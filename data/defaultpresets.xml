@@ -6986,7 +6986,7 @@
                 <reference ref="leaf" />
             </optional>
         </item> <!-- Tree Row -->
-        <item name="Wood" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Wood" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wood"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=wood"
@@ -6999,7 +6999,7 @@
             <text key="name" text="Name" />
             <reference ref="leaf" />
         </item> <!-- Wood -->
-        <item name="Forest" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Forest" icon="styles/standard/misc/landmark/trees.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=forest"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=forest"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=forest"
@@ -7126,7 +7126,7 @@
         </item> <!-- Stone -->
     </group> <!-- Nature -->
     <group name="Land use" icon="presets/landuse.png">
-        <item name="Farmyard" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
+        <item name="Farmyard" icon="styles/standard/misc/landuse/farmyard.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=farmyard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=farmyard"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=farmyard"
@@ -7149,7 +7149,7 @@
             <key key="landuse" value="farmland" />
             <text key="name" text="Name" />
         </item> <!-- Farmland -->
-        <item name="Meadow" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Meadow" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=meadow"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=meadow"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=meadow"
@@ -7171,7 +7171,7 @@
             <key key="landuse" value="orchard" />
             <text key="name" text="Name" />
         </item> <!-- Orchard -->
-        <item name="Vineyard" icon="presets/fruits.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Vineyard" icon="presets/fruits.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=vineyard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=vineyard"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=vineyard"
@@ -7205,7 +7205,7 @@
             <text key="genus" text="Genus" />
             <text key="species" text="Species" />
         </item> <!-- Plant Nursery -->
-        <item name="Allotments" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Allotments" icon="styles/standard/misc/landuse/allotments.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=allotments"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=allotments"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=allotments"
@@ -7220,7 +7220,7 @@
             <text key="name" text="Name" />
         </item> <!-- Allotments -->
         <separator/>
-        <item name="Garden" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Garden" icon="styles/standard/leisure/garden.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=garden"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=garden"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=garden"
@@ -7230,7 +7230,7 @@
             <key key="leisure" value="garden" />
             <text key="name" text="Name" />
         </item> <!-- Garden -->
-        <item name="Grass" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Grass" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=grass"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=grass"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=grass"
@@ -7243,7 +7243,7 @@
             <key key="landuse" value="grass" />
             <text key="name" text="Name" />
         </item> <!-- Grass -->
-        <item name="Village Green" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Village Green" icon="styles/standard/leisure/common.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=village_green"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=village_green"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=village_green"
@@ -7255,7 +7255,7 @@
             <key key="landuse" value="village_green" />
             <text key="name" text="Name" />
         </item> <!-- Village Green -->
-        <item name="Common" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Common" icon="styles/standard/leisure/common.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=common"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=common"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:leisure=common" />
@@ -7263,7 +7263,7 @@
             <key key="leisure" value="common" />
             <text key="name" text="Name" />
         </item> <!-- Common -->
-        <item name="Park" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Park" icon="styles/standard/leisure/park.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=park"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=park"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=park"
@@ -7276,7 +7276,7 @@
             <key key="leisure" value="park" />
             <text key="name" text="Name" />
         </item> <!-- Park -->
-        <item name="Recreation Ground" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Recreation Ground" icon="styles/standard/leisure/common.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=recreation_ground"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=recreation_ground"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=recreation_ground"
@@ -7314,7 +7314,7 @@
             <key key="amenity" value="grave_yard" />
             <reference ref="religious" />
         </item> <!-- Graveyard -->
-        <item name="Cemetery" icon="presets/cemetery.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Cemetery" icon="presets/cemetery.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=cemetery"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=cemetery"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=cemetery"
@@ -7329,7 +7329,7 @@
             <key key="landuse" value="cemetery" />
             <reference ref="religious" />
         </item> <!-- Cemetery -->
-        <item name="Religious" icon="styles/standard/religion.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Religious" icon="styles/standard/religion.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=religious"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=religious"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=religious"
@@ -7338,7 +7338,7 @@
             <key key="landuse" value="religious" />
             <reference ref="religious" />
         </item> <!-- Religious -->
-        <item name="Retail" icon="styles/standard/shop/supermarket.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Retail" icon="styles/standard/shop/mall.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=retail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=retail"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=retail"
@@ -7349,7 +7349,7 @@
             <key key="landuse" value="retail" />
             <text key="name" text="Name" />
         </item> <!-- Retail -->
-        <item name="Commercial" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Commercial" icon="styles/standard/misc/landuse/commercial.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=commercial"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=commercial"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=commercial"
@@ -7360,7 +7360,7 @@
             <key key="landuse" value="commercial" />
             <text key="name" text="Name" />
         </item> <!-- Commercial -->
-        <item name="Industrial" icon="presets/works.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Industrial" icon="styles/standard/misc/landmark/works.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=industrial"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=industrial"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:landuse=industrial"
@@ -7372,7 +7372,7 @@
             <key key="landuse" value="industrial" />
             <text key="name" text="Name" />
         </item> <!-- Industrial -->
-        <item name="Garages" icon="presets/garages.png" type="closedway" preset_name_label="true">
+        <item name="Garages" icon="presets/garages.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=garages"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=garages"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=garages"
@@ -7395,7 +7395,7 @@
             <key key="landuse" value="railway" />
             <text key="name" text="Name" />
         </item> <!-- Railway Land -->
-        <item name="Military" icon="presets/military.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Military" icon="presets/military.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=military"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=military"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=military"
@@ -7406,7 +7406,7 @@
             <text key="name" text="Name" />
         </item> <!-- Military -->
         <separator/>
-        <item name="Construction Area" icon="presets/construction.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Construction Area" icon="presets/construction.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=construction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=construction"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:landuse=construction"
@@ -7418,7 +7418,7 @@
             <key key="landuse" value="construction" />
             <text key="name" text="Name" />
         </item> <!-- Construction Area -->
-        <item name="Brownfield" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Brownfield" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=brownfield"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=brownfield"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=brownfield"
@@ -7429,7 +7429,7 @@
             <key key="landuse" value="brownfield" />
             <text key="name" text="Name" />
         </item> <!-- Brownfield -->
-        <item name="Greenfield" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Greenfield" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=greenfield"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=greenfield"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=greenfield"
@@ -7439,7 +7439,7 @@
             <key key="landuse" value="greenfield" />
             <text key="name" text="Name" />
         </item> <!-- Greenfield -->
-        <item name="Landfill" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Landfill" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=landfill"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=landfill"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=landfill"
@@ -7450,7 +7450,7 @@
             <key key="landuse" value="landfill" />
             <text key="name" text="Name" />
         </item> <!-- Landfill -->
-        <item name="Quarry" icon="presets/mine.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Quarry" icon="presets/mine.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=quarry"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=quarry"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=quarry"

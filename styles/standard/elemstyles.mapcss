@@ -1392,7 +1392,7 @@ node[leisure=nature_reserve] {
     text: auto;
 }
 node[leisure=park] {
-    icon-image: "leisure/park.png";
+    icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
 }
@@ -2806,59 +2806,18 @@ area[landuse=vineyard],
 area[landuse=orchard] {
     fill-color: green#b1e0c2;
 }
-node[landuse=farm] {
-    icon-image: "misc/landmark/farm.png";
-    set icon_z17;
-    text: auto;
-}
-node[landuse=farmland] {
-    icon-image: "misc/landuse/farmland.png";
-    set icon_z17;
-    text: auto;
-}
-node[landuse=meadow] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
-node[landuse=vineyard] {
-    icon-image: "shop/groceries/fruits.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=quarry] {
     fill-color: quarry#888888;
 }
-node[landuse=quarry] {
-    icon-image: "misc/landmark/mine.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=landfill] {
     fill-color: landfill#663300;
-}
-node[landuse=landfill] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
 }
 area[landuse=basin],
 area[landuse=reservoir] {
     fill-color: basin#0000bf;
 }
-node[landuse=basin],
-node[landuse=reservoir] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=forest] {
     fill-color: forest#b1efc8;
-}
-node[landuse=forest] {
-    icon-image: "misc/landmark/trees.png";
-    set icon_z17;
-    text: auto;
 }
 area[landuse=allotments],
 area[landuse=greenhouse_horticulture],
@@ -2866,91 +2825,30 @@ area[landuse=plant_nursery],
 area[landuse=grass] {
     fill-color: green#b1e0c2;
 }
-node[landuse=allotments] {
-    icon-image: "misc/landmark/plant.png";
-    set icon_z17;
-    text: auto;
-}
-node[landuse=greenhouse_horticulture] {
-    icon-image: "misc/landuse/greenhouse_horticulture.png";
-    set icon_z17;
-    text: auto;
-}
-node[landuse=plant_nursery],
-node[landuse=grass] {
-    icon-image: "misc/landmark/plant.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=residential] {
     fill-color: residential#f0f0f0;
-}
-node[landuse=residential] {
-    icon-image: "misc/landuse/residential.png";
-    set icon_z17;
-    text: auto;
 }
 area[landuse=garages] {
     fill-color: garages#d6c8aa;
 }
-node[landuse=garages] {
-    icon-image: "misc/landuse/garages.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=farmyard] {
     fill-color: farmyard#f0f0f0;
-}
-node[landuse=farmyard] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
 }
 area[landuse=retail],
 area[landuse=commercial] {
     fill-color: retail#ffc4ee;
 }
-node[landuse=retail] {
-    icon-image: "shop/mall.png";
-    set icon_z17;
-    text: auto;
-}
-node[landuse=commercial] {
-    icon-image: "misc/landuse/commercial.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=industrial] {
     fill-color: industrial#ecd8ff;
-}
-node[landuse=industrial] {
-    icon-image: "misc/landmark/works.png";
-    set icon_z17;
-    text: auto;
 }
 area[landuse=brownfield] {
     fill-color: brownfield#ecba32;
 }
-node[landuse=brownfield] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=greenfield] {
     fill-color: greenfield#b1ec5c;
 }
-node[landuse=greenfield] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=railway] {
     fill-color: railland#888888;
-}
-node[landuse=railway] {
-    icon-image: "transport/railway_station.png";
-    set icon_z17;
-    text: auto;
 }
 area[landuse=construction] {
     fill-color: construction#ffff00;
@@ -2960,18 +2858,8 @@ way[landuse=construction] {
     color: construction#ffff00;
     dashes: 9,9;
 }
-node[landuse=construction] {
-    icon-image: "misc/construction.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=military] {
     fill-color: military#b62c2c;
-}
-node[landuse=military] {
-    icon-image: "vehicle/tank.png";
-    set icon_z17;
-    text: auto;
 }
 area[landuse=religious] {
     fill-color: religious#ffd454;
@@ -2979,24 +2867,14 @@ area[landuse=religious] {
 area[landuse=cemetery] {
     fill-color: cemetery#b1efc8;
 }
-node[landuse=cemetery] {
-    icon-image: "rendering/landuse/cemetery.png";
-    set icon_z17;
-    text: auto;
-}
 area[landuse=village_green] {
     fill-color: green#b1e0c2;
-}
-node[landuse=village_green] {
-    icon-image: "leisure/common.png";
-    set icon_z17;
-    text: auto;
 }
 area[landuse=recreation_ground] {
     fill-color: green#b1e0c2;
 }
-node[landuse=recreation_ground] {
-    icon-image: "leisure/common.png";
+node[landuse] {
+    icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
 }
@@ -3870,7 +3748,7 @@ area[natural=grassland] {
     fill-color: green#b1e0c2;
 }
 node[natural=grassland] {
-    icon-image: "misc/no_icon.png";
+    icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
 }
