@@ -1120,6 +1120,7 @@ area[man_made=chimney],
 area[man_made=crane],
 area[man_made=flagpole],
 area[man_made=gasometer],
+area[man_made=bunker_silo],
 area[man_made=groyne],
 area[man_made=lighthouse],
 area[man_made=monitoring_station],
@@ -1149,6 +1150,11 @@ node[man_made=flagpole] {
 }
 node[man_made=gasometer] {
     icon-image: "misc/landmark/gasometer.png";
+    set icon_z17;
+    text: auto;
+}
+node[man_made=bunker_silo] {
+    icon-image: "bunker_silo.svg";
     set icon_z17;
     text: auto;
 }
