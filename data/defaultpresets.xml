@@ -4992,6 +4992,12 @@
             <key key="man_made" value="gasometer" />
             <text key="name" text="Name" />
         </item> <!-- Gasometer -->
+        <item name="Bunker Silo" icon="styles/standard/bunker_silo.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=bunker_silo" />
+            <space />
+            <key key="man_made" value="bunker_silo" />
+            <text key="name" text="Name" />
+        </item> <!-- Bunker Silo -->
         <item name="Pipeline" icon="presets/path.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pipeline"
