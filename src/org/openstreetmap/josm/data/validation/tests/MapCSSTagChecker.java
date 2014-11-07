@@ -573,7 +573,8 @@ public class MapCSSTagChecker extends Test.TagTest {
     public synchronized void addMapCSS(String url) throws ParseException, IOException {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         CachedFile cache = new CachedFile(url);
-        try (InputStream s = cache.getInputStream()) {
+        InputStream zip = cache.findZipEntryInputStream("validator.mapcss", "");
+        try (InputStream s = zip != null ? zip : cache.getInputStream()) {
             List<TagCheck> tagchecks = TagCheck.readMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
             checks.remove(url);
             checks.putAll(url, tagchecks);
