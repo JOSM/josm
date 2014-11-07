@@ -341,7 +341,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setEnabled(true);
             JMultilineLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
             lbl.setText(tr("Upload data in one request"));
-            lbl.setToolTipText("");
+            lbl.setToolTipText(null);
             lblNumRequests.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setVisible(true);
 
             pnlMultiChangesetPolicyPanel.setVisible(false);

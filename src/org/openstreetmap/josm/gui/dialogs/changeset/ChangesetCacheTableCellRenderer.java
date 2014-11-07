@@ -35,7 +35,7 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         setBackground(UIManager.getColor("Table.background"));
         setForeground(UIManager.getColor("Table.foreground"));
         setFont(UIManager.getFont("Table.font"));
-        setToolTipText("");
+        setToolTipText(null);
     }
 
     protected void renderColors(boolean isSelected) {
@@ -50,7 +50,7 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
 
     protected void renderId(Changeset cs) {
         setText(Integer.toString(cs.getId()));
-        setToolTipText("");
+        setToolTipText(null);
     }
 
     protected void renderUploadComment(Changeset cs) {
@@ -71,7 +71,7 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         } else {
             setText(trc("changeset.state", "Closed"));
         }
-        setToolTipText("");
+        setToolTipText(null);
     }
 
     protected void renderUser(Changeset cs) {
@@ -92,12 +92,12 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         } else {
             setText(DateUtils.formatDateTime(d, DateFormat.SHORT, DateFormat.SHORT));
         }
-        setToolTipText("");
+        setToolTipText(null);
     }
 
     protected void renderDiscussions(Changeset cs) {
         setText(Integer.toString(cs.getCommentsCount()));
-        setToolTipText("");
+        setToolTipText(null);
     }
 
     @Override
