@@ -42,7 +42,7 @@ public class ChangesetContentTableCellRenderer extends JLabel implements TableCe
 
     protected void renderId(HistoryOsmPrimitive primitive) {
         setText(Long.toString(primitive.getId()));
-        setToolTipText("");
+        setToolTipText(null);
     }
 
     protected void renderModificationType(ChangesetModificationType type) {
@@ -51,7 +51,7 @@ public class ChangesetContentTableCellRenderer extends JLabel implements TableCe
         case UPDATED: setText(tr("Updated")); break;
         case DELETED: setText(tr("Deleted")); break;
         }
-        setToolTipText("");
+        setToolTipText(null);
     }
 
     @Override
