@@ -946,7 +946,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return the primitive
      */
     public OsmPrimitive getPrimitiveById(PrimitiveId primitiveId) {
-        return primitivesMap.get(primitiveId);
+        return primitiveId != null ? primitivesMap.get(primitiveId) : null;
     }
 
     /**
@@ -956,7 +956,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      */
     private OsmPrimitive getPrimitiveByIdChecked(PrimitiveId primitiveId) {
         OsmPrimitive result = getPrimitiveById(primitiveId);
-        if (result == null) {
+        if (result == null && primitiveId != null) {
             Main.warn(tr("JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
                     + "at {2}. This is not a critical error, it should be safe to continue in your work.",
                     primitiveId.getType(), Long.toString(primitiveId.getUniqueId()), Main.getJOSMWebsite()));

@@ -474,13 +474,13 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             }
 
             // This will cycle through the available items.
-            if(firstSelected == null) {
-                ds.addSelected(firstItem);
-            } else {
+            if (firstSelected != null) {
                 ds.clearSelection(firstSelected);
                 if(nextSelected != null) {
                     ds.addSelected(nextSelected);
                 }
+            } else if (firstItem != null) {
+                ds.addSelected(firstItem);
             }
         }
 
