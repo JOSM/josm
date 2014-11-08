@@ -1,57 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.changeset;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.text.DateFormat;
-import java.util.Date;
 
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.UIManager;
-import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.User;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * The cell renderer for the changeset table
  * @since 2689
  */
-public class ChangesetCacheTableCellRenderer extends JLabel implements TableCellRenderer{
-
-    /**
-     * Constructs a new {@code ChangesetCacheTableCellRenderer}.
-     */
-    public ChangesetCacheTableCellRenderer() {
-        setOpaque(true);
-    }
-
-    protected void reset() {
-        setBackground(UIManager.getColor("Table.background"));
-        setForeground(UIManager.getColor("Table.foreground"));
-        setFont(UIManager.getFont("Table.font"));
-        setToolTipText(null);
-    }
-
-    protected void renderColors(boolean isSelected) {
-        if (isSelected) {
-            setBackground(UIManager.getColor("Table.selectionBackground"));
-            setForeground(UIManager.getColor("Table.selectionForeground"));
-        } else {
-            setBackground(UIManager.getColor("Table.background"));
-            setForeground(UIManager.getColor("Table.foreground"));
-        }
-    }
-
-    protected void renderId(Changeset cs) {
-        setText(Integer.toString(cs.getId()));
-        setToolTipText(null);
-    }
+public class ChangesetCacheTableCellRenderer extends AbstractCellRenderer {
 
     protected void renderUploadComment(Changeset cs) {
         String comment = cs.get("comment");
@@ -74,27 +38,6 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         setToolTipText(null);
     }
 
-    protected void renderUser(Changeset cs) {
-        User user = cs.getUser();
-        if (user == null || user.getName().trim().isEmpty()) {
-            setFont(UIManager.getFont("Table.font").deriveFont(Font.ITALIC));
-            setText(tr("anonymous"));
-        } else {
-            setFont(UIManager.getFont("Table.font"));
-            setText(user.getName());
-            setToolTipText(user.getName());
-        }
-    }
-
-    protected void renderDate(Date d) {
-        if (d == null) {
-            setText("");
-        } else {
-            setText(DateUtils.formatDateTime(d, DateFormat.SHORT, DateFormat.SHORT));
-        }
-        setToolTipText(null);
-    }
-
     protected void renderDiscussions(Changeset cs) {
         setText(Integer.toString(cs.getCommentsCount()));
         setToolTipText(null);
@@ -109,10 +52,10 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         renderColors(isSelected);
         Changeset cs = (Changeset)value;
         switch(column) {
-        case 0: /* id */ renderId(cs); break;
+        case 0: /* id */ renderId(cs.getId()); break;
         case 1: /* upload comment */ renderUploadComment(cs); break;
         case 2: /* open/closed */ renderOpen(cs); break;
-        case 3: /* user */ renderUser(cs); break;
+        case 3: /* user */ renderUser(cs.getUser()); break;
         case 4: /* created at */ renderDate(cs.getCreatedAt()); break;
         case 5: /* closed at */ renderDate(cs.getClosedAt()); break;
         case 6: /* discussions */ renderDiscussions(cs); break;
