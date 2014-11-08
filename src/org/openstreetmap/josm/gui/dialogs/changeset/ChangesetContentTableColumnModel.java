@@ -45,6 +45,9 @@ public class ChangesetContentTableColumnModel extends DefaultTableColumnModel {
         addColumn(col);
     }
 
+    /**
+     * Constructs a new {@code ChangesetContentTableColumnModel}.
+     */
     public ChangesetContentTableColumnModel() {
         createColumns();
     }

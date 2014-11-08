@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -13,6 +14,8 @@ import java.util.Collections;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JToolBar;
 
 import org.openstreetmap.josm.Main;
@@ -30,6 +33,10 @@ import org.openstreetmap.josm.io.OnlineResource;
 public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeListener {
 
     private final UpdateChangesetDiscussionAction actUpdateChangesets = new UpdateChangesetDiscussionAction();
+
+    private final ChangesetDiscussionTableModel model = new ChangesetDiscussionTableModel();
+
+    private JTable table;
 
     private Changeset current = null;
 
@@ -94,16 +101,33 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
     protected final void build() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
-        //add(buildDetailViewPanel(), BorderLayout.CENTER);
         add(buildActionButtonPanel(), BorderLayout.WEST);
+        add(buildDiscussionPanel(), BorderLayout.CENTER);
+    }
+
+    private Component buildDiscussionPanel() {
+        JPanel pnl = new JPanel(new BorderLayout());
+        table = new JTable(model, new ChangesetDiscussionTableColumnModel());
+        //tblContent.addMouseListener(new PopupMenuLauncher(new ChangesetContentTablePopupMenu()));
+        pnl.add(new JScrollPane(table), BorderLayout.CENTER);
+        return pnl;
     }
 
     protected void clearView() {
-        // TODO
+        model.populate(null);
     }
 
     protected void updateView(Changeset cs) {
-        // TODO
+        model.populate(cs.getDiscussion());
+        // Update row heights
+        for (int row = 0; row < table.getRowCount(); row++) {
+            int rowHeight = table.getRowHeight();
+
+            Component comp = table.prepareRenderer(table.getCellRenderer(row, 2), row, 2);
+            rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+
+            table.setRowHeight(row, rowHeight);
+        }
     }
 
     /* ---------------------------------------------------------------------------- */

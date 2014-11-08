@@ -314,6 +314,7 @@ public final class Changeset implements Tagged {
         this.commentsCount = other.commentsCount;
         this.tags = new HashMap<>(other.tags);
         this.incomplete = other.incomplete;
+        this.discussion = other.discussion != null ? new ArrayList<>(other.discussion) : null;
 
         // FIXME: merging of content required?
         this.content = other.content;

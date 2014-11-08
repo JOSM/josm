@@ -62,8 +62,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
     }
 
     /**
-     * Populates the model with the content of a model. If ds is null, the
-     * table is cleared.
+     * Populates the model with the content of a changeset. If ds is null, the table is cleared.
      *
      * @param ds the changeset content.
      */
