@@ -591,6 +591,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             public void actionPerformed(ActionEvent evt) {
                 layerInfo.loadDefaults(true);
                 defaultModel.fireTableDataChanged();
+                /* loading new file may change active layers */
+                activeModel.fireTableDataChanged();
             }
         }
 
