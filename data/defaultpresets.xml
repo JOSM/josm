@@ -6692,6 +6692,22 @@
             <key key="boundary" value="national_park" />
             <text key="name" text="Name" />
         </item> <!-- National Park -->
+        <item name="Protected Area" icon="presets/boundaries.png" type="closedway,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:boundary=protected_area"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:boundary=protected_area"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:boundary=protected_area"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:boundary=protected_area"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:boundary=protected_area" />
+            <space />
+            <key key="boundary" value="protected_area" />
+            <text key="protected_class" text="Protected Class" length="2" />
+            <text key="protection_title" text="National destination or formal title or type of protection" />
+            <optional>
+                <reference ref="name_operator_oh" />
+                <text key="wikipedia" text="Wikipedia" />
+                <text key="start_date" text="Start date" />
+            </optional>
+        </item> <!-- Protected Area -->
     </group> <!-- Boundaries -->
     <group name="Places" icon="presets/places.png">
         <item name="Continent" icon="presets/places.png" type="node,closedway" preset_name_label="true">
