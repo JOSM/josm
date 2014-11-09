@@ -431,11 +431,15 @@ node[barrier=sally_port] {
     set icon_z17;
     text: auto;
 }
+node[barrier=spikes] {
+    icon-image: "vehicle/spikes.svg";
+    set icon_z17;
+    text: auto;
+}
 node[barrier=fence],
 node[barrier=kissing_gate],
 node[barrier=bump_gate],
 node[barrier=portcullis],
-node[barrier=spikes],
 node[barrier=bus_trap],
 node[barrier=drawbridge],
 node[barrier=hampshire_gate] {
@@ -1121,7 +1125,6 @@ area[man_made=crane],
 area[man_made=flagpole],
 area[man_made=gasometer],
 area[man_made=bunker_silo],
-area[man_made=groyne],
 area[man_made=lighthouse],
 area[man_made=monitoring_station],
 area[man_made=mineshaft],
@@ -1157,6 +1160,20 @@ node[man_made=bunker_silo] {
     icon-image: "bunker_silo.svg";
     set icon_z17;
     text: auto;
+}
+area[man_made=groyne]:closed {
+    fill-color: manmade#d8d8d8;
+}
+way[man_made=groyne] {
+    width: 2;
+    color: manmade#d8d8d8;
+}
+area[man_made=breakwater]:closed {
+    fill-color: manmade#d8d8d8;
+}
+way[man_made=breakwater] {
+    width: 2;
+    color: manmade#d8d8d8;
 }
 node[man_made=groyne] {
     icon-image: "nautical/groyne.png";

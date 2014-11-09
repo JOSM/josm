@@ -1239,7 +1239,7 @@
             <key key="barrier" value="bus_trap" />
             <reference ref="optional_maxwidth" />
         </item> <!-- Bus Trap -->
-        <item name="Spikes" icon="presets/empty.png" type="node" preset_name_label="true">
+        <item name="Spikes" icon="styles/standard/vehicle/spikes.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:barrier"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:barrier"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:barrier"
@@ -1704,7 +1704,7 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=groyne" />
             <key key="man_made" value="groyne" />
         </item> <!-- Groyne -->
-        <item name="Breakwater" icon="presets/groyne.png" type="way,closedway" preset_name_label="true">
+        <item name="Breakwater" icon="presets/breakwater.png" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=breakwater"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=breakwater"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=breakwater"
@@ -7160,7 +7160,7 @@
             <key key="landuse" value="meadow" />
             <text key="name" text="Name" />
         </item> <!-- Meadow -->
-        <item name="Orchard" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
+        <item name="Orchard" icon="styles/standard/misc/landuse/orchard.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=orchard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=orchard"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=orchard"
