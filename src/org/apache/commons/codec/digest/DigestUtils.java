@@ -29,11 +29,9 @@ import org.apache.commons.codec.binary.StringUtils;
  * Operations to simplify common {@link java.security.MessageDigest} tasks.
  * This class is immutable and thread-safe.
  *
- * @version $Id: DigestUtils.java 1634433 2014-10-27 01:10:47Z ggregory $
+ * @version $Id: DigestUtils.java 1637832 2014-11-10 12:54:57Z ggregory $
  */
 public class DigestUtils {
-
-    private static final int STREAM_BUFFER_LENGTH = 1024;
 
     /**
      * Read through an InputStream and returns the digest for the data
@@ -816,4 +814,6 @@ public class DigestUtils {
         messageDigest.update(StringUtils.getBytesUtf8(valueToDigest));
         return messageDigest;
     }
+
+    private static final int STREAM_BUFFER_LENGTH = 1024;
 }
