@@ -19,6 +19,7 @@ package org.apache.commons.codec.digest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -29,9 +30,27 @@ import org.apache.commons.codec.binary.StringUtils;
  * Operations to simplify common {@link java.security.MessageDigest} tasks.
  * This class is immutable and thread-safe.
  *
- * @version $Id: DigestUtils.java 1637832 2014-11-10 12:54:57Z ggregory $
+ * @version $Id: DigestUtils.java 1637908 2014-11-10 16:13:23Z ggregory $
  */
 public class DigestUtils {
+
+    private static final int STREAM_BUFFER_LENGTH = 1024;
+
+    /**
+     * Read through an ByteBuffer and returns the digest for the data
+     *
+     * @param digest
+     *            The MessageDigest to use (e.g. MD5)
+     * @param data
+     *            Data to digest
+     * @return the digest
+     * @throws IOException
+     *             On error reading from the stream
+     */
+    private static byte[] digest(final MessageDigest messageDigest, final ByteBuffer data) {
+        messageDigest.update(data);
+        return messageDigest.digest();
+    }
 
     /**
      * Read through an InputStream and returns the digest for the data
@@ -189,6 +208,18 @@ public class DigestUtils {
      * @param data
      *            Data to digest
      * @return MD2 digest
+     * @since 1.11
+     */
+    public static byte[] md2(final ByteBuffer data) {
+        return digest(getMd2Digest(), data);
+    }
+
+    /**
+     * Calculates the MD2 digest and returns the value as a 16 element <code>byte[]</code>.
+     *
+     * @param data
+     *            Data to digest
+     * @return MD2 digest
      * @throws IOException
      *             On error reading from the stream
      * @since 1.7
@@ -218,6 +249,18 @@ public class DigestUtils {
      * @since 1.7
      */
     public static String md2Hex(final byte[] data) {
+        return Hex.encodeHexString(md2(data));
+    }
+
+    /**
+     * Calculates the MD2 digest and returns the value as a 32 character hex string.
+     *
+     * @param data
+     *            Data to digest
+     * @return MD2 digest as a hex string
+     * @since 1.11
+     */
+    public static String md2Hex(final ByteBuffer data) {
         return Hex.encodeHexString(md2(data));
     }
 
@@ -264,6 +307,18 @@ public class DigestUtils {
      * @param data
      *            Data to digest
      * @return MD5 digest
+     * @since 1.11
+     */
+    public static byte[] md5(final ByteBuffer data) {
+        return digest(getMd5Digest(), data);
+    }
+
+    /**
+     * Calculates the MD5 digest and returns the value as a 16 element <code>byte[]</code>.
+     *
+     * @param data
+     *            Data to digest
+     * @return MD5 digest
      * @throws IOException
      *             On error reading from the stream
      * @since 1.4
@@ -300,13 +355,25 @@ public class DigestUtils {
      * @param data
      *            Data to digest
      * @return MD5 digest as a hex string
-     * @throws IOException
-     *             On error reading from the stream
-     * @since 1.4
+     * @since 1.11
      */
-    public static String md5Hex(final InputStream data) throws IOException {
+    public static String md5Hex(final ByteBuffer data) {
         return Hex.encodeHexString(md5(data));
     }
+
+    /**
+         * Calculates the MD5 digest and returns the value as a 32 character hex string.
+         *
+         * @param data
+         *            Data to digest
+         * @return MD5 digest as a hex string
+         * @throws IOException
+         *             On error reading from the stream
+         * @since 1.4
+         */
+        public static String md5Hex(final InputStream data) throws IOException {
+            return Hex.encodeHexString(md5(data));
+        }
 
     /**
      * Calculates the MD5 digest and returns the value as a 32 character hex string.
@@ -332,21 +399,21 @@ public class DigestUtils {
         return sha1(data);
     }
 
-    /**
-     * Calculates the SHA-1 digest and returns the value as a <code>byte[]</code>.
-     *
-     * @param data
-     *            Data to digest
-     * @return SHA-1 digest
-     * @throws IOException
-     *             On error reading from the stream
-     * @since 1.4
-     * @deprecated Use {@link #sha1(InputStream)}
-     */
-    @Deprecated
-    public static byte[] sha(final InputStream data) throws IOException {
-        return sha1(data);
-    }
+/**
+ * Calculates the SHA-1 digest and returns the value as a <code>byte[]</code>.
+ *
+ * @param data
+ *            Data to digest
+ * @return SHA-1 digest
+ * @throws IOException
+ *             On error reading from the stream
+ * @since 1.4
+ * @deprecated Use {@link #sha1(InputStream)}
+ */
+@Deprecated
+public static byte[] sha(final InputStream data) throws IOException {
+    return sha1(data);
+}
 
     /**
      * Calculates the SHA-1 digest and returns the value as a <code>byte[]</code>.
@@ -371,6 +438,18 @@ public class DigestUtils {
      */
     public static byte[] sha1(final byte[] data) {
         return getSha1Digest().digest(data);
+    }
+
+    /**
+     * Calculates the SHA-1 digest and returns the value as a <code>byte[]</code>.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-1 digest
+     * @since 1.11
+     */
+    public static byte[] sha1(final ByteBuffer data) {
+        return digest(getSha1Digest(), data);
     }
 
     /**
@@ -407,6 +486,18 @@ public class DigestUtils {
      * @since 1.7
      */
     public static String sha1Hex(final byte[] data) {
+        return Hex.encodeHexString(sha1(data));
+    }
+
+    /**
+     * Calculates the SHA-1 digest and returns the value as a hex string.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-1 digest as a hex string
+     * @since 1.11
+     */
+    public static String sha1Hex(final ByteBuffer data) {
         return Hex.encodeHexString(sha1(data));
     }
 
@@ -453,6 +544,18 @@ public class DigestUtils {
 
     /**
      * Calculates the SHA-256 digest and returns the value as a <code>byte[]</code>.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-256 digest
+     * @since 1.11
+     */
+    public static byte[] sha256(final ByteBuffer data) {
+        return digest(getSha256Digest(), data);
+    }
+
+    /**
+     * Calculates the SHA-256 digest and returns the value as a <code>byte[]</code>.
      * <p>
      * Throws a <code>RuntimeException</code> on JRE versions prior to 1.4.0.
      * </p>
@@ -495,6 +598,18 @@ public class DigestUtils {
      * @since 1.4
      */
     public static String sha256Hex(final byte[] data) {
+        return Hex.encodeHexString(sha256(data));
+    }
+
+    /**
+     * Calculates the SHA-256 digest and returns the value as a hex string.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-256 digest as a hex string
+     * @since 1.11
+     */
+    public static String sha256Hex(final ByteBuffer data) {
         return Hex.encodeHexString(sha256(data));
     }
 
@@ -547,6 +662,18 @@ public class DigestUtils {
 
     /**
      * Calculates the SHA-384 digest and returns the value as a <code>byte[]</code>.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-384 digest
+     * @since 1.11
+     */
+    public static byte[] sha384(final ByteBuffer data) {
+        return digest(getSha384Digest(), data);
+    }
+
+    /**
+     * Calculates the SHA-384 digest and returns the value as a <code>byte[]</code>.
      * <p>
      * Throws a <code>RuntimeException</code> on JRE versions prior to 1.4.0.
      * </p>
@@ -589,6 +716,18 @@ public class DigestUtils {
      * @since 1.4
      */
     public static String sha384Hex(final byte[] data) {
+        return Hex.encodeHexString(sha384(data));
+    }
+
+    /**
+     * Calculates the SHA-384 digest and returns the value as a hex string.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-384 digest as a hex string
+     * @since 1.11
+     */
+    public static String sha384Hex(final ByteBuffer data) {
         return Hex.encodeHexString(sha384(data));
     }
 
@@ -641,6 +780,18 @@ public class DigestUtils {
 
     /**
      * Calculates the SHA-512 digest and returns the value as a <code>byte[]</code>.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-512 digest
+     * @since 1.11
+     */
+    public static byte[] sha512(final ByteBuffer data) {
+        return digest(getSha512Digest(), data);
+    }
+
+    /**
+     * Calculates the SHA-512 digest and returns the value as a <code>byte[]</code>.
      * <p>
      * Throws a <code>RuntimeException</code> on JRE versions prior to 1.4.0.
      * </p>
@@ -683,6 +834,18 @@ public class DigestUtils {
      * @since 1.4
      */
     public static String sha512Hex(final byte[] data) {
+        return Hex.encodeHexString(sha512(data));
+    }
+
+    /**
+     * Calculates the SHA-512 digest and returns the value as a hex string.
+     *
+     * @param data
+     *            Data to digest
+     * @return SHA-512 digest as a hex string
+     * @since 1.11
+     */
+    public static String sha512Hex(final ByteBuffer data) {
         return Hex.encodeHexString(sha512(data));
     }
 
@@ -776,6 +939,21 @@ public class DigestUtils {
     }
 
     /**
+     * Updates the given {@link MessageDigest}.
+     *
+     * @param messageDigest
+     *            the {@link MessageDigest} to update
+     * @param valueToDigest
+     *            the value to update the {@link MessageDigest} with
+     * @return the updated {@link MessageDigest}
+     * @since 1.11
+     */
+    public static MessageDigest updateDigest(final MessageDigest messageDigest, final ByteBuffer valueToDigest) {
+        messageDigest.update(valueToDigest);
+        return messageDigest;
+    }
+
+    /**
      * Reads through an InputStream and updates the digest for the data
      *
      * @param digest
@@ -814,6 +992,4 @@ public class DigestUtils {
         messageDigest.update(StringUtils.getBytesUtf8(valueToDigest));
         return messageDigest;
     }
-
-    private static final int STREAM_BUFFER_LENGTH = 1024;
 }
