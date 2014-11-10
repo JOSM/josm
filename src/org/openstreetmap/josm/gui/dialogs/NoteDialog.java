@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
@@ -293,16 +294,13 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            Object userInput = JOptionPane.showInputDialog(Main.map,
-                    tr("Add comment to note:"),
-                    tr("Add comment"),
-                    JOptionPane.QUESTION_MESSAGE,
-                    ICON_COMMENT,
-                    null,null);
-            if (userInput == null) { //user pressed cancel
+            NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Comment on note"), tr("Add comment"));
+            dialog.showNoteDialog(tr("Add comment to note:"), NoteDialog.ICON_COMMENT);
+            if (dialog.getValue() != 1) {
+                Main.debug("User aborted note reopening");
                 return;
             }
-            noteData.addCommentToNote(note, userInput.toString());
+            noteData.addCommentToNote(note, dialog.getInputText());
         }
     }
 
@@ -316,17 +314,14 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object userInput = JOptionPane.showInputDialog(Main.map,
-                    tr("Close note with message:"),
-                    tr("Close Note"),
-                    JOptionPane.QUESTION_MESSAGE,
-                    ICON_CLOSED,
-                    null,null);
-            if (userInput == null) { //user pressed cancel
+            NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Close note"), tr("Close note"));
+            dialog.showNoteDialog(tr("Close note with message:"), NoteDialog.ICON_CLOSED);
+            if (dialog.getValue() != 1) {
+                Main.debug("User aborted note closing");
                 return;
             }
             Note note = displayList.getSelectedValue();
-            noteData.closeNote(note, userInput.toString());
+            noteData.closeNote(note, dialog.getInputText());
         }
     }
 
@@ -357,17 +352,15 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object userInput = JOptionPane.showInputDialog(Main.map,
-                    tr("Reopen note with message:"),
-                    tr("Reopen note"),
-                    JOptionPane.QUESTION_MESSAGE,
-                    ICON_OPEN,
-                    null,null);
-            if (userInput == null) { //user pressed cancel
+            NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Reopen note"), tr("Reopen note"));
+            dialog.showNoteDialog(tr("Reopen note with message:"), NoteDialog.ICON_OPEN);
+            if (dialog.getValue() != 1) {
+                Main.debug("User aborted note reopening");
                 return;
             }
+
             Note note = displayList.getSelectedValue();
-            noteData.reOpenNote(note, userInput.toString());
+            noteData.reOpenNote(note, dialog.getInputText());
         }
     }
 }

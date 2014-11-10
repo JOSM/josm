@@ -5,15 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.MouseEvent;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.NoteDialog;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -62,29 +60,21 @@ public class AddNoteAction extends MapMode {
     public void mouseClicked(MouseEvent e) {
         Main.map.selectMapMode(Main.map.mapModeSelect);
         LatLon latlon = Main.map.mapView.getLatLon(e.getPoint().x, e.getPoint().y);
-        JLabel label = new JLabel(tr("Enter a comment for a new note"));
-        JTextArea textArea = new JTextArea();
-        textArea.setRows(6);
-        textArea.setColumns(30);
-        textArea.setLineWrap(true);
-        JScrollPane scrollPane = new JScrollPane(textArea);
 
-        Object[] components = new Object[]{label, scrollPane};
-        int option = JOptionPane.showConfirmDialog(Main.map,
-                components,
-                tr("Create new note"),
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                NoteDialog.ICON_NEW);
-        if (option == JOptionPane.OK_OPTION) {
-            String input = textArea.getText();
-            if (input != null && !input.isEmpty()) {
-                noteData.createNote(latlon, input);
-            } else {
-                Notification notification = new Notification("You must enter a comment to create a new note");
-                notification.setIcon(JOptionPane.WARNING_MESSAGE);
-                notification.show();
-            }
+        NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Create new note"), tr("Create note"));
+        dialog.showNoteDialog(tr("Enter a detailed comment to create a note"), NoteDialog.ICON_NEW);
+
+        if (dialog.getValue() != 1) {
+            Main.debug("User aborted note creation");
+            return;
+        }
+        String input = dialog.getInputText();
+        if (input != null && !input.isEmpty()) {
+            noteData.createNote(latlon, input);
+        } else {
+            Notification notification = new Notification(tr("You must enter a comment to create a new note"));
+            notification.setIcon(JOptionPane.WARNING_MESSAGE);
+            notification.show();
         }
     }
 }
