@@ -77,6 +77,7 @@ public class DownloadDialog extends JDialog  {
 
     protected JCheckBox cbDownloadOsmData;
     protected JCheckBox cbDownloadGpxData;
+    protected JCheckBox cbDownloadNotes;
     /** the download action and button */
     private DownloadAction actDownload;
     protected SideButton btnDownload;
@@ -97,7 +98,16 @@ public class DownloadDialog extends JDialog  {
         pnl.add(cbDownloadOsmData,  GBC.std().insets(1,5,1,5));
         cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
         cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces in the selected download area."));
-        pnl.add(cbDownloadGpxData,  GBC.eol().insets(5,5,1,5));
+        //TODO: uncomment this and remove logic below once notes are enabled
+        //pnl.add(cbDownloadGpxData,  GBC.std().insets(5,5,1,5));
+        cbDownloadNotes = new JCheckBox(tr("Notes"));
+        cbDownloadNotes.setToolTipText(tr("Select to download notes in the selected download area."));
+        if (Main.pref.getBoolean("osm.notes.enableDownload", false)) {
+            pnl.add(cbDownloadGpxData,  GBC.std().insets(5,5,1,5));
+            pnl.add(cbDownloadNotes, GBC.eol().insets(50, 5, 1, 5));
+        } else {
+            pnl.add(cbDownloadGpxData,  GBC.eol().insets(5,5,1,5));
+        }
 
         // hook for subclasses
         buildMainPanelAboveDownloadSelections(pnl);
@@ -173,6 +183,7 @@ public class DownloadDialog extends JDialog  {
 
         makeCheckBoxRespondToEnter(cbDownloadGpxData);
         makeCheckBoxRespondToEnter(cbDownloadOsmData);
+        makeCheckBoxRespondToEnter(cbDownloadNotes);
         makeCheckBoxRespondToEnter(cbNewLayer);
 
         // -- cancel button
@@ -278,6 +289,15 @@ public class DownloadDialog extends JDialog  {
     }
 
     /**
+     * Replies true if user selected to download notes
+     *
+     * @return true if user selected to download notes
+     */
+    public boolean isDownloadNotes() {
+        return cbDownloadNotes.isSelected();
+    }
+
+    /**
      * Replies true if the user requires to download into a new layer
      *
      * @return true if the user requires to download into a new layer
@@ -313,6 +333,7 @@ public class DownloadDialog extends JDialog  {
         Main.pref.put("download.tab", Integer.toString(tpDownloadAreaSelectors.getSelectedIndex()));
         Main.pref.put("download.osm", cbDownloadOsmData.isSelected());
         Main.pref.put("download.gps", cbDownloadGpxData.isSelected());
+        Main.pref.put("download.notes", cbDownloadNotes.isSelected());
         Main.pref.put("download.newlayer", cbNewLayer.isSelected());
         if (currentBounds != null) {
             Main.pref.put("osm-download.bounds", currentBounds.encodeAsString(";"));
@@ -325,6 +346,11 @@ public class DownloadDialog extends JDialog  {
     public void restoreSettings() {
         cbDownloadOsmData.setSelected(Main.pref.getBoolean("download.osm", true));
         cbDownloadGpxData.setSelected(Main.pref.getBoolean("download.gps", false));
+        //TODO: This is to make sure notes are not downloaded if the Notes checkbox isn't being displayed.
+        //      Make it look like the ones above when notes are enabled
+        boolean downloadNotes = Main.pref.getBoolean("download.notes", false)
+                && Main.pref.getBoolean("osm.notes.enableDownload", false);
+        cbDownloadNotes.setSelected(downloadNotes);
         cbNewLayer.setSelected(Main.pref.getBoolean("download.newlayer", false));
         cbStartup.setSelected( isAutorunEnabled() );
         int idx = Main.pref.getInteger("download.tab", 0);
@@ -457,6 +483,7 @@ public class DownloadDialog extends JDialog  {
                 );
                 return;
             }
+            //TODO: add notes into this logic once they are fully enabled in core
             if (!isDownloadOsmData() && !isDownloadGpxData()) {
                 JOptionPane.showMessageDialog(
                         DownloadDialog.this,
