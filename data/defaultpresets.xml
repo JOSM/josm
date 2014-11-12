@@ -6701,7 +6701,7 @@
             <space />
             <key key="boundary" value="protected_area" />
             <text key="protected_class" text="Protected Class" length="2" />
-            <text key="protection_title" text="National destination or formal title or type of protection" />
+            <text key="protection_title" text="Title or type of protection" />
             <optional>
                 <reference ref="name_operator_oh" />
                 <text key="wikipedia" text="Wikipedia" />
