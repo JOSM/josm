@@ -166,12 +166,44 @@ public class DuplicateWay extends Test {
     public void visit(Way w) {
         if (!w.isUsable())
             return;
-        List<Node> wNodes = w.getNodes();                            // The original list of nodes for this way
+        List<LatLon> wLat = getOrderedNodes(w);
+        // If this way has not direction-dependant keys, make sure the list is ordered the same for all ways (fix #8015)
+        if (!w.hasDirectionKeys()) {
+            int hash = wLat.hashCode();
+            if (!knownHashCodes.contains(hash)) {
+                List<LatLon> reversedwLat = new ArrayList<>(wLat);
+                Collections.reverse(reversedwLat);
+                int reverseHash = reversedwLat.hashCode();
+                if (!knownHashCodes.contains(reverseHash)) {
+                    // Neither hash or reversed hash is known, remember hash
+                    knownHashCodes.add(hash);
+                } else {
+                    // Reversed hash is known, use the reverse list then
+                    wLat = reversedwLat;
+                }
+            }
+        }
+        Map<String, String> wkeys = w.getKeys();
+        removeUninterestingKeys(wkeys);
+        WayPair wKey = new WayPair(wLat, wkeys);
+        ways.put(wKey, w);
+        WayPairNoTags wKeyN = new WayPairNoTags(wLat);
+        waysNoTags.put(wKeyN, w);
+    }
+
+    /**
+     * Replies the ordered list of nodes of way w such as it is easier to find duplicated ways.
+     * In case of a closed way, build the list of lat/lon starting from the node with the lowest id
+     * to ensure this list will produce the same hashcode as the list obtained from another closed
+     * way with the same nodes, in the same order, but that does not start from the same node (fix #8008)
+     * @param w way
+     * @return the ordered list of nodes of way w such as it is easier to find duplicated ways
+     * @since 7721
+     */
+    public static List<LatLon> getOrderedNodes(Way w) {
+        List<Node> wNodes = w.getNodes();                        // The original list of nodes for this way
         List<Node> wNodesToUse = new ArrayList<>(wNodes.size()); // The list that will be considered for this test
         if (w.isClosed()) {
-            // In case of a closed way, build the list of lat/lon starting from the node with the lowest id
-            // to ensure this list will produce the same hashcode as the list obtained from another closed
-            // way with the same nodes, in the same order, but that does not start from the same node (fix #8008)
             int lowestIndex = 0;
             long lowestNodeId = wNodes.get(0).getUniqueId();
             for (int i=1; i<wNodes.size(); i++) {
@@ -195,28 +227,7 @@ public class DuplicateWay extends Test {
         for (Node node : wNodesToUse) {
             wLat.add(node.getCoor());
         }
-        // If this way has not direction-dependant keys, make sure the list is ordered the same for all ways (fix #8015)
-        if (!w.hasDirectionKeys()) {
-            int hash = wLat.hashCode();
-            if (!knownHashCodes.contains(hash)) {
-                List<LatLon> reversedwLat = new ArrayList<>(wLat);
-                   Collections.reverse(reversedwLat);
-                int reverseHash = reversedwLat.hashCode();
-                if (!knownHashCodes.contains(reverseHash)) {
-                    // Neither hash or reversed hash is known, remember hash
-                    knownHashCodes.add(hash);
-                } else {
-                    // Reversed hash is known, use the reverse list then
-                    wLat = reversedwLat;
-                }
-            }
-        }
-        Map<String, String> wkeys = w.getKeys();
-        removeUninterestingKeys(wkeys);
-        WayPair wKey = new WayPair(wLat, wkeys);
-        ways.put(wKey, w);
-        WayPairNoTags wKeyN = new WayPairNoTags(wLat);
-        waysNoTags.put(wKeyN, w);
+        return wLat;
     }
 
     /**
