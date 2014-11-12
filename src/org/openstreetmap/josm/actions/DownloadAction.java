@@ -54,10 +54,7 @@ public class DownloadAction extends JosmAction {
                 Future<?> future = task.download(dialog.isNewLayerRequired(),area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }
-
-            //TODO: This eventually needs to be a checkbox in the UI
-            //For now I'm adding it as a hidden feature since this is still a work in progress
-            if (Main.pref.getBoolean("osm.notes.enableDownload", false)) {
+            if (dialog.isDownloadNotes()) {
                 DownloadNotesTask task = new DownloadNotesTask();
                 Future<?> future = task.download(false, area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
