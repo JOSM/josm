@@ -4416,9 +4416,9 @@
         </item> <!-- Fire Hydrant -->
     </group> <!-- Facilities -->
   </group>  <!-- Facilities -->
-  <group name="Sports" icon="presets/soccer.png">
+  <group name="Sports" icon="styles/standard/sport/soccer.png">
     <group name="Sport Facilities" icon="presets/stadium.png">
-        <item name="Stadium" icon="presets/stadium.png" type="node,closedway" preset_name_label="true">
+        <item name="Stadium" icon="styles/standard/sport/stadium.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=stadium"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=stadium"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=stadium"
@@ -4431,7 +4431,7 @@
             <text key="name" text="Name" />
             <reference ref="optional_sport" />
         </item> <!-- Stadium -->
-        <item name="Sports Centre" icon="presets/sports_centre.png" type="node,closedway" preset_name_label="true">
+        <item name="Sports Centre" icon="styles/standard/sport/centre.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=sports_centre"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=sports_centre"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=sports_centre"
@@ -4443,7 +4443,7 @@
             <text key="name" text="Name" />
             <reference ref="optional_sport" />
         </item> <!-- Sports Centre -->
-        <item name="Pitch" icon="presets/pitch.png" type="node,closedway" preset_name_label="true">
+        <item name="Pitch" icon="styles/standard/sport/pitch.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=pitch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=pitch"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=pitch"
@@ -4458,7 +4458,7 @@
             <text key="name" text="Name" />
             <reference ref="optional_sport" />
         </item> <!-- Pitch -->
-        <item name="Racetrack" icon="presets/stadium.png" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Racetrack" icon="styles/standard/sport/track.png" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=track"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=track"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=track"
@@ -4482,7 +4482,7 @@
             <key key="leisure" value="golf_course" />
             <reference ref="name_oh" />
         </item> <!-- Golf Course -->
-        <item name="Miniature Golf" icon="presets/golf.png" type="node,closedway" preset_name_label="true">
+        <item name="Miniature Golf" icon="styles/standard/sport/miniature_golf.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=miniature_golf"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=miniature_golf"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=miniature_golf"
@@ -4539,13 +4539,13 @@
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="sports_centre" />
         </item> <!-- Climbing -->
-        <item name="Canoeing/Kayaking" icon="presets/canoe.png" type="node,way,closedway" preset_name_label="true">
+        <item name="Canoeing/Kayaking" icon="styles/standard/sport/canoe.svg" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=canoe" />
             <space />
             <key key="sport" value="canoe" />
             <text key="name" text="Name" />
         </item> <!-- Canoeing/Kayaking -->
-        <item name="Cycling" icon="presets/cycling.png" type="node,closedway" preset_name_label="true">
+        <item name="Cycling" icon="styles/standard/sport/cycling.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=cycling" />
             <space />
             <key key="sport" value="cycling" />
@@ -4566,7 +4566,7 @@
             <text key="name" text="Name" />
             <reference ref="riding_surface" />
         </item> <!-- Equestrian -->
-        <item name="Horse Racing" icon="presets/equestrian.png" type="node,closedway" preset_name_label="true">
+        <item name="Horse Racing" icon="styles/standard/sport/riding.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=horse_racing" />
             <space />
             <key key="sport" value="horse_racing" />
@@ -4596,7 +4596,7 @@
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" default="pitch" values_context="racing" />
         </item> <!-- Skateboard -->
-        <item name="Swimming" icon="presets/swimming.png" type="node,closedway" preset_name_label="true">
+        <item name="Swimming" icon="styles/standard/sport/pool.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=swimming"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=swimming" />
             <space />
@@ -4612,7 +4612,7 @@
             <key key="sport" value="scuba_diving" />
             <text key="name" text="Name" />
         </item> <!-- Scuba Diving -->
-        <item name="Skiing" icon="presets/skiing_downhill.png" type="node,way,closedway" preset_name_label="true">
+        <item name="Skiing" icon="styles/standard/sport/skiing.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Piste_Maps"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Piste_Maps"
@@ -4636,8 +4636,8 @@
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
         </item> <!-- Shooting -->
     </group> <!-- Sport -->
-    <group name="Sport (Ball)" icon="presets/soccer.png">
-        <item name="Soccer" icon="presets/soccer.png" type="node,closedway" preset_name_label="true">
+    <group name="Sport (Ball)" icon="styles/standard/sport/soccer.png">
+        <item name="Soccer" icon="styles/standard/sport/soccer.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=soccer"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=soccer"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:sport=soccer"
@@ -4646,7 +4646,7 @@
             <key key="sport" value="soccer" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Soccer -->
-        <item name="Australian Football" icon="presets/soccer.png" type="node,closedway" preset_name_label="true">
+        <item name="Australian Football" icon="presets/football.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=australian_football" />
             <space />
             <key key="sport" value="australian_football" />
@@ -4664,7 +4664,7 @@
             <key key="sport" value="canadian_football" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Canadian Football -->
-        <item name="Gaelic Games" icon="presets/soccer.png" type="node,closedway" preset_name_label="true">
+        <item name="Gaelic Games" icon="styles/standard/sport/soccer.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_games" />
             <space />
             <key key="sport" value="gaelic_games" />
@@ -4690,7 +4690,7 @@
             <key key="sport" value="rugby_union" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Rugby Union -->
-        <item name="Baseball" icon="presets/baseball.png" type="node,closedway" preset_name_label="true">
+        <item name="Baseball" icon="styles/standard/sport/baseball.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=baseball" />
             <space />
             <key key="sport" value="baseball" />
@@ -4738,13 +4738,13 @@
             <key key="sport" value="bowls" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Lawn Bowling -->
-        <item name="Cricket" icon="presets/cricket.png" type="node,closedway" preset_name_label="true">
+        <item name="Cricket" icon="styles/standard/sport/cricket.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=cricket" />
             <space />
             <key key="sport" value="cricket" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Cricket -->
-        <item name="Cricket Nets" icon="presets/cricket.png" type="node,closedway" preset_name_label="true">
+        <item name="Cricket Nets" icon="styles/standard/sport/cricket.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=cricket_nets" />
             <space />
             <key key="sport" value="cricket_nets" />
@@ -4771,7 +4771,7 @@
             <key key="sport" value="pelota" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Pelota -->
-        <item name="Racquetball" icon="presets/racquetball.png" type="node,closedway" preset_name_label="true">
+        <item name="Racquetball" icon="styles/standard/sport/racquetball.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=racquet"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=racquet" />
             <space />
@@ -4786,7 +4786,7 @@
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
         </item> <!-- Table Tennis/Ping-Pong -->
-        <item name="Tennis" icon="presets/tennis.png" type="node,closedway" preset_name_label="true">
+        <item name="Tennis" icon="styles/standard/sport/tennis.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=tennis" />
             <space />
             <key key="sport" value="tennis" />
@@ -4850,7 +4850,7 @@
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,track" values_context="aerialway" />
         </item> <!-- Model Aerodrome -->
-        <item name="RC Car" icon="presets/car.png" type="node,closedway" preset_name_label="true">
+        <item name="RC Car" icon="styles/standard/transport/car.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=rc_car"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:sport"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:sport"
