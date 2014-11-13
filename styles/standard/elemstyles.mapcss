@@ -1448,7 +1448,7 @@ area[leisure=sauna] {
     fill-color: leisure#c7f1a3;
 }
 node[leisure=miniature_golf] {
-    icon-image: "sport/golf.png";
+    icon-image: "sport/miniature_golf.svg";
     set icon_z17;
     text: auto;
 }
@@ -1618,7 +1618,7 @@ node[shop=boutique] {
 }
 node[shop=car],
 node[shop=car_dealer] {
-    icon-image: "transport/car.png";
+    icon-image: "vehicle.png";
     set icon_z17;
     text: auto;
 }
@@ -3327,7 +3327,7 @@ area[sport=soccer],
 area[sport=australian_football],
 area[sport=american_football],
 area[sport=canadian_football],
-area[sport=gaelic_football],
+area[sport=gaelic_games],
 area[sport=rugby_league],
 area[sport=rugby_union] {
     fill-color: sport#bde3cb;
@@ -3348,14 +3348,14 @@ node[sport=athletics] {
     text: auto;
 }
 node[sport=soccer],
-node[sport=australian_football],
-node[sport=american_football],
-node[sport=canadian_football],
-node[sport=gaelic_football] {
+node[sport=gaelic_games] {
     icon-image: "sport/soccer.png";
     set icon_z17;
     text: auto;
 }
+node[sport=australian_football],
+node[sport=american_football],
+node[sport=canadian_football],
 node[sport=rugby_league],
 node[sport=rugby_union] {
     icon-image: "sport/football.png";
@@ -3395,7 +3395,7 @@ node[sport=bowls] {
     text: auto;
 }
 node[sport=canoe] {
-    icon-image: "sport/canoe.png";
+    icon-image: "sport/canoe.svg";
     set icon_z17;
     text: auto;
 }
@@ -3415,7 +3415,7 @@ node[sport=cricket] {
     text: auto;
 }
 node[sport=cricket_nets] {
-    icon-image: "misc/no_icon.png";
+    icon-image: "sport/cricket.png";
     set icon_z17;
     text: auto;
 }
@@ -3447,7 +3447,8 @@ node[sport=dog_racing] {
     text: auto;
 }
 node[sport=equestrian] {
-    icon-image: "sport/riding.png";
+    icon-image: "presets/equestrian.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -3457,7 +3458,8 @@ node[sport=golf] {
     text: auto;
 }
 node[sport=gymnastics] {
-    icon-image: "sport/multi.png";
+    icon-image: "presets/gymnastics.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -3570,7 +3572,8 @@ node[sport=squash] {
     text: auto;
 }
 node[sport=shooting] {
-    icon-image: "misc/no_icon.png";
+    icon-image: "presets/range.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
