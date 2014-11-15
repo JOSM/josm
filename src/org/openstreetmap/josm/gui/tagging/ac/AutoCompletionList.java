@@ -147,6 +147,21 @@ public class AutoCompletionList extends AbstractTableModel {
         sort();
         filter();
     }
+    
+    public void addUserInput(Collection<String> values) {
+        if (values == null) return;
+        int i = 0;
+        for (String value: values) {
+            if (value == null) {
+                continue;
+            }
+            AutoCompletionListItem item = new AutoCompletionListItem(value, new AutoCompletionItemPriority(false, false, false, i));
+            appendOrUpdatePriority(item);
+            i++;
+        }
+        sort();
+        filter();
+    }
 
     protected void appendOrUpdatePriority(AutoCompletionListItem toAdd) {
         AutoCompletionListItem item = valutToItemMap.get(toAdd.getValue());
