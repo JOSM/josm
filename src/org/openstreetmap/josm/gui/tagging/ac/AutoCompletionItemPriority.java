@@ -36,14 +36,33 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
     /** Unknown priority. This is the lowest priority. */
     public static final AutoCompletionItemPriority UNKNOWN = new AutoCompletionItemPriority(false, false, false);
 
+    private final static int NO_USER_INPUT = Integer.MAX_VALUE;
+
+    private final int userInput;
     private final boolean inDataSet;
     private final boolean inStandard;
     private final boolean selected;
+    
 
-    public AutoCompletionItemPriority(boolean inDataSet, boolean inStandard, boolean selected) {
+    /**
+     * Create new AutoCompletionItemPriority object.
+     * 
+     * @param inDataSet true, if the item is found in the currently active data layer
+     * @param inStandard true, if the item is a standard tag, e.g. from the presets.
+     * @param selected true, if it is found on an object that is currently selected
+     * @param userInput null, if the user hasn't entered this tag so far. A number when
+     * the tag key / value has been entered by the user before. A lower number means
+     * this happened more recently and beats a higher number in priority.
+     */
+    public AutoCompletionItemPriority(boolean inDataSet, boolean inStandard, boolean selected, Integer userInput) {
         this.inDataSet = inDataSet;
         this.inStandard = inStandard;
         this.selected = selected;
+        this.userInput = userInput == null ? NO_USER_INPUT : userInput;
+    }
+
+    public AutoCompletionItemPriority(boolean inDataSet, boolean inStandard, boolean selected) {
+        this(inDataSet, inStandard, selected, NO_USER_INPUT);
     }
 
     public boolean isInDataSet() {
@@ -58,12 +77,19 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
         return selected;
     }
 
+    public Integer getUserInput() {
+        return userInput == NO_USER_INPUT ? null : userInput;
+    }
+    
     /**
      * Imposes an ordering on the priorities.
      * Currently, being in the current DataSet is worth more than being in the Presets.
      */
     @Override
     public int compareTo(AutoCompletionItemPriority other) {
+        int ui = -Integer.compare(userInput, other.userInput);
+        if (ui != 0) return ui;
+
         int sel = Boolean.valueOf(selected).compareTo(other.selected);
         if (sel != 0) return sel;
 
@@ -84,10 +110,12 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
         return new AutoCompletionItemPriority(
                 inDataSet || other.inDataSet,
                 inStandard || other.inStandard,
-                selected || other.selected);
+                selected || other.selected,
+                Math.min(userInput, other.userInput));
     }
 
     @Override public String toString() {
-        return String.format("<Priority; inDataSet: %b, inStandard: %b, selected: %b>", inDataSet, inStandard, selected);
+        return String.format("<Priority; userInput: %s, inDataSet: %b, inStandard: %b, selected: %b>", 
+                userInput == NO_USER_INPUT ? "no" : Integer.toString(userInput), inDataSet, inStandard, selected);
     }
 }

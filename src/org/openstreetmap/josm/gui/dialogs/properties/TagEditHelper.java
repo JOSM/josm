@@ -370,6 +370,7 @@ class TagEditHelper {
                 return;
             if (key.equals(newkey) || value == null) {
                 Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
+                AutoCompletionManager.rememberUserInput(newkey, value, true);
             } else {
                 for (OsmPrimitive osm: sel) {
                     if (osm.get(newkey) != null) {
@@ -400,6 +401,7 @@ class TagEditHelper {
                     }
                 } else {
                     commands.add(new ChangePropertyCommand(sel, newkey, value));
+                    AutoCompletionManager.rememberUserInput(newkey, value, false);
                 }
                 Main.main.undoRedo.add(new SequenceCommand(
                         trn("Change properties of up to {0} object",
@@ -770,6 +772,7 @@ class TagEditHelper {
             lastAddKey = key;
             lastAddValue = value;
             recentTags.put(new Tag(key, value), null);
+            AutoCompletionManager.rememberUserInput(key, value, false);
             commandCount++;
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
             changedKey = key;

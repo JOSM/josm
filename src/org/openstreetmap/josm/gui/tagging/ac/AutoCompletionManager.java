@@ -6,9 +6,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -53,6 +55,60 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class AutoCompletionManager implements DataSetListener {
 
+    /**
+     * Data class to remember tags that the user has entered.
+     */
+    public static class UserInputTag {
+        public String key;
+        public String value;
+        public boolean defaultKey;
+
+        /**
+         * Constructor.
+         * 
+         * @param key the tag key
+         * @param value the tag value
+         * @param defaultKey true, if the key was not really entered by the
+         * user, e.g. for preset text fields.
+         * In this case, the key will not get any higher priority, just the value.
+         */
+        public UserInputTag(String key, String value, boolean defaultKey) {
+            this.key = key;
+            this.value = value;
+            this.defaultKey = defaultKey;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 59 * hash + Objects.hashCode(this.key);
+            hash = 59 * hash + Objects.hashCode(this.value);
+            hash = 59 * hash + (this.defaultKey ? 1 : 0);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final UserInputTag other = (UserInputTag) obj;
+            if (!Objects.equals(this.key, other.key)) {
+                return false;
+            }
+            if (!Objects.equals(this.value, other.value)) {
+                return false;
+            }
+            if (this.defaultKey != other.defaultKey) {
+                return false;
+            }
+            return true;
+        }
+    }
+
     /** If the dirty flag is set true, a rebuild is necessary. */
     protected boolean dirty;
     /** The data set that is managed */
@@ -69,6 +125,11 @@ public class AutoCompletionManager implements DataSetListener {
      * can be accessed directly
      */
     protected static final MultiMap<String, String> presetTagCache = new MultiMap<>();
+    /**
+     * Cache for tags that have been entered by the user.
+     */
+    protected static final Set<UserInputTag> userInputTagCache = new LinkedHashSet<>();
+    
     /**
      * the cached list of member roles
      * only accessed by getRoleCache(), rebuild() and cacheRelationMemberRoles()
@@ -173,6 +234,13 @@ public class AutoCompletionManager implements DataSetListener {
             }
         }
     }
+    
+    
+    public static void rememberUserInput(String key, String value, boolean defaultKey) {
+        UserInputTag tag = new UserInputTag(key, value, defaultKey);
+        userInputTagCache.remove(tag); // re-add, so it gets to the last position of the LinkedHashSet
+        userInputTagCache.add(tag);
+    }
 
     /**
      * replies the keys held by the cache
@@ -185,6 +253,17 @@ public class AutoCompletionManager implements DataSetListener {
 
     protected List<String> getPresetKeys() {
         return new ArrayList<>(presetTagCache.keySet());
+    }
+    
+    protected Collection<String> getUserInputKeys() {
+        List<String> keys = new ArrayList<>();
+        for (UserInputTag tag : userInputTagCache) {
+            if (!tag.defaultKey) {
+                keys.add(tag.key);
+            }
+        }
+        Collections.reverse(keys);
+        return new LinkedHashSet<>(keys);
     }
 
     /**
@@ -200,6 +279,17 @@ public class AutoCompletionManager implements DataSetListener {
 
     protected static List<String> getPresetValues(String key) {
         return new ArrayList<>(presetTagCache.getValues(key));
+    }
+
+    protected static Collection<String> getUserInputValues(String key) {
+        ArrayList<String> values = new ArrayList<>();
+        for (UserInputTag tag : userInputTagCache) {
+            if (key.equals(tag.key)) {
+                values.add(tag.value);
+            }
+        }
+        Collections.reverse(values);
+        return new LinkedHashSet<>(values);
     }
 
     /**
@@ -260,6 +350,7 @@ public class AutoCompletionManager implements DataSetListener {
         list.add(getPresetKeys(), AutoCompletionItemPriority.IS_IN_STANDARD);
         list.add(new AutoCompletionListItem("source", AutoCompletionItemPriority.IS_IN_STANDARD));
         list.add(getDataKeys(), AutoCompletionItemPriority.IS_IN_DATASET);
+        list.addUserInput(getUserInputKeys());
     }
 
     /**
@@ -284,6 +375,7 @@ public class AutoCompletionManager implements DataSetListener {
         for (String key : keys) {
             list.add(getPresetValues(key), AutoCompletionItemPriority.IS_IN_STANDARD);
             list.add(getDataValues(key), AutoCompletionItemPriority.IS_IN_DATASET);
+            list.addUserInput(getUserInputValues(key));
         }
     }
 

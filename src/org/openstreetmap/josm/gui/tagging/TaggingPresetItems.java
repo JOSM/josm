@@ -53,6 +53,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPriority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.QuadStateCheckBox;
@@ -766,6 +767,7 @@ public final class TaggingPresetItems {
                 return;
 
             changedTags.add(new Tag(key, v));
+            AutoCompletionManager.rememberUserInput(key, v, true);
         }
 
         @Override
