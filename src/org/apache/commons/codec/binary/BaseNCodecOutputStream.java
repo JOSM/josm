@@ -27,9 +27,15 @@ import org.apache.commons.codec.binary.BaseNCodec.Context;
 
 /**
  * Abstract superclass for Base-N output streams.
- *
+ * <p>
+ * To write the EOF marker without closing the stream, call {@link #eof()} or use an <a
+ * href="https://commons.apache.org/proper/commons-io/">Apache Commons IO</a> <a href=
+ * "https://commons.apache.org/proper/commons-io/apidocs/org/apache/commons/io/output/CloseShieldOutputStream.html"
+ * >CloseShieldOutputStream</a>.
+ * </p>
+ * 
  * @since 1.5
- * @version $Id: BaseNCodecOutputStream.java 1544347 2013-11-21 22:30:31Z ggregory $
+ * @version $Id: BaseNCodecOutputStream.java 1640002 2014-11-16 16:41:36Z ggregory $
  */
 public class BaseNCodecOutputStream extends FilterOutputStream {
 
@@ -134,20 +140,37 @@ public class BaseNCodecOutputStream extends FilterOutputStream {
 
     /**
      * Closes this output stream and releases any system resources associated with the stream.
+     * <p>
+     * To write the EOF marker without closing the stream, call {@link #eof()} or use an
+     * <a href="https://commons.apache.org/proper/commons-io/">Apache Commons IO</a> <a href=
+     * "https://commons.apache.org/proper/commons-io/apidocs/org/apache/commons/io/output/CloseShieldOutputStream.html"
+     * >CloseShieldOutputStream</a>.
+     * </p>
      *
      * @throws IOException
      *             if an I/O error occurs.
      */
     @Override
     public void close() throws IOException {
+        eof();
+        flush();
+        out.close();
+    }
+
+    /**
+     * Writes EOF.
+     * 
+     * @throws IOException
+     *             if an I/O error occurs.
+     * @since 1.11
+     */
+    public void eof() throws IOException {
         // Notify encoder of EOF (-1).
         if (doEncode) {
             baseNCodec.encode(singleByte, 0, EOF, context);
         } else {
             baseNCodec.decode(singleByte, 0, EOF, context);
         }
-        flush();
-        out.close();
     }
 
 }
