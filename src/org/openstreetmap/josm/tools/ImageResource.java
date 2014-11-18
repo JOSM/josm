@@ -7,8 +7,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.Action;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import com.kitfox.svg.SVGDiagram;
@@ -28,25 +28,40 @@ public class ImageResource {
      */
     private Map<Dimension, Image> imgCache = new HashMap<>();
     private SVGDiagram svg;
+    /**
+     * Use this dimension to request original file dimension.
+     */
     public static final Dimension DEFAULT_DIMENSION = new Dimension(-1, -1);
 
+    /**
+     * Constructs a new {@code ImageResource} from an image.
+     * @param img the image
+     */
     public ImageResource(Image img) {
         CheckParameterUtil.ensureParameterNotNull(img);
         imgCache.put(DEFAULT_DIMENSION, img);
     }
 
+    /**
+     * Constructs a new {@code ImageResource} from SVG data.
+     * @param svg SVG data
+     */
     public ImageResource(SVGDiagram svg) {
         CheckParameterUtil.ensureParameterNotNull(svg);
         this.svg = svg;
     }
 
+    /**
+     * Returns the image icon at default dimension.
+     * @return the image icon at default dimension
+     */
     public ImageIcon getImageIcon() {
         return getImageIcon(DEFAULT_DIMENSION);
     }
 
     /**
      * Set both icons of an Action
-     * @param action The action for the icons
+     * @param a The action for the icons
      * @since 7693
      */
     public void getImageIcon(AbstractAction a) {
@@ -55,7 +70,7 @@ public class ImageResource {
         icon = getImageIconBounded(ImageProvider.getImageSizes(ImageProvider.ImageSizes.LARGEICON));
         a.putValue(Action.LARGE_ICON_KEY, icon);
     }
-    
+
     /**
      * Get an ImageIcon object for the image of this resource
      * @param   dim The requested dimensions. Use (-1,-1) for the original size

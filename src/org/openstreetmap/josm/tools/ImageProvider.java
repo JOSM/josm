@@ -94,7 +94,14 @@ public class ImageProvider {
      * Position of an overlay icon
      */
     public static enum OverlayPosition {
-        NORTHWEST, NORTHEAST, SOUTHWEST, SOUTHEAST
+        /** North west */
+        NORTHWEST,
+        /** North east */
+        NORTHEAST,
+        /** South west */
+        SOUTHWEST,
+        /** South east */
+        SOUTHEAST
     }
 
     /**
@@ -112,15 +119,15 @@ public class ImageProvider {
      * @since 7687
      */
     public static enum ImageSizes {
-        /* SMALL_ICON value of on Action */
+        /** SMALL_ICON value of on Action */
         SMALLICON,
-        /* LARGE_ICON_KEY value of on Action */
+        /** LARGE_ICON_KEY value of on Action */
         LARGEICON,
-        /* MAP icon */
+        /** MAP icon */
         MAP,
-        /* MAP icon maximum size */
+        /** MAP icon maximum size */
         MAPMAX,
-        /* MENU icon size */
+        /** MENU icon size */
         MENU,
     }
 
@@ -168,6 +175,10 @@ public class ImageProvider {
      * Callback interface for asynchronous image loading.
      */
     public interface ImageCallback {
+        /**
+         * Called when image loading has finished.
+         * @param result the loaded image icon
+         */
         void finished(ImageIcon result);
     }
 
@@ -176,6 +187,10 @@ public class ImageProvider {
      * @since 7693
      */
     public interface ImageResourceCallback {
+        /**
+         * Called when image loading has finished.
+         * @param result the loaded image resource
+         */
         void finished(ImageResource result);
     }
 
@@ -246,7 +261,8 @@ public class ImageProvider {
 
     /**
      * Convert enumerated size values to real numbers
-     * @return dimension of image
+     * @param size the size enumeration
+     * @return dimension of image in pixels
      * @since 7687
      */
     static public Dimension getImageSizes(ImageSizes size) {
@@ -495,6 +511,8 @@ public class ImageProvider {
     }
 
     /**
+     * Load an image with a given file name.
+     *
      * @param name The icon name (base name with or without '.png' or '.svg' extension)
      * @return the requested image or null if the request failed
      * @see #get(String, String)
@@ -932,6 +950,13 @@ public class ImageProvider {
         return null;
     }
 
+    /**
+     * Load a cursor with a given file name, optionally decorated with an overlay image.
+     *
+     * @param name the cursor image filename in "cursor" directory
+     * @param overlay optional overlay image
+     * @return cursor with a given file name, optionally decorated with an overlay image
+     */
     public static Cursor getCursor(String name, String overlay) {
         ImageIcon img = get("cursor", name);
         if (overlay != null) {
@@ -1110,6 +1135,12 @@ public class ImageProvider {
         return get("data", type.getAPIName());
     }
 
+    /**
+     * Constructs an image from the given SVG data.
+     * @param svg the SVG data
+     * @param dim the desired image dimension
+     * @return an image from the given SVG data at the desired dimension.
+     */
     public static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim) {
         float realWidth = svg.getWidth();
         float realHeight = svg.getHeight();
