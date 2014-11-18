@@ -96,6 +96,9 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
             updateView(cs);
         }
         actUpdateChangesets.initProperties(current);
+        if (cs != null && cs.getDiscussion().size() < cs.getCommentsCount()) {
+            actUpdateChangesets.actionPerformed(null);
+        }
     }
 
     protected final void build() {
@@ -108,7 +111,6 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
     private Component buildDiscussionPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
         table = new JTable(model, new ChangesetDiscussionTableColumnModel());
-        //tblContent.addMouseListener(new PopupMenuLauncher(new ChangesetContentTablePopupMenu()));
         pnl.add(new JScrollPane(table), BorderLayout.CENTER);
         return pnl;
     }
