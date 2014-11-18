@@ -1385,7 +1385,7 @@ node[leisure=sports_centre] {
     text: auto;
 }
 node[leisure=golf_course] {
-    icon-image: "sport/golf.png";
+    icon-image: "sport/golf.svg";
     set icon_z17;
     text: auto;
 }
@@ -3491,7 +3491,7 @@ node[sport=equestrian] {
     text: auto;
 }
 node[sport=golf] {
-    icon-image: "sport/golf.png";
+    icon-image: "sport/golf.svg";
     set icon_z17;
     text: auto;
 }
