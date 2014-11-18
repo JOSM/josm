@@ -4471,7 +4471,7 @@
             <text key="name" text="Name" />
             <reference ref="optional_sport" />
         </item> <!-- Racetrack -->
-        <item name="Golf Course" icon="presets/golf.png" type="node,closedway" preset_name_label="true">
+        <item name="Golf Course" icon="styles/standard/sport/golf.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
@@ -4716,7 +4716,7 @@
             <reference ref="name_operator" />
             <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" />
         </item> <!-- Beach Volleyball -->
-        <item name="Golf" icon="presets/golf.png" type="node,closedway" preset_name_label="true">
+        <item name="Golf" icon="styles/standard/sport/golf.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=golf"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=golf"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:sport=golf"
