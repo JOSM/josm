@@ -1052,13 +1052,15 @@ node[power=minor_line] {
 area[power=plant],
 area[power=sub_station],
 area[power=substation],
-area[power=transformer] {
+area[power=transformer],
+area[power=generator] {
     fill-color: power#eeeeee;
 }
 node[power=plant],
 node[power=sub_station],
 node[power=substation],
-node[power=cable_distribution_cabinet] {
+node[power=cable_distribution_cabinet],
+node[power=generator] {
     icon-image: "misc/landmark/power.png";
     set icon_z17;
     text: auto;
@@ -1068,52 +1070,88 @@ node[power=transformer] {
     set icon_z17;
     text: auto;
 }
-/* power_source is deprecated by the wiki, but still in use */
-/* generator:source replaces power_source */
-area[power_source=wind], area[generator:source=wind],
-area[power_source=hydro], area[generator:source=hydro],
-area[power_source=fossil],
-area[power_source=coal], area[generator:source=coal],
-area[power_source=gas], area[generator:source=gas],
-area[power_source=photovoltaic],
-area[power_source=nuclear], area[generator:source=nuclear],
-area[power=generator] {
+
+/*************************/
+/* generator:source tags */
+/*************************/
+
+area[generator:source=nuclear],
+area[generator:source=wind],
+area[generator:source=hydro],
+area[generator:source=tidal],
+area[generator:source=wave],
+area[generator:source=osmotic],
+area[generator:source=geothermal],
+area[generator:source=solar],
+area[generator:source=coal],
+area[generator:source=gas],
+area[generator:source=biomass],
+area[generator:source=biofuel],
+area[generator:source=biogas],
+area[generator:source=oil],
+area[generator:source=diesel],
+area[generator:source=gasoline],
+area[generator:source=waste] {
     fill-color: power#eeeeee;
 }
-node[power_source=wind], node[generator:source=wind] {
-    icon-image: "misc/landmark/power/wind.png";
+node[generator:source=nuclear] {
+    icon-image: "presets/power_source-nuclear.svg";
     set icon_z17;
     text: auto;
 }
-node[power_source=hydro], node[generator:source=hydro] {
-    icon-image: "misc/landmark/power/hydro.png";
+node[generator:source=wind] {
+    icon-image: "presets/power_source-wind.svg";
     set icon_z17;
     text: auto;
 }
-node[power_source=fossil],
-node[power_source=coal], node[generator:source=coal],
-node[power_source=gas], node[generator:source=gas] {
-    icon-image: "misc/landmark/power/fossil.png";
+node[generator:source=hydro],
+node[generator:source=tidal],
+node[generator:source=wave],
+node[generator:source=osmotic],
+node[generator:source=geothermal] {
+    icon-image: "presets/power_source-water.svg";
     set icon_z17;
     text: auto;
 }
-node[power_source=photovoltaic] {
-/*    FIXME photovoltaic NOT fossil*/
-    icon-image: "misc/landmark/power/fossil.png";
+node[generator:source=solar] {
+    icon-image: "presets/power_source-sun.svg";
     set icon_z17;
     text: auto;
 }
-node[power_source=nuclear], node[generator:source=nuclear] {
-    icon-image: "misc/landmark/power/nuclear.png";
+node[generator:source=coal] {
+    icon-image: "presets/power_source-coal.svg";
     set icon_z17;
     text: auto;
 }
-node[power=generator] {
-    icon-image: "misc/landmark/power.png";
+node[generator:source=gas] {
+    icon-image: "presets/power_source-gas.svg";
     set icon_z17;
     text: auto;
 }
-
+node[generator:source=biomass],
+node[generator:source=biofuel],
+node[generator:source=biogas] {
+    icon-image: "presets/power_source-biofuel.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=oil],
+node[generator:source=diesel],
+node[generator:source=gasoline] {
+    icon-image: "presets/power_source-oil.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=waste] {
+    icon-image: "presets/power_source-waste.svg";
+    set icon_z17;
+    text: auto;
+}
+node[power_source] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
 /*****************/
 /* man_made tags */
 /*****************/
