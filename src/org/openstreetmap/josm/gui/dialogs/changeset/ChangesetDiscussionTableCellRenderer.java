@@ -22,7 +22,7 @@ public class ChangesetDiscussionTableCellRenderer extends AbstractCellRenderer {
         if (value == null)
             return this;
         JComponent comp = this;
-        reset(comp);
+        reset(comp, true);
         renderColors(comp, isSelected);
         switch(column) {
         case 0:
@@ -33,7 +33,7 @@ public class ChangesetDiscussionTableCellRenderer extends AbstractCellRenderer {
             break;
         case 2:
             comp = new JosmTextArea((String) value);
-            reset(comp);
+            reset(comp, false);
             renderColors(comp, isSelected);
         }
         return comp;

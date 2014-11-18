@@ -21,16 +21,18 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public abstract class AbstractCellRenderer extends JLabel implements TableCellRenderer {
 
-    protected void reset(JComponent c) {
+    protected void reset(JComponent c, boolean tableFont) {
         c.setBackground(UIManager.getColor("Table.background"));
         c.setForeground(UIManager.getColor("Table.foreground"));
-        c.setFont(UIManager.getFont("Table.font"));
+        if (tableFont) {
+            c.setFont(UIManager.getFont("Table.font"));
+        }
         c.setToolTipText(null);
         c.setOpaque(true);
     }
 
     protected void reset() {
-        reset(this);
+        reset(this, true);
     }
 
     protected void renderColors(JComponent c, boolean isSelected) {
