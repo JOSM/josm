@@ -1,18 +1,35 @@
-/* {0} on a node */
+/* {0} on a node, should be a way */
 node[oneway],
 node[bridge?],
-node[landuse],
 node[sidewalk],
-node[source:outline] {
-  throwWarning: tr("{0} on a node", "{0.key}");
+node[natural=coastline],
+node[natural=ridge],
+node[natural=tree_row] {
+  throwWarning: tr("{0} on a node. Should be used on a way.", "{0.key}");
   assertMatch: "node oneway=-1";
   assertNoMatch: "way oneway=-1";
   assertMatch: "node bridge=yes";
   assertNoMatch: "node bridge=13";
 }
 
-node[natural=wood] {
-  throwOther: tr("{0} on a node. Should be drawn as an area", "{0.tag}");
+/* {0} on a node, should be an area; see ticket #10679 */
+node[landuse],
+node[natural=scree],
+node[natural=scrub],
+node[natural=fell],
+node[natural=heath],
+node[natural=wood],
+node[natural=grassland],
+node[natural=wetland],
+node[natural=water],
+node[natural=mud],
+node[natural=beach],
+node[natural=sand],
+node[natural=wood],
+node[natural=bare_rock],
+node[waterway=riverbank],
+node[source:outline] {
+  throwWarning: tr("{0} on a node. Should be drawn as an area.", "{0.tag}");
 }
 
 /* see ticket:#10125 */

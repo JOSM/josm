@@ -1764,7 +1764,7 @@
             <text key="name" text="Name" />
         </item> <!-- Covered Reservoir -->
         <separator/>
-        <item name="Water" icon="presets/water.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Water" icon="presets/water.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=water"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=water"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=water"
@@ -1836,7 +1836,7 @@
             <key key="natural" value="mud" />
             <text key="name" text="Name" />
         </item> <!-- Mud -->
-        <item name="Beach" icon="presets/beach.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Beach" icon="presets/beach.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=beach"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=beach"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=beach"
@@ -7002,7 +7002,7 @@
                 <reference ref="leaf" />
             </optional>
         </item> <!-- Tree Row -->
-        <item name="Wood" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
+        <item name="Wood" icon="styles/standard/misc/landmark/trees.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wood"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=wood"
@@ -7028,7 +7028,7 @@
             <text key="name" text="Name" />
             <reference ref="leaf" />
         </item> <!-- Forest -->
-        <item name="Grassland" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
+        <item name="Grassland" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=grassland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=grassland"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:natural=grassland"
@@ -7055,7 +7055,7 @@
             <text key="name" text="Name" />
         </item> <!-- Nature Reserve -->
         <separator/>
-        <item name="Scree" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Scree" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=scree"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=scree"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:natural=scree"
@@ -7067,7 +7067,7 @@
             <key key="natural" value="scree" />
             <text key="name" text="Name" />
         </item> <!-- Scree -->
-        <item name="Fell" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Fell" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=fell"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=fell"
@@ -7078,7 +7078,7 @@
             <key key="natural" value="fell" />
             <text key="name" text="Name" />
         </item> <!-- Fell -->
-        <item name="Scrub" icon="presets/scrub.svg" type="node,closedway,relation" preset_name_label="true">
+        <item name="Scrub" icon="presets/scrub.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=scrub"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=scrub"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=scrub"
@@ -7094,7 +7094,7 @@
                 <reference ref="leaf" />
             </optional>
         </item> <!-- Scrub -->
-        <item name="Heath" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Heath" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=heath"
                   bg.href="http://wiki.openstreetmap.org/wiki/Bg:Tag:natural=heath"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=heath"
