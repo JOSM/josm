@@ -2244,11 +2244,17 @@ node[amenity=community_centre] {
     text: auto;
 }
 area[amenity=drinking_water],
+area[amenity=water_point],
 area[amenity=fountain] {
     fill-color: light_water#00005f;
 }
 node[amenity=drinking_water] {
     icon-image: "food/drinking_water.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=water_point] {
+    icon-image: "accommodation/camping/water.png";
     set icon_z17;
     text: auto;
 }
@@ -3916,17 +3922,14 @@ node[waterway=boatyard] {
     set icon_z17;
     text: auto;
 }
-node[waterway=water_point] {
-    icon-image: "accommodation/camping/water.png";
-    set icon_z17;
-    text: auto;
-}
-node[waterway=waste_disposal] {
-    icon-image: "accommodation/camping/wastewater.png";
-    set icon_z17;
-    text: auto;
-}
+node[waterway=water_point],
+node[waterway=waste_disposal],
 node[waterway=mooring] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
+node[mooring] {
     icon-image: "nautical/marina.png";
     set icon_z17;
     text: auto;

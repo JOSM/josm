@@ -2,6 +2,12 @@
 node[oneway],
 node[bridge?],
 node[sidewalk],
+node[waterway=river],
+node[waterway=riverbank],
+node[waterway=canal],
+node[waterway=wadi],
+node[waterway=stream],
+node[waterway=ditch],
 node[natural=coastline],
 node[natural=ridge],
 node[natural=tree_row] {
