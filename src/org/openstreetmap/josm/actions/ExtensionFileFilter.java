@@ -96,7 +96,8 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 "org.openstreetmap.josm.io.OsmGzipExporter",
                 "org.openstreetmap.josm.io.OsmBzip2Exporter",
                 "org.openstreetmap.josm.io.GeoJSONExporter",
-                "org.openstreetmap.josm.io.WMSLayerExporter"
+                "org.openstreetmap.josm.io.WMSLayerExporter",
+                "org.openstreetmap.josm.io.NoteExporter"
         };
 
         for (String classname : exporterNames) {
