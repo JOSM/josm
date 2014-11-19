@@ -343,3 +343,14 @@
 way[sidewalk=yes] {
   throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by ''left'', ''right'' or ''both''.", "{0.key}", "{0.value}");
 }
+
+*[waterway=water_point],
+*[waterway=waste_disposal] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  fixChangeKey: "waterway => amenity";
+}
+*[waterway=mooring] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  fixRemove: "waterway";
+  fixAdd: "mooring=yes";
+}
