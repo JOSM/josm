@@ -42,9 +42,10 @@ for my $arg (@ARGV ? @ARGV : @default)
         $img = $val if((!-f "images/$img") && -f "images/$val");
         ++$icons{$img};
       }
-      if($l =~ /ImageProvider\.get\(\"([^\"]*?)\"\)/)
+      if($l =~ /ImageProvider(?:\.get)?\(\"([^\"]*?)\"\)/)
       {
         my $i = $1;
+        $i = "styles/standard/$i" if $i eq "misc/no_icon.png";
         ++$icons{$i};
       }
       while($l =~ /\/\*\s*ICON\s*\*\/\s*\"(.*?)\"/g)
