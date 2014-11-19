@@ -4376,7 +4376,7 @@
             <combo key="lock" text="Lock" values="yes,no,unknown" />
         </item> <!-- Hunting Stand -->
         <separator/>
-        <item name="Drinking Water" icon="presets/drinking_water.png" type="node" preset_name_label="true">
+        <item name="Drinking Water" icon="styles/standard/food/drinking_water.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=drinking_water"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=drinking_water"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=drinking_water"
