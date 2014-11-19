@@ -186,7 +186,7 @@
     </chunk>
     <chunk id="parking_name_type_ref">
         <text key="name" text="Name" />
-        <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" />
+        <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" values_context="parking" />
         <text key="ref" text="Reference number" />
     </chunk>
     <chunk id="parking_access_fee_operator_surface">
@@ -5666,7 +5666,7 @@
             <reference ref="ref_operator_branch" />
             <optional>
                 <reference ref="cable_circuit" />
-                <combo key="location" text="Location" values="underground,underwater,overground" />
+                <combo key="location" text="Location" values="underground,underwater,overground" values_context="power cable" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
             </optional>
