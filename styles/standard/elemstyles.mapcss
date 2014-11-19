@@ -3753,124 +3753,68 @@ node[natural=cliff] {
     set icon_z17;
     text: auto;
 }
+way[natural=ridge] {
+    width: 1;
+    color: natural#002f00;
+}
 area[natural=scree] {
     fill-color: natural#002f00;
-}
-node[natural=scree] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
 }
 area[natural=scrub] {
     fill-color: scrub#007000;
 }
-node[natural=scrub] {
-    icon-image: "presets/scrub.svg";
-    set icon_z17;
-    text: auto;
-}
 area[natural=fell] {
     fill-color: natural#002f00;
 }
-node[natural=fell] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
 area[natural=heath] {
     fill-color: heath#ffffc0;
-}
-node[natural=heath] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
 }
 way[natural=tree_row] {
     width: 2;
     color: woodarea#008000;
 }
-node[natural=tree_row] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
 area[natural=wood] {
     fill-color: woodarea#008000;
-}
-node[natural=wood] {
-    icon-image: "misc/landmark/trees.png";
-    set icon_z17;
-    text: auto;
 }
 area[natural=grassland] {
     fill-color: green#b1e0c2;
 }
-node[natural=grassland] {
-    icon-image: "misc/deprecated.png";
-    set icon_z17;
-    text: auto;
-}
 area[natural=wetland] {
     fill-color: marsh#4f4ff3;
 }
-node[natural=wetland] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
 area[natural=water] {
     fill-color: water#0000ff;
-}
-node[natural=water] {
-    icon-image: "nautical/water.png";
-    set icon_z17;
-    text: auto;
 }
 way[natural=coastline] {
     width: 1;
     color: water#0000ff;
 }
-node[natural=coastline] {
-    icon-image: "misc/coastline.png";
-    set icon_z17;
-    text: auto;
-}
 area[natural=mud] {
     fill-color: mud#cba762;
-}
-node[natural=mud] {
-    icon-image: "misc/mud.png";
-    set icon_z17;
-    text: auto;
 }
 area[natural=beach] {
     fill-color: beach#f8dba2;
 }
-node[natural=beach] {
-    icon-image: "misc/beach.png";
-    set icon_z17;
-    text: auto;
-}
 area[natural=sand] {
     fill-color: sand#f8dba2;
 }
-node[natural=sand] {
+area[natural=bare_rock] {
+    fill-color: bare_rock#f8f8c7;
+}
+area[natural=stone] {
+    fill-color: stone#f8f8c7;
+}
+node[natural=stone] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
 area[natural=bay],
-area[natural=land],
 area[natural=cave_entrance] {
     fill-color: natural#002f00;
 }
 node[natural=bay] {
     icon-image: "misc/bay.png";
-    set icon_z17;
-    text: auto;
-}
-node[natural=land] {
-    icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
@@ -3901,7 +3845,26 @@ node[natural=tree][type=palm] {
     set icon_z17;
     text: auto;
 }
-
+node[natural=scree],
+node[natural=scrub],
+node[natural=fell],
+node[natural=heath],
+node[natural=tree_row],
+node[natural=wood],
+node[natural=grassland],
+node[natural=wetland],
+node[natural=water],
+node[natural=coastline],
+node[natural=mud],
+node[natural=beach],
+node[natural=sand],
+node[natural=land],
+node[natural=bare_rock],
+node[natural=ridge] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
 /*****************/
 /* waterway tags */
 /*****************/
