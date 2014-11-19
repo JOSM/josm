@@ -2480,6 +2480,7 @@ node[amenity=bus_station] {
 }
 node[amenity=ferry_terminal] {
     icon-image: "nautical/ferry.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
