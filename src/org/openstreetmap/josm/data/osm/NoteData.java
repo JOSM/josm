@@ -36,6 +36,11 @@ public class NoteData {
      */
     public NoteData(List<Note> notes) {
         noteList = notes;
+        for (Note note : notes) {
+            if (note.getId() <= newNoteId) {
+                newNoteId = note.getId() - 1;
+            }
+        }
     }
 
     /**

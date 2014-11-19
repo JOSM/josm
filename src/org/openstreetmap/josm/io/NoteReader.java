@@ -136,6 +136,9 @@ public class NoteReader {
             }
             if("comment".equals(qName)) {
                 User commentUser = User.createOsmUser(commentUid, commentUsername);
+                if (commentUid == 0) {
+                    commentUser = User.getAnonymous();
+                }
                 if(parseMode == NoteParseMode.API) {
                     commentIsNew = false;
                 }
@@ -163,6 +166,9 @@ public class NoteReader {
                 break;
             case "date_created":
                 thisNote.setCreatedAt(parseDate(NOTE_DATE_FORMAT, buffer.toString()));
+                break;
+            case "date_closed":
+                thisNote.setClosedAt(parseDate(NOTE_DATE_FORMAT, buffer.toString()));
                 break;
             case "date":
                 commentCreateDate = parseDate(NOTE_DATE_FORMAT, buffer.toString());
