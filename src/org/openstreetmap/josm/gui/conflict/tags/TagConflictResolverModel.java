@@ -177,6 +177,9 @@ public class TagConflictResolverModel extends DefaultTableModel {
             case KEEP_ALL:
                 decision.keepAll();
                 break;
+            case SUM_ALL_NUMERIC:
+                decision.sumAllNumeric();
+                break;
             }
         }
         GuiHelper.runInEDTAndWait(new Runnable() {

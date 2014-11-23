@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -721,6 +722,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the concatenation of all tag values (concatenated by a semicolon)
+     * @param key the key to look up
      *
      * @return the concatenation of all tag values
      */
@@ -748,6 +750,28 @@ public class TagCollection implements Iterable<Tag> {
         }
         return Utils.join(";", values);
     }
+
+    /**
+     * Replies the sum of all numeric tag values.
+     * @param key the key to look up
+     *
+     * @return the sum of all numeric tag values, as string
+     * @since 7743
+     */
+    public String getSummedValues(String key) {
+        int result = 0;
+        for (String value : getValues(key)) {
+            try {
+                result += Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                if (Main.isTraceEnabled()) {
+                    Main.trace(e.getMessage());
+                }
+            }
+        }
+        return Integer.toString(result);
+    }
+
 
     @Override
     public String toString() {
