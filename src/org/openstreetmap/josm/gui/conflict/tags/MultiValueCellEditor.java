@@ -21,6 +21,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
 /**
@@ -51,13 +52,21 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
     private DefaultComboBoxModel<Object> editorModel;
     private CopyOnWriteArrayList<NavigationListener> listeners;
 
-    public void addNavigationListeners(NavigationListener listener) {
+    /**
+     * Adds a navigation listener.
+     * @param listener navigation listener to add
+     */
+    public void addNavigationListener(NavigationListener listener) {
         if (listener != null) {
             listeners.addIfAbsent(listener);
         }
     }
 
-    public void removeNavigationListeners(NavigationListener listener) {
+    /**
+     * Removes a navigation listener.
+     * @param listener navigation listener to remove
+     */
+    public void removeNavigationListener(NavigationListener listener) {
         listeners.remove(listener);
     }
 
@@ -133,6 +142,9 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         for (String value: decision.getValues()) {
             editorModel.addElement(value);
         }
+        if (decision.canSumAllNumeric()) {
+            editorModel.addElement(MultiValueDecisionType.SUM_ALL_NUMERIC);
+        }
         if (decision.canKeepNone()) {
             editorModel.addElement(MultiValueDecisionType.KEEP_NONE);
         }
@@ -151,6 +163,12 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
             break;
         case KEEP_ALL:
             editor.setSelectedItem(MultiValueDecisionType.KEEP_ALL);
+            break;
+        case SUM_ALL_NUMERIC:
+            editor.setSelectedItem(MultiValueDecisionType.SUM_ALL_NUMERIC);
+            break;
+        default:
+            Main.error("Unknown decision type in initEditor(): "+decision.getDecisionType());
         }
     }
 
@@ -214,6 +232,10 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
                     break;
                 case KEEP_ALL:
                     setText(tr("all"));
+                    setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
+                    break;
+                case SUM_ALL_NUMERIC:
+                    setText(tr("sum"));
                     setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
                     break;
                 default:

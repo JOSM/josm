@@ -65,8 +65,12 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
                         setForeground(ConflictColors.FGCOLOR_TAG_KEEP_ALL.get());
                         setBackground(ConflictColors.BGCOLOR_TAG_KEEP_ALL.get());
                         break;
+                    case SUM_ALL_NUMERIC:
+                        setForeground(ConflictColors.FGCOLOR_TAG_SUM_ALL_NUM.get());
+                        setBackground(ConflictColors.BGCOLOR_TAG_SUM_ALL_NUM.get());
+                        break;
                     default:
-                        Main.error("Unknown decision type: "+decision.getDecisionType());
+                        Main.error("Unknown decision type in renderColors(): "+decision.getDecisionType());
                     }
                 } else {
                     setForeground(UIManager.getColor("Table.foreground"));
@@ -85,21 +89,20 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
             cbDecisionRenderer.setFont(getFont().deriveFont(Font.ITALIC));
             cbDecisionRenderer.setSelectedIndex(0);
             break;
-        case KEEP_ONE:
-            model.addElement(decision.getChosenValue());
-            cbDecisionRenderer.setFont(getFont());
-            cbDecisionRenderer.setSelectedIndex(0);
-            break;
         case KEEP_NONE:
             model.addElement(tr("deleted"));
             cbDecisionRenderer.setFont(getFont().deriveFont(Font.ITALIC));
             cbDecisionRenderer.setSelectedIndex(0);
             break;
+        case KEEP_ONE:
         case KEEP_ALL:
+        case SUM_ALL_NUMERIC:
             model.addElement(decision.getChosenValue());
             cbDecisionRenderer.setFont(getFont());
             cbDecisionRenderer.setSelectedIndex(0);
             break;
+        default:
+            Main.error("Unknown decision type in renderValue(): "+decision.getDecisionType());
         }
     }
 
@@ -107,29 +110,26 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
      * Sets the text of the tooltip for both renderers, this (the JLabel) and the combobox renderer.
      */
     protected void renderToolTipText(MultiValueResolutionDecision decision) {
-        String toolTipText;
+        String toolTipText = null;
         switch (decision.getDecisionType()) {
         case UNDECIDED:
             toolTipText = tr("Please decide which values to keep");
-            setToolTipText(toolTipText);
-            cbDecisionRenderer.setToolTipText(toolTipText);
             break;
         case KEEP_ONE:
             toolTipText = tr("Value ''{0}'' is going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
-            setToolTipText(toolTipText);
-            cbDecisionRenderer.setToolTipText(toolTipText);
+            break;
+        case SUM_ALL_NUMERIC:
+            toolTipText = tr("All numeric values sumed as ''{0}'' are going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
             break;
         case KEEP_NONE:
             toolTipText = tr("The key ''{0}'' and all its values are going to be removed", decision.getKey());
-            setToolTipText(toolTipText);
-            cbDecisionRenderer.setToolTipText(toolTipText);
             break;
         case KEEP_ALL:
             toolTipText = tr("All values joined as ''{0}'' are going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
-            setToolTipText(toolTipText);
-            cbDecisionRenderer.setToolTipText(toolTipText);
             break;
         }
+        setToolTipText(toolTipText);
+        cbDecisionRenderer.setToolTipText(toolTipText);
     }
 
     protected void reset() {
