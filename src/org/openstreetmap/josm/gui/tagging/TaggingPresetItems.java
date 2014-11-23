@@ -114,7 +114,7 @@ public final class TaggingPresetItems {
                 return "&nbsp;";
 
             final StringBuilder res = new StringBuilder("<b>");
-            res.append(getDisplayValue(true));
+            res.append(getDisplayValue(true).replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
             res.append("</b>");
             if (getShortDescription(true) != null) {
                 // wrap in table to restrict the text width
