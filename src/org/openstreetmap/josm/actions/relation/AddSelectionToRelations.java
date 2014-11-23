@@ -18,7 +18,10 @@ import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-
+/**
+ * Add all objects selected in the current dataset after the last member of relation(s).
+ * @since 5799
+ */
 public class AddSelectionToRelations extends AbstractRelationAction implements SelectionChangedListener {
     /**
     * Constructs a new <code>AddSelectionToRelation</code>.
