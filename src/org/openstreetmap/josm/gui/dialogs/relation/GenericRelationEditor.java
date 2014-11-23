@@ -736,6 +736,13 @@ public class GenericRelationEditor extends RelationEditor  {
                 JOptionPane.WARNING_MESSAGE);
     }
 
+    /**
+     * Adds primitives to a given relation.
+     * @param orig The relation to modify
+     * @param primitivesToAdd The primitives to add as relation members
+     * @return The resulting command
+     * @throws IllegalArgumentException if orig is null
+     */
     public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd)
             throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(orig, "orig");
@@ -752,14 +759,25 @@ public class GenericRelationEditor extends RelationEditor  {
                         && !confirmAddingPrimitive(p)) {
                     continue;
                 }
-                final String role = presets.isEmpty() ? null : presets.iterator().next().suggestRoleForOsmPrimitive(p);
-                relation.addMember(new RelationMember(role == null ? "" : role, p));
+                final Set<String> roles = findSuggestedRoles(presets, p);
+                relation.addMember(new RelationMember(roles.size() == 1 ? roles.iterator().next() : "", p));
                 modified = true;
             }
             return modified ? new ChangeCommand(orig, relation) : null;
         } catch (AddAbortException ign) {
             return null;
         }
+    }
+
+    protected static Set<String> findSuggestedRoles(final Collection<TaggingPreset> presets, OsmPrimitive p) {
+        final Set<String> roles = new HashSet<>();
+        for (TaggingPreset preset : presets) {
+            String role = preset.suggestRoleForOsmPrimitive(p);
+            if (role != null && !role.isEmpty()) {
+                roles.add(role);
+            }
+        }
+        return roles;
     }
 
     abstract class AddFromSelectionAction extends AbstractAction {
