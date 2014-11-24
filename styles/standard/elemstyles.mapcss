@@ -42,45 +42,43 @@ setting::highway_labels {
 /* turn restrictions */
 /*********************/
 
-relation[restriction=no_left_turn],
-node[restriction=no_left_turn] {
+relation[restriction=no_left_turn] {
     icon-image: "vehicle/restriction/turn_restrictions/no_left_turn.png";
     set icon_z17;
     text: auto;
 }
-relation[restriction=no_right_turn],
-node[restriction=no_right_turn] {
+relation[restriction=no_right_turn] {
     icon-image: "vehicle/restriction/turn_restrictions/no_right_turn.png";
     set icon_z17;
     text: auto;
 }
-relation[restriction=no_straight_on],
-node[restriction=no_straight_on] {
+relation[restriction=no_straight_on] {
     icon-image: "vehicle/restriction/turn_restrictions/no_straight_on.png";
     set icon_z17;
     text: auto;
 }
-relation[restriction=no_u_turn],
-node[restriction=no_u_turn] {
+relation[restriction=no_u_turn] {
     icon-image: "vehicle/restriction/turn_restrictions/no_u_turn.png";
     set icon_z17;
     text: auto;
 }
-relation[restriction=only_left_turn],
-node[restriction=only_left_turn] {
+relation[restriction=only_left_turn] {
     icon-image: "vehicle/restriction/turn_restrictions/only_left_turn.png";
     set icon_z17;
     text: auto;
 }
-relation[restriction=only_right_turn],
-node[restriction=only_right_turn] {
+relation[restriction=only_right_turn] {
     icon-image: "vehicle/restriction/turn_restrictions/only_right_turn.png";
     set icon_z17;
     text: auto;
 }
-relation[restriction=only_straight_on],
-node[restriction=only_straight_on] {
+relation[restriction=only_straight_on] {
     icon-image: "vehicle/restriction/turn_restrictions/only_straight_on.png";
+    set icon_z17;
+    text: auto;
+}
+node[restriction] {
+    icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
 }
