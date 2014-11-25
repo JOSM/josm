@@ -331,7 +331,10 @@ public class OsmApi extends OsmConnection {
         rv.append("/");
         // this works around a ruby (or lighttpd) bug where two consecutive slashes in
         // an URL will cause a "404 not found" response.
-        int p; while ((p = rv.indexOf("//", rv.indexOf("://")+2)) > -1) { rv.delete(p, p + 1); }
+        int p;
+        while ((p = rv.indexOf("//", rv.indexOf("://")+2)) > -1) {
+            rv.delete(p, p + 1);
+        }
         return rv.toString();
     }
 
@@ -382,7 +385,8 @@ public class OsmApi extends OsmConnection {
             osm.setChangesetId(getChangeset().getId());
             osm.setVisible(true);
         } catch(NumberFormatException e) {
-            throw new OsmTransferException(tr("Unexpected format of new version of modified primitive ''{0}''. Got ''{1}''.", osm.getId(), ret));
+            throw new OsmTransferException(tr("Unexpected format of new version of modified primitive ''{0}''. Got ''{1}''.",
+                    osm.getId(), ret));
         }
     }
 
@@ -466,8 +470,9 @@ public class OsmApi extends OsmConnection {
             e.setSource(ChangesetClosedException.Source.UPDATE_CHANGESET);
             throw e;
         } catch(OsmApiException e) {
-            if (e.getResponseCode() == HttpURLConnection.HTTP_CONFLICT && ChangesetClosedException.errorHeaderMatchesPattern(e.getErrorHeader()))
-                throw new ChangesetClosedException(e.getErrorHeader(), ChangesetClosedException.Source.UPDATE_CHANGESET);
+            String errorHeader = e.getErrorHeader();
+            if (e.getResponseCode() == HttpURLConnection.HTTP_CONFLICT && ChangesetClosedException.errorHeaderMatchesPattern(errorHeader))
+                throw new ChangesetClosedException(errorHeader, ChangesetClosedException.Source.UPDATE_CHANGESET);
             throw e;
         } finally {
             monitor.finishTask();
@@ -511,7 +516,8 @@ public class OsmApi extends OsmConnection {
      * @return list of processed primitives
      * @throws OsmTransferException if something is wrong
      */
-    public Collection<OsmPrimitive> uploadDiff(Collection<? extends OsmPrimitive> list, ProgressMonitor monitor) throws OsmTransferException {
+    public Collection<OsmPrimitive> uploadDiff(Collection<? extends OsmPrimitive> list, ProgressMonitor monitor)
+            throws OsmTransferException {
         try {
             monitor.beginTask("", list.size() * 2);
             if (changeset == null)
@@ -587,7 +593,8 @@ public class OsmApi extends OsmConnection {
         return "oauth".equals(Main.pref.get("osm-server.auth-method", "basic"));
     }
 
-    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
+    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor)
+            throws OsmTransferException {
         return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true, false);
     }
 
@@ -610,7 +617,8 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if the HTTP return code was not 200 (and retries have
      *    been exhausted), or rewrapping a Java exception.
      */
-    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
+    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor,
+            boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
         StringBuilder responseBody = new StringBuilder();
         int retries = fastFail ? 0 : getMaxRetries();
 
@@ -787,8 +795,12 @@ public class OsmApi extends OsmConnection {
         this.changeset = changeset;
     }
 
+    private static StringBuilder noteStringBuilder(Note note) {
+        return new StringBuilder().append("notes/").append(note.getId());
+    }
+
     /**
-     * Create a new note on the server
+     * Create a new note on the server.
      * @param latlon Location of note
      * @param text Comment entered by user to open the note
      * @param monitor Progress monitor
@@ -797,7 +809,7 @@ public class OsmApi extends OsmConnection {
      */
     public Note createNote(LatLon latlon, String text, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
-        String url = new StringBuilder()
+        String noteUrl = new StringBuilder()
             .append("notes?lat=")
             .append(latlon.lat())
             .append("&lon=")
@@ -805,7 +817,7 @@ public class OsmApi extends OsmConnection {
             .append("&text=")
             .append(urlEncode(text)).toString();
 
-        String response = sendRequest("POST", url, null, monitor, true, false);
+        String response = sendRequest("POST", noteUrl, null, monitor, true, false);
         return parseSingleNote(response);
     }
 
@@ -819,18 +831,16 @@ public class OsmApi extends OsmConnection {
      */
     public Note addCommentToNote(Note note, String comment, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
-        String url = new StringBuilder()
-            .append("notes/")
-            .append(note.getId())
+        String noteUrl = noteStringBuilder(note)
             .append("/comment?text=")
             .append(urlEncode(comment)).toString();
 
-        String response = sendRequest("POST", url, null, monitor, true, false);
+        String response = sendRequest("POST", noteUrl, null, monitor, true, false);
         return parseSingleNote(response);
     }
 
     /**
-     * Close a note
+     * Close a note.
      * @param note Note to close. Must currently be open
      * @param closeMessage Optional message supplied by the user when closing the note
      * @param monitor Progress monitor
@@ -840,9 +850,7 @@ public class OsmApi extends OsmConnection {
     public Note closeNote(Note note, String closeMessage, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
         String encodedMessage = urlEncode(closeMessage);
-        StringBuilder urlBuilder = new StringBuilder()
-            .append("notes/")
-            .append(note.getId())
+        StringBuilder urlBuilder = noteStringBuilder(note)
             .append("/close");
         if (encodedMessage != null && !encodedMessage.trim().isEmpty()) {
             urlBuilder.append("?text=");
@@ -864,9 +872,7 @@ public class OsmApi extends OsmConnection {
     public Note reopenNote(Note note, String reactivateMessage, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
         String encodedMessage = urlEncode(reactivateMessage);
-        StringBuilder urlBuilder = new StringBuilder()
-            .append("notes/")
-            .append(note.getId())
+        StringBuilder urlBuilder = noteStringBuilder(note)
             .append("/reopen");
         if (encodedMessage != null && !encodedMessage.trim().isEmpty()) {
             urlBuilder.append("?text=");
