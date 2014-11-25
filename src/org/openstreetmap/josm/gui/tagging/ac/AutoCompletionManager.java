@@ -59,13 +59,13 @@ public class AutoCompletionManager implements DataSetListener {
      * Data class to remember tags that the user has entered.
      */
     public static class UserInputTag {
-        public String key;
-        public String value;
-        public boolean defaultKey;
+        private final String key;
+        private final String value;
+        private final boolean defaultKey;
 
         /**
          * Constructor.
-         * 
+         *
          * @param key the tag key
          * @param value the tag value
          * @param defaultKey true, if the key was not really entered by the
@@ -89,23 +89,13 @@ public class AutoCompletionManager implements DataSetListener {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
             final UserInputTag other = (UserInputTag) obj;
-            if (!Objects.equals(this.key, other.key)) {
-                return false;
-            }
-            if (!Objects.equals(this.value, other.value)) {
-                return false;
-            }
-            if (this.defaultKey != other.defaultKey) {
-                return false;
-            }
-            return true;
+            return Objects.equals(this.key, other.key)
+                && Objects.equals(this.value, other.value)
+                && this.defaultKey == other.defaultKey;
         }
     }
 
@@ -120,31 +110,36 @@ public class AutoCompletionManager implements DataSetListener {
      * use getTagCache() accessor
      */
     protected MultiMap<String, String> tagCache;
+
     /**
-     * the same as tagCache but for the preset keys and values
-     * can be accessed directly
+     * the same as tagCache but for the preset keys and values can be accessed directly
      */
-    protected static final MultiMap<String, String> presetTagCache = new MultiMap<>();
+    protected static final MultiMap<String, String> PRESET_TAG_CACHE = new MultiMap<>();
+
     /**
      * Cache for tags that have been entered by the user.
      */
-    protected static final Set<UserInputTag> userInputTagCache = new LinkedHashSet<>();
-    
+    protected static final Set<UserInputTag> USER_INPUT_TAG_CACHE = new LinkedHashSet<>();
+
     /**
      * the cached list of member roles
      * only accessed by getRoleCache(), rebuild() and cacheRelationMemberRoles()
      * use getRoleCache() accessor
      */
     protected Set<String> roleCache;
-    /**
-     * the same as roleCache but for the preset roles
-     * can be accessed directly
-     */
-    protected static final Set<String> presetRoleCache = new HashSet<>();
 
+    /**
+     * the same as roleCache but for the preset roles can be accessed directly
+     */
+    protected static final Set<String> PRESET_ROLE_CACHE = new HashSet<>();
+
+    /**
+     * Constructs a new {@code AutoCompletionManager}.
+     * @param ds data set
+     */
     public AutoCompletionManager(DataSet ds) {
         this.ds = ds;
-        dirty = true;
+        this.dirty = true;
     }
 
     protected MultiMap<String, String> getTagCache() {
@@ -165,7 +160,6 @@ public class AutoCompletionManager implements DataSetListener {
 
     /**
      * initializes the cache from the primitives in the dataset
-     *
      */
     protected void rebuild() {
         tagCache = new MultiMap<>();
@@ -210,6 +204,7 @@ public class AutoCompletionManager implements DataSetListener {
 
     /**
      * Initialize the cache for presets. This is done only once.
+     * @param presets Tagging presets to cache
      */
     public static void cachePresets(Collection<TaggingPreset> presets) {
         for (final TaggingPreset p : presets) {
@@ -218,7 +213,7 @@ public class AutoCompletionManager implements DataSetListener {
                     TaggingPresetItems.KeyedItem ki = (TaggingPresetItems.KeyedItem) item;
                     if (ki.key != null && ki.getValues() != null) {
                         try {
-                            presetTagCache.putAll(ki.key, ki.getValues());
+                            PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
                         } catch (NullPointerException e) {
                             Main.error(p+": Unable to cache "+ki);
                         }
@@ -227,19 +222,24 @@ public class AutoCompletionManager implements DataSetListener {
                     TaggingPresetItems.Roles r = (TaggingPresetItems.Roles) item;
                     for (TaggingPresetItems.Role i : r.roles) {
                         if (i.key != null) {
-                            presetRoleCache.add(i.key);
+                            PRESET_ROLE_CACHE.add(i.key);
                         }
                     }
                 }
             }
         }
     }
-    
-    
+
+    /**
+     * Remembers user input for the given key/value.
+     * @param key Tag key
+     * @param value Tag value
+     * @param defaultKey true, if the key was not really entered by the user, e.g. for preset text fields
+     */
     public static void rememberUserInput(String key, String value, boolean defaultKey) {
         UserInputTag tag = new UserInputTag(key, value, defaultKey);
-        userInputTagCache.remove(tag); // re-add, so it gets to the last position of the LinkedHashSet
-        userInputTagCache.add(tag);
+        USER_INPUT_TAG_CACHE.remove(tag); // re-add, so it gets to the last position of the LinkedHashSet
+        USER_INPUT_TAG_CACHE.add(tag);
     }
 
     /**
@@ -252,12 +252,12 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     protected List<String> getPresetKeys() {
-        return new ArrayList<>(presetTagCache.keySet());
+        return new ArrayList<>(PRESET_TAG_CACHE.keySet());
     }
-    
+
     protected Collection<String> getUserInputKeys() {
         List<String> keys = new ArrayList<>();
-        for (UserInputTag tag : userInputTagCache) {
+        for (UserInputTag tag : USER_INPUT_TAG_CACHE) {
             if (!tag.defaultKey) {
                 keys.add(tag.key);
             }
@@ -278,12 +278,12 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     protected static List<String> getPresetValues(String key) {
-        return new ArrayList<>(presetTagCache.getValues(key));
+        return new ArrayList<>(PRESET_TAG_CACHE.getValues(key));
     }
 
     protected static Collection<String> getUserInputValues(String key) {
-        ArrayList<String> values = new ArrayList<>();
-        for (UserInputTag tag : userInputTagCache) {
+        List<String> values = new ArrayList<>();
+        for (UserInputTag tag : USER_INPUT_TAG_CACHE) {
             if (key.equals(tag.key)) {
                 values.add(tag.value);
             }
@@ -308,7 +308,7 @@ public class AutoCompletionManager implements DataSetListener {
      * @param list the list to populate
      */
     public void populateWithMemberRoles(AutoCompletionList list) {
-        list.add(presetRoleCache, AutoCompletionItemPriority.IS_IN_STANDARD);
+        list.add(PRESET_ROLE_CACHE, AutoCompletionItemPriority.IS_IN_STANDARD);
         list.add(getRoleCache(), AutoCompletionItemPriority.IS_IN_DATASET);
     }
 

@@ -90,6 +90,10 @@ import com.kitfox.svg.SVGUniverse;
  */
 public class ImageProvider {
 
+    private static final String HTTP_PROTOCOL  = "http://";
+    private static final String HTTPS_PROTOCOL = "https://";
+    private static final String WIKI_PROTOCOL  = "wiki://";
+
     /**
      * Position of an overlay icon
      */
@@ -265,7 +269,7 @@ public class ImageProvider {
      * @return dimension of image in pixels
      * @since 7687
      */
-    static public Dimension getImageSizes(ImageSizes size) {
+    public static Dimension getImageSizes(ImageSizes size) {
         int sizeval;
         switch(size) {
         case MAPMAX: sizeval = Main.pref.getInteger("iconsize.mapmax", 48); break;
@@ -457,7 +461,7 @@ public class ImageProvider {
      * value is returned to callback (just like {@link #get}).
      */
     public void getInBackground(final ImageCallback callback) {
-        if (name.startsWith("http://") || name.startsWith("wiki://")) {
+        if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)) {
             Runnable fetch = new Runnable() {
                 @Override
                 public void run() {
@@ -485,7 +489,7 @@ public class ImageProvider {
      * @since 7693
      */
     public void getInBackground(final ImageResourceCallback callback) {
-        if (name.startsWith("http://") || name.startsWith("wiki://")) {
+        if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)) {
             Runnable fetch = new Runnable() {
                 @Override
                 public void run() {
@@ -571,7 +575,7 @@ public class ImageProvider {
 
             ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
 
-            if (name.startsWith("http://") || name.startsWith("https://")) {
+            if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(HTTPS_PROTOCOL)) {
                 String url = name;
                 ImageResource ir = cache.get(url);
                 if (ir != null) return ir;
@@ -580,7 +584,7 @@ public class ImageProvider {
                     cache.put(url, ir);
                 }
                 return ir;
-            } else if (name.startsWith("wiki://")) {
+            } else if (name.startsWith(WIKI_PROTOCOL)) {
                 ImageResource ir = cache.get(name);
                 if (ir != null) return ir;
                 ir = getIfAvailableWiki(name, type);
@@ -983,6 +987,7 @@ public class ImageProvider {
      * Overlay should be handled like all the other functions only settings arguments and
      * overlay must be transparent in the background.
      * Also scaling is not cared about with current implementation.
+     * @deprecated this method will be refactored
      */
     @Deprecated
     public static ImageIcon overlay(Icon ground, Icon overlay, OverlayPosition pos) {

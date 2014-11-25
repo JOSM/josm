@@ -44,6 +44,11 @@ public class UploadNotesTask {
         Map<Note, Note> updatedNotes = new HashMap<>();
         Map<Note, Exception> failedNotes = new HashMap<>();
 
+        /**
+         * Constructs a new {@code UploadTask}.
+         * @param title message for the user
+         * @param monitor progress monitor
+         */
         public UploadTask(String title, ProgressMonitor monitor) {
             super(title, monitor, false);
         }
@@ -70,44 +75,48 @@ public class UploadNotesTask {
                         if (Main.isDebugEnabled()) {
                             Main.debug("found note change to upload");
                         }
-                        try {
-                            Note newNote;
-                            switch (comment.getNoteAction()) {
-                            case opened:
-                                if (Main.isDebugEnabled()) {
-                                    Main.debug("opening new note");
-                                }
-                                newNote = api.createNote(note.getLatLon(), comment.getText(), monitor);
-                                note.setId(newNote.getId());
-                                break;
-                            case closed:
-                                if (Main.isDebugEnabled()) {
-                                    Main.debug("closing note " + note.getId());
-                                }
-                                newNote = api.closeNote(note, comment.getText(), monitor);
-                                break;
-                            case commented:
-                                if (Main.isDebugEnabled()) {
-                                    Main.debug("adding comment to note " + note.getId());
-                                }
-                                newNote = api.addCommentToNote(note, comment.getText(), monitor);
-                                break;
-                            case reopened:
-                                if (Main.isDebugEnabled()) {
-                                    Main.debug("reopening note " + note.getId());
-                                }
-                                newNote = api.reopenNote(note, comment.getText(), monitor);
-                                break;
-                            default:
-                                newNote = null;
-                            }
-                            updatedNotes.put(note, newNote);
-                        } catch (Exception e) {
-                            Main.error("Failed to upload note to server: " + note.getId());
-                            failedNotes.put(note, e);
-                        }
+                        processNoteComment(monitor, api, note, comment);
                     }
                 }
+            }
+        }
+
+        private void processNoteComment(ProgressMonitor monitor, OsmApi api, Note note, NoteComment comment) {
+            try {
+                Note newNote;
+                switch (comment.getNoteAction()) {
+                case opened:
+                    if (Main.isDebugEnabled()) {
+                        Main.debug("opening new note");
+                    }
+                    newNote = api.createNote(note.getLatLon(), comment.getText(), monitor);
+                    note.setId(newNote.getId());
+                    break;
+                case closed:
+                    if (Main.isDebugEnabled()) {
+                        Main.debug("closing note " + note.getId());
+                    }
+                    newNote = api.closeNote(note, comment.getText(), monitor);
+                    break;
+                case commented:
+                    if (Main.isDebugEnabled()) {
+                        Main.debug("adding comment to note " + note.getId());
+                    }
+                    newNote = api.addCommentToNote(note, comment.getText(), monitor);
+                    break;
+                case reopened:
+                    if (Main.isDebugEnabled()) {
+                        Main.debug("reopening note " + note.getId());
+                    }
+                    newNote = api.reopenNote(note, comment.getText(), monitor);
+                    break;
+                default:
+                    newNote = null;
+                }
+                updatedNotes.put(note, newNote);
+            } catch (Exception e) {
+                Main.error("Failed to upload note to server: " + note.getId());
+                failedNotes.put(note, e);
             }
         }
 
