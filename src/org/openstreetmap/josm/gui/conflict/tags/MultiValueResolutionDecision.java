@@ -29,6 +29,10 @@ public class MultiValueResolutionDecision {
     /** the selected value if {@link #type} is {@link MultiValueDecisionType#KEEP_ONE} */
     private String value;
 
+    private static final String[] SUMMABLE_KEYS = new String[] {
+        "capacity(:.+)?", "step_count"
+    };
+
     /**
      * constuctor
      */
@@ -196,7 +200,15 @@ public class MultiValueResolutionDecision {
      * @since 7743
      */
     public boolean canSumAllNumeric() {
-        return "capacity".equals(getKey()) && canKeepAll();
+        if (!canKeepAll()) {
+            return false;
+        }
+        for (String key : SUMMABLE_KEYS) {
+            if (getKey().matches(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -224,16 +236,15 @@ public class MultiValueResolutionDecision {
      * @throws IllegalStateException thrown if this resolution is not resolved yet
      *
      */
-    public void applyTo(OsmPrimitive primitive) throws IllegalStateException{
+    public void applyTo(OsmPrimitive primitive) {
         if (primitive == null) return;
         if (!isDecided())
             throw new IllegalStateException(tr("Not decided yet."));
         String key = tags.getKeys().iterator().next();
-        String value = getChosenValue();
         if (type.equals(MultiValueDecisionType.KEEP_NONE)) {
             primitive.remove(key);
         } else {
-            primitive.put(key, value);
+            primitive.put(key, getChosenValue());
         }
     }
 
@@ -243,7 +254,7 @@ public class MultiValueResolutionDecision {
      * @param primitives the collection of primitives
      * @throws IllegalStateException thrown if this resolution is not resolved yet
      */
-    public void applyTo(Collection<? extends OsmPrimitive> primitives) throws IllegalStateException {
+    public void applyTo(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null) return;
         for (OsmPrimitive primitive: primitives) {
             if (primitive == null) {
@@ -261,7 +272,7 @@ public class MultiValueResolutionDecision {
      * @throws IllegalArgumentException thrown if primitive is null
      * @throws IllegalStateException thrown if this resolution is not resolved yet
      */
-    public Command buildChangeCommand(OsmPrimitive primitive) throws IllegalArgumentException, IllegalStateException {
+    public Command buildChangeCommand(OsmPrimitive primitive) {
         CheckParameterUtil.ensureParameterNotNull(primitive, "primitive");
         if (!isDecided())
             throw new IllegalStateException(tr("Not decided yet."));
