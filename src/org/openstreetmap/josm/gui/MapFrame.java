@@ -63,7 +63,6 @@ import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel;
 import org.openstreetmap.josm.gui.dialogs.FilterDialog;
-import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.MapPaintDialog;
 import org.openstreetmap.josm.gui.dialogs.NoteDialog;
@@ -238,7 +237,6 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addToggleDialog(relationListDialog = new RelationListDialog());
         addToggleDialog(new CommandStackDialog());
         addToggleDialog(new UserListDialog());
-        addToggleDialog(new HistoryDialog(), true);
         addToggleDialog(conflictDialog = new ConflictDialog());
         addToggleDialog(validatorDialog = new ValidatorDialog());
         addToggleDialog(filterDialog = new FilterDialog());

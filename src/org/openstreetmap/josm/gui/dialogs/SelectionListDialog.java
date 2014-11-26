@@ -63,6 +63,7 @@ import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
@@ -85,6 +86,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
     private SelectAction actSelect = new SelectAction();
     private SearchAction actSearch = new SearchAction();
+    private ShowHistoryAction actShowHistory = new ShowHistoryAction();
     private ZoomToJOSMSelectionAction actZoomToJOSMSelection = new ZoomToJOSMSelectionAction();
     private ZoomToListSelection actZoomToListSelection = new ZoomToListSelection();
     private SelectInRelationListAction actSetRelationSelection = new SelectInRelationListAction();
@@ -103,11 +105,14 @@ public class SelectionListDialog extends ToggleDialog  {
         lstPrimitives.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstPrimitives.setSelectionModel(selectionModel);
         lstPrimitives.setCellRenderer(new OsmPrimitivRenderer());
-        lstPrimitives.setTransferHandler(null); // Fix #6290. Drag & Drop is not supported anyway and Copy/Paste is better propagated to main window
+        // Fix #6290. Drag & Drop is not supported anyway and Copy/Paste is better propagated to main window
+        lstPrimitives.setTransferHandler(null);
+
+        lstPrimitives.getSelectionModel().addListSelectionListener(actSelect);
+        lstPrimitives.getSelectionModel().addListSelectionListener(actShowHistory);
 
         // the select action
         final SideButton selectButton = new SideButton(actSelect);
-        lstPrimitives.getSelectionModel().addListSelectionListener(actSelect);
         selectButton.createArrow(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -125,7 +130,7 @@ public class SelectionListDialog extends ToggleDialog  {
         });
 
         createLayout(lstPrimitives, true, Arrays.asList(new SideButton[] {
-            selectButton, searchButton
+            selectButton, searchButton, new SideButton(actShowHistory)
         }));
     }
 
@@ -279,6 +284,9 @@ public class SelectionListDialog extends ToggleDialog  {
      * Launches the search dialog
      */
     static class SearchAction extends AbstractAction implements EditLayerChangeListener {
+        /**
+         * Constructs a new {@code SearchAction}.
+         */
         public SearchAction() {
             putValue(NAME, tr("Search"));
             putValue(SHORT_DESCRIPTION,   tr("Search for objects"));
@@ -292,7 +300,7 @@ public class SelectionListDialog extends ToggleDialog  {
             org.openstreetmap.josm.actions.search.SearchAction.search();
         }
 
-        public void updateEnabledState() {
+        protected void updateEnabledState() {
             setEnabled(Main.main != null && Main.main.hasEditLayer());
         }
 
@@ -307,6 +315,9 @@ public class SelectionListDialog extends ToggleDialog  {
      * of this dialog
      */
     class SelectAction extends AbstractAction implements ListSelectionListener {
+        /**
+         * Constructs a new {@code SelectAction}.
+         */
         public SelectAction() {
             putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
@@ -323,7 +334,38 @@ public class SelectionListDialog extends ToggleDialog  {
             editLayer.data.setSelected(sel);
         }
 
-        public void updateEnabledState() {
+        protected void updateEnabledState() {
+            setEnabled(!model.getSelected().isEmpty());
+        }
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    /**
+     * The action for showing history information of the current history item.
+     */
+    class ShowHistoryAction extends AbstractAction implements ListSelectionListener {
+        /**
+         * Constructs a new {@code ShowHistoryAction}.
+         */
+        public ShowHistoryAction() {
+            putValue(NAME, tr("History"));
+            putValue(SHORT_DESCRIPTION, tr("Display the history of the selected objects."));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
+            updateEnabledState();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Collection<OsmPrimitive> sel = model.getSelected();
+            if (sel.isEmpty())return;
+            HistoryBrowserDialogManager.getInstance().showHistory(sel);
+        }
+
+        protected void updateEnabledState() {
             setEnabled(!model.getSelected().isEmpty());
         }
 
@@ -376,7 +418,10 @@ public class SelectionListDialog extends ToggleDialog  {
      * the list displaying the JOSM selection
      *
      */
-    class ZoomToListSelection extends AbstractAction implements ListSelectionListener{
+    class ZoomToListSelection extends AbstractAction implements ListSelectionListener {
+        /**
+         * Constructs a new {@code ZoomToListSelection}.
+         */
         public ZoomToListSelection() {
             putValue(NAME, tr("Zoom to selected element(s)"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to selected element(s)"));
@@ -396,7 +441,7 @@ public class SelectionListDialog extends ToggleDialog  {
             Main.map.mapView.recalculateCenterScale(box);
         }
 
-        public void updateEnabledState() {
+        protected void updateEnabledState() {
             setEnabled(!model.getSelected().isEmpty());
         }
 
