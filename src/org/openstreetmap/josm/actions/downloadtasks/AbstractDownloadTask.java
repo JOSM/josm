@@ -67,7 +67,6 @@ public abstract class AbstractDownloadTask implements DownloadTask {
     }
 
     // Can be overridden for more complex checking logic
-    @Override
     public boolean acceptsUrl(String url) {
         if (url==null) return false;
         for (String p: getPatterns()) {
@@ -76,6 +75,30 @@ public abstract class AbstractDownloadTask implements DownloadTask {
             }
         }
         return false;
+    }
+
+    /**
+     * Check / decide if the task is safe for remotecontrol.
+     * 
+     * Keep in mind that a potential attacker has full control over the content
+     * of the file that will be downloaded.
+     * If it is possible to run arbitrary code or write to the local file
+     * system, then the task is (obviously) not save for remote execution.
+     * 
+     * The default value is false = unsafe. Override in a subclass to
+     * allow running the task via remotecontol.
+     * 
+     * @return true if it is safe to download and open any file of the
+     * corresponding format, false otherwise
+     */
+    public boolean isSafeForRemotecontrolRequests() {
+        return false;
+    }
+
+    @Override
+    public boolean acceptsUrl(String url, boolean isRemotecontrol) {
+        if (isRemotecontrol && !isSafeForRemotecontrolRequests()) return false;
+        return acceptsUrl(url);
     }
 
     // Default name to keep old plugins compatible

@@ -168,6 +168,11 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         }
     }
 
+    @Override
+    public boolean isSafeForRemotecontrolRequests() {
+        return true;
+    }
+
     /**
      * Superclass of internal download task.
      * @since 7636
