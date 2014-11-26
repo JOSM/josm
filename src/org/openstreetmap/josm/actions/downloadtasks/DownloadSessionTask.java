@@ -71,4 +71,16 @@ public class DownloadSessionTask extends AbstractDownloadTask {
         // TODO
         return null;
     }
+
+    /**
+     * Do not allow to load a session file via remotecontrol.
+     * 
+     * Session importers can be added by plugins and there is currently
+     * no way to ensure that these are safe for remotecontol.
+     * @return 
+     */
+    @Override
+    public boolean isSafeForRemotecontrolRequests() {
+        return Main.pref.getBoolean("remotecontrol.import.allow_session", false);
+    }
 }

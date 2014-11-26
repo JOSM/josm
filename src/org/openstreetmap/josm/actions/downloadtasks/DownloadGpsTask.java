@@ -197,6 +197,11 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         return null;
     }
 
+    @Override
+    public boolean isSafeForRemotecontrolRequests() {
+        return true;
+    }
+
     /**
      * Determines if the given URL denotes an OSM gpx-related API call.
      * @param url The url to check

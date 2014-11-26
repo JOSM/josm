@@ -130,16 +130,17 @@ public class OpenLocationAction extends JosmAction {
     /**
      * Replies the list of download tasks accepting the given url.
      * @param url The URL to open
+     * @param isRemotecontrol True if download request comes from remotecontrol.
      * @return The list of download tasks accepting the given url.
      * @since 5691
      */
-    public Collection<DownloadTask> findDownloadTasks(final String url) {
+    public Collection<DownloadTask> findDownloadTasks(final String url, boolean isRemotecontrol) {
         List<DownloadTask> result = new ArrayList<>();
         for (Class<? extends DownloadTask> taskClass : downloadTasks) {
             if (taskClass != null) {
                 try {
                     DownloadTask task = taskClass.getConstructor().newInstance();
-                    if (task.acceptsUrl(url)) {
+                    if (task.acceptsUrl(url, isRemotecontrol)) {
                         result.add(task);
                     }
                 } catch (Exception e) {
@@ -178,7 +179,7 @@ public class OpenLocationAction extends JosmAction {
      */
     public void openUrl(boolean new_layer, final String url) {
         PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
-        Collection<DownloadTask> tasks = findDownloadTasks(url);
+        Collection<DownloadTask> tasks = findDownloadTasks(url, false);
         DownloadTask task = null;
         Future<?> future = null;
         if (!tasks.isEmpty()) {

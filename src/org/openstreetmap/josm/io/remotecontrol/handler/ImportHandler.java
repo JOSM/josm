@@ -124,7 +124,7 @@ public class ImportHandler extends RequestHandler {
             throw new RequestHandlerBadRequestException("MalformedURLException: "+e.getMessage(), e);
         }
         // Find download tasks for the given URL
-        suitableDownloadTasks = Main.main.menu.openLocation.findDownloadTasks(urlString);
+        suitableDownloadTasks = Main.main.menu.openLocation.findDownloadTasks(urlString, true);
         if (suitableDownloadTasks.isEmpty()) {
             // It should maybe be better to reject the request in that case ?
             // For compatibility reasons with older instances of JOSM, arbitrary choice of DownloadOsmTask

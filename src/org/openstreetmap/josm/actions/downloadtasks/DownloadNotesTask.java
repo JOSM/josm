@@ -66,6 +66,11 @@ public class DownloadNotesTask extends AbstractDownloadTask {
         return new String[] {PATTERN_API_URL, PATTERN_DUMP_FILE};
     }
 
+    @Override
+    public boolean isSafeForRemotecontrolRequests() {
+        return true;
+    }
+
     abstract class DownloadTask extends PleaseWaitRunnable {
         protected OsmServerReader reader;
         protected List<Note> notesData;

@@ -74,9 +74,15 @@ public interface DownloadTask {
     /**
      * Returns true if the task is able to open the given URL, false otherwise.
      * @param url the url to download from
+     * @param isRemotecontrol True if download request comes from remotecontrol.
      * @return True if the task is able to open the given URL, false otherwise.
+     * Return false, if the request comes from remotecontrol, but the task is not
+     * safe for remotecontrol.
+     * A task is not safe for remotecontrol if it is possible to prepare a file
+     * for download which does something unintended, e.g. gain access to the
+     * local file system.
      */
-    boolean acceptsUrl(String url);
+    boolean acceptsUrl(String url, boolean isRemotecontrol);
 
     /**
      * Returns a short HTML documentation string, describing acceptable URLs.
