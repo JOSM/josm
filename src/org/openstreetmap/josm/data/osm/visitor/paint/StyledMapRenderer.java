@@ -27,8 +27,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -234,7 +236,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private static Boolean IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = null;
+    private static Map<Font,Boolean> IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = new HashMap<>();
 
     /**
      * Check, if this System has the GlyphVector double translation bug.
@@ -258,25 +260,26 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * preference glyph-bug=false|true|auto, where auto is the automatic detection
      * method which apparently no longer gives a useful result for Java 7.
      */
-    public static boolean isGlyphVectorDoubleTranslationBug() {
-        if (IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG != null)
-            return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
-        String overridePref = Main.pref.get("glyph-bug", "false");
+    public static boolean isGlyphVectorDoubleTranslationBug(Font font) {
+        Boolean cached  = IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG.get(font);
+        if (cached != null)
+            return cached;
+        String overridePref = Main.pref.get("glyph-bug", "auto");
         if ("auto".equals(overridePref)) {
             FontRenderContext frc = new FontRenderContext(null, false, false);
-            Font font = new Font("Dialog", Font.PLAIN, 12);
             GlyphVector gv = font.createGlyphVector(frc, "x");
             gv.setGlyphTransform(0, AffineTransform.getTranslateInstance(1000, 1000));
             Shape shape = gv.getGlyphOutline(0);
             Main.trace("#10446: shape: "+shape.getBounds());
             // x is about 1000 on normal stystems and about 2000 when the bug occurs
             int x = shape.getBounds().x;
-            IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = x > 1500;
-            return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
+            boolean isBug = x > 1500;
+            IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG.put(font, isBug);
+            return isBug;
         } else {
             boolean override = Boolean.parseBoolean(overridePref);
-            IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = override;
-            return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
+            IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG.put(font, override);
+            return override;
         }
     }
 
@@ -1205,7 +1208,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 trfm.rotate(p[2]+angleOffset);
                 double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
                 trfm.translate(-rect.getWidth()/2, off);
-                if (isGlyphVectorDoubleTranslationBug()) {
+                if (isGlyphVectorDoubleTranslationBug(text.font)) {
                     // scale the translation components by one half
                     AffineTransform tmp = AffineTransform.getTranslateInstance(-0.5 * trfm.getTranslateX(), -0.5 * trfm.getTranslateY());
                     tmp.concatenate(trfm);
