@@ -92,7 +92,11 @@ public class RestartAction extends JosmAction {
                 // java binary is resolved later
                 cmd.add(null);
                 // vm arguments
-                for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+                List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+                if (Main.isDebugEnabled()) {
+                    Main.debug("VM arguments: "+arguments.toString());
+                }
+                for (String arg : arguments) {
                     // if it's the agent argument : we ignore it otherwise the
                     // address of the old application and the new one will be in conflict
                     if (!arg.contains("-agentlib")) {
@@ -141,6 +145,10 @@ public class RestartAction extends JosmAction {
                 }
             }
             Main.info("Restart "+cmd);
+            if (Main.isDebugEnabled() && Main.pref.getBoolean("restart.debug.simulation")) {
+                Main.debug("Restart cancelled to get debug info");
+                return;
+            }
             // execute the command in a shutdown hook, to be sure that all the
             // resources have been disposed before restarting the application
             Runtime.getRuntime().addShutdownHook(new Thread() {
