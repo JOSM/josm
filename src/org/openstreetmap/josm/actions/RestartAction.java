@@ -102,6 +102,9 @@ public class RestartAction extends JosmAction {
                     Main.debug("VM arguments: "+arguments.toString());
                 }
                 for (String arg : arguments) {
+                    // When run from jp2launcher.exe, jnlpx.remove is true, while it is not when run from javaws
+                    // Always set it to false to avoid error caused by a missing jnlp file on the second restart
+                    arg = arg.replace("-Djnlpx.remove=true", "-Djnlpx.remove=false");
                     // if it's the agent argument : we ignore it otherwise the
                     // address of the old application and the new one will be in conflict
                     if (!arg.contains("-agentlib")) {
