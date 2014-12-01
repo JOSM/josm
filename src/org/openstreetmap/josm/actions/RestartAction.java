@@ -89,8 +89,13 @@ public class RestartAction extends JosmAction {
                     cmd.add(line);
                 }
             } else {
-                // java binary is resolved later
-                cmd.add(null);
+                // java binary
+                final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator +
+                        (Main.isPlatformWindows() ? "java.exe" : "java");
+                if (!new File(java).isFile()) {
+                    throw new IOException("Unable to find suitable java runtime at "+java);
+                }
+                cmd.add(java);
                 // vm arguments
                 List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
                 if (Main.isDebugEnabled()) {
@@ -103,46 +108,32 @@ public class RestartAction extends JosmAction {
                         cmd.add(arg);
                     }
                 }
-                final String javadir = System.getProperty("java.home") + File.separator + "bin" + File.separator;
-                final String java;
-                // Detect JNLP files launched with jp2launcher
-                boolean jp2launcher = cmd.contains("-secure") && cmd.contains("-javaws");
-                if (jp2launcher) {
-                    java = javadir + (Main.isPlatformWindows() ? "jp2launcher.exe" : "jp2launcher");
+                // program main and program arguments (be careful a sun property. might not be supported by all JVM)
+                String[] mainCommand = System.getProperty("sun.java.command").split(" ");
+                // look for a .jar in all chunks to support paths with spaces (fix #9077)
+                String jarPath = mainCommand[0];
+                for (int i = 1; i < mainCommand.length && !jarPath.endsWith(".jar"); i++) {
+                    jarPath += " " + mainCommand[i];
+                }
+                // program main is a jar
+                if (jarPath.endsWith(".jar")) {
+                    // if it's a jar, add -jar mainJar
+                    cmd.add("-jar");
+                    cmd.add(new File(jarPath).getPath());
                 } else {
-                    java = javadir + (Main.isPlatformWindows() ? "java.exe" : "java");
+                    // else it's a .class, add the classpath and mainClass
+                    cmd.add("-cp");
+                    cmd.add("\"" + System.getProperty("java.class.path") + "\"");
+                    cmd.add(mainCommand[0]);
                 }
-                if (!new File(java).isFile()) {
-                    throw new IOException("Unable to find suitable java runtime at "+java);
+                // if it's webstart add JNLP file. Use jnlpx.origFilenameArg instead of jnlp.application.href,
+                // because only this one is present when run from j2plauncher.exe (see #10795)
+                String jnlp = System.getProperty("jnlpx.origFilenameArg");
+                if (jnlp != null) {
+                    cmd.add(jnlp);
                 }
-                cmd.set(0, java);
-                if (!jp2launcher) {
-                    // program main and program arguments (be careful a sun property. might not be supported by all JVM)
-                    String[] mainCommand = System.getProperty("sun.java.command").split(" ");
-                    // look for a .jar in all chunks to support paths with spaces (fix #9077)
-                    String jarPath = mainCommand[0];
-                    for (int i = 1; i < mainCommand.length && !jarPath.endsWith(".jar"); i++) {
-                        jarPath += " " + mainCommand[i];
-                    }
-                    // program main is a jar
-                    if (jarPath.endsWith(".jar")) {
-                        // if it's a jar, add -jar mainJar
-                        cmd.add("-jar");
-                        cmd.add(new File(jarPath).getPath());
-                    } else {
-                        // else it's a .class, add the classpath and mainClass
-                        cmd.add("-cp");
-                        cmd.add("\"" + System.getProperty("java.class.path") + "\"");
-                        cmd.add(mainCommand[0]);
-                    }
-                    // if it's webstart add JNLP file
-                    String jnlp = System.getProperty("jnlp.application.href");
-                    if (jnlp != null) {
-                        cmd.add(jnlp);
-                    }
-                    // finally add program arguments
-                    cmd.addAll(Arrays.asList(Main.commandLineArgs));
-                }
+                // finally add program arguments
+                cmd.addAll(Arrays.asList(Main.commandLineArgs));
             }
             Main.info("Restart "+cmd);
             if (Main.isDebugEnabled() && Main.pref.getBoolean("restart.debug.simulation")) {
