@@ -300,6 +300,14 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
 
+    /**
+     * Constructs a new {@code ImageryInfo} with given name, url, extended and EULA URLs.
+     * @param name The entry name
+     * @param url The entry URL
+     * @param type The entry imagery type. If null, WMS will be used as default
+     * @param eulaAcceptanceRequired The EULA URL
+     * @throws IllegalArgumentException if type refers to an unknown imagery type
+     */
     public ImageryInfo(String name, String url, String type, String eulaAcceptanceRequired, String cookies) {
         this.name=name;
         setExtendedUrl(url);
@@ -308,6 +316,8 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
         if (t != null) {
             this.imageryType = t;
+        } else if (type != null && !type.trim().isEmpty()) {
+            throw new IllegalArgumentException("unknown type: "+type);
         }
     }
 
