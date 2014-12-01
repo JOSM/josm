@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -45,16 +47,32 @@ public class ImageryHandler extends RequestHandler {
         return PermissionPrefWithDefault.LOAD_IMAGERY;
     }
 
+    protected static ImageryInfo findBingEntry() {
+        for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
+            if (ImageryType.BING.equals(i.getImageryType())) {
+                return i;
+            }
+        }
+        return null;
+    }
+
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
         String url = args.get("url");
         String title = args.get("title");
         String type = args.get("type");
-        if ((title == null) || (title.isEmpty())) {
+        final ImageryInfo bing = ImageryType.BING.getTypeString().equals(type) ? findBingEntry() : null;
+        if ((title == null || title.isEmpty()) && bing != null) {
+            title = bing.getName();
+        }
+        if (title == null || title.isEmpty()) {
             title = tr("Remote imagery");
         }
         String cookies = args.get("cookies");
         final ImageryInfo imgInfo = new ImageryInfo(title, url, type, null, cookies);
+        if (bing != null) {
+            imgInfo.setIcon(bing.getIcon());
+        }
         String min_zoom = args.get("min_zoom");
         if (min_zoom != null && !min_zoom.isEmpty()) {
             try {
