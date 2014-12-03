@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg" xmlns:ns1="http://sozi.baierouge.fr" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg11273" sodipodi:docname="home-frame-photo.svg" viewBox="0 0 695.07 695.07" version="1.1" inkscape:version="0.47 r22583">
+  <title id="title11338">Photo Frame</title>
+  <defs id="defs11275">
+    <filter id="filter4280" color-interpolation-filters="sRGB" inkscape:collect="always">
+      <feGaussianBlur id="feGaussianBlur4282" stdDeviation="2.9027502" inkscape:collect="always"/>
+    </filter>
+  </defs>
+  <sodipodi:namedview id="base" bordercolor="#666666" inkscape:pageshadow="2" inkscape:window-y="-8" pagecolor="#ffffff" inkscape:window-height="706" inkscape:window-maximized="1" inkscape:zoom="0.34591046" inkscape:window-x="-8" showgrid="false" borderopacity="1.0" inkscape:current-layer="layer1" inkscape:cx="473.89441" inkscape:cy="317.63875" inkscape:window-width="1280" inkscape:pageopacity="0.0" inkscape:document-units="px"/>
+  <g id="layer1" inkscape:label="Layer 1" inkscape:groupmode="layer" transform="translate(-26.083 -118.53)">
+    <g id="g37657" transform="matrix(2.2848 0 0 2.2848 -426.36 131.55)">
+      <rect id="rect3481" style="filter:url(#filter4280);fill-opacity:.99608;fill:#000000" height="290.28" width="290.28" y="1.2723" x="204.98"/>
+      <rect id="rect3502" style="fill-opacity:.99608;fill:#a05a2c" height="290.28" width="290.28" y="-2.7277" x="200.98"/>
+      <rect id="rect3484" style="fill-opacity:.99608;fill:#784421" height="280.05" width="280.05" y="2.3828" x="206.09"/>
+      <rect id="rect3486" style="fill-opacity:.99608;fill:#c87137" height="255.52" width="255.52" y="14.648" x="218.36"/>
+      <rect id="rect3488" style="fill-opacity:.99608;fill:#784421" height="235.08" width="235.08" y="24.869" x="228.58"/>
+      <rect id="rect3490" style="fill-opacity:.99608;fill:#ffffff" height="204.42" width="204.42" y="40.2" x="243.91"/>
+      <path id="rect3492" style="fill-opacity:.99608;fill:#2b1100" d="m486.64 282.98v-281.27h-281.27l4.9462 4.9461h271.38v271.38l4.9461 4.9461z"/>
+      <path id="path3500" style="fill-opacity:.99608;fill:#d38d5f" d="m205.37 1.7121v281.27h281.27l-4.9462-4.9461h-271.38v-271.38l-4.9461-4.9461z"/>
+      <g id="g4291" transform="matrix(.90578 0 0 .90578 -1237.3 -654.51)">
+        <path id="path4287" style="fill-opacity:.99608;fill:#2b1100" d="m1888.9 1020.4v-281.27h-281.27l4.9462 4.9461h271.38v271.38l4.9461 4.9461z"/>
+        <path id="path4289" style="fill-opacity:.99608;fill:#d38d5f" d="m1607.7 739.11v281.27h281.27l-4.9462-4.9461h-271.38v-271.38l-4.9461-4.9461z"/>
+      </g>
+      <g id="g4295" transform="matrix(.83468 0 0 .83468 -1113 -591.95)">
+        <path id="path4297" style="fill-opacity:.99608;fill:#2b1100" d="m1888.9 1020.4v-281.27h-281.27l4.9462 4.9461h271.38v271.38l4.9461 4.9461z"/>
+        <path id="path4299" style="fill-opacity:.99608;fill:#d38d5f" d="m1607.7 739.11v281.27h281.27l-4.9462-4.9461h-271.38v-271.38l-4.9461-4.9461z"/>
+      </g>
+      <g id="g4301" transform="matrix(.72802 0 0 .72802 -926.53 -498.12)">
+        <path id="path4303" style="fill-opacity:.99608;fill:#2b1100" d="m1888.9 1020.4v-281.27h-281.27l4.9462 4.9461h271.38v271.38l4.9461 4.9461z"/>
+        <path id="path4305" style="fill-opacity:.99608;fill:#d38d5f" d="m1607.7 739.11v281.27h281.27l-4.9462-4.9461h-271.38v-271.38l-4.9461-4.9461z"/>
+      </g>
+    </g>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>A Photo Frame</dc:title>
+        <dc:date>2010-04-20T23:18:33</dc:date>
+        <dc:description/>
+        <dc:source>https://openclipart.org/detail/49345/a-photo-frame-by-sheikh_tuhin</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>sheikh_tuhin</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>home</rdf:li>
+            <rdf:li>photo frame</rdf:li>
+            <rdf:li>picture</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
