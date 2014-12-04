@@ -90,6 +90,7 @@ way[junction                   ][!highway],
 }
 
 /* {0.key} without {1.tag} */
+*[parking                      ][amenity!=parking],
 *[fence_type                   ][barrier!=fence],
 *[recycling_type               ][amenity!=recycling],
 *[board_type                   ][information!=board],
