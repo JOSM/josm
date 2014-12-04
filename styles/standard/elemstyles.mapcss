@@ -2050,12 +2050,8 @@ node[amenity=ice_cream] {
 }
 area[amenity=parking_space],
 area[amenity=parking],
-area[parking=multi-storey],
 area[amenity=motorcycle_parking],
 area[amenity=bicycle_parking],
-area[parking=park_and_ride],
-area[parking=underground],
-area[parking=surface],
 area[amenity=bicycle_rental],
 area[amenity=car_rental],
 area[amenity=car_sharing],
@@ -2069,13 +2065,19 @@ node[amenity=parking_space] {
     icon-image: "vehicle/parking.png";
     set icon_z17;
     text: auto;
-}node[amenity=parking] {
+}
+node[amenity=parking] {
     icon-image: vehicle/parking.png;
     set icon_z17;
     text: auto;
 }
-node[parking=multi-storey] {
+node[amenity=parking][parking=multi-storey] {
     icon-image: "vehicle/parking/multi-storey.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=parking][parking=underground] {
+    icon-image: "vehicle/parking/underground.png";
     set icon_z17;
     text: auto;
 }
@@ -2091,16 +2093,6 @@ node[amenity=bicycle_parking] {
 }
 node[park_ride][park_ride!=no] {
     icon-image: "vehicle/parking/park_ride.svg";
-    set icon_z17;
-    text: auto;
-}
-node[parking=underground] {
-    icon-image: "vehicle/parking/underground.png";
-    set icon_z17;
-    text: auto;
-}
-node[parking=surface] {
-    icon-image: "vehicle/parking.png";
     set icon_z17;
     text: auto;
 }
