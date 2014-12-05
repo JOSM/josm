@@ -40,6 +40,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.LassoModeAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
@@ -837,14 +838,16 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     /**
      * Determines if the functionality of this layer is available in
-     * the specified map mode.  SelectAction is supported by default,
+     * the specified map mode. {@link SelectAction} and {@link LassoModeAction} are supported by default,
      * other map modes can be registered.
      * @param mapMode Map mode to be checked
      * @return {@code true} if the map mode is supported,
      *         {@code false} otherwise
      */
     private static final boolean isSupportedMapMode(MapMode mapMode) {
-        if (mapMode instanceof SelectAction) return true;
+        if (mapMode instanceof SelectAction || mapMode instanceof LassoModeAction) {
+            return true;
+        }
         if (supportedMapModes != null) {
             for (MapMode supmmode: supportedMapModes) {
                 if (mapMode == supmmode) {
