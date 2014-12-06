@@ -2067,15 +2067,22 @@ node[amenity=parking_space] {
     text: auto;
 }
 node[amenity=parking] {
-    icon-image: vehicle/parking.png;
+    icon-image: "vehicle/parking.png";
     set icon_z17;
     text: auto;
 }
+node[amenity=parking_entrance] {
+    icon-image: "vehicle/parking.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=parking_entrance][parking=multi-storey],
 node[amenity=parking][parking=multi-storey] {
     icon-image: "vehicle/parking/multi-storey.png";
     set icon_z17;
     text: auto;
 }
+node[amenity=parking_entrance][parking=underground],
 node[amenity=parking][parking=underground] {
     icon-image: "vehicle/parking/underground.png";
     set icon_z17;
