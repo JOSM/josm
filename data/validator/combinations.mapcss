@@ -90,7 +90,6 @@ way[junction                   ][!highway],
 }
 
 /* {0.key} without {1.tag} */
-*[parking                      ][amenity!=parking],
 *[fence_type                   ][barrier!=fence],
 *[recycling_type               ][amenity!=recycling],
 *[board_type                   ][information!=board],
@@ -117,6 +116,11 @@ way[junction                   ][!highway],
 *[boat                         ][!waterway][natural!=water],
 *[intermittent                 ][!waterway][natural!=water] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
+}
+
+/* {0.key} without {1.tag} or {2.tag} */
+*[parking                      ][amenity!=parking][amenity!=parking_entrance] {
+  throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.tag}", "{2.tag}");
 }
 
 /* {0.key} without {1.key}, {2.key} or {3.key} */
