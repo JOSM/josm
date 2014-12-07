@@ -7,12 +7,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,7 +35,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Show a splash screen so the user knows what is happening during startup.
- *
+ * @since 976
  */
 public class SplashScreen extends JFrame {
 
@@ -43,7 +45,6 @@ public class SplashScreen extends JFrame {
      * Constructs a new {@code SplashScreen}.
      */
     public SplashScreen() {
-        super();
         setUndecorated(true);
 
         // Add a nice border to the main splash screen
@@ -58,7 +59,7 @@ public class SplashScreen extends JFrame {
         innerContentPane.setLayout(new GridBagLayout());
 
         // Add the logo
-        JLabel logo = new JLabel(ImageProvider.get("logo.png"));
+        JLabel logo = new JLabel(new ImageIcon(ImageProvider.get("logo.png").getImage().getScaledInstance(128, 129, Image.SCALE_SMOOTH)));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridheight = 2;
         gbc.insets = new Insets(0, 0, 0, 70);
