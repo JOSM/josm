@@ -192,7 +192,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             super(false);
             putValue(NAME, tr("Show info"));
             putValue(SHORT_DESCRIPTION, tr("Launches a browser with information about the user"));
-            putValue(SMALL_ICON, ImageProvider.get("about"));
+            putValue(SMALL_ICON, ImageProvider.get("help/internet"));
             updateEnabledState();
         }
 

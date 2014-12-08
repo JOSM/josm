@@ -20,7 +20,7 @@ public class InfoAction extends JosmAction {
      * Constructs a new {@code InfoAction}.
      */
     public InfoAction() {
-        super(tr("Advanced info"), "about",
+        super(tr("Advanced info"), "info",
             tr("Display advanced object information about OSM nodes, ways, or relations."),
             Shortcut.registerShortcut("core:info",
                 tr("Advanced info"), KeyEvent.VK_I, Shortcut.CTRL),

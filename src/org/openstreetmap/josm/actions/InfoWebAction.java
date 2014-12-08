@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class InfoWebAction extends AbstractInfoAction {
 
     public InfoWebAction() {
-        super(tr("Advanced info (web)"), "about",
+        super(tr("Advanced info (web)"), "info",
                 tr("Display object information about OSM nodes, ways, or relations in web browser."),
                 Shortcut.registerShortcut("core:infoweb",
                         tr("Advanced info (web)"), KeyEvent.VK_I, Shortcut.CTRL_SHIFT),

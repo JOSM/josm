@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class HistoryInfoWebAction extends AbstractInfoAction {
 
     public HistoryInfoWebAction() {
-        super(tr("History (web)"), "about",
+        super(tr("History (web)"), "dialogs/history",
                 tr("Display history information about OSM ways, nodes, or relations in web browser."),
                 Shortcut.registerShortcut("core:historyinfoweb",
                         tr("History (web)"), KeyEvent.VK_H, Shortcut.CTRL_SHIFT),

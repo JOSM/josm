@@ -149,7 +149,7 @@ public class VersionTable extends JTable implements Observer{
             super(true);
             putValue(NAME, tr("Changeset info"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with information about the changeset"));
-            putValue(SMALL_ICON, ImageProvider.get("about"));
+            putValue(SMALL_ICON, ImageProvider.get("data/changeset"));
         }
 
         @Override
@@ -179,7 +179,7 @@ public class VersionTable extends JTable implements Observer{
             super(true);
             putValue(NAME, tr("User info"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with information about the user"));
-            putValue(SMALL_ICON, ImageProvider.get("about"));
+            putValue(SMALL_ICON, ImageProvider.get("data/user"));
         }
 
         @Override
