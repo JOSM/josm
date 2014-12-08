@@ -5184,15 +5184,16 @@
             <reference ref="name_operator" />
             <label text="Monitoring:" />
             <checkgroup columns="3">
-                <check key="monitoring:weather" text="Weather" />
                 <check key="monitoring:water_level" text="Water level" />
                 <check key="monitoring:tide_gauge" text="Tide Level" />
+                <check key="monitoring:groundwater" text="Groundwater" />
                 <check key="monitoring:traffic" text="Traffic" />
                 <check key="monitoring:air_quality" text="Air Quality" />
                 <check key="monitoring:noise" text="Noise" />
                 <check key="monitoring:gps" text="GPS Signals" />
                 <check key="monitoring:glonass" text="GLONASS Signals" />
                 <check key="monitoring:galileo" text="Galileo Signals" />
+                <check key="monitoring:weather" text="Weather" />
                 <check key="monitoring:radiation" text="Radiation" />
                 <check key="monitoring:seismic_activity" text="Seismic Activity" />
             </checkgroup>
