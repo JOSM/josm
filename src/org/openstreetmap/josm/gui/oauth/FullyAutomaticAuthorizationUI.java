@@ -386,7 +386,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     class TestAccessTokenAction extends AbstractAction {
         public TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
-            putValue(SMALL_ICON, ImageProvider.get("about"));
+            putValue(SMALL_ICON, ImageProvider.get("logo"));
         }
 
         @Override

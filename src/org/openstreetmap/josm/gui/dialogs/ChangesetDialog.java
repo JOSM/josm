@@ -422,7 +422,7 @@ public class ChangesetDialog extends ToggleDialog{
         public ShowChangesetInfoAction() {
             putValue(NAME, tr("Show info"));
             putValue(SHORT_DESCRIPTION, tr("Open a web page for each selected changeset"));
-            putValue(SMALL_ICON, ImageProvider.get("about"));
+            putValue(SMALL_ICON, ImageProvider.get("help/internet"));
             updateEnabledState();
         }
 

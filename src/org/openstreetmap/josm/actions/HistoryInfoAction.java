@@ -24,7 +24,7 @@ public class HistoryInfoAction extends JosmAction {
      * Constructs a new {@code HistoryInfoAction}.
      */
     public HistoryInfoAction() {
-        super(tr("History"), "about",
+        super(tr("History"), "dialogs/history",
                 tr("Display history information about OSM ways, nodes, or relations."),
                 Shortcut.registerShortcut("core:historyinfo",
                         tr("History"), KeyEvent.VK_H, Shortcut.CTRL), false);
