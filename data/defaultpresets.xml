@@ -1762,6 +1762,7 @@
         <item name="Covered Reservoir" icon="presets/reservoir_covered.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=reservoir_covered"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=reservoir_covered"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=reservoir_covered"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=reservoir_covered"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=reservoir_covered" />
             <space />
@@ -4984,7 +4985,8 @@
             <text key="name" text="Name" />
         </item> <!-- Works -->
         <item name="Chimney" icon="presets/chimney.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=chimney" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=chimney"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=chimney" />
             <space />
             <key key="man_made" value="chimney" />
             <reference ref="name_operator" />
@@ -5724,6 +5726,7 @@
         </item> <!-- Archaeological Site -->
         <item name="Battlefield" icon="presets/battlefield.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=battlefield"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=battlefield"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:historic=battlefield"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:historic=battlefield"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:historic=battlefield"
