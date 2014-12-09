@@ -142,27 +142,21 @@ final class ImproveWayAccuracyHelper {
         for (Pair<Node, Node> wpp : wpps) {
             ++i;
 
-            // Finding intersection of the segment with its altitude from p (c)
-            EastNorth altitudeIntersection = Geometry.getSegmentAltituteIntersection(wpp.a.getEastNorth(),
-                    wpp.b.getEastNorth(), pEN);
-
-            if (altitudeIntersection != null) {
-                // If the segment intersects with the altitude from p
-                currentDistance = pEN.distance(altitudeIntersection);
-
-                // Making an angle too big to let this candidate win any others
+            EastNorth a = wpp.a.getEastNorth();
+            EastNorth b = wpp.b.getEastNorth();
+            
+            // Finding intersection of the segment with its altitude from p
+            EastNorth altitudeIntersection = Geometry.closestPointToSegment(a, b, pEN);
+            currentDistance = pEN.distance(altitudeIntersection);
+            
+            if (!altitudeIntersection.equals(a) && !altitudeIntersection.equals(b)) {
+                // If the segment intersects with the altitude from p,
+                // make an angle too big to let this candidate win any others
                 // having the same distance.
                 currentAngle = Double.MAX_VALUE;
-
             } else {
-                // Otherwise: Distance is equal to the shortest distance from p
-                // to a or b
-                currentDistance = Math.min(pEN.distance(wpp.a.getEastNorth()),
-                        pEN.distance(wpp.b.getEastNorth()));
-
-                // Measuring the angle
-                currentAngle = Math.abs(Geometry.getCornerAngle(
-                        wpp.a.getEastNorth(), pEN, wpp.b.getEastNorth()));
+                // Otherwise measure the angle
+                currentAngle = Math.abs(Geometry.getCornerAngle(a, pEN, b));
             }
 
             if (currentDistance < bestDistance

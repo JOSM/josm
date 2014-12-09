@@ -825,44 +825,6 @@ public final class Geometry {
         return new EastNorth(xC, yC);
     }
 
-    /**
-     * Returns the coordinate of intersection of segment sp1-sp2 and an altitude
-     * to it starting at point ap. If the line defined with sp1-sp2 intersects
-     * its altitude out of sp1-sp2, null is returned.
-     *
-     * @param sp1
-     * @param sp2
-     * @param ap
-     * @return Intersection coordinate or null
-     */
-    public static EastNorth getSegmentAltituteIntersection(EastNorth sp1, EastNorth sp2, EastNorth ap) {
-
-        CheckParameterUtil.ensureValidCoordinates(sp1, "sp1");
-        CheckParameterUtil.ensureValidCoordinates(sp2, "sp2");
-        CheckParameterUtil.ensureValidCoordinates(ap, "ap");
-
-        Double segmentLenght = sp1.distance(sp2);
-        Double altitudeAngle = getSegmentAngle(sp1, sp2) + Math.PI / 2;
-
-        // Taking a random point on the altitude line (angle is known).
-        EastNorth ap2 = new EastNorth(ap.east() + 1000
-                * Math.cos(altitudeAngle), ap.north() + 1000
-                * Math.sin(altitudeAngle));
-
-        // Finding the intersection of two lines
-        EastNorth resultCandidate = Geometry.getLineLineIntersection(sp1, sp2,
-                ap, ap2);
-
-        // Filtering result
-        if (resultCandidate != null
-                && resultCandidate.distance(sp1) * .999 < segmentLenght
-                && resultCandidate.distance(sp2) * .999 < segmentLenght) {
-            return resultCandidate;
-        } else {
-            return null;
-        }
-    }
-
     public static class MultiPolygonMembers {
         public final Set<Way> outers = new HashSet<>();
         public final Set<Way> inners = new HashSet<>();
