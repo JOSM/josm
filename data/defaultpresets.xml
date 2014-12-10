@@ -169,7 +169,7 @@
     </chunk>
     <chunk id="payment_base">
         <check key="payment:coins" text="Coins" />
-        <check key="payment:notes" text="Notes" />
+        <check key="payment:notes" text="Notes" text_context="payment" />
         <check key="payment:electronic_purses" text="Electronic purses and Charge cards" />
         <check key="payment:debit_cards" text="Debit cards" />
         <check key="payment:credit_cards" text="Credit cards" />
