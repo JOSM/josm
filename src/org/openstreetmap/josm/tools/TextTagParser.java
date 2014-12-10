@@ -203,7 +203,7 @@ public final class TextTagParser {
 
         // Format
         // tag1\tval1\ntag2\tval2\n
-        tags = readTagsByRegexp(buf, "[\\r\\n]+", "(.*?)\\t(.*?)", false);
+        tags = readTagsByRegexp(buf, "[\\r\\n]+", "([a-zA-Z0-9:_]+)\\t(.*?)", false);
                 // try "tag\tvalue\n" format
         if (tags!=null) return tags;
 
@@ -212,7 +212,7 @@ public final class TextTagParser {
         // SORRY: "a=b" = c is not supported fror now, only first = will be considered
         // a = "b=c" is OK
         // a = b=c  - this method of parsing fails intentionally
-        tags = readTagsByRegexp(buf, "[\\n\\t\\r]+", "(.*?)=(.*?)", true);
+        tags = readTagsByRegexp(buf, "[\\n\\t\\r]+", "([a-zA-Z0-9:_]+)=(.*?)", true);
                 // try format  t1=v1\n t2=v2\n ...
         if (tags!=null) return tags;
 

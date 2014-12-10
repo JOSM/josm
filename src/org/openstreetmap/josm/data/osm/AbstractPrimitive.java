@@ -17,6 +17,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.openstreetmap.josm.tools.Utils;
+
 /**
 * Abstract class to represent common features of the datatypes primitives.
 *
@@ -508,7 +510,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Set the given value to the given key. If key is null, does nothing. If value is null,
      * removes the key and behaves like {@link #remove(String)}.
      *
-     * @param key  The key, for which the value is to be set. Can be null, does nothing in this case.
+     * @param key  The key, for which the value is to be set. Can be null or empty, does nothing in this case.
      * @param value The value for the key. If null, removes the respective key/value pair.
      *
      * @see #remove(String)
@@ -516,7 +518,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     @Override
     public void put(String key, String value) {
         Map<String, String> originalKeys = getKeys();
-        if (key == null)
+        if (key == null || Utils.strip(key).isEmpty())
             return;
         else if (value == null) {
             remove(key);

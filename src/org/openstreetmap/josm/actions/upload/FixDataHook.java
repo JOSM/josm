@@ -79,8 +79,8 @@ public class FixDataHook implements UploadHook {
             for (Entry<String, String> e : keys.entrySet()) {
                 String v = Tag.removeWhiteSpaces(e.getValue());
                 String k = Tag.removeWhiteSpaces(e.getKey());
+                boolean drop = k.isEmpty() || v.isEmpty();
                 if(!e.getKey().equals(k)) {
-                    boolean drop = k.isEmpty() || v.isEmpty();
                     if(drop || !keys.containsKey(k)) {
                         newKeys.remove(e.getKey());
                         if(!drop)
@@ -91,6 +91,8 @@ public class FixDataHook implements UploadHook {
                         newKeys.remove(k);
                     else
                         newKeys.put(k, v);
+                } else if (drop) {
+                    newKeys.remove(e.getKey());
                 }
             }
             boolean changed = !keys.equals(newKeys);
