@@ -40,11 +40,14 @@ public class ThumbsLoader implements Runnable {
         for (int i = 0; i < data.size(); i++) {
             if (stop) return;
 
-            data.get(i).thumbnail = loadThumb(data.get(i));
+            // Do not load thumbnails that were loaded before.
+            if (data.get(i).thumbnail == null) {
+                data.get(i).thumbnail = loadThumb(data.get(i));
 
-            if (Main.isDisplayingMapView()) {
-                layer.updateOffscreenBuffer = true;
-                Main.map.mapView.repaint();
+                if (Main.isDisplayingMapView()) {
+                    layer.updateOffscreenBuffer = true;
+                    Main.map.mapView.repaint();
+                }
             }
         }
         layer.updateOffscreenBuffer = true;
