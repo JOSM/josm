@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.NoteInputDialog;
+import org.openstreetmap.josm.gui.NoteSortDialog;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
@@ -74,6 +75,7 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
     private final CloseAction closeAction;
     private final NewAction newAction;
     private final ReopenAction reopenAction;
+    private final SortAction sortAction;
     private final UploadNotesAction uploadAction;
 
     private NoteData noteData;
@@ -89,6 +91,7 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
         closeAction = new CloseAction();
         newAction = new NewAction();
         reopenAction = new ReopenAction();
+        sortAction = new SortAction();
         uploadAction = new UploadNotesAction();
         buildDialog();
     }
@@ -120,6 +123,7 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
                 new SideButton(addCommentAction, false),
                 new SideButton(closeAction, false),
                 new SideButton(reopenAction, false),
+                new SideButton(sortAction, false),
                 new SideButton(uploadAction, false)}));
         updateButtonStates();
     }
@@ -143,6 +147,12 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
         } else {
             uploadAction.setEnabled(true);
         }
+        //enable sort button if any notes are loaded
+        if (noteData == null || noteData.getNotes().isEmpty()) {
+            sortAction.setEnabled(false);
+        } else {
+            sortAction.setEnabled(true);
+        }
     }
 
     @Override
@@ -160,15 +170,10 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
 
     @Override
     public void layerAdded(Layer newLayer) {
-        if (Main.isDebugEnabled()) {
-            Main.debug("layer added: " + newLayer);
-        }
         if (newLayer instanceof NoteLayer) {
-            if (Main.isDebugEnabled()) {
-                Main.debug("note layer added");
-            }
             noteData = ((NoteLayer)newLayer).getNoteData();
             model.setData(noteData.getNotes());
+            setNoteList(noteData.getNotes());
         }
     }
 
@@ -361,6 +366,24 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
 
             Note note = displayList.getSelectedValue();
             noteData.reOpenNote(note, dialog.getInputText());
+        }
+    }
+
+    class SortAction extends AbstractAction {
+
+        public SortAction() {
+            putValue(SHORT_DESCRIPTION, tr("Sort notes"));
+            putValue(NAME, tr("Sort"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            NoteSortDialog sortDialog = new NoteSortDialog(Main.parent, tr("Sort notes"), tr("Apply"));
+            sortDialog.showSortDialog(noteData.getCurrentSortMethod());
+            if (sortDialog.getValue() == 1) {
+                noteData.setSortMethod(sortDialog.getSelectedComparator());
+            }
         }
     }
 }
