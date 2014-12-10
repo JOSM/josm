@@ -2579,7 +2579,7 @@
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:shop=bicycle" />
             <space />
             <key key="shop" value="bicycle" />
-            <text key="name" text="Name" />
+            <reference ref="name_oh" />
             <check key="service:bicycle:retail" text="Bicycles are sold" />
             <check key="service:bicycle:second_hand" text="Second-hand bicycles are sold" />
             <check key="service:bicycle:repair" text="Bicycles are repaired" />
