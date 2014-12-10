@@ -400,6 +400,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
 
         setName(l.getName());
+        thumbsLoaded &= l.thumbsLoaded;
     }
 
     private Dimension scaledDimension(Image thumb) {
