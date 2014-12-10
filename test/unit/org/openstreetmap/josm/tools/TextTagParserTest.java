@@ -38,9 +38,9 @@ public class TextTagParserTest {
 
     @Test
     public void testTNformat() {
-        String txt = "   a  \t  1   \n\n\n  b=2 \t the value with \"quotes\"";
+        String txt = "   a  \t  1   \n\n\n  b\t2 \n c \t the value with \"quotes\"";
         Map<String, String> correctTags = new HashMap<String, String>() { {
-            put("a", "1"); put("b=2", "the value with \"quotes\"");
+            put("a", "1"); put("b", "2"); put("c", "the value with \"quotes\"");
         }};
         Map<String, String> tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
