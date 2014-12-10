@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,64 @@ public class NoteData {
 
     private final List<Note> noteList;
     private Note selectedNote = null;
+    private Comparator<Note> comparator = DEFAULT_COMPARATOR;
+
+    /**
+     * Sorts notes in the following order:
+     * 1) Open notes
+     * 2) Closed notes
+     * 3) New notes
+     * Within each subgroup it sorts by ID
+     */
+    public static final Comparator<Note> DEFAULT_COMPARATOR = new Comparator<Note>() {
+        @Override
+        public int compare(Note n1, Note n2) {
+            if (n1.getId() < 0 && n2.getId() > 0) {
+                return 1;
+            }
+            if (n1.getId() > 0 && n2.getId() < 0) {
+                return -1;
+            }
+            if (n1.getState() == State.closed && n2.getState() == State.open) {
+                return 1;
+            }
+            if (n1.getState() == State.open && n2.getState() == State.closed) {
+                return -1;
+            }
+            return Long.valueOf(Math.abs(n1.getId())).compareTo(Long.valueOf(Math.abs(n2.getId())));
+        }
+    };
+
+    /** Sorts notes strictly by creation date */
+    public static final Comparator<Note> DATE_COMPARATOR = new Comparator<Note>() {
+        @Override
+        public int compare(Note n1, Note n2) {
+            return n1.getCreatedAt().compareTo(n2.getCreatedAt());
+        }
+    };
+
+    /** Sorts notes by user, then creation date */
+    public static final Comparator<Note> USER_COMPARATOR = new Comparator<Note>() {
+        @Override
+        public int compare(Note n1, Note n2) {
+            String n1User = n1.getFirstComment().getUser().getName();
+            String n2User = n2.getFirstComment().getUser().getName();
+            if (n1User.equals(n2User)) {
+                return n1.getCreatedAt().compareTo(n2.getCreatedAt());
+            }
+            return n1.getFirstComment().getUser().getName().compareTo(n2.getFirstComment().getUser().getName());
+        }
+    };
+
+    /** Sorts notes by the last modified date */
+    public static final Comparator<Note> LAST_ACTION_COMPARATOR = new Comparator<Note>() {
+        @Override
+        public int compare(Note n1, Note n2) {
+            Date n1Date = n1.getComments().get(n1.getComments().size()-1).getCommentTimestamp();
+            Date n2Date = n2.getComments().get(n2.getComments().size()-1).getCommentTimestamp();
+            return n1Date.compareTo(n2Date);
+        }
+    };
 
     /**
      * Construct a new note container with an empty note list
@@ -36,6 +96,7 @@ public class NoteData {
      */
     public NoteData(List<Note> notes) {
         noteList = notes;
+        Collections.sort(notes, comparator);
         for (Note note : notes) {
             if (note.getId() <= newNoteId) {
                 newNoteId = note.getId() - 1;
@@ -194,6 +255,7 @@ public class NoteData {
     }
 
     private void dataUpdated() {
+        Collections.sort(noteList, comparator);
         Main.map.noteDialog.setNoteList(noteList);
         Main.map.mapView.repaint();
     }
@@ -214,6 +276,20 @@ public class NoteData {
             Note newNote = entry.getValue();
             oldNote.updateWith(newNote);
         }
+        dataUpdated();
+    }
+
+    /** @return The current comparator being used to sort the note list */
+    public Comparator<Note> getCurrentSortMethod() {
+        return comparator;
+    }
+
+    /** Set the comparator to be used to sort the note list. Several are available
+     * as public static members of this class.
+     * @param comparator - The Note comparator to sort by
+     */
+    public void setSortMethod(Comparator<Note> comparator) {
+        this.comparator = comparator;
         dataUpdated();
     }
 }
