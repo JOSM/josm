@@ -17,7 +17,6 @@
 package org.openstreetmap.josm.data.validation.routines;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * <p><b>Domain name</b> validation routines.</p>
@@ -56,7 +55,7 @@ import java.util.List;
  * {@link java.net.InetAddress} for that functionality.)
  * </p>
  *
- * @version $Revision: 1227719 $ $Date: 2012-01-05 18:45:51 +0100 (Thu, 05 Jan 2012) $
+ * @version $Revision: 1640271 $ $Date: 2014-11-18 02:32:15 2014 UTC (Tue, 18 Nov 2014) $
  * @since Validator 1.4
  */
 public class DomainValidator extends AbstractValidator {
@@ -162,7 +161,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is an infrastructure TLD
      */
     public boolean isValidInfrastructureTld(String iTld) {
-        return INFRASTRUCTURE_TLD_LIST.contains(chompLeadingDot(iTld.toLowerCase()));
+        return Arrays.binarySearch(INFRASTRUCTURE_TLDS, (chompLeadingDot(iTld.toLowerCase()))) >= 0;
     }
 
     /**
@@ -173,7 +172,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is a generic TLD
      */
     public boolean isValidGenericTld(String gTld) {
-        return GENERIC_TLD_LIST.contains(chompLeadingDot(gTld.toLowerCase()));
+        return Arrays.binarySearch(GENERIC_TLDS, chompLeadingDot(gTld.toLowerCase())) >= 0;
     }
 
     /**
@@ -184,7 +183,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is a country code TLD
      */
     public boolean isValidCountryCodeTld(String ccTld) {
-        return COUNTRY_CODE_TLD_LIST.contains(chompLeadingDot(ccTld.toLowerCase()));
+        return Arrays.binarySearch(COUNTRY_CODE_TLDS, chompLeadingDot(ccTld.toLowerCase())) >= 0;
     }
 
     /**
@@ -195,7 +194,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is an local TLD
      */
     public boolean isValidLocalTld(String iTld) {
-        return LOCAL_TLD_LIST.contains(chompLeadingDot(iTld.toLowerCase()));
+        return Arrays.binarySearch(LOCAL_TLDS, chompLeadingDot(iTld.toLowerCase())) >= 0;
     }
 
     private String chompLeadingDot(String str) {
@@ -217,26 +216,420 @@ public class DomainValidator extends AbstractValidator {
     };
 
     private static final String[] GENERIC_TLDS = new String[] {
-        "aero",               // air transport industry
-        "asia",               // Pan-Asia/Asia Pacific
-        "biz",                // businesses
-        "cat",                // Catalan linguistic/cultural community
-        "com",                // commercial enterprises
-        "coop",               // cooperative associations
-        "info",               // informational sites
-        "jobs",               // Human Resource managers
-        "mobi",               // mobile products and services
-        "museum",             // museums, surprisingly enough
-        "name",               // individuals' sites
-        "net",                // internet support infrastructure/business
-        "org",                // noncommercial organizations
-        "pro",                // credentialed professionals and entities
-        "tel",                // contact data for businesses and individuals
-        "travel",             // entities in the travel industry
-        "gov",                // United States Government
-        "edu",                // accredited postsecondary US education entities
-        "mil",                // United States Military
-        "int"                 // organizations established by international treaty
+        "abogado",
+        "academy",
+        "accountants",
+        "active",
+        "actor",
+        "aero",
+        "agency",
+        "airforce",
+        "allfinanz",
+        "alsace",
+        "archi",
+        "army",
+        "arpa",
+        "asia",
+        "associates",
+        "attorney",
+        "auction",
+        "audio",
+        "autos",
+        "axa",
+        "band",
+        "bar",
+        "bargains",
+        "bayern",
+        "beer",
+        "berlin",
+        "best",
+        "bid",
+        "bike",
+        "bio",
+        "biz",
+        "black",
+        "blackfriday",
+        "blue",
+        "bmw",
+        "bnpparibas",
+        "boo",
+        "boutique",
+        "brussels",
+        "budapest",
+        "build",
+        "builders",
+        "business",
+        "buzz",
+        "bzh",
+        "cab",
+        "cal",
+        "camera",
+        "camp",
+        "cancerresearch",
+        "capetown",
+        "capital",
+        "caravan",
+        "cards",
+        "care",
+        "career",
+        "careers",
+        "casa",
+        "cash",
+        "cat",
+        "catering",
+        "center",
+        "ceo",
+        "cern",
+        "channel",
+        "cheap",
+        "christmas",
+        "chrome",
+        "church",
+        "citic",
+        "city",
+        "claims",
+        "cleaning",
+        "click",
+        "clinic",
+        "clothing",
+        "club",
+        "codes",
+        "coffee",
+        "college",
+        "cologne",
+        "com",
+        "community",
+        "company",
+        "computer",
+        "condos",
+        "construction",
+        "consulting",
+        "contractors",
+        "cooking",
+        "cool",
+        "coop",
+        "country",
+        "credit",
+        "creditcard",
+        "crs",
+        "cruises",
+        "cuisinella",
+        "cymru",
+        "dad",
+        "dance",
+        "dating",
+        "day",
+        "deals",
+        "degree",
+        "democrat",
+        "dental",
+        "dentist",
+        "desi",
+        "diamonds",
+        "diet",
+        "digital",
+        "direct",
+        "directory",
+        "discount",
+        "dnp",
+        "domains",
+        "durban",
+        "dvag",
+        "eat",
+        "edu",
+        "education",
+        "email",
+        "engineer",
+        "engineering",
+        "enterprises",
+        "equipment",
+        "esq",
+        "estate",
+        "eus",
+        "events",
+        "exchange",
+        "expert",
+        "exposed",
+        "fail",
+        "farm",
+        "feedback",
+        "finance",
+        "financial",
+        "fish",
+        "fishing",
+        "fitness",
+        "flights",
+        "florist",
+        "flsmidth",
+        "fly",
+        "foo",
+        "forsale",
+        "foundation",
+        "frl",
+        "frogans",
+        "fund",
+        "furniture",
+        "futbol",
+        "gal",
+        "gallery",
+        "gbiz",
+        "gent",
+        "gift",
+        "gifts",
+        "gives",
+        "glass",
+        "gle",
+        "global",
+        "globo",
+        "gmail",
+        "gmo",
+        "gmx",
+        "google",
+        "gop",
+        "gov",
+        "graphics",
+        "gratis",
+        "green",
+        "gripe",
+        "guide",
+        "guitars",
+        "guru",
+        "hamburg",
+        "haus",
+        "healthcare",
+        "help",
+        "here",
+        "hiphop",
+        "hiv",
+        "holdings",
+        "holiday",
+        "homes",
+        "horse",
+        "host",
+        "hosting",
+        "house",
+        "how",
+        "ibm",
+        "immo",
+        "immobilien",
+        "industries",
+        "info",
+        "ing",
+        "ink",
+        "institute",
+        "insure",
+        "int",
+        "international",
+        "investments",
+        "jetzt",
+        "jobs",
+        "joburg",
+        "juegos",
+        "kaufen",
+        "kim",
+        "kitchen",
+        "kiwi",
+        "koeln",
+        "krd",
+        "kred",
+        "lacaixa",
+        "land",
+        "lawyer",
+        "lease",
+        "lgbt",
+        "life",
+        "lighting",
+        "limited",
+        "limo",
+        "link",
+        "loans",
+        "london",
+        "lotto",
+        "ltda",
+        "luxe",
+        "luxury",
+        "maison",
+        "management",
+        "mango",
+        "market",
+        "marketing",
+        "media",
+        "meet",
+        "melbourne",
+        "meme",
+        "menu",
+        "miami",
+        "mil",
+        "mini",
+        "mobi",
+        "moda",
+        "moe",
+        "monash",
+        "mortgage",
+        "moscow",
+        "motorcycles",
+        "mov",
+        "museum",
+        "nagoya",
+        "name",
+        "navy",
+        "net",
+        "network",
+        "neustar",
+        "new",
+        "nexus",
+        "ngo",
+        "nhk",
+        "ninja",
+        "nra",
+        "nrw",
+        "nyc",
+        "okinawa",
+        "ong",
+        "onl",
+        "ooo",
+        "org",
+        "organic",
+        "otsuka",
+        "ovh",
+        "paris",
+        "partners",
+        "parts",
+        "pharmacy",
+        "photo",
+        "photography",
+        "photos",
+        "physio",
+        "pics",
+        "pictures",
+        "pink",
+        "pizza",
+        "place",
+        "plumbing",
+        "pohl",
+        "poker",
+        "post",
+        "praxi",
+        "press",
+        "pro",
+        "prod",
+        "productions",
+        "prof",
+        "properties",
+        "property",
+        "pub",
+        "qpon",
+        "quebec",
+        "realtor",
+        "recipes",
+        "red",
+        "rehab",
+        "reise",
+        "reisen",
+        "ren",
+        "rentals",
+        "repair",
+        "report",
+        "republican",
+        "rest",
+        "restaurant",
+        "reviews",
+        "rich",
+        "rio",
+        "rip",
+        "rocks",
+        "rodeo",
+        "rsvp",
+        "ruhr",
+        "ryukyu",
+        "saarland",
+        "sarl",
+        "sca",
+        "scb",
+        "schmidt",
+        "schule",
+        "scot",
+        "services",
+        "sexy",
+        "shiksha",
+        "shoes",
+        "singles",
+        "social",
+        "software",
+        "sohu",
+        "solar",
+        "solutions",
+        "soy",
+        "space",
+        "spiegel",
+        "supplies",
+        "supply",
+        "support",
+        "surf",
+        "surgery",
+        "suzuki",
+        "systems",
+        "tatar",
+        "tattoo",
+        "tax",
+        "technology",
+        "tel",
+        "tienda",
+        "tips",
+        "tirol",
+        "today",
+        "tokyo",
+        "tools",
+        "top",
+        "town",
+        "toys",
+        "trade",
+        "training",
+        "travel",
+        "tui",
+        "university",
+        "uno",
+        "uol",
+        "vacations",
+        "vegas",
+        "ventures",
+        "versicherung",
+        "vet",
+        "viajes",
+        "villas",
+        "vision",
+        "vlaanderen",
+        "vodka",
+        "vote",
+        "voting",
+        "voto",
+        "voyage",
+        "wales",
+        "wang",
+        "watch",
+        "webcam",
+        "website",
+        "wed",
+        "wedding",
+        "whoswho",
+        "wien",
+        "wiki",
+        "williamhill",
+        "wme",
+        "work",
+        "works",
+        "world",
+        "wtc",
+        "wtf",
+        "xxx",
+        "xyz",
+        "yachts",
+        "yandex",
+        "yoga",
+        "yokohama",
+        "youtube",
+        "zip",
+        "zone",
     };
 
     private static final String[] COUNTRY_CODE_TLDS = new String[] {
@@ -292,6 +685,7 @@ public class DomainValidator extends AbstractValidator {
         "cr",                 // Costa Rica
         "cu",                 // Cuba
         "cv",                 // Cape Verde
+        "cw",                 // Curaçao
         "cx",                 // Christmas Island
         "cy",                 // Cyprus
         "cz",                 // Czech Republic
@@ -448,6 +842,7 @@ public class DomainValidator extends AbstractValidator {
         "st",                 // São Tomé and Príncipe
         "su",                 // Soviet Union (deprecated)
         "sv",                 // El Salvador
+        "sx",                 // Sint Maarten
         "sy",                 // Syria
         "sz",                 // Swaziland
         "tc",                 // Turks and Caicos Islands
@@ -496,8 +891,10 @@ public class DomainValidator extends AbstractValidator {
        "localdomain"          // Also widely used as localhost.localdomain
    };
 
-    private static final List<String> INFRASTRUCTURE_TLD_LIST = Arrays.asList(INFRASTRUCTURE_TLDS);
-    private static final List<String> GENERIC_TLD_LIST = Arrays.asList(GENERIC_TLDS);
-    private static final List<String> COUNTRY_CODE_TLD_LIST = Arrays.asList(COUNTRY_CODE_TLDS);
-    private static final List<String> LOCAL_TLD_LIST = Arrays.asList(LOCAL_TLDS);
+    static {
+        Arrays.sort(INFRASTRUCTURE_TLDS);
+        Arrays.sort(COUNTRY_CODE_TLDS);
+        Arrays.sort(GENERIC_TLDS);
+        Arrays.sort(LOCAL_TLDS);
+    }
 }
