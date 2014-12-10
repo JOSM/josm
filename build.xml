@@ -270,7 +270,7 @@ Build-Date: ${build.tstamp}
             <include name="**/*.jar"/>
         </fileset>
         <pathelement path="dist/josm-custom.jar"/>
-        <pathelement path="tools/groovy-all-2.3.7.jar"/>
+        <pathelement path="tools/groovy-all-2.3.8.jar"/>
     </path>
     <macrodef name="init-test-preferences">
         <attribute name="testfamily"/>
@@ -317,7 +317,7 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
     <target name="test-compile" depends="test-init,dist">
-        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.3.7.jar"/>
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.3.8.jar"/>
         <call-groovyc testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>
