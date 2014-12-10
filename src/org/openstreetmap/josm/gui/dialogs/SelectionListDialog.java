@@ -81,17 +81,17 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class SelectionListDialog extends ToggleDialog  {
     private JList<OsmPrimitive> lstPrimitives;
-    private DefaultListSelectionModel selectionModel  = new DefaultListSelectionModel();
-    private SelectionListModel model = new SelectionListModel(selectionModel);
+    private final DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
+    private final SelectionListModel model = new SelectionListModel(selectionModel);
 
-    private SelectAction actSelect = new SelectAction();
-    private SearchAction actSearch = new SearchAction();
-    private ShowHistoryAction actShowHistory = new ShowHistoryAction();
-    private ZoomToJOSMSelectionAction actZoomToJOSMSelection = new ZoomToJOSMSelectionAction();
-    private ZoomToListSelection actZoomToListSelection = new ZoomToListSelection();
-    private SelectInRelationListAction actSetRelationSelection = new SelectInRelationListAction();
-    private EditRelationAction actEditRelationSelection = new EditRelationAction();
-    private DownloadSelectedIncompleteMembersAction actDownloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
+    private final SelectAction actSelect = new SelectAction();
+    private final SearchAction actSearch = new SearchAction();
+    private final ShowHistoryAction actShowHistory = new ShowHistoryAction();
+    private final ZoomToJOSMSelectionAction actZoomToJOSMSelection = new ZoomToJOSMSelectionAction();
+    private final ZoomToListSelection actZoomToListSelection = new ZoomToListSelection();
+    private final SelectInRelationListAction actSetRelationSelection = new SelectInRelationListAction();
+    private final EditRelationAction actEditRelationSelection = new EditRelationAction();
+    private final DownloadSelectedIncompleteMembersAction actDownloadSelIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
 
     /** the popup menu and its handler */
     private final ListPopupMenu popupMenu;
@@ -168,6 +168,7 @@ public class SelectionListDialog extends ToggleDialog  {
     @Override
     public void showNotify() {
         MapView.addEditLayerChangeListener(model);
+        SelectionEventManager.getInstance().addSelectionListener(actShowHistory, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListener(model, FireMode.IN_EDT_CONSOLIDATED);
         DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT);
         MapView.addEditLayerChangeListener(actSearch);
@@ -184,6 +185,7 @@ public class SelectionListDialog extends ToggleDialog  {
     public void hideNotify() {
         MapView.removeEditLayerChangeListener(actSearch);
         MapView.removeEditLayerChangeListener(model);
+        SelectionEventManager.getInstance().removeSelectionListener(actShowHistory);
         SelectionEventManager.getInstance().removeSelectionListener(model);
         DatasetEventManager.getInstance().removeDatasetListener(model);
     }
@@ -236,7 +238,7 @@ public class SelectionListDialog extends ToggleDialog  {
         handler.addAction(actSetRelationSelection);
         handler.addAction(actEditRelationSelection);
         handler.addSeparator();
-        handler.addAction(actDownloadSelectedIncompleteMembers);
+        handler.addAction(actDownloadSelIncompleteMembers);
         return handler;
     }
 
@@ -347,7 +349,7 @@ public class SelectionListDialog extends ToggleDialog  {
     /**
      * The action for showing history information of the current history item.
      */
-    class ShowHistoryAction extends AbstractAction implements ListSelectionListener {
+    class ShowHistoryAction extends AbstractAction implements ListSelectionListener, SelectionChangedListener {
         /**
          * Constructs a new {@code ShowHistoryAction}.
          */
@@ -355,23 +357,33 @@ public class SelectionListDialog extends ToggleDialog  {
             putValue(NAME, tr("History"));
             putValue(SHORT_DESCRIPTION, tr("Display the history of the selected objects."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
-            updateEnabledState();
+            updateEnabledState(model.getSize());
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
-            if (sel.isEmpty())return;
+            if (sel.isEmpty() && model.getSize() != 1) {
+                return;
+            } else if (sel.isEmpty()) {
+                sel = Collections.singleton(model.getElementAt(0));
+            }
             HistoryBrowserDialogManager.getInstance().showHistory(sel);
         }
 
-        protected void updateEnabledState() {
-            setEnabled(!model.getSelected().isEmpty());
+        protected void updateEnabledState(int osmSelectionSize) {
+            // See #10830 - allow to click on history button is a single object is selected, even if not selected again in the list
+            setEnabled(!model.getSelected().isEmpty() || osmSelectionSize == 1);
         }
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
+            updateEnabledState(model.getSize());
+        }
+
+        @Override
+        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+            updateEnabledState(newSelection.size());
         }
     }
 
