@@ -4431,6 +4431,23 @@
             <combo key="fire_hydrant:pressure" text="Pressure (in bar)" values="5,6,8,suction" />
             <text key="fire_hydrant:count" text="Count" />
         </item> <!-- Fire Hydrant -->
+        <separator/>
+        <item name="Advertising Column" icon="styles/standard/leisure/advertising_column.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:advertising=column" />
+            <space />
+            <key key="advertising" value="column" />
+            <optional>
+                <check key="lit" text="Lit" />
+            </optional>
+        </item> <!-- Advertising Column -->
+        <item name="Billboard" icon="styles/standard/leisure/billboard.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:advertising=billboard" />
+            <space />
+            <key key="advertising" value="billboard" />
+            <optional>
+                <check key="lit" text="Lit" />
+            </optional>
+        </item> <!-- Billboard -->   
     </group> <!-- Facilities -->
   </group>  <!-- Facilities -->
   <group name="Sports" icon="styles/standard/sport/soccer.png">
