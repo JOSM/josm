@@ -42,6 +42,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private static final String COMMAND_COLLAPSE = "collapse";
     private static final String COMMAND_FIRST = "first";
     private static final String COMMAND_LAST = "last";
+    private static final String COMMAND_COPY_PATH = "copypath";
 
     private ImageDisplay imgDisplay = new ImageDisplay();
     private boolean centerView = false;
@@ -111,6 +112,12 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnDeleteFromDisk.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDeleteFromDisk.getKeyStroke(), ADELFROMDISK);
         btnDeleteFromDisk.getActionMap().put(ADELFROMDISK, delFromDiskAction);
 
+        ImageAction copyPathAction = new ImageAction(COMMAND_COPY_PATH, ImageProvider.get("copy"), tr("Copy image path"));
+        JButton btnCopyPath = new JButton(copyPathAction);
+        btnCopyPath.setPreferredSize(buttonDim);
+        final String ACOPYPATH = "Copy image path";
+        btnCopyPath.getActionMap().put(ACOPYPATH, copyPathAction);
+
         ImageAction nextAction = new ImageAction(COMMAND_NEXT, ImageProvider.get("dialogs", "next"), tr("Next"));
         btnNext = new JButton(nextAction);
         btnNext.setPreferredSize(buttonDim);
@@ -146,12 +153,14 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         JPanel buttons = new JPanel();
         buttons.add(btnPrevious);
         buttons.add(btnNext);
-        buttons.add(Box.createRigidArea(new Dimension(14, 0)));
+        buttons.add(Box.createRigidArea(new Dimension(7, 0)));
         buttons.add(tbCentre);
         buttons.add(btnZoomBestFit);
-        buttons.add(Box.createRigidArea(new Dimension(14, 0)));
+        buttons.add(Box.createRigidArea(new Dimension(7, 0)));
         buttons.add(btnDelete);
         buttons.add(btnDeleteFromDisk);
+        buttons.add(Box.createRigidArea(new Dimension(7, 0)));
+        buttons.add(btnCopyPath);
 
         JPanel bottomPane = new JPanel();
         bottomPane.setLayout(new GridBagLayout());
@@ -220,6 +229,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             } else if (COMMAND_REMOVE_FROM_DISK.equals(action)) {
                 if (currentLayer != null) {
                     currentLayer.removeCurrentPhotoFromDisk();
+                }
+            } else if (COMMAND_COPY_PATH.equals(action)) {
+                if (currentLayer != null) {
+                    currentLayer.copyCurrentPhotoPath();
                 }
             } else if (COMMAND_COLLAPSE.equals(action)) {
                 collapseButtonClicked = true;

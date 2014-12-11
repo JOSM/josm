@@ -15,6 +15,9 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -753,6 +756,15 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 updateOffscreenBuffer = true;
                 Main.map.repaint();
             }
+        }
+    }
+
+    public void copyCurrentPhotoPath() {
+        ImageEntry toCopy = null;
+        if (data != null && data.size() > 0 && currentPhoto >= 0 && currentPhoto < data.size()) {
+            toCopy = data.get(currentPhoto);
+            String copyString = toCopy.getFile().toString();
+            Utils.copyToClipboard(copyString);
         }
     }
 
