@@ -1083,7 +1083,7 @@
             <space />
             <combo key="direction" text="Direction" values="clockwise" />
         </item> <!-- Mini-Roundabout -->
-        <item name="Pedestrian Crossing" icon="styles/standard/vehicle/zebra_crossing.png" type="node" preset_name_label="true">
+        <item name="Pedestrian Crossing" icon="styles/standard/vehicle/crossing.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:crossing"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:crossing"

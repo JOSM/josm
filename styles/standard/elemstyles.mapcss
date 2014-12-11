@@ -664,7 +664,27 @@ node[traffic_sign=city_limit] {
     text: auto;
 }
 node[highway=crossing] {
-    icon-image: "vehicle/zebra_crossing.png";
+    icon-image: "vehicle/crossing.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=crossing][crossing=unmarked] {
+    icon-image: "vehicle/crossing_unmarked.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=crossing][crossing=island] {
+    icon-image: "vehicle/crossing_island.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=crossing][crossing_ref=zebra] {
+    icon-image: "vehicle/crossing_ref_zebra.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=crossing][crossing=traffic_signals] {
+    icon-image: "vehicle/crossing_traffic_signals.png";
     set icon_z17;
     text: auto;
 }
