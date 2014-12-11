@@ -284,11 +284,6 @@ node[building=garages] {
     set icon_z17;
     text: auto;
 }
-node[building=entrance] {
-    icon-image: "misc/entrance-yes.png";
-    set icon_z17;
-    text: auto;
-}
 node[entrance=yes] {
     icon-image: "misc/entrance-yes.png";
     set icon_z17;
@@ -311,6 +306,11 @@ node[entrance=exit] {
 }
 node[entrance=emergency] {
     icon-image: "misc/entrance-emergency.png";
+    set icon_z17;
+    text: auto;
+}
+node[building=entrance] {
+    icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
 }
