@@ -115,7 +115,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         ImageAction copyPathAction = new ImageAction(COMMAND_COPY_PATH, ImageProvider.get("copy"), tr("Copy image path"));
         JButton btnCopyPath = new JButton(copyPathAction);
         btnCopyPath.setPreferredSize(buttonDim);
+        Shortcut scCopyPath = Shortcut.registerShortcut(
+                "geoimage:copypath", tr("Geoimage: {0}", tr("Copy image path")), KeyEvent.VK_C, Shortcut.ALT_CTRL_SHIFT);
         final String ACOPYPATH = "Copy image path";
+        Main.registerActionShortcut(copyPathAction, scCopyPath);
+        btnCopyPath.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scCopyPath.getKeyStroke(), ACOPYPATH);
         btnCopyPath.getActionMap().put(ACOPYPATH, copyPathAction);
 
         ImageAction nextAction = new ImageAction(COMMAND_NEXT, ImageProvider.get("dialogs", "next"), tr("Next"));
