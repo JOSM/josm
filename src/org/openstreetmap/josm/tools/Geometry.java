@@ -313,6 +313,11 @@ public final class Geometry {
 
     /**
      * Finds the intersection of two lines of infinite length.
+     * 
+     * @param p1 first point on first line
+     * @param p2 second point on first line
+     * @param p3 first point on second line
+     * @param p4 second point on second line
      * @return EastNorth null if no intersection was found, the coordinates of the intersection otherwise
      * @throws IllegalArgumentException if a parameter is null or without valid coordinates
      */
@@ -322,24 +327,35 @@ public final class Geometry {
         CheckParameterUtil.ensureValidCoordinates(p2, "p2");
         CheckParameterUtil.ensureValidCoordinates(p3, "p3");
         CheckParameterUtil.ensureValidCoordinates(p4, "p4");
-
+        
         if (!p1.isValid()) throw new IllegalArgumentException();
+
+        // Basically, the formula from wikipedia is used:
+        //  https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+        // However, large numbers lead to rounding errors (see #10286).
+        // To avoid this, p1 is first substracted from each of the points:
+        //  p1' = 0
+        //  p2' = p2 - p1
+        //  p3' = p3 - p1
+        //  p4' = p4 - p1
+        // In the end, p1 is added to the intersection point of segment p1'/p2'
+        // and segment p3'/p4'.
 
         // Convert line from (point, point) form to ax+by=c
         double a1 = p2.getY() - p1.getY();
         double b1 = p1.getX() - p2.getX();
-        double c1 = p2.getX() * p1.getY() - p1.getX() * p2.getY();
+        // double c1 = 0;
 
         double a2 = p4.getY() - p3.getY();
         double b2 = p3.getX() - p4.getX();
-        double c2 = p4.getX() * p3.getY() - p3.getX() * p4.getY();
+        double c2 = (p4.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p3.getX() - p1.getX()) * (p4.getY() - p1.getY());
 
         // Solve the equations
         double det = a1 * b2 - a2 * b1;
         if (det == 0)
             return null; // Lines are parallel
 
-        return new EastNorth((b1 * c2 - b2 * c1) / det, (a2 * c1 - a1 * c2) / det);
+        return new EastNorth(b1 * c2 / det + p1.getX(),  - a1 * c2 / det + p1.getY());
     }
 
     public static boolean segmentsParallel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
@@ -716,7 +732,7 @@ public final class Geometry {
         if (result > Math.PI) {
             result -= 2 * Math.PI;
         }
-
+        
         return result;
     }
 
