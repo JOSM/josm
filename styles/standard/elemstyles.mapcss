@@ -1504,6 +1504,21 @@ node[leisure=sauna] {
     text: auto;
 }
 
+/********************/
+/* advertising tags */
+/********************/
+
+node[advertising=column] {
+    icon-image: "leisure/advertising_column.svg";
+    set icon_z17;
+    text: auto;
+}
+node[advertising=billboard] {
+    icon-image: "leisure/billboard.svg";
+    set icon_z17;
+    text: auto;
+}
+
 /*************/
 /* shop tags */
 /*************/
