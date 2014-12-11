@@ -106,3 +106,27 @@ node[tag("shop") = parent_tag("shop")] ∈ *[shop] {
 node[tag("power") = parent_tag("power")] ∈ *[power] {
   throwWarning: tr("{0} inside {1}", concat("power=", tag("power")), concat("power=", tag("power")));
 }
+
+/* isolated nodes which should be part of a way, see ticket:#10825 */
+node:unconnected[barrier=entrance],
+node:unconnected[entrance],
+node:unconnected[traffic_calming],
+node:unconnected[highway=passing_place],
+node:unconnected[highway=mini_roundabout],
+node:unconnected[highway=motorway_junction],
+node:unconnected[highway=turning_loop],
+node:unconnected[highway=turning_circle],
+node:unconnected[highway=traffic_signals],
+node:unconnected[highway=crossing],
+node:unconnected[crossing],
+node:unconnected[railway=crossing],
+node:unconnected[railway=level_crossing],
+node:unconnected[railway=buffer_stop],
+node:unconnected[noexit],
+node:unconnected[waterway=dam],
+node:unconnected[waterway=weir],
+node:unconnected[waterway=waterfall],
+node:unconnected[amenity=ferry_terminal],
+node:unconnected[mountain_pass=yes] {
+  throwWarning: tr("{0} must be connected to a way", "{1.tag}");
+}
