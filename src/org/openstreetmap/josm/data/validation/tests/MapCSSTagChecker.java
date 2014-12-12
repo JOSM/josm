@@ -29,6 +29,7 @@ import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
@@ -532,7 +533,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @return all errors for the given primitive, with or without those of "info" severity
      */
     public synchronized Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
-        final ArrayList<TestError> r = new ArrayList<>();
+        final List<TestError> r = new ArrayList<>();
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         for (Set<TagCheck> schecks : checks.values()) {
             for (TagCheck check : schecks) {
@@ -627,6 +628,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     public Set<String> checkAsserts(final Collection<TagCheck> schecks) {
         Set<String> assertionErrors = new LinkedHashSet<>();
+        final DataSet ds = new DataSet();
         for (final TagCheck check : schecks) {
             if (Main.isDebugEnabled()) {
                 Main.debug("Check: "+check);
@@ -636,6 +638,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                     Main.debug("- Assertion: "+i);
                 }
                 final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey());
+                // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
+                ds.addPrimitive(p);
                 final boolean isError = Utils.exists(getErrorsForPrimitive(p, true), new Predicate<TestError>() {
                     @Override
                     public boolean evaluate(TestError e) {
@@ -648,6 +652,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                             check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
                     assertionErrors.add(error);
                 }
+                ds.removePrimitive(p);
             }
         }
         return assertionErrors;

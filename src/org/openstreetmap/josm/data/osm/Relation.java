@@ -474,7 +474,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     @Override
-    public void setDataset(DataSet dataSet) {
+    void setDataset(DataSet dataSet) {
         super.setDataset(dataSet);
         checkMembers();
         bbox = null; // bbox might have changed if relation was in ds, was removed, modified, added back to dataset
