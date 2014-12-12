@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
@@ -33,6 +36,8 @@ public class RemoteControl {
      */
     static final int protocolMajorVersion = 1;
     static final int protocolMinorVersion = 7;
+
+    private static final String LOCALHOST = "localhost";
 
     /**
      * Starts the remote control server
@@ -69,5 +74,25 @@ public class RemoteControl {
      */
     public static String getRemoteControlDir() {
         return Main.pref.getPreferencesDir() + "remotecontrol/";
+    }
+
+    /**
+     * Returns the inet address used for remote control.
+     * @return the inet address used for remote control
+     * @throws UnknownHostException if the local host name could not be resolved into an address.
+     * @since 7800
+     */
+    public static InetAddress getInetAddress() throws UnknownHostException {
+        String hostname = Main.pref.get("remote.control.host", LOCALHOST);
+        InetAddress result = InetAddress.getByName(hostname);
+        // Sometimes localhost resolution does not work as expected, see #10833
+        if (LOCALHOST.equalsIgnoreCase(hostname) && !LOCALHOST.equalsIgnoreCase(result.getHostName())) {
+            InetAddress localhostAddr = InetAddress.getLocalHost();
+            // Use this result if it's better. Not sure if it's a Java bug or not
+            if (LOCALHOST.equalsIgnoreCase(localhostAddr.getHostName())) {
+                result = localhostAddr;
+            }
+        }
+        return result;
     }
 }

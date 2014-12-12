@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.io.IOException;
 import java.net.BindException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -67,11 +66,9 @@ public class RemoteControlHttpServer extends Thread {
         super("RemoteControl HTTP Server");
         this.setDaemon(true);
         // Start the server socket with only 1 connection.
-        // Also make sure we only listen
-        // on the local interface so nobody from the outside can connect!
+        // Also make sure we only listen on the local interface so nobody from the outside can connect!
         // NOTE: On a dual stack machine with old Windows OS this may not listen on both interfaces!
-        this.server = new ServerSocket(port, 1,
-            InetAddress.getByName(Main.pref.get("remote.control.host", "localhost")));
+        this.server = new ServerSocket(port, 1, RemoteControl.getInetAddress());
     }
 
     /**
@@ -79,8 +76,8 @@ public class RemoteControlHttpServer extends Thread {
      */
     @Override
     public void run() {
-        Main.info(marktr("RemoteControl::Accepting connections on port {0}"),
-             Integer.toString(server.getLocalPort()));
+        Main.info(marktr("RemoteControl::Accepting connections on {0}:{1}"),
+                server.getInetAddress(), Integer.toString(server.getLocalPort()));
         while (true) {
             try {
                 @SuppressWarnings("resource")
