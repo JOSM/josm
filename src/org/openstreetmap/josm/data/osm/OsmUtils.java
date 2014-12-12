@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.TextTagParser;
 
@@ -64,7 +65,7 @@ public final class OsmUtils {
         CheckParameterUtil.ensureParameterNotNull(assertion, "assertion");
         final String[] x = assertion.split("\\s+", 2);
         final OsmPrimitive p = "n".equals(x[0]) || "node".equals(x[0])
-                ? new Node()
+                ? new Node(LatLon.ZERO)
                 : "w".equals(x[0]) || "way".equals(x[0])
                 ? new Way()
                 : "r".equals(x[0]) || "relation".equals(x[0])
