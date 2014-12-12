@@ -618,7 +618,7 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     @Override
-    public void setDataset(DataSet dataSet) {
+    void setDataset(DataSet dataSet) {
         super.setDataset(dataSet);
         checkNodes();
     }
