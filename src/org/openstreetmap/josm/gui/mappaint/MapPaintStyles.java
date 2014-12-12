@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -138,14 +139,24 @@ public final class MapPaintStyles {
         return getNodeIcon(tag, true);
     }
 
+    /**
+     * Returns the node icon that would be displayed for the given tag.
+     * @param tag The tag to look an icon for
+     * @param includeDeprecatedIcon if {@code true}, the special deprecated icon will be returned if applicable
+     * @return {@code null} if no icon found, or if the icon is deprecated and not wanted
+     */
     public static ImageIcon getNodeIcon(Tag tag, boolean includeDeprecatedIcon) {
         if (tag != null) {
+            DataSet ds = new DataSet();
             Node virtualNode = new Node(LatLon.ZERO);
             virtualNode.put(tag.getKey(), tag.getValue());
             StyleList styleList;
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
             try {
+                // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
+                ds.addPrimitive(virtualNode);
                 styleList = getStyles().generateStyles(virtualNode, 0.5, false).a;
+                ds.removePrimitive(virtualNode);
             } finally {
                 MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
             }
