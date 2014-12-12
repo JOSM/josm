@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.BindException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -379,11 +378,9 @@ public class RemoteControlHttpsServer extends Thread {
         }
 
         // Start the server socket with only 1 connection.
-        // Also make sure we only listen
-        // on the local interface so nobody from the outside can connect!
+        // Also make sure we only listen on the local interface so nobody from the outside can connect!
         // NOTE: On a dual stack machine with old Windows OS this may not listen on both interfaces!
-        this.server = factory.createServerSocket(port, 1,
-            InetAddress.getByName(Main.pref.get("remote.control.host", "localhost")));
+        this.server = factory.createServerSocket(port, 1, RemoteControl.getInetAddress());
 
         if (Main.isTraceEnabled() && server instanceof SSLServerSocket) {
             SSLServerSocket sslServer = (SSLServerSocket) server;
@@ -401,8 +398,8 @@ public class RemoteControlHttpsServer extends Thread {
      */
     @Override
     public void run() {
-        Main.info(marktr("RemoteControl::Accepting secure connections on port {0}"),
-             Integer.toString(server.getLocalPort()));
+        Main.info(marktr("RemoteControl::Accepting secure connections on {0}:{1}"),
+                server.getInetAddress(), Integer.toString(server.getLocalPort()));
         while (true) {
             try {
                 @SuppressWarnings("resource")
