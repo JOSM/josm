@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.logging.Logger;
 
 public class FeatureAdapter {
 
@@ -18,8 +19,13 @@ public class FeatureAdapter {
         // TODO: more i18n functions
     }
 
+    public static interface LoggingAdapter {
+        Logger getLogger(String name);
+    }
+
     private static BrowserAdapter browserAdapter = new DefaultBrowserAdapter();
     private static TranslationAdapter translationAdapter = new DefaultTranslationAdapter();
+    private static LoggingAdapter loggingAdapter = new DefaultLoggingAdapter();
 
     public static void registerBrowserAdapter(BrowserAdapter browserAdapter) {
         FeatureAdapter.browserAdapter = browserAdapter;
@@ -29,12 +35,20 @@ public class FeatureAdapter {
         FeatureAdapter.translationAdapter = translationAdapter;
     }
 
+    public static void registerLoggingAdapter(LoggingAdapter loggingAdapter) {
+        FeatureAdapter.loggingAdapter = loggingAdapter;
+    }
+
     public static void openLink(String url) {
         browserAdapter.openLink(url);
     }
 
     public static String tr(String text, Object... objects) {
         return translationAdapter.tr(text, objects);
+    }
+    
+    public static Logger getLogger(String name) {
+        return loggingAdapter.getLogger(name);
     }
 
     public static class DefaultBrowserAdapter implements BrowserAdapter {
@@ -58,6 +72,13 @@ public class FeatureAdapter {
         @Override
         public String tr(String text, Object... objects) {
             return MessageFormat.format(text, objects);
+        }
+    }
+
+    public static class DefaultLoggingAdapter implements LoggingAdapter {
+        @Override
+        public Logger getLogger(String name) {
+            return Logger.getLogger(name);
         }
     }
 }
