@@ -122,6 +122,7 @@ public class RegexValidator extends AbstractValidator {
      * @return <code>true</code> if the value is valid
      * otherwise <code>false</code>.
      */
+    @Override
     public boolean isValid(String value) {
         if (value == null) {
             return false;

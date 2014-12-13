@@ -83,18 +83,12 @@ public class OsmChangesetContentParser {
                 }
                 data.put(currentPrimitive, currentModificationType);
                 break;
-            case "osmChange":
-                // do nothing
-                break;
             case "create":
-                currentModificationType = null;
-                break;
             case "modify":
-                currentModificationType = null;
-                break;
             case "delete":
                 currentModificationType = null;
                 break;
+            case "osmChange":
             case "tag":
             case "nd":
             case "member":

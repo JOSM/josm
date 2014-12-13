@@ -982,8 +982,8 @@ public abstract class Main {
             dialog.getModel().populate(layersWithUnmodifiedChanges);
             dialog.setVisible(true);
             switch(dialog.getUserAction()) {
-            case CANCEL: return false;
             case PROCEED: return true;
+            case CANCEL:
             default: return false;
             }
         }

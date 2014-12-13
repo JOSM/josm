@@ -54,6 +54,7 @@ public class InetAddressValidator extends AbstractValidator {
      * @param inetAddress the string to validate
      * @return true if the string validates as an IP address
      */
+    @Override
     public boolean isValid(String inetAddress) {
         return isValidInet4Address(inetAddress);
     }

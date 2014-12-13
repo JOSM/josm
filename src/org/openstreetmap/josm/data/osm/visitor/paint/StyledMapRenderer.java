@@ -1457,7 +1457,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         private final int from;
         private final int to;
         private final List<StyleRecord> output;
-        private final DataSet data;
 
         private final ElemStyles styles = MapPaintStyles.getStyles();
 
@@ -1471,14 +1470,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
          * @param from first index of <code>input</code> to use
          * @param to last index + 1
          * @param output the list of styles to which styles will be added
-         * @param data the data set
          */
-        public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output, DataSet data) {
+        public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output) {
             this.input = input;
             this.from = from;
             this.to = to;
             this.output = output;
-            this.data = data;
             this.styles.setDrawMultipolygon(drawMultipolygon);
         }
 
@@ -1594,7 +1591,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 int from = i*bucketsize;
                 int to = Math.min((i+1)*bucketsize, prims.size());
                 List<StyleRecord> target = singleThread ? allStyleElems : new ArrayList<StyleRecord>(to - from);
-                tasks.add(new ComputeStyleListWorker(prims, from, to, target, data));
+                tasks.add(new ComputeStyleListWorker(prims, from, to, target));
             }
             if (singleThread) {
                 try {

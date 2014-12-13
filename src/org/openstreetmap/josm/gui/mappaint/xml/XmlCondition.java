@@ -3,8 +3,8 @@ package org.openstreetmap.josm.gui.mappaint.xml;
 
 import org.openstreetmap.josm.data.osm.OsmUtils;
 
-public class XmlCondition
-{
+public class XmlCondition {
+
     public String key;
     public String value;
     public String boolValue;
@@ -32,6 +32,7 @@ public class XmlCondition
       key = value = boolValue = null;
     }
 
+    @Override
     public String toString() {
       return "Rule["+key+","+(boolValue != null ? "b="+boolValue:"v="+value)+"]";
     }
