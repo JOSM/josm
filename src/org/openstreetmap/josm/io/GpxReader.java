@@ -404,9 +404,6 @@ public class GpxReader implements GpxConstants {
                     }
                     break;
                 case "time":
-                    currentWayPoint.put(localName, accumulator.toString());
-                    currentWayPoint.setTime();
-                    break;
                 case "cmt":
                 case "desc":
                     currentWayPoint.put(localName, accumulator.toString());

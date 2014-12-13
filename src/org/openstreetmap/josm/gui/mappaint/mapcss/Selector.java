@@ -413,6 +413,7 @@ public interface Selector {
          * @param env The environment to check
          * @return {@code true} if all conditions apply, false otherwise.
          */
+        @Override
         public boolean matches(Environment env) {
             if (conds == null) return true;
             for (Condition c : conds) {

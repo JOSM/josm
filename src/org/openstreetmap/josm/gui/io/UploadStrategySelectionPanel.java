@@ -251,8 +251,6 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         UploadStrategySpecification spec = new UploadStrategySpecification();
         switch(strategy) {
         case INDIVIDUAL_OBJECTS_STRATEGY:
-            spec.setStrategy(strategy);
-            break;
         case SINGLE_REQUEST_STRATEGY:
             spec.setStrategy(strategy);
             break;

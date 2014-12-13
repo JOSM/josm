@@ -1,15 +1,8 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.widgets;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.GBC;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -18,7 +11,15 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * A {@link JList} containing items, and {@link JButton}s to add/edit/delete items.
@@ -137,6 +138,7 @@ public class EditableList extends JPanel {
         return items;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         sourcesList.setEnabled(enabled);
         addSrcButton.setEnabled(enabled);

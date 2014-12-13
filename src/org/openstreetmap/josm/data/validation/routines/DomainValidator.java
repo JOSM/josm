@@ -125,6 +125,7 @@ public class DomainValidator extends AbstractValidator {
      * @param domain the parameter to check for domain name syntax
      * @return true if the parameter is a valid domain name
      */
+    @Override
     public boolean isValid(String domain) {
         String[] groups = domainRegex.match(domain);
         if (groups != null && groups.length > 0) {
