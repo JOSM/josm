@@ -35,6 +35,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.swing.Action;
 import javax.swing.InputMap;
@@ -614,6 +618,42 @@ public abstract class Main {
             }
         });
         FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
+        FeatureAdapter.registerLoggingAdapter(new FeatureAdapter.LoggingAdapter() {
+            @Override
+            public Logger getLogger(String name) {
+                Logger logger = Logger.getAnonymousLogger();
+                logger.setUseParentHandlers(false);
+                logger.setLevel(Level.ALL);
+                if (logger.getHandlers().length == 0) {
+                    logger.addHandler(new Handler() {
+                        @Override
+                        public void publish(LogRecord record) {
+                            String msg = MessageFormat.format(record.getMessage(), record.getParameters());
+                            if (record.getLevel().intValue() >= Level.SEVERE.intValue()) {
+                                Main.error(msg);
+                            } else if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
+                                Main.warn(msg);
+                            } else if (record.getLevel().intValue() >= Level.INFO.intValue()) {
+                                Main.info(msg);
+                            } else if (record.getLevel().intValue() >= Level.FINE.intValue()) {
+                                Main.debug(msg);
+                            } else {
+                                Main.trace(msg);
+                            }
+                        }
+
+                        @Override
+                        public void flush() {
+                        }
+
+                        @Override
+                        public void close() throws SecurityException {
+                        }
+                    });
+                }
+                return logger;
+            }
+        });
 
         if (initListener != null) {
             initListener.updateStatus(tr("Updating user interface"));
