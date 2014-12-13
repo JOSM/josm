@@ -405,26 +405,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
             }
         }
 
-        /** Load backward-compatiblity .etag file and if it exists move it to new .tags file*/
-        private void loadOldETagfromFile() {
-            File etagFile = new File(tileCacheDir, tile.getZoom() + "_"
-                    + tile.getXtile() + "_" + tile.getYtile() + ETAG_FILE_EXT);
-            if (!etagFile.exists()) return;
-            try (FileInputStream f = new FileInputStream(etagFile)) {
-                byte[] buf = new byte[f.available()];
-                f.read(buf);
-                String etag = new String(buf, TAGS_CHARSET.name());
-                tile.putValue("etag", etag);
-                if (etagFile.delete()) {
-                    saveTagsToFile();
-                }
-            } catch (IOException e) {
-                System.err.println("Failed to load compatiblity etag: " + e.getLocalizedMessage());
-            }
-        }
-
         protected void loadTagsFromFile() {
-            loadOldETagfromFile();
             File tagsFile = getTagsFile();
             try (BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(tagsFile), TAGS_CHARSET))) {
                 for (String line = f.readLine(); line != null; line = f.readLine()) {
