@@ -72,7 +72,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
 
 /**
@@ -1178,7 +1177,9 @@ public class ImageProvider {
         }
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
-            svg.render(g);
+            synchronized (getSvgUniverse()) {
+                svg.render(g);
+            }
         } catch (Exception ex) {
             Main.error("Unable to load svg: {0}", ex.getMessage());
             return null;
