@@ -1179,7 +1179,8 @@ public class ImageProvider {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
             svg.render(g);
-        } catch (SVGException ex) {
+        } catch (Exception ex) {
+            Main.error("Unable to load svg: {0}", ex.getMessage());
             return null;
         }
         return img;
