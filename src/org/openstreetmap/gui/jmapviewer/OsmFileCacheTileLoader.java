@@ -132,7 +132,8 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         Tile tile;
         File tileCacheDir;
         File tileFile = null;
-        Long fileAge = null;
+        Long fileMtime = null;
+        Long now = null; // current time in milliseconds (keep consistent value for the whole run)
 
         public FileLoadJob(Tile tile) {
             this.tile = tile;
@@ -152,10 +153,11 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                 tile.error = false;
                 tile.loading = true;
             }
+            now = System.currentTimeMillis();
             tileCacheDir = getSourceCacheDir(tile.getSource());
             
             if (loadTileFromFile(recheckAfter)) {
-                log.log(Level.FINEST, "TMS - found in tile cache: {0}", tile);
+                log.log(Level.FINE, "TMS - found in tile cache: {0}", tile);
                 tile.setLoaded(true);
                 listener.tileLoadingFinished(tile, true);
                 return;
@@ -173,7 +175,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                             tile.setLoaded(true);
                             tile.error = false;
                             listener.tileLoadingFinished(tile, true);
-                            log.log(Level.FINEST, "TMS - found stale tile in cache: {0}", tile);
+                            log.log(Level.FINE, "TMS - found stale tile in cache: {0}", tile);
                         } else {
                             // failed completely
                             tile.setLoaded(true);
@@ -192,15 +194,15 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         protected boolean loadOrUpdateTile() {
             try {
                 URLConnection urlConn = loadTileFromOsm(tile);
-                if (fileAge != null) {
+                if (fileMtime != null && now - fileMtime <= maxCacheFileAge) {
                     switch (tile.getSource().getTileUpdate()) {
                     case IfModifiedSince:
-                        urlConn.setIfModifiedSince(fileAge);
+                        urlConn.setIfModifiedSince(fileMtime);
                         break;
                     case LastModified:
-                        if (!isOsmTileNewer(fileAge)) {
-                            log.log(Level.FINEST, "TMS - LastModified test: local version is up to date: {0}", tile);
-                            tileFile.setLastModified(System.currentTimeMillis());
+                        if (!isOsmTileNewer(fileMtime)) {
+                            log.log(Level.FINE, "TMS - LastModified test: local version is up to date: {0}", tile);
+                            tileFile.setLastModified(now);
                             return true;
                         }
                         break;
@@ -215,8 +217,8 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                             break;
                         case ETag:
                             if (hasOsmTileETag(fileETag)) {
-                                log.log(Level.FINEST, "TMS - ETag test: local version is up to date: {0}", tile);
-                                tileFile.setLastModified(System.currentTimeMillis());
+                                log.log(Level.FINE, "TMS - ETag test: local version is up to date: {0}", tile);
+                                tileFile.setLastModified(now);
                                 return true;
                             }
                         }
@@ -228,14 +230,14 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                     // and the server answers with a HTTP 304 = "Not Modified"
                     switch (tile.getSource().getTileUpdate()) {
                     case IfModifiedSince:
-                        log.log(Level.FINEST, "TMS - IfModifiedSince test: local version is up to date: {0}", tile);
+                        log.log(Level.FINE, "TMS - IfModifiedSince test: local version is up to date: {0}", tile);
                         break;
                     case IfNoneMatch:
-                        log.log(Level.FINEST, "TMS - IfNoneMatch test: local version is up to date: {0}", tile);
+                        log.log(Level.FINE, "TMS - IfNoneMatch test: local version is up to date: {0}", tile);
                         break;
                     }
                     if (loadTileFromFile(maxCacheFileAge)) {
-                        tileFile.setLastModified(System.currentTimeMillis());
+                        tileFile.setLastModified(now);
                         return true;
                     }
                 }
@@ -245,7 +247,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
 
                 if ("no-tile".equals(tile.getValue("tile-info")))
                 {
-                    log.log(Level.FINEST, "TMS - No tile: tile-info=no-tile: {0}", tile);
+                    log.log(Level.FINE, "TMS - No tile: tile-info=no-tile: {0}", tile);
                     tile.setError("No tile at this zoom level");
                     return true;
                 } else {
@@ -258,7 +260,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                         if (buffer != null) {
                             tile.loadImage(new ByteArrayInputStream(buffer));
                             saveTileToFile(buffer);
-                            log.log(Level.FINEST, "TMS - downloaded tile from server: {0}", tile.getUrl());
+                            log.log(Level.FINE, "TMS - downloaded tile from server: {0}", tile.getUrl());
                             return true;
                         }
                     }
@@ -284,8 +286,8 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                     return false;
                 loadTagsFromFile();
 
-                fileAge = tileFile.lastModified();
-                if (System.currentTimeMillis() - fileAge > maxAge)
+                fileMtime = tileFile.lastModified();
+                if (now - fileMtime > maxAge)
                     return false;
 
                 if ("no-tile".equals(tile.getValue("tile-info"))) {
@@ -307,7 +309,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                 log.log(Level.WARNING, "TMS - Error while loading image from tile cache: {0}; {1}", new Object[]{e.getMessage(), tile});
                 tileFile.delete();
                 tileFile = null;
-                fileAge = null;
+                fileMtime = null;
             }
             return false;
         }
@@ -360,7 +362,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
             urlConn.setReadTimeout(30000); // 30 seconds read timeout
             // System.out.println("Tile age: " + new
             // Date(urlConn.getLastModified()) + " / "
-            // + new Date(fileAge));
+            // + new Date(fileMtime));
             long lastModified = urlConn.getLastModified();
             if (lastModified == 0)
                 return true; // no LastModified time returned
@@ -376,7 +378,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
             urlConn.setReadTimeout(30000); // 30 seconds read timeout
             // System.out.println("Tile age: " + new
             // Date(urlConn.getLastModified()) + " / "
-            // + new Date(fileAge));
+            // + new Date(fileMtime));
             String osmETag = urlConn.getHeaderField("ETag");
             if (osmETag == null)
                 return true;
@@ -400,7 +402,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
             ) {
                 f.write(rawData);
             } catch (Exception e) {
-                System.err.println("Failed to save tile content: " + e.getLocalizedMessage());
+                log.log(Level.SEVERE, "Failed to save tile content: {0}", e.getLocalizedMessage());
             }
         }
 
