@@ -666,8 +666,11 @@ public class ImageProvider {
         try (InputStream is = cf.getInputStream()) {
             switch (type) {
             case SVG:
-                URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(cf.getFile()).toString());
-                SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                SVGDiagram svg = null;
+                synchronized (getSvgUniverse()) {
+                    URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(cf.getFile()).toString());
+                    svg = getSvgUniverse().getDiagram(uri);
+                }
                 return svg == null ? null : new ImageResource(svg);
             case OTHER:
                 BufferedImage img = null;
@@ -705,8 +708,11 @@ public class ImageProvider {
                 }
                 if ("image/svg+xml".equals(mediatype)) {
                     String s = new String(bytes, StandardCharsets.UTF_8);
-                    URI uri = getSvgUniverse().loadSVG(new StringReader(s), URLEncoder.encode(s, "UTF-8"));
-                    SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                    SVGDiagram svg = null;
+                    synchronized (getSvgUniverse()) {
+                        URI uri = getSvgUniverse().loadSVG(new StringReader(s), URLEncoder.encode(s, "UTF-8"));
+                        svg = getSvgUniverse().getDiagram(uri);
+                    }
                     if (svg == null) {
                         Main.warn("Unable to process svg: "+s);
                         return null;
@@ -776,8 +782,11 @@ public class ImageProvider {
                 try (InputStream is = zipFile.getInputStream(entry)) {
                     switch (type) {
                     case SVG:
-                        URI uri = getSvgUniverse().loadSVG(is, entryName);
-                        SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                        SVGDiagram svg = null;
+                        synchronized (getSvgUniverse()) {
+                            URI uri = getSvgUniverse().loadSVG(is, entryName);
+                            svg = getSvgUniverse().getDiagram(uri);
+                        }
                         return svg == null ? null : new ImageResource(svg);
                     case OTHER:
                         while(size > 0)
@@ -807,8 +816,11 @@ public class ImageProvider {
     private static ImageResource getIfAvailableLocalURL(URL path, ImageType type) {
         switch (type) {
         case SVG:
-            URI uri = getSvgUniverse().loadSVG(path);
-            SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+            SVGDiagram svg = null;
+            synchronized (getSvgUniverse()) {
+                URI uri = getSvgUniverse().loadSVG(path);
+                svg = getSvgUniverse().getDiagram(uri);
+            }
             return svg == null ? null : new ImageResource(svg);
         case OTHER:
             BufferedImage img = null;
