@@ -2,6 +2,7 @@
 node[oneway],
 node[bridge?],
 node[sidewalk],
+node[footway],
 node[waterway=river],
 node[waterway=riverbank],
 node[waterway=canal],
