@@ -1396,15 +1396,17 @@ public final class TaggingPresetItems {
                 int[] intParts = new int[lm.getSize()];
                 int j = 0;
                 for (int i = 0; i < lm.getSize(); i++) {
-                    if (parts.contains((lm.getElementAt(i).value))) {
+                    final String value = lm.getElementAt(i).value;
+                    if (parts.contains(value)) {
                         intParts[j++]=i;
+                        parts.remove(value);
                     }
                 }
                 setSelectedIndices(Arrays.copyOf(intParts, j));
                 // check if we have actually managed to represent the full
                 // value with our presets. if not, cop out; we will not offer
                 // a selection list that threatens to ruin the value.
-                setEnabled(Utils.join(delimiter, parts).equals(getSelectedItem()));
+                setEnabled(parts.isEmpty());
             }
         }
 
