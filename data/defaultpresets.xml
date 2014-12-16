@@ -1160,6 +1160,10 @@
                 <text key="maxspeed" text="Max. speed (km/h)" />
             </optional>
         </item> <!-- Speed Camera -->
+        <item name="Traffic Mirror" icon="styles/standard/vehicle/traffic_mirror.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=traffic_mirror" />
+            <key key="highway" value="traffic_mirror" />
+        </item> <!-- Traffic Mirror -->
         <separator/>
         <item name="Elevator" icon="styles/standard/service/elevator.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=elevator"
