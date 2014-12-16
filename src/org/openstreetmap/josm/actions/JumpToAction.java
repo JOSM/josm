@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
@@ -39,6 +40,7 @@ public class JumpToAction extends JosmAction {
         super(tr("Jump To Position"), (ImageProvider) null, tr("Opens a dialog that allows to jump to a specific location"),
                 Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump To Position")),
                         KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", true);
+        putValue("help", ht("/Action/JumpToPosition"));
     }
 
     private final JosmTextField url = new JosmTextField();
