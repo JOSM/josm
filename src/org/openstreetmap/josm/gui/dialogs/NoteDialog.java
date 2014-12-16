@@ -94,6 +94,7 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
         sortAction = new SortAction();
         uploadAction = new UploadNotesAction();
         buildDialog();
+        MapView.addLayerChangeListener(this);
     }
 
     @Override
@@ -156,14 +157,10 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
     }
 
     @Override
-    public void showNotify() {
-        MapView.addLayerChangeListener(this);
-    }
+    public void showNotify() { }
 
     @Override
-    public void hideNotify() {
-        MapView.removeLayerChangeListener(this);
-    }
+    public void hideNotify() { }
 
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) { }
