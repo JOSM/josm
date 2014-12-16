@@ -483,8 +483,8 @@ public class DownloadDialog extends JDialog  {
                 );
                 return;
             }
-            //TODO: add notes into this logic once they are fully enabled in core
-            if (!isDownloadOsmData() && !isDownloadGpxData()) {
+            if (!isDownloadOsmData() && !isDownloadGpxData() && !isDownloadNotes()) {
+                //TODO: When notes are enabled, change this message to include downloading notes
                 JOptionPane.showMessageDialog(
                         DownloadDialog.this,
                         tr("<html>Neither <strong>{0}</strong> nor <strong>{1}</strong> is enabled.<br>"
