@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagConstraints;
@@ -74,6 +75,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                         KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
                 true
         );
+        putValue("help", ht("/Menu/Imagery"));
 
         // Add default services
         services.add(
