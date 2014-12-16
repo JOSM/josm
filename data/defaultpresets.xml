@@ -7585,7 +7585,6 @@
             <space />
             <text key="addr:housenumber" text="House number" match="key" auto_increment="-2,-1,+1,+2" />
             <optional>
-                <text key="addr:housename" text="House name" match="key" alternative_autocomplete_keys="name" />
                 <text key="addr:street" text="Street name" use_last_as_default="force" match="key" alternative_autocomplete_keys="name" />
                 <text key="addr:place" text="Place name" use_last_as_default="force" match="key" alternative_autocomplete_keys="name" />
                 <text key="addr:city" text="City name" use_last_as_default="force" match="key" />
@@ -7593,6 +7592,7 @@
                 <combo key="addr:country" text="Country code" values_from="java.util.Locale#getISOCountries" use_last_as_default="force" match="key" />
             </optional>
             <optional text="Optional values for specific countries">
+                <text key="addr:housename" text="House name" match="key" alternative_autocomplete_keys="name" />
                 <text key="addr:hamlet" text="Hamlet" match="key" />
                 <text key="addr:suburb" text="Suburb" use_last_as_default="force" match="key" />
                 <text key="addr:subdistrict" text="Subdistrict" use_last_as_default="force" match="key" />
