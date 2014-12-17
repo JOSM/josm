@@ -450,7 +450,7 @@ public class SelectionListDialog extends ToggleDialog  {
             if (box.getBounds() == null)
                 return;
             box.enlargeBoundingBox();
-            Main.map.mapView.recalculateCenterScale(box);
+            Main.map.mapView.zoomTo(box);
         }
 
         protected void updateEnabledState() {

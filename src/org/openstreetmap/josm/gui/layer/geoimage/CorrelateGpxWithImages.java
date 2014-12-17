@@ -745,7 +745,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     if (! boundingBoxedLayerFound) {
                         BoundingXYVisitor bbox = new BoundingXYVisitor();
                         yLayer.visitBoundingBox(bbox);
-                        Main.map.mapView.recalculateCenterScale(bbox);
+                        Main.map.mapView.zoomTo(bbox);
                     }
 
                     for (ImageEntry ie : yLayer.data) {

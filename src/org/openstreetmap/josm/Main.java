@@ -699,8 +699,8 @@ public abstract class Main {
      * 
      * @param layer the layer
      * 
-     * @see #addLayer(org.openstreetmap.josm.gui.layer.Layer, org.openstreetmap.josm.data.ProjectionBounds)
-     * @see #addLayer(org.openstreetmap.josm.gui.layer.Layer, org.openstreetmap.josm.data.ViewportData)
+     * @see #addLayer(Layer, ProjectionBounds)
+     * @see #addLayer(Layer, ViewportData)
      */
     public final void addLayer(final Layer layer) {
         BoundingXYVisitor v = new BoundingXYVisitor();
@@ -714,10 +714,11 @@ public abstract class Main {
      * If no map exists, create one.
      * 
      * @param layer the layer
-     * @param bounds the bounds of the layer (target zoom area)
+     * @param bounds the bounds of the layer (target zoom area); can be null, then
+     * the viewport isn't changed
      */
     public final synchronized void addLayer(final Layer layer, ProjectionBounds bounds) {
-        addLayer(layer, new ViewportData(bounds));
+        addLayer(layer, bounds == null ? null : new ViewportData(bounds));
     }
 
     /**
@@ -726,7 +727,8 @@ public abstract class Main {
      * If no map exists, create one.
      * 
      * @param layer the layer
-     * @param viewport the viewport to zoom to
+     * @param viewport the viewport to zoom to; can be null, then the viewport
+     * isn't changed
      */
     public final synchronized void addLayer(final Layer layer, ViewportData viewport) {
         boolean noMap = map == null;
@@ -737,6 +739,8 @@ public abstract class Main {
         map.mapView.addLayer(layer);
         if (noMap) {
             Main.map.setVisible(true);
+        } else if (viewport != null) {
+            Main.map.mapView.zoomTo(viewport);
         }
     }
 

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Data class to keep viewport information.
@@ -27,12 +28,15 @@ public class ViewportData {
      * @param scale Scale factor in east-/north-units per pixel
      */
     public ViewportData(EastNorth center, Double scale) {
+        CheckParameterUtil.ensureParameterNotNull(center);
+        CheckParameterUtil.ensureParameterNotNull(scale);
         this.center = center;
         this.scale = scale;
         this.bounds = null;
     }
 
     public ViewportData(ProjectionBounds bounds) {
+        CheckParameterUtil.ensureParameterNotNull(bounds);
         this.center = null;
         this.scale = null;
         this.bounds = bounds;

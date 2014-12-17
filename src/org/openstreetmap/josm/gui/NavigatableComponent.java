@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -579,6 +580,34 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void zoomTo(Bounds box) {
         zoomTo(new ProjectionBounds(getProjection().latlon2eastNorth(box.getMin()),
                 getProjection().latlon2eastNorth(box.getMax())));
+    }
+
+    public void zoomTo(ViewportData viewport) {
+        if (viewport == null) return;
+        if (viewport.getBounds() != null) {
+            BoundingXYVisitor box = new BoundingXYVisitor();
+            box.visit(viewport.getBounds());
+            zoomTo(box);
+        } else {
+            zoomTo(viewport.getCenter(), viewport.getScale(), true);
+        }
+    }
+
+    /**
+     * Set the new dimension to the view.
+     */
+    public void zoomTo(BoundingXYVisitor box) {
+        if (box == null) {
+            box = new BoundingXYVisitor();
+        }
+        if (box.getBounds() == null) {
+            box.visit(getProjection().getWorldBoundsLatLon());
+        }
+        if (!box.hasExtend()) {
+            box.enlargeBoundingBox();
+        }
+
+        zoomTo(box.getBounds());
     }
 
     private class ZoomData {
