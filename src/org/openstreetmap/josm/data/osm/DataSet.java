@@ -25,6 +25,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -38,6 +39,7 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -1347,4 +1349,16 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
     public void projectionChanged(Projection oldValue, Projection newValue) {
         invalidateEastNorthCache();
     }
+
+    public ProjectionBounds getDataSourceBoundingBox() {
+        BoundingXYVisitor bbox = new BoundingXYVisitor();
+        for (DataSource source : dataSources) {
+            bbox.visit(source.bounds);
+        }
+        if (bbox.hasExtend()) {
+            return bbox.getBounds();
+        }
+        return null;
+    }
+
 }

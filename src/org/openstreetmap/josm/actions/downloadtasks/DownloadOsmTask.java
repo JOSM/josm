@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -249,13 +250,20 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             return createNewLayer(null);
         }
 
-        protected void computeBboxAndCenterScale(Bounds bounds) {
+        protected ProjectionBounds computeBbox(Bounds bounds) {
             BoundingXYVisitor v = new BoundingXYVisitor();
             if (bounds != null) {
                 v.visit(bounds);
             } else {
                 v.computeBoundingBox(dataSet.getNodes());
             }
+            return v.getBounds();
+        }
+
+        protected void computeBboxAndCenterScale(Bounds bounds) {
+            ProjectionBounds pb = computeBbox(bounds);
+            BoundingXYVisitor v = new BoundingXYVisitor();
+            v.visit(pb);
             Main.map.mapView.recalculateCenterScale(v);
         }
 
@@ -266,15 +274,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 // or it is not clear which layer to merge to
                 //
                 final OsmDataLayer layer = createNewLayer(newLayerName);
-                final boolean isDisplayingMapView = Main.isDisplayingMapView();
-
-                Main.main.addLayer(layer);
-
-                // If the mapView is not there yet, we cannot calculate the bounds (see constructor of MapView).
-                // Otherwise jump to the current download.
-                if (isDisplayingMapView) {
-                    computeBboxAndCenterScale(bounds);
-                }
+                Main.main.addLayer(layer, computeBbox(bounds));
                 return layer;
             }
             return null;

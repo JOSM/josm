@@ -64,6 +64,7 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -71,6 +72,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -691,12 +693,45 @@ public abstract class Main {
     }
 
     /**
-     * Add a new layer to the map. If no map exists, create one.
+     * Add a new layer to the map.
+     * 
+     * If no map exists, create one.
+     * 
+     * @param layer the layer
+     * 
+     * @see #addLayer(org.openstreetmap.josm.gui.layer.Layer, org.openstreetmap.josm.data.ProjectionBounds)
+     * @see #addLayer(org.openstreetmap.josm.gui.layer.Layer, org.openstreetmap.josm.data.ViewportData)
      */
-    public final synchronized void addLayer(final Layer layer) {
+    public final void addLayer(final Layer layer) {
+        BoundingXYVisitor v = new BoundingXYVisitor();
+        layer.visitBoundingBox(v);
+        addLayer(layer, v.getBounds());
+    }
+
+    /**
+     * Add a new layer to the map.
+     * 
+     * If no map exists, create one.
+     * 
+     * @param layer the layer
+     * @param bounds the bounds of the layer (target zoom area)
+     */
+    public final synchronized void addLayer(final Layer layer, ProjectionBounds bounds) {
+        addLayer(layer, new ViewportData(bounds));
+    }
+
+    /**
+     * Add a new layer to the map.
+     * 
+     * If no map exists, create one.
+     * 
+     * @param layer the layer
+     * @param viewport the viewport to zoom to
+     */
+    public final synchronized void addLayer(final Layer layer, ViewportData viewport) {
         boolean noMap = map == null;
         if (noMap) {
-            createMapFrame(layer, null);
+            createMapFrame(layer, viewport);
         }
         layer.hookUpMapView();
         map.mapView.addLayer(layer);
