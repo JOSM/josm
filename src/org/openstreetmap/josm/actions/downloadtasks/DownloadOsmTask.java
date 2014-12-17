@@ -264,7 +264,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             ProjectionBounds pb = computeBbox(bounds);
             BoundingXYVisitor v = new BoundingXYVisitor();
             v.visit(pb);
-            Main.map.mapView.recalculateCenterScale(v);
+            Main.map.mapView.zoomTo(v);
         }
 
         protected OsmDataLayer addNewLayerIfRequired(String newLayerName, Bounds bounds) {

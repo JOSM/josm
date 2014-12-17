@@ -243,7 +243,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                 public void run() {
                     BoundingXYVisitor bbox1 = new BoundingXYVisitor();
                     bbox1.visit(bbox);
-                    Main.map.mapView.recalculateCenterScale(bbox1);
+                    Main.map.mapView.zoomTo(bbox1);
                 }
             });
         }

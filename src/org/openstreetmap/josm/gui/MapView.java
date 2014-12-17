@@ -528,13 +528,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      */
     @Override public void paint(Graphics g) {
         if (initialViewport != null) {
-            if (initialViewport.getBounds() != null) {
-                BoundingXYVisitor box = new BoundingXYVisitor();
-                box.visit(initialViewport.getBounds());
-                recalculateCenterScale(box);
-            } else {
-                zoomTo(initialViewport.getCenter(), initialViewport.getScale(), true);
-            }
+            zoomTo(initialViewport);
             initialViewport = null;
         }
         if (BugReportExceptionHandler.exceptionHandlingInProgress())
@@ -692,19 +686,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Set the new dimension to the view.
+     * 
+     * @deprecated use #zoomTo(BoundingXYVisitor)
      */
+    @Deprecated
     public void recalculateCenterScale(BoundingXYVisitor box) {
-        if (box == null) {
-            box = new BoundingXYVisitor();
-        }
-        if (box.getBounds() == null) {
-            box.visit(getProjection().getWorldBoundsLatLon());
-        }
-        if (!box.hasExtend()) {
-            box.enlargeBoundingBox();
-        }
-
-        zoomTo(box.getBounds());
+        zoomTo(box);
     }
 
     /**

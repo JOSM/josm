@@ -84,7 +84,7 @@ public class AutoScaleAction extends JosmAction {
         // in most other cases as well.
         bboxCalculator.enlargeBoundingBox();
         if (bboxCalculator.getBounds() != null) {
-            Main.map.mapView.recalculateCenterScale(bboxCalculator);
+            Main.map.mapView.zoomTo(bboxCalculator);
         }
     }
 
@@ -173,7 +173,7 @@ public class AutoScaleAction extends JosmAction {
             default:
                 BoundingXYVisitor bbox = getBoundingBox();
                 if (bbox != null && bbox.getBounds() != null) {
-                    Main.map.mapView.recalculateCenterScale(bbox);
+                    Main.map.mapView.zoomTo(bbox);
                 }
             }
         }
