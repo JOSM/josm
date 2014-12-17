@@ -649,7 +649,27 @@ node[highway=give_way] {
     text: auto;
 }
 node[highway=traffic_signals] {
-    icon-image: "vehicle/restriction/traffic-light.png";
+    icon-image: "vehicle/traffic_signals.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=traffic_signals][crossing] {
+    icon-image: "vehicle/traffic_signals_crossing.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=traffic_signals][crossing_ref=zebra] {
+    icon-image: "vehicle/traffic_signals_crossing_ref_zebra.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=traffic_signals][crossing=island] {
+    icon-image: "vehicle/traffic_signals_crossing_island.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=traffic_signals][crossing=traffic_signals] {
+    icon-image: "vehicle/traffic_signals_crossing_traffic_signals.svg";
     set icon_z17;
     text: auto;
 }
@@ -689,7 +709,7 @@ node[highway=crossing][crossing_ref=zebra] {
     text: auto;
 }
 node[highway=crossing][crossing=traffic_signals] {
-    icon-image: "vehicle/crossing_traffic_signals.png";
+    icon-image: "vehicle/crossing_traffic_signals.svg";
     set icon_z17;
     text: auto;
 }
