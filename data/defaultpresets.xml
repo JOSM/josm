@@ -1034,7 +1034,7 @@
             </optional>
         </item> <!-- Rest Area -->
         <separator/>
-        <item name="Traffic Signal" icon="presets/traffic-light.png" type="node" preset_name_label="true">
+        <item name="Traffic Signal" icon="styles/standard/vehicle/traffic_signals.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=traffic_signals"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=traffic_signals"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=traffic_signals"
