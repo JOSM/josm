@@ -31,6 +31,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -180,6 +181,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     private final Object paintRequestLock = new Object();
     private Rectangle paintRect = null;
     private Polygon paintPoly = null;
+
+    protected ViewportData initialViewport;
 
     /**
      * Constructs a new {@code NavigatableComponent}.
@@ -405,11 +408,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * Zoom to the given coordinate.
+     * Zoom to the given coordinate and scale.
+     *
      * @param newCenter The center x-value (easting) to zoom to.
      * @param newScale The scale to use.
      */
     public void zoomTo(EastNorth newCenter, double newScale) {
+        zoomTo(newCenter, newScale, false);
+    }
+
+    /**
+     * Zoom to the given coordinate and scale.
+     *
+     * @param newCenter The center x-value (easting) to zoom to.
+     * @param newScale The scale to use.
+     * @param initial true if this call initializes the viewport.
+     */
+    public void zoomTo(EastNorth newCenter, double newScale, boolean initial) {
         Bounds b = getProjection().getWorldBoundsLatLon();
         LatLon cl = Projections.inverseProject(newCenter);
         boolean changed = false;
@@ -445,30 +460,40 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
 
         if (!newCenter.equals(center) || (scale != newScale)) {
-            pushZoomUndo(center, scale);
-            zoomNoUndoTo(newCenter, newScale);
+            if (!initial) {
+                pushZoomUndo(center, scale);
+            }
+            zoomNoUndoTo(newCenter, newScale, initial);
         }
     }
 
     /**
      * Zoom to the given coordinate without adding to the zoom undo buffer.
+     *
      * @param newCenter The center x-value (easting) to zoom to.
      * @param newScale The scale to use.
+     * @param initial true if this call initializes the viewport.
      */
-    private void zoomNoUndoTo(EastNorth newCenter, double newScale) {
+    private void zoomNoUndoTo(EastNorth newCenter, double newScale, boolean intial) {
         if (!newCenter.equals(center)) {
             EastNorth oldCenter = center;
             center = newCenter;
-            firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
+            if (!intial) {
+                firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
+            }
         }
         if (scale != newScale) {
             double oldScale = scale;
             scale = newScale;
-            firePropertyChange(PROPNAME_SCALE, oldScale, newScale);
+            if (!intial) {
+                firePropertyChange(PROPNAME_SCALE, oldScale, newScale);
+            }
         }
 
-        repaint();
-        fireZoomChanged();
+        if (!intial) {
+            repaint();
+            fireZoomChanged();
+        }
     }
 
     public void zoomTo(EastNorth newCenter) {
@@ -594,7 +619,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (!zoomUndoBuffer.isEmpty()) {
             ZoomData zoom = zoomUndoBuffer.pop();
             zoomRedoBuffer.push(new ZoomData(center, scale));
-            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale());
+            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale(), false);
         }
     }
 
@@ -602,7 +627,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (!zoomRedoBuffer.isEmpty()) {
             ZoomData zoom = zoomRedoBuffer.pop();
             zoomUndoBuffer.push(new ZoomData(center, scale));
-            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale());
+            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale(), false);
         }
     }
 

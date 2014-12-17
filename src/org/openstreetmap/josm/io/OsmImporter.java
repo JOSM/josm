@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -31,8 +32,8 @@ public class OsmImporter extends FileImporter {
      */
     public static class OsmImporterData {
 
-        private OsmDataLayer layer;
-        private Runnable postLayerTask;
+        private final OsmDataLayer layer;
+        private final Runnable postLayerTask;
 
         public OsmImporterData(OsmDataLayer layer, Runnable postLayerTask) {
             this.layer = layer;
@@ -101,9 +102,15 @@ public class OsmImporter extends FileImporter {
         GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {
-                Main.main.addLayer(data.layer);
-                data.postLayerTask.run();
-                data.layer.onPostLoadFromFile();
+                OsmDataLayer layer = data.getLayer();
+                BoundingXYVisitor v = new BoundingXYVisitor();
+                v.visit(layer.data.getDataSourceBoundingBox());
+                if (!v.hasExtend()) {
+                    v.computeBoundingBox(layer.data.getNodes());
+                }
+                Main.main.addLayer(layer, v.getBounds());
+                data.getPostLayerTask().run();
+                data.getLayer().onPostLoadFromFile();
             }
         });
     }

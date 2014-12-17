@@ -83,4 +83,7 @@ public class ProjectionBounds {
         return new EastNorth(maxEast, maxNorth);
     }
 
+    public boolean hasExtend() {
+        return minEast != maxEast || minNorth != maxNorth;
+    }
 }

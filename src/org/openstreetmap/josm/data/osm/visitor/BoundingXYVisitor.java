@@ -84,9 +84,8 @@ public class BoundingXYVisitor extends AbstractVisitor {
         }
     }
 
-    public boolean hasExtend()
-    {
-        return bounds != null && !bounds.getMin().equals(bounds.getMax());
+    public boolean hasExtend() {
+        return bounds != null && bounds.hasExtend();
     }
 
     /**
