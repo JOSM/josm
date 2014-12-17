@@ -139,6 +139,14 @@ way[junction                   ][!highway],
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
 }
 
+/* {0.tag} together with {1.tag}, see #10851 */
+*[sidewalk=yes][foot=no],
+*[sidewalk=left][foot=no],
+*[sidewalk=right][foot=no],
+*[sidewalk=both][foot=no] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+}
+
 /* {0} on suspicious object */
 *[tunnel  ][!highway][!railway][!waterway][public_transport != platform][man_made != pipeline],
 *[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport != platform][man_made !~ /^(bridge|pipeline)$/][building != bridge],
