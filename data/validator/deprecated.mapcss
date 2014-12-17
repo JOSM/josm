@@ -329,15 +329,21 @@
   fixAdd: "park_ride=yes";
 }
 
-/* see #10661 */
-*[barrier=yes] {
+/* see #10661, #10837 */
+*[barrier=yes],
+*[amenity=yes],
+*[place=yes] {
   throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by a specific value.", "{0.key}", "{0.value}");
 }
 
-/* see #10693 - http://wiki.openstreetmap.org/wiki/Proposed_features/drop_recommendation_for_place_name */
+/* see #10693 - http://wiki.openstreetmap.org/wiki/Proposed_features/drop_recommendation_for_place_name , #10837 */
 *[place_name][!name] {
   throwWarning: tr("{0} should be replaced with {1}", "{0.key}", "{1.key}");
   fixChangeKey: "place_name => name";
+}
+*[place][place_name = *name] {
+  throwWarning: tr("{0} = {1}; remove {0}", "{1.key}", "{1.value}");
+  fixRemove: "{1.key}";
 }
 
 way[sidewalk=yes] {
@@ -353,4 +359,11 @@ way[sidewalk=yes] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   fixRemove: "waterway";
   fixAdd: "mooring=yes";
+}
+
+/* see #10837 */
+*[building][levels] {
+  throwWarning: tr("{0} is deprecated", "{1.key}");
+  suggestAlternative: "building:levels";
+  fixChangeKey: "levels => building:levels";
 }
