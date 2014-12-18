@@ -45,6 +45,8 @@ import java.util.Arrays;
  *         (<code>.arpa</code>, etc.)</li>
  *     <li>{@link #isValidGenericTld} - validates generic TLDs
  *         (<code>.com, .org</code>, etc.)</li>
+ *     <li>{@link #isValidIdnTld} - validates IDN TLDs
+ *         (<code>.xn--*</code>, etc.)</li>
  *     <li>{@link #isValidCountryCodeTld} - validates country code TLDs
  *         (<code>.us, .uk, .cn</code>, etc.)</li>
  *   </ul>
@@ -63,8 +65,12 @@ public class DomainValidator extends AbstractValidator {
     // Regular expression strings for hostnames (derived from RFC2396 and RFC 1123)
     private static final String DOMAIN_LABEL_REGEX = "\\p{Alnum}(?>[\\p{Alnum}-]*\\p{Alnum})*";
     private static final String TOP_LABEL_REGEX = "\\p{Alpha}{2,}";
+    // JOSM PATCH BEGIN
+    // See #10862 - IDN TLDs in ASCII form
+    private static final String TOP_LABEL_IDN_REGEX = "(?:xn|XN)--\\p{Alnum}{2,}(?:-\\p{Alpha}{2,})?";
     private static final String DOMAIN_NAME_REGEX =
-            "^(?:" + DOMAIN_LABEL_REGEX + "\\.)+" + "(" + TOP_LABEL_REGEX + ")$";
+            "^(?:" + DOMAIN_LABEL_REGEX + "\\.)+" + "(" + TOP_LABEL_REGEX + "|" + TOP_LABEL_IDN_REGEX + ")$";
+    // JOSM PATCH END
 
     private final boolean allowLocal;
 
@@ -151,6 +157,7 @@ public class DomainValidator extends AbstractValidator {
         }
         return isValidInfrastructureTld(tld)
                 || isValidGenericTld(tld)
+                || isValidIdnTld(tld)
                 || isValidCountryCodeTld(tld);
     }
 
@@ -174,6 +181,17 @@ public class DomainValidator extends AbstractValidator {
      */
     public boolean isValidGenericTld(String gTld) {
         return Arrays.binarySearch(GENERIC_TLDS, chompLeadingDot(gTld.toLowerCase())) >= 0;
+    }
+
+    /**
+     * Returns true if the specified <code>String</code> matches any
+     * IANA-defined IDN top-level domain. Leading dots are ignored
+     * if present. The search is case-sensitive.
+     * @param iTld the parameter to check for IDN TLD status
+     * @return true if the parameter is an IDN TLD
+     */
+    public boolean isValidIdnTld(String iTld) {
+        return Arrays.binarySearch(IDN_TLDS, chompLeadingDot(iTld.toUpperCase())) >= 0;
     }
 
     /**
@@ -633,6 +651,90 @@ public class DomainValidator extends AbstractValidator {
         "zone",
     };
 
+    // JOSM PATCH BEGIN
+    // see #10862 - list of IDN TLDs taken from IANA on 2014-12-18
+    private static final String[] IDN_TLDS = new String[] {
+        "XN--1QQW23A",
+        "XN--3BST00M",
+        "XN--3DS443G",
+        "XN--3E0B707E",
+        "XN--45BRJ9C",
+        "XN--45Q11C",
+        "XN--4GBRIM",
+        "XN--55QW42G",
+        "XN--55QX5D",
+        "XN--6FRZ82G",
+        "XN--6QQ986B3XL",
+        "XN--80ADXHKS",
+        "XN--80AO21A",
+        "XN--80ASEHDB",
+        "XN--80ASWG",
+        "XN--90A3AC",
+        "XN--C1AVG",
+        "XN--CG4BKI",
+        "XN--CLCHC0EA0B2G2A9GCD",
+        "XN--CZR694B",
+        "XN--CZRS0T",
+        "XN--CZRU2D",
+        "XN--D1ACJ3B",
+        "XN--D1ALF",
+        "XN--FIQ228C5HS",
+        "XN--FIQ64B",
+        "XN--FIQS8S",
+        "XN--FIQZ9S",
+        "XN--FLW351E",
+        "XN--FPCRJ9C3D",
+        "XN--FZC2C9E2C",
+        "XN--GECRJ9C",
+        "XN--H2BRJ9C",
+        "XN--HXT814E",
+        "XN--I1B6B1A6A2E",
+        "XN--IO0A7I",
+        "XN--J1AMH",
+        "XN--J6W193G",
+        "XN--KPRW13D",
+        "XN--KPRY57D",
+        "XN--KPUT3I",
+        "XN--L1ACC",
+        "XN--LGBBAT1AD8J",
+        "XN--MGB9AWBF",
+        "XN--MGBA3A4F16A",
+        "XN--MGBAAM7A8H",
+        "XN--MGBAB2BD",
+        "XN--MGBAYH7GPA",
+        "XN--MGBBH1A71E",
+        "XN--MGBC0A9AZCG",
+        "XN--MGBERP4A5D4AR",
+        "XN--MGBX4CD0AB",
+        "XN--NGBC5AZD",
+        "XN--NODE",
+        "XN--NQV7F",
+        "XN--NQV7FS00EMA",
+        "XN--O3CW4H",
+        "XN--OGBPF8FL",
+        "XN--P1ACF",
+        "XN--P1AI",
+        "XN--PGBS0DH",
+        "XN--Q9JYB4C",
+        "XN--QCKA1PMC",
+        "XN--RHQV96G",
+        "XN--S9BRJ9C",
+        "XN--SES554G",
+        "XN--UNUP4Y",
+        "XN--VERMGENSBERATER-CTB",
+        "XN--VERMGENSBERATUNG-PWB",
+        "XN--VHQUV",
+        "XN--WGBH1C",
+        "XN--WGBL6A",
+        "XN--XHQ521B",
+        "XN--XKC2AL3HYE2A",
+        "XN--XKC2DL3A5EE0H",
+        "XN--YFRO4I67O",
+        "XN--YGBI2AMMX",
+        "XN--ZFR164B",
+    };
+    // END JOSM PATCH
+
     private static final String[] COUNTRY_CODE_TLDS = new String[] {
         "ac",                 // Ascension Island
         "ad",                 // Andorra
@@ -896,6 +998,7 @@ public class DomainValidator extends AbstractValidator {
         Arrays.sort(INFRASTRUCTURE_TLDS);
         Arrays.sort(COUNTRY_CODE_TLDS);
         Arrays.sort(GENERIC_TLDS);
+        Arrays.sort(IDN_TLDS);
         Arrays.sort(LOCAL_TLDS);
     }
 }
