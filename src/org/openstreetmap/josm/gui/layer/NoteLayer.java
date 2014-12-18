@@ -49,20 +49,17 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
     public NoteLayer(List<Note> notes, String name) {
         super(name);
         noteData = new NoteData(notes);
-        init();
     }
 
     /** Convenience constructor that creates a layer with an empty note list */
     public NoteLayer() {
         super(tr("Notes"));
         noteData = new NoteData();
-        init();
     }
 
-    private void init() {
-        if (Main.map != null && Main.map.mapView != null) {
-            Main.map.mapView.addMouseListener(this);
-        }
+    @Override
+    public void hookUpMapView() {
+        Main.map.mapView.addMouseListener(this);
     }
 
     /**
