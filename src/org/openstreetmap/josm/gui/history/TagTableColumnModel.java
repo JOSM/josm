@@ -8,17 +8,17 @@ import javax.swing.table.TableColumn;
 
 /**
  * The {@link javax.swing.table.TableColumnModel} for the table with the list of tags
- *
+ * @since 1709
  */
-public class TagTableColumnModel extends DefaultTableColumnModel{
+public class TagTableColumnModel extends DefaultTableColumnModel {
     protected void createColumns() {
         TableColumn col = null;
 
         TagTableCellRenderer renderer = new TagTableCellRenderer();
 
-        // column 0 - Name
+        // column 0 - Key
         col = new TableColumn(0);
-        col.setHeaderValue(tr("Name"));
+        col.setHeaderValue(tr("Key"));
         col.setCellRenderer(renderer);
         addColumn(col);
 
@@ -30,6 +30,9 @@ public class TagTableColumnModel extends DefaultTableColumnModel{
 
     }
 
+    /**
+     * Constructs a new {@code TagTableColumnModel}.
+     */
     public TagTableColumnModel() {
         createColumns();
     }
