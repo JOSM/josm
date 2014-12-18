@@ -45,6 +45,7 @@ import org.openstreetmap.gui.jmapviewer.JobDispatcher;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
+import org.openstreetmap.gui.jmapviewer.TMSFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
@@ -109,15 +110,21 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser", true);
     public static final IntegerProperty PROP_TMS_JOBS = new IntegerProperty("tmsloader.maxjobs", 25);
     public static final StringProperty PROP_TILECACHE_DIR;
+    
+    private static final boolean newcache = Main.pref.getBoolean("tms.newcache");
 
     static {
         String defPath = null;
         try {
-            defPath = OsmFileCacheTileLoader.getDefaultCacheDir().getAbsolutePath();
+            if (newcache) {
+                defPath = new File(Main.pref.getCacheDirectory(), "tms").getAbsolutePath();
+            } else {
+                defPath = OsmFileCacheTileLoader.getDefaultCacheDir().getAbsolutePath();
+            }
         } catch (SecurityException e) {
             Main.warn(e);
         }
-        PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache_path", defPath);
+        PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + (newcache ? ".tilecache" : ".tilecache_path"), defPath);
     }
 
     public interface TileLoaderFactory {
@@ -134,7 +141,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
             if (cachePath != null && !cachePath.isEmpty()) {
                 try {
-                    OsmFileCacheTileLoader loader = new OsmFileCacheTileLoader(listener, new File(cachePath));
+                    OsmFileCacheTileLoader loader;
+                    if (newcache) {
+                        loader = new TMSFileCacheTileLoader(listener, new File(cachePath));
+                    } else {
+                        loader = new OsmFileCacheTileLoader(listener, new File(cachePath));
+                    }
                     loader.headers.put("User-Agent", Version.getInstance().getFullAgentString());
                     return loader;
                 } catch (IOException e) {
@@ -318,6 +330,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     private static class CachedAttributionBingAerialTileSource extends BingAerialTileSource {
 
+        public CachedAttributionBingAerialTileSource(String id) {
+            super(id);
+        }
+
         class BingAttributionData extends CacheCustomContent<IOException> {
 
             public BingAttributionData() {
@@ -373,13 +389,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
         if (info.getImageryType() == ImageryType.TMS) {
             checkUrl(info.getUrl());
-            TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getMinZoom(), info.getMaxZoom());
+            TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getId(), info.getMinZoom(), info.getMaxZoom());
             info.setAttribution(t);
             return t;
         } else if (info.getImageryType() == ImageryType.BING)
-            return new CachedAttributionBingAerialTileSource();
+            return new CachedAttributionBingAerialTileSource(info.getId());
         else if (info.getImageryType() == ImageryType.SCANEX) {
-            return new ScanexTileSource(info.getName(), info.getUrl(), info.getMaxZoom());
+            return new ScanexTileSource(info.getName(), info.getUrl(), info.getId(), info.getMaxZoom());
         }
         return null;
     }
