@@ -45,8 +45,8 @@ public class ScanexTileSource extends TMSTileSource {
     /* IRS by default */
     private ScanexLayer Layer = ScanexLayer.IRS;
 
-    public ScanexTileSource(String name, String url, int maxZoom) {
-        super(name, url, maxZoom);
+    public ScanexTileSource(String name, String url, String id, int maxZoom) {
+        super(name, url, id, maxZoom);
 
         for (ScanexLayer layer : ScanexLayer.values()) {
             if (url.equalsIgnoreCase(layer.getName())) {

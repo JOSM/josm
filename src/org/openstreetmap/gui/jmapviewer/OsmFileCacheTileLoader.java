@@ -44,7 +44,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
 
     private static final Logger log = FeatureAdapter.getLogger(OsmFileCacheTileLoader.class.getName());
 
-    private static final String TAGS_FILE_EXT = ".tags";
+    protected static final String TAGS_FILE_EXT = "tags";
 
     private static final Charset TAGS_CHARSET = Charset.forName("UTF-8");
 
@@ -391,14 +391,15 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         }
 
         protected File getTagsFile() {
-            return new File(tileCacheDir + "/" + tile.getZoom() + "_" + tile.getXtile() + "_" + tile.getYtile()
+            return new File(tileCacheDir + "/" + tile.getZoom() + "_" + tile.getXtile() + "_" + tile.getYtile() + "."
                     + TAGS_FILE_EXT);
         }
 
         protected void saveTileToFile(byte[] rawData) {
+            File file = getTileFile();
+            file.getParentFile().mkdirs();
             try (
-                FileOutputStream f = new FileOutputStream(tileCacheDir + "/" + tile.getZoom() + "_" + tile.getXtile()
-                        + "_" + tile.getYtile() + "." + tile.getSource().getTileType())
+                FileOutputStream f = new FileOutputStream(file)
             ) {
                 f.write(rawData);
             } catch (Exception e) {

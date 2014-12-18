@@ -8,7 +8,7 @@ public class MapQuestOpenAerialTileSource extends AbstractMapQuestTileSource {
     private static final String PATTERN = "http://oatile%d.mqcdn.com/tiles/1.0.0/sat";
 
     public MapQuestOpenAerialTileSource() {
-        super("MapQuest Open Aerial", PATTERN);
+        super("MapQuest Open Aerial", PATTERN, "mapquest-oa");
     }
 
     @Override

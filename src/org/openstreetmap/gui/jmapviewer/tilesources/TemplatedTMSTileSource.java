@@ -26,13 +26,13 @@ public class TemplatedTMSTileSource extends TMSTileSource {
         PATTERN_SWITCH
     };
 
-    public TemplatedTMSTileSource(String name, String url, int maxZoom) {
-        super(name, url, maxZoom);
+    public TemplatedTMSTileSource(String name, String url, String id, int maxZoom) {
+        super(name, url, id, maxZoom);
         handleTemplate();
     }
 
-    public TemplatedTMSTileSource(String name, String url, int minZoom, int maxZoom) {
-        super(name, url, minZoom, maxZoom);
+    public TemplatedTMSTileSource(String name, String url, String id, int minZoom, int maxZoom) {
+        super(name, url, id, minZoom, maxZoom);
         handleTemplate();
     }
 

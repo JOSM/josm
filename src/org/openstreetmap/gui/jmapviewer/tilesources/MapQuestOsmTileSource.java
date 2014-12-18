@@ -8,7 +8,7 @@ public class MapQuestOsmTileSource extends AbstractMapQuestTileSource {
     private static final String PATTERN = "http://otile%d.mqcdn.com/tiles/1.0.0/osm";
 
     public MapQuestOsmTileSource() {
-        super("MapQuest-OSM", PATTERN);
+        super("MapQuest-OSM", PATTERN, "mapquest-osm");
     }
     
     @Override

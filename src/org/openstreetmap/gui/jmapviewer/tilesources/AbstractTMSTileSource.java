@@ -9,18 +9,25 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
 
     protected String name;
     protected String baseUrl;
+    protected String id;
 
-    public AbstractTMSTileSource(String name, String base_url) {
+    public AbstractTMSTileSource(String name, String base_url, String id) {
         this.name = name;
         this.baseUrl = base_url;
         if(baseUrl.endsWith("/")) {
             baseUrl = baseUrl.substring(0,baseUrl.length()-1);
         }
+        this.id = id;
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     @Override
