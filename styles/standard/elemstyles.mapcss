@@ -2224,15 +2224,6 @@ node[amenity=clock] {
     set icon_z17;
     text: auto;
 }
-/* Rule to delete by end of 2014 if this deprecated tag has finally been replaced by emergency=phone below */
-area[amenity=emergency_phone] {
-    fill-color: amenity_light#f7efb7;
-}
-node[amenity=emergency_phone] {
-    icon-image: "vehicle/emergency_phone.png";
-    set icon_z17;
-    text: auto;
-}
 area[emergency=phone],
 area[emergency=aed],
 area[emergency=defibrillator],
