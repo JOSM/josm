@@ -330,7 +330,8 @@ way[barrier=bollard] {
     dashes: 3,9;
 }
 node[barrier=bollard] {
-    icon-image: "vehicle/restriction/bollard.png";
+    icon-image: "presets/bollard.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -348,6 +349,7 @@ way[barrier=city_wall],
 way[barrier=retaining_wall],
 way[barrier=block],
 way[barrier=chain],
+way[barrier=ditch],
 way[barrier=kerb] {
     width: 2;
     color: barrier#F0F050;
@@ -356,7 +358,8 @@ node[barrier=hedge],
 node[barrier=wall],
 node[barrier=guard_rail],
 node[barrier=city_wall],
-node[barrier=retaining_wall] {
+node[barrier=retaining_wall],
+node[barrier=ditch] {
     icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
@@ -377,7 +380,7 @@ node[barrier=chain] {
     text: auto;
 }
 node[barrier=stile] {
-    icon-image: "vehicle/stile.png";
+    icon-image: "vehicle/stile.svg";
     set icon_z17;
     text: auto;
 }
