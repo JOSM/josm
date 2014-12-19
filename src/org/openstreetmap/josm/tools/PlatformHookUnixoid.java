@@ -369,4 +369,9 @@ public class PlatformHookUnixoid implements PlatformHook {
         // TODO setup HTTPS certificate on Unix systems
         return false;
     }
+
+    @Override
+    public File getDefaultCacheDirectory() {
+        return new File(Main.pref.getPreferencesDirFile(), "cache");
+    }
 }

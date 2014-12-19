@@ -322,4 +322,9 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     public String getOSDescription() {
         return System.getProperty("os.name") + " " + System.getProperty("os.version");
     }
+
+    @Override
+    public File getDefaultCacheDirectory() {
+        return new File(System.getProperty("user.home")+"/Library/Caches", "JOSM");
+    }
 }

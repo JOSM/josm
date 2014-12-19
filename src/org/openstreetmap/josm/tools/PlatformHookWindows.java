@@ -282,4 +282,9 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         ks.setEntry(entryAlias, trustedCert, null);
         return true;
     }
+
+    @Override
+    public File getDefaultCacheDirectory() {
+        return new File(System.getenv("LOCALAPPDATA")+"/JOSM", "cache");
+    }
 }
