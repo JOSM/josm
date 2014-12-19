@@ -119,4 +119,11 @@ public interface PlatformHook {
      */
     public boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
+
+    /**
+     * Returns the platform-dependent default cache directory.
+     * @return the platform-dependent default cache directory
+     * @since 7829
+     */
+    public File getDefaultCacheDirectory();
 }

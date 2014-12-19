@@ -594,7 +594,7 @@ public class Preferences {
             if (path != null) {
                 cacheDirFile = new File(path);
             } else {
-                cacheDirFile = new File(getPreferencesDirFile(), "cache");
+                cacheDirFile = Main.platform.getDefaultCacheDirectory();
             }
         }
         if (!cacheDirFile.exists() && !cacheDirFile.mkdirs()) {
