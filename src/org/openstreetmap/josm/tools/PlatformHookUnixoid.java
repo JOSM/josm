@@ -374,4 +374,9 @@ public class PlatformHookUnixoid implements PlatformHook {
     public File getDefaultCacheDirectory() {
         return new File(Main.pref.getPreferencesDirFile(), "cache");
     }
+
+    @Override
+    public File getDefaultPrefDirectory() {
+        return new File(System.getProperty("user.home"), ".josm");
+    }
 }

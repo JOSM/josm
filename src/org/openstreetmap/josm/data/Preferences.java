@@ -549,12 +549,7 @@ public class Preferences {
         if (path != null) {
             preferencesDirFile = new File(path).getAbsoluteFile();
         } else {
-            path = System.getenv("APPDATA");
-            if (path != null) {
-                preferencesDirFile = new File(path, "JOSM");
-            } else {
-                preferencesDirFile = new File(System.getProperty("user.home"), ".josm");
-            }
+            preferencesDirFile = Main.platform.getDefaultPrefDirectory();
         }
         return preferencesDirFile;
     }

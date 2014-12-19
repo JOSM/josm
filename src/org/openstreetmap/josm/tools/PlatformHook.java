@@ -126,4 +126,11 @@ public interface PlatformHook {
      * @since 7829
      */
     public File getDefaultCacheDirectory();
+
+    /**
+     * Returns the platform-dependent default preferences directory.
+     * @return the platform-dependent default preferences directory
+     * @since 7831
+     */
+    public File getDefaultPrefDirectory();
 }
