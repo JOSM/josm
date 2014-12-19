@@ -37,8 +37,6 @@ public class RemoteControl {
     static final int protocolMajorVersion = 1;
     static final int protocolMinorVersion = 7;
 
-    private static final String LOCALHOST = "127.0.0.1";
-
     /**
      * Starts the remote control server
      */
@@ -83,6 +81,7 @@ public class RemoteControl {
      * @since 7800
      */
     public static InetAddress getInetAddress() throws UnknownHostException {
-        return InetAddress.getByName(Main.pref.get("remote.control.host", LOCALHOST));
+        // Return an address to the loopback interface by default
+        return InetAddress.getByName(Main.pref.get("remote.control.host", null));
     }
 }
