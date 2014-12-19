@@ -93,6 +93,11 @@ public class Preferences {
      * Internal storage for the cache directory.
      */
     private File cacheDir = null;
+    
+    /**
+     * Internal storage for the user data directory.
+     */
+    private File userdataDir = null;
 
     /**
      * Determines if preferences file is saved each time a property is changed.
@@ -551,11 +556,16 @@ public class Preferences {
         if (preferencesDir != null)
             return preferencesDir;
         String path;
-        path = System.getProperty("josm.home");
+        path = System.getProperty("josm.pref");
         if (path != null) {
             preferencesDir = new File(path).getAbsoluteFile();
         } else {
-            preferencesDir = Main.platform.getDefaultPrefDirectory();
+            path = System.getProperty("josm.home");
+            if (path != null) {
+                preferencesDir = new File(path).getAbsoluteFile();
+            } else {
+                preferencesDir = Main.platform.getDefaultPrefDirectory();
+            }
         }
         return preferencesDir;
     }
@@ -567,7 +577,21 @@ public class Preferences {
      * @since 7834
      */
     public File getUserDataDirectory() {
-        return Main.platform.getDefaultUserDataDirectory();
+        if (userdataDir != null)
+            return userdataDir;
+        String path;
+        path = System.getProperty("josm.userdata");
+        if (path != null) {
+            userdataDir = new File(path).getAbsoluteFile();
+        } else {
+            path = System.getProperty("josm.home");
+            if (path != null) {
+                userdataDir = new File(path).getAbsoluteFile();
+            } else {
+                userdataDir = Main.platform.getDefaultUserDataDirectory();
+            }
+        }
+        return userdataDir;
     }
 
     /**
@@ -601,11 +625,16 @@ public class Preferences {
         if (path != null) {
             cacheDir = new File(path).getAbsoluteFile();
         } else {
-            path = get("cache.folder", null);
+            path = System.getProperty("josm.home");
             if (path != null) {
-                cacheDir = new File(path);
+                cacheDir = new File(path, "cache");
             } else {
-                cacheDir = Main.platform.getDefaultCacheDirectory();
+                path = get("cache.folder", null);
+                if (path != null) {
+                    cacheDir = new File(path).getAbsoluteFile();
+                } else {
+                    cacheDir = Main.platform.getDefaultCacheDirectory();
+                }
             }
         }
         if (!cacheDir.exists() && !cacheDir.mkdirs()) {
