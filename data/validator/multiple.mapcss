@@ -1,4 +1,4 @@
-/* see #9757 - Better handling of semicolon in values
+/* see #9757, #10869 - Better handling of semicolon in values
 */
 *["addr:street" =~ /.+;(.+)?/],
 *[highway =~ /.+;(.+)?/],
@@ -8,4 +8,37 @@
 *[surface =~ /.+;(.+)?/],
 *[water =~ /.+;(.+)?/] {
     throwWarning: tr("{0} with multiple values", "{0.key}");
+}
+
+*[source              =~ /^(;.*|.*;;.*|.*;)$/],
+*["source:addr"       =~ /^(;.*|.*;;.*|.*;)$/],
+*["source:maxspeed"   =~ /^(;.*|.*;;.*|.*;)$/],
+*["source:name"       =~ /^(;.*|.*;;.*|.*;)$/],
+*["source:position"   =~ /^(;.*|.*;;.*|.*;)$/],
+*["source:postcode"   =~ /^(;.*|.*;;.*|.*;)$/],
+*[ref                 =~ /^(;.*|.*;;.*|.*;)$/],
+*[int_ref             =~ /^(;.*|.*;;.*|.*;)$/],
+*[old_ref             =~ /^(;.*|.*;;.*|.*;)$/],
+*[source_ref          =~ /^(;.*|.*;;.*|.*;)$/],
+*[route_ref           =~ /^(;.*|.*;;.*|.*;)$/],
+*[attribution         =~ /^(;.*|.*;;.*|.*;)$/],
+*[name                =~ /^(;.*|.*;;.*|.*;)$/],
+*[alt_name            =~ /^(;.*|.*;;.*|.*;)$/],
+*[note                =~ /^(;.*|.*;;.*|.*;)$/],
+*[fixme               =~ /^(;.*|.*;;.*|.*;)$/],
+*["addr:housenumber"  =~ /^(;.*|.*;;.*|.*;)$/],
+*[destination         =~ /^(;.*|.*;;.*|.*;)$/],
+*[exit_to             =~ /^(;.*|.*;;.*|.*;)$/],
+*[surface             =~ /^(;.*|.*;;.*|.*;)$/],
+*["building:use"      =~ /^(;.*|.*;;.*|.*;)$/],
+*[traffic_sign        =~ /^(;.*|.*;;.*|.*;)$/],
+*[voltage             =~ /^(;.*|.*;;.*|.*;)$/],
+*[cuisine             =~ /^(;.*|.*;;.*|.*;)$/] {
+	throwWarning: tr("empty value in semicolon-separated '{0}'", "{0.key}");
+	assertMatch: "node ref=;A1";
+	assertMatch: "node ref=A1;";
+	assertMatch: "node ref=;";
+	assertMatch: "node ref=A1;;A2";
+	assertNoMatch: "node ref=A1";
+	assertNoMatch: "node ref=A1;A2";
 }
