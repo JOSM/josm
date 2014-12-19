@@ -154,7 +154,7 @@ public final class DistributeAction extends JosmAction {
         Set<Node> result = new HashSet<>();
         for (Iterator<Node> it = col.iterator(); it.hasNext();) {
             Node n = it.next();
-            if (n.getCoor() == null) {
+            if (!n.isLatLonKnown()) {
                 it.remove();
                 result.add(n);
             }

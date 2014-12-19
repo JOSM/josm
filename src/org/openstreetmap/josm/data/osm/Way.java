@@ -600,7 +600,7 @@ public final class Way extends OsmPrimitive implements IWay {
             }
             if (Main.pref.getBoolean("debug.checkNullCoor", true)) {
                 for (Node n: nodes) {
-                    if (n.isVisible() && !n.isIncomplete() && (n.getCoor() == null || n.getEastNorth() == null))
+                    if (n.isVisible() && !n.isIncomplete() && !n.isLatLonKnown())
                         throw new DataIntegrityProblemException("Complete visible node with null coordinates: " + toString(),
                                 "<html>" + tr("Complete node {0} with null coordinates in way {1}",
                                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(n),

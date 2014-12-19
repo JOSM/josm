@@ -1,6 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.TreeMap;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
@@ -10,11 +15,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Geometry;
-
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.TreeMap;
 
 /**
  * This allows to select a polygon/multipolgon by an internal point.
@@ -71,7 +71,7 @@ public class SelectByInternalPointAction extends JosmAction {
     }
 
     /**
-     * Select a polygon or multipolgon by an internal point.
+     * Select a polygon or multipolygon by an internal point.
      *
      * @param internalPoint the internal point.
      * @param doAdd         whether to add selected polygon to the current selection.
