@@ -327,4 +327,9 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     public File getDefaultCacheDirectory() {
         return new File(System.getProperty("user.home")+"/Library/Caches", "JOSM");
     }
+
+    @Override
+    public File getDefaultPrefDirectory() {
+        return new File(System.getProperty("user.home")+"/Library/Preferences", "JOSM");
+    }
 }

@@ -287,4 +287,9 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     public File getDefaultCacheDirectory() {
         return new File(System.getenv("LOCALAPPDATA")+"/JOSM", "cache");
     }
+
+    @Override
+    public File getDefaultPrefDirectory() {
+        return new File(System.getenv("APPDATA"), "JOSM");
+    }
 }
