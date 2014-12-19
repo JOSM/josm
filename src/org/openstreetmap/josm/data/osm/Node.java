@@ -34,7 +34,12 @@ public final class Node extends OsmPrimitive implements INode {
     private double east = Double.NaN;
     private double north = Double.NaN;
 
-    private boolean isLatLonKnown() {
+    /**
+     * Determines if this node has valid coordinates.
+     * @return {@code true} if this node has valid coordinates
+     * @since 7828
+     */
+    public final boolean isLatLonKnown() {
         return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
@@ -197,7 +202,7 @@ public final class Node extends OsmPrimitive implements INode {
     @Override
     void setDataset(DataSet dataSet) {
         super.setDataset(dataSet);
-        if (!isIncomplete() && isVisible() && (getCoor() == null || getEastNorth() == null))
+        if (!isIncomplete() && isVisible() && !isLatLonKnown())
             throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString());
     }
 

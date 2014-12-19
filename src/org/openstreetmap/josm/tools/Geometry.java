@@ -313,7 +313,7 @@ public final class Geometry {
 
     /**
      * Finds the intersection of two lines of infinite length.
-     * 
+     *
      * @param p1 first point on first line
      * @param p2 second point on first line
      * @param p3 first point on second line
@@ -327,7 +327,7 @@ public final class Geometry {
         CheckParameterUtil.ensureValidCoordinates(p2, "p2");
         CheckParameterUtil.ensureValidCoordinates(p3, "p3");
         CheckParameterUtil.ensureValidCoordinates(p4, "p4");
-        
+
         if (!p1.isValid()) throw new IllegalArgumentException();
 
         // Basically, the formula from wikipedia is used:
@@ -574,10 +574,18 @@ public final class Geometry {
         //iterate each side of the polygon, start with the last segment
         Node oldPoint = polygonNodes.get(polygonNodes.size() - 1);
 
+        if (!oldPoint.isLatLonKnown()) {
+            return false;
+        }
+
         for (Node newPoint : polygonNodes) {
             //skip duplicate points
             if (newPoint.equals(oldPoint)) {
                 continue;
+            }
+
+            if (!newPoint.isLatLonKnown()) {
+                return false;
             }
 
             //order points so p1.lat <= p2.lat
@@ -732,7 +740,7 @@ public final class Geometry {
         if (result > Math.PI) {
             result -= 2 * Math.PI;
         }
-        
+
         return result;
     }
 
