@@ -285,6 +285,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
 
     @Override
     public File getDefaultCacheDirectory() {
+        String p = System.getenv("LOCALAPPDATA");
         if (p == null || "".equals(p)) {
             p = System.getenv("APPDATA");
         }
