@@ -323,7 +323,7 @@ public final class Utils {
     }
 
     /**
-     * Simple file copy function that will overwrite the target file.<br>
+     * Simple file copy function that will overwrite the target file.
      * @param in The source file
      * @param out The destination file
      * @return the path to the target file
@@ -331,10 +331,34 @@ public final class Utils {
      * @throws IllegalArgumentException If {@code in} or {@code out} is {@code null}
      * @since 7003
      */
-    public static Path copyFile(File in, File out) throws IOException, IllegalArgumentException  {
+    public static Path copyFile(File in, File out) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(in, "in");
         CheckParameterUtil.ensureParameterNotNull(out, "out");
         return Files.copy(in.toPath(), out.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    /**
+     * Recursive directory copy function
+     * @param in The source directory
+     * @param out The destination directory
+     * @throws IOException If any I/O error ooccurs
+     * @throws IllegalArgumentException If {@code in} or {@code out} is {@code null}
+     * @since 7835
+     */
+    public static void copyDirectory(File in, File out) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(in, "in");
+        CheckParameterUtil.ensureParameterNotNull(out, "out");
+        if (!out.exists() && !out.mkdirs()) {
+            Main.warn("Unable to create directory "+out.getPath());
+        }
+        for (File f : in.listFiles()) {
+            File target = new File(out, f.getName());
+            if (f.isDirectory()) {
+                copyDirectory(f, target);
+            } else {
+                copyFile(f, target);
+            }
+        }
     }
 
     public static int copyStream(InputStream source, OutputStream destination) throws IOException {
@@ -348,18 +372,24 @@ public final class Utils {
         return count;
     }
 
+    /**
+     * Deletes a directory recursively.
+     * @param path The directory to delete
+     * @return  <code>true</code> if and only if the file or directory is
+     *          successfully deleted; <code>false</code> otherwise
+     */
     public static boolean deleteDirectory(File path) {
         if( path.exists() ) {
             File[] files = path.listFiles();
             for (File file : files) {
                 if (file.isDirectory()) {
                     deleteDirectory(file);
-                } else {
-                    file.delete();
+                } else if (!file.delete()) {
+                    Main.warn("Unable to delete file: "+file.getPath());
                 }
             }
         }
-        return( path.delete() );
+        return path.delete();
     }
 
     /**
