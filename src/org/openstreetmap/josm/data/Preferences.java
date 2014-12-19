@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -83,14 +85,14 @@ public class Preferences {
     /**
      * Internal storage for the preference directory.
      * Do not access this variable directly!
-     * @see #getPreferencesDirFile()
+     * @see #getPreferencesDirectory()
      */
-    private File preferencesDirFile = null;
+    private File preferencesDir = null;
 
     /**
      * Internal storage for the cache directory.
      */
-    private File cacheDirFile = null;
+    private File cacheDir = null;
 
     /**
      * Determines if preferences file is saved each time a property is changed.
@@ -529,37 +531,51 @@ public class Preferences {
     /**
      * Returns the location of the user defined preferences directory
      * @return The location of the user defined preferences directory
+     * @deprecated use #getPreferencesDirectory() to access preferences directory
+     * or #getUserDataDirectory to access user data directory
      */
+    @Deprecated
     public String getPreferencesDir() {
-        final String path = getPreferencesDirFile().getPath();
+        final String path = getPreferencesDirectory().getPath();
         if (path.endsWith(File.separator))
             return path;
         return path + File.separator;
     }
 
     /**
-     * Returns the user defined preferences directory
-     * @return The user defined preferences directory
+     * Returns the user defined preferences directory, containing the preferences.xml file
+     * @return The user defined preferences directory, containing the preferences.xml file
+     * @since 7834
      */
-    public File getPreferencesDirFile() {
-        if (preferencesDirFile != null)
-            return preferencesDirFile;
+    public File getPreferencesDirectory() {
+        if (preferencesDir != null)
+            return preferencesDir;
         String path;
         path = System.getProperty("josm.home");
         if (path != null) {
-            preferencesDirFile = new File(path).getAbsoluteFile();
+            preferencesDir = new File(path).getAbsoluteFile();
         } else {
-            preferencesDirFile = Main.platform.getDefaultPrefDirectory();
+            preferencesDir = Main.platform.getDefaultPrefDirectory();
         }
-        return preferencesDirFile;
+        return preferencesDir;
     }
 
     /**
-     * Returns the user preferences file
-     * @return The user preferences file
+     * Returns the user data directory, containing autosave, plugins, etc.
+     * Depending on the OS it may be the same directory as preferences directory.
+     * @return The user data directory, containing autosave, plugins, etc.
+     * @since 7834
+     */
+    public File getUserDataDirectory() {
+        return Main.platform.getDefaultUserDataDirectory();
+    }
+
+    /**
+     * Returns the user preferences file (preferences.xml)
+     * @return The user preferences file (preferences.xml)
      */
     public File getPreferenceFile() {
-        return new File(getPreferencesDirFile(), "preferences.xml");
+        return new File(getPreferencesDirectory(), "preferences.xml");
     }
 
     /**
@@ -567,7 +583,7 @@ public class Preferences {
      * @return The user plugin directory
      */
     public File getPluginsDirectory() {
-        return new File(getPreferencesDirFile(), "plugins");
+        return new File(getUserDataDirectory(), "plugins");
     }
 
     /**
@@ -579,61 +595,64 @@ public class Preferences {
      * @return the cache directory
      */
     public File getCacheDirectory() {
-        if (cacheDirFile != null)
-            return cacheDirFile;
+        if (cacheDir != null)
+            return cacheDir;
         String path = System.getProperty("josm.cache");
         if (path != null) {
-            cacheDirFile = new File(path).getAbsoluteFile();
+            cacheDir = new File(path).getAbsoluteFile();
         } else {
             path = get("cache.folder", null);
             if (path != null) {
-                cacheDirFile = new File(path);
+                cacheDir = new File(path);
             } else {
-                cacheDirFile = Main.platform.getDefaultCacheDirectory();
+                cacheDir = Main.platform.getDefaultCacheDirectory();
             }
         }
-        if (!cacheDirFile.exists() && !cacheDirFile.mkdirs()) {
-            Main.warn(tr("Failed to create missing cache directory: {0}", cacheDirFile.getAbsoluteFile()));
+        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+            Main.warn(tr("Failed to create missing cache directory: {0}", cacheDir.getAbsoluteFile()));
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("<html>Failed to create missing cache directory: {0}</html>", cacheDirFile.getAbsoluteFile()),
+                    tr("<html>Failed to create missing cache directory: {0}</html>", cacheDir.getAbsoluteFile()),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
         }
-        return cacheDirFile;
+        return cacheDir;
+    }
+
+    private void addPossibleResourceDir(Set<String> locations, String s) {
+        if (s != null) {
+            if (!s.endsWith(File.separator)) {
+                s += File.separator;
+            }
+            locations.add(s);
+        }
     }
 
     /**
-     * @return A list of all existing directories where resources could be stored.
+     * Returns a set of all existing directories where resources could be stored.
+     * @return A set of all existing directories where resources could be stored.
      */
     public Collection<String> getAllPossiblePreferenceDirs() {
-        LinkedList<String> locations = new LinkedList<>();
-        locations.add(getPreferencesDir());
-        String s;
-        if ((s = System.getenv("JOSM_RESOURCES")) != null) {
-            if (!s.endsWith(File.separator)) {
-                s = s + File.separator;
+        Set<String> locations = new HashSet<>();
+        addPossibleResourceDir(locations, getPreferencesDirectory().getPath());
+        addPossibleResourceDir(locations, getUserDataDirectory().getPath());
+        addPossibleResourceDir(locations, System.getenv("JOSM_RESOURCES"));
+        addPossibleResourceDir(locations, System.getProperty("josm.resources"));
+        if (Main.isPlatformWindows()) {
+            String appdata = System.getenv("APPDATA");
+            if (System.getenv("ALLUSERSPROFILE") != null && appdata != null
+                    && appdata.lastIndexOf(File.separator) != -1) {
+                appdata = appdata.substring(appdata.lastIndexOf(File.separator));
+                locations.add(new File(new File(System.getenv("ALLUSERSPROFILE"),
+                        appdata), "JOSM").getPath());
             }
-            locations.add(s);
+        } else {
+            locations.add("/usr/local/share/josm/");
+            locations.add("/usr/local/lib/josm/");
+            locations.add("/usr/share/josm/");
+            locations.add("/usr/lib/josm/");
         }
-        if ((s = System.getProperty("josm.resources")) != null) {
-            if (!s.endsWith(File.separator)) {
-                s = s + File.separator;
-            }
-            locations.add(s);
-        }
-        String appdata = System.getenv("APPDATA");
-        if (System.getenv("ALLUSERSPROFILE") != null && appdata != null
-                && appdata.lastIndexOf(File.separator) != -1) {
-            appdata = appdata.substring(appdata.lastIndexOf(File.separator));
-            locations.add(new File(new File(System.getenv("ALLUSERSPROFILE"),
-                    appdata), "JOSM").getPath());
-        }
-        locations.add("/usr/local/share/josm/");
-        locations.add("/usr/local/lib/josm/");
-        locations.add("/usr/share/josm/");
-        locations.add("/usr/lib/josm/");
         return locations;
     }
 
@@ -810,7 +829,7 @@ public class Preferences {
      */
     public void init(boolean reset) {
         // get the preferences.
-        File prefDir = getPreferencesDirFile();
+        File prefDir = getPreferencesDirectory();
         if (prefDir.exists()) {
             if(!prefDir.isDirectory()) {
                 Main.warn(tr("Failed to initialize preferences. Preference directory ''{0}'' is not a directory.", prefDir.getAbsoluteFile()));

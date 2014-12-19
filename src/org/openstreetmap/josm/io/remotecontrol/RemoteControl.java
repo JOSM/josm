@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -27,7 +28,8 @@ public class RemoteControl {
      * only HTTP access will be available.
      * @since 7335
      */
-    public static final BooleanProperty PROP_REMOTECONTROL_HTTPS_ENABLED = new BooleanProperty("remotecontrol.https.enabled", false);
+    public static final BooleanProperty PROP_REMOTECONTROL_HTTPS_ENABLED = new BooleanProperty(
+            "remotecontrol.https.enabled", false);
 
     /**
      * RemoteControl HTTP protocol version. Change minor number for compatible
@@ -71,7 +73,7 @@ public class RemoteControl {
      * @since 7335
      */
     public static String getRemoteControlDir() {
-        return Main.pref.getPreferencesDir() + "remotecontrol/";
+        return new File(Main.pref.getUserDataDirectory(), "remotecontrol").getAbsolutePath();
     }
 
     /**

@@ -1,26 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
-import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.gui.widgets.OsmIdTextField;
-import org.openstreetmap.josm.gui.widgets.OsmPrimitiveTypesComboBox;
-import org.openstreetmap.josm.tools.Utils;
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.border.EtchedBorder;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -36,8 +19,26 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.border.EtchedBorder;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.gui.widgets.OsmIdTextField;
+import org.openstreetmap.josm.gui.widgets.OsmPrimitiveTypesComboBox;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Dialog prompt to user to let him choose OSM primitives by specifying their type and IDs.
@@ -196,7 +197,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
 
     protected void tryToPasteFromClipboard(OsmIdTextField tfId, OsmPrimitiveTypesComboBox cbType) {
         String buf = Utils.getClipboardContent();
-        if (buf == null || buf.length()==0) return;
+        if (buf == null || buf.isEmpty()) return;
         if (buf.length() > Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) return;
         final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
         if (!ids.isEmpty()) {

@@ -133,4 +133,11 @@ public interface PlatformHook {
      * @since 7831
      */
     public File getDefaultPrefDirectory();
+
+    /**
+     * Returns the platform-dependent default user data directory.
+     * @return the platform-dependent default user data directory
+     * @since 7834
+     */
+    public File getDefaultUserDataDirectory();
 }
