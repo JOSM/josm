@@ -179,7 +179,7 @@ Build-Date: ${build.tstamp}
     </target>
     <!-- Windows target -->
     <target name="distwin" depends="dist">
-        <exec dir="windows" executable="josm-setup-unix.sh">
+        <exec dir="windows" executable="./josm-setup-unix.sh">
             <arg value="${version.entry.commit.revision}"/>
             <arg value="../dist/josm-custom.jar"/>
         </exec>

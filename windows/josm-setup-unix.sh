@@ -45,13 +45,13 @@ if [ -n "$2" ]; then
   # 2 arguments: for Ant build.xml and Jenkins CI
   export VERSION=$1
   export JOSM_BUILD="no"
-  export WEBKIT_DOWNLAD="yes"
+  export WEBKIT_DOWNLOAD="yes"
   export JOSM_FILE=$2
 elif [ -n "$1" ]; then
   # 1 argument: for official JOSM server
   export VERSION=$1
   export JOSM_BUILD="no"
-  export WEBKIT_DOWNLAD="no"
+  export WEBKIT_DOWNLOAD="no"
   export JOSM_FILE="/home/josm/www/download/josm-tested.jar"
 else
   # no argument: for everyone else
