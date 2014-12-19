@@ -177,6 +177,13 @@ Build-Date: ${build.tstamp}
             <param name="bundle.jar" value="dist/josm-custom.jar"/>
         </antcall>
     </target>
+    <!-- Windows target -->
+    <target name="distwin" depends="dist">
+        <exec dir="windows" executable="josm-setup-unix.sh">
+            <arg value="${version.entry.commit.revision}"/>
+            <arg value="../dist/josm-custom.jar"/>
+        </exec>
+    </target>
     <target name="javacc" depends="init" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <exec append="false" executable="java" failifexecutionfails="true">

@@ -9,7 +9,7 @@
 # See also /usr/share/doc/nsis/README.Debian 
 #
 # Then download launch4j from http://launch4j.sourceforge.net/ 
-# wget http://softlayer-ams.dl.sourceforge.net/project/launch4j/launch4j-3/3.4/launch4j-3.4-linux.tgz
+# wget http://softlayer-ams.dl.sourceforge.net/project/launch4j/launch4j-3/3.5/launch4j-3.5-linux.tgz
 # and unpack it to /usr/share/launch4j
 
 ## settings ##
@@ -41,14 +41,22 @@ else
 fi
 echo Using NSIS: $MAKENSIS
 
-if [ -n "$1" ]; then
+if [ -n "$2" ]; then
+  # 2 arguments: for Ant build.xml and Jenkins CI
+  export VERSION=$1
+  export JOSM_BUILD="no"
+  export WEBKIT_DOWNLAD="yes"
+  export JOSM_FILE=$2
+elif [ -n "$1" ]; then
+  # 1 argument: for official JOSM server
   export VERSION=$1
   export JOSM_BUILD="no"
   export WEBKIT_DOWNLAD="no"
   export JOSM_FILE="/home/josm/www/download/josm-tested.jar"
 else
-  svncorerevision=`svnversion -n ../core`
-  #svnpluginsrevision=`svnversion -n ../plugins`
+  # no argument: for everyone else
+  svncorerevision=`svnversion -n ..`
+  #svnpluginsrevision=`svnversion -n ../../plugins`
   #svnrevision="$svncorerevision-$svnpluginsrevision"
 
   #export VERSION=custom-${svnrevision}
