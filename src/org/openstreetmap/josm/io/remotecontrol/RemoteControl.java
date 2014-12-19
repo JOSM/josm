@@ -37,7 +37,7 @@ public class RemoteControl {
     static final int protocolMajorVersion = 1;
     static final int protocolMinorVersion = 7;
 
-    private static final String LOCALHOST = "localhost";
+    private static final String LOCALHOST = "127.0.0.1";
 
     /**
      * Starts the remote control server
@@ -83,16 +83,6 @@ public class RemoteControl {
      * @since 7800
      */
     public static InetAddress getInetAddress() throws UnknownHostException {
-        String hostname = Main.pref.get("remote.control.host", LOCALHOST);
-        InetAddress result = InetAddress.getByName(hostname);
-        // Sometimes localhost resolution does not work as expected, see #10833
-        if (LOCALHOST.equalsIgnoreCase(hostname) && !LOCALHOST.equalsIgnoreCase(result.getHostName())) {
-            InetAddress localhostAddr = InetAddress.getLocalHost();
-            // Use this result if it's better. Not sure if it's a Java bug or not
-            if (LOCALHOST.equalsIgnoreCase(localhostAddr.getHostName())) {
-                result = localhostAddr;
-            }
-        }
-        return result;
+        return InetAddress.getByName(Main.pref.get("remote.control.host", LOCALHOST));
     }
 }
