@@ -153,7 +153,7 @@ public class OsmValidator implements LayerChangeListener {
      * @return The validator directory
      */
     public static String getValidatorDir() {
-        return Main.pref.getPreferencesDir() + "validator/";
+        return new File(Main.pref.getUserDataDirectory(), "validator").getAbsolutePath();
     }
 
     /**
@@ -173,7 +173,7 @@ public class OsmValidator implements LayerChangeListener {
     private void loadIgnoredErrors() {
         ignoredErrors.clear();
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
-            Path path = Paths.get(getValidatorDir() + "ignorederrors");
+            Path path = Paths.get(getValidatorDir()).resolve("ignorederrors");
             if (Files.exists(path)) {
                 try {
                     ignoredErrors.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
@@ -195,8 +195,8 @@ public class OsmValidator implements LayerChangeListener {
     }
 
     public static void saveIgnoredErrors() {
-        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                new FileOutputStream(getValidatorDir() + "ignorederrors"), StandardCharsets.UTF_8), false)) {
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(
+                new File(getValidatorDir(), "ignorederrors")), StandardCharsets.UTF_8), false)) {
             for (String e : ignoredErrors) {
                 out.println(e);
             }
@@ -281,7 +281,7 @@ public class OsmValidator implements LayerChangeListener {
      * the original value fixed for EPSG:4326 (10000) using heuristics (that is, test&amp;error
      * until most bugs were discovered while keeping the processing time reasonable)
      */
-    public final void initializeGridDetail() {
+    public static final void initializeGridDetail() {
         String code = Main.getProjection().toCode();
         if (Arrays.asList(ProjectionPreference.wgs84.allCodes()).contains(code)) {
             OsmValidator.griddetail = 10000;

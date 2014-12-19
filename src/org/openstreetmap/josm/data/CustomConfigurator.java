@@ -156,7 +156,7 @@ public final class CustomConfigurator {
      * @param text - message to display, HTML allowed
      */
     public static void messageBox(String type, String text) {
-        if (type==null || type.length()==0) type="plain";
+        if (type==null || type.isEmpty()) type="plain";
 
         switch (type.charAt(0)) {
             case 'i': JOptionPane.showMessageDialog(Main.parent, text, tr("Information"), JOptionPane.INFORMATION_MESSAGE); break;
@@ -389,17 +389,17 @@ public final class CustomConfigurator {
     }
 
     private static String getDirectoryByAbbr(String base) {
-            String dir;
-            if ("prefs".equals(base) || base.length()==0) {
-                dir = Main.pref.getPreferencesDir();
-            } else if ("cache".equals(base)) {
-                dir = Main.pref.getCacheDirectory().getAbsolutePath();
-            } else if ("plugins".equals(base)) {
-                dir = Main.pref.getPluginsDirectory().getAbsolutePath();
-            } else {
-                dir = null;
-            }
-            return dir;
+        String dir;
+        if ("prefs".equals(base) || base.isEmpty()) {
+            dir = Main.pref.getPreferencesDirectory().getAbsolutePath();
+        } else if ("cache".equals(base)) {
+            dir = Main.pref.getCacheDirectory().getAbsolutePath();
+        } else if ("plugins".equals(base)) {
+            dir = Main.pref.getPluginsDirectory().getAbsolutePath();
+        } else {
+            dir = null;
+        }
+        return dir;
     }
 
     public static Preferences clonePreferences(Preferences pref) {
@@ -458,7 +458,7 @@ public final class CustomConfigurator {
                 engine = new ScriptEngineManager().getEngineByName("rhino");
                 engine.eval("API={}; API.pref={}; API.fragments={};");
 
-                engine.eval("homeDir='"+normalizeDirName(Main.pref.getPreferencesDir()) +"';");
+                engine.eval("homeDir='"+normalizeDirName(Main.pref.getPreferencesDirectory().getAbsolutePath()) +"';");
                 engine.eval("josmVersion="+Version.getInstance().getVersion()+";");
                 String className = CustomConfigurator.class.getName();
                 engine.eval("API.messageBox="+className+".messageBox");
@@ -628,7 +628,7 @@ public final class CustomConfigurator {
             String locText = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".text"));
             if (locText.length()>0) text=locText;
             String var = elem.getAttribute("var");
-            if (var.length()==0) var="result";
+            if (var.isEmpty()) var="result";
 
             String input = evalVars(elem.getAttribute("input"));
             if ("true".equals(input)) {

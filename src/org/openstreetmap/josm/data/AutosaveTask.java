@@ -84,8 +84,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private final Object layersLock = new Object();
     private final Deque<File> deletedLayers = new LinkedList<>();
 
-    private final File autosaveDir = new File(Main.pref.getPreferencesDir() + AUTOSAVE_DIR);
-    private final File deletedLayersDir = new File(Main.pref.getPreferencesDir() + DELETED_LAYERS_DIR);
+    private final File autosaveDir = new File(Main.pref.getUserDataDirectory(), AUTOSAVE_DIR);
+    private final File deletedLayersDir = new File(Main.pref.getUserDataDirectory(), DELETED_LAYERS_DIR);
 
     public void schedule() {
         if (PROP_INTERVAL.get() > 0) {

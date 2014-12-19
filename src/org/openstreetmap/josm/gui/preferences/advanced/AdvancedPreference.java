@@ -366,7 +366,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                         }
                    }
                 }
-                for (File f: Main.pref.getPreferencesDirFile().listFiles()) {
+                for (File f: Main.pref.getPreferencesDirectory().listFiles()) {
                    String s = f.getName();
                    int idx = s.indexOf('_');
                    if (idx>=0) {

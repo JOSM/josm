@@ -199,14 +199,14 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         warning.setText(enable ? GPL_WARNING : "<html><font size='-2'>&nbsp;</html");
 
         if (enable) {
-            if (copyrightYear.getText().length()==0) {
+            if (copyrightYear.getText().isEmpty()) {
                 String sCopyrightYear = data.getString(META_COPYRIGHT_YEAR);
                 if (sCopyrightYear == null) {
                     sCopyrightYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
                 }
                 copyrightYear.setText(sCopyrightYear);
             }
-            if (copyright.getText().length()==0) {
+            if (copyright.getText().isEmpty()) {
                 String sCopyright = data.getString(META_COPYRIGHT_LICENSE);
                 if (sCopyright == null) {
                     sCopyright = Main.pref.get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5");
@@ -307,7 +307,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                         license = "public domain";
                         break;
                     }
-                    license += license.length()==0 ? urls[i] : ", "+urls[i];
+                    license += license.isEmpty() ? urls[i] : ", "+urls[i];
                 }
                 copyright.setText(license);
                 copyright.setCaretPosition(0);

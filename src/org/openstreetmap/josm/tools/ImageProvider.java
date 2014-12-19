@@ -879,8 +879,8 @@ public class ImageProvider {
 
             }
         }
-        // Try user-preference directory
-        String dir = Main.pref.getPreferencesDir() + "images";
+        // Try user-data directory
+        String dir = new File(Main.pref.getUserDataDirectory(), "images").getAbsolutePath();
         try {
             u = getImageUrl(dir, imageName, additionalClassLoaders);
             if (u != null)
@@ -951,7 +951,8 @@ public class ImageProvider {
                 }
             });
 
-            CachedFile cf = new CachedFile(base + fn).setDestDir(new File(Main.pref.getPreferencesDir(), "images").toString());
+            CachedFile cf = new CachedFile(base + fn).setDestDir(
+                    new File(Main.pref.getUserDataDirectory(), "images").getPath());
             try (InputStream is = cf.getInputStream()) {
                 parser.parse(new InputSource(is));
             }
