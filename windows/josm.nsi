@@ -63,7 +63,7 @@ FunctionEnd
 ; ============================================================================
 
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "..\core\LICENSE"
+!insertmacro MUI_PAGE_LICENSE "..\LICENSE"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -429,8 +429,6 @@ SectionIn 2
 SetShellVarContext current
 Delete "$APPDATA\JOSM\plugins\turnrestrictions\*.*"
 RMDir "$APPDATA\JOSM\plugins\turnrestrictions"
-Delete "$APPDATA\JOSM\plugins\openstreetbugs\*.*"
-RMDir "$APPDATA\JOSM\plugins\openstreetbugs"
 Delete "$APPDATA\JOSM\plugins\*.*"
 RMDir "$APPDATA\JOSM\plugins"
 

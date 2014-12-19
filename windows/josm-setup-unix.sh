@@ -63,7 +63,7 @@ else
   export VERSION=`echo ${svncorerevision} | sed -e 's/M//g' -e 's/S//g' -e 's/P//g'`
   export JOSM_BUILD="yes"
   export WEBKIT_DOWNLOAD="yes"
-  export JOSM_FILE="..\core\dist\josm-custom.jar"
+  export JOSM_FILE="..\dist\josm-custom.jar"
 fi
 
 echo "Creating Windows Installer for josm-$VERSION"
