@@ -622,6 +622,14 @@ way[highway=raceway] {
 way[highway=raceway][area?], relation[type=multipolygon][highway=raceway] {
     fill-color: raceway#ff80ff;
 }
+area[junction=yes] {
+    fill-color: junction#c0c0c0;
+}
+node[junction=yes] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
 node[highway=traffic_mirror] {
     icon-image: "vehicle/traffic_mirror.svg";
     set icon_z17;
