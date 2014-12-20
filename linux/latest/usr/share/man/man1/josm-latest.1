@@ -1,4 +1,4 @@
-.TH JOSM 1 "September  4, 2014"
+.TH JOSM 1 "December 20, 2014"
 .\" Please adjust this date whenever revising the manpage.
 .SH NAME
 josm \- Java OpenStreetMap Editor
@@ -61,6 +61,22 @@ Print debugging messages to console
 .TP
 .B \-\-offline=<osm_api|josm_website|all>
 Disable access to the given resource(s), separated by comma
+.SH JAVA PROPERTIES
+The following options can be set by using Java system properties (i.e. \-Dkey=value
+passed to java, or specified inside JAVA_OPTS).
+.TP
+.B josm.pref=<path>
+Set the JOSM preferences directory.
+.TP
+.B josm.userdata=<path>
+Set the JOSM user data directory.
+.TP
+.B josm.cache=<path>
+Set the JOSM cache directory.
+.TP
+.B josm.home=<homedir>
+Relocate all 3 directories to homedir. Cache directory will be in homedir/cache.
+Default is ~/.josm/.
 .SH ENVIRONMENT
 .IP JAVA_HOME
 Specify an alternate Java environment.
@@ -99,6 +115,7 @@ Dirk Stöcker
 Many minor contributions and patches by others; see SVN history
 at http://josm.openstreetmap.de/svn/ for details. Use
 "josm-dev AT openstreetmap.org" to contact still active authors.
+The logo has been designed by Ilya Palikov.
 .PP
 This manual page was initially written by Andreas Putzo <andreas@putzo.net>,
 for the Debian project (but may be used by others).
