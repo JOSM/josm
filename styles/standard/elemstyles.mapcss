@@ -722,7 +722,7 @@ node[highway=incline], node[highway=incline_steep] {
     text: auto;
 }
 node[highway=motorway_junction] {
-    icon-image: "vehicle/exit.png";
+    icon-image: "vehicle/motorway_junction.svg";
     set icon_z17;
     text: auto;
 }
@@ -774,6 +774,9 @@ node[highway=passing_place] {
     icon-image: "vehicle/passing_place.png";
     set icon_z17;
     text: auto;
+}
+area[highway=elevator] {
+    fill-color: elevator#a6bace;
 }
 node[highway=elevator] {
     icon-image: "service/elevator.png";
