@@ -204,6 +204,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         public final JTable activeTable;
         /** The table of default providers **/
         public final JTable defaultTable;
+        /** The selection listener synchronizing map display with table of default providers **/
+        private final DefListSelectionListener defaultTableListener;
         /** The map displaying imagery bounds of selected default providers **/
         public final JMapViewer defaultMap;
 
@@ -330,7 +332,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             defaultMap.setMinimumSize(new Dimension(100, 200));
             add(defaultMap, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
 
-            defaultTable.getSelectionModel().addListSelectionListener(new DefListSelectionListener());
+            defaultTableListener = new DefListSelectionListener();
+            defaultTable.getSelectionModel().addListSelectionListener(defaultTableListener);
 
             defaultToolbar = new JToolBar(JToolBar.VERTICAL);
             defaultToolbar.setFloatable(false);
@@ -366,7 +369,6 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             //activeToolbar.add(edit); TODO
             activeToolbar.add(remove);
             add(activeToolbar, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
-
         }
 
         // Listener of default providers list selection
@@ -380,16 +382,20 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 this.mapPolygons = new HashMap<>();
             }
 
+            private void clearMap() {
+                defaultMap.removeAllMapRectangles();
+                defaultMap.removeAllMapPolygons();
+                mapRectangles.clear();
+                mapPolygons.clear();
+            }
+
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                // First index is set to -1 when the list is refreshed, so discard all map rectangles and polygons
+                // First index can be set to -1 when the list is refreshed, so discard all map rectangles and polygons
                 if (e.getFirstIndex() == -1) {
-                    defaultMap.removeAllMapRectangles();
-                    defaultMap.removeAllMapPolygons();
-                    mapRectangles.clear();
-                    mapPolygons.clear();
-                    // Only process complete (final) selection events
+                    clearMap();
                 } else if (!e.getValueIsAdjusting()) {
+                    // Only process complete (final) selection events
                     for (int i = e.getFirstIndex(); i<=e.getLastIndex(); i++) {
                         updateBoundsAndShapes(i);
                     }
@@ -493,6 +499,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
         private class RemoveEntryAction extends AbstractAction implements ListSelectionListener {
 
+            /**
+             * Constructs a new {@code RemoveEntryAction}.
+             */
             public RemoveEntryAction() {
                 putValue(NAME, tr("Remove"));
                 putValue(SHORT_DESCRIPTION, tr("Remove entry"));
@@ -519,6 +528,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         }
 
         private class ActivateAction extends AbstractAction implements ListSelectionListener {
+
+            /**
+             * Constructs a new {@code ActivateAction}.
+             */
             public ActivateAction() {
                 putValue(NAME, tr("Activate"));
                 putValue(SHORT_DESCRIPTION, tr("copy selected defaults"));
@@ -582,6 +595,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         }
 
         private class ReloadAction extends AbstractAction {
+
+            /**
+             * Constructs a new {@code ReloadAction}.
+             */
             public ReloadAction() {
                 putValue(SHORT_DESCRIPTION, tr("reload defaults"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
@@ -591,6 +608,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             public void actionPerformed(ActionEvent evt) {
                 layerInfo.loadDefaults(true);
                 defaultModel.fireTableDataChanged();
+                defaultTable.getSelectionModel().clearSelection();
+                defaultTableListener.clearMap();
                 /* loading new file may change active layers */
                 activeModel.fireTableDataChanged();
             }
@@ -741,8 +760,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 JScrollPane scrollPane = new JScrollPane(htmlPane);
                 scrollPane.setPreferredSize(new Dimension(400, 400));
                 box.add(scrollPane);
-                int option = JOptionPane.showConfirmDialog(Main.parent, box, tr("Please abort if you are not sure"), JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
+                int option = JOptionPane.showConfirmDialog(Main.parent, box, tr("Please abort if you are not sure"),
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (option == JOptionPane.YES_OPTION)
                     return true;
             } catch (MalformedURLException e2) {
@@ -810,7 +829,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         /**
          * The table model for imagery offsets list
          */
-        class OffsetsBookmarksModel extends DefaultTableModel {
+        private class OffsetsBookmarksModel extends DefaultTableModel {
+
+            /**
+             * Constructs a new {@code OffsetsBookmarksModel}.
+             */
             public OffsetsBookmarksModel() {
                 setColumnIdentifiers(new String[] { tr("Projection"),  tr("Layer"), tr("Name"), tr("Easting"), tr("Northing"),});
             }
