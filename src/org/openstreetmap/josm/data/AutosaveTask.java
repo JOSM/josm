@@ -158,7 +158,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                     File pidFile = new File(autosaveDir, filename+".pid");
                     try (PrintStream ps = new PrintStream(pidFile, "UTF-8")) {
                         ps.println(ManagementFactory.getRuntimeMXBean().getName());
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         Main.error(t);
                     }
                     return result;
@@ -208,7 +208,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 if (PROP_NOTIFICATION.get() && !layersInfo.isEmpty()) {
                     displayNotification();
                 }
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // Don't let exception stop time thread
                 Main.error("Autosave failed:");
                 Main.error(t);
@@ -307,7 +307,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                             String pid = jvmId.split("@")[0];
                             skipFile = jvmPerfDataFileExists(pid);
                         }
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         Main.error(t);
                     }
                 }
