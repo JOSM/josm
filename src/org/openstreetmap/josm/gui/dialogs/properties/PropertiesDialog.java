@@ -84,6 +84,7 @@ import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.PresetHandler;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -233,6 +234,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         super(tr("Tags/Memberships"), "propertiesdialog", tr("Tags for selected objects."),
                 Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Tags/Memberships")), KeyEvent.VK_P,
                         Shortcut.ALT_SHIFT), 150, true);
+
+        HelpUtil.setHelpContext(this, HelpUtil.ht("/Dialog/TagsMembership"));
 
         setupTagsMenu();
         buildTagsTable();

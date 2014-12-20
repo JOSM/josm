@@ -151,6 +151,7 @@ public final class HelpUtil {
 
     /**
      * Replies the context specific help topic configured for <code>context</code>.
+     * @param context The UI object used as context
      *
      * @return the help topic. null, if no context specific help topic is found
      */
@@ -200,16 +201,13 @@ public final class HelpUtil {
      * code. Example: /Dialog/RelationEditor is a relative help topic, /De:Help/Dialog/RelationEditor
      * is not.
      *
-     * @param component the component  the component
+     * @param component the component
      * @param relativeHelpTopic the help topic. Set to the default help topic if null.
      */
     public static void setHelpContext(JComponent component, String relativeHelpTopic) {
-        if (relativeHelpTopic == null) {
-            relativeHelpTopic = "/";
-        }
         component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F1"), "help");
         component.getActionMap().put("help", getHelpAction());
-        component.putClientProperty("help", relativeHelpTopic);
+        component.putClientProperty("help", relativeHelpTopic == null ? "/" : relativeHelpTopic);
     }
 
     /**
