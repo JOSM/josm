@@ -185,7 +185,7 @@ public class ChangesetDialog extends ToggleDialog{
 
         cbInSelectionOnly.addItemListener(new FilterChangeHandler());
 
-        HelpUtil.setHelpContext(pnl, HelpUtil.ht("/Dialog/ChangesetListDialog"));
+        HelpUtil.setHelpContext(pnl, HelpUtil.ht("/Dialog/ChangesetList"));
 
         // -- select objects action
         selectObjectsAction = new SelectObjectsAction();
