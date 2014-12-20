@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -26,14 +28,20 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * Aligns all selected nodes into a straight line (useful for
- * roads that should be straight, but have side roads and
+ * Aligns all selected nodes into a straight line (useful for roads that should be straight, but have side roads and
  * therefore need multiple nodes)
  *
- * Case 1: Only ways selected, align each ways taking care of intersection.
- * Case 2: Single node selected, align this node relative to the surrounding nodes.
- * Case 3: Single node and ways selected, align this node relative to the surrounding nodes only parts of selected ways.
- * Case 4: Only nodes selected, align these nodes respect to the line passing through the most distant nodes.
+ * <pre>
+ * Case 1: 1 or 2 ways selected and no nodes selected: align nodes of ways taking care of intersection.
+ * Case 2: Single node selected and no ways selected: align this node relative to all referrer ways (2 at most).
+ * Case 3: Single node and ways selected: align this node relative to selected ways.
+ * Case 4.1: Only nodes selected, part of a non-closed way: align these nodes on the line passing through the
+ *   extremity nodes (most distant in the way sequence). See https://josm.openstreetmap.de/ticket/9605#comment:3
+ * Case 4.2: Only nodes selected, part of a closed way: align these nodes on the line passing through the most distant
+ *   nodes.
+ * Case 4.3: Only nodes selected, part of multiple ways: align these nodes on the line passing through the most distant
+ *   nodes.
+ * </pre>
  *
  * @author Matthew Newton
  */
@@ -70,21 +78,19 @@ public final class AlignInLineAction extends JosmAction {
     }
 
     /**
-     * Compute 2 anchor points to align a set of nodes.
-     * If all nodes are part of a same way anchor points are choose farthest relative to this way,
-     * else choose farthest nodes.
-     * @param nodes Nodes to be aligned
-     * @param resultOut Array of size >= 2
+     * Return 2 nodes making up the line along which provided nodes must be aligned.
+     *
+     * @param nodes Nodes to be aligned.
+     * @return A array of two nodes.
      */
-    private void nodePairFurthestApart(List<Node> nodes, Node[] resultOut) {
-        if(resultOut.length < 2)
-            throw new IllegalArgumentException();
-
+    private Node[] nodePairFurthestApart(List<Node> nodes) {
         Node nodea = null;
         Node nodeb = null;
 
-        // Intersection of all ways referred by each node
-        HashSet<Way> waysRef = null;
+        // Detect if selected nodes are on the same way.
+
+        // Get ways passing though all selected nodes.
+        Set<Way> waysRef = null;
         for(Node n: nodes) {
             Collection<Way> ref = OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
             if(waysRef == null)
@@ -92,38 +98,63 @@ public final class AlignInLineAction extends JosmAction {
             else
                 waysRef.retainAll(ref);
         }
-        if(waysRef.size() == 1) {
-            // All nodes are part of the same way. See #9605
-            HashSet<Node> remainNodes = new HashSet<>(nodes);
-            Way way = waysRef.iterator().next();
-            for(Node n: way.getNodes()) {
-                if(!remainNodes.contains(n)) continue;
-                if(nodea == null) nodea = n;
-                if(remainNodes.size() == 1) {
-                    nodeb = remainNodes.iterator().next();
-                    break;
-                }
-                remainNodes.remove(n);
+
+        // Nodes belongs to multiple ways, return most distant nodes.
+        if (waysRef.size() != 1)
+            return nodeFurthestAppart(nodes);
+
+        // All nodes are part of the same way. See #9605.
+        Way way = waysRef.iterator().next();
+
+        if (way.isClosed()) {
+            // Align these nodes on the line passing through the most distant nodes.
+            return nodeFurthestAppart(nodes);
+        }
+
+        // The way is open, align nodes on the line passing through the extremity nodes (most distant in the way
+        // sequence). See #9605#comment:3.
+        Set<Node> remainNodes = new HashSet<>(nodes);
+        for (Node n : way.getNodes()) {
+            if (!remainNodes.contains(n))
+                continue;
+            if (nodea == null)
+                nodea = n;
+            if (remainNodes.size() == 1) {
+                nodeb = remainNodes.iterator().next();
+                break;
             }
-        } else {
-            // Find from the selected nodes two that are the furthest apart.
-            // Let's call them A and B.
-            double distance = 0;
-            for (int i = 0; i < nodes.size()-1; i++) {
-                Node n = nodes.get(i);
-                for (int j = i+1; j < nodes.size(); j++) {
-                    Node m = nodes.get(j);
-                    double dist = Math.sqrt(n.getEastNorth().distance(m.getEastNorth()));
-                    if (dist > distance) {
-                        nodea = n;
-                        nodeb = m;
-                        distance = dist;
-                    }
+            remainNodes.remove(n);
+        }
+
+        return new Node[] { nodea, nodeb };
+    }
+
+    /**
+     * Return the two nodes the most distant from the provided list.
+     *
+     * @param nodes List of nodes to analyze.
+     * @return An array containing the two most distant nodes.
+     */
+    private Node[] nodeFurthestAppart(List<Node> nodes) {
+        Node node1 = null, node2 = null;
+        double minSqDistance = 0;
+        int nb;
+
+        nb = nodes.size();
+        for (int i = 0; i < nb - 1; i++) {
+            Node n = nodes.get(i);
+            for (int j = i + 1; j < nb; j++) {
+                Node m = nodes.get(j);
+                double sqDist = n.getEastNorth().distanceSq(m.getEastNorth());
+                if (sqDist > minSqDistance) {
+                    node1 = n;
+                    node2 = m;
+                    minSqDistance = sqDist;
                 }
             }
         }
-        resultOut[0] = nodea;
-        resultOut[1] = nodeb;
+
+        return new Node[] { node1, node2 };
     }
 
     /**
@@ -160,7 +191,7 @@ public final class AlignInLineAction extends JosmAction {
                     throw new InvalidSelection();
                 cmd = alignSingleNode(selectedNodes.get(0), lines);
             }
-            /// More than 3 nodes selected -> align those nodes
+            // More than 3 nodes and way(s) selected -> align selected nodes. Don't care of way(s).
             else if(selectedNodes.size() >= 3) {
                 cmd = alignOnlyNodes(selectedNodes);
             }
@@ -181,20 +212,15 @@ public final class AlignInLineAction extends JosmAction {
     }
 
     /**
-     * Align nodes in case that only nodes are selected
+     * Align nodes in case 3 or more nodes are selected.
      *
-     * The general algorithm here is to find the two selected nodes
-     * that are furthest apart, and then to align all other selected
-     * nodes onto the straight line between these nodes.
-
-     * @param nodes Nodes to be aligned
-     * @return Command that perform action
-     * @throws InvalidSelection
+     * @param nodes Nodes to be aligned.
+     * @return Command that perform action.
+     * @throws InvalidSelection If the nodes have same coordinates.
      */
     private Command alignOnlyNodes(List<Node> nodes) throws InvalidSelection {
-        Node[] anchors = new Node[2]; // oh, java I love you so much..
-        // use the nodes furthest apart as anchors
-        nodePairFurthestApart(nodes, anchors);
+        // Choose nodes used as anchor points for projection.
+        Node[] anchors = nodePairFurthestApart(nodes);
         Collection<Command> cmds = new ArrayList<>(nodes.size());
         Line line = new Line(anchors[0], anchors[1]);
         for(Node node: nodes)
@@ -211,8 +237,8 @@ public final class AlignInLineAction extends JosmAction {
      */
     private Command alignMultiWay(Collection<Way> ways) throws InvalidSelection {
         // Collect all nodes and compute line equation
-        HashSet<Node> nodes = new HashSet<>();
-        HashMap<Way, Line> lines = new HashMap<>();
+        Set<Node> nodes = new HashSet<>();
+        Map<Way, Line> lines = new HashMap<>();
         for(Way w: ways) {
             if(w.firstNode() == w.lastNode())
                 throw new InvalidSelection(tr("Can not align a polygon. Abort."));
@@ -249,8 +275,8 @@ public final class AlignInLineAction extends JosmAction {
      * @throws InvalidSelection
      */
     private List<Line> getInvolvedLines(Node node, List<Way> refWays) throws InvalidSelection {
-        ArrayList<Line> lines = new ArrayList<>();
-        ArrayList<Node> neighbors = new ArrayList<>();
+        List<Line> lines = new ArrayList<>();
+        List<Node> neighbors = new ArrayList<>();
         for(Way way: refWays) {
             List<Node> nodes = way.getNodes();
             neighbors.clear();
