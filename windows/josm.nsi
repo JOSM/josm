@@ -296,7 +296,7 @@ Section $(JOSM_SEC_TURNRESTRICTIONS_PLUGIN) SecTurnrestrictionsPlugin
 SectionIn 1 2
 SetShellVarContext current
 SetOutPath $APPDATA\JOSM\plugins
-File "..\..\dist\turnrestrictions.jar"
+File "../../dist/turnrestrictions.jar"
 StrCpy $plugins "$plugins<entry value='turnrestrictions'/>"
 SectionEnd
 
