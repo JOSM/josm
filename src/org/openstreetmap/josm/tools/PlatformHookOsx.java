@@ -334,7 +334,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         return new File(System.getProperty("user.home")+"/Library/Preferences", "JOSM");
     }
 
-    @Overrides
+    @Override
     public File getDefaultUserDataDirectory() {
         return new File(System.getProperty("user.home")+"/Library", "JOSM");
     }
