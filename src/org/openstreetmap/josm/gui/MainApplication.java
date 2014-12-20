@@ -134,7 +134,12 @@ public class MainApplication extends Main {
                 "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
                 "\t--offline=<osm_api|josm_website|all>      "+tr("Disable access to the given resource(s), separated by comma")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
-                "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
+                "\t-Djosm.pref="    +tr("/PATH/TO/JOSM/PREF    ")+tr("Set the preferences directory")+"\n\n"+
+                "\t-Djosm.userdata="+tr("/PATH/TO/JOSM/USERDATA")+tr("Set the user data directory")+"\n\n"+
+                "\t-Djosm.cache="   +tr("/PATH/TO/JOSM/CACHE   ")+tr("Set the cache directory")+"\n\n"+
+                "\t-Djosm.home="    +tr("/PATH/TO/JOSM/HOMEDIR ")+
+                tr("Relocate all 3 directories to homedir. Cache directory will be in homedir/cache")+"\n\n"+
+                tr("-Djosm.home has lower precedence, i.e. the specific setting overrides the general one")+"\n\n"+
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
                         "      Java option to specify the maximum size of allocated memory in megabytes")+":\n"+
                         "\t-Xmx...m\n\n"+
@@ -143,6 +148,7 @@ public class MainApplication extends Main {
                         "\tjava -jar josm.jar "+OsmUrlToBounds.getURL(43.2, 11.1, 13)+"\n"+
                         "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
                         "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
+                        "\tjava -Djosm.pref=$XDG_CONFIG_HOME -Djosm.userdata=$XDG_DATA_HOME -Djosm.cache=$XDG_CACHE_HOME -jar josm.jar\n"+
                         "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
                         "\tjava -Xmx1024m -jar josm.jar\n\n"+
                         tr("Parameters --download, --downloadgps, and --selection are processed in this order.")+"\n"+
