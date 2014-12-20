@@ -120,7 +120,7 @@ function build_exe {
 	# (an exe file makes attaching to file extensions a lot easier)
 	# launch4j - http://launch4j.sourceforge.net/
 	# delete old exe file first
-	/bin/rm -f ${TARGET}.exe
+	/bin/rm -f ${TARGET}*.exe
 	$LAUNCH4J "launch4j_${TARGET}.xml"
 	# comment previous line and uncomment next one on Windows
 	#"$LAUNCH4J" "launch4j_${TARGET}.xml"

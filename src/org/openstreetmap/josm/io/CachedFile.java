@@ -65,7 +65,7 @@ public class CachedFile {
     protected CachingStrategy cachingStrategy;
 
     protected File cacheFile = null;
-    boolean initialized = false;
+    protected boolean initialized = false;
 
     public static final long DEFAULT_MAXTIME = -1L;
     public static final long DAYS = 24*60*60; // factor to get caching time in days
@@ -177,7 +177,9 @@ public class CachedFile {
                 if (is == null)
                     throw new IOException(tr("Failed to open input stream for resource ''{0}''", name));
                 return is;
-            } else throw new IOException();
+            } else {
+                throw new IllegalStateException("No file found for something different from a resource: "+name);
+            }
         }
         return new FileInputStream(file);
     }
@@ -188,7 +190,7 @@ public class CachedFile {
      * returns just that file.
      * @throws IOException when the resource with the given name could not be retrieved
      */
-    public File getFile() throws IOException {
+    public synchronized File getFile() throws IOException {
         if (initialized)
             return cacheFile;
         initialized = true;
