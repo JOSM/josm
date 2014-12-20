@@ -326,6 +326,6 @@ public class TestError implements Comparable<TestError>, DataSetListener {
 
     @Override
     public String toString() {
-        return "TestError [tester=" + tester + ", code=" + code + "]";
+        return "TestError [tester=" + tester + ", code=" + code + ", message=" + message + "]";
     }
 }
