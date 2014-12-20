@@ -42,10 +42,11 @@ import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Dialog to display and manipulate notes
+ * Dialog to display and manipulate notes.
+ * @since 7852 (renaming)
+ * @since 7608 (creation)
  */
-public class NoteDialog extends ToggleDialog implements LayerChangeListener {
-
+public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     /** Small icon size for use in graphics calculations */
     public static final int ICON_SMALL_SIZE = 16;
@@ -81,12 +82,8 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
     private NoteData noteData;
 
     /** Creates a new toggle dialog for notes */
-    public NoteDialog() {
+    public NotesDialog() {
         super("Notes", "notes/note_open.png", "List of notes", null, 150);
-        if (Main.isDebugEnabled()) {
-            Main.debug("constructed note dialog");
-        }
-
         addCommentAction = new AddCommentAction();
         closeAction = new CloseAction();
         newAction = new NewAction();
@@ -297,7 +294,7 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
                 return;
             }
             NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Comment on note"), tr("Add comment"));
-            dialog.showNoteDialog(tr("Add comment to note:"), NoteDialog.ICON_COMMENT);
+            dialog.showNoteDialog(tr("Add comment to note:"), NotesDialog.ICON_COMMENT);
             if (dialog.getValue() != 1) {
                 Main.debug("User aborted note reopening");
                 return;
@@ -317,7 +314,7 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Close note"), tr("Close note"));
-            dialog.showNoteDialog(tr("Close note with message:"), NoteDialog.ICON_CLOSED);
+            dialog.showNoteDialog(tr("Close note with message:"), NotesDialog.ICON_CLOSED);
             if (dialog.getValue() != 1) {
                 Main.debug("User aborted note closing");
                 return;
@@ -355,7 +352,7 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Reopen note"), tr("Reopen note"));
-            dialog.showNoteDialog(tr("Reopen note with message:"), NoteDialog.ICON_OPEN);
+            dialog.showNoteDialog(tr("Reopen note with message:"), NotesDialog.ICON_OPEN);
             if (dialog.getValue() != 1) {
                 Main.debug("User aborted note reopening");
                 return;

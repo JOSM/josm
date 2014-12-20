@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.Notification;
-import org.openstreetmap.josm.gui.dialogs.NoteDialog;
+import org.openstreetmap.josm.gui.dialogs.NotesDialog;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -62,7 +62,7 @@ public class AddNoteAction extends MapMode {
         LatLon latlon = Main.map.mapView.getLatLon(e.getPoint().x, e.getPoint().y);
 
         NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Create new note"), tr("Create note"));
-        dialog.showNoteDialog(tr("Enter a detailed comment to create a note"), NoteDialog.ICON_NEW);
+        dialog.showNoteDialog(tr("Enter a detailed comment to create a note"), NotesDialog.ICON_NEW);
 
         if (dialog.getValue() != 1) {
             Main.debug("User aborted note creation");
