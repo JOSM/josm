@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 /**
  * AutoCompletionList manages a list of {@link AutoCompletionListItem}s.
  *
@@ -57,8 +59,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * @exception IllegalArgumentException thrown, if filter is null
      */
     public void applyFilter(String filter) {
-        if (filter == null)
-            throw new IllegalArgumentException("argument 'filter' must not be null");
+        CheckParameterUtil.ensureParameterNotNull(filter, "filter");
         this.filter = filter;
         filter();
     }
@@ -101,8 +102,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * @exception IllegalArgumentException thrown, if other is null
      */
     public void add(AutoCompletionList other) {
-        if (other == null)
-            throw new IllegalArgumentException("argument 'other' must not be null");
+        CheckParameterUtil.ensureParameterNotNull(other, "other");
         for (AutoCompletionListItem item : other.list) {
             appendOrUpdatePriority(item);
         }
@@ -118,8 +118,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * @exception IllegalArgumentException thrown, if other is null
      */
     public void add(List<AutoCompletionListItem> other) {
-        if (other == null)
-            throw new IllegalArgumentException("argument 'other' must not be null");
+        CheckParameterUtil.ensureParameterNotNull(other, "other");
         for (AutoCompletionListItem toadd : other) {
             appendOrUpdatePriority(toadd);
         }
@@ -147,7 +146,7 @@ public class AutoCompletionList extends AbstractTableModel {
         sort();
         filter();
     }
-    
+
     public void addUserInput(Collection<String> values) {
         if (values == null) return;
         int i = 0;

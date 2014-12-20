@@ -80,7 +80,7 @@ public class ImageResource {
      */
     public ImageIcon getImageIcon(Dimension dim) {
         if (dim.width < -1 || dim.width == 0 || dim.height < -1 || dim.height == 0)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(dim+" is invalid");
         Image img = imgCache.get(dim);
         if (img != null) {
             return new ImageIcon(img);
@@ -122,7 +122,7 @@ public class ImageResource {
      */
     public ImageIcon getImageIconBounded(Dimension maxSize) {
         if (maxSize.width < -1 || maxSize.width == 0 || maxSize.height < -1 || maxSize.height == 0)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(maxSize+" is invalid");
         float realWidth;
         float realHeight;
         if (svg != null) {

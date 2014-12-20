@@ -41,7 +41,7 @@ public final class Cascade implements Cloneable {
      */
     public <T> T get(String key, T def, Class<T> klass, boolean suppressWarnings) {
         if (def != null && !klass.isInstance(def))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(def+" is not an instance of "+klass);
         Object o = prop.get(key);
         if (o == null)
             return def;

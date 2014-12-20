@@ -46,14 +46,21 @@ public enum OsmPrimitiveType {
         for (OsmPrimitiveType type : OsmPrimitiveType.values()) {
             if (type.getAPIName().equals(typeName)) return type;
         }
-        throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' is not a valid type name. Got ''{1}''.", "typeName", typeName));
+        throw new IllegalArgumentException(MessageFormat.format(
+                "Parameter ''{0}'' is not a valid type name. Got ''{1}''.", "typeName", typeName));
     }
 
+    /**
+     * Determines the OSM primitive type of the given object.
+     * @param obj the S object to inspect
+     * @return the OSM primitive type of {@code obj}
+     * @throws IllegalArgumentException if {@code obj} is null or of unknown type
+     */
     public static OsmPrimitiveType from(IPrimitive obj) {
         if (obj instanceof INode) return NODE;
         if (obj instanceof IWay) return WAY;
         if (obj instanceof IRelation) return RELATION;
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("Unknown type: "+obj);
     }
 
     public static OsmPrimitiveType from(String value) {

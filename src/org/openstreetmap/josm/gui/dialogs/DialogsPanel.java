@@ -9,11 +9,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.openstreetmap.josm.gui.widgets.MultiSplitPane;
 import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Divider;
 import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Leaf;
 import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Node;
 import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Split;
+import org.openstreetmap.josm.gui.widgets.MultiSplitPane;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Destroyable;
 
 public class DialogsPanel extends JPanel implements Destroyable {
@@ -160,8 +161,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
                 }
             }
         } else {
-            if (triggeredBy == null)
-                throw new IllegalArgumentException();
+            CheckParameterUtil.ensureParameterNotNull(triggeredBy, "triggeredBy");
 
             int sumP = 0;   // sum of preferred heights of dialogs in default view (without the triggering dialog)
             int sumA = 0;   // sum of actual heights of dialogs in default view (without the triggering dialog)

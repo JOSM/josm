@@ -34,7 +34,7 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
      */
     public AbstractProjectionChoice(String name, String id) {
         this(name, id, null);
-        if (!id.startsWith("core:")) throw new IllegalArgumentException();
+        if (!id.startsWith("core:")) throw new IllegalArgumentException(id+" does not start with core:");
         this.cacheDir = id.substring(5);
     }
 

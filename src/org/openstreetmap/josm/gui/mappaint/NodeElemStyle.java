@@ -44,9 +44,9 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
 
         public Symbol(SymbolShape symbol, int size, Stroke stroke, Color strokeColor, Color fillColor) {
             if (stroke != null && strokeColor == null)
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Stroke given without color");
             if (stroke == null && fillColor == null)
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Either a stroke or a fill color must be given");
             this.symbol = symbol;
             this.size = size;
             this.stroke = stroke;

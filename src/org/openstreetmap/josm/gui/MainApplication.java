@@ -265,7 +265,7 @@ public class MainApplication extends Main {
                 }
                 values.add(g.getOptarg());
             } else
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Invalid option: "+c);
         }
         // positional arguments are a shortcut for the --download ... option
         for (int i = g.getOptind(); i < args.length; ++i) {

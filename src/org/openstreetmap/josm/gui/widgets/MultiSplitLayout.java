@@ -42,6 +42,7 @@ import java.util.Map;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -827,8 +828,7 @@ public class MultiSplitLayout implements LayoutManager {
      * @throws IllegalArgumentException if the Rectangle is null
      */
     public List<Divider> dividersThatOverlap(Rectangle r) {
-        if (r == null)
-            throw new IllegalArgumentException("null Rectangle");
+        CheckParameterUtil.ensureParameterNotNull(r, "r");
         return dividersThatOverlap(getModel(), r);
     }
 
@@ -885,8 +885,7 @@ public class MultiSplitLayout implements LayoutManager {
          * @see #getBounds
          */
         public void setBounds(Rectangle bounds) {
-            if (bounds == null)
-                throw new IllegalArgumentException("null bounds");
+            CheckParameterUtil.ensureParameterNotNull(bounds, "bounds");
             this.bounds = new Rectangle(bounds);
         }
 
@@ -1076,8 +1075,7 @@ public class MultiSplitLayout implements LayoutManager {
          * @throws IllegalArgumentException if name is null
          */
         public Leaf(String name) {
-            if (name == null)
-                throw new IllegalArgumentException("name is null");
+            CheckParameterUtil.ensureParameterNotNull(name, "name");
             this.name = name;
         }
 
@@ -1096,8 +1094,7 @@ public class MultiSplitLayout implements LayoutManager {
          * @throws IllegalArgumentException if name is null
          */
         public void setName(String name) {
-            if (name == null)
-                throw new IllegalArgumentException("name is null");
+            CheckParameterUtil.ensureParameterNotNull(name, "name");
             this.name = name;
         }
 

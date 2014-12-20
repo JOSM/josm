@@ -105,7 +105,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
     @Override
     public Collection<String> getPreferences(JPanel panel) {
         if (!(panel instanceof UTMPanel)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Unsupported panel: "+panel);
         }
         UTMPanel p = (UTMPanel) panel;
         int idx = p.prefcb.getSelectedIndex();
