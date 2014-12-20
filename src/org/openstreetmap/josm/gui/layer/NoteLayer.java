@@ -29,7 +29,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.gui.dialogs.NoteDialog;
+import org.openstreetmap.josm.gui.dialogs.NotesDialog;
 import org.openstreetmap.josm.io.NoteExporter;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -98,11 +98,11 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
             ImageIcon icon = null;
             if (note.getId() < 0) {
-                icon = NoteDialog.ICON_NEW_SMALL;
+                icon = NotesDialog.ICON_NEW_SMALL;
             } else if (note.getState() == State.closed) {
-                icon = NoteDialog.ICON_CLOSED_SMALL;
+                icon = NotesDialog.ICON_CLOSED_SMALL;
             } else {
-                icon = NoteDialog.ICON_OPEN_SMALL;
+                icon = NotesDialog.ICON_OPEN_SMALL;
             }
             int width = icon.getIconWidth();
             int height = icon.getIconHeight();
@@ -138,10 +138,10 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             Point p = mv.getPoint(noteData.getSelectedNote().getLatLon());
 
             g.setColor(ColorHelper.html2color(Main.pref.get("color.selected")));
-            g.drawRect(p.x - (NoteDialog.ICON_SMALL_SIZE / 2), p.y - NoteDialog.ICON_SMALL_SIZE, NoteDialog.ICON_SMALL_SIZE - 1, NoteDialog.ICON_SMALL_SIZE - 1);
+            g.drawRect(p.x - (NotesDialog.ICON_SMALL_SIZE / 2), p.y - NotesDialog.ICON_SMALL_SIZE, NotesDialog.ICON_SMALL_SIZE - 1, NotesDialog.ICON_SMALL_SIZE - 1);
 
-            int tx = p.x + (NoteDialog.ICON_SMALL_SIZE / 2) + 5;
-            int ty = p.y - NoteDialog.ICON_SMALL_SIZE - 1;
+            int tx = p.x + (NotesDialog.ICON_SMALL_SIZE / 2) + 5;
+            int ty = p.y - NotesDialog.ICON_SMALL_SIZE - 1;
             g.translate(tx, ty);
 
             //Carried over from the OSB plugin. Not entirely sure why it is needed
@@ -158,7 +158,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public Icon getIcon() {
-        return NoteDialog.ICON_OPEN_SMALL;
+        return NotesDialog.ICON_OPEN_SMALL;
     }
 
     @Override
@@ -218,7 +218,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
         for (Note note : noteData.getNotes()) {
             Point notePoint = Main.map.mapView.getPoint(note.getLatLon());
             //move the note point to the center of the icon where users are most likely to click when selecting
-            notePoint.setLocation(notePoint.getX(), notePoint.getY() - NoteDialog.ICON_SMALL_SIZE / 2);
+            notePoint.setLocation(notePoint.getX(), notePoint.getY() - NotesDialog.ICON_SMALL_SIZE / 2);
             double dist = clickPoint.distanceSq(notePoint);
             if (minDistance > dist && clickPoint.distance(notePoint) < snapDistance ) {
                 minDistance = dist;
