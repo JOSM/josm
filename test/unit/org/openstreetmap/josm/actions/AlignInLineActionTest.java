@@ -45,21 +45,17 @@ public final class AlignInLineActionTest {
      */
     @Test
     public void nodesOpenWay() {
-        DataSet dataSet;
-        OsmDataLayer layer;
-        Node point1, point2, point3;
-
-        dataSet = new DataSet();
-        layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
+        DataSet dataSet = new DataSet();
+        OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
         // Create test points, lower left is (0,0).
         //
         // 1 - - -
         // - 3 - 2
         // - - - -
-        point1 = new Node(new EastNorth(0, 2));
-        point2 = new Node(new EastNorth(3, 1));
-        point3 = new Node(new EastNorth(1, 1));
+        Node point1 = new Node(new EastNorth(0, 2));
+        Node point2 = new Node(new EastNorth(3, 1));
+        Node point3 = new Node(new EastNorth(1, 1));
 
         try {
             Main.main.addLayer(layer);
@@ -88,22 +84,18 @@ public final class AlignInLineActionTest {
      */
     @Test
     public void nodesClosedWay() {
-        DataSet dataSet;
-        OsmDataLayer layer;
-        Node point1, point2, point3, point4;
-
-        dataSet = new DataSet();
-        layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
+        DataSet dataSet = new DataSet();
+        OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
         // Create test points, lower left is (0,0).
         //
         // 4 - 3
         // - - -
         // 1 - 2
-        point1 = new Node(new EastNorth(0, 0));
-        point2 = new Node(new EastNorth(2, 0));
-        point3 = new Node(new EastNorth(2, 2));
-        point4 = new Node(new EastNorth(0, 2));
+        Node point1 = new Node(new EastNorth(0, 0));
+        Node point2 = new Node(new EastNorth(2, 0));
+        Node point3 = new Node(new EastNorth(2, 2));
+        Node point4 = new Node(new EastNorth(0, 2));
 
         try {
             Main.main.addLayer(layer);
@@ -132,22 +124,18 @@ public final class AlignInLineActionTest {
      */
     @Test
     public void nodesOpenWays() {
-        DataSet dataSet;
-        OsmDataLayer layer;
-        Node point1, point2, point3, point4;
-
-        dataSet = new DataSet();
-        layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
+        DataSet dataSet = new DataSet();
+        OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
         // Create test points, lower left is (0,0).
         //
         // 1 - -
         // 3 - 2
         // - - 4
-        point1 = new Node(new EastNorth(0, 2));
-        point2 = new Node(new EastNorth(2, 1));
-        point3 = new Node(new EastNorth(0, 1));
-        point4 = new Node(new EastNorth(2, 0));
+        Node point1 = new Node(new EastNorth(0, 2));
+        Node point2 = new Node(new EastNorth(2, 1));
+        Node point3 = new Node(new EastNorth(0, 1));
+        Node point4 = new Node(new EastNorth(2, 0));
 
         try {
             Main.main.addLayer(layer);
@@ -179,9 +167,7 @@ public final class AlignInLineActionTest {
      * @param nodes List of nodes to add to dataset.
      */
     private void createWay(DataSet dataSet, Node... nodes) {
-        Way way;
-
-        way = new Way();
+        Way way = new Way();
         dataSet.addPrimitive(way);
 
         for (Node node : nodes) {
@@ -201,9 +187,7 @@ public final class AlignInLineActionTest {
      * @param y Y coordinate.
      */
     private void assertCoordEq(Node node, double x, double y) {
-        EastNorth coordinate;
-
-        coordinate = node.getEastNorth();
+        EastNorth coordinate = node.getEastNorth();
         assertEquals("Wrong x coordinate.", x, coordinate.getX(), LatLon.MAX_SERVER_PRECISION);
         assertEquals("Wrong y coordinate.", y, coordinate.getY(), LatLon.MAX_SERVER_PRECISION);
     }
