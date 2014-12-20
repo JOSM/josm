@@ -13,7 +13,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.io.OnlineResource;
 
 /**
  * Unit tests for class AlignInLineAction.
@@ -33,8 +32,6 @@ public final class AlignInLineActionTest {
         // Enable "Align in line" feature.
         action = Main.main.menu.alignInLine;
         action.setEnabled(true);
-
-        Main.setOffline(OnlineResource.ALL);
     }
 
     /**
