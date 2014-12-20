@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
@@ -237,7 +238,7 @@ public final class TaggingPresetReader {
             if (zip != null) {
                 zipIcons = cf.getFile();
             }
-            try (InputStreamReader r = new InputStreamReader(zip == null ? cf.getInputStream() : zip, StandardCharsets.UTF_8)) {
+            try (InputStreamReader r = UTFInputStreamReader.create(zip == null ? cf.getInputStream() : zip)) {
                 tp = readAll(new BufferedReader(r), validate);
             }
         }
