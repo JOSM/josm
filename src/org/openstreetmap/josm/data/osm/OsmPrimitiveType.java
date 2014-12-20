@@ -52,7 +52,7 @@ public enum OsmPrimitiveType {
 
     /**
      * Determines the OSM primitive type of the given object.
-     * @param obj the S object to inspect
+     * @param obj the OSM object to inspect
      * @return the OSM primitive type of {@code obj}
      * @throws IllegalArgumentException if {@code obj} is null or of unknown type
      */

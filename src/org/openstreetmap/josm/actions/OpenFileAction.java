@@ -198,9 +198,11 @@ public class OpenFileAction extends DiskAccessAction {
              * Find the importer with the chosen file filter
              */
             FileImporter chosenImporter = null;
-            for (FileImporter importer : ExtensionFileFilter.importers) {
-                if (fileFilter.equals(importer.filter)) {
-                    chosenImporter = importer;
+            if (fileFilter != null) {
+                for (FileImporter importer : ExtensionFileFilter.importers) {
+                    if (fileFilter.equals(importer.filter)) {
+                        chosenImporter = importer;
+                    }
                 }
             }
             /**
