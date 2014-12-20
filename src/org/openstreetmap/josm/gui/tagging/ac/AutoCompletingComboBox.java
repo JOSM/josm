@@ -222,7 +222,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
         } else if (item instanceof AutoCompletionListItem) {
             cbEditor.setItem(((AutoCompletionListItem)item).getValue());
         } else
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Unsupported item: "+item);
     }
 
     /**

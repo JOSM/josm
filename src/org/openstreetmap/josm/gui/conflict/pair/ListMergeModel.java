@@ -371,7 +371,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
 
     private void copy(ListRole sourceRole, int[] rows, int position) {
         if (position < 0 || position > getMergedEntriesSize())
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Position must be between 0 and "+getMergedEntriesSize()+" but is "+position);
         List<T> newItems = new ArrayList<>(rows.length);
         List<T> source = entries.get(sourceRole);
         List<PrimitiveId> deletedIds = new ArrayList<>();

@@ -188,7 +188,7 @@ public final class Utils {
      */
     public static int mod(int a, int n) {
         if (n <= 0)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("n must be <= 0 but is "+n);
         int res = a % n;
         if (res < 0) {
             res += n;
@@ -205,8 +205,7 @@ public final class Utils {
      * @return null if values is null. The joined string otherwise.
      */
     public static String join(String sep, Collection<?> values) {
-        if (sep == null)
-            throw new IllegalArgumentException();
+        CheckParameterUtil.ensureParameterNotNull(sep, "sep");
         if (values == null)
             return null;
         if (values.isEmpty())

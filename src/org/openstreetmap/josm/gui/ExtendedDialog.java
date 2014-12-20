@@ -526,7 +526,7 @@ public class ExtendedDialog extends JDialog {
      */
     public ExtendedDialog toggleEnable(String togglePref) {
         if (!modal) {
-            throw new IllegalArgumentException();
+            throw new IllegalStateException();
         }
         this.toggleable = true;
         this.togglePref = togglePref;

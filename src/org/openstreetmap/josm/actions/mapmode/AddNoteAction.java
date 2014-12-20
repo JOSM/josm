@@ -14,6 +14,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.NotesDialog;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -33,9 +34,7 @@ public class AddNoteAction extends MapMode {
         super(tr("Add a new Note"), "addnote.png",
             tr("Add note mode"),
             mapFrame, ImageProvider.getCursor("crosshair", "create_note"));
-        if (data == null) {
-            throw new IllegalArgumentException("Note data must not be null");
-        }
+        CheckParameterUtil.ensureParameterNotNull(data, "data");
         noteData = data;
     }
 

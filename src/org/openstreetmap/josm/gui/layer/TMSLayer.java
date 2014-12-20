@@ -80,6 +80,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -110,7 +111,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser", true);
     public static final IntegerProperty PROP_TMS_JOBS = new IntegerProperty("tmsloader.maxjobs", 25);
     public static final StringProperty PROP_TILECACHE_DIR;
-    
+
     private static final boolean newcache = Main.pref.getBoolean("tms.newcache");
 
     static {
@@ -400,22 +401,25 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return null;
     }
 
-    public static void checkUrl(String url) throws IllegalArgumentException {
-        if (url == null) {
-            throw new IllegalArgumentException();
-        } else {
-            Matcher m = Pattern.compile("\\{[^}]*\\}").matcher(url);
-            while (m.find()) {
-                boolean isSupportedPattern = false;
-                for (String pattern : TemplatedTMSTileSource.ALL_PATTERNS) {
-                    if (m.group().matches(pattern)) {
-                        isSupportedPattern = true;
-                        break;
-                    }
+    /**
+     * Checks validity of given URL.
+     * @param url URL to check
+     * @throws IllegalArgumentException if url is null or invalid
+     */
+    public static void checkUrl(String url) {
+        CheckParameterUtil.ensureParameterNotNull(url, "url");
+        Matcher m = Pattern.compile("\\{[^}]*\\}").matcher(url);
+        while (m.find()) {
+            boolean isSupportedPattern = false;
+            for (String pattern : TemplatedTMSTileSource.ALL_PATTERNS) {
+                if (m.group().matches(pattern)) {
+                    isSupportedPattern = true;
+                    break;
                 }
-                if (!isSupportedPattern) {
-                    throw new IllegalArgumentException(tr("{0} is not a valid TMS argument. Please check this server URL:\n{1}", m.group(), url));
-                }
+            }
+            if (!isSupportedPattern) {
+                throw new IllegalArgumentException(
+                        tr("{0} is not a valid TMS argument. Please check this server URL:\n{1}", m.group(), url));
             }
         }
     }

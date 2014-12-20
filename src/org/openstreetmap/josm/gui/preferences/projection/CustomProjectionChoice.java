@@ -231,7 +231,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
     @Override
     public Collection<String> getPreferences(JPanel panel) {
         if (!(panel instanceof PreferencePanel)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Unsupported panel: "+panel);
         }
         PreferencePanel prefPanel = (PreferencePanel) panel;
         String pref = prefPanel.input.getText();

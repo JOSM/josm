@@ -12,9 +12,15 @@ public class Range {
 
     public static final Range ZERO_TO_INFINITY = new Range(0.0, Double.POSITIVE_INFINITY);
 
+    /**
+     * Constructs a new {@code Range}.
+     * @param lower Lower bound. Must be positive or zero
+     * @param upper Upper bound
+     * @throws IllegalArgumentException if the range is invalid ({@code lower < 0 || lower >= upper})
+     */
     public Range(double lower, double upper) {
         if (lower < 0 || lower >= upper)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid range: "+lower+"-"+upper);
         this.lower = lower;
         this.upper = upper;
     }
@@ -28,7 +34,7 @@ public class Range {
      */
     public static Range cut(Range a, Range b) {
         if (b.lower >= a.upper || b.upper <= a.lower)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Ranges do not overlap: "+a+" - "+b);
         return new Range(Math.max(a.lower, b.lower), Math.min(a.upper, b.upper));
     }
 
@@ -48,9 +54,9 @@ public class Range {
      */
     public Range reduceAround(double x, Range other) {
         if (!contains(x))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(x+" is not inside "+this);
         if (other.contains(x))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(x+" is inside "+other);
 
         if (x < other.lower && other.lower < upper)
             return new Range(lower, other.lower);

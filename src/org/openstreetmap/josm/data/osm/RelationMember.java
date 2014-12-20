@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Arrays;
 
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 /**
  * A linkage class that can be used by an relation to keep a list of
  * members. Since membership may be qualified by a "role", a simple
@@ -127,12 +129,11 @@ public class RelationMember implements PrimitiveId {
      * @param member Cannot be null
      * @throws IllegalArgumentException thrown if member is <code>null</code>
      */
-    public RelationMember(String role, OsmPrimitive member) throws IllegalArgumentException{
+    public RelationMember(String role, OsmPrimitive member) {
+        CheckParameterUtil.ensureParameterNotNull(member, "member");
         if (role == null) {
             role = "";
         }
-        if (member == null)
-            throw new IllegalArgumentException("Relation member cannot be null");
         this.role = role;
         this.member = member;
     }

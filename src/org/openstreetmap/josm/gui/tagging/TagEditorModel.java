@@ -175,16 +175,14 @@ public class TagEditorModel extends AbstractTableModel {
      * @exception IllegalArgumentException thrown, if tag is null
      */
     public void add(TagModel tag) {
-        if (tag == null)
-            throw new IllegalArgumentException("argument 'tag' must not be null");
+        CheckParameterUtil.ensureParameterNotNull(tag, "tag");
         tags.add(tag);
         setDirty(true);
         fireTableDataChanged();
     }
 
     public void prepend(TagModel tag) {
-        if (tag == null)
-            throw new IllegalArgumentException("argument 'tag' must not be null");
+        CheckParameterUtil.ensureParameterNotNull(tag, "tag");
         tags.add(0, tag);
         setDirty(true);
         fireTableDataChanged();
