@@ -246,8 +246,9 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
                 }
             }
             super.setSelectedItem(new AutoCompletionListItem(s, AutoCompletionItemPriority.UNKNOWN));
-        } else
-            throw new IllegalArgumentException();
+        } else {
+            throw new IllegalArgumentException("Unsupported item: "+item);
+        }
     }
 
     /**
