@@ -988,7 +988,7 @@
         </item> <!-- Steps -->
     </group> <!-- Ways -->
     <group name="Waypoints" icon="presets/waypoints.png">
-        <item name="Motorway Junction" icon="presets/motorway_exit.png" type="node" preset_name_label="true">
+        <item name="Motorway Junction" icon="styles/standard/vehicle/motorway_junction.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway_junction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=motorway_junction"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=motorway_junction"
