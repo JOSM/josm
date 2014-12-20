@@ -31,7 +31,7 @@ public class MoveAction extends JosmAction {
     private Direction myDirection;
 
     // any better idea?
-    private static String calltosupermustbefirststatementinconstructor_text(Direction dir) {
+    private static String calltosupermustbefirststatementinconstructortext(Direction dir) {
         String directiontext;
         if        (dir == Direction.UP)   {
             directiontext = tr("up");
@@ -60,9 +60,13 @@ public class MoveAction extends JosmAction {
         return sc;
     }
 
+    /**
+     * Constructs a new {@code MoveAction}.
+     * @param dir direction
+     */
     public MoveAction(Direction dir) {
-        super(tr("Move {0}", calltosupermustbefirststatementinconstructor_text(dir)), null,
-                tr("Moves Objects {0}", calltosupermustbefirststatementinconstructor_text(dir)),
+        super(tr("Move {0}", calltosupermustbefirststatementinconstructortext(dir)), null,
+                tr("Moves Objects {0}", calltosupermustbefirststatementinconstructortext(dir)),
                 calltosupermustbefirststatementinconstructor(dir), false);
         myDirection = dir;
         putValue("help", ht("/Action/Move"));
@@ -119,8 +123,8 @@ public class MoveAction extends JosmAction {
         if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).getParticipatingPrimitives())) {
             ((MoveCommand)c).moveAgain(distx, disty);
         } else {
-            Main.main.undoRedo.add(
-                    c = new MoveCommand(selection, distx, disty));
+            c = new MoveCommand(selection, distx, disty);
+            Main.main.undoRedo.add(c);
         }
         getCurrentDataSet().endUpdate();
 

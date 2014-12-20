@@ -11,8 +11,15 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Display object information about OSM nodes, ways, or relations in web browser.
+ * @since 4408
+ */
 public class InfoWebAction extends AbstractInfoAction {
 
+    /**
+     * Constructs a new {@code InfoWebAction}.
+     */
     public InfoWebAction() {
         super(tr("Advanced info (web)"), "info",
                 tr("Display object information about OSM nodes, ways, or relations in web browser."),

@@ -37,12 +37,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  * <li><b>Join Node to Way</b>: Include a node into the nearest way segments. The node does not move</li>
  * <li><b>Move Node onto Way</b>: Move the node onto the nearest way segments and include it</li>
  * </ul>
+ * @since 466
  */
 public class JoinNodeWayAction extends JosmAction {
 
     protected final boolean joinWayToNode;
 
-    protected JoinNodeWayAction(boolean joinWayToNode, String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
+    protected JoinNodeWayAction(boolean joinWayToNode, String name, String iconName, String tooltip,
+            Shortcut shortcut, boolean registerInToolbar) {
         super(name, iconName, tooltip, shortcut, registerInToolbar);
         this.joinWayToNode = joinWayToNode;
     }
@@ -53,8 +55,10 @@ public class JoinNodeWayAction extends JosmAction {
      */
     public static JoinNodeWayAction createJoinNodeToWayAction() {
         JoinNodeWayAction action = new JoinNodeWayAction(false,
-                tr("Join Node to Way"), /* ICON */ "joinnodeway", tr("Include a node into the nearest way segments"),
-                Shortcut.registerShortcut("tools:joinnodeway", tr("Tool: {0}", tr("Join Node to Way")), KeyEvent.VK_J, Shortcut.DIRECT), true);
+                tr("Join Node to Way"), /* ICON */ "joinnodeway",
+                tr("Include a node into the nearest way segments"),
+                Shortcut.registerShortcut("tools:joinnodeway", tr("Tool: {0}", tr("Join Node to Way")),
+                        KeyEvent.VK_J, Shortcut.DIRECT), true);
         action.putValue("help", ht("/Action/JoinNodeWay"));
         return action;
     }
@@ -65,8 +69,11 @@ public class JoinNodeWayAction extends JosmAction {
      */
     public static JoinNodeWayAction createMoveNodeOntoWayAction() {
         JoinNodeWayAction action = new JoinNodeWayAction(true,
-                tr("Move Node onto Way"), /* ICON*/ "movenodeontoway", tr("Move the node onto the nearest way segments and include it"),
-                Shortcut.registerShortcut("tools:movenodeontoway", tr("Tool: {0}", tr("Move Node onto Way")), KeyEvent.VK_N, Shortcut.DIRECT), true);
+                tr("Move Node onto Way"), /* ICON*/ "movenodeontoway",
+                tr("Move the node onto the nearest way segments and include it"),
+                Shortcut.registerShortcut("tools:movenodeontoway", tr("Tool: {0}", tr("Move Node onto Way")),
+                        KeyEvent.VK_N, Shortcut.DIRECT), true);
+        action.putValue("help", ht("/Action/MoveNodeWay"));
         return action;
     }
 
@@ -94,7 +101,7 @@ public class JoinNodeWayAction extends JosmAction {
                     continue;
                 }
 
-                if (ws.getFirstNode() != node && ws.getSecondNode() != node) {
+                if (!ws.getFirstNode().equals(node) && !ws.getSecondNode().equals(node)) {
                     insertPoints.put(ws.way, ws.lowerIndex);
                 }
             }
@@ -136,7 +143,8 @@ public class JoinNodeWayAction extends JosmAction {
                 }
                 List<Node> nodesToAdd = new LinkedList<>();
                 nodesToAdd.addAll(nodesInSegment);
-                Collections.sort(nodesToAdd, new NodeDistanceToRefNodeComparator(w.getNode(segmentIndex), w.getNode(segmentIndex+1), !joinWayToNode));
+                Collections.sort(nodesToAdd, new NodeDistanceToRefNodeComparator(
+                        w.getNode(segmentIndex), w.getNode(segmentIndex+1), !joinWayToNode));
                 wayNodes.addAll(segmentIndex + 1, nodesToAdd);
             }
             Way wnew = new Way(w);

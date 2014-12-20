@@ -54,7 +54,8 @@ public class OpenLocationAction extends JosmAction {
     public OpenLocationAction() {
         /* I18N: Command to download a specific location/URL */
         super(tr("Open Location..."), "openlocation", tr("Open an URL."),
-                Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")), KeyEvent.VK_L, Shortcut.CTRL), true);
+                Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")),
+                        KeyEvent.VK_L, Shortcut.CTRL), true);
         putValue("help", ht("/Action/OpenLocation"));
         this.downloadTasks = new ArrayList<>();
         addDownloadTaskClass(DownloadOsmTask.class);
@@ -73,7 +74,8 @@ public class OpenLocationAction extends JosmAction {
      * @param cbHistory
      */
     protected void restoreUploadAddressHistory(HistoryComboBox cbHistory) {
-        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(getClass().getName() + ".uploadAddressHistory", new LinkedList<String>()));
+        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(getClass().getName() + ".uploadAddressHistory",
+                new LinkedList<String>()));
         // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         //
         Collections.reverse(cmtHistory);
@@ -174,10 +176,10 @@ public class OpenLocationAction extends JosmAction {
 
     /**
      * Open the given URL.
-     * @param new_layer true if the URL needs to be opened in a new layer, false otherwise
+     * @param newLayer true if the URL needs to be opened in a new layer, false otherwise
      * @param url The URL to open
      */
-    public void openUrl(boolean new_layer, final String url) {
+    public void openUrl(boolean newLayer, final String url) {
         PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
         Collection<DownloadTask> tasks = findDownloadTasks(url, false);
         DownloadTask task = null;
@@ -186,7 +188,7 @@ public class OpenLocationAction extends JosmAction {
             // TODO: handle multiple suitable tasks ?
             try {
                 task = tasks.iterator().next();
-                future = task.loadUrl(new_layer, url, monitor);
+                future = task.loadUrl(newLayer, url, monitor);
             } catch (IllegalArgumentException e) {
                 Main.error(e);
             }

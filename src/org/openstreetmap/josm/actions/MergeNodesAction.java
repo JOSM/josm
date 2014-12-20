@@ -71,7 +71,8 @@ public class MergeNodesAction extends JosmAction {
         List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
 
         if (selectedNodes.size() == 1) {
-            List<Node> nearestNodes = Main.map.mapView.getNearestNodes(Main.map.mapView.getPoint(selectedNodes.get(0)), selectedNodes, OsmPrimitive.isUsablePredicate);
+            List<Node> nearestNodes = Main.map.mapView.getNearestNodes(
+                    Main.map.mapView.getPoint(selectedNodes.get(0)), selectedNodes, OsmPrimitive.isUsablePredicate);
             if (nearestNodes.isEmpty()) {
                 new Notification(
                         tr("Please select at least two nodes to merge or one node that is close to another node."))
@@ -141,9 +142,8 @@ public class MergeNodesAction extends JosmAction {
 
             return new Node(new EastNorth(east2 / weight, north2 / weight));
         default:
-            throw new RuntimeException("unacceptable merge-nodes.mode");
+            throw new IllegalStateException("unacceptable merge-nodes.mode");
         }
-
     }
 
     /**
@@ -197,14 +197,13 @@ public class MergeNodesAction extends JosmAction {
         for (Way w: OsmPrimitive.getFilteredList(OsmPrimitive.getReferrer(nodesToDelete), Way.class)) {
             List<Node> newNodes = new ArrayList<>(w.getNodesCount());
             for (Node n: w.getNodes()) {
-                if (! nodesToDelete.contains(n) && n != targetNode) {
+                if (! nodesToDelete.contains(n) && !n.equals(targetNode)) {
                     newNodes.add(n);
                 } else if (newNodes.isEmpty()) {
                     newNodes.add(targetNode);
-                } else if (newNodes.get(newNodes.size()-1) != targetNode) {
+                } else if (!newNodes.get(newNodes.size()-1).equals(targetNode)) {
                     // make sure we collapse a sequence of deleted nodes
                     // to exactly one occurrence of the merged target node
-                    //
                     newNodes.add(targetNode);
                 } else {
                     // drop the node
@@ -316,7 +315,7 @@ public class MergeNodesAction extends JosmAction {
         try {
             TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
             List<Command> resultion = CombinePrimitiveResolverDialog.launchIfNecessary(nodeTags, nodes, Collections.singleton(targetNode));
-            LinkedList<Command> cmds = new LinkedList<>();
+            List<Command> cmds = new LinkedList<>();
 
             // the nodes we will have to delete
             //
@@ -336,7 +335,7 @@ public class MergeNodesAction extends JosmAction {
 
             // build the commands
             //
-            if (targetNode != targetLocationNode) {
+            if (!targetNode.equals(targetLocationNode)) {
                 LatLon targetLocationCoor = targetLocationNode.getCoor();
                 if (!targetNode.getCoor().equals(targetLocationCoor)) {
                     Node newTargetNode = new Node(targetNode);

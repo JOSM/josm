@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -44,7 +45,7 @@ public final class MirrorAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        HashSet<Node> nodes = new HashSet<>();
+        Set<Node> nodes = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Node) {

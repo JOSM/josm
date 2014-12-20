@@ -23,13 +23,18 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.gui.widgets.UrlLabel;
 
+/**
+ * Download rectified images from various services.
+ * @since 3715
+ */
 public class MapRectifierWMSmenuAction extends JosmAction {
+
     /**
      * Class that bundles all required information of a rectifier service
      */
@@ -39,7 +44,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
         private final String wmsUrl;
         private final Pattern urlRegEx;
         private final Pattern idValidator;
-        public JRadioButton btn;
+        private JRadioButton btn;
 
         /**
          * @param name Name of the rectifing service
@@ -56,16 +61,19 @@ public class MapRectifierWMSmenuAction extends JosmAction {
             this.idValidator = Pattern.compile(idValidator);
         }
 
-        public boolean isSelected() {
+        private boolean isSelected() {
             return btn.isSelected();
         }
     }
 
     /**
-     * List of available rectifier services. May be extended from the outside
+     * List of available rectifier services.
      */
-    public List<RectifierService> services = new ArrayList<>();
+    private final List<RectifierService> services = new ArrayList<>();
 
+    /**
+     * Constructs a new {@code MapRectifierWMSmenuAction}.
+     */
     public MapRectifierWMSmenuAction() {
         super(tr("Rectified Image..."),
                 "OLmarker",

@@ -8,8 +8,15 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * Lasso selection mode: select objects within a hand-drawn region.
+ * @since 5152
+ */
 public class LassoModeAction extends MapMode {
 
+    /**
+     * Constructs a new {@code LassoModeAction}.
+     */
     public LassoModeAction() {
         super(tr("Lasso Mode"),
                 /* ICON(mapmode/) */ "rope",
