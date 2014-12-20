@@ -11,6 +11,11 @@
 # Then download launch4j from http://launch4j.sourceforge.net/ 
 # wget http://softlayer-ams.dl.sourceforge.net/project/launch4j/launch4j-3/3.5/launch4j-3.5-linux.tgz
 # and unpack it to /usr/share/launch4j
+#
+# On Debian/Ubuntu 64bits, follow then this procedure
+# http://sourceforge.net/p/launch4j/feature-requests/74/#2051
+# if you get this error: launch4j: net.sf.launch4j.ExecException: java.io.IOException: 
+#   Cannot run program "/usr/share/launch4j/bin/windres": error=2, No such file or directory
 
 ## settings ##
 
@@ -78,10 +83,7 @@ else
       ln -s /home/josm/www/download/windows/webkit-image.zip .
     fi
 fi
-#mkdir -p webkit-image
-#cd webkit-image
 unzip -o webkit-image.zip
-#cd ..
 
 echo 
 echo "##################################################################"
