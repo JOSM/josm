@@ -334,7 +334,6 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
 
     /**
      * Adapter for selection change events
-     *
      */
     private class SelectionChangeAdapter implements SelectionChangedListener {
         @Override

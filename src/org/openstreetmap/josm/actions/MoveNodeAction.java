@@ -20,6 +20,9 @@ import org.openstreetmap.josm.gui.dialogs.LatLonDialog;
  */
 public final class MoveNodeAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code MoveNodeAction}.
+     */
     public MoveNodeAction() {
         super(tr("Move Node..."), "movenode", tr("Edit latitude and longitude of a node."),
                 null, /* no shortcut */

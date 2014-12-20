@@ -51,7 +51,7 @@ public class OpenFileAction extends DiskAccessAction {
     /**
      * The {@link ExtensionFileFilter} matching .url files
      */
-    public static final ExtensionFileFilter urlFileFilter = new ExtensionFileFilter("url", "url", tr("URL Files") + " (*.url)");
+    public static final ExtensionFileFilter URL_FILE_FILTER = new ExtensionFileFilter("url", "url", tr("URL Files") + " (*.url)");
 
     /**
      * Create an open action. The name is "Open a file".
@@ -199,7 +199,7 @@ public class OpenFileAction extends DiskAccessAction {
              */
             FileImporter chosenImporter = null;
             for (FileImporter importer : ExtensionFileFilter.importers) {
-                if (fileFilter == importer.filter) {
+                if (fileFilter.equals(importer.filter)) {
                     chosenImporter = importer;
                 }
             }
@@ -257,7 +257,7 @@ public class OpenFileAction extends DiskAccessAction {
                             continue FILES;
                         }
                     }
-                    if (urlFileFilter.accept(f)) {
+                    if (URL_FILE_FILTER.accept(f)) {
                         urlFiles.add(f);
                     } else {
                         filesWithUnknownImporter.add(f);
