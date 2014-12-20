@@ -119,8 +119,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     /**
      * The MapView this status belongs to.
      */
-    final MapView mv;
-    final Collector collector;
+    private final MapView mv;
+    private final Collector collector;
 
     public class BackgroundProgressMonitor implements ProgressMonitorDialog {
 
@@ -901,7 +901,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
     @Override
     public String helpTopic() {
-        return ht("/Statusline");
+        return ht("/StatusBar");
     }
 
     @Override
