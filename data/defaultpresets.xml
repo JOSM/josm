@@ -704,7 +704,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
-                <combo key="junction" text="Junction" values="roundabout,jughandle,yes" />
+                <combo key="junction" text="Junction" values="roundabout,jughandle" />
             </optional>
         </item> <!-- Construction -->
         <separator/>
@@ -1164,6 +1164,12 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=traffic_mirror" />
             <key key="highway" value="traffic_mirror" />
         </item> <!-- Traffic Mirror -->
+        <item name="Named Junction" name_context="junction=yes" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:junction=yes" />
+            <key key="junction" value="yes" />
+            <label text="Used in some countries for a named road junction who’s name serves for local orientation." />
+            <text key="name" text="Name" />
+        </item> <!-- Named Junction -->
         <separator/>
         <item name="Elevator" icon="styles/standard/service/elevator.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=elevator"
