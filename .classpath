@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="org/apache/commons/compress/compressors/lzma/|org/apache/commons/compress/compressors/xz/|org/apache/commons/compress/compressors/CompressorStreamFactory.java|org/apache/commons/compress/compressors/deflate/|org/apache/commons/compress/compressors/gzip/|org/apache/commons/compress/compressors/lzw/|org/apache/commons/compress/compressors/pack200/|org/apache/commons/compress/compressors/snappy/|org/apache/commons/compress/compressors/z/" kind="src" path="src"/>
 	<classpathentry kind="src" path="test/unit"/>
 	<classpathentry kind="src" path="test/functional"/>
 	<classpathentry kind="src" path="test/performance"/>

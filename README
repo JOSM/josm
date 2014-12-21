@@ -58,14 +58,17 @@ This is an overview of the files and directories in the JOSM code repository:
 - build.xml                 ant build file (standard way to create a JOSM binary)
 - CONTRIBUTION              list of major code contributors
 - data/                     data files that will be included in the JOSM jar file
-    - *.gsb                 NTv2 grid files for projection support
+    - fonts/                font files used for map rendering
+    - projection/           projection files
+      - *.gsb               NTv2 grid files for projection support
+      - epsg                list of projection definitions
     - *.lang                translation data
     - *.xsd                 xml schema files for validation of configuration files
-    - epsg                  list of projection definitions
     - help-browser.css      CSS file for the help sites (HTML content is downloaded from the website
                             on demand, but displayed inside the programm in a Java web browser component.)
-    - ignoretags.cfg, tagchecker.cfg
-                            data files used by the JOSM validator feature
+    - validator/            data files used by the JOSM validator feature
+      - *.cfg               files designed for the old tagchecker, still used
+      - *.mapcss            default validation rules for the new mapcss-based tagchecker
 - data_nodist/              data files that are useful for development, but not distributed
     - exif-direction-example.jpg
                             sample image, that contains direction information in the EXIF header
@@ -87,14 +90,18 @@ This is an overview of the files and directories in the JOSM code repository:
     - styles/standard       images for the main map style (external repository)
 - images_nodist/            images, which are not for distribution, but may be useful later (e.g. high
                             resolution and vector versions)
-- josm.jnlp                 Java Web Start launcher file (used on the website)
-- lib/                      libraries (directory is empty at the moment)
+- josm.jnlp                 Java Web Start launcher file (used on the website for the tested version)
+- josm-latest.jnlp          Java Web Start launcher file (used on the website for the latest version)
 - LICENSE                   the JOSM license terms
-- macosx/                   files needed to create the MacOS package
+- linux/                    files useful for Linux distributions, including Appdata files, .desktop
+                            files, Debian/Ubuntu scripts, man pages, icons, etc.
+- macosx/                   files needed to create the MacOS X package
 - netbeans/                 preconfigured Netbeans project
 - optimize-images           short script to decrease size of PNG images
 - patches/                  patches for external libraries used in JOSM (see below)
 - README                    this file
+- resources/                resource files that will be included in the JOSM jar file
+- scripts/                  various scripts used by JOSM developers
 - src/                      the source code of the program
 - start.html                HTML page to run the applet version of JOSM
 - styles/                   map styles included in JOSM
@@ -107,15 +114,18 @@ This is an overview of the files and directories in the JOSM code repository:
     - performance/          performance tests (source code)
     - unit/                 unit tests (source code)
 - tools/                    libraries and tools that help in the development process
-    - animal-sniffer-ant-tasks-1.8.jar
+    - animal-sniffer-ant-tasks-1.11.jar
                             TODO: what is this?
     - appbundler-1.0ea.jar  used to build Mac OS X package for Oracle Java 7
     - findbugs/             libs and config files for findbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
+    - groovy-all-2.3.9.jar  used for some unit tests and various scripts
     - jacocoant.jar         used to include coverage data into JUnit test reports 
     - javacc.jar            used in the build process to generate some .java files from a javacc source file
                             (src/org/openstreetmap/josm/gui/mappaint/mapcss/MapCSSParser.jj)
     - proguard.jar          optimize final binary jar - see build.xml (not used in production so far)
+    - xmltask.jar           used to edit XML files from Ant for the OSX package
+- windows/                  files needed to create the Windows installer
 
 The 'patches' directory
 -----------------------
@@ -132,17 +142,17 @@ Of course, it is also possible to apply the patch files manually one by one.
 
 Third party libraries
 ---------------------
-There are a couple of third party libraries which are directly included in the source code tree, in particular:
+There are some third party libraries which are directly included in the source code tree, in particular:
 
 * jmapviewer: Java component to browse a TMS map
     src/org/openstreetmap/gui (svn external)
     -> http://svn.openstreetmap.org/applications/viewer/jmapviewer/
-* Apache Ant's bzip2: Support for bzip2 compression when opening files
-    src/org/apache/tools/bzip2 (svn external)
-    -> http://svn.apache.org/repos/asf/ant/core/trunk/src/main/org/apache/tools/bzip2
 * Apache commons codec: Better Base64 support
     src/org/apache/commons/codec (svn external)
     -> http://svn.apache.org/repos/asf/commons/proper/codec/trunk/src/main/java/org/apache/commons/codec
+* Apache commons compress: Support for bzip2 compression when opening files
+    src/org/apache/commons/compress/compressors (svn external)
+    -> http://svn.apache.org/repos/asf/commons/proper/compress/trunk/src/main/java/org/apache/commons/compress/compressors
 * Apache commons validator: Improved validator routines
     src/org/openstreetmap/josm/data/validation/routines
     -> http://commons.apache.org/proper/commons-validator
