@@ -215,13 +215,14 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile" depends="init,javacc,jaxb">
         <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**" nowarn="on"
+        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**" nowarn="on"
+            excludes="org/apache/commons/compress/compressors/lzma/**,org/apache/commons/compress/compressors/xz/**,org/apache/commons/compress/compressors/CompressorStreamFactory.java,org/apache/commons/compress/compressors/deflate/**,org/apache/commons/compress/compressors/gzip/**,org/apache/commons/compress/compressors/lzw/**,org/apache/commons/compress/compressors/pack200/**,org/apache/commons/compress/compressors/snappy/**,org/apache/commons/compress/compressors/z/**"
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="iso-8859-1">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
         </javac>
         <!-- JMapViewer/JOSM -->
-        <javac srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
+        <javac srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
