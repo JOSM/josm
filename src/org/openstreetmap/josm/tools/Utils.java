@@ -12,7 +12,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -762,8 +761,7 @@ public final class Utils {
         if (in == null) {
             return null;
         }
-        BufferedInputStream bis = new BufferedInputStream(in);
-        return new BZip2CompressorInputStream(bis, /* see #9537 */ true);
+        return new BZip2CompressorInputStream(in, /* see #9537 */ true);
     }
 
     /**

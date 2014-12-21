@@ -453,14 +453,17 @@ public class OsmReader extends AbstractReader {
             try {
                 version = Integer.parseInt(versionString);
             } catch(NumberFormatException e) {
-                throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString), e);
+                throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.",
+                        Long.toString(current.getUniqueId()), versionString), e);
             }
             switch (ds.getVersion()) {
             case "0.6":
                 if (version <= 0 && !current.isNew()) {
-                    throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString));
+                    throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.",
+                            Long.toString(current.getUniqueId()), versionString));
                 } else if (version < 0 && current.isNew()) {
-                    Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 0, "0.6"));
+                    Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.",
+                            current.getUniqueId(), version, 0, "0.6"));
                     version = 0;
                 }
                 break;
@@ -553,7 +556,11 @@ public class OsmReader extends AbstractReader {
             }
             if (getLocation() == null)
                 return msg;
-            msg = msg + " " + tr("(at line {0}, column {1})", getLocation().getLineNumber(), getLocation().getColumnNumber());
+            msg += " " + tr("(at line {0}, column {1})", getLocation().getLineNumber(), getLocation().getColumnNumber());
+            int offset = getLocation().getCharacterOffset();
+            if (offset > -1) {
+                msg += ". "+ tr("{0} bytes have been read", offset);
+            }
             return msg;
         }
     }
