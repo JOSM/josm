@@ -37,7 +37,7 @@ The jpeg metadata extraction code is from Drew Noakes
 (http://code.google.com/p/metadata-extractor/) and licensed
 with Apache license version 2.0.
 
-The Bzip2 code is from Keiron Liddle (Apache project) and licensed
+The Bzip2 code is from Apache Commons Compress and licensed
 with Apache license version 2.0.
 
 The signpost code (http://code.google.com/p/oauth-signpost/)

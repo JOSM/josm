@@ -50,7 +50,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import org.apache.tools.bzip2.CBZip2InputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 
@@ -158,7 +158,11 @@ public final class Utils {
     }
 
     /**
-     * Get minimum of 3 values
+     * Returns the minimum of three values.
+     * @param   a   an argument.
+     * @param   b   another argument.
+     * @param   c   another argument.
+     * @return  the smaller of {@code a}, {@code b} and {@code c}.
      */
     public static int min(int a, int b, int c) {
         if (b < c) {
@@ -172,10 +176,29 @@ public final class Utils {
         }
     }
 
+    /**
+     * Returns the greater of four {@code int} values. That is, the
+     * result is the argument closer to the value of
+     * {@link Integer#MAX_VALUE}. If the arguments have the same value,
+     * the result is that same value.
+     *
+     * @param   a   an argument.
+     * @param   b   another argument.
+     * @param   c   another argument.
+     * @param   d   another argument.
+     * @return  the larger of {@code a}, {@code b}, {@code c} and {@code d}.
+     */
     public static int max(int a, int b, int c, int d) {
         return Math.max(Math.max(a, b), Math.max(c, d));
     }
 
+    /**
+     * Ensures a logical condition is met. Otherwise throws an assertion error.
+     * @param condition the condition to be met
+     * @param message Formatted error message to raise if condition is not met
+     * @param data Message parameters, optional
+     * @throws AssertionError if the condition is not met
+     */
     public static void ensure(boolean condition, String message, Object...data) {
         if (!condition)
             throw new AssertionError(
@@ -208,8 +231,6 @@ public final class Utils {
         CheckParameterUtil.ensureParameterNotNull(sep, "sep");
         if (values == null)
             return null;
-        if (values.isEmpty())
-            return "";
         StringBuilder s = null;
         for (Object a : values) {
             if (a == null) {
@@ -221,7 +242,7 @@ public final class Utils {
                 s = new StringBuilder(a.toString());
             }
         }
-        return s.toString();
+        return s != null ? s.toString() : "";
     }
 
     /**
@@ -360,6 +381,13 @@ public final class Utils {
         }
     }
 
+    /**
+     * Copy data from source stream to output stream.
+     * @param source source stream
+     * @param destination target stream
+     * @return number of bytes copied
+     * @throws IOException if any I/O error occurs
+     */
     public static int copyStream(InputStream source, OutputStream destination) throws IOException {
         int count = 0;
         byte[] b = new byte[512];
@@ -701,7 +729,7 @@ public final class Utils {
     /**
      * Opens a connection to the given URL, sets the User-Agent property to JOSM's one, and decompresses stream if necessary.
      * @param url The url to open
-     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link CBZip2InputStream}
+     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link BZip2CompressorInputStream}
      *                   if the {@code Content-Type} header is set accordingly.
      * @return An stream for the given URL
      * @throws IOException if an I/O exception occurs.
@@ -728,20 +756,14 @@ public final class Utils {
      * @param in The raw input stream
      * @return a Bzip2 input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
      * @throws IOException if the given input stream does not contain valid BZ2 header
-     * @since 7119
+     * @since 7867
      */
-    public static CBZip2InputStream getBZip2InputStream(InputStream in) throws IOException {
+    public static BZip2CompressorInputStream getBZip2InputStream(InputStream in) throws IOException {
         if (in == null) {
             return null;
         }
         BufferedInputStream bis = new BufferedInputStream(in);
-        int b = bis.read();
-        if (b != 'B')
-            throw new IOException(tr("Invalid bz2 file."));
-        b = bis.read();
-        if (b != 'Z')
-            throw new IOException(tr("Invalid bz2 file."));
-        return new CBZip2InputStream(bis, /* see #9537 */ true);
+        return new BZip2CompressorInputStream(bis, /* see #9537 */ true);
     }
 
     /**
@@ -807,7 +829,7 @@ public final class Utils {
     /**
      * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param url The url to open
-     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link CBZip2InputStream}
+     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link BZip2CompressorInputStream}
      *                   if the {@code Content-Type} header is set accordingly.
      * @return An buffered stream reader for the given URL (using UTF-8)
      * @throws IOException if an I/O exception occurs.
@@ -928,7 +950,7 @@ public final class Utils {
      * @throws IllegalArgumentException if elapsedTime is &lt; 0
      * @since 6354
      */
-    public static String getDurationString(long elapsedTime) throws IllegalArgumentException {
+    public static String getDurationString(long elapsedTime) {
         if (elapsedTime < 0) {
             throw new IllegalArgumentException("elapsedTime must be >= 0");
         }
@@ -1032,7 +1054,7 @@ public final class Utils {
         Throwable result = t;
         if (result != null) {
             Throwable cause = result.getCause();
-            while (cause != null && cause != result) {
+            while (cause != null && !cause.equals(result)) {
                 result = cause;
                 cause = result.getCause();
             }
@@ -1055,6 +1077,9 @@ public final class Utils {
 
     /**
      * If the string {@code s} is longer than {@code maxLength}, the string is cut and "..." is appended.
+     * @param s String to shorten
+     * @param maxLength maximum number of characters to keep (not including the "...")
+     * @return the shortened string
      */
     public static String shortenString(String s, int maxLength) {
         if (s != null && s.length() > maxLength) {
