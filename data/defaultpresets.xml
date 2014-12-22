@@ -1052,7 +1052,10 @@
                 <check key="bicycle" text="Cross by bicycle" />
                 <check key="horse" text="Cross on horseback" />
             </optional>
-        </item> <!-- Traffic Signal -->
+            <optional text="Optional values for specific countries">
+                <text key="name" text="Name" />
+            </optional>
+			</item> <!-- Traffic Signal -->
         <item name="Stop" icon="presets/Stop.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stop"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=stop"
