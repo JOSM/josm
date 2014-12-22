@@ -1528,6 +1528,11 @@ node[leisure=firepit] {
     set icon_z17; 
     text: auto; 
 }
+node[leisure=picnic_table] {
+    icon-image: "leisure/picnic.png";
+    set icon_z17;
+    text: auto;
+}
 area[leisure=swimming_pool] {
     fill-color: swimming_pool#51c4ef;
 }

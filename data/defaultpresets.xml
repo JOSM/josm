@@ -1055,7 +1055,7 @@
             <optional text="Optional values for specific countries">
                 <text key="name" text="Name" />
             </optional>
-			</item> <!-- Traffic Signal -->
+            </item> <!-- Traffic Signal -->
         <item name="Stop" icon="presets/Stop.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stop"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=stop"
@@ -3585,6 +3585,12 @@
             <text key="name" text="Name" />
             <check key="fireplace" text="Fireplace" />
         </item> <!-- Picnic Site -->
+        <item name="Picnic Table" icon="presets/picnic.png" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=picnic_table" />
+            <space />
+            <key key="leisure" value="picnic_table" />
+            <check key="covered" text="Covered" />
+        </item> <!-- Picnic Table -->
         <item name="Public Grill" icon="presets/bbq.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bbq"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bbq"
