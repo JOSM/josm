@@ -149,6 +149,6 @@ way[highway]["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/] {
   assertMatch: "way lanes=5.5";
   assertMatch: "way lanes=1;2";
   assertMatch: "way lanes:forward=-1";
-  assertMatch: "way lanes:fobackward=-1";
+  assertMatch: "way lanes:backward=-1";
   assertNoMatch: "way lanes=1";
 }
