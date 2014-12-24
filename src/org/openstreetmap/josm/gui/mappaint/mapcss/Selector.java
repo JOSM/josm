@@ -427,6 +427,10 @@ public interface Selector {
             return true;
         }
 
+        /**
+         * Returns the list of conditions.
+         * @return the list of conditions
+         */
         public List<Condition> getConditions() {
             if (conds == null) {
                 return Collections.emptyList();

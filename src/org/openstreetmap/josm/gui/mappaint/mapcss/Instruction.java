@@ -86,7 +86,8 @@ public interface Instruction extends StyleKeys {
 
         @Override
         public String toString() {
-            return key + ": " + (val instanceof float[] ? Arrays.toString((float[]) val) : val instanceof String ? "String<"+val+">" : val) + ';';
+            return key + ": " + (val instanceof float[] ? Arrays.toString((float[]) val) :
+                val instanceof String ? "String<"+val+">" : val) + ';';
         }
     }
 }
