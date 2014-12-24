@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -41,12 +42,14 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.ClassCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule.Declaration;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
@@ -146,6 +149,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         protected final List<String> alternatives = new ArrayList<>();
         protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<>();
         protected final Map<String, Boolean> assertions = new HashMap<>();
+        protected final Set<String> setClassExpressions = new HashSet<>();
         protected boolean deletion = false;
 
         TagCheck(GroupedMapCSSRule rule) {
@@ -206,12 +210,11 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         static TagCheck ofMapCSSRule(final GroupedMapCSSRule rule) throws IllegalDataException {
             final TagCheck check = new TagCheck(rule);
-            boolean containsSetClassExpression = false;
             for (Instruction i : rule.declaration.instructions) {
                 if (i instanceof Instruction.AssignmentInstruction) {
                     final Instruction.AssignmentInstruction ai = (Instruction.AssignmentInstruction) i;
                     if (ai.isSetInstruction) {
-                        containsSetClassExpression = true;
+                        check.setClassExpressions.add(ai.key);
                         continue;
                     }
                     final String val = ai.val instanceof Expression
@@ -262,10 +265,13 @@ public class MapCSSTagChecker extends Test.TagTest {
                     }
                 }
             }
-            if (check.errors.isEmpty() && !containsSetClassExpression) {
-                throw new IllegalDataException("No "+POSSIBLE_THROWS+" given! You should specify a validation error message for " + rule.selectors);
+            if (check.errors.isEmpty() && check.setClassExpressions.isEmpty()) {
+                throw new IllegalDataException(
+                        "No "+POSSIBLE_THROWS+" given! You should specify a validation error message for " + rule.selectors);
             } else if (check.errors.size() > 1) {
-                throw new IllegalDataException("More than one "+POSSIBLE_THROWS+" given! You should specify a single validation error message for " + rule.selectors);
+                throw new IllegalDataException(
+                        "More than one "+POSSIBLE_THROWS+" given! You should specify a single validation error message for "
+                                + rule.selectors);
             }
             return check;
         }
@@ -506,6 +512,50 @@ public class MapCSSTagChecker extends Test.TagTest {
                 return null;
             }
         }
+
+        /**
+         * Returns the set of tagchecks on which this check depends on.
+         * @param schecks the collection of tagcheks to search in
+         * @return the set of tagchecks on which this check depends on
+         * @since 7881
+         */
+        public Set<TagCheck> getTagCheckDependencies(Collection<TagCheck> schecks) {
+            Set<TagCheck> result = new HashSet<MapCSSTagChecker.TagCheck>();
+            Set<String> classes = getClassesIds();
+            if (schecks != null && !classes.isEmpty()) {
+                for (TagCheck tc : schecks) {
+                    if (this.equals(tc)) {
+                        continue;
+                    }
+                    for (String id : tc.setClassExpressions) {
+                        if (classes.contains(id)) {
+                            result.add(tc);
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Returns the list of ids of all MapCSS classes referenced in the rule selectors.
+         * @return the list of ids of all MapCSS classes referenced in the rule selectors
+         * @since 7881
+         */
+        public Set<String> getClassesIds() {
+            Set<String> result = new HashSet<>();
+            for (Selector s : rule.selectors) {
+                if (s instanceof AbstractSelector) {
+                    for (Condition c : ((AbstractSelector)s).getConditions()) {
+                        if (c instanceof ClassCondition) {
+                            result.add(((ClassCondition) c).id);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
     }
 
     static class MapCSSTagCheckerAndRule extends MapCSSTagChecker {
@@ -653,10 +703,16 @@ public class MapCSSTagChecker extends Test.TagTest {
                     Main.debug("- Assertion: "+i);
                 }
                 final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey());
+                // Build minimal ordered list of checks to run to test the assertion
+                List<Set<TagCheck>> checksToRun = new ArrayList<Set<TagCheck>>();
+                Set<TagCheck> checkDependencies = check.getTagCheckDependencies(schecks);
+                if (!checkDependencies.isEmpty()) {
+                    checksToRun.add(checkDependencies);
+                }
+                checksToRun.add(Collections.singleton(check));
                 // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
                 ds.addPrimitive(p);
-                final Collection<TestError> pErrors = getErrorsForPrimitive(p, true,
-                        Collections.singleton(Collections.singleton(check)));
+                final Collection<TestError> pErrors = getErrorsForPrimitive(p, true, checksToRun);
                 if (Main.isDebugEnabled()) {
                     Main.debug("- Errors: "+pErrors);
                 }
