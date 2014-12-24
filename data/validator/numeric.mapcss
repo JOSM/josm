@@ -145,10 +145,10 @@ way[highway][lanes][lanes !~ /^[1-9]([0-9]*)$/],
 way[highway]["lanes:backward"]["lanes:backward" !~ /^[1-9]([0-9]*)$/],
 way[highway]["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/] {
   throwError: tr("{0} must be a positive integer number", "{1.key}");
-  assertMatch: "way highway lanes=-1";
-  assertMatch: "way highway lanes=5.5";
-  assertMatch: "way highway lanes=1;2";
-  assertMatch: "way highway lanes:forward=-1";
-  assertMatch: "way highway lanes:backward=-1";
-  assertNoMatch: "way highway lanes=1";
+  assertMatch: "way highway=residential lanes=-1";
+  assertMatch: "way highway=residential lanes=5.5";
+  assertMatch: "way highway=residential lanes=1;2";
+  assertMatch: "way highway=residential lanes:forward=-1";
+  assertMatch: "way highway=residential lanes:backward=-1";
+  assertNoMatch: "way highway=residential lanes=1";
 }
