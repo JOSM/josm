@@ -117,6 +117,11 @@ public class MapCSSTagChecker extends Test.TagTest {
                 return false;
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "GroupedMapCSSRule [selectors=" + selectors + ", declaration=" + declaration + "]";
+        }
     }
 
     /**
@@ -524,6 +529,11 @@ public class MapCSSTagChecker extends Test.TagTest {
             result = prime * result + ((rule == null) ? 0 : rule.hashCode());
             return result;
         }
+
+        @Override
+        public String toString() {
+            return "MapCSSTagCheckerAndRule [rule=" + rule + "]";
+        }
     }
 
     /**
@@ -533,9 +543,14 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @return all errors for the given primitive, with or without those of "info" severity
      */
     public synchronized Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
+        return getErrorsForPrimitive(p, includeOtherSeverity, checks.values());
+    }
+
+    private static Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity,
+            Collection<Set<TagCheck>> checksCol) {
         final List<TestError> r = new ArrayList<>();
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        for (Set<TagCheck> schecks : checks.values()) {
+        for (Set<TagCheck> schecks : checksCol) {
             for (TagCheck check : schecks) {
                 if (Severity.OTHER.equals(check.getSeverity()) && !includeOtherSeverity) {
                     continue;
@@ -640,7 +655,12 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey());
                 // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
                 ds.addPrimitive(p);
-                final boolean isError = Utils.exists(getErrorsForPrimitive(p, true), new Predicate<TestError>() {
+                final Collection<TestError> pErrors = getErrorsForPrimitive(p, true,
+                        Collections.singleton(Collections.singleton(check)));
+                if (Main.isDebugEnabled()) {
+                    Main.debug("- Errors: "+pErrors);
+                }
+                final boolean isError = Utils.exists(pErrors, new Predicate<TestError>() {
                     @Override
                     public boolean evaluate(TestError e) {
                         //noinspection EqualsBetweenInconvertibleTypes

@@ -66,8 +66,18 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
                 return false;
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "Declaration [instructions=" + instructions + ", idx=" + idx + "]";
+        }
     }
 
+    /**
+     * Constructs a new {@code MapCSSRule}.
+     * @param selector The selector
+     * @param declaration The declaration
+     */
     public MapCSSRule(Selector selector, Declaration declaration) {
         this.selector = selector;
         this.declaration = declaration;
