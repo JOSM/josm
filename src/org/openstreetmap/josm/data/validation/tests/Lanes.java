@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +24,13 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class Lanes extends Test.TagTest {
 
+    private static final String[] BLACKLIST = {
+        "source:lanes",
+        "note:lanes",
+        "proposed:lanes",
+        "piste:lanes",
+    };
+
     /**
      * Constructs a new {@code Lanes} test.
      */
@@ -37,7 +45,7 @@ public class Lanes extends Test.TagTest {
     protected void checkNumberOfLanesByKey(final OsmPrimitive p, String lanesKey, String message) {
         final Collection<String> keysForPattern = new ArrayList<>(Utils.filter(p.keySet(),
                 Predicates.stringContainsPattern(Pattern.compile(":" + lanesKey + "$"))));
-        keysForPattern.remove("source:lanes");
+        keysForPattern.removeAll(Arrays.asList(BLACKLIST));
         if (keysForPattern.size() < 1) {
             // nothing to check
             return;
