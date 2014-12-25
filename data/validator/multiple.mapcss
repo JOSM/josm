@@ -34,7 +34,7 @@
 *[traffic_sign        =~ /^(;.*|.*;;.*|.*;)$/],
 *[voltage             =~ /^(;.*|.*;;.*|.*;)$/],
 *[cuisine             =~ /^(;.*|.*;;.*|.*;)$/] {
-	throwWarning: tr("empty value in semicolon-separated '{0}'", "{0.key}");
+	throwWarning: tr("empty value in semicolon-separated ''{0}''", "{0.key}");
 	assertMatch: "node ref=;A1";
 	assertMatch: "node ref=A1;";
 	assertMatch: "node ref=;";
