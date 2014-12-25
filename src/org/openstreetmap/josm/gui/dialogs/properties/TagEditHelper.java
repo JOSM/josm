@@ -506,6 +506,7 @@ class TagEditHelper {
                    Collections.sort(valueList, comparator);
 
                    values.setPossibleACItems(valueList);
+                   values.getEditor().selectAll();
                    objKey=key;
                }
            };
