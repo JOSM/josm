@@ -54,7 +54,7 @@ class RelationCheckerTest extends GroovyTestCase {
 
         def errors = testRelation(r)
         assert errors.size() == 1
-        assert errors.get(0).getDescription() == "Role outer2 unknown"
+        assert errors.get(0).getDescription() == "Role outer2 unknown in templates outer/inner"
     }
 
     void testRestrictionViaMissing() {
@@ -75,7 +75,7 @@ class RelationCheckerTest extends GroovyTestCase {
 
         def errors = testRelation(r)
         assert errors.size() == 1
-        assert errors.get(0).getDescription() == "Member for role via of wrong type"
+        assert errors.get(0).getDescription() == "Role member type relation does not match accepted list of node/way in template Turn Restriction"
     }
 
     void testRestrictionTwoFrom() {
@@ -99,7 +99,7 @@ class RelationCheckerTest extends GroovyTestCase {
 
         def errors = testRelation(r)
         assert errors.size() == 1
-        assert errors.get(0).getDescription() == "Empty role found"
+        assert errors.get(0).getDescription().startsWith("Empty role type found when expecting one of")
     }
 
     void testPowerMemberExpression() {
@@ -108,6 +108,6 @@ class RelationCheckerTest extends GroovyTestCase {
 
         def errors = testRelation(r)
         assert errors.size() == 1
-        assert errors.get(0).getDescription() == "Member for role '<empty>' does not match 'power'"
+        assert errors.get(0).getDescription() == "Role member does not match expression power in template Power Route"
     }
 }

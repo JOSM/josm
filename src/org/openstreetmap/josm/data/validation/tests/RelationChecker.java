@@ -5,21 +5,18 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -30,6 +27,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.TaggingPresets;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Check for wrong relations.
@@ -85,17 +83,22 @@ public class RelationChecker extends Test {
         }
     }
 
+    private static class RolePreset {
+        public RolePreset(LinkedList<Role> roles, String name) {
+            this.roles = roles;
+            this.name = name;
+        }
+        private final LinkedList<Role> roles;
+        private final String name;
+    }
+
     private static class RoleInfo {
         private int total = 0;
-        private Collection<Node> nodes = new LinkedList<>();
-        private Collection<Way> ways = new LinkedList<>();
-        private Collection<Way> openways = new LinkedList<>();
-        private Collection<Relation> relations = new LinkedList<>();
     }
 
     @Override
     public void visit(Relation n) {
-        LinkedList<Role> allroles = buildAllRoles(n);
+        Map<String, RolePreset> allroles = buildAllRoles(n);
         if (allroles.isEmpty() && n.hasTag("type", "route")
                 && n.hasTag("route", "train", "subway", "monorail", "tram", "bus", "trolleybus", "aerialway", "ferry")) {
             errors.add(new TestError(this, Severity.WARNING,
@@ -105,7 +108,7 @@ public class RelationChecker extends Test {
             errors.add(new TestError(this, Severity.WARNING, tr("Relation type is unknown"), RELATION_UNKNOWN, n));
         }
 
-        HashMap<String, RoleInfo> map = buildRoleInfoMap(n);
+        Map<String, RoleInfo> map = buildRoleInfoMap(n);
         if (map.isEmpty()) {
             errors.add(new TestError(this, Severity.ERROR, tr("Relation is empty"), RELATION_EMPTY, n));
         } else if (!allroles.isEmpty()) {
@@ -113,33 +116,24 @@ public class RelationChecker extends Test {
         }
     }
 
-    private HashMap<String, RoleInfo> buildRoleInfoMap(Relation n) {
-        HashMap<String,RoleInfo> map = new HashMap<>();
+    private Map<String, RoleInfo> buildRoleInfoMap(Relation n) {
+        Map<String,RoleInfo> map = new HashMap<>();
         for (RelationMember m : n.getMembers()) {
             String role = m.getRole();
             RoleInfo ri = map.get(role);
             if (ri == null) {
                 ri = new RoleInfo();
+                map.put(role, ri);
             }
             ri.total++;
-            if (m.isRelation()) {
-                ri.relations.add(m.getRelation());
-            } else if(m.isWay()) {
-                ri.ways.add(m.getWay());
-                if (!m.getWay().isClosed()) {
-                    ri.openways.add(m.getWay());
-                }
-            }
-            else if (m.isNode()) {
-                ri.nodes.add(m.getNode());
-            }
-            map.put(role, ri);
         }
         return map;
     }
 
-    private LinkedList<Role> buildAllRoles(Relation n) {
-        LinkedList<Role> allroles = new LinkedList<>();
+    // return Roles grouped by key
+    private Map<String, RolePreset> buildAllRoles(Relation n) {
+        Map<String, RolePreset> allroles = new HashMap<>();
+
         for (TaggingPreset p : relationpresets) {
             boolean matches = true;
             Roles r = null;
@@ -155,95 +149,169 @@ public class RelationChecker extends Test {
                 }
             }
             if (matches && r != null) {
-                allroles.addAll(r.roles);
+                for(Role role: r.roles) {
+                    String key = role.key;
+                    LinkedList<Role> roleGroup = null;
+                    if (allroles.containsKey(key)) {
+                        roleGroup = allroles.get(key).roles;
+                    } else {
+                        roleGroup = new LinkedList<>();
+                        allroles.put(key, new RolePreset(roleGroup, p.name));
+                    }
+                    roleGroup.add(role);
+                }
             }
         }
         return allroles;
     }
 
-    private void checkRoles(Relation n, LinkedList<Role> allroles, HashMap<String, RoleInfo> map) {
-        List<String> done = new LinkedList<>();
-        // Remove empty roles if several exist (like in route=hiking, see #9844)
-        List<Role> emptyRoles = new LinkedList<>();
-        for (Role r : allroles) {
-            if ("".equals(r.key)) {
-                emptyRoles.add(r);
+    private boolean checkMemberType(Role r, RelationMember member) {
+        if (r.types != null) {
+            if (member.getDisplayType().equals(OsmPrimitiveType.NODE)) {
+                return r.types.contains(TaggingPresetType.NODE);
             }
-        }
-        if (emptyRoles.size() > 1) {
-            allroles.removeAll(emptyRoles);
-        }
-        for (Role r : allroles) {
-            done.add(r.key);
-            String keyname = r.key;
-            if ("".equals(keyname)) {
-                keyname = tr("<empty>");
+            if (member.getDisplayType().equals(OsmPrimitiveType.CLOSEDWAY)) {
+                return r.types.contains(TaggingPresetType.CLOSEDWAY);
             }
-            RoleInfo ri = map.get(r.key);
-            checkRoleCounts(n, r, keyname, ri);
-            if (ri != null) {
-                if (r.types != null) {
-                    checkRoleTypes(n, r, keyname, ri);
-                }
-                if (r.memberExpression != null) {
-                    checkRoleMemberExpressions(n, r, keyname, ri);
-                }
+            if (member.getDisplayType().equals(OsmPrimitiveType.WAY)) {
+                return r.types.contains(TaggingPresetType.WAY);
             }
+            if (member.getDisplayType().equals(OsmPrimitiveType.RELATION)) {
+                return r.types.contains(TaggingPresetType.RELATION);
+            }
+            // not matching type
+            return false;
+        } else {
+            // if no types specified, then test is passed
+            return true;
         }
-        for (String key : map.keySet()) {
-            if (!done.contains(key)) {
-                if (key.length() > 0) {
-                    String s = marktr("Role {0} unknown");
-                    errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                            tr(s, key), MessageFormat.format(s, key), ROLE_UNKNOWN, n));
+    }
+
+    /**
+     * get all role definition for specified key and check, if some definition matches
+     *
+     * @param rolePreset containing preset for role of the member
+     * @param member to be verified
+     * @param n relation to be verified
+     * @return <tt>true</tt> if member passed any of definition within preset
+     *
+     */
+    private boolean checkMemberExpressionAndType(RolePreset rolePreset, RelationMember member, Relation n) {
+        TestError possibleMatchError = null;
+        if (rolePreset == null || rolePreset.roles == null) {
+            // no restrictions on role types
+            return true;
+        }
+        // iterate through all of the role definition within preset
+        // and look for any matching definition
+        for (Role r: rolePreset.roles) {
+            if (checkMemberType(r, member)) {
+                // member type accepted by role definition
+                if (r.memberExpression == null) {
+                    // no member expression - so all requirements met
+                    return true;
                 } else {
-                    String s = marktr("Empty role found");
-                    errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                            tr(s), s, ROLE_EMPTY, n));
+                    // verify if preset accepts such member
+                    OsmPrimitive primitive = member.getMember();
+                    if(!primitive.isUsable()) {
+                        // if member is not usable (i.e. not present in working set)
+                        // we can't verify expression - so we just skip it
+                        return true;
+                    } else {
+                        // verify expression
+                        if(r.memberExpression.match(primitive)) {
+                            return true;
+                        } else {
+                            // possible match error
+                            // we still need to iterate further, as we might have
+                            // different present, for which memberExpression will match
+                            // but stash the error in case no better reason will be found later
+                            String s = marktr("Role member does not match expression {0} in template {1}");
+                            possibleMatchError = new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                                    tr(s, r.memberExpression, rolePreset.name), s, WRONG_TYPE,
+                                    member.getMember().isUsable() ? member.getMember() : n);
+
+                        }
+                    }
                 }
             }
         }
+
+        if( possibleMatchError != null) {
+            // if any error found, then assume that member type was correct
+            // and complain about not matching the memberExpression
+            // (the only failure, that we could gather)
+            errors.add(possibleMatchError);
+        } else {
+            // no errors found till now. So member at least failed at matching the type
+            // it could also fail at memberExpression, but we can't guess at which
+            String s = marktr("Role member type {0} does not match accepted list of {1} in template {2}");
+
+            // prepare Set of all accepted types in template
+            EnumSet<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
+            for (Role r: rolePreset.roles) {
+                types.addAll(r.types);
+            }
+
+            // convert in localization friendly way to string of accepted types
+            String typesStr = Utils.join("/", Utils.transform(types, new Utils.Function<TaggingPresetType, Object>() {
+                public Object apply(TaggingPresetType x) {
+                    return tr(x.getName());
+                }
+            }));
+
+            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                    tr(s, member.getType(), typesStr, rolePreset.name), s, WRONG_TYPE,
+                    member.getMember().isUsable() ? member.getMember() : n));
+        }
+        return false;
     }
 
-    private void checkRoleMemberExpressions(Relation n, Role r, String keyname, RoleInfo ri) {
-        Set<OsmPrimitive> notMatching = new HashSet<>();
-        Collection<OsmPrimitive> allPrimitives = new ArrayList<>();
-        allPrimitives.addAll(ri.nodes);
-        allPrimitives.addAll(ri.ways);
-        allPrimitives.addAll(ri.relations);
-        for (OsmPrimitive p : allPrimitives) {
-            if (p.isUsable() && !r.memberExpression.match(p)) {
-                notMatching.add(p);
+    /**
+     *
+     * @param n relation to validate
+     * @param allroles contains presets for specified relation
+     * @param map contains statistics of occurances of specified role types in relation
+     */
+    private void checkRoles(Relation n, Map<String, RolePreset> allroles, Map<String, RoleInfo> map) {
+        // go through all members of relation
+        for (RelationMember member: n.getMembers()) {
+            String role = member.getRole();
+
+            // error reporting done inside
+            checkMemberExpressionAndType(allroles.get(role), member, n);
+        }
+
+        // verify role counts based on whole role sets
+        for(RolePreset rp: allroles.values()) {
+            for (Role r: rp.roles) {
+                String keyname = r.key;
+                if (keyname.isEmpty()) {
+                    keyname = tr("<empty>");
+                }
+                checkRoleCounts(n, r, keyname, map.get(r.key));
             }
         }
-        if (!notMatching.isEmpty()) {
-            String s = marktr("Member for role ''{0}'' does not match ''{1}''");
-            LinkedList<OsmPrimitive> highlight = new LinkedList<>(notMatching);
-            highlight.addFirst(n);
-            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                    tr(s, keyname, r.memberExpression), MessageFormat.format(s, keyname, r.memberExpression), WRONG_TYPE,
-                    highlight, notMatching));
-        }
-    }
+        // verify unwanted members
+        for (String key : map.keySet()) {
+            if (!allroles.containsKey(key)) {
+                String templates = Utils.join("/", Utils.transform(allroles.keySet(), new Utils.Function<String, Object>() {
+                    public Object apply(String x) {
+                        return tr(x);
+                    }
+                }));
 
-    private void checkRoleTypes(Relation n, Role r, String keyname, RoleInfo ri) {
-        Set<OsmPrimitive> wrongTypes = new HashSet<>();
-        if (!r.types.contains(TaggingPresetType.WAY)) {
-            wrongTypes.addAll(r.types.contains(TaggingPresetType.CLOSEDWAY) ? ri.openways : ri.ways);
-        }
-        if (!r.types.contains(TaggingPresetType.NODE)) {
-            wrongTypes.addAll(ri.nodes);
-        }
-        if (!r.types.contains(TaggingPresetType.RELATION)) {
-            wrongTypes.addAll(ri.relations);
-        }
-        if (!wrongTypes.isEmpty()) {
-            String s = marktr("Member for role {0} of wrong type");
-            LinkedList<OsmPrimitive> highlight = new LinkedList<>(wrongTypes);
-            highlight.addFirst(n);
-            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                    tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE,
-                    highlight, wrongTypes));
+                if (key.length() > 0) {
+                    String s = marktr("Role {0} unknown in templates {1}");
+
+                    errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                            tr(s, key, templates.toString()), MessageFormat.format(s, key), ROLE_UNKNOWN, n));
+                } else {
+                    String s = marktr("Empty role type found when expecting one of {0}");
+                    errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                            tr(s, templates), s, ROLE_EMPTY, n));
+                }
+            }
         }
     }
 
