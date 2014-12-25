@@ -48,7 +48,6 @@ import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.TMSFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileClearController;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -185,11 +184,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (Main.isDebugEnabled()) {
             Main.debug("tileLoadingFinished() tile: " + tile + " success: " + success);
         }
-    }
-
-    @Override
-    public TileCache getTileCache() {
-        return tileCache;
     }
 
     private static class TmsTileClearController implements TileClearController, CancelListener {
