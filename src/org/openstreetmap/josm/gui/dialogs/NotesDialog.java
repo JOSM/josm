@@ -226,7 +226,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 }
                 String toolTipText = userName + " @ " + sdf.format(note.getCreatedAt());
                 JLabel jlabel = (JLabel)comp;
-                jlabel.setText(text);
+                jlabel.setText(note.getId() + ": " +text);
                 ImageIcon icon;
                 if (note.getId() < 0) {
                     icon = ICON_NEW_SMALL;

@@ -110,14 +110,15 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
         }
         if (noteData.getSelectedNote() != null) {
             StringBuilder sb = new StringBuilder("<html>");
+            sb.append(tr("Note"));
+            sb.append(" " + noteData.getSelectedNote().getId());
             List<NoteComment> comments = noteData.getSelectedNote().getComments();
-            String sep = "";
             SimpleDateFormat dayFormat = new SimpleDateFormat("MMM d, yyyy");
             for (NoteComment comment : comments) {
                 String commentText = comment.getText();
                 //closing a note creates an empty comment that we don't want to show
                 if (commentText != null && commentText.trim().length() > 0) {
-                    sb.append(sep);
+                    sb.append("<hr/>");
                     String userName = XmlWriter.encode(comment.getUser().getName());
                     if (userName == null || userName.trim().length() == 0) {
                         userName = "&lt;Anonymous&gt;";
@@ -130,7 +131,6 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
                     htmlText = htmlText.replace("&#xA;", "<br/>"); //encode method leaves us with entity instead of \n
                     sb.append(htmlText);
                 }
-                sep = "<hr/>";
             }
             sb.append("</html>");
             JToolTip toolTip = new JToolTip();
