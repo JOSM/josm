@@ -56,7 +56,7 @@ public class OsmTileSource {
          * Constructs a new {@code CycleMap} tile source.
          */
         public CycleMap() {
-            super("Cyclemap", PATTERN, "opencylemap");
+            super("Cyclemap", PATTERN, "opencyclemap");
         }
 
         @Override

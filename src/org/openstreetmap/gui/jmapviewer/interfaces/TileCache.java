@@ -42,4 +42,9 @@ public interface TileCache {
      * @return the number of tiles hold by the cache
      */
     public int getTileCount();
+
+    /**
+     * Clears the cache deleting all tiles from memory.
+     */
+    public void clear();
 }

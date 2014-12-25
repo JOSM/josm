@@ -95,18 +95,21 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Creates a standard {@link JMapViewer} instance that can be controlled via
      * mouse: hold right mouse button for moving, double click left mouse button
-     * or use mouse wheel for zooming. Loaded tiles are stored the
+     * or use mouse wheel for zooming. Loaded tiles are stored in a
      * {@link MemoryTileCache} and the tile loader uses 4 parallel threads for
      * retrieving the tiles.
      */
-    @SuppressWarnings("unused")
     public JMapViewer() {
         this(new MemoryTileCache(), 8);
         new DefaultMapController(this);
     }
 
+    /**
+     * Creates a new {@link JMapViewer} instance.
+     * @param tileCache The cache where to store tiles
+     * @param downloadThreadCount The number of parallel threads for retrieving the tiles
+     */
     public JMapViewer(TileCache tileCache, int downloadThreadCount) {
-        super();
         JobDispatcher.setMaxWorkers(downloadThreadCount);
         tileSource = new OsmTileSource.Mapnik();
         tileController = new TileController(tileSource, tileCache, this);
@@ -122,13 +125,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         setMinimumSize(new Dimension(tileSource.getTileSize(), tileSource.getTileSize()));
         setPreferredSize(new Dimension(400, 400));
         setDisplayPosition(new Coordinate(50, 9), 3);
-        //setToolTipText("");
     }
 
     @Override
     public String getToolTipText(MouseEvent event) {
-        //        Point screenPoint = event.getLocationOnScreen();
-        //        Coordinate c = getPosition(screenPoint);
         return super.getToolTipText(event);
     }
 
@@ -244,8 +244,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     }
 
     /**
-     * Sets the displayed map pane and zoom level so that all chosen map elements are
-     * visible.
+     * Sets the displayed map pane and zoom level so that all chosen map elements are visible.
      */
     public void setDisplayToFitMapElements(boolean markers, boolean rectangles, boolean polygons) {
         int nbElemToCheck = 0;
@@ -328,24 +327,21 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     }
 
     /**
-     * Sets the displayed map pane and zoom level so that all map markers are
-     * visible.
+     * Sets the displayed map pane and zoom level so that all map markers are visible.
      */
     public void setDisplayToFitMapMarkers() {
         setDisplayToFitMapElements(true, false, false);
     }
 
     /**
-     * Sets the displayed map pane and zoom level so that all map rectangles are
-     * visible.
+     * Sets the displayed map pane and zoom level so that all map rectangles are visible.
      */
     public void setDisplayToFitMapRectangles() {
         setDisplayToFitMapElements(false, true, false);
     }
 
     /**
-     * Sets the displayed map pane and zoom level so that all map polygons are
-     * visible.
+     * Sets the displayed map pane and zoom level so that all map polygons are visible.
      */
     public void setDisplayToFitMapPolygons() {
         setDisplayToFitMapElements(false, false, true);
@@ -797,6 +793,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Increases the current zoom level by one
+     * @param mapPoint point to choose as center for new zoom level
      */
     public void zoomIn(Point mapPoint) {
         setZoom(zoom + 1, mapPoint);
@@ -964,7 +961,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         zoomOutButton.setVisible(visible);
     }
 
-    public boolean getZoomContolsVisible() {
+    public boolean getZoomControlsVisible() {
         return zoomSlider.isVisible();
     }
 
@@ -972,7 +969,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         if (tileSource.getMaxZoom() > MAX_ZOOM)
             throw new RuntimeException("Maximum zoom level too high");
         if (tileSource.getMinZoom() < MIN_ZOOM)
-            throw new RuntimeException("Minumim zoom level too low");
+            throw new RuntimeException("Minimum zoom level too low");
         Coordinate position = getPosition();
         this.tileSource = tileSource;
         tileController.setTileSource(tileSource);
