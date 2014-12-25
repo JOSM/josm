@@ -9,16 +9,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
@@ -71,7 +71,7 @@ public final class TaggingPresetReader {
         public String ref;
     }
 
-    public static List<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
+    private static XmlObjectParser buildParser() {
         XmlObjectParser parser = new XmlObjectParser();
         parser.mapOnStart("item", TaggingPreset.class);
         parser.mapOnStart("separator", TaggingPresetSeparator.class);
@@ -93,16 +93,28 @@ public final class TaggingPresetReader {
         parser.map("item_separator", TaggingPresetItems.ItemSeparator.class);
         parser.mapBoth("chunk", Chunk.class);
         parser.map("reference", Reference.class);
+        return parser;
+    }
 
-        LinkedList<TaggingPreset> all = new LinkedList<>();
+    /**
+     * Reads all tagging presets from the input reader.
+     * @param in The input reader
+     * @param validate if {@code true}, XML validation will be performed
+     * @return collection of tagging presets
+     * @throws SAXException if any XML error occurs
+     */
+    public static Collection<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
+        XmlObjectParser parser = buildParser();
+
+        Deque<TaggingPreset> all = new LinkedList<>();
         TaggingPresetMenu lastmenu = null;
         TaggingPresetItems.Roles lastrole = null;
         final List<TaggingPresetItems.Check> checks = new LinkedList<>();
         List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<>();
         final Map<String, List<Object>> byId = new HashMap<>();
-        final Stack<String> lastIds = new Stack<>();
+        final Deque<String> lastIds = new ArrayDeque<>();
         /** lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
-        final Stack<Iterator<Object>> lastIdIterators = new Stack<>();
+        final Deque<Iterator<Object>> lastIdIterators = new ArrayDeque<>();
 
         if (validate) {
             parser.startWithValidation(in, Main.getXMLBase()+"/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
@@ -199,6 +211,9 @@ public final class TaggingPresetReader {
                         listEntries.add((TaggingPresetItems.PresetListEntry) o);
                     } else if (o instanceof TaggingPresetItems.CheckGroup) {
                         all.getLast().data.add((TaggingPresetItem) o);
+                        // Make sure list of checks is empty to avoid adding checks several times
+                        // when used in chunks (fix #10801)
+                        ((TaggingPresetItems.CheckGroup) o).checks.clear();
                         ((TaggingPresetItems.CheckGroup) o).checks.addAll(checks);
                         checks.clear();
                     } else {
@@ -228,6 +243,14 @@ public final class TaggingPresetReader {
         return all;
     }
 
+    /**
+     * Reads all tagging presets from the given source.
+     * @param source a given filename, URL or internal resource
+     * @param validate if {@code true}, XML validation will be performed
+     * @return collection of tagging presets
+     * @throws SAXException if any XML error occurs
+     * @throws IOException if any I/O error occurs
+     */
     public static Collection<TaggingPreset> readAll(String source, boolean validate) throws SAXException, IOException {
         Collection<TaggingPreset> tp;
         CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
