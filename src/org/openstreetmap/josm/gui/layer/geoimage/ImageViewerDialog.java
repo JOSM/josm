@@ -391,7 +391,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     @Override
     public void layerAdded(Layer newLayer) {
-        // Ignored
+        if (currentLayer == null && newLayer instanceof GeoImageLayer) {
+            ((GeoImageLayer)newLayer).showFirstPhoto();
+        }
     }
 
     @Override
