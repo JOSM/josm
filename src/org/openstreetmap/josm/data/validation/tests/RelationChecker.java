@@ -14,7 +14,6 @@ import java.util.Map;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -167,20 +166,18 @@ public class RelationChecker extends Test {
 
     private boolean checkMemberType(Role r, RelationMember member) {
         if (r.types != null) {
-            if (member.getDisplayType().equals(OsmPrimitiveType.NODE)) {
+            switch (member.getDisplayType()) {
+            case NODE:
                 return r.types.contains(TaggingPresetType.NODE);
-            }
-            if (member.getDisplayType().equals(OsmPrimitiveType.CLOSEDWAY)) {
+            case CLOSEDWAY:
                 return r.types.contains(TaggingPresetType.CLOSEDWAY);
-            }
-            if (member.getDisplayType().equals(OsmPrimitiveType.WAY)) {
+            case WAY:
                 return r.types.contains(TaggingPresetType.WAY);
-            }
-            if (member.getDisplayType().equals(OsmPrimitiveType.RELATION)) {
+            case RELATION:
                 return r.types.contains(TaggingPresetType.RELATION);
+            default: // not matching type
+                return false;
             }
-            // not matching type
-            return false;
         } else {
             // if no types specified, then test is passed
             return true;
