@@ -45,7 +45,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.CustomConfigurator;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
@@ -347,7 +346,7 @@ public class MainApplication extends Main {
             // Enable JOSM debug level
             logLevel = 5;
             // Enable debug in OAuth signpost via system preference, but only at trace level
-            Preferences.updateSystemProperty("debug", "true");
+            Utils.updateSystemProperty("debug", "true");
             Main.info(tr("Enabled detailed debug level (trace)"));
         }
 

@@ -18,7 +18,6 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
@@ -36,7 +35,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         // MUST be set before Swing is initialized!
         // And will not work when one of the system independent LAFs is used.
         // They just insist on painting themselves...
-        Preferences.updateSystemProperty("apple.laf.useScreenMenuBar", "true");
+        Utils.updateSystemProperty("apple.laf.useScreenMenuBar", "true");
         migrateOldDirectory();
     }
 

@@ -1143,4 +1143,24 @@ public final class Utils {
         ExecutorService pool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads);
         return new Pair<>(noThreads, pool);
     }
+
+    /**
+     * Updates a given system property.
+     * @param key The property key
+     * @param value The property value
+     * @return the previous value of the system property, or {@code null} if it did not have one.
+     * @since 7894
+     */
+    public static String updateSystemProperty(String key, String value) {
+        if (value != null) {
+            String old = System.setProperty(key, value);
+            if (!key.toLowerCase().contains("password")) {
+                Main.debug("System property '"+key+"' set to '"+value+"'. Old value was '"+old+"'");
+            } else {
+                Main.debug("System property '"+key+"' changed.");
+            }
+            return old;
+        }
+        return null;
+    }
 }

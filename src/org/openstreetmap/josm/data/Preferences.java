@@ -93,7 +93,7 @@ public class Preferences {
      * Internal storage for the cache directory.
      */
     private File cacheDir = null;
-    
+
     /**
      * Internal storage for the user data directory.
      */
@@ -1374,10 +1374,10 @@ public class Preferences {
     public void updateSystemProperties() {
         if(getBoolean("prefer.ipv6", false)) {
             // never set this to false, only true!
-            updateSystemProperty("java.net.preferIPv6Addresses", "true");
+            Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
         }
-        updateSystemProperty("http.agent", Version.getInstance().getAgentString());
-        updateSystemProperty("user.language", get("language"));
+        Utils.updateSystemProperty("http.agent", Version.getInstance().getAgentString());
+        Utils.updateSystemProperty("user.language", get("language"));
         // Workaround to fix a Java bug.
         // Force AWT toolkit to update its internal preferences (fix #3645).
         // This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
@@ -1391,35 +1391,15 @@ public class Preferences {
         // Workaround to fix a Java "feature"
         // See http://stackoverflow.com/q/7615645/2257172 and #9875
         if (getBoolean("jdk.tls.disableSNIExtension", true)) {
-            updateSystemProperty("jsse.enableSNIExtension", "false");
+            Utils.updateSystemProperty("jsse.enableSNIExtension", "false");
         }
         // Workaround to fix another Java bug
         // Force Java 7 to use old sorting algorithm of Arrays.sort (fix #8712).
         // See Oracle bug database: https://bugs.openjdk.java.net/browse/JDK-7075600
         // and https://bugs.openjdk.java.net/browse/JDK-6923200
         if (getBoolean("jdk.Arrays.useLegacyMergeSort", !Version.getInstance().isLocalBuild())) {
-            updateSystemProperty("java.util.Arrays.useLegacyMergeSort", "true");
+            Utils.updateSystemProperty("java.util.Arrays.useLegacyMergeSort", "true");
         }
-    }
-
-    /**
-     * Updates a given system property.
-     * @param key The property key
-     * @param value The property value
-     * @return the previous value of the system property, or {@code null} if it did not have one.
-     * @since 6851
-     */
-    public static String updateSystemProperty(String key, String value) {
-        if (value != null) {
-            String old = System.setProperty(key, value);
-            if (!key.toLowerCase().contains("password")) {
-                Main.debug("System property '"+key+"' set to '"+value+"'. Old value was '"+old+"'");
-            } else {
-                Main.debug("System property '"+key+"' changed.");
-            }
-            return old;
-        }
-        return null;
     }
 
     /**

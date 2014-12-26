@@ -145,8 +145,7 @@ public class RemoteControlHttpsServer extends Thread {
         // Change of behaviour in JDK8:
         // https://bugs.openjdk.java.net/browse/JDK-8040820
         // https://bugs.openjdk.java.net/browse/JDK-7198416
-        String version = System.getProperty("java.version");
-        if (version == null || version.matches("^(1\\.)?[7].*")) {
+        if (!Main.isJava8orLater()) {
             // Java 7 code. To remove with Java 8 migration
             info.set(X509CertInfo.SUBJECT, new CertificateSubjectName(owner));
             info.set(X509CertInfo.ISSUER, new CertificateIssuerName(owner));
