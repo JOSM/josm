@@ -38,7 +38,8 @@ public final class I18n {
         // Hide default constructor for utils classes
     }
 
-    private enum PluralMode { MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
+    private enum PluralMode {
+        MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
         MODE_CS/*, MODE_AR*/, MODE_PL/*, MODE_RO*/, MODE_RU, MODE_SK/*, MODE_SL*/}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
     private static String loadedCode = "en";
@@ -137,7 +138,7 @@ public final class I18n {
      * These strings are collected by a script that runs on the source code files.
      * After translation, the localizations are distributed with the main program.
      * <br>
-     * For example, {@code tr("JOSM''s default value is ''{0}''.", val)}.
+     * For example, <code>tr("JOSM''s default value is ''{0}''.", val)</code>.
      * <br>
      * Use {@link #trn} for distinguishing singular from plural text, i.e.,
      * do not use {@code tr(size == 1 ? "singular" : "plural")} nor
@@ -148,7 +149,7 @@ public final class I18n {
      * Can be broken over multiple lines.
      * An apostrophe ' must be quoted by another apostrophe.
      * @param objects the parameters for the string.
-     * Mark occurrences in {@code text} with {@code {0}}, {@code {1}}, ...
+     * Mark occurrences in {@code text} with <code>{0}</code>, <code>{1}</code>, ...
      * @return the translated string.
      * @see #trn
      * @see #trc
@@ -191,9 +192,9 @@ public final class I18n {
      * Marks a string for translation (such that a script can harvest
      * the translatable strings from the source files).
      *
-     * For example, {@code
+     * For example, <code>
      * String[] options = new String[] {marktr("up"), marktr("down")};
-     * lbl.setText(tr(options[0]));}
+     * lbl.setText(tr(options[0]));</code>
      * @param text the string to be marked for translation.
      * @return {@code text} unmodified.
      */
@@ -210,7 +211,7 @@ public final class I18n {
      * {@code singularText} and {@code pluralText} depending on {@code n}.
      * <br>
      * For instance, {@code trn("There was an error!", "There were errors!", i)} or
-     * {@code trn("Found {0} error in {1}!", "Found {0} errors in {1}!", i, Integer.toString(i), url)}.
+     * <code>trn("Found {0} error in {1}!", "Found {0} errors in {1}!", i, Integer.toString(i), url)</code>.
      *
      * @param singularText the singular text to translate.
      * Must be a string literal. (No constants or local vars.)
@@ -222,7 +223,7 @@ public final class I18n {
      * An apostrophe ' must be quoted by another apostrophe.
      * @param n a number to determine whether {@code singularText} or {@code pluralText} is used.
      * @param objects the parameters for the string.
-     * Mark occurrences in {@code singularText} and {@code pluralText} with {@code {0}}, {@code {1}}, ...
+     * Mark occurrences in {@code singularText} and {@code pluralText} with <code>{0}</code>, <code>{1}</code>, ...
      * @return the translated string.
      * @see #tr
      * @see #trc
@@ -249,7 +250,7 @@ public final class I18n {
      * An apostrophe ' must be quoted by another apostrophe.
      * @param n a number to determine whether {@code singularText} or {@code pluralText} is used.
      * @param objects the parameters for the string.
-     * Mark occurrences in {@code singularText} and {@code pluralText} with {@code {0}}, {@code {1}}, ...
+     * Mark occurrences in {@code singularText} and {@code pluralText} with <code>{0}</code>, <code>{1}</code>, ...
      * @return the translated string.
      * @see #tr
      * @see #trc
@@ -259,16 +260,13 @@ public final class I18n {
         return MessageFormat.format(gettextn(singularText, pluralText, context, n), objects);
     }
 
-    private static final String gettext(String text, String ctx, boolean lazy)
-    {
+    private static final String gettext(String text, String ctx, boolean lazy) {
         int i;
-        if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0)
-        {
+        if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0) {
             ctx = text.substring(2,i-1);
             text = text.substring(i+1);
         }
-        if(strings != null)
-        {
+        if(strings != null) {
             String trans = strings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
             if(trans != null)
                 return trans;
@@ -286,22 +284,18 @@ public final class I18n {
         return gettext(text, ctx, false);
     }
 
-
     /* try without context, when context try fails */
     private static final String gettext_lazy(String text, String ctx) {
         return gettext(text, ctx, true);
     }
 
-    private static final String gettextn(String text, String plural, String ctx, long num)
-    {
+    private static final String gettextn(String text, String plural, String ctx, long num) {
         int i;
-        if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0)
-        {
+        if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0) {
             ctx = text.substring(2,i-1);
             text = text.substring(i+1);
         }
-        if(pstrings != null)
-        {
+        if(pstrings != null) {
             i = pluralEval(num);
             String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
             if(trans != null && trans.length > i)
@@ -326,8 +320,7 @@ public final class I18n {
      */
     public static final Locale[] getAvailableTranslations() {
         Collection<Locale> v = new ArrayList<>(languages.size());
-        if(getTranslationFile("en") != null)
-        {
+        if(getTranslationFile("en") != null) {
             for (String loc : languages.keySet()) {
                 if(getTranslationFile(loc) != null) {
                     v.add(LanguageInfo.getLocale(loc));
@@ -346,13 +339,19 @@ public final class I18n {
         return l;
     }
 
-    public static boolean hasCode(String code)
-    {
+    /**
+     * Determines if a language exists for the given code.
+     * @param code The language code
+     * @return {@code true} if a language exists, {@code false} otherwise
+     */
+    public static boolean hasCode(String code) {
         return languages.containsKey(code);
     }
 
-    public static void init()
-    {
+    /**
+     * I18n initialization.
+     */
+    public static void init() {
         //languages.put("ar", PluralMode.MODE_AR);
         languages.put("bg", PluralMode.MODE_NOTONE);
         languages.put("ca", PluralMode.MODE_NOTONE);
@@ -498,18 +497,15 @@ public final class I18n {
                string
            }
          */
-        try
-        {
+        try {
             InputStream ens = new BufferedInputStream(en);
             InputStream trs = new BufferedInputStream(tr);
             byte[] enlen = new byte[2];
             byte[] trlen = new byte[2];
             boolean multimode = false;
             byte[] str = new byte[4096];
-            for(;;)
-            {
-                if(multimode)
-                {
+            for(;;) {
+                if(multimode) {
                     int ennum = ens.read();
                     int trnum = trs.read();
                     if(trnum == 0xFE) /* marks identical string, handle equally to non-translated */
@@ -521,8 +517,7 @@ public final class I18n {
                     }
                     String[] enstrings = new String[ennum];
                     String[] trstrings = new String[trnum];
-                    for(int i = 0; i < ennum; ++i)
-                    {
+                    for(int i = 0; i < ennum; ++i) {
                         int val = ens.read(enlen);
                         if(val != 2) /* file corrupt */
                             return false;
@@ -535,8 +530,7 @@ public final class I18n {
                             return false;
                         enstrings[i] = new String(str, 0, val, StandardCharsets.UTF_8);
                     }
-                    for(int i = 0; i < trnum; ++i)
-                    {
+                    for(int i = 0; i < trnum; ++i) {
                         int val = trs.read(trlen);
                         if(val != 2) /* file corrupt */
                             return false;
@@ -552,9 +546,7 @@ public final class I18n {
                     if(trnum > 0 && !p.containsKey(enstrings[0])) {
                         p.put(enstrings[0], trstrings);
                     }
-                }
-                else
-                {
+                } else {
                     int enval = ens.read(enlen);
                     int trval = trs.read(trlen);
                     if(enval != trval) /* files do not match */
@@ -568,8 +560,7 @@ public final class I18n {
                     trval = (trlen[0] < 0 ? 256+trlen[0]:trlen[0])*256+(trlen[1] < 0 ? 256+trlen[1]:trlen[1]);
                     if(trval == 0xFFFE) /* marks identical string, handle equally to non-translated */
                         trval = 0;
-                    if(enval == 0xFFFF)
-                    {
+                    if(enval == 0xFFFF) {
                         multimode = true;
                         if(trval != 0xFFFF) /* files do not match */
                             return false;
@@ -595,8 +586,7 @@ public final class I18n {
                     }
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return false;
         }
         if (!s.isEmpty()) {
@@ -654,10 +644,8 @@ public final class I18n {
         }
     }
 
-    private static int pluralEval(long n)
-    {
-        switch(pluralMode)
-        {
+    private static int pluralEval(long n) {
+        switch(pluralMode) {
         case MODE_NOTONE: /* bg, da, de, el, en, en_GB, es, et, eu, fi, gl, is, it, iw_IL, nb, nl, sv */
             return ((n != 1) ? 1 : 0);
         case MODE_NONE: /* ja, tr, zh_CN, zh_TW */
