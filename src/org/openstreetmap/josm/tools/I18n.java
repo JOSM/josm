@@ -38,9 +38,42 @@ public final class I18n {
         // Hide default constructor for utils classes
     }
 
+    /**
+     * Enumeration of possible plural modes.
+     * See <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html">CLDR</a>
+     * for a complete list.
+     * @see #pluralEval
+     */
     private enum PluralMode {
-        MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
-        MODE_CS/*, MODE_AR*/, MODE_PL/*, MODE_RO*/, MODE_RU, MODE_SK/*, MODE_SL*/}
+        /** Plural = Not 1. This is the default for many languages, including English: 1 day, but 0 days or 2 days. */
+        MODE_NOTONE,
+        /** No plural. Mainly for Asian languages (Indonesian, Chinese, Japanese, ...) */
+        MODE_NONE,
+        /** Plural = Greater than 1. For some latin languages (French, Brazilian Portuguese) */
+        MODE_GREATERONE,
+        /* Special mode for
+         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ar">Arabic</a>.*
+        MODE_AR,*/
+        /** Special mode for
+         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#cs">Czech</a>. */
+        MODE_CS,
+        /** Special mode for
+         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#pl">Polish</a>. */
+        MODE_PL,
+        /* Special mode for
+         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ro">Romanian</a>.*
+        MODE_RO,*/
+        /** Special mode for
+         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ru">Russian</a>. */
+        MODE_RU,
+        /** Special mode for
+         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sk">Slovak</a>. */
+        MODE_SK,
+        /* Special mode for
+         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#sl">Slovenian</a>.*
+        MODE_SL,*/
+    }
+
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
     private static String loadedCode = "en";
 
@@ -352,6 +385,12 @@ public final class I18n {
      * I18n initialization.
      */
     public static void init() {
+        // Enable CLDR locale provider on Java 8 to get additional languages, such as Khmer.
+        // http://docs.oracle.com/javase/8/docs/technotes/guides/intl/enhancements.8.html#cldr
+        // This can be removed after we switch to a minimal version of Java that enables CLDR by default
+        // or includes all languages we need in the JRE. See http://openjdk.java.net/jeps/8043554 for Java 9
+        Utils.updateSystemProperty("java.locale.providers", "JRE,CLDR");
+
         //languages.put("ar", PluralMode.MODE_AR);
         languages.put("bg", PluralMode.MODE_NOTONE);
         languages.put("ca", PluralMode.MODE_NOTONE);
@@ -373,6 +412,10 @@ public final class I18n {
         //languages.put("is", PluralMode.MODE_NOTONE);
         languages.put("it", PluralMode.MODE_NOTONE);
         languages.put("ja", PluralMode.MODE_NONE);
+        if (Main.isJava8orLater()) {
+            // Java 8 and later code
+            languages.put("km", PluralMode.MODE_NONE);
+        }
         //languages.put("nb", PluralMode.MODE_NOTONE);
         languages.put("nl", PluralMode.MODE_NOTONE);
         languages.put("pl", PluralMode.MODE_PL);
@@ -648,7 +691,7 @@ public final class I18n {
         switch(pluralMode) {
         case MODE_NOTONE: /* bg, da, de, el, en, en_GB, es, et, eu, fi, gl, is, it, iw_IL, nb, nl, sv */
             return ((n != 1) ? 1 : 0);
-        case MODE_NONE: /* ja, tr, zh_CN, zh_TW */
+        case MODE_NONE: /* id, ja, km, tr, zh_CN, zh_TW */
             return 0;
         case MODE_GREATERONE: /* fr, pt_BR */
             return ((n > 1) ? 1 : 0);

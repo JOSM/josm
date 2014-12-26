@@ -694,11 +694,11 @@ public abstract class Main {
 
     /**
      * Add a new layer to the map.
-     * 
+     *
      * If no map exists, create one.
-     * 
+     *
      * @param layer the layer
-     * 
+     *
      * @see #addLayer(Layer, ProjectionBounds)
      * @see #addLayer(Layer, ViewportData)
      */
@@ -710,9 +710,9 @@ public abstract class Main {
 
     /**
      * Add a new layer to the map.
-     * 
+     *
      * If no map exists, create one.
-     * 
+     *
      * @param layer the layer
      * @param bounds the bounds of the layer (target zoom area); can be null, then
      * the viewport isn't changed
@@ -723,9 +723,9 @@ public abstract class Main {
 
     /**
      * Add a new layer to the map.
-     * 
+     *
      * If no map exists, create one.
-     * 
+     *
      * @param layer the layer
      * @param viewport the viewport to zoom to; can be null, then the viewport
      * isn't changed
@@ -1232,6 +1232,16 @@ public abstract class Main {
     protected static void addListener() {
         parent.addComponentListener(new WindowPositionSizeListener());
         ((JFrame)parent).addWindowStateListener(new WindowPositionSizeListener());
+    }
+
+    /**
+     * Determines if JOSM currently runs with Java 8 or later.
+     * @return {@code true} if the current JVM is at least Java 8, {@code false} otherwise
+     * @since 7894
+     */
+    public static boolean isJava8orLater() {
+        String version = System.getProperty("java.version");
+        return version != null && !version.matches("^(1\\.)?[7].*");
     }
 
     /**
