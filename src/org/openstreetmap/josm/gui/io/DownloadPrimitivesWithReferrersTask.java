@@ -212,7 +212,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
             p.add(missing, GBC.eol());
         }
         JosmTextArea txt = new JosmTextArea();
-        txt.setFont(new Font("Monospaced", txt.getFont().getStyle(), txt.getFont().getSize()));
+        txt.setFont(GuiHelper.getMonospacedFont(txt));
         txt.setEditable(false);
         txt.setBackground(p.getBackground());
         txt.setColumns(40);

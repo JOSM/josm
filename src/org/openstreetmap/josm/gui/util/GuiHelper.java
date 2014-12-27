@@ -22,6 +22,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.FilteredImageSource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -30,16 +31,20 @@ import java.util.concurrent.FutureTask;
 import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -296,16 +301,36 @@ public final class GuiHelper {
     }
 
     /**
+     * Gets the font used to display monospaced text in a component, if possible.
+     * @param component The component
+     * @return the font used to display monospaced text in a component, if possible
+     * @since 7896
+     */
+    public static Font getMonospacedFont(JComponent component) {
+        // Special font for Khmer script
+        if ("km".equals(Main.pref.get("language"))) {
+            return component.getFont();
+        } else {
+            return new Font("Monospaced", component.getFont().getStyle(), component.getFont().getSize());
+        }
+    }
+
+    /**
      * Gets the font used to display JOSM title in about dialog and splash screen.
      * @return By order or priority, the first font available in local fonts:
      *         1. Helvetica Bold 20
      *         2. Calibri Bold 23
      *         3. Arial Bold 20
      *         4. SansSerif Bold 20
+     *         Except if current language is Khmer, where it will be current font at size 20
      * @since 5797
      */
     public static Font getTitleFont() {
         List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+        // Special font for Khmer script
+        if ("km".equals(Main.pref.get("language"))) {
+            return UIManager.getFont("Label.font").deriveFont(20.0f);
+        }
         // Helvetica is the preferred choice but is not available by default on Windows
         // (https://www.microsoft.com/typography/fonts/product.aspx?pid=161)
         if (fonts.contains("Helvetica")) {
@@ -344,5 +369,25 @@ public final class GuiHelper {
      */
     public static int getMenuShortcutKeyMaskEx() {
         return Main.isPlatformOsx() ? KeyEvent.META_DOWN_MASK : KeyEvent.CTRL_DOWN_MASK;
+    }
+
+    /**
+     * Sets a global font for all UI, replacing default font of current look and feel.
+     * @param name Font name. It is up to the caller to make sure the font exists
+     * @since 7896
+     * @throws IllegalArgumentException if name is null
+     */
+    public static void setUIFont(String name) {
+        CheckParameterUtil.ensureParameterNotNull(name, "name");
+        Main.info("Setting "+name+" as the default UI font");
+        Enumeration<?> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value != null && value instanceof FontUIResource) {
+                FontUIResource fui = (FontUIResource)value;
+                UIManager.put(key, new FontUIResource(name, fui.getStyle(), fui.getSize()));
+            }
+        }
     }
 }

@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +43,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Geometry;
@@ -94,7 +94,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     protected JPanel buildDataPanel() {
         JPanel p = new JPanel(new GridBagLayout());
         JosmTextArea txtData = new JosmTextArea();
-        txtData.setFont(new Font("Monospaced", txtData.getFont().getStyle(), txtData.getFont().getSize()));
+        txtData.setFont(GuiHelper.getMonospacedFont(txtData));
         txtData.setEditable(false);
         txtData.setText(buildDataText());
         txtData.setSelectionStart(0);
@@ -324,7 +324,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     protected void buildMapPaintPanel(JPanel p) {
         p.setLayout(new GridBagLayout());
         txtMappaint = new JosmTextArea();
-        txtMappaint.setFont(new Font("Monospaced", txtMappaint.getFont().getStyle(), txtMappaint.getFont().getSize()));
+        txtMappaint.setFont(GuiHelper.getMonospacedFont(txtMappaint));
         txtMappaint.setEditable(false);
 
         p.add(new JScrollPane(txtMappaint), GBC.std().fill());

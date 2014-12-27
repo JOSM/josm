@@ -15,6 +15,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.text.html.StyleSheet;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -82,7 +83,7 @@ public class JosmEditorPane extends JEditorPane {
         }
         return result;
     }
-    
+
     /**
      * Adapts a {@link JEditorPane} to be used as a powerful replacement of {@link javax.swing.JLabel}.
      * @param pane The editor pane to adapt
@@ -102,6 +103,10 @@ public class JosmEditorPane extends JEditorPane {
         ss.addRule("h1 {" + getFontRule(GuiHelper.getTitleFont()) + "}");
         ss.addRule("ol {margin-left: 1cm; margin-top: 0.1cm; margin-bottom: 0.2cm; list-style-type: decimal}");
         ss.addRule("ul {margin-left: 1cm; margin-top: 0.1cm; margin-bottom: 0.2cm; list-style-type: disc}");
+        if ("km".equals(Main.pref.get("language"))) {
+            // Fix rendering problem for Khmer script
+            ss.addRule("p {" + getFontRule(UIManager.getFont("Label.font")) + "}");
+        }
         kit.setStyleSheet(ss);
         pane.setEditorKit(kit);
     }

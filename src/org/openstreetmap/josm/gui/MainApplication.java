@@ -7,6 +7,7 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
@@ -367,6 +368,8 @@ public class MainApplication extends Main {
 
         FontsManager.initialize();
 
+        handleSpecialLanguages();
+
         final JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
 
@@ -478,6 +481,20 @@ public class MainApplication extends Main {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process but they don't seem to break anything and are difficult to fix
             info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
+        }
+    }
+
+    private static void handleSpecialLanguages() {
+        // Use special font for Khmer script, as the default Java font do not display these characters
+        if ("km".equals(Main.pref.get("language"))) {
+            Collection<String> fonts = Arrays.asList(
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+            for (String f : new String[]{"Khmer UI", "DaunPenh", "MoolBoran"}) {
+                if (fonts.contains(f)) {
+                    GuiHelper.setUIFont(f);
+                    break;
+                }
+            }
         }
     }
 
