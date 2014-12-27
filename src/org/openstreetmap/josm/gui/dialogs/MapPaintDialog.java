@@ -72,6 +72,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -614,7 +615,7 @@ public class MapPaintDialog extends ToggleDialog {
 
         private void buildSourcePanel(StyleSource s, JPanel p) {
             JosmTextArea txtSource = new JosmTextArea();
-            txtSource.setFont(new Font("Monospaced", txtSource.getFont().getStyle(), txtSource.getFont().getSize()));
+            txtSource.setFont(GuiHelper.getMonospacedFont(txtSource));
             txtSource.setEditable(false);
             p.add(new JScrollPane(txtSource), GBC.std().fill());
 
@@ -635,7 +636,7 @@ public class MapPaintDialog extends ToggleDialog {
 
         private void buildErrorsPanel(StyleSource s, JPanel p) {
             JosmTextArea txtErrors = new JosmTextArea();
-            txtErrors.setFont(new Font("Monospaced", txtErrors.getFont().getStyle(), txtErrors.getFont().getSize()));
+            txtErrors.setFont(GuiHelper.getMonospacedFont(txtErrors));
             txtErrors.setEditable(false);
             p.add(new JScrollPane(txtErrors), GBC.std().fill());
             for (Throwable t : s.getErrors()) {
