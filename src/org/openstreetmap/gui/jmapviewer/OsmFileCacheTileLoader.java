@@ -155,7 +155,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
             }
             now = System.currentTimeMillis();
             tileCacheDir = getSourceCacheDir(tile.getSource());
-            
+
             if (loadTileFromFile(recheckAfter)) {
                 log.log(Level.FINE, "TMS - found in tile cache: {0}", tile);
                 tile.setLoaded(true);
@@ -206,6 +206,8 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                             return true;
                         }
                         break;
+                    default:
+                        break;
                     }
                 }
                 if (tile.getSource().getTileUpdate() == TileUpdate.ETag || tile.getSource().getTileUpdate() == TileUpdate.IfNoneMatch) {
@@ -221,6 +223,8 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                                 tileFile.setLastModified(now);
                                 return true;
                             }
+                        default:
+                            break;
                         }
                     }
                     tile.putValue("etag", urlConn.getHeaderField("ETag"));
@@ -234,6 +238,8 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                         break;
                     case IfNoneMatch:
                         log.log(Level.FINE, "TMS - IfNoneMatch test: local version is up to date: {0}", tile);
+                        break;
+                    default:
                         break;
                     }
                     if (loadTileFromFile(maxCacheFileAge)) {
