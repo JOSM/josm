@@ -392,6 +392,7 @@ public final class I18n {
         Utils.updateSystemProperty("java.locale.providers", "JRE,CLDR");
 
         //languages.put("ar", PluralMode.MODE_AR);
+        languages.put("ast", PluralMode.MODE_NOTONE);
         languages.put("bg", PluralMode.MODE_NOTONE);
         languages.put("ca", PluralMode.MODE_NOTONE);
         languages.put("cs", PluralMode.MODE_CS);
@@ -412,10 +413,8 @@ public final class I18n {
         //languages.put("is", PluralMode.MODE_NOTONE);
         languages.put("it", PluralMode.MODE_NOTONE);
         languages.put("ja", PluralMode.MODE_NONE);
-        //if (Main.isJava8orLater()) {
-            // fully supported only with Java 8 and later code
-            languages.put("km", PluralMode.MODE_NONE);
-        //}
+        // fully supported only with Java 8 and later (needs CLDR)
+        languages.put("km", PluralMode.MODE_NONE);
         //languages.put("nb", PluralMode.MODE_NOTONE);
         languages.put("nl", PluralMode.MODE_NOTONE);
         languages.put("pl", PluralMode.MODE_PL);
