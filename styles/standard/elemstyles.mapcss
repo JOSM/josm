@@ -510,7 +510,7 @@ way[highway=road] {
     color: #770000;
 }
 way[highway=track][area?], relation[type=multipolygon][highway=track] {
-    fill-color: highway_track#006600;
+    fill-color: highway_track#6e541c;
 }
 way[highway=track] {
     width: 2;
@@ -4481,7 +4481,7 @@ way|z17-[highway=service][setting("highway_labels")] {
     text-halo-color: service#809bc0;
 }
 way|z17-[highway=track][setting("highway_labels")] {
-    text-halo-color: highway_track#006600;
+    text-halo-color: highway_track#6e541c;
 }
 way|z18[highway][setting("highway_labels")] {
     font-size: 10;
