@@ -7715,8 +7715,8 @@
                 <text key="name" text="Name" />
             </optional>
             <roles>
-                <role key="outer" text="outer segment" requisite="required" type="way" />
-                <role key="inner" text="inner segment" requisite="optional" type="way" />
+                <role key="outer" text="outer segment" requisite="required" type="way,closedway" />
+                <role key="inner" text="inner segment" requisite="optional" type="way,closedway" />
             </roles>
         </item> <!-- Multipolygon -->
         <item name="Boundary" icon="presets/boundaries.png" type="relation" preset_name_label="true">
@@ -7736,8 +7736,8 @@
                 <combo key="admin_level" text="Administrative level" values="1,2,3,4,5,6,7,8,9,10" />
             </optional>
             <roles>
-                <role key="outer" text="outer segment" requisite="required" type="way" />
-                <role key="inner" text="inner segment" requisite="optional" type="way" />
+                <role key="outer" text="outer segment" requisite="required" type="way,closedway" />
+                <role key="inner" text="inner segment" requisite="optional" type="way,closedway" />
                 <role key="subarea" text="Sub area" requisite="optional" type="relation" />
                 <role key="admin_centre" text="Administration centre" requisite="optional" type="node" count="1" />
                 <role key="label" text="Label point" requisite="optional" type="node" count="1" />
