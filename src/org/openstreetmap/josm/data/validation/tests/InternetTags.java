@@ -127,8 +127,15 @@ public class InternetTags extends Test {
      */
     private TestError doValidateTag(OsmPrimitive p, String k, String v, AbstractValidator validator, int code) {
         TestError error = null;
-        if (!validator.isValid(v != null ? v : p.get(k))) {
-            String msg = tr("''{0}'': {1}", k, validator.getErrorMessage());
+        String value = v != null ? v : p.get(k);
+        if (!validator.isValid(value)) {
+            String errMsg = validator.getErrorMessage();
+            // Special treatment to allow URLs without protocol. See UrlValidator#isValid
+            if (tr("URL contains an invalid protocol: {0}", (String)null).equals(errMsg)) {
+                String proto = validator instanceof EmailValidator ? "mailto://" : "http://";
+                return doValidateTag(p, k, proto+value, validator, code);
+            }
+            String msg = tr("''{0}'': {1}", k, errMsg);
             String fix = validator.getFix();
             if (fix != null) {
                 error = new FixableTestError(this, Severity.WARNING, msg, code, p,
