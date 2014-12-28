@@ -513,8 +513,8 @@ way[highway=track][area?], relation[type=multipolygon][highway=track] {
     fill-color: highway_track#006600;
 }
 way[highway=track] {
-    width: 1;
-    color: highway_track#006600;
+    width: 2;
+    color: highway_track#6e541c;
 }
 way[highway=residential] {
     width: 2;
@@ -535,7 +535,7 @@ way[highway=service][!area?] {
 }
 way[highway=bridleway] {
     width: 1;
-    color: horse#c08000;
+    color: horse#a18559;
 }
 way[highway=cycleway] {
     width: 1;
@@ -597,7 +597,7 @@ way[highway=pedestrian] {
     color: foot#00ff00;
 }
 way[highway=steps] {
-    width: 1;
+    width: 3;
     color: foot#00ff00;
     dashes: 2,2;
 }
@@ -978,20 +978,19 @@ node[cycleway=opposite] {
 /******************/
 
 way[highway=track][tracktype=grade1] {
-    width: 2;
-    dashes: 2,2;
+    dashes: 8,1;
 }
 way[highway=track][tracktype=grade2] {
-    dashes: 2,3;
+    dashes: 6,2;
 }
 way[highway=track][tracktype=grade3] {
-    dashes: 2,4;
+    dashes: 4,3;
 }
 way[highway=track][tracktype=grade4] {
-    dashes: 2,5;
+    dashes: 4,5;
 }
 way[highway=track][tracktype=grade5] {
-    dashes: 1,5;
+    dashes: 4,7;
 }
 
 /**************/
