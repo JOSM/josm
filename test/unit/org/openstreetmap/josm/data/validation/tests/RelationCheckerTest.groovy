@@ -47,6 +47,13 @@ class RelationCheckerTest extends GroovyTestCase {
         assert errors.get(0).getMessage() == "Relation is empty"
     }
 
+    void testNormal() {
+        def r = createRelation("type=multipolygon")
+        r.addMember(new RelationMember("outer", new Way()))
+        r.addMember(new RelationMember("inner", new Way()))
+        assert testRelation(r).isEmpty()
+    }
+
     void testOuter2() {
         def r = createRelation("type=multipolygon")
         r.addMember(new RelationMember("outer", new Way()))

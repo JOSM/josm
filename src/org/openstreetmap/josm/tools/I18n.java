@@ -39,9 +39,10 @@ public final class I18n {
     }
 
     /**
-     * Enumeration of possible plural modes.
+     * Enumeration of possible plural modes. It allows us to identify and implement logical conditions of
+     * plural forms defined on <a href="https://help.launchpad.net/Translations/PluralForms">Launchpad</a>.
      * See <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html">CLDR</a>
-     * for a complete list.
+     * for another complete list.
      * @see #pluralEval
      */
     private enum PluralMode {
