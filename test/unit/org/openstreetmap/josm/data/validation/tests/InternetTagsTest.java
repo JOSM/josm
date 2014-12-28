@@ -36,6 +36,7 @@ public class InternetTagsTest {
     public void test() {
 
         // Valid URLs
+        testUrl("url", "www.domain.com", true);                                // No protocol
         testUrl("url", "http://josm.openstreetmap.de", true);                  // Simple HTTP
         testUrl("url", "http://josm.openstreetmap.de/", true);                 // Simple HTTP + slash
         testUrl("website", "https://www.openstreetmap.org", true);             // Simple HTTPS
@@ -47,7 +48,6 @@ public class InternetTagsTest {
         testUrl("website", "http://золотаяцепь.рф/", true);                    // see #10862: IDN URL in Unicode form + slash
 
         // Invalid URLs
-        testUrl("url", "www.domain.com", false);                               // No protocol
         testUrl("url", "something://www.domain.com", false);                   // invalid protocol
         testUrl("url", "http://www.domain.invalidtld", false);                 // invalid TLD
 
