@@ -7696,6 +7696,40 @@
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
         </item> <!-- Contact (Schema with 'contact:*' Prefix) -->
+        <item name="Description" name_context="the text to display for the tag description=*" type="node,way,closedway,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:description" />
+            <space />
+            <label text="A short text with additional information that might be viewable to" />,
+            <label text="the end user (perhaps using a search system or a map with pop-ups)." />
+            <space />
+            <text key="description" text="Description" text_context="the text to display for the tag description=*" match="key" />
+            <space />
+            <label text="Similar but different tags:" />
+            <preset_link preset_name="Note" />
+            <preset_link preset_name="Fixme" />
+        </item> <!-- Description -->
+         <item name="Note" icon="styles/standard/misc/note-annotation.png" name_context="the text to display for the tag note=*" type="node,way,closedway,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:note" />
+            <space />
+            <label text="An important hint for other mappers (not for the end user)." />
+            <space />
+            <text key="note" text="Note" text_context="the text to display for the tag note=*" match="key" />
+            <space />
+            <label text="Similar but different tags:" />
+            <preset_link preset_name="Fixme" />
+            <preset_link preset_name="Description" />
+        </item> <!-- Note -->
+        <item name="Fixme" icon="styles/standard/misc/fixme-annotation.png" name_context="the text to display for the tag fixme=*" type="node,way,closedway,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:fixme" />
+            <space />
+            <label text="A hint for other mappers (not for the end user), that an object needs an improvement." />
+            <space />
+            <text key="fixme" text="Fixme" text_context="the text to display for the tag fixme=*" match="key" />
+            <space />
+            <label text="Similar but different tags:" />
+            <preset_link preset_name="Note" />
+            <preset_link preset_name="Description" />
+        </item> <!-- Fixme -->
     </group> <!-- Annotation -->
     <group name="Relations" icon="presets/relations.png">
         <item name="Multipolygon" icon="presets/multipolygon.png" type="relation" preset_name_label="true">
