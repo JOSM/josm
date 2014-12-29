@@ -6735,7 +6735,6 @@
         <multiselect key="vending" text="Vending products" values="animal_food;bicycle_tube;cigarettes;condoms;drinks;excrement_bags;food;news_papers;parking_tickets;photos;public_transport_plans;public_transport_tickets;SIM-cards;stamps;sweets;tampons;telephone_vouchers;toys;vouchers" values_searchable="true" />
         <text key="operator" text="Operator" />
         <text key="ref" text="Reference number" />
-        <text key="note" text="Note" text_context="payment" />
         <reference ref="payment_account" />
     </item> <!-- Vending Machine -->
   </group> <!-- Shops -->
