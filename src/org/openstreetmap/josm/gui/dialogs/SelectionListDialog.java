@@ -39,6 +39,7 @@ import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
@@ -610,15 +611,20 @@ public class SelectionListDialog extends ToggleDialog  {
                         remember(selection);
                         if (selection.size() == 2) {
                             Iterator<? extends OsmPrimitive> it = selection.iterator();
-                            OsmPrimitive n1 = it.next(), n2=it.next();
-                            // show distance between two selected nodes
+                            OsmPrimitive n1 = it.next();
+                            OsmPrimitive n2 = it.next();
+                            // show distance between two selected nodes with coordinates
                             if (n1 instanceof Node && n2 instanceof Node) {
-                                double d = ((Node) n1).getCoor().greatCircleDistance(((Node) n2).getCoor());
-                                Main.map.statusLine.setDist(d);
-                                return;
+                                LatLon c1 = ((Node) n1).getCoor();
+                                LatLon c2 = ((Node) n2).getCoor();
+                                if (c1 != null && c2 != null) {
+                                    Main.map.statusLine.setDist(c1.greatCircleDistance(c2));
+                                    return;
+                                }
                             }
                         }
-                        Main.map.statusLine.setDist(new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate));
+                        Main.map.statusLine.setDist(
+                                new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate));
                     }
                 }
             });
