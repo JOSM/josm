@@ -331,6 +331,7 @@
 
 /* see #10661, #10837 */
 *[barrier=yes],
+*[aerialway=yes],
 *[amenity=yes],
 *[place=yes] {
   throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by a specific value.", "{0.key}", "{0.value}");

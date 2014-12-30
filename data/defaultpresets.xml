@@ -2179,30 +2179,6 @@
         </item> <!-- Railway Switch -->
     </group> <!-- Railway -->
     <group name="Aerialway" icon="presets/aerialway.png">
-        <item name="Chair Lift" icon="presets/chair_lift.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=chair_lift"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:aerialway=chair_lift" />
-            <space />
-            <key key="aerialway" value="chair_lift" />
-            <reference ref="name_ref" />
-            <optional>
-                <text key="aerialway:capacity" text="Number of people per hour" />
-                <text key="aerialway:occupancy" text="Number of people per chair" />
-                <text key="aerialway:duration" text="Typical journey time in minutes" />
-                <check key="aerialway:bubble" text="Has bubble?" />
-                <check key="aerialway:heating" text="Has heating?" />
-            </optional>
-        </item> <!-- Chair Lift -->
-        <item name="Drag Lift" icon="presets/drag_lift.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=drag_lift" />
-            <space />
-            <key key="aerialway" value="drag_lift" />
-            <reference ref="name_ref" />
-            <optional>
-                <text key="aerialway:capacity" text="Number of people per hour" />
-                <text key="aerialway:duration" text="Typical journey time in minutes" />
-            </optional>
-        </item> <!-- Drag Lift -->
         <item name="Cable Car" icon="presets/cable_car.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=cable_car"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:aerialway=cable_car"
@@ -2221,6 +2197,20 @@
                 <check key="aerialway:heating" text="Has heating?" />
             </optional>
         </item> <!-- Cable Car -->
+		<item name="Chair Lift" icon="presets/chair_lift.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=chair_lift"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:aerialway=chair_lift" />
+            <space />
+            <key key="aerialway" value="chair_lift" />
+            <reference ref="name_ref" />
+            <optional>
+                <text key="aerialway:capacity" text="Number of people per hour" />
+                <text key="aerialway:occupancy" text="Number of people per chair" />
+                <text key="aerialway:duration" text="Typical journey time in minutes" />
+                <check key="aerialway:bubble" text="Has bubble?" />
+                <check key="aerialway:heating" text="Has heating?" />
+            </optional>
+        </item> <!-- Chair Lift -->
         <item name="Gondola" icon="presets/aerialway.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=gondola" />
             <space />
@@ -2233,7 +2223,7 @@
                 <check key="aerialway:heating" text="Has heating?" />
             </optional>
         </item> <!-- Gondola -->
-        <item name="Mixed Lift" type="way" preset_name_label="true">
+        <item name="Mixed Lift" icon="styles/standard/transport/aerialway/mixed_lift.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=mixed_lift" />
             <space />
             <key key="aerialway" value="mixed_lift" />
@@ -2246,47 +2236,17 @@
                 <check key="aerialway:heating" text="Has heating?" />
             </optional>
         </item> <!-- Mixed Lift -->
-        <item name="T-bar Lift" icon="presets/drag_lift.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=t-bar" />
+        <item name="Drag Lift" icon="presets/drag_lift.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=drag_lift" />
             <space />
-            <key key="aerialway" value="t-bar" />
+            <combo key="aerialway" text="Type" values="drag_lift,t-bar,j-bar,platter,rope_tow" display_values="drag_lift (general type - use only if exact type (see values below) is unknown),t-bar,j-bar,platter,rope_tow" match="keyvalue" />
             <reference ref="name_ref" />
             <optional>
                 <text key="aerialway:capacity" text="Number of people per hour" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
             </optional>
-        </item> <!-- T-bar Lift -->
-        <item name="J-bar Lift" icon="presets/drag_lift.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=j-bar" />
-            <space />
-            <key key="aerialway" value="j-bar" />
-            <reference ref="name_ref" />
-            <optional>
-                <text key="aerialway:capacity" text="Number of people per hour" />
-                <text key="aerialway:duration" text="Typical journey time in minutes" />
-            </optional>
-        </item> <!-- J-bar Lift -->
-        <item name="Platter Lift" icon="presets/drag_lift.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=platter" />
-            <space />
-            <key key="aerialway" value="platter" />
-            <reference ref="name_ref" />
-            <optional>
-                <text key="aerialway:capacity" text="Number of people per hour" />
-                <text key="aerialway:duration" text="Typical journey time in minutes" />
-            </optional>
-        </item> <!-- Platter Lift -->
-        <item name="Rope Tow" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=rope_tow" />
-            <space />
-            <key key="aerialway" value="rope_tow" />
-            <reference ref="name_ref" />
-            <optional>
-                <text key="aerialway:capacity" text="Number of people per hour" />
-                <text key="aerialway:duration" text="Typical journey time in minutes" />
-            </optional>
-        </item> <!-- Rope Tow -->
-        <item name="Magic Carpet" type="way" preset_name_label="true">
+        </item> <!-- Drag Lift -->
+        <item name="Magic Carpet" icon="styles/standard/transport/aerialway/magic_carpet.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=magic_carpet" />
             <space />
             <key key="aerialway" value="magic_carpet" />
@@ -2313,7 +2273,7 @@
             <key key="aerialway" value="station" />
             <text key="name" text="Name" />
         </item> <!-- Station -->
-        <item name="Pylon" icon="presets/power_tower.png" type="node" preset_name_label="true">
+        <item name="Pylon" icon="styles/standard/transport/aerialway/pylon.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=pylon" />
             <space />
             <key key="aerialway" value="pylon" />

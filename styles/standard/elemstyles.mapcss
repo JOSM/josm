@@ -3368,38 +3368,36 @@ way[aerialway=gondola] {
     color: aerialway#663300;
     dashes: 9,9;
 }
-node[aerialway=cable_car] {
-    icon-image: "transport/aerialway/cable_car.png";
-    set icon_z17;
-    text: auto;
-}
-node[aerialway=gondola] {
-    icon-image: "transport/aerialway/gondola.png";
-    set icon_z17;
-    text: auto;
-}
 way[aerialway=chair_lift] {
     width: 1;
     color: aerialway#663300;
     dashes: 6,6;
 }
-node[aerialway=chair_lift] {
-    icon-image: "transport/aerialway/chair_lift.png";
-    set icon_z17;
-    text: auto;
+way[aerialway=mixed_lift] {
+    width: 1;
+    color: aerialway#663300;
+    dashes: 6,6,9,6;
 }
+way[aerialway=j-bar],
+way[aerialway=t-bar],
+way[aerialway=platter],
+way[aerialway=rope_tow],
 way[aerialway=drag_lift] {
     width: 1;
     color: aerialway#663300;
     dashes: 3,3;
 }
-node[aerialway=drag_lift] {
-    icon-image: "transport/aerialway/drag_lift.png";
-    set icon_z17;
-    text: auto;
+way[aerialway=magic_carpet] {
+    width: 1;
+    color: aerialway#663300;
+    dashes: 3,3;
 }
-area[aerialway=station],
-area[aerialway=pylon] {
+way[aerialway=goods] {
+    width: 1;
+    color: aerialway#663300;
+    dashes: 2,2;
+}
+area[aerialway=station] {
     fill-color: aerialway#663300;
 }
 node[aerialway=station] {
@@ -3408,17 +3406,22 @@ node[aerialway=station] {
     text: auto;
 }
 node[aerialway=pylon] {
-    icon-image: "misc/landmark/power/tower_small.png";
+    icon-image: "transport/aerialway/pylon.svg";
     set icon_z17;
     text: auto;
 }
-way[aerialway=goods] {
-    width: 1;
-    color: aerialway#663300;
-    dashes: 2,2;
-}
+node[aerialway=cable_car],
+node[aerialway=gondola],
+node[aerialway=chair_lift],
+node[aerialway=mixed_lift],
+node[aerialway=drag_lift],
+node[aerialway=t-bar],
+node[aerialway=j-bar],
+node[aerialway=platter],
+node[aerialway=magic_carpet],
+node[aerialway=rope_tow],
 node[aerialway=goods] {
-    icon-image: "transport/aerialway/goods.png";
+    icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
 }
