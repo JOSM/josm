@@ -415,6 +415,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
 
         protected void saveTagsToFile() {
             File tagsFile = getTagsFile();
+            tagsFile.getParentFile().mkdirs();
             if (tile.getMetadata() == null) {
                 tagsFile.delete();
                 return;
