@@ -32,7 +32,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * or extracted from the image EXIF data.
      */
     private CachedLatLon pos;
-    /** Speed in kilometer per second */
+    /** Speed in kilometer per hour */
     private Double speed;
     /** Elevation (altitude) in meters */
     private Double elevation;

@@ -302,7 +302,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 osd.append(tr("\nAltitude: {0} m", entry.getElevation().longValue()));
             }
             if (entry.getSpeed() != null) {
-                osd.append(tr("\n{0} km/h", Math.round(entry.getSpeed())));
+                osd.append(tr("\nSpeed: {0} km/h", Math.round(entry.getSpeed())));
             }
             if (entry.getExifImgDir() != null) {
                 osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));

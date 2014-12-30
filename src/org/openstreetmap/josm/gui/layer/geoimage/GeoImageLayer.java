@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Dimension;
@@ -12,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -495,39 +497,55 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             if (e.getPos() != null) {
                 Point p = mv.getPoint(e.getPos());
 
+                int imgWidth = 100;
+                int imgHeight = 100;
                 if (useThumbs && e.thumbnail != null) {
                     Dimension d = scaledDimension(e.thumbnail);
+                    imgWidth = d.width;
+                    imgHeight = d.height;
+                }
+                else {
+                    imgWidth = selectedIcon.getIconWidth();
+                    imgHeight = selectedIcon.getIconHeight();
+                }
+
+                if (e.getExifImgDir() != null) {
+                    // Multiplier must be larger than sqrt(2)/2=0.71.
+                    double arrowlength = Math.max(25, Math.max(imgWidth, imgHeight) * 0.85);
+                    double arrowwidth = arrowlength / 1.4;
+
+                    double dir = e.getExifImgDir();
+                    // Rotate 90 degrees CCW
+                    double headdir = ( dir < 90 ) ? dir + 270 : dir - 90;
+                    double leftdir = ( headdir < 90 ) ? headdir + 270 : headdir - 90;
+                    double rightdir = ( headdir > 270 ) ? headdir - 270 : headdir + 90;
+
+                    double ptx = p.x + Math.cos(Math.toRadians(headdir)) * arrowlength;
+                    double pty = p.y + Math.sin(Math.toRadians(headdir)) * arrowlength;
+
+                    double ltx = p.x + Math.cos(Math.toRadians(leftdir)) * arrowwidth/2;
+                    double lty = p.y + Math.sin(Math.toRadians(leftdir)) * arrowwidth/2;
+
+                    double rtx = p.x + Math.cos(Math.toRadians(rightdir)) * arrowwidth/2;
+                    double rty = p.y + Math.sin(Math.toRadians(rightdir)) * arrowwidth/2;
+
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g.setColor(new Color(255, 255, 255, 192));
+                    int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
+                    int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
+                    g.fillPolygon(xar, yar, 4);
+                    g.setColor(Color.black);
+                    g.setStroke(new BasicStroke(1.2f));
+                    g.drawPolyline(xar, yar, 3);
+                }
+
+                if (useThumbs && e.thumbnail != null) {
                     g.setColor(new Color(128, 0, 0, 122));
-                    g.fillRect(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
+                    g.fillRect(p.x - imgWidth / 2, p.y - imgHeight / 2, imgWidth, imgHeight);
                 } else {
-                    if (e.getExifImgDir() != null) {
-                        double arrowlength = 25;
-                        double arrowwidth = 18;
-
-                        double dir = e.getExifImgDir();
-                        // Rotate 90 degrees CCW
-                        double headdir = ( dir < 90 ) ? dir + 270 : dir - 90;
-                        double leftdir = ( headdir < 90 ) ? headdir + 270 : headdir - 90;
-                        double rightdir = ( headdir > 270 ) ? headdir - 270 : headdir + 90;
-
-                        double ptx = p.x + Math.cos(Math.toRadians(headdir)) * arrowlength;
-                        double pty = p.y + Math.sin(Math.toRadians(headdir)) * arrowlength;
-
-                        double ltx = p.x + Math.cos(Math.toRadians(leftdir)) * arrowwidth/2;
-                        double lty = p.y + Math.sin(Math.toRadians(leftdir)) * arrowwidth/2;
-
-                        double rtx = p.x + Math.cos(Math.toRadians(rightdir)) * arrowwidth/2;
-                        double rty = p.y + Math.sin(Math.toRadians(rightdir)) * arrowwidth/2;
-
-                        g.setColor(Color.white);
-                        int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
-                        int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
-                        g.fillPolygon(xar, yar, 4);
-                    }
-
                     selectedIcon.paintIcon(mv, g,
-                            p.x - selectedIcon.getIconWidth() / 2,
-                            p.y - selectedIcon.getIconHeight() / 2);
+                            p.x - imgWidth / 2,
+                            p.y - imgHeight / 2);
 
                 }
             }
@@ -575,6 +593,24 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             e.setExifCoor(null);
             e.setPos(null);
             return;
+        }
+
+        try {
+            double speed = dirGps.getDouble(GpsDirectory.TAG_GPS_SPEED);
+            String speedRef = dirGps.getString(GpsDirectory.TAG_GPS_SPEED_REF);
+            if (speedRef != null) {
+                if (speedRef.equalsIgnoreCase("M")) {
+                    // miles per hour
+                    speed *= 1.609344;
+                } else if (speedRef.equalsIgnoreCase("N")) {
+                    // knots == nautical miles per hour
+                    speed *= 1.852;
+                }
+                // default is K (km/h)
+            }
+            e.setSpeed(speed);
+        } catch (Exception ex) {
+            Main.debug(ex.getMessage());
         }
 
         try {

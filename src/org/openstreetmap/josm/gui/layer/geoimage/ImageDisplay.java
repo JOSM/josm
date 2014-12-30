@@ -468,6 +468,7 @@ public class ImageDisplay extends JComponent {
 
     public void setOsdText(String text) {
         this.osdText = text;
+        repaint();
     }
 
     @Override
