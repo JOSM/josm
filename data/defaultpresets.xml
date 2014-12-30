@@ -7699,7 +7699,7 @@
         <item name="Description" name_context="the text to display for the tag description=*" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:description" />
             <space />
-            <label text="A short text with additional information that might be viewable to" />,
+            <label text="A short text with additional information that might be viewable to" />
             <label text="the end user (perhaps using a search system or a map with pop-ups)." />
             <space />
             <text key="description" text="Description" text_context="the text to display for the tag description=*" match="key" />
@@ -7708,7 +7708,7 @@
             <preset_link preset_name="Note" />
             <preset_link preset_name="Fixme" />
         </item> <!-- Description -->
-         <item name="Note" icon="styles/standard/misc/note-annotation.png" name_context="the text to display for the tag note=*" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Note" icon="styles/standard/misc/note-annotation.png" name_context="the text to display for the tag note=*" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:note" />
             <space />
             <label text="An important hint for other mappers (not for the end user)." />
