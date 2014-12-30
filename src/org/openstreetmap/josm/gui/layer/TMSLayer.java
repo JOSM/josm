@@ -111,20 +111,14 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static final IntegerProperty PROP_TMS_JOBS = new IntegerProperty("tmsloader.maxjobs", 25);
     public static final StringProperty PROP_TILECACHE_DIR;
 
-    private static final boolean newcache = Main.pref.getBoolean("tms.newcache");
-
     static {
         String defPath = null;
         try {
-            if (newcache) {
-                defPath = new File(Main.pref.getCacheDirectory(), "tms").getAbsolutePath();
-            } else {
-                defPath = OsmFileCacheTileLoader.getDefaultCacheDir().getAbsolutePath();
-            }
+            defPath = new File(Main.pref.getCacheDirectory(), "tms").getAbsolutePath();
         } catch (SecurityException e) {
             Main.warn(e);
         }
-        PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + (newcache ? ".tilecache" : ".tilecache_path"), defPath);
+        PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache", defPath);
     }
 
     public interface TileLoaderFactory {
@@ -142,11 +136,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             if (cachePath != null && !cachePath.isEmpty()) {
                 try {
                     OsmFileCacheTileLoader loader;
-                    if (newcache) {
-                        loader = new TMSFileCacheTileLoader(listener, new File(cachePath));
-                    } else {
-                        loader = new OsmFileCacheTileLoader(listener, new File(cachePath));
-                    }
+                    loader = new TMSFileCacheTileLoader(listener, new File(cachePath));
                     loader.headers.put("User-Agent", Version.getInstance().getFullAgentString());
                     return loader;
                 } catch (IOException e) {
