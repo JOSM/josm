@@ -2600,7 +2600,7 @@
                 <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             </optional>
             <roles>
-                <role key="" text="route segment" requisite="required" type="way" member_expression="highway OR railway OR waterway OR aerialway" />
+                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway OR railway OR waterway OR aerialway" />
                 <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position" />
                 <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position" />
                 <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position" />
@@ -7952,10 +7952,10 @@
                 <text key="operator" text="Operator" />
                 <text key="distance" text="Distance (km)"/>
                 <roles>
-                    <role key="" text="route segment" requisite="optional" type="way" member_expression="highway"/>
-                    <role key="forward" text="forward segment" requisite="optional" type="way" member_expression="highway"/>
-                    <role key="backward" text="backward segment" requisite="optional" type="way" member_expression="highway"/>
-                    <role key="link" text="link segment" requisite="optional" type="way" member_expression="highway"/>
+                    <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway"/>
+                    <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway"/>
+                    <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="highway"/>
+                    <role key="link" text="link segment" requisite="optional" type="way,closedway" member_expression="highway"/>
                 </roles>
             </item> <!-- Road Route -->
         </group> <!-- Routes -->
