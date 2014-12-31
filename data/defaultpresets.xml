@@ -7656,37 +7656,37 @@
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
         </item> <!-- Contact (Schema with 'contact:*' Prefix) -->
-        <item name="Description" name_context="the text to display for the tag description=*" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Description" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:description" />
             <space />
-            <label text="A short text with additional information." text_context="explanation of the tag description=*" />
-            <label text="Is might be viewable to the end user (perhaps using a search system or a map with pop-ups)." text_context="explanation of the tag description=*" />
+            <label text="A short text with additional information." text_context="description=*" />
+            <label text="It might be viewable to the end user (perhaps using a search system or a map with pop-ups)." text_context="description=*" />
             <space />
-            <text key="description" text="Description" text_context="the text to display for the tag description=*" match="key" />
+            <text key="description" text="Description" match="key" />
             <space />
-            <label text="Similar but different tags:" text_context="the similar tags note=*, fixme=* and description=*, which have different meanings" />
+            <label text="Similar but different tags:" text_context="note=*, fixme=*, description=*" />
             <preset_link preset_name="Note" />
             <preset_link preset_name="Fixme" />
         </item> <!-- Description -->
-        <item name="Note" icon="styles/standard/misc/note-annotation.png" name_context="the text to display for the tag note=*" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Note" icon="styles/standard/misc/note-annotation.png" name_context="the tag note=*" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:note" />
             <space />
-            <label text="An important hint for other mappers (not for the end user)." text_context="explanation of the tag note=*" />
+            <label text="An important hint for other mappers (not for the end user)." text_context="note=*" />
             <space />
-            <text key="note" text="Note" text_context="the text to display for the tag note=*" match="key" />
+            <text key="note" text="Note" text_context="the tag note=*" match="key" />
             <space />
-            <label text="Similar but different tags:" text_context="the similar tags note=*, fixme=* and description=*, which have different meanings" />
+            <label text="Similar but different tags:" text_context="note=*, fixme=*, description=*" />
             <preset_link preset_name="Fixme" />
             <preset_link preset_name="Description" />
         </item> <!-- Note -->
-        <item name="Fixme" icon="styles/standard/misc/fixme-annotation.png" name_context="the text to display for the tag fixme=*" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Fixme" icon="styles/standard/misc/fixme-annotation.png" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:fixme" />
             <space />
-            <label text="A hint for other mappers (not for the end user), that an object needs an improvement."  text_context="explanation of the tag fixme=*"/>
+            <label text="A hint for other mappers (not for the end user), that an object needs an improvement."  text_context="fixme=*"/>
             <space />
-            <text key="fixme" text="Fixme" text_context="the text to display for the tag fixme=*" match="key" />
+            <text key="fixme" text="Fixme" match="key" />
             <space />
-            <label text="Similar but different tags:" text_context="the similar tags note=*, fixme=* and description=*, which have different meanings" />
+            <label text="Similar but different tags:" text_context="note=*, fixme=*, description=*" />
             <preset_link preset_name="Note" />
             <preset_link preset_name="Description" />
         </item> <!-- Fixme -->
