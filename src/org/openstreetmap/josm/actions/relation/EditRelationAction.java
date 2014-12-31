@@ -20,7 +20,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * The action for editing a relation 
+ * The action for editing a relation.
  * @since 5793
  */
 public class EditRelationAction extends AbstractRelationAction  {
@@ -35,7 +35,7 @@ public class EditRelationAction extends AbstractRelationAction  {
     }
 
     /**
-     * Returns the set of currently selected relation members for the given relation. 
+     * Returns the set of currently selected relation members for the given relation.
      * @param r The relation to inspect
      * @return The set of currently selected relation members for the given relation.
      */
@@ -60,7 +60,7 @@ public class EditRelationAction extends AbstractRelationAction  {
      * @param toEdit The relation to edit
      */
     public static void launchEditor(Relation toEdit) {
-        if (toEdit == null || !Main.isDisplayingMapView()) return;
+        if (toEdit == null || toEdit.isDeleted() || !Main.isDisplayingMapView()) return;
         RelationEditor.getEditor(Main.main.getEditLayer(), toEdit,
                 getMembersForCurrentSelection(toEdit)).setVisible(true);
     }
@@ -70,10 +70,10 @@ public class EditRelationAction extends AbstractRelationAction  {
         if (!isEnabled() || relations.isEmpty()) return;
         if (relations.size() > Main.pref.getInteger("warn.open.maxrelations", 5) &&
             /* I18N english text for value 1 makes no real sense, never called for values <= maxrel (usually 5) */
-            JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent, 
+            JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent,
                     "<html>"+trn("You are about to open <b>{0}</b> different relation editor simultaneously.<br/>Do you want to continue?",
                             "You are about to open <b>{0}</b> different relation editors simultaneously.<br/>Do you want to continue?",
-                            relations.size(), relations.size())+"</html>", 
+                            relations.size(), relations.size())+"</html>",
                     tr("Confirmation"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE)) {
             return;
         }
@@ -84,6 +84,13 @@ public class EditRelationAction extends AbstractRelationAction  {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled( !relations.isEmpty() );
+        boolean enabled = false;
+        for (Relation r : relations) {
+            if (!r.isDeleted()) {
+                enabled = true;
+                break;
+            }
+        }
+        setEnabled(enabled);
     }
 }
