@@ -118,9 +118,9 @@ way[junction                   ][!highway][junction!=yes],
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
 }
 
-/* {0.key} without {1.tag} or {2.tag} */
+/* {0.key} without {1.tag}, {2.tag} or {3.tag} */
 *[parking                      ][amenity!=parking][amenity!=parking_entrance][amenity!=motorcycle_parking] {
-  throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.tag}", "{2.tag}");
+  throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.tag}", "{2.tag}", "{3.tag}");
 }
 
 /* {0.key} without {1.key}, {2.key} or {3.key} */
