@@ -4,11 +4,13 @@ package org.openstreetmap.josm.actions;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.TreeMap;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -29,16 +31,20 @@ public class SelectByInternalPointAction extends JosmAction {
      * @param internalPoint the internal point.
      */
     public static Collection<OsmPrimitive> getSurroundingObjects(EastNorth internalPoint) {
+        final DataSet ds = getCurrentDataSet();
+        if (ds == null) {
+            return Collections.emptySet();
+        }
         final Node n = new Node(internalPoint);
         final TreeMap<Double, OsmPrimitive> found = new TreeMap<>();
-        for (Way w : getCurrentDataSet().getWays()) {
+        for (Way w : ds.getWays()) {
             if (w.isUsable() && w.isClosed()) {
                 if (Geometry.nodeInsidePolygon(n, w.getNodes())) {
                     found.put(Geometry.closedWayArea(w), w);
                 }
             }
         }
-        for (Relation r : getCurrentDataSet().getRelations()) {
+        for (Relation r : ds.getRelations()) {
             if (r.isUsable() && r.isMultipolygon()) {
                 if (Geometry.isNodeInsideMultiPolygon(n, r, null)) {
                     for (RelationMember m : r.getMembers()) {
