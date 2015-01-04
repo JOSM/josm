@@ -241,7 +241,7 @@
   assertMatch: "way fixme=yes";
 }
 
-/* see #10107, #10108 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
+/* see #10107, #10108, #10929 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
 *[wood=deciduous],
 *[type=broad_leaved],
 *[type=broad_leafed] {
@@ -250,9 +250,11 @@
   fixAdd: "leaf_type=broadleaved";
 }
 
-*[wood=coniferous] {
+*[wood=coniferous],
+*[type=coniferous],
+*[type=conifer] {
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
-  fixRemove: "wood";
+  fixRemove: "{0.key}";
   fixAdd: "leaf_type=needleleaved";
 }
 
