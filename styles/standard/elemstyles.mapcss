@@ -1428,6 +1428,7 @@ area[leisure=golf_course],
 area[leisure=stadium],
 area[leisure=track][!area?!]:closed,
 area[leisure=pitch],
+area[leisure=horse_riding],
 area[leisure=water_park] {
     fill-color: leisure#c7f1a3;
 }
@@ -1457,6 +1458,12 @@ node[leisure=track] {
 }
 node[leisure=pitch] {
     icon-image: "sport/pitch.png";
+    set icon_z17;
+    text: auto;
+}
+node[leisure=horse_riding] {
+    icon-image: "presets/equestrian.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -1548,7 +1555,8 @@ node[leisure=miniature_golf] {
     text: auto;
 }
 node[leisure=dog_park] {
-    icon-image: "leisure/dog.png";
+    icon-image: "presets/dogpark.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -2082,12 +2090,12 @@ node[amenity=biergarten] {
     text: auto;
 }
 node[amenity=nightclub] {
-    icon-image: "leisure/nightclub.png";
+    icon-image: "leisure/discoball.svg";
     set icon_z17;
     text: auto;
 }
 node[amenity=stripclub] {
-    icon-image: "leisure/stripclub.png";
+    icon-image: "leisure/nightclub.png";
     set icon_z17;
     text: auto;
 }
@@ -2222,9 +2230,6 @@ node[amenity=grit_bin] {
     set icon_z17;
     text: auto;
 }
-area[amenity=telephone] {
-    fill-color: amenity_light#f7efb7;
-}
 node[amenity=telephone] {
     icon-image: "service/telephone.png";
     set icon_z17;
@@ -2235,9 +2240,7 @@ node[amenity=clock] {
     set icon_z17;
     text: auto;
 }
-area[emergency=phone],
 area[emergency=aed],
-area[emergency=defibrillator],
 area[amenity=toilets],
 area[amenity=shower],
 area[amenity=recycling] {
@@ -2289,9 +2292,13 @@ area[amenity=embassy],
 area[amenity=community_centre] {
     fill-color: amenity_light#f7efb7;
 }
-node[amenity=public_building],
-node[amenity=townhall] {
+node[amenity=public_building] {
     icon-image: "service.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=townhall] {
+    icon-image: "presets/townhall.png";
     set icon_z17;
     text: auto;
 }
@@ -2305,7 +2312,6 @@ node[amenity=community_centre] {
     set icon_z17;
     text: auto;
 }
-area[amenity=drinking_water],
 area[amenity=water_point],
 area[amenity=fountain] {
     fill-color: light_water#00005f;
@@ -2329,7 +2335,6 @@ area[amenity=place_of_worship],
 area[amenity=grave_yard],
 area[amenity=crematorium],
 area[amenity=post_office],
-area[amenity=post_box],
 area[amenity=studio],
 area[amenity=school],
 area[amenity=university],
@@ -2461,6 +2466,8 @@ node[amenity=driving_school] {
 area[amenity=pharmacy],
 area[amenity=hospital],
 area[amenity=clinic],
+area[amenity=nursing_home],
+area[amenity=social_facility],
 area[amenity=nursery],
 area[amenity=baby_hatch],
 area[amenity=doctors],
@@ -2479,6 +2486,8 @@ node[amenity=clinic] {
     set icon_z17;
     text: auto;
 }
+node[amenity=nursing_home],
+node[amenity=social_facility],
 node[amenity=nursery] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
@@ -2547,7 +2556,8 @@ node[amenity=ferry_terminal] {
     text: auto;
 }
 node[amenity=theatre] {
-    icon-image: "leisure/theater.png";
+    icon-image: "presets/theater.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -2606,7 +2616,6 @@ node[emergency=fire_hydrant] {
     text: auto;
 }
 area[amenity=shelter],
-area[amenity=hunting_stand],
 area[amenity=marketplace],
 area[amenity=wlan],
 area[amenity=vending_machine] {
@@ -2629,6 +2638,11 @@ node[amenity=shelter][shelter_type=picnic_shelter] {
 }
 node[amenity=shelter][shelter_type=basic_hut] {
     icon-image: "accommodation/basic_hut_blue.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=shelter][shelter_type=lean_to] {
+    icon-image: "accommodation/shelter_lean_to.svg";
     set icon_z17;
     text: auto;
 }
