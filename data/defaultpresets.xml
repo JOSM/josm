@@ -700,6 +700,7 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:construction"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:construction" />
             <key key="highway" value="construction" />
+            <combo key="construction" text="Highway type" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,secondary_link,tertiary,tertiary_link,unclassified,residential,service,bus_guideway,bridleway,living_street,pedestrian,track,path,footway,cycleway,steps" values_context="Highway" />
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
@@ -769,7 +770,7 @@
                   sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:junction=roundabout" />
             <space />
             <key key="junction" value="roundabout" />
-            <combo key="highway" text="Type" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" />
+            <combo key="highway" text="Type" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" values_context="Highway" />
             <optional>
                 <reference ref="name_layer" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
@@ -894,7 +895,7 @@
             <check key="oneway:bicycle" text="Oneway (bicycle)" />
             <space />
             <optional text="Edit Highway Attributes:">
-                <combo key="highway" text="Highway" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" />
+                <combo key="highway" text="Highway" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" values_context="Highway" />
                 <check key="oneway" text="Oneway" />
             </optional>
         </item> <!-- Cycle Lane/Track -->
