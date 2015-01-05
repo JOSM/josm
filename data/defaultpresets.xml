@@ -2978,7 +2978,7 @@
   </group> <!-- Transport -->
   <group name="Facilities" icon="presets/bed.png">
     <group name="Accommodation" icon="presets/bed.png">
-        <item name="Hotel" icon="presets/bed.png" type="node,closedway" preset_name_label="true">
+        <item name="Hotel" icon="styles/standard/accommodation.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=hotel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=hotel"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:tourism=hotel"
@@ -3043,7 +3043,7 @@
             <space />
             <reference ref="contact" />
         </item> <!-- Chalet -->
-        <item name="Hostel" icon="presets/hostel.png" type="node,closedway" preset_name_label="true">
+        <item name="Hostel" icon="styles/standard/accommodation/hostel.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=hostel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=hostel"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=hostel"
@@ -3077,7 +3077,7 @@
             <reference ref="contact" />
         </item> <!-- Alpine Hut -->
         <separator/>
-        <item name="Caravan Site/RV Park" icon="presets/caravan2.png" type="node,closedway" preset_name_label="true">
+        <item name="Caravan Site/RV Park" icon="styles/standard/accommodation/camping/caravan.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=caravan_site"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=caravan_site"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:tourism=caravan_site"
@@ -3096,7 +3096,7 @@
             <space />
             <reference ref="contact" />
         </item> <!-- Caravan Site/RV Park -->
-        <item name="Camping Site" icon="presets/tent.png" type="node,closedway" preset_name_label="true">
+        <item name="Camping Site" icon="styles/standard/accommodation/camping.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=camp_site"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=camp_site"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:tourism=camp_site"
@@ -3152,7 +3152,7 @@
             <space />
             <reference ref="contact" />
         </item> <!-- Fast Food -->
-        <item name="Food Court" icon="presets/fastfood.png" type="node,closedway" preset_name_label="true">
+        <item name="Food Court" icon="presets/restaurant.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=food_court"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=food_court"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=food_court"
@@ -3217,7 +3217,7 @@
             <space />
             <reference ref="contact" />
         </item> <!-- Beer Garden -->
-        <item name="Bar" icon="presets/bar.png" type="node,closedway" preset_name_label="true">
+        <item name="Bar" icon="styles/standard/food/bar.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bar"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bar"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=bar"
@@ -3234,7 +3234,7 @@
             <space />
             <reference ref="contact" />
         </item> <!-- Bar -->
-        <item name="Night Club" icon="presets/bar.png" type="node,closedway" preset_name_label="true">
+        <item name="Night Club" icon="styles/standard/leisure/discoball.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nightclub"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=nightclub"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=nightclub"
@@ -3253,7 +3253,7 @@
             <space />
             <reference ref="contact" />
         </item> <!-- Night Club -->
-        <item name="Strip Club" icon="styles/standard/leisure/stripclub.png" type="node,closedway" preset_name_label="true">
+        <item name="Strip Club" icon="styles/standard/leisure/nightclub.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=stripclub"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=stripclub"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=stripclub"
@@ -3277,7 +3277,7 @@
             <key key="tourism" value="attraction" />
             <reference ref="name_oh" />
         </item> <!-- Attraction -->
-        <item name="Viewpoint" icon="presets/viewpoint.png" type="node,closedway" preset_name_label="true">
+        <item name="Viewpoint" icon="styles/standard/sightseeing/viewpoint.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=viewpoint"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=viewpoint"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=viewpoint"
@@ -3368,7 +3368,7 @@
                 <label text="... other transportation modes possible" />
             </optional>
         </item> <!-- Guidepost -->
-        <item name="Information Terminal" icon="presets/information.png" type="node" preset_name_label="true">
+        <item name="Information Terminal" icon="styles/standard/misc/information.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:information"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:information"
@@ -3385,7 +3385,7 @@
             <reference ref="fee" />
             <reference ref="internet" />
         </item> <!-- Information Terminal -->
-        <item name="Audio Guide" icon="presets/information.png" type="node" preset_name_label="true">
+        <item name="Audio Guide" icon="styles/standard/misc/information.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:information"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:information"
@@ -3404,7 +3404,7 @@
             <label text="Audioguide via mobile phone?" />
             <text key="phone" text="Phone number" />
         </item> <!-- Audio Guide -->
-        <item name="Other Information Point" icon="presets/information.png" type="node,closedway" preset_name_label="true">
+        <item name="Other Information Point" icon="styles/standard/misc/information.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=information"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=information"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=information"
@@ -3475,7 +3475,7 @@
             <space />
             <reference ref="contact" />
         </item> <!-- Amusement/Theme Park -->
-        <item name="Water Park" icon="presets/swimming.png" type="node,closedway" preset_name_label="true">
+        <item name="Water Park" icon="styles/standard/leisure/water_park.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=water_park"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=water_park"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=water_park"
@@ -3545,7 +3545,7 @@
             <key key="leisure" value="playground" />
             <text key="name" text="Name" />
         </item> <!-- Playground -->
-        <item name="Picnic Site" icon="presets/picnic.png" type="node,closedway" preset_name_label="true">
+        <item name="Picnic Site" icon="styles/standard/leisure/picnic.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=picnic_site"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=picnic_site"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:tourism=picnic_site"
@@ -3557,13 +3557,13 @@
             <text key="name" text="Name" />
             <check key="fireplace" text="Fireplace" />
         </item> <!-- Picnic Site -->
-        <item name="Picnic Table" icon="presets/picnic.png" type="node" preset_name_label="true">
+        <item name="Picnic Table" icon="styles/standard/leisure/picnic.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=picnic_table" />
             <space />
             <key key="leisure" value="picnic_table" />
             <check key="covered" text="Covered" />
         </item> <!-- Picnic Table -->
-        <item name="Public Grill" icon="presets/bbq.png" type="node" preset_name_label="true">
+        <item name="Public Grill" icon="presets/bbq.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bbq"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bbq"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=bbq"
@@ -3584,7 +3584,7 @@
             <key key="leisure" value="firepit" />
             <text key="name" text="Name" />
         </item> <!-- Firepit -->
-        <item name="Fishing" icon="presets/fishing.png" type="node,closedway" preset_name_label="true">
+        <item name="Fishing" icon="styles/standard/sport/fishing.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=fishing"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:leisure=fishing"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=fishing"
@@ -3593,7 +3593,7 @@
             <key key="leisure" value="fishing" />
             <text key="name" text="Name" />
         </item> <!-- Fishing -->
-        <item name="Private Swimming Pool" icon="presets/swimming.png" type="node,closedway" preset_name_label="true">
+        <item name="Private Swimming Pool" icon="styles/standard/sport/pool.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=swimming_pool"
                   ca.href="http://wiki.openstreetmap.org/wiki/Ca:Tag:leisure=swimming_pool"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=swimming_pool"
@@ -3607,7 +3607,7 @@
         </item> <!-- Private Swimming Pool -->
     </group> <!-- Leisure -->
     <group name="Culture" icon="presets/theater.png">
-        <item name="Museum" icon="presets/State_Public.png" type="node,closedway" preset_name_label="true">
+        <item name="Museum" icon="styles/standard/sightseeing/museum.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=museum"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=museum"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:tourism=museum"
@@ -3822,7 +3822,7 @@
             <reference ref="service_times" />
             <reference ref="oh" />
         </item> <!-- Shinto Shrine -->
-        <item name="Other Place of Worship" type="node,closedway,relation" preset_name_label="true">
+        <item name="Other Place of Worship" icon="styles/standard/religion.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
@@ -4239,7 +4239,7 @@
             <reference ref="payment_base" />
             <check key="payment:telephone_cards" text="Telephone cards" />
         </item> <!-- Telephone -->
-        <item name="Emergency Phone" icon="presets/telephone.png" type="node" preset_name_label="true">
+        <item name="Emergency Phone" icon="styles/standard/vehicle/emergency_phone.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=phone"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=phone"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=phone"
@@ -4336,7 +4336,7 @@
             <key key="amenity" value="waste_disposal" />
         </item> <!-- Waste Disposal/Dumpster -->
         <separator/>
-        <item name="Bench" icon="presets/bench.png" type="node" preset_name_label="true">
+        <item name="Bench" icon="presets/bench.png" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bench"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bench"
                   et.href="http://wiki.openstreetmap.org/wiki/Et:Tag:amenity=bench"
@@ -4356,7 +4356,7 @@
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             <combo key="seats" text="Amount of Seats" values="2,3,4,5,6,7,8,9,10" />
         </item> <!-- Bench -->
-        <item name="Shelter" icon="presets/shelter.png" type="node,closedway" preset_name_label="true">
+        <item name="Shelter" icon="styles/standard/accommodation/shelter.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=shelter"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=shelter"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=shelter"
