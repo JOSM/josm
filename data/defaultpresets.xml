@@ -2582,6 +2582,16 @@
             <text key="name" text="Name" />
             <reference ref="link_contact" />
         </item> <!-- Rental -->
+        <item name="Public Bicycle Repair Station" icon="styles/standard/vehicle/bicycle_repair_statio.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bicycle_repair_station"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bicycle_repair_station" />
+            <space />
+            <key key="amenity" value="bicycle_repair_station" />
+            <optional>
+            <reference ref="name_operator_oh" />
+            <check key="service:bicycle:pump" text="Free bicycle pump" />
+            </optional>
+        </item> <!-- Public Bicycle Repair Station -->
     </group> <!-- Bicycle -->
     <group name="Public Transport" icon="presets/bus.png">
         <item name="Public Transport Route" icon="presets/path.png" type="relation" preset_name_label="true">
