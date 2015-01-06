@@ -2135,6 +2135,7 @@ area[amenity=parking],
 area[amenity=motorcycle_parking],
 area[amenity=bicycle_parking],
 area[amenity=bicycle_rental],
+area[amenity=bicycle_repair_station],
 area[amenity=car_rental],
 area[amenity=car_sharing],
 area[amenity=car_wash],
@@ -2192,6 +2193,11 @@ node[amenity=parking_space][wheelchair?] {
 }
 node[amenity=bicycle_rental] {
     icon-image: "vehicle/rental/bicycle.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=bicycle_repair_station] {
+    icon-image: "vehicle/bicycle_repair_station.svg";
     set icon_z17;
     text: auto;
 }
