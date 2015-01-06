@@ -1326,7 +1326,10 @@ public final class TaggingPresetItems {
      */
     public static class MultiSelect extends ComboMultiSelect {
 
-        public long rows = -1;
+        /**
+         * Number of rows to display (positive integer, optional).
+         */
+        public String rows;
         protected ConcatenatingJList list;
 
         @Override
@@ -1353,9 +1356,9 @@ public final class TaggingPresetItems {
             JScrollPane sp = new JScrollPane(list);
             // if a number of rows has been specified in the preset,
             // modify preferred height of scroll pane to match that row count.
-            if (rows != -1) {
+            if (rows != null) {
                 double height = renderer.getListCellRendererComponent(list,
-                        new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * rows;
+                        new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * Integer.valueOf(rows);
                 sp.setPreferredSize(new Dimension((int) sp.getPreferredSize().getWidth(), (int) height));
             }
             p.add(sp, GBC.eol().fill(GBC.HORIZONTAL));
