@@ -155,9 +155,10 @@ way[junction                   ][!highway][junction!=yes],
   throwWarning: tr("{0} on suspicious object", "{0.key}");
 }
 
-node[amenity =~ /^(restaurant|cafe|fast_food)$/][!name] {
+node[amenity =~ /^(restaurant|cafe|fast_food)$/][!name][noname!=yes] {
   throwOther: tr("restaurant without name");
   assertMatch: "node amenity=restaurant";
+  assertNoMatch: "node amenity=restaurant noname=yes";
   assertNoMatch: "node amenity=restaurant name=Foobar";
 }
 

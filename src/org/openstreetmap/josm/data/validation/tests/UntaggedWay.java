@@ -78,7 +78,8 @@ public class UntaggedWay extends Test {
         Map<String, String> tags = w.getKeys();
         if (!tags.isEmpty()) {
             String highway = tags.get("highway");
-            if (highway != null && NAMED_WAYS.contains(highway) && !tags.containsKey("name") && !tags.containsKey("ref")) {
+            if (highway != null && NAMED_WAYS.contains(highway) && !tags.containsKey("name") && !tags.containsKey("ref")
+                    && !"yes".equals(tags.get("noname"))) {
                 boolean isRoundabout = false;
                 boolean hasName = false;
                 for (String key : w.keySet()) {
