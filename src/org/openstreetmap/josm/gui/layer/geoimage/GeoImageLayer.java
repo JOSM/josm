@@ -17,9 +17,6 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -37,6 +34,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -77,6 +76,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Layer displaying geottaged pictures.
@@ -92,8 +92,17 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     private int currentPhoto = -1;
 
     boolean useThumbs = false;
+    ExecutorService thumbusLoaderExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setPriority(Thread.MIN_PRIORITY);
+            return t;
+        }
+    });
     ThumbsLoader thumbsloader;
-    boolean thumbsLoaded = false;
+    boolean thumbsLoaderRunning = false;
+    volatile boolean thumbsLoaded = false;
     private BufferedImage offscreenBuffer;
     boolean updateOffscreenBuffer = true;
 
@@ -330,6 +339,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         entries.add(new RenameLayerAction(null, this));
         entries.add(SeparatorLayerAction.INSTANCE);
         entries.add(new CorrelateGpxWithImages(this));
+        entries.add(new ShowThumbnailAction(this));
         if (!menuAdditions.isEmpty()) {
             entries.add(SeparatorLayerAction.INSTANCE);
             entries.addAll(menuAdditions);
@@ -371,6 +381,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     @Override
     public void mergeFrom(Layer from) {
         GeoImageLayer l = (GeoImageLayer) from;
+
+        // Stop to load thumbnails on both layers.  Thumbnail loading will continue the next time
+        // the layer is painted.
+        stopLoadThumbs();
+        l.stopLoadThumbs();
 
         ImageEntry selected = null;
         if (l.currentPhoto >= 0) {
@@ -439,7 +454,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Rectangle clip = g.getClipBounds();
         if (useThumbs) {
             if (!thumbsLoaded) {
-                loadThumbs();
+                startLoadThumbs();
             }
 
             if (null == offscreenBuffer || offscreenBuffer.getWidth() != width  // reuse the old buffer if possible
@@ -988,9 +1003,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             @Override
             public void layerRemoved(Layer oldLayer) {
                 if (oldLayer == GeoImageLayer.this) {
-                    if (thumbsloader != null) {
-                        thumbsloader.stop = true;
-                    }
+                    stopLoadThumbs();
                     Main.map.mapView.removeMouseListener(mouseAdapter);
                     MapFrame.removeMapModeChangeListener(mapModeListener);
                     currentPhoto = -1;
@@ -1016,14 +1029,38 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
     }
 
-    public void loadThumbs() {
-        if (useThumbs && !thumbsLoaded) {
-            thumbsLoaded = true;
+    /**
+     * Start to load thumbnails.
+     */
+    public synchronized void startLoadThumbs() {
+        if (useThumbs && !thumbsLoaded && !thumbsLoaderRunning) {
+            stopLoadThumbs();
             thumbsloader = new ThumbsLoader(this);
-            Thread t = new Thread(thumbsloader);
-            t.setPriority(Thread.MIN_PRIORITY);
-            t.start();
+            thumbusLoaderExecutor.submit(thumbsloader);
+            thumbsLoaderRunning = true;
         }
+    }
+
+    /**
+     * Stop to load thumbnails.
+     * 
+     * Can be called at any time to make sure that the
+     * thumbnail loader is stopped.
+     */
+    public synchronized void stopLoadThumbs() {
+        if (thumbsloader != null) {
+            thumbsloader.stop = true;
+        }
+        thumbsLoaderRunning = false;
+    }
+
+    /**
+     * Called to signal that the loading of thumbnails has finished.
+     * 
+     * Usually called from {@link ThumbsLoader} in another thread.
+     */
+    public void thumbsLoaded() {
+        thumbsLoaded = true;
     }
 
     public void updateBufferAndRepaint() {
@@ -1075,7 +1112,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     public void setUseThumbs(boolean useThumbs) {
         this.useThumbs = useThumbs;
         if (useThumbs && !thumbsLoaded) {
-            loadThumbs();
+            startLoadThumbs();
+        } else if (!useThumbs) {
+            stopLoadThumbs();
         }
     }
 }

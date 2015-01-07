@@ -16,7 +16,7 @@ import org.openstreetmap.josm.io.CacheFiles;
 public class ThumbsLoader implements Runnable {
     public static final int maxSize = 120;
     public static final int minSize = 22;
-    volatile boolean stop = false;
+    public volatile boolean stop = false;
     List<ImageEntry> data;
     GeoImageLayer layer;
     MediaTracker tracker;
@@ -50,6 +50,7 @@ public class ThumbsLoader implements Runnable {
                 }
             }
         }
+        layer.thumbsLoaded();
         layer.updateOffscreenBuffer = true;
         Main.map.mapView.repaint();
     }
