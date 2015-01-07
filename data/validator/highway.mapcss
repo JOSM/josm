@@ -43,9 +43,10 @@ way[highway=crossing], way[railway=crossing] {
   assertNoMatch: "node highway=crossing";
 }
 
-way[highway=unclassified][!name] {
+way[highway=unclassified][!name][noname!=yes] {
   throwOther: tr("Unnamed unclassified highway");
   assertMatch: "way highway=unclassified";
+  assertNoMatch: "way highway=unclassified noname=yes";
   assertNoMatch: "way highway=unclassified name=Foo";
 }
 
