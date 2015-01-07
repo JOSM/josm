@@ -448,7 +448,7 @@ Build-Date: ${build.tstamp}
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-            <classpath path="tools/animal-sniffer-ant-tasks-1.11.jar"/>
+            <classpath path="tools/animal-sniffer-ant-tasks-1.13.jar"/>
         </typedef>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
@@ -520,6 +520,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="au.edu.*"/>
             <ignore classname="au.com.*"/>
             <ignore classname="com.*"/>
+            <ignore classname="de.miethxml.*"/>
             <ignore classname="javax.*"/>
             <ignore classname="jogamp.*"/>
             <ignore classname="junit.*"/>
@@ -530,6 +531,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.dom4j.*"/>
             <ignore classname="org.hsqldb.*"/>
             <ignore classname="org.ibex.*"/>
+            <ignore classname="org.iso_relax.*"/>
             <ignore classname="org.jaitools.*"/>
             <ignore classname="org.jaxen.*"/>
             <ignore classname="org.jdom2.*"/>
@@ -541,6 +543,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.slf4j.*"/>
         	<!-- plugins used by another ones -->
             <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.jna.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.jts.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.log4j.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.utilsplugin2.*"/>
