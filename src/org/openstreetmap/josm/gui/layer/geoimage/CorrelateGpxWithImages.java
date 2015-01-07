@@ -727,7 +727,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
 
                     yLayer.useThumbs = cbShowThumbs.isSelected();
-                    yLayer.loadThumbs();
+                    yLayer.startLoadThumbs();
 
                     // Search whether an other layer has yet defined some bounding box.
                     // If none, we'll zoom to the bounding box of the layer with the photos.
