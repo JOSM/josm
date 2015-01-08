@@ -52,6 +52,8 @@
 <3949> +proj=lcc +lat_0=49 +lat_1=48.25 +lat_2=49.75 +lon_0=3 +x_0=1700000 +y_0=8200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,46.5,10.2,51.1  <>
 # Lambert CC9 (France) Zone 50
 <3950> +proj=lcc +lat_0=50 +lat_1=49.25 +lat_2=50.75 +lon_0=3 +x_0=1700000 +y_0=9200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,47.5,10.2,51.1  <>
+# ETRS89
+<4258> +proj=lonlat +ellps=GRS80 +datum=GRS80 +bounds=-180,-90,180,90  <>
 # WGS 84
 <4326> +proj=lonlat +ellps=WGS84 +datum=WGS84 +bounds=-180,-90,180,90  <>
 # Swiss Grid (Switzerland)
