@@ -19,6 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.Datum;
+import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.ClassProjFactory;
@@ -80,6 +81,7 @@ public final class Projections {
         ellipsoids.put("bessel", Ellipsoid.Bessel1841);
 
         datums.put("WGS84", WGS84Datum.INSTANCE);
+        datums.put("GRS80", GRS80Datum.INSTANCE);
 
         nadgrids.put("BETA2007.gsb", NTV2GridShiftFileWrapper.BETA2007);
         nadgrids.put("ntf_r93_b.gsb", NTV2GridShiftFileWrapper.ntf_rgf93);
@@ -122,8 +124,16 @@ public final class Projections {
         return nadgrids.get(id);
     }
 
+    /**
+     * Get the projection definition string for the given id.
+     * @param id the id
+     * @return the string that can be processed by #{link CustomProjection}.
+     * Null, if the id isn't supported.
+     */
     public static String getInit(String id) {
-        return inits.get(id.toUpperCase()).b;
+        Pair<String, String> r = inits.get(id.toUpperCase());
+        if (r == null) return null;
+        return r.b;
     }
 
     /**
