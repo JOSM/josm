@@ -23,7 +23,7 @@ node[waterway=ditch],
 node[natural=coastline],
 node[natural=ridge],
 node[natural=tree_row] {
-  throwWarning: tr("{0} on a node. Should be used on a way.", "{0.key}");
+  throwWarning: tr("{0} on a node. Should be used on a way.", "{0.tag}");
   assertMatch: "node oneway=-1";
   assertNoMatch: "way oneway=-1";
   assertMatch: "node bridge=yes";
@@ -54,6 +54,14 @@ node[source:outline] {
 node[route],
 node[restriction] {
   throwWarning: tr("{0}=* on a node. Should be used in a relation", "{0.key}"); 
+}
+
+/* {0} on a way, should be a node */
+way[natural=peak],
+way[natural=saddle],
+way[natural=volcano],
+way[natural=tree] {
+  throwWarning: tr("{0} on a way. Should be used on a node.", "{0.tag}"); 
 }
 
 /* {0} on a way, should be a relation; see #10252 */

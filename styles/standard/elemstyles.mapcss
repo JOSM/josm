@@ -3798,9 +3798,6 @@ node[natural=saddle] {
     text: auto;
     set text_z0;
 }
-area[natural=peak] {
-    fill-color: peak#663300;
-}
 node[natural=peak] {
     icon-image: "presets/peak.svg";
     set icon_z0;
@@ -3821,9 +3818,6 @@ node[natural=glacier] {
     set icon_z0;
     text: auto;
     set text_z0;
-}
-area[natural=volcano] {
-    fill-color: volcano#5f0000;
 }
 node[natural=volcano] {
     icon-image: "misc/landmark/volcano_small.png";

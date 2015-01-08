@@ -7024,8 +7024,8 @@
             <text key="ele" text="Elevation" />
         </item> <!-- Ridge -->
     </group> <!-- Geography -->
-    <group name="Nature" icon="presets/tree.png">
-        <item name="Tree" icon="presets/tree.png" type="node" preset_name_label="true">
+    <group name="Nature" icon="styles/standard/misc/landmark/trees.png">
+        <item name="Tree" icon="styles/standard/misc/landmark/trees.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=tree"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=tree"
@@ -7049,7 +7049,7 @@
                 <reference ref="leaf" />
             </optional>
         </item> <!-- Tree -->
-        <item name="Tree Row" icon="presets/tree.png" type="way" preset_name_label="true">
+        <item name="Tree Row" icon="styles/standard/misc/landmark/tree_row.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree_row"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=tree_row"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=tree_row"
@@ -7067,7 +7067,7 @@
                 <reference ref="leaf" />
             </optional>
         </item> <!-- Tree Row -->
-        <item name="Wood" icon="styles/standard/misc/landmark/trees.png" type="closedway,relation" preset_name_label="true">
+        <item name="Wood" icon="styles/standard/misc/landmark/forest.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wood"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=wood"
@@ -7080,7 +7080,7 @@
             <text key="name" text="Name" />
             <reference ref="leaf" />
         </item> <!-- Wood -->
-        <item name="Forest" icon="styles/standard/misc/landmark/trees.png" type="closedway,relation" preset_name_label="true">
+        <item name="Forest" icon="styles/standard/misc/landmark/forest.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=forest"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=forest"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=forest"
@@ -7173,7 +7173,7 @@
             <key key="natural" value="heath" />
             <text key="name" text="Name" />
         </item> <!-- Heath -->
-        <item name="Sand" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
+        <item name="Sand" icon="styles/standard/misc/sand.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=sand"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=sand"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=sand" />
