@@ -57,13 +57,8 @@ public class ProjectionRegressionTest {
         setUp();
 
         Map<String, Projection> supportedCodesMap = new HashMap<>();
-        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
-            for (String code : pc.allCodes()) {
-                Collection<String> pref = pc.getPreferencesFromCode(code);
-                pc.setPreferences(pref);
-                Projection p = pc.getProjection();
-                supportedCodesMap.put(code, p);
-            }
+        for (String code : Projections.getAllProjectionCodes()) {
+            supportedCodesMap.put(code, Projections.getProjectionByCode(code));
         }
 
         List<TestData> prevData = new ArrayList<>();
