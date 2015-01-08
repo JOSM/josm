@@ -86,7 +86,7 @@ class taginfoextract {
             }
             f = new File("${base_dir}/images/${path}")
             if (f.exists()) {
-                return "https://josm.openstreetmap.de/export/${josm_svn_revision}/josm/trunk/images/${path}"
+                return "http://josm.openstreetmap.de/export/${josm_svn_revision}/josm/trunk/images/${path}"
             }
             assert false, "Cannot find image url for ${path}"
         }
@@ -198,9 +198,9 @@ class taginfoextract {
     static void parse_command_line_arguments(args) {
         def cli = new CliBuilder(usage:'taginfoextract.groovy [options] [inputfile]',
             header:"Options:",
-            footer:"[inputfile]  the file to process (optional, default is 'resource://styles/standard/elemstyles.mapcss')")
-        cli.o(args:1, argName: "file", "output file, - prints to stdout (default: -)")
-        cli._(longOpt:'svnrev', args:1, argName:"revision", "corresponding revision of the repository http://svn.openstreetmap.org/ (optional, current revision is fetched from the web if not given)")
+            footer:"[inputfile]           the file to process (optional, default is 'resource://styles/standard/elemstyles.mapcss')")
+        cli.o(args:1, argName: "file", "output file (json), - prints to stdout (default: -)")
+        cli._(longOpt:'svnrev', args:1, argName:"revision", "corresponding revision of the repository http://svn.openstreetmap.org/ (optional, current revision is read from the local checkout or from the web if not given, see --svnweb)")
         cli._(longOpt:'imgdir', args:1, argName:"directory", "directory to put the generated images in (default: ./taginfo-img)")
         cli._(longOpt:'svnweb', 'fetch revision of the repository http://svn.openstreetmap.org/ from web and not from the local repository')
         cli._(longOpt:'imgurlprefix', args:1, argName:'prefix', 'image URLs prefix for generated image files')
