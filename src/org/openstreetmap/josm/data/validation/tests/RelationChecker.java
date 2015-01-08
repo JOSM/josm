@@ -173,6 +173,7 @@ public class RelationChecker extends Test {
                 return r.types.contains(TaggingPresetType.CLOSEDWAY);
             case WAY:
                 return r.types.contains(TaggingPresetType.WAY);
+            case MULTIPOLYGON:
             case RELATION:
                 return r.types.contains(TaggingPresetType.RELATION);
             default: // not matching type
@@ -234,7 +235,7 @@ public class RelationChecker extends Test {
             }
         }
 
-        if( possibleMatchError != null) {
+        if (possibleMatchError != null) {
             // if any error found, then assume that member type was correct
             // and complain about not matching the memberExpression
             // (the only failure, that we could gather)
@@ -245,7 +246,7 @@ public class RelationChecker extends Test {
             String s = marktr("Role member type {0} does not match accepted list of {1} in template {2}");
 
             // prepare Set of all accepted types in template
-            EnumSet<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
+            Collection<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
             for (Role r: rolePreset.roles) {
                 types.addAll(r.types);
             }
