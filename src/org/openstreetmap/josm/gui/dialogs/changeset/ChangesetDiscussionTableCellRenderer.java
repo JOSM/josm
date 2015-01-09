@@ -33,6 +33,8 @@ public class ChangesetDiscussionTableCellRenderer extends AbstractCellRenderer {
             break;
         case 2:
             comp = new JosmTextArea((String) value);
+            ((JosmTextArea)comp).setLineWrap(true);
+            ((JosmTextArea)comp).setWrapStyleWord(true);
             reset(comp, false);
             renderColors(comp, isSelected);
         }

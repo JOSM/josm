@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -111,6 +112,14 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
     private Component buildDiscussionPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
         table = new JTable(model, new ChangesetDiscussionTableColumnModel());
+        table.getColumnModel().getColumn(2).addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("width".equals(evt.getPropertyName())) {
+                    updateRowHeights();
+                }
+            }
+        });
         pnl.add(new JScrollPane(table), BorderLayout.CENTER);
         return pnl;
     }
@@ -121,11 +130,19 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
 
     protected void updateView(Changeset cs) {
         model.populate(cs.getDiscussion());
+        updateRowHeights();
+    }
+
+    protected void updateRowHeights() {
+        int intercellWidth = table.getIntercellSpacing().width;
+        int colWidth = table.getColumnModel().getColumn(2).getWidth();
         // Update row heights
         for (int row = 0; row < table.getRowCount(); row++) {
             int rowHeight = table.getRowHeight();
 
             Component comp = table.prepareRenderer(table.getCellRenderer(row, 2), row, 2);
+            // constrain width of component
+            comp.setBounds(new Rectangle(0, 0, colWidth - intercellWidth, Integer.MAX_VALUE));
             rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
 
             table.setRowHeight(row, rowHeight);
