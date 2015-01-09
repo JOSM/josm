@@ -33,6 +33,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
@@ -317,14 +318,11 @@ public class SelectionListDialog extends ToggleDialog  {
      * Sets the current JOSM selection to the OSM primitives selected in the list
      * of this dialog
      */
-    class SelectAction extends AbstractAction implements ListSelectionListener {
+    class SelectAction extends AbstractSelectAction implements ListSelectionListener {
         /**
          * Constructs a new {@code SelectAction}.
          */
         public SelectAction() {
-            putValue(NAME, tr("Select"));
-            putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
             updateEnabledState();
         }
 
@@ -335,6 +333,7 @@ public class SelectionListDialog extends ToggleDialog  {
             OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer == null) return;
             editLayer.data.setSelected(sel);
+            model.selectionModel.setSelectionInterval(0, sel.size()-1);
         }
 
         protected void updateEnabledState() {
@@ -721,9 +720,14 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         @Override
-        public void primitivesAdded(PrimitivesAddedEvent event) {/* ignored - handled by SelectionChangeListener */}
+        public void primitivesAdded(PrimitivesAddedEvent event) {
+            /* ignored - handled by SelectionChangeListener */
+        }
+
         @Override
-        public void primitivesRemoved(PrimitivesRemovedEvent event) {/* ignored - handled by SelectionChangeListener*/}
+        public void primitivesRemoved(PrimitivesRemovedEvent event) {
+            /* ignored - handled by SelectionChangeListener*/
+        }
     }
 
     /**
@@ -735,7 +739,8 @@ public class SelectionListDialog extends ToggleDialog  {
         protected final SearchSetting s;
 
         public SearchMenuItem(SearchSetting s) {
-            super(Utils.shortenString(s.toString(), org.openstreetmap.josm.actions.search.SearchAction.MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY));
+            super(Utils.shortenString(s.toString(),
+                    org.openstreetmap.josm.actions.search.SearchAction.MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY));
             this.s = s;
             addActionListener(this);
         }
