@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -33,6 +34,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -155,10 +157,15 @@ public class CreateMultipolygonAction extends JosmAction {
                 ? getSelectedMultipolygonRelation(selectedWays, selectedRelations)
                 : null;
 
-        // download incomplete relation if necessary
-        if (multipolygonRelation != null && !multipolygonRelation.isNew()
-                && (multipolygonRelation.isIncomplete() || multipolygonRelation.hasIncompleteMembers())) {
-            Main.worker.submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.main.getEditLayer()));
+        // download incomplete relation or incomplete members if necessary
+        if (multipolygonRelation != null) {
+            if (!multipolygonRelation.isNew() && multipolygonRelation.isIncomplete()) {
+                Main.worker.submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.main.getEditLayer()));
+            } else if (multipolygonRelation.hasIncompleteMembers()) {
+                Main.worker.submit(new DownloadRelationMemberTask(multipolygonRelation,
+                        DownloadSelectedIncompleteMembersAction.buildSetOfIncompleteMembers(Collections.singleton(multipolygonRelation)),
+                        Main.main.getEditLayer()));
+            }
         }
         // create/update multipolygon relation
         Main.worker.submit(new CreateUpdateMultipolygonTask(selectedWays, multipolygonRelation));
