@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -83,7 +84,7 @@ public class CreateMultipolygonAction extends JosmAction {
         private final Collection<Way> selectedWays;
         private final Relation multipolygonRelation;
 
-        public CreateUpdateMultipolygonTask(Collection<Way> selectedWays, Relation multipolygonRelation) {
+        private CreateUpdateMultipolygonTask(Collection<Way> selectedWays, Relation multipolygonRelation) {
             this.selectedWays = selectedWays;
             this.multipolygonRelation = multipolygonRelation;
         }
@@ -139,7 +140,7 @@ public class CreateMultipolygonAction extends JosmAction {
         final Collection<Way> selectedWays = Main.main.getCurrentDataSet().getSelectedWays();
         final Collection<Relation> selectedRelations = Main.main.getCurrentDataSet().getSelectedRelations();
 
-        if (selectedWays.size() < 1) {
+        if (selectedWays.isEmpty()) {
             // Sometimes it make sense creating multipoly of only one way (so it will form outer way)
             // and then splitting the way later (so there are multiple ways forming outer way)
             new Notification(
@@ -155,12 +156,12 @@ public class CreateMultipolygonAction extends JosmAction {
                 : null;
 
         // download incomplete relation if necessary
-        if (multipolygonRelation != null && (multipolygonRelation.isIncomplete() || multipolygonRelation.hasIncompleteMembers())) {
+        if (multipolygonRelation != null && !multipolygonRelation.isNew()
+                && (multipolygonRelation.isIncomplete() || multipolygonRelation.hasIncompleteMembers())) {
             Main.worker.submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.main.getEditLayer()));
         }
         // create/update multipolygon relation
         Main.worker.submit(new CreateUpdateMultipolygonTask(selectedWays, multipolygonRelation));
-
     }
 
     private Relation getSelectedMultipolygonRelation() {
@@ -171,7 +172,7 @@ public class CreateMultipolygonAction extends JosmAction {
         if (selectedRelations.size() == 1 && "multipolygon".equals(selectedRelations.iterator().next().get("type"))) {
             return selectedRelations.iterator().next();
         } else {
-            final HashSet<Relation> relatedRelations = new HashSet<>();
+            final Set<Relation> relatedRelations = new HashSet<>();
             for (final Way w : selectedWays) {
                 relatedRelations.addAll(Utils.filteredCollection(w.getReferrers(), Relation.class));
             }
@@ -267,13 +268,18 @@ public class CreateMultipolygonAction extends JosmAction {
     private static MultipolygonBuilder analyzeWays(Collection<Way> selectedWays, boolean showNotif) {
 
         MultipolygonBuilder pol = new MultipolygonBuilder();
-        String error = pol.makeFromWays(selectedWays);
+        final String error = pol.makeFromWays(selectedWays);
 
         if (error != null) {
             if (showNotif) {
-                new Notification(error)
+                GuiHelper.runInEDT(new Runnable() {
+                    @Override
+                    public void run() {
+                        new Notification(error)
                         .setIcon(JOptionPane.INFORMATION_MESSAGE)
                         .show();
+                    }
+                });
             }
             return null;
         } else {
@@ -302,7 +308,7 @@ public class CreateMultipolygonAction extends JosmAction {
 
     private static void addMembers(JoinedPolygon polygon, Relation rel, String role) {
         final int count = rel.getMembersCount();
-        final HashSet<Way> ways = new HashSet<>(polygon.ways);
+        final Set<Way> ways = new HashSet<>(polygon.ways);
         for (int i = 0; i < count; i++) {
             final RelationMember m = rel.getMember(i);
             if (ways.contains(m.getMember()) && !role.equals(m.getRole())) {
