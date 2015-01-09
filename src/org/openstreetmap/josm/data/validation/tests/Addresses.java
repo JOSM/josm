@@ -27,6 +27,8 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Performs validation tests on addresses (addr:housenumber) and associatedStreet relations.
@@ -75,9 +77,18 @@ public class Addresses extends Test {
             }
         }
         if (list.size() > 1) {
-            List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(list);
-            errorList.add(0, p);
-            errors.add(new AddressError(MULTIPLE_STREET_RELATIONS, errorList, tr("Multiple associatedStreet relations")));
+            // no warning if several relations have the same name, see #10945
+            final String name = list.get(0).get("name");
+            if (name == null || Utils.filter(list, new Predicate<Relation>() {
+                @Override
+                public boolean evaluate(Relation r) {
+                    return name.equals(r.get("name"));
+                }
+            }).size() < list.size()) {
+                List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(list);
+                errorList.add(0, p);
+                errors.add(new AddressError(MULTIPLE_STREET_RELATIONS, errorList, tr("Multiple associatedStreet relations")));
+            }
         }
         return list;
     }
