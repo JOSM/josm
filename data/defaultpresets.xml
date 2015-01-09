@@ -5895,7 +5895,7 @@
             <reference ref="name_oh" />
             <reference ref="link_contact" />
         </item> <!-- Bakery -->
-        <item name="Butcher" icon="presets/cow.png" type="node,closedway" preset_name_label="true">
+        <item name="Butcher" icon="styles/standard/shop/groceries/butcher.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=butcher"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=butcher"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=butcher"
@@ -6018,7 +6018,7 @@
             <combo text="Fair Trade" key="fair_trade" values="no,yes,only" match="key" />
         </item> <!-- Fair Trade -->
         <separator/>
-        <item name="Alcohol" icon="styles/standard/shop/beverages.png" type="node,closedway" preset_name_label="true">
+        <item name="Alcohol" icon="styles/standard/shop/alcohol.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=alcohol"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=alcohol"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=alcohol"
@@ -6089,7 +6089,7 @@
             <combo key="organic" text="Organic" values="only,yes,no" />
             <reference ref="link_contact" />
         </item> <!-- Shoes -->
-        <item name="Outdoor" icon="presets/tent.png" type="node,closedway" preset_name_label="true">
+        <item name="Outdoor" icon="styles/standard/shop/outdoor.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=outdoor"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=outdoor"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=outdoor"
@@ -6100,7 +6100,7 @@
             <reference ref="name_oh" />
             <reference ref="link_contact" />
         </item> <!-- Outdoor -->
-        <item name="Sports" icon="presets/rowing.png" type="node,closedway" preset_name_label="true">
+        <item name="Sports" icon="styles/standard/sport/multi.png" type="node,closedway" preset_name_label="true">
              <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=sports"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=sports"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=sports" />
@@ -6402,7 +6402,7 @@
             <key key="shop" value="copyshop" />
             <reference ref="name_operator_oh" />
         </item> <!-- Copy Shop -->
-        <item name="Book Store" icon="presets/book.png" type="node,closedway" preset_name_label="true">
+        <item name="Book Store" icon="styles/standard/shop/library.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=books"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=books"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=books"
@@ -6696,7 +6696,7 @@
         </item> <!-- Funeral Directors -->
     </group> <!-- Other -->
         <separator/>
-    <item name="Vending Machine" icon="presets/vending_machine.png" type="node" preset_name_label="true">
+    <item name="Vending Machine" icon="styles/standard/transport/ticket-machine.png" type="node" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=vending_machine"
