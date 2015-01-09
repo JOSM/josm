@@ -1709,7 +1709,7 @@ node[shop=laundry] {
     text: auto;
 }
 node[shop=outdoor] {
-    icon-image: "shop/sports/outdoor.png";
+    icon-image: "shop/outdoor.png";
     set icon_z17;
     text: auto;
 }
@@ -1718,14 +1718,18 @@ node[shop=kiosk] {
     set icon_z17;
     text: auto;
 }
-node[shop=alcohol],
 node[shop=beverages] {
     icon-image: "shop/beverages.png";
     set icon_z17;
     text: auto;
 }
+node[shop=alcohol] {
+    icon-image: "shop/alcohol.png";
+    set icon_z17;
+    text: auto;
+}
 node[shop=books] {
-    icon-image: "shop/rental/library.png";
+    icon-image: "shop/library.png";
     set icon_z17;
     text: auto;
 }
@@ -1936,7 +1940,8 @@ node[shop=tailor] {
     text: auto;
 }
 node[shop=travel_agency] {
-    icon-image: "place/island.png";
+    icon-image: "presets/travel.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -2531,7 +2536,6 @@ area[amenity=courthouse],
 area[amenity=prison],
 area[amenity=bank],
 area[amenity=bureau_de_change],
-area[amenity=atm],
 area[amenity=bbq] {
     fill-color: amenity_light#f7efb7;
 }
