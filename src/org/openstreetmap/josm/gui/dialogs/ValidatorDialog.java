@@ -27,6 +27,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.Command;
@@ -101,12 +102,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         List<SideButton> buttons = new LinkedList<>();
 
-        selectButton = new SideButton(new AbstractAction() {
-            {
-                putValue(NAME, tr("Select"));
-                putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
-            }
+        selectButton = new SideButton(new AbstractSelectAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setSelectedItems();
