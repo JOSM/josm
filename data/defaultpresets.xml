@@ -3642,7 +3642,7 @@
             <reference ref="name_operator" />
             <reference ref="link_contact" />
         </item> <!-- Theatre -->
-        <item name="Library" icon="styles/standard/shop/rental/library.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Library" icon="styles/standard/shop/library.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=library"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=library"
                   et.href="http://wiki.openstreetmap.org/wiki/Et:Tag:amenity=library"
