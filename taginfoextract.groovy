@@ -242,7 +242,7 @@ class taginfoextract {
                 |    "name": "JOSM main mappaint style",
                 |    "description": "Tags supported by the main mappaint style in the OSM editor JOSM",
                 |    "project_url": "http://josm.openstreetmap.de/",
-                |    "icon_url": "http://josm.openstreetmap.de/export/7543/josm/trunk/images/logo_16x16x8.png",
+                |    "icon_url": "http://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png",
                 |    "contact_name": "JOSM developer team",
                 |    "contact_email": "josm-dev@openstreetmap.org"
                 |  },
