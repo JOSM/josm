@@ -2540,7 +2540,7 @@ area[amenity=bbq] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=library] {
-    icon-image: "shop/rental/library.png";
+    icon-image: "shop/library.png";
     set icon_z17;
     text: auto;
 }
