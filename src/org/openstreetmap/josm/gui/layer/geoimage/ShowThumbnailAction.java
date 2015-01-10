@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Toggle the image display between thumbnails and symbols.
- * @since tbd
+ * @since 7935
  */
 public class ShowThumbnailAction extends AbstractAction implements LayerAction {
 
