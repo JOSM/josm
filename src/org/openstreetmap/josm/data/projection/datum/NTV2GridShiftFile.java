@@ -128,13 +128,13 @@ public class NTV2GridShiftFile implements Serializable {
         shiftType = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
-        version = new String(b8);
+        version = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
-        fromEllipsoid = new String(b8);
+        fromEllipsoid = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
-        toEllipsoid = new String(b8);
+        toEllipsoid = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
         fromSemiMajorAxis = NTV2Util.getDouble(b8, bigEndian);

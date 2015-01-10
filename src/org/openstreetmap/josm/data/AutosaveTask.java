@@ -104,7 +104,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             }
 
             timer = new Timer(true);
-            timer.schedule(this, 1000, PROP_INTERVAL.get() * 1000);
+            timer.schedule(this, 1000L, PROP_INTERVAL.get() * 1000L);
             MapView.addLayerChangeListener(this);
             if (Main.isDisplayingMapView()) {
                 for (OsmDataLayer l: Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
@@ -151,7 +151,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         int index = 0;
         Date now = new Date();
         while (true) {
-            String filename = String.format("%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s", layer.layerFileName, now, index == 0?"":"_" + index);
+            String filename = String.format("%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s",
+                    layer.layerFileName, now, index == 0 ? "" : "_" + index);
             File result = new File(autosaveDir, filename+".osm");
             try {
                 if (result.createNewFile()) {
@@ -373,8 +374,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             // we cannot move to deleted folder, so just try to delete it directly
             if (!f.delete()) {
                 Main.warn(String.format("Could not delete backup file %s", f));
-            } else {
-                pidFile.delete();
+            } else if (!pidFile.delete()) {
+                Main.warn(String.format("Could not delete PID file %s", pidFile));
             }
         }
         while (deletedLayers.size() > PROP_DELETED_LAYERS.get()) {
