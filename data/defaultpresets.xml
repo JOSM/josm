@@ -6402,7 +6402,7 @@
             <key key="shop" value="copyshop" />
             <reference ref="name_operator_oh" />
         </item> <!-- Copy Shop -->
-        <item name="Book Store" icon="styles/standard/shop/library.png" type="node,closedway" preset_name_label="true">
+        <item name="Book Store" icon="styles/standard/shop/book.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=books"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=books"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=books"

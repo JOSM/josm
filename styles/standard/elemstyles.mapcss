@@ -1729,7 +1729,7 @@ node[shop=alcohol] {
     text: auto;
 }
 node[shop=books] {
-    icon-image: "shop/library.png";
+    icon-image: "shop/book.svg";
     set icon_z17;
     text: auto;
 }
