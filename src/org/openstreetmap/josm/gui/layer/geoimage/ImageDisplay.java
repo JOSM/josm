@@ -26,6 +26,7 @@ import java.io.File;
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ExifReader;
 
 public class ImageDisplay extends JComponent {
 
@@ -102,37 +103,17 @@ public class ImageDisplay extends JComponent {
                     final int w = (int) visibleRect.getWidth();
                     final int h = (int) visibleRect.getHeight();
 
-                    outer: {
-                        final int hh, ww, q;
-                        final double ax, ay;
-                        switch (orientation) {
-                        case 8:
-                            q = -1;
-                            ax = w / 2;
-                            ay = w / 2;
+                    if (ExifReader.orientationNeedsCorrection(orientation)) {
+                        final int hh, ww;
+                        if (ExifReader.orientationSwitchesDimensions(orientation)) {
                             ww = h;
                             hh = w;
-                            break;
-                        case 3:
-                            q = 2;
-                            ax = w / 2;
-                            ay = h / 2;
+                        } else {
                             ww = w;
                             hh = h;
-                            break;
-                        case 6:
-                            q = 1;
-                            ax = h / 2;
-                            ay = h / 2;
-                            ww = h;
-                            hh = w;
-                            break;
-                        default:
-                            break outer;
                         }
-
                         final BufferedImage rot = new BufferedImage(ww, hh, BufferedImage.TYPE_INT_RGB);
-                        final AffineTransform xform = AffineTransform.getQuadrantRotateInstance(q, ax, ay);
+                        final AffineTransform xform = ExifReader.getRestoreOrientationTransform(orientation, w, h);
                         final Graphics2D g = rot.createGraphics();
                         g.drawImage(image, xform, null);
                         g.dispose();
