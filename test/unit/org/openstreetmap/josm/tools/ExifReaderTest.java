@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public class ExifReaderTest {
 
-    private File sampleFile;
+    private File orientationSampleFile, directionSampleFile;
     
     /**
      * Setup test
@@ -29,7 +29,8 @@ public class ExifReaderTest {
      */
     @Before
     public void setUp() throws Exception {
-        sampleFile = new File("data_nodist/exif-direction-example.jpg");
+        directionSampleFile = new File("data_nodist/exif-example_direction.jpg");
+        orientationSampleFile = new File("data_nodist/exif-example_orientation=6.jpg");
     }
 
     /** 
@@ -38,7 +39,7 @@ public class ExifReaderTest {
      */
     @Test
     public void testReadTime() throws ParseException {
-        Date date = ExifReader.readTime(sampleFile);
+        Date date = ExifReader.readTime(directionSampleFile);
         assertEquals(new GregorianCalendar(2010, Calendar.MAY, 15, 17, 12, 05).getTime(), date);
     }
 
@@ -47,8 +48,8 @@ public class ExifReaderTest {
      */
     @Test
     public void testReadOrientation() {
-        Integer orientation = ExifReader.readOrientation(sampleFile);
-        assertEquals(Integer.valueOf(1), orientation);
+        Integer orientation = ExifReader.readOrientation(orientationSampleFile);
+        assertEquals(Integer.valueOf(6), orientation);
     }
     
     /**
@@ -56,7 +57,7 @@ public class ExifReaderTest {
      */
     @Test
     public void testReadLatLon() {
-        LatLon latlon = ExifReader.readLatLon(sampleFile);
+        LatLon latlon = ExifReader.readLatLon(directionSampleFile);
         assertNotNull(latlon);
         DecimalFormat f = new DecimalFormat("00.0");
         assertEquals("51°46'"+f.format(43.0)+"\"", LatLon.dms(latlon.lat()));
@@ -68,7 +69,7 @@ public class ExifReaderTest {
      */
     @Test
     public void testReadDirection() {
-        Double direction = ExifReader.readDirection(sampleFile);
+        Double direction = ExifReader.readDirection(directionSampleFile);
         assertEquals(new Double(46.5), direction);
     }
 }
