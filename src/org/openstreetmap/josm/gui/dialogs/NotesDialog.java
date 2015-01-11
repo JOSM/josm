@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -112,6 +115,17 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 }
                 updateButtonStates();
             }});
+        displayList.addMouseListener(new MouseAdapter() {
+            //center view on selected note on double click
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+                    if (noteData != null && noteData.getSelectedNote() != null) {
+                        Main.map.mapView.zoomTo(noteData.getSelectedNote().getLatLon());
+                    }
+                }
+            }
+        });
 
         JPanel pane = new JPanel(new BorderLayout());
         pane.add(new JScrollPane(displayList), BorderLayout.CENTER);
