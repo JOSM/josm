@@ -187,7 +187,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Built-in:")+" ");
             s.append(listKeys(Projections.nadgrids)+"<br>");
             s.append("<b>+bounds=</b>minlon,minlat,maxlon,maxlat - <i>"+tr("Projection bounds (in degrees)")+"</i><br>");
-            s.append("<b>+wmssrs=</b>EPSG:123456 - <i>"+tr("WMS SRS (EPSG code)")+"</i><br>");
+            s.append("<b>+wmssrs=</b>EPSG:123456 - <i>"+tr("Sets the SRS=... parameter in the WMS request")+"</i><br>");
 
             return new HtmlPanel(s.toString());
         }

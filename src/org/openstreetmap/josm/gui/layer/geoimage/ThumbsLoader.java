@@ -6,12 +6,14 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CacheFiles;
+import org.openstreetmap.josm.tools.ExifReader;
 
 public class ThumbsLoader implements Runnable {
     public static final int maxSize = 120;
@@ -78,12 +80,29 @@ public class ThumbsLoader implements Runnable {
             Main.error(" Invalid image");
             return null;
         }
+
+        final int w = img.getWidth(null);
+        final int h = img.getHeight(null);
+        final int hh, ww;
+        if (ExifReader.orientationSwitchesDimensions(entry.getExifOrientation())) {
+            ww = h;
+            hh = w;
+        } else {
+            ww = w;
+            hh = h;
+        }
+
         Rectangle targetSize = ImageDisplay.calculateDrawImageRectangle(
-                new Rectangle(0, 0, img.getWidth(null), img.getHeight(null)),
+                new Rectangle(0, 0, ww, hh),
                 new Rectangle(0, 0, maxSize, maxSize));
         BufferedImage scaledBI = new BufferedImage(targetSize.width, targetSize.height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = scaledBI.createGraphics();
-        while (!g.drawImage(img, 0, 0, targetSize.width, targetSize.height, null)) {
+
+        final AffineTransform restoreOrientation = ExifReader.getRestoreOrientationTransform(entry.getExifOrientation(), w, h);
+        final AffineTransform scale = AffineTransform.getScaleInstance((double) targetSize.width / ww, (double) targetSize.height / hh);
+        scale.concatenate(restoreOrientation);
+
+        while (!g.drawImage(img, scale, null)) {
             try {
                 Thread.sleep(10);
             } catch(InterruptedException ie) {

@@ -1083,7 +1083,6 @@ public final class PluginHandler {
                 Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
             }
         }
-        return;
     }
 
     /**
