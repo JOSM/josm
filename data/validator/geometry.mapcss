@@ -28,7 +28,7 @@ node[natural=tree_row] {
   assertMatch: "node oneway=-1";
   assertNoMatch: "way oneway=-1";
   assertMatch: "node bridge=yes";
-  assertNoMatch: "node bridge=13";
+  assertMatch: "node bridge=viaduct";
 }
 
 /* {0} on a node, should be an area; see ticket #10679 */
