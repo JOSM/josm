@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 /**
  * This class allows to create and keep a deep copy of primitives. Provides methods to access directly added
  * primitives and reference primitives
- *
+ * @since 2305
  */
 public class PrimitiveDeepCopy {
 
@@ -25,19 +25,28 @@ public class PrimitiveDeepCopy {
     private final List<PrimitiveData> referenced = new ArrayList<>();
     private final CopyOnWriteArrayList<PasteBufferChangedListener> listeners = new CopyOnWriteArrayList<>();
 
+    /**
+     * Constructs a new {@code PrimitiveDeepCopy} without data. Use {@link #makeCopy(Collection)} after that.
+     */
     public PrimitiveDeepCopy() {
-
+        // Do nothing
     }
 
-    public PrimitiveDeepCopy(final Collection<OsmPrimitive> primitives) {
+    /**
+     * Constructs a new {@code PrimitiveDeepCopy} of given OSM primitives.
+     * @param primitives OSM primitives to copy
+     * @since 7961
+     */
+    public PrimitiveDeepCopy(final Collection<? extends OsmPrimitive> primitives) {
         makeCopy(primitives);
     }
 
     /**
-     * Replace content of the object with copy of provided primitives
-     * @param primitives
+     * Replace content of the object with copy of provided primitives.
+     * @param primitives OSM primitives to copy
+     * @since 7961
      */
-    public final void makeCopy(final Collection<OsmPrimitive> primitives) {
+    public final void makeCopy(final Collection<? extends OsmPrimitive> primitives) {
         directlyAdded.clear();
         referenced.clear();
 
@@ -118,5 +127,4 @@ public class PrimitiveDeepCopy {
     public void removePasteBufferChangedListener(PasteBufferChangedListener listener) {
         listeners.remove(listener);
     }
-
 }
