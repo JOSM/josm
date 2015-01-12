@@ -1210,19 +1210,28 @@ node[power_source] {
 
 area[man_made=beacon],
 area[man_made=bridge],
+area[bridge:support],
 area[man_made=chimney],
 area[man_made=crane],
-area[man_made=flagpole],
 area[man_made=gasometer],
 area[man_made=bunker_silo],
 area[man_made=lighthouse],
 area[man_made=monitoring_station],
-area[man_made=mineshaft],
-area[man_made=adit] {
+area[man_made=mineshaft] {
     fill-color: manmade#d8d8d8;
 }
 node[man_made=beacon] {
     icon-image: "misc/landmark/beacon.png";
+    set icon_z17;
+    text: auto;
+}
+node[man_made=bridge] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
+node[bridge:support] {
+    icon-image: "bridge/support.svg";
     set icon_z17;
     text: auto;
 }
@@ -1242,7 +1251,8 @@ node[man_made=flagpole] {
     text: auto;
 }
 node[man_made=gasometer] {
-    icon-image: "misc/landmark/gasometer.png";
+    icon-image: "presets/gasometer.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -1321,6 +1331,7 @@ way[man_made=pipeline] {
     width: 2;
     color: pipeline#660000;
 }
+node[man_made=embankment],
 node[man_made=pipeline] {
     icon-image: "misc/deprecated.png";
     set icon_z17;
@@ -1333,7 +1344,6 @@ node[man_made=petroleum_well] {
 }
 area[man_made=reservoir_covered],
 area[man_made=surveillance],
-area[man_made=survey_point],
 area[man_made=tower],
 area[man_made=wastewater_plant],
 area[man_made=watermill],
@@ -1350,7 +1360,8 @@ node[man_made=reservoir_covered] {
     text: auto;
 }
 node[man_made=surveillance] {
-    icon-image: "misc/surveillance.png";
+    icon-image: "presets/surveillance.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -2878,14 +2889,14 @@ area[historic=memorial],
 area[historic=archaeological_site],
 area[historic=ruins],
 area[historic=battlefield],
-area[historic=palaeontological_site],
+area[geological=palaeontological_site],
 area[historic=wayside_cross],
 area[historic=wayside_shrine],
 area[historic=boundary_stone] {
     fill-color: historic#663300;
 }
 node[historic=castle] {
-    icon-image: "sightseeing/castle.png";
+    icon-image: "sightseeing/castle.svg";
     set icon_z17;
     text: auto;
 }
@@ -2914,7 +2925,7 @@ node[historic=battlefield] {
     set icon_z17;
     text: auto;
 }
-node[historic=palaeontological_site] {
+node[geological=palaeontological_site] {
     icon-image: "historic/palaeontological_site.png";
     set icon_z17;
     text: auto;

@@ -1,8 +1,9 @@
 /* {0} on a node, should be a way */
 node[oneway],
-node[bridge?],
+node[bridge],
 node[sidewalk],
 node[footway],
+node[man_made=embankment],
 node[aerialway=cable_car],
 node[aerialway=gondola],
 node[aerialway=chair_lift],
@@ -46,6 +47,7 @@ node[natural=sand],
 node[natural=wood],
 node[natural=bare_rock],
 node[waterway=riverbank],
+node[man_made=bridge],
 node[source:outline] {
   throwWarning: tr("{0} on a node. Should be drawn as an area.", "{0.tag}");
 }
@@ -57,6 +59,8 @@ node[restriction] {
 }
 
 /* {0} on a way, should be a node */
+way[entrance],
+way[man_made=survey_point],
 way[natural=peak],
 way[natural=saddle],
 way[natural=volcano],
