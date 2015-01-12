@@ -4973,7 +4973,7 @@
                 <text key="addr:flats" text="Flat numbers" />
             </optional>
         </item> <!-- Entrance -->
-        <item name="Tower" icon="presets/tower.png" type="node,closedway" preset_name_label="true">
+        <item name="Tower" icon="styles/standard/misc/landmark/tower.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=tower"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=tower"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=tower"
@@ -4997,7 +4997,7 @@
             <key key="man_made" value="flagpole" />
         </item> <!-- Flagpole -->
         <separator/>
-        <item name="Works" icon="presets/works.png" type="node,closedway" preset_name_label="true">
+        <item name="Works" icon="styles/standard/misc/landmark/works.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=works"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=works"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=works"
@@ -5015,7 +5015,7 @@
             <reference ref="name_operator" />
             <text key="height" text="Height (meters)" />
         </item> <!-- Chimney -->
-        <item name="Windmill" icon="presets/windmill.png" type="node,closedway" preset_name_label="true">
+        <item name="Windmill" icon="styles/standard/misc/landmark/windmill.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=windmill"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=windmill"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=windmill"
@@ -5102,7 +5102,7 @@
             <key key="man_made" value="embankment" />
         </item> <!-- Embankment -->
         <separator/>
-        <item name="Water Tower" icon="presets/water_tower.png" type="node,closedway" preset_name_label="true">
+        <item name="Water Tower" icon="styles/standard/misc/landmark/water_tower.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=water_tower"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=water_tower"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=water_tower"
@@ -5159,7 +5159,7 @@
             <key key="amenity" value="fountain" />
             <text key="name" text="Name" />
         </item> <!-- Fountain -->
-        <item name="Water Well" icon="presets/water_well.png" type="node" preset_name_label="true">
+        <item name="Water Well" icon="presets/water_well.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=water_well"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=water_well"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=water_well"
@@ -5182,7 +5182,7 @@
             <key key="man_made" value="lighthouse" />
             <text key="name" text="Name" />
         </item> <!-- Lighthouse -->
-        <item name="Beacon" icon="styles/standard/misc/landmark/beacon.png" type="node" preset_name_label="true">
+        <item name="Beacon" icon="styles/standard/misc/landmark/beacon.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=beacon"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=beacon"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=beacon" />
@@ -5235,7 +5235,7 @@
                 <check key="display:digital" text="Digital" />
             </checkgroup>
         </item> <!-- Monitoring Station -->
-        <item name="Survey Point" icon="presets/survey_point.png" type="node" preset_name_label="true">
+        <item name="Survey Point" icon="styles/standard/misc/landmark/survey_point.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=survey_point"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=survey_point"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=survey_point"
@@ -5301,7 +5301,7 @@
             <combo key="bridge:movable" text="Type" values="bascule,drawbridge,lift,submersible,swing,transporter" match="key" />
             <reference ref="optional_bridge" />
         </item> <!-- Movable Bridge -->
-        <item name="Bridge Support" icon="presets/bridge.png" type="node,closedway" preset_name_label="true">
+        <item name="Bridge Support" icon="styles/standard/bridge/support.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge:support" />
             <space />
             <combo key="bridge:support" text="Type" values="pier,abutment,lift_pier,pivot_pier" match="key" />
@@ -5717,8 +5717,8 @@
             </optional>
         </item> <!-- Power Cable -->
     </group> <!-- Power -->
-    <group name="Historic Places" icon="presets/State_Tourist.png">
-        <item name="Castle" icon="presets/State_Tourist.png" type="node,closedway" preset_name_label="true">
+    <group name="Historic Places" icon="styles/standard/sightseeing/castle.svg">
+        <item name="Castle" icon="styles/standard/sightseeing/castle.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=castle"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:historic=castle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=castle"
