@@ -2773,9 +2773,9 @@
                 <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             </optional>
             <roles>
-                <role key="" text="route segment" requisite="optional" type="way" />
-                <role key="forward" text="forward segment" requisite="optional" type="way" />
-                <role key="backward" text="backward segment" requisite="optional" type="way" />
+                <role key="" text="route segment" requisite="optional" type="way,closedway" />
+                <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
+                <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
                 <role key="stop" text="halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
                 <role key="forward_stop" text="forward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
                 <role key="backward_stop" text="backward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
