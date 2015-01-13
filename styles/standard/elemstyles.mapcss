@@ -1231,7 +1231,7 @@ node[man_made=bridge] {
     text: auto;
 }
 node[bridge:support] {
-    icon-image: "bridge/support.svg";
+    icon-image: "transport/bridge/support.svg";
     set icon_z17;
     text: auto;
 }

@@ -5301,7 +5301,7 @@
             <combo key="bridge:movable" text="Type" values="bascule,drawbridge,lift,submersible,swing,transporter" match="key" />
             <reference ref="optional_bridge" />
         </item> <!-- Movable Bridge -->
-        <item name="Bridge Support" icon="styles/standard/bridge/support.svg" type="node,closedway" preset_name_label="true">
+        <item name="Bridge Support" icon="styles/standard/transport/bridge/support.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge:support" />
             <space />
             <combo key="bridge:support" text="Type" values="pier,abutment,lift_pier,pivot_pier" match="key" />
