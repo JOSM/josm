@@ -10,20 +10,17 @@ import java.awt.MenuComponent;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.MenuElement;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -44,6 +41,19 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 3737
  */
 public class ImageryMenu extends JMenu implements LayerChangeListener {
+
+    /**
+     * Compare ImageryInfo objects alphabetically by name.
+     *
+     * ImageryInfo objects are normally sorted by country code first
+     * (for the preferences). We don't want this in the imagery menu.
+     */
+    public static Comparator<ImageryInfo> alphabeticImageryComparator = new Comparator<ImageryInfo>() {
+        @Override
+        public int compare(ImageryInfo ii1, ImageryInfo ii2) {
+            return ii1.getName().toLowerCase().compareTo(ii2.getName().toLowerCase());
+        }
+    };
 
     private Action offsetAction = new JosmAction(
             tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false) {
@@ -133,7 +143,9 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         addDynamicSeparator();
 
         // for each configured ImageryInfo, add a menu entry.
-        for (final ImageryInfo u : ImageryLayerInfo.instance.getLayers()) {
+        final List<ImageryInfo> savedLayers = new ArrayList<>(ImageryLayerInfo.instance.getLayers());
+        Collections.sort(savedLayers, alphabeticImageryComparator);
+        for (final ImageryInfo u : savedLayers) {
             addDynamic(new AddImageryLayerAction(u));
         }
 
@@ -142,7 +154,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         if (Main.isDisplayingMapView()) {
             MapView mv = Main.map.mapView;
             LatLon pos = mv.getProjection().eastNorth2latlon(mv.getCenter());
-            final Set<ImageryInfo> inViewLayers = new TreeSet<>();
+            final List<ImageryInfo> inViewLayers = new ArrayList<>();
 
             for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
                 if (i.getBounds() != null && i.getBounds().contains(pos)) {
@@ -166,6 +178,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
                 }
             }
             if (!inViewLayers.isEmpty()) {
+                Collections.sort(inViewLayers, alphabeticImageryComparator);
                 addDynamicSeparator();
                 for (ImageryInfo i : inViewLayers) {
                     addDynamic(new AddImageryLayerAction(i));
