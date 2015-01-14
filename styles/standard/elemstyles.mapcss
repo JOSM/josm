@@ -1071,9 +1071,6 @@ node[piste:difficulty=novice] {
 /* power tags */
 /**************/
 
-area[power=tower] {
-    fill-color: power#eeeeee;
-}
 node[power=tower] {
     icon-image: "misc/landmark/power/tower_small.png";
     set icon_z17;
@@ -1094,6 +1091,8 @@ way[power=cable] {
     color: power#eeeeee;
     dashes: 9,9;
 }
+node[power=plant],
+node[power=sub_station],
 node[power=line],
 node[power=cable],
 node[power=minor_line] {
@@ -1102,23 +1101,27 @@ node[power=minor_line] {
     text: auto;
 }
 area[power=plant],
-area[power=sub_station],
 area[power=substation],
 area[power=transformer],
+area[power=compensator],
+area[power=converter],
 area[power=generator] {
     fill-color: power#eeeeee;
 }
-node[power=plant],
-node[power=sub_station],
-node[power=substation],
 node[power=cable_distribution_cabinet],
 node[power=generator] {
     icon-image: "misc/landmark/power.png";
     set icon_z17;
     text: auto;
 }
+node[power=substation] {
+    icon-image: "icons/power_substation.n.16.png";
+    set icon_z17;
+    text: auto;
+}
 node[power=transformer] {
     icon-image: "misc/landmark/power/transformer.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }

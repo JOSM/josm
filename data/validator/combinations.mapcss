@@ -107,6 +107,7 @@ way[junction                   ][!highway][junction!=yes],
 
 /* {0.tag} without {1.key} */
 *[aeroway=terminal][!building],
+*[power=generator][!generator:source],
 *[amenity=place_of_worship][!religion] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
 }
