@@ -660,7 +660,7 @@ node[highway=traffic_signals] {
     set icon_z17;
     text: auto;
 }
-node[highway=traffic_signals][crossing] {
+node[highway=traffic_signals][crossing][crossing!=no] {
     icon-image: "vehicle/traffic_signals_crossing.svg";
     set icon_z17;
     text: auto;
