@@ -365,7 +365,8 @@ way[sidewalk=yes] {
 }
 
 /* see #10837 */
-*[building][levels] {
+*[building][levels],
+*[building:part=yes][levels] {
   throwWarning: tr("{0} is deprecated", "{1.key}");
   suggestAlternative: "building:levels";
   fixChangeKey: "levels => building:levels";
