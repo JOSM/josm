@@ -4935,7 +4935,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,cowshed,construction" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,barn,farm_auxiliary,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,cowshed,construction" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
         </item> <!-- Building -->
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation" preset_name_label="true">
@@ -4953,7 +4953,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="residential,apartments,house,hut,dormitory,terrace,detached,roof" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
+            <combo key="building" text="Building" values="residential,apartments,house,hut,dormitory,terrace,detached,farm,roof" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
             <text key="name" text="Name" />
         </item> <!-- Residential Building -->
         <item name="Entrance" icon="styles/standard/misc/entrance-yes.png" type="node" preset_name_label="true">
