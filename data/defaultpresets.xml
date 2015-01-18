@@ -7823,6 +7823,8 @@
                 </optional>
                 <roles>
                     <role key="" text="route segment" requisite="required" type="way"/>
+                    <role key="forward" text="forward segment" requisite="optional" type="way" />
+                    <role key="backward" text="backward segment" requisite="optional" type="way" />
                 </roles>
             </item> <!-- Bicycle Route -->
             <item name="Mountain Biking Route" icon="presets/path.png" type="relation" preset_name_label="true">
@@ -7843,6 +7845,8 @@
                 </optional>
                 <roles>
                     <role key="" text="route segment" requisite="required" type="way" member_expression="highway=path OR highway=track"/>
+                    <role key="forward" text="forward segment" requisite="optional" type="way" />
+                    <role key="backward" text="backward segment" requisite="optional" type="way" />
                 </roles>
             </item> <!-- Mountain Biking Route -->
             <item name="Hiking Route" icon="presets/path.png" type="relation" preset_name_label="true">
