@@ -7822,9 +7822,9 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way"/>
-                    <role key="forward" text="forward segment" requisite="optional" type="way" />
-                    <role key="backward" text="backward segment" requisite="optional" type="way" />
+                    <role key="" text="route segment" requisite="required" type="way,closedway"/>
+                    <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
+                    <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
                 </roles>
             </item> <!-- Bicycle Route -->
             <item name="Mountain Biking Route" icon="presets/path.png" type="relation" preset_name_label="true">
@@ -7844,9 +7844,9 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way" member_expression="highway=path OR highway=track"/>
-                    <role key="forward" text="forward segment" requisite="optional" type="way" />
-                    <role key="backward" text="backward segment" requisite="optional" type="way" />
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway=path OR highway=track"/>
+                    <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
+                    <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
                 </roles>
             </item> <!-- Mountain Biking Route -->
             <item name="Hiking Route" icon="presets/path.png" type="relation" preset_name_label="true">
@@ -7867,7 +7867,7 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way" member_expression="highway=path OR highway=footway OR highway=track"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway=path OR highway=footway OR highway=track"/>
                     <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
                     <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
                 </roles>
@@ -7927,7 +7927,7 @@
                     <text key="detour" text="Ref of the way this is a detour to"/>
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway"/>
                     <role key="fork" text="fork node for alternative routes" requisite="optional" type="node"/>
                 </roles>
             </item> <!-- Detour Route -->
