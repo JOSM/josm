@@ -1278,11 +1278,6 @@ way[man_made=breakwater] {
     width: 2;
     color: manmade#d8d8d8;
 }
-node[man_made=groyne] {
-    icon-image: "nautical/groyne.png";
-    set icon_z17;
-    text: auto;
-}
 node[man_made=lighthouse] {
     icon-image: "misc/landmark/lighthouse.png";
     set icon_z17;
@@ -1334,6 +1329,8 @@ way[man_made=pipeline] {
     width: 2;
     color: pipeline#660000;
 }
+node[man_made=breakwater],
+node[man_made=groyne],
 node[man_made=embankment],
 node[man_made=pipeline] {
     icon-image: "misc/deprecated.png";
@@ -1494,7 +1491,15 @@ node[leisure=marina] {
     set icon_z17;
     text: auto;
 }
-area[leisure=slipway],
+way[leisure=slipway] {
+    width: 2;
+    color: leisure#c7f1a3;
+}
+node[leisure=slipway] {
+    icon-image: "nautical/slipway.png";
+    set icon_z17;
+    text: auto;
+}
 area[leisure=fishing],
 area[leisure=nature_reserve],
 area[leisure=park],
@@ -1503,11 +1508,6 @@ area[leisure=garden],
 area[leisure=common],
 area[leisure=firepit] {
     fill-color: leisure#c7f1a3;
-}
-node[leisure=slipway] {
-    icon-image: "nautical/slipway.png";
-    set icon_z17;
-    text: auto;
 }
 node[leisure=fishing] {
     icon-image: "sport/fishing.png";

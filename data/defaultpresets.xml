@@ -1717,7 +1717,7 @@
             <key key="waterway" value="dam" />
             <reference ref="name_wikipedia" />
         </item> <!-- Dam -->
-        <item name="Groyne" icon="presets/groyne.png" type="node,way,closedway" preset_name_label="true">
+        <item name="Groyne" icon="presets/groyne.png" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=groyne"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=groyne"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=groyne"
@@ -1928,7 +1928,7 @@
             </optional>
         </item> <!-- Ferry Route -->
         <separator/>
-        <item name="Marina" icon="presets/marina.png" type="node,closedway" preset_name_label="true">
+        <item name="Marina" icon="styles/standard/nautical/marina.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=marina"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=marina"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:leisure=marina"
@@ -1940,7 +1940,7 @@
             <key key="leisure" value="marina" />
             <text key="name" text="Name" />
         </item> <!-- Marina -->
-        <item name="Pier" icon="presets/pier.png" type="way,closedway" preset_name_label="true">
+        <item name="Pier" icon="presets/pier.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pier"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pier"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:man_made=pier"
