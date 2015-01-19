@@ -371,3 +371,10 @@ way[sidewalk=yes] {
   suggestAlternative: "building:levels";
   fixChangeKey: "levels => building:levels";
 }
+
+/* see #10691 */
+*[protected_class] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "protect_class";
+  fixChangeKey: "protected_class => protect_class";
+}
