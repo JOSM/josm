@@ -6823,7 +6823,7 @@
             <reference ref="name_wikipedia" />
             <reference ref="population_postcode_website" />
         </item> <!-- City -->
-        <item name="Town" icon="styles/standard/place/settlement/city.png" type="node,closedway" preset_name_label="true">
+        <item name="Town" icon="styles/standard/place/settlement/town.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=town"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:place=town"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=town"
@@ -6836,7 +6836,7 @@
             <reference ref="name_wikipedia" />
             <reference ref="population_postcode_website" />
         </item> <!-- Town -->
-        <item name="Suburb" icon="styles/standard/place/settlement/city.png" type="node,closedway" preset_name_label="true">
+        <item name="Suburb" icon="styles/standard/place/settlement/suburb.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=suburb"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=suburb"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:place=suburb"
@@ -6848,7 +6848,7 @@
             <reference ref="name_wikipedia" />
             <reference ref="population_postcode_website" />
         </item> <!-- Suburb -->
-        <item name="Village" icon="styles/standard/place/settlement/city.png" type="node,closedway" preset_name_label="true">
+        <item name="Village" icon="styles/standard/place/settlement/village.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=village"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:place=village"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=village"
@@ -6863,43 +6863,7 @@
             <reference ref="name_wikipedia" />
             <reference ref="population_postcode_website" />
         </item> <!-- Village -->
-        <item name="Hamlet" icon="styles/standard/place/settlement/city.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=hamlet"
-                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:place=hamlet"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=hamlet"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:place=hamlet"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:place=hamlet"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:place=hamlet"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:place=hamlet" />
-            <space />
-            <key key="place" value="hamlet" />
-            <reference ref="name_wikipedia" />
-            <reference ref="population_postcode_website" />
-        </item> <!-- Hamlet -->
-        <item name="Farm" icon="styles/standard/place/settlement/city.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=farm"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:place=farm"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:place=farm" />
-            <space />
-            <label text="A farm within a bigger settlement" />
-            <label text="(please use isolated_dwelling for an isolated farm)" />
-            <key key="place" value="farm" />
-            <reference ref="name_wikipedia" />
-            <reference ref="population_postcode_website" />
-        </item> <!-- Farm -->
-        <item name="Isolated Dwelling" icon="styles/standard/place/settlement/city.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=isolated_dwelling"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=isolated_dwelling"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:place=isolated_dwelling"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:place=isolated_dwelling"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:place=isolated_dwelling"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:place=isolated_dwelling" />
-            <space />
-            <key key="place" value="isolated_dwelling" />
-            <reference ref="name_wikipedia" />
-            <reference ref="population_postcode_website" />
-        </item> <!-- Isolated Dwelling -->
-        <item name="Neighbourhood" icon="styles/standard/place/settlement/city.png" type="node,closedway" preset_name_label="true">
+        <item name="Neighbourhood" icon="styles/standard/place/settlement/hamlet.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=neighbourhood"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=neighbourhood"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:place=neighbourhood"
@@ -6912,6 +6876,42 @@
             <text key="population" text="Population" />
             <text key="website" text="Website" />
         </item> <!-- Neighbourhood -->
+        <item name="Hamlet" icon="styles/standard/place/settlement/hamlet.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=hamlet"
+                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:place=hamlet"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=hamlet"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:place=hamlet"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:place=hamlet"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:place=hamlet"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:place=hamlet" />
+            <space />
+            <key key="place" value="hamlet" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
+        </item> <!-- Hamlet -->
+        <item name="Farm" icon="styles/standard/place/settlement/hamlet.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=farm"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:place=farm"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:place=farm" />
+            <space />
+            <label text="A farm within a bigger settlement" />
+            <label text="(please use isolated_dwelling for an isolated farm)" />
+            <key key="place" value="farm" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
+        </item> <!-- Farm -->
+        <item name="Isolated Dwelling" icon="styles/standard/place/settlement/hamlet.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=isolated_dwelling"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=isolated_dwelling"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:place=isolated_dwelling"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:place=isolated_dwelling"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:place=isolated_dwelling"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:place=isolated_dwelling" />
+            <space />
+            <key key="place" value="isolated_dwelling" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
+        </item> <!-- Isolated Dwelling -->
         <separator/>
         <item name="Locality" icon="presets/locality.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=locality"
