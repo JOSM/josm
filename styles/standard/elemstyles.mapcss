@@ -4310,6 +4310,7 @@ node[place=county] {
     text-color:black;
     text-halo-color: white;
     text-halo-radius: 1;
+    z-index: 2.6;
 }
 node[place=city] {
     icon-image: "place/settlement/city.png";
@@ -4321,14 +4322,9 @@ node[place=city] {
     text-color:black;
     text-halo-color: white;
     text-halo-radius: 1;
+    z-index: 2.5;
 }
-node[place=town],
-node[place=village],
-node[place=hamlet],
-node[place=farm],
-node[place=isolated_dwelling],
-node[place=neighbourhood],
-node[place=suburb] {
+node[place=town] {
     icon-image: "place/settlement/town.png";
     set icon_z0;
     text: auto;
@@ -4338,6 +4334,46 @@ node[place=suburb] {
     text-color:black;
     text-halo-color: white;
     text-halo-radius: 1;
+    z-index: 2.4;
+}
+node[place=suburb] {
+    icon-image: "place/settlement/suburb.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.3;
+}
+node[place=village] {
+    icon-image: "place/settlement/village.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.2;
+}
+node[place=hamlet],
+node[place=farm],
+node[place=isolated_dwelling],
+node[place=neighbourhood] {
+    icon-image: "place/settlement/hamlet.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.1;
 }
 node[place=locality] {
     icon-image: "place/locality.png";
