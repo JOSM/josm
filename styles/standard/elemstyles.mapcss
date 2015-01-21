@@ -2159,8 +2159,7 @@ area[amenity=car_rental],
 area[amenity=car_sharing],
 area[amenity=car_wash],
 area[amenity=taxi],
-area[amenity=fuel],
-area[amenity=charging_station] {
+area[amenity=fuel] {
     fill-color: amenity_traffic#f7efb7;
 }
 node[amenity=parking_space] {
@@ -2641,8 +2640,7 @@ node[emergency=fire_hydrant] {
 }
 area[amenity=shelter],
 area[amenity=marketplace],
-area[amenity=wlan],
-area[amenity=vending_machine] {
+area[amenity=wlan] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=shelter] {
@@ -3156,9 +3154,9 @@ node[public_transport=platform][train=yes] {
 /* railway tags */
 /****************/
 
-area[railway=station], area[railway=tram_station],
-area[railway=subway_entrance],
-area[railway=crossing], area[railway=level_crossing] {
+area[railway=station],
+area[railway=tram_station],
+area[railway=subway_entrance] {
     fill-color: railwaypoint#f7efb7;
 }
 node[railway=station], node[railway=tram_station] {
@@ -3182,12 +3180,13 @@ node[railway=subway_entrance] {
     text: auto;
 }
 node[railway=crossing] {
-    icon-image: "vehicle/crossing_small.png";
+    icon-image: "vehicle/crossing.png";
     set icon_z17;
     text: auto;
 }
 node[railway=level_crossing] {
-    icon-image: "vehicle/crossing.png";
+    icon-image: "presets/level_crossing.png";
+    icon-width: 16;
     set icon_z17;
     text: auto;
 }
@@ -3253,8 +3252,7 @@ way[railway=monorail] {
     color: rail#404040;
     dashes: 9,9;
 }
-area[railway=turntable],
-area[railway=buffer_stop] {
+area[railway=turntable] {
     fill-color: rail#404040;
 }
 node[railway=turntable] {
@@ -3278,6 +3276,12 @@ way[railway=funicular] {
     width: 1;
     color: rail#404040;
     dashes: 9,9;
+}
+node[railway=switch] {
+    icon-image: "presets/railway_switch.png";
+    icon-width: 16;
+    set icon_z17;
+    text: auto;
 }
 node[railway=rail], node[railway=tram], node[railway=light_rail],
 node[railway=subway], node[railway=preserved],
@@ -3319,12 +3323,9 @@ way[railway=construction][construction=tram][!highway] {
 /* aeroway tags */
 /****************/
 
-area[aeroway=aerodrome]:closed {
+area[aeroway=aerodrome] {
     fill-color: aeroway#660000;
-}
-way[aeroway=aerodrome] {
     width: 2;
-    color: aeroway#660000;
     dashes: 9,9;
 }
 node[aeroway=aerodrome] {
@@ -3355,11 +3356,6 @@ way[aeroway=runway] {
     width: 3;
     color: aeroway_dark#330000;
 }
-node[aeroway=runway] {
-    icon-image: "transport/airport/runway.png";
-    set icon_z17;
-    text: auto;
-}
 area[aeroway=taxiway]:closed {
     fill-color: aeroway#660000;
 }
@@ -3367,16 +3363,14 @@ way[aeroway=taxiway] {
     width: 2;
     color: aeroway#660000;
 }
-node[aeroway=taxiway] {
-    icon-image: "transport/airport/taxiway.png";
-    set icon_z17;
-    text: auto;
-}
-area[aeroway=apron], area[aeroway=hangar] {
+area[aeroway=apron],
+area[aeroway=hangar] {
     fill-color: aeroway_light#990000;
 }
-node[aeroway=apron] {
-    icon-image: "transport/airport/apron.png";
+node[aeroway=apron],
+node[aeroway=runway],
+node[aeroway=taxiway] {
+    icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
 }
