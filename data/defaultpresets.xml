@@ -2139,7 +2139,7 @@
                 <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" values_context="crossing:barrier" />
             </optional>
         </item> <!-- Level Crossing -->
-        <item name="Crossing" icon="presets/crossing.png" type="node" preset_name_label="true">
+        <item name="Crossing" icon="styles/standard/vehicle/crossing.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
                   bg.href="http://wiki.openstreetmap.org/wiki/Bg:Key:crossing"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:crossing"
@@ -2742,7 +2742,7 @@
                 <check key="bicycle" text="Bicycle" />
             </optional>
         </item> <!-- Subway Entrance -->
-        <item name="Ticket Machine" icon="presets/vending_machine.png" type="node" preset_name_label="true">
+        <item name="Ticket Machine" icon="styles/standard/transport/ticket-machine.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=vending_machine"

@@ -37,7 +37,9 @@ node[highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|resident
   assertNoMatch: "node highway=turning_circle";
 }
 
-way[highway=crossing], way[railway=crossing] {
+way[highway=crossing],
+way[railway=crossing],
+way[railway=level_crossing] {
   throwWarning: tr("wrong crossing tag on a way");
   assertMatch: "way highway=crossing";
   assertNoMatch: "node highway=crossing";
