@@ -674,6 +674,17 @@
                 <check key="lit" text="Lit" />
             </optional>
         </item> <!-- Parking Aisle -->
+        <item name="Escape" icon="presets/way_unclassified.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=escape" />
+            <space />
+            <key key="highway" value="escape" />
+            <label text="Emergency lane beside long descending slopes for trucks and other vehicles to stop safely after brake failure." />
+            <optional>
+                <reference ref="surface" />
+                <text key="width" text="Width (meters)" />
+                <check key="lit" text="Lit" />
+            </optional>
+        </item> <!-- Escape -->
         <item name="Road (Unknown Type)" icon="presets/way_unclassified.png" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=road"
