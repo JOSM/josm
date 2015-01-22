@@ -80,7 +80,7 @@ public class UntaggedWay extends Test {
             String highway = tags.get("highway");
             if (highway != null && NAMED_WAYS.contains(highway) && !tags.containsKey("name") && !tags.containsKey("ref")
                     && !"yes".equals(tags.get("noname"))) {
-                boolean isRoundabout = false;
+                boolean isJunction = false;
                 boolean hasName = false;
                 for (String key : w.keySet()) {
                     hasName = key.startsWith("name:") || key.endsWith("_name") || key.endsWith("_ref");
@@ -88,15 +88,15 @@ public class UntaggedWay extends Test {
                         break;
                     }
                     if ("junction".equals(key)) {
-                        isRoundabout = "roundabout".equals(w.get("junction"));
+                        isJunction = true;
                         break;
                     }
                 }
 
-                if (!hasName && !isRoundabout) {
+                if (!hasName && !isJunction) {
                     errors.add(new TestError(this, Severity.WARNING, tr("Unnamed ways"), UNNAMED_WAY, w));
-                } else if (isRoundabout) {
-                    errors.add(new TestError(this, Severity.WARNING, tr("Unnamed junction"), UNNAMED_JUNCTION, w));
+                } else if (isJunction) {
+                    errors.add(new TestError(this, Severity.OTHER, tr("Unnamed junction"), UNNAMED_JUNCTION, w));
                 }
             }
         }
