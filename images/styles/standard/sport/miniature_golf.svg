@@ -18,11 +18,11 @@
    enable-background="new 0 0 580 580"
    xml:space="preserve"
    id="svg2"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="07.svg"><metadata
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="miniature_golf.svg"><metadata
    id="metadata26"><rdf:RDF><cc:Work
        rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
    id="defs24">
 	
 
@@ -43,24 +43,24 @@
    guidetolerance="10"
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
-   inkscape:window-width="1680"
-   inkscape:window-height="988"
+   inkscape:window-width="678"
+   inkscape:window-height="453"
    id="namedview22"
    showgrid="false"
    fit-margin-top="0"
    fit-margin-left="0"
    fit-margin-right="0"
    fit-margin-bottom="0"
-   inkscape:zoom="0.8137931"
-   inkscape:cx="305.34242"
-   inkscape:cy="200.83644"
-   inkscape:window-x="-8"
-   inkscape:window-y="-8"
-   inkscape:window-maximized="1"
+   inkscape:zoom="0.28771931"
+   inkscape:cx="78.145868"
+   inkscape:cy="214.81131"
+   inkscape:window-x="662"
+   inkscape:window-y="359"
+   inkscape:window-maximized="0"
    inkscape:current-layer="svg2" />
 
 <path
-   style="opacity:0.5;fill:#deaa87"
+   style="opacity:1;fill:#c87137;fill-opacity:1"
    id="path12"
    d="m 57.79865,478.764 35.852,-235.576 28.108,-16.83 27.495,17.278 c 0,0 31.173,237.983 28.246,236.556 -2.927,-1.427 -119.116,0.714 -119.701,-1.428 l 0,0 z"
    sodipodi:nodetypes="ccccsc"
