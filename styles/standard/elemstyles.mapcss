@@ -503,6 +503,11 @@ way[highway=unclassified] {
     width: 2;
     color: street#c0c0c0;
 }
+way[highway=escape] {
+    width: 3;
+    color: street#c0c0c0;
+    dashes: 3,3;
+}
 way[highway=road] {
     width: 2;
     casing-width: 0.5;
