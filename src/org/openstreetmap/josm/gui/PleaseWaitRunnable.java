@@ -41,8 +41,8 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      * Create the runnable object with a given message for the user.
      *
      * @param title message for the user
-     * @param ignoreException If true, exception will be propagated to calling code. If false then
-     * exception will be thrown directly in EDT. When this runnable is executed using executor framework
+     * @param ignoreException If true, exception will be silently ignored. If false then
+     * exception will be handled by showing a dialog. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
     public PleaseWaitRunnable(String title, boolean ignoreException) {
@@ -54,8 +54,8 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      *
      * @param parent the parent component for the please wait dialog. Must not be null.
      * @param title message for the user
-     * @param ignoreException If true, exception will be propagated to calling code. If false then
-     * exception will be thrown directly in EDT. When this runnable is executed using executor framework
+     * @param ignoreException If true, exception will be silently ignored. If false then
+     * exception will be handled by showing a dialog. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
      * @throws IllegalArgumentException thrown if parent is null
      */
@@ -71,8 +71,8 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      *
      * @param title message for the user
      * @param progressMonitor progress monitor
-     * @param ignoreException If true, exception will be propagated to calling code. If false then
-     * exception will be thrown directly in EDT. When this runnable is executed using executor framework
+     * @param ignoreException If true, exception will be silently ignored. If false then
+     * exception will be handled by showing a dialog. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
     public PleaseWaitRunnable(String title, ProgressMonitor progressMonitor, boolean ignoreException) {
