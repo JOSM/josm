@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -65,6 +66,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -76,7 +78,6 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * Layer displaying geottaged pictures.
@@ -387,10 +388,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         stopLoadThumbs();
         l.stopLoadThumbs();
 
-        ImageEntry selected = null;
-        if (l.currentPhoto >= 0) {
-            selected = l.data.get(l.currentPhoto);
-        }
+        final ImageEntry selected = l.currentPhoto >= 0 ? l.data.get(l.currentPhoto) : null;
 
         data.addAll(l.data);
         Collections.sort(data);
@@ -409,14 +407,19 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             }
         }
 
-        if (selected != null) {
-            for (int i = 0; i < data.size() ; i++) {
-                if (data.get(i) == selected) {
-                    currentPhoto = i;
-                    ImageViewerDialog.showImage(GeoImageLayer.this, data.get(i));
-                    break;
+        if (selected != null && !data.isEmpty()) {
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < data.size() ; i++) {
+                        if (selected.equals(data.get(i))) {
+                            currentPhoto = i;
+                            ImageViewerDialog.showImage(GeoImageLayer.this, data.get(i));
+                            break;
+                        }
+                    }
                 }
-            }
+            });
         }
 
         setName(l.getName());
@@ -1043,7 +1046,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     /**
      * Stop to load thumbnails.
-     * 
+     *
      * Can be called at any time to make sure that the
      * thumbnail loader is stopped.
      */
@@ -1056,7 +1059,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     /**
      * Called to signal that the loading of thumbnails has finished.
-     * 
+     *
      * Usually called from {@link ThumbsLoader} in another thread.
      */
     public void thumbsLoaded() {
