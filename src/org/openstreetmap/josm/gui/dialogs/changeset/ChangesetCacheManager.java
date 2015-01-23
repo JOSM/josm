@@ -149,7 +149,7 @@ public class ChangesetCacheManager extends JFrame {
         //-- help action
         pnl.add(new SideButton(
                 new ContextSensitiveHelpAction(
-                        HelpUtil.ht("/Dialog/ChangesetCacheManager"))
+                        HelpUtil.ht("/Dialog/ChangesetManager"))
         )
         );
 
@@ -287,7 +287,7 @@ public class ChangesetCacheManager extends JFrame {
         cp.add(buildButtonPanel(), BorderLayout.SOUTH);
 
         // the help context
-        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetCacheManager"));
+        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetManager"));
 
         // make the dialog respond to ESC
         getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "cancelAndClose");
@@ -552,7 +552,7 @@ public class ChangesetCacheManager extends JFrame {
                     ),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Dialog/ChangesetCacheManager#CanDownloadMyChangesets")
+                    HelpUtil.ht("/Dialog/ChangesetManager#CanDownloadMyChangesets")
             );
         }
 
