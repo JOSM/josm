@@ -4267,7 +4267,7 @@ node["openGeoDB:type"=Gemeinde],
 node["openGeoDB:type"=Ort],
 node["openGeoDB:type"=District],
 node["openGeoDB:location"=locality] {
-    icon-image: "place/settlement/town.png";
+    icon-image: "place/settlement/openGeoDB.png";
     set icon_z0;
     text: auto;
     set text_z0;
