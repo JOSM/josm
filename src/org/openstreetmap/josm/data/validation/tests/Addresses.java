@@ -57,7 +57,11 @@ public class Addresses extends Test {
             this(code, collection, message, null, null);
         }
         public AddressError(int code, Collection<OsmPrimitive> collection, String message, String description, String englishDescription) {
-            super(Addresses.this, Severity.WARNING, message, description, englishDescription, code, collection);
+            this(code, Severity.WARNING, collection, message, description, englishDescription);
+        }
+        public AddressError(int code, Severity severity, Collection<OsmPrimitive> collection, String message, String description,
+                String englishDescription) {
+            super(Addresses.this, severity, message, description, englishDescription, code, collection);
         }
     }
 
@@ -77,7 +81,8 @@ public class Addresses extends Test {
             }
         }
         if (list.size() > 1) {
-            // no warning if several relations have the same name, see #10945
+            Severity level;
+            // warning level only if several relations have different names, see #10945
             final String name = list.get(0).get("name");
             if (name == null || Utils.filter(list, new Predicate<Relation>() {
                 @Override
@@ -85,10 +90,14 @@ public class Addresses extends Test {
                     return name.equals(r.get("name"));
                 }
             }).size() < list.size()) {
-                List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(list);
-                errorList.add(0, p);
-                errors.add(new AddressError(MULTIPLE_STREET_RELATIONS, errorList, tr("Multiple associatedStreet relations")));
+                level = Severity.WARNING;
+            } else {
+                level = Severity.OTHER;
             }
+            List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(list);
+            errorList.add(0, p);
+            errors.add(new AddressError(MULTIPLE_STREET_RELATIONS, level, errorList,
+                    tr("Multiple associatedStreet relations"), null, null));
         }
         return list;
     }
