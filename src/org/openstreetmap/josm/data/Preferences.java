@@ -1683,13 +1683,6 @@ public class Preferences {
         }
 
         String[] obsolete = {
-                "validator.tests",                             // 01/2014 - can be removed end-2014. Replaced by validator.skip
-                "validator.testsBeforeUpload",                 // 01/2014 - can be removed end-2014. Replaced by validator.skipBeforeUpload
-                "validator.TagChecker.sources",                // 01/2014 - can be removed end-2014. Replaced by validator.TagChecker.source
-                "validator.TagChecker.usedatafile",            // 01/2014 - can be removed end-2014. Replaced by validator.TagChecker.source
-                "validator.TagChecker.useignorefile",          // 01/2014 - can be removed end-2014. Replaced by validator.TagChecker.source
-                "validator.TagChecker.usespellfile",           // 01/2014 - can be removed end-2014. Replaced by validator.TagChecker.source
-                "validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.sources" // 01/2014 - can be removed end-2014. Replaced by validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.entries
         };
         for (String key : obsolete) {
             if (settingsMap.containsKey(key)) {
