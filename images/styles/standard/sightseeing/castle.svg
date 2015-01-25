@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="9"
+   width="160"
+   height="90"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="02.svg">
+   sodipodi:docname="castle.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="64"
-     inkscape:cx="6.6172147"
-     inkscape:cy="4.8883971"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="151.69799"
+     inkscape:cy="8.3599243"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -65,16 +65,16 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1043.3622)">
+     transform="translate(0,-962.3622)">
     <path
        style="fill:#784421;fill-opacity:1;stroke:none"
-       d="m 1,1052.3622 0,-6.5 -1,0 0,-2.5 1,0 0,1 1,0 0,-1 1,0 0,1 1,0 0,-1 1,0 0,2.5 -1,0 0,2.5 2,0 2,-3 2,3 2,0 0,-2.5 -1,0 0,-2.5 1,0 0,1 1,0 0,-1 1,0 0,1 1,0 0,-1 1,0 0,2.5 -1,0 0,6.5 z"
+       d="m 10,1052.3622 0,-65 -10,0 0,-25 10,0 0,10 10,0 0,-10 10,0 0,10 10,0 0,-10 10,0 0,25 -10,0 0,25 20,0 20,-30 20,30 20,0 0,-25 -10,0 0,-25 10,0 0,10 10,0 0,-10 10,0 0,10 10,0 0,-10 10,0 0,25 -10,0 0,65 z"
        id="path3004"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccc" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 7,1052.3622 0,-2 1,-1 1,1 0,2 z"
+       d="m 70,1052.3622 0,-20 10,-10 10,10 0,20 z"
        id="path3774"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
