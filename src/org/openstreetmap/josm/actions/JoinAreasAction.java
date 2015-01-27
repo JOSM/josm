@@ -462,6 +462,12 @@ public class JoinAreasAction extends JosmAction {
         //user canceled, do nothing.
 
         try {
+            // see #11026 - Because <ways> is a dynamic filtered (on ways) of a filtered (on selected objects) collection,
+            // retrieve effective dataset before joining the ways (which affects the selection, thus, the <ways> collection)
+            // Dataset retrieving allows to call this code without relying on Main.getCurrentDataSet(), thus, on a mapview instance
+            DataSet ds = ways.iterator().next().getDataSet();
+
+            // Do the job of joining areas
             JoinAreasResult result = joinAreas(areas);
 
             if (result.hasChanges) {
@@ -477,7 +483,6 @@ public class JoinAreasAction extends JosmAction {
                     allWays.add(pol.outerWay);
                     allWays.addAll(pol.innerWays);
                 }
-                DataSet ds = ways.iterator().next().getDataSet();
                 if (ds != null) {
                     ds.setSelected(allWays);
                     Main.map.mapView.repaint();
