@@ -26,7 +26,7 @@
 	<xs:simpleType name="type">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="wms" />
-            <xs:enumeration value="wms_endpoint" />
+			<xs:enumeration value="wms_endpoint" />
 			<xs:enumeration value="tms" />
 			<xs:enumeration value="html" />
 			<xs:enumeration value="bing" />
@@ -598,6 +598,8 @@
 					<xs:all>
 						<!-- The name of the imagery source -->
 						<xs:element name="name" minOccurs="1" maxOccurs="1" type="xs:string" />
+						<!-- A description of the imagery source -->
+						<xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string" />
 						<!-- A unique id for the imagery source -->
 						<xs:element name="id" minOccurs="0" maxOccurs="1" type="tns:id" />
 						<!-- The type. Can be tms, wms and html. In addition, there are the special types bing and scanex 
@@ -637,7 +639,19 @@
 						<xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />
 						<!-- A base64-encoded image that is displayed as menu/toolbar icon -->
 						<xs:element name="icon" minOccurs="0" maxOccurs="1" type="xs:string" />
+						<xs:element name="mirror" minOccurs="0">
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
+									<xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:string" />
+									<xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
+									<xs:element name="min-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+									<xs:element name="max-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
 					</xs:all>
+					<xs:attribute name="lastcheck" type="xs:date" use="optional" />
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
