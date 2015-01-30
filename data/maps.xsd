@@ -659,7 +659,7 @@
 							</xs:complexType>
 						</xs:element>
 					</xs:all>
-					<xs:attribute name="lastcheck" type="xs:date" use="optional" />
+					<xs:attribute name="last-check" type="xs:date" use="optional" />
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
