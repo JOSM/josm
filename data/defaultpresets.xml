@@ -4141,9 +4141,9 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=pharmacy" />
             <space />
             <key key="amenity" value="pharmacy" />
-            <text key="name" text="Name" />
-            <combo key="dispensing" text="Dispensing" values="yes,no" default="no" />
-            <reference ref="oh" />
+            <reference ref="name_operator_oh" />
+            <combo key="dispensing" text="Dispensing" values="yes,no" />
+            <combo key="wheelchair" text="Wheelchairs" values="no,limited,yes" />
             <reference ref="link_contact" />
         </item> <!-- Pharmacy -->
         <item name="Hearing Aids" icon="presets/hearing_aids.png" type="node,closedway" preset_name_label="true">
