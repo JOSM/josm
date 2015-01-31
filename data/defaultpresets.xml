@@ -2376,7 +2376,7 @@
                   zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=fuel" />
             <space />
             <key key="amenity" value="fuel" />
-            <combo key="brand" text="Brand" values="Agip,Aral,Avia,BP,Chevron,Citgo,Esso,Exxon,Gulf,Mobil,OMV,Petro-Canada,Pioneer,Q8,Repsol,Shell,Sunoco,Statoil,Tamoil,Texaco,Total,Independent" values_searchable="true" />
+            <combo key="brand" text="Brand" values="Agip,Aral,Avia,BP,Chevron,Citgo,Eni,Esso,Exxon,Gulf,Mobil,OMV,Petro-Canada,Pioneer,Q8,Repsol,Shell,Socar,Statoil,Sunoco,Tamoil,Texaco,Total,Independent" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
                 <text key="operator" text="Operator" />
