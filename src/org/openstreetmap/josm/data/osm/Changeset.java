@@ -12,6 +12,7 @@ import java.util.Map;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Represents a single changeset in JOSM. For now its only used during
@@ -20,8 +21,8 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
  */
 public final class Changeset implements Tagged {
 
-    /** The maximum changeset comment text length allowed by API 0.6 **/
-    public static final int MAX_COMMENT_LENGTH = 255;
+    /** The maximum changeset tag length allowed by API 0.6 **/
+    public static final int MAX_CHANGESET_TAG_LENGTH = 255;
 
     /** the changeset id */
     private int id;
@@ -190,6 +191,12 @@ public final class Changeset implements Tagged {
 
     @Override
     public void setKeys(Map<String, String> keys) {
+        CheckParameterUtil.ensureParameterNotNull(keys, "keys");
+        for (String value : keys.values()) {
+            if (value != null && value.length() > MAX_CHANGESET_TAG_LENGTH) {
+                throw new IllegalArgumentException("Changeset tag value is too long: "+value);
+            }
+        }
         this.tags = keys;
     }
 
@@ -203,6 +210,10 @@ public final class Changeset implements Tagged {
 
     @Override
     public void put(String key, String value) {
+        CheckParameterUtil.ensureParameterNotNull(key, "key");
+        if (value != null && value.length() > MAX_CHANGESET_TAG_LENGTH) {
+            throw new IllegalArgumentException("Changeset tag value is too long: "+value);
+        }
         this.tags.put(key, value);
     }
 
