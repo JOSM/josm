@@ -312,6 +312,9 @@
   <chunk id="link_contact">
     <preset_link preset_name="Contact (Common Schema)" />
   </chunk>
+  <chunk id="link_address">
+    <preset_link preset_name="Addresses" />
+  </chunk>
   <!--  Groups -->
   <group name="Highways" icon="presets/way_secondary.png">
     <group name="Streets" icon="presets/way_secondary.png">
@@ -2217,7 +2220,7 @@
                 <check key="aerialway:heating" text="Has heating?" />
             </optional>
         </item> <!-- Cable Car -->
-		<item name="Chair Lift" icon="presets/chair_lift.png" type="way" preset_name_label="true">
+        <item name="Chair Lift" icon="presets/chair_lift.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=chair_lift"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:aerialway=chair_lift" />
             <space />
@@ -3461,6 +3464,12 @@
             <space />
             <key key="amenity" value="cinema" />
             <reference ref="name_operator_oh" />
+			<combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
+            <check key="drive_in" text="Drive-in theater" />
+            <check key="cinema:3D" text="3D" />
+            <text key="screen" text="Number of screens" />
+            <text key="min_age" text="Minimum age" />
+			<reference ref="link_address" />
             <reference ref="link_contact" />
         </item> <!-- Movie Theater/Cinema -->
         <item name="Zoo" icon="presets/zoo.png" type="node,closedway" preset_name_label="true">
@@ -6314,7 +6323,7 @@
             <reference ref="link_contact" />
         </item> <!-- Pawnbroker -->
     </group> <!-- Cash -->
-    <group name="Home decoration" icon="styles/standard/shop/interior_decoration.svg">	
+    <group name="Home decoration" icon="styles/standard/shop/interior_decoration.svg">
         <item name="Furniture" icon="styles/standard/shop/furniture.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=furniture"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=furniture"
