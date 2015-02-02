@@ -5510,7 +5510,7 @@
                 <reference ref="power_generator" />
                 <reference ref="power_output" />
             </item> <!-- Osmotic Power Generator -->
-            <item name="Geothermal Power Generator" icon="presets/power_source-water.svg" type="node,closedway,relation" preset_name_label="true">
+            <item name="Geothermal Power Generator" icon="presets/power_source-geothermal.svg" type="node,closedway,relation" preset_name_label="true">
                 <key key="generator:source" value="geothermal" />
                 <reference ref="power_generator" />
                 <combo key="generator:type" text="Generator Type" values="heat_pump,steam_turbine" />
