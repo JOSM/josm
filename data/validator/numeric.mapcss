@@ -140,15 +140,18 @@ way[incline][incline !~ /^(up|down|-?([0-9]+?(\.[1-9]%)?|100)[%°]?)$/] {
   throwWarning: tr("{0} must be a numeric value", "{0.key}");
 }
 
-/* lanes* must be an integer positive number only, see #10837 */
-way[highway][lanes][lanes !~ /^[1-9]([0-9]*)$/],
-way[highway]["lanes:backward"]["lanes:backward" !~ /^[1-9]([0-9]*)$/],
-way[highway]["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/] {
-  throwError: tr("{0} must be a positive integer number", "{1.key}");
+/* must be an integer positive number only and not 0, see #10837 (lanes), #11055 (screen) */
+way[lanes][lanes !~ /^[1-9]([0-9]*)$/][highway],
+way["lanes:backward"]["lanes:backward" !~ /^[1-9]([0-9]*)$/][highway],
+way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
+*[screen][screen !~ /^[1-9]([0-9]*)$/][amenity=cinema] {
+  throwError: tr("{0} must be a positive integer number", "{0.key}");
   assertMatch: "way highway=residential lanes=-1";
   assertMatch: "way highway=residential lanes=5.5";
   assertMatch: "way highway=residential lanes=1;2";
   assertMatch: "way highway=residential lanes:forward=-1";
   assertMatch: "way highway=residential lanes:backward=-1";
   assertNoMatch: "way highway=residential lanes=1";
+  assertMatch: "node amenity=cinema screen=led";
+  assertNoMatch: "node amenity=cinema screen=8";
 }
