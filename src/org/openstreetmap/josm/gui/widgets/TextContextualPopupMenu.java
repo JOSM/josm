@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.widgets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -19,6 +20,7 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
+import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
@@ -29,6 +31,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * A popup menu designed for text components. It displays the following actions:
  * <ul>
  * <li>Undo</li>
+ * <li>Redo</li>
  * <li>Cut</li>
  * <li>Copy</li>
  * <li>Paste</li>
@@ -42,10 +45,22 @@ public class TextContextualPopupMenu extends JPopupMenu {
     private static final String EDITABLE = "editable";
 
     protected JTextComponent component = null;
-    protected UndoAction undoAction = null;
+    protected final UndoAction undoAction = new UndoAction();
+    protected final RedoAction redoAction = new RedoAction();
+    protected final UndoManager undo = new UndoManager();
+
+    protected final UndoableEditListener undoEditListener = new UndoableEditListener() {
+        @Override
+        public void undoableEditHappened(UndoableEditEvent e) {
+            undo.addEdit(e.getEdit());
+            undoAction.updateUndoState();
+            redoAction.updateRedoState();
+        }
+    };
 
     protected final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-        @Override public void propertyChange(PropertyChangeEvent evt) {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
             if (EDITABLE.equals(evt.getPropertyName())) {
                 removeAll();
                 addMenuEntries();
@@ -70,10 +85,13 @@ public class TextContextualPopupMenu extends JPopupMenu {
         if (component != null && !isAttached()) {
             this.component = component;
             if (component.isEditable()) {
-                undoAction = new UndoAction();
-                component.getDocument().addUndoableEditListener(undoAction);
-                component.getInputMap().put(
-                        KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), undoAction);
+                component.getDocument().addUndoableEditListener(undoEditListener);
+                if (!GraphicsEnvironment.isHeadless()) {
+                    component.getInputMap().put(
+                            KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), undoAction);
+                    component.getInputMap().put(
+                            KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), redoAction);
+                }
             }
             addMenuEntries();
             component.addPropertyChangeListener(EDITABLE, propertyChangeListener);
@@ -84,6 +102,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
     private void addMenuEntries() {
         if (component.isEditable()) {
             add(new JMenuItem(undoAction));
+            add(new JMenuItem(redoAction));
             addSeparator();
             addMenuEntry(component, tr("Cut"), DefaultEditorKit.cutAction, null);
         }
@@ -105,11 +124,8 @@ public class TextContextualPopupMenu extends JPopupMenu {
         if (isAttached()) {
             component.removePropertyChangeListener(EDITABLE, propertyChangeListener);
             removeAll();
-            if (undoAction != null) {
-                component.getDocument().removeUndoableEditListener(undoAction);
-                undoAction = null;
-            }
-            this.component = null;
+            component.getDocument().removeUndoableEditListener(undoEditListener);
+            component = null;
         }
         return this;
     }
@@ -163,9 +179,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
         }
     }
 
-    protected static class UndoAction extends AbstractAction implements UndoableEditListener {
-
-        private final UndoManager undoManager = new UndoManager();
+    protected class UndoAction extends AbstractAction {
 
         /**
          * Constructs a new {@code UndoAction}.
@@ -176,21 +190,61 @@ public class TextContextualPopupMenu extends JPopupMenu {
         }
 
         @Override
-        public void undoableEditHappened(UndoableEditEvent e) {
-            undoManager.addEdit(e.getEdit());
-            setEnabled(undoManager.canUndo());
-        }
-
-        @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                undoManager.undo();
+                undo.undo();
             } catch (CannotUndoException ex) {
                 if (Main.isTraceEnabled()) {
                     Main.trace(ex.getMessage());
                 }
             } finally {
-                setEnabled(undoManager.canUndo());
+                updateUndoState();
+                redoAction.updateRedoState();
+            }
+        }
+
+        public void updateUndoState() {
+            if (undo.canUndo()) {
+                setEnabled(true);
+                putValue(Action.NAME, undo.getUndoPresentationName());
+            } else {
+                setEnabled(false);
+                putValue(Action.NAME, tr("Undo"));
+            }
+        }
+    }
+
+    protected class RedoAction extends AbstractAction {
+
+        /**
+         * Constructs a new {@code RedoAction}.
+         */
+        public RedoAction() {
+            super(tr("Redo"));
+            setEnabled(false);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                undo.redo();
+            } catch (CannotRedoException ex) {
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ex.getMessage());
+                }
+            } finally {
+                updateRedoState();
+                undoAction.updateUndoState();
+            }
+        }
+
+        public void updateRedoState() {
+            if (undo.canRedo()) {
+                setEnabled(true);
+                putValue(Action.NAME, undo.getRedoPresentationName());
+            } else {
+                setEnabled(false);
+                putValue(Action.NAME, tr("Redo"));
             }
         }
     }
