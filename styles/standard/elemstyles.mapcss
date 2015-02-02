@@ -2861,25 +2861,25 @@ node[tourism=information] {
     set icon_z17;
     text: auto;
 }
-node[information=guidepost] {
+node[tourism=information][information=guidepost] {
     icon-image: "misc/information/guidepost.png";
     set icon_z17;
     text: auto;
 }
-area[information=office] {
+area[tourism=information][information=office] {
     fill-color: tourism#e180a2;
 }
-node[information=office] {
+node[tourism=information][information=office] {
     icon-image: "misc/information/informationoffice.png";
     set icon_z17;
     text: auto;
 }
-node[information=map] {
+node[tourism=information][information=map] {
     icon-image: "misc/information/map.png";
     set icon_z17;
     text: auto;
 }
-node[information=board] {
+node[tourism=information][information=board] {
     icon-image: "misc/information/board.png";
     set icon_z17;
     text: auto;

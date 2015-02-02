@@ -92,6 +92,7 @@ way[junction                   ][!highway][junction!=yes],
 /* {0.key} without {1.tag} */
 *[fence_type                   ][barrier!=fence],
 *[recycling_type               ][amenity!=recycling],
+*[information                  ][tourism!=information],
 *[board_type                   ][information!=board],
 *[shelter_type                 ][amenity!=shelter],
 *[lamp_type                    ][highway!=street_lamp],
@@ -106,6 +107,7 @@ way[junction                   ][!highway][junction!=yes],
 }
 
 /* {0.tag} without {1.key} */
+*[tourism=information][!information],
 *[aeroway=terminal][!building],
 *[power=generator][!generator:source],
 *[amenity=place_of_worship][!religion] {
