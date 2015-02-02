@@ -1167,9 +1167,13 @@ node[generator:source=wind] {
 node[generator:source=hydro],
 node[generator:source=tidal],
 node[generator:source=wave],
-node[generator:source=osmotic],
-node[generator:source=geothermal] {
+node[generator:source=osmotic] {
     icon-image: "presets/power_source-water.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=geothermal] {
+    icon-image: "presets/power_source-geothermal.svg";
     set icon_z17;
     text: auto;
 }
