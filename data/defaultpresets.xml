@@ -3464,12 +3464,12 @@
             <space />
             <key key="amenity" value="cinema" />
             <reference ref="name_operator_oh" />
-			<combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
+            <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
             <check key="drive_in" text="Drive-in theater" />
             <check key="cinema:3D" text="3D" />
             <text key="screen" text="Number of screens" />
             <text key="min_age" text="Minimum age" />
-			<reference ref="link_address" />
+            <reference ref="link_address" />
             <reference ref="link_contact" />
         </item> <!-- Movie Theater/Cinema -->
         <item name="Zoo" icon="presets/zoo.png" type="node,closedway" preset_name_label="true">
@@ -6815,7 +6815,7 @@
             <key key="place" value="country" />
             <reference ref="name_wikipedia" />
         </item> <!-- Country -->
-        <item name="State" icon="styles/standard/place/settlement/capital.png" type="node,closedway" preset_name_label="true">
+        <item name="State" icon="styles/standard/place/settlement/capital.png" name_context="place" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=state"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=state"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:place=state"
@@ -7649,7 +7649,7 @@
                 <text key="addr:district" text="District" use_last_as_default="force" match="key" />
                 <text key="addr:province" text="Province" use_last_as_default="force" match="key" />
                 <!--  US States as defined in ISO 3166-2 -->
-                <combo key="addr:state" text="State" values="AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,DC,AS,GU,MP,PR,UM,VI" use_last_as_default="force" match="key" />
+                <combo key="addr:state" text="State" text_context="addr:" values="AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,DC,AS,GU,MP,PR,UM,VI" use_last_as_default="force" match="key" />
             </optional>
         </item> <!-- Addresses -->
         <item name="Address Interpolation" icon="presets/interpolation.png" type="way" preset_name_label="true">
