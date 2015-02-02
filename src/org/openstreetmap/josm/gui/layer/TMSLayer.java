@@ -374,7 +374,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
         if (info.getImageryType() == ImageryType.TMS) {
             checkUrl(info.getUrl());
-            TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getId(), info.getMinZoom(), info.getMaxZoom());
+            TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getId(), info.getMinZoom(), info.getMaxZoom(),
+                    info.getCookies());
             info.setAttribution(t);
             return t;
         } else if (info.getImageryType() == ImageryType.BING)

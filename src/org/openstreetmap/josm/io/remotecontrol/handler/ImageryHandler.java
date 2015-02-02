@@ -145,8 +145,9 @@ public class ImageryHandler extends RequestHandler {
     protected void validateRequest() throws RequestHandlerBadRequestException {
         String url = args.get("url");
         String type = args.get("type");
+        String cookies = args.get("cookies");
         try {
-            ImageryLayer.create(new ImageryInfo(null, url, type, null, null));
+            ImageryLayer.create(new ImageryInfo(null, url, type, null, cookies));
         } catch (IllegalArgumentException e) {
             throw new RequestHandlerBadRequestException(e.getMessage(), e);
         }
