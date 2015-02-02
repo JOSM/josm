@@ -17,7 +17,7 @@ import org.openstreetmap.josm.Main;
 
 /**
  * Subclass of {@link JTextField} that:<ul>
- * <li>adds a "native" context menu (cut/copy/paste/select all)</li>
+ * <li>adds a "native" context menu (undo/cut/copy/paste/select all)</li>
  * <li>adds an optional "hint" displayed when no text has been entered</li>
  * <li>disables the global advanced key press detector when focused</li>
  * <br>This class must be used everywhere in core and plugins instead of {@code JTextField}.

@@ -3,7 +3,9 @@ package org.openstreetmap.josm.gui.widgets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -12,6 +14,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.DefaultEditorKit;
@@ -36,12 +39,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class TextContextualPopupMenu extends JPopupMenu {
 
+    private static final String EDITABLE = "editable";
+
     protected JTextComponent component = null;
     protected UndoAction undoAction = null;
 
     protected final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
         @Override public void propertyChange(PropertyChangeEvent evt) {
-            if ("editable".equals(evt.getPropertyName())) {
+            if (EDITABLE.equals(evt.getPropertyName())) {
                 removeAll();
                 addMenuEntries();
             }
@@ -67,9 +72,11 @@ public class TextContextualPopupMenu extends JPopupMenu {
             if (component.isEditable()) {
                 undoAction = new UndoAction();
                 component.getDocument().addUndoableEditListener(undoAction);
+                component.getInputMap().put(
+                        KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), undoAction);
             }
             addMenuEntries();
-            component.addPropertyChangeListener("editable", propertyChangeListener);
+            component.addPropertyChangeListener(EDITABLE, propertyChangeListener);
         }
         return this;
     }
@@ -96,7 +103,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
      */
     protected TextContextualPopupMenu detach() {
         if (isAttached()) {
-            component.removePropertyChangeListener("editable", propertyChangeListener);
+            component.removePropertyChangeListener(EDITABLE, propertyChangeListener);
             removeAll();
             if (undoAction != null) {
                 component.getDocument().removeUndoableEditListener(undoAction);
@@ -160,6 +167,9 @@ public class TextContextualPopupMenu extends JPopupMenu {
 
         private final UndoManager undoManager = new UndoManager();
 
+        /**
+         * Constructs a new {@code UndoAction}.
+         */
         public UndoAction() {
             super(tr("Undo"));
             setEnabled(false);
@@ -176,7 +186,9 @@ public class TextContextualPopupMenu extends JPopupMenu {
             try {
                 undoManager.undo();
             } catch (CannotUndoException ex) {
-                // Ignored
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ex.getMessage());
+                }
             } finally {
                 setEnabled(undoManager.canUndo());
             }
