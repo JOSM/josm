@@ -7716,7 +7716,7 @@
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
         </item> <!-- Contact (Schema with 'contact:*' Prefix) -->
-        <item name="Description" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Description" icon="styles/standard/misc/description.svg" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:description"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:description"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:description"
