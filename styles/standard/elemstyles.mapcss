@@ -3908,11 +3908,19 @@ area[natural=sand] {
 area[natural=bare_rock] {
     fill-color: bare_rock#f8f8c7;
 }
+area[natural=rock] {
+    fill-color: stone#f8f8c7;
+}
+node[natural=rock] {
+    icon-image: "misc/rock.svg";
+    set icon_z17;
+    text: auto;
+}
 area[natural=stone] {
     fill-color: stone#f8f8c7;
 }
 node[natural=stone] {
-    icon-image: "misc/no_icon.png";
+    icon-image: "misc/stone.svg";
     set icon_z17;
     text: auto;
 }
