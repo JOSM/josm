@@ -45,6 +45,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
     private static final String EDITABLE = "editable";
 
     protected JTextComponent component = null;
+    protected boolean undoRedo;
     protected final UndoAction undoAction = new UndoAction();
     protected final RedoAction redoAction = new RedoAction();
     protected final UndoManager undo = new UndoManager();
@@ -81,10 +82,11 @@ public class TextContextualPopupMenu extends JPopupMenu {
      * @return {@code this}
      * @see #detach()
      */
-    protected TextContextualPopupMenu attach(JTextComponent component) {
+    protected TextContextualPopupMenu attach(JTextComponent component, boolean undoRedo) {
         if (component != null && !isAttached()) {
             this.component = component;
-            if (component.isEditable()) {
+            this.undoRedo = undoRedo;
+            if (undoRedo && component.isEditable()) {
                 component.getDocument().addUndoableEditListener(undoEditListener);
                 if (!GraphicsEnvironment.isHeadless()) {
                     component.getInputMap().put(
@@ -101,9 +103,11 @@ public class TextContextualPopupMenu extends JPopupMenu {
 
     private void addMenuEntries() {
         if (component.isEditable()) {
-            add(new JMenuItem(undoAction));
-            add(new JMenuItem(redoAction));
-            addSeparator();
+            if (undoRedo) {
+                add(new JMenuItem(undoAction));
+                add(new JMenuItem(redoAction));
+                addSeparator();
+            }
             addMenuEntry(component, tr("Cut"), DefaultEditorKit.cutAction, null);
         }
         addMenuEntry(component, tr("Copy"), DefaultEditorKit.copyAction, "copy");
@@ -124,7 +128,9 @@ public class TextContextualPopupMenu extends JPopupMenu {
         if (isAttached()) {
             component.removePropertyChangeListener(EDITABLE, propertyChangeListener);
             removeAll();
-            component.getDocument().removeUndoableEditListener(undoEditListener);
+            if (undoRedo) {
+                component.getDocument().removeUndoableEditListener(undoEditListener);
+            }
             component = null;
         }
         return this;
@@ -133,12 +139,13 @@ public class TextContextualPopupMenu extends JPopupMenu {
     /**
      * Creates a new {@link TextContextualPopupMenu} and enables it for the given text component.
      * @param component The component that will display the menu and handle its actions.
+     * @param undoRedo Enables or not Undo/Redo feature. Not recommended for table cell editors, unless each cell provides its own editor
      * @return The {@link PopupMenuLauncher} responsible of displaying the popup menu.
      *         Call {@link #disableMenuFor} with this object if you want to disable the menu later.
-     * @see #disableMenuFor(JTextComponent, PopupMenuLauncher)
+     * @see #disableMenuFor
      */
-    public static PopupMenuLauncher enableMenuFor(JTextComponent component) {
-        PopupMenuLauncher launcher = new PopupMenuLauncher(new TextContextualPopupMenu().attach(component), true);
+    public static PopupMenuLauncher enableMenuFor(JTextComponent component, boolean undoRedo) {
+        PopupMenuLauncher launcher = new PopupMenuLauncher(new TextContextualPopupMenu().attach(component, undoRedo), true);
         component.addMouseListener(launcher);
         return launcher;
     }
@@ -147,7 +154,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
      * Disables the {@link TextContextualPopupMenu} attached to the given popup menu launcher and text component.
      * @param component The component that currently displays the menu and handles its actions.
      * @param launcher The {@link PopupMenuLauncher} obtained via {@link #enableMenuFor}.
-     * @see #enableMenuFor(JTextComponent)
+     * @see #enableMenuFor
      */
     public static void disableMenuFor(JTextComponent component, PopupMenuLauncher launcher) {
         if (launcher.getMenu() instanceof TextContextualPopupMenu) {

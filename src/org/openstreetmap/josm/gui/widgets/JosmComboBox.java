@@ -180,7 +180,8 @@ public class JosmComboBox<E> extends JComboBox<E> {
         private JTextComponent component;
         private PopupMenuLauncher launcher;
 
-        @Override public void propertyChange(PropertyChangeEvent evt) {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
             if ("editable".equals(evt.getPropertyName())) {
                 if (evt.getNewValue().equals(true)) {
                     enableMenu();
@@ -201,7 +202,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
                 if (editorComponent instanceof JTextComponent) {
                     component = (JTextComponent) editorComponent;
                     component.addMouseListener(this);
-                    launcher = TextContextualPopupMenu.enableMenuFor(component);
+                    launcher = TextContextualPopupMenu.enableMenuFor(component, true);
                 }
             }
         }

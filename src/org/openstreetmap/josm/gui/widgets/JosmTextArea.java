@@ -85,7 +85,7 @@ public class JosmTextArea extends JTextArea implements FocusListener {
      */
     public JosmTextArea(Document doc, String text, int rows, int columns) {
         super(doc, text, rows, columns);
-        TextContextualPopupMenu.enableMenuFor(this);
+        TextContextualPopupMenu.enableMenuFor(this, true);
         addFocusListener(this);
     }
 
