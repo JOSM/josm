@@ -7230,7 +7230,17 @@
             <key key="natural" value="bare_rock" />
             <text key="name" text="Name" />
         </item> <!-- Bare Rock -->
-        <item name="Stone" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Rock" icon="styles/standard/misc/rock.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=rock" />
+            <label text="A notable rock or group of rocks, with at least one of them firmly attached to the underlying bedrock." />
+            <space />
+            <key key="natural" value="rock" />
+            <reference ref="name_wikipedia" />
+            <optional>
+                <check key="tourism" text="Tourism attraction" value_on="attraction" disable_off="true" />
+            </optional>
+        </item> <!-- Rock -->
+        <item name="Stone" icon="styles/standard/misc/stone.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=stone"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=stone"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=stone"
