@@ -44,8 +44,29 @@ public class JosmTextField extends JTextField implements FocusListener {
      * @exception IllegalArgumentException if <code>columns</code> &lt; 0
      */
     public JosmTextField(Document doc, String text, int columns) {
+        this(doc, text, columns, true);
+    }
+
+    /**
+     * Constructs a new <code>JosmTextField</code> that uses the given text
+     * storage model and the given number of columns.
+     * This is the constructor through which the other constructors feed.
+     * If the document is <code>null</code>, a default model is created.
+     *
+     * @param doc  the text storage to use; if this is <code>null</code>,
+     *      a default will be provided by calling the
+     *      <code>createDefaultModel</code> method
+     * @param text  the initial string to display, or <code>null</code>
+     * @param columns  the number of columns to use to calculate
+     *   the preferred width &gt;= 0; if <code>columns</code>
+     *   is set to zero, the preferred width will be whatever
+     *   naturally results from the component implementation
+     * @param undoRedo Enables or not Undo/Redo feature. Not recommended for table cell editors, unless each cell provides its own editor
+     * @exception IllegalArgumentException if <code>columns</code> &lt; 0
+     */
+    public JosmTextField(Document doc, String text, int columns, boolean undoRedo) {
         super(doc, text, columns);
-        TextContextualPopupMenu.enableMenuFor(this);
+        TextContextualPopupMenu.enableMenuFor(this, undoRedo);
         // Fix minimum size when columns are specified
         if (columns > 0) {
             setMinimumSize(getPreferredSize());

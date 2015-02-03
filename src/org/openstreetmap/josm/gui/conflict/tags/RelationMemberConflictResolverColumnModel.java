@@ -61,7 +61,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
 
     protected final void createColumns() {
 
-        AutoCompletingTextField roleEditor = new AutoCompletingTextField();
+        AutoCompletingTextField roleEditor = new AutoCompletingTextField(0, false);
         RelationMemberConflictDecisionRenderer decisionRenderer = new RelationMemberConflictDecisionRenderer();
         RelationMemberConflictDecisionEditor decisionEditor = new RelationMemberConflictDecisionEditor();
 

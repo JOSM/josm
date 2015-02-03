@@ -31,7 +31,7 @@ public class JosmEditorPane extends JEditorPane {
      * The document model is set to <code>null</code>.
      */
     public JosmEditorPane() {
-        TextContextualPopupMenu.enableMenuFor(this);
+        TextContextualPopupMenu.enableMenuFor(this, true);
     }
 
     /**

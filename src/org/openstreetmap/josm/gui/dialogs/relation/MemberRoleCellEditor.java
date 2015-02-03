@@ -29,7 +29,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
     public MemberRoleCellEditor(DataSet ds, Relation relation) {
         this.ds = ds;
         this.relation = relation;
-        editor = new AutoCompletingTextField();
+        editor = new AutoCompletingTextField(0, false);
         editor.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
         autoCompletionList = new AutoCompletionList();
         editor.setAutoCompletionList(autoCompletionList);
