@@ -378,3 +378,16 @@ way[sidewalk=yes] {
   suggestAlternative: "protect_class";
   fixChangeKey: "protected_class => protect_class";
 }
+
+/* see #11070 */
+*[lock=unknown],
+*[hide=unknown],
+*[shelter=unknown],
+*[access=unknown],
+*[capacity:parent=unknown],
+*[capacity:women=unknown],
+*[capacity:disabled=unknown],
+*[crossing=unknown],
+*[foot=unknown] {
+  throwOther: tr("Unspecific tag {0}", "{0.tag}");
+}
