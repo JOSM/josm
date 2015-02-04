@@ -140,7 +140,7 @@
     <chunk id="internet_smoking_wheelchair">
         <reference ref="internet" />
         <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" />
-        <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
+        <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
     </chunk>
     <chunk id="optional_height">
         <optional>
@@ -865,7 +865,7 @@
                 <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" />
                 <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
-                <combo key="wheelchair" text="Wheelchairs" values="unknown,yes,official,no" />
+                <combo key="wheelchair" text="Wheelchairs" values="yes,designated,limited,no" />
                 <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" />
                 <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <!-- <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" /> -->
@@ -1400,7 +1400,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=kerb" />
             <key key="barrier" value="kerb" />
             <reference ref="optional_height" />
-            <combo key="wheelchair" text="Wheelchairs" values="no,limited,yes" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
         </item> <!-- Kerb -->
         <separator/> <!-- *** Access *** -->
         <item name="Entrance (Barrier Opening)" icon="styles/standard/vehicle/entrance.png" type="node" preset_name_label="true">
@@ -2712,7 +2712,7 @@
             <check key="bench" text="Bench" />
             <check key="shelter" text="Shelter" />
             <check key="covered" text="Covered" />
-            <combo key="wheelchair" text="Wheelchair" values="yes,no,limited,only" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
             <optional>
                 <text key="ref" text="Reference" />
                 <text key="uic_ref" text="UIC reference" />
@@ -2760,7 +2760,7 @@
             <key key="railway" value="subway_entrance" />
             <optional>
                 <text key="name" text="Name" />
-                <check key="wheelchair" text="Wheelchair" />
+                <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
                 <check key="bicycle" text="Bicycle" />
             </optional>
         </item> <!-- Subway Entrance -->
@@ -3281,8 +3281,7 @@
             <key key="amenity" value="nightclub" />
             <reference ref="name_operator_oh" />
             <space />
-            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" />
-            <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
+            <reference ref="internet_smoking_wheelchair" />
             <space />
             <reference ref="contact" />
         </item> <!-- Night Club -->
@@ -3464,7 +3463,7 @@
             <space />
             <key key="amenity" value="cinema" />
             <reference ref="name_operator_oh" />
-            <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
             <check key="drive_in" text="Drive-in theater" />
             <check key="cinema:3D" text="3D" />
             <text key="screen" text="Number of screens" />
@@ -3563,8 +3562,7 @@
             <key key="amenity" value="brothel" />
             <reference ref="name_operator_oh" />
             <space />
-            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" />
-            <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
+            <reference ref="internet_smoking_wheelchair" />
             <space />
             <reference ref="contact" />
         </item> <!-- Brothel -->
@@ -4152,7 +4150,7 @@
             <key key="amenity" value="pharmacy" />
             <reference ref="name_operator_oh" />
             <combo key="dispensing" text="Dispensing" values="yes,no" />
-            <combo key="wheelchair" text="Wheelchairs" values="no,limited,yes" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
             <reference ref="link_contact" />
         </item> <!-- Pharmacy -->
         <item name="Hearing Aids" icon="presets/hearing_aids.png" type="node,closedway" preset_name_label="true">
@@ -4234,7 +4232,7 @@
                 <reference ref="fee" />
                 <text key="operator" text="Operator" />
                 <combo key="toilets:position" text="Usage Position" values="seated,seated;urinal,squat,urinal" />
-                <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
+                <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
             </optional>
         </item> <!-- Toilets/Restrooms -->
         <item name="Shower" icon="styles/standard/service/shower.svg" type="node,closedway" preset_name_label="true">
@@ -4247,7 +4245,7 @@
                 <text key="description" text="Description" />
                 <combo key="fee" text="Fee" values="yes,no" />
                 <text key="operator" text="Operator" />
-                <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
+                <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
                 <reference ref="oh" />
             </optional>
         </item> <!-- Shower -->
@@ -5000,7 +4998,7 @@
             <space />
             <combo key="entrance" text="Entrance" values="yes,main,service,exit,emergency" values_context="entrance" default="yes" match="key" />
             <combo key="access" text="Access" values="yes,delivery,private,no" />
-            <combo key="wheelchair" text="Wheelchairs" values="yes,no,limited" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
             <optional>
                 <text key="ref" text="Entrance number" />
                 <text key="addr:flats" text="Flat numbers" />
