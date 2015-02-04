@@ -28,8 +28,16 @@ import static java.awt.event.KeyEvent.VK_Z;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyStore;
@@ -42,11 +50,13 @@ import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
 
 /**
@@ -84,6 +94,115 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
 
     private static final String WINDOWS_ROOT = "Windows-ROOT";
 
+    @Override
+    public void preStartupHook() {
+        extendFontconfig();
+    }
+    
+    /**
+     * Add more fallback fonts to the Java runtime, in order to get wider 
+     * unicode support.
+     * 
+     * The font configuration in Java doesn't include some Indic scripts,
+     * even though MS Windows ships with fonts that cover these unicode
+     * ranges.
+     * 
+     * To fix this, the fontconfig.properties template is copied to the JOSM
+     * cache folder. Then, the additional entries are added to the font
+     * configuration. Finally the system property "sun.awt.fontconfig" is set
+     * to the customized fontconfig.properties file.
+     * 
+     * This is a crude hack, but better than no font display at all for these
+     * languages.
+     * There is no guarantee, that the template file
+     * ($JAVA_HOME/lib/fontconfig.properties.src) matches the default
+     * configuration (which is in a binary format).
+     * Furthermore, the system property "sun.awt.fontconfig" is undocumented and
+     * may no longer work in future versions of Java.
+     */
+    protected void extendFontconfig() {
+        String customFontconfigFile = Main.pref.get("fontconfig.properties", null);
+        if (customFontconfigFile != null) {
+            Utils.updateSystemProperty("sun.awt.fontconfig", customFontconfigFile);
+            return;
+        }
+        if (!Main.pref.getBoolean("font.extended-unicode", true))
+            return;
+        String javaLibPath = System.getProperty("java.home") + File.separator + "lib";
+        Path templateFile = FileSystems.getDefault().getPath(javaLibPath, "fontconfig.properties.src");
+        if (!Files.isReadable(templateFile)) {
+            Main.warn("extended unicode - unable to find font config template file "+templateFile.toString());
+            return;
+        }
+        try {
+            Properties props = new Properties();
+            props.load(new FileInputStream(templateFile.toFile()));
+            byte[] content = Files.readAllBytes(templateFile);
+            File cachePath = Main.pref.getCacheDirectory();
+            Path fontconfigFile = cachePath.toPath().resolve("fontconfig.properties");
+            OutputStream os = Files.newOutputStream(fontconfigFile);
+            os.write(content);
+            try (Writer w = new BufferedWriter(new OutputStreamWriter(os))) {
+                Collection<Collection<String>> def = new ArrayList<>();
+                def.add(Arrays.asList("devanagari", "", "")); // just include in fallback list
+                                                              // no font definition needed
+                // all of the following fonts are available in Win XP and later
+                def.add(Arrays.asList("gujarati", "Shruti", "SHRUTI.TTF"));
+                def.add(Arrays.asList("kannada", "Tunga", "TUNGA.TTF"));
+                def.add(Arrays.asList("gurmuhi", "Raavi", "RAAVI.TTF"));
+                def.add(Arrays.asList("tamil", "Latha", "LATHA.TTF"));
+                def.add(Arrays.asList("telugu", "Gautami", "GAUTAMI.TTF"));
+                def.add(Arrays.asList("bengali", "Vrinda", "VRINDA.TTF"));
+                Collection<Collection<String>> additions = 
+                        Main.pref.getArray("font.extended-unicode.added-items", def);
+                w.append("\n\n# Added by JOSM to extend unicode coverage of Java font support:\n\n");
+                List<String> allCharSubsets = new ArrayList<>();
+                for (Collection<String> entry: additions) {
+                    List<String> lentry = new ArrayList<>(entry);
+                    String charSubset = lentry.get(0);
+                    allCharSubsets.add(charSubset);
+                    String platformFontName = lentry.get(1);
+                    if ("".equals(platformFontName)) {
+                        continue;
+                    }
+                    String key = "allfonts." + charSubset;
+                    String value = platformFontName;
+                    String prevValue = props.getProperty(key);
+                    if (prevValue != null && !prevValue.equals(value)) {
+                        Main.warn("extended unicode - overriding " + key + "=" + prevValue + " with " + value);
+                    }
+                    w.append(key + "=" + value + "\n");
+                }
+                w.append("\n");
+                for (Collection<String> entry: additions) {
+                    List<String> lentry = new ArrayList<>(entry);
+                    String platformFontName = lentry.get(1);
+                    String fontFile = lentry.get(2);
+                    if ("".equals(platformFontName) || "".equals(fontFile)) {
+                        continue;
+                    }
+                    String key = "filename." + platformFontName;
+                    String value = fontFile;
+                    String prevValue = props.getProperty(key);
+                    if (prevValue != null && !prevValue.equals(value)) {
+                        Main.warn("extended unicode - overriding " + key + "=" + prevValue + " with " + value);
+                    }
+                    w.append(key + "=" + value + "\n");
+                }
+                w.append("\n");
+                String fallback = props.getProperty("sequence.fallback");
+                if (fallback != null) {
+                    w.append("sequence.fallback=" + fallback + "," + Utils.join(",", allCharSubsets) + "\n");
+                } else {
+                    w.append("sequence.fallback=" + Utils.join(",", allCharSubsets) + "\n");
+                }
+            }
+            Utils.updateSystemProperty("sun.awt.fontconfig", fontconfigFile.toString());
+        } catch (IOException ex) {
+            Main.error(ex);
+        }
+    }
+    
     @Override
     public void openUrl(String url) throws IOException {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
