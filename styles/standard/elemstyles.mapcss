@@ -151,62 +151,62 @@ way[access=destination]::core_access {
     color: destination#8080ff;
     dashes: 2,2;
 }
-node[access?!] {
+node[traffic_sign][access?!] {
     icon-image: "vehicle/restriction/access.png";
     set icon_z17;
 }
-node[access=permissive],
-node[access=private],
-node[access=destination] {
+node[traffic_sign][access=permissive],
+node[traffic_sign][access=private],
+node[traffic_sign][access=destination] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[bicycle?!] {
+node[traffic_sign][bicycle?!] {
     icon-image: "vehicle/restriction/bicycle.png";
     set icon_z17;
 }
-node[bicycle=designated] {
+node[traffic_sign][bicycle=designated] {
     icon-image: "vehicle/restriction/bicycle-designated.png";
     set icon_z17;
     text: auto;
 }
-node[foot?!] {
+node[traffic_sign][foot?!] {
     icon-image: "vehicle/restriction/foot.png";
     set icon_z17;
 }
-node[foot=designated] {
+node[traffic_sign][foot=designated] {
     icon-image: "vehicle/restriction/foot-designated.png";
     set icon_z17;
     text: auto;
 }
-node[goods?!],
-node[hgv?!] {
+node[traffic_sign][goods?!],
+node[traffic_sign][hgv?!] {
     icon-image: "vehicle/restriction/goods.png";
     set icon_z17;
 }
-node[horse?!] {
+node[traffic_sign][horse?!] {
     icon-image: "vehicle/restriction/horse.png";
     set icon_z17;
 }
-node[horse=designated] {
+node[traffic_sign][horse=designated] {
     icon-image: "vehicle/restriction/horse-designated.png";
     set icon_z17;
 }
-node[motorcycle?!] {
+node[traffic_sign][motorcycle?!] {
     icon-image: "vehicle/restriction/motorbike.png";
     set icon_z17;
 }
-node[motorcar?!] {
+node[traffic_sign][motorcar?!] {
     icon-image: "vehicle/restriction/motorcar.png";
     set icon_z17;
 }
-node[psv?!] {
+node[traffic_sign][psv?!] {
     icon-image: "vehicle/restriction/psv.png";
     set icon_z17;
 }
-node[motorboat?!],
-node[boat?!] {
+node[traffic_sign][motorboat?!],
+node[traffic_sign][boat?!] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
 }
@@ -214,28 +214,28 @@ node[noexit?] {
     icon-image: "vehicle/restriction/dead_end.png";
     set icon_z17;
 }
-node[maxweight] {
+node[traffic_sign][maxweight] {
     icon-image: "vehicle/restriction/maxweight.png";
     set icon_z17;
 }
-node[maxheight] {
+node[traffic_sign][maxheight] {
     icon-image: "vehicle/restriction/maxheight.png";
     set icon_z17;
 }
-node[maxwidth] {
+node[traffic_sign][maxwidth] {
     icon-image: "vehicle/restriction/maxwidth.png";
     set icon_z17;
 }
-node[maxlength] {
+node[traffic_sign][maxlength] {
     icon-image: "vehicle/restriction/maxlength.png";
     set icon_z17;
 }
-node[minspeed] {
+node[traffic_sign][minspeed] {
     icon-image: "vehicle/restriction/minspeed.png";
     set icon_z17;
 }
-node[maxstay],
-node[toll] {
+node[traffic_sign][maxstay],
+node[traffic_sign][toll] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
 }
@@ -4204,27 +4204,27 @@ node[boundary=national_park] {
 /******************/
 /* maxspeed nodes */
 /******************/
-node[maxspeed=none][!is_prop_set(icon-image)] {
+node[traffic_sign][maxspeed=none][!is_prop_set(icon-image)] {
     icon-image: "vehicle/restriction/maxspeed_none.svg";
     set icon_z17;
 }
-node[maxspeed=~/^[0-9]+$/][!is_prop_set(icon-image)] {
+node[traffic_sign][maxspeed=~/^[0-9]+$/][!is_prop_set(icon-image)] {
     maxspeedprop: tag(maxspeed);
     set maxspeedclass;
 }
-node[maxspeed=signals][!is_prop_set(icon-image)] {
+node[traffic_sign][maxspeed=signals][!is_prop_set(icon-image)] {
     maxspeedprop: " ?";
     set maxspeedclass;
 }
-node[maxspeed=~/^[0-9]+ mph/][!is_prop_set(icon-image)] {
+node[traffic_sign][maxspeed=~/^[0-9]+ mph/][!is_prop_set(icon-image)] {
     maxspeedprop: get(split(" mph",tag(maxspeed)),0);
     set maxspeedclass;
 }
-node[maxspeed=~/[0-9]+ km\/h/][!is_prop_set(icon-image)] {
+node[traffic_sign][maxspeed=~/[0-9]+ km\/h/][!is_prop_set(icon-image)] {
     maxspeedprop: get(split(" km/h",tag(maxspeed)),0);
     set maxspeedclass;
 }
-node[maxspeed=~/[0-9]+ knots/][!is_prop_set(icon-image)] {
+node[traffic_sign][maxspeed=~/[0-9]+ knots/][!is_prop_set(icon-image)] {
     maxspeedprop: get(split(" knots",tag(maxspeed)),0);
     set maxspeedclass;
 }
@@ -4235,8 +4235,8 @@ node[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core_maxn
     symbol-fill-color: white;
     major-z-index: 4.2;
 }
-node[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"]::core_maxnodebg,
-node[maxspeed=signals]::core_maxnodebg {
+node[traffic_sign][maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"]::core_maxnodebg,
+node[traffic_sign][maxspeed=signals]::core_maxnodebg {
     /* background (black) */
     symbol-fill-color: black;
 }
@@ -4256,8 +4256,8 @@ node[prop(maxspeedclass, default)]::core_maxnodefg {
     text-offset-y: -1;
     major-z-index: 4.2;
 }
-node[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"]::core_maxnodefg,
-node[maxspeed=signals]::core_maxnodefg {
+node[traffic_sign][maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"]::core_maxnodefg,
+node[traffic_sign][maxspeed=signals]::core_maxnodefg {
     /* foreground (white text) */
     text-color: white;
 }

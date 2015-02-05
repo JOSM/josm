@@ -722,7 +722,7 @@
             </optional>
         </item> <!-- Construction -->
         <separator/>
-        <item name="Road Restrictions" icon="presets/restrictions.png" type="node,way" preset_name_label="true">
+        <item name="Road Restrictions" icon="presets/restrictions.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:access"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Key:access"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:access"
