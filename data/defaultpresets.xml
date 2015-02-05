@@ -6735,7 +6735,7 @@
   </group> <!-- Shops -->
   <group name="Geography" icon="presets/peak.svg">
     <group name="Boundaries" icon="presets/boundaries.png">
-        <item name="Administrative" icon="presets/boundaries.png" type="closedway,relation" preset_name_label="true">
+        <item name="Administrative" icon="presets/boundaries.png" type="way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:boundary=administrative"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:boundary=administrative"
                   hu.href="http://wiki.openstreetmap.org/wiki/Hu:Tag:boundary=administrative"
@@ -6746,6 +6746,8 @@
             <space />
             <key key="boundary" value="administrative" />
             <text key="name" text="Name" />
+            <combo key="admin_level" text="Administrative level" values="1,2,3,4,5,6,7,8,9,10" />
+            <check key="maritime" text="Maritime" disable_off="true" />
         </item> <!-- Administrative -->
         <item name="Political" icon="presets/boundaries.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:boundary=political"
@@ -6755,7 +6757,7 @@
             <combo key="political_division" text="Division" values="canton,linguistic_community,ward" />
             <text key="name" text="Name" />
         </item> <!-- Political -->
-        <item name="Postal Code" icon="presets/boundaries.png" type="closedway,relation" preset_name_label="true">
+        <item name="Postal Code" icon="presets/boundaries.png" type="way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:boundary=postal_code"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:boundary=postal_code" />
             <space />
@@ -6787,6 +6789,13 @@
                 <text key="start_date" text="Start date" />
             </optional>
         </item> <!-- Protected Area -->
+        <item name="Maritime" icon="presets/boundaries.png" type="way,closedway,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:boundary=maritime" />
+            <space />
+            <key key="boundary" value="maritime" />
+            <combo key="border_type" text="Border type" values="baseline,territorial,contiguous,eez" />
+            <text key="name" text="Name" />
+        </item> <!-- Maritime -->
     </group> <!-- Boundaries -->
     <group name="Places" icon="styles/standard/place/settlement/isolated_dwelling.png">
         <item name="Continent" icon="styles/standard/place/settlement/capital.png" type="node,closedway" preset_name_label="true">
@@ -7795,8 +7804,8 @@
             <space />
             <key key="type" value="boundary" />
             <text key="name" text="Name" />
+            <combo key="boundary" text="Boundary type" values="administrative,maritime,national_park,political,postal_code,protected_area" values_searchable="true" />
             <optional>
-                <combo key="boundary" text="Boundary type" values="administrative,national_park,political,postal_code,protected_area" values_searchable="true" />
                 <combo key="admin_level" text="Administrative level" values="1,2,3,4,5,6,7,8,9,10" />
             </optional>
             <roles>

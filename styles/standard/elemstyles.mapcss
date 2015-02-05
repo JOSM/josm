@@ -4133,6 +4133,7 @@ way[boundary=protected_area]::core_boundary,
 way[boundary=administrative]::core_boundary,
 way[boundary=postal_code]::core_boundary,
 way[boundary=political]::core_boundary,
+way[boundary=maritime]::core_boundary,
 way[boundary=national_park]::core_boundary {
     z-index: 2;
     modifier: false;
