@@ -4129,7 +4129,7 @@ node[mountain_pass?] {
 /* boundary tags */
 /*****************/
 
-way[boundary=national]::core_boundary,
+way[boundary=protected_area]::core_boundary,
 way[boundary=administrative]::core_boundary,
 way[boundary=postal_code]::core_boundary,
 way[boundary=political]::core_boundary,
