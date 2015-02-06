@@ -153,6 +153,9 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
                 def.add(Arrays.asList("tamil", "Latha", "LATHA.TTF"));
                 def.add(Arrays.asList("telugu", "Gautami", "GAUTAMI.TTF"));
                 def.add(Arrays.asList("bengali", "Vrinda", "VRINDA.TTF"));
+                def.add(Arrays.asList("syriac", "Estrangelo Edessa", "ESTRE.TTF")); // ISO 639: arc
+                def.add(Arrays.asList("thaana", "MV Boli", "MVBOLI.TTF"));          // ISO 639: dv
+                def.add(Arrays.asList("malayalam", "Kartika", "KARTIKA.TTF"));      // ISO 639: ml; since XP SP2
                 Collection<Collection<String>> additions = 
                         Main.pref.getArray("font.extended-unicode.added-items", def);
                 w.append("\n\n# Added by JOSM to extend unicode coverage of Java font support:\n\n");
