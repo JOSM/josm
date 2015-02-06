@@ -386,6 +386,16 @@ public abstract class Main {
     }
 
     /**
+     * Prints a formatted trace message if logging is on. Calls {@link MessageFormat#format}
+     * function to format text.
+     * @param msg The formatted message to print.
+     * @param objects The objects to insert into format string.
+     */
+    public static void trace(String msg, Object... objects) {
+        trace(MessageFormat.format(msg, objects));
+    }
+
+    /**
      * Prints an error message for the given Throwable.
      * @param t The throwable object causing the error
      * @since 6248

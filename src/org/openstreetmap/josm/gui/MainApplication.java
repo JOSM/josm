@@ -366,6 +366,8 @@ public class MainApplication extends Main {
 
         processOffline(args);
 
+        Main.platform.afterPrefStartupHook();
+
         FontsManager.initialize();
 
         handleSpecialLanguages();

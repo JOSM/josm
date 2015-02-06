@@ -23,6 +23,14 @@ public interface PlatformHook {
       * that we want to be integrated with the OS before we setup our GUI.
       */
     public void preStartupHook();
+    
+    /**
+      * The afterPrefStartupHook will be called early, but after
+      * the preferences have been loaded and basic processing of
+      * command line arguments is finished. 
+      * It is guaranteed to be called before the GUI setup has started.
+      */
+    public void afterPrefStartupHook();
 
     /**
       * The startupHook will be called early, but after the GUI
