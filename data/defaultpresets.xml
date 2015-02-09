@@ -15,6 +15,19 @@
     <chunk id="surface">
         <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground,sett" />
     </chunk>
+    <chunk id="surface_smoothness">
+        <reference ref="surface" />
+        <combo key="smoothness" text="Smoothness" values_searchable="true">
+            <list_entry value="excellent" short_description="Thin Rollers: rollerblade, skateboard" />
+            <list_entry value="good" short_description="Thin Wheels: racing bike" />
+            <list_entry value="intermediate" short_description="Wheels: city bike, wheelchair, scooter" />
+            <list_entry value="bad" short_description="Robust Wheels: trekking bike, car, rickshaw" />
+            <list_entry value="very_bad" short_description="High Clearance: light duty off-road vehicle" />
+            <list_entry value="horrible" short_description="Off-Road: heavy duty off-road vehicle" />
+            <list_entry value="very_horrible" short_description="Specialized off-road: tractor, ATV" />
+            <list_entry value="impassable" short_description="No wheeled vehicle" />
+        </combo>
+    </chunk>
     <chunk id="riding_surface">
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="riding" />
         <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
@@ -23,7 +36,7 @@
         <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3"/>
         <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3"/>
         <text key="maxspeed" text="Max. speed (km/h)"/>
-        <reference ref="surface" />
+        <reference ref="surface_smoothness" />
     </chunk>
     <chunk id="highway_yesno_incline">
         <check key="bridge" text="Bridge" disable_off="true" />
@@ -189,12 +202,12 @@
         <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" values_context="parking" />
         <text key="ref" text="Reference number" />
     </chunk>
-    <chunk id="parking_access_fee_operator_surface">
+    <chunk id="parking_access_fee_operator_surface_smoothness">
         <space />
         <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
         <reference ref="fee_interval" />
         <text key="operator" text="Operator" />
-        <reference ref="surface" />
+        <reference ref="surface_smoothness" />
     </chunk>
     <chunk id="maxstay">
         <combo key="maxstay" text="Time Limit (minutes)" values="0,30,60,90,120,180" />
@@ -583,7 +596,7 @@
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <check key="oneway" text="Oneway" />
                 <check key="oneway:bicycle" text="Oneway for bicycle" />
                 <reference ref="highway_yesno_incline" />
@@ -607,7 +620,7 @@
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Living Street -->
@@ -628,7 +641,7 @@
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <check key="area" text="Area" />
                 <reference ref="highway_yesno_incline" />
                 <check key="lit" text="Lit" />
@@ -666,7 +679,7 @@
             <key key="highway" value="service" />
             <key key="service" value="parking_aisle" />
             <optional>
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <check key="oneway" text="Oneway" />
                 <check key="lit" text="Lit" />
             </optional>
@@ -824,7 +837,7 @@
             <key key="highway" value="track" />
             <optional>
                 <reference ref="name_layer" />
-                <combo key="surface" text="Surface" values="paved,concrete,cobblestone,gravel,ground,grass,sand" />
+                <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
                 <reference ref="general_access" />
@@ -848,7 +861,7 @@
             <key key="highway" value="path" />
             <optional>
                 <reference ref="name_layer" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="sac_scale" text="SAC Scale" values_searchable="true">
                     <list_entry value="hiking" display_value="T1 - hiking trail" short_description="Trail well cleared. Area flat or slightly sloped, no fall hazard" />
@@ -882,7 +895,7 @@
             <optional>
                 <reference ref="name_layer" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Dedicated Bridleway -->
@@ -923,7 +936,7 @@
             <key key="highway" value="cycleway" />
             <optional>
                 <reference ref="name_layer" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="foot" text="Pedestrians" values="yes,no" />
             </optional>
@@ -938,7 +951,7 @@
             <key key="segregated" value="yes" />
             <optional>
                 <reference ref="name_layer" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Segregated Foot- and Cycleway -->
@@ -952,7 +965,7 @@
             <key key="segregated" value="no" />
             <optional>
                 <reference ref="name_layer" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <check key="passing_places" text="Passing Places" />
             </optional>
@@ -972,7 +985,7 @@
             <key key="highway" value="footway" />
             <optional>
                 <reference ref="name_layer" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline" />
                 <check key="lit" text="Lit" />
                 <check key="bicycle" text="Bicycle" />
@@ -2132,7 +2145,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_yesno_incline_oneway" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-                <reference ref="surface" />
+                <reference ref="surface_smoothness" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <text key="width" text="Width (meters)" />
             </optional>
@@ -2340,7 +2353,8 @@
             <reference ref="parking_name_type_ref" />
             <text key="maxheight" text="Max. height (meters)" />
             <combo key="park_ride" text="Park and Ride" values="yes,no,bus,train,tram,metro,ferry" />
-            <reference ref="parking_access_fee_operator_surface" />
+            <reference ref="parking_access_fee_operator_surface_smoothness" />
+            <space />
             <text key="capacity" text="Capacity (overall)" />
             <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,1,2,3" />
             <combo key="capacity:women" text="Spaces for Women" values="yes,no,1,2,3" />
@@ -2361,7 +2375,7 @@
             <key key="amenity" value="parking_space" />
             <reference ref="parking_name_type_ref" />
             <text key="capacity" text="Capacity" />
-            <reference ref="parking_access_fee_operator_surface" />
+            <reference ref="parking_access_fee_operator_surface_smoothness" />
             <reference ref="maxstay" />
             <reference ref="supervised_lit_oh" />
             <check key="covered" text="Covered (with roof)" />
@@ -2377,7 +2391,7 @@
             <key key="amenity" value="parking_entrance" />
             <reference ref="parking_name_type_ref" />
             <text key="maxheight" text="Max. height (meters)" />
-            <reference ref="parking_access_fee_operator_surface" />
+            <reference ref="parking_access_fee_operator_surface_smoothness" />
             <reference ref="supervised_lit_oh" />
             <check key="covered" text="Covered (with roof)" />
         </item> <!-- Parking Entrance -->
@@ -2532,7 +2546,7 @@
             <key key="amenity" value="motorcycle_parking" />
             <reference ref="parking_name_type_ref" />
             <text key="capacity" text="Capacity" />
-            <reference ref="parking_access_fee_operator_surface" />
+            <reference ref="parking_access_fee_operator_surface_smoothness" />
             <reference ref="supervised_lit_oh" />
             <check key="covered" text="Covered (with roof)" />
         </item> <!-- Parking -->
