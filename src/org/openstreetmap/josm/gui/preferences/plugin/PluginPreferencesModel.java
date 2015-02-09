@@ -24,12 +24,14 @@ import org.openstreetmap.josm.plugins.PluginInformation;
  * The plugin model behind a {@code PluginListPanel}.
  */
 public class PluginPreferencesModel extends Observable {
+    // remember the initial list of active plugins
+    private final Set<String> currentActivePlugins;
     private final List<PluginInformation> availablePlugins = new ArrayList<>();
+    private String filterExpression;
     private final List<PluginInformation> displayedPlugins = new ArrayList<>();
     private final Map<PluginInformation, Boolean> selectedPluginsMap = new HashMap<>();
+    // plugins that still require an update/download
     private Set<String> pendingDownloads = new HashSet<>();
-    private String filterExpression;
-    private Set<String> currentActivePlugins;
 
     /**
      * Constructs a new {@code PluginPreferencesModel}.
@@ -196,7 +198,7 @@ public class PluginPreferencesModel extends Observable {
     public void setPluginSelected(String name, boolean selected) {
         PluginInformation pi = getPluginInformation(name);
         if (pi != null) {
-            selectedPluginsMap.put(pi,selected);
+            selectedPluginsMap.put(pi, selected);
             if (pi.isUpdateRequired()) {
                 pendingDownloads.add(pi.name);
             }
@@ -212,9 +214,9 @@ public class PluginPreferencesModel extends Observable {
      *
      * @param plugins the list of plugins to clear for a pending download
      */
-    public void clearPendingPlugins(Collection<PluginInformation> plugins){
+    public void clearPendingPlugins(Collection<PluginInformation> plugins) {
         if (plugins == null || plugins.isEmpty()) return;
-        for(PluginInformation pi: plugins) {
+        for (PluginInformation pi: plugins) {
             pendingDownloads.remove(pi.name);
         }
     }

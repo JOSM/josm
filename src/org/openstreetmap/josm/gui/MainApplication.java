@@ -422,7 +422,7 @@ public class MainApplication extends Main {
         PluginHandler.installDownloadedPlugins(true);
 
         monitor.indeterminateSubTask(tr("Loading early plugins"));
-        PluginHandler.loadEarlyPlugins(splash,pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+        PluginHandler.loadEarlyPlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
 
         monitor.indeterminateSubTask(tr("Setting defaults"));
         preConstructorInit(args);
@@ -431,7 +431,7 @@ public class MainApplication extends Main {
         final Main main = new MainApplication(mainFrame);
 
         monitor.indeterminateSubTask(tr("Loading plugins"));
-        PluginHandler.loadLatePlugins(splash,pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
+        PluginHandler.loadLatePlugins(splash, pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
         toolbar.refreshToolbarControl();
 
         // Wait for splash disappearance (fix #9714)

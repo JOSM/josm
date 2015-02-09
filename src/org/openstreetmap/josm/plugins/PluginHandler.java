@@ -186,6 +186,23 @@ public final class PluginHandler {
     }
 
     /**
+     * ClassLoader that makes the addURL method of URLClassLoader public.
+     *
+     * Like URLClassLoader, but allows to add more URLs after construction.
+     */
+    public static class DynamicURLClassLoader extends URLClassLoader {
+
+        public DynamicURLClassLoader(URL[] urls, ClassLoader parent) {
+            super(urls, parent);
+        }
+
+        @Override
+        public void addURL(URL url) {
+            super.addURL(url);
+        }
+    }
+
+    /**
      * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not really maintained after a few months, sadly...
      */
     private static final String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
@@ -199,6 +216,11 @@ public final class PluginHandler {
      * All installed and loaded plugins (resp. their main classes)
      */
     public static final Collection<PluginProxy> pluginList = new LinkedList<>();
+
+    /**
+     * Global plugin ClassLoader.
+     */
+    private static DynamicURLClassLoader pluginClassLoader;
 
     /**
      * Add here all ClassLoader whose resource should be searched.
@@ -535,41 +557,44 @@ public final class PluginHandler {
     }
 
     /**
-     * Creates a class loader for loading plugin code.
+     * Get the class loader for loading plugin code.
      *
-     * @param plugins the collection of plugins which are going to be loaded with this
-     * class loader
      * @return the class loader
      */
-    public static ClassLoader createClassLoader(Collection<PluginInformation> plugins) {
-        // iterate all plugins and collect all libraries of all plugins:
-        List<URL> allPluginLibraries = new LinkedList<>();
-        File pluginDir = Main.pref.getPluginsDirectory();
-
-        // Add all plugins already loaded (to include early plugins in the classloader, allowing late plugins to rely on early ones)
-        Collection<PluginInformation> allPlugins = new HashSet<>(plugins);
-        for (PluginProxy proxy : pluginList) {
-            allPlugins.add(proxy.getPluginInformation());
+    public static DynamicURLClassLoader getPluginClassLoader() {
+        if (pluginClassLoader == null) {
+            pluginClassLoader = AccessController.doPrivileged(new PrivilegedAction<DynamicURLClassLoader>() {
+                public DynamicURLClassLoader run() {
+                    return new DynamicURLClassLoader(new URL[0], Main.class.getClassLoader());
+                }
+            });
+            sources.add(0, pluginClassLoader);
         }
+        return pluginClassLoader;
+    }
 
-        for (PluginInformation info : allPlugins) {
+    /**
+     * Add more plugins to the plugin class loader.
+     *
+     * @param plugins the plugins that should be handled by the plugin class loader
+     */
+    public static void extendPluginClassLoader(Collection<PluginInformation> plugins) {
+        // iterate all plugins and collect all libraries of all plugins:
+        File pluginDir = Main.pref.getPluginsDirectory();
+        DynamicURLClassLoader cl = getPluginClassLoader();
+
+        for (PluginInformation info : plugins) {
             if (info.libraries == null) {
                 continue;
             }
-            allPluginLibraries.addAll(info.libraries);
+            for (URL libUrl : info.libraries) {
+                cl.addURL(libUrl);
+            }
             File pluginJar = new File(pluginDir, info.name + ".jar");
             I18n.addTexts(pluginJar);
             URL pluginJarUrl = Utils.fileToURL(pluginJar);
-            allPluginLibraries.add(pluginJarUrl);
+            cl.addURL(pluginJarUrl);
         }
-
-        // create a classloader for all plugins:
-        final URL[] jarUrls = allPluginLibraries.toArray(new URL[allPluginLibraries.size()]);
-        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            public ClassLoader run() {
-                return new URLClassLoader(jarUrls, Main.class.getClassLoader());
-            }
-      });
     }
 
     /**
@@ -613,7 +638,7 @@ public final class PluginHandler {
      * @param plugins the list of plugins
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
-    public static void loadPlugins(Component parent,Collection<PluginInformation> plugins, ProgressMonitor monitor) {
+    public static void loadPlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -643,12 +668,11 @@ public final class PluginHandler {
             if (toLoad.isEmpty())
                 return;
 
-            ClassLoader pluginClassLoader = createClassLoader(toLoad);
-            sources.add(0, pluginClassLoader);
+            extendPluginClassLoader(toLoad);
             monitor.setTicksCount(toLoad.size());
             for (PluginInformation info : toLoad) {
                 monitor.setExtraText(tr("Loading plugin ''{0}''...", info.name));
-                loadPlugin(parent, info, pluginClassLoader);
+                loadPlugin(parent, info, getPluginClassLoader());
                 monitor.worked(1);
             }
         } finally {
@@ -1044,7 +1068,7 @@ public final class PluginHandler {
      *
      * If {@code dowarn} is true, this methods emits warning messages on the console if a downloaded
      * but not yet installed plugin .jar can't be be installed. If {@code dowarn} is false, the
-     * installation of the respective plugin is sillently skipped.
+     * installation of the respective plugin is silently skipped.
      *
      * @param dowarn if true, warning messages are displayed; false otherwise
      */
