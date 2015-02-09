@@ -2636,7 +2636,10 @@
             <space />
             <key key="amenity" value="bicycle_repair_station" />
             <optional>
-            <reference ref="name_operator_oh_wheelchair" />
+            <text key="name" text="Name" />
+            <text key="brand" text="Brand" />
+            <text key="operator" text="Operator" />
+            <reference ref="oh" />
             <check key="service:bicycle:pump" text="Free bicycle pump" />
             </optional>
         </item> <!-- Public Bicycle Repair Station -->
