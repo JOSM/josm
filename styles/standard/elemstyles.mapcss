@@ -2548,6 +2548,7 @@ node[amenity=veterinary] {
 }
 area[amenity=library],
 area[amenity=police],
+area[amenity=ranger_station],
 area[amenity=fire_station],
 area[amenity=bus_station],
 area[amenity=ferry_terminal],
@@ -2568,6 +2569,11 @@ node[amenity=library] {
 }
 node[amenity=police] {
     icon-image: "service/police.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=ranger_station] {
+    icon-image: "service/ranger_station.svg";
     set icon_z17;
     text: auto;
 }

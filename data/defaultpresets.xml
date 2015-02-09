@@ -4010,6 +4010,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact" />
         </item> <!-- Police -->
+        <item name="Ranger Station" icon="styles/standard/service/ranger_station.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=ranger_station" />
+            <space />
+            <key key="amenity" value="ranger_station" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact" />
+        </item> <!-- Ranger Station -->
         <item name="Fire Station" icon="presets/firebrigade.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fire_station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=fire_station"
