@@ -142,7 +142,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
     // all created tabs
     private final List<PreferenceTab> tabs = new ArrayList<>();
-    private static final Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<>();
+    private static final Collection<PreferenceSettingFactory> settingsFactories = new LinkedList<>();
+    private static final PreferenceSettingFactory advancedPreferenceFactory = new AdvancedPreference.Factory();
     private final List<PreferenceSetting> settings = new ArrayList<>();
 
     // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)
@@ -423,7 +424,11 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     public void buildGui() {
-        for (PreferenceSettingFactory factory : settingsFactory) {
+        Collection<PreferenceSettingFactory> factories = new ArrayList<>(settingsFactories);
+        factories.addAll(PluginHandler.getPreferenceSetting());
+        factories.add(advancedPreferenceFactory);
+
+        for (PreferenceSettingFactory factory : factories) {
             PreferenceSetting setting = factory.createPreferenceSetting();
             if (setting != null) {
                 settings.add(setting);
@@ -508,33 +513,28 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
     static {
         // order is important!
-        settingsFactory.add(new DisplayPreference.Factory());
-        settingsFactory.add(new DrawingPreference.Factory());
-        settingsFactory.add(new ColorPreference.Factory());
-        settingsFactory.add(new LafPreference.Factory());
-        settingsFactory.add(new LanguagePreference.Factory());
-        settingsFactory.add(new ServerAccessPreference.Factory());
-        settingsFactory.add(new AuthenticationPreference.Factory());
-        settingsFactory.add(new ProxyPreference.Factory());
-        settingsFactory.add(new MapPreference.Factory());
-        settingsFactory.add(new ProjectionPreference.Factory());
-        settingsFactory.add(new MapPaintPreference.Factory());
-        settingsFactory.add(new TaggingPresetPreference.Factory());
-        settingsFactory.add(new BackupPreference.Factory());
-        settingsFactory.add(new PluginPreference.Factory());
-        settingsFactory.add(Main.toolbar);
-        settingsFactory.add(new AudioPreference.Factory());
-        settingsFactory.add(new ShortcutPreference.Factory());
-        settingsFactory.add(new ValidatorPreference.Factory());
-        settingsFactory.add(new ValidatorTestsPreference.Factory());
-        settingsFactory.add(new ValidatorTagCheckerRulesPreference.Factory());
-        settingsFactory.add(new RemoteControlPreference.Factory());
-        settingsFactory.add(new ImageryPreference.Factory());
-
-        PluginHandler.getPreferenceSetting(settingsFactory);
-
-        // always the last: advanced tab
-        settingsFactory.add(new AdvancedPreference.Factory());
+        settingsFactories.add(new DisplayPreference.Factory());
+        settingsFactories.add(new DrawingPreference.Factory());
+        settingsFactories.add(new ColorPreference.Factory());
+        settingsFactories.add(new LafPreference.Factory());
+        settingsFactories.add(new LanguagePreference.Factory());
+        settingsFactories.add(new ServerAccessPreference.Factory());
+        settingsFactories.add(new AuthenticationPreference.Factory());
+        settingsFactories.add(new ProxyPreference.Factory());
+        settingsFactories.add(new MapPreference.Factory());
+        settingsFactories.add(new ProjectionPreference.Factory());
+        settingsFactories.add(new MapPaintPreference.Factory());
+        settingsFactories.add(new TaggingPresetPreference.Factory());
+        settingsFactories.add(new BackupPreference.Factory());
+        settingsFactories.add(new PluginPreference.Factory());
+        settingsFactories.add(Main.toolbar);
+        settingsFactories.add(new AudioPreference.Factory());
+        settingsFactories.add(new ShortcutPreference.Factory());
+        settingsFactories.add(new ValidatorPreference.Factory());
+        settingsFactories.add(new ValidatorTestsPreference.Factory());
+        settingsFactories.add(new ValidatorTagCheckerRulesPreference.Factory());
+        settingsFactories.add(new RemoteControlPreference.Factory());
+        settingsFactories.add(new ImageryPreference.Factory());
     }
 
     /**

@@ -1056,10 +1056,12 @@ public final class PluginHandler {
         }
     }
 
-    public static void getPreferenceSetting(Collection<PreferenceSettingFactory> settings) {
+    public static Collection<PreferenceSettingFactory> getPreferenceSetting() {
+        Collection<PreferenceSettingFactory> settings = new ArrayList<>();
         for (PluginProxy plugin : pluginList) {
             settings.add(new PluginPreferenceFactory(plugin));
         }
+        return settings;
     }
 
     /**
