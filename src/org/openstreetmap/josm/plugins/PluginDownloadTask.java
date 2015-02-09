@@ -186,18 +186,18 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     }
 
     /**
-     * Replies the list of successfully downloaded plugins
+     * Replies the list of plugins whose download has failed.
      *
-     * @return the list of successfully downloaded plugins
+     * @return the list of plugins whose download has failed
      */
     public Collection<PluginInformation> getFailedPlugins() {
         return failed;
     }
 
     /**
-     * Replies the list of plugins whose download has failed
+     * Replies the list of successfully downloaded plugins.
      *
-     * @return the list of plugins whose download has failed
+     * @return the list of successfully downloaded plugins
      */
     public Collection<PluginInformation> getDownloadedPlugins() {
         return downloaded;

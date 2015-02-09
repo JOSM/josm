@@ -122,13 +122,20 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
      * @param task The finished plugin download task
      * @since 6797
      */
-    public static void notifyDownloadResults(final Component parent, PluginDownloadTask task) {
+    public void notifyDownloadResults(final Component parent, PluginDownloadTask task) {
         final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
         final Collection<PluginInformation> failed = task.getFailedPlugins();
         final StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(buildDownloadSummary(task));
-        if (!downloaded.isEmpty()) {
+        boolean restartRequired = false;
+        for (PluginInformation pi : downloaded) {
+            if (!model.getNewlyActivatedPlugins().contains(pi) || !pi.canloadatruntime) {
+                restartRequired = true;
+                break;
+            }
+        }
+        if (restartRequired) {
             sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
         }
         sb.append("</html>");
@@ -275,6 +282,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         return model != null ? model.getPluginsScheduledForUpdateOrDownload() : null;
     }
 
+    public List<PluginInformation> getNewlyActivatedPlugins() {
+        return model != null ? model.getNewlyActivatedPlugins() : null;
+    }
+
     @Override
     public boolean ok() {
         if (! pluginPreferencesActivated)
@@ -284,7 +295,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             LinkedList<String> l = new LinkedList<>(model.getSelectedPluginNames());
             Collections.sort(l);
             Main.pref.putCollection("plugins", l);
-            return true;
+            if (!model.getNewlyDeactivatedPlugins().isEmpty()) return true;
+            for (PluginInformation pi : model.getNewlyActivatedPlugins()) {
+                if (!pi.canloadatruntime) return true;
+            }
         }
         return false;
     }
@@ -435,7 +449,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     // select plugins which actually have to be updated
                     //
                     Iterator<PluginInformation> it = toUpdate.iterator();
-                    while(it.hasNext()) {
+                    while (it.hasNext()) {
                         PluginInformation pi = it.next();
                         if (!pi.isUpdateRequired()) {
                             it.remove();
@@ -589,4 +603,6 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             return ret;
         }
     }
+
+
 }

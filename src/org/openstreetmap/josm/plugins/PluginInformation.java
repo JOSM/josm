@@ -77,6 +77,8 @@ public class PluginInformation {
     public String iconPath;
     /** The plugin icon. */
     public ImageIcon icon;
+    /** Plugin can be loaded at any time and not just at start. */
+    public boolean canloadatruntime = false;
     /** The libraries referenced in Class-Path manifest attribute. */
     public List<URL> libraries = new LinkedList<>();
     /** All manifest attributes. */
@@ -168,6 +170,7 @@ public class PluginInformation {
         this.downloadlink = other.downloadlink;
         this.icon = other.icon;
         this.iconPath = other.iconPath;
+        this.canloadatruntime = other.canloadatruntime;
         this.libraries = other.libraries;
         this.attr.clear();
         this.attr.putAll(other.attr);
@@ -188,6 +191,7 @@ public class PluginInformation {
         }
         this.early = other.early;
         this.className = other.className;
+        this.canloadatruntime = other.canloadatruntime;
         this.libraries = other.libraries;
         this.stage = other.stage;
     }
@@ -249,6 +253,7 @@ public class PluginInformation {
                 icon = new ImageProvider(iconPath).setMaxWidth(24).setMaxHeight(24).setOptional(true).get();
             }
         }
+        canloadatruntime = Boolean.parseBoolean(attr.getValue("Plugin-Canloadatruntime"));
         if (oldcheck && mainversion > Version.getInstance().getVersion()) {
             int myv = Version.getInstance().getVersion();
             for (Map.Entry<Object, Object> entry : attr.entrySet()) {

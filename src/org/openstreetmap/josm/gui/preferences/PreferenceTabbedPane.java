@@ -317,11 +317,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             @Override
             public void run() {
                 boolean requiresRestart = false;
-                if (task != null && !task.isCanceled()) {
-                    if (!task.getDownloadedPlugins().isEmpty()) {
-                        requiresRestart = true;
-                    }
-                }
 
                 for (PreferenceSetting setting : settingsInitialized) {
                     if (setting.ok()) {
@@ -369,6 +364,28 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                             JOptionPane.WARNING_MESSAGE
                             );
                 }
+
+                // load the plugins that can be loaded at runtime
+                List<PluginInformation> newPlugins = preference.getNewlyActivatedPlugins();
+                if (newPlugins != null) {
+                    Collection<PluginInformation> downloadedPlugins = null;
+                    if (task != null && !task.isCanceled()) {
+                        downloadedPlugins = task.getDownloadedPlugins();
+                    }
+                    List<PluginInformation> toLoad = new ArrayList<>();
+                    for (PluginInformation pi : newPlugins) {
+                        if (toDownload.contains(pi) && downloadedPlugins != null && !downloadedPlugins.contains(pi)) {
+                            continue; // failed download
+                        }
+                        if (pi.canloadatruntime) {
+                            toLoad.add(pi);
+                        }
+                    }
+                    if (!toLoad.isEmpty()) {
+                        PluginHandler.loadPlugins(PreferenceTabbedPane.this, toLoad, null); // FIXME: progress bar
+                    }
+                }
+
                 Main.parent.repaint();
             }
         };
