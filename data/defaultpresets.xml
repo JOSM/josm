@@ -933,7 +933,7 @@
                 <reference ref="name_layer" />
                 <reference ref="surface" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
-                <combo key="foot" text="Pedestrians" values="unknown,yes,no" />
+                <combo key="foot" text="Pedestrians" values="yes,no" />
             </optional>
         </item> <!-- Dedicated Cycleway -->
         <item name="Segregated Foot- and Cycleway" icon="presets/foot_and_cycleway_segregated.png" type="way" preset_name_label="true">
@@ -1084,7 +1084,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=traffic_signals" />
             <key key="highway" value="traffic_signals" />
             <optional text="Optional crossing attributes:">
-                <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
+                <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
                 <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
                 <check key="button_operated" text="Button operated" />
                 <check key="traffic_signals:sound" text="Sound signals" />
@@ -1138,7 +1138,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:crossing" />
             <space />
             <key key="highway" value="crossing" />
-            <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
+            <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
             <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
             <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
             <check key="bicycle" text="Cross by bicycle" />
@@ -2196,7 +2196,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:crossing" />
             <key key="railway" value="crossing" />
             <optional>
-                <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
+                <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
                 <reference ref="supervised" />
                 <check key="horse" text="Cross on horseback" />
                 <check key="bicycle" text="Cross by bicycle" />
@@ -2350,9 +2350,9 @@
             <combo key="park_ride" text="Park and Ride" values="yes,no,bus,train,tram,metro,ferry" />
             <reference ref="parking_access_fee_operator_surface" />
             <text key="capacity" text="Capacity (overall)" />
-            <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,unknown,1,2,3" />
-            <combo key="capacity:women" text="Spaces for Women" values="yes,no,unknown,1,2,3" />
-            <combo key="capacity:parent" text="Spaces for Parents" values="yes,no,unknown,1,2,3" />
+            <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,1,2,3" />
+            <combo key="capacity:women" text="Spaces for Women" values="yes,no,1,2,3" />
+            <combo key="capacity:parent" text="Spaces for Parents" values="yes,no,1,2,3" />
             <label text="See the Wiki for other capacity:[types]=*." />
             <space />
             <reference ref="maxstay" />
@@ -3577,7 +3577,7 @@
             <space />
             <key key="leisure" value="sauna" />
             <reference ref="name_operator_oh_wheelchair" />
-            <combo key="access" text="Access" values="yes,permissive,private,unknown" />
+            <combo key="access" text="Access" values="yes,permissive,private" />
             <space />
             <reference ref="contact" />
         </item> <!-- Sauna -->
@@ -4459,9 +4459,9 @@
             <space />
             <key key="amenity" value="hunting_stand" />
             <combo key="height" text="Height" values="low,half,full,5,10,15,20" values_context="height" />
-            <combo key="shelter" text="Shelter" values="yes,no,unknown" />
-            <combo key="hide" text="Hide" values="yes,no,unknown" />
-            <combo key="lock" text="Lock" values="yes,no,unknown" />
+            <combo key="shelter" text="Shelter" values="yes,no" />
+            <combo key="hide" text="Hide" values="yes,no" />
+            <combo key="lock" text="Lock" values="yes,no" />
         </item> <!-- Hunting Stand -->
         <separator/>
         <item name="Drinking Water" icon="styles/standard/food/drinking_water.png" type="node" preset_name_label="true">
