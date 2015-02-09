@@ -122,19 +122,12 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
      * @param task The finished plugin download task
      * @since 6797
      */
-    public void notifyDownloadResults(final Component parent, PluginDownloadTask task) {
+    public static void notifyDownloadResults(final Component parent, PluginDownloadTask task, boolean restartRequired) {
         final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
         final Collection<PluginInformation> failed = task.getFailedPlugins();
         final StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(buildDownloadSummary(task));
-        boolean restartRequired = false;
-        for (PluginInformation pi : downloaded) {
-            if (!model.getNewlyActivatedPlugins().contains(pi) || !pi.canloadatruntime) {
-                restartRequired = true;
-                break;
-            }
-        }
         if (restartRequired) {
             sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
         }
@@ -427,7 +420,14 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 public void run() {
                     if (pluginDownloadTask.isCanceled())
                         return;
-                    notifyDownloadResults(pnlPluginPreferences, pluginDownloadTask);
+                    boolean restartRequired = false;
+                    for (PluginInformation pi : pluginDownloadTask.getDownloadedPlugins()) {
+                        if (!model.getNewlyActivatedPlugins().contains(pi) || !pi.canloadatruntime) {
+                            restartRequired = true;
+                            break;
+                        }
+                    }
+                    notifyDownloadResults(pnlPluginPreferences, pluginDownloadTask, restartRequired);
                     model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
                     model.clearPendingPlugins(pluginDownloadTask.getDownloadedPlugins());
                     GuiHelper.runInEDT(new Runnable() {
