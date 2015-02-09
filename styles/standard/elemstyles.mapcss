@@ -3372,6 +3372,15 @@ way[aeroway=taxiway] {
     width: 2;
     color: aeroway#660000;
 }
+way[aeroway=parking_position] {
+    width: 1;
+    color: aeroway#660000;
+}
+node[aeroway=parking_position] {
+    icon-image: "transport/airport/parking_position.png";
+    set icon_z17;
+    text: auto;
+}
 area[aeroway=apron],
 area[aeroway=hangar] {
     fill-color: aeroway_light#990000;

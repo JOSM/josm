@@ -2993,6 +2993,11 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:aeroway=apron" />
             <key key="aeroway" value="apron" />
         </item> <!-- Apron -->
+        <item name="Plane Parking Position" icon="styles/standard/transport/airport/parking_position.png" type="node,way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=parking_position" />
+            <key key="aeroway" value="parking_position" />
+            <text key="ref" text="Reference" />
+        </item> <!-- Plane Parking Position -->
         <item name="Hangar" icon="presets/hangar.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=hangar"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:aeroway=hangar"
