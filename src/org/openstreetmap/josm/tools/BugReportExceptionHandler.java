@@ -126,7 +126,8 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                         }
                     } else {
                         // Ask for restart to install new plugin
-                        PluginPreference.notifyDownloadResults(Main.parent, pluginDownloadTask);
+                        PluginPreference.notifyDownloadResults(
+                                Main.parent, pluginDownloadTask, !pluginDownloadTask.getDownloadedPlugins().isEmpty());
                     }
                 }
             });
