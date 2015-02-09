@@ -4187,7 +4187,6 @@
             <text key="capacity" text="Capacity" />
             <reference ref="link_contact_address" />
         </item> <!-- Retirement Home -->
-        <separator/>
         <item name="Pharmacy" icon="presets/pharmacy.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pharmacy"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=pharmacy"
@@ -4203,15 +4202,6 @@
             <combo key="dispensing" text="Dispensing" values="yes,no" />
             <reference ref="link_contact_address" />
         </item> <!-- Pharmacy -->
-        <item name="Hearing Aids" icon="presets/hearing_aids.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hearing_aids"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=hearing_aids"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=hearing_aids" />
-            <space />
-            <key key="shop" value="hearing_aids" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
-        </item> <!-- Hearing Aids -->
         <separator/>
         <item name="Baby Hatch/Safe Haven" icon="presets/baby_hatch.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=baby_hatch"
@@ -6608,6 +6598,15 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Optician -->
+        <item name="Hearing Aids" icon="presets/hearing_aids.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hearing_aids"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=hearing_aids"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=hearing_aids" />
+            <space />
+            <key key="shop" value="hearing_aids" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address" />
+        </item> <!-- Hearing Aids -->
         <item name="Jewellery" icon="styles/standard/shop/jewelry.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=jewelry"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=jewelry"
