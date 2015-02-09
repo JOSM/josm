@@ -389,5 +389,5 @@ way[sidewalk=yes] {
 *[capacity:disabled=unknown],
 *[crossing=unknown],
 *[foot=unknown] {
-  throwOther: tr("Unspecific tag {0}", "{0.tag}");
+  throwWarning: tr("Unspecific tag {0}", "{0.tag}");
 }
