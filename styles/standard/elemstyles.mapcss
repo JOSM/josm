@@ -319,11 +319,6 @@ node[building=entrance] {
 /* barrier tags */
 /****************/
 
-node[barrier] {
-    icon-image: "vehicle/restriction/barrier.png";
-    set icon_z17;
-    text: auto;
-}
 way[barrier=bollard] {
     width: 2;
     color: barrier#F0F050;
