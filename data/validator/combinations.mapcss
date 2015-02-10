@@ -13,7 +13,6 @@ way[junction                   ][!highway][junction!=yes],
 *[ntd_id                       ][!highway],
 *[sac_scale                    ][!highway],
 *[sidewalk                     ][!highway],
-*[smoothness                   ][!highway],
 *[step_count                   ][!highway],
 *[tracktype                    ][!highway],
 *[trail_visibility             ][!highway],
@@ -121,6 +120,7 @@ way[junction                   ][!highway][junction!=yes],
 }
 
 /* {0.key} without {1.key} or {2.tag} */
+*[smoothness                   ][!highway][amenity!=parking][amenity!=parking_space][amenity!=parking_entrance][amenity!=motorcycle_parking],
 *[segregated                   ][!highway][railway!=crossing],
 *[boat                         ][!waterway][natural!=water],
 *[intermittent                 ][!waterway][natural!=water] {
