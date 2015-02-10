@@ -250,30 +250,20 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
 
     /**
      * Indicates that the image has new GPS data.
-     * That flag is used e.g. by the photo_geotagging plugin to decide for which image
-     * file the EXIF GPS data needs to be (re-)written.
+     * That flag is set by new GPS data providers.  It is used e.g. by the photo_geotagging plugin
+     * to decide for which image file the EXIF GPS data needs to be (re-)written.
      * @since 6392
      */
     public void flagNewGpsData() {
         isNewGpsData = true;
-        // We need to set the GPS time to tell the system (mainly the photo_geotagging plug-in)
-        // that the GPS data has changed. Check for existing GPS time and take EXIF time otherwise.
-        // This can be removed once isNewGpsData is used instead of the GPS time.
-        if (gpsTime == null) {
-            Date time = getExifGpsTime();
-            if (time == null) {
-                time = getExifTime();
-                if (time == null) {
-                    // Time still not set, take the current time.
-                    time = new Date();
-                }
-            }
-            gpsTime = time;
-        }
-        if (tmp != null && !tmp.hasGpsTime()) {
-            // tmp.gpsTime overrides gpsTime, so we set it too.
-            tmp.gpsTime = gpsTime;
-        }
+   }
+
+    /**
+     * Remove the flag that indicates new GPS data.
+     * The flag is cleared by a new GPS data consumer.
+     */
+    public void unflagNewGpsData() {
+        isNewGpsData = false;
     }
 
     /**
