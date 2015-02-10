@@ -20,6 +20,7 @@ import org.openstreetmap.josm.Main;
  * <li>adds a "native" context menu (undo/redo/cut/copy/paste/select all)</li>
  * <li>adds an optional "hint" displayed when no text has been entered</li>
  * <li>disables the global advanced key press detector when focused</li>
+ * <li>implements a workaround to <a href="https://bugs.openjdk.java.net/browse/JDK-6322854">JDK bug 6322854</a></li>
  * <br>This class must be used everywhere in core and plugins instead of {@code JTextField}.
  * @since 5886
  */
@@ -72,6 +73,8 @@ public class JosmTextField extends JTextField implements FocusListener {
             setMinimumSize(getPreferredSize());
         }
         addFocusListener(this);
+        // Workaround for Java bug 6322854
+        JosmPasswordField.workaroundJdkBug6322854(this);
     }
 
     /**
