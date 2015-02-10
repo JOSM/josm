@@ -37,7 +37,7 @@ public class FollowLineAction extends JosmAction {
     public FollowLineAction() {
         super(
                 tr("Follow line"),
-                "followline.png",
+                "followline",
                 tr("Continues drawing a line that shares nodes with another line."),
                 Shortcut.registerShortcut("tools:followline", tr(
                 "Tool: {0}", tr("Follow")),
