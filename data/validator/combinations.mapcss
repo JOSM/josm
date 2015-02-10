@@ -148,6 +148,12 @@ way[junction                   ][!highway][junction!=yes],
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
 }
 
+/* see #9195 */
+*[highway=footway][cycleway=lane] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "bicycle=designated + segregated=yes";
+}
+
 /* {0} on suspicious object */
 *[tunnel  ][!highway][!railway][!waterway][public_transport != platform][man_made != pipeline],
 *[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport != platform][man_made !~ /^(bridge|pipeline)$/][building != bridge],
