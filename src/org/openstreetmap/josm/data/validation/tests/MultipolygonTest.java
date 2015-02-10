@@ -236,7 +236,7 @@ public class MultipolygonTest extends Test {
                             List<OsmPrimitive> l = new ArrayList<>();
                             l.add(r);
                             l.add(wInner);
-                            addError(r, new TestError(this, Severity.WARNING, tr("Style for inner way equals multipolygon"),
+                            addError(r, new TestError(this, Severity.OTHER, tr("With the currently used mappaint style the style for inner way equals the multipolygon style"),
                                     INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
                         }
                     }
