@@ -147,6 +147,11 @@ way[junction                   ][!highway][junction!=yes],
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
 }
 
+/* {0.tag} together with {1.tag} (info level), see #9696 */
+*[highway=footway][oneway=no] {
+  throwOther: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+}
+
 /* see #9811 */
 *[place][/^addr:/],
 *[boundary][/^addr:/],
