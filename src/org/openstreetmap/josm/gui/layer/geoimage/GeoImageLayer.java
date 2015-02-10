@@ -355,14 +355,26 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     }
 
+    /**
+     * Prepare the string that is displayed if layer information is requested.
+     * @return String with layer information
+     */
     private String infoText() {
-        int i = 0;
-        for (ImageEntry e : data)
+        int tagged = 0;
+        int newdata = 0;
+        for (ImageEntry e : data) {
             if (e.getPos() != null) {
-                i++;
+                tagged++;
             }
-        return trn("{0} image loaded.", "{0} images loaded.", data.size(), data.size())
-                + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", i, i);
+            if (e.hasNewGpsData()) {
+                newdata++;
+            }
+        }
+        return "<html>"
+                + trn("{0} image loaded.", "{0} images loaded.", data.size(), data.size())
+                + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", tagged, tagged)
+                + (newdata > 0 ? "<br>" + trn("{0} has updated GPS data.", "{0} have updated GPS data.", newdata, newdata) : "")
+                + "</html>";
     }
 
     @Override public Object getInfoComponent() {
@@ -1071,10 +1083,14 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Main.map.mapView.repaint();
     }
 
+    /**
+     * Get list of images in layer.
+     * @return List of images in layer
+     */
     public List<ImageEntry> getImages() {
         List<ImageEntry> copy = new ArrayList<>(data.size());
         for (ImageEntry ie : data) {
-            copy.add(ie.clone());
+            copy.add(ie);
         }
         return copy;
     }
