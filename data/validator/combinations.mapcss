@@ -143,9 +143,15 @@ way[junction                   ][!highway][junction!=yes],
 }
 
 /* {0.key} together with {1.key}, see #10837 */
-*[noname?][name],
-*[highway]["addr:street"] {
+*[noname?][name] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
+}
+
+/* see #9811 */
+*[place][/^addr:/],
+*[boundary][/^addr:/],
+*[highway][/^addr:/] {
+  throwWarning: tr("{0} together with addr:*", "{0.key}");
 }
 
 /* see #9195 */
