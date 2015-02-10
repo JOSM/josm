@@ -332,6 +332,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 StringBuilder sb = new StringBuilder();
                 sb.append("<html>");
                 if (task != null && !task.isCanceled()) {
+                    PluginHandler.refreshLocalUpdatedPluginInfo(task.getDownloadedPlugins());
                     sb.append(PluginPreference.buildDownloadSummary(task));
                 }
                 if (requiresRestart) {

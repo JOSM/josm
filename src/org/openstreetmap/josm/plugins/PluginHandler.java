@@ -895,7 +895,7 @@ public final class PluginHandler {
             // try to download the plugin lists
             //
             ReadRemotePluginInformationTask task1 = new ReadRemotePluginInformationTask(
-                    monitor.createSubTaskMonitor(1,false),
+                    monitor.createSubTaskMonitor(1, false),
                     Main.pref.getPluginSites(), displayErrMsg
             );
             Future<?> future = service.submit(task1);
@@ -904,7 +904,7 @@ public final class PluginHandler {
             try {
                 future.get();
                 allPlugins = task1.getAvailablePlugins();
-                plugins = buildListOfPluginsToLoad(parent,monitor.createSubTaskMonitor(1, false));
+                plugins = buildListOfPluginsToLoad(parent, monitor.createSubTaskMonitor(1, false));
                 // If only some plugins have to be updated, filter the list
                 if (pluginsWanted != null && !pluginsWanted.isEmpty()) {
                     for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
