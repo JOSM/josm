@@ -2970,8 +2970,12 @@ area[man_made] {
     z-index: -2; /* put areas that can have other areas inside (e.g. building) a little lower, see #9606 */
 }
 area[landuse=farm],
-area[landuse=farmland],
-area[landuse=meadow],
+area[landuse=farmland] {
+    fill-color: farmland#b8e0b1;
+}
+area[landuse=meadow] {
+    fill-color: meadow#b1e0b6;
+}
 area[landuse=vineyard],
 area[landuse=orchard] {
     fill-color: green#b1e0c2;
@@ -2989,11 +2993,15 @@ area[landuse=reservoir] {
 area[landuse=forest] {
     fill-color: forest#b1efc8;
 }
-area[landuse=allotments],
+area[landuse=allotments] {
+    fill-color: allotments#5dbf80;
+}
 area[landuse=greenhouse_horticulture],
-area[landuse=plant_nursery],
-area[landuse=grass] {
+area[landuse=plant_nursery] {
     fill-color: green#b1e0c2;
+}
+area[landuse=grass] {
+    fill-color: grass#97ca96;
 }
 area[landuse=residential] {
     fill-color: residential#f0f0f0;
