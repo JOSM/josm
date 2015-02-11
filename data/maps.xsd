@@ -603,62 +603,67 @@
 		<xs:sequence>
 			<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
-					<xs:all>
-						<!-- The name of the imagery source -->
-						<xs:element name="name" minOccurs="1" maxOccurs="1" type="xs:string" />
-						<!-- A description of the imagery source -->
-						<xs:element name="description" minOccurs="0" type="tns:description" />
-						<!-- A unique id for the imagery source -->
-						<xs:element name="id" minOccurs="0" maxOccurs="1" type="tns:id" />
-						<!-- The type. Can be tms, wms and html. In addition, there are the special types bing and scanex 
-							with hardcoded behaviour. -->
-						<xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
-						<!-- To define as default server for this type -->
-						<xs:element name="default" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-						<!-- The URL of the service. Can contain templates, e.g. {zoom} will be replaced by the current 
-							zoom level (see below). The list of services is a XML document, so the '&' character is represented by 
-							'&amp;'. Alternatively, the URL can be wrapped in a <![CDATA[...]]> section. -->
-						<xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:string" />
-						<!-- A list of supported projections (inside <code> tags) -->
-						<xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
-						<!-- TMS only: The minimum zoom level -->
-						<xs:element name="min-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
-						<!-- TMS only: The maximum zoom level. For higher scales, the images of the maximum level is enlarged. -->
-						<xs:element name="max-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
-						<!-- The area of use, e.g. <bounds min-lat='45.7' min-lon='5.9' max-lat='55.0' max-lon='17.3'/> -->
-						<xs:element name="bounds" minOccurs="0" maxOccurs="1" type="tns:bounds" />
-						<!-- Provide a source that this background can be used for OSM. A page on the OSM-wiki with additional explanation and further references is preferred, but other sources (for example the license text) can also be linked. -->
-						<xs:element name="permission-ref" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
-						<!-- A link to an EULA text that has to be accepted by the user, before the imagery source is added. -->
-						<xs:element name="eula" minOccurs="0" maxOccurs="1" type="tns:eula" />
-						<!-- The attribution text to be shown all the time on the map. -->
-						<xs:element name="attribution-text" minOccurs="0" maxOccurs="1" type="tns:attribution-text" />
-						<!-- A link that is opened, when the user clicks on the attribution text -->
-						<xs:element name="attribution-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
-						<!-- A image that is displayed as attribution for the imagery background -->
-						<xs:element name="logo-image" minOccurs="0" maxOccurs="1" type="xs:string" />
-						<!-- A link that is opened, when the user clicks on the logo image -->
-						<xs:element name="logo-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
-						<!-- terms-of-use text (if missing, default tou text will be used, unless terms-of-use-url is also missing) -->
-						<xs:element name="terms-of-use-text" minOccurs="0" maxOccurs="1" type="xs:string" />
-						<!-- A link that is opened, when the user clicks on the terms-of-use text -->
-						<xs:element name="terms-of-use-url" minOccurs="0" maxOccurs="1" type="xs:string" />
-						<!-- The ISO 3166 country code -->
-						<xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />
-						<!-- A base64-encoded image that is displayed as menu/toolbar icon -->
-						<xs:element name="icon" minOccurs="0" maxOccurs="1" type="xs:string" />
-						<xs:element name="mirror" minOccurs="0">
-							<xs:complexType>
-								<xs:all>
-									<xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
-									<xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:string" />
-									<xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
-									<xs:element name="min-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
-									<xs:element name="max-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
-								</xs:all>
-							</xs:complexType>
-						</xs:element>
-					</xs:all>
+					<!-- this is actually not fully correct, but XSD does not allow multiple time the
+						same argument in one xs:all, so this sequence/choice combination, which
+						actually allows to much, only description and mirror can appear more than once! -->
+					<xs:sequence>
+						<xs:choice minOccurs="1" maxOccurs="unbounded">
+							<!-- The name of the imagery source -->
+							<xs:element name="name" minOccurs="1" maxOccurs="1" type="xs:string" />
+							<!-- A description of the imagery source -->
+							<xs:element name="description" minOccurs="0" type="tns:description" />
+							<!-- A unique id for the imagery source -->
+							<xs:element name="id" minOccurs="0" maxOccurs="1" type="tns:id" />
+							<!-- The type. Can be tms, wms and html. In addition, there are the special types bing and scanex 
+								with hardcoded behaviour. -->
+							<xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
+							<!-- To define as default server for this type -->
+							<xs:element name="default" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+							<!-- The URL of the service. Can contain templates, e.g. {zoom} will be replaced by the current 
+								zoom level (see below). The list of services is a XML document, so the '&' character is represented by 
+								'&amp;'. Alternatively, the URL can be wrapped in a <![CDATA[...]]> section. -->
+							<xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:string" />
+							<!-- A list of supported projections (inside <code> tags) -->
+							<xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
+							<!-- TMS only: The minimum zoom level -->
+							<xs:element name="min-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+							<!-- TMS only: The maximum zoom level. For higher scales, the images of the maximum level is enlarged. -->
+							<xs:element name="max-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+							<!-- The area of use, e.g. <bounds min-lat='45.7' min-lon='5.9' max-lat='55.0' max-lon='17.3'/> -->
+							<xs:element name="bounds" minOccurs="0" maxOccurs="1" type="tns:bounds" />
+							<!-- Provide a source that this background can be used for OSM. A page on the OSM-wiki with additional explanation and further references is preferred, but other sources (for example the license text) can also be linked. -->
+							<xs:element name="permission-ref" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+							<!-- A link to an EULA text that has to be accepted by the user, before the imagery source is added. -->
+							<xs:element name="eula" minOccurs="0" maxOccurs="1" type="tns:eula" />
+							<!-- The attribution text to be shown all the time on the map. -->
+							<xs:element name="attribution-text" minOccurs="0" maxOccurs="1" type="tns:attribution-text" />
+							<!-- A link that is opened, when the user clicks on the attribution text -->
+							<xs:element name="attribution-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+							<!-- A image that is displayed as attribution for the imagery background -->
+							<xs:element name="logo-image" minOccurs="0" maxOccurs="1" type="xs:string" />
+							<!-- A link that is opened, when the user clicks on the logo image -->
+							<xs:element name="logo-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
+							<!-- terms-of-use text (if missing, default tou text will be used, unless terms-of-use-url is also missing) -->
+							<xs:element name="terms-of-use-text" minOccurs="0" maxOccurs="1" type="xs:string" />
+							<!-- A link that is opened, when the user clicks on the terms-of-use text -->
+							<xs:element name="terms-of-use-url" minOccurs="0" maxOccurs="1" type="xs:string" />
+							<!-- The ISO 3166 country code -->
+							<xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />
+							<!-- A base64-encoded image that is displayed as menu/toolbar icon -->
+							<xs:element name="icon" minOccurs="0" maxOccurs="1" type="xs:string" />
+							<xs:element name="mirror" minOccurs="0">
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
+										<xs:element name="url" minOccurs="1" maxOccurs="1" type="xs:string" />
+										<xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
+										<xs:element name="min-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+										<xs:element name="max-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
+					</xs:sequence>
 					<xs:attribute name="last-check" type="xs:date" use="optional" />
 				</xs:complexType>
 			</xs:element>
@@ -666,5 +671,4 @@
 	</xs:complexType>
 
 	<xs:element name="imagery" type="tns:imagery" />
-
 </xs:schema>
