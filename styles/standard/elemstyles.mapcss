@@ -38,21 +38,42 @@ setting::highway_labels {
   default: true;
 }
 
+setting::alt_turn_icons {
+  type: boolean;
+  label: tr("Use alternative turn restriction icon set");
+  default: false;
+}
+
 /*********************/
 /* turn restrictions */
 /*********************/
 
-relation[restriction=no_left_turn] {
+relation[restriction=no_left_turn][!setting("alt_turn_icons")] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_left_turn_red.png";
+    set icon_z17;
+    text: auto;
+}
+relation[restriction=no_left_turn][setting("alt_turn_icons")] {
     icon-image: "vehicle/restriction/turn_restrictions/no_left_turn.png";
     set icon_z17;
     text: auto;
 }
-relation[restriction=no_right_turn] {
+relation[restriction=no_right_turn][!setting("alt_turn_icons")] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_right_turn_red.png";
+    set icon_z17;
+    text: auto;
+}
+relation[restriction=no_right_turn][setting("alt_turn_icons")] {
     icon-image: "vehicle/restriction/turn_restrictions/no_right_turn.png";
     set icon_z17;
     text: auto;
 }
-relation[restriction=no_straight_on] {
+relation[restriction=no_straight_on][!setting("alt_turn_icons")] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_straight_on_red.png";
+    set icon_z17;
+    text: auto;
+}
+relation[restriction=no_straight_on][setting("alt_turn_icons")] {
     icon-image: "vehicle/restriction/turn_restrictions/no_straight_on.png";
     set icon_z17;
     text: auto;
