@@ -152,6 +152,18 @@ way[junction                   ][!highway][junction!=yes],
   throwOther: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
 }
 
+/* only {0.key}, see #11104 */
+*[area][eval(number_of_tags()) = 1],
+*[name][eval(number_of_tags()) = 1],
+*[ref][eval(number_of_tags()) = 1] {
+  throwWarning: tr("incomplete object: only {0}", "{0.key}");
+}
+/* only {0.key} and {1.key}, see #11104 */
+*[name][area][eval(number_of_tags()) = 2],
+*[name][ref][eval(number_of_tags()) = 2] {
+  throwWarning: tr("incomplete object: only {0} and {1}", "{0.key}", "{1.key}");
+}
+
 /* see #9811 */
 *[place][place!=farm][/^addr:/],
 *[boundary][/^addr:/],
