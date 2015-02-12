@@ -1677,6 +1677,7 @@ area[shop=motorcycle],
 area[shop=musical_instrument],
 area[shop=newsagent],
 area[shop=optician],
+area[shop=medical_supply],
 area[shop=paint],
 area[shop=pawnbroker],
 area[shop=seafood],
@@ -1940,6 +1941,11 @@ node[shop=newsagent] {
 }
 node[shop=optician] {
     icon-image: "shop/optician.png";
+    set icon_z17;
+    text: auto;
+}
+node[shop=medical_supply] {
+    icon-image: "shop/medical_supply.svg";
     set icon_z17;
     text: auto;
 }

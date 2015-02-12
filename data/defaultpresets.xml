@@ -6643,6 +6643,14 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Hearing Aids -->
+        <item name="Medical Supply" icon="styles/standard/shop/medical_supply.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=medical_supply" />
+            <space />
+            <key key="shop" value="medical_supply" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <combo key="dispensing" text="Dispensing" values="yes,no" />
+            <reference ref="link_contact_address" />
+        </item> <!-- Medical Supply -->
         <item name="Jewellery" icon="styles/standard/shop/jewelry.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=jewelry"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=jewelry"
