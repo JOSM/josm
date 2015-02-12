@@ -765,7 +765,7 @@
                   sv.href="http://wiki.openstreetmap.org/wiki/Sv:Key:access"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:access" />
             <space />
-            <label text="Some road types already imply some access restrictions. They shouldn't set again." />
+            <label text="Some road types already imply some access restrictions which should not be set again." />
             <space />
             <check key="oneway" text="Oneway" />
             <check key="toll" text="Toll" />
