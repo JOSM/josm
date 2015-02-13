@@ -31,7 +31,7 @@ public class AddNoteAction extends MapMode {
      * @param data Note data container. Must not be null
      */
     public AddNoteAction(MapFrame mapFrame, NoteData data) {
-        super(tr("Add a new Note"), "addnote.png",
+        super(tr("Add a new Note"), "addnote",
             tr("Add note mode"),
             mapFrame, ImageProvider.getCursor("crosshair", "create_note"));
         CheckParameterUtil.ensureParameterNotNull(data, "data");

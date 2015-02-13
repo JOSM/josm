@@ -28,8 +28,8 @@ public class SizeButton extends JComponent {
     public SizeButton(SlippyMapBBoxChooser slippyMapBBoxChooser){
         super();
         this.slippyMapBBoxChooser = slippyMapBBoxChooser;
-        enlargeImage = ImageProvider.get("view-fullscreen.png");
-        shrinkImage = ImageProvider.get("view-fullscreen-revert.png");
+        enlargeImage = ImageProvider.get("view-fullscreen");
+        shrinkImage = ImageProvider.get("view-fullscreen-revert");
         setPreferredSize(new Dimension(enlargeImage.getIconWidth(), enlargeImage.getIconHeight()));
         addMouseListener(mouseListener);
     }
