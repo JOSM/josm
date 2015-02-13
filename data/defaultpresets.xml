@@ -180,17 +180,6 @@
             <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,handball,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" values_context="sport" />
         </optional>
     </chunk>
-    <chunk id="payment_base">
-        <check key="payment:coins" text="Coins" />
-        <check key="payment:notes" text="Notes" text_context="payment" />
-        <check key="payment:electronic_purses" text="Electronic purses and Charge cards" />
-        <check key="payment:debit_cards" text="Debit cards" />
-        <check key="payment:credit_cards" text="Credit cards" />
-    </chunk>
-    <chunk id="payment_account">
-        <reference ref="payment_base" />
-        <check key="payment:account_cards" text="Account or loyalty cards" />
-    </chunk>
     <chunk id="fee">
         <combo key="fee" text="Fee" values="yes,no" />
     </chunk>
@@ -2833,7 +2822,7 @@
             <key key="vending" value="public_transport_tickets" />
             <reference ref="name_operator" />
             <text key="ref" text="Reference Number" />
-            <reference ref="payment_account" />
+            <preset_link preset_name="Payment Methods" />
         </item> <!-- Ticket Machine -->
     </group> <!-- Public Transport -->
     <group name="Public Transport (Legacy)" icon="presets/bus.png">
@@ -4349,8 +4338,11 @@
             <space />
             <key key="amenity" value="telephone" />
             <text key="operator" text="Operator" />
-            <reference ref="payment_base" />
+            <space />
+            <check key="payment:coins" text="Coins" />
+            <check key="payment:notes" text="Notes" text_context="payment" />
             <check key="payment:telephone_cards" text="Telephone cards" />
+            <preset_link preset_name="Payment Methods" />
         </item> <!-- Telephone -->
         <item name="Emergency Phone" icon="styles/standard/vehicle/emergency_phone.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=phone"
@@ -6354,7 +6346,7 @@
             <reference ref="link_contact_address" />
         </item> <!-- Music -->
     </group> <!-- Electronic -->
-    <group name="Cash" icon="presets/dollar.png">
+    <group name="Cash" icon="styles/standard/money/dollar.svg">
         <item name="Bank" icon="styles/standard/money/bank.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bank"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bank"
@@ -6849,8 +6841,81 @@
         <multiselect key="vending" text="Vending products" values="animal_food;bicycle_tube;cigarettes;condoms;drinks;excrement_bags;food;news_papers;parking_tickets;photos;public_transport_plans;public_transport_tickets;SIM-cards;stamps;sweets;tampons;telephone_vouchers;toys;vouchers" values_searchable="true" />
         <text key="operator" text="Operator" />
         <text key="ref" text="Reference number" />
-        <reference ref="payment_account" />
+        <preset_link preset_name="Payment Methods" />
     </item> <!-- Vending Machine -->
+    <item name="Payment Methods" icon="styles/standard/money/dollar.svg" type="node,way,closedway,relation" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Key:payment" />
+        <space />
+        <combo key="payment:cash" text="Cash" values="yes,no" />
+        <checkgroup columns="4">
+            <check key="payment:coins" text="Coins" />
+            <check key="payment:notes" text="Notes" text_context="payment" />
+        </checkgroup>
+        <space />
+        <combo key="payment:debit_cards" text="Debit cards" values="no" />
+        <checkgroup columns="4">
+            <check key="payment:bankaxess" text="BankAxess" />
+            <check key="payment:bancomat" text="Bancomat" />
+            <check key="payment:girocard" text="Girocard" />
+            <check key="payment:laser" text="Laser" />
+            <check key="payment:maestro" text="Maestro" />
+            <check key="payment:visa_debit" text="Visa Debit" />
+            <check key="payment:visa_electron" text="Visa Electron" />
+        </checkgroup>
+        <space />
+        <combo key="payment:credit_cards" text="Credit cards" values="no" />
+        <checkgroup columns="4">
+            <check key="payment:american_express" text="American Express" />
+            <check key="payment:diners_club" text="Diners Club" />
+            <check key="payment:discover_card" text="Discover Card" />
+            <check key="payment:jcb" text="JCB" />
+            <check key="payment:mastercard" text="Mastercard" />
+            <check key="payment:visa" text="Visa" />
+        </checkgroup>
+        <space />
+        <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="no" />
+        <checkgroup columns="4">
+            <check key="payment:ep_avant" text="Avant (fi)" />
+            <check key="payment:ep_cash" text="Cash (ch)" />
+            <check key="payment:ep_chipknip" text="Chipknip (nl)" />
+            <check key="payment:ep_geldkarte" text="Geldkarte (de)" />
+            <check key="payment:ep_mep" text="Mep (pt)" />
+            <check key="payment:ep_minicash" text="Minicash (lu)" />
+            <check key="payment:ep_minipay" text="Minipay (it)" />
+            <check key="payment:ep_monedero" text="Mondero (ar)" />
+            <check key="payment:ep_monedero4b" text="Mondero 4b (es)" />
+            <check key="payment:ep_moneo" text="Moneo (fr)" />
+            <check key="payment:ep_proton" text="Proton (be)" />
+            <check key="payment:ep_quick" text="Quick (au)" />
+        </checkgroup>
+        <space />
+        <combo key="payment:cryptocurrencies" text="Cryptocurrencies" values="no" />
+        <checkgroup columns="4">
+            <check key="payment:bitcoin" text="Bitcoin" />
+            <check key="payment:dogecoin" text="Dogecoin" />
+            <check key="payment:litecoin" text="Litecoin" />
+        </checkgroup>
+        <space />
+        <label text="Public transport:" />
+        <checkgroup columns="4">
+            <check key="payment:bob" text="Bob" />
+            <check key="payment:icsf" text="IC Stored Fare" />
+            <check key="payment:oyster" text="Oyster" />
+            <check key="payment:prepaid_ticket" text="Prepaid ticket" />
+            <check key="payment:sube" text="Sube" />
+        </checkgroup>
+        <space />
+        <label text="Others:" />
+        <checkgroup columns="4">
+            <check key="payment:cheque" text="Cheque" />
+            <check key="payment:contactless" text="Contactless" />
+            <check key="payment:meal_voucher" text="Meal voucher" />
+            <check key="payment:paypal" text="Paypal" />
+            <check key="payment:telephone_cards" text="Telephone cards" />
+            <check key="payment:u-key" text="U-Key" />
+            <check key="payment:wire_transfer" text="Wire transfer" />
+        </checkgroup>
+    </item> <!-- Payment Methods -->
   </group> <!-- Shops -->
   <group name="Geography" icon="presets/peak.svg">
     <group name="Boundaries" icon="presets/boundaries.png">
