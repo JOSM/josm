@@ -622,7 +622,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyAllLeft extends AbstractAction implements Observer, PropertyChangeListener {
 
         public CopyAllLeft() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallleft.png");
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallleft");
             putValue(Action.SMALL_ICON, icon);
             putValue(Action.SHORT_DESCRIPTION, tr("Copy all my elements to the target"));
         }
@@ -651,7 +651,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyAllRight extends AbstractAction implements Observer, PropertyChangeListener {
 
         public CopyAllRight() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallright.png");
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallright");
             putValue(Action.SMALL_ICON, icon);
             putValue(Action.SHORT_DESCRIPTION, tr("Copy all their elements to the target"));
         }
@@ -680,7 +680,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class MoveUpMergedAction extends AbstractAction implements ListSelectionListener {
 
         public MoveUpMergedAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "moveup.png");
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "moveup");
             putValue(Action.SMALL_ICON, icon);
             if (icon == null) {
                 putValue(Action.NAME, tr("Up"));
@@ -714,7 +714,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class MoveDownMergedAction extends AbstractAction implements ListSelectionListener {
 
         public MoveDownMergedAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "movedown.png");
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "movedown");
             putValue(Action.SMALL_ICON, icon);
             if (icon == null) {
                 putValue(Action.NAME, tr("Down"));
@@ -748,7 +748,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class RemoveMergedAction extends AbstractAction implements ListSelectionListener {
 
         public RemoveMergedAction() {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", "remove.png");
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "remove");
             putValue(Action.SMALL_ICON, icon);
             if (icon == null) {
                 putValue(Action.NAME, tr("Remove"));

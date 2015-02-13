@@ -101,14 +101,14 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
                         test.update(input.getText());
                     } catch (ProjectionConfigurationException ex) {
                         error = ex.getMessage();
-                        valStatus.setIcon(ImageProvider.get("data", "error.png"));
+                        valStatus.setIcon(ImageProvider.get("data", "error"));
                         valStatus.setVisible(true);
                         errorsPanel.setText(error);
                         errorsPanel.setVisible(true);
                         return false;
                     }
                     errorsPanel.setVisible(false);
-                    valStatus.setIcon(ImageProvider.get("misc", "green_check.png"));
+                    valStatus.setIcon(ImageProvider.get("misc", "green_check"));
                     valStatus.setVisible(true);
                     return true;
                 }
