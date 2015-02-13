@@ -2194,7 +2194,7 @@ area[amenity=fuel] {
     fill-color: amenity_traffic#f7efb7;
 }
 node[amenity=parking_space] {
-    icon-image: "vehicle/parking.png";
+    icon-image: "vehicle/parking_space.svg";
     set icon_z17;
     text: auto;
 }

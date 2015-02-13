@@ -2386,7 +2386,7 @@
             <reference ref="maxstay" />
             <reference ref="supervised_lit_oh" />
         </item> <!-- Parking -->
-        <item name="Parking Space" icon="presets/parking.png" type="node,closedway" preset_name_label="true">
+        <item name="Parking Space" icon="styles/standard/vehicle/parking_space.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking_space"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=parking_space"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=parking_space"
