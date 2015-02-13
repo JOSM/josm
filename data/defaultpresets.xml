@@ -315,6 +315,11 @@
     <preset_link preset_name="Contact (Common Schema)" />
     <preset_link preset_name="Addresses" />
   </chunk>
+  <chunk id="link_contact_address_payment">
+    <preset_link preset_name="Contact (Common Schema)" />
+    <preset_link preset_name="Addresses" />
+    <preset_link preset_name="Payment Methods" />
+  </chunk>
   <!--  Groups -->
   <group name="Highways" icon="presets/way_secondary.png">
     <group name="Streets" icon="presets/way_secondary.png">
@@ -2448,6 +2453,7 @@
                     <check key="fuel:1_50" text="1/50 mix (mofa/moped)" />
                 </checkgroup>
             </optional>
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Fuel -->
         <item name="Charging Station" icon="styles/standard/vehicle/fuel/charging_station.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=charging_station"
@@ -2471,6 +2477,7 @@
             <space />
             <key key="amenity" value="car_wash" />
             <reference ref="name_brand_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Wash -->
         <separator/>
         <item name="Car Dealer" icon="presets/car.png" type="node,closedway" preset_name_label="true">
@@ -2486,7 +2493,7 @@
             <space />
             <key key="shop" value="car" />
             <reference ref="name_brand_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Car Dealer -->
         <item name="Repair" icon="presets/car_repair.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=car_repair"
@@ -2497,7 +2504,7 @@
             <space />
             <key key="shop" value="car_repair" />
             <reference ref="name_brand_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Repair -->
         <item name="Parts" icon="styles/standard/vehicle/car_parts.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=car_parts"
@@ -2506,7 +2513,7 @@
             <space />
             <key key="shop" value="car_parts" />
             <reference ref="name_brand_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Parts -->
         <item name="Tires" icon="presets/tyres.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=tyres"
@@ -2515,7 +2522,7 @@
             <space />
             <key key="shop" value="tyres" />
             <reference ref="name_brand_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Tires -->
         <separator/>
         <item name="Rental" icon="presets/car_rental.png" type="node,closedway" preset_name_label="true">
@@ -2530,7 +2537,7 @@
             <key key="amenity" value="car_rental" />
             <reference ref="name_brand_operator_oh_wheelchair" />
             <combo key="second_hand" text="Second hand" values="only,yes,no" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Rental -->
         <item name="Sharing" icon="presets/car_sharing.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=car_sharing"
@@ -2583,7 +2590,7 @@
                 <combo key="clothes" text="Clothes" values="yes,brand,no" />
                 <text key="services" text="Other" />
             </optional>
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Motorcycle Dealer -->
     </group> <!-- Motorcycle -->
     <group name="Bicycle" icon="presets/bike.png">
@@ -2628,7 +2635,7 @@
             <check key="service:bicycle:pump" text="Free bicycle pump" />
             <check key="service:bicycle:diy" text="Tools for do-it-yourself repair (may be a bike co-operative)" />
             <check key="service:bicycle:cleaning" text="Bicycles are washed (for a fee)" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Bike Dealer -->
         <item name="Rental" icon="presets/bicycle_rental.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bicycle_rental"
@@ -2645,7 +2652,7 @@
             <space />
             <key key="amenity" value="bicycle_rental" />
             <text key="name" text="Name" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Rental -->
         <item name="Public Bicycle Repair Station" icon="styles/standard/vehicle/bicycle_repair_station.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bicycle_repair_station"
@@ -3079,7 +3086,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Hotel -->
         <item name="Motel" icon="styles/standard/accommodation/motel.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=motel"
@@ -3096,7 +3103,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Motel -->
         <item name="Guest House/Bed &amp; Breakfast" icon="styles/standard/accommodation/guest_house.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=guest_house"
@@ -3112,7 +3119,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Guest House/Bed & Breakfast -->
         <item name="Chalet" icon="styles/standard/accommodation/chalet.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=chalet"
@@ -3129,7 +3136,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Chalet -->
         <item name="Hostel" icon="styles/standard/accommodation/hostel.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=hostel"
@@ -3147,7 +3154,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Hostel -->
         <item name="Alpine Hut" icon="styles/standard/accommodation/alpine_hut_blue.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=alpine_hut"
@@ -3163,7 +3170,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Alpine Hut -->
         <separator/>
         <item name="Caravan Site/RV Park" icon="styles/standard/accommodation/camping/caravan.png" type="node,closedway" preset_name_label="true">
@@ -3184,7 +3191,7 @@
             <check key="power_supply" text="Power supply" />
             <check key="tents" text="Tents allowed" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Caravan Site/RV Park -->
         <item name="Camping Site" icon="styles/standard/accommodation/camping.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=camp_site"
@@ -3203,7 +3210,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Camping Site -->
     </group> <!-- Accommodation -->
     <group name="Food+Drinks" icon="presets/restaurant.png">
@@ -3225,7 +3232,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Restaurant -->
         <item name="Fast Food" icon="presets/fastfood.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fast_food"
@@ -3241,7 +3248,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Fast Food -->
         <item name="Food Court" icon="presets/restaurant.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=food_court"
@@ -3254,7 +3261,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Food Court -->
         <item name="Cafe" icon="presets/cafe.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=cafe"
@@ -3274,7 +3281,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Cafe -->
         <item name="Pub" icon="presets/pub.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pub"
@@ -3290,7 +3297,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Pub -->
         <item name="Beer Garden" icon="presets/biergarten.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=biergarten"
@@ -3306,7 +3313,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Beer Garden -->
         <item name="Bar" icon="styles/standard/food/bar.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bar"
@@ -3323,7 +3330,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Bar -->
         <item name="Night Club" icon="styles/standard/leisure/discoball.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nightclub"
@@ -3341,7 +3348,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Night Club -->
         <item name="Strip Club" icon="styles/standard/leisure/nightclub.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=stripclub"
@@ -3355,7 +3362,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Strip Club -->
     </group> <!-- Food+Drinks -->
     <group name="Tourism" icon="presets/sightseeing.png">
@@ -3395,7 +3402,7 @@
             <key key="information" value="office" />
             <reference ref="name_oh_wheelchair" />
             <reference ref="internet" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Information Office -->
         <item name="Map" icon="presets/map.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information"
@@ -3527,7 +3534,7 @@
             <check key="cinema:3D" text="3D" />
             <text key="screen" text="Number of screens" />
             <text key="min_age" text="Minimum age" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Movie Theater/Cinema -->
         <item name="Zoo" icon="presets/zoo.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=zoo"
@@ -3540,7 +3547,7 @@
             <reference ref="name_oh_wheelchair" />
             <text key="wikipedia" text="Wikipedia" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Zoo -->
         <item name="Dog Park" icon="presets/dogpark.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=dog_park"
@@ -3569,7 +3576,7 @@
             <key key="tourism" value="theme_park" />
             <reference ref="name_operator_oh_wheelchair" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Amusement/Theme Park -->
         <item name="Water Park" icon="styles/standard/leisure/water_park.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=water_park"
@@ -3583,7 +3590,7 @@
             <key key="leisure" value="water_park" />
             <reference ref="name_operator_oh_wheelchair" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Water Park -->
         <item name="Sauna" de.name="Sauna" icon="presets/sauna.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=sauna"
@@ -3595,7 +3602,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <combo key="access" text="Access" values="yes,permissive,private" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Sauna -->
         <item name="Horse Riding" icon="presets/equestrian.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=horse_riding" />
@@ -3604,7 +3611,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="fee" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Horse Riding -->
         <item name="Brothel" de.name="Bordell" icon="styles/standard/leisure/stripclub.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=brothel"
@@ -3620,7 +3627,7 @@
             <space />
             <reference ref="internet_smoking" />
             <space />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Brothel -->
         <separator/>
         <item name="Playground" icon="styles/standard/leisure/playground.png" type="node,closedway" preset_name_label="true">
@@ -3712,7 +3719,7 @@
             <key key="tourism" value="museum" />
             <reference ref="name_operator_oh_wheelchair" />
             <text key="wikipedia" text="Wikipedia" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Museum -->
         <item name="Theatre" icon="presets/theater.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=theatre"
@@ -3725,7 +3732,7 @@
             <key key="amenity" value="theatre" />
             <reference ref="name_operator" />
             <reference ref="wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Theatre -->
         <item name="Library" icon="styles/standard/shop/library.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=library"
@@ -3739,7 +3746,7 @@
             <space />
             <key key="amenity" value="library" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Library -->
         <item name="Arts Centre" icon="presets/arts_centre.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=arts_centre"
@@ -3750,7 +3757,7 @@
             <space />
             <key key="amenity" value="arts_centre" />
             <text key="name" text="Name" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Arts Centre -->
         <item name="Artwork" icon="presets/arts_centre.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=artwork"
@@ -3779,7 +3786,7 @@
             <reference ref="name_operator" />
             <reference ref="wheelchair" />
             <combo key="type" text="Type" values="audio,video" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Recording Studio -->
     </group> <!-- Culture -->
     <group name="Place of Worship" icon="styles/standard/religion.png">
@@ -4071,7 +4078,7 @@
             <key key="amenity" value="post_office" />
             <reference ref="name_operator_oh_wheelchair" />
             <text key="ref" text="Reference" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Post Office -->
     </group> <!-- Public Buildings -->
     <group name="Education" icon="presets/school.png">
@@ -4155,7 +4162,7 @@
             <space />
             <key key="amenity" value="hospital" />
             <reference ref="name_operator" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Hospital -->
         <item name="Clinic" icon="styles/standard/health/hospital.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=clinic"
@@ -4163,7 +4170,7 @@
             <space />
             <key key="amenity" value="clinic" />
             <reference ref="name_operator" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Clinic -->
         <item name="Doctor's Office" icon="styles/standard/health/doctor.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=doctors"
@@ -4174,7 +4181,7 @@
             <space />
             <key key="amenity" value="doctors" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Doctor's Office -->
         <item name="Dentist" icon="styles/standard/health/dentist.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=dentist"
@@ -4184,7 +4191,7 @@
             <space />
             <key key="amenity" value="dentist" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Dentist -->
         <item name="Nursing Home" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nursing_home"
@@ -4225,7 +4232,7 @@
             <key key="amenity" value="pharmacy" />
             <reference ref="name_operator_oh_wheelchair" />
             <combo key="dispensing" text="Dispensing" values="yes,no" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Pharmacy -->
         <separator/>
         <item name="Baby Hatch/Safe Haven" icon="presets/baby_hatch.png" type="node,closedway" preset_name_label="true">
@@ -4274,7 +4281,7 @@
             <space />
             <key key="amenity" value="veterinary" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Veterinary -->
     </group> <!-- Health -->
     <group name="Facilities" icon="presets/telephone.png">
@@ -4564,7 +4571,7 @@
             <key key="leisure" value="stadium" />
             <text key="name" text="Name" />
             <reference ref="optional_sport" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Stadium -->
         <item name="Sports Centre" icon="styles/standard/sport/centre.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=sports_centre"
@@ -4577,7 +4584,7 @@
             <key key="leisure" value="sports_centre" />
             <text key="name" text="Name" />
             <reference ref="optional_sport" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Sports Centre -->
         <item name="Pitch" icon="styles/standard/sport/pitch.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=pitch"
@@ -4593,7 +4600,7 @@
             <key key="leisure" value="pitch" />
             <text key="name" text="Name" />
             <reference ref="optional_sport" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Pitch -->
         <item name="Racetrack" icon="styles/standard/sport/track.png" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=track"
@@ -5834,7 +5841,7 @@
             <space />
             <key key="historic" value="castle" />
             <reference ref="name_wikipedia" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Castle -->
         <item name="Ruins" icon="presets/ruins.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=ruins"
@@ -5969,7 +5976,7 @@
             <space />
             <key key="shop" value="supermarket" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Supermarket -->
         <item name="Convenience Store" icon="presets/convenience.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=convenience"
@@ -5982,7 +5989,7 @@
             <space />
             <key key="shop" value="convenience" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Convenience Store -->
         <item name="Kiosk" icon="presets/kiosk.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=kiosk"
@@ -5995,7 +6002,7 @@
             <space />
             <key key="shop" value="kiosk" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Kiosk -->
         <separator/>
         <item name="Bakery" icon="presets/baker.png" type="node,closedway" preset_name_label="true">
@@ -6012,7 +6019,7 @@
             <space />
             <key key="shop" value="bakery" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Bakery -->
         <item name="Butcher" icon="styles/standard/shop/groceries/butcher.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=butcher"
@@ -6026,7 +6033,7 @@
             <space />
             <key key="shop" value="butcher" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Butcher -->
         <item name="Seafood" icon="presets/seafood.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=seafood"
@@ -6036,7 +6043,7 @@
             <space />
             <key key="shop" value="seafood" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Seafood -->
         <item name="Deli (Fine Food)" icon="presets/deli.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=deli"
@@ -6048,7 +6055,7 @@
             <space />
             <key key="shop" value="deli" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Deli (Fine Food) -->
         <item name="Candy Store" icon="presets/confectionery.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=confectionery"
@@ -6063,7 +6070,7 @@
             <space />
             <key key="shop" value="confectionery" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Candy Store -->
         <item name="Tea" icon="styles/standard/shop/groceries/tea.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=tea"
@@ -6071,14 +6078,14 @@
             <space />
             <key key="shop" value="tea" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Tea -->
         <item name="Coffee" icon="styles/standard/shop/groceries/coffee.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=coffee" />
             <space />
             <key key="shop" value="coffee" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Coffee -->
         <separator/>
         <item name="Public Market" icon="styles/standard/place/marketplace.png" type="node,way,closedway" preset_name_label="true">
@@ -6109,7 +6116,7 @@
             <key key="shop" value="greengrocer" />
             <reference ref="name_oh_wheelchair" />
             <combo key="organic" text="Organic" values="only,yes,no" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Greengrocer -->
         <item name="Farm Stand" icon="presets/apple.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=farm"
@@ -6122,7 +6129,7 @@
             <reference ref="name_oh_wheelchair" />
             <text key="description" text="Description" />
             <combo key="organic" text="Organic" values="only,yes,no" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Farm Stand -->
         <separator/>
         <item name="Organic" type="node,closedway" preset_name_label="true">
@@ -6149,7 +6156,7 @@
             <space />
             <key key="shop" value="alcohol" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Alcohol -->
         <item name="Beverages" icon="styles/standard/shop/beverages.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=beverages"
@@ -6160,7 +6167,7 @@
             <space />
             <key key="shop" value="beverages" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Beverages -->
         <item name="Wine" icon="styles/standard/shop/wine.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=wine"
@@ -6168,7 +6175,7 @@
             <space />
             <key key="shop" value="wine" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Wine -->
     </group> <!-- Food -->
     <group name="Clothes" icon="styles/standard/shop/clothes.png">
@@ -6185,7 +6192,7 @@
             <reference ref="name_oh_wheelchair" />
             <combo key="second_hand" text="Second hand" values="only,yes,no" />
             <combo key="organic" text="Organic" values="only,yes,no" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Clothes -->
         <item name="Boutique" icon="presets/boutique.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=boutique"
@@ -6196,7 +6203,7 @@
             <space />
             <key key="shop" value="boutique" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Boutique -->
         <item name="Shoes" icon="styles/standard/shop/shoes.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=shoes"
@@ -6208,7 +6215,7 @@
             <reference ref="name_oh_wheelchair" />
             <combo key="second_hand" text="Second hand" values="only,yes,no" />
             <combo key="organic" text="Organic" values="only,yes,no" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Shoes -->
         <item name="Outdoor" icon="styles/standard/shop/outdoor.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=outdoor"
@@ -6219,7 +6226,7 @@
             <space />
             <key key="shop" value="outdoor" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Outdoor -->
         <item name="Sports" icon="styles/standard/sport/multi.png" type="node,closedway" preset_name_label="true">
              <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=sports"
@@ -6228,7 +6235,7 @@
             <space />
             <key key="shop" value="sports" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Sports -->
         <separator/>
         <item name="Dry Cleaning" icon="presets/laundry.png" type="node,closedway" preset_name_label="true">
@@ -6240,7 +6247,7 @@
             <space />
             <key key="shop" value="dry_cleaning" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Dry Cleaning -->
         <item name="Laundry" icon="presets/laundry.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=laundry"
@@ -6250,7 +6257,7 @@
             <space />
             <key key="shop" value="laundry" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Laundry -->
         <item name="Tailor" icon="styles/standard/shop/tailor.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=tailor"
@@ -6258,7 +6265,7 @@
             <space />
             <key key="shop" value="tailor" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Tailor -->
         <item name="Fabric" icon="presets/fabric.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=fabric"
@@ -6268,7 +6275,7 @@
             <space />
             <key key="shop" value="fabric" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Fabric -->
     </group> <!-- Clothes -->
     <group name="Electronic" icon="styles/standard/shop/electronics.png">
@@ -6281,7 +6288,7 @@
             <space />
             <key key="shop" value="computer" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Computer -->
         <item name="Electronics" icon="styles/standard/shop/electronics.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=electronics"
@@ -6291,7 +6298,7 @@
             <space />
             <key key="shop" value="electronics" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Computer -->
         <item name="Mobile Phone" icon="presets/mobile_phone.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=mobile_phone"
@@ -6300,7 +6307,7 @@
             <space />
             <key key="shop" value="mobile_phone" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Mobile Phone -->
         <item name="Vacuum Cleaner" icon="presets/vacuum_cleaner.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=vacuum_cleaner"
@@ -6309,7 +6316,7 @@
             <space />
             <key key="shop" value="vacuum_cleaner" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Vacuum Cleaner -->
         <item name="Hifi" icon="styles/standard/shop/hifi.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hifi"
@@ -6319,7 +6326,7 @@
             <space />
             <key key="shop" value="hifi" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Hifi -->
         <item name="Video" icon="styles/standard/shop/video.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=video"
@@ -6329,21 +6336,21 @@
             <space />
             <key key="shop" value="video" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Video -->
         <item name="Video Games" icon="styles/standard/shop/video_games.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=video_games" />
             <space />
             <key key="shop" value="video_games" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Video Games -->
         <item name="Music" icon="styles/standard/shop/music.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=music" />
             <space />
             <key key="shop" value="music" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Music -->
     </group> <!-- Electronic -->
     <group name="Cash" icon="styles/standard/money/dollar.svg">
@@ -6402,7 +6409,7 @@
             <space />
             <key key="shop" value="pawnbroker" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Pawnbroker -->
     </group> <!-- Cash -->
     <group name="Home decoration" icon="styles/standard/shop/interior_decoration.svg">
@@ -6415,7 +6422,7 @@
             <space />
             <key key="shop" value="furniture" />
             <reference ref="name_brand_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Furniture -->
         <item name="Kitchen" icon="presets/kitchen.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=kitchen"
@@ -6427,7 +6434,7 @@
             <space />
             <key key="shop" value="kitchen" />
             <reference ref="name_brand_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Kitchen -->
         <item name="Curtain" icon="presets/curtain.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=curtain"
@@ -6436,7 +6443,7 @@
             <space />
             <key key="shop" value="curtain" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Curtain -->
         <item name="Art" icon="styles/standard/shop/art.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=art"
@@ -6446,7 +6453,7 @@
             <space />
             <key key="shop" value="art" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Art -->
         <item name="Frame" icon="presets/frame.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=frame"
@@ -6456,7 +6463,7 @@
             <space />
             <key key="shop" value="frame" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Frame -->
         <item name="Bed" icon="styles/standard/shop/bed.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bed"
@@ -6467,7 +6474,7 @@
             <space />
             <key key="shop" value="bed" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Bed -->
         <item name="Interior Decoration" icon="styles/standard/shop/interior_decoration.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=interior_decoration"
@@ -6476,7 +6483,7 @@
             <space />
             <key key="shop" value="interior_decoration" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Interior Decoration -->
         <item name="Antiques" icon="styles/standard/shop/antique.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=antiques"
@@ -6485,7 +6492,7 @@
             <space />
             <key key="shop" value="antiques" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Antiques -->
     </group> <!-- Home decoration -->
     <group name="Printed Material" icon="presets/stationery.png">
@@ -6498,7 +6505,7 @@
             <space />
             <key key="shop" value="stationery" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Stationery -->
         <item name="Copy Shop" icon="presets/copyshop.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=copyshop"
@@ -6509,7 +6516,7 @@
             <space />
             <key key="shop" value="copyshop" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Copy Shop -->
         <item name="Book Store" icon="styles/standard/shop/book.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=books"
@@ -6522,7 +6529,7 @@
             <key key="shop" value="books" />
             <reference ref="name_brand_oh_wheelchair" />
             <combo key="second_hand" text="Second hand" values="only,yes,no" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Book Store -->
         <item name="Newspaper Stand" icon="presets/kiosk.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=newsagent"
@@ -6534,7 +6541,7 @@
             <space />
             <key key="shop" value="newsagent" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Newspaper Stand -->
         <item name="Ticket" icon="styles/standard/shop/ticket.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=ticket"
@@ -6542,7 +6549,7 @@
             <space />
             <key key="shop" value="ticket" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Ticket -->
     </group> <!-- Printed Material -->
     <group name="Other" icon="styles/standard/shop/mall.png">
@@ -6557,7 +6564,7 @@
             <space />
             <key key="shop" value="department_store" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Department Store -->
         <item name="Mall" icon="styles/standard/shop/mall.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=mall"
@@ -6568,7 +6575,7 @@
             <space />
             <key key="shop" value="mall" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Mall -->
         <separator/>
         <item name="Chemist" icon="styles/standard/shop/chemist.png" type="node,closedway" preset_name_label="true">
@@ -6580,7 +6587,7 @@
             <space />
             <key key="shop" value="chemist" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Chemist -->
         <item name="Hairdresser/Barber" icon="styles/standard/shop/hairdresser.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hairdresser"
@@ -6593,7 +6600,7 @@
             <space />
             <key key="shop" value="hairdresser" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Hairdresser/Barber -->
         <item name="Beauty" icon="styles/standard/shop/beauty.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=beauty"
@@ -6605,7 +6612,7 @@
             <space />
             <key key="shop" value="beauty" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Beauty -->
         <item name="Tattoo" icon="styles/standard/shop/tattoo.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=tattoo"
@@ -6615,7 +6622,7 @@
             <space />
             <key key="shop" value="tattoo" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Tattoo -->
         <item name="Optician" icon="styles/standard/shop/optician.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=optician"
@@ -6624,7 +6631,7 @@
             <space />
             <key key="shop" value="optician" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Optician -->
         <item name="Hearing Aids" icon="presets/hearing_aids.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hearing_aids"
@@ -6633,7 +6640,7 @@
             <space />
             <key key="shop" value="hearing_aids" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Hearing Aids -->
         <item name="Medical Supply" icon="styles/standard/shop/medical_supply.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=medical_supply" />
@@ -6641,7 +6648,7 @@
             <key key="shop" value="medical_supply" />
             <reference ref="name_operator_oh_wheelchair" />
             <combo key="dispensing" text="Dispensing" values="yes,no" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Medical Supply -->
         <item name="Jewellery" icon="styles/standard/shop/jewelry.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=jewelry"
@@ -6651,7 +6658,7 @@
             <space />
             <key key="shop" value="jewelry" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Jewellery -->
         <item name="Gift/Souvenir" icon="presets/present.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=gift"
@@ -6667,7 +6674,7 @@
                 <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" />
                 <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
             </optional>
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Gift/Souvenir -->
         <item name="Erotic" icon="presets/erotic.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=erotic"
@@ -6676,7 +6683,7 @@
             <space />
             <key key="shop" value="erotic" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Erotic -->
         <separator/>
         <item name="Florist" icon="styles/standard/shop/florist.png" type="node,closedway" preset_name_label="true">
@@ -6689,7 +6696,7 @@
             <space />
             <key key="shop" value="florist" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Florist -->
         <item name="Garden Centre" icon="styles/standard/shop/garden_centre.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=garden_centre"
@@ -6702,7 +6709,7 @@
             <space />
             <key key="shop" value="garden_centre" />
             <reference ref="name_brand_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Garden Centre -->
         <separator/>
         <item name="Do-It-Yourself Store" icon="presets/diy_store.png" type="node,closedway" preset_name_label="true">
@@ -6715,7 +6722,7 @@
             <space />
             <key key="shop" value="doityourself" />
             <reference ref="name_brand_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Do-It-Yourself Store -->
         <item name="Hardware" icon="presets/hardware.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hardware"
@@ -6726,7 +6733,7 @@
             <space />
             <key key="shop" value="hardware" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Hardware -->
         <item name="Paint" icon="presets/paint.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=paint"
@@ -6736,7 +6743,7 @@
             <space />
             <key key="shop" value="paint" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Paint -->
         <separator/>
         <item name="Travel Agency" icon="presets/travel.png" type="node,closedway" preset_name_label="true">
@@ -6746,7 +6753,7 @@
             <space />
             <key key="shop" value="travel_agency" />
             <reference ref="name_brand_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Travel Agency -->
         <item name="Musical Instrument" icon="presets/musical_instrument.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=musical_instrument"
@@ -6755,7 +6762,7 @@
             <space />
             <key key="shop" value="musical_instrument" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Musical Instrument -->
         <item name="Toys" icon="styles/standard/shop/toys.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=toys"
@@ -6766,7 +6773,7 @@
             <space />
             <key key="shop" value="toys" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Toys -->
         <item name="Variety Store" icon="presets/variety_store.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=variety_store"
@@ -6778,14 +6785,14 @@
             <space />
             <key key="shop" value="variety_store" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Variety Store -->
         <item name="Bookmaker" icon="presets/lottery.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bookmaker" />
             <space />
             <key key="shop" value="bookmaker" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Bookmaker -->
         <item name="Lottery" icon="presets/lottery.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=lottery"
@@ -6794,7 +6801,7 @@
             <space />
             <key key="shop" value="lottery" />
             <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Lottery -->
         <item name="Bag" icon="styles/standard/shop/bag.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bag"
@@ -6803,7 +6810,7 @@
             <space />
             <key key="shop" value="bag" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Bag -->
         <item name="Pet" icon="styles/standard/shop/pet.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=pet"
@@ -6814,7 +6821,7 @@
             <space />
             <key key="shop" value="pet" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Pet -->
         <item name="Funeral Directors" icon="styles/standard/shop/funeral_directors.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=funeral_directors"
@@ -6827,7 +6834,7 @@
             <space />
             <key key="shop" value="funeral_directors" />
             <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Funeral Directors -->
     </group> <!-- Other -->
         <separator/>
