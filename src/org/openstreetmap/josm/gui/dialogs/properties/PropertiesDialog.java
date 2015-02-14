@@ -946,7 +946,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             ExtendedDialog ed = new ExtendedDialog(Main.parent,
                     tr("Change relation"),
                     new String[] {tr("Delete from relation"), tr("Cancel")});
-            ed.setButtonIcons(new String[] {"dialogs/delete.png", "cancel.png"});
+            ed.setButtonIcons(new String[] {"dialogs/delete", "cancel"});
             ed.setContent(tr("Really delete selection from relation {0}?", cur.getDisplayName(DefaultNameFormatter.getInstance())));
             ed.toggleEnable(DELETE_FROM_RELATION_PREF);
             ed.showDialog();

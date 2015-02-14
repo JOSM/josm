@@ -580,7 +580,7 @@ public class MainApplication extends Main {
                 ExtendedDialog ed = new ExtendedDialog(
                         Main.parent, title,
                         new String[]{tr("Change proxy settings"), tr("Cancel")});
-                ed.setButtonIcons(new String[]{"dialogs/settings.png", "cancel.png"}).setCancelButton(2);
+                ed.setButtonIcons(new String[]{"dialogs/settings", "cancel"}).setCancelButton(2);
                 ed.setMinimumSize(new Dimension(460, 260));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
                 ed.setContent(message);

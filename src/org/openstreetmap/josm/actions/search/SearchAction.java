@@ -305,7 +305,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 }
             }
         };
-        dialog.setButtonIcons(new String[] {"dialogs/search.png", "cancel.png"});
+        dialog.setButtonIcons(new String[] {"dialogs/search", "cancel"});
         dialog.configureContextsensitiveHelp("/Action/Search", true /* show help button */);
         dialog.setContent(p);
         dialog.showDialog();

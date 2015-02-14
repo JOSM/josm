@@ -388,7 +388,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                         new String[]{tr("Update Java"), tr("Cancel")});
                 // Check if the dialog has not already been permanently hidden by user
                 if (!ed.toggleEnable("askUpdateJava8").toggleCheckState()) {
-                    ed.setButtonIcons(new String[]{"java.png", "cancel.png"}).setCancelButton(2);
+                    ed.setButtonIcons(new String[]{"java", "cancel"}).setCancelButton(2);
                     ed.setMinimumSize(new Dimension(480, 300));
                     ed.setIcon(JOptionPane.WARNING_MESSAGE);
                     String content = tr("You are running version {0} of Java.", "<b>"+version+"</b>")+"<br><br>";

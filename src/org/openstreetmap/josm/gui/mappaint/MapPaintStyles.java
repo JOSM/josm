@@ -127,7 +127,7 @@ public final class MapPaintStyles {
      *  can be null if the defaults are turned off by user
      */
     public static ImageIcon getNoIcon_Icon(StyleSource source) {
-        return new ImageProvider("misc/no_icon.png")
+        return new ImageProvider("misc/no_icon")
                 .setDirs(getIconSourceDirs(source))
                 .setId("mappaint."+source.getPrefName())
                 .setArchive(source.zipIcons)

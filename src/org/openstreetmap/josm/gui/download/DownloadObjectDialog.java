@@ -41,7 +41,7 @@ public class DownloadObjectDialog extends OsmIdSelectionDialog {
     public DownloadObjectDialog(Component parent) {
         super(parent, tr("Download object"), new String[]{tr("Download object"), tr("Cancel")});
         init();
-        setButtonIcons(new String[]{"download.png", "cancel.png"});
+        setButtonIcons(new String[]{"download", "cancel"});
         setToolTipTexts(new String[]{
                 tr("Start downloading"),
                 tr("Close dialog and cancel downloading")

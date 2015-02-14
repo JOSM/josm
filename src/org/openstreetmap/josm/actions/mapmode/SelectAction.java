@@ -821,7 +821,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                     Main.parent,
                     tr("Move elements"),
                     new String[]{tr("Move them"), tr("Undo move")});
-            ed.setButtonIcons(new String[]{"reorder.png", "cancel.png"});
+            ed.setButtonIcons(new String[]{"reorder", "cancel"});
             ed.setContent(
                     /* for correct i18n of plural forms - see #9110 */
                     trn(

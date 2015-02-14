@@ -125,7 +125,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Export options"),
                 new String[] { tr("Export and Save"), tr("Cancel") });
-        ed.setButtonIcons(new String[] { "exportgpx.png", "cancel.png" });
+        ed.setButtonIcons(new String[] { "exportgpx", "cancel" });
         ed.setContent(p);
         ed.showDialog();
 

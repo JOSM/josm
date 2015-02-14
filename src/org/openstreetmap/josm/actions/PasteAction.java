@@ -179,7 +179,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Delete incomplete members?"),
                 new String[] {tr("Paste without incomplete members"), tr("Cancel")});
-        ed.setButtonIcons(new String[] {"dialogs/relation/deletemembers.png", "cancel.png"});
+        ed.setButtonIcons(new String[] {"dialogs/relation/deletemembers", "cancel"});
         ed.setContent(tr("The copied data contains incomplete objects.  "
                 + "When pasting the incomplete objects are removed.  "
                 + "Do you want to paste the data without the incomplete objects?"));

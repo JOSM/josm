@@ -889,7 +889,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                             new String[] {tr("Save anyway"), tr("Cancel")}
                     );
                     dialog.setContent(tr("The document contains no data."));
-                    dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+                    dialog.setButtonIcons(new String[] {"save", "cancel"});
                     return dialog.showDialog().getValue();
                 }
             })) {
@@ -909,7 +909,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                             new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
                     );
                     dialog.setContent(tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
-                    dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+                    dialog.setButtonIcons(new String[] {"save", "cancel"});
                     return dialog.showDialog().getValue();
                 }
             })) {

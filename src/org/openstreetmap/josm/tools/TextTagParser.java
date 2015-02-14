@@ -270,7 +270,7 @@ public final class TextTagParser {
                     Main.parent,
                     tr("Do you want to paste these tags?"),
                     new String[]{tr("Ok"), tr("Cancel"), tr("Clear buffer"), tr("Ignore warnings")});
-        ed.setButtonIcons(new String[]{"ok.png", "cancel.png", "dialogs/delete.png", "pastetags.png"});
+        ed.setButtonIcons(new String[]{"ok", "cancel", "dialogs/delete", "pastetags"});
         ed.setContent("<html><b>"+text + "</b><br/><br/><div width=\"300px\">"+XmlWriter.encode(data,true)+"</html>");
         ed.setDefaultButton(2);
         ed.setCancelButton(2);
@@ -304,7 +304,7 @@ public final class TextTagParser {
                     tr("Warning"),
                     new String[]{tr("Ok"), tr("Clear buffer")});
 
-        ed.setButtonIcons(new String[]{"ok.png", "dialogs/delete.png"});
+        ed.setButtonIcons(new String[]{"ok", "dialogs/delete"});
 
         ed.setContent(p);
         ed.setDefaultButton(1);

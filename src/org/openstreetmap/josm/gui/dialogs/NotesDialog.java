@@ -56,22 +56,22 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     /** Large icon size for use in graphics calculations */
     public static final int ICON_LARGE_SIZE = 24;
     /** 24x24 icon for unresolved notes */
-    public static final ImageIcon ICON_OPEN = ImageProvider.get("dialogs/notes", "note_open.png");
+    public static final ImageIcon ICON_OPEN = ImageProvider.get("dialogs/notes", "note_open");
     /** 16x16 icon for unresolved notes */
     public static final ImageIcon ICON_OPEN_SMALL =
             new ImageIcon(ICON_OPEN.getImage().getScaledInstance(ICON_SMALL_SIZE, ICON_SMALL_SIZE, Image.SCALE_SMOOTH));
     /** 24x24 icon for resolved notes */
-    public static final ImageIcon ICON_CLOSED = ImageProvider.get("dialogs/notes", "note_closed.png");
+    public static final ImageIcon ICON_CLOSED = ImageProvider.get("dialogs/notes", "note_closed");
     /** 16x16 icon for resolved notes */
     public static final ImageIcon ICON_CLOSED_SMALL =
             new ImageIcon(ICON_CLOSED.getImage().getScaledInstance(ICON_SMALL_SIZE, ICON_SMALL_SIZE, Image.SCALE_SMOOTH));
     /** 24x24 icon for new notes */
-    public static final ImageIcon ICON_NEW = ImageProvider.get("dialogs/notes", "note_new.png");
+    public static final ImageIcon ICON_NEW = ImageProvider.get("dialogs/notes", "note_new");
     /** 16x16 icon for new notes */
     public static final ImageIcon ICON_NEW_SMALL =
             new ImageIcon(ICON_NEW.getImage().getScaledInstance(ICON_SMALL_SIZE, ICON_SMALL_SIZE, Image.SCALE_SMOOTH));
     /** Icon for note comments */
-    public static final ImageIcon ICON_COMMENT = ImageProvider.get("dialogs/notes", "note_comment.png");
+    public static final ImageIcon ICON_COMMENT = ImageProvider.get("dialogs/notes", "note_comment");
 
     private NoteTableModel model;
     private JList<Note> displayList;
@@ -86,7 +86,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     /** Creates a new toggle dialog for notes */
     public NotesDialog() {
-        super("Notes", "notes/note_open.png", "List of notes", null, 150);
+        super("Notes", "notes/note_open", "List of notes", null, 150);
         addCommentAction = new AddCommentAction();
         closeAction = new CloseAction();
         newAction = new NewAction();
