@@ -165,6 +165,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     private int defaultMinZoom = 0;
     private ImageryBounds bounds = null;
     private List<String> serverProjections;
+    private String description;
     private String attributionText;
     private String attributionLinkURL;
     private String attributionImage;
@@ -199,6 +200,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         @pref String shapes;
         @pref String projections;
         @pref String icon;
+        @pref String description;
 
         /**
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
@@ -228,6 +230,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             min_zoom = i.defaultMinZoom;
             cookies = i.cookies;
             icon = i.icon;
+            description = i.description;
             if (i.bounds != null) {
                 bounds = i.bounds.encodeAsString(",");
                 StringBuilder shapesString = new StringBuilder();
@@ -331,6 +334,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         name = e.name;
         id = e.id;
         url = e.url;
+        description = e.description;
         cookies = e.cookies;
         eulaAcceptanceRequired = e.eula;
         imageryType = ImageryType.fromString(e.type);
@@ -388,6 +392,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.termsOfUseURL = i.termsOfUseURL;
         this.countryCode = i.countryCode;
         this.icon = i.icon;
+        this.description = i.description;
     }
 
     @Override
@@ -471,9 +476,11 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         if (!Objects.equals(this.icon, other.icon)) {
             return false;
         }
+        if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
         return true;
     }
-
 
     @Override
     public int hashCode() {
@@ -770,6 +777,37 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      */
     public int getMinZoom() {
         return this.defaultMinZoom;
+    }
+
+    /**
+     * Returns the description text when existing.
+     * @return The description
+     * @since 8064
+     */
+    public String getDescription() {
+        return this.description;
+    }
+
+    /**
+     * Sets the description text when existing.
+     * @param description the imagery description text
+     * @since 8064
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Returns a tool tip text for display.
+     * @return The text
+     * @since 8064
+     */
+    public String getToolTipText() {
+        String desc = getDescription();
+        if (desc != null && !desc.isEmpty()) {
+            return "<html>" + getName() + "<br>" + desc + "</html>";
+        }
+        return getName();
     }
 
     /**
