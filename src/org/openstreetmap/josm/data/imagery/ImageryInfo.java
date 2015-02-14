@@ -782,7 +782,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     /**
      * Returns the description text when existing.
      * @return The description
-     * @since 8064
+     * @since 8065
      */
     public String getDescription() {
         return this.description;
@@ -791,7 +791,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     /**
      * Sets the description text when existing.
      * @param description the imagery description text
-     * @since 8064
+     * @since 8065
      */
     public void setDescription(String description) {
         this.description = description;
@@ -800,7 +800,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     /**
      * Returns a tool tip text for display.
      * @return The text
-     * @since 8064
+     * @since 8065
      */
     public String getToolTipText() {
         String desc = getDescription();
