@@ -65,6 +65,14 @@
 		</xs:simpleContent>
 	</xs:complexType>
 
+	<xs:complexType name="name">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="lang" type="xs:string" use="optional" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
 	<xs:complexType name="point">
 		<xs:attribute name="lat" type="tns:latitude" use="required" />
 		<xs:attribute name="lon" type="tns:longitude" use="required" />
@@ -609,7 +617,7 @@
 					<xs:sequence>
 						<xs:choice minOccurs="1" maxOccurs="unbounded">
 							<!-- The name of the imagery source -->
-							<xs:element name="name" minOccurs="1" maxOccurs="1" type="xs:string" />
+							<xs:element name="name" minOccurs="1" type="tns:name" />
 							<!-- A description of the imagery source -->
 							<xs:element name="description" minOccurs="0" type="tns:description" />
 							<!-- A unique id for the imagery source -->
