@@ -116,6 +116,7 @@ public class ImageryReader {
                         "name",
                         "id",
                         "type",
+                        "description",
                         "default",
                         "url",
                         "eula",
@@ -205,7 +206,12 @@ public class ImageryReader {
             case ENTRY_ATTRIBUTE:
                 switch(qName) {
                 case "name":
+                    /* TODO: don't ignore lang attribute */
                     entry.setTranslatedName(accumulator.toString());
+                    break;
+                case "description":
+                    /* TODO: don't ignore lang attribute */
+                    entry.setDescription(accumulator.toString());
                     break;
                 case "id":
                     entry.setId(accumulator.toString());

@@ -183,8 +183,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     /**
      * Gets a server URL in the preferences dialog. Used by plugins.
      *
-     * @param server
-     *            The server name
+     * @param server The server name
      * @return The server URL
      */
     public String getServerUrl(String server) {
@@ -227,11 +226,15 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         private final PreferenceTabbedPane gui;
         private final ImageryLayerInfo layerInfo;
 
-        private static class ImageryTableCellRenderer extends DefaultTableCellRenderer {
+        /**
+         * class to render the URL information of Imagery source
+         * @since 8064
+         */
+        private static class ImageryURLTableCellRenderer extends DefaultTableCellRenderer {
 
             private List<ImageryInfo> layers;
 
-            public ImageryTableCellRenderer(List<ImageryInfo> layers) {
+            public ImageryURLTableCellRenderer(List<ImageryInfo> layers) {
                 this.layers = layers;
             }
 
@@ -254,7 +257,28 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                             break;
                         }
                     }
+                    label.setToolTipText((String)value);
                 }
+                return label;
+            }
+        }
+
+        /**
+         * class to render the name information of Imagery source
+         * @since 8064
+         */
+        private static class ImageryNameTableCellRenderer extends DefaultTableCellRenderer {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean
+                    isSelected, boolean hasFocus, int row, int column) {
+                ImageryInfo info = (ImageryInfo) value;
+                JLabel label = (JLabel) super.getTableCellRendererComponent(
+                        table, info.getName(), isSelected, hasFocus, row, column);
+                label.setBackground(Main.pref.getUIColor("Table.background"));
+                if (isSelected) {
+                    label.setForeground(Main.pref.getUIColor("Table.foreground"));
+                }
+                label.setToolTipText(info.getToolTipText());
                 return label;
             }
         }
@@ -280,13 +304,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             activeTable.putClientProperty("terminateEditOnFocusLost", true);
 
             defaultModel = new ImageryDefaultLayerTableModel();
-            defaultTable = new JTable(defaultModel) {
-                @Override
-                public String getToolTipText(MouseEvent e) {
-                    java.awt.Point p = e.getPoint();
-                    return (String) defaultModel.getValueAt(rowAtPoint(p), columnAtPoint(p));
-                }
-            };
+            defaultTable = new JTable(defaultModel);
 
             defaultModel.addTableModelListener(
                     new TableModelListener() {
@@ -308,13 +326,14 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             TableColumnModel mod = defaultTable.getColumnModel();
             mod.getColumn(2).setPreferredWidth(800);
-            mod.getColumn(2).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getLayers()));
+            mod.getColumn(2).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getLayers()));
             mod.getColumn(1).setPreferredWidth(400);
+            mod.getColumn(1).setCellRenderer(new ImageryNameTableCellRenderer());
             mod.getColumn(0).setPreferredWidth(50);
 
             mod = activeTable.getColumnModel();
             mod.getColumn(1).setPreferredWidth(800);
-            mod.getColumn(1).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getDefaultLayers()));
+            mod.getColumn(1).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getDefaultLayers()));
             mod.getColumn(0).setPreferredWidth(200);
 
             RemoveEntryAction remove = new RemoveEntryAction();
@@ -725,7 +744,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 case 0:
                     return info.getCountryCode();
                 case 1:
-                    return info.getName();
+                    return info;
                 case 2:
                     return info.getExtendedUrl();
                 }
