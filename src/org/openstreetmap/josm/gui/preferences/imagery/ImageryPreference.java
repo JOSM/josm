@@ -228,7 +228,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
         /**
          * class to render the URL information of Imagery source
-         * @since 8064
+         * @since 8065
          */
         private static class ImageryURLTableCellRenderer extends DefaultTableCellRenderer {
 
