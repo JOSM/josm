@@ -21,7 +21,7 @@ public class ReportBugAction extends JosmAction {
      * Constructs a new {@code ReportBugAction}.
      */
     public ReportBugAction() {
-        super(tr("Report bug"), "bug.png", tr("Report a ticket to JOSM bugtracker"),
+        super(tr("Report bug"), "bug", tr("Report a ticket to JOSM bugtracker"),
                 Shortcut.registerShortcut("reportbug", tr("Report a ticket to JOSM bugtracker"),
                         KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), true);
     }

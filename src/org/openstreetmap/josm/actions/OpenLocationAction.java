@@ -117,7 +117,7 @@ public class OpenLocationAction extends JosmAction {
                 new String[] {tr("Download URL"), tr("Cancel")}
         );
         dialog.setContent(all, false /* don't embedded content in JScrollpane  */);
-        dialog.setButtonIcons(new String[] {"download.png", "cancel.png"});
+        dialog.setButtonIcons(new String[] {"download", "cancel"});
         dialog.setToolTipTexts(new String[] {
                 tr("Start downloading data"),
                 tr("Close dialog and cancel downloading")

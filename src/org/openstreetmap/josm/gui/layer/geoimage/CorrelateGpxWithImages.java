@@ -658,7 +658,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 false
         );
         syncDialog.setContent(panelTf, false);
-        syncDialog.setButtonIcons(new String[] { "ok.png", "cancel.png" });
+        syncDialog.setButtonIcons(new String[] { "ok", "cancel" });
         syncDialog.setupDialog();
         outerPanel.add(syncDialog.getContentPane(), BorderLayout.PAGE_START);
         syncDialog.setContentPane(outerPanel);
@@ -698,7 +698,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                             tr("Correlate images with GPX track"),
                             new String[] { tr("OK"), tr("Try Again") }).
                             setContent(tr("No images could be matched!")).
-                            setButtonIcons(new String[] { "ok.png", "dialogs/refresh.png"}).
+                            setButtonIcons(new String[] { "ok", "dialogs/refresh"}).
                             showDialog().getValue() == 2)
                     return AGAIN;
                 return DONE;
@@ -981,7 +981,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             new ExtendedDialog(Main.parent,
                     tr("Adjust timezone and offset"),
                     new String[] { tr("Close")}).
-                    setContent(p).setButtonIcons(new String[] {"ok.png"}).showDialog();
+                    setContent(p).setButtonIcons(new String[] {"ok"}).showDialog();
         }
     }
 
