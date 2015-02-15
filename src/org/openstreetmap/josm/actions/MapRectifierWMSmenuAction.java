@@ -186,8 +186,12 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 // We've reached the custom WMS URL service
                 // Just set the URL and hope everything works out
                 if(s.wmsUrl.isEmpty()) {
-                    addWMSLayer(s.name + " (" + text + ")", text);
-                    break outer;
+                    try {
+                        addWMSLayer(s.name + " (" + text + ")", text);
+                        break outer;
+                    } catch (IllegalStateException ex) {
+                        Main.error(ex.getMessage());
+                    }
                 }
 
                 // First try to match if the entered string as an URL
@@ -225,9 +229,13 @@ public class MapRectifierWMSmenuAction extends JosmAction {
      * Adds a WMS Layer with given title and URL
      * @param title Name of the layer as it will shop up in the layer manager
      * @param url URL to the WMS server
+     * @throws IllegalStateException if imagery time is neither HTML nor WMS
+     * @see WMSLayer#checkGrabberType
      */
     private void addWMSLayer(String title, String url) {
-        Main.main.addLayer(new WMSLayer(new ImageryInfo(title, url)));
+        WMSLayer layer = new WMSLayer(new ImageryInfo(title, url));
+        layer.checkGrabberType();
+        Main.main.addLayer(layer);
     }
 
     @Override

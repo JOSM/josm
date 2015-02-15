@@ -1020,12 +1020,23 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
+    /**
+     * Checks that WMS layer is a grabber-compatible one (HTML or WMS).
+     * @throws IllegalStateException if imagery time is neither HTML nor WMS
+     * @since 8068
+     */
+    public void checkGrabberType() {
+        ImageryType it = getInfo().getImageryType();
+        if (!ImageryType.HTML.equals(it) && !ImageryType.WMS.equals(it))
+            throw new IllegalStateException("getGrabber() called for non-WMS layer type");
+    }
+
     protected WMSGrabber getGrabber(boolean localOnly) {
+        checkGrabberType();
         if (getInfo().getImageryType() == ImageryType.HTML)
             return new HTMLGrabber(Main.map.mapView, this, localOnly);
-        else if (getInfo().getImageryType() == ImageryType.WMS)
+        else
             return new WMSGrabber(Main.map.mapView, this, localOnly);
-        else throw new IllegalStateException("getGrabber() called for non-WMS layer type");
     }
 
     public ProjectionBounds getBounds(WMSRequest request) {
