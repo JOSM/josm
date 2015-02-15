@@ -73,7 +73,11 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private ImageViewerDialog() {
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged",
         tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.DIRECT), 200);
+        build();
+        MapView.addLayerChangeListener(this);
+    }
 
+    protected void build() {
         JPanel content = new JPanel();
         content.setLayout(new BorderLayout());
 
@@ -183,9 +187,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
         content.add(bottomPane, BorderLayout.SOUTH);
 
-        add(content, BorderLayout.CENTER);
-
-        MapView.addLayerChangeListener(this);
+        createLayout(content, false, null);
     }
 
     @Override
