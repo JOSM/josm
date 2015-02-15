@@ -1683,6 +1683,7 @@ public class Preferences {
         }
 
         String[] obsolete = {
+                "osm.notes.enableDownload" // was used prior to r8071 when notes was an hidden feature. To remove end of 2015
         };
         for (String key : obsolete) {
             if (settingsMap.containsKey(key)) {

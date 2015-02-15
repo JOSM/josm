@@ -98,16 +98,10 @@ public class DownloadDialog extends JDialog  {
         pnl.add(cbDownloadOsmData,  GBC.std().insets(1,5,1,5));
         cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
         cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces in the selected download area."));
-        //TODO: uncomment this and remove logic below once notes are enabled
-        //pnl.add(cbDownloadGpxData,  GBC.std().insets(5,5,1,5));
+        pnl.add(cbDownloadGpxData,  GBC.std().insets(5,5,1,5));
         cbDownloadNotes = new JCheckBox(tr("Notes"));
         cbDownloadNotes.setToolTipText(tr("Select to download notes in the selected download area."));
-        if (Main.pref.getBoolean("osm.notes.enableDownload", false)) {
-            pnl.add(cbDownloadGpxData,  GBC.std().insets(5,5,1,5));
-            pnl.add(cbDownloadNotes, GBC.eol().insets(50, 5, 1, 5));
-        } else {
-            pnl.add(cbDownloadGpxData,  GBC.eol().insets(5,5,1,5));
-        }
+        pnl.add(cbDownloadNotes, GBC.eol().insets(50, 5, 1, 5));
 
         // hook for subclasses
         buildMainPanelAboveDownloadSelections(pnl);
@@ -204,6 +198,10 @@ public class DownloadDialog extends JDialog  {
         return pnl;
     }
 
+    /**
+     * Constructs a new {@code DownloadDialog}.
+     * @param parent the parent component
+     */
     public DownloadDialog(Component parent) {
         super(JOptionPane.getFrameForComponent(parent),tr("Download"), ModalityType.DOCUMENT_MODAL);
         getContentPane().setLayout(new BorderLayout());
@@ -246,8 +244,7 @@ public class DownloadDialog extends JDialog  {
 
     /**
      * Distributes a "bounding box changed" from one DownloadSelection
-     * object to the others, so they may update or clear their input
-     * fields.
+     * object to the others, so they may update or clear their input fields.
      *
      * @param eventSource - the DownloadSelection object that fired this notification.
      */
@@ -346,11 +343,7 @@ public class DownloadDialog extends JDialog  {
     public void restoreSettings() {
         cbDownloadOsmData.setSelected(Main.pref.getBoolean("download.osm", true));
         cbDownloadGpxData.setSelected(Main.pref.getBoolean("download.gps", false));
-        //TODO: This is to make sure notes are not downloaded if the Notes checkbox isn't being displayed.
-        //      Make it look like the ones above when notes are enabled
-        boolean downloadNotes = Main.pref.getBoolean("download.notes", false)
-                && Main.pref.getBoolean("osm.notes.enableDownload", false);
-        cbDownloadNotes.setSelected(downloadNotes);
+        cbDownloadNotes.setSelected(Main.pref.getBoolean("download.notes", false));
         cbNewLayer.setSelected(Main.pref.getBoolean("download.newlayer", false));
         cbStartup.setSelected( isAutorunEnabled() );
         int idx = Main.pref.getInteger("download.tab", 0);
@@ -484,13 +477,13 @@ public class DownloadDialog extends JDialog  {
                 return;
             }
             if (!isDownloadOsmData() && !isDownloadGpxData() && !isDownloadNotes()) {
-                //TODO: When notes are enabled, change this message to include downloading notes
                 JOptionPane.showMessageDialog(
                         DownloadDialog.this,
-                        tr("<html>Neither <strong>{0}</strong> nor <strong>{1}</strong> is enabled.<br>"
-                                + "Please choose to either download OSM data, or GPX data, or both.</html>",
+                        tr("<html>Neither <strong>{0}</strong> nor <strong>{1}</strong> nor <strong>{2}</strong> is enabled.<br>"
+                                + "Please choose to either download OSM data, or GPX data, or Notes, or all.</html>",
                                 cbDownloadOsmData.getText(),
-                                cbDownloadGpxData.getText()
+                                cbDownloadGpxData.getText(),
+                                cbDownloadNotes.getText()
                         ),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
