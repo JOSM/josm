@@ -586,6 +586,10 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                             hideDialog();
                             dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
                             hideNotify();
+                            if (Main.map != null) {
+                                // To avoid menu bar search field from taking focus when a toggle dialog is closed
+                                Main.map.requestFocusInWindow();
+                            }
                         }
                     }
                     );

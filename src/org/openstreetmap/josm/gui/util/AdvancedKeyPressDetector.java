@@ -22,8 +22,8 @@ import javax.swing.Timer;
 import org.openstreetmap.josm.Main;
 
 /**
- * Helper object that allows cross-platform detection of key press and realease events
- * instance is available globally as Main.map.keyDetector
+ * Helper object that allows cross-platform detection of key press and release events
+ * instance is available globally as {@code Main.map.keyDetector}.
  * @since 7217
  */
 public class AdvancedKeyPressDetector implements AWTEventListener {
