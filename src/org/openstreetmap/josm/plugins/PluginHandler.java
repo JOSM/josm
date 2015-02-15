@@ -123,6 +123,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("wayselector", IN_CORE),
             new DeprecatedPlugin("openstreetbugs", tr("replaced by new {0} plugin", "notes")),
             new DeprecatedPlugin("nearclick", tr("no longer required")),
+            new DeprecatedPlugin("notes", IN_CORE),
         });
     }
 
@@ -203,7 +204,7 @@ public final class PluginHandler {
     }
 
     /**
-     * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not really maintained after a few months, sadly...
+     * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not maintained after a few months, sadly...
      */
     private static final String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
 
