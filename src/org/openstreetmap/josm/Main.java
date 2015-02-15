@@ -220,7 +220,7 @@ public abstract class Main {
     /**
      * The MOTD Layer.
      */
-    private GettingStarted gettingStarted = new GettingStarted();
+    public final GettingStarted gettingStarted = new GettingStarted();
 
     private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<>();
 
