@@ -242,10 +242,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addToggleDialog(filterDialog = new FilterDialog());
         addToggleDialog(new ChangesetDialog(), true);
         addToggleDialog(new MapPaintDialog());
-        //TODO: remove this if statement once note support is complete
-        if(Main.pref.getBoolean("osm.notes.enableDownload", false)) {
-            addToggleDialog(noteDialog = new NotesDialog());
-        }
+        addToggleDialog(noteDialog = new NotesDialog());
         toolBarToggle.setFloatable(false);
 
         // status line below the map

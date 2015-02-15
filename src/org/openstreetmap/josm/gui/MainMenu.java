@@ -77,6 +77,7 @@ import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.actions.ReverseWayAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
+import org.openstreetmap.josm.actions.SearchNotesDownloadAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.SelectNonBranchingWaySequencesAction;
 import org.openstreetmap.josm.actions.SessionLoadAction;
@@ -151,6 +152,8 @@ public class MainMenu extends JMenuBar {
     public final DownloadAction download = new DownloadAction();
     /** File / Download object... **/
     public final DownloadPrimitiveAction downloadPrimitive = new DownloadPrimitiveAction();
+    /** File / Search Notes... **/
+    public final SearchNotesDownloadAction searchNotes = new SearchNotesDownloadAction();
     /** File / Download parent ways/relations... **/
     public final DownloadReferrersAction downloadReferrers = new DownloadReferrersAction();
     /** File / Close open changesets... **/
@@ -614,6 +617,7 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, download);
         add(fileMenu, downloadPrimitive);
+        add(fileMenu, searchNotes);
         add(fileMenu, downloadReferrers);
         add(fileMenu, update);
         add(fileMenu, updateSelection);
