@@ -803,15 +803,32 @@ public class MainMenu extends JMenuBar {
         new PresetsMenuEnabler(presetsMenu).refreshEnabled();
     }
 
+    private int getMaximumAvailableWidth() {
+        int maxWidth = getSize().width;
+        for (int i = 0; i < getMenuCount(); i++) {
+            JMenu menu = getMenu(i);
+            if (menu != null) {
+                maxWidth -= menu.getPreferredSize().width;
+            }
+        }
+        return maxWidth;
+    }
+
     /**
      * Create search field.
      */
     private JComponent createSearchField() {
-        DisableShortcutsOnFocusGainedTextField searchField = new DisableShortcutsOnFocusGainedTextField();
+        DisableShortcutsOnFocusGainedTextField searchField = new DisableShortcutsOnFocusGainedTextField() {
+            @Override
+            public Dimension getPreferredSize() {
+                // JMenuBar uses a BoxLayout and it doesn't seem possible to specify a size factor,
+                // so compute the preferred size dynamically
+                return new Dimension(Math.min(200, Math.max(25, getMaximumAvailableWidth())),
+                        helpMenu.getPreferredSize().height);
+            }
+        };
         searchField.setEditable(true);
-        Dimension d = new Dimension(200, helpMenu.getPreferredSize().height);
-        searchField.setPreferredSize(d);
-        searchField.setMaximumSize(d);
+        searchField.setMaximumSize(new Dimension(200, helpMenu.getPreferredSize().height));
         searchField.setHint(tr("Search menu items"));
         searchField.setToolTipText(tr("Search menu items"));
         searchField.addKeyListener(new SearchFieldKeyListener());
