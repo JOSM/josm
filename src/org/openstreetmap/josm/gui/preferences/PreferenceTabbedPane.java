@@ -11,6 +11,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,6 +59,7 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorTestsPreference
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
@@ -383,8 +386,25 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                             toLoad.add(pi);
                         }
                     }
+                    // check if plugin dependences can also be loaded
+                    Collection<PluginInformation> allPlugins = new HashSet<>(toLoad);
+                    for (PluginProxy proxy : PluginHandler.pluginList) {
+                        allPlugins.add(proxy.getPluginInformation());
+                    }
+                    boolean removed;
+                    do {
+                        removed = false;
+                        Iterator<PluginInformation> it = toLoad.iterator();
+                        while (it.hasNext()) {
+                            if (!PluginHandler.checkRequiredPluginsPreconditions(null, allPlugins, it.next(), requiresRestart)) {
+                                it.remove();
+                                removed = true;
+                            }
+                        }
+                    } while (removed);
+                    
                     if (!toLoad.isEmpty()) {
-                        PluginHandler.loadPlugins(PreferenceTabbedPane.this, toLoad, null); // FIXME: progress bar
+                        PluginHandler.loadPlugins(PreferenceTabbedPane.this, toLoad, null);
                     }
                 }
 
