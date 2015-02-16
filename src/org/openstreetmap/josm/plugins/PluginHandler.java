@@ -524,7 +524,8 @@ public final class PluginHandler {
      * Checks if required plugins preconditions for loading the plugin <code>plugin</code> are met.
      * No other plugins this plugin depends on should be missing.
      *
-     * @param parent The parent Component used to display error popup
+     * @param parent The parent Component used to display error popup. If parent is
+     * null, the error popup is suppressed
      * @param plugins the collection of all loaded plugins
      * @param plugin the plugin for which preconditions are checked
      * @param local Determines if the local or up-to-date plugin dependencies are to be checked.
@@ -550,7 +551,9 @@ public final class PluginHandler {
                 }
             }
             if (!missingPlugins.isEmpty()) {
-                alertMissingRequiredPlugin(parent, plugin.name, missingPlugins);
+                if (parent != null) {
+                    alertMissingRequiredPlugin(parent, plugin.name, missingPlugins);
+                }
                 return false;
             }
         }
