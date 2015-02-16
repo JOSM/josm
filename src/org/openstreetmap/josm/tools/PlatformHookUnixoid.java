@@ -36,10 +36,10 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.data.Preferences.pref;
 import org.openstreetmap.josm.data.Preferences.writeExplicitly;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * {@code PlatformHook} base implementation.
@@ -56,25 +56,35 @@ public class PlatformHookUnixoid implements PlatformHook {
      */
     public static class FontEntry {
         /**
-         * The character subset. Basically a free identifier, but should
-         * be unique.
+         * The character subset. Basically a free identifier, but should be unique.
          */
         @pref
         public String charset;
+
         /**
          * Platform font name.
          */
         @pref @writeExplicitly
         public String name = "";
+
         /**
          * File name.
          */
         @pref @writeExplicitly
         public String file = "";
 
+        /**
+         * Constructs a new {@code FontEntry}.
+         */
         public FontEntry() {
         }
 
+        /**
+         * Constructs a new {@code FontEntry}.
+         * @param charset The character subset. Basically a free identifier, but should be unique
+         * @param name Platform font name
+         * @param file File name
+         */
         public FontEntry(String charset, String name, String file) {
             this.charset = charset;
             this.name = name;
@@ -447,7 +457,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      * cache folder. Then, the additional entries are added to the font
      * configuration. Finally the system property "sun.awt.fontconfig" is set
      * to the customized fontconfig.properties file.
-     * 
+     *
      * This is a crude hack, but better than no font display at all for these
      * languages.
      * There is no guarantee, that the template file
@@ -481,7 +491,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             Path fontconfigFile = cachePath.toPath().resolve("fontconfig.properties");
             OutputStream os = Files.newOutputStream(fontconfigFile);
             os.write(content);
-            try (Writer w = new BufferedWriter(new OutputStreamWriter(os))) {
+            try (Writer w = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
                 Collection<FontEntry> extrasPref = Main.pref.getListOfStructs(
                         "font.extended-unicode.extra-items", getAdditionalFonts(), FontEntry.class);
                 Collection<FontEntry> extras = new ArrayList<>();

@@ -256,12 +256,12 @@ public class CachedFile {
         return ze.b;
     }
 
-    @SuppressWarnings("resource")
     private Pair<String, InputStream> findZipEntryImpl(String extension, String namepart) {
         File file = null;
         try {
             file = getFile();
         } catch (IOException ex) {
+            Main.warn(ex, false);
         }
         if (file == null)
             return null;
