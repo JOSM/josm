@@ -152,7 +152,6 @@ public class LineElemStyle extends ElemStyle {
                 break;
             case LEFT_CASING:
             case RIGHT_CASING:
-            {
                 Float baseWidthOnDefault = getWidth(c_def, WIDTH, null);
                 Float baseWidth = getWidth(c, WIDTH, baseWidthOnDefault);
                 if (baseWidth == null || baseWidth < 2f) {
@@ -166,7 +165,6 @@ public class LineElemStyle extends ElemStyle {
                 }
                 offset += casingOffset;
                 break;
-            }
         }
 
         int alpha = 255;
@@ -373,6 +371,7 @@ public class LineElemStyle extends ElemStyle {
             default: return null;
         }
     }
+
     public String linecapToString(int linecap) {
         switch (linecap) {
             case BasicStroke.CAP_BUTT: return "none";
