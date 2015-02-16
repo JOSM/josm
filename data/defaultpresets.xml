@@ -2433,6 +2433,7 @@
                 <text key="operator" text="Operator" />
                 <reference ref="oh_wheelchair" />
                 <combo key="shop" text="With shop" values="yes,convenience,kiosk,no" />
+                <space />
                 <label text="Fuel types:" />
                 <checkgroup columns="2">
                     <check key="fuel:diesel" text="Diesel" />
@@ -2451,6 +2452,13 @@
                     <check key="fuel:cng" text="CNG (Compressed Natural Gas)" />
                     <check key="fuel:1_25" text="1/25 mix (mofa/moped)" />
                     <check key="fuel:1_50" text="1/50 mix (mofa/moped)" />
+                </checkgroup>
+                <space />
+                <label text="Fuel cards:" />
+                <checkgroup columns="3">
+                    <check key="payment:dkv" text="DKV" />
+                    <check key="payment:routex" text="Routex" />
+                    <check key="payment:uta" text="UTA" />
                 </checkgroup>
             </optional>
             <reference ref="link_contact_address_payment" />
@@ -6901,26 +6909,6 @@
             <check key="payment:bitcoin" text="Bitcoin" />
             <check key="payment:dogecoin" text="Dogecoin" />
             <check key="payment:litecoin" text="Litecoin" />
-        </checkgroup>
-        <space />
-        <label text="Public transport:" />
-        <checkgroup columns="4">
-            <check key="payment:bob" text="Bob" />
-            <check key="payment:icsf" text="IC Stored Fare" />
-            <check key="payment:oyster" text="Oyster" />
-            <check key="payment:prepaid_ticket" text="Prepaid ticket" />
-            <check key="payment:sube" text="Sube" />
-        </checkgroup>
-        <space />
-        <label text="Others:" />
-        <checkgroup columns="4">
-            <check key="payment:cheque" text="Cheque" />
-            <check key="payment:contactless" text="Contactless" />
-            <check key="payment:meal_voucher" text="Meal voucher" />
-            <check key="payment:paypal" text="Paypal" />
-            <check key="payment:telephone_cards" text="Telephone cards" />
-            <check key="payment:u-key" text="U-Key" />
-            <check key="payment:wire_transfer" text="Wire transfer" />
         </checkgroup>
     </item> <!-- Payment Methods -->
   </group> <!-- Shops -->
