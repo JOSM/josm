@@ -108,12 +108,18 @@ way[junction                   ][!highway][junction!=yes],
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
 }
 
-/* {0.tag} without {1.key} */
+/* {0.tag} without {1.key} (warning level) */
 *[tourism=information][!information],
 *[aeroway=terminal][!building],
 *[power=generator][!generator:source],
 *[amenity=place_of_worship][!religion] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
+}
+
+/* {0.tag} without {1.key} (info level) */
+*[amenity=parking              ][!parking],
+*[amenity=parking_entrance     ][!parking] {
+  throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
 }
 
 /* {0.key} without {1.key} or {2.key} */
