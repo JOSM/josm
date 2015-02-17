@@ -313,7 +313,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 Main.debug("User aborted note reopening");
                 return;
             }
+            int selectedIndex = displayList.getSelectedIndex();
             noteData.addCommentToNote(note, dialog.getInputText());
+            noteData.setSelectedNote(model.getElementAt(selectedIndex));
         }
     }
 
@@ -334,7 +336,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 return;
             }
             Note note = displayList.getSelectedValue();
+            int selectedIndex = displayList.getSelectedIndex();
             noteData.closeNote(note, dialog.getInputText());
+            noteData.setSelectedNote(model.getElementAt(selectedIndex));
         }
     }
 
@@ -373,7 +377,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             }
 
             Note note = displayList.getSelectedValue();
+            int selectedIndex = displayList.getSelectedIndex();
             noteData.reOpenNote(note, dialog.getInputText());
+            noteData.setSelectedNote(model.getElementAt(selectedIndex));
         }
     }
 
