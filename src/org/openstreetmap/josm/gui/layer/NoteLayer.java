@@ -149,8 +149,16 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             for (int x = 0; x < 2; x++) {
                 Dimension d = toolTip.getUI().getPreferredSize(toolTip);
                 d.width = Math.min(d.width, (mv.getWidth() * 1 / 2));
-                toolTip.setSize(d);
-                toolTip.paint(g);
+                if (d.width > 0 && d.height > 0) {
+                    toolTip.setSize(d);
+                    try {
+                        toolTip.paint(g);
+                    } catch (IllegalArgumentException e) {
+                        // See #11123 - https://bugs.openjdk.java.net/browse/JDK-6719550
+                        // Ignore the exception, as Netbeans does: http://hg.netbeans.org/main-silver/rev/c96f4d5fbd20
+                        Main.error(e, false);
+                    }
+                }
             }
             g.translate(-tx, -ty);
         }
