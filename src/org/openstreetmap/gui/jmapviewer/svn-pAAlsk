@@ -334,4 +334,129 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     }
 
     /**
-     * Sets the displayed
+     * Sets the displayed map pane and zoom level so that all map rectangles are visible.
+     */
+    public void setDisplayToFitMapRectangles() {
+        setDisplayToFitMapElements(false, true, false);
+    }
+
+    /**
+     * Sets the displayed map pane and zoom level so that all map polygons are visible.
+     */
+    public void setDisplayToFitMapPolygons() {
+        setDisplayToFitMapElements(false, false, true);
+    }
+
+    /**
+     * @return the center
+     */
+    public Point getCenter() {
+        return center;
+    }
+
+    /**
+     * @param center the center to set
+     */
+    public void setCenter(Point center) {
+        this.center = center;
+    }
+
+    /**
+     * Calculates the latitude/longitude coordinate of the center of the
+     * currently displayed map area.
+     *
+     * @return latitude / longitude
+     */
+    public Coordinate getPosition() {
+        double lon = tileSource.XToLon(center.x, zoom);
+        double lat = tileSource.YToLat(center.y, zoom);
+        return new Coordinate(lat, lon);
+    }
+
+    /**
+     * Converts the relative pixel coordinate (regarding the top left corner of
+     * the displayed map) into a latitude / longitude coordinate
+     *
+     * @param mapPoint
+     *            relative pixel coordinate regarding the top left corner of the
+     *            displayed map
+     * @return latitude / longitude
+     */
+    public Coordinate getPosition(Point mapPoint) {
+        return getPosition(mapPoint.x, mapPoint.y);
+    }
+
+    /**
+     * Converts the relative pixel coordinate (regarding the top left corner of
+     * the displayed map) into a latitude / longitude coordinate
+     *
+     * @param mapPointX
+     * @param mapPointY
+     * @return latitude / longitude
+     */
+    public Coordinate getPosition(int mapPointX, int mapPointY) {
+        int x = center.x + mapPointX - getWidth() / 2;
+        int y = center.y + mapPointY - getHeight() / 2;
+        double lon = tileSource.XToLon(x, zoom);
+        double lat = tileSource.YToLat(y, zoom);
+        return new Coordinate(lat, lon);
+    }
+
+    /**
+     * Calculates the position on the map of a given coordinate
+     *
+     * @param lat
+     * @param lon
+     * @param checkOutside
+     * @return point on the map or <code>null</code> if the point is not visible
+     *         and checkOutside set to <code>true</code>
+     */
+    public Point getMapPosition(double lat, double lon, boolean checkOutside) {
+        int x = tileSource.LonToX(lon, zoom);
+        int y = tileSource.LatToY(lat, zoom);
+        x -= center.x - getWidth() / 2;
+        y -= center.y - getHeight() / 2;
+        if (checkOutside) {
+            if (x < 0 || y < 0 || x > getWidth() || y > getHeight())
+                return null;
+        }
+        return new Point(x, y);
+    }
+
+    /**
+     * Calculates the position on the map of a given coordinate
+     *
+     * @param lat Latitude
+     * @param offset Offset respect Latitude
+     * @param checkOutside
+     * @return Integer the radius in pixels
+     */
+    public Integer getLatOffset(double lat, double offset, boolean checkOutside) {
+        int y = tileSource.LatToY(lat + offset, zoom);
+        y -= center.y - getHeight() / 2;
+        if (checkOutside) {
+            if (y < 0 || y > getHeight())
+                return null;
+        }
+        return y;
+    }
+
+    /**
+     * Calculates the position on the map of a given coordinate
+     *
+     * @param lat
+     * @param lon
+     * @return point on the map or <code>null</code> if the point is not visible
+     */
+    public Point getMapPosition(double lat, double lon) {
+        return getMapPosition(lat, lon, true);
+    }
+
+    /**
+     * Calculates the position on the map of a given coordinate
+     *
+     * @param marker MapMarker object that define the x,y coordinate
+     * @return Integer the radius in pixels
+     */
+    public Integer getRadius(MapMarker marker, Point p) {
+        if (marker.getMarkerStyle() == Map
