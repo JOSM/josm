@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.DefaultFocusTraversalPolicy;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
@@ -19,7 +20,6 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -796,7 +796,17 @@ public class MainMenu extends JMenuBar {
                 Shortcut.DIRECT).getKeyStroke());
         add(helpMenu, about);
         add(Box.createHorizontalGlue());
-        add(createSearchField());
+        final DisableShortcutsOnFocusGainedTextField searchField = createSearchField();
+        add(searchField);
+
+        // Do not let search field take the focus automatically
+        setFocusTraversalPolicyProvider(true);
+        setFocusTraversalPolicy(new DefaultFocusTraversalPolicy() {
+            @Override
+            protected boolean accept(Component aComponent) {
+                return super.accept(aComponent) && !searchField.equals(aComponent);
+            }
+        });
 
         windowMenu.addMenuListener(menuSeparatorHandler);
 
@@ -817,7 +827,7 @@ public class MainMenu extends JMenuBar {
     /**
      * Create search field.
      */
-    private JComponent createSearchField() {
+    private DisableShortcutsOnFocusGainedTextField createSearchField() {
         DisableShortcutsOnFocusGainedTextField searchField = new DisableShortcutsOnFocusGainedTextField() {
             @Override
             public Dimension getPreferredSize() {
@@ -995,37 +1005,38 @@ public class MainMenu extends JMenuBar {
             }
             currentSearchText = searchTerm;
             if (searchTerm.length() == 0) {
-                //No text to search
+                // No text to search
                 hideMenu();
                 return;
             }
 
             List<JMenuItem> searchResult = mainMenu.findMenuItems(currentSearchText);
             if(searchResult.size() == 0) {
-                //Nothing found
+                // Nothing found
                 hideMenu();
                 return;
             }
 
             if(searchResult.size() > 20) {
-                //Too many items found...
+                // Too many items found...
                 searchResult = searchResult.subList(0, 20);
             }
 
-            //Update Popup menu
+            // Update Popup menu
             searchResultsMenu.removeAll();
             for (JMenuItem foundItem : searchResult) {
                 searchResultsMenu.add(foundItem.getText()).setAction(foundItem.getAction());
             }
+            // Put menu right under search field
             searchResultsMenu.pack();
-            searchResultsMenu.show(mainMenu, searchField.getX(), searchField.getY() + searchField.getHeight()); //Put menu right under search field
+            searchResultsMenu.show(mainMenu, searchField.getX(), searchField.getY() + searchField.getHeight());
 
-            searchField.grabFocus(); //This is tricky. User still is able to edit search text. While Up and Down keys are handled by Popup Menu.
+            // This is tricky. User still is able to edit search text. While Up and Down keys are handled by Popup Menu.
+            searchField.requestFocusInWindow();
         }
 
         private void hideMenu() {
             searchResultsMenu.setVisible(false);
         }
-
     }
 }
