@@ -1966,6 +1966,7 @@
             <space />
             <key key="natural" value="cliff" />
             <text key="name" text="Name" />
+            <text key="height" text="Height (meters)" />
         </item> <!-- Cliff -->
     </group> <!-- Water -->
     <group name="Shipping" icon="presets/ferry.png">
@@ -5389,7 +5390,7 @@
             <optional>
                 <text key="camera:direction" text="Direction in degrees" match="key" />
                 <text key="camera:angle" text="Inclination in degrees" match="key" />
-                <text key="height" text="Height in meter (m)" />
+                <text key="height" text="Height (meters)" />
             </optional>
         </item> <!-- Surveillance Camera -->
     </group> <!-- Man Made -->
@@ -5748,7 +5749,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=tower" />
             <space />
             <key key="power" value="tower" />
-            <text key="height" text="Height in meter (m)" />
+            <text key="height" text="Height (meters)" />
             <combo key="structure" text="Type of construction" values="lattice,tubular,solid " />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
@@ -5773,7 +5774,7 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=pole" />
             <space />
             <key key="power" value="pole" />
-            <text key="height" text="Height in meter (m)" />
+            <text key="height" text="Height (meters)" />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
             <check key="pole" text="Location transition" value_on="transition" disable_off="true" />
             <reference ref="ref_operator_branch" />
@@ -5790,7 +5791,7 @@
             <space />
             <key key="power" value="pole" />
             <label text="Pole Attributes:" />
-            <text key="height" text="Height in meter (m)" />
+            <text key="height" text="Height (meters)" />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
             <check key="pole" text="Location transition" value_on="transition" disable_off="true" />
             <reference ref="ref_operator_branch" />
@@ -7258,7 +7259,7 @@
             <space />
             <key key="natural" value="tree" />
             <text key="name" text="Name" />
-            <text key="height" text="Height in meter (m)" />
+            <text key="height" text="Height (meters)" />
             <text key="name:botanical" text="Botanical Name" />
             <optional>
                 <text key="genus" text="Genus" />
@@ -7280,7 +7281,7 @@
             <label text="A line of trees." />
             <space />
             <key key="natural" value="tree_row" />
-            <text key="height" text="Height in meter (m)" />
+            <text key="height" text="Height (meters)" />
             <optional>
                 <reference ref="leaf" />
             </optional>
