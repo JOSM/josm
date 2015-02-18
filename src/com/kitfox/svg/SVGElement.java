@@ -587,7 +587,7 @@ abstract public class SVGElement implements Serializable
 
     static public AffineTransform parseSingleTransform(String val) throws SVGException
     {
-        final Matcher matchWord = Pattern.compile("([a-zA-Z]+|-?\\d+(\\.\\d+)?|-?\\.\\d+)").matcher("");
+        final Matcher matchWord = Pattern.compile("([a-zA-Z]+|-?\\d+(\\.\\d+)?(e-?\\d+)?|-?\\.\\d+(e-?\\d+)?)").matcher("");
 
         AffineTransform retXform = new AffineTransform();
 

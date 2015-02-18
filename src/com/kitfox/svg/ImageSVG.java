@@ -211,6 +211,14 @@ public class ImageSVG extends RenderableElement
             }
         }
 
+        if (getStyle(styleAttrib.setName("display")))
+        {
+            if (styleAttrib.getStringValue().equals("none"))
+            {
+                return;
+            }
+        }
+
         beginLayer(g);
 
         float opacity = 1f;

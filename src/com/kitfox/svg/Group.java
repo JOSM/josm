@@ -149,14 +149,16 @@ public class Group extends ShapeElement
     {
         //Don't process if not visible
         StyleAttribute styleAttrib = new StyleAttribute();
-        if (getStyle(styleAttrib.setName("visibility")))
+        //Visibility can be overridden by children
+
+        if (getStyle(styleAttrib.setName("display")))
         {
-            if (!styleAttrib.getStringValue().equals("visible"))
+            if (styleAttrib.getStringValue().equals("none"))
             {
                 return;
             }
         }
-
+        
         //Do not process offscreen groups
         boolean ignoreClip = diagram.ignoringClipHeuristic();
 //        if (!ignoreClip && outsideClip(g))

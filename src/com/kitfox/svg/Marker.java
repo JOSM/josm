@@ -55,8 +55,8 @@ public class Marker extends Group
     Rectangle2D viewBox;
     float refX;
     float refY;
-    float markerWidth = 3;
-    float markerHeight = 3;
+    float markerWidth = 1;
+    float markerHeight = 1;
     float orient = Float.NaN;
     boolean markerUnitsStrokeWidth = true; //if set to false 'userSpaceOnUse' is assumed
 
@@ -195,6 +195,8 @@ public class Marker extends Group
     {
         boolean changeState = super.updateTime(curTime);
 
+        build();
+        
         //Marker properties do not change
         return changeState;
     }

@@ -143,6 +143,11 @@ public class Font extends SVGElement
         return fontFace;
     }
 
+    public void setFontFace(FontFace face)
+    {
+        fontFace = face;
+    }
+
     public MissingGlyph getGlyph(String unicode)
     {
         Glyph retVal = (Glyph) glyphs.get(unicode);
