@@ -52,7 +52,7 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member) {
         Way w = (Way) primitive;
-        painter.drawRepeatImage(w, pattern.getImage(), offset, spacing, phase, align);
+        painter.drawRepeatImage(w, pattern, painter.isInactiveMode() || w.isDisabled(), offset, spacing, phase, align);
     }
 
     @Override

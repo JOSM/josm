@@ -427,7 +427,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, TextElement text) {
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, boolean disabled, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
 
@@ -439,10 +439,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 g.setColor(color);
                 g.fill(area);
             } else {
-                TexturePaint texture = new TexturePaint(fillImage.getImage(),
+                TexturePaint texture = new TexturePaint(fillImage.getImage(disabled),
                         new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
                 g.setPaint(texture);
-                Float alpha = Utils.color_int2float(fillImage.alpha);
+                Float alpha = fillImage.getAlphaFloat();
                 if (alpha != 1f) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
                 }
@@ -528,7 +528,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    public void drawArea(Relation r, Color color, MapImage fillImage, TextElement text) {
+    public void drawArea(Relation r, Color color, MapImage fillImage, boolean disabled, TextElement text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
@@ -538,13 +538,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
                 drawArea(r, p,
                         pd.selected ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
-                                fillImage, text);
+                                fillImage, disabled, text);
             }
         }
     }
 
-    public void drawArea(Way w, Color color, MapImage fillImage, TextElement text) {
-        drawArea(w, getPath(w), color, fillImage, text);
+    public void drawArea(Way w, Color color, MapImage fillImage, boolean disabled, TextElement text) {
+        drawArea(w, getPath(w), color, fillImage, disabled, text);
     }
 
     public void drawBoxText(Node n, BoxTextElemStyle bs) {
@@ -616,10 +616,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param align alignment of the image. The top, center or bottom edge
      * can be aligned with the way.
      */
-    public void drawRepeatImage(Way way, Image pattern, float offset, float spacing, float phase, LineImageAlignment align) {
-        final int imgWidth = pattern.getWidth(null);
+    public void drawRepeatImage(Way way, MapImage pattern, boolean disabled, float offset, float spacing, float phase, LineImageAlignment align) {
+        final int imgWidth = pattern.getWidth();
         final double repeat = imgWidth + spacing;
-        final int imgHeight = pattern.getHeight(null);
+        final int imgHeight = pattern.getHeight();
 
         Point lastP = null;
         double currentWayLength = phase % repeat;
@@ -668,12 +668,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (pos > spacing) {
                     // segment is too short for a complete image
                     if (pos > segmentLength + spacing) {
-                        g.drawImage(pattern, 0, dy1, (int) segmentLength, dy2,
+                        g.drawImage(pattern.getImage(disabled), 0, dy1, (int) segmentLength, dy2,
                                 (int) (repeat - pos), 0,
                                 (int) (repeat - pos + segmentLength), imgHeight, null);
                     // rest of the image fits fully on the current segment
                     } else {
-                        g.drawImage(pattern, 0, dy1, (int) (pos - spacing), dy2,
+                        g.drawImage(pattern.getImage(disabled), 0, dy1, (int) (pos - spacing), dy2,
                                 (int) (repeat - pos), 0, imgWidth, imgHeight, null);
                     }
                 }
@@ -681,10 +681,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 while (pos < segmentLength) {
                     // cut off at the end?
                     if (pos + imgWidth > segmentLength) {
-                        g.drawImage(pattern, (int) pos, dy1, (int) segmentLength, dy2,
+                        g.drawImage(pattern.getImage(disabled), (int) pos, dy1, (int) segmentLength, dy2,
                                 0, 0, (int) segmentLength - (int) pos, imgHeight, null);
                     } else {
-                        g.drawImage(pattern, (int) pos, dy1, nc);
+                        g.drawImage(pattern.getImage(disabled), (int) pos, dy1, nc);
                     }
                     pos += repeat;
                 }
@@ -724,23 +724,25 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    public void drawNodeIcon(Node n, Image img, float alpha, boolean selected, boolean member) {
+    public void drawNodeIcon(Node n, MapImage img, boolean disabled, boolean selected, boolean member) {
         Point p = nc.getPoint(n);
 
-        final int w = img.getWidth(null), h=img.getHeight(null);
+        final int w = img.getWidth(), h = img.getHeight();
         if(n.isHighlighted()) {
             drawPointHighlight(p, Math.max(w, h));
         }
 
+        float alpha = img.getAlphaFloat();
+
         if (alpha != 1f) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         }
-        g.drawImage(img, p.x-w/2, p.y-h/2, nc);
+        g.drawImage(img.getImage(disabled), p.x - w/2 + img.offsetX, p.y - h/2 + img.offsetY, nc);
         g.setPaintMode();
         if (selected || member)
         {
             Color color;
-            if (isInactiveMode || n.isDisabled()) {
+            if (disabled) {
                 color = inactiveColor;
             } else if (selected) {
                 color = selectedColor;
@@ -748,7 +750,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 color = relationSelectedColor;
             }
             g.setColor(color);
-            g.drawRect(p.x-w/2-2, p.y-h/2-2, w+4, h+4);
+            g.drawRect(p.x - w/2 + img.offsetX - 2, p.y - h/2 + img.offsetY - 2, w + 4, h + 4);
         }
     }
 
@@ -887,7 +889,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    public void drawRestriction(Relation r, MapImage icon) {
+    public void drawRestriction(Relation r, MapImage icon, boolean disabled) {
         Way fromWay = null;
         Way toWay = null;
         OsmPrimitive via = null;
@@ -1056,7 +1058,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             iconAngle = 270-fromAngleDeg;
         }
 
-        drawRestriction(isInactiveMode || r.isDisabled() ? icon.getDisabled() : icon.getImage(),
+        drawRestriction(icon.getImage(disabled),
                 pVia, vx, vx2, vy, vy2, iconAngle, r.isSelected());
     }
 

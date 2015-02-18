@@ -41,9 +41,8 @@ public class AreaElemStyle extends ElemStyle {
         IconReference iconRef = c.get(FILL_IMAGE, null, IconReference.class);
         if (iconRef != null) {
             fillImage = new MapImage(iconRef.iconName, iconRef.source);
-            fillImage.getImage();
 
-            color = new Color(fillImage.getImage().getRGB(
+            color = new Color(fillImage.getImage(false).getRGB(
                     fillImage.getWidth() / 2, fillImage.getHeight() / 2)
             );
 
@@ -96,12 +95,12 @@ public class AreaElemStyle extends ElemStyle {
                     myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
                 }
             }
-            painter.drawArea((Way) osm, myColor, fillImage, text);
+            painter.drawArea((Way) osm, myColor, fillImage, painter.isInactiveMode() || osm.isDisabled(), text);
         } else if (osm instanceof Relation) {
             if (color != null && (selected || outermember)) {
                 myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
             }
-            painter.drawArea((Relation) osm, myColor, fillImage, text);
+            painter.drawArea((Relation) osm, myColor, fillImage, painter.isInactiveMode() || osm.isDisabled(), text);
         }
     }
 

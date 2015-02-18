@@ -31,4 +31,6 @@ public interface StyleKeys {
     int ICON_WIDTH_IDX = 1;
     int ICON_HEIGHT_IDX = 2;
     int ICON_OPACITY_IDX = 3;
+    int ICON_OFFSET_X_IDX = 4;
+    int ICON_OFFSET_Y_IDX = 5;
 }
