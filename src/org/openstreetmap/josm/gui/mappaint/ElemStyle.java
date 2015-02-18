@@ -13,8 +13,8 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
 public abstract class ElemStyle implements StyleKeys {
 
-    protected static final String[] ICON_KEYS = {"icon-image", "icon-width", "icon-height", "icon-opacity"};
-    protected static final String[] REPEAT_IMAGE_KEYS = {"repeat-image", "repeat-image-width", "repeat-image-height", "repeat-image-opacity"};
+    protected static final String[] ICON_KEYS = {"icon-image", "icon-width", "icon-height", "icon-opacity", "icon-offset-x", "icon-offset-y"};
+    protected static final String[] REPEAT_IMAGE_KEYS = {"repeat-image", "repeat-image-width", "repeat-image-height", "repeat-image-opacity", null, null};
 
     public float major_z_index;
     public float z_index;
