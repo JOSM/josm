@@ -18,9 +18,10 @@ Only in kitfox/svg/app: SVGViewer.java
 Only in kitfox/svg/app: VersionDialog.form
 Only in kitfox/svg/app: VersionDialog.java
 Only in kitfox/svg: SVGDisplayPanel.form
+Only in kitfox/svg: SVGDisplayPanel.java
 diff -ur kitfox/svg/SVGElement.java src/com/kitfox/svg/SVGElement.java
---- kitfox/svg/SVGElement.java	2014-10-30 11:31:46.229650244 +0100
-+++ src/com/kitfox/svg/SVGElement.java	2014-10-29 23:30:19.882171106 +0100
+--- kitfox/svg/SVGElement.java	2015-02-18 15:16:19.968664918 +0100
++++ src/com/kitfox/svg/SVGElement.java	2015-02-18 15:25:38.763435836 +0100
 @@ -35,9 +35,6 @@
   */
  package com.kitfox.svg;
@@ -245,8 +246,8 @@ diff -ur kitfox/svg/SVGElement.java src/com/kitfox/svg/SVGElement.java
          if (presAttr != null)
          {
 diff -ur kitfox/svg/SVGLoaderHelper.java src/com/kitfox/svg/SVGLoaderHelper.java
---- kitfox/svg/SVGLoaderHelper.java	2014-10-29 22:49:38.193473772 +0100
-+++ src/com/kitfox/svg/SVGLoaderHelper.java	2014-10-29 22:54:17.671385584 +0100
+--- kitfox/svg/SVGLoaderHelper.java	2015-02-18 15:16:20.160665871 +0100
++++ src/com/kitfox/svg/SVGLoaderHelper.java	2015-02-18 15:25:38.763435836 +0100
 @@ -37,9 +37,6 @@
  package com.kitfox.svg;
  
@@ -270,8 +271,8 @@ diff -ur kitfox/svg/SVGLoaderHelper.java src/com/kitfox/svg/SVGLoaderHelper.java
      /** Creates a new instance of SVGLoaderHelper */
      public SVGLoaderHelper(URI xmlBase, SVGUniverse universe, SVGDiagram diagram)
 diff -ur kitfox/svg/SVGLoader.java src/com/kitfox/svg/SVGLoader.java
---- kitfox/svg/SVGLoader.java	2014-10-29 22:49:38.193473772 +0100
-+++ src/com/kitfox/svg/SVGLoader.java	2014-10-29 22:53:56.462392128 +0100
+--- kitfox/svg/SVGLoader.java	2015-02-18 15:16:20.188666018 +0100
++++ src/com/kitfox/svg/SVGLoader.java	2015-02-18 15:25:38.763435836 +0100
 @@ -42,7 +42,6 @@
  import org.xml.sax.*;
  import org.xml.sax.helpers.DefaultHandler;

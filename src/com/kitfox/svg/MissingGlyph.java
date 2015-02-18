@@ -58,12 +58,12 @@ public class MissingGlyph extends ShapeElement
     public static final String TAG_NAME = "missingglyph";
     
     //We may define a path
-    Shape path = null;
+    private Shape path = null;
     //Alternately, we may have child graphical elements
-    int horizAdvX = -1;  //Inherits font's value if not set
-    int vertOriginX = -1;  //Inherits font's value if not set
-    int vertOriginY = -1;  //Inherits font's value if not set
-    int vertAdvY = -1;  //Inherits font's value if not set
+    private int horizAdvX = -1;  //Inherits font's value if not set
+    private int vertOriginX = -1;  //Inherits font's value if not set
+    private int vertOriginY = -1;  //Inherits font's value if not set
+    private int vertAdvY = -1;  //Inherits font's value if not set
 
     /**
      * Creates a new instance of Font
@@ -240,5 +240,45 @@ public class MissingGlyph extends ShapeElement
     {
         //Fonts can't change
         return false;
+    }
+
+    /**
+     * @param path the path to set
+     */
+    public void setPath(Shape path)
+    {
+        this.path = path;
+    }
+
+    /**
+     * @param horizAdvX the horizAdvX to set
+     */
+    public void setHorizAdvX(int horizAdvX)
+    {
+        this.horizAdvX = horizAdvX;
+    }
+
+    /**
+     * @param vertOriginX the vertOriginX to set
+     */
+    public void setVertOriginX(int vertOriginX)
+    {
+        this.vertOriginX = vertOriginX;
+    }
+
+    /**
+     * @param vertOriginY the vertOriginY to set
+     */
+    public void setVertOriginY(int vertOriginY)
+    {
+        this.vertOriginY = vertOriginY;
+    }
+
+    /**
+     * @param vertAdvY the vertAdvY to set
+     */
+    public void setVertAdvY(int vertAdvY)
+    {
+        this.vertAdvY = vertAdvY;
     }
 }
