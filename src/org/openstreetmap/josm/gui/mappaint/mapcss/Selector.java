@@ -49,7 +49,7 @@ public interface Selector {
      */
     boolean matches(Environment env);
 
-    String getSubpart();
+    Subpart getSubpart();
 
     Range getRange();
 
@@ -371,7 +371,7 @@ public interface Selector {
         }
 
         @Override
-        public String getSubpart() {
+        public Subpart getSubpart() {
             return right.getSubpart();
         }
 
@@ -452,7 +452,7 @@ public interface Selector {
         }
 
         @Override
-        public String getSubpart() {
+        public Subpart getSubpart() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -474,7 +474,7 @@ public interface Selector {
 
     public static class GeneralSelector extends OptimizedGeneralSelector {
 
-        public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
+        public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, Subpart subpart) {
             super(base, zoom, conds, subpart);
         }
 
@@ -496,9 +496,9 @@ public interface Selector {
     public static class OptimizedGeneralSelector extends AbstractSelector {
         public final String base;
         public final Range range;
-        public final String subpart;
+        public final Subpart subpart;
 
-        public OptimizedGeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
+        public OptimizedGeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, Subpart subpart) {
             super(conds);
             this.base = base;
             if (zoom != null) {
@@ -512,14 +512,14 @@ public interface Selector {
             } else {
                 range = Range.ZERO_TO_INFINITY;
             }
-            this.subpart = subpart;
+            this.subpart = subpart != null ? subpart : Subpart.DEFAULT_SUBPART;
         }
 
-        public OptimizedGeneralSelector(String base, Range range, List<Condition> conds, String subpart) {
+        public OptimizedGeneralSelector(String base, Range range, List<Condition> conds, Subpart subpart) {
             super(conds);
             this.base = base;
             this.range = range;
-            this.subpart = subpart;
+            this.subpart = subpart != null ? subpart : Subpart.DEFAULT_SUBPART;
         }
 
         public OptimizedGeneralSelector(GeneralSelector s) {
@@ -527,7 +527,7 @@ public interface Selector {
         }
 
         @Override
-        public String getSubpart() {
+        public Subpart getSubpart() {
             return subpart;
         }
 

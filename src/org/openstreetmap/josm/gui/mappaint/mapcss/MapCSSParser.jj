@@ -11,24 +11,25 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
+import org.openstreetmap.josm.gui.mappaint.mapcss.LiteralExpression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule.Declaration;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
-import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
-import org.openstreetmap.josm.gui.mappaint.mapcss.LiteralExpression;
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Subpart;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.Main;
 
 /**
  * MapCSS parser.
@@ -552,7 +553,7 @@ Selector selector() :
     Condition c;
     Pair<Integer, Integer> r = null;
     List<Condition> conditions = new ArrayList<Condition>();
-    String sub = null;
+    Subpart sub = null;
 }
 {
     ( base=<IDENT> | base=<STAR> )
@@ -707,13 +708,20 @@ Condition class_or_pseudoclass(Context context) :
         : Condition.createClassCondition(s, not, context); }
 }
 
-String subpart() :
+Subpart subpart() :
 {
     String s;
+    Expression e;
 }
 {
     <DCOLON>
-    ( s=ident() { return s; } | <STAR> { return "*"; } )
+    (
+        s=ident() { return new Subpart.StringSubpart(s); }
+    |
+        <STAR> { return new Subpart.StringSubpart("*"); }
+    |
+        <LPAR> e=expression() <RPAR> { return new Subpart.ExpressionSubpart(e); }
+    )
 }
 
 Declaration declaration() :
