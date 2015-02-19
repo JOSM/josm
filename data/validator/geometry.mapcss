@@ -195,3 +195,12 @@ node:unconnected[barrier=height_restrictor],
 node:unconnected[barrier=debris] {
   throwWarning: tr("{0} must be connected to a way", "{1.tag}");
 }
+
+/*see #11127*/
+way[railway][bridge] > node,
+way[highway][bridge] > node {
+  set node_in_bridge;
+}
+way[waterway] > node.node_in_bridge {
+  throwWarning: tr("node connects waterway and bridge");
+}

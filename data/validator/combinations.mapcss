@@ -168,6 +168,13 @@ way[junction                   ][!highway][junction!=yes],
   throwOther: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
 }
 
+/*see #11127*/
+way[waterway][bridge=yes] {
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{1.tag}");
+  suggestAlternative: "bridge=aqueduct";
+  fixAdd: "bridge=aqueduct";
+}
+
 /* only {0.key}, see #11104 */
 *[area][eval(number_of_tags()) = 1],
 *[name][eval(number_of_tags()) = 1],
