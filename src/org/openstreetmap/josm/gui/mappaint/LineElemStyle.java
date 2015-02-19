@@ -39,7 +39,7 @@ public class LineElemStyle extends ElemStyle {
 
     private BasicStroke dashesLine;
 
-    protected enum LineType {
+    public enum LineType {
         NORMAL("", 3f),
         CASING("casing-", 2f),
         LEFT_CASING("left-casing-", 2.1f),
@@ -213,7 +213,7 @@ public class LineElemStyle extends ElemStyle {
         }
 
         Integer cap = null;
-        Keyword capKW = c.get(type.prefix + "linecap", null, Keyword.class);
+        Keyword capKW = c.get(type.prefix + LINECAP, null, Keyword.class);
         if (capKW != null) {
             if ("none".equals(capKW.val)) {
                 cap = BasicStroke.CAP_BUTT;
@@ -228,7 +228,7 @@ public class LineElemStyle extends ElemStyle {
         }
 
         Integer join = null;
-        Keyword joinKW = c.get(type.prefix + "linejoin", null, Keyword.class);
+        Keyword joinKW = c.get(type.prefix + LINEJOIN, null, Keyword.class);
         if (joinKW != null) {
             if ("round".equals(joinKW.val)) {
                 join = BasicStroke.JOIN_ROUND;
@@ -242,7 +242,7 @@ public class LineElemStyle extends ElemStyle {
             join = BasicStroke.JOIN_ROUND;
         }
 
-        float miterlimit = c.get(type.prefix + "miterlimit", 10f, Float.class);
+        float miterlimit = c.get(type.prefix + MITERLIMIT, 10f, Float.class);
         if (miterlimit < 1f) {
             miterlimit = 10f;
         }
