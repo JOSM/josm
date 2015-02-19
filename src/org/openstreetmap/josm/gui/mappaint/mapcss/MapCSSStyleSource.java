@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -32,8 +33,10 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
@@ -80,6 +83,38 @@ public class MapCSSStyleSource extends StyleSource {
      * stack trace.
      */
     public final static ReadWriteLock STYLE_SOURCE_LOCK = new ReentrantReadWriteLock();
+
+    /**
+     * Set of all supported MapCSS keys.
+     */
+    public static final Set<String> SUPPORTED_KEYS = new HashSet<>();
+    static {
+        Field[] declaredFields = StyleKeys.class.getDeclaredFields();
+        for (Field f : declaredFields) {
+            try {
+                SUPPORTED_KEYS.add((String) f.get(null));
+                if (!f.getName().toLowerCase().replace("_", "-").equals(f.get(null))) {
+                    throw new RuntimeException(f.getName());
+                }
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        for (LineElemStyle.LineType lt : LineElemStyle.LineType.values()) {
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.COLOR);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES_BACKGROUND_COLOR);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES_BACKGROUND_OPACITY);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES_OFFSET);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.LINECAP);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.LINEJOIN);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.MITERLIMIT);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.OFFSET);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.OPACITY);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.REAL_WIDTH);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.WIDTH);
+        }
+    }
 
     /**
      * A collection of {@link MapCSSRule}s, that are indexed by tag key and value.
@@ -483,8 +518,9 @@ public class MapCSSStyleSource extends StyleSource {
         }
     }
 
-    public boolean evalMediaExpression(String feature, Object val) {
+    public boolean evalSupportsDeclCondition(String feature, Object val) {
         if (feature == null) return false;
+        if (SUPPORTED_KEYS.contains(feature)) return true;
         switch (feature) {
             case "user-agent":
             {

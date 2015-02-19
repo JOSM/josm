@@ -13,8 +13,14 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
 public abstract class ElemStyle implements StyleKeys {
 
-    protected static final String[] ICON_KEYS = {"icon-image", "icon-width", "icon-height", "icon-opacity", "icon-offset-x", "icon-offset-y"};
-    protected static final String[] REPEAT_IMAGE_KEYS = {"repeat-image", "repeat-image-width", "repeat-image-height", "repeat-image-opacity", null, null};
+    protected static final int ICON_IMAGE_IDX = 0;
+    protected static final int ICON_WIDTH_IDX = 1;
+    protected static final int ICON_HEIGHT_IDX = 2;
+    protected static final int ICON_OPACITY_IDX = 3;
+    protected static final int ICON_OFFSET_X_IDX = 4;
+    protected static final int ICON_OFFSET_Y_IDX = 5;
+    public static final String[] ICON_KEYS = {ICON_IMAGE, ICON_WIDTH, ICON_HEIGHT, ICON_OPACITY, ICON_OFFSET_X, ICON_OFFSET_Y};
+    public static final String[] REPEAT_IMAGE_KEYS = {REPEAT_IMAGE, REPEAT_IMAGE_WIDTH, REPEAT_IMAGE_HEIGHT, REPEAT_IMAGE_OPACITY, null, null};
 
     public float major_z_index;
     public float z_index;
@@ -30,7 +36,7 @@ public abstract class ElemStyle implements StyleKeys {
     }
 
     protected ElemStyle(Cascade c, float default_major_z_index) {
-        major_z_index = c.get("major-z-index", default_major_z_index, Float.class);
+        major_z_index = c.get(MAJOR_Z_INDEX, default_major_z_index, Float.class);
         z_index = c.get(Z_INDEX, 0f, Float.class);
         object_z_index = c.get(OBJECT_Z_INDEX, 0f, Float.class);
         isModifier = c.get(MODIFIER, false, Boolean.class);
@@ -176,14 +182,14 @@ public abstract class ElemStyle implements StyleKeys {
     }
 
     protected static Font getFont(Cascade c, String s) {
-        String name = c.get("font-family", getDefaultFontName(), String.class);
-        float size = c.get("font-size", getDefaultFontSize(), Float.class);
+        String name = c.get(FONT_FAMILY, getDefaultFontName(), String.class);
+        float size = c.get(FONT_SIZE, getDefaultFontSize(), Float.class);
         int weight = Font.PLAIN;
-        if ("bold".equalsIgnoreCase(c.get("font-weight", null, String.class))) {
+        if ("bold".equalsIgnoreCase(c.get(FONT_WEIGHT, null, String.class))) {
             weight = Font.BOLD;
         }
         int style = Font.PLAIN;
-        if ("italic".equalsIgnoreCase(c.get("font-style", null, String.class))) {
+        if ("italic".equalsIgnoreCase(c.get(FONT_STYLE, null, String.class))) {
             style = Font.ITALIC;
         }
         Font f = getCachedFont(name, style | weight, Math.round(size));

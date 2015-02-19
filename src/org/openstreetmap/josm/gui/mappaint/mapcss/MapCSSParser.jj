@@ -37,9 +37,9 @@ import org.openstreetmap.josm.tools.Pair;
  * Contains two independent grammars:
  * (a) the preprocessor and (b) the main mapcss parser.
  *
- * The preprocessor handles @media syntax. Basically this allows
- * to write one style for different versions of JOSM (or different editors).
- * When the @media condition is not fulfilled, it should simply skip over
+ * The preprocessor handles @supports and @media syntax (@media is deprecated).
+ * Basically this allows to write one style for different versions of JOSM (or different editors).
+ * When the @supports condition is not fulfilled, it should simply skip over
  * the whole section and not attempt to parse the possibly unknown
  * grammar. It preserves whitespace and comments, in order to keep the
  * line and column numbers in the error messages correct for the second pass.
@@ -99,7 +99,9 @@ PARSER_END(MapCSSParser)
 TOKEN:
 {
     < PP_AND: "and" >
+|   < PP_OR: "or" >
 |   < PP_NOT: "not" >
+|   < PP_SUPPORTS: "@supports" >
 |   < PP_MEDIA: "@media" >
 |   < PP_NEWLINECHAR: "\n" | "\r" | "\f" >
 |   < PP_WHITESPACE: " " | "\t" >
@@ -243,9 +245,11 @@ void pp_black_box(boolean write):
 }
 {
     (
-        (t=<PP_AND> | t=<PP_NOT> | t=<UINT> | t=<STRING> | t=<REGEX> | t=<LPAR> | t=<RPAR> | t=<COMMA> | t=<COLON> | t=<IDENT> | t=<PP_SOMETHING_ELSE>) { if (write) sb.append(t.image); }
+        (t=<PP_AND> | t=<PP_OR> | t=<PP_NOT> | t=<UINT> | t=<STRING> | t=<REGEX> | t=<LPAR> | t=<RPAR> | t=<COMMA> | t=<COLON> | t=<IDENT> | t=<PP_SOMETHING_ELSE>) { if (write) sb.append(t.image); }
         |
             pp_w1()
+        |
+            pp_supports(!write)
         |
             pp_media(!write)
         |
@@ -253,6 +257,90 @@ void pp_black_box(boolean write):
     )*
 }
 
+/**
+ * Parses an @supports rule.
+ *
+ * @param ignore if the content of this rule should be ignored
+ * (because we are already inside a @supports block that didn't pass)
+ */
+void pp_supports(boolean ignore):
+{
+    boolean pass;
+}
+{
+    <PP_SUPPORTS> pp_w()
+    pass=pp_supports_condition()
+    <LBRACE>
+    pp_black_box(pass && !ignore)
+    <RBRACE>
+}
+
+/**
+ * Parses the condition of the @supports rule.
+ *
+ * Unlike other parsing rules, grabs trailing whitespace.
+ * @return true, if the condition is fulfilled
+ */
+boolean pp_supports_condition():
+{
+    boolean pass;
+    boolean q;
+}
+{
+    (
+        <PP_NOT> pp_w() q=pp_supports_condition_in_parens() { pass = !q; } pp_w()
+    |
+        LOOKAHEAD(pp_supports_condition_in_parens() pp_w() <PP_AND>)
+        pass=pp_supports_condition_in_parens() pp_w()
+        ( <PP_AND> pp_w() q=pp_supports_condition_in_parens() { pass = pass && q; } pp_w() )+
+    |
+        LOOKAHEAD(pp_supports_condition_in_parens() pp_w() <PP_OR>)
+        pass=pp_supports_condition_in_parens() pp_w()
+        ( <PP_OR> pp_w() q=pp_supports_condition_in_parens() { pass = pass || q; } pp_w() )+
+    |
+        pass=pp_supports_condition_in_parens() pp_w()
+    )
+    { return pass; }
+}
+
+/**
+ * Parses something in parenthesis inside the condition of the @supports rule.
+ *
+ * @return true, if the condition is fulfilled
+ */
+boolean pp_supports_condition_in_parens():
+{
+    boolean pass;
+}
+{
+    (
+        LOOKAHEAD(pp_supports_declaration_condition())
+        pass=pp_supports_declaration_condition()
+    |
+        <LPAR> pp_w() pass=pp_supports_condition() <RPAR>
+    )
+    { return pass; }
+}
+
+/**
+ * Parse an @supports declaration condition, e.&nbsp;g. a single (key:value) or (key) statement.
+ *
+ * The parsing rule {@link #literal()} from the main mapcss parser is reused here.
+ *
+ * @return true if the condition is fulfilled
+ */
+boolean pp_supports_declaration_condition():
+{
+    Token t;
+    String feature;
+    Object val = null;
+}
+{
+    <LPAR> pp_w() t=<IDENT> { feature = t.image; } pp_w() ( <COLON> pp_w() val=literal() )? <RPAR>
+    { return this.sheet.evalSupportsDeclCondition(feature, val); }
+}
+
+// deprecated
 void pp_media(boolean ignore):
 {
     boolean pass = false;
@@ -269,6 +357,7 @@ void pp_media(boolean ignore):
     <RBRACE>
 }
 
+// deprecated
 boolean pp_media_query():
 {
     Token t;
@@ -301,6 +390,7 @@ boolean pp_media_query():
  *
  * @return true if the condition is fulfilled
  */
+// deprecated
 boolean pp_media_expression():
 {
     Token t;
@@ -309,7 +399,7 @@ boolean pp_media_expression():
 }
 {
     <LPAR> pp_w() t=<IDENT> { feature = t.image; } pp_w() ( <COLON> pp_w() val=literal() )? <RPAR>
-    { return this.sheet.evalMediaExpression(feature, val); }
+    { return this.sheet.evalSupportsDeclCondition(feature, val); }
 }
 
 void pp_w1():

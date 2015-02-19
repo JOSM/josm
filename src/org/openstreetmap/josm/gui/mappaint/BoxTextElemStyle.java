@@ -118,7 +118,7 @@ public class BoxTextElemStyle extends ElemStyle {
         if (text.labelCompositionStrategy.compose(env.osm) == null) return null;
 
         HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
-        Keyword hAlignKW = c.get("text-anchor-horizontal", Keyword.RIGHT, Keyword.class);
+        Keyword hAlignKW = c.get(TEXT_ANCHOR_HORIZONTAL, Keyword.RIGHT, Keyword.class);
         if ("left".equals(hAlignKW.val)) {
             hAlign = HorizontalTextAlignment.LEFT;
         } else if ("center".equals(hAlignKW.val)) {
@@ -127,7 +127,7 @@ public class BoxTextElemStyle extends ElemStyle {
             hAlign = HorizontalTextAlignment.RIGHT;
         }
         VerticalTextAlignment vAlign = VerticalTextAlignment.BOTTOM;
-        String vAlignStr = c.get("text-anchor-vertical", Keyword.BOTTOM, Keyword.class).val;
+        String vAlignStr = c.get(TEXT_ANCHOR_VERTICAL, Keyword.BOTTOM, Keyword.class).val;
         if ("above".equals(vAlignStr)) {
             vAlign = VerticalTextAlignment.ABOVE;
         } else if ("top".equals(vAlignStr)) {

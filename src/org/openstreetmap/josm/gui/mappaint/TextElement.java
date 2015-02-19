@@ -126,7 +126,7 @@ public class TextElement implements StyleKeys {
 
         float xOffset = 0;
         float yOffset = 0;
-        float[] offset = c.get("text-offset", null, float[].class);
+        float[] offset = c.get(TEXT_OFFSET, null, float[].class);
         if (offset != null) {
             if (offset.length == 1) {
                 yOffset = offset[0];
@@ -135,22 +135,22 @@ public class TextElement implements StyleKeys {
                 yOffset = offset[1];
             }
         }
-        xOffset = c.get("text-offset-x", xOffset, Float.class);
-        yOffset = c.get("text-offset-y", yOffset, Float.class);
+        xOffset = c.get(TEXT_OFFSET_X, xOffset, Float.class);
+        yOffset = c.get(TEXT_OFFSET_Y, yOffset, Float.class);
 
-        Color color = c.get("text-color", defaultTextColor, Color.class);
-        float alpha = c.get("text-opacity", 1f, Float.class);
+        Color color = c.get(TEXT_COLOR, defaultTextColor, Color.class);
+        float alpha = c.get(TEXT_OPACITY, 1f, Float.class);
         color = new Color(color.getRed(), color.getGreen(),
                 color.getBlue(), Utils.color_float2int(alpha));
 
-        Float haloRadius = c.get("text-halo-radius", null, Float.class);
+        Float haloRadius = c.get(TEXT_HALO_RADIUS, null, Float.class);
         if (haloRadius != null && haloRadius <= 0) {
             haloRadius = null;
         }
         Color haloColor = null;
         if (haloRadius != null) {
-            haloColor = c.get("text-halo-color", Utils.complement(color), Color.class);
-            float haloAlpha = c.get("text-halo-opacity", 1f, Float.class);
+            haloColor = c.get(TEXT_HALO_COLOR, Utils.complement(color), Color.class);
+            float haloAlpha = c.get(TEXT_HALO_OPACITY, 1f, Float.class);
             haloColor = new Color(haloColor.getRed(), haloColor.getGreen(),
                     haloColor.getBlue(), Utils.color_float2int(haloAlpha));
         }
