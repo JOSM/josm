@@ -5755,7 +5755,7 @@
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
             <reference ref="ref_operator_branch" />
             <optional>
-                <combo key="tower:type" text="Tower type" values="suspension,anchor,termination,branch,transposing,crossing,transition" values_context="power" />
+                <combo key="tower:type" text="Tower type" values="suspension,anchor,termination,branch,transposing,crossing,transition" text_context="power" values_context="power" />
                 <combo key="branch:type" text="Branch tower type" values="tap,split,loop,cross" values_context="power" />
                 <combo key="design" text="Tower design" values="one-level,two-level,donau,three-level,barrel,asymmetric,triangle,flag,donau;one-level,four-level,six-level,nine-level,delta,delta_two-level,y-frame,x-frame,h-frame,guyed_h-frame,portal,portal_two-level,portal_three-level,guyed_v-frame,bipole,monopolar" values_context="power" />
                 <check key="triple_tower" text="Triple tower" />
