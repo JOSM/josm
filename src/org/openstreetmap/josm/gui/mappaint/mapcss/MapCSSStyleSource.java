@@ -373,7 +373,8 @@ public class MapCSSStyleSource extends StyleSource {
                     if (!gs.matchesConditions(env)) {
                         continue;
                     }
-                    env.layer = gs.getSubpart();
+                    env.layer = null;
+                    env.layer = gs.getSubpart().getId(env);
                     r.execute(env);
                 }
             }
@@ -454,7 +455,8 @@ public class MapCSSStyleSource extends StyleSource {
 
         for (MapCSSRule r : matchingRuleIndex.getRuleCandidates(osm)) {
             env.clearSelectorMatchingInformation();
-            env.layer = r.selector.getSubpart();
+            env.layer = null;
+            String sub = env.layer = r.selector.getSubpart().getId(env);
             if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                 Selector s = r.selector;
                 if (s.getRange().contains(scale)) {
@@ -466,11 +468,7 @@ public class MapCSSStyleSource extends StyleSource {
 
                 if (r.declaration.idx == lastDeclUsed) continue; // don't apply one declaration more than once
                 lastDeclUsed = r.declaration.idx;
-                String sub = s.getSubpart();
-                if (sub == null) {
-                    sub = "default";
-                }
-                else if ("*".equals(sub)) {
+                if ("*".equals(sub)) {
                     for (Entry<String, Cascade> entry : mc.getLayers()) {
                         env.layer = entry.getKey();
                         if ("*".equals(env.layer)) {
@@ -486,19 +484,26 @@ public class MapCSSStyleSource extends StyleSource {
     }
 
     public boolean evalMediaExpression(String feature, Object val) {
-        if ("user-agent".equals(feature)) {
-            String s = Cascade.convertTo(val, String.class);
-            if ("josm".equals(s)) return true;
+        if (feature == null) return false;
+        switch (feature) {
+            case "user-agent":
+            {
+                String s = Cascade.convertTo(val, String.class);
+                return "josm".equals(s);
+            }
+            case "min-josm-version":
+            {
+                Float v = Cascade.convertTo(val, Float.class);
+                return v != null && Math.round(v) <= Version.getInstance().getVersion();
+            }
+            case "max-josm-version":
+            {
+                Float v = Cascade.convertTo(val, Float.class);
+                return v != null && Math.round(v) >= Version.getInstance().getVersion();
+            }
+            default:
+                return false;
         }
-        if ("min-josm-version".equals(feature)) {
-            Float v = Cascade.convertTo(val, Float.class);
-            if (v != null) return Math.round(v) <= Version.getInstance().getVersion();
-        }
-        if ("max-josm-version".equals(feature)) {
-            Float v = Cascade.convertTo(val, Float.class);
-            if (v != null) return Math.round(v) >= Version.getInstance().getVersion();
-        }
-        return false;
     }
 
     @Override
