@@ -521,6 +521,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="au.com.*"/>
             <ignore classname="com.*"/>
             <ignore classname="de.miethxml.*"/>
+            <ignore classname="javafx.*"/>
             <ignore classname="javax.*"/>
             <ignore classname="jogamp.*"/>
             <ignore classname="junit.*"/>
@@ -539,6 +540,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.joda.time.*"/>
             <ignore classname="org.jvnet.staxex.*"/>
             <ignore classname="org.kxml2.*"/>
+            <ignore classname="org.objectweb.*"/>
             <ignore classname="org.python.*"/>
             <ignore classname="org.slf4j.*"/>
         	<!-- plugins used by another ones -->
