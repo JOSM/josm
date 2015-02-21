@@ -1064,7 +1064,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     /**
      * Return tile information caching class
-     * @see TileLoaderListener#getTileCache()
+     * @see TileController#getTileCache()
      */
     public TileCache getTileCache() {
         return tileController.getTileCache();
