@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.LanguageInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -81,6 +82,8 @@ public class ImageryReader {
         ImageryInfo entry;
         ImageryBounds bounds;
         Shape shape;
+        // language of last element, does only work for simple ENTRY_ATTRIBUTE's
+        String lang;
         List<String> projections;
 
         @Override public void startDocument() {
@@ -132,6 +135,7 @@ public class ImageryReader {
                         "icon",
                 }).contains(qName)) {
                     newState = State.ENTRY_ATTRIBUTE;
+                    lang = atts.getValue("lang");
                 } else if ("bounds".equals(qName)) {
                     try {
                         bounds = new ImageryBounds(
@@ -206,12 +210,10 @@ public class ImageryReader {
             case ENTRY_ATTRIBUTE:
                 switch(qName) {
                 case "name":
-                    /* TODO: don't ignore lang attribute */
-                    entry.setTranslatedName(accumulator.toString());
+                    entry.setName(lang == null ? LanguageInfo.getJOSMLocaleCode(null) : lang, accumulator.toString());
                     break;
                 case "description":
-                    /* TODO: don't ignore lang attribute */
-                    entry.setDescription(accumulator.toString());
+                    entry.setDescription(lang, accumulator.toString());
                     break;
                 case "id":
                     entry.setId(accumulator.toString());

@@ -27,6 +27,7 @@ import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Class that stores info about an image background layer.
@@ -151,8 +152,10 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
     /** name of the imagery entry (gets translated by josm usually) */
     private String name;
-    /** original name of the imagery entry in case of translation call */
+    /** original name of the imagery entry in case of translation call, for multiple languages English when possible */
     private String origName;
+    /** (original) language of the translated name entry */
+    private String langName;
     /** id for this imagery entry, optional at the moment */
     private String id;
     private String url = null;
@@ -165,7 +168,10 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     private int defaultMinZoom = 0;
     private ImageryBounds bounds = null;
     private List<String> serverProjections;
+    /** description of the imagery entry, should contain notes what type of data it is */
     private String description;
+    /** language of the description entry, "" for tr() result */
+    private String langDescription;
     private String attributionText;
     private String attributionLinkURL;
     private String attributionImage;
@@ -685,13 +691,20 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     }
 
     /**
-     * Sets the entry name and translates it.
+     * Sets the entry name and handle translation.
+     * @param name The used language
      * @param name The entry name
-     * @since 6968
+     * @since 8091
      */
-    public void setTranslatedName(String name) {
-        this.name = tr(name);
-        this.origName = name;
+    public void setName(String language, String name) {
+        boolean isdefault = LanguageInfo.getJOSMLocaleCode(null).equals(language);
+        if(LanguageInfo.isBetterLanguage(langName, language)) {
+            this.name = isdefault ? tr(name) : name;
+            this.langName = language;
+        }
+        if(origName == null || isdefault) {
+            this.origName = name;
+        }
     }
 
     /**
@@ -790,11 +803,16 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
     /**
      * Sets the description text when existing.
+     * @param name The used language
      * @param description the imagery description text
-     * @since 8065
+     * @since 8091
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String language, String description) {
+        boolean isdefault = LanguageInfo.getJOSMLocaleCode(null).equals(language);
+        if(LanguageInfo.isBetterLanguage(langDescription, language)) {
+            this.description = isdefault ? tr(description) : description;
+            this.langDescription = language;
+        }
     }
 
     /**
