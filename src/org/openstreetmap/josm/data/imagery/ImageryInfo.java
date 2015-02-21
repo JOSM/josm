@@ -158,27 +158,44 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     private String langName;
     /** id for this imagery entry, optional at the moment */
     private String id;
+    /** URL of the imagery service */
     private String url = null;
+    /** whether this is a entry activated by default or not */
     private boolean defaultEntry = false;
+    /** The data part of HTTP cookies header in case the service requires cookies to work */
     private String cookies = null;
-    private String eulaAcceptanceRequired= null;
+    /** Whether this service requires a explicit EULA acceptance before it can be activated */
+    private String eulaAcceptanceRequired = null;
+    /** type of the imagery servics - WMS, TMS, ... */
     private ImageryType imageryType = ImageryType.WMS;
     private double pixelPerDegree = 0.0;
+    /** maximum zoom level for TMS imagery */
     private int defaultMaxZoom = 0;
+    /** minimum zoom level for TMS imagery */
     private int defaultMinZoom = 0;
+    /** display bounds of imagery, displayed in prefs and used for automatic imagery selection */
     private ImageryBounds bounds = null;
+    /** projections supported by WMS servers */
     private List<String> serverProjections;
     /** description of the imagery entry, should contain notes what type of data it is */
     private String description;
-    /** language of the description entry, "" for tr() result */
+    /** language of the description entry */
     private String langDescription;
+    /** Text of a text attribution displayed when using the imagery */
     private String attributionText;
+    /** Link behing the text attribution displayed when using the imagery */
     private String attributionLinkURL;
+    /** Image of a graphical attribution displayed when using the imagery */
     private String attributionImage;
+    /** Link behind the graphical attribution displayed when using the imagery */
     private String attributionImageURL;
+    /** Text with usage terms displayed when using the imagery */
     private String termsOfUseText;
+    /** Link behind the text with usage terms displayed when using the imagery */
     private String termsOfUseURL;
+    /** country code of the imagery (for country specific imagery) */
     private String countryCode = "";
+    /** icon used in menu */
     private String icon;
     // when adding a field, also adapt the ImageryInfo(ImageryInfo) constructor
 
@@ -315,6 +332,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * @param url The entry URL
      * @param type The entry imagery type. If null, WMS will be used as default
      * @param eulaAcceptanceRequired The EULA URL
+     * @param cookies The data part of HTTP cookies header in case the service requires cookies to work
      * @throws IllegalArgumentException if type refers to an unknown imagery type
      */
     public ImageryInfo(String name, String url, String type, String eulaAcceptanceRequired, String cookies) {
@@ -768,6 +786,10 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.defaultEntry = defaultEntry;
     }
 
+    /**
+     * Return the data part of HTTP cookies header in case the service requires cookies to work
+     * @return the cookie data part
+     */
     public String getCookies() {
         return this.cookies;
     }
