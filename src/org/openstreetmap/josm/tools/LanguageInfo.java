@@ -122,10 +122,39 @@ public final class LanguageInfo {
         return l;
     }
 
+    /**
+     * Check if a new language is better than a previous existing. Can be used in classes where
+     * multiple user supplied language marked strings appear and the best one is searched. Following
+     * priorities: current language, english, any other
+     *
+     * @param oldLanguage the language code of the existing string
+     * @param newLanguage the language code of the new string
+     * @return true if new one is better
+     * @since 8091
+     */
+    public static boolean isBetterLanguage(String oldLanguage, String newLanguage) {
+        if (oldLanguage == null)
+            return true;
+        String want = getJOSMLocaleCode();
+        return want.equals(newLanguage) || (!want.equals(oldLanguage) && newLanguage.startsWith("en"));
+    }
+    
+    /**
+     * Replies the language prefix for use in XML elements (with a dot appended).
+     *
+     * @return the XML language prefix
+     * @see #getJOSMLocaleCode()
+     */
     public static String getLanguageCodeXML() {
         return getJOSMLocaleCode()+".";
     }
 
+    /**
+     * Replies the language prefix for use in manifests (with an underscore appended).
+     *
+     * @return the manifest language prefix
+     * @see #getJOSMLocaleCode()
+     */
     public static String getLanguageCodeManifest() {
         return getJOSMLocaleCode()+"_";
     }
