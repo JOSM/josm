@@ -77,7 +77,7 @@ public class DownloadSessionTask extends AbstractDownloadTask {
      * 
      * Session importers can be added by plugins and there is currently
      * no way to ensure that these are safe for remotecontol.
-     * @return 
+     * @return <code>true</code> if session import is allowed
      */
     @Override
     public boolean isSafeForRemotecontrolRequests() {

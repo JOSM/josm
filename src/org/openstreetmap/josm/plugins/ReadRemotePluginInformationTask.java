@@ -104,8 +104,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     /**
      * Creates the file name for the cached plugin list and the icon cache file.
      *
+     * @param pluginDir directory of plugin for data storage
      * @param site the name of the site
-     * @param type icon cache or plugin list cache
      * @return the file name for the cache file
      */
     protected File createSiteCacheFile(File pluginDir, String site) {

@@ -710,7 +710,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
     /**
      * Sets the entry name and handle translation.
-     * @param name The used language
+     * @param language The used language
      * @param name The entry name
      * @since 8091
      */
@@ -825,7 +825,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
     /**
      * Sets the description text when existing.
-     * @param name The used language
+     * @param language The used language
      * @param description the imagery description text
      * @since 8091
      */
