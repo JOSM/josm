@@ -122,7 +122,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
     /**
      * Detaches this contextual menu from its text component.
      * @return {@code this}
-     * @see #attach(JTextComponent)
+     * @see #attach(JTextComponent, boolean)
      */
     protected TextContextualPopupMenu detach() {
         if (isAttached()) {

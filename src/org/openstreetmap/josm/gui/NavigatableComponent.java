@@ -475,23 +475,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param newScale The scale to use.
      * @param initial true if this call initializes the viewport.
      */
-    private void zoomNoUndoTo(EastNorth newCenter, double newScale, boolean intial) {
+    private void zoomNoUndoTo(EastNorth newCenter, double newScale, boolean initial) {
         if (!newCenter.equals(center)) {
             EastNorth oldCenter = center;
             center = newCenter;
-            if (!intial) {
+            if (!initial) {
                 firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
             }
         }
         if (scale != newScale) {
             double oldScale = scale;
             scale = newScale;
-            if (!intial) {
+            if (!initial) {
                 firePropertyChange(PROPNAME_SCALE, oldScale, newScale);
             }
         }
 
-        if (!intial) {
+        if (!initial) {
             repaint();
             fireZoomChanged();
         }
