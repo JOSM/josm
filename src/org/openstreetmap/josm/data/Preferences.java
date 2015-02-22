@@ -1674,11 +1674,34 @@ public class Preferences {
      * see something with an expiry date in the past, remove it from the list.
      */
     public void removeObsolete() {
-        /* update the data with old consumer key*/
-        if(getInteger("josm.version", Version.getInstance().getVersion()) < 6076) {
-            if(!get("oauth.access-token.key").isEmpty() && get("oauth.settings.consumer-key").isEmpty()) {
-                put("oauth.settings.consumer-key", "AdCRxTpvnbmfV8aPqrTLyA");
-                put("oauth.settings.consumer-secret", "XmYOiGY9hApytcBC3xCec3e28QBqOWz5g6DSb5UpE");
+        // drop this block end of 2015
+        // update old style JOSM server links to use zip now, see #10581
+        // actually also cache and mirror entries should be cleared
+        if(getInteger("josm.version", Version.getInstance().getVersion()) < 8099) {
+            for(String key: new String[]{"mappaint.style.entries", "taggingpreset.entries"}) {
+                Collection<Map<String, String>> data = getListOfStructs(key, (Collection<Map<String, String>>) null);
+                if (data != null) {
+                    List<Map<String, String>> newlist = new ArrayList<Map<String, String>>();
+                    boolean modified = false;
+                    for(Map<String, String> map : data)
+                    {
+                         Map<String, String> newmap = new LinkedHashMap<String, String>();
+                         for (Entry<String, String> entry : map.entrySet()) {
+                             String val = entry.getValue();
+                             String mkey = entry.getKey();
+                             if ("url".equals(mkey) && val.contains("josm.openstreetmap.de/josmfile") && !val.contains("zip=1")) {
+                                 val += "&zip=1";
+                                 modified = true;
+                                 
+                             }
+                             newmap.put(mkey, val);
+                         }
+                         newlist.add(newmap);
+                    }
+                    if (modified) {
+                        putListOfStructs(key, newlist);
+                    }
+                }
             }
         }
 
