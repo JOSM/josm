@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -34,13 +35,16 @@ public abstract class StyleSource extends SourceEntry {
     private List<Throwable> errors = new ArrayList<>();
     public File zipIcons;
 
-    private ImageIcon imageIcon;
+    /** image provider returning the icon for this style */
+    private ImageProvider imageIconProvider;
+
+    /** image provider returning the default icon */
+    private static ImageProvider defaultIconProvider;
 
     /******
      * The following fields is additional information found in the header
      * of the source file.
      */
-
     public String icon;
 
     /**
@@ -114,42 +118,76 @@ public abstract class StyleSource extends SourceEntry {
         return Collections.unmodifiableCollection(errors);
     }
 
+    /**
+     * Initialize the class.
+     */
     protected void init() {
         errors.clear();
-        imageIcon = null;
+        imageIconProvider = null;
         icon = null;
     }
 
-    private static ImageIcon defaultIcon;
-
-    private static ImageIcon getDefaultIcon() {
-        if (defaultIcon == null) {
-            defaultIcon = ImageProvider.get("dialogs/mappaint", "pencil");
+    /**
+     * Image provider for default icon.
+     *
+     * @return image provider for default styles icon
+     * @since 8097
+     * @see #getIconProvider()
+     */
+    private static ImageProvider getDefaultIconProvider() {
+        if (defaultIconProvider == null) {
+            defaultIconProvider = new ImageProvider("dialogs/mappaint", "pencil");
         }
-        return defaultIcon;
+        return defaultIconProvider;
     }
 
-    protected ImageIcon getSourceIcon() {
-        if (imageIcon == null) {
+    /**
+     * Image provider for source icon. Uses default icon, when not else available.
+     *
+     * @return image provider for styles icon
+     * @since 8097
+     * @see #getIconProvider()
+     */
+    protected ImageProvider getSourceIconProvider() {
+        if (imageIconProvider == null) {
             if (icon != null) {
-                imageIcon = MapPaintStyles.getIcon(new IconReference(icon, this), -1, -1);
+                imageIconProvider = MapPaintStyles.getIconProvider(new IconReference(icon, this), true);
             }
-            if (imageIcon == null) {
-                imageIcon = getDefaultIcon();
+            if (imageIconProvider == null) {
+                imageIconProvider = getDefaultIconProvider();
             }
         }
-        return imageIcon;
+        return imageIconProvider;
     }
 
+    /**
+     * Image provider for source icon.
+     *
+     * @return image provider for styles icon
+     * @since 8097
+     */
+    public final ImageProvider getIconProvider() {
+        ImageProvider i = getSourceIconProvider();
+        if (!getErrors().isEmpty()) {
+            i = new ImageProvider(i).addOverlay(new ImageOverlay(new ImageProvider("dialogs/mappaint/error_small")));
+        }
+        return i;
+    }
+
+    /**
+     * Image for source icon.
+     *
+     * @return styles icon for display
+     */
     public final ImageIcon getIcon() {
-        if (getErrors().isEmpty())
-            return getSourceIcon();
-        else
-            return ImageProvider.overlay(getSourceIcon(),
-                    ImageProvider.get("dialogs/mappaint/error_small"),
-                    ImageProvider.OverlayPosition.SOUTHEAST);
+        return getIconProvider().setMaxSize(ImageProvider.ImageSizes.MENU).get();
     }
 
+    /**
+     * Return text to display as ToolTip.
+     *
+     * @return tooltip text containing error status
+     */
     public String getToolTipText() {
         if (errors.isEmpty())
             return null;
