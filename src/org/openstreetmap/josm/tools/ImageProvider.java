@@ -239,6 +239,28 @@ public class ImageProvider {
     }
 
     /**
+     * Constructs a new {@code ImageProvider} from an existing one.
+     * @param image the existing image provider to be copied
+     * @since 8095
+     */
+    public ImageProvider(ImageProvider image) {
+        this.dirs = image.dirs;
+        this.id = image.id;
+        this.subdir = image.subdir;
+        this.name = image.name;
+        this.archive = image.archive;
+        this.inArchiveDir = image.inArchiveDir;
+        this.width = image.width;
+        this.height = image.height;
+        this.maxWidth = image.maxWidth;
+        this.maxHeight = image.maxHeight;
+        this.optional = image.optional;
+        this.suppressWarnings = image.suppressWarnings;
+        this.additionalClassLoaders = image.additionalClassLoaders;
+        this.overlayInfo = image.overlayInfo;
+    }
+
+    /**
      * Directories to look for the image.
      * @param dirs The directories to look for.
      * @return the current object, for convenience
@@ -383,6 +405,29 @@ public class ImageProvider {
     public ImageProvider setMaxSize(Dimension maxSize) {
         this.maxWidth = maxSize.width;
         this.maxHeight = maxSize.height;
+        return this;
+    }
+
+    /**
+     * Limit the maximum size of the image.
+     *
+     * It will shrink the image if necessary, but keep the aspect ratio.
+     * The given width or height can be -1 which means this direction is not bounded.
+     *
+     * This function sets value using the most restrictive of the new or existing set of
+     * values.
+     *
+     * @param maxSize maximum image size
+     * @return the current object, for convenience
+     * @see #setMaxSize(Dimension)
+     */
+    public ImageProvider resetMaxSize(Dimension maxSize) {
+        if (this.maxWidth == -1 || maxSize.width < this.maxWidth) {
+            this.maxWidth = maxSize.width;
+        }
+        if (this.maxHeight == -1 || maxSize.height < this.maxHeight) {
+            this.maxHeight = maxSize.height;
+        }
         return this;
     }
 

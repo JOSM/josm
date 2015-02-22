@@ -101,16 +101,43 @@ public final class MapPaintStyles {
         }
     }
 
-    public static ImageIcon getIcon(IconReference ref, int width, int height) {
+    /**
+     * Image provider for icon. Note that this is a provider only. A @link{ImageProvider#get()} call may still
+     * fail!
+     *
+     * @param ref reference to the requested icon
+     * @param test if <code>true</code> than the icon is request is tested
+     * @return image provider for icon (can be <code>null</code> when <code>test</code> is <code>true</code>).
+     * @since 8097
+     * @see #getIcon(IconReference, int,int)
+     */
+    public static ImageProvider getIconProvider(IconReference ref, boolean test) {
         final String namespace = ref.source.getPrefName();
-        ImageIcon i = new ImageProvider(ref.iconName)
+        ImageProvider i = new ImageProvider(ref.iconName)
                 .setDirs(getIconSourceDirs(ref.source))
                 .setId("mappaint."+namespace)
                 .setArchive(ref.source.zipIcons)
                 .setInArchiveDir(ref.source.getZipEntryDirName())
-                .setWidth(width)
-                .setHeight(height)
-                .setOptional(true).get();
+                .setOptional(true);
+        if (test && i.get() == null) {
+            Main.warn("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
+            return null;
+        }
+        return i;
+    }
+
+    /**
+     * Return scaled icon.
+     *
+     * @param ref reference to the requested icon
+     * @param width icon width or -1 for autoscale
+     * @param height icon height or -1 for autoscale
+     * @return image icon or <code>null</code>.
+     * @see #getIconProvider(IconReference, boolean)
+     */
+    public static ImageIcon getIcon(IconReference ref, int width, int height) {
+        final String namespace = ref.source.getPrefName();
+        ImageIcon i = getIconProvider(ref, false).setWidth(width).setHeight(height).get();
         if (i == null) {
             Main.warn("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
             return null;

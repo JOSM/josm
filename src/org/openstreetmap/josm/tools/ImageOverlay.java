@@ -80,12 +80,9 @@ public class ImageOverlay {
         }
         ImageIcon overlay;
         if(width != -1 || height != -1) {
-            /* Don't modify ImageProvider, but apply maximum size, probably cloning the ImageProvider
-               would be a better approach. */
-            overlay = image.getResource().getImageIconBounded(new Dimension(width, height));
-        } else {
-            overlay = image.get();
+            image = new ImageProvider(image).resetMaxSize(new Dimension(width, height));
         }
+        overlay = image.get();
         int x, y;
         if (width == -1 && offsetLeft < 0) {
             x = new Double(w*offsetRight).intValue() - overlay.getIconWidth();
