@@ -1032,7 +1032,7 @@ public class ImageProvider {
     }
 
     /**
-     * Return URL of wiki image for an Wiki image described by and Wiki file info page
+     * Reads the wiki page on a certain file in html format in order to find the real image URL.
      *
      * @param base base URL for Wiki image
      * @param fn filename of the Wiki image
