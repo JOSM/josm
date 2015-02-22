@@ -319,11 +319,12 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
             for (Path p : ds) {
                 fontsAvail.add(p.getFileName().toString().toUpperCase());
             }
+            fontsAvail.add(""); // for devanagari
         } catch (IOException ex) {
+            Main.error(ex, false);
             Main.warn("extended font config - failed to load available Fonts");
             fontsAvail = null;
         }
-        fontsAvail.add(""); // for devanagari
         return fontsAvail;
     }
 
@@ -332,15 +333,25 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         Collection<FontEntry> def = new ArrayList<>();
         def.add(new FontEntry("devanagari", "", "")); // just include in fallback list
                                                       // font already defined in template
-        // Win 8 (and later)
-        def.add(new FontEntry("myanmar", "Myanmar Text", "MMRTEXT.TTF"));           // ISO 639: my
 
-        // Win 7 and later
-        def.add(new FontEntry("nko_tifinagh_vai_osmanya", "Ebrima", "EBRIMA.TTF")); // ISO 639: ber
-        def.add(new FontEntry("khmer1", "Khmer UI", "KHMERUI.TTF"));                // ISO 639: km
-        def.add(new FontEntry("lao1", "Lao UI", "LAOUI.TTF"));                      // ISO 639: lo
+        // Windows scripts: https://msdn.microsoft.com/en-us/goglobal/bb688099.aspx
+        // IE default fonts: https://msdn.microsoft.com/en-us/library/ie/dn467844(v=vs.85).aspx
 
-        // Win Vista and later:
+        // Windows 8/8.1 and later
+        def.add(new FontEntry("javanese", "Javanese Text", "JAVATEXT.TTF"));           // ISO 639: jv
+        def.add(new FontEntry("leelawadee", "Leelawadee", "LEELAWAD.TTF"));            // ISO 639: bug
+        def.add(new FontEntry("myanmar", "Myanmar Text", "MMRTEXT.TTF"));              // ISO 639: my
+        def.add(new FontEntry("nirmala", "Nirmala UI", "NIRMALA.TTF"));                // ISO 639: sat,srb
+        def.add(new FontEntry("segoeui", "Segoe UI", "SEGOEUI.TTF"));                  // ISO 639: lis
+
+        // Windows 7 and later
+        def.add(new FontEntry("nko_tifinagh_vai_osmanya", "Ebrima", "EBRIMA.TTF"));    // ISO 639: ber. Nko only since Win 8
+        def.add(new FontEntry("khmer1", "Khmer UI", "KHMERUI.TTF"));                   // ISO 639: km
+        def.add(new FontEntry("lao1", "Lao UI", "LAOUI.TTF"));                         // ISO 639: lo
+        def.add(new FontEntry("tai_le", "Microsoft Tai Le", "TAILE.TTF"));             // ISO 639: khb
+        def.add(new FontEntry("new_tai_lue", "Microsoft New Tai Lue", "NTHAILU.TTF")); // ISO 639: khb
+
+        // Windows Vista and later:
         def.add(new FontEntry("ethiopic", "Nyala", "NYALA.TTF"));                   // ISO 639: am,gez,ti
         def.add(new FontEntry("tibetan", "Microsoft Himalaya", "HIMALAYA.TTF"));    // ISO 639: bo,dz
         def.add(new FontEntry("cherokee", "Plantagenet Cherokee", "PLANTC.TTF"));   // ISO 639: chr
@@ -351,22 +362,24 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         def.add(new FontEntry("mongolian", "Mongolian Baiti", "MONBAITI.TTF"));     // ISO 639: mn
         def.add(new FontEntry("oriya", "Kalinga", "KALINGA.TTF"));                  // ISO 639: or
         def.add(new FontEntry("sinhala", "Iskoola Pota", "ISKPOTA.TTF"));           // ISO 639: si
+        def.add(new FontEntry("yi", "Yi Baiti", "MSYI.TTF"));                       // ISO 639: ii
 
-        // Win XP and later
+        // Windows XP and later
         def.add(new FontEntry("gujarati", "Shruti", "SHRUTI.TTF"));
         def.add(new FontEntry("kannada", "Tunga", "TUNGA.TTF"));
-        def.add(new FontEntry("gurmuhi", "Raavi", "RAAVI.TTF"));
-        def.add(new FontEntry("tamil", "Latha", "LATHA.TTF"));
+        def.add(new FontEntry("gurmukhi", "Raavi", "RAAVI.TTF"));
         def.add(new FontEntry("telugu", "Gautami", "GAUTAMI.TTF"));
-        def.add(new FontEntry("bengali", "Vrinda", "VRINDA.TTF"));
+        def.add(new FontEntry("bengali", "Vrinda", "VRINDA.TTF"));                  // since XP SP2
         def.add(new FontEntry("syriac", "Estrangelo Edessa", "ESTRE.TTF"));         // ISO 639: arc
         def.add(new FontEntry("thaana", "MV Boli", "MVBOLI.TTF"));                  // ISO 639: dv
         def.add(new FontEntry("malayalam", "Kartika", "KARTIKA.TTF"));              // ISO 639: ml; since XP SP2
+
+        // Windows 2000 and later
+        def.add(new FontEntry("tamil", "Latha", "LATHA.TTF"));
 
         // Comes with MS Office & Outlook 2000. Good unicode coverage, so add if available.
         def.add(new FontEntry("arialuni", "Arial Unicode MS", "ARIALUNI.TTF"));
 
         return def;
     }
-
 }
