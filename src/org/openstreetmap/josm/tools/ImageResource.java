@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -17,8 +18,8 @@ import com.kitfox.svg.SVGDiagram;
  * Holds data for one particular image.
  * It can be backed by a svg or raster image.
  *
- * In the first case, 'svg' is not null and in the latter case, 'imgCache' has
- * at least one entry for the key DEFAULT_DIMENSION.
+ * In the first case, <code>svg</code> is not <code>null</code> and in the latter case,
+ * <code>baseImage</code> is not <code>null</code>.
  * @since 4271
  */
 public class ImageResource {
@@ -27,11 +28,19 @@ public class ImageResource {
      * Caches the image data for resized versions of the same image.
      */
     private Map<Dimension, Image> imgCache = new HashMap<>();
+    /**
+     * SVG diagram information in case of SVG vector image.
+     */
     private SVGDiagram svg;
     /**
      * Use this dimension to request original file dimension.
      */
     public static final Dimension DEFAULT_DIMENSION = new Dimension(-1, -1);
+    /**
+     * ordered list of overlay images
+     */
+    protected List<ImageOverlay> overlayInfo = null;
+    private Image baseImage = null;
 
     /**
      * Constructs a new {@code ImageResource} from an image.
@@ -39,6 +48,7 @@ public class ImageResource {
      */
     public ImageResource(Image img) {
         CheckParameterUtil.ensureParameterNotNull(img);
+        this.baseImage = img;
         imgCache.put(DEFAULT_DIMENSION, img);
     }
 
@@ -49,6 +59,18 @@ public class ImageResource {
     public ImageResource(SVGDiagram svg) {
         CheckParameterUtil.ensureParameterNotNull(svg);
         this.svg = svg;
+    }
+
+    /**
+     * Constructs a new {@code ImageResource} from another one and sets overlays.
+     * @param res the existing resource
+     * @param overlayInfo the overlay to apply
+     * @since 8095
+     */
+    public ImageResource(ImageResource res, List<ImageOverlay> overlayInfo) {
+        this.svg = res.svg;
+        this.baseImage = res.baseImage;
+        this.overlayInfo = overlayInfo;
     }
 
     /**
@@ -86,29 +108,41 @@ public class ImageResource {
             return new ImageIcon(img);
         }
         if (svg != null) {
-            img = ImageProvider.createImageFromSvg(svg, dim);
-            if (img == null) {
+            BufferedImage bimg = ImageProvider.createImageFromSvg(svg, dim);
+            if (bimg == null) {
                 return null;
             }
-            imgCache.put(dim, img);
-            return new ImageIcon(img);
+            if (overlayInfo != null) {
+                for (ImageOverlay o : overlayInfo) {
+                    o.apply(bimg);
+                }
+            }
+            imgCache.put(dim, bimg);
+            return new ImageIcon(bimg);
         } else {
-            Image base = imgCache.get(DEFAULT_DIMENSION);
-            if (base == null) throw new AssertionError();
+            if (baseImage == null) throw new AssertionError();
 
             int width = dim.width;
             int height = dim.height;
-            ImageIcon icon = new ImageIcon(base);
-            if (width == -1) {
+            ImageIcon icon = new ImageIcon(baseImage);
+            if (width == -1 && height == -1) {
+                width = icon.getIconWidth();
+                height = icon.getIconHeight();
+            } else if (width == -1) {
                 width = Math.max(1, icon.getIconWidth() * height / icon.getIconHeight());
             } else if (height == -1) {
                 height = Math.max(1, icon.getIconHeight() * width / icon.getIconWidth());
             }
             Image i = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            img.getGraphics().drawImage(i, 0, 0, null);
-            imgCache.put(dim, img);
-            return new ImageIcon(img);
+            BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            bimg.getGraphics().drawImage(i, 0, 0, null);
+            if (overlayInfo != null) {
+                for (ImageOverlay o : overlayInfo) {
+                    o.apply(bimg);
+                }
+            }
+            imgCache.put(dim, bimg);
+            return new ImageIcon(bimg);
         }
     }
 
@@ -116,7 +150,7 @@ public class ImageResource {
      * Get image icon with a certain maximum size. The image is scaled down
      * to fit maximum dimensions. (Keeps aspect ratio)
      *
-     * @param maxSize The maximum size. One of the dimensions (widht or height) can be -1,
+     * @param maxSize The maximum size. One of the dimensions (width or height) can be -1,
      * which means it is not bounded.
      * @return ImageIcon object for the image of this resource, scaled down if needed, according to maxSize
      */
@@ -129,9 +163,8 @@ public class ImageResource {
             realWidth = svg.getWidth();
             realHeight = svg.getHeight();
         } else {
-            Image base = imgCache.get(DEFAULT_DIMENSION);
-            if (base == null) throw new AssertionError();
-            ImageIcon icon = new ImageIcon(base);
+            if (baseImage == null) throw new AssertionError();
+            ImageIcon icon = new ImageIcon(baseImage);
             realWidth = icon.getIconWidth();
             realHeight = icon.getIconHeight();
         }
@@ -151,10 +184,9 @@ public class ImageResource {
             return getImageIcon(new Dimension(-1, maxHeight));
         else if (maxHeight == -1)
             return getImageIcon(new Dimension(maxWidth, -1));
+        else if (realWidth / maxWidth > realHeight / maxHeight)
+            return getImageIcon(new Dimension(maxWidth, -1));
         else
-            if (realWidth / maxWidth > realHeight / maxHeight)
-                return getImageIcon(new Dimension(maxWidth, -1));
-            else
-                return getImageIcon(new Dimension(-1, maxHeight));
+            return getImageIcon(new Dimension(-1, maxHeight));
    }
 }

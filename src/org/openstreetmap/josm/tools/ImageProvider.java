@@ -38,6 +38,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -79,7 +81,7 @@ import com.kitfox.svg.SVGUniverse;
  *
  * How to use:
  *
- * <code>ImageIcon icon = new ImageProvider(name).setMaxWidth(24).setMaxHeight(24).get();</code>
+ * <code>ImageIcon icon = new ImageProvider(name).setMaxSize(ImageSizes.MAP).get();</code>
  * (there are more options, see below)
  *
  * short form:
@@ -126,11 +128,15 @@ public class ImageProvider {
         SMALLICON,
         /** LARGE_ICON_KEY value of on Action */
         LARGEICON,
-        /** MAP icon */
+        /** map icon */
         MAP,
-        /** MAP icon maximum size */
+        /** map icon maximum size */
         MAPMAX,
-        /** MENU icon size */
+        /** menu icon size */
+        CURSOR,
+        /** Cursor overlay icon size */
+        CURSOROVERLAY,
+        /** Cursor icon size */
         MENU,
     }
 
@@ -146,19 +152,34 @@ public class ImageProvider {
      */
     public static String PROP_TRANSPARENCY_COLOR = "josm.transparency.color";
 
+    /** directories in which images are searched */
     protected Collection<String> dirs;
+    /** caching identifier */
     protected String id;
+    /** sub directory the image can be found in */
     protected String subdir;
+    /** image file name */
     protected String name;
+    /** archive file to take image from */
     protected File archive;
+    /** directory inside the archive */
     protected String inArchiveDir;
+    /** width of the resulting image, -1 when original image data should be used */
     protected int width = -1;
+    /** height of the resulting image, -1 when original image data should be used */
     protected int height = -1;
+    /** maximum width of the resulting image, -1 for no restriction */
     protected int maxWidth = -1;
+    /** maximum height of the resulting image, -1 for no restriction */
     protected int maxHeight = -1;
+    /** In case of errors do not throw exception but return <code>null</code> for missing image */
     protected boolean optional;
+    /** <code>true</code> if warnings should be suppressed */
     protected boolean suppressWarnings;
+    /** list of class loaders to take images from */
     protected Collection<ClassLoader> additionalClassLoaders;
+    /** ordered list of overlay images */
+    protected List<ImageOverlay> overlayInfo = null;
 
     private static SVGUniverse svgUniverse;
 
@@ -199,9 +220,9 @@ public class ImageProvider {
 
     /**
      * Constructs a new {@code ImageProvider} from a filename in a given directory.
-     * @param subdir    subdirectory the image lies in
-     * @param name      the name of the image. If it does not end with '.png' or '.svg',
-     *                  both extensions are tried.
+     * @param subdir subdirectory the image lies in
+     * @param name the name of the image. If it does not end with '.png' or '.svg',
+     * both extensions are tried.
      */
     public ImageProvider(String subdir, String name) {
         this.subdir = subdir;
@@ -210,8 +231,8 @@ public class ImageProvider {
 
     /**
      * Constructs a new {@code ImageProvider} from a filename.
-     * @param name      the name of the image. If it does not end with '.png' or '.svg',
-     *                  both extensions are tried.
+     * @param name the name of the image. If it does not end with '.png' or '.svg',
+     * both extensions are tried.
      */
     public ImageProvider(String name) {
         this.name = name;
@@ -231,6 +252,7 @@ public class ImageProvider {
      * Set an id used for caching.
      * If name starts with <tt>http://</tt> Id is not used for the cache.
      * (A URL is unique anyway.)
+     * @param id the id for the cached image
      * @return the current object, for convenience
      */
     public ImageProvider setId(String id) {
@@ -255,10 +277,26 @@ public class ImageProvider {
      * The subdir and name will be relative to this path.
      *
      * (optional)
+     * @param inArchiveDir path inside the archive
      * @return the current object, for convenience
      */
     public ImageProvider setInArchiveDir(String inArchiveDir) {
         this.inArchiveDir = inArchiveDir;
+        return this;
+    }
+
+    /**
+     * Add an overlay over the image. Multiple overlays are possible.
+     *
+     * @param overlay overlay image and placement specification
+     * @return the current object, for convenience
+     * @since 8095
+     */
+    public ImageProvider addOverlay(ImageOverlay overlay) {
+        if (overlayInfo == null) {
+            overlayInfo = new LinkedList<ImageOverlay>();
+        }
+        overlayInfo.add(overlay);
         return this;
     }
 
@@ -276,6 +314,8 @@ public class ImageProvider {
         case LARGEICON: sizeval = Main.pref.getInteger("iconsize.largeicon", 24); break;
         case MENU: /* MENU is SMALLICON - only provided in case of future changes */
         case SMALLICON: sizeval = Main.pref.getInteger("iconsize.smallicon", 16); break;
+        case CURSOROVERLAY: /* same as cursor - only provided in case of future changes */
+        case CURSOR: sizeval = Main.pref.getInteger("iconsize.cursor", 32); break;
         default: sizeval = Main.pref.getInteger("iconsize.default", 24); break;
         }
         return new Dimension(sizeval, sizeval);
@@ -287,6 +327,7 @@ public class ImageProvider {
      * If not specified, the original size of the image is used.
      * The width part of the dimension can be -1. Then it will only set the height but
      * keep the aspect ratio. (And the other way around.)
+     * @param size final dimensions of the image
      * @return the current object, for convenience
      */
     public ImageProvider setSize(Dimension size) {
@@ -299,6 +340,7 @@ public class ImageProvider {
      * Set the dimensions of the image.
      *
      * If not specified, the original size of the image is used.
+     * @param size final dimensions of the image
      * @return the current object, for convenience
      * @since 7687
      */
@@ -307,6 +349,8 @@ public class ImageProvider {
     }
 
     /**
+     * Set image width
+     * @param width final width of the image
      * @see #setSize
      * @return the current object, for convenience
      */
@@ -316,6 +360,8 @@ public class ImageProvider {
     }
 
     /**
+     * Set image height
+     * @param height final height of the image
      * @see #setSize
      * @return the current object, for convenience
      */
@@ -331,6 +377,7 @@ public class ImageProvider {
      * The given width or height can be -1 which means this direction is not bounded.
      *
      * 'size' and 'maxSize' are not compatible, you should set only one of them.
+     * @param maxSize maximum image size
      * @return the current object, for convenience
      */
     public ImageProvider setMaxSize(Dimension maxSize) {
@@ -346,6 +393,7 @@ public class ImageProvider {
      * The given width or height can be -1 which means this direction is not bounded.
      *
      * 'size' and 'maxSize' are not compatible, you should set only one of them.
+     * @param size maximum image size
      * @return the current object, for convenience
      * @since 7687
      */
@@ -355,6 +403,7 @@ public class ImageProvider {
 
     /**
      * Convenience method, see {@link #setMaxSize(Dimension)}.
+     * @param maxSize maximum image size
      * @return the current object, for convenience
      */
     public ImageProvider setMaxSize(int maxSize) {
@@ -362,6 +411,8 @@ public class ImageProvider {
     }
 
     /**
+     * Limit the maximum width of the image.
+     * @param maxWidth maximum image width
      * @see #setMaxSize
      * @return the current object, for convenience
      */
@@ -371,6 +422,8 @@ public class ImageProvider {
     }
 
     /**
+     * Limit the maximum height of the image.
+     * @param maxHeight maximum image height
      * @see #setMaxSize
      * @return the current object, for convenience
      */
@@ -397,6 +450,7 @@ public class ImageProvider {
      * Suppresses warning on the command line in case the image cannot be found.
      *
      * In combination with setOptional(true);
+     * @param suppressWarnings if <code>true</code> warnings are suppressed
      * @return the current object, for convenience
      */
     public ImageProvider setSuppressWarnings(boolean suppressWarnings) {
@@ -406,6 +460,7 @@ public class ImageProvider {
 
     /**
      * Add a collection of additional class loaders to search image for.
+     * @param additionalClassLoaders class loaders to add to the internal list
      * @return the current object, for convenience
      */
     public ImageProvider setAdditionalClassLoaders(Collection<ClassLoader> additionalClassLoaders) {
@@ -429,6 +484,7 @@ public class ImageProvider {
 
     /**
      * Execute the image request.
+     *
      * @return the requested image or null if the request failed
      * @since 7693
      */
@@ -444,6 +500,9 @@ public class ImageProvider {
                 }
                 return null;
             }
+        }
+        if (overlayInfo != null) {
+            ir = new ImageResource(ir, overlayInfo);
         }
         return ir;
     }
@@ -538,6 +597,9 @@ public class ImageProvider {
     }
 
     /**
+     * Load an image with a given file name, but do not throw an exception
+     * when the image cannot be found.
+     *
      * @param name The icon name (base name with or without '.png' or '.svg' extension)
      * @return the requested image or null if the request failed
      * @see #getIfAvailable(String, String)
@@ -553,6 +615,12 @@ public class ImageProvider {
     private static final Pattern dataUrlPattern = Pattern.compile(
             "^data:([a-zA-Z]+/[a-zA-Z+]+)?(;base64)?,(.+)$");
 
+    /**
+     * Internal implementation of the image request.
+     *
+     * @param additionalClassLoaders the list of class loaders to use
+     * @return the requested image or null if the request failed
+     */
     private ImageResource getIfAvailableImpl(Collection<ClassLoader> additionalClassLoaders) {
         synchronized (cache) {
             // This method is called from different thread and modifying HashMap concurrently can result
@@ -660,6 +728,13 @@ public class ImageProvider {
         }
     }
 
+    /**
+     * Internal implementation of the image request for URL's.
+     *
+     * @param url URL of the image
+     * @param type data type of the image
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
         CachedFile cf = new CachedFile(url)
                 .setDestDir(new File(Main.pref.getCacheDirectory(), "images").getPath());
@@ -688,6 +763,12 @@ public class ImageProvider {
         }
     }
 
+    /**
+     * Internal implementation of the image request for inline images (<b>data:</b> urls).
+     *
+     * @param url the data URL for image extraction
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableDataUrl(String url) {
         try {
             Matcher m = dataUrlPattern.matcher(url);
@@ -736,6 +817,13 @@ public class ImageProvider {
         }
     }
 
+    /**
+     * Internal implementation of the image request for wiki images.
+     *
+     * @param name image file name
+     * @param type data type of the image
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableWiki(String name, ImageType type) {
         final Collection<String> defaultBaseUrls = Arrays.asList(
                 "http://wiki.openstreetmap.org/w/images/",
@@ -766,6 +854,15 @@ public class ImageProvider {
         return result;
     }
 
+    /**
+     * Internal implementation of the image request for images in Zip archives.
+     *
+     * @param fullName image file name
+     * @param archive the archive to get image from
+     * @param inArchiveDir directory of the image inside the archive or <code>null</code>
+     * @param type data type of the image
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableZip(String fullName, File archive, String inArchiveDir, ImageType type) {
         try (ZipFile zipFile = new ZipFile(archive, StandardCharsets.UTF_8)) {
             if (inArchiveDir == null || ".".equals(inArchiveDir)) {
@@ -813,6 +910,13 @@ public class ImageProvider {
         return null;
     }
 
+    /**
+     * Internal implementation of the image request for local images.
+     *
+     * @param path image file path
+     * @param type data type of the image
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableLocalURL(URL path, ImageType type) {
         switch (type) {
         case SVG:
@@ -928,7 +1032,11 @@ public class ImageProvider {
     }
 
     /**
-     * Reads the wiki page on a certain file in html format in order to find the real image URL.
+     * Return URL of wiki image for an Wiki image described by and Wiki file info page
+     *
+     * @param base base URL for Wiki image
+     * @param fn filename of the Wiki image
+     * @return image URL for a Wiki image or null in case of error
      */
     private static String getImgUrlFromWikiInfoPage(final String base, final String fn) {
         try {
@@ -976,7 +1084,9 @@ public class ImageProvider {
     public static Cursor getCursor(String name, String overlay) {
         ImageIcon img = get("cursor", name);
         if (overlay != null) {
-            img = overlay(img, ImageProvider.get("cursor/modifier/" + overlay), OverlayPosition.SOUTHEAST);
+            img = new ImageProvider("cursor", name).setMaxSize(ImageSizes.CURSOR)
+                .addOverlay(new ImageOverlay(new ImageProvider("cursor/modifier/" + overlay)
+                    .setMaxSize(ImageSizes.CURSOROVERLAY))).get();
         }
         if (GraphicsEnvironment.isHeadless()) {
             Main.warn("Cursors are not available in headless mode. Returning null for '"+name+"'");
