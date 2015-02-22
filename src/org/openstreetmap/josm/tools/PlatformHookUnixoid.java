@@ -446,25 +446,27 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     /**
-     * Add more fallback fonts to the Java runtime, in order to get
-     * support for more scripts.
+     * <p>Add more fallback fonts to the Java runtime, in order to get
+     * support for more scripts.</p>
      *
-     * The font configuration in Java doesn't include some Indic scripts,
+     * <p>The font configuration in Java doesn't include some Indic scripts,
      * even though MS Windows ships with fonts that cover these unicode
-     * ranges.
+     * ranges.</p>
      *
-     * To fix this, the fontconfig.properties template is copied to the JOSM
+     * <p>To fix this, the fontconfig.properties template is copied to the JOSM
      * cache folder. Then, the additional entries are added to the font
      * configuration. Finally the system property "sun.awt.fontconfig" is set
-     * to the customized fontconfig.properties file.
+     * to the customized fontconfig.properties file.</p>
      *
-     * This is a crude hack, but better than no font display at all for these
+     * <p>This is a crude hack, but better than no font display at all for these
      * languages.
      * There is no guarantee, that the template file
      * ($JAVA_HOME/lib/fontconfig.properties.src) matches the default
      * configuration (which is in a binary format).
      * Furthermore, the system property "sun.awt.fontconfig" is undocumented and
-     * may no longer work in future versions of Java.
+     * may no longer work in future versions of Java.</p>
+     *
+     * <p>Related Java bug: <a href="https://bugs.openjdk.java.net/browse/JDK-8008572">JDK-8008572</a></p>
      *
      * @param templateFileName file name of the fontconfig.properties template file
      */
