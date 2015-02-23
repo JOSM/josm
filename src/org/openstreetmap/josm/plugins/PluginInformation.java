@@ -312,6 +312,7 @@ public class PluginInformation {
         }
         if (downloadlink != null
                 && !downloadlink.startsWith("http://svn.openstreetmap.org/applications/editors/josm/dist/")
+                && !downloadlink.startsWith("https://svn.openstreetmap.org/applications/editors/josm/dist/")
                 && !downloadlink.startsWith("http://trac.openstreetmap.org/browser/applications/editors/josm/dist/")
                 && !downloadlink.startsWith("https://github.com/JOSM/")) {
             sb.append("<p>&nbsp;</p><p>"+tr("<b>Plugin provided by an external source:</b> {0}", downloadlink)+"</p>");
