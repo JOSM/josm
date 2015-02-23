@@ -708,7 +708,7 @@ public class ImageProvider {
 
             if (subdir == null) {
                 subdir = "";
-            } else if (!subdir.isEmpty()) {
+            } else if (!subdir.isEmpty() && !subdir.endsWith("/")) {
                 subdir += "/";
             }
             String[] extensions;
