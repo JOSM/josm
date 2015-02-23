@@ -224,6 +224,11 @@ public class ColorTable
     {
         Color retVal = null;
 
+        if ("".equals(val))
+        {
+            return null;
+        }
+        
         if (val.charAt(0) == '#')
         {
             String hexStrn = val.substring(1);

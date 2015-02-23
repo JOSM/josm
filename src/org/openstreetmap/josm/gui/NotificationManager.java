@@ -104,7 +104,7 @@ class NotificationManager {
 
         currentNotification = queue.poll();
         if (currentNotification == null) return;
-        
+
         currentNotificationPanel = new NotificationPanel(currentNotification);
         currentNotificationPanel.validate();
 
@@ -308,7 +308,7 @@ class NotificationManager {
             public HideAction() {
                 putValue(SMALL_ICON, ImageProvider.get("misc", "grey_x"));
             }
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 new HideEvent().actionPerformed(null);

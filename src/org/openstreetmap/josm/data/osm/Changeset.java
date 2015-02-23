@@ -1,14 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Represents a single changeset in JOSM. For now its only used during
@@ -17,8 +21,8 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
  */
 public final class Changeset implements Tagged {
 
-    /** The maximum changeset comment text length allowed by API 0.6 **/
-    public static final int MAX_COMMENT_LENGTH = 255;
+    /** The maximum changeset tag length allowed by API 0.6 **/
+    public static final int MAX_CHANGESET_TAG_LENGTH = 255;
 
     /** the changeset id */
     private int id;
@@ -34,14 +38,16 @@ public final class Changeset implements Tagged {
     private LatLon min;
     /** the max. coordinates of the bounding box of this changeset */
     private LatLon max;
+    /** the number of comments for this changeset */
+    private int commentsCount;
     /** the map of tags */
     private Map<String,String> tags;
-    /** indicates whether this changeset is incomplete. For an
-     * incomplete changeset we only know its id
-     */
+    /** indicates whether this changeset is incomplete. For an incomplete changeset we only know its id */
     private boolean incomplete;
     /** the changeset content */
     private ChangesetDataSet content = null;
+    /** the changeset discussion */
+    private List<ChangesetDiscussionComment> discussion = null;
 
     /**
      * Creates a new changeset with id 0.
@@ -160,6 +166,24 @@ public final class Changeset implements Tagged {
         this.max = max;
     }
 
+    /**
+     * Replies the number of comments for this changeset.
+     * @return the number of comments for this changeset
+     * @since 7700
+     */
+    public final int getCommentsCount() {
+        return commentsCount;
+    }
+
+    /**
+     * Sets the number of comments for this changeset.
+     * @param commentsCount the number of comments for this changeset
+     * @since 7700
+     */
+    public final void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
     @Override
     public Map<String, String> getKeys() {
         return tags;
@@ -167,6 +191,12 @@ public final class Changeset implements Tagged {
 
     @Override
     public void setKeys(Map<String, String> keys) {
+        CheckParameterUtil.ensureParameterNotNull(keys, "keys");
+        for (String value : keys.values()) {
+            if (value != null && value.length() > MAX_CHANGESET_TAG_LENGTH) {
+                throw new IllegalArgumentException("Changeset tag value is too long: "+value);
+            }
+        }
         this.tags = keys;
     }
 
@@ -180,6 +210,10 @@ public final class Changeset implements Tagged {
 
     @Override
     public void put(String key, String value) {
+        CheckParameterUtil.ensureParameterNotNull(key, "key");
+        if (value != null && value.length() > MAX_CHANGESET_TAG_LENGTH) {
+            throw new IllegalArgumentException("Changeset tag value is too long: "+value);
+        }
         this.tags.put(key, value);
     }
 
@@ -235,6 +269,9 @@ public final class Changeset implements Tagged {
                 return false;
         } else if (!user.equals(other.user))
             return false;
+        if (commentsCount != other.commentsCount) {
+            return false;
+        }
         return true;
     }
 
@@ -285,8 +322,10 @@ public final class Changeset implements Tagged {
         this.open  = other.open;
         this.min = other.min;
         this.max = other.max;
+        this.commentsCount = other.commentsCount;
         this.tags = new HashMap<>(other.tags);
         this.incomplete = other.incomplete;
+        this.discussion = other.discussion != null ? new ArrayList<>(other.discussion) : null;
 
         // FIXME: merging of content required?
         this.content = other.content;
@@ -302,5 +341,32 @@ public final class Changeset implements Tagged {
 
     public void setContent(ChangesetDataSet content) {
         this.content = content;
+    }
+
+    /**
+     * Replies the list of comments in the changeset discussion, if any.
+     * @return the list of comments in the changeset discussion. May be empty but never null
+     * @since 7704
+     */
+    public synchronized final List<ChangesetDiscussionComment> getDiscussion() {
+        if (discussion == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(discussion);
+    }
+
+    /**
+     * Adds a comment to the changeset discussion.
+     * @param comment the comment to add. Ignored if null
+     * @since 7704
+     */
+    public synchronized final void addDiscussionComment(ChangesetDiscussionComment comment) {
+        if (comment == null) {
+            return;
+        }
+        if (discussion == null) {
+            discussion = new ArrayList<>();
+        }
+        discussion.add(comment);
     }
 }

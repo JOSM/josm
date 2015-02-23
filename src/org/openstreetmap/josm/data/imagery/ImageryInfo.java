@@ -23,9 +23,11 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.pref;
+import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Class that stores info about an image background layer.
@@ -147,30 +149,53 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             return true;
         }
     }
-    
+
     /** name of the imagery entry (gets translated by josm usually) */
     private String name;
-    /** original name of the imagery entry in case of translation call */
+    /** original name of the imagery entry in case of translation call, for multiple languages English when possible */
     private String origName;
+    /** (original) language of the translated name entry */
+    private String langName;
     /** id for this imagery entry, optional at the moment */
     private String id;
+    /** URL of the imagery service */
     private String url = null;
+    /** whether this is a entry activated by default or not */
     private boolean defaultEntry = false;
+    /** The data part of HTTP cookies header in case the service requires cookies to work */
     private String cookies = null;
-    private String eulaAcceptanceRequired= null;
+    /** Whether this service requires a explicit EULA acceptance before it can be activated */
+    private String eulaAcceptanceRequired = null;
+    /** type of the imagery servics - WMS, TMS, ... */
     private ImageryType imageryType = ImageryType.WMS;
     private double pixelPerDegree = 0.0;
+    /** maximum zoom level for TMS imagery */
     private int defaultMaxZoom = 0;
+    /** minimum zoom level for TMS imagery */
     private int defaultMinZoom = 0;
+    /** display bounds of imagery, displayed in prefs and used for automatic imagery selection */
     private ImageryBounds bounds = null;
+    /** projections supported by WMS servers */
     private List<String> serverProjections;
+    /** description of the imagery entry, should contain notes what type of data it is */
+    private String description;
+    /** language of the description entry */
+    private String langDescription;
+    /** Text of a text attribution displayed when using the imagery */
     private String attributionText;
+    /** Link behing the text attribution displayed when using the imagery */
     private String attributionLinkURL;
+    /** Image of a graphical attribution displayed when using the imagery */
     private String attributionImage;
+    /** Link behind the graphical attribution displayed when using the imagery */
     private String attributionImageURL;
+    /** Text with usage terms displayed when using the imagery */
     private String termsOfUseText;
+    /** Link behind the text with usage terms displayed when using the imagery */
     private String termsOfUseURL;
+    /** country code of the imagery (for country specific imagery) */
     private String countryCode = "";
+    /** icon used in menu */
     private String icon;
     // when adding a field, also adapt the ImageryInfo(ImageryInfo) constructor
 
@@ -198,6 +223,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         @pref String shapes;
         @pref String projections;
         @pref String icon;
+        @pref String description;
 
         /**
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
@@ -227,6 +253,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             min_zoom = i.defaultMinZoom;
             cookies = i.cookies;
             icon = i.icon;
+            description = i.description;
             if (i.bounds != null) {
                 bounds = i.bounds.encodeAsString(",");
                 StringBuilder shapesString = new StringBuilder();
@@ -299,6 +326,15 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
 
+    /**
+     * Constructs a new {@code ImageryInfo} with given name, url, extended and EULA URLs.
+     * @param name The entry name
+     * @param url The entry URL
+     * @param type The entry imagery type. If null, WMS will be used as default
+     * @param eulaAcceptanceRequired The EULA URL
+     * @param cookies The data part of HTTP cookies header in case the service requires cookies to work
+     * @throws IllegalArgumentException if type refers to an unknown imagery type
+     */
     public ImageryInfo(String name, String url, String type, String eulaAcceptanceRequired, String cookies) {
         this.name=name;
         setExtendedUrl(url);
@@ -307,6 +343,8 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
         if (t != null) {
             this.imageryType = t;
+        } else if (type != null && !type.trim().isEmpty()) {
+            throw new IllegalArgumentException("unknown type: "+type);
         }
     }
 
@@ -320,6 +358,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         name = e.name;
         id = e.id;
         url = e.url;
+        description = e.description;
         cookies = e.cookies;
         eulaAcceptanceRequired = e.eula;
         imageryType = ImageryType.fromString(e.type);
@@ -377,6 +416,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.termsOfUseURL = i.termsOfUseURL;
         this.countryCode = i.countryCode;
         this.icon = i.icon;
+        this.description = i.description;
     }
 
     @Override
@@ -392,13 +432,13 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
         return true;
     }
-    
+
     /**
      * Check if this object equals another ImageryInfo with respect to the properties
      * that get written to the preference file.
-     * 
+     *
      * The field {@link #pixelPerDegree} is ignored.
-     * 
+     *
      * @param other the ImageryInfo object to compare to
      * @return true if they are equal
      */
@@ -460,10 +500,12 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         if (!Objects.equals(this.icon, other.icon)) {
             return false;
         }
+        if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
         return true;
     }
 
-    
     @Override
     public int hashCode() {
         int result = url != null ? url.hashCode() : 0;
@@ -667,18 +709,25 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     }
 
     /**
-     * Sets the entry name and translates it.
+     * Sets the entry name and handle translation.
+     * @param language The used language
      * @param name The entry name
-     * @since 6968
+     * @since 8091
      */
-    public void setTranslatedName(String name) {
-        this.name = tr(name);
-        this.origName = name;
+    public void setName(String language, String name) {
+        boolean isdefault = LanguageInfo.getJOSMLocaleCode(null).equals(language);
+        if(LanguageInfo.isBetterLanguage(langName, language)) {
+            this.name = isdefault ? tr(name) : name;
+            this.langName = language;
+        }
+        if(origName == null || isdefault) {
+            this.origName = name;
+        }
     }
 
     /**
      * Gets the entry id.
-     * 
+     *
      * Id can be null. This gets the configured id as is. Due to a user error,
      * this may not be unique. Use {@link ImageryLayerInfo#getUniqueId} to ensure
      * a unique value.
@@ -695,7 +744,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public void clearId() {
         if (this.id != null) {
             Collection<String> newAddedIds = new TreeSet<>(Main.pref.getCollection("imagery.layers.addedIds"));
@@ -737,6 +786,10 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.defaultEntry = defaultEntry;
     }
 
+    /**
+     * Return the data part of HTTP cookies header in case the service requires cookies to work
+     * @return the cookie data part
+     */
     public String getCookies() {
         return this.cookies;
     }
@@ -759,6 +812,42 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      */
     public int getMinZoom() {
         return this.defaultMinZoom;
+    }
+
+    /**
+     * Returns the description text when existing.
+     * @return The description
+     * @since 8065
+     */
+    public String getDescription() {
+        return this.description;
+    }
+
+    /**
+     * Sets the description text when existing.
+     * @param language The used language
+     * @param description the imagery description text
+     * @since 8091
+     */
+    public void setDescription(String language, String description) {
+        boolean isdefault = LanguageInfo.getJOSMLocaleCode(null).equals(language);
+        if(LanguageInfo.isBetterLanguage(langDescription, language)) {
+            this.description = isdefault ? tr(description) : description;
+            this.langDescription = language;
+        }
+    }
+
+    /**
+     * Returns a tool tip text for display.
+     * @return The text
+     * @since 8065
+     */
+    public String getToolTipText() {
+        String desc = getDescription();
+        if (desc != null && !desc.isEmpty()) {
+            return "<html>" + getName() + "<br>" + desc + "</html>";
+        }
+        return getName();
     }
 
     /**
@@ -933,6 +1022,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * @return {@code true} is this entry is blacklisted, {@code false} otherwise
      */
     public boolean isBlacklisted() {
-        return OsmApi.getOsmApi().getCapabilities().isOnImageryBlacklist(this.url);
+        Capabilities capabilities = OsmApi.getOsmApi().getCapabilities();
+        return capabilities != null && capabilities.isOnImageryBlacklist(this.url);
     }
 }

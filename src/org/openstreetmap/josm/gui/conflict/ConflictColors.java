@@ -39,6 +39,8 @@ public enum ConflictColors implements ColorKey {
     FGCOLOR_TAG_KEEP_NONE(marktr("Conflict foreground: drop tag"), Color.black),
     BGCOLOR_TAG_KEEP_ALL (marktr("Conflict background: keep all tags"), new Color(255,234,213)),
     FGCOLOR_TAG_KEEP_ALL (marktr("Conflict foreground: keep all tags"), Color.black),
+    BGCOLOR_TAG_SUM_ALL_NUM(marktr("Conflict background: sum all numeric tags"), new Color(255,234,213)),
+    FGCOLOR_TAG_SUM_ALL_NUM(marktr("Conflict foreground: sum all numeric tags"), Color.black),
 
     BGCOLOR_MEMBER_KEEP  (marktr("Conflict background: keep member"), new Color(217,255,217)),
     FGCOLOR_MEMBER_KEEP  (marktr("Conflict foreground: keep member"), Color.black),

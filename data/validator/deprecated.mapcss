@@ -81,13 +81,33 @@
   suggestAlternative: "generator:output";
 }
   
+*[shop=antique] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixAdd: "shop=antiques";
+}
+
+*[shop=bags] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixAdd: "shop=bag";
+}
+
 *[shop=organic] {
   /* from http://wiki.openstreetmap.org/wiki/Tag:shop=organic */
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
   fixAdd: "shop=supermarket";
   fixAdd: "organic=only";
 }
-  
+
+*[shop=pets] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixAdd: "shop=pet";
+}
+
+*[shop=pharmacy] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixChangeKey: "shop => amenity";
+}
+
 *[bicycle_parking=sheffield] {
   /* from http://wiki.openstreetmap.org/wiki/Key:bicycle_parking */
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
@@ -182,6 +202,11 @@
   fixChangeKey: "monitoring:river_level => monitoring:water_level";
 }
 
+*[stay] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  fixChangeKey: "stay => maxstay";
+}
+
 *[emergency=aed] {
   /* see #9554 - http://wiki.openstreetmap.org/wiki/Proposed_features/automated_external_defibrillator */
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
@@ -216,7 +241,7 @@
   assertMatch: "way fixme=yes";
 }
 
-/* see #10107, #10108 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
+/* see #10107, #10108, #10929 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
 *[wood=deciduous],
 *[type=broad_leaved],
 *[type=broad_leafed] {
@@ -225,9 +250,11 @@
   fixAdd: "leaf_type=broadleaved";
 }
 
-*[wood=coniferous] {
+*[wood=coniferous],
+*[type=coniferous],
+*[type=conifer] {
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
-  fixRemove: "wood";
+  fixRemove: "{0.key}";
   fixAdd: "leaf_type=needleleaved";
 }
 
@@ -249,4 +276,118 @@
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
   fixRemove: "type";
   fixAdd: "leaf_cycle=deciduous";
+}
+
+*[natural=land] {
+  throwWarning: tr("{0}={1} is deprecated. Please use instead a multipolygon.", "{0.key}", "{0.value}");
+  assertMatch: "way natural=land";
+}
+
+/* see #10447 - https://wiki.openstreetmap.org/wiki/Proposed_features/Bridge_types#Deprecated_bridge_key_values */
+*[bridge=causeway] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  suggestAlternative: "ford=yes";
+  suggestAlternative: "bridge=low_water_crossing";
+  suggestAlternative: "embankment=yes";
+}
+
+*[bridge=swing] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  suggestAlternative: "bridge:movable=swing";
+  suggestAlternative: "bridge:structure=simple-suspension";
+}
+
+*[bridge=suspension] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixAdd: "bridge=yes";
+  fixAdd: "bridge:structure=suspension";
+}
+
+/* See #10530 - Incorrect tag proposed in internal preset for years */
+*[fee=interval],
+*[lit=interval],
+*[supervised=interval] {
+  throwWarning: tr("{0} is deprecated. Please specify interval by using opening_hours syntax", "{0.tag}");
+}
+
+/* See #10582 - JOSM supported this tag as "don't upload this" feature, before the introduction of upload flag at layer level */
+*[/josm\/ignore/] {
+  throwError: tr("{0} is deprecated. Please delete this object and use a private layer instead", "{0.key}");
+  fixDeleteObject: this;
+}
+
+/* see #8281 */
+*[sport=diving] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "sport=scuba_diving";
+  suggestAlternative: "sport=cliff_diving";
+}
+
+/* see #8281 */
+*[parking=park_and_ride] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  fixRemove: "parking";
+  fixAdd: "amenity=parking";
+  fixAdd: "park_ride=yes";
+}
+
+/* see #10661, #10837 */
+*[barrier=yes],
+*[aerialway=yes],
+*[amenity=yes],
+*[place=yes] {
+  throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by a specific value.", "{0.key}", "{0.value}");
+}
+
+/* see #10693 - http://wiki.openstreetmap.org/wiki/Proposed_features/drop_recommendation_for_place_name , #10837 */
+*[place_name][!name] {
+  throwWarning: tr("{0} should be replaced with {1}", "{0.key}", "{1.key}");
+  fixChangeKey: "place_name => name";
+}
+*[place][place_name = *name] {
+  throwWarning: tr("{0} = {1}; remove {0}", "{1.key}", "{1.value}");
+  fixRemove: "{1.key}";
+}
+
+way[sidewalk=yes] {
+  throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by ''left'', ''right'' or ''both''.", "{0.key}", "{0.value}");
+}
+
+*[waterway=water_point],
+*[waterway=waste_disposal] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  fixChangeKey: "waterway => amenity";
+}
+*[waterway=mooring] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  fixRemove: "waterway";
+  fixAdd: "mooring=yes";
+}
+
+/* see #10837 */
+*[building][levels],
+*[building:part=yes][levels] {
+  throwWarning: tr("{0} is deprecated", "{1.key}");
+  suggestAlternative: "building:levels";
+  fixChangeKey: "levels => building:levels";
+}
+
+/* see #10691 */
+*[protected_class] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "protect_class";
+  fixChangeKey: "protected_class => protect_class";
+}
+
+/* see #11070 */
+*[lock=unknown],
+*[hide=unknown],
+*[shelter=unknown],
+*[access=unknown],
+*[capacity:parent=unknown],
+*[capacity:women=unknown],
+*[capacity:disabled=unknown],
+*[crossing=unknown],
+*[foot=unknown] {
+  throwWarning: tr("Unspecific tag {0}", "{0.tag}");
 }

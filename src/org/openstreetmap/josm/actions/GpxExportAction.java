@@ -24,9 +24,13 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Exports data to gpx.
+ * @since 78
  */
 public class GpxExportAction extends DiskAccessAction {
 
+    /**
+     * Constructs a new {@code GpxExportAction}.
+     */
     public GpxExportAction() {
         super(tr("Export to GPX..."), "exportgpx", tr("Export the data to GPX file."),
                 Shortcut.registerShortcut("file:exportgpx", tr("Export to GPX..."), KeyEvent.VK_E, Shortcut.CTRL));
@@ -94,7 +98,6 @@ public class GpxExportAction extends DiskAccessAction {
 
     /**
      * Refreshes the enabled state
-     *
      */
     @Override
     protected void updateEnabledState() {

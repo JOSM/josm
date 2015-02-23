@@ -48,7 +48,7 @@ public final class SaveAction extends SaveActionBase {
                     tr("Overwrite"),
                     new String[] {tr("Overwrite"), tr("Cancel")}
             );
-            dialog.setButtonIcons(new String[] {"save_as.png", "cancel.png"});
+            dialog.setButtonIcons(new String[] {"save_as", "cancel"});
             dialog.setContent(tr("File {0} exists. Overwrite?", f.getName()));
             dialog.showDialog();
             int ret = dialog.getValue();

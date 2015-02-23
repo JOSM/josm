@@ -32,7 +32,7 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
      * Constructs a new {@code LambertCC9ZonesProjectionChoice}.
      */
     public LambertCC9ZonesProjectionChoice() {
-        super(tr("Lambert CC9 Zone (France)"), "core:lambertcc9", lambert9zones, tr("Lambert CC Zone"));
+        super(tr("Lambert CC9 Zone (France)"), /* NO-ICON */ "core:lambertcc9", lambert9zones, tr("Lambert CC Zone"));
     }
 
     private class LambertCC9CBPanel extends CBPanel {

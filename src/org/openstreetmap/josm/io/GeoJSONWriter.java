@@ -69,11 +69,11 @@ public class GeoJSONWriter {
             return stringWriter.toString();
         }
     }
-    
+
     private static class GeometryPrimitiveVisitor implements PrimitiveVisitor {
-        
+
         private final JsonObjectBuilder geomObj;
-        
+
         public GeometryPrimitiveVisitor(JsonObjectBuilder geomObj) {
             this.geomObj = geomObj;
         }

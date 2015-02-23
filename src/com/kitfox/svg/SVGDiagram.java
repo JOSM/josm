@@ -102,7 +102,7 @@ public class SVGDiagram implements Serializable
      */
     public void render(Graphics2D g) throws SVGException
     {
-        root.render(g);
+        root.renderToViewport(g);
     }
     
     /**

@@ -62,12 +62,21 @@ public interface TileSource extends Attributed {
     TileUpdate getTileUpdate();
 
     /**
-     * A tile layer name has to be unique and has to consist only of characters
-     * valid for filenames.
+     * A tile layer name as displayed to the user.
      *
      * @return Name of the tile layer
      */
     String getName();
+
+    /**
+     * A unique id for this tile source.
+     * 
+     * Unlike the name it has to be unique and has to consist only of characters
+     * valid for filenames.
+     * 
+     * @return the id
+     */
+    String getId();
 
     /**
      * Constructs the tile url.

@@ -10,8 +10,10 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -32,23 +34,24 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Link;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.PresetLink;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
@@ -141,26 +144,23 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     /**
      * Called from the XML parser to set the icon.
      * This task is performed in the background in order to speedup startup.
-     *
-     * FIXME for Java 1.6 - use 24x24 icons for LARGE_ICON_KEY (button bar)
-     * and the 16x16 icons for SMALL_ICON.
      */
     public void setIcon(final String iconName) {
-        ImageProvider imgProv = new ImageProvider(iconName);
+        File arch = TaggingPresetReader.getZipIcons();
         final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
+        ImageProvider imgProv = new ImageProvider(iconName);
         imgProv.setDirs(s);
         imgProv.setId("presets");
-        imgProv.setArchive(TaggingPresetReader.getZipIcons());
+        imgProv.setArchive(arch);
         imgProv.setOptional(true);
-        imgProv.setMaxWidth(16).setMaxHeight(16);
-        imgProv.getInBackground(new ImageProvider.ImageCallback() {
+        imgProv.getInBackground(new ImageProvider.ImageResourceCallback() {
             @Override
-            public void finished(final ImageIcon result) {
+            public void finished(final ImageResource result) {
                 if (result != null) {
                     GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {
-                            putValue(Action.SMALL_ICON, result);
+                            result.getImageIcon(TaggingPreset.this);
                         }
                     });
                 } else {
@@ -206,11 +206,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         if (data == null)
             return null;
         PresetPanel p = new PresetPanel();
-        LinkedList<TaggingPresetItem> l = new LinkedList<>();
-        LinkedList<TaggingPresetItem> presetLink = new LinkedList<>();
-        if(types != null){
+        List<Link> l = new LinkedList<>();
+        List<PresetLink> presetLink = new LinkedList<>();
+        if (types != null){
             JPanel pp = new JPanel();
-            for(TaggingPresetType t : types){
+            for (TaggingPresetType t : types) {
                 JLabel la = new JLabel(ImageProvider.get(t.getIconName()));
                 la.setToolTipText(tr("Elements of type {0} are supported.", tr(t.getName())));
                 pp.add(la);
@@ -218,18 +218,19 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(pp, GBC.eol());
         }
         if (preset_name_label) {
-            TaggingPresetItems.Label.addLabel(p, getName());
+            TaggingPresetItems.Label.addLabel(p, getIcon(), getName());
         }
 
         boolean presetInitiallyMatches = !selected.isEmpty() && Utils.forAll(selected, this);
         JPanel items = new JPanel(new GridBagLayout());
-        for (TaggingPresetItem i : data){
-            if(i instanceof Link) {
-                l.add(i);
-            } else if (i instanceof TaggingPresetItems.PresetLink) {
-                presetLink.add(i);
+        for (TaggingPresetItem i : data) {
+            if (i instanceof Link) {
+                l.add((Link) i);
+                p.hasElements = true;
+            } else if (i instanceof PresetLink) {
+                presetLink.add((PresetLink) i);
             } else {
-                if(i.addToPanel(items, selected, presetInitiallyMatches)) {
+                if (i.addToPanel(items, selected, presetInitiallyMatches)) {
                     p.hasElements = true;
                 }
             }
@@ -242,13 +243,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         // add PresetLink
         if (!presetLink.isEmpty()) {
             p.add(new JLabel(tr("Edit also …")), GBC.eol().insets(0, 8, 0, 0));
-            for(TaggingPresetItem link : presetLink) {
+            for (PresetLink link : presetLink) {
                 link.addToPanel(p, selected, presetInitiallyMatches);
             }
         }
 
         // add Link
-        for(TaggingPresetItem link : l) {
+        for (Link link : l) {
             link.addToPanel(p, selected, presetInitiallyMatches);
         }
 
@@ -260,8 +261,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public boolean isShowable() {
-        for(TaggingPresetItem i : data) {
-            if(!(i instanceof TaggingPresetItems.Optional || i instanceof TaggingPresetItems.Space || i instanceof TaggingPresetItems.Key))
+        for (TaggingPresetItem i : data) {
+            if (!(i instanceof TaggingPresetItems.Optional || i instanceof TaggingPresetItems.Space || i instanceof TaggingPresetItems.Key))
                 return true;
         }
         return false;
@@ -281,11 +282,22 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (Main.main == null) return;
-        if (Main.main.getCurrentDataSet() == null) return;
+        if (Main.main == null) {
+            return;
+        }
+        DataSet ds = Main.main.getCurrentDataSet();
+        Collection<OsmPrimitive> participants = Collections.emptyList();
+        if (Main.main != null && ds != null) {
+            participants = ds.getSelected();
+        }
 
-        Collection<OsmPrimitive> sel = createSelection(Main.main.getCurrentDataSet().getSelected());
+        // Display dialog even if no data layer (used by preset-tagging-tester plugin)
+        Collection<OsmPrimitive> sel = createSelection(participants);
         int answer = showDialog(sel, supportsRelation());
+
+        if (ds == null) {
+            return;
+        }
 
         if (!sel.isEmpty() && answer == DIALOG_ANSWER_APPLY) {
             Command cmd = createCommand(sel, getChangedTags());
@@ -298,7 +310,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             for(Tag t : getChangedTags()) {
                 r.put(t.getKey(), t.getValue());
             }
-            for (OsmPrimitive osm : Main.main.getCurrentDataSet().getSelected()) {
+            for (OsmPrimitive osm : ds.getSelected()) {
                 String role = suggestRoleForOsmPrimitive(osm);
                 RelationMember rm = new RelationMember(role == null ? "" : role, osm);
                 r.addMember(rm);
@@ -311,8 +323,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 }
             });
         }
-        Main.main.getCurrentDataSet().setSelected(Main.main.getCurrentDataSet().getSelected()); // force update
-
+        ds.setSelected(ds.getSelected()); // force update
     }
 
     private static class PresetDialog extends ExtendedDialog {
@@ -326,9 +337,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 setIconImage(icon.getImage());
             contentInsets = new Insets(10,5,0,5);
             if (showNewRelation) {
-                setButtonIcons(new String[] {"ok.png", "dialogs/addrelation.png", "cancel.png" });
+                setButtonIcons(new String[] {"ok", "dialogs/addrelation", "cancel" });
             } else {
-                setButtonIcons(new String[] {"ok.png", "cancel.png" });
+                setButtonIcons(new String[] {"ok", "cancel" });
             }
             setContent(content);
             setDefaultButton(1);
@@ -361,7 +372,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 }
             }
 
-            answer = new PresetDialog(p, title, (ImageIcon) getValue(Action.SMALL_ICON),
+            answer = new PresetDialog(p, title, preset_name_label ? null : (ImageIcon) getValue(Action.SMALL_ICON),
                     sel.isEmpty(), showNewRelation).getValue();
         }
         if (!showNewRelation && answer == 2)
@@ -486,7 +497,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
          * Constructs a new {@code ToolbarButtonAction}.
          */
         public ToolbarButtonAction() {
-            super("", ImageProvider.get("styles/standard/waypoint","pin"));
+            super("", ImageProvider.get("dialogs", "pin"));
             putValue(SHORT_DESCRIPTION, tr("Add or remove toolbar button"));
             LinkedList<String> t = new LinkedList<>(ToolbarPreferences.getToolString());
             toolbarIndex = t.indexOf(getToolbarString());

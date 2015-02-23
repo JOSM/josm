@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
+import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
@@ -24,7 +28,8 @@ public class RemoteControl {
      * only HTTP access will be available.
      * @since 7335
      */
-    public static final BooleanProperty PROP_REMOTECONTROL_HTTPS_ENABLED = new BooleanProperty("remotecontrol.https.enabled", false);
+    public static final BooleanProperty PROP_REMOTECONTROL_HTTPS_ENABLED = new BooleanProperty(
+            "remotecontrol.https.enabled", false);
 
     /**
      * RemoteControl HTTP protocol version. Change minor number for compatible
@@ -32,7 +37,7 @@ public class RemoteControl {
      * changes.
      */
     static final int protocolMajorVersion = 1;
-    static final int protocolMinorVersion = 5;
+    static final int protocolMinorVersion = 7;
 
     /**
      * Starts the remote control server
@@ -68,6 +73,17 @@ public class RemoteControl {
      * @since 7335
      */
     public static String getRemoteControlDir() {
-        return Main.pref.getPreferencesDir() + "remotecontrol/";
+        return new File(Main.pref.getUserDataDirectory(), "remotecontrol").getAbsolutePath();
+    }
+
+    /**
+     * Returns the inet address used for remote control.
+     * @return the inet address used for remote control
+     * @throws UnknownHostException if the local host name could not be resolved into an address.
+     * @since 7800
+     */
+    public static InetAddress getInetAddress() throws UnknownHostException {
+        // Return an address to the loopback interface by default
+        return InetAddress.getByName(Main.pref.get("remote.control.host", null));
     }
 }

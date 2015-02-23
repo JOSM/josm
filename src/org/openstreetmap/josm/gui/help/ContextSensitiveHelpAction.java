@@ -1,26 +1,28 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.help;
 
-import java.awt.event.ActionEvent;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
-
-import javax.swing.AbstractAction;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is the standard help action to be used with help buttons for
  * context sensitive help
- *
+ * @since 2289
  */
 public class ContextSensitiveHelpAction extends AbstractAction {
 
-    /** the help topic */
     private String helpTopic;
 
     /**
-     * Sets the help topic
+     * Sets the help topic.
      *
      * @param relativeHelpTopic the relative help topic
      */
@@ -31,22 +33,22 @@ public class ContextSensitiveHelpAction extends AbstractAction {
     }
 
     /**
-     * Creates a help topic for the root help topic
-     *
+     * Constructs a new {@code ContextSensitiveHelpAction} for the root help topic.
      */
     public ContextSensitiveHelpAction() {
         this(ht("/"));
     }
 
     /**
-     *
-     * @param helpTopic
+     * Constructs a new {@code ContextSensitiveHelpAction} for a given help topic.
+     * @param helpTopic The help topic
      */
     public ContextSensitiveHelpAction(String helpTopic) {
         putValue(SHORT_DESCRIPTION, tr("Show help information"));
         putValue(NAME, tr("Help"));
         putValue(SMALL_ICON, ImageProvider.get("help"));
         this.helpTopic = helpTopic;
+        setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
     }
 
     @Override

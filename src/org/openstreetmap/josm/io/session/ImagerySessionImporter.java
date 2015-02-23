@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
@@ -43,6 +44,18 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         }
         ImageryPreferenceEntry prefEntry = Preferences.deserializeStruct(attributes, ImageryPreferenceEntry.class);
         ImageryInfo i = new ImageryInfo(prefEntry);
-        return ImageryLayer.create(i);
+        ImageryLayer layer = ImageryLayer.create(i);
+        if (layer instanceof WMSLayer) {
+            WMSLayer wms = (WMSLayer) layer;
+            String autoDownload = attributes.get("automatic-downloading");
+            if (autoDownload != null) {
+                wms.setAutoDownload(Boolean.parseBoolean(autoDownload));
+            }
+            String autoResolution = attributes.get("automatically-change-resolution");
+            if (autoResolution != null) {
+                wms.setAutoResolution(Boolean.parseBoolean(autoResolution));
+            }
+        }
+        return layer;
     }
 }

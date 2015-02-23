@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
  * Look up, if there is right- or left-hand traffic at a certain place.
  */
 public class RightAndLefthandTraffic {
-    
+
     private static class RLTrafficGeoProperty implements GeoProperty<Boolean> {
 
         @Override
@@ -45,15 +45,15 @@ public class RightAndLefthandTraffic {
             return false;
         }
     }
-    
+
     private static Collection<Area> leftHandTrafficPolygons;
     private static GeoPropertyIndex<Boolean> rlCache;
 
     /**
      * Check if there is right-hand traffic at a certain location.
-     * 
+     *
      * TODO: Synchronization can be refined inside the {@link GeoPropertyIndex}
-     *       as most look-ups are read-only. 
+     *       as most look-ups are read-only.
      * @param ll the coordinates of the point
      * @return true if there is right-hand traffic, false if there is left-hand traffic
      */
@@ -76,5 +76,5 @@ public class RightAndLefthandTraffic {
         }
         rlCache = new GeoPropertyIndex<Boolean>(new RLTrafficGeoProperty(), 24);
     }
-    
+
 }

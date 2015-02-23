@@ -41,14 +41,14 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class AutoScaleAction extends JosmAction {
 
     public static final Collection<String> MODES = Collections.unmodifiableList(Arrays.asList(
-        marktr("data"),
-        marktr("layer"),
-        marktr("selection"),
-        marktr("conflict"),
-        marktr("download"),
-        marktr("problem"),
-        marktr("previous"),
-        marktr("next")));
+        marktr(/* ICON(dialogs/autoscale/) */ "data"),
+        marktr(/* ICON(dialogs/autoscale/) */ "layer"),
+        marktr(/* ICON(dialogs/autoscale/) */ "selection"),
+        marktr(/* ICON(dialogs/autoscale/) */ "conflict"),
+        marktr(/* ICON(dialogs/autoscale/) */ "download"),
+        marktr(/* ICON(dialogs/autoscale/) */ "problem"),
+        marktr(/* ICON(dialogs/autoscale/) */ "previous"),
+        marktr(/* ICON(dialogs/autoscale/) */ "next")));
 
     private final String mode;
 
@@ -84,7 +84,7 @@ public class AutoScaleAction extends JosmAction {
         // in most other cases as well.
         bboxCalculator.enlargeBoundingBox();
         if (bboxCalculator.getBounds() != null) {
-            Main.map.mapView.recalculateCenterScale(bboxCalculator);
+            Main.map.mapView.zoomTo(bboxCalculator);
         }
     }
 
@@ -173,7 +173,7 @@ public class AutoScaleAction extends JosmAction {
             default:
                 BoundingXYVisitor bbox = getBoundingBox();
                 if (bbox != null && bbox.getBounds() != null) {
-                    Main.map.mapView.recalculateCenterScale(bbox);
+                    Main.map.mapView.zoomTo(bbox);
                 }
             }
         }

@@ -22,16 +22,23 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.swing.Action;
 import javax.swing.InputMap;
@@ -41,6 +48,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -56,6 +64,7 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -63,6 +72,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -75,8 +85,8 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.ModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -89,7 +99,9 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.FileWatcher;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -208,17 +220,45 @@ public abstract class Main {
     /**
      * The MOTD Layer.
      */
-    private GettingStarted gettingStarted = new GettingStarted();
+    public final GettingStarted gettingStarted = new GettingStarted();
 
     private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<>();
 
     protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
+
+    // First lines of last 5 error and warning messages, used for bug reports
+    private static final List<String> ERRORS_AND_WARNINGS = Collections.<String>synchronizedList(new ArrayList<String>());
+
+    private static final Set<OnlineResource> OFFLINE_RESOURCES = new HashSet<>();
 
     /**
      * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
      * @since 6248
      */
     public static int logLevel = 3;
+
+    private static void rememberWarnErrorMsg(String msg) {
+        // Only remember first line of message
+        int idx = msg.indexOf('\n');
+        if (idx > 0) {
+            ERRORS_AND_WARNINGS.add(msg.substring(0, idx));
+        } else {
+            ERRORS_AND_WARNINGS.add(msg);
+        }
+        // Only keep 5 lines to avoid memory leak and incomplete stacktraces in bug reports
+        while (ERRORS_AND_WARNINGS.size() > 5) {
+            ERRORS_AND_WARNINGS.remove(0);
+        }
+    }
+
+    /**
+     * Replies the first lines of last 10 error and warning messages, used for bug reports
+     * @return the first lines of last 10 error and warning messages
+     * @since 7420
+     */
+    public static final Collection<String> getLastErrorAndWarnings() {
+        return Collections.unmodifiableList(ERRORS_AND_WARNINGS);
+    }
 
     /**
      * Prints an error message if logging is on.
@@ -230,6 +270,7 @@ public abstract class Main {
             return;
         if (msg != null && !msg.isEmpty()) {
             System.err.println(tr("ERROR: {0}", msg));
+            rememberWarnErrorMsg("E: "+msg);
         }
     }
 
@@ -242,6 +283,7 @@ public abstract class Main {
             return;
         if (msg != null && !msg.isEmpty()) {
             System.err.println(tr("WARNING: {0}", msg));
+            rememberWarnErrorMsg("W: "+msg);
         }
     }
 
@@ -341,6 +383,16 @@ public abstract class Main {
      */
     public static void debug(String msg, Object... objects) {
         debug(MessageFormat.format(msg, objects));
+    }
+
+    /**
+     * Prints a formatted trace message if logging is on. Calls {@link MessageFormat#format}
+     * function to format text.
+     * @param msg The formatted message to print.
+     * @param objects The objects to insert into format string.
+     */
+    public static void trace(String msg, Object... objects) {
+        trace(MessageFormat.format(msg, objects));
     }
 
     /**
@@ -578,6 +630,42 @@ public abstract class Main {
             }
         });
         FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
+        FeatureAdapter.registerLoggingAdapter(new FeatureAdapter.LoggingAdapter() {
+            @Override
+            public Logger getLogger(String name) {
+                Logger logger = Logger.getAnonymousLogger();
+                logger.setUseParentHandlers(false);
+                logger.setLevel(Level.ALL);
+                if (logger.getHandlers().length == 0) {
+                    logger.addHandler(new Handler() {
+                        @Override
+                        public void publish(LogRecord record) {
+                            String msg = MessageFormat.format(record.getMessage(), record.getParameters());
+                            if (record.getLevel().intValue() >= Level.SEVERE.intValue()) {
+                                Main.error(msg);
+                            } else if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
+                                Main.warn(msg);
+                            } else if (record.getLevel().intValue() >= Level.INFO.intValue()) {
+                                Main.info(msg);
+                            } else if (record.getLevel().intValue() >= Level.FINE.intValue()) {
+                                Main.debug(msg);
+                            } else {
+                                Main.trace(msg);
+                            }
+                        }
+
+                        @Override
+                        public void flush() {
+                        }
+
+                        @Override
+                        public void close() throws SecurityException {
+                        }
+                    });
+                }
+                return logger;
+            }
+        });
 
         if (initListener != null) {
             initListener.updateStatus(tr("Updating user interface"));
@@ -615,17 +703,54 @@ public abstract class Main {
     }
 
     /**
-     * Add a new layer to the map. If no map exists, create one.
+     * Add a new layer to the map.
+     *
+     * If no map exists, create one.
+     *
+     * @param layer the layer
+     *
+     * @see #addLayer(Layer, ProjectionBounds)
+     * @see #addLayer(Layer, ViewportData)
      */
-    public final synchronized void addLayer(final Layer layer) {
+    public final void addLayer(final Layer layer) {
+        BoundingXYVisitor v = new BoundingXYVisitor();
+        layer.visitBoundingBox(v);
+        addLayer(layer, v.getBounds());
+    }
+
+    /**
+     * Add a new layer to the map.
+     *
+     * If no map exists, create one.
+     *
+     * @param layer the layer
+     * @param bounds the bounds of the layer (target zoom area); can be null, then
+     * the viewport isn't changed
+     */
+    public final synchronized void addLayer(final Layer layer, ProjectionBounds bounds) {
+        addLayer(layer, bounds == null ? null : new ViewportData(bounds));
+    }
+
+    /**
+     * Add a new layer to the map.
+     *
+     * If no map exists, create one.
+     *
+     * @param layer the layer
+     * @param viewport the viewport to zoom to; can be null, then the viewport
+     * isn't changed
+     */
+    public final synchronized void addLayer(final Layer layer, ViewportData viewport) {
         boolean noMap = map == null;
         if (noMap) {
-            createMapFrame(layer, null);
+            createMapFrame(layer, viewport);
         }
         layer.hookUpMapView();
         map.mapView.addLayer(layer);
         if (noMap) {
             Main.map.setVisible(true);
+        } else if (viewport != null) {
+            Main.map.mapView.zoomTo(viewport);
         }
     }
 
@@ -791,8 +916,26 @@ public abstract class Main {
                 UIManager.setLookAndFeel(laf);
             }
             catch (final NoClassDefFoundError | ClassNotFoundException e) {
-                info("Look and Feel not found: " + laf);
-                Main.pref.put("laf", defaultlaf);
+                // Try to find look and feel in plugin classloaders
+                Class<?> klass = null;
+                for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
+                    try {
+                        klass = cl.loadClass(laf);
+                        break;
+                    } catch (ClassNotFoundException ex) {
+                        // Do nothing
+                    }
+                }
+                if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {
+                    try {
+                        UIManager.setLookAndFeel((LookAndFeel) klass.newInstance());
+                    } catch (Exception ex) {
+                        warn("Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
+                    }
+                } else {
+                    info("Look and Feel not found: " + laf);
+                    Main.pref.put("laf", defaultlaf);
+                }
             }
             catch (final UnsupportedLookAndFeelException e) {
                 info("Look and Feel not supported: " + laf);
@@ -890,31 +1033,31 @@ public abstract class Main {
     }
 
     /**
-     * Asks user to perform "save layer" operations (save on disk and/or upload data to server) for all {@link ModifiableLayer} before JOSM exits.
+     * Asks user to perform "save layer" operations (save on disk and/or upload data to server) for all {@link AbstractModifiableLayer} before JOSM exits.
      * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
      * @since 2025
      */
     public static boolean saveUnsavedModifications() {
         if (!isDisplayingMapView()) return true;
-        return saveUnsavedModifications(map.mapView.getLayersOfType(ModifiableLayer.class), true);
+        return saveUnsavedModifications(map.mapView.getLayersOfType(AbstractModifiableLayer.class), true);
     }
 
     /**
      * Asks user to perform "save layer" operations (save on disk and/or upload data to server) before data layers deletion.
      *
-     * @param selectedLayers The layers to check. Only instances of {@link ModifiableLayer} are considered.
+     * @param selectedLayers The layers to check. Only instances of {@link AbstractModifiableLayer} are considered.
      * @param exit {@code true} if JOSM is exiting, {@code false} otherwise.
      * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
      * @since 5519
      */
     public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, boolean exit) {
         SaveLayersDialog dialog = new SaveLayersDialog(parent);
-        List<ModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
+        List<AbstractModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
         for (Layer l: selectedLayers) {
-            if (!(l instanceof ModifiableLayer)) {
+            if (!(l instanceof AbstractModifiableLayer)) {
                 continue;
             }
-            ModifiableLayer odl = (ModifiableLayer)l;
+            AbstractModifiableLayer odl = (AbstractModifiableLayer)l;
             if ((odl.requiresSaveToFile() || (odl.requiresUploadToServer() && !odl.isUploadDiscouraged())) && odl.isModified()) {
                 layersWithUnmodifiedChanges.add(odl);
             }
@@ -928,8 +1071,8 @@ public abstract class Main {
             dialog.getModel().populate(layersWithUnmodifiedChanges);
             dialog.setVisible(true);
             switch(dialog.getUserAction()) {
-            case CANCEL: return false;
             case PROCEED: return true;
+            case CANCEL:
             default: return false;
             }
         }
@@ -1099,6 +1242,16 @@ public abstract class Main {
     protected static void addListener() {
         parent.addComponentListener(new WindowPositionSizeListener());
         ((JFrame)parent).addWindowStateListener(new WindowPositionSizeListener());
+    }
+
+    /**
+     * Determines if JOSM currently runs with Java 8 or later.
+     * @return {@code true} if the current JVM is at least Java 8, {@code false} otherwise
+     * @since 7894
+     */
+    public static boolean isJava8orLater() {
+        String version = System.getProperty("java.version");
+        return version != null && !version.matches("^(1\\.)?[7].*");
     }
 
     /**
@@ -1412,11 +1565,27 @@ public abstract class Main {
     /**
      * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes
      * @param listener The MapFrameListener
+     * @param fireWhenMapViewPresent If true, will fire an initial mapFrameInitialized event
+     * when the MapFrame is present. Otherwise will only fire when the MapFrame is created
+     * or destroyed.
+     * @return {@code true} if the listeners collection changed as a result of the call
+     */
+    public static boolean addMapFrameListener(MapFrameListener listener, boolean fireWhenMapViewPresent) {
+        boolean changed = listener != null ? mapFrameListeners.add(listener) : false;
+        if (fireWhenMapViewPresent && changed && map != null) {
+            listener.mapFrameInitialized(null, map);
+        }
+        return changed;
+    }
+
+    /**
+     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes
+     * @param listener The MapFrameListener
      * @return {@code true} if the listeners collection changed as a result of the call
      * @since 5957
      */
     public static boolean addMapFrameListener(MapFrameListener listener) {
-        return listener != null ? mapFrameListeners.add(listener) : false;
+        return addMapFrameListener(listener, false);
     }
 
     /**
@@ -1507,6 +1676,28 @@ public abstract class Main {
     }
 
     /**
+     * Replies the base URL for browsing information about a primitive.
+     * @return the base URL, i.e. https://www.openstreetmap.org
+     * @since 7678
+     */
+    public static String getBaseBrowseUrl() {
+        if (Main.pref != null)
+            return Main.pref.get("osm-browse.url", getOSMWebsite());
+        return getOSMWebsite();
+    }
+
+    /**
+     * Replies the base URL for browsing information about a user.
+     * @return the base URL, i.e. https://www.openstreetmap.org/user
+     * @since 7678
+     */
+    public static String getBaseUserUrl() {
+        if (Main.pref != null)
+            return Main.pref.get("osm-user.url", getOSMWebsite() + "/user");
+        return getOSMWebsite() + "/user";
+    }
+
+    /**
      * Determines if we are currently running on OSX.
      * @return {@code true} if we are currently running on OSX
      * @since 6957
@@ -1522,5 +1713,34 @@ public abstract class Main {
      */
     public static boolean isPlatformWindows() {
         return Main.platform instanceof PlatformHookWindows;
+    }
+
+    /**
+     * Determines if the given online resource is currently offline.
+     * @param r the online resource
+     * @return {@code true} if {@code r} is offline and should not be accessed
+     * @since 7434
+     */
+    public static boolean isOffline(OnlineResource r) {
+        return OFFLINE_RESOURCES.contains(r) || OFFLINE_RESOURCES.contains(OnlineResource.ALL);
+    }
+
+    /**
+     * Sets the given online resource to offline state.
+     * @param r the online resource
+     * @return {@code true} if {@code r} was not already offline
+     * @since 7434
+     */
+    public static boolean setOffline(OnlineResource r) {
+        return OFFLINE_RESOURCES.add(r);
+    }
+
+    /**
+     * Replies the set of online resources currently offline.
+     * @return the set of online resources currently offline
+     * @since 7434
+     */
+    public static Set<OnlineResource> getOfflineResources() {
+        return new HashSet<>(OFFLINE_RESOURCES);
     }
 }

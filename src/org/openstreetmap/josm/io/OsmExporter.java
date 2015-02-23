@@ -21,6 +21,10 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Exports data to an .osm file.
+ * @since 1949
+ */
 public class OsmExporter extends FileExporter {
 
     /**
@@ -30,6 +34,10 @@ public class OsmExporter extends FileExporter {
         super(OsmImporter.FILE_FILTER);
     }
 
+    /**
+     * Constructs a new {@code OsmExporter}.
+     * @param filter The extension file filter
+     */
     public OsmExporter(ExtensionFileFilter filter) {
         super(filter);
     }
@@ -46,15 +54,27 @@ public class OsmExporter extends FileExporter {
         exportData(file, layer, false);
     }
 
+    /**
+     * Exports OSM data to the given file.
+     * @param file Output file
+     * @param layer Data layer. Must be an instance of {@link OsmDataLayer}.
+     * @param noBackup if {@code true}, the potential backup file created if the output file already exists will be deleted
+     *                 after a successful export
+     * @throws IllegalArgumentException if {@code layer} is not an instance of {@code OsmDataLayer}
+     */
     public void exportData(File file, Layer layer, boolean noBackup) throws IllegalArgumentException {
-        if (layer instanceof OsmDataLayer) {
-            save(file, (OsmDataLayer) layer, noBackup);
-        } else
-            throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer. Got ''{0}''.", layer
-                    .getClass().getName()));
+        checkOsmDataLayer(layer);
+        save(file, (OsmDataLayer) layer, noBackup);
     }
 
-    protected OutputStream getOutputStream(File file) throws FileNotFoundException, IOException {
+    protected static void checkOsmDataLayer(Layer layer) throws IllegalArgumentException {
+        if (!(layer instanceof OsmDataLayer)) {
+            throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer. Got ''{0}''.", layer
+                    .getClass().getName()));
+        }
+    }
+
+    protected static OutputStream getOutputStream(File file) throws FileNotFoundException, IOException {
         return Compression.getCompressedFileOutputStream(file);
     }
 
@@ -69,19 +89,7 @@ public class OsmExporter extends FileExporter {
                 Utils.copyFile(file, tmpFile);
             }
 
-            // create outputstream and wrap it with gzip or bzip, if necessary
-            try (
-                OutputStream out = getOutputStream(file);
-                Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-                OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
-            ) {
-                layer.data.getReadLock().lock();
-                try {
-                    w.writeLayer(layer);
-                } finally {
-                    layer.data.getReadLock().unlock();
-                }
-            }
+            doSave(file, layer);
             if (noBackup || !Main.pref.getBoolean("save.keepbackup", false)) {
                 if (tmpFile != null) {
                     tmpFile.delete();
@@ -111,6 +119,22 @@ public class OsmExporter extends FileExporter {
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
+            }
+        }
+    }
+
+    protected void doSave(File file, OsmDataLayer layer) throws IOException, FileNotFoundException {
+        // create outputstream and wrap it with gzip or bzip, if necessary
+        try (
+            OutputStream out = getOutputStream(file);
+            Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+            OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
+        ) {
+            layer.data.getReadLock().lock();
+            try {
+                w.writeLayer(layer);
+            } finally {
+                layer.data.getReadLock().unlock();
             }
         }
     }

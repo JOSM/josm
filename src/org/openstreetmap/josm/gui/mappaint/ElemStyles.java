@@ -5,10 +5,10 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
@@ -41,7 +42,7 @@ public class ElemStyles {
      * Clear the style cache for all primitives of all DataSets.
      */
     public void clearCached() {
-        // run in EDT to make sure this isn't called during rendering run 
+        // run in EDT to make sure this isn't called during rendering run
         // {@link org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer#render}
         GuiHelper.runInEDT(new Runnable() {
             @Override
@@ -140,11 +141,9 @@ public class ElemStyles {
      *
      * This method does multipolygon handling.
      *
-     *
      * There are different tagging styles for multipolygons, that have to be respected:
      * - tags on the relation
-     * - tags on the outer way
-     * - tags on both, the outer and the inner way (very old style)
+     * - tags on the outer way (deprecated)
      *
      * If the primitive is a way, look for multipolygon parents. In case it
      * is indeed member of some multipolygon as role "outer", all area styles
@@ -157,19 +156,17 @@ public class ElemStyles {
      *
      * Now consider the case that the way is not an outer way of any multipolygon,
      * but is member of a multipolygon as "inner".
-     * First, the style list is regenerated, considering only tags of this way
-     * minus the tags of outer way of the multipolygon (to care for the "very
-     * old style").
+     * First, the style list is regenerated, considering only tags of this way.
      * Then check, if the way describes something in its own right. (linear feature
      * or area) If not, add a default line style from the area color of the multipolygon.
      *
      */
     private Pair<StyleList, Range> getImpl(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         if (osm instanceof Node)
-            return generateStyles(osm, scale, null, false);
+            return generateStyles(osm, scale, false);
         else if (osm instanceof Way)
         {
-            Pair<StyleList, Range> p = generateStyles(osm, scale, null, false);
+            Pair<StyleList, Range> p = generateStyles(osm, scale, false);
 
             boolean isOuterWayOfSomeMP = false;
             Color wayColor = null;
@@ -250,8 +247,7 @@ public class ElemStyles {
                 final Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, ref);
 
                 if (multipolygon.getInnerWays().contains(osm)) {
-                    Iterator<Way> it = multipolygon.getOuterWays().iterator();
-                    p = generateStyles(osm, scale, it.hasNext() ? it.next() : null, false);
+                    p = generateStyles(osm, scale, false);
                     boolean hasIndependentElemStyle = false;
                     for (ElemStyle s : p.a) {
                         if (s.isProperLineStyle() || s instanceof AreaElemStyle) {
@@ -280,13 +276,13 @@ public class ElemStyles {
         }
         else if (osm instanceof Relation)
         {
-            Pair<StyleList, Range> p = generateStyles(osm, scale, null, true);
+            Pair<StyleList, Range> p = generateStyles(osm, scale, true);
             if (drawMultipolygon && ((Relation)osm).isMultipolygon()) {
-                if (!Utils.exists(p.a, AreaElemStyle.class)) {
+                if (!Utils.exists(p.a, AreaElemStyle.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
                     // look at outer ways to find area style
                     Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
                     for (Way w : multipolygon.getOuterWays()) {
-                        Pair<StyleList, Range> wayStyles = generateStyles(w, scale, null, false);
+                        Pair<StyleList, Range> wayStyles = generateStyles(w, scale, false);
                         p.b = Range.cut(p.b, wayStyles.b);
                         ElemStyle area = Utils.find(wayStyles.a, AreaElemStyle.class);
                         if (area != null) {
@@ -309,15 +305,12 @@ public class ElemStyles {
      *
      * @param osm the primitive to create styles for
      * @param scale the scale (in meters per 100 px), must be &gt; 0
-     * @param multipolyOuterWay support for a very old multipolygon tagging style
-     * where you add the tags both to the outer and the inner way.
-     * However, independent inner way style is also possible.
      * @param pretendWayIsClosed For styles that require the way to be closed,
      * we pretend it is. This is useful for generating area styles from the (segmented)
      * outer ways of a multipolygon.
      * @return the generated styles and the valid range as a pair
      */
-    public Pair<StyleList, Range> generateStyles(OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
+    public Pair<StyleList, Range> generateStyles(OsmPrimitive osm, double scale, boolean pretendWayIsClosed) {
 
         List<ElemStyle> sl = new ArrayList<>();
         MultiCascade mc = new MultiCascade();
@@ -325,7 +318,7 @@ public class ElemStyles {
 
         for (StyleSource s : styleSources) {
             if (s.active) {
-                s.apply(mc, osm, scale, multipolyOuterWay, pretendWayIsClosed);
+                s.apply(mc, osm, scale, pretendWayIsClosed);
             }
         }
 
@@ -334,9 +327,8 @@ public class ElemStyles {
                 continue;
             }
             env.layer = e.getKey();
-            Cascade c = e.getValue();
             if (osm instanceof Way) {
-                addIfNotNull(sl, AreaElemStyle.create(c));
+                addIfNotNull(sl, AreaElemStyle.create(env));
                 addIfNotNull(sl, RepeatImageElemStyle.create(env));
                 addIfNotNull(sl, LineElemStyle.createLine(env));
                 addIfNotNull(sl, LineElemStyle.createLeftCasing(env));
@@ -353,7 +345,7 @@ public class ElemStyles {
                 }
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {
-                    addIfNotNull(sl, AreaElemStyle.create(c));
+                    addIfNotNull(sl, AreaElemStyle.create(env));
                     addIfNotNull(sl, RepeatImageElemStyle.create(env));
                     addIfNotNull(sl, LineElemStyle.createLine(env));
                     addIfNotNull(sl, LineElemStyle.createCasing(env));
@@ -401,7 +393,7 @@ public class ElemStyles {
 
         for (StyleSource s : styleSources) {
             if (s.active) {
-                s.apply(mc, r, 1, null, false);
+                s.apply(mc, r, 1, false);
             }
         }
         return mc.getCascade("default").get(key, def, c);
@@ -446,13 +438,18 @@ public class ElemStyles {
      * @return first AreaElemStyle found or {@code null}.
      */
     public static AreaElemStyle getAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
-        if (MapPaintStyles.getStyles() == null)
+        MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+        try {
+            if (MapPaintStyles.getStyles() == null)
+                return null;
+            for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, pretendWayIsClosed).a) {
+                if (s instanceof AreaElemStyle)
+                    return (AreaElemStyle) s;
+            }
             return null;
-        for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, null, pretendWayIsClosed).a) {
-            if (s instanceof AreaElemStyle)
-                return (AreaElemStyle) s;
+        } finally {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
         }
-        return null;
     }
 
     /**
@@ -465,5 +462,31 @@ public class ElemStyles {
      */
     public static boolean hasAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
         return getAreaElemStyle(p, pretendWayIsClosed) != null;
+    }
+
+    /**
+     * Determines whether primitive has <b>only</b> an AreaElemStyle.
+     * @param p the OSM primitive
+     * @return {@code true} if primitive has only an AreaElemStyle
+     * @since 7486
+     */
+    public static boolean hasOnlyAreaElemStyle(OsmPrimitive p) {
+        MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+        try {
+            if (MapPaintStyles.getStyles() == null)
+                return false;
+            StyleList styles = MapPaintStyles.getStyles().generateStyles(p, 1.0, false).a;
+            if (styles.isEmpty()) {
+                return false;
+            }
+            for (ElemStyle s : styles) {
+                if (!(s instanceof AreaElemStyle)) {
+                    return false;
+                }
+            }
+            return true;
+        } finally {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
+        }
     }
 }

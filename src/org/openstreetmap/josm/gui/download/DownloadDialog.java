@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -76,6 +77,7 @@ public class DownloadDialog extends JDialog  {
 
     protected JCheckBox cbDownloadOsmData;
     protected JCheckBox cbDownloadGpxData;
+    protected JCheckBox cbDownloadNotes;
     /** the download action and button */
     private DownloadAction actDownload;
     protected SideButton btnDownload;
@@ -96,13 +98,16 @@ public class DownloadDialog extends JDialog  {
         pnl.add(cbDownloadOsmData,  GBC.std().insets(1,5,1,5));
         cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
         cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces in the selected download area."));
-        pnl.add(cbDownloadGpxData,  GBC.eol().insets(5,5,1,5));
+        pnl.add(cbDownloadGpxData,  GBC.std().insets(5,5,1,5));
+        cbDownloadNotes = new JCheckBox(tr("Notes"));
+        cbDownloadNotes.setToolTipText(tr("Select to download notes in the selected download area."));
+        pnl.add(cbDownloadNotes, GBC.eol().insets(50, 5, 1, 5));
 
         // hook for subclasses
         buildMainPanelAboveDownloadSelections(pnl);
 
         slippyMapChooser = new SlippyMapChooser();
-        
+
         // predefined download selections
         downloadSelections.add(slippyMapChooser);
         downloadSelections.add(new BookmarkSelection());
@@ -172,6 +177,7 @@ public class DownloadDialog extends JDialog  {
 
         makeCheckBoxRespondToEnter(cbDownloadGpxData);
         makeCheckBoxRespondToEnter(cbDownloadOsmData);
+        makeCheckBoxRespondToEnter(cbDownloadNotes);
         makeCheckBoxRespondToEnter(cbNewLayer);
 
         // -- cancel button
@@ -192,6 +198,10 @@ public class DownloadDialog extends JDialog  {
         return pnl;
     }
 
+    /**
+     * Constructs a new {@code DownloadDialog}.
+     * @param parent the parent component
+     */
     public DownloadDialog(Component parent) {
         super(JOptionPane.getFrameForComponent(parent),tr("Download"), ModalityType.DOCUMENT_MODAL);
         getContentPane().setLayout(new BorderLayout());
@@ -234,8 +244,7 @@ public class DownloadDialog extends JDialog  {
 
     /**
      * Distributes a "bounding box changed" from one DownloadSelection
-     * object to the others, so they may update or clear their input
-     * fields.
+     * object to the others, so they may update or clear their input fields.
      *
      * @param eventSource - the DownloadSelection object that fired this notification.
      */
@@ -277,6 +286,15 @@ public class DownloadDialog extends JDialog  {
     }
 
     /**
+     * Replies true if user selected to download notes
+     *
+     * @return true if user selected to download notes
+     */
+    public boolean isDownloadNotes() {
+        return cbDownloadNotes.isSelected();
+    }
+
+    /**
      * Replies true if the user requires to download into a new layer
      *
      * @return true if the user requires to download into a new layer
@@ -304,7 +322,7 @@ public class DownloadDialog extends JDialog  {
             slippyMapChooser.refreshTileSources();
         }
     }
-    
+
     /**
      * Remembers the current settings in the download dialog.
      */
@@ -312,6 +330,7 @@ public class DownloadDialog extends JDialog  {
         Main.pref.put("download.tab", Integer.toString(tpDownloadAreaSelectors.getSelectedIndex()));
         Main.pref.put("download.osm", cbDownloadOsmData.isSelected());
         Main.pref.put("download.gps", cbDownloadGpxData.isSelected());
+        Main.pref.put("download.notes", cbDownloadNotes.isSelected());
         Main.pref.put("download.newlayer", cbNewLayer.isSelected());
         if (currentBounds != null) {
             Main.pref.put("osm-download.bounds", currentBounds.encodeAsString(";"));
@@ -324,6 +343,7 @@ public class DownloadDialog extends JDialog  {
     public void restoreSettings() {
         cbDownloadOsmData.setSelected(Main.pref.getBoolean("download.osm", true));
         cbDownloadGpxData.setSelected(Main.pref.getBoolean("download.gps", false));
+        cbDownloadNotes.setSelected(Main.pref.getBoolean("download.notes", false));
         cbNewLayer.setSelected(Main.pref.getBoolean("download.newlayer", false));
         cbStartup.setSelected( isAutorunEnabled() );
         int idx = Main.pref.getInteger("download.tab", 0);
@@ -348,7 +368,7 @@ public class DownloadDialog extends JDialog  {
             }
         }
     }
-    
+
     /**
      * Returns the previously saved bounding box from preferences.
      * @return The bounding box saved in preferences if any, {@code null} otherwise
@@ -443,6 +463,7 @@ public class DownloadDialog extends JDialog  {
             putValue(NAME, tr("Download"));
             putValue(SMALL_ICON, ImageProvider.get("download"));
             putValue(SHORT_DESCRIPTION, tr("Click to download the currently selected area"));
+            setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
 
         public void run() {
@@ -455,13 +476,14 @@ public class DownloadDialog extends JDialog  {
                 );
                 return;
             }
-            if (!isDownloadOsmData() && !isDownloadGpxData()) {
+            if (!isDownloadOsmData() && !isDownloadGpxData() && !isDownloadNotes()) {
                 JOptionPane.showMessageDialog(
                         DownloadDialog.this,
-                        tr("<html>Neither <strong>{0}</strong> nor <strong>{1}</strong> is enabled.<br>"
-                                + "Please choose to either download OSM data, or GPX data, or both.</html>",
+                        tr("<html>Neither <strong>{0}</strong> nor <strong>{1}</strong> nor <strong>{2}</strong> is enabled.<br>"
+                                + "Please choose to either download OSM data, or GPX data, or Notes, or all.</html>",
                                 cbDownloadOsmData.getText(),
-                                cbDownloadGpxData.getText()
+                                cbDownloadGpxData.getText(),
+                                cbDownloadNotes.getText()
                         ),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE

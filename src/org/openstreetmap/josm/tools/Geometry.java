@@ -23,7 +23,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
-import org.openstreetmap.josm.data.osm.MultipolygonCreate;
+import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -313,6 +313,11 @@ public final class Geometry {
 
     /**
      * Finds the intersection of two lines of infinite length.
+     *
+     * @param p1 first point on first line
+     * @param p2 second point on first line
+     * @param p3 first point on second line
+     * @param p4 second point on second line
      * @return EastNorth null if no intersection was found, the coordinates of the intersection otherwise
      * @throws IllegalArgumentException if a parameter is null or without valid coordinates
      */
@@ -323,23 +328,34 @@ public final class Geometry {
         CheckParameterUtil.ensureValidCoordinates(p3, "p3");
         CheckParameterUtil.ensureValidCoordinates(p4, "p4");
 
-        if (!p1.isValid()) throw new IllegalArgumentException();
+        if (!p1.isValid()) throw new IllegalArgumentException(p1+" is invalid");
+
+        // Basically, the formula from wikipedia is used:
+        //  https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+        // However, large numbers lead to rounding errors (see #10286).
+        // To avoid this, p1 is first substracted from each of the points:
+        //  p1' = 0
+        //  p2' = p2 - p1
+        //  p3' = p3 - p1
+        //  p4' = p4 - p1
+        // In the end, p1 is added to the intersection point of segment p1'/p2'
+        // and segment p3'/p4'.
 
         // Convert line from (point, point) form to ax+by=c
         double a1 = p2.getY() - p1.getY();
         double b1 = p1.getX() - p2.getX();
-        double c1 = p2.getX() * p1.getY() - p1.getX() * p2.getY();
+        // double c1 = 0;
 
         double a2 = p4.getY() - p3.getY();
         double b2 = p3.getX() - p4.getX();
-        double c2 = p4.getX() * p3.getY() - p3.getX() * p4.getY();
+        double c2 = (p4.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p3.getX() - p1.getX()) * (p4.getY() - p1.getY());
 
         // Solve the equations
         double det = a1 * b2 - a2 * b1;
         if (det == 0)
             return null; // Lines are parallel
 
-        return new EastNorth((b1 * c2 - b2 * c1) / det, (a2 * c1 - a1 * c2) / det);
+        return new EastNorth(b1 * c2 / det + p1.getX(),  - a1 * c2 / det + p1.getY());
     }
 
     public static boolean segmentsParallel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
@@ -468,7 +484,7 @@ public final class Geometry {
 
         return new Area(path);
     }
-    
+
     /**
      * Returns the Area of a polygon, from its list of nodes.
      * @param polygon List of nodes forming polygon (LatLon coordinates)
@@ -558,10 +574,18 @@ public final class Geometry {
         //iterate each side of the polygon, start with the last segment
         Node oldPoint = polygonNodes.get(polygonNodes.size() - 1);
 
+        if (!oldPoint.isLatLonKnown()) {
+            return false;
+        }
+
         for (Node newPoint : polygonNodes) {
             //skip duplicate points
             if (newPoint.equals(oldPoint)) {
                 continue;
+            }
+
+            if (!newPoint.isLatLonKnown()) {
+                return false;
             }
 
             //order points so p1.lat <= p2.lat
@@ -825,44 +849,6 @@ public final class Geometry {
         return new EastNorth(xC, yC);
     }
 
-    /**
-     * Returns the coordinate of intersection of segment sp1-sp2 and an altitude
-     * to it starting at point ap. If the line defined with sp1-sp2 intersects
-     * its altitude out of sp1-sp2, null is returned.
-     *
-     * @param sp1
-     * @param sp2
-     * @param ap
-     * @return Intersection coordinate or null
-     */
-    public static EastNorth getSegmentAltituteIntersection(EastNorth sp1, EastNorth sp2, EastNorth ap) {
-
-        CheckParameterUtil.ensureValidCoordinates(sp1, "sp1");
-        CheckParameterUtil.ensureValidCoordinates(sp2, "sp2");
-        CheckParameterUtil.ensureValidCoordinates(ap, "ap");
-
-        Double segmentLenght = sp1.distance(sp2);
-        Double altitudeAngle = getSegmentAngle(sp1, sp2) + Math.PI / 2;
-
-        // Taking a random point on the altitude line (angle is known).
-        EastNorth ap2 = new EastNorth(ap.east() + 1000
-                * Math.cos(altitudeAngle), ap.north() + 1000
-                * Math.sin(altitudeAngle));
-
-        // Finding the intersection of two lines
-        EastNorth resultCandidate = Geometry.getLineLineIntersection(sp1, sp2,
-                ap, ap2);
-
-        // Filtering result
-        if (resultCandidate != null
-                && resultCandidate.distance(sp1) * .999 < segmentLenght
-                && resultCandidate.distance(sp2) * .999 < segmentLenght) {
-            return resultCandidate;
-        } else {
-            return null;
-        }
-    }
-
     public static class MultiPolygonMembers {
         public final Set<Way> outers = new HashSet<>();
         public final Set<Way> inners = new HashSet<>();
@@ -898,23 +884,23 @@ public final class Geometry {
         // Extract outer/inner members from multipolygon
         final MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
         // Construct complete rings for the inner/outer members
-        final List<MultipolygonCreate.JoinedPolygon> outerRings;
-        final List<MultipolygonCreate.JoinedPolygon> innerRings;
+        final List<MultipolygonBuilder.JoinedPolygon> outerRings;
+        final List<MultipolygonBuilder.JoinedPolygon> innerRings;
         try {
-            outerRings = MultipolygonCreate.joinWays(mpm.outers);
-            innerRings = MultipolygonCreate.joinWays(mpm.inners);
-        } catch (MultipolygonCreate.JoinedPolygonCreationException ex) {
+            outerRings = MultipolygonBuilder.joinWays(mpm.outers);
+            innerRings = MultipolygonBuilder.joinWays(mpm.inners);
+        } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
             Main.debug("Invalid multipolygon " + multiPolygon);
             return false;
         }
         // Test if object is inside an outer member
-        for (MultipolygonCreate.JoinedPolygon out : outerRings) {
+        for (MultipolygonBuilder.JoinedPolygon out : outerRings) {
             if (nodes.size() == 1
                     ? nodeInsidePolygon(nodes.get(0), out.getNodes())
                     : EnumSet.of(PolygonIntersection.FIRST_INSIDE_SECOND, PolygonIntersection.CROSSING).contains(polygonIntersection(nodes, out.getNodes()))) {
                 boolean insideInner = false;
                 // If inside an outer, check it is not inside an inner
-                for (MultipolygonCreate.JoinedPolygon in : innerRings) {
+                for (MultipolygonBuilder.JoinedPolygon in : innerRings) {
                     if (polygonIntersection(in.getNodes(), out.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND
                             && (nodes.size() == 1
                             ? nodeInsidePolygon(nodes.get(0), in.getNodes())

@@ -41,7 +41,7 @@ public final class Cascade implements Cloneable {
      */
     public <T> T get(String key, T def, Class<T> klass, boolean suppressWarnings) {
         if (def != null && !klass.isInstance(def))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(def+" is not an instance of "+klass);
         Object o = prop.get(key);
         if (o == null)
             return def;
@@ -111,7 +111,7 @@ public final class Cascade implements Cloneable {
                 if (alpha != 255)
                     return (T) String.format("#%06x%02x", ((Color) o).getRGB() & 0x00ffffff, alpha);
                 return (T) String.format("#%06x", ((Color) o).getRGB() & 0x00ffffff);
-                
+
             }
 
             return (T) o.toString();
@@ -150,7 +150,7 @@ public final class Cascade implements Cloneable {
             return !((List) o).isEmpty();
         if (o instanceof float[])
             return ((float[]) o).length != 0;
-        
+
         return null;
     }
 

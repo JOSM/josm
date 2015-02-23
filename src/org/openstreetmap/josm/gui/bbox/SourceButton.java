@@ -47,8 +47,8 @@ public class SourceButton extends JComponent {
     public SourceButton(SlippyMapBBoxChooser slippyMapBBoxChooser, Collection<TileSource> sources) {
         this.slippyMapBBoxChooser = slippyMapBBoxChooser;
         setSources(sources);
-        enlargeImage = ImageProvider.get("layer-switcher-maximize.png");
-        shrinkImage = ImageProvider.get("layer-switcher-minimize.png");
+        enlargeImage = ImageProvider.get("layer-switcher-maximize");
+        shrinkImage = ImageProvider.get("layer-switcher-minimize");
 
         hiddenDimension= new Dimension(enlargeImage.getIconWidth(), enlargeImage.getIconHeight());
         setPreferredSize(hiddenDimension);

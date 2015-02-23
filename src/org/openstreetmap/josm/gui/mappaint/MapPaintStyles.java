@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -100,16 +101,43 @@ public final class MapPaintStyles {
         }
     }
 
-    public static ImageIcon getIcon(IconReference ref, int width, int height) {
+    /**
+     * Image provider for icon. Note that this is a provider only. A @link{ImageProvider#get()} call may still
+     * fail!
+     *
+     * @param ref reference to the requested icon
+     * @param test if <code>true</code> than the icon is request is tested
+     * @return image provider for icon (can be <code>null</code> when <code>test</code> is <code>true</code>).
+     * @since 8097
+     * @see #getIcon(IconReference, int,int)
+     */
+    public static ImageProvider getIconProvider(IconReference ref, boolean test) {
         final String namespace = ref.source.getPrefName();
-        ImageIcon i = new ImageProvider(ref.iconName)
+        ImageProvider i = new ImageProvider(ref.iconName)
                 .setDirs(getIconSourceDirs(ref.source))
                 .setId("mappaint."+namespace)
                 .setArchive(ref.source.zipIcons)
                 .setInArchiveDir(ref.source.getZipEntryDirName())
-                .setWidth(width)
-                .setHeight(height)
-                .setOptional(true).get();
+                .setOptional(true);
+        if (test && i.get() == null) {
+            Main.warn("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
+            return null;
+        }
+        return i;
+    }
+
+    /**
+     * Return scaled icon.
+     *
+     * @param ref reference to the requested icon
+     * @param width icon width or -1 for autoscale
+     * @param height icon height or -1 for autoscale
+     * @return image icon or <code>null</code>.
+     * @see #getIconProvider(IconReference, boolean)
+     */
+    public static ImageIcon getIcon(IconReference ref, int width, int height) {
+        final String namespace = ref.source.getPrefName();
+        ImageIcon i = getIconProvider(ref, false).setWidth(width).setHeight(height).get();
         if (i == null) {
             Main.warn("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
             return null;
@@ -126,7 +154,7 @@ public final class MapPaintStyles {
      *  can be null if the defaults are turned off by user
      */
     public static ImageIcon getNoIcon_Icon(StyleSource source) {
-        return new ImageProvider("misc/no_icon.png")
+        return new ImageProvider("misc/no_icon")
                 .setDirs(getIconSourceDirs(source))
                 .setId("mappaint."+source.getPrefName())
                 .setArchive(source.zipIcons)
@@ -138,18 +166,34 @@ public final class MapPaintStyles {
         return getNodeIcon(tag, true);
     }
 
+    /**
+     * Returns the node icon that would be displayed for the given tag.
+     * @param tag The tag to look an icon for
+     * @param includeDeprecatedIcon if {@code true}, the special deprecated icon will be returned if applicable
+     * @return {@code null} if no icon found, or if the icon is deprecated and not wanted
+     */
     public static ImageIcon getNodeIcon(Tag tag, boolean includeDeprecatedIcon) {
         if (tag != null) {
+            DataSet ds = new DataSet();
             Node virtualNode = new Node(LatLon.ZERO);
             virtualNode.put(tag.getKey(), tag.getValue());
-            StyleList styleList = getStyles().generateStyles(virtualNode, 0.5, null, false).a;
+            StyleList styleList;
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+            try {
+                // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
+                ds.addPrimitive(virtualNode);
+                styleList = getStyles().generateStyles(virtualNode, 0.5, false).a;
+                ds.removePrimitive(virtualNode);
+            } finally {
+                MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
+            }
             if (styleList != null) {
                 for (ElemStyle style : styleList) {
                     if (style instanceof NodeElemStyle) {
                         MapImage mapImage = ((NodeElemStyle) style).mapImage;
                         if (mapImage != null) {
                             if (includeDeprecatedIcon || mapImage.name == null || !"misc/deprecated.png".equals(mapImage.name)) {
-                                return new ImageIcon(mapImage.getDisplayedNodeIcon(false));
+                                return new ImageIcon(mapImage.getImage(false));
                             } else {
                                 return null; // Deprecated icon found but not wanted
                             }
@@ -341,7 +385,7 @@ public final class MapPaintStyles {
     public static void moveStyles(int[] sel, int delta) {
         if (!canMoveStyles(sel, delta))
             return;
-        int[] selSorted = Arrays.copyOf(sel, sel.length);
+        int[] selSorted = Utils.copyArray(sel);
         Arrays.sort(selSorted);
         List<StyleSource> data = new ArrayList<>(styles.getStyleSources());
         for (int row: selSorted) {
@@ -360,7 +404,7 @@ public final class MapPaintStyles {
     public static boolean canMoveStyles(int[] sel, int i) {
         if (sel.length == 0)
             return false;
-        int[] selSorted = Arrays.copyOf(sel, sel.length);
+        int[] selSorted = Utils.copyArray(sel);
         Arrays.sort(selSorted);
 
         if (i < 0) // Up

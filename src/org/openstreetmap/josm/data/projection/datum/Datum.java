@@ -17,8 +17,8 @@ public interface Datum {
     String getName();
 
     /**
-     * @return the Proj.4 identifier
-     * (as reported by cs2cs -ld)
+     * Replies the Proj.4 identifier.
+     * @return the Proj.4 identifier (as reported by cs2cs -ld)
      * If no id exists, return null.
      */
     String getProj4Id();

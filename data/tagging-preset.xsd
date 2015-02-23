@@ -85,22 +85,30 @@
 		<attribute name="text_context" type="string" />
 	</complexType>
 
-    <complexType name="chunk">
-        <sequence>
-            <choice minOccurs="1" maxOccurs="unbounded">
-                <group ref="tns:optional_elements" />
-                <element name="key" type="tns:key" />
-                <element name="optional" type="tns:optional" minOccurs="0" />
-            </choice>
-        </sequence>
-        <attribute name="id" type="ID" use="required" />
-    </complexType>
+	<complexType name="chunk">
+		<choice minOccurs="1" maxOccurs="1">
+			<sequence>
+				<choice minOccurs="1" maxOccurs="unbounded">
+					<group ref="tns:optional_elements" />
+					<element name="key" type="tns:key" />
+					<element name="optional" type="tns:optional" minOccurs="0" />
+				</choice>
+			</sequence>
+			<sequence>
+				<!-- Cannot use tns:list_elements here because reference is present both in optional_elements and list_elements
+				so it violates cos-nonambig: Unique Particle Attribution :
+				<group ref="tns:list_elements" minOccurs="1" maxOccurs="unbounded" />-->
+				<element name="list_entry" type="tns:list_entry" minOccurs="1" maxOccurs="unbounded" />
+			</sequence>
+		</choice>
+		<attribute name="id" type="ID" use="required" />
+	</complexType>
 
-    <complexType name="reference">
-        <attribute name="ref" type="IDREF" use="required" />
-    </complexType>
+	<complexType name="reference">
+		<attribute name="ref" type="IDREF" use="required" />
+	</complexType>
 
-    <group name="optional_elements">
+	<group name="optional_elements">
 		<choice>
 			<element name="label" type="tns:label" />
 			<element name="space" type="tns:space" />
@@ -116,12 +124,18 @@
 		</choice>
 	</group>
 
+	<group name="list_elements">
+		<choice>
+			<element name="list_entry" type="tns:list_entry" />
+			<element name="reference" type="tns:reference" />
+		</choice>
+	</group>
+
 	<complexType name="key">
 		<attribute name="key" type="string" use="required" />
 		<attribute name="value" type="string" />
 		<attribute name="match" type="string" />
 	</complexType>
-
 
 	<complexType name="link">
 		<attribute name="href" type="string" use="required" />
@@ -140,6 +154,8 @@
 	<complexType name="label">
 		<attribute name="text" type="string" use="required" />
 		<attribute name="text_context" type="string" />
+		<attribute name="icon" type="string" />
+		<attribute name="icon_size" type="integer" />
 
 		<attribute name="name" use="prohibited" />
 		<anyAttribute processContents="skip" />
@@ -178,7 +194,7 @@
 	<complexType name="combo">
 		<!-- use either list_entry's or a combination of values/display_values -->
 		<sequence>
-			<element name="list_entry" type="tns:list_entry" minOccurs="0" maxOccurs="unbounded" />
+			<group ref="tns:list_elements" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
@@ -206,7 +222,7 @@
 	<complexType name="multiselect">
 		<!-- use either list_entry's or a combination of values/display_values -->
 		<sequence>
-			<element name="list_entry" type="tns:list_entry" minOccurs="0" maxOccurs="unbounded" />
+			<group ref="tns:list_elements" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
@@ -215,7 +231,7 @@
 		<attribute name="values_from" type="string" />
 		<attribute name="values_context" type="string" />
 		<attribute name="display_values" type="string" />
-        <attribute name="values_searchable" type="boolean" />
+		<attribute name="values_searchable" type="boolean" />
 		<attribute name="default" type="string" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="delimiter" type="string" />
@@ -246,7 +262,7 @@
 		<attribute name="default" type="tns:check_default" />
 		<attribute name="value_on" type="string" />
 		<attribute name="value_off" type="string" />
-        <attribute name="disable_off" type="boolean" />
+		<attribute name="disable_off" type="boolean" />
 		<attribute name="match" type="tns:match" />
 
 		<attribute name="name" use="prohibited" />
@@ -276,6 +292,7 @@
 			<enumeration value="key" />
 			<enumeration value="key!" />
 			<enumeration value="keyvalue" />
+            <enumeration value="keyvalue!" />
 		</restriction>
 	</simpleType>
 

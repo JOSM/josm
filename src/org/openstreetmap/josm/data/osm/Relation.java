@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * An relation, having a set of tags and any number (0...n) of members.
+ * A relation, having a set of tags and any number (0...n) of members.
  *
  * @author Frederik Ramm
  */
@@ -162,11 +162,13 @@ public final class Relation extends OsmPrimitive implements IRelation {
         return members[idx].getType();
     }
 
-    @Override public void accept(Visitor visitor) {
+    @Override
+    public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
-    @Override public void accept(PrimitiveVisitor visitor) {
+    @Override
+    public void accept(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 
@@ -222,7 +224,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
         super(id, version, false);
     }
 
-    @Override public void cloneFrom(OsmPrimitive osm) {
+    @Override
+    public void cloneFrom(OsmPrimitive osm) {
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
@@ -233,7 +236,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
-    @Override public void load(PrimitiveData data) {
+    @Override
+    public void load(PrimitiveData data) {
         boolean locked = writeLock();
         try {
             super.load(data);
@@ -470,7 +474,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     @Override
-    public void setDataset(DataSet dataSet) {
+    void setDataset(DataSet dataSet) {
         super.setDataset(dataSet);
         checkMembers();
         bbox = null; // bbox might have changed if relation was in ds, was removed, modified, added back to dataset
@@ -501,7 +505,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     /**
-     * Replies true if at least one child primitive is incomplete
+     * Determines if at least one child primitive is incomplete.
      *
      * @return true if at least one child primitive is incomplete
      */
@@ -514,8 +518,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     /**
-     * Replies a collection with the incomplete children this relation
-     * refers to
+     * Replies a collection with the incomplete children this relation refers to.
      *
      * @return the incomplete children. Empty collection if no children are incomplete.
      */
@@ -547,5 +550,21 @@ public final class Relation extends OsmPrimitive implements IRelation {
     @Override
     public boolean isOutsideDownloadArea() {
         return false;
+    }
+
+    /**
+     * Returns the set of roles used in this relation.
+     * @return the set of roles used in this relation. Can be empty but never null
+     * @since 7556
+     */
+    public Set<String> getMemberRoles() {
+        Set<String> result = new HashSet<>();
+        for (RelationMember rm : members) {
+            String role = rm.getRole();
+            if (!role.isEmpty()) {
+                result.add(role);
+            }
+        }
+        return result;
     }
 }

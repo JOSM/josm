@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.List;
 
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.MergeSourceBuildingVisitor;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -19,7 +18,15 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Merge the currently selected objects into another layer.
+ * @since 1890
+ */
 public class MergeSelectionAction extends AbstractMergeAction {
+
+    /**
+     * Constructs a new {@code MergeSelectionAction}.
+     */
     public MergeSelectionAction() {
         super(tr("Merge selection"), "dialogs/mergedown", tr("Merge the currently selected objects into another layer"),
             Shortcut.registerShortcut("system:mergeselection", tr("Edit: {0}", tr("Merge selection")),
@@ -29,7 +36,10 @@ public class MergeSelectionAction extends AbstractMergeAction {
         putValue("help", ht("/Action/MergeSelection"));
     }
 
-    public void mergeSelected(DataSet source) {
+    /**
+     * Merge the currently selected objects into another layer.
+     */
+    public void mergeSelected() {
         List<Layer> targetLayers = LayerListDialog.getInstance().getModel().getPossibleMergeTargets(getEditLayer());
         if (targetLayers.isEmpty()) {
             warnNoTargetLayersForSourceLayer(getEditLayer());
@@ -38,11 +48,11 @@ public class MergeSelectionAction extends AbstractMergeAction {
         Layer targetLayer = askTargetLayer(targetLayers);
         if (targetLayer == null)
             return;
-        if (getEditLayer().isUploadDiscouraged() && targetLayer instanceof OsmDataLayer && !((OsmDataLayer)targetLayer).isUploadDiscouraged()
-                && getEditLayer().data.getAllSelected().size() > 1) {
-            if (warnMergingUploadDiscouragedObjects(targetLayer)) {
-                return;
-            }
+        if (getEditLayer().isUploadDiscouraged() && targetLayer instanceof OsmDataLayer
+                && !((OsmDataLayer)targetLayer).isUploadDiscouraged()
+                && getEditLayer().data.getAllSelected().size() > 1
+                && warnMergingUploadDiscouragedObjects(targetLayer)) {
+            return;
         }
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(getEditLayer().data);
         ((OsmDataLayer)targetLayer).mergeFrom(builder.build());
@@ -52,7 +62,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
     public void actionPerformed(ActionEvent e) {
         if (getEditLayer() == null || getEditLayer().data.getAllSelected().isEmpty())
             return;
-        mergeSelected(getEditLayer().data);
+        mergeSelected();
     }
 
     @Override
@@ -70,7 +80,9 @@ public class MergeSelectionAction extends AbstractMergeAction {
     }
 
     /**
-     * returns true if the user wants to cancel, false if they want to continue
+     * Warns the user about merging too many objects with different upload policies.
+     * @param targetLayer Target layer
+     * @return true if the user wants to cancel, false if they want to continue
      */
     public static final boolean warnMergingUploadDiscouragedObjects(Layer targetLayer) {
         return GuiHelper.warnUser(tr("Merging too many objects with different upload policies"),
@@ -78,7 +90,8 @@ public class MergeSelectionAction extends AbstractMergeAction {
                 tr("You are about to merge more than 1 object between layers ''{0}'' and ''{1}''.<br /><br />"+
                         "<b>This is not the recommended way of merging such data</b>.<br />"+
                         "You should instead check and merge each object, <b>one by one</b>.<br /><br />"+
-                        "Are you sure you want to continue?", getEditLayer().getName(), targetLayer.getName(), targetLayer.getName())+
+                        "Are you sure you want to continue?",
+                        getEditLayer().getName(), targetLayer.getName(), targetLayer.getName())+
                 "</html>",
                 ImageProvider.get("dialogs", "mergedown"), tr("Ignore this hint and merge anyway"));
     }

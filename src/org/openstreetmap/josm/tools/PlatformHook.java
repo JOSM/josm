@@ -23,6 +23,14 @@ public interface PlatformHook {
       * that we want to be integrated with the OS before we setup our GUI.
       */
     public void preStartupHook();
+    
+    /**
+      * The afterPrefStartupHook will be called early, but after
+      * the preferences have been loaded and basic processing of
+      * command line arguments is finished. 
+      * It is guaranteed to be called before the GUI setup has started.
+      */
+    public void afterPrefStartupHook();
 
     /**
       * The startupHook will be called early, but after the GUI
@@ -119,4 +127,25 @@ public interface PlatformHook {
      */
     public boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
+
+    /**
+     * Returns the platform-dependent default cache directory.
+     * @return the platform-dependent default cache directory
+     * @since 7829
+     */
+    public File getDefaultCacheDirectory();
+
+    /**
+     * Returns the platform-dependent default preferences directory.
+     * @return the platform-dependent default preferences directory
+     * @since 7831
+     */
+    public File getDefaultPrefDirectory();
+
+    /**
+     * Returns the platform-dependent default user data directory.
+     * @return the platform-dependent default user data directory
+     * @since 7834
+     */
+    public File getDefaultUserDataDirectory();
 }

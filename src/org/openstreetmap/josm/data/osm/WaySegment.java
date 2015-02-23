@@ -7,7 +7,7 @@ import java.awt.geom.Line2D;
  * A segment consisting of 2 consecutive nodes out of a way.
  */
 public final class WaySegment implements Comparable<WaySegment> {
-    
+
     /**
      * The way.
      */

@@ -30,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -49,7 +50,9 @@ import javax.xml.parsers.SAXParserFactory;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -60,6 +63,7 @@ import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class PlaceSelection implements DownloadSelection {
@@ -378,13 +382,28 @@ public class PlaceSelection implements DownloadSelection {
                     SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
                     this.data = parser.getResult();
                 }
-            } catch(Exception e) {
-                if (canceled)
-                    // ignore exception
-                    return;
-                OsmTransferException ex = new OsmTransferException(e);
-                ex.setUrl(urlString);
-                lastException = ex;
+            } catch (SAXParseException e) {
+                if (!canceled) {
+                    // Nominatim sometimes returns garbage, see #5934, #10643
+                    Main.warn(tr("Error occured with query ''{0}'': ''{1}''", urlString, e.getMessage()));
+                    GuiHelper.runInEDTAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            HelpAwareOptionPane.showOptionDialog(
+                                    Main.parent,
+                                    tr("Name server returned invalid data. Please try again."),
+                                    tr("Bad response"),
+                                    JOptionPane.WARNING_MESSAGE, null
+                            );
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                if (!canceled) {
+                    OsmTransferException ex = new OsmTransferException(e);
+                    ex.setUrl(urlString);
+                    lastException = ex;
+                }
             }
         }
     }

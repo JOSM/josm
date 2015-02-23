@@ -17,9 +17,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
-
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -30,8 +30,6 @@ import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
-import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -39,26 +37,20 @@ import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
- *
- * @author master
- *
- * Dialog to add tags as part of the remotecontrol
+ * Dialog to add tags as part of the remotecontrol.
  * Existing Keys get grey color and unchecked selectboxes so they will not overwrite the old Key-Value-Pairs by default.
  * You can choose the tags you want to add by selectboxes. You can edit the tags before you apply them.
- *
+ * @author master
+ * @since 3850
  */
-public class AddTagsDialog extends ExtendedDialog implements SelectionChangedListener {
-
-
-    /** initially given tags  **/
-    String[][] tags;
+public class AddTagsDialog extends ExtendedDialog {
 
     private final JTable propertyTable;
-    private Collection<? extends OsmPrimitive> sel;
-    int[] count;
+    private final Collection<? extends OsmPrimitive> sel;
+    private final int[] count;
 
-    String sender;
-    static Set<String> trustedSenders = new HashSet<>();
+    private final String sender;
+    private static final Set<String> trustedSenders = new HashSet<>();
 
     /**
      * Class for displaying "delete from ... objects" in the table
@@ -68,6 +60,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         public DeleteTagMarker(int num) {
             this.num = num;
         }
+        @Override
         public String toString() {
             return tr("<delete from {0} objects>", num);
         }
@@ -120,16 +113,16 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         }
     }
 
-    public AddTagsDialog(String[][] tags, String senderName) {
+    /**
+     * Constructs a new {@code AddTagsDialog}.
+     */
+    public AddTagsDialog(String[][] tags, String senderName, Collection<? extends OsmPrimitive> primitives) {
         super(Main.parent, tr("Add tags to selected objects"), new String[] { tr("Add selected tags"), tr("Add all tags"),  tr("Cancel")},
                 false,
                 true);
         setToolTipTexts(new String[]{tr("Add checked tags to selected objects"), tr("Shift+Enter: Add all tags to selected objects"), ""});
 
         this.sender = senderName;
-
-        DataSet.addSelectionListener(this);
-
 
         final DefaultTableModel tm = new DefaultTableModel(new String[] {tr("Assume"), tr("Key"), tr("Value"), tr("Existing values")}, tags.length) {
             final Class<?>[] types = {Boolean.class, String.class, Object.class, ExistingValues.class};
@@ -139,7 +132,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
             }
         };
 
-        sel = Main.main.getCurrentDataSet().getSelected();
+        sel = primitives;
         count = new int[tags.length];
 
         for (int i = 0; i<tags.length; i++) {
@@ -165,8 +158,6 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         }
 
         propertyTable = new JTable(tm) {
-
-            private static final long serialVersionUID = 1L;
 
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -198,7 +189,6 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                 if (c==3) return ((ExistingValues)o).getToolTip();
                 return tr("Enable the checkbox to accept the value");
             }
-
         };
 
         propertyTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
@@ -238,25 +228,6 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
     }
 
     /**
-     * This method looks for existing tags in the current selection and sets the corresponding boolean in the boolean array existing[]
-     */
-    private void findExistingTags() {
-        TableModel tm = propertyTable.getModel();
-        for (int i=0; i<tm.getRowCount(); i++) {
-            String key = (String)tm.getValueAt(i, 1);
-            String value = (String)tm.getValueAt(i, 1);
-            count[i] = 0;
-            for (OsmPrimitive osm : sel) {
-                if (osm.keySet().contains(key) && !osm.get(key).equals(value)) {
-                    count[i]++;
-                    break;
-                }
-            }
-        }
-        propertyTable.repaint();
-    }
-
-    /**
      * If you click the "Add tags" button build a ChangePropertyCommand for every key that has a checked checkbox to apply the key value pair to all selected osm objects.
      * You get a entry for every key in the command queue.
      */
@@ -280,17 +251,11 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         setVisible(false);
     }
 
-    @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        sel = newSelection;
-        findExistingTags();
-    }
-
     /**
      * parse addtags parameters Example URL (part):
      * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
      */
-    public static void addTags(final Map<String, String> args, final String sender) {
+    public static void addTags(final Map<String, String> args, final String sender, final Collection<? extends OsmPrimitive> primitives) {
         if (args.containsKey("addtags")) {
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
 
@@ -318,30 +283,29 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                             keyValue[i][1] = pair.length<2 ? "": pair[1];
                             i++;
                         }
-                        addTags(keyValue, sender);
+                        addTags(keyValue, sender, primitives);
                     }
                 }
-
-
             });
         }
     }
 
     /**
-     * Ask user and add the tags he confirm
+     * Ask user and add the tags he confirm.
      * @param keyValue is a table or {{tag1,val1},{tag2,val2},...}
-     * @param sender is a string for skipping confirmations. Use epmty string for always confirmed adding.
+     * @param sender is a string for skipping confirmations. Use empty string for always confirmed adding.
+     * @param primitives OSM objects that will be modified
+     * @since 7521
      */
-    public static void addTags(String[][] keyValue, String sender) {
+    public static void addTags(String[][] keyValue, String sender, Collection<? extends OsmPrimitive> primitives) {
         if (trustedSenders.contains(sender)) {
             if (Main.main.getCurrentDataSet() != null) {
-                Collection<OsmPrimitive> s = Main.main.getCurrentDataSet().getSelected();
                 for (String[] row : keyValue) {
-                    Main.main.undoRedo.add(new ChangePropertyCommand(s, row[0], row[1]));
+                    Main.main.undoRedo.add(new ChangePropertyCommand(primitives, row[0], row[1]));
                 }
             }
         } else {
-            new AddTagsDialog(keyValue, sender).showDialog();
+            new AddTagsDialog(keyValue, sender, primitives).showDialog();
         }
     }
 }

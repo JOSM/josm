@@ -31,6 +31,9 @@ public class MemoryTileCache implements TileCache {
      */
     protected final CacheLinkedListElement lruTiles;
 
+    /**
+     * Constructs a new {@code MemoryTileCache}.
+     */
     public MemoryTileCache() {
         hash = new HashMap<>(cacheSize);
         lruTiles = new CacheLinkedListElement();
@@ -80,9 +83,7 @@ public class MemoryTileCache implements TileCache {
         return new CacheEntry(tile);
     }
 
-    /**
-     * Clears the cache deleting all tiles from memory
-     */
+    @Override
     public synchronized void clear() {
         hash.clear();
         lruTiles.clear();

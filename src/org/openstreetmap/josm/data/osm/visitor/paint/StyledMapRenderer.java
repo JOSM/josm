@@ -27,12 +27,13 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractButton;
@@ -69,25 +70,21 @@ import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.RepeatImageElemStyle.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * <p>A map renderer which renders a map according to style rules in a set of style sheets.</p>
- *
+ * A map renderer which renders a map according to style rules in a set of style sheets.
+ * @since 486
  */
 public class StyledMapRenderer extends AbstractMapRenderer {
 
-    final public static int noThreads;
-    final public static ExecutorService styleCreatorPool;
-
-    static {
-        noThreads = Main.pref.getInteger(
-                "mappaint.StyledMapRenderer.style_creation.numberOfThreads",
-                Runtime.getRuntime().availableProcessors());
-        styleCreatorPool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads);
-    }
+    private static final Pair<Integer, ExecutorService> THREAD_POOL =
+            Utils.newThreadPool("mappaint.StyledMapRenderer.style_creation.numberOfThreads");
 
     /**
      * Iterates over a list of Way Nodes and returns screen coordinates that
@@ -239,7 +236,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private static Boolean IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = null;
+    private static Map<Font,Boolean> IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = new HashMap<>();
 
     /**
      * Check, if this System has the GlyphVector double translation bug.
@@ -252,34 +249,51 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      *
      * This bug has only been observed on Mac OS X, see #7841.
      *
-     * @return true, if the GlyphVector double translation bug is present on
-     * this System
+     * After switch to Java 7, this test is a false positive on Mac OS X (see #10446),
+     * i.e. it returns true, but the real rendering code does not require any special
+     * handling.
+     * It hasn't been further investigated why the test reports a wrong result in
+     * this case, but the method has been changed to simply return false by default.
+     * (This can be changed with a setting in the advanced preferences.)
+     *
+     * @return false by default, but depends on the value of the advanced
+     * preference glyph-bug=false|true|auto, where auto is the automatic detection
+     * method which apparently no longer gives a useful result for Java 7.
      */
-    public static boolean isGlyphVectorDoubleTranslationBug() {
-        if (IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG != null)
-            return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
-        FontRenderContext frc = new FontRenderContext(null, false, false);
-        Font font = new Font("Dialog", Font.PLAIN, 12);
-        GlyphVector gv = font.createGlyphVector(frc, "x");
-        gv.setGlyphTransform(0, AffineTransform.getTranslateInstance(1000, 1000));
-        Shape shape = gv.getGlyphOutline(0);
-        // x is about 1000 on normal stystems and about 2000 when the bug occurs
-        int x = shape.getBounds().x;
-        IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = x > 1500;
-        return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
+    public static boolean isGlyphVectorDoubleTranslationBug(Font font) {
+        Boolean cached  = IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG.get(font);
+        if (cached != null)
+            return cached;
+        String overridePref = Main.pref.get("glyph-bug", "auto");
+        if ("auto".equals(overridePref)) {
+            FontRenderContext frc = new FontRenderContext(null, false, false);
+            GlyphVector gv = font.createGlyphVector(frc, "x");
+            gv.setGlyphTransform(0, AffineTransform.getTranslateInstance(1000, 1000));
+            Shape shape = gv.getGlyphOutline(0);
+            Main.trace("#10446: shape: "+shape.getBounds());
+            // x is about 1000 on normal stystems and about 2000 when the bug occurs
+            int x = shape.getBounds().x;
+            boolean isBug = x > 1500;
+            IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG.put(font, isBug);
+            return isBug;
+        } else {
+            boolean override = Boolean.parseBoolean(overridePref);
+            IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG.put(font, override);
+            return override;
+        }
     }
 
     private double circum;
 
     private MapPaintSettings paintSettings;
 
-    private Color relationSelectedColor;
     private Color highlightColorTransparent;
 
     private static final int FLAG_NORMAL = 0;
     private static final int FLAG_DISABLED = 1;
     private static final int FLAG_MEMBER_OF_SELECTED = 2;
     private static final int FLAG_SELECTED = 4;
+    private static final int FLAG_OUTERMEMBER_OF_SELECTED = 8;
 
     private static final double PHI = Math.toRadians(20);
     private static final double cosPHI = Math.cos(PHI);
@@ -299,7 +313,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private boolean useStrokes;
     private boolean showNames;
     private boolean showIcons;
-    private boolean  isOutlineOnly;
+    private boolean isOutlineOnly;
 
     private Font orderFont;
 
@@ -413,7 +427,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, TextElement text) {
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, boolean disabled, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
 
@@ -425,10 +439,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 g.setColor(color);
                 g.fill(area);
             } else {
-                TexturePaint texture = new TexturePaint(fillImage.getImage(),
+                TexturePaint texture = new TexturePaint(fillImage.getImage(disabled),
                         new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
                 g.setPaint(texture);
-                Float alpha = Utils.color_int2float(fillImage.alpha);
+                Float alpha = fillImage.getAlphaFloat();
                 if (alpha != 1f) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
                 }
@@ -437,6 +451,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
         }
 
+        drawAreaText(osm, text, area);
+    }
+
+    private void drawAreaText(OsmPrimitive osm, TextElement text, Shape area) {
         if (text != null && isShowNames()) {
             // abort if we can't compose the label to be rendered
             if (text.labelCompositionStrategy == null) return;
@@ -453,24 +471,64 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             // will have to do.                                    ++
             // Centroids are not optimal either, just imagine a U-shaped house.
 
-            Rectangle centeredNBounds = new Rectangle(pb.x + (int)((pb.width - nb.getWidth())/2.0),
-                    pb.y + (int)((pb.height - nb.getHeight())/2.0),
-                    (int)nb.getWidth(),
-                    (int)nb.getHeight());
+            // quick check to see if label box is smaller than primitive box
+            if (pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) {
 
-            if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
-                    area.contains(centeredNBounds) // slow but nice
-            ) {
-                Font defaultFont = g.getFont();
-                int x = (int)(centeredNBounds.getMinX() - nb.getMinX());
-                int y = (int)(centeredNBounds.getMinY() - nb.getMinY());
-                displayText(null, name, x, y, osm.isDisabled(), text);
-                g.setFont(defaultFont);
+                final double w = pb.width  - nb.getWidth();
+                final double h = pb.height - nb.getHeight();
+
+                final int x2 = pb.x + (int)(w/2.0);
+                final int y2 = pb.y + (int)(h/2.0);
+
+                final int nbw = (int) nb.getWidth();
+                final int nbh = (int) nb.getHeight();
+
+                Rectangle centeredNBounds = new Rectangle(x2, y2, nbw, nbh);
+
+                // slower check to see if label is displayed inside primitive shape
+                boolean labelOK = area.contains(centeredNBounds);
+                if (!labelOK) {
+                    // if center position (C) is not inside osm shape, try naively some other positions as follows:
+                    final int x1 = pb.x + (int)(  w/4.0);
+                    final int x3 = pb.x + (int)(3*w/4.0);
+                    final int y1 = pb.y + (int)(  h/4.0);
+                    final int y3 = pb.y + (int)(3*h/4.0);
+                    // +-----------+
+                    // |  5  1  6  |
+                    // |  4  C  2  |
+                    // |  8  3  7  |
+                    // +-----------+
+                    Rectangle[] candidates = new Rectangle[] {
+                            new Rectangle(x2, y1, nbw, nbh),
+                            new Rectangle(x3, y2, nbw, nbh),
+                            new Rectangle(x2, y3, nbw, nbh),
+                            new Rectangle(x1, y2, nbw, nbh),
+                            new Rectangle(x1, y1, nbw, nbh),
+                            new Rectangle(x3, y1, nbw, nbh),
+                            new Rectangle(x3, y3, nbw, nbh),
+                            new Rectangle(x1, y3, nbw, nbh)
+                    };
+                    // Dumb algorithm to find a better placement. We could surely find a smarter one but it should
+                    // solve most of building issues with only few calculations (8 at most)
+                    for (int i = 0; i < candidates.length && !labelOK; i++) {
+                        centeredNBounds = candidates[i];
+                        labelOK = area.contains(centeredNBounds);
+                    }
+                }
+                if (labelOK) {
+                    Font defaultFont = g.getFont();
+                    int x = (int)(centeredNBounds.getMinX() - nb.getMinX());
+                    int y = (int)(centeredNBounds.getMinY() - nb.getMinY());
+                    displayText(null, name, x, y, osm.isDisabled(), text);
+                    g.setFont(defaultFont);
+                } else if (Main.isDebugEnabled()) {
+                    Main.debug("Couldn't find a correct label placement for "+osm+" / "+name);
+                }
             }
         }
     }
 
-    public void drawArea(Relation r, Color color, MapImage fillImage, TextElement text) {
+    public void drawArea(Relation r, Color color, MapImage fillImage, boolean disabled, TextElement text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
@@ -480,13 +538,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
                 drawArea(r, p,
                         pd.selected ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
-                                fillImage, text);
+                                fillImage, disabled, text);
             }
         }
     }
 
-    public void drawArea(Way w, Color color, MapImage fillImage, TextElement text) {
-        drawArea(w, getPath(w), color, fillImage, text);
+    public void drawArea(Way w, Color color, MapImage fillImage, boolean disabled, TextElement text) {
+        drawArea(w, getPath(w), color, fillImage, disabled, text);
     }
 
     public void drawBoxText(Node n, BoxTextElemStyle bs) {
@@ -558,10 +616,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param align alignment of the image. The top, center or bottom edge
      * can be aligned with the way.
      */
-    public void drawRepeatImage(Way way, Image pattern, float offset, float spacing, float phase, LineImageAlignment align) {
-        final int imgWidth = pattern.getWidth(null);
+    public void drawRepeatImage(Way way, MapImage pattern, boolean disabled, float offset, float spacing, float phase, LineImageAlignment align) {
+        final int imgWidth = pattern.getWidth();
         final double repeat = imgWidth + spacing;
-        final int imgHeight = pattern.getHeight(null);
+        final int imgHeight = pattern.getHeight();
 
         Point lastP = null;
         double currentWayLength = phase % repeat;
@@ -610,12 +668,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (pos > spacing) {
                     // segment is too short for a complete image
                     if (pos > segmentLength + spacing) {
-                        g.drawImage(pattern, 0, dy1, (int) segmentLength, dy2,
+                        g.drawImage(pattern.getImage(disabled), 0, dy1, (int) segmentLength, dy2,
                                 (int) (repeat - pos), 0,
                                 (int) (repeat - pos + segmentLength), imgHeight, null);
                     // rest of the image fits fully on the current segment
                     } else {
-                        g.drawImage(pattern, 0, dy1, (int) (pos - spacing), dy2,
+                        g.drawImage(pattern.getImage(disabled), 0, dy1, (int) (pos - spacing), dy2,
                                 (int) (repeat - pos), 0, imgWidth, imgHeight, null);
                     }
                 }
@@ -623,10 +681,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 while (pos < segmentLength) {
                     // cut off at the end?
                     if (pos + imgWidth > segmentLength) {
-                        g.drawImage(pattern, (int) pos, dy1, (int) segmentLength, dy2,
+                        g.drawImage(pattern.getImage(disabled), (int) pos, dy1, (int) segmentLength, dy2,
                                 0, 0, (int) segmentLength - (int) pos, imgHeight, null);
                     } else {
-                        g.drawImage(pattern, (int) pos, dy1, nc);
+                        g.drawImage(pattern.getImage(disabled), (int) pos, dy1, nc);
                     }
                     pos += repeat;
                 }
@@ -666,23 +724,25 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    public void drawNodeIcon(Node n, Image img, float alpha, boolean selected, boolean member) {
+    public void drawNodeIcon(Node n, MapImage img, boolean disabled, boolean selected, boolean member) {
         Point p = nc.getPoint(n);
 
-        final int w = img.getWidth(null), h=img.getHeight(null);
+        final int w = img.getWidth(), h = img.getHeight();
         if(n.isHighlighted()) {
             drawPointHighlight(p, Math.max(w, h));
         }
 
+        float alpha = img.getAlphaFloat();
+
         if (alpha != 1f) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         }
-        g.drawImage(img, p.x-w/2, p.y-h/2, nc);
+        g.drawImage(img.getImage(disabled), p.x - w/2 + img.offsetX, p.y - h/2 + img.offsetY, nc);
         g.setPaintMode();
         if (selected || member)
         {
             Color color;
-            if (isInactiveMode || n.isDisabled()) {
+            if (disabled) {
                 color = inactiveColor;
             } else if (selected) {
                 color = selectedColor;
@@ -690,7 +750,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 color = relationSelectedColor;
             }
             g.setColor(color);
-            g.drawRect(p.x-w/2-2, p.y-h/2-2, w+4, h+4);
+            g.drawRect(p.x - w/2 + img.offsetX - 2, p.y - h/2 + img.offsetY - 2, w + 4, h + 4);
         }
     }
 
@@ -829,7 +889,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    public void drawRestriction(Relation r, MapImage icon) {
+    public void drawRestriction(Relation r, MapImage icon, boolean disabled) {
         Way fromWay = null;
         Way toWay = null;
         OsmPrimitive via = null;
@@ -998,7 +1058,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             iconAngle = 270-fromAngleDeg;
         }
 
-        drawRestriction(isInactiveMode || r.isDisabled() ? icon.getDisabled() : icon.getImage(),
+        drawRestriction(icon.getImage(disabled),
                 pVia, vx, vx2, vy, vy2, iconAngle, r.isSelected());
     }
 
@@ -1009,11 +1069,23 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (name == null || name.isEmpty())
             return;
 
+        FontMetrics fontMetrics = g.getFontMetrics(text.font);
+        Rectangle2D rec = fontMetrics.getStringBounds(name, g);
+
+        Rectangle bounds = g.getClipBounds();
+
         Polygon poly = new Polygon();
         Point lastPoint = null;
         Iterator<Node> it = way.getNodes().iterator();
         double pathLength = 0;
         long dx, dy;
+
+        // find half segments that are long enough to draw text on
+        // (don't draw text over the cross hair in the center of each segment)
+        List<Double> longHalfSegmentStart = new ArrayList<>(); // start point of half segment (as length along the way)
+        List<Double> longHalfSegmentEnd = new ArrayList<>(); // end point of half segment (as length along the way)
+        List<Double> longHalfsegmentQuality = new ArrayList<>(); // quality factor (off screen / partly on screen / fully on screen)
+
         while (it.hasNext()) {
             Node n = it.next();
             Point p = nc.getPoint(n);
@@ -1022,19 +1094,87 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if(lastPoint != null) {
                 dx = p.x - lastPoint.x;
                 dy = p.y - lastPoint.y;
-                pathLength += Math.sqrt(dx*dx + dy*dy);
+                double segmentLength = Math.sqrt(dx*dx + dy*dy);
+                if (segmentLength > 2*(rec.getWidth()+4)) {
+                    Point center = new Point((lastPoint.x + p.x)/2, (lastPoint.y + p.y)/2);
+                    double q = 0;
+                    if (bounds != null) {
+                        if (bounds.contains(lastPoint) && bounds.contains(center)) {
+                            q = 2;
+                        } else if (bounds.contains(lastPoint) || bounds.contains(center)) {
+                            q = 1;
+                        }
+                    }
+                    longHalfSegmentStart.add(pathLength);
+                    longHalfSegmentEnd.add(pathLength + segmentLength / 2);
+                    longHalfsegmentQuality.add(q);
+
+                    q = 0;
+                    if (bounds != null) {
+                        if (bounds.contains(center) && bounds.contains(p)) {
+                            q = 2;
+                        } else if (bounds.contains(center) || bounds.contains(p)) {
+                            q = 1;
+                        }
+                    }
+                    longHalfSegmentStart.add(pathLength + segmentLength / 2);
+                    longHalfSegmentEnd.add(pathLength + segmentLength);
+                    longHalfsegmentQuality.add(q);
+                }
+                pathLength += segmentLength;
             }
             lastPoint = p;
         }
 
-        FontMetrics fontMetrics = g.getFontMetrics(text.font); // if slow, use cache
-        Rectangle2D rec = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
-
         if (rec.getWidth() > pathLength)
             return;
 
-        double t1 = (pathLength/2 - rec.getWidth()/2) / pathLength;
-        double t2 = (pathLength/2 + rec.getWidth()/2) / pathLength;
+        double t1, t2;
+
+        if (!longHalfSegmentStart.isEmpty()) {
+            if (way.getNodesCount() == 2) {
+                // For 2 node ways, the two half segments are exactly
+                // the same size and distance from the center.
+                // Prefer the first one for consistency.
+                longHalfsegmentQuality.set(0, longHalfsegmentQuality.get(0) + 0.5);
+            }
+
+            // find the long half segment that is closest to the center of the way
+            // candidates with higher quality value are preferred
+            double bestStart = Double.NaN;
+            double bestEnd = Double.NaN;
+            double bestDistanceToCenter = Double.MAX_VALUE;
+            double bestQuality = -1;
+            for (int i=0; i<longHalfSegmentStart.size(); i++) {
+                double start = longHalfSegmentStart.get(i);
+                double end = longHalfSegmentEnd.get(i);
+                double dist = Math.abs(0.5 * (end + start) - 0.5 * pathLength);
+                if (longHalfsegmentQuality.get(i) > bestQuality || (dist < bestDistanceToCenter && longHalfsegmentQuality.get(i) == bestQuality)) {
+                    bestStart = start;
+                    bestEnd = end;
+                    bestDistanceToCenter = dist;
+                    bestQuality = longHalfsegmentQuality.get(i);
+                }
+            }
+            double remaining = bestEnd - bestStart - rec.getWidth(); // total space left and right from the text
+            // The space left and right of the text should be distributed 20% - 80% (towards the center),
+            // but the smaller space should not be less than 7 px.
+            // However, if the total remaining space is less than 14 px, then distribute it evenly.
+            double smallerSpace = Math.min(Math.max(0.2 * remaining, 7), 0.5 * remaining);
+            if ((bestEnd + bestStart)/2 < pathLength/2) {
+                t2 = bestEnd - smallerSpace;
+                t1 = t2 - rec.getWidth();
+            } else {
+                t1 = bestStart + smallerSpace;
+                t2 = t1 + rec.getWidth();
+            }
+        } else {
+            // doesn't fit into one half-segment -> just put it in the center of the way
+            t1 = pathLength/2 - rec.getWidth()/2;
+            t2 = pathLength/2 + rec.getWidth()/2;
+        }
+        t1 /= pathLength;
+        t2 /= pathLength;
 
         double[] p1 = pointAt(t1, poly, pathLength);
         double[] p2 = pointAt(t2, poly, pathLength);
@@ -1070,7 +1210,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 trfm.rotate(p[2]+angleOffset);
                 double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
                 trfm.translate(-rect.getWidth()/2, off);
-                if (isGlyphVectorDoubleTranslationBug()) {
+                if (isGlyphVectorDoubleTranslationBug(text.font)) {
                     // scale the translation components by one half
                     AffineTransform tmp = AffineTransform.getTranslateInstance(-0.5 * trfm.getTranslateX(), -0.5 * trfm.getTranslateY());
                     tmp.concatenate(trfm);
@@ -1111,7 +1251,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (wayNodes.size() < 2) return;
 
         // only highlight the segment if the way itself is not highlighted
-        if (!way.isHighlighted()) {
+        if (!way.isHighlighted() && highlightWaySegments != null) {
             GeneralPath highlightSegs = null;
             for (WaySegment ws : highlightWaySegments) {
                 if (ws.way != way || ws.lowerIndex < offset) {
@@ -1220,13 +1360,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     @Override
     public void getColors() {
         super.getColors();
-        this.relationSelectedColor = PaintColors.RELATIONSELECTED.get();
         this.highlightColorTransparent = new Color(highlightColor.getRed(), highlightColor.getGreen(), highlightColor.getBlue(), 100);
         this.backgroundColor = PaintColors.getBackgroundColor();
     }
 
     @Override
-    protected void getSettings(boolean virtual) {
+    public void getSettings(boolean virtual) {
         super.getSettings(virtual);
         paintSettings = MapPaintSettings.INSTANCE;
 
@@ -1238,7 +1377,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         showNames = paintSettings.getShowNamesDistance() > circum;
         showIcons = paintSettings.getShowIconsDistance() > circum;
         isOutlineOnly = paintSettings.isOutlineOnly();
-        orderFont = new Font(Main.pref.get("mappaint.font", "Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
+        orderFont = new Font(Main.pref.get("mappaint.font", "Droid Sans"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
@@ -1320,7 +1459,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         private final int from;
         private final int to;
         private final List<StyleRecord> output;
-        private final DataSet data;
 
         private final ElemStyles styles = MapPaintStyles.getStyles();
 
@@ -1334,33 +1472,36 @@ public class StyledMapRenderer extends AbstractMapRenderer {
          * @param from first index of <code>input</code> to use
          * @param to last index + 1
          * @param output the list of styles to which styles will be added
-         * @param data the data set
          */
-        public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output, DataSet data) {
+        public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output) {
             this.input = input;
             this.from = from;
             this.to = to;
             this.output = output;
-            this.data = data;
             this.styles.setDrawMultipolygon(drawMultipolygon);
         }
 
         @Override
         public List<StyleRecord> call() throws Exception {
-            for (int i = from; i<to; i++) {
-                OsmPrimitive osm = input.get(i);
-                if (osm.isDrawable()) {
-                    osm.accept(this);
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+            try {
+                for (int i = from; i<to; i++) {
+                    OsmPrimitive osm = input.get(i);
+                    if (osm.isDrawable()) {
+                        osm.accept(this);
+                    }
                 }
+                return output;
+            } finally {
+                MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
             }
-            return output;
         }
 
         @Override
         public void visit(Node n) {
             if (n.isDisabled()) {
                 add(n, FLAG_DISABLED);
-            } else if (data.isSelected(n)) {
+            } else if (n.isSelected()) {
                 add(n, FLAG_SELECTED);
             } else if (n.isMemberOfSelected()) {
                 add(n, FLAG_MEMBER_OF_SELECTED);
@@ -1373,8 +1514,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         public void visit(Way w) {
             if (w.isDisabled()) {
                 add(w, FLAG_DISABLED);
-            } else if (data.isSelected(w)) {
+            } else if (w.isSelected()) {
                 add(w, FLAG_SELECTED);
+            } else if (w.isOuterMemberOfSelected()) {
+                add(w, FLAG_OUTERMEMBER_OF_SELECTED);
             } else if (w.isMemberOfSelected()) {
                 add(w, FLAG_MEMBER_OF_SELECTED);
             } else {
@@ -1386,8 +1529,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         public void visit(Relation r) {
             if (r.isDisabled()) {
                 add(r, FLAG_DISABLED);
-            } else if (data.isSelected(r)) {
+            } else if (r.isSelected()) {
                 add(r, FLAG_SELECTED);
+            } else if (r.isOuterMemberOfSelected()) {
+                add(r, FLAG_OUTERMEMBER_OF_SELECTED);
+            } else if (r.isMemberOfSelected()) {
+                add(r, FLAG_MEMBER_OF_SELECTED);
             } else {
                 add(r, FLAG_NORMAL);
             }
@@ -1439,14 +1586,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         void process(List<? extends OsmPrimitive> prims) {
             final List<ComputeStyleListWorker> tasks = new ArrayList<>();
-            final int bucketsize = Math.max(100, prims.size()/noThreads/3);
+            final int bucketsize = Math.max(100, prims.size()/THREAD_POOL.a/3);
             final int noBuckets = (prims.size() + bucketsize - 1) / bucketsize;
-            final boolean singleThread = noThreads == 1 || noBuckets == 1;
+            final boolean singleThread = THREAD_POOL.a == 1 || noBuckets == 1;
             for (int i=0; i<noBuckets; i++) {
                 int from = i*bucketsize;
                 int to = Math.min((i+1)*bucketsize, prims.size());
                 List<StyleRecord> target = singleThread ? allStyleElems : new ArrayList<StyleRecord>(to - from);
-                tasks.add(new ComputeStyleListWorker(prims, from, to, target, data));
+                tasks.add(new ComputeStyleListWorker(prims, from, to, target));
             }
             if (singleThread) {
                 try {
@@ -1456,10 +1603,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
-            } else if (tasks.size() > 1) {
+            } else if (!tasks.isEmpty()) {
                 try {
-                    for (Future<List<StyleRecord>> future : styleCreatorPool.invokeAll(tasks)) {
-                            allStyleElems.addAll(future.get());
+                    for (Future<List<StyleRecord>> future : THREAD_POOL.b.invokeAll(tasks)) {
+                        allStyleElems.addAll(future.get());
                     }
                 } catch (InterruptedException | ExecutionException ex) {
                     throw new RuntimeException(ex);
@@ -1487,9 +1634,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             List<Node> nodes = data.searchNodes(bbox);
             List<Way> ways = data.searchWays(bbox);
             List<Relation> relations = data.searchRelations(bbox);
-    
+
             final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
-    
+
             ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems, data);
 
             // Need to process all relations first.
@@ -1505,7 +1652,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 System.err.print("phase 1 (calculate styles): " + (timePhase1 - timeStart) + " ms");
             }
 
-            Collections.sort(allStyleElems);
+            Collections.sort(allStyleElems); // TODO: try parallel sort when switching to Java 8
 
             for (StyleRecord r : allStyleElems) {
                 r.style.paintPrimitive(
@@ -1513,15 +1660,17 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         paintSettings,
                         StyledMapRenderer.this,
                         (r.flags & FLAG_SELECTED) != 0,
+                        (r.flags & FLAG_OUTERMEMBER_OF_SELECTED) != 0,
                         (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
                 );
             }
-    
+
             if (Main.isTraceEnabled()) {
                 timeFinished = System.currentTimeMillis();
-                System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms");
+                System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms" +
+                    " (scale: " + circum + " zoom level: " + Selector.GeneralSelector.scale2level(circum) + ")");
             }
-    
+
             drawVirtualNodes(data, bbox);
         } finally {
             data.getReadLock().unlock();

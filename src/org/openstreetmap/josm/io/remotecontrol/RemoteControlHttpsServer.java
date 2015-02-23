@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.BindException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -135,7 +134,7 @@ public class RemoteControlHttpsServer extends Thread {
         PrivateKey privkey = pair.getPrivate();
         X509CertInfo info = new X509CertInfo();
         Date from = new Date();
-        Date to = new Date(from.getTime() + days * 86400000l);
+        Date to = new Date(from.getTime() + days * 86400000L);
         CertificateValidity interval = new CertificateValidity(from, to);
         BigInteger sn = new BigInteger(64, new SecureRandom());
         X500Name owner = new X500Name(dn);
@@ -146,8 +145,7 @@ public class RemoteControlHttpsServer extends Thread {
         // Change of behaviour in JDK8:
         // https://bugs.openjdk.java.net/browse/JDK-8040820
         // https://bugs.openjdk.java.net/browse/JDK-7198416
-        String version = System.getProperty("java.version");
-        if (version == null || version.matches("^(1\\.)?[7].*")) {
+        if (!Main.isJava8orLater()) {
             // Java 7 code. To remove with Java 8 migration
             info.set(X509CertInfo.SUBJECT, new CertificateSubjectName(owner));
             info.set(X509CertInfo.ISSUER, new CertificateIssuerName(owner));
@@ -379,11 +377,9 @@ public class RemoteControlHttpsServer extends Thread {
         }
 
         // Start the server socket with only 1 connection.
-        // Also make sure we only listen
-        // on the local interface so nobody from the outside can connect!
+        // Also make sure we only listen on the local interface so nobody from the outside can connect!
         // NOTE: On a dual stack machine with old Windows OS this may not listen on both interfaces!
-        this.server = factory.createServerSocket(port, 1,
-            InetAddress.getByName(Main.pref.get("remote.control.host", "localhost")));
+        this.server = factory.createServerSocket(port, 1, RemoteControl.getInetAddress());
 
         if (Main.isTraceEnabled() && server instanceof SSLServerSocket) {
             SSLServerSocket sslServer = (SSLServerSocket) server;
@@ -401,8 +397,8 @@ public class RemoteControlHttpsServer extends Thread {
      */
     @Override
     public void run() {
-        Main.info(marktr("RemoteControl::Accepting secure connections on port {0}"),
-             Integer.toString(server.getLocalPort()));
+        Main.info(marktr("RemoteControl::Accepting secure connections on {0}:{1}"),
+                server.getInetAddress(), Integer.toString(server.getLocalPort()));
         while (true) {
             try {
                 @SuppressWarnings("resource")

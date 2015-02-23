@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -148,7 +149,7 @@ public class ChangesetCacheManager extends JFrame {
         //-- help action
         pnl.add(new SideButton(
                 new ContextSensitiveHelpAction(
-                        HelpUtil.ht("/Dialog/ChangesetCacheManager"))
+                        HelpUtil.ht("/Dialog/ChangesetManager"))
         )
         );
 
@@ -179,12 +180,19 @@ public class ChangesetCacheManager extends JFrame {
         tp.add(pnlChangesetContent);
         model.addPropertyChangeListener(pnlChangesetContent);
 
+        // -- add the panel for the changeset discussion
+        ChangesetDiscussionPanel pnlChangesetDiscussion = new ChangesetDiscussionPanel();
+        tp.add(pnlChangesetDiscussion);
+        model.addPropertyChangeListener(pnlChangesetDiscussion);
+
         tp.setTitleAt(0, tr("Properties"));
         tp.setToolTipTextAt(0, tr("Display the basic properties of the changeset"));
         tp.setTitleAt(1, tr("Tags"));
         tp.setToolTipTextAt(1, tr("Display the tags of the changeset"));
         tp.setTitleAt(2, tr("Content"));
         tp.setToolTipTextAt(2, tr("Display the objects created, updated, and deleted by the changeset"));
+        tp.setTitleAt(3, tr("Discussion"));
+        tp.setToolTipTextAt(3, tr("Display the public discussion around this changeset"));
 
         pnl.add(tp, BorderLayout.CENTER);
         return pnl;
@@ -279,7 +287,7 @@ public class ChangesetCacheManager extends JFrame {
         cp.add(buildButtonPanel(), BorderLayout.SOUTH);
 
         // the help context
-        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetCacheManager"));
+        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetManager"));
 
         // make the dialog respond to ESC
         getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "cancelAndClose");
@@ -363,6 +371,7 @@ public class ChangesetCacheManager extends JFrame {
             putValue(NAME, tr("Query"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs","search"));
             putValue(SHORT_DESCRIPTION, tr("Launch the dialog for querying changesets"));
+            setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -475,7 +484,7 @@ public class ChangesetCacheManager extends JFrame {
         }
 
         protected void updateEnabledState() {
-            setEnabled(model.hasSelectedChangesets());
+            setEnabled(model.hasSelectedChangesets() && !Main.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -503,7 +512,7 @@ public class ChangesetCacheManager extends JFrame {
         }
 
         protected void updateEnabledState() {
-            setEnabled(model.hasSelectedChangesets());
+            setEnabled(model.hasSelectedChangesets() && !Main.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -531,6 +540,7 @@ public class ChangesetCacheManager extends JFrame {
             putValue(NAME, tr("My changesets"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangeset"));
             putValue(SHORT_DESCRIPTION, tr("Download my changesets from the OSM server (max. 100 changesets)"));
+            setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
 
         protected void alertAnonymousUser() {
@@ -542,7 +552,7 @@ public class ChangesetCacheManager extends JFrame {
                     ),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Dialog/ChangesetCacheManager#CanDownloadMyChangesets")
+                    HelpUtil.ht("/Dialog/ChangesetManager#CanDownloadMyChangesets")
             );
         }
 

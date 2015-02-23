@@ -357,9 +357,8 @@ public class SplitWayAction extends JosmAction {
             wayToAdd.setKeys(way.getKeys());
             newWays.add(wayToAdd);
             wayToAdd.setNodes(chunkIt.next());
-            commandList.add(new AddCommand(layer,wayToAdd));
+            commandList.add(new AddCommand(layer, wayToAdd));
             newSelection.add(wayToAdd);
-
         }
         boolean warnmerole = false;
         boolean warnme = false;
@@ -380,35 +379,32 @@ public class SplitWayAction extends JosmAction {
             for (RelationMember rm: relationMembers) {
                 if (rm.isWay() && rm.getMember() == way) {
                     boolean insert = true;
-                    if ("restriction".equals(type))
-                    {
+                    if ("restriction".equals(type)) {
                         /* this code assumes the restriction is correct. No real error checking done */
                         String role = rm.getRole();
-                        if("from".equals(role) || "to".equals(role))
-                        {
+                        if("from".equals(role) || "to".equals(role)) {
                             OsmPrimitive via = null;
                             for (RelationMember rmv : r.getMembers()) {
-                                if("via".equals(rmv.getRole())){
+                                if ("via".equals(rmv.getRole())){
                                     via = rmv.getMember();
                                 }
                             }
                             List<Node> nodes = new ArrayList<>();
-                            if(via != null) {
-                                if(via instanceof Node) {
+                            if (via != null) {
+                                if (via instanceof Node) {
                                     nodes.add((Node)via);
-                                } else if(via instanceof Way) {
+                                } else if (via instanceof Way) {
                                     nodes.add(((Way)via).lastNode());
                                     nodes.add(((Way)via).firstNode());
                                 }
                             }
                             Way res = null;
-                            for(Node n : nodes) {
+                            for (Node n : nodes) {
                                 if(changedWay.isFirstLastNode(n)) {
                                     res = way;
                                 }
                             }
-                            if(res == null)
-                            {
+                            if (res == null) {
                                 for (Way wayToAdd : newWays) {
                                     for(Node n : nodes) {
                                         if(wayToAdd.isFirstLastNode(n)) {
@@ -416,8 +412,7 @@ public class SplitWayAction extends JosmAction {
                                         }
                                     }
                                 }
-                                if(res != null)
-                                {
+                                if (res != null) {
                                     if (c == null) {
                                         c = new Relation(r);
                                     }
@@ -428,20 +423,17 @@ public class SplitWayAction extends JosmAction {
                             } else {
                                 insert = false;
                             }
-                        }
-                        else if(!"via".equals(role)) {
+                        } else if(!"via".equals(role)) {
                             warnme = true;
                         }
-                    }
-                    else if (!("route".equals(type)) && !("multipolygon".equals(type))) {
+                    } else if (!("route".equals(type)) && !("multipolygon".equals(type))) {
                         warnme = true;
                     }
                     if (c == null) {
                         c = new Relation(r);
                     }
 
-                    if(insert)
-                    {
+                    if (insert) {
                         if (rm.hasRole() && !nowarnroles.contains(rm.getRole())) {
                             warnmerole = true;
                         }
@@ -483,11 +475,12 @@ public class SplitWayAction extends JosmAction {
                         i_c = j;
                     }
                 }
-                i_c++; i_r++;
+                i_c++;
+                i_r++;
             }
 
             if (c != null) {
-                commandList.add(new ChangeCommand(layer,r, c));
+                commandList.add(new ChangeCommand(layer, r, c));
             }
         }
         if (warnmerole) {

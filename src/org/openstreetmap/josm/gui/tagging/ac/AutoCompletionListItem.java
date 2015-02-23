@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.ac;
 
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 /**
  * Represents an entry in the list of auto completion values.
  *
@@ -78,8 +80,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
      * @exception IllegalArgumentException thrown, if value if null
      */
     public void setValue(String value) {
-        if (value == null)
-            throw new IllegalArgumentException("argument 'value' must not be null");
+        CheckParameterUtil.ensureParameterNotNull(value, "value");
         this.value = value;
     }
 
@@ -107,6 +108,8 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
             return true;
         if (obj == null)
             return false;
+        if (obj instanceof String)
+            return obj.equals(value);
         if (getClass() != obj.getClass())
             return false;
         final AutoCompletionListItem other = (AutoCompletionListItem)obj;

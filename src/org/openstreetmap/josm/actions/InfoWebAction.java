@@ -6,14 +6,22 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Display object information about OSM nodes, ways, or relations in web browser.
+ * @since 4408
+ */
 public class InfoWebAction extends AbstractInfoAction {
 
+    /**
+     * Constructs a new {@code InfoWebAction}.
+     */
     public InfoWebAction() {
-        super(tr("Advanced info (web)"), "about",
+        super(tr("Advanced info (web)"), "info",
                 tr("Display object information about OSM nodes, ways, or relations in web browser."),
                 Shortcut.registerShortcut("core:infoweb",
                         tr("Advanced info (web)"), KeyEvent.VK_I, Shortcut.CTRL_SHIFT),
@@ -24,6 +32,6 @@ public class InfoWebAction extends AbstractInfoAction {
     @Override
     protected  String createInfoUrl(Object infoObject) {
         OsmPrimitive primitive = (OsmPrimitive)infoObject;
-        return getBaseBrowseUrl() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.getId();
+        return Main.getBaseBrowseUrl() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.getId();
     }
 }

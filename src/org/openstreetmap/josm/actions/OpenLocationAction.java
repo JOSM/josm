@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmChangeCompressedTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmChangeTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmCompressedTask;
@@ -53,11 +54,13 @@ public class OpenLocationAction extends JosmAction {
     public OpenLocationAction() {
         /* I18N: Command to download a specific location/URL */
         super(tr("Open Location..."), "openlocation", tr("Open an URL."),
-                Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")), KeyEvent.VK_L, Shortcut.CTRL), true);
+                Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")),
+                        KeyEvent.VK_L, Shortcut.CTRL), true);
         putValue("help", ht("/Action/OpenLocation"));
         this.downloadTasks = new ArrayList<>();
         addDownloadTaskClass(DownloadOsmTask.class);
         addDownloadTaskClass(DownloadGpsTask.class);
+        addDownloadTaskClass(DownloadNotesTask.class);
         addDownloadTaskClass(DownloadOsmChangeTask.class);
         addDownloadTaskClass(DownloadOsmUrlTask.class);
         addDownloadTaskClass(DownloadOsmCompressedTask.class);
@@ -71,9 +74,9 @@ public class OpenLocationAction extends JosmAction {
      * @param cbHistory
      */
     protected void restoreUploadAddressHistory(HistoryComboBox cbHistory) {
-        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(getClass().getName() + ".uploadAddressHistory", new LinkedList<String>()));
-        // we have to reverse the history, because ComboBoxHistory will reverse it again
-        // in addElement()
+        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(getClass().getName() + ".uploadAddressHistory",
+                new LinkedList<String>()));
+        // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         //
         Collections.reverse(cmtHistory);
         cbHistory.setPossibleItems(cmtHistory);
@@ -114,7 +117,7 @@ public class OpenLocationAction extends JosmAction {
                 new String[] {tr("Download URL"), tr("Cancel")}
         );
         dialog.setContent(all, false /* don't embedded content in JScrollpane  */);
-        dialog.setButtonIcons(new String[] {"download.png", "cancel.png"});
+        dialog.setButtonIcons(new String[] {"download", "cancel"});
         dialog.setToolTipTexts(new String[] {
                 tr("Start downloading data"),
                 tr("Close dialog and cancel downloading")
@@ -129,16 +132,17 @@ public class OpenLocationAction extends JosmAction {
     /**
      * Replies the list of download tasks accepting the given url.
      * @param url The URL to open
+     * @param isRemotecontrol True if download request comes from remotecontrol.
      * @return The list of download tasks accepting the given url.
      * @since 5691
      */
-    public Collection<DownloadTask> findDownloadTasks(final String url) {
+    public Collection<DownloadTask> findDownloadTasks(final String url, boolean isRemotecontrol) {
         List<DownloadTask> result = new ArrayList<>();
         for (Class<? extends DownloadTask> taskClass : downloadTasks) {
             if (taskClass != null) {
                 try {
                     DownloadTask task = taskClass.getConstructor().newInstance();
-                    if (task.acceptsUrl(url)) {
+                    if (task.acceptsUrl(url, isRemotecontrol)) {
                         result.add(task);
                     }
                 } catch (Exception e) {
@@ -172,19 +176,19 @@ public class OpenLocationAction extends JosmAction {
 
     /**
      * Open the given URL.
-     * @param new_layer true if the URL needs to be opened in a new layer, false otherwise
+     * @param newLayer true if the URL needs to be opened in a new layer, false otherwise
      * @param url The URL to open
      */
-    public void openUrl(boolean new_layer, final String url) {
+    public void openUrl(boolean newLayer, final String url) {
         PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
-        Collection<DownloadTask> tasks = findDownloadTasks(url);
+        Collection<DownloadTask> tasks = findDownloadTasks(url, false);
         DownloadTask task = null;
         Future<?> future = null;
         if (!tasks.isEmpty()) {
             // TODO: handle multiple suitable tasks ?
             try {
                 task = tasks.iterator().next();
-                future = task.loadUrl(new_layer, url, monitor);
+                future = task.loadUrl(newLayer, url, monitor);
             } catch (IllegalArgumentException e) {
                 Main.error(e);
             }

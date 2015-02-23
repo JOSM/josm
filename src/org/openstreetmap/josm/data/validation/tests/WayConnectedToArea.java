@@ -70,13 +70,13 @@ public class WayConnectedToArea extends Test {
         } else if (Utils.exists(wayNode.getReferrers(), Predicates.hasTag("route", "ferry"))) {
             return;
         } else if (isArea(p)) {
-            addError(w, wayNode, p);
+            addPossibleError(w, wayNode, p, p);
         } else {
             for (OsmPrimitive r : p.getReferrers()) {
                 if (r instanceof Relation
                         && r.hasTag("type", "multipolygon")
                         && isArea(r)) {
-                    addError(w, wayNode, p);
+                    addPossibleError(w, wayNode, p, r);
                     break;
                 }
             }
@@ -88,7 +88,11 @@ public class WayConnectedToArea extends Test {
                 && ElemStyles.hasAreaElemStyle(p, false);
     }
 
-    private void addError(Way w, Node wayNode, OsmPrimitive p) {
+    private void addPossibleError(Way w, Node wayNode, OsmPrimitive p, OsmPrimitive area) {
+        // Avoid "legal" cases (see #10655)
+        if (w.hasKey("highway") && wayNode.hasTag("leisure", "slipway") && area.hasTag("natural", "water")) {
+            return;
+        }
         errors.add(new TestError(this, Severity.WARNING,
                 tr("Way terminates on Area"), 2301,
                 Arrays.asList(w, p),

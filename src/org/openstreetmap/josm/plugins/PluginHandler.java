@@ -62,6 +62,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.io.OfflineAccessException;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -120,6 +122,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("restart", IN_CORE),
             new DeprecatedPlugin("wayselector", IN_CORE),
             new DeprecatedPlugin("openstreetbugs", tr("replaced by new {0} plugin", "notes")),
+            new DeprecatedPlugin("nearclick", tr("no longer required")),
+            new DeprecatedPlugin("notes", IN_CORE),
         });
     }
 
@@ -183,7 +187,24 @@ public final class PluginHandler {
     }
 
     /**
-     * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not really maintained after a few months, sadly...
+     * ClassLoader that makes the addURL method of URLClassLoader public.
+     *
+     * Like URLClassLoader, but allows to add more URLs after construction.
+     */
+    public static class DynamicURLClassLoader extends URLClassLoader {
+
+        public DynamicURLClassLoader(URL[] urls, ClassLoader parent) {
+            super(urls, parent);
+        }
+
+        @Override
+        public void addURL(URL url) {
+            super.addURL(url);
+        }
+    }
+
+    /**
+     * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not maintained after a few months, sadly...
      */
     private static final String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
 
@@ -196,6 +217,11 @@ public final class PluginHandler {
      * All installed and loaded plugins (resp. their main classes)
      */
     public static final Collection<PluginProxy> pluginList = new LinkedList<>();
+
+    /**
+     * Global plugin ClassLoader.
+     */
+    private static DynamicURLClassLoader pluginClassLoader;
 
     /**
      * Add here all ClassLoader whose resource should be searched.
@@ -301,6 +327,10 @@ public final class PluginHandler {
      * @return true if a plugin update should be run; false, otherwise
      */
     public static boolean checkAndConfirmPluginUpdate(Component parent) {
+        if (!checkOfflineAccess()) {
+            Main.info(tr("{0} not available (offline mode)", tr("Plugin update")));
+            return false;
+        }
         String message = null;
         String togglePreferenceKey = null;
         int v = Version.getInstance().getVersion();
@@ -403,6 +433,25 @@ public final class PluginHandler {
         return ret == 0;
     }
 
+    private static boolean checkOfflineAccess() {
+        if (Main.isOffline(OnlineResource.ALL)) {
+            return false;
+        }
+        if (Main.isOffline(OnlineResource.JOSM_WEBSITE)) {
+            for (String updateSite : Main.pref.getPluginSites()) {
+                try {
+                    OnlineResource.JOSM_WEBSITE.checkOfflineAccess(updateSite, Main.getJOSMWebsite());
+                } catch (OfflineAccessException e) {
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /**
      * Alerts the user if a plugin required by another plugin is missing
      *
@@ -475,7 +524,8 @@ public final class PluginHandler {
      * Checks if required plugins preconditions for loading the plugin <code>plugin</code> are met.
      * No other plugins this plugin depends on should be missing.
      *
-     * @param parent The parent Component used to display error popup
+     * @param parent The parent Component used to display error popup. If parent is
+     * null, the error popup is suppressed
      * @param plugins the collection of all loaded plugins
      * @param plugin the plugin for which preconditions are checked
      * @param local Determines if the local or up-to-date plugin dependencies are to be checked.
@@ -501,7 +551,9 @@ public final class PluginHandler {
                 }
             }
             if (!missingPlugins.isEmpty()) {
-                alertMissingRequiredPlugin(parent, plugin.name, missingPlugins);
+                if (parent != null) {
+                    alertMissingRequiredPlugin(parent, plugin.name, missingPlugins);
+                }
                 return false;
             }
         }
@@ -509,41 +561,44 @@ public final class PluginHandler {
     }
 
     /**
-     * Creates a class loader for loading plugin code.
+     * Get the class loader for loading plugin code.
      *
-     * @param plugins the collection of plugins which are going to be loaded with this
-     * class loader
      * @return the class loader
      */
-    public static ClassLoader createClassLoader(Collection<PluginInformation> plugins) {
-        // iterate all plugins and collect all libraries of all plugins:
-        List<URL> allPluginLibraries = new LinkedList<>();
-        File pluginDir = Main.pref.getPluginsDirectory();
-
-        // Add all plugins already loaded (to include early plugins in the classloader, allowing late plugins to rely on early ones)
-        Collection<PluginInformation> allPlugins = new HashSet<>(plugins);
-        for (PluginProxy proxy : pluginList) {
-            allPlugins.add(proxy.getPluginInformation());
+    public static DynamicURLClassLoader getPluginClassLoader() {
+        if (pluginClassLoader == null) {
+            pluginClassLoader = AccessController.doPrivileged(new PrivilegedAction<DynamicURLClassLoader>() {
+                public DynamicURLClassLoader run() {
+                    return new DynamicURLClassLoader(new URL[0], Main.class.getClassLoader());
+                }
+            });
+            sources.add(0, pluginClassLoader);
         }
+        return pluginClassLoader;
+    }
 
-        for (PluginInformation info : allPlugins) {
+    /**
+     * Add more plugins to the plugin class loader.
+     *
+     * @param plugins the plugins that should be handled by the plugin class loader
+     */
+    public static void extendPluginClassLoader(Collection<PluginInformation> plugins) {
+        // iterate all plugins and collect all libraries of all plugins:
+        File pluginDir = Main.pref.getPluginsDirectory();
+        DynamicURLClassLoader cl = getPluginClassLoader();
+
+        for (PluginInformation info : plugins) {
             if (info.libraries == null) {
                 continue;
             }
-            allPluginLibraries.addAll(info.libraries);
+            for (URL libUrl : info.libraries) {
+                cl.addURL(libUrl);
+            }
             File pluginJar = new File(pluginDir, info.name + ".jar");
             I18n.addTexts(pluginJar);
             URL pluginJarUrl = Utils.fileToURL(pluginJar);
-            allPluginLibraries.add(pluginJarUrl);
+            cl.addURL(pluginJarUrl);
         }
-
-        // create a classloader for all plugins:
-        final URL[] jarUrls = allPluginLibraries.toArray(new URL[allPluginLibraries.size()]);
-        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-            public ClassLoader run() {
-                return new URLClassLoader(jarUrls, Main.class.getClassLoader());
-            }
-      });
     }
 
     /**
@@ -562,7 +617,7 @@ public final class PluginHandler {
                 Main.info(tr("loading plugin ''{0}'' (version {1})", plugin.name, plugin.localversion));
                 PluginProxy pluginProxy = plugin.load(klass);
                 pluginList.add(pluginProxy);
-                Main.addMapFrameListener(pluginProxy);
+                Main.addMapFrameListener(pluginProxy, true);
             }
             msg = null;
         } catch (PluginException e) {
@@ -587,7 +642,7 @@ public final class PluginHandler {
      * @param plugins the list of plugins
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
-    public static void loadPlugins(Component parent,Collection<PluginInformation> plugins, ProgressMonitor monitor) {
+    public static void loadPlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -617,12 +672,11 @@ public final class PluginHandler {
             if (toLoad.isEmpty())
                 return;
 
-            ClassLoader pluginClassLoader = createClassLoader(toLoad);
-            sources.add(0, pluginClassLoader);
+            extendPluginClassLoader(toLoad);
             monitor.setTicksCount(toLoad.size());
             for (PluginInformation info : toLoad) {
                 monitor.setExtraText(tr("Loading plugin ''{0}''...", info.name));
-                loadPlugin(parent, info, pluginClassLoader);
+                loadPlugin(parent, info, getPluginClassLoader());
                 monitor.worked(1);
             }
         } finally {
@@ -845,7 +899,7 @@ public final class PluginHandler {
             // try to download the plugin lists
             //
             ReadRemotePluginInformationTask task1 = new ReadRemotePluginInformationTask(
-                    monitor.createSubTaskMonitor(1,false),
+                    monitor.createSubTaskMonitor(1, false),
                     Main.pref.getPluginSites(), displayErrMsg
             );
             Future<?> future = service.submit(task1);
@@ -854,7 +908,7 @@ public final class PluginHandler {
             try {
                 future.get();
                 allPlugins = task1.getAvailablePlugins();
-                plugins = buildListOfPluginsToLoad(parent,monitor.createSubTaskMonitor(1, false));
+                plugins = buildListOfPluginsToLoad(parent, monitor.createSubTaskMonitor(1, false));
                 // If only some plugins have to be updated, filter the list
                 if (pluginsWanted != null && !pluginsWanted.isEmpty()) {
                     for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
@@ -1006,10 +1060,12 @@ public final class PluginHandler {
         }
     }
 
-    public static void getPreferenceSetting(Collection<PreferenceSettingFactory> settings) {
+    public static Collection<PreferenceSettingFactory> getPreferenceSetting() {
+        Collection<PreferenceSettingFactory> settings = new ArrayList<>();
         for (PluginProxy plugin : pluginList) {
             settings.add(new PluginPreferenceFactory(plugin));
         }
+        return settings;
     }
 
     /**
@@ -1018,7 +1074,7 @@ public final class PluginHandler {
      *
      * If {@code dowarn} is true, this methods emits warning messages on the console if a downloaded
      * but not yet installed plugin .jar can't be be installed. If {@code dowarn} is false, the
-     * installation of the respective plugin is sillently skipped.
+     * installation of the respective plugin is silently skipped.
      *
      * @param dowarn if true, warning messages are displayed; false otherwise
      */
@@ -1057,7 +1113,6 @@ public final class PluginHandler {
                 Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
             }
         }
-        return;
     }
 
     /**
@@ -1270,8 +1325,11 @@ public final class PluginHandler {
                     ? pi.localversion : "unknown") + ")");
         }
         Collections.sort(pl);
+        if (!pl.isEmpty()) {
+            text.append("Plugins:\n");
+        }
         for (String s : pl) {
-            text.append("Plugin: ").append(s).append("\n");
+            text.append("- ").append(s).append("\n");
         }
         return text.toString();
     }

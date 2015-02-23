@@ -104,7 +104,7 @@ public final class StyleCache {
      */
     public StyleList get(double scale) {
         if (scale <= 0)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("scale must be <= 0 but is "+scale);
         for (int i=0; i<data.size(); ++i) {
             if (bd.get(i) < scale && scale <= bd.get(i+1)) {
                 return data.get(i);
@@ -119,7 +119,7 @@ public final class StyleCache {
      */
     public Pair<StyleList, Range> getWithRange(double scale) {
         if (scale <= 0)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("scale must be <= 0 but is "+scale);
         for (int i=0; i<data.size(); ++i) {
             if (bd.get(i) < scale && scale <= bd.get(i+1)) {
                 return new Pair<>(data.get(i), new Range(bd.get(i), bd.get(i+1)));

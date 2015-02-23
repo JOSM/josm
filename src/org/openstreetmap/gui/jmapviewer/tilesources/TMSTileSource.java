@@ -6,13 +6,13 @@ public class TMSTileSource extends AbstractTMSTileSource {
     protected int maxZoom;
     protected int minZoom = 0;
 
-    public TMSTileSource(String name, String url, int maxZoom) {
-        super(name, url);
+    public TMSTileSource(String name, String url, String id, int maxZoom) {
+        super(name, url, id);
         this.maxZoom = maxZoom;
     }
 
-    public TMSTileSource(String name, String url, int minZoom, int maxZoom) {
-        super(name, url);
+    public TMSTileSource(String name, String url, String id, int minZoom, int maxZoom) {
+        super(name, url, id);
         this.minZoom = minZoom;
         this.maxZoom = maxZoom;
     }
@@ -27,6 +27,7 @@ public class TMSTileSource extends AbstractTMSTileSource {
         return (maxZoom == 0) ? super.getMaxZoom() : maxZoom;
     }
 
+    @Override
     public TileUpdate getTileUpdate() {
         return TileUpdate.IfNoneMatch;
     }

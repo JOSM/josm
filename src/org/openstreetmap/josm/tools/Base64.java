@@ -16,7 +16,7 @@ public final class Base64 {
     private Base64() {
         // Hide default constructor for utils classes
     }
-    
+
     /** "base64": RFC 2045 default encoding */
     private static String encDefault = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     /** "base64url": RFC 4648 url-safe encoding */

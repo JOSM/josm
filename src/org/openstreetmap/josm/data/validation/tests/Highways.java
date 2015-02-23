@@ -85,7 +85,9 @@ public class Highways extends Test {
     @Override
     public void visit(Node n) {
         if (n.isUsable()) {
-            if (!n.hasTag("highway", "crossing") && !n.hasTag("crossing", "no") && n.isReferredByWays(2)) {
+            if (!n.hasTag("crossing", "no")
+             && !(n.hasKey("crossing") && (n.hasTag("highway", "crossing") || n.hasTag("highway", "traffic_signals")))
+             && n.isReferredByWays(2)) {
                 testMissingPedestrianCrossing(n);
             }
             if (n.hasKey("source:maxspeed")) {
@@ -150,8 +152,8 @@ public class Highways extends Test {
         }
 
         final HashSet<OsmPrimitive> referrers = new HashSet<>();
-        
-        if (way.isClosed()) { 
+
+        if (way.isClosed()) {
             // for closed way we need to check all adjacent ways
             for (Node n: way.getNodes()) {
                 referrers.addAll(n.getReferrers());

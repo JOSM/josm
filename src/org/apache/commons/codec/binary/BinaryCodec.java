@@ -31,7 +31,7 @@ import org.apache.commons.codec.EncoderException;
  * TODO: also might be good to generate boolean[] from byte[] et cetera.
  *
  * @since 1.3
- * @version $Id: BinaryCodec.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: BinaryCodec.java 1619948 2014-08-22 22:53:55Z ggregory $
  */
 public class BinaryCodec implements BinaryDecoder, BinaryEncoder {
     /*
@@ -216,11 +216,11 @@ public class BinaryCodec implements BinaryDecoder, BinaryEncoder {
     }
 
     /**
-     * Returns {@code true} if the given array is {@code null} or empty (size 0.)
+     * Returns <code>true</code> if the given array is <code>null</code> or empty (size 0.)
      *
      * @param array
      *            the source array
-     * @return {@code true} if the given array is {@code null} or empty (size 0.)
+     * @return <code>true</code> if the given array is <code>null</code> or empty (size 0.)
      */
     private static boolean isEmpty(final byte[] array) {
         return array == null || array.length == 0;

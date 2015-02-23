@@ -270,6 +270,12 @@ public class XmlObjectParser implements Iterable<Object> {
         }
     }
 
+    /**
+     * Starts parsing from the given input reader, without validation.
+     * @param in The input reader
+     * @return iterable collection of objects
+     * @throws SAXException if any XML or I/O error occurs
+     */
     public Iterable<Object> start(final Reader in) throws SAXException {
         try {
             return start(in, parser);
@@ -278,6 +284,14 @@ public class XmlObjectParser implements Iterable<Object> {
         }
     }
 
+    /**
+     * Starts parsing from the given input reader, with XSD validation.
+     * @param in The input reader
+     * @param namespace default namespace
+     * @param schemaSource XSD schema
+     * @return iterable collection of objects
+     * @throws SAXException if any XML or I/O error occurs
+     */
     public Iterable<Object> startWithValidation(final Reader in, String namespace, String schemaSource) throws SAXException {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try (InputStream mis = new CachedFile(schemaSource).getInputStream()) {

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreference;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
@@ -54,7 +56,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
         @Override
         public void run() {
-         // Give the user a chance to deactivate the plugin which threw the exception (if it was thrown from a plugin)
+            // Give the user a chance to deactivate the plugin which threw the exception (if it was thrown from a plugin)
             final PluginDownloadTask pluginDownloadTask = PluginHandler.updateOrdisablePluginAfterException(e);
 
             SwingUtilities.invokeLater(new Runnable() {
@@ -62,30 +64,70 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 public void run() {
                     // Then ask for submitting a bug report, for exceptions thrown from a plugin too, unless updated to a new version
                     if (pluginDownloadTask == null) {
-                        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Unexpected Exception"), new String[] {tr("Do nothing"), tr("Report Bug")});
+                        String[] buttonTexts = new String[] {tr("Do nothing"), tr("Report Bug")};
+                        String[] buttonIcons = new String[] {"cancel", "bug"};
+                        int defaultButtonIdx = 1;
+                        String message = tr("An unexpected exception occurred.<br>" +
+                                "This is always a coding error. If you are running the latest<br>" +
+                                "version of JOSM, please consider being kind and file a bug report."
+                                );
+                        // Check user is running current tested version, the error may already be fixed
+                        int josmVersion = Version.getInstance().getVersion();
+                        if (josmVersion != Version.JOSM_UNKNOWN_VERSION) {
+                            try {
+                                int latestVersion = Integer.parseInt(new WikiReader().
+                                        read(Main.getJOSMWebsite()+"/wiki/TestedVersion?format=txt").trim());
+                                if (latestVersion > josmVersion) {
+                                    buttonTexts = new String[] {tr("Do nothing"), tr("Update JOSM"), tr("Report Bug")};
+                                    buttonIcons = new String[] {"cancel", "download", "bug"};
+                                    defaultButtonIdx = 2;
+                                    message = tr("An unexpected exception occurred. This is always a coding error.<br><br>" +
+                                            "However, you are running an old version of JOSM ({0}),<br>" +
+                                            "instead of using the current tested version (<b>{1}</b>).<br><br>"+
+                                            "<b>Please update JOSM</b> before considering to file a bug report.",
+                                            String.valueOf(josmVersion), String.valueOf(latestVersion));
+                                }
+                            } catch (IOException | NumberFormatException e) {
+                                Main.warn("Unable to detect latest version of JOSM: "+e.getMessage());
+                            }
+                        }
+                        // Show dialog
+                        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Unexpected Exception"), buttonTexts);
+                        ed.setButtonIcons(buttonIcons);
                         ed.setIcon(JOptionPane.ERROR_MESSAGE);
+                        ed.setCancelButton(1);
+                        ed.setDefaultButton(defaultButtonIdx);
                         JPanel pnl = new JPanel(new GridBagLayout());
-                        pnl.add(new JLabel(
-                                "<html>" + tr("An unexpected exception occurred.<br>" +
-                                              "This is always a coding error. If you are running the latest<br>" +
-                                              "version of JOSM, please consider being kind and file a bug report."
-                                              )
-                                         + "</html>"), GBC.eol());
+                        pnl.add(new JLabel("<html>" + message + "</html>"), GBC.eol());
                         JCheckBox cbSuppress = null;
                         if (exceptionCounter > 1) {
                             cbSuppress = new JCheckBox(tr("Suppress further error dialogs for this session."));
                             pnl.add(cbSuppress, GBC.eol());
                         }
                         ed.setContent(pnl);
+                        ed.setFocusOnDefaultButton(true);
                         ed.showDialog();
                         if (cbSuppress != null && cbSuppress.isSelected()) {
                             suppressExceptionDialogs = true;
                         }
-                        if (ed.getValue() != 2) return;
-                        askForBugReport(e);
+                        if (ed.getValue() <= 1) {
+                            // "Do nothing"
+                            return;
+                        } else if (ed.getValue() < buttonTexts.length) {
+                            // "Update JOSM"
+                            try {
+                                Main.platform.openUrl(Main.getJOSMWebsite());
+                            } catch (IOException e) {
+                                Main.warn("Unable to access JOSM website: "+e.getMessage());
+                            }
+                        } else {
+                            // "Report bug"
+                            askForBugReport(e);
+                        }
                     } else {
                         // Ask for restart to install new plugin
-                        PluginPreference.notifyDownloadResults(Main.parent, pluginDownloadTask);
+                        PluginPreference.notifyDownloadResults(
+                                Main.parent, pluginDownloadTask, !pluginDownloadTask.getDownloadedPlugins().isEmpty());
                     }
                 }
             });
@@ -97,7 +139,6 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
         handleException(e);
     }
 
-    //http://stuffthathappens.com/blog/2007/10/15/one-more-note-on-uncaught-exception-handlers/
     /**
      * Handles the given throwable object
      * @param t The throwable object
@@ -161,22 +202,30 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             JPanel p = new JPanel(new GridBagLayout());
             p.add(new JMultilineLabel(
                     tr("You have encountered an error in JOSM. Before you file a bug report " +
-                            "make sure you have updated to the latest version of JOSM here:")), GBC.eol());
+                            "make sure you have updated to the latest version of JOSM here:")),
+                            GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p.add(new UrlLabel(Main.getJOSMWebsite(),2), GBC.eop().insets(8,0,0,0));
             p.add(new JMultilineLabel(
                     tr("You should also update your plugins. If neither of those help please " +
-                            "file a bug report in our bugtracker using this link:")), GBC.eol());
+                            "file a bug report in our bugtracker using this link:")),
+                            GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p.add(getBugReportUrlLabel(urltext), GBC.eop().insets(8,0,0,0));
             p.add(new JMultilineLabel(
                     tr("There the error information provided below should already be " +
                             "filled in for you. Please include information on how to reproduce " +
-                            "the error and try to supply as much detail as possible.")), GBC.eop());
+                            "the error and try to supply as much detail as possible.")),
+                            GBC.eop().fill(GridBagConstraints.HORIZONTAL));
             p.add(new JMultilineLabel(
                     tr("Alternatively, if that does not work you can manually fill in the information " +
-                            "below at this URL:")), GBC.eol());
+                            "below at this URL:")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket",2), GBC.eop().insets(8,0,0,0));
+
+            // Wiki formatting for manual copy-paste
+            text = "{{{\n"+text+"}}}";
+
             if (Utils.copyToClipboard(text)) {
-                p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")), GBC.eop());
+                p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")),
+                        GBC.eop().fill(GridBagConstraints.HORIZONTAL));
             }
 
             JosmTextArea info = new JosmTextArea(text, 18, 60);

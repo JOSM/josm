@@ -1,5 +1,4 @@
 // License: GPL. See LICENSE file for details.
-
 package org.openstreetmap.josm.gui.layer.gpx;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
@@ -17,11 +16,11 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ColorScale;
-
 
 /**
  * Class that helps to draw large set of GPS tracks with different colors and options
@@ -105,9 +104,17 @@ public class GpxDrawHelper {
         NONE, VELOCITY, HDOP, DIRECTION, TIME
     }
 
+    /**
+     * Constructs a new {@code GpxDrawHelper}.
+     * @param gpxData GPX data
+     */
     public GpxDrawHelper(GpxData gpxData) {
         data = gpxData;
         setupColors();
+    }
+
+    private static String specName(String layerName) {
+        return "layer " + layerName;
     }
 
     /**
@@ -117,7 +124,7 @@ public class GpxDrawHelper {
      * @return the color or null if the color is not constant
      */
     public Color getColor(String layerName, boolean ignoreCustom) {
-        Color c = Main.pref.getColor(marktr("gps point"), "layer " + layerName, Color.gray);
+        Color c = Main.pref.getColor(marktr("gps point"), specName(layerName), Color.gray);
         return ignoreCustom || getColorMode(layerName) == ColorMode.NONE ? c : null;
     }
 
@@ -128,7 +135,7 @@ public class GpxDrawHelper {
      */
     public ColorMode getColorMode(String layerName) {
         try {
-            int i=Main.pref.getInteger("draw.rawgps.colors", "layer " + layerName, 0);
+            int i = Main.pref.getInteger("draw.rawgps.colors", specName(layerName), 0);
             return ColorMode.values()[i];
         } catch (Exception e) {
             Main.warn(e);
@@ -148,7 +155,7 @@ public class GpxDrawHelper {
      * @param layerName layer name used to access its specific preferences
      **/
     public void readPreferences(String layerName) {
-        String spec = "layer " + layerName;
+        String spec = specName(layerName);
         forceLines = Main.pref.getBoolean("draw.rawgps.lines.force", spec, false);
         direction = Main.pref.getBoolean("draw.rawgps.direction", spec, false);
         lineWidth = Main.pref.getInteger("draw.rawgps.linewidth", spec, 0);
@@ -197,14 +204,14 @@ public class GpxDrawHelper {
             Main.pref.getBoolean("mappaint.gpx.use-antialiasing", false) ?
                     RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
-        if(lineWidth != 0) {
-           g.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+        if (lineWidth != 0) {
+            g.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
         }
         fixColors(visibleSegments);
         drawLines(g, mv, visibleSegments);
         drawArrows(g, mv, visibleSegments);
         drawPoints(g, mv, visibleSegments);
-        if(lineWidth != 0) {
+        if (lineWidth != 0) {
             g.setStroke(storedStroke);
         }
     }
@@ -246,7 +253,7 @@ public class GpxDrawHelper {
             } else if (colored == ColorMode.HDOP) {
                 for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
                     for (WayPoint trkPnt : segment) {
-                        Object val = trkPnt.attr.get("hdop");
+                        Object val = trkPnt.get(GpxConstants.PT_HDOP);
                         if (val != null) {
                             double hdop = ((Float) val).doubleValue();
                             if(hdop > maxval) {
@@ -297,7 +304,7 @@ public class GpxDrawHelper {
                 Color color = null;
 
                 if (colored == ColorMode.HDOP) {
-                    Float hdop = ((Float) trkPnt.attr.get("hdop"));
+                    Float hdop = (Float) trkPnt.get(GpxConstants.PT_HDOP);
                     color = hdopScale.getColor(hdop);
                 }
                 if (oldWp != null) { // other coloring modes need segment for calcuation
@@ -345,8 +352,6 @@ public class GpxDrawHelper {
         computeCacheInSync = true;
     }
 
-
-
     private void drawLines(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
         if (lines) {
             Point old = null;
@@ -356,12 +361,10 @@ public class GpxDrawHelper {
                     continue;
                 }
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
-                if (trkPnt.drawLine) {
-                    // skip points that are on the same screenposition
-                    if (old != null && ((old.x != screen.x) || (old.y != screen.y))) {
-                        g.setColor(trkPnt.customColoring);
-                        g.drawLine(old.x, old.y, screen.x, screen.y);
-                    }
+                // skip points that are on the same screenposition
+                if (trkPnt.drawLine && old != null && ((old.x != screen.x) || (old.y != screen.y))) {
+                    g.setColor(trkPnt.customColoring);
+                    g.drawLine(old.x, old.y, screen.x, screen.y);
                 }
                 old = screen;
             }
@@ -443,9 +446,9 @@ public class GpxDrawHelper {
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
 
 
-                if (hdopCircle && trkPnt.attr.get("hdop") != null) {
+                if (hdopCircle && trkPnt.get(GpxConstants.PT_HDOP) != null) {
                     // hdop value
-                    float hdop = ((Float)trkPnt.attr.get("hdop"));
+                    float hdop = (Float)trkPnt.get(GpxConstants.PT_HDOP);
                     if (hdop < 0) {
                         hdop = 0;
                     }
@@ -533,7 +536,6 @@ public class GpxDrawHelper {
 
     public void drawColorBar(Graphics2D g, MapView mv) {
         int w = mv.getWidth();
-        int h = mv.getHeight();
         if (colored == ColorMode.HDOP) {
             hdopScale.drawColorBar(g, w-30, 50, 20, 100, 1.0);
         } else if (colored == ColorMode.VELOCITY) {
@@ -542,5 +544,4 @@ public class GpxDrawHelper {
             directionScale.drawColorBar(g, w-30, 50, 20, 100, 180.0/Math.PI);
         }
     }
-
 }

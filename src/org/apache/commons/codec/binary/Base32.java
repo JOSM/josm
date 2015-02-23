@@ -39,7 +39,7 @@ package org.apache.commons.codec.binary;
  * @see <a href="http://www.ietf.org/rfc/rfc4648.txt">RFC 4648</a>
  *
  * @since 1.5
- * @version $Id: Base32.java 1571406 2014-02-24 19:38:15Z ggregory $
+ * @version $Id: Base32.java 1619949 2014-08-22 22:56:08Z ggregory $
  */
 public class Base32 extends BaseNCodec {
 
@@ -526,7 +526,7 @@ public class Base32 extends BaseNCodec {
     }
 
     /**
-     * Returns whether or not the <code>octet</code> is in the Base32 alphabet.
+     * Returns whether or not the {@code octet} is in the Base32 alphabet.
      *
      * @param octet
      *            The value to test

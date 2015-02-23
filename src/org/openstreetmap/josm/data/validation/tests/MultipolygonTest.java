@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.geom.GeneralPath;
 import java.text.MessageFormat;
@@ -53,6 +54,7 @@ public class MultipolygonTest extends Test {
     protected static final int NOT_CLOSED = 1609;
     protected static final int NO_STYLE = 1610;
     protected static final int NO_STYLE_POLYGON = 1611;
+    protected static final int OUTER_STYLE = 1613;
 
     private static ElemStyles styles;
 
@@ -147,7 +149,7 @@ public class MultipolygonTest extends Test {
 
     @Override
     public void visit(Way w) {
-        if (!w.isArea() && ElemStyles.hasAreaElemStyle(w, false)) {
+        if (!w.isArea() && ElemStyles.hasOnlyAreaElemStyle(w)) {
             List<Node> nodes = w.getNodes();
             if (nodes.size()<1) return; // fix zero nodes bug
             for (String key : keysCheckedByAnotherTest) {
@@ -204,8 +206,7 @@ public class MultipolygonTest extends Test {
 
             List<List<Node>> innerWays = joinWays(polygon.getInnerWays()); // Side effect - sets nonClosedWays
             List<List<Node>> outerWays = joinWays(polygon.getOuterWays());
-            if (styles != null) {
-
+            if (styles != null && !"boundary".equals(r.get("type"))) {
                 AreaElemStyle area = ElemStyles.getAreaElemStyle(r, false);
                 boolean areaStyle = area != null;
                 // If area style was not found for relation then use style of ways
@@ -216,13 +217,14 @@ public class MultipolygonTest extends Test {
                             break;
                         }
                     }
-                    if (!"boundary".equals(r.get("type"))) {
-                        if (area == null) {
-                            addError(r, new TestError(this, Severity.OTHER, tr("No style for multipolygon"), NO_STYLE, r));
-                        } else {
-                            addError(r, new TestError(this, Severity.OTHER, tr("No style in multipolygon relation"),
-                                NO_STYLE_POLYGON, r));
-                        }
+                    if (area == null) {
+                        addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
+                    } else {
+                        /* old style multipolygon - solve: copy tags from outer way to multipolygon */
+                        addError(r, new TestError(this, Severity.WARNING, 
+                                trn("Multipolygon relation should be tagged with area tags and not the outer way",
+                                        "Multipolygon relation should be tagged with area tags and not the outer ways", polygon.getOuterWays().size()),
+                           NO_STYLE_POLYGON, r));
                     }
                 }
 
@@ -234,19 +236,23 @@ public class MultipolygonTest extends Test {
                             List<OsmPrimitive> l = new ArrayList<>();
                             l.add(r);
                             l.add(wInner);
-                            addError(r, new TestError(this, Severity.WARNING, tr("Style for inner way equals multipolygon"),
+                            addError(r, new TestError(this, Severity.OTHER, tr("With the currently used mappaint style the style for inner way equals the multipolygon style"),
                                     INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
                         }
                     }
-                    if(!areaStyle) {
-                        for (Way wOuter : polygon.getOuterWays()) {
-                            AreaElemStyle areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
-                            if (areaOuter != null && !area.equals(areaOuter)) {
-                                List<OsmPrimitive> l = new ArrayList<>();
-                                l.add(r);
-                                l.add(wOuter);
-                                addError(r, new TestError(this, Severity.WARNING, tr("Style for outer way mismatches"),
+                    for (Way wOuter : polygon.getOuterWays()) {
+                        AreaElemStyle areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
+                        if (areaOuter != null) {
+                            List<OsmPrimitive> l = new ArrayList<>();
+                            l.add(r);
+                            l.add(wOuter);
+                            if (!area.equals(areaOuter)) {
+                                addError(r, new TestError(this, Severity.WARNING, !areaStyle ? tr("Style for outer way mismatches")
+                                : tr("Style for outer way mismatches polygon"),
                                 OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
+                            } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
+                                addError(r, new TestError(this, Severity.WARNING, tr("Area style on outer way"), OUTER_STYLE,
+                                l, Collections.singletonList(wOuter)));
                             }
                         }
                     }

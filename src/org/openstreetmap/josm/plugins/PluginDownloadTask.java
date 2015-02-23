@@ -39,11 +39,11 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
      * @since 6867
      */
     public static final String PLUGIN_MIME_TYPES = "application/java-archive, application/zip; q=0.9, application/octet-stream; q=0.5";
-    
+
     private final Collection<PluginInformation> toUpdate = new LinkedList<>();
     private final Collection<PluginInformation> failed = new LinkedList<>();
     private final Collection<PluginInformation> downloaded = new LinkedList<>();
-    private Exception lastException;
+    //private Exception lastException;
     private boolean canceled;
     private HttpURLConnection downloadConnection;
 
@@ -110,7 +110,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
                         tr("Skip Download") }
             );
             dialog.setContent(tr("JOSM version {0} required for plugin {1}.", pi.mainversion, pi.name));
-            dialog.setButtonIcons(new String[] { "download.png", "cancel.png" });
+            dialog.setButtonIcons(new String[] { "download", "cancel" });
             dialog.showDialog();
             int answer = dialog.getValue();
             if (answer != 1)
@@ -154,7 +154,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     protected void realRun() throws SAXException, IOException {
         File pluginDir = Main.pref.getPluginsDirectory();
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
-            lastException = new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
+            /*lastException =*/ new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
             failed.addAll(toUpdate);
             return;
         }
@@ -186,18 +186,18 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     }
 
     /**
-     * Replies the list of successfully downloaded plugins
+     * Replies the list of plugins whose download has failed.
      *
-     * @return the list of successfully downloaded plugins
+     * @return the list of plugins whose download has failed
      */
     public Collection<PluginInformation> getFailedPlugins() {
         return failed;
     }
 
     /**
-     * Replies the list of plugins whose download has failed
+     * Replies the list of successfully downloaded plugins.
      *
-     * @return the list of plugins whose download has failed
+     * @return the list of successfully downloaded plugins
      */
     public Collection<PluginInformation> getDownloadedPlugins() {
         return downloaded;

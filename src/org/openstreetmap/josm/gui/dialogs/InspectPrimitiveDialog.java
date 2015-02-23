@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +43,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Geometry;
@@ -94,7 +94,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     protected JPanel buildDataPanel() {
         JPanel p = new JPanel(new GridBagLayout());
         JosmTextArea txtData = new JosmTextArea();
-        txtData.setFont(new Font("Monospaced", txtData.getFont().getStyle(), txtData.getFont().getSize()));
+        txtData.setFont(GuiHelper.getMonospacedFont(txtData));
         txtData.setEditable(false);
         txtData.setText(buildDataText());
         txtData.setSelectionStart(0);
@@ -324,7 +324,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     protected void buildMapPaintPanel(JPanel p) {
         p.setLayout(new GridBagLayout());
         txtMappaint = new JosmTextArea();
-        txtMappaint.setFont(new Font("Monospaced", txtMappaint.getFont().getStyle(), txtMappaint.getFont().getSize()));
+        txtMappaint.setFont(GuiHelper.getMonospacedFont(txtMappaint));
         txtMappaint.setEditable(false);
 
         p.add(new JScrollPane(txtMappaint), GBC.std().fill());
@@ -336,31 +336,35 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         NavigatableComponent nc = Main.map.mapView;
         double scale = nc.getDist100Pixel();
 
-        for (OsmPrimitive osm : sel) {
-            txtMappaint.append(tr("Styles Cache for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance())));
+        MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+        try {
+            for (OsmPrimitive osm : sel) {
+                txtMappaint.append(tr("Styles Cache for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance())));
 
-            MultiCascade mc = new MultiCascade();
+                MultiCascade mc = new MultiCascade();
 
-            for (StyleSource s : elemstyles.getStyleSources()) {
-                if (s.active) {
-                    txtMappaint.append(tr("\n\n> applying {0} style \"{1}\"\n", getSort(s), s.getDisplayString()));
-                    s.apply(mc, osm, scale, null, false);
-                    txtMappaint.append(tr("\nRange:{0}", mc.range));
-                    for (Entry<String, Cascade> e : mc.getLayers()) {
-                        txtMappaint.append("\n " + e.getKey() + ": \n" + e.getValue());
+                for (StyleSource s : elemstyles.getStyleSources()) {
+                    if (s.active) {
+                        txtMappaint.append(tr("\n\n> applying {0} style \"{1}\"\n", getSort(s), s.getDisplayString()));
+                        s.apply(mc, osm, scale, false);
+                        txtMappaint.append(tr("\nRange:{0}", mc.range));
+                        for (Entry<String, Cascade> e : mc.getLayers()) {
+                            txtMappaint.append("\n " + e.getKey() + ": \n" + e.getValue());
+                        }
+                    } else {
+                        txtMappaint.append(tr("\n\n> skipping \"{0}\" (not active)", s.getDisplayString()));
                     }
-                } else {
-                    txtMappaint.append(tr("\n\n> skipping \"{0}\" (not active)", s.getDisplayString()));
                 }
+                txtMappaint.append(tr("\n\nList of generated Styles:\n"));
+                StyleList sl = elemstyles.get(osm, scale, nc);
+                for (ElemStyle s : sl) {
+                    txtMappaint.append(" * " + s + "\n");
+                }
+                txtMappaint.append("\n\n");
             }
-            txtMappaint.append(tr("\n\nList of generated Styles:\n"));
-            StyleList sl = elemstyles.get(osm, scale, nc);
-            for (ElemStyle s : sl) {
-                txtMappaint.append(" * " + s + "\n");
-            }
-            txtMappaint.append("\n\n");
+        } finally {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
         }
-
         if (sel.size() == 2) {
             List<OsmPrimitive> selList = new ArrayList<>(sel);
             StyleCache sc1 = selList.get(0).mappaintStyle;

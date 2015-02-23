@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -18,7 +17,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -31,48 +29,6 @@ public abstract class AbstractInfoAction extends JosmAction {
 
     public AbstractInfoAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register, String toolbarId, boolean installAdapters) {
         super(name, iconName, tooltip, shortcut, register, toolbarId, installAdapters);
-    }
-
-    /**
-     * Replies the base URL for browsing information about about a primitive.
-     *
-     * @return the base URL, i.e. https://www.openstreetmap.org
-     */
-    public static String getBaseBrowseUrl() {
-        String baseUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
-        Pattern pattern = Pattern.compile("/api/?$");
-        String ret = pattern.matcher(baseUrl).replaceAll("");
-        if (ret.equals(baseUrl)) {
-            Main.warn(tr("Unexpected format of API base URL. Redirection to info or history page for OSM object will probably fail. API base URL is: ''{0}''",baseUrl));
-        }
-        for (String prefix : new String[]{"http://api.openstreetmap.org/", "https://api.openstreetmap.org/"}) {
-            if (ret.startsWith(prefix)) {
-                ret = Main.getOSMWebsite() + "/" + ret.substring(prefix.length());
-                break;
-            }
-        }
-        return ret;
-    }
-
-    /**
-     * Replies the base URL for browsing information about a user.
-     *
-     * @return the base URL, i.e. https://www.openstreetmap.org/user
-     */
-    public static String getBaseUserUrl() {
-        String baseUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
-        Pattern pattern = Pattern.compile("/api/?$");
-        String ret =  pattern.matcher(baseUrl).replaceAll("/user");
-        if (ret.equals(baseUrl)) {
-            Main.warn(tr("Unexpected format of API base URL. Redirection to user page for OSM user will probably fail. API base URL is: ''{0}''",baseUrl));
-        }
-        for (String prefix : new String[]{"http://api.openstreetmap.org/", "https://api.openstreetmap.org/"}) {
-            if (ret.startsWith(prefix)) {
-                ret = Main.getOSMWebsite() + "/" + ret.substring(prefix.length());
-                break;
-            }
-        }
-        return ret;
     }
 
     public static boolean confirmLaunchMultiple(int numBrowsers) {

@@ -12,7 +12,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -41,6 +40,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -48,7 +49,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import org.apache.tools.bzip2.CBZip2InputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 
@@ -156,7 +157,11 @@ public final class Utils {
     }
 
     /**
-     * Get minimum of 3 values
+     * Returns the minimum of three values.
+     * @param   a   an argument.
+     * @param   b   another argument.
+     * @param   c   another argument.
+     * @return  the smaller of {@code a}, {@code b} and {@code c}.
      */
     public static int min(int a, int b, int c) {
         if (b < c) {
@@ -170,10 +175,29 @@ public final class Utils {
         }
     }
 
+    /**
+     * Returns the greater of four {@code int} values. That is, the
+     * result is the argument closer to the value of
+     * {@link Integer#MAX_VALUE}. If the arguments have the same value,
+     * the result is that same value.
+     *
+     * @param   a   an argument.
+     * @param   b   another argument.
+     * @param   c   another argument.
+     * @param   d   another argument.
+     * @return  the larger of {@code a}, {@code b}, {@code c} and {@code d}.
+     */
     public static int max(int a, int b, int c, int d) {
         return Math.max(Math.max(a, b), Math.max(c, d));
     }
 
+    /**
+     * Ensures a logical condition is met. Otherwise throws an assertion error.
+     * @param condition the condition to be met
+     * @param message Formatted error message to raise if condition is not met
+     * @param data Message parameters, optional
+     * @throws AssertionError if the condition is not met
+     */
     public static void ensure(boolean condition, String message, Object...data) {
         if (!condition)
             throw new AssertionError(
@@ -186,7 +210,7 @@ public final class Utils {
      */
     public static int mod(int a, int n) {
         if (n <= 0)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("n must be <= 0 but is "+n);
         int res = a % n;
         if (res < 0) {
             res += n;
@@ -203,12 +227,9 @@ public final class Utils {
      * @return null if values is null. The joined string otherwise.
      */
     public static String join(String sep, Collection<?> values) {
-        if (sep == null)
-            throw new IllegalArgumentException();
+        CheckParameterUtil.ensureParameterNotNull(sep, "sep");
         if (values == null)
             return null;
-        if (values.isEmpty())
-            return "";
         StringBuilder s = null;
         for (Object a : values) {
             if (a == null) {
@@ -220,7 +241,7 @@ public final class Utils {
                 s = new StringBuilder(a.toString());
             }
         }
-        return s.toString();
+        return s != null ? s.toString() : "";
     }
 
     /**
@@ -308,7 +329,20 @@ public final class Utils {
     }
 
     /**
-     * Simple file copy function that will overwrite the target file.<br>
+     * Copies the given array. Unlike {@link Arrays#copyOf}, this method is null-safe.
+     * @param array The array to copy
+     * @return A copy of the original array, or {@code null} if {@code array} is null
+     * @since 7436
+     */
+    public static int[] copyArray(int[] array) {
+        if (array != null) {
+            return Arrays.copyOf(array, array.length);
+        }
+        return null;
+    }
+
+    /**
+     * Simple file copy function that will overwrite the target file.
      * @param in The source file
      * @param out The destination file
      * @return the path to the target file
@@ -316,12 +350,43 @@ public final class Utils {
      * @throws IllegalArgumentException If {@code in} or {@code out} is {@code null}
      * @since 7003
      */
-    public static Path copyFile(File in, File out) throws IOException, IllegalArgumentException  {
+    public static Path copyFile(File in, File out) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(in, "in");
         CheckParameterUtil.ensureParameterNotNull(out, "out");
         return Files.copy(in.toPath(), out.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
+    /**
+     * Recursive directory copy function
+     * @param in The source directory
+     * @param out The destination directory
+     * @throws IOException If any I/O error ooccurs
+     * @throws IllegalArgumentException If {@code in} or {@code out} is {@code null}
+     * @since 7835
+     */
+    public static void copyDirectory(File in, File out) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(in, "in");
+        CheckParameterUtil.ensureParameterNotNull(out, "out");
+        if (!out.exists() && !out.mkdirs()) {
+            Main.warn("Unable to create directory "+out.getPath());
+        }
+        for (File f : in.listFiles()) {
+            File target = new File(out, f.getName());
+            if (f.isDirectory()) {
+                copyDirectory(f, target);
+            } else {
+                copyFile(f, target);
+            }
+        }
+    }
+
+    /**
+     * Copy data from source stream to output stream.
+     * @param source source stream
+     * @param destination target stream
+     * @return number of bytes copied
+     * @throws IOException if any I/O error occurs
+     */
     public static int copyStream(InputStream source, OutputStream destination) throws IOException {
         int count = 0;
         byte[] b = new byte[512];
@@ -333,18 +398,24 @@ public final class Utils {
         return count;
     }
 
+    /**
+     * Deletes a directory recursively.
+     * @param path The directory to delete
+     * @return  <code>true</code> if and only if the file or directory is
+     *          successfully deleted; <code>false</code> otherwise
+     */
     public static boolean deleteDirectory(File path) {
         if( path.exists() ) {
             File[] files = path.listFiles();
             for (File file : files) {
                 if (file.isDirectory()) {
                     deleteDirectory(file);
-                } else {
-                    file.delete();
+                } else if (!file.delete()) {
+                    Main.warn("Unable to delete file: "+file.getPath());
                 }
             }
         }
-        return( path.delete() );
+        return path.delete();
     }
 
     /**
@@ -609,7 +680,6 @@ public final class Utils {
     public static <A, B> List<B> transform(final List<? extends A> l, final Function<A, B> f) {
         return new AbstractList<B>() {
 
-
             @Override
             public int size() {
                 return l.size();
@@ -619,8 +689,6 @@ public final class Utils {
             public B get(int index) {
                 return f.apply(l.get(index));
             }
-
-
         };
     }
 
@@ -636,6 +704,9 @@ public final class Utils {
     public static HttpURLConnection openHttpConnection(URL httpURL) throws IOException {
         if (httpURL == null || !HTTP_PREFFIX_PATTERN.matcher(httpURL.getProtocol()).matches()) {
             throw new IllegalArgumentException("Invalid HTTP url");
+        }
+        if (Main.isDebugEnabled()) {
+            Main.debug("Opening HTTP connection to "+httpURL.toExternalForm());
         }
         HttpURLConnection connection = (HttpURLConnection) httpURL.openConnection();
         connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
@@ -657,7 +728,7 @@ public final class Utils {
     /**
      * Opens a connection to the given URL, sets the User-Agent property to JOSM's one, and decompresses stream if necessary.
      * @param url The url to open
-     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link CBZip2InputStream}
+     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link BZip2CompressorInputStream}
      *                   if the {@code Content-Type} header is set accordingly.
      * @return An stream for the given URL
      * @throws IOException if an I/O exception occurs.
@@ -684,20 +755,13 @@ public final class Utils {
      * @param in The raw input stream
      * @return a Bzip2 input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
      * @throws IOException if the given input stream does not contain valid BZ2 header
-     * @since 7119
+     * @since 7867
      */
-    public static CBZip2InputStream getBZip2InputStream(InputStream in) throws IOException {
+    public static BZip2CompressorInputStream getBZip2InputStream(InputStream in) throws IOException {
         if (in == null) {
             return null;
         }
-        BufferedInputStream bis = new BufferedInputStream(in);
-        int b = bis.read();
-        if (b != 'B')
-            throw new IOException(tr("Invalid bz2 file."));
-        b = bis.read();
-        if (b != 'Z')
-            throw new IOException(tr("Invalid bz2 file."));
-        return new CBZip2InputStream(bis, /* see #9537 */ true);
+        return new BZip2CompressorInputStream(in, /* see #9537 */ true);
     }
 
     /**
@@ -763,7 +827,7 @@ public final class Utils {
     /**
      * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param url The url to open
-     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link CBZip2InputStream}
+     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link BZip2CompressorInputStream}
      *                   if the {@code Content-Type} header is set accordingly.
      * @return An buffered stream reader for the given URL (using UTF-8)
      * @throws IOException if an I/O exception occurs.
@@ -884,7 +948,7 @@ public final class Utils {
      * @throws IllegalArgumentException if elapsedTime is &lt; 0
      * @since 6354
      */
-    public static String getDurationString(long elapsedTime) throws IllegalArgumentException {
+    public static String getDurationString(long elapsedTime) {
         if (elapsedTime < 0) {
             throw new IllegalArgumentException("elapsedTime must be >= 0");
         }
@@ -988,7 +1052,7 @@ public final class Utils {
         Throwable result = t;
         if (result != null) {
             Throwable cause = result.getCause();
-            while (cause != null && cause != result) {
+            while (cause != null && !cause.equals(result)) {
                 result = cause;
                 cause = result.getCause();
             }
@@ -1011,6 +1075,9 @@ public final class Utils {
 
     /**
      * If the string {@code s} is longer than {@code maxLength}, the string is cut and "..." is appended.
+     * @param s String to shorten
+     * @param maxLength maximum number of characters to keep (not including the "...")
+     * @return the shortened string
      */
     public static String shortenString(String s, int maxLength) {
         if (s != null && s.length() > maxLength) {
@@ -1062,5 +1129,38 @@ public final class Utils {
         if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("resource://"))
             return false;
         return true;
+    }
+
+    /**
+     * Returns a pair containing the number of threads (n), and a thread pool (if n > 1) to perform
+     * multi-thread computation in the context of the given preference key.
+     * @param pref The preference key
+     * @return a pair containing the number of threads (n), and a thread pool (if n > 1, null otherwise)
+     * @since 7423
+     */
+    public static Pair<Integer, ExecutorService> newThreadPool(String pref) {
+        int noThreads = Main.pref.getInteger(pref, Runtime.getRuntime().availableProcessors());
+        ExecutorService pool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads);
+        return new Pair<>(noThreads, pool);
+    }
+
+    /**
+     * Updates a given system property.
+     * @param key The property key
+     * @param value The property value
+     * @return the previous value of the system property, or {@code null} if it did not have one.
+     * @since 7894
+     */
+    public static String updateSystemProperty(String key, String value) {
+        if (value != null) {
+            String old = System.setProperty(key, value);
+            if (!key.toLowerCase().contains("password")) {
+                Main.debug("System property '"+key+"' set to '"+value+"'. Old value was '"+old+"'");
+            } else {
+                Main.debug("System property '"+key+"' changed.");
+            }
+            return old;
+        }
+        return null;
     }
 }

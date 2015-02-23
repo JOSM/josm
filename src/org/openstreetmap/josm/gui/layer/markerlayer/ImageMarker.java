@@ -38,7 +38,7 @@ public class ImageMarker extends ButtonMarker {
     public URL imageUrl;
 
     public ImageMarker(LatLon ll, URL imageUrl, MarkerLayer parentLayer, double time, double offset) {
-        super(ll, "photo.png", parentLayer, time, offset);
+        super(ll, "photo", parentLayer, time, offset);
         this.imageUrl = imageUrl;
     }
 
@@ -92,8 +92,7 @@ public class ImageMarker extends ButtonMarker {
         WayPoint wpt = super.convertToWayPoint();
         GpxLink link = new GpxLink(imageUrl.toString());
         link.type = "image";
-        wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
+        wpt.put(GpxConstants.META_LINKS, Collections.singleton(link));
         return wpt;
     }
-
 }

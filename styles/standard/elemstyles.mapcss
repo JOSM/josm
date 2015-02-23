@@ -8,62 +8,99 @@ Documentation of MapCSS format:
 
 */
 
-
 meta {
     icon: "dialogs/mappaint/josm_small.png";
 }
 
-/***************************/
-/* "work in progress" tags */
-/***************************/
-
-node[fixme]::core_fixme,
-node[FIXME]::core_fixme {
-    object-z-index: 20;
-    icon-image: "misc/fixme-annotation.png";
+canvas {
+    default-points: false;
 }
-node[note]::core_note {
-    object-z-index: 10;
-    icon-image: "misc/note-annotation.png";
+
+/*************************/
+/* create style settings */
+/*************************/
+
+setting::hide_icons {
+  type: boolean;
+  label: tr("Hide icons at low zoom");
+  default: true;
+}
+
+setting::shrink_nodes {
+  type: boolean;
+  label: tr("Less obtrusive node symbols at low zoom");
+  default: true;
+}
+
+setting::highway_labels {
+  type: boolean;
+  label: tr("Display street labels (at high zoom)");
+  default: true;
+}
+
+setting::alt_turn_icons {
+  type: boolean;
+  label: tr("Use alternative turn restriction icon set");
+  default: false;
 }
 
 /*********************/
 /* turn restrictions */
 /*********************/
 
-relation[restriction=no_left_turn],
-node[restriction=no_left_turn] {
+relation[restriction=no_left_turn][!setting("alt_turn_icons")] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_left_turn_red.png";
+    set icon_z17;
+    text: auto;
+}
+relation[restriction=no_left_turn][setting("alt_turn_icons")] {
     icon-image: "vehicle/restriction/turn_restrictions/no_left_turn.png";
+    set icon_z17;
     text: auto;
 }
-relation[restriction=no_right_turn],
-node[restriction=no_right_turn] {
+relation[restriction=no_right_turn][!setting("alt_turn_icons")] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_right_turn_red.png";
+    set icon_z17;
+    text: auto;
+}
+relation[restriction=no_right_turn][setting("alt_turn_icons")] {
     icon-image: "vehicle/restriction/turn_restrictions/no_right_turn.png";
+    set icon_z17;
     text: auto;
 }
-relation[restriction=no_straight_on],
-node[restriction=no_straight_on] {
+relation[restriction=no_straight_on][!setting("alt_turn_icons")] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_straight_on_red.png";
+    set icon_z17;
+    text: auto;
+}
+relation[restriction=no_straight_on][setting("alt_turn_icons")] {
     icon-image: "vehicle/restriction/turn_restrictions/no_straight_on.png";
+    set icon_z17;
     text: auto;
 }
-relation[restriction=no_u_turn],
-node[restriction=no_u_turn] {
+relation[restriction=no_u_turn] {
     icon-image: "vehicle/restriction/turn_restrictions/no_u_turn.png";
+    set icon_z17;
     text: auto;
 }
-relation[restriction=only_left_turn],
-node[restriction=only_left_turn] {
+relation[restriction=only_left_turn] {
     icon-image: "vehicle/restriction/turn_restrictions/only_left_turn.png";
+    set icon_z17;
     text: auto;
 }
-relation[restriction=only_right_turn],
-node[restriction=only_right_turn] {
+relation[restriction=only_right_turn] {
     icon-image: "vehicle/restriction/turn_restrictions/only_right_turn.png";
+    set icon_z17;
     text: auto;
 }
-relation[restriction=only_straight_on],
-node[restriction=only_straight_on] {
+relation[restriction=only_straight_on] {
     icon-image: "vehicle/restriction/turn_restrictions/only_straight_on.png";
+    set icon_z17;
+    text: auto;
+}
+node[restriction] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -80,7 +117,7 @@ way[bridge=covered]::core_bridge,
 way[bridge=low_water_crossing]::core_bridge,
 way[bridge=trestle]::core_bridge,
 way[bridge=aqueduct]::core_bridge {
-    major-z-index: 2.1;
+    major-z-index: 2;
     object-z-index: -1;
     width: +4;
     color: bridge#0000FF;
@@ -90,7 +127,7 @@ way[tunnel?]::core_tunnel,
 way[tunnel=culvert]::core_tunnel,
 way[tunnel=building_passage]::core_tunnel,
 way[tunnel=avalanche_protector]::core_tunnel {
-    major-z-index: 2.1;
+    major-z-index: 2;
     object-z-index: -1;
     width: +5;
     color: tunnel#964B00;
@@ -103,71 +140,7 @@ node[tunnel?!],
 node[cutting?!],
 node[embankment?!] {
     icon-image: "misc/deprecated.png";
-    text: auto;
-}
-
-/*****************************/
-/* building/entrance/address */
-/*****************************/
-
-node["addr:housenumber"],
-node["addr:postcode"] {
-    icon-image: "misc/housenumber.png";
-    text: auto;
-}
-way["addr:interpolation"=odd] {
-    width: 1;
-    color: address#1C86EE;
-    dashes: 15,4;
-}
-way["addr:interpolation"=even] {
-    width: 1;
-    color: address#1C86EE;
-    dashes: 4,4;
-}
-way["addr:interpolation"=all],
-way["addr:interpolation"=alphabetic] {
-    width: 1;
-    color: address#1C86EE;
-    dashes: 2,2;
-}
-area[building][!building?!] {
-    fill-color: building#cb9999;
-}
-node[building][!building?!] {
-    icon-image: "misc/landmark/building.png";
-    text: auto;
-}
-node[building=garage] {
-    icon-image: "misc/landuse/garages.png";
-    text: auto;
-}
-node[building=garages] {
-    icon-image: "misc/landuse/garages.png";
-    text: auto;
-}
-node[building=entrance] {
-    icon-image: "misc/entrance-yes.png";
-    text: auto;
-}
-node[entrance=yes] {
-    icon-image: "misc/entrance-yes.png";
-    text: auto;
-}
-node[entrance=main] {
-    icon-image: "misc/entrance-main.png";
-    text: auto;
-}
-node[entrance=service] {
-    icon-image: "misc/entrance-service.png";
-    text: auto;
-}
-node[entrance=exit] {
-    icon-image: "misc/entrance-exit.png";
-    text: auto;
-}
-node[entrance=emergency] {
-    icon-image: "misc/entrance-emergency.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -199,171 +172,191 @@ way[access=destination]::core_access {
     color: destination#8080ff;
     dashes: 2,2;
 }
-node[access?!] {
+node[traffic_sign][access?!] {
     icon-image: "vehicle/restriction/access.png";
+    set icon_z17;
 }
-node[access=permissive],
-node[access=private],
-node[access=destination] {
+node[traffic_sign][access=permissive],
+node[traffic_sign][access=private],
+node[traffic_sign][access=destination] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
-node[bicycle?!] {
+node[traffic_sign][bicycle?!] {
     icon-image: "vehicle/restriction/bicycle.png";
+    set icon_z17;
 }
-node[bicycle=designated] {
+node[traffic_sign][bicycle=designated] {
     icon-image: "vehicle/restriction/bicycle-designated.png";
+    set icon_z17;
     text: auto;
 }
-node[foot?!] {
+node[traffic_sign][foot?!] {
     icon-image: "vehicle/restriction/foot.png";
+    set icon_z17;
 }
-node[foot=designated] {
+node[traffic_sign][foot=designated] {
     icon-image: "vehicle/restriction/foot-designated.png";
+    set icon_z17;
     text: auto;
 }
-node[goods?!],
-node[hgv?!] {
+node[traffic_sign][goods?!],
+node[traffic_sign][hgv?!] {
     icon-image: "vehicle/restriction/goods.png";
+    set icon_z17;
 }
-node[horse?!] {
+node[traffic_sign][horse?!] {
     icon-image: "vehicle/restriction/horse.png";
+    set icon_z17;
 }
-node[horse=designated] {
+node[traffic_sign][horse=designated] {
     icon-image: "vehicle/restriction/horse-designated.png";
+    set icon_z17;
 }
-node[motorcycle?!] {
+node[traffic_sign][motorcycle?!] {
     icon-image: "vehicle/restriction/motorbike.png";
+    set icon_z17;
 }
-node[motorcar?!] {
+node[traffic_sign][motorcar?!] {
     icon-image: "vehicle/restriction/motorcar.png";
+    set icon_z17;
 }
-node[psv?!] {
+node[traffic_sign][psv?!] {
     icon-image: "vehicle/restriction/psv.png";
+    set icon_z17;
 }
-node[motorboat?!],
-node[boat?!] {
+node[traffic_sign][motorboat?!],
+node[traffic_sign][boat?!] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
 }
 node[noexit?] {
     icon-image: "vehicle/restriction/dead_end.png";
+    set icon_z17;
 }
-node[maxweight] {
+node[traffic_sign][maxweight] {
     icon-image: "vehicle/restriction/maxweight.png";
+    set icon_z17;
 }
-node[maxheight] {
+node[traffic_sign][maxheight] {
     icon-image: "vehicle/restriction/maxheight.png";
+    set icon_z17;
 }
-node[maxwidth] {
+node[traffic_sign][maxwidth] {
     icon-image: "vehicle/restriction/maxwidth.png";
+    set icon_z17;
 }
-node[maxlength] {
+node[traffic_sign][maxlength] {
     icon-image: "vehicle/restriction/maxlength.png";
+    set icon_z17;
 }
-node[maxspeed] {
-    icon-image: "vehicle/restriction/speed.png";
-}
-node[minspeed] {
+node[traffic_sign][minspeed] {
     icon-image: "vehicle/restriction/minspeed.png";
+    set icon_z17;
 }
-node[maxstay],
-node[toll] {
+node[traffic_sign][maxstay],
+node[traffic_sign][toll] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
 }
 
-/**************/
-/* place tags */
-/**************/
+/*****************************/
+/* building/entrance/address */
+/*****************************/
 
-/* lot's of "openGeoDB:..." tags can be found in germany */
-node["openGeoDB:type"=Stadt],
-node["openGeoDB:type"=Kreis],
-node["openGeoDB:type"=Gemeinde],
-node["openGeoDB:type"=Ort],
-node["openGeoDB:type"=District],
-node["openGeoDB:location"=locality] {
-    icon-image: "place/settlement/town.png";
+node["addr:housenumber"],
+node["addr:postcode"] {
+    icon-image: "misc/housenumber.png";
+    set icon_z17;
     text: auto;
 }
-area[place=continent],
-area[place=country],
-area[place=state],
-area[place=region],
-area[place=county],
-area[place=city],
-area[place=town],
-area[place=village],
-area[place=hamlet],
-area[place=isolated_dwelling],
-area[place=neighbourhood],
-area[place=suburb],
-area[place=locality],
-area[place=island],
-area[place=islet] {
-    fill-color: place#8de3cb;
+way["addr:interpolation"=odd] {
+    width: 1;
+    color: address#1C86EE;
+    dashes: 15,4;
 }
-node[place=continent],
-node[place=country],
-node[place=state],
-node[place=region],
-node[place=county] {
-    icon-image: "place/settlement/capital.png";
+way["addr:interpolation"=even] {
+    width: 1;
+    color: address#1C86EE;
+    dashes: 4,4;
+}
+way["addr:interpolation"=all],
+way["addr:interpolation"=alphabetic] {
+    width: 1;
+    color: address#1C86EE;
+    dashes: 2,2;
+}
+area[building][!building?!] {
+    fill-color: building#cb9999;
+}
+node[building][!building?!] {
+    icon-image: "misc/landmark/building.png";
+    set icon_z17;
     text: auto;
 }
-node[place=city] {
-    icon-image: "place/settlement/city.png";
+node[building=garage] {
+    icon-image: "misc/landuse/garages.png";
+    set icon_z17;
     text: auto;
 }
-node[place=town],
-node[place=village],
-node[place=hamlet],
-node[place=isolated_dwelling],
-node[place=neighbourhood],
-node[place=suburb] {
-    icon-image: "place/settlement/town.png";
+node[building=garages] {
+    icon-image: "misc/landuse/garages.png";
+    set icon_z17;
     text: auto;
 }
-node[place=locality] {
-    icon-image: "place/locality.png";
+node[entrance=yes] {
+    icon-image: "misc/entrance-yes.png";
+    set icon_z17;
     text: auto;
 }
-node[place=island] {
-    icon-image: "place/island.png";
+node[entrance=main] {
+    icon-image: "misc/entrance-main.png";
+    set icon_z17;
     text: auto;
 }
-node[place=islet] {
-    icon-image: "place/islet.png";
+node[entrance=service] {
+    icon-image: "misc/entrance-service.png";
+    set icon_z17;
     text: auto;
 }
-/* special display of unreviewed tiger data (USA) */
-way["tiger:reviewed"=no]::core_tiger {
-    major-z-index: -10;
-    width: 11;
-    color: tiger_data#808000;
-    opacity: 0.6;
+node[entrance=exit] {
+    icon-image: "misc/entrance-exit.png";
+    set icon_z17;
+    text: auto;
+}
+node[entrance=emergency] {
+    icon-image: "misc/entrance-emergency.png";
+    set icon_z17;
+    text: auto;
+}
+node[building=entrance] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
 }
 
 /****************/
 /* barrier tags */
 /****************/
 
-node[barrier] {
-    icon-image: "vehicle/restriction/barrier.png";
-    text: auto;
-}
 way[barrier=bollard] {
-    width: 3;
+    width: 2;
     color: barrier#F0F050;
     dashes: 3,9;
 }
 node[barrier=bollard] {
-    icon-image: "vehicle/restriction/bollard.png";
+    icon-image: "presets/bollard.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
 node[barrier=gate] {
     icon-image: "vehicle/gate.png";
+    set icon_z17;
     text: auto;
 }
+way[barrier=yes],
 way[barrier=hedge],
 way[barrier=fence],
 way[barrier=wall],
@@ -371,44 +364,60 @@ way[barrier=guard_rail],
 way[barrier=city_wall],
 way[barrier=retaining_wall],
 way[barrier=block],
-way[barrier=chain] {
-    width: 3;
+way[barrier=chain],
+way[barrier=ditch],
+way[barrier=kerb] {
+    width: 2;
     color: barrier#F0F050;
 }
 node[barrier=hedge],
 node[barrier=wall],
 node[barrier=guard_rail],
 node[barrier=city_wall],
-node[barrier=retaining_wall] {
+node[barrier=retaining_wall],
+node[barrier=ditch] {
     icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
+node[barrier=kerb] {
+    icon-image: "vehicle/kerb.svg";
+    set icon_z17;
     text: auto;
 }
 node[barrier=block] {
     icon-image: "vehicle/block.svg";
+    set icon_z17;
     text: auto;
 }
 node[barrier=chain] {
     icon-image: "vehicle/chain.svg";
+    set icon_z17;
     text: auto;
 }
 node[barrier=stile] {
-    icon-image: "vehicle/stile.png";
+    icon-image: "vehicle/stile.svg";
+    set icon_z17;
     text: auto;
 }
 node[barrier=turnstile] {
     icon-image: "vehicle/turnstile.png";
+    set icon_z17;
     text: auto;
 }
 node[barrier=cycle_barrier] {
     icon-image: "vehicle/cycle_barrier.png";
+    set icon_z17;
     text: auto;
 }
 node[barrier=lift_gate] {
     icon-image: "vehicle/lift_gate.png";
+    set icon_z17;
     text: auto;
 }
 node[barrier=swing_gate] {
     icon-image: "vehicle/swing_gate.png";
+    set icon_z17;
     text: auto;
 }
 area[barrier=toll_booth]:closed {
@@ -416,33 +425,43 @@ area[barrier=toll_booth]:closed {
 }
 node[barrier=toll_booth] {
     icon-image: "vehicle/toll_booth.png";
+    set icon_z17;
     text: auto;
 }
 node[barrier=entrance] {
     icon-image: "vehicle/entrance.png";
+    set icon_z17;
     text: auto;
 }
 node[barrier=cattle_grid] {
     icon-image: "vehicle/cattle_grid.png";
+    set icon_z17;
     text: auto;
 }
 node[barrier=border_control] {
     icon-image: "vehicle/border_control.png";
+    set icon_z17;
     text: auto;
 }
 node[barrier=sally_port] {
     icon-image: "vehicle/sally_port.png";
+    set icon_z17;
+    text: auto;
+}
+node[barrier=spikes] {
+    icon-image: "vehicle/spikes.svg";
+    set icon_z17;
     text: auto;
 }
 node[barrier=fence],
 node[barrier=kissing_gate],
 node[barrier=bump_gate],
 node[barrier=portcullis],
-node[barrier=spikes],
 node[barrier=bus_trap],
 node[barrier=drawbridge],
 node[barrier=hampshire_gate] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -451,7 +470,7 @@ node[barrier=hampshire_gate] {
 /****************/
 
 way[motorroad?]::core_motorroad {
-    major-z-index: 2.1;
+    major-z-index: 2;
     z-index: -1;
     width: +4;
     color: motorroad#3377ff;
@@ -500,22 +519,23 @@ way[highway=unclassified] {
     width: 2;
     color: street#c0c0c0;
 }
+way[highway=escape] {
+    width: 3;
+    color: street#c0c0c0;
+    dashes: 3,3;
+}
 way[highway=road] {
     width: 2;
     casing-width: 0.5;
     casing-color: #ff9696;
     color: #770000;
 }
-way[highway=unsurfaced] {
-    width: 1;
-    color: street#c0c0c0;
-}
 way[highway=track][area?], relation[type=multipolygon][highway=track] {
-    fill-color: highway_track#006600;
+    fill-color: highway_track#6e541c;
 }
 way[highway=track] {
-    width: 1;
-    color: highway_track#006600;
+    width: 2;
+    color: highway_track#6e541c;
 }
 way[highway=residential] {
     width: 2;
@@ -536,7 +556,7 @@ way[highway=service][!area?] {
 }
 way[highway=bridleway] {
     width: 1;
-    color: horse#c08000;
+    color: horse#a18559;
 }
 way[highway=cycleway] {
     width: 1;
@@ -598,12 +618,13 @@ way[highway=pedestrian] {
     color: foot#00ff00;
 }
 way[highway=steps] {
-    width: 1;
+    width: 3;
     color: foot#00ff00;
     dashes: 2,2;
 }
 node[highway=steps] {
     icon-image: "transport/steps.png";
+    set icon_z17;
     text: auto;
 }
 way[highway=bus_guideway] {
@@ -615,51 +636,119 @@ way[highway=raceway] {
     width: 1;
     color: raceway#ff80ff;
 }
+way[highway=raceway][area?], relation[type=multipolygon][highway=raceway] {
+    fill-color: raceway#ff80ff;
+}
+area[junction=yes] {
+    fill-color: junction#c0c0c0;
+}
+node[junction=yes] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[highway=traffic_mirror] {
+    icon-image: "vehicle/traffic_mirror.svg";
+    set icon_z17;
+    text: auto;
+}
 node[direction=clockwise] {
     icon-image: "vehicle/restriction/roundabout_left.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=mini_roundabout] {
     icon-image: "vehicle/restriction/roundabout_left.png";
+    set icon_z17;
     text: auto;
 }
 node:righthandtraffic[highway=mini_roundabout] {
     icon-image: "vehicle/restriction/roundabout_right.png";
+    set icon_z17;
 }
 node[highway=stop] {
     icon-image: "vehicle/restriction/stop.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=give_way] {
     icon-image: "vehicle/restriction/right_of_way.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=traffic_signals] {
-    icon-image: "vehicle/restriction/traffic-light.png";
+    icon-image: "vehicle/traffic_signals.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=traffic_signals][crossing][crossing!=no] {
+    icon-image: "vehicle/traffic_signals_crossing.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=traffic_signals][crossing_ref=zebra] {
+    icon-image: "vehicle/traffic_signals_crossing_ref_zebra.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=traffic_signals][crossing=island] {
+    icon-image: "vehicle/traffic_signals_crossing_island.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=traffic_signals][crossing=traffic_signals] {
+    icon-image: "vehicle/traffic_signals_crossing_traffic_signals.svg";
+    set icon_z17;
     text: auto;
 }
 node[highway=street_lamp] {
     icon-image: "misc/streetlamp.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=speed_camera] {
     icon-image: "vehicle/restriction/speed_trap.png";
+    set icon_z17;
     text: auto;
 }
 node[traffic_sign=city_limit] {
     icon-image: "vehicle/restriction/citylimit.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=crossing] {
-    icon-image: "vehicle/zebra_crossing.png";
+    icon-image: "vehicle/crossing.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=crossing][crossing=unmarked] {
+    icon-image: "vehicle/crossing_unmarked.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=crossing][crossing=island] {
+    icon-image: "vehicle/crossing_island.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=crossing][crossing_ref=zebra] {
+    icon-image: "vehicle/crossing_ref_zebra.svg";
+    set icon_z17;
+    text: auto;
+}
+node[highway=crossing][crossing=traffic_signals] {
+    icon-image: "vehicle/crossing_traffic_signals.svg";
+    set icon_z17;
     text: auto;
 }
 node[highway=incline], node[highway=incline_steep] {
     icon-image: "vehicle/restriction/incline.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=motorway_junction] {
-    icon-image: "vehicle/exit.png";
+    icon-image: "vehicle/motorway_junction.svg";
+    set icon_z17;
     text: auto;
 }
 area[highway=services] {
@@ -667,6 +756,7 @@ area[highway=services] {
 }
 node[highway=services] {
     icon-image: "vehicle/services.png";
+    set icon_z17;
     text: auto;
 }
 area[highway=rest_area] {
@@ -674,10 +764,12 @@ area[highway=rest_area] {
 }
 node[highway=rest_area] {
     icon-image: "vehicle/parking.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=ford], node[ford?] {
     icon-image: "vehicle/ford.png";
+    set icon_z17;
     text: auto;
 }
 way[ford?]::core_ford {
@@ -695,18 +787,25 @@ way[highway=platform] {
 }
 node[highway=turning_circle] {
     icon-image: "vehicle/turning_circle.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=turning_loop] {
     icon-image: "vehicle/turning_loop.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=passing_place] {
     icon-image: "vehicle/passing_place.png";
+    set icon_z17;
     text: auto;
+}
+area[highway=elevator] {
+    fill-color: elevator#a6bace;
 }
 node[highway=elevator] {
     icon-image: "service/elevator.png";
+    set icon_z17;
     text: auto;
 }
 way[highway=construction] {
@@ -716,6 +815,7 @@ way[highway=construction] {
 }
 node[highway=construction] {
     icon-image: "misc/construction.png";
+    set icon_z17;
     text: auto;
 }
 area[highway=emergency_access_point] {
@@ -723,6 +823,7 @@ area[highway=emergency_access_point] {
 }
 node[highway=emergency_access_point] {
     icon-image: "service/emergency_access_point.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=motorway], node[highway=motorway_link],
@@ -745,6 +846,7 @@ node[highway=pedestrian],
 node[highway=bus_guideway],
 node[highway=platform] {
     icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -753,16 +855,19 @@ node[highway=platform] {
 /************************/
 
 node[traffic_calming] {
-    icon-image: "vehicle/traffic_calming.png";
+    icon-image: "vehicle/traffic_calming_blue.png";
+    set icon_z17;
     text: auto;
 }
 node[traffic_calming=chicane] {
     icon-image: "vehicle/chicane.png";
+    set icon_z17;
     text: auto;
 }
 node[traffic_calming=choker],
 node[traffic_calming=cushion] {
     icon-image: "vehicle/passing_place.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -772,10 +877,12 @@ node[traffic_calming=cushion] {
 
 node[junction=roundabout] {
     icon-image: "vehicle/restriction/roundabout_left.png";
+    set icon_z17;
     text: auto;
 }
 node:righthandtraffic[junction=roundabout] {
     icon-image: "vehicle/restriction/roundabout_right.png";
+    set icon_z17;
 }
 
 /*****************/
@@ -883,6 +990,7 @@ node[cycleway=lane], node[cycleway=opposite_lane],
 node[cycleway=track], node[cycleway=opposite_track],
 node[cycleway=opposite] {
     icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -891,27 +999,32 @@ node[cycleway=opposite] {
 /******************/
 
 way[highway=track][tracktype=grade1] {
-    width: 2;
-    dashes: 2,2;
+    dashes: 8,1;
 }
 way[highway=track][tracktype=grade2] {
-    dashes: 2,3;
+    dashes: 6,2;
 }
 way[highway=track][tracktype=grade3] {
-    dashes: 2,4;
+    dashes: 4,3;
 }
 way[highway=track][tracktype=grade4] {
-    dashes: 2,5;
+    dashes: 4,5;
 }
 way[highway=track][tracktype=grade5] {
-    dashes: 1,5;
+    dashes: 4,7;
 }
 
 /**************/
 /* piste tags */
 /**************/
 
-area[piste:difficulty=easy]:closed::core_piste {
+way[route=ski]::core_piste {
+    z-index: -1;
+    modifier: false;
+    width: 6;
+    color: ski#809bc0;
+}
+area[piste:difficulty=easy][!highway]:closed::core_piste {
     fill-color: piste_easy#0000ff;
 }
 way[piste:difficulty=easy]::core_piste {
@@ -920,7 +1033,7 @@ way[piste:difficulty=easy]::core_piste {
     width: 6;
     color: piste_easy#0000ff;
 }
-area[piste:difficulty=intermediate]:closed::core_piste {
+area[piste:difficulty=intermediate][!highway]:closed::core_piste {
     fill-color: piste_intermediate#ff0000;
 }
 way[piste:difficulty=intermediate]::core_piste {
@@ -929,7 +1042,7 @@ way[piste:difficulty=intermediate]::core_piste {
     width: 6;
     color: piste_intermediate#ff0000;
 }
-area[piste:difficulty=advanced]:closed::core_piste {
+area[piste:difficulty=advanced][!highway]:closed::core_piste {
     fill-color: piste_advanced#606060;
 }
 way[piste:difficulty=advanced]::core_piste {
@@ -938,7 +1051,7 @@ way[piste:difficulty=advanced]::core_piste {
     width: 6;
     color: piste_advanced#606060;
 }
-area[piste:difficulty=expert]:closed::core_piste {
+area[piste:difficulty=expert][!highway]:closed::core_piste {
     fill-color: piste_expert#606060;
 }
 way[piste:difficulty=expert]::core_piste {
@@ -947,7 +1060,7 @@ way[piste:difficulty=expert]::core_piste {
     width: 6;
     color: piste_expert#606060;
 }
-area[piste:difficulty=freeride]:closed::core_piste {
+area[piste:difficulty=freeride][!highway]:closed::core_piste {
     fill-color: piste_freeride#ffff00;
 }
 way[piste:difficulty=freeride]::core_piste {
@@ -956,7 +1069,7 @@ way[piste:difficulty=freeride]::core_piste {
     width: 6;
     color: piste_freeride#ffff00;
 }
-area[piste:difficulty=novice]:closed::core_piste {
+area[piste:difficulty=novice][!highway]:closed::core_piste {
     fill-color: piste_novice#00ff00;
 }
 way[piste:difficulty=novice]::core_piste {
@@ -972,21 +1085,21 @@ node[piste:difficulty=expert],
 node[piste:difficulty=freeride],
 node[piste:difficulty=novice] {
     icon-image: "sport/skiing.png";
+    set icon_z17;
 }
 
 /**************/
 /* power tags */
 /**************/
 
-area[power=tower] {
-    fill-color: power#eeeeee;
-}
 node[power=tower] {
     icon-image: "misc/landmark/power/tower_small.png";
+    set icon_z17;
     text: auto;
 }
 node[power=pole] {
     icon-image: "misc/landmark/power/pole.png";
+    set icon_z17;
     text: auto;
 }
 way[power=line],
@@ -994,122 +1107,220 @@ way[power=minor_line] {
     width: 1;
     color: power#eeeeee;
 }
-node[power=line],
-node[power=minor_line] {
-    icon-image: "misc/deprecated.png";
-    text: auto;
-}
-area[power=plant],
-area[power=sub_station],
-area[power=substation],
-area[power=transformer] {
-    fill-color: power#eeeeee;
+way[power=cable] {
+    width: 1;
+    color: power#eeeeee;
+    dashes: 9,9;
 }
 node[power=plant],
 node[power=sub_station],
-node[power=substation],
-node[power=cable_distribution_cabinet] {
+node[power=line],
+node[power=cable],
+node[power=minor_line] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
+area[power=plant],
+area[power=substation],
+area[power=transformer],
+area[power=compensator],
+area[power=converter],
+area[power=generator] {
+    fill-color: power#eeeeee;
+}
+node[power=cable_distribution_cabinet],
+node[power=generator] {
     icon-image: "misc/landmark/power.png";
+    set icon_z17;
+    text: auto;
+}
+node[power=substation] {
+    icon-image: "icons/power_substation.n.16.png";
+    set icon_z17;
     text: auto;
 }
 node[power=transformer] {
     icon-image: "misc/landmark/power/transformer.png";
-    text: auto;
-}
-/* power_source is deprecated by the wiki, but still in use */
-/* generator:source replaces power_source */
-area[power_source=wind], area[generator:source=wind],
-area[power_source=hydro], area[generator:source=hydro],
-area[power_source=fossil],
-area[power_source=coal], area[generator:source=coal],
-area[power_source=gas], area[generator:source=gas],
-area[power_source=photovoltaic],
-area[power_source=nuclear], area[generator:source=nuclear],
-area[power=generator] {
-    fill-color: power#eeeeee;
-}
-node[power_source=wind], node[generator:source=wind] {
-    icon-image: "misc/landmark/power/wind.png";
-    text: auto;
-}
-node[power_source=hydro], node[generator:source=hydro] {
-    icon-image: "misc/landmark/power/hydro.png";
-    text: auto;
-}
-node[power_source=fossil],
-node[power_source=coal], node[generator:source=coal],
-node[power_source=gas], node[generator:source=gas] {
-    icon-image: "misc/landmark/power/fossil.png";
-    text: auto;
-}
-node[power_source=photovoltaic] {
-/*    FIXME photovoltaic NOT fossil*/
-    icon-image: "misc/landmark/power/fossil.png";
-    text: auto;
-}
-node[power_source=nuclear], node[generator:source=nuclear] {
-    icon-image: "misc/landmark/power/nuclear.png";
-    text: auto;
-}
-node[power=generator] {
-    icon-image: "misc/landmark/power.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
 
+/*************************/
+/* generator:source tags */
+/*************************/
+
+area[generator:source=nuclear],
+area[generator:source=wind],
+area[generator:source=hydro],
+area[generator:source=tidal],
+area[generator:source=wave],
+area[generator:source=osmotic],
+area[generator:source=geothermal],
+area[generator:source=solar],
+area[generator:source=coal],
+area[generator:source=gas],
+area[generator:source=biomass],
+area[generator:source=biofuel],
+area[generator:source=biogas],
+area[generator:source=oil],
+area[generator:source=diesel],
+area[generator:source=gasoline],
+area[generator:source=waste] {
+    fill-color: power#eeeeee;
+}
+node[generator:source=nuclear] {
+    icon-image: "presets/power_source-nuclear.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=wind] {
+    icon-image: "presets/power_source-wind.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=hydro],
+node[generator:source=tidal],
+node[generator:source=wave],
+node[generator:source=osmotic] {
+    icon-image: "presets/power_source-water.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=geothermal] {
+    icon-image: "presets/power_source-geothermal.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=solar] {
+    icon-image: "presets/power_source-sun.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=coal] {
+    icon-image: "presets/power_source-coal.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=gas] {
+    icon-image: "presets/power_source-gas.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=biomass],
+node[generator:source=biofuel],
+node[generator:source=biogas] {
+    icon-image: "presets/power_source-biofuel.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=oil],
+node[generator:source=diesel],
+node[generator:source=gasoline] {
+    icon-image: "presets/power_source-oil.svg";
+    set icon_z17;
+    text: auto;
+}
+node[generator:source=waste] {
+    icon-image: "presets/power_source-waste.svg";
+    set icon_z17;
+    text: auto;
+}
+node[power_source] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
 /*****************/
 /* man_made tags */
 /*****************/
 
 area[man_made=beacon],
+area[man_made=bridge],
+area[bridge:support],
 area[man_made=chimney],
 area[man_made=crane],
-area[man_made=flagpole],
 area[man_made=gasometer],
-area[man_made=groyne],
+area[man_made=bunker_silo],
 area[man_made=lighthouse],
 area[man_made=monitoring_station],
-area[man_made=mineshaft],
-area[man_made=adit] {
+area[man_made=mineshaft] {
     fill-color: manmade#d8d8d8;
 }
 node[man_made=beacon] {
     icon-image: "misc/landmark/beacon.png";
+    set icon_z17;
+    text: auto;
+}
+node[man_made=bridge] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
+node[bridge:support] {
+    icon-image: "transport/bridge/support.svg";
+    set icon_z17;
     text: auto;
 }
 node[man_made=chimney] {
     icon-image: "misc/landmark/chimney.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=crane] {
     icon-image: "misc/landmark/crane.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=flagpole] {
     icon-image: "misc/flag.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=gasometer] {
-    icon-image: "misc/landmark/gasometer.png";
+    icon-image: "presets/gasometer.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
-node[man_made=groyne] {
-    icon-image: "nautical/groyne.png";
+node[man_made=bunker_silo] {
+    icon-image: "bunker_silo.svg";
+    set icon_z17;
     text: auto;
+}
+area[man_made=groyne]:closed {
+    fill-color: manmade#d8d8d8;
+}
+way[man_made=groyne] {
+    width: 2;
+    color: manmade#d8d8d8;
+}
+area[man_made=breakwater]:closed {
+    fill-color: manmade#d8d8d8;
+}
+way[man_made=breakwater] {
+    width: 2;
+    color: manmade#d8d8d8;
 }
 node[man_made=lighthouse] {
     icon-image: "misc/landmark/lighthouse.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=monitoring_station] {
     icon-image: "misc/landmark/measurement_station.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=mineshaft] {
     icon-image: "misc/landmark/mine.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=adit] {
     icon-image: "misc/landmark/adit.png";
+    set icon_z17;
     text: auto;
 }
 area[man_made=pier]:closed {
@@ -1121,23 +1332,43 @@ way[man_made=pier] {
 }
 node[man_made=pier] {
     icon-image: "nautical/pier.png";
+    set icon_z17;
     text: auto;
+}
+way[embankment?][!highway][!railway][!waterway],
+way[man_made=embankment][!highway][!railway][!waterway] {
+    repeat-image: "misc/embankment-pattern.png";
+    repeat-image-align: top;
+    width: 1;
+    color: embankment#c14d00;
+}
+way[embankment?][highway],
+way[embankment?][railway],
+way[embankment?][waterway],
+way[man_made=embankment][highway],
+way[man_made=embankment][railway],
+way[man_made=embankment][waterway] {
+    repeat-image: "misc/embankment-pattern-centered.png";
 }
 way[man_made=pipeline] {
     width: 2;
     color: pipeline#660000;
 }
+node[man_made=breakwater],
+node[man_made=groyne],
+node[man_made=embankment],
 node[man_made=pipeline] {
     icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=petroleum_well] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 area[man_made=reservoir_covered],
 area[man_made=surveillance],
-area[man_made=survey_point],
 area[man_made=tower],
 area[man_made=wastewater_plant],
 area[man_made=watermill],
@@ -1150,46 +1381,58 @@ area[man_made=water_works] {
 }
 node[man_made=reservoir_covered] {
     icon-image: "misc/landmark/reservoir_covered.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=surveillance] {
-    icon-image: "misc/surveillance.png";
+    icon-image: "presets/surveillance.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
 node[man_made=survey_point] {
     icon-image: "misc/landmark/survey_point.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=tower] {
     icon-image: "misc/landmark/tower.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=wastewater_plant] {
     icon-image: "misc/landmark/wastewater_plant.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=watermill] {
     icon-image: "misc/landmark/watermill.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=water_tower] {
     icon-image: "misc/landmark/water_tower.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=water_well] {
     icon-image: "misc/landmark/water_well.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=windmill] {
     icon-image: "misc/landmark/windmill.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=works] {
     icon-image: "misc/landmark/works.png";
+    set icon_z17;
     text: auto;
 }
 node[man_made=water_works] {
     icon-image: "misc/landmark/water_works.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -1203,10 +1446,12 @@ area[office=government] {
 }
 node[office=company] {
     icon-image: "icons/office_blue.png";
+    set icon_z17;
     text: auto;
 }
 node[office=government] {
     icon-image: "icons/office_pink.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -1219,19 +1464,23 @@ area[leisure=golf_course],
 area[leisure=stadium],
 area[leisure=track][!area?!]:closed,
 area[leisure=pitch],
+area[leisure=horse_riding],
 area[leisure=water_park] {
     fill-color: leisure#c7f1a3;
 }
 node[leisure=sports_centre] {
     icon-image: "sport/centre.png";
+    set icon_z17;
     text: auto;
 }
 node[leisure=golf_course] {
-    icon-image: "sport/golf.png";
+    icon-image: "sport/golf.svg";
+    set icon_z17;
     text: auto;
 }
 node[leisure=stadium] {
     icon-image: "sport/stadium.png";
+    set icon_z17;
     text: auto;
 }
 way[leisure=track] {
@@ -1240,14 +1489,23 @@ way[leisure=track] {
 }
 node[leisure=track] {
     icon-image: "sport/track.png";
+    set icon_z17;
     text: auto;
 }
 node[leisure=pitch] {
     icon-image: "sport/pitch.png";
+    set icon_z17;
+    text: auto;
+}
+node[leisure=horse_riding] {
+    icon-image: "presets/equestrian.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
 node[leisure=water_park] {
     icon-image: "leisure/water_park.png";
+    set icon_z17;
     text: auto;
 }
 area[leisure=marina] {
@@ -1255,43 +1513,65 @@ area[leisure=marina] {
 }
 node[leisure=marina] {
     icon-image: "nautical/marina.png";
+    set icon_z17;
     text: auto;
 }
-area[leisure=slipway],
+way[leisure=slipway] {
+    width: 2;
+    color: leisure#c7f1a3;
+}
+node[leisure=slipway] {
+    icon-image: "nautical/slipway.png";
+    set icon_z17;
+    text: auto;
+}
 area[leisure=fishing],
 area[leisure=nature_reserve],
 area[leisure=park],
 area[leisure=playground],
 area[leisure=garden],
-area[leisure=common] {
+area[leisure=common],
+area[leisure=firepit] {
     fill-color: leisure#c7f1a3;
-}
-node[leisure=slipway] {
-    icon-image: "nautical/slipway.png";
-    text: auto;
 }
 node[leisure=fishing] {
     icon-image: "sport/fishing.png";
+    set icon_z17;
     text: auto;
 }
 node[leisure=nature_reserve] {
     icon-image: "leisure/nature_reserve.png";
+    set icon_z17;
     text: auto;
 }
 node[leisure=park] {
-    icon-image: "leisure/park.png";
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
 }
 node[leisure=playground] {
     icon-image: "leisure/playground.png";
+    set icon_z17;
     text: auto;
 }
 node[leisure=garden] {
     icon-image: "leisure/garden.png";
+    set icon_z17;
     text: auto;
 }
 node[leisure=common] {
     icon-image: "leisure/common.png";
+    set icon_z17;
+    text: auto;
+}
+node[leisure=firepit] { 
+    icon-image: "leisure/firepit.svg"; 
+    set icon_z17; 
+    text: auto; 
+}
+node[leisure=picnic_table] {
+    icon-image: "leisure/picnic.png";
+    set icon_z17;
     text: auto;
 }
 area[leisure=swimming_pool] {
@@ -1299,6 +1579,7 @@ area[leisure=swimming_pool] {
 }
 node[leisure=swimming_pool] {
     icon-image: "sport/pool.png";
+    set icon_z17;
     text: auto;
 }
 area[leisure=miniature_golf],
@@ -1308,19 +1589,39 @@ area[leisure=sauna] {
     fill-color: leisure#c7f1a3;
 }
 node[leisure=miniature_golf] {
-    icon-image: "sport/golf.png";
+    icon-image: "sport/miniature_golf.svg";
+    set icon_z17;
     text: auto;
 }
 node[leisure=dog_park] {
-    icon-image: "leisure/dog.png";
+    icon-image: "presets/dogpark.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
 node[leisure=ice_rink] {
     icon-image: "sport/hockey.png";
+    set icon_z17;
     text: auto;
 }
 node[leisure=sauna] {
     icon-image: "leisure/sauna.png";
+    set icon_z17;
+    text: auto;
+}
+
+/********************/
+/* advertising tags */
+/********************/
+
+node[advertising=column] {
+    icon-image: "leisure/advertising_column.svg";
+    set icon_z17;
+    text: auto;
+}
+node[advertising=billboard] {
+    icon-image: "leisure/billboard.svg";
+    set icon_z17;
     text: auto;
 }
 
@@ -1376,6 +1677,7 @@ area[shop=motorcycle],
 area[shop=musical_instrument],
 area[shop=newsagent],
 area[shop=optician],
+area[shop=medical_supply],
 area[shop=paint],
 area[shop=pawnbroker],
 area[shop=seafood],
@@ -1400,291 +1702,413 @@ area[shop=bed],
 area[shop=beauty],
 area[shop=tea],
 area[shop=coffee],
+area[shop=antiques],
+area[shop=music],
+area[shop=funeral_directors],
+area[shop=wine],
+area[shop=farm],
+area[shop=tattoo],
+area[shop=art],
 area[shop=bag] {
     fill-color: shop#00005f;
 }
 node[shop=supermarket] {
     icon-image: "shop/supermarket.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=convenience] {
     icon-image: "shop/convenience.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=bakery] {
     icon-image: "shop/groceries/bakery.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=butcher] {
     icon-image: "shop/groceries/butcher.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=bicycle] {
     icon-image: "sport/bicycle.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=doityourself] {
     icon-image: "shop/diy_store.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=dry_cleaning],
 node[shop=laundry] {
     icon-image: "shop/laundry.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=outdoor] {
-    icon-image: "shop/sports/outdoor.png";
+    icon-image: "shop/outdoor.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=kiosk] {
     icon-image: "shop/kiosk.png";
+    set icon_z17;
     text: auto;
 }
-node[shop=alcohol],
 node[shop=beverages] {
     icon-image: "shop/beverages.png";
+    set icon_z17;
+    text: auto;
+}
+node[shop=alcohol] {
+    icon-image: "shop/alcohol.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=books] {
-    icon-image: "shop/rental/library.png";
+    icon-image: "shop/book.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=boutique] {
     icon-image: "shop/boutique.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=car],
 node[shop=car_dealer] {
-    icon-image: "transport/car.png";
+    icon-image: "vehicle.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=car_repair] {
     icon-image: "vehicle/repair_shop.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=tyres] {
     icon-image: "vehicle/tyres.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=chemist] {
     icon-image: "shop/chemist.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=clothes] {
     icon-image: "shop/clothes.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=computer] {
     icon-image: "shop/computer.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=confectionery] {
     icon-image: "shop/groceries/confectionery.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=copyshop] {
     icon-image: "shop/copyshop.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=curtain] {
     icon-image: "shop/curtain.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=cycle_repair] {
     icon-image: "sport/bicycle.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=department_store] {
     icon-image: "shop/mall.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=deli] {
     icon-image: "shop/groceries/deli.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=electronics] {
     icon-image: "shop/electronics.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=erotic] {
-    icon-image:"shop/erotic.png";
+    icon-image: "shop/erotic.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=furniture] {
     icon-image: "shop/furniture.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=fabric] {
     icon-image: "shop/fabric.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=florist] {
     icon-image: "shop/florist.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=frame] {
     icon-image: "shop/frame.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=gift] {
     icon-image: "presets/present.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=greengrocer] {
     icon-image: "shop/groceries/greengrocer.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=garden_centre] {
     icon-image: "shop/garden_centre.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=hairdresser] {
     icon-image: "shop/hairdresser.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=hardware] {
     icon-image: "shop/hardware.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=hearing_aids] {
     icon-image: "shop/hearing_aids.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=hifi] {
     icon-image: "shop/hifi.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=jewelry] {
     icon-image: "shop/jewelry.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=kitchen] {
     icon-image: "shop/kitchen.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=mall] {
     icon-image: "shop/mall.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=mobile_phone] {
     icon-image: "shop/mobile_phone.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=motorcycle] {
     icon-image: "vehicle/motorbike.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=musical_instrument] {
     icon-image: "shop/musical_instrument.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=newsagent] {
     icon-image: "shop/kiosk.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=optician] {
     icon-image: "shop/optician.png";
+    set icon_z17;
+    text: auto;
+}
+node[shop=medical_supply] {
+    icon-image: "shop/medical_supply.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=paint] {
     icon-image: "shop/paint.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=pawnbroker] {
     icon-image: "presets/pawnbroker.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=seafood] {
     icon-image: "shop/groceries/seafood.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=shoes] {
     icon-image: "shop/shoes.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=sports] {
     icon-image: "sport/multi.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=stationery] {
     icon-image: "shop/stationery.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=tailor] {
     icon-image: "shop/tailor.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=travel_agency] {
-    icon-image: "place/island.png";
+    icon-image: "presets/travel.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
 node[shop=toys] {
     icon-image: "shop/toys.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=vacuum_cleaner] {
     icon-image: "shop/vacuum_cleaner.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=variety_store] {
     icon-image: "shop/variety_store.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=video] {
     icon-image: "shop/video.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=bookmaker] {
     icon-image: "presets/lottery.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=lottery] {
     icon-image: "presets/lottery.svg";
+    set icon_z17;
     text: auto;
 }
 /* duplicate of shopping_centre? */
 node[shop=shopping_centre] {
     icon-image: "shop/mall.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=pet] {
     icon-image: "shop/pet.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=ticket] {
     icon-image: "shop/ticket.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=interior_decoration] {
     icon-image: "shop/interior_decoration.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=car_parts] {
     icon-image: "vehicle/car_parts.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=video_games] {
     icon-image: "shop/video_games.png";
+    set icon_z17;
     text: auto;
 }
 node[shop=bed] {
     icon-image: "shop/bed.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=beauty] {
     icon-image: "shop/beauty.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=tea] {
     icon-image: "shop/groceries/tea.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=coffee] {
     icon-image: "shop/groceries/coffee.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=antiques] {
+    icon-image: "shop/antique.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=music] {
+    icon-image: "shop/music.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=funeral_directors] {
+    icon-image: "shop/funeral_directors.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=wine] {
+    icon-image: "shop/wine.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=farm] {
+    icon-image: "presets/apple.png";
+    set icon_z17;
+    text: auto;
+}
+node[shop=tattoo] {
+    icon-image: "shop/tattoo.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=art] {
+    icon-image: "shop/art.svg";
+    set icon_z17;
     text: auto;
 }
 node[shop=bag] {
     icon-image: "shop/bag.svg";
+    set icon_z17;
     text: auto;
 }
 
@@ -1707,181 +2131,214 @@ area[amenity=ice_cream] {
 }
 node[amenity=pub] {
     icon-image: "food/pub.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=biergarten] {
     icon-image: "food/biergarten.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=nightclub] {
-    icon-image: "leisure/nightclub.png";
+    icon-image: "leisure/discoball.svg";
+    set icon_z17;
     text: auto;
 }
 node[amenity=stripclub] {
-    icon-image: "leisure/stripclub.png";
+    icon-image: "leisure/nightclub.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=brothel] {
     icon-image: "leisure/stripclub.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=cafe] {
     icon-image: "food/cafe.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=restaurant],
 node[amenity=food_court] {
     icon-image: "food/restaurant.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=fast_food] {
     icon-image: "food/fastfood.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=bar] {
     icon-image: "food/bar.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=ice_cream] {
     icon-image: "food/icecream.png";
+    set icon_z17;
     text: auto;
 }
 area[amenity=parking_space],
 area[amenity=parking],
-area[parking=multi-storey],
 area[amenity=motorcycle_parking],
 area[amenity=bicycle_parking],
-area[parking=park_and_ride],
-area[parking=underground],
-area[parking=surface],
 area[amenity=bicycle_rental],
+area[amenity=bicycle_repair_station],
 area[amenity=car_rental],
 area[amenity=car_sharing],
 area[amenity=car_wash],
 area[amenity=taxi],
-area[amenity=fuel],
-area[amenity=charging_station] {
+area[amenity=fuel] {
     fill-color: amenity_traffic#f7efb7;
 }
 node[amenity=parking_space] {
-    icon-image: "vehicle/parking.png";
-    text: auto;
-}node[amenity=parking] {
-    icon-image: vehicle/parking.png;
+    icon-image: "vehicle/parking/parking_space.svg";
+    set icon_z17;
     text: auto;
 }
-node[parking=multi-storey] {
+node[amenity=parking] {
+    icon-image: "vehicle/parking.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=parking_entrance] {
+    icon-image: "vehicle/parking.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=parking_entrance][parking=multi-storey],
+node[amenity=parking][parking=multi-storey] {
     icon-image: "vehicle/parking/multi-storey.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=parking_entrance][parking=underground],
+node[amenity=parking][parking=underground] {
+    icon-image: "vehicle/parking/underground.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=motorcycle_parking] {
     icon-image: "vehicle/parking/motorbike.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=bicycle_parking] {
     icon-image: "vehicle/parking/bicycle.png";
+    set icon_z17;
     text: auto;
 }
-node[parking=park_and_ride] {
-    icon-image: "vehicle/parking/park_ride.png";
-    text: auto;
-}
-node[parking=underground] {
-    icon-image: "vehicle/parking/underground.png";
-    text: auto;
-}
-node[parking=surface] {
-    icon-image: "vehicle/parking.png";
+node[park_ride][park_ride!=no] {
+    icon-image: "vehicle/parking/park_ride.svg";
+    set icon_z17;
     text: auto;
 }
 node[amenity=parking_space][wheelchair?] {
     icon-image: "vehicle/parking/handicapped.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=bicycle_rental] {
     icon-image: "vehicle/rental/bicycle.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=bicycle_repair_station] {
+    icon-image: "vehicle/bicycle_repair_station.svg";
+    set icon_z17;
     text: auto;
 }
 node[amenity=car_rental] {
     icon-image: "vehicle/rental/car.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=car_sharing] {
     icon-image: "vehicle/car_sharing.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=car_wash] {
     icon-image: "vehicle/car_wash.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=taxi] {
     icon-image: "transport/taxi.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=fuel] {
     icon-image: "vehicle/fuel.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=charging_station] {
     icon-image: "vehicle/fuel/charging_station.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=grit_bin] {
     icon-image: "misc/grit_bin.png";
+    set icon_z17;
     text: auto;
-}
-area[amenity=telephone] {
-    fill-color: amenity_light#f7efb7;
 }
 node[amenity=telephone] {
     icon-image: "service/telephone.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=clock] {
     icon-image: "service/clock.png";
+    set icon_z17;
     text: auto;
 }
-/* Rule to delete by end of 2013 if this deprecated tag has finally been replaced by emergency=phone below */
-area[amenity=emergency_phone] {
-    fill-color: amenity_light#f7efb7;
-}
-node[amenity=emergency_phone] {
-    icon-image: "vehicle/emergency_phone.png";
-    text: auto;
-}
-area[emergency=phone],
 area[emergency=aed],
-area[emergency=defibrillator],
 area[amenity=toilets],
+area[amenity=shower],
 area[amenity=recycling] {
     fill-color: amenity_light#f7efb7;
 }
 node[emergency=phone] {
     icon-image: "vehicle/emergency_phone.png";
+    set icon_z17;
     text: auto;
 }
 node[emergency=aed] {
     icon-image: "presets/aed.svg";
+    set icon_z17;
     text: auto;
 }
 node[emergency=defibrillator] {
     icon-image: "presets/aed.svg";
+    set icon_z17;
     text: auto;
 }
 node[amenity=toilets] {
     icon-image: "service/toilets.png";
+    set icon_z17;
     text: auto;
+}
+node[amenity=shower] { 
+    icon-image: "service/shower.svg"; 
+    set icon_z17; 
+    text: auto; 
 }
 node[amenity=recycling] {
     icon-image: "service/recycling.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=waste_basket] {
     icon-image: "service/recycling/trash-bin.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=waste_disposal] {
     icon-image: "service/recycling/waste_disposal.png";
+    set icon_z17;
     text: auto;
 }
 area[amenity=public_building],
@@ -1890,36 +2347,49 @@ area[amenity=embassy],
 area[amenity=community_centre] {
     fill-color: amenity_light#f7efb7;
 }
-node[amenity=public_building],
-node[amenity=townhall] {
+node[amenity=public_building] {
     icon-image: "service.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=townhall] {
+    icon-image: "presets/townhall.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=embassy] {
     icon-image: "service/administration/embassy.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=community_centre] {
     icon-image: "service/community_centre.png";
+    set icon_z17;
     text: auto;
 }
-area[amenity=drinking_water],
+area[amenity=water_point],
 area[amenity=fountain] {
     fill-color: light_water#00005f;
 }
 node[amenity=drinking_water] {
     icon-image: "food/drinking_water.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=water_point] {
+    icon-image: "accommodation/camping/water.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=fountain] {
-    icon-image: "misc/landmark/spring.png";
+    icon-image: "misc/fountain.png";
+    set icon_z17;
     text: auto;
 }
 area[amenity=place_of_worship],
 area[amenity=grave_yard],
 area[amenity=crematorium],
 area[amenity=post_office],
-area[amenity=post_box],
 area[amenity=studio],
 area[amenity=school],
 area[amenity=university],
@@ -1930,103 +2400,129 @@ area[amenity=driving_school] {
 }
 node[amenity=place_of_worship] {
     icon-image: "religion.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=bahai] {
     icon-image: "religion/bahai.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=buddhist] {
     icon-image: "religion/buddhism.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=christian] {
     icon-image: "religion/church.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=hindu] {
     icon-image: "religion/hinduism.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=jain] {
     icon-image: "religion/jainism.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=jewish] {
     icon-image: "religion/jewish.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=muslim] {
     icon-image: "religion/muslim.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=sikh] {
     icon-image: "religion/sikhism.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=shinto] {
     icon-image: "religion/shinto.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=spiritualist] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=taoist] {
     icon-image: "religion/taoism.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=unitarian] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=place_of_worship][religion=zoroastrian] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=grave_yard] {
     icon-image: "rendering/landuse/cemetery.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=crematorium] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=post_office] {
     icon-image: "service/post_office.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=post_box] {
     icon-image: "service/post_box.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=studio] {
     icon-image: "service/studio.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=school] {
     icon-image: "education/school.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=university] {
     icon-image: "education/university.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=college] {
     icon-image: "education/college.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=kindergarten] {
     icon-image: "education/kindergarten.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=driving_school] {
     icon-image: "education/driving_school.png";
+    set icon_z17;
     text: auto;
 }
 area[amenity=pharmacy],
 area[amenity=hospital],
 area[amenity=clinic],
+area[amenity=nursing_home],
+area[amenity=social_facility],
 area[amenity=nursery],
 area[amenity=baby_hatch],
 area[amenity=doctors],
@@ -2036,35 +2532,45 @@ area[amenity=veterinary] {
 }
 node[amenity=pharmacy] {
     icon-image: "health/pharmacy.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=hospital],
 node[amenity=clinic] {
     icon-image: "health/hospital.png";
+    set icon_z17;
     text: auto;
 }
+node[amenity=nursing_home],
+node[amenity=social_facility],
 node[amenity=nursery] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=baby_hatch] {
     icon-image: "health/baby_hatch.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=doctors] {
     icon-image: "health/doctor.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=dentist] {
     icon-image: "health/dentist.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=veterinary] {
     icon-image: "health/veterinary.png";
+    set icon_z17;
     text: auto;
 }
 area[amenity=library],
 area[amenity=police],
+area[amenity=ranger_station],
 area[amenity=fire_station],
 area[amenity=bus_station],
 area[amenity=ferry_terminal],
@@ -2075,60 +2581,79 @@ area[amenity=courthouse],
 area[amenity=prison],
 area[amenity=bank],
 area[amenity=bureau_de_change],
-area[amenity=atm],
 area[amenity=bbq] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=library] {
-    icon-image: "shop/rental/library.png";
+    icon-image: "shop/library.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=police] {
     icon-image: "service/police.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=ranger_station] {
+    icon-image: "service/ranger_station.svg";
+    set icon_z17;
     text: auto;
 }
 node[amenity=fire_station] {
     icon-image: "service/firebrigade.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=bus_station] {
     icon-image: "transport/bus.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=ferry_terminal] {
     icon-image: "nautical/ferry.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
 node[amenity=theatre] {
-    icon-image: "leisure/theater.png";
+    icon-image: "presets/theater.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
 node[amenity=cinema] {
     icon-image: "leisure/cinema.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=arts_centre] {
     icon-image: "service/arts_centre.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=courthouse] {
     icon-image: "service/administration/court_of_law.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=prison] {
     icon-image: "service/administration/prison.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=bank] {
     icon-image: "money/bank.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=bureau_de_change] {
     icon-image: "money/exchange.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=atm] {
     icon-image: "money/atm.png";
+    set icon_z17;
     text: auto;
 }
 way[amenity=bench] {
@@ -2137,44 +2662,71 @@ way[amenity=bench] {
 }
 node[amenity=bench] {
     icon-image: "leisure/bench.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=bbq] {
     icon-image: "leisure/bbq.png";
+    set icon_z17;
     text: auto;
 }
 node[emergency=fire_hydrant] {
     icon-image: "service/fire_hydrant.png";
+    set icon_z17;
     text: auto;
 }
 area[amenity=shelter],
-area[amenity=hunting_stand],
 area[amenity=marketplace],
-area[amenity=wlan],
-area[amenity=vending_machine] {
+area[amenity=wlan] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=shelter] {
     icon-image: "accommodation/shelter.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=shelter][shelter_type=public_transport] {
+    icon-image: "accommodation/shelter_public_transport_brown.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=shelter][shelter_type=picnic_shelter] {
+    icon-image: "accommodation/shelter_picnic_brown.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=shelter][shelter_type=basic_hut] {
+    icon-image: "accommodation/basic_hut_blue.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=shelter][shelter_type=lean_to] {
+    icon-image: "accommodation/shelter_lean_to.svg";
+    set icon_z17;
     text: auto;
 }
 node[amenity=hunting_stand] {
     icon-image: "hunting_stand.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=marketplace] {
     icon-image: "place/marketplace.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=wlan] {
     icon-image: "wlan.png";
+    set icon_z17;
     text: auto;
 }
 node[amenity=vending_machine] {
     icon-image: "transport/ticket-machine.png";
+    set icon_z17;
 }
 node[vending=excrement_bags] {
     icon-image: "service/excrement_bags.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2192,26 +2744,32 @@ area[craft=window_construction] {
 }
 node[craft=painter] {
     icon-image: "craft/painter.png";
+    set icon_z17;
     text: auto;
 }
 node[craft=plumber] {
     icon-image: "craft/plumber.png";
+    set icon_z17;
     text: auto;
 }
 node[craft=pottery] {
     icon-image: "craft/pottery.png";
+    set icon_z17;
     text: auto;
 }
 node[craft=stonemason] {
     icon-image: "craft/stonemason.png";
+    set icon_z17;
     text: auto;
 }
 node[craft=tiler] {
     icon-image: "craft/tiler.png";
+    set icon_z17;
     text: auto;
 }
 node[craft=window_construction] {
     icon-image: "craft/window_construction.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2231,34 +2789,47 @@ area[tourism=caravan_site] {
 }
 node[tourism=hotel] {
     icon-image: "accommodation.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=motel] {
     icon-image: "accommodation/motel.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=guest_house] {
     icon-image: "accommodation/guest_house.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=hostel] {
     icon-image: "accommodation/hostel.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=chalet] {
     icon-image: "accommodation/chalet.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=alpine_hut] {
-    icon-image: "accommodation/alpine_hut.png";
+    icon-image: "accommodation/alpine_hut_blue.png";
+    set icon_z17;
+    text: auto;
+}
+node[tourism=wilderness_hut] {
+    icon-image: "accommodation/wilderness_hut_blue.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=camp_site] {
     icon-image: "accommodation/camping.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=caravan_site] {
     icon-image: "accommodation/camping/caravan.png";
+    set icon_z17;
     text: auto;
 }
 area[tourism=picnic_site],
@@ -2272,22 +2843,27 @@ area[tourism=museum] {
 }
 node[tourism=picnic_site] {
     icon-image: "leisure/picnic.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=viewpoint] {
     icon-image: "sightseeing/viewpoint.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=theme_park] {
     icon-image: "leisure/theme_park.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=attraction] {
     icon-image: "sightseeing.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=zoo] {
     icon-image: "leisure/zoo.png";
+    set icon_z17;
     text: auto;
 }
 way[tourism=artwork] {
@@ -2296,10 +2872,12 @@ way[tourism=artwork] {
 }
 node[tourism=artwork] {
     icon-image: "service/arts_centre.png";
+    set icon_z17;
     text: auto;
 }
 node[tourism=museum] {
     icon-image: "sightseeing/museum.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2312,25 +2890,30 @@ area[tourism=information] {
 }
 node[tourism=information] {
     icon-image: "misc/information.png";
+    set icon_z17;
     text: auto;
 }
-node[information=guidepost] {
+node[tourism=information][information=guidepost] {
     icon-image: "misc/information/guidepost.png";
+    set icon_z17;
     text: auto;
 }
-area[information=office] {
+area[tourism=information][information=office] {
     fill-color: tourism#e180a2;
 }
-node[information=office] {
+node[tourism=information][information=office] {
     icon-image: "misc/information/informationoffice.png";
+    set icon_z17;
     text: auto;
 }
-node[information=map] {
+node[tourism=information][information=map] {
     icon-image: "misc/information/map.png";
+    set icon_z17;
     text: auto;
 }
-node[information=board] {
+node[tourism=information][information=board] {
     icon-image: "misc/information/board.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2344,50 +2927,60 @@ area[historic=memorial],
 area[historic=archaeological_site],
 area[historic=ruins],
 area[historic=battlefield],
-area[historic=palaeontological_site],
+area[geological=palaeontological_site],
 area[historic=wayside_cross],
 area[historic=wayside_shrine],
 area[historic=boundary_stone] {
     fill-color: historic#663300;
 }
 node[historic=castle] {
-    icon-image: "sightseeing/castle.png";
+    icon-image: "sightseeing/castle.svg";
+    set icon_z17;
     text: auto;
 }
 node[historic=monument] {
     icon-image: "sightseeing/monument.png";
+    set icon_z17;
     text: auto;
 }
 node[historic=memorial] {
     icon-image: "sightseeing/memorial.png";
+    set icon_z17;
     text: auto;
 }
 node[historic=archaeological_site] {
     icon-image: "sightseeing/archaeological.png";
+    set icon_z17;
     text: auto;
 }
 node[historic=ruins] {
     icon-image: "sightseeing/ruins.png";
+    set icon_z17;
     text: auto;
 }
 node[historic=battlefield] {
     icon-image: "sightseeing/battlefield.png";
+    set icon_z17;
     text: auto;
 }
-node[historic=palaeontological_site] {
+node[geological=palaeontological_site] {
     icon-image: "historic/palaeontological_site.png";
+    set icon_z17;
     text: auto;
 }
 node[historic=wayside_cross] {
     icon-image: "religion/wayside_cross.png";
+    set icon_z17;
     text: auto;
 }
 node[historic=wayside_shrine] {
     icon-image: "religion/wayside_shrine.png";
+    set icon_z17;
     text: auto;
 }
 node[historic=boundary_stone] {
     icon-image: "historic/boundary_stone.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2395,138 +2988,72 @@ node[historic=boundary_stone] {
 /* landuse tags */
 /****************/
 
+area[landuse],
+area[leisure],
+area[amenity],
+area[place],
+area[natural],
+area[man_made] {
+    z-index: -2; /* put areas that can have other areas inside (e.g. building) a little lower, see #9606 */
+}
 area[landuse=farm],
-area[landuse=farmland],
-area[landuse=meadow],
+area[landuse=farmland] {
+    fill-color: farmland#b8e0b1;
+}
+area[landuse=meadow] {
+    fill-color: meadow#b1e0b6;
+}
 area[landuse=vineyard],
 area[landuse=orchard] {
     fill-color: green#b1e0c2;
 }
-node[landuse=farm] {
-    icon-image: "misc/landmark/farm.png";
-    text: auto;
-}
-node[landuse=farmland] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
-node[landuse=meadow] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
-node[landuse=vineyard] {
-    icon-image: "shop/groceries/fruits.png";
-    text: auto;
-}
 area[landuse=quarry] {
     fill-color: quarry#888888;
 }
-node[landuse=quarry] {
-    icon-image: "misc/landmark/mine.png";
-    text: auto;
-}
 area[landuse=landfill] {
     fill-color: landfill#663300;
-}
-node[landuse=landfill] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
 }
 area[landuse=basin],
 area[landuse=reservoir] {
     fill-color: basin#0000bf;
 }
-node[landuse=basin],
-node[landuse=reservoir] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
 area[landuse=forest] {
     fill-color: forest#b1efc8;
 }
-node[landuse=forest] {
-    icon-image: "misc/landmark/trees.png";
-    text: auto;
+area[landuse=allotments] {
+    fill-color: allotments#5dbf80;
 }
-area[landuse=allotments],
 area[landuse=greenhouse_horticulture],
-area[landuse=plant_nursery],
-area[landuse=grass] {
+area[landuse=plant_nursery] {
     fill-color: green#b1e0c2;
 }
-node[landuse=allotments] {
-    icon-image: "misc/landmark/plant.png";
-    text: auto;
-}
-node[landuse=greenhouse_horticulture] {
-    icon-image: "misc/landuse/greenhouse_horticulture.png";
-    text: auto;
-}
-node[landuse=plant_nursery],
-node[landuse=grass] {
-    icon-image: "misc/landmark/plant.png";
-    text: auto;
+area[landuse=grass] {
+    fill-color: grass#97ca96;
 }
 area[landuse=residential] {
     fill-color: residential#f0f0f0;
 }
-node[landuse=residential] {
-    icon-image: "misc/landuse/residential.png";
-    text: auto;
-}
 area[landuse=garages] {
-    fill-color: garages#f0f0f0;
-}
-node[landuse=garages] {
-    icon-image: "misc/landuse/garages.png";
-    text: auto;
+    fill-color: garages#d6c8aa;
 }
 area[landuse=farmyard] {
     fill-color: farmyard#f0f0f0;
-}
-node[landuse=farmyard] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
 }
 area[landuse=retail],
 area[landuse=commercial] {
     fill-color: retail#ffc4ee;
 }
-node[landuse=retail] {
-    icon-image: "shop/mall.png";
-    text: auto;
-}
-node[landuse=commercial] {
-    icon-image: "misc/landuse/commercial.png";
-    text: auto;
-}
 area[landuse=industrial] {
     fill-color: industrial#ecd8ff;
-}
-node[landuse=industrial] {
-    icon-image: "misc/landmark/works.png";
-    text: auto;
 }
 area[landuse=brownfield] {
     fill-color: brownfield#ecba32;
 }
-node[landuse=brownfield] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
 area[landuse=greenfield] {
     fill-color: greenfield#b1ec5c;
 }
-node[landuse=greenfield] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
 area[landuse=railway] {
     fill-color: railland#888888;
-}
-node[landuse=railway] {
-    icon-image: "transport/railway_station.png";
-    text: auto;
 }
 area[landuse=construction] {
     fill-color: construction#ffff00;
@@ -2536,16 +3063,8 @@ way[landuse=construction] {
     color: construction#ffff00;
     dashes: 9,9;
 }
-node[landuse=construction] {
-    icon-image: "misc/construction.png";
-    text: auto;
-}
 area[landuse=military] {
     fill-color: military#b62c2c;
-}
-node[landuse=military] {
-    icon-image: "vehicle/tank.png";
-    text: auto;
 }
 area[landuse=religious] {
     fill-color: religious#ffd454;
@@ -2553,22 +3072,15 @@ area[landuse=religious] {
 area[landuse=cemetery] {
     fill-color: cemetery#b1efc8;
 }
-node[landuse=cemetery] {
-    icon-image: "rendering/landuse/cemetery.png";
-    text: auto;
-}
 area[landuse=village_green] {
     fill-color: green#b1e0c2;
-}
-node[landuse=village_green] {
-    icon-image: "leisure/common.png";
-    text: auto;
 }
 area[landuse=recreation_ground] {
     fill-color: green#b1e0c2;
 }
-node[landuse=recreation_ground] {
-    icon-image: "leisure/common.png";
+node[landuse] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2585,22 +3097,27 @@ area[military=range] {
 }
 node[military=airfield] {
     icon-image: "transport/airport/airfield.png";
+    set icon_z17;
     text: auto;
 }
 node[military=bunker] {
     icon-image: "misc/landmark/bunker.png";
+    set icon_z17;
     text: auto;
 }
 node[military=barracks] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 node[military=danger_area] {
     icon-image: "misc/danger.png";
+    set icon_z17;
     text: auto;
 }
 node[military=range] {
     icon-image: "misc/landmark/range.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2610,30 +3127,37 @@ node[military=range] {
 
 node[public_transport=stop_position] {
     icon-image: "transport/railway_small.png";
+    set icon_z17;
     text: auto;
 }
 node[highway=bus_stop] {
     icon-image: "transport/bus_small.png";
+    set icon_z17;
     text: auto;
 }
 node[public_transport=stop_position][bus=yes] {
     icon-image: "transport/bus_small.png";
+    set icon_z17;
     text: auto;
 }
 node[public_transport=stop_position][aerial=yes] {
     icon-image: "transport/aerialway.png";
+    set icon_z17;
     text: auto;
 }
 node[public_transport=stop_position][ferry=yes] {
     icon-image: "transport/ferry.png";
+    set icon_z17;
     text: auto;
 }
 node[public_transport=stop_position][tram=yes] {
     icon-image: "transport/tram.png";
+    set icon_z17;
     text: auto;
 }
 node[public_transport=stop_position][train=yes] {
     icon-image: "transport/railway_small.png";
+    set icon_z17;
     text: auto;
 }
 area[public_transport=platform]:closed {
@@ -2646,23 +3170,28 @@ way[public_transport=platform]!:closed {
 }
 node[public_transport=platform] {
     icon-image: "transport/bus_small.png";
+    set icon_z17;
     text: auto;
 }
 node[public_transport=platform][bus=yes] {
     icon-image: "transport/bus_small.png";
+    set icon_z17;
     text: auto;
 }
 node[public_transport=platform][aerial=yes] {
     icon-image: "transport/aerialway/station.png";
+    set icon_z17;
     text: auto;
 }
 node[public_transport=platform][ferry=yes] {
     icon-image: "transport/ferry.png";
+    set icon_z17;
     text: auto;
 }
 node[public_transport=platform][tram=yes],
 node[public_transport=platform][train=yes] {
     icon-image: "transport/railway_station.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2670,33 +3199,40 @@ node[public_transport=platform][train=yes] {
 /* railway tags */
 /****************/
 
-area[railway=station], area[railway=tram_station],
-area[railway=subway_entrance],
-area[railway=crossing], area[railway=level_crossing] {
+area[railway=station],
+area[railway=tram_station],
+area[railway=subway_entrance] {
     fill-color: railwaypoint#f7efb7;
 }
 node[railway=station], node[railway=tram_station] {
     icon-image: "transport/railway_station.png";
+    set icon_z17;
     text: auto;
 }
 node[railway=halt] {
     icon-image: "transport/railway_small.png";
+    set icon_z17;
     text: auto;
 }
 node[railway=tram_stop] {
     icon-image: "transport/tram.png";
+    set icon_z17;
     text: auto;
 }
 node[railway=subway_entrance] {
     icon-image: "transport/underground.png";
+    set icon_z17;
     text: auto;
 }
 node[railway=crossing] {
-    icon-image: "vehicle/crossing_small.png";
+    icon-image: "vehicle/crossing.png";
+    set icon_z17;
     text: auto;
 }
 node[railway=level_crossing] {
-    icon-image: "vehicle/crossing.png";
+    icon-image: "presets/level_crossing.png";
+    icon-width: 16;
+    set icon_z17;
     text: auto;
 }
 way[railway=rail] {
@@ -2719,7 +3255,6 @@ way[highway][railway=tram]::core_railway, way[!highway][railway=tram] {
     object-z-index: 1;
     modifier: false; /* don't draw default way if there is no line on default layer */
     width: 1;
-    color: otherrail#808080;
     color: railover#202020;
     dashes: 9,9;
     casing-width: 1;
@@ -2745,8 +3280,11 @@ way[railway=preserved] {
 /* disused often appears together with highway=xy */
 /* -> draw on separate layer with higher z-index, but use */
 /* modifier: false; to suppress default line when used alone. */
-way[railway=disused]::core_railway,
-way[railway=abandoned]::core_railway {
+/* use default layer when used without highway=* to display bridge correctly */
+way[railway=disused][highway]::core_railway,
+way[railway=disused][!highway],
+way[railway=abandoned][highway]::core_railway,
+way[railway=abandoned][!highway] {
     width: 1;
     modifier: false;
     z-index: 1;
@@ -2759,16 +3297,17 @@ way[railway=monorail] {
     color: rail#404040;
     dashes: 9,9;
 }
-area[railway=turntable],
-area[railway=buffer_stop] {
+area[railway=turntable] {
     fill-color: rail#404040;
 }
 node[railway=turntable] {
     icon-image: "transport/turntable.png";
+    set icon_z17;
     text: auto;
 }
 node[railway=buffer_stop] {
     icon-image: "transport/buffer_stop.png";
+    set icon_z17;
     text: auto;
 }
 area[railway=platform]:closed {
@@ -2783,6 +3322,12 @@ way[railway=funicular] {
     color: rail#404040;
     dashes: 9,9;
 }
+node[railway=switch] {
+    icon-image: "presets/railway_switch.png";
+    icon-width: 16;
+    set icon_z17;
+    text: auto;
+}
 node[railway=rail], node[railway=tram], node[railway=light_rail],
 node[railway=subway], node[railway=preserved],
 node[railway=disused], node[railway=abandoned],
@@ -2790,7 +3335,33 @@ node[railway=narrow_gauge], node[railway=monorail],
 node[railway=platform], node[railway=funicular],
 node[service=yard], node[service=siding], node[service=spur] {
     icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
+}
+way[railway=construction][!highway] {
+    width: 1;
+    color: construction#ffff00;
+    dashes: 9,9;
+}
+way[railway=construction][construction=rail] {
+    width: 2;
+    color: rail#404040;
+    dashes: 9,9;
+    dashes-background-color: construction#ffff00;
+}
+way[railway=construction][construction=light_rail] {
+    width: 2;
+}
+way[railway=construction][construction=tram][highway]::core_railway,
+way[railway=construction][construction=tram][!highway] {
+    z-index: 1;
+    width: 1;
+    color: railover#202020;
+    dashes: 9,9;
+    casing-width: 1;
+    casing-color: construction#ffff00;
+    casing-linecap: round;
+    casing-dashes: 9,9;
 }
 
 /****************/
@@ -2799,14 +3370,12 @@ node[service=yard], node[service=siding], node[service=spur] {
 
 area[aeroway=aerodrome] {
     fill-color: aeroway#660000;
-}
-way[aeroway=aerodrome] {
     width: 2;
-    color: aeroway#660000;
     dashes: 9,9;
 }
 node[aeroway=aerodrome] {
     icon-image: "transport/airport.png";
+    set icon_z17;
     text: auto;
 }
 area[aeroway=terminal] {
@@ -2814,6 +3383,7 @@ area[aeroway=terminal] {
 }
 node[aeroway=terminal] {
     icon-image: "transport/airport/terminal.png";
+    set icon_z17;
     text: auto;
 }
 area[aeroway=helipad] {
@@ -2821,41 +3391,56 @@ area[aeroway=helipad] {
 }
 node[aeroway=helipad] {
     icon-image: "transport/airport/helipad.png";
+    set icon_z17;
     text: auto;
+}
+area[aeroway=runway]:closed {
+    fill-color: aeroway_dark#330000;
 }
 way[aeroway=runway] {
     width: 3;
     color: aeroway_dark#330000;
 }
-node[aeroway=runway] {
-    icon-image: "transport/airport/runway.png";
-    text: auto;
+area[aeroway=taxiway]:closed {
+    fill-color: aeroway#660000;
 }
 way[aeroway=taxiway] {
     width: 2;
     color: aeroway#660000;
 }
-node[aeroway=taxiway] {
-    icon-image: "transport/airport/taxiway.png";
+way[aeroway=parking_position] {
+    width: 1;
+    color: aeroway#660000;
+}
+node[aeroway=parking_position] {
+    icon-image: "transport/airport/parking_position.png";
+    set icon_z17;
     text: auto;
 }
-area[aeroway=apron], area[aeroway=hangar] {
+area[aeroway=apron],
+area[aeroway=hangar] {
     fill-color: aeroway_light#990000;
 }
-node[aeroway=apron] {
-    icon-image: "transport/airport/apron.png";
+node[aeroway=apron],
+node[aeroway=runway],
+node[aeroway=taxiway] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
 }
 node[aeroway=hangar] {
     icon-image: "transport/airport/hangar.png";
+    set icon_z17;
     text: auto;
 }
 node[aeroway=gate] {
     icon-image: "transport/airport/gate.png";
+    set icon_z17;
     text: auto;
 }
 node[aeroway=windsock] {
     icon-image: "transport/airport/windsock.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2869,51 +3454,395 @@ way[aerialway=gondola] {
     color: aerialway#663300;
     dashes: 9,9;
 }
-node[aerialway=cable_car] {
-    icon-image: "transport/aerialway/cable_car.png";
-    text: auto;
-}
-node[aerialway=gondola] {
-    icon-image: "transport/aerialway/gondola.png";
-    text: auto;
-}
 way[aerialway=chair_lift] {
     width: 1;
     color: aerialway#663300;
     dashes: 6,6;
 }
-node[aerialway=chair_lift] {
-    icon-image: "transport/aerialway/chair_lift.png";
-    text: auto;
+way[aerialway=mixed_lift] {
+    width: 1;
+    color: aerialway#663300;
+    dashes: 6,6,9,6;
 }
+way[aerialway=j-bar],
+way[aerialway=t-bar],
+way[aerialway=platter],
+way[aerialway=rope_tow],
 way[aerialway=drag_lift] {
     width: 1;
     color: aerialway#663300;
     dashes: 3,3;
 }
-node[aerialway=drag_lift] {
-    icon-image: "transport/aerialway/drag_lift.png";
-    text: auto;
-}
-area[aerialway=station],
-area[aerialway=pylon] {
-    fill-color: aerialway#663300;
-}
-node[aerialway=station] {
-    icon-image: "transport/aerialway/station.png";
-    text: auto;
-}
-node[aerialway=pylon] {
-    icon-image: "misc/landmark/power/tower_small.png";
-    text: auto;
+way[aerialway=magic_carpet] {
+    width: 1;
+    color: aerialway#663300;
+    dashes: 3,3;
 }
 way[aerialway=goods] {
     width: 1;
     color: aerialway#663300;
     dashes: 2,2;
 }
+area[aerialway=station] {
+    fill-color: aerialway#663300;
+}
+node[aerialway=station] {
+    icon-image: "transport/aerialway/station.png";
+    set icon_z17;
+    text: auto;
+}
+node[aerialway=pylon] {
+    icon-image: "transport/aerialway/pylon.svg";
+    set icon_z17;
+    text: auto;
+}
+node[aerialway=cable_car],
+node[aerialway=gondola],
+node[aerialway=chair_lift],
+node[aerialway=mixed_lift],
+node[aerialway=drag_lift],
+node[aerialway=t-bar],
+node[aerialway=j-bar],
+node[aerialway=platter],
+node[aerialway=magic_carpet],
+node[aerialway=rope_tow],
 node[aerialway=goods] {
-    icon-image: "transport/aerialway/goods.png";
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
+
+/**************/
+/* sport tags */
+/**************/
+
+area[sport="9pin"],
+area[sport="10pin"],
+area[sport=athletics],
+area[sport=soccer],
+area[sport=australian_football],
+area[sport=american_football],
+area[sport=canadian_football],
+area[sport=gaelic_games],
+area[sport=rugby_league],
+area[sport=rugby_union] {
+    fill-color: sport#bde3cb;
+}
+node[sport="9pin"] {
+    icon-image: "sport/10pin.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport="10pin"] {
+    icon-image: "sport/10pin.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=athletics] {
+    icon-image: "sport/athletics.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=soccer],
+node[sport=gaelic_games] {
+    icon-image: "sport/soccer.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=australian_football],
+node[sport=american_football],
+node[sport=canadian_football],
+node[sport=rugby_league],
+node[sport=rugby_union] {
+    icon-image: "sport/football.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=baseball],
+area[sport=basketball],
+area[sport=boules],
+area[sport=bowls],
+area[sport=canoe],
+area[sport=chess],
+area[sport=climbing]:closed,
+area[sport=cricket],
+area[sport=cricket_nets],
+area[sport=croquet] {
+    fill-color: sport#bde3cb;
+}
+node[sport=baseball] {
+    icon-image: "sport/baseball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=basketball] {
+    icon-image: "sport/basketball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=boules] {
+    icon-image: "sport/boule.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=bowls] {
+    icon-image: "sport/boule.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=canoe] {
+    icon-image: "sport/canoe.svg";
+    set icon_z17;
+    text: auto;
+}
+node[sport=chess] {
+    icon-image: "sport/chess.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=climbing] {
+    icon-image: "sport/climbing.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=cricket] {
+    icon-image: "sport/cricket.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=cricket_nets] {
+    icon-image: "sport/cricket.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=croquet] {
+    icon-image: "sport/croquet.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=cycling],
+area[sport=dog_racing],
+area[sport=equestrian],
+area[sport=golf],
+area[sport=gymnastics],
+area[sport=hockey],
+area[sport=horse_racing],
+area[sport=karting],
+area[sport=motocross],
+area[sport=motor] {
+    fill-color: sport#bde3cb;
+}
+node[sport=cycling] {
+    icon-image: "sport/cycling.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=dog_racing] {
+    icon-image: "leisure/dog.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=equestrian] {
+    icon-image: "presets/equestrian.png";
+    icon-width: 16;
+    set icon_z17;
+    text: auto;
+}
+node[sport=golf] {
+    icon-image: "sport/golf.svg";
+    set icon_z17;
+    text: auto;
+}
+node[sport=gymnastics] {
+    icon-image: "presets/gymnastics.png";
+    icon-width: 16;
+    set icon_z17;
+    text: auto;
+}
+node[sport=hockey] {
+    icon-image: "sport/hockey.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=horse_racing] {
+    icon-image: "sport/riding.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=karting] {
+    icon-image: "sport/karting.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=motocross] {
+    icon-image: "sport/motocross.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=motor] {
+    icon-image: "sport/motor.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=multi],
+area[sport=pelota],
+area[sport=racquet],
+area[sport=skating],
+area[sport=skateboard] {
+    fill-color: sport#bde3cb;
+}
+node[sport=multi] {
+    icon-image: "sport/multi.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=pelota] {
+    icon-image: "sport/pelota.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=racquet] {
+    icon-image: "sport/racquetball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=skating] {
+    icon-image: "sport/skating.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=skateboard] {
+    icon-image: "sport/skateboard.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=swimming] {
+    fill-color: swimming_pool#51c4ef;
+}
+node[sport=swimming] {
+    icon-image: "sport/pool.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=skiing],
+area[sport=table_tennis],
+area[sport=tennis],
+area[sport=paintball] {
+    fill-color: sport#bde3cb;
+}
+node[sport=skiing] {
+    icon-image: "sport/skiing.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=table_tennis] {
+    icon-image: "sport/table_tennis.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=tennis] {
+    icon-image: "sport/tennis.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=paintball] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=squash],
+area[sport=shooting],
+area[sport=volleyball],
+area[sport=beachvolleyball],
+area[sport=bowling],
+area[sport=handball],
+area[sport=rowing],
+area[sport=sailing],
+area[sport=scuba_diving],
+area[sport=badminton] {
+    fill-color: sport#bde3cb;
+}
+node[sport=squash] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=shooting] {
+    icon-image: "presets/range.png";
+    icon-width: 16;
+    set icon_z17;
+    text: auto;
+}
+node[sport=volleyball] {
+    icon-image: "sport/volleyball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=beachvolleyball] {
+    icon-image: "sport/beachvolleyball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=bowling] {
+    icon-image: "sport/10pin.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=handball] {
+    icon-image: "sport/handball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=rowing] {
+    icon-image: "sport/rowing.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=sailing] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=scuba_diving] {
+    icon-image: "sport/scuba_diving.svg";
+    set icon_z17;
+    text: auto;
+}
+node[sport=badminton] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=archery],
+area[sport=fishing],
+area[sport=safety_training],
+area[sport=model_aerodrome],
+area[sport=rc_car] {
+    fill-color: sport#bde3cb;
+}
+node[sport=archery] {
+    icon-image: "sport/archery.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=fishing] {
+    icon-image: "sport/fishing.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=safety_training] {
+    icon-image: "sport/safety_training.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=model_aerodrome] {
+    icon-image: "transport/airport.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=rc_car] {
+    icon-image: "transport/car.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -2926,32 +3855,41 @@ area[natural=spring] {
 }
 node[natural=spring] {
     icon-image: "misc/landmark/spring.png";
+    set icon_z17;
     text: auto;
 }
 node[natural=saddle] {
     icon-image: "presets/saddle.svg";
+    set icon_z0;
     text: auto;
-}
-area[natural=peak] {
-    fill-color: peak#663300;
+    set text_z0;
 }
 node[natural=peak] {
     icon-image: "presets/peak.svg";
+    set icon_z0;
     text: auto;
+    set text_z0;
+}
+node[natural=peak][tourism=viewpoint] {
+    icon-image: "sightseeing/peak_viewpoint.svg";
+    set icon_z0;
+    text: auto;
+    set text_z0;
 }
 area[natural=glacier] {
     fill-color: glacier#ffffff;
 }
 node[natural=glacier] {
     icon-image: "misc/landmark/glacier_small.png";
+    set icon_z0;
     text: auto;
-}
-area[natural=volcano] {
-    fill-color: volcano#5f0000;
+    set text_z0;
 }
 node[natural=volcano] {
     icon-image: "misc/landmark/volcano_small.png";
+    set icon_z0;
     text: auto;
+    set text_z0;
 }
 area[natural=cliff]:closed {
     fill-color: natural#002f00;
@@ -2960,141 +3898,133 @@ way[natural=cliff] {
     repeat-image: "misc/cliff-pattern.png";
     repeat-image-align: top;
     width: 1;
-    color: #b2b2b2;    
+    color: #b2b2b2;
 }
 node[natural=cliff] {
     icon-image: "misc/cliff.png";
+    set icon_z17;
     text: auto;
+}
+way[natural=ridge] {
+    width: 1;
+    color: natural#002f00;
 }
 area[natural=scree] {
     fill-color: natural#002f00;
 }
-node[natural=scree] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
 area[natural=scrub] {
     fill-color: scrub#007000;
-}
-node[natural=scrub] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
 }
 area[natural=fell] {
     fill-color: natural#002f00;
 }
-node[natural=fell] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
 area[natural=heath] {
     fill-color: heath#ffffc0;
-}
-node[natural=heath] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
 }
 way[natural=tree_row] {
     width: 2;
     color: woodarea#008000;
 }
-node[natural=tree_row] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
 area[natural=wood] {
     fill-color: woodarea#008000;
-}
-node[natural=wood] {
-    icon-image: "misc/landmark/trees.png";
-    text: auto;
 }
 area[natural=grassland] {
     fill-color: green#b1e0c2;
 }
-node[natural=grassland] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
 area[natural=wetland] {
     fill-color: marsh#4f4ff3;
 }
-node[natural=wetland] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
 area[natural=water] {
     fill-color: water#0000ff;
-}
-node[natural=water] {
-    icon-image: "nautical/water.png";
-    text: auto;
 }
 way[natural=coastline] {
     width: 1;
     color: water#0000ff;
 }
-node[natural=coastline] {
-    icon-image: "misc/coastline.png";
-    text: auto;
-}
 area[natural=mud] {
     fill-color: mud#cba762;
-}
-node[natural=mud] {
-    icon-image: "misc/mud.png";
-    text: auto;
 }
 area[natural=beach] {
     fill-color: beach#f8dba2;
 }
-node[natural=beach] {
-    icon-image: "misc/beach.png";
-    text: auto;
-}
 area[natural=sand] {
     fill-color: sand#f8dba2;
 }
-node[natural=sand] {
-    icon-image: "misc/no_icon.png";
+area[natural=bare_rock] {
+    fill-color: bare_rock#f8f8c7;
+}
+area[natural=rock] {
+    fill-color: stone#f8f8c7;
+}
+node[natural=rock] {
+    icon-image: "misc/rock.svg";
+    set icon_z17;
+    text: auto;
+}
+area[natural=stone] {
+    fill-color: stone#f8f8c7;
+}
+node[natural=stone] {
+    icon-image: "misc/stone.svg";
+    set icon_z17;
     text: auto;
 }
 area[natural=bay],
-area[natural=land],
 area[natural=cave_entrance] {
     fill-color: natural#002f00;
 }
 node[natural=bay] {
     icon-image: "misc/bay.png";
-    text: auto;
-}
-node[natural=land] {
-    icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 node[natural=cave_entrance] {
     icon-image: "misc/landmark/cave_entrance.png";
+    set icon_z17;
     text: auto;
 }
 node[natural=tree] {
     icon-image: "misc/landmark/trees.png";
+    set icon_z17;
     text: auto;
 }
 node[natural=tree][type=conifer],
 node[natural=tree][leaf_type=needleleaved] {
     icon-image: "misc/landmark/trees_conifer.png";
+    set icon_z17;
     text: auto;
 }
 node[natural=tree][type=broad_leaved],
 node[natural=tree][leaf_type=broadleaved] {
     icon-image: "misc/landmark/trees_broad_leaved.png";
+    set icon_z17;
     text: auto;
 }
 node[natural=tree][type=palm] {
     icon-image: "misc/landmark/trees_palm.png";
+    set icon_z17;
     text: auto;
 }
-
+node[natural=scree],
+node[natural=scrub],
+node[natural=fell],
+node[natural=heath],
+node[natural=tree_row],
+node[natural=wood],
+node[natural=grassland],
+node[natural=wetland],
+node[natural=water],
+node[natural=coastline],
+node[natural=mud],
+node[natural=beach],
+node[natural=sand],
+node[natural=land],
+node[natural=bare_rock],
+node[natural=ridge] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
 /*****************/
 /* waterway tags */
 /*****************/
@@ -3125,14 +4055,17 @@ area[waterway=dock] {
 }
 node[waterway=dock] {
     icon-image: "nautical/boatyard.png";
+    set icon_z17;
     text: auto;
 }
 node[waterway=lock_gate] {
     icon-image: "nautical/lock_gate.png";
+    set icon_z17;
     text: auto;
 }
 node[waterway=turning_point] {
     icon-image: "nautical/turning.png";
+    set icon_z17;
     text: auto;
 }
 area[waterway=boatyard] {
@@ -3140,18 +4073,19 @@ area[waterway=boatyard] {
 }
 node[waterway=boatyard] {
     icon-image: "nautical/boatyard.png";
+    set icon_z17;
     text: auto;
 }
-node[waterway=water_point] {
-    icon-image: "accommodation/camping/water.png";
-    text: auto;
-}
-node[waterway=waste_disposal] {
-    icon-image: "accommodation/camping/wastewater.png";
-    text: auto;
-}
+node[waterway=water_point],
+node[waterway=waste_disposal],
 node[waterway=mooring] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
+node[mooring] {
     icon-image: "nautical/marina.png";
+    set icon_z17;
     text: auto;
 }
 way[waterway=weir] {
@@ -3160,6 +4094,7 @@ way[waterway=weir] {
 }
 node[waterway=weir] {
     icon-image: "nautical/weir.png";
+    set icon_z17;
     text: auto;
 }
 way[waterway=rapids] {
@@ -3168,6 +4103,7 @@ way[waterway=rapids] {
 }
 node[waterway=rapids] {
     icon-image: "misc/no_icon.png";
+    set icon_z17;
     text: auto;
 }
 area[waterway=dam]:closed {
@@ -3179,6 +4115,7 @@ way[waterway=dam] {
 }
 node[waterway=dam] {
     icon-image: "nautical/dam.png";
+    set icon_z17;
     text: auto;
 }
 /* it's not possible to have both line and area, line seems more likely */
@@ -3188,6 +4125,7 @@ way[waterway=waterfall] {
 }
 node[waterway=waterfall] {
     icon-image: "nautical/waterfall.png";
+    set icon_z17;
     text: auto;
 }
 node[waterway=river], node[waterway=riverbank],
@@ -3195,6 +4133,7 @@ node[waterway=canal], node[waterway=wadi],
 node[waterway=stream],
 node[waterway=ditch], node[waterway=drain] {
     icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -3202,16 +4141,9 @@ node[waterway=ditch], node[waterway=drain] {
 /* route tags */
 /**************/
 
-way[route=bus],
-way[route=ferry],
-way[route=flight],
-way[route=ncn],
-way[route=subsea],
-way[route=ski],
-way[route=tour],
-way[route=pub_crawl] {
+way[route=ferry] {
     width: 1;
-    color: route#809bc0;
+    color: ferry#809bc0;
     dashes: 9,9;
 }
 node[route=bus],
@@ -3223,287 +4155,7 @@ node[route=ski],
 node[route=tour],
 node[route=pub_crawl] {
     icon-image: "misc/deprecated.png";
-    text: auto;
-}
-
-/**************/
-/* sport tags */
-/**************/
-
-area[sport="9pin"],
-area[sport="10pin"],
-area[sport=athletics],
-area[sport=soccer],
-area[sport=australian_football],
-area[sport=american_football],
-area[sport=canadian_football],
-area[sport=gaelic_football],
-area[sport=rugby_league],
-area[sport=rugby_union] {
-    fill-color: sport#bde3cb;
-}
-node[sport="9pin"] {
-    icon-image: "sport/10pin.png";
-    text: auto;
-}
-node[sport="10pin"] {
-    icon-image: "sport/10pin.png";
-    text: auto;
-}
-node[sport=athletics] {
-    icon-image: "sport/athletics.png";
-    text: auto;
-}
-node[sport=soccer],
-node[sport=australian_football],
-node[sport=american_football],
-node[sport=canadian_football],
-node[sport=gaelic_football] {
-    icon-image: "sport/soccer.png";
-    text: auto;
-}
-node[sport=rugby_league],
-node[sport=rugby_union] {
-    icon-image: "sport/football.png";
-    text: auto;
-}
-area[sport=baseball],
-area[sport=basketball],
-area[sport=boules],
-area[sport=bowls],
-area[sport=canoe],
-area[sport=chess],
-area[sport=climbing],
-area[sport=cricket],
-area[sport=cricket_nets],
-area[sport=croquet] {
-    fill-color: sport#bde3cb;
-}
-node[sport=baseball] {
-    icon-image: "sport/baseball.png";
-    text: auto;
-}
-node[sport=basketball] {
-    icon-image: "sport/basketball.png";
-    text: auto;
-}
-node[sport=boules] {
-    icon-image: "sport/boule.png";
-    text: auto;
-}
-node[sport=bowls] {
-    icon-image: "sport/boule.png";
-    text: auto;
-}
-node[sport=canoe] {
-    icon-image: "sport/canoe.png";
-    text: auto;
-}
-node[sport=chess] {
-    icon-image: "sport/chess.png";
-    text: auto;
-}
-node[sport=climbing] {
-    icon-image:"sport/climbing.png" ;
-    text: auto;
-}
-node[sport=cricket] {
-    icon-image: "sport/cricket.png";
-    text: auto;
-}
-node[sport=cricket_nets] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
-node[sport=croquet] {
-    icon-image: "sport/croquet.png";
-    text: auto;
-}
-area[sport=cycling],
-area[sport=dog_racing],
-area[sport=equestrian],
-area[sport=golf],
-area[sport=gymnastics],
-area[sport=hockey],
-area[sport=horse_racing],
-area[sport=karting],
-area[sport=motocross],
-area[sport=motor] {
-    fill-color: sport#bde3cb;
-}
-node[sport=cycling] {
-    icon-image: "sport/cycling.png";
-    text: auto;
-}
-node[sport=dog_racing] {
-    icon-image: "leisure/dog.png";
-    text: auto;
-}
-node[sport=equestrian] {
-    icon-image: "sport/riding.png";
-    text: auto;
-}
-node[sport=golf] {
-    icon-image: "sport/golf.png";
-    text: auto;
-}
-node[sport=gymnastics] {
-    icon-image: "sport/multi.png";
-    text: auto;
-}
-node[sport=hockey] {
-    icon-image: "sport/hockey.png";
-    text: auto;
-}
-node[sport=horse_racing] {
-    icon-image: "sport/riding.png";
-    text: auto;
-}
-node[sport=karting] {
-    icon-image: "sport/karting.png";
-    text: auto;
-}
-node[sport=motocross] {
-    icon-image: "sport/motocross.png";
-    text: auto;
-}
-node[sport=motor] {
-    icon-image: "sport/motor.png";
-    text: auto;
-}
-area[sport=multi],
-area[sport=pelota],
-area[sport=racquet],
-area[sport=skating],
-area[sport=skateboard] {
-    fill-color: sport#bde3cb;
-}
-node[sport=multi] {
-    icon-image: "sport/multi.png";
-    text: auto;
-}
-node[sport=pelota] {
-    icon-image: "sport/pelota.png";
-    text: auto;
-}
-node[sport=racquet] {
-    icon-image: "sport/racquetball.png";
-    text: auto;
-}
-node[sport=skating] {
-    icon-image: "sport/skating.png";
-    text: auto;
-}
-node[sport=skateboard] {
-    icon-image: "sport/skateboard.png";
-    text: auto;
-}
-area[sport=swimming] {
-    fill-color: swimming_pool#51c4ef;
-}
-node[sport=swimming] {
-    icon-image: "sport/pool.png";
-    text: auto;
-}
-area[sport=skiing],
-area[sport=table_tennis],
-area[sport=tennis],
-area[sport=paintball] {
-    fill-color: sport#bde3cb;
-}
-node[sport=skiing] {
-    icon-image: "sport/skiing.png";
-    text: auto;
-}
-node[sport=table_tennis] {
-    icon-image: "sport/table_tennis.png";
-    text: auto;
-}
-node[sport=tennis] {
-    icon-image: "sport/tennis.png";
-    text: auto;
-}
-node[sport=paintball] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
-area[sport=squash],
-area[sport=shooting],
-area[sport=volleyball],
-area[sport=beachvolleyball],
-area[sport=bowling],
-area[sport=handball],
-area[sport=rowing],
-area[sport=sailing],
-area[sport=diving],
-area[sport=badminton] {
-    fill-color: sport#bde3cb;
-}
-node[sport=squash] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
-node[sport=shooting] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
-node[sport=volleyball] {
-    icon-image: "sport/volleyball.png";
-    text: auto;
-}
-node[sport=beachvolleyball] {
-    icon-image: "sport/beachvolleyball.png";
-    text: auto;
-}
-node[sport=bowling] {
-    icon-image: "sport/10pin.png";
-    text: auto;
-}
-node[sport=handball] {
-    icon-image: "sport/handball.png";
-    text: auto;
-}
-node[sport=rowing] {
-    icon-image: "sport/rowing.png";
-    text: auto;
-}
-node[sport=sailing] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
-node[sport=diving] {
-    icon-image: "sport/diving.png";
-    text: auto;
-}
-node[sport=badminton] {
-    icon-image: "misc/no_icon.png";
-    text: auto;
-}
-area[sport=archery],
-area[sport=fishing],
-area[sport=safety_training],
-area[sport=model_aerodrome],
-area[sport=rc_car] {
-    fill-color: sport#bde3cb;
-}
-node[sport=archery] {
-    icon-image: "sport/archery.png";
-    text: auto;
-}
-node[sport=fishing] {
-    icon-image: "sport/fishing.png";
-    text: auto;
-}
-node[sport=safety_training] {
-    icon-image: "sport/safety_training.png";
-    text: auto;
-}
-node[sport=model_aerodrome] {
-    icon-image: "transport/airport.png";
-    text: auto;
-}
-node[sport=rc_car] {
-    icon-image: "transport/car.png";
+    set icon_z17;
     text: auto;
 }
 
@@ -3513,17 +4165,20 @@ node[sport=rc_car] {
 
 node[mountain_pass?] {
     icon-image: "misc/landmark/mountain_pass.png";
+    set icon_z0;
     text: auto;
+    set text_z0;
 }
 
 /*****************/
 /* boundary tags */
 /*****************/
 
-way[boundary=national]::core_boundary,
+way[boundary=protected_area]::core_boundary,
 way[boundary=administrative]::core_boundary,
 way[boundary=postal_code]::core_boundary,
 way[boundary=political]::core_boundary,
+way[boundary=maritime]::core_boundary,
 way[boundary=national_park]::core_boundary {
     z-index: 2;
     modifier: false;
@@ -3587,8 +4242,418 @@ node[boundary=postal_code],
 node[boundary=political],
 node[boundary=national_park] {
     icon-image: "misc/deprecated.png";
+    set icon_z17;
     text: auto;
 }
+
+/******************/
+/* maxspeed nodes */
+/******************/
+node[traffic_sign][maxspeed=none][!is_prop_set(icon-image)] {
+    icon-image: "vehicle/restriction/maxspeed_none.svg";
+    set icon_z17;
+}
+node[traffic_sign][maxspeed=~/^[0-9]+$/][!is_prop_set(icon-image)] {
+    maxspeedprop: tag(maxspeed);
+    set maxspeedclass;
+}
+node[traffic_sign][maxspeed=signals][!is_prop_set(icon-image)] {
+    maxspeedprop: " ?";
+    set maxspeedclass;
+}
+node[traffic_sign][maxspeed=~/^[0-9]+ mph/][!is_prop_set(icon-image)] {
+    maxspeedprop: get(split(" mph",tag(maxspeed)),0);
+    set maxspeedclass;
+}
+node[traffic_sign][maxspeed=~/[0-9]+ km\/h/][!is_prop_set(icon-image)] {
+    maxspeedprop: get(split(" km/h",tag(maxspeed)),0);
+    set maxspeedclass;
+}
+node[traffic_sign][maxspeed=~/[0-9]+ knots/][!is_prop_set(icon-image)] {
+    maxspeedprop: get(split(" knots",tag(maxspeed)),0);
+    set maxspeedclass;
+}
+node[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core_maxnodebg {
+    /* background (white) */
+    symbol-shape: circle;
+    symbol-size: 17;
+    symbol-fill-color: white;
+    major-z-index: 4.2;
+}
+node[traffic_sign][maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"]::core_maxnodebg,
+node[traffic_sign][maxspeed=signals]::core_maxnodebg {
+    /* background (black) */
+    symbol-fill-color: black;
+}
+node[prop(maxspeedclass, default)]::core_maxnodefg {
+    /* foreground (black text and red circle) */
+    symbol-shape: circle;
+    symbol-size: 15;
+    symbol-stroke-color: crimson;
+    symbol-stroke-width: 2;
+    text: prop(maxspeedprop, default);
+    font-size: 8;
+    font-weight: bold;
+    text-color: black;
+    text-anchor-horizontal: center;
+    text-anchor-vertical: center;
+    text-offset-x: 0;
+    text-offset-y: -1;
+    major-z-index: 4.2;
+}
+node[traffic_sign][maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"]::core_maxnodefg,
+node[traffic_sign][maxspeed=signals]::core_maxnodefg {
+    /* foreground (white text) */
+    text-color: white;
+}
+node|z-16[prop(maxspeedclass, default)][setting("hide_icons")]::core_maxnodebg {
+    symbol-shape: none;
+}
+node|z-16[prop(maxspeedclass, default)][setting("hide_icons")]::core_maxnodefg {
+    text: none;
+    symbol-shape: none;
+}
+
+/**************/
+/* place tags */
+/**************/
+
+/* lot's of "openGeoDB:..." tags can be found in germany */
+node["openGeoDB:type"=Stadt],
+node["openGeoDB:type"=Kreis],
+node["openGeoDB:type"=Gemeinde],
+node["openGeoDB:type"=Ort],
+node["openGeoDB:type"=District],
+node["openGeoDB:location"=locality] {
+    icon-image: "place/settlement/openGeoDB.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+}
+area[place=continent],
+area[place=country],
+area[place=state],
+area[place=region],
+area[place=county],
+area[place=city],
+area[place=town],
+area[place=village],
+area[place=hamlet],
+area[place=farm],
+area[place=isolated_dwelling],
+area[place=neighbourhood],
+area[place=suburb],
+area[place=locality],
+area[place=island],
+area[place=islet] {
+    fill-color: place#8de3cb;
+}
+node[place=continent],
+node[place=country],
+node[place=state],
+node[place=region],
+node[place=county] {
+    icon-image: "place/settlement/capital.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.9;
+}
+node[place=city] {
+    icon-image: "place/settlement/city.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.8;
+}
+node[place=town] {
+    icon-image: "place/settlement/town.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.7;
+}
+node[place=suburb] {
+    icon-image: "place/settlement/suburb.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.6;
+}
+node[place=village] {
+    icon-image: "place/settlement/village.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.5;
+}
+node[place=neighbourhood] {
+    icon-image: "place/settlement/neighbourhood.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.4;
+}
+node[place=hamlet] {
+    icon-image: "place/settlement/hamlet.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.3;
+}
+node[place=isolated_dwelling] {
+    icon-image: "place/settlement/isolated_dwelling.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.2;
+}
+node[place=farm] {
+    icon-image: "place/settlement/farm.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+    z-index: 2.1;
+}
+node[place=locality] {
+    icon-image: "place/locality.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+}
+node[place=island] {
+    icon-image: "place/island.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+}
+node[place=islet] {
+    icon-image: "place/islet.png";
+    set icon_z0;
+    text: auto;
+    set text_z0;
+    font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
+}
+
+/***************************/
+/* "work in progress" tags */
+/***************************/
+
+node|z16-[fixme]::core_fixme,
+node|z-15[fixme][!setting("hide_icons")]::core_fixme,
+node|z16-[FIXME]::core_fixme,
+node|z-15[FIXME][!setting("hide_icons")]::core_fixme {
+    object-z-index: 20;
+    icon-image: "misc/fixme-annotation.png";
+}
+node|z16-[note]::core_note,
+node|z-15[note][!setting("hide_icons")]::core_note {
+    object-z-index: 10;
+    icon-image: "misc/note-annotation.png";
+}
+
+/* special display of unreviewed tiger data (USA) */
+way["tiger:reviewed"=no]::core_tiger {
+    major-z-index: -10;
+    width: 11;
+    color: tiger_data#808000;
+    opacity: 0.6;
+}
+
+/****************************************/
+/* zoom levels and general node display */
+/****************************************/
+
+/*
+Summary of different zoom levels:
+  (any zoom)    place=* and a few natural icons with their text is shown
+  |z-15         untagged way nodes are hidden completely
+  |z16-         fixme=* and note=* symbols
+  |z17-         normal POI icons (without text),
+                street name along highway=* ways
+  |z18-         text for normal POI icons is shown
+  
+ * text size and node size is adapted according to zoom level (see style source below)
+ * maxspeed icons should not be distinguishable from POIs with "icon-image" property
+
+*/
+
+node {
+    text: auto;
+}
+node|z-16[setting("hide_icons")],
+node|z17-[!is_prop_set("icon-image")][setting("hide_icons")]!.maxspeedclass,
+node[!is_prop_set("icon-image")][!setting("hide_icons")]!.maxspeedclass {
+    symbol-size: 2;
+    symbol-shape: square;
+    symbol-stroke-color: node_standard#ffff00;
+    major-z-index: 4.95; /* put node squares above line text */
+}
+way > node|z-15[setting("shrink_nodes")]!:tagged {
+    symbol-shape: none;
+}
+node:connection {
+    symbol-stroke-color: node_connection#ffff00;
+}
+node:tagged {
+    symbol-stroke-color: none;
+    symbol-fill-color: node_tagged#00ffff;
+}
+
+way > node|z16[setting("shrink_nodes")]!:tagged { symbol-size: 1; }
+
+node|z17[setting("shrink_nodes")]               { symbol-size: 4; }
+way > node|z17[setting("shrink_nodes")]         { symbol-size: 2; }
+node|z17[setting("shrink_nodes")]:connection    { symbol-size: 4; }
+
+node|z18[setting("shrink_nodes")]               { symbol-size: 4; }
+way > node|z18[setting("shrink_nodes")]         { symbol-size: 3; }
+node|z18[setting("shrink_nodes")]:connection    { symbol-size: 5; }
+
+node|z19-[setting("shrink_nodes")]              { symbol-size: 4; }
+way > node|z19-[setting("shrink_nodes")]        { symbol-size: 4; }
+node|z19-[setting("shrink_nodes")]:connection   { symbol-size: 6; }
+
+node[!setting("shrink_nodes")]                  { symbol-size: 4; }
+way > node[!setting("shrink_nodes")]            { symbol-size: 4; }
+node[!setting("shrink_nodes")]:connection       { symbol-size: 6; }
+
+node|z-16[setting("hide_icons")].icon_z17!.icon_z0,
+relation|z-16[type=restriction][setting("hide_icons")] {
+    icon-image: none;
+}
+node|z-17[setting("hide_icons")]!.text_z0 {
+    text: none;
+}
+
+node|z19,area|z19   { font-size: 9; }
+node|z20-,area|z20-   { font-size: 10; }
+
+/*******************/
+/* way text labels */
+/*******************/
+
+way|z17-[highway^=motorway][setting("highway_labels")],
+way|z17-[highway^=trunk][setting("highway_labels")],
+way|z17-[highway^=primary][setting("highway_labels")],
+way|z17-[highway^=secondary][setting("highway_labels")],
+way|z17-[highway^=tertiary][setting("highway_labels")],
+way|z17-[highway=unclassified][setting("highway_labels")],
+way|z17-[highway=residential][setting("highway_labels")],
+way|z17-[highway=living_street][setting("highway_labels")],
+way|z17-[highway=pedestrian][!area?][setting("highway_labels")],
+way|z17-[highway=service][setting("highway_labels")],
+way|z17-[highway=track][setting("highway_labels")] {
+    text: auto;
+    text-color: black;
+    font-size: 9;
+    text-position: line;
+    text-halo-opacity: 1;
+    text-halo-radius: 1.5;
+}
+way|z17-[highway^=motorway][setting("highway_labels")] {
+    text-halo-color: motorway#809bc0;
+}
+way|z17-[highway^=trunk][setting("highway_labels")] {
+    text-halo-color: trunk#7fc97f;
+}
+way|z17-[highway^=primary][setting("highway_labels")] {
+    text-halo-color: primary#fb805f;
+}
+way|z17-[highway^=secondary][setting("highway_labels")] {
+    text-halo-color: secondary#fdbf6f;
+}
+way|z17-[highway^=tertiary][setting("highway_labels")] {
+    text-halo-color: tertiary#f7f496;
+}
+way|z17-[highway=unclassified][setting("highway_labels")],
+way|z17-[highway=residential][setting("highway_labels")],
+way|z17-[highway=living_street][setting("highway_labels")] {
+    text-halo-color: street#c0c0c0;
+}
+way[highway=pedestrian][!area?][setting("highway_labels")] {
+    text-halo-color: foot#00ff00;
+}
+way|z17-[highway=service][setting("highway_labels")] {
+    text-halo-color: service#809bc0;
+}
+way|z17-[highway=track][setting("highway_labels")] {
+    text-halo-color: highway_track#6e541c;
+}
+way|z18[highway][setting("highway_labels")] {
+    font-size: 10;
+}
+way|z19[highway][setting("highway_labels")] {
+    font-size: 11;
+}
+way|z20-[highway][setting("highway_labels")] {
+    font-size: 12;
+}
+
 /* "deprecated" tags 
      historic=museum -> tourism=museum 
      man_made=power_wind -> power=generator and power_source=wind 
@@ -3610,4 +4675,3 @@ node[boundary=national_park] {
      leisure=zoo -> tourism=zoo 
      power=station -> power=plant or power=sub_station 
 */
-

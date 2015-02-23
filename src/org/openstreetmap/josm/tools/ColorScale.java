@@ -1,5 +1,4 @@
 // License: GPL. For details, see LICENSE file.
-
 package org.openstreetmap.josm.tools;
 
 import java.awt.Color;
@@ -7,8 +6,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
 /**
- * Utility class that helps to work with color scale 
- * for coloring GPX tracks etc.
+ * Utility class that helps to work with color scale for coloring GPX tracks etc.
  * @since 7319
  */
 public class ColorScale {
@@ -16,15 +14,15 @@ public class ColorScale {
     private Color noDataColor;
     private Color belowMinColor;
     private Color aboveMaxColor;
-    
+
     private Color[] colors;
     private String title = "";
     private int intervalCount = 5;
-    
+
     private ColorScale() {
-        
+
     }
-    
+
     public static ColorScale createHSBScale(int count) {
         ColorScale sc = new ColorScale();
         sc.colors = new Color[count];
@@ -35,7 +33,7 @@ public class ColorScale {
         sc.addBounds();
         return sc;
     }
-    
+
     public static ColorScale createCyclicScale(int count) {
         ColorScale sc = new ColorScale();
         //                    red   yellow  green   blue    red
@@ -45,7 +43,7 @@ public class ColorScale {
 
         sc.colors = new Color[count];
         for (int i = 0; i < sc.colors.length; i++) {
-  
+
             float angle = 4 - i / 256f * 4;
             int quadrant = (int) angle;
             angle -= quadrant;
@@ -61,7 +59,7 @@ public class ColorScale {
         sc.addBounds();
         return sc;
     }
-    
+
     /**
      * transition function:
      *  w(0)=1, w(1)=0, 0&lt;=w(x)&lt;=1
@@ -79,7 +77,7 @@ public class ColorScale {
         this.min = min;
         this.max = max;
     }
-    
+
     /**
      * Add standard colors for values below min or above max value
      */
@@ -87,7 +85,7 @@ public class ColorScale {
         aboveMaxColor = colors[colors.length-1];
         belowMinColor = colors[0];
     }
-    
+
     public final Color getColor(double value) {
         if (value<min) return belowMinColor;
         if (value>max) return aboveMaxColor;
@@ -99,41 +97,37 @@ public class ColorScale {
         } else {
             return colors[n-1]; // this happens when value==max
         }
-        // int hdoplvl =(int) Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
-        //            : (hdop <= 0 ? 0 : hdop * hdopfactor));
-        // int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
     }
-    
+
     public final Color getColor(Number value) {
         return (value==null)? noDataColor : getColor(value.doubleValue());
     }
 
     public Color getNoDataColor() {
-        
         return noDataColor;
     }
 
     public void setNoDataColor(Color noDataColor) {
         this.noDataColor = noDataColor;
     }
-    
+
     public ColorScale makeTransparent(int alpha) {
         for (int i = 0; i < colors.length; i++) {
             colors[i] = new Color((colors[i].getRGB() & 0xFFFFFF) | ((alpha & 0xFF) << 24), true);
         }
         return this;
     }
-    
+
     public ColorScale addTitle(String title) {
         this.title = title;
         return this;
     }
-    
+
     public ColorScale setIntervalCount(int intervalCount) {
         this.intervalCount = intervalCount;
         return this;
     }
-    
+
     public ColorScale makeReversed() {
         int n = colors.length;
         Color tmp;
@@ -147,10 +141,10 @@ public class ColorScale {
         aboveMaxColor = tmp;
         return this;
     }
-    
+
     public void drawColorBar(Graphics2D g, int x, int y, int w, int h, double valueScale) {
         int n=colors.length;
-        
+
         for (int i=0; i<n; i++) {
             g.setColor(colors[i]);
             if (w<h) {
@@ -159,9 +153,9 @@ public class ColorScale {
                 g.fillRect(x+i*w/n, y, w/n+1, h);
             }
         }
-        
+
         int fw, fh;
-        FontMetrics fm = g.getFontMetrics(); 
+        FontMetrics fm = g.getFontMetrics();
         fh = fm.getHeight()/2;
         fw = fm.stringWidth(String.valueOf(Math.max((int)Math.abs(max*valueScale), (int)Math.abs(min*valueScale)))) + fm.stringWidth("0.123");
         g.setColor(noDataColor);

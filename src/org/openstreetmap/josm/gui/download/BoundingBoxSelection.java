@@ -183,7 +183,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     protected void resetErrorMessage(JosmTextField tf) {
         tf.setBorder(UIManager.getBorder("TextField.border"));
-        tf.setToolTipText("");
+        tf.setToolTipText(null);
     }
 
     class LatValueChecker extends FocusAdapter implements ActionListener{

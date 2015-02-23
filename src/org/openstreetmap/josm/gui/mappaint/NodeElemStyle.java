@@ -44,9 +44,9 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
 
         public Symbol(SymbolShape symbol, int size, Stroke stroke, Color strokeColor, Color fillColor) {
             if (stroke != null && strokeColor == null)
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Stroke given without color");
             if (stroke == null && fillColor == null)
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Either a stroke or a fill color must be given");
             this.symbol = symbol;
             this.size = size;
             this.stroke = stroke;
@@ -147,10 +147,19 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         int width = widthF == null ? -1 : Math.round(widthF);
         int height = heightF == null ? -1 : Math.round(heightF);
 
+        float offsetXF = 0f;
+        float offsetYF = 0f;
+        if (keys[ICON_OFFSET_X_IDX] != null) {
+            offsetXF = c.get(keys[ICON_OFFSET_X_IDX], 0f, Float.class);
+            offsetYF = c.get(keys[ICON_OFFSET_Y_IDX], 0f, Float.class);
+        }
+
         final MapImage mapImage = new MapImage(iconRef.iconName, iconRef.source);
 
         mapImage.width = width;
         mapImage.height = height;
+        mapImage.offsetX = Math.round(offsetXF);
+        mapImage.offsetY = Math.round(offsetYF);
 
         mapImage.alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
         Integer pAlpha = Utils.color_float2int(c.get(keys[ICON_OPACITY_IDX], null, float.class));
@@ -240,25 +249,12 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, StyledMapRenderer painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, StyledMapRenderer painter,
+            boolean selected, boolean outermember, boolean member) {
         if (primitive instanceof Node) {
             Node n = (Node) primitive;
             if (mapImage != null && painter.isShowIcons()) {
-                final Image nodeIcon;
-                if (painter.isInactiveMode() || n.isDisabled()) {
-                    if (disabledNodeIcon == null || disabledNodeIconIsTemporary) {
-                        disabledNodeIcon = mapImage.getDisplayedNodeIcon(true);
-                        disabledNodeIconIsTemporary = mapImage.isTemporary();
-                    }
-                    nodeIcon = disabledNodeIcon;
-                } else {
-                    if (enabledNodeIcon == null || enabledNodeIconIsTemporary) {
-                        enabledNodeIcon = mapImage.getDisplayedNodeIcon(false);
-                        enabledNodeIconIsTemporary = mapImage.isTemporary();
-                    }
-                    nodeIcon = enabledNodeIcon;
-                }
-                painter.drawNodeIcon(n, nodeIcon, Utils.color_int2float(mapImage.alpha), selected, member);
+                painter.drawNodeIcon(n, mapImage, painter.isInactiveMode() || n.isDisabled(), selected, member);
             } else if (symbol != null) {
                 Color fillColor = symbol.fillColor;
                 if (fillColor != null) {
@@ -319,7 +315,7 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
 
             }
         } else if (primitive instanceof Relation && mapImage != null) {
-            painter.drawRestriction((Relation) primitive, mapImage);
+            painter.drawRestriction((Relation) primitive, mapImage, painter.isInactiveMode() || primitive.isDisabled());
         }
     }
 

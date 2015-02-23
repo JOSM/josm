@@ -123,7 +123,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
 
         public Icon getDisplayIcon() {
-            return ico != null ? ico : (Icon) action.getValue(Action.SMALL_ICON);
+            if(ico != null)
+                return ico;
+            Object o = action.getValue(Action.LARGE_ICON_KEY);
+            if(o == null)
+                o = action.getValue(Action.SMALL_ICON);
+            return (Icon) o;
         }
 
         public void setName(String name) {
@@ -569,7 +574,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private String movingComponent;
 
         public Settings(DefaultMutableTreeNode rootActionsNode) {
-            super("toolbar", tr("Toolbar customization"), tr("Customize the elements on the toolbar."));
+            super(/* ICON(preferences/) */ "toolbar", tr("Toolbar customization"), tr("Customize the elements on the toolbar."));
             actionsTreeModel = new DefaultTreeModel(rootActionsNode);
             actionsTree = new JTree(actionsTreeModel);
         }
@@ -1056,7 +1061,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         control.setVisible(control.getComponentCount() != 0);
         control.repaint();
     }
-    
+
     /**
      * The method to add custom button on toolbar like search or preset buttons
      * @param definitionText toolbar definition text to describe the new button,

@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Dimension;
@@ -12,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -32,6 +34,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -40,6 +45,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.LassoModeAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
@@ -60,6 +66,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -86,8 +93,17 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     private int currentPhoto = -1;
 
     boolean useThumbs = false;
+    ExecutorService thumbsLoaderExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setPriority(Thread.MIN_PRIORITY);
+            return t;
+        }
+    });
     ThumbsLoader thumbsloader;
-    boolean thumbsLoaded = false;
+    boolean thumbsLoaderRunning = false;
+    volatile boolean thumbsLoaded = false;
     private BufferedImage offscreenBuffer;
     boolean updateOffscreenBuffer = true;
 
@@ -324,6 +340,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         entries.add(new RenameLayerAction(null, this));
         entries.add(SeparatorLayerAction.INSTANCE);
         entries.add(new CorrelateGpxWithImages(this));
+        entries.add(new ShowThumbnailAction(this));
         if (!menuAdditions.isEmpty()) {
             entries.add(SeparatorLayerAction.INSTANCE);
             entries.addAll(menuAdditions);
@@ -338,14 +355,26 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     }
 
+    /**
+     * Prepare the string that is displayed if layer information is requested.
+     * @return String with layer information
+     */
     private String infoText() {
-        int i = 0;
-        for (ImageEntry e : data)
+        int tagged = 0;
+        int newdata = 0;
+        for (ImageEntry e : data) {
             if (e.getPos() != null) {
-                i++;
+                tagged++;
             }
-        return trn("{0} image loaded.", "{0} images loaded.", data.size(), data.size())
-                + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", i, i);
+            if (e.hasNewGpsData()) {
+                newdata++;
+            }
+        }
+        return "<html>"
+                + trn("{0} image loaded.", "{0} images loaded.", data.size(), data.size())
+                + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", tagged, tagged)
+                + (newdata > 0 ? "<br>" + trn("{0} has updated GPS data.", "{0} have updated GPS data.", newdata, newdata) : "")
+                + "</html>";
     }
 
     @Override public Object getInfoComponent() {
@@ -366,10 +395,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     public void mergeFrom(Layer from) {
         GeoImageLayer l = (GeoImageLayer) from;
 
-        ImageEntry selected = null;
-        if (l.currentPhoto >= 0) {
-            selected = l.data.get(l.currentPhoto);
-        }
+        // Stop to load thumbnails on both layers.  Thumbnail loading will continue the next time
+        // the layer is painted.
+        stopLoadThumbs();
+        l.stopLoadThumbs();
+
+        final ImageEntry selected = l.currentPhoto >= 0 ? l.data.get(l.currentPhoto) : null;
 
         data.addAll(l.data);
         Collections.sort(data);
@@ -388,17 +419,23 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             }
         }
 
-        if (selected != null) {
-            for (int i = 0; i < data.size() ; i++) {
-                if (data.get(i) == selected) {
-                    currentPhoto = i;
-                    ImageViewerDialog.showImage(GeoImageLayer.this, data.get(i));
-                    break;
+        if (selected != null && !data.isEmpty()) {
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < data.size() ; i++) {
+                        if (selected.equals(data.get(i))) {
+                            currentPhoto = i;
+                            ImageViewerDialog.showImage(GeoImageLayer.this, data.get(i));
+                            break;
+                        }
+                    }
                 }
-            }
+            });
         }
 
         setName(l.getName());
+        thumbsLoaded &= l.thumbsLoaded;
     }
 
     private Dimension scaledDimension(Image thumb) {
@@ -432,7 +469,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Rectangle clip = g.getClipBounds();
         if (useThumbs) {
             if (!thumbsLoaded) {
-                loadThumbs();
+                startLoadThumbs();
             }
 
             if (null == offscreenBuffer || offscreenBuffer.getWidth() != width  // reuse the old buffer if possible
@@ -490,39 +527,55 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             if (e.getPos() != null) {
                 Point p = mv.getPoint(e.getPos());
 
+                int imgWidth = 100;
+                int imgHeight = 100;
                 if (useThumbs && e.thumbnail != null) {
                     Dimension d = scaledDimension(e.thumbnail);
+                    imgWidth = d.width;
+                    imgHeight = d.height;
+                }
+                else {
+                    imgWidth = selectedIcon.getIconWidth();
+                    imgHeight = selectedIcon.getIconHeight();
+                }
+
+                if (e.getExifImgDir() != null) {
+                    // Multiplier must be larger than sqrt(2)/2=0.71.
+                    double arrowlength = Math.max(25, Math.max(imgWidth, imgHeight) * 0.85);
+                    double arrowwidth = arrowlength / 1.4;
+
+                    double dir = e.getExifImgDir();
+                    // Rotate 90 degrees CCW
+                    double headdir = ( dir < 90 ) ? dir + 270 : dir - 90;
+                    double leftdir = ( headdir < 90 ) ? headdir + 270 : headdir - 90;
+                    double rightdir = ( headdir > 270 ) ? headdir - 270 : headdir + 90;
+
+                    double ptx = p.x + Math.cos(Math.toRadians(headdir)) * arrowlength;
+                    double pty = p.y + Math.sin(Math.toRadians(headdir)) * arrowlength;
+
+                    double ltx = p.x + Math.cos(Math.toRadians(leftdir)) * arrowwidth/2;
+                    double lty = p.y + Math.sin(Math.toRadians(leftdir)) * arrowwidth/2;
+
+                    double rtx = p.x + Math.cos(Math.toRadians(rightdir)) * arrowwidth/2;
+                    double rty = p.y + Math.sin(Math.toRadians(rightdir)) * arrowwidth/2;
+
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g.setColor(new Color(255, 255, 255, 192));
+                    int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
+                    int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
+                    g.fillPolygon(xar, yar, 4);
+                    g.setColor(Color.black);
+                    g.setStroke(new BasicStroke(1.2f));
+                    g.drawPolyline(xar, yar, 3);
+                }
+
+                if (useThumbs && e.thumbnail != null) {
                     g.setColor(new Color(128, 0, 0, 122));
-                    g.fillRect(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
+                    g.fillRect(p.x - imgWidth / 2, p.y - imgHeight / 2, imgWidth, imgHeight);
                 } else {
-                    if (e.getExifImgDir() != null) {
-                        double arrowlength = 25;
-                        double arrowwidth = 18;
-
-                        double dir = e.getExifImgDir();
-                        // Rotate 90 degrees CCW
-                        double headdir = ( dir < 90 ) ? dir + 270 : dir - 90;
-                        double leftdir = ( headdir < 90 ) ? headdir + 270 : headdir - 90;
-                        double rightdir = ( headdir > 270 ) ? headdir - 270 : headdir + 90;
-
-                        double ptx = p.x + Math.cos(Math.toRadians(headdir)) * arrowlength;
-                        double pty = p.y + Math.sin(Math.toRadians(headdir)) * arrowlength;
-
-                        double ltx = p.x + Math.cos(Math.toRadians(leftdir)) * arrowwidth/2;
-                        double lty = p.y + Math.sin(Math.toRadians(leftdir)) * arrowwidth/2;
-
-                        double rtx = p.x + Math.cos(Math.toRadians(rightdir)) * arrowwidth/2;
-                        double rty = p.y + Math.sin(Math.toRadians(rightdir)) * arrowwidth/2;
-
-                        g.setColor(Color.white);
-                        int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
-                        int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
-                        g.fillPolygon(xar, yar, 4);
-                    }
-
                     selectedIcon.paintIcon(mv, g,
-                            p.x - selectedIcon.getIconWidth() / 2,
-                            p.y - selectedIcon.getIconHeight() / 2);
+                            p.x - imgWidth / 2,
+                            p.y - imgHeight / 2);
 
                 }
             }
@@ -570,6 +623,24 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             e.setExifCoor(null);
             e.setPos(null);
             return;
+        }
+
+        try {
+            double speed = dirGps.getDouble(GpsDirectory.TAG_GPS_SPEED);
+            String speedRef = dirGps.getString(GpsDirectory.TAG_GPS_SPEED_REF);
+            if (speedRef != null) {
+                if (speedRef.equalsIgnoreCase("M")) {
+                    // miles per hour
+                    speed *= 1.609344;
+                } else if (speedRef.equalsIgnoreCase("N")) {
+                    // knots == nautical miles per hour
+                    speed *= 1.852;
+                }
+                // default is K (km/h)
+            }
+            e.setSpeed(speed);
+        } catch (Exception ex) {
+            Main.debug(ex.getMessage());
         }
 
         try {
@@ -716,7 +787,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     Main.parent,
                     tr("Delete image file from disk"),
                     new String[] {tr("Cancel"), tr("Delete")})
-            .setButtonIcons(new String[] {"cancel.png", "dialogs/delete.png"})
+            .setButtonIcons(new String[] {"cancel", "dialogs/delete"})
             .setContent(new JLabel(tr("<html><h3>Delete the file {0} from disk?<p>The image file will be permanently lost!</h3></html>"
                     ,toDelete.getFile().getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"),SwingConstants.LEFT))
                     .toggleEnable("geoimage.deleteimagefromdisk")
@@ -751,6 +822,15 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 updateOffscreenBuffer = true;
                 Main.map.repaint();
             }
+        }
+    }
+
+    public void copyCurrentPhotoPath() {
+        ImageEntry toCopy = null;
+        if (data != null && data.size() > 0 && currentPhoto >= 0 && currentPhoto < data.size()) {
+            toCopy = data.get(currentPhoto);
+            String copyString = toCopy.getFile().toString();
+            Utils.copyToClipboard(copyString);
         }
     }
 
@@ -837,14 +917,16 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     /**
      * Determines if the functionality of this layer is available in
-     * the specified map mode.  SelectAction is supported by default,
+     * the specified map mode. {@link SelectAction} and {@link LassoModeAction} are supported by default,
      * other map modes can be registered.
      * @param mapMode Map mode to be checked
      * @return {@code true} if the map mode is supported,
      *         {@code false} otherwise
      */
     private static final boolean isSupportedMapMode(MapMode mapMode) {
-        if (mapMode instanceof SelectAction) return true;
+        if (mapMode instanceof SelectAction || mapMode instanceof LassoModeAction) {
+            return true;
+        }
         if (supportedMapModes != null) {
             for (MapMode supmmode: supportedMapModes) {
                 if (mapMode == supmmode) {
@@ -936,9 +1018,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             @Override
             public void layerRemoved(Layer oldLayer) {
                 if (oldLayer == GeoImageLayer.this) {
-                    if (thumbsloader != null) {
-                        thumbsloader.stop = true;
-                    }
+                    stopLoadThumbs();
                     Main.map.mapView.removeMouseListener(mouseAdapter);
                     MapFrame.removeMapModeChangeListener(mapModeListener);
                     currentPhoto = -1;
@@ -964,14 +1044,38 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
     }
 
-    public void loadThumbs() {
-        if (useThumbs && !thumbsLoaded) {
-            thumbsLoaded = true;
+    /**
+     * Start to load thumbnails.
+     */
+    public synchronized void startLoadThumbs() {
+        if (useThumbs && !thumbsLoaded && !thumbsLoaderRunning) {
+            stopLoadThumbs();
             thumbsloader = new ThumbsLoader(this);
-            Thread t = new Thread(thumbsloader);
-            t.setPriority(Thread.MIN_PRIORITY);
-            t.start();
+            thumbsLoaderExecutor.submit(thumbsloader);
+            thumbsLoaderRunning = true;
         }
+    }
+
+    /**
+     * Stop to load thumbnails.
+     *
+     * Can be called at any time to make sure that the
+     * thumbnail loader is stopped.
+     */
+    public synchronized void stopLoadThumbs() {
+        if (thumbsloader != null) {
+            thumbsloader.stop = true;
+        }
+        thumbsLoaderRunning = false;
+    }
+
+    /**
+     * Called to signal that the loading of thumbnails has finished.
+     *
+     * Usually called from {@link ThumbsLoader} in another thread.
+     */
+    public void thumbsLoaded() {
+        thumbsLoaded = true;
     }
 
     public void updateBufferAndRepaint() {
@@ -979,10 +1083,14 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Main.map.mapView.repaint();
     }
 
+    /**
+     * Get list of images in layer.
+     * @return List of images in layer
+     */
     public List<ImageEntry> getImages() {
         List<ImageEntry> copy = new ArrayList<>(data.size());
         for (ImageEntry ie : data) {
-            copy.add(ie.clone());
+            copy.add(ie);
         }
         return copy;
     }
@@ -1023,7 +1131,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     public void setUseThumbs(boolean useThumbs) {
         this.useThumbs = useThumbs;
         if (useThumbs && !thumbsLoaded) {
-            loadThumbs();
+            startLoadThumbs();
+        } else if (!useThumbs) {
+            stopLoadThumbs();
         }
     }
 }

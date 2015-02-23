@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 2575
  */
 public class SimplifyWayAction extends JosmAction {
-    
+
     /**
      * Constructs a new {@code SimplifyWayAction}.
      */

@@ -114,7 +114,7 @@ public class LanguagePreference implements SubPreferenceSetting {
             this.dispatch = new DefaultListCellRenderer();
         }
         @Override
-        public Component getListCellRendererComponent(JList<? extends Locale> list, Locale l, 
+        public Component getListCellRendererComponent(JList<? extends Locale> list, Locale l,
                 int index, boolean isSelected, boolean cellHasFocus) {
             return dispatch.getListCellRendererComponent(list,
                     l == null ? tr("Default (Auto determined)") : l.getDisplayName(l),

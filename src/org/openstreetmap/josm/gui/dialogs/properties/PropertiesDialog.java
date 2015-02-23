@@ -84,6 +84,7 @@ import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.PresetHandler;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -233,6 +234,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         super(tr("Tags/Memberships"), "propertiesdialog", tr("Tags for selected objects."),
                 Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Tags/Memberships")), KeyEvent.VK_P,
                         Shortcut.ALT_SHIFT), 150, true);
+
+        HelpUtil.setHelpContext(this, HelpUtil.ht("/Dialog/TagsMembership"));
 
         setupTagsMenu();
         buildTagsTable();
@@ -890,7 +893,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         static final String DELETE_FROM_RELATION_PREF = "delete_from_relation";
 
         public DeleteAction() {
-            super(tr("Delete"), "dialogs/delete", tr("Delete the selected key in all objects"),
+            super(tr("Delete"), /* ICON() */ "dialogs/delete", tr("Delete the selected key in all objects"),
                     Shortcut.registerShortcut("properties:delete", tr("Delete Tags"), KeyEvent.VK_D,
                             Shortcut.ALT_CTRL_SHIFT), false);
             updateEnabledState();
@@ -943,7 +946,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             ExtendedDialog ed = new ExtendedDialog(Main.parent,
                     tr("Change relation"),
                     new String[] {tr("Delete from relation"), tr("Cancel")});
-            ed.setButtonIcons(new String[] {"dialogs/delete.png", "cancel.png"});
+            ed.setButtonIcons(new String[] {"dialogs/delete", "cancel"});
             ed.setContent(tr("Really delete selection from relation {0}?", cur.getDisplayName(DefaultNameFormatter.getInstance())));
             ed.toggleEnable(DELETE_FROM_RELATION_PREF);
             ed.showDialog();
@@ -998,7 +1001,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     class AddAction extends JosmAction {
         public AddAction() {
-            super(tr("Add"), "dialogs/add", tr("Add a new key/value pair to all objects"),
+            super(tr("Add"), /* ICON() */ "dialogs/add", tr("Add a new key/value pair to all objects"),
                     Shortcut.registerShortcut("properties:add", tr("Add Tag"), KeyEvent.VK_A,
                             Shortcut.ALT), false);
         }
@@ -1015,7 +1018,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     class EditAction extends JosmAction implements ListSelectionListener {
         public EditAction() {
-            super(tr("Edit"), "dialogs/edit", tr("Edit the value of the selected key for all objects"),
+            super(tr("Edit"), /* ICON() */ "dialogs/edit", tr("Edit the value of the selected key for all objects"),
                     Shortcut.registerShortcut("properties:edit", tr("Edit Tags"), KeyEvent.VK_S,
                             Shortcut.ALT), false);
             updateEnabledState();
@@ -1210,8 +1213,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     class CopyKeyValueAction extends AbstractCopyAction {
 
         public CopyKeyValueAction() {
-            putValue(NAME, tr("Copy Key/Value"));
-            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tag to clipboard"));
+            putValue(NAME, tr("Copy selected Key(s)/Value(s)"));
+            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tag(s) to clipboard"));
         }
 
         @Override
@@ -1225,7 +1228,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         public CopyAllKeyValueAction() {
             putValue(NAME, tr("Copy all Keys/Values"));
-            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the all tags to clipboard"));
+            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of all the tags to clipboard"));
         }
 
         @Override

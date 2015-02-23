@@ -61,7 +61,7 @@ public class CombineWayAction extends JosmAction {
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Change directions?"),
                 new String[] {tr("Reverse and Combine"), tr("Cancel")});
-        ed.setButtonIcons(new String[] {"wayflip.png", "cancel.png"});
+        ed.setButtonIcons(new String[] {"wayflip", "cancel"});
         ed.setContent(tr("The ways can not be combined in their current directions.  "
                 + "Do you want to reverse some of them?"));
         ed.toggleEnable("combineway-reverse");
@@ -259,7 +259,7 @@ public class CombineWayAction extends JosmAction {
     public static class NodePair {
         private final Node a;
         private final Node b;
-        
+
         /**
          * Constructs a new {@code NodePair}.
          * @param a The first node
@@ -350,7 +350,7 @@ public class CombineWayAction extends JosmAction {
             result = prime * result + ((b == null) ? 0 : b.hashCode());
             return result;
         }
-        
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)

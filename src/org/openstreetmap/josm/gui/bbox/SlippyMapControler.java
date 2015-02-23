@@ -44,7 +44,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     /** The speed increase per timer interval when a cursor button is clicked */
     private static final double ACCELERATION = 0.10;
-    
+
     private static final int MAC_MOUSE_BUTTON3_MASK = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
 
     // start and end point of selection rectangle

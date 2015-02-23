@@ -110,7 +110,7 @@ public class BoxTextElemStyle extends ElemStyle {
         initDefaultParameters();
         Cascade c = env.mc.getCascade(env.layer);
 
-        TextElement text = TextElement.create(c, DEFAULT_TEXT_COLOR, false);
+        TextElement text = TextElement.create(env, DEFAULT_TEXT_COLOR, false);
         if (text == null) return null;
         // Skip any primitives that don't have text to draw. (Styles are recreated for any tag change.)
         // The concrete text to render is not cached in this object, but computed for each
@@ -118,7 +118,7 @@ public class BoxTextElemStyle extends ElemStyle {
         if (text.labelCompositionStrategy.compose(env.osm) == null) return null;
 
         HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
-        Keyword hAlignKW = c.get("text-anchor-horizontal", Keyword.RIGHT, Keyword.class);
+        Keyword hAlignKW = c.get(TEXT_ANCHOR_HORIZONTAL, Keyword.RIGHT, Keyword.class);
         if ("left".equals(hAlignKW.val)) {
             hAlign = HorizontalTextAlignment.LEFT;
         } else if ("center".equals(hAlignKW.val)) {
@@ -127,7 +127,7 @@ public class BoxTextElemStyle extends ElemStyle {
             hAlign = HorizontalTextAlignment.RIGHT;
         }
         VerticalTextAlignment vAlign = VerticalTextAlignment.BOTTOM;
-        String vAlignStr = c.get("text-anchor-vertical", Keyword.BOTTOM, Keyword.class).val;
+        String vAlignStr = c.get(TEXT_ANCHOR_VERTICAL, Keyword.BOTTOM, Keyword.class).val;
         if ("above".equals(vAlignStr)) {
             vAlign = VerticalTextAlignment.ABOVE;
         } else if ("top".equals(vAlignStr)) {
@@ -178,7 +178,8 @@ public class BoxTextElemStyle extends ElemStyle {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings settings, StyledMapRenderer painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings settings, StyledMapRenderer painter,
+            boolean selected, boolean outermember, boolean member) {
         if (osm instanceof Node) {
             painter.drawBoxText((Node) osm, this);
         }

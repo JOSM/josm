@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonModel;
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JRadioButton;
@@ -14,6 +13,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -39,7 +39,7 @@ public abstract class ToggleAction extends JosmAction {
      * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public ToggleAction(String name, Icon icon, String tooltip, Shortcut shortcut, boolean registerInToolbar, String toolbarId, boolean installAdapters) {
+    public ToggleAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar, String toolbarId, boolean installAdapters) {
         super(name, icon, tooltip, shortcut, registerInToolbar, toolbarId, installAdapters);
         // It is required to set the SELECTED_KEY to a non-null value in order to let Swing components update it
         setSelected(false);
@@ -81,7 +81,7 @@ public abstract class ToggleAction extends JosmAction {
             return false;
         }
     }
-    
+
     /**
      * Adds a button model
      * @param model The button model to add
@@ -102,7 +102,7 @@ public abstract class ToggleAction extends JosmAction {
             buttonModels.remove(model);
         }
     }
-    
+
     protected void notifySelectedState() {
         boolean selected = isSelected();
         for (ButtonModel model: buttonModels) {
@@ -120,11 +120,11 @@ public abstract class ToggleAction extends JosmAction {
      * @see <a href="http://docs.oracle.com/javase/6/docs/api/javax/swing/Action.html">Interface Action</a>
      */
     protected final void toggleSelectedState(ActionEvent e) {
-        if (e == null || !(e.getSource() instanceof JToggleButton || 
-                           e.getSource() instanceof JCheckBox || 
-                           e.getSource() instanceof JRadioButton || 
-                           e.getSource() instanceof JCheckBoxMenuItem || 
-                           e.getSource() instanceof JRadioButtonMenuItem 
+        if (e == null || !(e.getSource() instanceof JToggleButton ||
+                           e.getSource() instanceof JCheckBox ||
+                           e.getSource() instanceof JRadioButton ||
+                           e.getSource() instanceof JCheckBoxMenuItem ||
+                           e.getSource() instanceof JRadioButtonMenuItem
                            )) {
             setSelected(!isSelected());
         }

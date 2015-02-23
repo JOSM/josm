@@ -24,7 +24,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * @author frsantos
  */
 public class UntaggedWay extends Test {
-    
+
     /** Empty way error */
     protected static final int EMPTY_WAY    = 301;
     /** Untagged way error */
@@ -78,8 +78,9 @@ public class UntaggedWay extends Test {
         Map<String, String> tags = w.getKeys();
         if (!tags.isEmpty()) {
             String highway = tags.get("highway");
-            if (highway != null && NAMED_WAYS.contains(highway) && !tags.containsKey("name") && !tags.containsKey("ref")) {
-                boolean isRoundabout = false;
+            if (highway != null && NAMED_WAYS.contains(highway) && !tags.containsKey("name") && !tags.containsKey("ref")
+                    && !"yes".equals(tags.get("noname"))) {
+                boolean isJunction = false;
                 boolean hasName = false;
                 for (String key : w.keySet()) {
                     hasName = key.startsWith("name:") || key.endsWith("_name") || key.endsWith("_ref");
@@ -87,15 +88,15 @@ public class UntaggedWay extends Test {
                         break;
                     }
                     if ("junction".equals(key)) {
-                        isRoundabout = "roundabout".equals(w.get("junction"));
+                        isJunction = true;
                         break;
                     }
                 }
 
-                if (!hasName && !isRoundabout) {
+                if (!hasName && !isJunction) {
                     errors.add(new TestError(this, Severity.WARNING, tr("Unnamed ways"), UNNAMED_WAY, w));
-                } else if (isRoundabout) {
-                    errors.add(new TestError(this, Severity.WARNING, tr("Unnamed junction"), UNNAMED_JUNCTION, w));
+                } else if (isJunction) {
+                    errors.add(new TestError(this, Severity.OTHER, tr("Unnamed junction"), UNNAMED_JUNCTION, w));
                 }
             }
         }

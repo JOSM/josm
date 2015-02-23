@@ -399,6 +399,7 @@ public abstract class Condition {
             case "sameTags":
                 return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
             case "areaStyle":
+                // only for validator
                 return ElemStyles.hasAreaElemStyle(e.osm, false);
             case "unconnected":
                 return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();

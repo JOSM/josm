@@ -35,7 +35,7 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * This class is immutable and thread-safe.
  *
- * @version $Id: Sha2Crypt.java 1552918 2013-12-21 16:26:59Z ggregory $
+ * @version $Id: Sha2Crypt.java 1619948 2014-08-22 22:53:55Z ggregory $
  * @since 1.7
  */
 public class Sha2Crypt {
@@ -125,7 +125,7 @@ public class Sha2Crypt {
      *            {@link MessageDigest} algorithm identifier string
      * @return complete hash value including prefix and salt
      * @throws IllegalArgumentException
-     *             if the given salt is {@code null} or does not match the allowed pattern
+     *             if the given salt is <code>null</code> or does not match the allowed pattern
      * @throws IllegalArgumentException
      *             when a {@link NoSuchAlgorithmException} is caught
      * @see MessageDigestAlgorithms

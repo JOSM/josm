@@ -18,6 +18,7 @@
 package org.apache.commons.codec.binary;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 import org.apache.commons.codec.CharEncoding;
@@ -32,21 +33,21 @@ import org.apache.commons.codec.Charsets;
  *
  * @see CharEncoding
  * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
- * @version $Id: StringUtils.java 1586300 2014-04-10 13:51:06Z ggregory $
+ * @version $Id: StringUtils.java 1637888 2014-11-10 15:29:02Z ggregory $
  * @since 1.4
  */
 public class StringUtils {
 
     /**
      * <p>
-     * Compares two CharSequences, returning {@code true} if they represent equal sequences of characters.
+     * Compares two CharSequences, returning <code>true</code> if they represent equal sequences of characters.
      * </p>
-     * 
+     *
      * <p>
-     * {@code null}s are handled without exceptions. Two {@code null} references are considered to be equal. The
-     * comparison is case sensitive.
+     * <code>null</code>s are handled without exceptions. Two <code>null</code> references are considered to be equal.
+     * The comparison is case sensitive.
      * </p>
-     * 
+     *
      * <pre>
      * StringUtils.equals(null, null)   = true
      * StringUtils.equals(null, "abc")  = false
@@ -54,17 +55,17 @@ public class StringUtils {
      * StringUtils.equals("abc", "abc") = true
      * StringUtils.equals("abc", "ABC") = false
      * </pre>
-     * 
+     *
      * <p>
      * Copied from Apache Commons Lang r1583482 on April 10, 2014 (day of 3.3.2 release).
      * </p>
-     * 
+     *
      * @see Object#equals(Object)
      * @param cs1
-     *            the first CharSequence, may be {@code null}
+     *            the first CharSequence, may be <code>null</code>
      * @param cs2
-     *            the second CharSequence, may be {@code null}
-     * @return {@code true} if the CharSequences are equal (case-sensitive), or both {@code null}
+     *            the second CharSequence, may be <code>null</code>
+     * @return <code>true</code> if the CharSequences are equal (case-sensitive), or both <code>null</code>
      * @since 1.10
      */
     public static boolean equals(final CharSequence cs1, final CharSequence cs2) {
@@ -86,7 +87,7 @@ public class StringUtils {
      * @param string
      *            The string to encode (if null, return null).
      * @param charset
-     *            The {@link Charset} to encode the {@code String}
+     *            The {@link Charset} to encode the <code>String</code>
      * @return the encoded bytes
      */
     private static byte[] getBytes(final String string, final Charset charset) {
@@ -97,12 +98,47 @@ public class StringUtils {
     }
 
     /**
+     * Calls {@link String#getBytes(Charset)}
+     *
+     * @param string
+     *            The string to encode (if null, return null).
+     * @param charset
+     *            The {@link Charset} to encode the <code>String</code>
+     * @return the encoded bytes
+     * @since 1.11
+     */
+    private static ByteBuffer getByteBuffer(final String string, final Charset charset) {
+        if (string == null) {
+            return null;
+        }
+        return ByteBuffer.wrap(string.getBytes(charset));
+    }
+
+    /**
+     * Encodes the given string into a byte buffer using the UTF-8 charset, storing the result into a new byte
+     * array.
+     *
+     * @param string
+     *            the String to encode, may be <code>null</code>
+     * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
+     * @throws NullPointerException
+     *             Thrown if {@link Charsets#UTF_8} is not initialized, which should never happen since it is
+     *             required by the Java platform specification.
+     * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
+     * @see #getBytesUnchecked(String, String)
+     * @since 1.11
+     */
+    public static ByteBuffer getByteBufferUtf8(final String string) {
+        return getByteBuffer(string, Charsets.UTF_8);
+    }
+
+    /**
      * Encodes the given string into a sequence of bytes using the ISO-8859-1 charset, storing the result into a new
      * byte array.
      *
      * @param string
-     *            the String to encode, may be {@code null}
-     * @return encoded bytes, or {@code null} if the input string was {@code null}
+     *            the String to encode, may be <code>null</code>
+     * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
      * @throws NullPointerException
      *             Thrown if {@link Charsets#ISO_8859_1} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -124,10 +160,10 @@ public class StringUtils {
      * </p>
      *
      * @param string
-     *            the String to encode, may be {@code null}
+     *            the String to encode, may be <code>null</code>
      * @param charsetName
      *            The name of a required {@link java.nio.charset.Charset}
-     * @return encoded bytes, or {@code null} if the input string was {@code null}
+     * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
      * @throws IllegalStateException
      *             Thrown when a {@link UnsupportedEncodingException} is caught, which should never happen for a
      *             required charset name.
@@ -150,8 +186,8 @@ public class StringUtils {
      * array.
      *
      * @param string
-     *            the String to encode, may be {@code null}
-     * @return encoded bytes, or {@code null} if the input string was {@code null}
+     *            the String to encode, may be <code>null</code>
+     * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
      * @throws NullPointerException
      *             Thrown if {@link Charsets#US_ASCII} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -168,8 +204,8 @@ public class StringUtils {
      * array.
      *
      * @param string
-     *            the String to encode, may be {@code null}
-     * @return encoded bytes, or {@code null} if the input string was {@code null}
+     *            the String to encode, may be <code>null</code>
+     * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
      * @throws NullPointerException
      *             Thrown if {@link Charsets#UTF_16} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -186,8 +222,8 @@ public class StringUtils {
      * array.
      *
      * @param string
-     *            the String to encode, may be {@code null}
-     * @return encoded bytes, or {@code null} if the input string was {@code null}
+     *            the String to encode, may be <code>null</code>
+     * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
      * @throws NullPointerException
      *             Thrown if {@link Charsets#UTF_16BE} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -204,8 +240,8 @@ public class StringUtils {
      * array.
      *
      * @param string
-     *            the String to encode, may be {@code null}
-     * @return encoded bytes, or {@code null} if the input string was {@code null}
+     *            the String to encode, may be <code>null</code>
+     * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
      * @throws NullPointerException
      *             Thrown if {@link Charsets#UTF_16LE} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -222,8 +258,8 @@ public class StringUtils {
      * array.
      *
      * @param string
-     *            the String to encode, may be {@code null}
-     * @return encoded bytes, or {@code null} if the input string was {@code null}
+     *            the String to encode, may be <code>null</code>
+     * @return encoded bytes, or <code>null</code> if the input string was <code>null</code>
      * @throws NullPointerException
      *             Thrown if {@link Charsets#UTF_8} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -246,9 +282,9 @@ public class StringUtils {
      * @param bytes
      *            The bytes to be decoded into characters
      * @param charset
-     *            The {@link Charset} to encode the {@code String}
+     *            The {@link Charset} to encode the <code>String</code>
      * @return A new <code>String</code> decoded from the specified array of bytes using the given charset,
-     *         or {@code null} if the input byte array was {@code null}.
+     *         or <code>null</code> if the input byte array was <code>null</code>.
      * @throws NullPointerException
      *             Thrown if {@link Charsets#UTF_8} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -265,11 +301,11 @@ public class StringUtils {
      * </p>
      *
      * @param bytes
-     *            The bytes to be decoded into characters, may be {@code null}
+     *            The bytes to be decoded into characters, may be <code>null</code>
      * @param charsetName
      *            The name of a required {@link java.nio.charset.Charset}
      * @return A new <code>String</code> decoded from the specified array of bytes using the given charset,
-     *         or {@code null} if the input byte array was {@code null}.
+     *         or <code>null</code> if the input byte array was <code>null</code>.
      * @throws IllegalStateException
      *             Thrown when a {@link UnsupportedEncodingException} is caught, which should never happen for a
      *             required charset name.
@@ -291,9 +327,9 @@ public class StringUtils {
      * Constructs a new <code>String</code> by decoding the specified array of bytes using the ISO-8859-1 charset.
      *
      * @param bytes
-     *            The bytes to be decoded into characters, may be {@code null}
+     *            The bytes to be decoded into characters, may be <code>null</code>
      * @return A new <code>String</code> decoded from the specified array of bytes using the ISO-8859-1 charset, or
-     *         {@code null} if the input byte array was {@code null}.
+     *         <code>null</code> if the input byte array was <code>null</code>.
      * @throws NullPointerException
      *             Thrown if {@link Charsets#ISO_8859_1} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -309,7 +345,7 @@ public class StringUtils {
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the US-ASCII charset,
-     *         or {@code null} if the input byte array was {@code null}.
+     *         or <code>null</code> if the input byte array was <code>null</code>.
      * @throws NullPointerException
      *             Thrown if {@link Charsets#US_ASCII} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -325,7 +361,7 @@ public class StringUtils {
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the UTF-16 charset
-     *         or {@code null} if the input byte array was {@code null}.
+     *         or <code>null</code> if the input byte array was <code>null</code>.
      * @throws NullPointerException
      *             Thrown if {@link Charsets#UTF_16} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -341,7 +377,7 @@ public class StringUtils {
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the UTF-16BE charset,
-     *         or {@code null} if the input byte array was {@code null}.
+     *         or <code>null</code> if the input byte array was <code>null</code>.
      * @throws NullPointerException
      *             Thrown if {@link Charsets#UTF_16BE} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -357,7 +393,7 @@ public class StringUtils {
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the UTF-16LE charset,
-     *         or {@code null} if the input byte array was {@code null}.
+     *         or <code>null</code> if the input byte array was <code>null</code>.
      * @throws NullPointerException
      *             Thrown if {@link Charsets#UTF_16LE} is not initialized, which should never happen since it is
      *             required by the Java platform specification.
@@ -373,7 +409,7 @@ public class StringUtils {
      * @param bytes
      *            The bytes to be decoded into characters
      * @return A new <code>String</code> decoded from the specified array of bytes using the UTF-8 charset,
-     *         or {@code null} if the input byte array was {@code null}.
+     *         or <code>null</code> if the input byte array was <code>null</code>.
      * @throws NullPointerException
      *             Thrown if {@link Charsets#UTF_8} is not initialized, which should never happen since it is
      *             required by the Java platform specification.

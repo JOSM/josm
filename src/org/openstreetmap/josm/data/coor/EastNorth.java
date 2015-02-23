@@ -45,7 +45,7 @@ public class EastNorth extends Coordinate {
 
     /**
      * Returns the euclidean distance from this {@code EastNorth} to a specified {@code EastNorth}.
-     * 
+     *
      * @param en the specified coordinate to be measured against this {@code EastNorth}
      * @return the euclidean distance from this {@code EastNorth} to a specified {@code EastNorth}
      * @since 6166
@@ -56,7 +56,7 @@ public class EastNorth extends Coordinate {
 
     /**
      * Returns the square of the euclidean distance from this {@code EastNorth} to a specified {@code EastNorth}.
-     * 
+     *
      * @param en the specified coordinate to be measured against this {@code EastNorth}
      * @return the square of the euclidean distance from this {@code EastNorth} to a specified {@code EastNorth}
      * @since 6166
@@ -67,7 +67,7 @@ public class EastNorth extends Coordinate {
 
     /**
      * Counts length (distance from [0,0]) of this.
-     * 
+     *
      * @return length of this
      */
     public double length(){

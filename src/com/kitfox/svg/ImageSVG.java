@@ -123,7 +123,7 @@ public class ImageSVG extends RenderableElement
                     } catch (Exception e)
                     {
                         Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING,
-                            "Could not parse xlink:href", e);
+                            "Could not parse xlink:href " + src, e);
 //                        e.printStackTrace();
                         imageSrc = null;
                     }
@@ -206,6 +206,14 @@ public class ImageSVG extends RenderableElement
         if (getStyle(styleAttrib.setName("visibility")))
         {
             if (!styleAttrib.getStringValue().equals("visible"))
+            {
+                return;
+            }
+        }
+
+        if (getStyle(styleAttrib.setName("display")))
+        {
+            if (styleAttrib.getStringValue().equals("none"))
             {
                 return;
             }

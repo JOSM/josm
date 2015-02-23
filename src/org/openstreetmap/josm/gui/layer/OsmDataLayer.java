@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,17 +46,19 @@ import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
@@ -94,9 +97,12 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * The data can be fully edited.
  *
  * @author imi
+ * @since 17
  */
-public class OsmDataLayer extends ModifiableLayer implements Listener, SelectionChangedListener {
+public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener {
+    /** Property used to know if this layer has to be saved on disk */
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
+    /** Property used to know if this layer has to be uploaded */
     public static final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 
     private boolean requiresSaveToFile = false;
@@ -231,10 +237,18 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
         createHatchTexture();
     }
 
+    /**
+     * Replies background color for downloaded areas.
+     * @return background color for downloaded areas. Black by default
+     */
     public static Color getBackgroundColor() {
         return Main.pref.getColor(marktr("background"), Color.BLACK);
     }
 
+    /**
+     * Replies background color for non-downloaded areas.
+     * @return background color for non-downloaded areas. Yellow by default
+     */
     public static Color getOutsideColor() {
         return Main.pref.getColor(marktr("outside downloaded area"), Color.YELLOW);
     }
@@ -256,7 +270,10 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
     }
 
     /**
-     * Construct a OsmDataLayer.
+     * Construct a new {@code OsmDataLayer}.
+     * @param data OSM data
+     * @param name Layer name
+     * @param associatedFile Associated .osm file (can be null)
      */
     public OsmDataLayer(final DataSet data, final String name, final File associatedFile) {
         super(name);
@@ -334,13 +351,12 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
     @Override public String getToolTipText() {
         int nodes = new FilteredCollection<>(data.getNodes(), OsmPrimitive.nonDeletedPredicate).size();
         int ways = new FilteredCollection<>(data.getWays(), OsmPrimitive.nonDeletedPredicate).size();
+        int rels = new FilteredCollection<>(data.getRelations(), OsmPrimitive.nonDeletedPredicate).size();
 
         String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
-        tool += trn("{0} way", "{0} ways", ways, ways);
+        tool += trn("{0} way", "{0} ways", ways, ways)+", ";
+        tool += trn("{0} relation", "{0} relations", rels, rels);
 
-        if (data.getVersion() != null) {
-            tool += ", " + tr("version {0}", data.getVersion());
-        }
         File f = getAssociatedFile();
         if (f != null) {
             tool = "<html>"+tool+"<br>"+f.getPath()+"</html>";
@@ -523,11 +539,23 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
         return actions.toArray(new Action[actions.size()]);
     }
 
+    /**
+     * Converts given OSM dataset to GPX data.
+     * @param data OSM dataset
+     * @param file output .gpx file
+     * @return GPX data
+     */
     public static GpxData toGpxData(DataSet data, File file) {
         GpxData gpxData = new GpxData();
         gpxData.storageFile = file;
         HashSet<Node> doneNodes = new HashSet<>();
-        for (Way w : data.getWays()) {
+        waysToGpxData(data.getWays(), gpxData, doneNodes);
+        nodesToGpxData(data.getNodes(), gpxData, doneNodes);
+        return gpxData;
+    }
+
+    private static void waysToGpxData(Collection<Way> ways, GpxData gpxData, HashSet<Node> doneNodes) {
+        for (Way w : ways) {
             if (!w.isUsable()) {
                 continue;
             }
@@ -553,7 +581,7 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
                 }
                 WayPoint wpt = new WayPoint(n.getCoor());
                 if (!n.isTimestampEmpty()) {
-                    wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
+                    wpt.put("time", DateUtils.fromDate(n.getTimestamp()));
                     wpt.setTime();
                 }
                 trkseg.add(wpt);
@@ -561,35 +589,137 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
 
             gpxData.tracks.add(new ImmutableGpxTrack(trk, trkAttr));
         }
+    }
 
-        for (Node n : data.getNodes()) {
-            if (n.isIncomplete() || n.isDeleted() || doneNodes.contains(n)) {
+    private static void nodesToGpxData(Collection<Node> nodes, GpxData gpxData, HashSet<Node> doneNodes) {
+        List<Node> sortedNodes = new ArrayList<>(nodes);
+        sortedNodes.removeAll(doneNodes);
+        Collections.sort(sortedNodes);
+        for (Node n : sortedNodes) {
+            if (n.isIncomplete() || n.isDeleted()) {
                 continue;
             }
             WayPoint wpt = new WayPoint(n.getCoor());
-            String name = n.get("name");
-            if (name != null) {
-                wpt.attr.put("name", name);
-            }
+
+            // Position info
+
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
+
             if (!n.isTimestampEmpty()) {
-                wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
+                wpt.put("time", DateUtils.fromDate(n.getTimestamp()));
                 wpt.setTime();
             }
-            String desc = n.get("description");
-            if (desc != null) {
-                wpt.attr.put("desc", desc);
+
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_MAGVAR);
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_GEOIDHEIGHT);
+
+            // Description info
+
+            addStringIfPresent(wpt, n, GpxConstants.GPX_NAME);
+            addStringIfPresent(wpt, n, GpxConstants.GPX_DESC, "description");
+            addStringIfPresent(wpt, n, GpxConstants.GPX_CMT, "comment");
+            addStringIfPresent(wpt, n, GpxConstants.GPX_SRC, "source", "source:position");
+
+            Collection<GpxLink> links = new ArrayList<>();
+            for (String key : new String[]{"link", "url", "website", "contact:website"}) {
+                String value = n.get(key);
+                if (value != null) {
+                    links.add(new GpxLink(value));
+                }
             }
+            wpt.put(GpxConstants.META_LINKS, links);
+
+            addStringIfPresent(wpt, n, GpxConstants.PT_SYM, "wpt_symbol");
+            addStringIfPresent(wpt, n, GpxConstants.PT_TYPE);
+
+            // Accuracy info
+            addStringIfPresent(wpt, n, GpxConstants.PT_FIX, "gps:fix");
+            addIntegerIfPresent(wpt, n, GpxConstants.PT_SAT, "gps:sat");
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_HDOP, "gps:hdop");
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_VDOP, "gps:vdop");
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_PDOP, "gps:pdop");
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_AGEOFDGPSDATA, "gps:ageofdgpsdata");
+            addIntegerIfPresent(wpt, n, GpxConstants.PT_DGPSID, "gps:dgpsid");
 
             gpxData.waypoints.add(wpt);
         }
-        return gpxData;
     }
 
+    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+        ArrayList<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
+        possibleKeys.add(0, gpxKey);
+        for (String key : possibleKeys) {
+            String value = p.get(key);
+            if (value != null) {
+                try {
+                    int i = Integer.parseInt(value);
+                    // Sanity checks
+                    if ((!GpxConstants.PT_SAT.equals(gpxKey) || i >= 0) &&
+                        (!GpxConstants.PT_DGPSID.equals(gpxKey) || (0 <= i && i <= 1023))) {
+                        wpt.put(gpxKey, value);
+                        break;
+                    }
+                } catch (NumberFormatException e) {
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+        ArrayList<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
+        possibleKeys.add(0, gpxKey);
+        for (String key : possibleKeys) {
+            String value = p.get(key);
+            if (value != null) {
+                try {
+                    double d = Double.parseDouble(value);
+                    // Sanity checks
+                    if (!GpxConstants.PT_MAGVAR.equals(gpxKey) || (0.0 <= d && d < 360.0)) {
+                        wpt.put(gpxKey, value);
+                        break;
+                    }
+                } catch (NumberFormatException e) {
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+        ArrayList<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
+        possibleKeys.add(0, gpxKey);
+        for (String key : possibleKeys) {
+            String value = p.get(key);
+            if (value != null) {
+                // Sanity checks
+                if (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value)) {
+                    wpt.put(gpxKey, value);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Converts OSM data behind this layer to GPX data.
+     * @return GPX data
+     */
     public GpxData toGpxData() {
         return toGpxData(data, getAssociatedFile());
     }
 
+    /**
+     * Action that converts this OSM layer to a GPX layer.
+     */
     public class ConvertToGpxLayerAction extends AbstractAction {
+        /**
+         * Constructs a new {@code ConvertToGpxLayerAction}.
+         */
         public ConvertToGpxLayerAction() {
             super(tr("Convert to GPX layer"), ImageProvider.get("converttogpx"));
             putValue("help", ht("/Action/ConvertToGpxLayer"));
@@ -601,6 +731,11 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
         }
     }
 
+    /**
+     * Determines if this layer contains data at the given coordinate.
+     * @param coor the coordinate
+     * @return {@code true} if data sources bounding boxes contain {@code coor}
+     */
     public boolean containsPoint(LatLon coor) {
         // we'll assume that if this has no data sources
         // that it also has no borders
@@ -618,7 +753,7 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
     }
 
     /**
-     * replies the set of conflicts currently managed in this layer
+     * Replies the set of conflicts currently managed in this layer.
      *
      * @return the set of conflicts currently managed in this layer
      */
@@ -642,6 +777,9 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
         setRequiresUploadToServer(isModified());
     }
 
+    /**
+     * Actions run after data has been downloaded to this layer.
+     */
     public void onPostDownloadFromServer() {
         setRequiresSaveToFile(true);
         setRequiresUploadToServer(isModified());
@@ -707,10 +845,8 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
 
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
-        /*
-         * No reprojection required. The dataset itself is registered as projection
-         * change listener and already got notified.
-         */
+         // No reprojection required. The dataset itself is registered as projection
+         // change listener and already got notified.
     }
 
     @Override
@@ -718,6 +854,10 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
         return data.isUploadDiscouraged();
     }
 
+    /**
+     * Sets the "discouraged upload" flag.
+     * @param uploadDiscouraged {@code true} if upload of data managed by this layer is discouraged. This feature allows to use "private" data layers.
+     */
     public final void setUploadDiscouraged(boolean uploadDiscouraged) {
         if (uploadDiscouraged ^ isUploadDiscouraged()) {
             data.setUploadDiscouraged(uploadDiscouraged);
@@ -749,7 +889,7 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
                             new String[] {tr("Save anyway"), tr("Cancel")}
                     );
                     dialog.setContent(tr("The document contains no data."));
-                    dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+                    dialog.setButtonIcons(new String[] {"save", "cancel"});
                     return dialog.showDialog().getValue();
                 }
             })) {
@@ -769,7 +909,7 @@ public class OsmDataLayer extends ModifiableLayer implements Listener, Selection
                             new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
                     );
                     dialog.setContent(tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
-                    dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+                    dialog.setButtonIcons(new String[] {"save", "cancel"});
                     return dialog.showDialog().getValue();
                 }
             })) {

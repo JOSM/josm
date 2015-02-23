@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Represents the rendering style for a textual label placed somewhere on the map.
- *
+ * @since 3880
  */
 public class TextElement implements StyleKeys {
     public static final LabelCompositionStrategy AUTO_LABEL_COMPOSITION_STRATEGY = new DeriveLabelFromNameTagsCompositionStrategy();
@@ -72,8 +72,7 @@ public class TextElement implements StyleKeys {
     }
 
     /**
-     * Derives a suitable label composition strategy from the style properties in
-     * {@code c}.
+     * Derives a suitable label composition strategy from the style properties in {@code c}.
      *
      * @param c the style properties
      * @return the label composition strategy
@@ -107,7 +106,7 @@ public class TextElement implements StyleKeys {
      * Builds a text element from style properties in {@code c} and the
      * default text color {@code defaultTextColor}
      *
-     * @param c the style properties
+     * @param env the environment
      * @param defaultTextColor the default text color. Must not be null.
      * @param defaultAnnotate true, if a text label shall be rendered by default, even if the style sheet
      *   doesn't include respective style declarations
@@ -115,16 +114,19 @@ public class TextElement implements StyleKeys {
      * properties for text rendering
      * @throws IllegalArgumentException thrown if {@code defaultTextColor} is null
      */
-    public static TextElement create(Cascade c, Color defaultTextColor, boolean defaultAnnotate)  throws IllegalArgumentException{
+    public static TextElement create(Environment env, Color defaultTextColor, boolean defaultAnnotate)  throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(defaultTextColor);
+        Cascade c = env.mc.getCascade(env.layer);
 
         LabelCompositionStrategy strategy = buildLabelCompositionStrategy(c, defaultAnnotate);
         if (strategy == null) return null;
-        Font font = ElemStyle.getFont(c);
+        String s = strategy.compose(env.osm);
+        if (s == null) return null;
+        Font font = ElemStyle.getFont(c, s);
 
         float xOffset = 0;
         float yOffset = 0;
-        float[] offset = c.get("text-offset", null, float[].class);
+        float[] offset = c.get(TEXT_OFFSET, null, float[].class);
         if (offset != null) {
             if (offset.length == 1) {
                 yOffset = offset[0];
@@ -133,22 +135,22 @@ public class TextElement implements StyleKeys {
                 yOffset = offset[1];
             }
         }
-        xOffset = c.get("text-offset-x", xOffset, Float.class);
-        yOffset = c.get("text-offset-y", yOffset, Float.class);
+        xOffset = c.get(TEXT_OFFSET_X, xOffset, Float.class);
+        yOffset = c.get(TEXT_OFFSET_Y, yOffset, Float.class);
 
-        Color color = c.get("text-color", defaultTextColor, Color.class);
-        float alpha = c.get("text-opacity", 1f, Float.class);
+        Color color = c.get(TEXT_COLOR, defaultTextColor, Color.class);
+        float alpha = c.get(TEXT_OPACITY, 1f, Float.class);
         color = new Color(color.getRed(), color.getGreen(),
                 color.getBlue(), Utils.color_float2int(alpha));
 
-        Float haloRadius = c.get("text-halo-radius", null, Float.class);
+        Float haloRadius = c.get(TEXT_HALO_RADIUS, null, Float.class);
         if (haloRadius != null && haloRadius <= 0) {
             haloRadius = null;
         }
         Color haloColor = null;
         if (haloRadius != null) {
-            haloColor = c.get("text-halo-color", Utils.complement(color), Color.class);
-            float haloAlpha = c.get("text-halo-opacity", 1f, Float.class);
+            haloColor = c.get(TEXT_HALO_COLOR, Utils.complement(color), Color.class);
+            float haloAlpha = c.get(TEXT_HALO_OPACITY, 1f, Float.class);
             haloColor = new Color(haloColor.getRed(), haloColor.getGreen(),
                     haloColor.getBlue(), Utils.color_float2int(haloAlpha));
         }

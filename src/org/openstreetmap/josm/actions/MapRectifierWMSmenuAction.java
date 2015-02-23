@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagConstraints;
@@ -22,13 +23,18 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.gui.widgets.UrlLabel;
 
+/**
+ * Download rectified images from various services.
+ * @since 3715
+ */
 public class MapRectifierWMSmenuAction extends JosmAction {
+
     /**
      * Class that bundles all required information of a rectifier service
      */
@@ -38,7 +44,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
         private final String wmsUrl;
         private final Pattern urlRegEx;
         private final Pattern idValidator;
-        public JRadioButton btn;
+        private JRadioButton btn;
 
         /**
          * @param name Name of the rectifing service
@@ -55,16 +61,19 @@ public class MapRectifierWMSmenuAction extends JosmAction {
             this.idValidator = Pattern.compile(idValidator);
         }
 
-        public boolean isSelected() {
+        private boolean isSelected() {
             return btn.isSelected();
         }
     }
 
     /**
-     * List of available rectifier services. May be extended from the outside
+     * List of available rectifier services.
      */
-    public List<RectifierService> services = new ArrayList<>();
+    private final List<RectifierService> services = new ArrayList<>();
 
+    /**
+     * Constructs a new {@code MapRectifierWMSmenuAction}.
+     */
     public MapRectifierWMSmenuAction() {
         super(tr("Rectified Image..."),
                 "OLmarker",
@@ -74,6 +83,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                         KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
                 true
         );
+        putValue("help", ht("/Menu/Imagery"));
 
         // Add default services
         services.add(
@@ -154,7 +164,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
 
                 new String[] {tr("Add Rectified Image"), tr("Cancel")});
         diag.setContent(panel);
-        diag.setButtonIcons(new String[] {"OLmarker.png", "cancel.png"});
+        diag.setButtonIcons(new String[] {"OLmarker", "cancel"});
 
         // This repeatedly shows the dialog in case there has been an error.
         // The loop is break;-ed if the users cancels
@@ -176,8 +186,12 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 // We've reached the custom WMS URL service
                 // Just set the URL and hope everything works out
                 if(s.wmsUrl.isEmpty()) {
-                    addWMSLayer(s.name + " (" + text + ")", text);
-                    break outer;
+                    try {
+                        addWMSLayer(s.name + " (" + text + ")", text);
+                        break outer;
+                    } catch (IllegalStateException ex) {
+                        Main.error(ex.getMessage());
+                    }
                 }
 
                 // First try to match if the entered string as an URL
@@ -215,9 +229,13 @@ public class MapRectifierWMSmenuAction extends JosmAction {
      * Adds a WMS Layer with given title and URL
      * @param title Name of the layer as it will shop up in the layer manager
      * @param url URL to the WMS server
+     * @throws IllegalStateException if imagery time is neither HTML nor WMS
+     * @see WMSLayer#checkGrabberType
      */
     private void addWMSLayer(String title, String url) {
-        Main.main.addLayer(new WMSLayer(new ImageryInfo(title, url)));
+        WMSLayer layer = new WMSLayer(new ImageryInfo(title, url));
+        layer.checkGrabberType();
+        Main.main.addLayer(layer);
     }
 
     @Override

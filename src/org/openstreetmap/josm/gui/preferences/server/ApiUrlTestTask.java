@@ -4,46 +4,41 @@ package org.openstreetmap.josm.gui.preferences.server;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 import javax.swing.JOptionPane;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
  * This is an asynchronous task for testing whether an URL points to an OSM API server.
- * It tries to retrieve a list of changesets from the given URL. If it succeeds, the method
+ * It tries to retrieve capabilities from the given URL. If it succeeds, the method
  * {@link #isSuccess()} replies true, otherwise false.
- *
- * Note: it fetches a list of changesets instead of the much smaller capabilities because - strangely enough -
- * an OSM server "https://x.y.y/api/0.6" not only responds to  "https://x.y.y/api/0.6/capabilities" but also
- * to "https://x.y.y/api/0/capabilities" or "https://x.y.y/a/capabilities" with valid capabilities. If we get
- * valid capabilities with an URL we therefore can't be sure that the base URL is valid API URL.
- *
+ * @since 2745
  */
-public class ApiUrlTestTask extends PleaseWaitRunnable{
+public class ApiUrlTestTask extends PleaseWaitRunnable {
 
-    private String url;
+    private final String url;
     private boolean canceled;
     private boolean success;
-    private Component parent;
+    private final Component parent;
     private HttpURLConnection connection;
 
     /**
-     * Creates the task
+     * Constructs a new {@code ApiUrlTestTask}.
      *
      * @param parent the parent component relative to which the {@link PleaseWaitRunnable}-Dialog is displayed
      * @param url the url. Must not be null.
@@ -57,7 +52,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
     }
 
     protected void alertInvalidUrl(String url) {
-        HelpAwareOptionPane.showOptionDialog(
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "''{0}'' is not a valid OSM API URL.<br>"
@@ -71,8 +66,8 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
         );
     }
 
-    protected void alertInvalidChangesetUrl(String url) {
-        HelpAwareOptionPane.showOptionDialog(
+    protected void alertInvalidCapabilitiesUrl(String url) {
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "Failed to build URL ''{0}'' for validating the OSM API server.<br>"
@@ -88,7 +83,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
     }
 
     protected void alertConnectionFailed() {
-        HelpAwareOptionPane.showOptionDialog(
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "Failed to connect to the URL ''{0}''.<br>"
@@ -104,7 +99,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
     }
 
     protected void alertInvalidServerResult(int retCode) {
-        HelpAwareOptionPane.showOptionDialog(
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "Failed to retrieve a list of changesets from the OSM API server at<br>"
@@ -120,8 +115,8 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
         );
     }
 
-    protected void alertInvalidChangesetList() {
-        HelpAwareOptionPane.showOptionDialog(
+    protected void alertInvalidCapabilities() {
+        HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
                         + "The OSM API server at ''{0}'' did not return a valid response.<br>"
@@ -150,8 +145,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
     protected void finish() {}
 
     /**
-     * Removes leading and trailing whitespace from the API URL and removes trailing
-     * '/'.
+     * Removes leading and trailing whitespace from the API URL and removes trailing '/'.
      *
      * @return the normalized API URL
      */
@@ -173,11 +167,11 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
                 return;
             }
             URL capabilitiesUrl;
-            String getChangesetsUrl = getNormalizedApiUrl() + "/0.6/changesets";
+            String getCapabilitiesUrl = getNormalizedApiUrl() + "/0.6/capabilities";
             try {
-                capabilitiesUrl = new URL(getChangesetsUrl);
+                capabilitiesUrl = new URL(getCapabilitiesUrl);
             } catch(MalformedURLException e) {
-                alertInvalidChangesetUrl(getChangesetsUrl);
+                alertInvalidCapabilitiesUrl(getCapabilitiesUrl);
                 return;
             }
 
@@ -193,18 +187,12 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
                 alertInvalidServerResult(connection.getResponseCode());
                 return;
             }
-            StringBuilder changesets = new StringBuilder();
-            try (BufferedReader bin = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = bin.readLine()) != null) {
-                    changesets.append(line).append("\n");
-                }
-            }
-            if (! (changesets.toString().contains("<osm") && changesets.toString().contains("</osm>"))) {
-                // heuristic: if there isn't an opening and closing "<osm>" tag in the returned content,
-                // then we didn't get a list of changesets in return. Could be replaced by explicitly parsing
-                // the result but currently not worth the effort.
-                alertInvalidChangesetList();
+
+            try {
+                Capabilities.CapabilitiesParser.parse(new InputSource(connection.getInputStream()));
+            } catch (SAXException | ParserConfigurationException e) {
+                Main.warn(e.getMessage());
+                alertInvalidCapabilities();
                 return;
             }
             success = true;

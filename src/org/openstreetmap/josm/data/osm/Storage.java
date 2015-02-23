@@ -2,13 +2,14 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.AbstractSet;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A Set-like class that allows looking up equivalent preexising instance.
@@ -147,7 +148,7 @@ public class Storage<T> extends AbstractSet<T> {
 
     private void copyArray() {
         if (arrayCopyNecessary) {
-            data = Arrays.copyOf(data, data.length);
+            data = Utils.copyArray(data);
             arrayCopyNecessary = false;
         }
     }

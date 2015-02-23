@@ -10,20 +10,17 @@ import java.awt.MenuComponent;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.MenuElement;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -32,12 +29,31 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.Shape;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
+/**
+ * Imagery menu, holding entries for imagery preferences, offset actions and dynamic imagery entries
+ * depending on current maview coordinates.
+ * @since 3737
+ */
+public class ImageryMenu extends JMenu implements LayerChangeListener {
+
+    /**
+     * Compare ImageryInfo objects alphabetically by name.
+     *
+     * ImageryInfo objects are normally sorted by country code first
+     * (for the preferences). We don't want this in the imagery menu.
+     */
+    public static Comparator<ImageryInfo> alphabeticImageryComparator = new Comparator<ImageryInfo>() {
+        @Override
+        public int compare(ImageryInfo ii1, ImageryInfo ii2) {
+            return ii1.getName().toLowerCase().compareTo(ii2.getName().toLowerCase());
+        }
+    };
 
     private Action offsetAction = new JosmAction(
             tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false) {
@@ -82,6 +98,10 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     private JMenuItem offsetMenuItem = singleOffset;
     private final MapRectifierWMSmenuAction rectaction = new MapRectifierWMSmenuAction();
 
+    /**
+     * Constructs a new {@code ImageryMenu}.
+     * @param subMenu submenu in that contains plugin-managed additional imagery layers
+     */
     public ImageryMenu(JMenu subMenu) {
         super(tr("Imagery"));
         setupMenuScroller();
@@ -106,9 +126,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
 
     private void setupMenuScroller() {
         if (!GraphicsEnvironment.isHeadless()) {
-            int menuItemHeight = singleOffset.getPreferredSize().height;
-            MenuScroller.setScrollerFor(this, 
-                    MenuScroller.computeScrollCount(this, menuItemHeight));
+            MenuScroller.setScrollerFor(this, 150, 2);
         }
     }
 
@@ -125,7 +143,9 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         addDynamicSeparator();
 
         // for each configured ImageryInfo, add a menu entry.
-        for (final ImageryInfo u : ImageryLayerInfo.instance.getLayers()) {
+        final List<ImageryInfo> savedLayers = new ArrayList<>(ImageryLayerInfo.instance.getLayers());
+        Collections.sort(savedLayers, alphabeticImageryComparator);
+        for (final ImageryInfo u : savedLayers) {
             addDynamic(new AddImageryLayerAction(u));
         }
 
@@ -134,7 +154,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         if (Main.isDisplayingMapView()) {
             MapView mv = Main.map.mapView;
             LatLon pos = mv.getProjection().eastNorth2latlon(mv.getCenter());
-            final Set<ImageryInfo> inViewLayers = new TreeSet<>();
+            final List<ImageryInfo> inViewLayers = new ArrayList<>();
 
             for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
                 if (i.getBounds() != null && i.getBounds().contains(pos)) {
@@ -158,6 +178,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
                 }
             }
             if (!inViewLayers.isEmpty()) {
+                Collections.sort(inViewLayers, alphabeticImageryComparator);
                 addDynamicSeparator();
                 for (ImageryInfo i : inViewLayers) {
                     addDynamic(new AddImageryLayerAction(i));
@@ -191,14 +212,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
             return singleOffset;
         }
         offsetAction.setEnabled(true);
-        JMenu newMenu = new JMenu(trc("layer","Offset")) {
-            // Hack to prevent ToolbarPreference from tracing this menu
-            // TODO: Modify ToolbarPreference to not to trace such dynamic submenus?
-            @Override
-            public MenuElement[] getSubElements() {
-                return new MenuElement[0];
-            }
-        };
+        JMenu newMenu = new JMenu(trc("layer","Offset"));
         newMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
         newMenu.setAction(offsetAction);
         if (layers.size() == 1)

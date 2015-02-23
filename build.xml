@@ -25,12 +25,6 @@
     <condition property="isWindows">
         <os family="Windows"/>
     </condition>
-    <!-- Java classpath addition (all jar files to compile tests with this) -->
-    <path id="classpath">
-        <fileset dir="lib">
-            <include name="**/*.jar"/>
-        </fileset>
-    </path>
 
     <!--
       ** Used by Eclipse ant builder for updating
@@ -127,9 +121,6 @@ Build-Date: ${build.tstamp}
             <zipfileset dir="data" prefix="data"/>
             <zipfileset dir="styles" prefix="styles"/>
             <zipfileset dir="${src.dir}/org/openstreetmap/gui/jmapviewer/images" prefix="org/openstreetmap/gui/jmapviewer/images"/>
-            <!-- All jar files necessary to run only JOSM (no tests) -->
-            <!-- <zipfileset src="lib/metadata-extractor-2.3.1-nosun.jar"/>  -->
-            <!-- <zipfileset src="lib/signpost-core-1.2.1.1.jar"/> -->
         </jar>
     </target>
     <!-- Mac OS X target -->
@@ -186,6 +177,13 @@ Build-Date: ${build.tstamp}
             <param name="bundle.jar" value="dist/josm-custom.jar"/>
         </antcall>
     </target>
+    <!-- Windows target -->
+    <target name="distwin" depends="dist">
+        <exec dir="windows" executable="./josm-setup-unix.sh">
+            <arg value="${version.entry.commit.revision}"/>
+            <arg value="../dist/josm-custom.jar"/>
+        </exec>
+    </target>
     <target name="javacc" depends="init" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <exec append="false" executable="java" failifexecutionfails="true">
@@ -217,13 +215,14 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile" depends="init,javacc,jaxb">
         <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**" nowarn="on"
+        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**" nowarn="on"
+            excludes="org/apache/commons/compress/compressors/lzma/**,org/apache/commons/compress/compressors/xz/**,org/apache/commons/compress/compressors/CompressorStreamFactory.java,org/apache/commons/compress/compressors/deflate/**,org/apache/commons/compress/compressors/gzip/**,org/apache/commons/compress/compressors/lzw/**,org/apache/commons/compress/compressors/pack200/**,org/apache/commons/compress/compressors/snappy/**,org/apache/commons/compress/compressors/z/**"
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="iso-8859-1">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
         </javac>
         <!-- JMapViewer/JOSM -->
-        <javac srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
+        <javac srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
@@ -278,11 +277,8 @@ Build-Date: ${build.tstamp}
         <fileset dir="${test.dir}/lib">
             <include name="**/*.jar"/>
         </fileset>
-        <fileset dir="lib">
-            <include name="**/*.jar"/>
-        </fileset>
         <pathelement path="dist/josm-custom.jar"/>
-        <pathelement path="tools/groovy-all-2.3.6.jar"/>
+        <pathelement path="tools/groovy-all-2.4.0.jar"/>
     </path>
     <macrodef name="init-test-preferences">
         <attribute name="testfamily"/>
@@ -329,7 +325,7 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
     <target name="test-compile" depends="test-init,dist">
-        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.3.6.jar"/>
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.4.0.jar"/>
         <call-groovyc testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>
@@ -452,7 +448,7 @@ Build-Date: ${build.tstamp}
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-            <classpath path="tools/animal-sniffer-ant-tasks-1.11.jar"/>
+            <classpath path="tools/animal-sniffer-ant-tasks-1.13.jar"/>
         </typedef>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
@@ -524,6 +520,8 @@ Build-Date: ${build.tstamp}
             <ignore classname="au.edu.*"/>
             <ignore classname="au.com.*"/>
             <ignore classname="com.*"/>
+            <ignore classname="de.miethxml.*"/>
+            <ignore classname="javafx.*"/>
             <ignore classname="javax.*"/>
             <ignore classname="jogamp.*"/>
             <ignore classname="junit.*"/>
@@ -534,6 +532,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.dom4j.*"/>
             <ignore classname="org.hsqldb.*"/>
             <ignore classname="org.ibex.*"/>
+            <ignore classname="org.iso_relax.*"/>
             <ignore classname="org.jaitools.*"/>
             <ignore classname="org.jaxen.*"/>
             <ignore classname="org.jdom2.*"/>
@@ -541,8 +540,15 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.joda.time.*"/>
             <ignore classname="org.jvnet.staxex.*"/>
             <ignore classname="org.kxml2.*"/>
+            <ignore classname="org.objectweb.*"/>
             <ignore classname="org.python.*"/>
             <ignore classname="org.slf4j.*"/>
+        	<!-- plugins used by another ones -->
+            <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.jna.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.jts.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.log4j.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.utilsplugin2.*"/>
             <path path="${dir}"/>
         </as:check-signature>
     </target>
@@ -574,5 +580,4 @@ Build-Date: ${build.tstamp}
             <jvmarg value="-Djosm.home=/tmp/.josm/"/>
         </java>
     </target>
-
 </project>

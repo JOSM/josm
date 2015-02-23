@@ -31,6 +31,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
@@ -440,11 +441,8 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         }
     }
 
-    class SelectAction extends AbstractAction implements ListSelectionListener {
-        public SelectAction() {
-            putValue(NAME, tr("Select"));
-            putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+    class SelectAction extends AbstractSelectAction implements ListSelectionListener {
+        private SelectAction() {
             putValue("help", ht("/Dialog/ConflictList#SelectAction"));
         }
 

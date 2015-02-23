@@ -3,7 +3,7 @@
  */
 
 /* {0.key} without {1.key} (warning level) */
-way[junction                   ][!highway],
+way[junction                   ][!highway][junction!=yes],
 *[lanes                        ][!highway],
 *[lcn                          ][!highway],
 *[living_street                ][!highway],
@@ -13,7 +13,6 @@ way[junction                   ][!highway],
 *[ntd_id                       ][!highway],
 *[sac_scale                    ][!highway],
 *[sidewalk                     ][!highway],
-*[smoothness                   ][!highway],
 *[step_count                   ][!highway],
 *[tracktype                    ][!highway],
 *[trail_visibility             ][!highway],
@@ -45,6 +44,7 @@ way[junction                   ][!highway],
 *[canal                        ][!waterway],
 *[have_riverbank               ][!waterway],
 *[border_type                  ][!boundary],
+*[bridge:structure             ][!bridge],
 *[source:date                  ][!source],
 *[source:name                  ][!name],
 *[source:maxspeed:forward      ][!maxspeed:forward],
@@ -83,6 +83,8 @@ way[junction                   ][!highway],
 }
 
 /* {0.key} without {1.key} (info level) */
+*[lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1],
+*[lanes:backward][!lanes:forward][oneway!=yes][oneway!=-1],
 *[leaf_type ][!leaf_cycle],
 *[leaf_cycle][!leaf_type] {
   throwOther: tr("{0} without {1}", "{0.key}", "{1.key}");
@@ -91,6 +93,7 @@ way[junction                   ][!highway],
 /* {0.key} without {1.tag} */
 *[fence_type                   ][barrier!=fence],
 *[recycling_type               ][amenity!=recycling],
+*[information                  ][tourism!=information],
 *[board_type                   ][information!=board],
 *[shelter_type                 ][amenity!=shelter],
 *[lamp_type                    ][highway!=street_lamp],
@@ -99,8 +102,24 @@ way[junction                   ][!highway],
 *[artwork_type                 ][tourism!=artwork],
 *[castle_type                  ][historic!=castle],
 *[reservoir_type               ][landuse!=reservoir][water!=reservoir],
+*[bridge:movable               ][bridge!=movable],
+*[parking                      ][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking)$/]
 *[bunker_type                  ][military!=bunker] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
+}
+
+/* {0.tag} without {1.key} (warning level) */
+*[tourism=information][!information],
+*[aeroway=terminal][!building],
+*[power=generator][!generator:source],
+*[amenity=place_of_worship][!religion] {
+  throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
+}
+
+/* {0.tag} without {1.key} (info level) */
+*[amenity=parking              ][!parking],
+*[amenity=parking_entrance     ][!parking] {
+  throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
 }
 
 /* {0.key} without {1.key} or {2.key} */
@@ -110,10 +129,15 @@ way[junction                   ][!highway],
 }
 
 /* {0.key} without {1.key} or {2.tag} */
+*[smoothness                   ][!highway][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking)$/],
 *[segregated                   ][!highway][railway!=crossing],
-*[boat                         ][!waterway][natural!=water],
-*[intermittent                 ][!waterway][natural!=water] {
+*[boat                         ][!waterway][natural!=water] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
+}
+
+/* {0.key} without {1.key}, {2.tag} or {3.tag} */
+*[intermittent                 ][!waterway][natural!~/^(water|spring)$/][ford!=yes] {
+  throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.tag}", "{3.tag}");
 }
 
 /* {0.key} without {1.key}, {2.key} or {3.key} */
@@ -126,19 +150,70 @@ way[junction                   ][!highway],
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.tag}");
 }
 
+/* {0.key} together with {1.key}, see #10837 */
+*[noname?][name] {
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
+}
+
+/* {0.tag} together with {1.key}, see #9389 */
+*[oneway=yes][/:backward/],
+*[oneway=yes][/:forward/],
+*[oneway=-1 ][/:backward/],
+*[oneway=-1 ][/:forward/] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.key}");
+}
+
+/* {0.tag} together with {1.tag} (info level), see #9696 */
+*[highway=footway][oneway=no] {
+  throwOther: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+}
+
+/*see #11127*/
+way[waterway][bridge=yes] {
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{1.tag}");
+  suggestAlternative: "bridge=aqueduct";
+  fixAdd: "bridge=aqueduct";
+}
+
+/* only {0.key}, see #11104 */
+*[area][eval(number_of_tags()) = 1],
+*[name][eval(number_of_tags()) = 1],
+*[ref][eval(number_of_tags()) = 1] {
+  throwWarning: tr("incomplete object: only {0}", "{0.key}");
+}
+/* only {0.key} and {1.key}, see #11104 */
+*[name][area][eval(number_of_tags()) = 2],
+*[name][ref][eval(number_of_tags()) = 2] {
+  throwWarning: tr("incomplete object: only {0} and {1}", "{0.key}", "{1.key}");
+}
+
+/* see #9811 */
+*[place][place!=farm][/^addr:/],
+*[boundary][/^addr:/],
+*[highway][/^addr:/] {
+  throwWarning: tr("{0} together with addr:*", "{0.key}");
+}
+
+/* see #9195 */
+*[highway=footway][cycleway=lane] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "highway=path + foot=designated + bicycle=designated + segregated=yes";
+}
+
 /* {0} on suspicious object */
 *[tunnel  ][!highway][!railway][!waterway][public_transport != platform][man_made != pipeline],
 *[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport != platform][man_made !~ /^(bridge|pipeline)$/][building != bridge],
 *[psv     ][!highway][!railway][!waterway][amenity !~ /^parking.*/],
 *[width   ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance],
 *[maxspeed][!highway][!railway][traffic_sign !~ /^(.*;)?maxspeed(;.*)?$/][type != enforcement][waterway !~ /^(river|canal|lock)$/],
-*[lit     ][!highway][!railway][!piste:type][amenity !~ /^(parking|shelter)/][public_transport!=platform][advertising!=billboard][leisure!=pitch] {
+*[lit     ][!highway][!railway][!piste:type][!amenity][public_transport!=platform][advertising!=billboard][!leisure][!tourism] {
   throwWarning: tr("{0} on suspicious object", "{0.key}");
 }
 
-node[amenity =~ /^(restaurant|cafe|fast_food)$/][!name] {
+node[amenity =~ /^(restaurant|cafe|fast_food)$/][!name][noname!=yes] {
   throwOther: tr("restaurant without name");
   assertMatch: "node amenity=restaurant";
+  assertNoMatch: "node amenity=restaurant noname=yes";
   assertNoMatch: "node amenity=restaurant name=Foobar";
 }
 
@@ -157,8 +232,8 @@ way[highway][natural],
   fixRemove: "natural";
 }
 
-/* see ticket #9593 */
-*[sport][tourism != hotel][highway != raceway][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool|recreation_ground)$/][natural !~ /^(beach|bare_rock)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/] {
+/* see #9593 */
+*[sport][!building][tourism != hotel][highway != raceway][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool|recreation_ground)$/][natural !~ /^(beach|bare_rock|peak)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/] {
     throwWarning: tr("sport without physical feature");
     assertMatch: "node sport=tennis";
     assertNoMatch: "node sport=tennis leisure=pitch";
@@ -171,4 +246,23 @@ way[highway][natural],
 /* see #10140 */
 *[building:levels][!building][!building:part] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
+}
+
+/* see #10471 */
+way[waterway] > node[ford?] { set ford_on_waterway; }
+way[highway] > node[ford?] { set ford_on_highway; }
+node[ford?]!.ford_on_waterway, node[ford?]!.ford_on_highway {
+    throwWarning: tr("{0} should be on the node where {1} and {2} intersect", "ford", "highway", "waterway");
+}
+
+/* any other *_name tag (except old_name, loc_name and uic_name) but not a name , see #10837 */
+*[/_name$/][!name][!old_name][!loc_name][!uic_name] {
+  throwWarning: tr("alternative name without {0}", "{1.key}");
+}
+
+/* see #10837 */
+way[destination][!oneway?] {
+  throwWarning: tr("incomplete usage of {0} on a way without {1}", "{0.key}", "{1.key}");
+  suggestAlternative: "destination:forward";
+  suggestAlternative: "destination:backward";
 }

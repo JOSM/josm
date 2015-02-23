@@ -76,6 +76,4 @@ public class Coordinate implements Serializable, ICoordinate {
         }
         return true;
     }
-    
-    
 }

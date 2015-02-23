@@ -38,12 +38,10 @@ package com.kitfox.svg.xml.cpx;
 
 import com.kitfox.svg.SVGConst;
 import java.io.*;
-import java.util.*;
 import java.util.zip.*;
 import java.security.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.crypto.*;
 
 /**
  * This class reads/decodes the CPX file format.  This format is a simple

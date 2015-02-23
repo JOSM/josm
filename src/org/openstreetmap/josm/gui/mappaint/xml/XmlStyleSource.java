@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -300,7 +299,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
      }
 
     @Override
-    public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
+    public void apply(MultiCascade mc, OsmPrimitive osm, double scale, boolean pretendWayIsClosed) {
         Cascade def = mc.getOrCreateCascade("default");
         boolean useMinMaxScale = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
 
@@ -364,13 +363,6 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
                     }
                     c.putOrClear(DASHES, mod.getDashed());
                     c.putOrClear(DASHES_BACKGROUND_COLOR, mod.dashedColor);
-                }
-            }
-            if (multipolyOuterWay != null) {
-                WayPrototypesRecord p2 = new WayPrototypesRecord();
-                get(multipolyOuterWay, true, p2, (useMinMaxScale ? scale : null), mc);
-                if (Objects.equals(p.area, p2.area)) {
-                    p.area = null;
                 }
             }
             if (p.area != null) {

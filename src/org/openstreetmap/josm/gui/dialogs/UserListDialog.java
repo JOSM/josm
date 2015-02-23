@@ -192,7 +192,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             super(false);
             putValue(NAME, tr("Show info"));
             putValue(SHORT_DESCRIPTION, tr("Launches a browser with information about the user"));
-            putValue(SMALL_ICON, ImageProvider.get("about"));
+            putValue(SMALL_ICON, ImageProvider.get("help/internet"));
             updateEnabledState();
         }
 
@@ -221,7 +221,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         protected String createInfoUrl(Object infoObject) {
             User user = (User)infoObject;
             try {
-                return getBaseUserUrl() + "/" + URLEncoder.encode(user.getName(), "UTF-8").replaceAll("\\+", "%20");
+                return Main.getBaseUserUrl() + "/" + URLEncoder.encode(user.getName(), "UTF-8").replaceAll("\\+", "%20");
             } catch(UnsupportedEncodingException e) {
                 Main.error(e);
                 JOptionPane.showMessageDialog(

@@ -32,7 +32,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
      * constructor
      */
     public TagCellEditor() {
-        editor = new AutoCompletingTextField();
+        editor = new AutoCompletingTextField(0, false);
         editor.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
     }
 

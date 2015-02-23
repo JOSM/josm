@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -39,6 +40,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     /** the embedded browser */
     private HistoryBrowser browser;
     private CloseAction closeAction;
+    private JLabel titleLabel;
 
     /**
      * displays the title for this dialog
@@ -58,12 +60,24 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         ));
     }
 
+    @Override
+    public void setTitle(String title) {
+        super.setTitle(title);
+        if (titleLabel != null) {
+            titleLabel.setText(title);
+        }
+    }
+
     /**
      * builds the GUI
-     *
      */
     protected void build() {
         setLayout(new BorderLayout());
+
+        titleLabel = new JLabel();
+        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        add(titleLabel, BorderLayout.NORTH);
+
         browser = new HistoryBrowser();
         add(browser, BorderLayout.CENTER);
 
@@ -91,27 +105,34 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     }
 
     /**
-     * constructor
+     * Constructs a new {@code HistoryBrowserDialog}.
      *
-     * @param history  the history to be displayed
+     * @param history the history to be displayed
      */
     public HistoryBrowserDialog(History history) {
         super(JOptionPane.getFrameForComponent(Main.parent), false);
         build();
         setHistory(history);
         renderTitle(history);
+        pack();
+        if (getInsets().top > 0) {
+            titleLabel.setVisible(false);
+        }
         HistoryDataSet.getInstance().addHistoryDataSetListener(this);
         addWindowListener(new WindowClosingAdapter());
     }
 
     /**
-     * sets the current history
+     * Sets the current history.
      * @param history
      */
     protected void setHistory(History history) {
         browser.populate(history);
     }
 
+    /**
+     * Removes this history browser model as listener for data change and layer change events.
+     */
     public void unlinkAsListener() {
         getHistoryBrowser().getModel().unlinkAsListener();
     }
@@ -173,6 +194,10 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         }
     }
 
+    /**
+     * Replies the history browser.
+     * @return the history browser
+     */
     public HistoryBrowser getHistoryBrowser() {
         return browser;
     }

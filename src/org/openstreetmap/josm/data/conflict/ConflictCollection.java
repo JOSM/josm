@@ -44,7 +44,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     private static class FilterPredicate implements Predicate<Conflict<? extends OsmPrimitive>> {
 
         private final Class<? extends OsmPrimitive> c;
-        
+
         public FilterPredicate(Class<? extends OsmPrimitive> c) {
             this.c = c;
         }
@@ -54,7 +54,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
             return conflict != null && c.isInstance(conflict.getMy());
         }
     }
-    
+
     private static final FilterPredicate NODE_FILTER_PREDICATE = new FilterPredicate(Node.class);
     private static final FilterPredicate WAY_FILTER_PREDICATE = new FilterPredicate(Way.class);
     private static final FilterPredicate RELATION_FILTER_PREDICATE = new FilterPredicate(Relation.class);

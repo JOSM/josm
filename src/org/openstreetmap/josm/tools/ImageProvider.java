@@ -38,6 +38,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -72,7 +74,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
 
 /**
@@ -80,7 +81,7 @@ import com.kitfox.svg.SVGUniverse;
  *
  * How to use:
  *
- * <code>ImageIcon icon = new ImageProvider(name).setMaxWidth(24).setMaxHeight(24).get();</code>
+ * <code>ImageIcon icon = new ImageProvider(name).setMaxSize(ImageSizes.MAP).get();</code>
  * (there are more options, see below)
  *
  * short form:
@@ -90,12 +91,22 @@ import com.kitfox.svg.SVGUniverse;
  */
 public class ImageProvider {
 
+    private static final String HTTP_PROTOCOL  = "http://";
+    private static final String HTTPS_PROTOCOL = "https://";
+    private static final String WIKI_PROTOCOL  = "wiki://";
+
     /**
      * Position of an overlay icon
-     * @author imi
      */
     public static enum OverlayPosition {
-        NORTHWEST, NORTHEAST, SOUTHWEST, SOUTHEAST
+        /** North west */
+        NORTHWEST,
+        /** North east */
+        NORTHEAST,
+        /** South west */
+        SOUTHWEST,
+        /** South east */
+        SOUTHEAST
     }
 
     /**
@@ -106,6 +117,27 @@ public class ImageProvider {
         SVG,
         /** Everything else, e.g. png, gif (must be supported by Java) */
         OTHER
+    }
+
+    /**
+     * Supported image sizes
+     * @since 7687
+     */
+    public static enum ImageSizes {
+        /** SMALL_ICON value of on Action */
+        SMALLICON,
+        /** LARGE_ICON_KEY value of on Action */
+        LARGEICON,
+        /** map icon */
+        MAP,
+        /** map icon maximum size */
+        MAPMAX,
+        /** menu icon size */
+        CURSOR,
+        /** Cursor overlay icon size */
+        CURSOROVERLAY,
+        /** Cursor icon size */
+        MENU,
     }
 
     /**
@@ -120,19 +152,34 @@ public class ImageProvider {
      */
     public static String PROP_TRANSPARENCY_COLOR = "josm.transparency.color";
 
+    /** directories in which images are searched */
     protected Collection<String> dirs;
+    /** caching identifier */
     protected String id;
+    /** sub directory the image can be found in */
     protected String subdir;
+    /** image file name */
     protected String name;
+    /** archive file to take image from */
     protected File archive;
+    /** directory inside the archive */
     protected String inArchiveDir;
+    /** width of the resulting image, -1 when original image data should be used */
     protected int width = -1;
+    /** height of the resulting image, -1 when original image data should be used */
     protected int height = -1;
+    /** maximum width of the resulting image, -1 for no restriction */
     protected int maxWidth = -1;
+    /** maximum height of the resulting image, -1 for no restriction */
     protected int maxHeight = -1;
+    /** In case of errors do not throw exception but return <code>null</code> for missing image */
     protected boolean optional;
+    /** <code>true</code> if warnings should be suppressed */
     protected boolean suppressWarnings;
+    /** list of class loaders to take images from */
     protected Collection<ClassLoader> additionalClassLoaders;
+    /** ordered list of overlay images */
+    protected List<ImageOverlay> overlayInfo = null;
 
     private static SVGUniverse svgUniverse;
 
@@ -148,15 +195,34 @@ public class ImageProvider {
 
     private static final ExecutorService IMAGE_FETCHER = Executors.newSingleThreadExecutor();
 
+    /**
+     * Callback interface for asynchronous image loading.
+     */
     public interface ImageCallback {
+        /**
+         * Called when image loading has finished.
+         * @param result the loaded image icon
+         */
         void finished(ImageIcon result);
     }
 
     /**
+     * Callback interface for asynchronous image loading (with delayed scaling possibility).
+     * @since 7693
+     */
+    public interface ImageResourceCallback {
+        /**
+         * Called when image loading has finished.
+         * @param result the loaded image resource
+         */
+        void finished(ImageResource result);
+    }
+
+    /**
      * Constructs a new {@code ImageProvider} from a filename in a given directory.
-     * @param subdir    subdirectory the image lies in
-     * @param name      the name of the image. If it does not end with '.png' or '.svg',
-     *                  both extensions are tried.
+     * @param subdir subdirectory the image lies in
+     * @param name the name of the image. If it does not end with '.png' or '.svg',
+     * both extensions are tried.
      */
     public ImageProvider(String subdir, String name) {
         this.subdir = subdir;
@@ -165,11 +231,33 @@ public class ImageProvider {
 
     /**
      * Constructs a new {@code ImageProvider} from a filename.
-     * @param name      the name of the image. If it does not end with '.png' or '.svg',
-     *                  both extensions are tried.
+     * @param name the name of the image. If it does not end with '.png' or '.svg',
+     * both extensions are tried.
      */
     public ImageProvider(String name) {
         this.name = name;
+    }
+
+    /**
+     * Constructs a new {@code ImageProvider} from an existing one.
+     * @param image the existing image provider to be copied
+     * @since 8095
+     */
+    public ImageProvider(ImageProvider image) {
+        this.dirs = image.dirs;
+        this.id = image.id;
+        this.subdir = image.subdir;
+        this.name = image.name;
+        this.archive = image.archive;
+        this.inArchiveDir = image.inArchiveDir;
+        this.width = image.width;
+        this.height = image.height;
+        this.maxWidth = image.maxWidth;
+        this.maxHeight = image.maxHeight;
+        this.optional = image.optional;
+        this.suppressWarnings = image.suppressWarnings;
+        this.additionalClassLoaders = image.additionalClassLoaders;
+        this.overlayInfo = image.overlayInfo;
     }
 
     /**
@@ -186,6 +274,7 @@ public class ImageProvider {
      * Set an id used for caching.
      * If name starts with <tt>http://</tt> Id is not used for the cache.
      * (A URL is unique anyway.)
+     * @param id the id for the cached image
      * @return the current object, for convenience
      */
     public ImageProvider setId(String id) {
@@ -210,6 +299,7 @@ public class ImageProvider {
      * The subdir and name will be relative to this path.
      *
      * (optional)
+     * @param inArchiveDir path inside the archive
      * @return the current object, for convenience
      */
     public ImageProvider setInArchiveDir(String inArchiveDir) {
@@ -218,11 +308,48 @@ public class ImageProvider {
     }
 
     /**
+     * Add an overlay over the image. Multiple overlays are possible.
+     *
+     * @param overlay overlay image and placement specification
+     * @return the current object, for convenience
+     * @since 8095
+     */
+    public ImageProvider addOverlay(ImageOverlay overlay) {
+        if (overlayInfo == null) {
+            overlayInfo = new LinkedList<ImageOverlay>();
+        }
+        overlayInfo.add(overlay);
+        return this;
+    }
+
+    /**
+     * Convert enumerated size values to real numbers
+     * @param size the size enumeration
+     * @return dimension of image in pixels
+     * @since 7687
+     */
+    public static Dimension getImageSizes(ImageSizes size) {
+        int sizeval;
+        switch(size) {
+        case MAPMAX: sizeval = Main.pref.getInteger("iconsize.mapmax", 48); break;
+        case MAP: sizeval = Main.pref.getInteger("iconsize.mapmax", 16); break;
+        case LARGEICON: sizeval = Main.pref.getInteger("iconsize.largeicon", 24); break;
+        case MENU: /* MENU is SMALLICON - only provided in case of future changes */
+        case SMALLICON: sizeval = Main.pref.getInteger("iconsize.smallicon", 16); break;
+        case CURSOROVERLAY: /* same as cursor - only provided in case of future changes */
+        case CURSOR: sizeval = Main.pref.getInteger("iconsize.cursor", 32); break;
+        default: sizeval = Main.pref.getInteger("iconsize.default", 24); break;
+        }
+        return new Dimension(sizeval, sizeval);
+    }
+
+    /**
      * Set the dimensions of the image.
      *
      * If not specified, the original size of the image is used.
      * The width part of the dimension can be -1. Then it will only set the height but
      * keep the aspect ratio. (And the other way around.)
+     * @param size final dimensions of the image
      * @return the current object, for convenience
      */
     public ImageProvider setSize(Dimension size) {
@@ -232,6 +359,20 @@ public class ImageProvider {
     }
 
     /**
+     * Set the dimensions of the image.
+     *
+     * If not specified, the original size of the image is used.
+     * @param size final dimensions of the image
+     * @return the current object, for convenience
+     * @since 7687
+     */
+    public ImageProvider setSize(ImageSizes size) {
+        return setSize(getImageSizes(size));
+    }
+
+    /**
+     * Set image width
+     * @param width final width of the image
      * @see #setSize
      * @return the current object, for convenience
      */
@@ -241,6 +382,8 @@ public class ImageProvider {
     }
 
     /**
+     * Set image height
+     * @param height final height of the image
      * @see #setSize
      * @return the current object, for convenience
      */
@@ -256,6 +399,7 @@ public class ImageProvider {
      * The given width or height can be -1 which means this direction is not bounded.
      *
      * 'size' and 'maxSize' are not compatible, you should set only one of them.
+     * @param maxSize maximum image size
      * @return the current object, for convenience
      */
     public ImageProvider setMaxSize(Dimension maxSize) {
@@ -265,7 +409,46 @@ public class ImageProvider {
     }
 
     /**
+     * Limit the maximum size of the image.
+     *
+     * It will shrink the image if necessary, but keep the aspect ratio.
+     * The given width or height can be -1 which means this direction is not bounded.
+     *
+     * This function sets value using the most restrictive of the new or existing set of
+     * values.
+     *
+     * @param maxSize maximum image size
+     * @return the current object, for convenience
+     * @see #setMaxSize(Dimension)
+     */
+    public ImageProvider resetMaxSize(Dimension maxSize) {
+        if (this.maxWidth == -1 || maxSize.width < this.maxWidth) {
+            this.maxWidth = maxSize.width;
+        }
+        if (this.maxHeight == -1 || maxSize.height < this.maxHeight) {
+            this.maxHeight = maxSize.height;
+        }
+        return this;
+    }
+
+    /**
+     * Limit the maximum size of the image.
+     *
+     * It will shrink the image if necessary, but keep the aspect ratio.
+     * The given width or height can be -1 which means this direction is not bounded.
+     *
+     * 'size' and 'maxSize' are not compatible, you should set only one of them.
+     * @param size maximum image size
+     * @return the current object, for convenience
+     * @since 7687
+     */
+    public ImageProvider setMaxSize(ImageSizes size) {
+        return setMaxSize(getImageSizes(size));
+    }
+
+    /**
      * Convenience method, see {@link #setMaxSize(Dimension)}.
+     * @param maxSize maximum image size
      * @return the current object, for convenience
      */
     public ImageProvider setMaxSize(int maxSize) {
@@ -273,6 +456,8 @@ public class ImageProvider {
     }
 
     /**
+     * Limit the maximum width of the image.
+     * @param maxWidth maximum image width
      * @see #setMaxSize
      * @return the current object, for convenience
      */
@@ -282,6 +467,8 @@ public class ImageProvider {
     }
 
     /**
+     * Limit the maximum height of the image.
+     * @param maxHeight maximum image height
      * @see #setMaxSize
      * @return the current object, for convenience
      */
@@ -308,6 +495,7 @@ public class ImageProvider {
      * Suppresses warning on the command line in case the image cannot be found.
      *
      * In combination with setOptional(true);
+     * @param suppressWarnings if <code>true</code> warnings are suppressed
      * @return the current object, for convenience
      */
     public ImageProvider setSuppressWarnings(boolean suppressWarnings) {
@@ -317,6 +505,7 @@ public class ImageProvider {
 
     /**
      * Add a collection of additional class loaders to search image for.
+     * @param additionalClassLoaders class loaders to add to the internal list
      * @return the current object, for convenience
      */
     public ImageProvider setAdditionalClassLoaders(Collection<ClassLoader> additionalClassLoaders) {
@@ -325,10 +514,26 @@ public class ImageProvider {
     }
 
     /**
-     * Execute the image request.
+     * Execute the image request and scale result.
      * @return the requested image or null if the request failed
      */
     public ImageIcon get() {
+        ImageResource ir = getResource();
+        if (ir == null)
+            return null;
+        if (maxWidth != -1 || maxHeight != -1)
+            return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight));
+        else
+            return ir.getImageIcon(new Dimension(width, height));
+    }
+
+    /**
+     * Execute the image request.
+     *
+     * @return the requested image or null if the request failed
+     * @since 7693
+     */
+    public ImageResource getResource() {
         ImageResource ir = getIfAvailableImpl(additionalClassLoaders);
         if (ir == null) {
             if (!optional) {
@@ -341,10 +546,10 @@ public class ImageProvider {
                 return null;
             }
         }
-        if (maxWidth != -1 || maxHeight != -1)
-            return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight));
-        else
-            return ir.getImageIcon(new Dimension(width, height));
+        if (overlayInfo != null) {
+            ir = new ImageResource(ir, overlayInfo);
+        }
+        return ir;
     }
 
     /**
@@ -359,7 +564,7 @@ public class ImageProvider {
      * value is returned to callback (just like {@link #get}).
      */
     public void getInBackground(final ImageCallback callback) {
-        if (name.startsWith("http://") || name.startsWith("wiki://")) {
+        if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)) {
             Runnable fetch = new Runnable() {
                 @Override
                 public void run() {
@@ -371,6 +576,32 @@ public class ImageProvider {
         } else {
             ImageIcon result = get();
             callback.finished(result);
+        }
+    }
+
+    /**
+     * Load the image in a background thread.
+     *
+     * This method returns immediately and runs the image request
+     * asynchronously.
+     *
+     * @param callback a callback. It is called, when the image is ready.
+     * This can happen before the call to this method returns or it may be
+     * invoked some time (seconds) later. If no image is available, a null
+     * value is returned to callback (just like {@link #get}).
+     * @since 7693
+     */
+    public void getInBackground(final ImageResourceCallback callback) {
+        if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)) {
+            Runnable fetch = new Runnable() {
+                @Override
+                public void run() {
+                    callback.finished(getResource());
+                }
+            };
+            IMAGE_FETCHER.submit(fetch);
+        } else {
+            callback.finished(getResource());
         }
     }
 
@@ -387,6 +618,8 @@ public class ImageProvider {
     }
 
     /**
+     * Load an image with a given file name.
+     *
      * @param name The icon name (base name with or without '.png' or '.svg' extension)
      * @return the requested image or null if the request failed
      * @see #get(String, String)
@@ -409,6 +642,9 @@ public class ImageProvider {
     }
 
     /**
+     * Load an image with a given file name, but do not throw an exception
+     * when the image cannot be found.
+     *
      * @param name The icon name (base name with or without '.png' or '.svg' extension)
      * @return the requested image or null if the request failed
      * @see #getIfAvailable(String, String)
@@ -424,6 +660,12 @@ public class ImageProvider {
     private static final Pattern dataUrlPattern = Pattern.compile(
             "^data:([a-zA-Z]+/[a-zA-Z+]+)?(;base64)?,(.+)$");
 
+    /**
+     * Internal implementation of the image request.
+     *
+     * @param additionalClassLoaders the list of class loaders to use
+     * @return the requested image or null if the request failed
+     */
     private ImageResource getIfAvailableImpl(Collection<ClassLoader> additionalClassLoaders) {
         synchronized (cache) {
             // This method is called from different thread and modifying HashMap concurrently can result
@@ -445,7 +687,7 @@ public class ImageProvider {
 
             ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
 
-            if (name.startsWith("http://") || name.startsWith("https://")) {
+            if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(HTTPS_PROTOCOL)) {
                 String url = name;
                 ImageResource ir = cache.get(url);
                 if (ir != null) return ir;
@@ -454,7 +696,7 @@ public class ImageProvider {
                     cache.put(url, ir);
                 }
                 return ir;
-            } else if (name.startsWith("wiki://")) {
+            } else if (name.startsWith(WIKI_PROTOCOL)) {
                 ImageResource ir = cache.get(name);
                 if (ir != null) return ir;
                 ir = getIfAvailableWiki(name, type);
@@ -531,14 +773,24 @@ public class ImageProvider {
         }
     }
 
+    /**
+     * Internal implementation of the image request for URL's.
+     *
+     * @param url URL of the image
+     * @param type data type of the image
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
         CachedFile cf = new CachedFile(url)
                 .setDestDir(new File(Main.pref.getCacheDirectory(), "images").getPath());
         try (InputStream is = cf.getInputStream()) {
             switch (type) {
             case SVG:
-                URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(cf.getFile()).toString());
-                SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                SVGDiagram svg = null;
+                synchronized (getSvgUniverse()) {
+                    URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(cf.getFile()).toString());
+                    svg = getSvgUniverse().getDiagram(uri);
+                }
                 return svg == null ? null : new ImageResource(svg);
             case OTHER:
                 BufferedImage img = null;
@@ -556,6 +808,12 @@ public class ImageProvider {
         }
     }
 
+    /**
+     * Internal implementation of the image request for inline images (<b>data:</b> urls).
+     *
+     * @param url the data URL for image extraction
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableDataUrl(String url) {
         try {
             Matcher m = dataUrlPattern.matcher(url);
@@ -574,10 +832,13 @@ public class ImageProvider {
                         return null;
                     }
                 }
-                if (mediatype != null && mediatype.contains("image/svg+xml")) {
+                if ("image/svg+xml".equals(mediatype)) {
                     String s = new String(bytes, StandardCharsets.UTF_8);
-                    URI uri = getSvgUniverse().loadSVG(new StringReader(s), URLEncoder.encode(s, "UTF-8"));
-                    SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                    SVGDiagram svg = null;
+                    synchronized (getSvgUniverse()) {
+                        URI uri = getSvgUniverse().loadSVG(new StringReader(s), URLEncoder.encode(s, "UTF-8"));
+                        svg = getSvgUniverse().getDiagram(uri);
+                    }
                     if (svg == null) {
                         Main.warn("Unable to process svg: "+s);
                         return null;
@@ -585,7 +846,11 @@ public class ImageProvider {
                     return new ImageResource(svg);
                 } else {
                     try {
-                        return new ImageResource(read(new ByteArrayInputStream(bytes), false, false));
+                        // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
+                        // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
+                        // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
+                        Image img = read(new ByteArrayInputStream(bytes), false, true);
+                        return img == null ? null : new ImageResource(img);
                     } catch (IOException e) {
                         Main.warn("IOException while reading image: "+e.getMessage());
                     }
@@ -597,6 +862,13 @@ public class ImageProvider {
         }
     }
 
+    /**
+     * Internal implementation of the image request for wiki images.
+     *
+     * @param name image file name
+     * @param type data type of the image
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableWiki(String name, ImageType type) {
         final Collection<String> defaultBaseUrls = Arrays.asList(
                 "http://wiki.openstreetmap.org/w/images/",
@@ -627,6 +899,15 @@ public class ImageProvider {
         return result;
     }
 
+    /**
+     * Internal implementation of the image request for images in Zip archives.
+     *
+     * @param fullName image file name
+     * @param archive the archive to get image from
+     * @param inArchiveDir directory of the image inside the archive or <code>null</code>
+     * @param type data type of the image
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableZip(String fullName, File archive, String inArchiveDir, ImageType type) {
         try (ZipFile zipFile = new ZipFile(archive, StandardCharsets.UTF_8)) {
             if (inArchiveDir == null || ".".equals(inArchiveDir)) {
@@ -643,8 +924,11 @@ public class ImageProvider {
                 try (InputStream is = zipFile.getInputStream(entry)) {
                     switch (type) {
                     case SVG:
-                        URI uri = getSvgUniverse().loadSVG(is, entryName);
-                        SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                        SVGDiagram svg = null;
+                        synchronized (getSvgUniverse()) {
+                            URI uri = getSvgUniverse().loadSVG(is, entryName);
+                            svg = getSvgUniverse().getDiagram(uri);
+                        }
                         return svg == null ? null : new ImageResource(svg);
                     case OTHER:
                         while(size > 0)
@@ -671,16 +955,32 @@ public class ImageProvider {
         return null;
     }
 
+    /**
+     * Internal implementation of the image request for local images.
+     *
+     * @param path image file path
+     * @param type data type of the image
+     * @return the requested image or null if the request failed
+     */
     private static ImageResource getIfAvailableLocalURL(URL path, ImageType type) {
         switch (type) {
         case SVG:
-            URI uri = getSvgUniverse().loadSVG(path);
-            SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+            SVGDiagram svg = null;
+            synchronized (getSvgUniverse()) {
+                URI uri = getSvgUniverse().loadSVG(path);
+                svg = getSvgUniverse().getDiagram(uri);
+            }
             return svg == null ? null : new ImageResource(svg);
         case OTHER:
             BufferedImage img = null;
             try {
-                img = read(path, false, false);
+                // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
+                // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
+                // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
+                img = read(path, false, true);
+                if (Main.isDebugEnabled() && isTransparencyForced(img)) {
+                    Main.debug("Transparency has been forced for image "+path.toExternalForm());
+                }
             } catch (IOException e) {
                 Main.warn(e);
             }
@@ -728,8 +1028,8 @@ public class ImageProvider {
 
             }
         }
-        // Try user-preference directory
-        String dir = Main.pref.getPreferencesDir() + "images";
+        // Try user-data directory
+        String dir = new File(Main.pref.getUserDataDirectory(), "images").getAbsolutePath();
         try {
             u = getImageUrl(dir, imageName, additionalClassLoaders);
             if (u != null)
@@ -778,6 +1078,10 @@ public class ImageProvider {
 
     /**
      * Reads the wiki page on a certain file in html format in order to find the real image URL.
+     *
+     * @param base base URL for Wiki image
+     * @param fn filename of the Wiki image
+     * @return image URL for a Wiki image or null in case of error
      */
     private static String getImgUrlFromWikiInfoPage(final String base, final String fn) {
         try {
@@ -800,7 +1104,8 @@ public class ImageProvider {
                 }
             });
 
-            CachedFile cf = new CachedFile(base + fn).setDestDir(new File(Main.pref.getPreferencesDir(), "images").toString());
+            CachedFile cf = new CachedFile(base + fn).setDestDir(
+                    new File(Main.pref.getUserDataDirectory(), "images").getPath());
             try (InputStream is = cf.getInputStream()) {
                 parser.parse(new InputSource(is));
             }
@@ -814,10 +1119,19 @@ public class ImageProvider {
         return null;
     }
 
+    /**
+     * Load a cursor with a given file name, optionally decorated with an overlay image.
+     *
+     * @param name the cursor image filename in "cursor" directory
+     * @param overlay optional overlay image
+     * @return cursor with a given file name, optionally decorated with an overlay image
+     */
     public static Cursor getCursor(String name, String overlay) {
         ImageIcon img = get("cursor", name);
         if (overlay != null) {
-            img = overlay(img, ImageProvider.get("cursor/modifier/" + overlay), OverlayPosition.SOUTHEAST);
+            img = new ImageProvider("cursor", name).setMaxSize(ImageSizes.CURSOR)
+                .addOverlay(new ImageOverlay(new ImageProvider("cursor/modifier/" + overlay)
+                    .setMaxSize(ImageSizes.CURSOROVERLAY))).get();
         }
         if (GraphicsEnvironment.isHeadless()) {
             Main.warn("Cursors are not available in headless mode. Returning null for '"+name+"'");
@@ -836,7 +1150,13 @@ public class ImageProvider {
      * in one of the corners)
      * @return an icon that represent the overlay of the two given icons. The second icon is layed
      * on the first relative to the given position.
+     * FIXME: This function does not fit into the ImageProvider concept as public function!
+     * Overlay should be handled like all the other functions only settings arguments and
+     * overlay must be transparent in the background.
+     * Also scaling is not cared about with current implementation.
+     * @deprecated this method will be refactored
      */
+    @Deprecated
     public static ImageIcon overlay(Icon ground, Icon overlay, OverlayPosition pos) {
         int w = ground.getIconWidth();
         int h = ground.getIconHeight();
@@ -987,6 +1307,12 @@ public class ImageProvider {
         return get("data", type.getAPIName());
     }
 
+    /**
+     * Constructs an image from the given SVG data.
+     * @param svg the SVG data
+     * @param dim the desired image dimension
+     * @return an image from the given SVG data at the desired dimension.
+     */
     public static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim) {
         float realWidth = svg.getWidth();
         float realHeight = svg.getHeight();
@@ -1019,8 +1345,11 @@ public class ImageProvider {
         }
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
-            svg.render(g);
-        } catch (SVGException ex) {
+            synchronized (getSvgUniverse()) {
+                svg.render(g);
+            }
+        } catch (Exception ex) {
+            Main.error("Unable to load svg: {0}", ex.getMessage());
             return null;
         }
         return img;
@@ -1234,14 +1563,14 @@ public class ImageProvider {
         try {
             bi = reader.read(0, param);
             if (bi.getTransparency() != Transparency.TRANSLUCENT && (readMetadata || enforceTransparency)) {
-                Color color = getTransparentColor(reader);
+                Color color = getTransparentColor(bi.getColorModel(), reader);
                 if (color != null) {
                     Hashtable<String, Object> properties = new Hashtable<>(1);
                     properties.put(PROP_TRANSPARENCY_COLOR, color);
                     bi = new BufferedImage(bi.getColorModel(), bi.getRaster(), bi.isAlphaPremultiplied(), properties);
                     if (enforceTransparency) {
-                        if (Main.isDebugEnabled()) {
-                            Main.debug("Enforcing image transparency of "+stream+" for "+color);
+                        if (Main.isTraceEnabled()) {
+                            Main.trace("Enforcing image transparency of "+stream+" for "+color);
                         }
                         bi = makeImageTransparent(bi, color);
                     }
@@ -1256,13 +1585,14 @@ public class ImageProvider {
 
     /**
      * Returns the {@code TransparentColor} defined in image reader metadata.
+     * @param model The image color model
      * @param reader The image reader
      * @return the {@code TransparentColor} defined in image reader metadata, or {@code null}
      * @throws IOException if an error occurs during reading
-     * @since 7132
+     * @since 7499
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html">javax_imageio_1.0 metadata</a>
      */
-    public static Color getTransparentColor(ImageReader reader) throws IOException {
+    public static Color getTransparentColor(ColorModel model, ImageReader reader) throws IOException {
         try {
             IIOMetadata metadata = reader.getImageMetadata(0);
             if (metadata != null) {
@@ -1276,20 +1606,23 @@ public class ImageProvider {
                                 if (list.getLength() > 0) {
                                     Node item = list.item(0);
                                     if (item instanceof Element) {
+                                        // Handle different color spaces (tested with RGB and grayscale)
                                         String value = ((Element)item).getAttribute("value");
-                                        String[] s = value.split(" ");
-                                        if (s.length == 3) {
-                                            int[] rgb = new int[3];
-                                            try {
-                                                for (int i = 0; i<3; i++) {
-                                                    rgb[i] = Integer.parseInt(s[i]);
-                                                }
-                                                return new Color(rgb[0], rgb[1], rgb[2]);
-                                            } catch (IllegalArgumentException e) {
-                                                Main.error(e);
+                                        if (!value.isEmpty()) {
+                                            String[] s = value.split(" ");
+                                            if (s.length == 3) {
+                                                return parseRGB(s);
+                                            } else if (s.length == 1) {
+                                                int pixel = Integer.parseInt(s[0]);
+                                                int r = model.getRed(pixel);
+                                                int g = model.getGreen(pixel);
+                                                int b = model.getBlue(pixel);
+                                                return new Color(r,g,b);
+                                            } else {
+                                                Main.warn("Unable to translate TransparentColor '"+value+"' with color model "+model);
                                             }
                                         }
-                                }
+                                    }
                                 }
                             }
                             break;
@@ -1297,11 +1630,24 @@ public class ImageProvider {
                     }
                 }
             }
-        } catch (IIOException e) {
+        } catch (IIOException | NumberFormatException e) {
             // JAI doesn't like some JPEG files with error "Inconsistent metadata read from stream" (see #10267)
             Main.warn(e);
         }
         return null;
+    }
+
+    private static Color parseRGB(String[] s) {
+        int[] rgb = new int[3];
+        try {
+            for (int i = 0; i<3; i++) {
+                rgb[i] = Integer.parseInt(s[i]);
+            }
+            return new Color(rgb[0], rgb[1], rgb[2]);
+        } catch (IllegalArgumentException e) {
+            Main.error(e);
+            return null;
+        }
     }
 
     /**
@@ -1316,7 +1662,7 @@ public class ImageProvider {
      */
     public static BufferedImage makeImageTransparent(BufferedImage bi, Color color) {
         // the color we are looking for. Alpha bits are set to opaque
-        final int markerRGB = color.getRGB() | 0xFFFFFFFF;
+        final int markerRGB = color.getRGB() | 0xFF000000;
         ImageFilter filter = new RGBImageFilter() {
             @Override
             public int filterRGB(int x, int y, int rgb) {

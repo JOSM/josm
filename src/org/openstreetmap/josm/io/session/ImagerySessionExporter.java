@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.JCheckBox;
@@ -77,7 +78,12 @@ public class ImagerySessionExporter implements SessionLayerExporter {
         layerElem.setAttribute("type", "imagery");
         layerElem.setAttribute("version", "0.1");
         ImageryPreferenceEntry e = new ImageryPreferenceEntry(layer.getInfo());
-        Map<String,String> data = Preferences.serializeStruct(e, ImageryPreferenceEntry.class);
+        Map<String,String> data = new LinkedHashMap<>(Preferences.serializeStruct(e, ImageryPreferenceEntry.class));
+        if (layer instanceof WMSLayer) {
+            WMSLayer wms = (WMSLayer) layer;
+            data.put("automatic-downloading", Boolean.toString(wms.hasAutoDownload()));
+            data.put("automatically-change-resolution", Boolean.toString(wms.isAutoResolution()));
+        }
         for (Map.Entry<String,String> entry : data.entrySet()) {
             Element attrElem = support.createElement(entry.getKey());
             layerElem.appendChild(attrElem);

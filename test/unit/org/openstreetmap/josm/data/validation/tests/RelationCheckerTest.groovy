@@ -37,7 +37,7 @@ class RelationCheckerTest extends GroovyTestCase {
 
     void testUnknownType() {
         def errors = testRelation(createRelation("type=foobar"))
-        assert errors.size() == 1
+        assert errors.size() >= 1
         assert errors.get(0).getMessage() == "Relation type is unknown"
     }
 
@@ -47,6 +47,13 @@ class RelationCheckerTest extends GroovyTestCase {
         assert errors.get(0).getMessage() == "Relation is empty"
     }
 
+    void testNormal() {
+        def r = createRelation("type=multipolygon")
+        r.addMember(new RelationMember("outer", new Way()))
+        r.addMember(new RelationMember("inner", new Way()))
+        assert testRelation(r).isEmpty()
+    }
+
     void testOuter2() {
         def r = createRelation("type=multipolygon")
         r.addMember(new RelationMember("outer", new Way()))
@@ -54,7 +61,7 @@ class RelationCheckerTest extends GroovyTestCase {
 
         def errors = testRelation(r)
         assert errors.size() == 1
-        assert errors.get(0).getDescription() == "Role outer2 unknown"
+        assert errors.get(0).getDescription() == "Role outer2 unknown in templates outer/inner"
     }
 
     void testRestrictionViaMissing() {
@@ -75,7 +82,7 @@ class RelationCheckerTest extends GroovyTestCase {
 
         def errors = testRelation(r)
         assert errors.size() == 1
-        assert errors.get(0).getDescription() == "Member for role via of wrong type"
+        assert errors.get(0).getDescription() == "Role member type relation does not match accepted list of node/way in template Turn Restriction"
     }
 
     void testRestrictionTwoFrom() {
@@ -99,7 +106,7 @@ class RelationCheckerTest extends GroovyTestCase {
 
         def errors = testRelation(r)
         assert errors.size() == 1
-        assert errors.get(0).getDescription() == "Empty role found"
+        assert errors.get(0).getDescription().startsWith("Empty role type found when expecting one of")
     }
 
     void testPowerMemberExpression() {
@@ -108,6 +115,6 @@ class RelationCheckerTest extends GroovyTestCase {
 
         def errors = testRelation(r)
         assert errors.size() == 1
-        assert errors.get(0).getDescription() == "Member for role '<empty>' does not match 'power'"
+        assert errors.get(0).getDescription() == "Role member does not match expression power in template Power Route"
     }
 }

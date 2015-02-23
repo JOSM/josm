@@ -7,6 +7,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.Main;
 
+/**
+ * Executor that displays the progress monitor to the user.
+ * 
+ * Similar to Executors.newSingleThreadExecutor(), but displays the
+ * progress monitor whenever a new task is executed.
+ */
 public class ProgressMonitorExecutor extends ThreadPoolExecutor {
 
     public ProgressMonitorExecutor() {

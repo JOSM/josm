@@ -1,0 +1,24 @@
+Package: josm
+Version: 1.5.svn{{VERSION}}
+Section: utils
+Maintainer: josm developers <josm-dev@openstreetmap.org>
+Homepage: https://josm.openstreetmap.de
+Priority: extra
+Architecture: all
+Depends: openjdk-7-jre
+Conflicts: josm-plugins
+Replaces: josm-plugins
+Description: Editor for OpenStreetMap
+ JOSM is an editor for OpenStreetMap (OSM) written in Java.
+  The current version supports stand alone GPX tracks, GPX track data
+  from OSM database and existing nodes, line segments and metadata tags
+  from the OSM database.
+ .
+  OpenStreetMap is a project aimed squarely at creating and providing
+  free geographic data such as street maps to anyone who wants them.
+  The project was started because most maps you think of as free actually
+  have legal or technical restrictions on their use, holding back people
+  from using them in creative, productive or unexpected ways.
+
+
+

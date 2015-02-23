@@ -43,7 +43,7 @@ public class RelationMemberConflictResolver extends JPanel {
     private AutoCompletingTextField tfKey;
     private AutoCompletingTextField tfValue;
     private JCheckBox cbTagRelations;
-    private RelationMemberConflictResolverModel model;
+    private final RelationMemberConflictResolverModel model;
     private RelationMemberConflictResolverTable tblResolver;
     private JMultilineLabel lblHeader;
 
@@ -58,7 +58,6 @@ public class RelationMemberConflictResolver extends JPanel {
         gc.weightx = 1.0;
         gc.insets = new Insets(5,5,5,5);
         add(pnl, gc);
-        model = new RelationMemberConflictResolverModel();
 
         gc.gridy = 1;
         gc.weighty = 1.0;
@@ -117,8 +116,11 @@ public class RelationMemberConflictResolver extends JPanel {
 
     /**
      * Constructs a new {@code RelationMemberConflictResolver}.
+     * @param model model managing a list of conflicting relation members
+     * @since 7661
      */
-    public RelationMemberConflictResolver() {
+    public RelationMemberConflictResolver(RelationMemberConflictResolverModel model) {
+        this.model = model;
         build();
     }
 

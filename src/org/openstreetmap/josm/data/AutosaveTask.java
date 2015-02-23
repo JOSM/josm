@@ -84,8 +84,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private final Object layersLock = new Object();
     private final Deque<File> deletedLayers = new LinkedList<>();
 
-    private final File autosaveDir = new File(Main.pref.getPreferencesDir() + AUTOSAVE_DIR);
-    private final File deletedLayersDir = new File(Main.pref.getPreferencesDir() + DELETED_LAYERS_DIR);
+    private final File autosaveDir = new File(Main.pref.getUserDataDirectory(), AUTOSAVE_DIR);
+    private final File deletedLayersDir = new File(Main.pref.getUserDataDirectory(), DELETED_LAYERS_DIR);
 
     public void schedule() {
         if (PROP_INTERVAL.get() > 0) {
@@ -104,7 +104,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             }
 
             timer = new Timer(true);
-            timer.schedule(this, 1000, PROP_INTERVAL.get() * 1000);
+            timer.schedule(this, 1000L, PROP_INTERVAL.get() * 1000L);
             MapView.addLayerChangeListener(this);
             if (Main.isDisplayingMapView()) {
                 for (OsmDataLayer l: Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
@@ -151,14 +151,15 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         int index = 0;
         Date now = new Date();
         while (true) {
-            String filename = String.format("%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%3$s", layer.layerFileName, now, index == 0?"":"_" + index);
+            String filename = String.format("%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s",
+                    layer.layerFileName, now, index == 0 ? "" : "_" + index);
             File result = new File(autosaveDir, filename+".osm");
             try {
                 if (result.createNewFile()) {
                     File pidFile = new File(autosaveDir, filename+".pid");
                     try (PrintStream ps = new PrintStream(pidFile, "UTF-8")) {
                         ps.println(ManagementFactory.getRuntimeMXBean().getName());
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         Main.error(t);
                     }
                     return result;
@@ -208,7 +209,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 if (PROP_NOTIFICATION.get() && !layersInfo.isEmpty()) {
                     displayNotification();
                 }
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 // Don't let exception stop time thread
                 Main.error("Autosave failed:");
                 Main.error(t);
@@ -307,7 +308,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                             String pid = jvmId.split("@")[0];
                             skipFile = jvmPerfDataFileExists(pid);
                         }
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         Main.error(t);
                     }
                 }
@@ -373,8 +374,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             // we cannot move to deleted folder, so just try to delete it directly
             if (!f.delete()) {
                 Main.warn(String.format("Could not delete backup file %s", f));
-            } else {
-                pidFile.delete();
+            } else if (!pidFile.delete()) {
+                Main.warn(String.format("Could not delete PID file %s", pidFile));
             }
         }
         while (deletedLayers.size() > PROP_DELETED_LAYERS.get()) {

@@ -43,7 +43,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
      * Constructs a new {@code UTMProjectionChoice}.
      */
     public UTMProjectionChoice() {
-        super(tr("UTM"), "core:utm", cbEntries.toArray(new String[0]), tr("UTM Zone"));
+        super(tr("UTM"), /* NO-ICON */ "core:utm", cbEntries.toArray(new String[0]), tr("UTM Zone"));
     }
 
     private class UTMPanel extends CBPanel {
@@ -105,7 +105,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
     @Override
     public Collection<String> getPreferences(JPanel panel) {
         if (!(panel instanceof UTMPanel)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Unsupported panel: "+panel);
         }
         UTMPanel p = (UTMPanel) panel;
         int idx = p.prefcb.getSelectedIndex();

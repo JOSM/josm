@@ -7,6 +7,7 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
@@ -26,6 +27,7 @@ import java.security.Permissions;
 import java.security.Policy;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -44,7 +46,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.CustomConfigurator;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
@@ -53,12 +54,14 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.MessageNotifier;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -85,7 +88,7 @@ public class MainApplication extends Main {
         mainFrame.setContentPane(contentPanePrivate);
         mainFrame.setJMenuBar(menu);
         geometry.applySafe(mainFrame);
-        LinkedList<Image> l = new LinkedList<>();
+        List<Image> l = new LinkedList<>();
         l.add(ImageProvider.get("logo_16x16x32").getImage());
         l.add(ImageProvider.get("logo_16x16x8").getImage());
         l.add(ImageProvider.get("logo_32x32x32").getImage());
@@ -129,8 +132,14 @@ public class MainApplication extends Main {
                 "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
                 "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
                 "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
+                "\t--offline=<osm_api|josm_website|all>      "+tr("Disable access to the given resource(s), separated by comma")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
-                "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
+                "\t-Djosm.pref="    +tr("/PATH/TO/JOSM/PREF    ")+tr("Set the preferences directory")+"\n\n"+
+                "\t-Djosm.userdata="+tr("/PATH/TO/JOSM/USERDATA")+tr("Set the user data directory")+"\n\n"+
+                "\t-Djosm.cache="   +tr("/PATH/TO/JOSM/CACHE   ")+tr("Set the cache directory")+"\n\n"+
+                "\t-Djosm.home="    +tr("/PATH/TO/JOSM/HOMEDIR ")+
+                tr("Relocate all 3 directories to homedir. Cache directory will be in homedir/cache")+"\n\n"+
+                tr("-Djosm.home has lower precedence, i.e. the specific setting overrides the general one")+"\n\n"+
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
                         "      Java option to specify the maximum size of allocated memory in megabytes")+":\n"+
                         "\t-Xmx...m\n\n"+
@@ -139,6 +148,7 @@ public class MainApplication extends Main {
                         "\tjava -jar josm.jar "+OsmUrlToBounds.getURL(43.2, 11.1, 13)+"\n"+
                         "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
                         "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
+                        "\tjava -Djosm.pref=$XDG_CONFIG_HOME -Djosm.userdata=$XDG_DATA_HOME -Djosm.cache=$XDG_CACHE_HOME -jar josm.jar\n"+
                         "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
                         "\tjava -Xmx1024m -jar josm.jar\n\n"+
                         tr("Parameters --download, --downloadgps, and --selection are processed in this order.")+"\n"+
@@ -152,37 +162,39 @@ public class MainApplication extends Main {
      * @since 5279
      */
     public enum Option {
-        /** --help|-h                                 Show this help */
+        /** --help|-h                                  Show this help */
         HELP(false),
-        /** --version                                 Displays the JOSM version and exits */
+        /** --version                                  Displays the JOSM version and exits */
         VERSION(false),
-        /** --debug                                   Print debugging messages to console */
+        /** --debug                                    Print debugging messages to console */
         DEBUG(false),
-        /** --trace                                   Print detailed debugging messages to console */
+        /** --trace                                    Print detailed debugging messages to console */
         TRACE(false),
-        /** --language=&lt;language&gt;               Set the language */
+        /** --language=&lt;language&gt;                Set the language */
         LANGUAGE(true),
-        /** --reset-preferences                       Reset the preferences to default */
+        /** --reset-preferences                        Reset the preferences to default */
         RESET_PREFERENCES(false),
-        /** --load-preferences=&lt;url-to-xml&gt;     Changes preferences according to the XML file */
+        /** --load-preferences=&lt;url-to-xml&gt;      Changes preferences according to the XML file */
         LOAD_PREFERENCES(true),
-        /** --set=&lt;key&gt;=&lt;value&gt;           Set preference key to value */
+        /** --set=&lt;key&gt;=&lt;value&gt;            Set preference key to value */
         SET(true),
-        /** --geometry=widthxheight(+|-)x(+|-)y       Standard unix geometry argument */
+        /** --geometry=widthxheight(+|-)x(+|-)y        Standard unix geometry argument */
         GEOMETRY(true),
-        /** --no-maximize                             Do not launch in maximized mode */
+        /** --no-maximize                              Do not launch in maximized mode */
         NO_MAXIMIZE(false),
-        /** --maximize                                Launch in maximized mode */
+        /** --maximize                                 Launch in maximized mode */
         MAXIMIZE(false),
-        /** --download=minlat,minlon,maxlat,maxlon    Download the bounding box <br>
-         *  --download=&lt;URL&gt;                    Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) <br>
-         *  --download=&lt;filename&gt;               Open a file (any file type that can be opened with File/Open) */
+        /** --download=minlat,minlon,maxlat,maxlon     Download the bounding box <br>
+         *  --download=&lt;URL&gt;                     Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) <br>
+         *  --download=&lt;filename&gt;                Open a file (any file type that can be opened with File/Open) */
         DOWNLOAD(true),
-        /** --downloadgps=minlat,minlon,maxlat,maxlon Download the bounding box as raw GPS <br>
-         *  --downloadgps=&lt;URL&gt;                 Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) as raw GPS */
+        /** --downloadgps=minlat,minlon,maxlat,maxlon  Download the bounding box as raw GPS <br>
+         *  --downloadgps=&lt;URL&gt;                  Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) as raw GPS */
         DOWNLOADGPS(true),
-        /** --selection=&lt;searchstring&gt;          Select with the given search */
-        SELECTION(true);
+        /** --selection=&lt;searchstring&gt;           Select with the given search */
+        SELECTION(true),
+        /** --offline=&lt;osm_api|josm_website|all&gt; Disable access to the given resource(s), delimited by comma */
+        OFFLINE(true);
 
         private String name;
         private boolean requiresArgument;
@@ -253,7 +265,7 @@ public class MainApplication extends Main {
                 }
                 values.add(g.getOptarg());
             } else
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Invalid option: "+c);
         }
         // positional arguments are a shortcut for the --download ... option
         for (int i = g.getOptind(); i < args.length; ++i) {
@@ -282,6 +294,7 @@ public class MainApplication extends Main {
             args = buildCommandLineArgumentMap(argArray);
         } catch (IllegalArgumentException e) {
             System.exit(1);
+            return;
         }
 
         final boolean languageGiven = args.containsKey(Option.LANGUAGE);
@@ -334,7 +347,7 @@ public class MainApplication extends Main {
             // Enable JOSM debug level
             logLevel = 5;
             // Enable debug in OAuth signpost via system preference, but only at trace level
-            Preferences.updateSystemProperty("debug", "true");
+            Utils.updateSystemProperty("debug", "true");
             Main.info(tr("Enabled detailed debug level (trace)"));
         }
 
@@ -344,6 +357,20 @@ public class MainApplication extends Main {
             I18n.set(Main.pref.get("language", null));
         }
         Main.pref.updateSystemProperties();
+
+        // asking for help? show help and exit
+        if (args.containsKey(Option.HELP)) {
+            showHelp();
+            System.exit(0);
+        }
+
+        processOffline(args);
+
+        Main.platform.afterPrefStartupHook();
+
+        FontsManager.initialize();
+
+        handleSpecialLanguages();
 
         final JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
@@ -373,12 +400,6 @@ public class MainApplication extends Main {
         ProxySelector.setDefault(proxySelector);
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
 
-        // asking for help? show help and exit
-        if (args.containsKey(Option.HELP)) {
-            showHelp();
-            System.exit(0);
-        }
-
         final SplashScreen splash = new SplashScreen();
         final ProgressMonitor monitor = splash.getProgressMonitor();
         monitor.beginTask(tr("Initializing"));
@@ -391,7 +412,7 @@ public class MainApplication extends Main {
             }
         });
 
-        Collection<PluginInformation> pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash,monitor.createSubTaskMonitor(1, false));
+        Collection<PluginInformation> pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash, monitor.createSubTaskMonitor(1, false));
         if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate(splash)) {
             monitor.subTask(tr("Updating plugins"));
             pluginsToLoad = PluginHandler.updatePlugins(splash, null, monitor.createSubTaskMonitor(1, false), false);
@@ -401,7 +422,7 @@ public class MainApplication extends Main {
         PluginHandler.installDownloadedPlugins(true);
 
         monitor.indeterminateSubTask(tr("Loading early plugins"));
-        PluginHandler.loadEarlyPlugins(splash,pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+        PluginHandler.loadEarlyPlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
 
         monitor.indeterminateSubTask(tr("Setting defaults"));
         preConstructorInit(args);
@@ -410,7 +431,7 @@ public class MainApplication extends Main {
         final Main main = new MainApplication(mainFrame);
 
         monitor.indeterminateSubTask(tr("Loading plugins"));
-        PluginHandler.loadLatePlugins(splash,pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
+        PluginHandler.loadLatePlugins(splash, pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
         toolbar.refreshToolbarControl();
 
         // Wait for splash disappearance (fix #9714)
@@ -420,6 +441,7 @@ public class MainApplication extends Main {
                 splash.setVisible(false);
                 splash.dispose();
                 mainFrame.setVisible(true);
+                main.gettingStarted.requestFocusInWindow();
             }
         });
 
@@ -462,6 +484,41 @@ public class MainApplication extends Main {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process but they don't seem to break anything and are difficult to fix
             info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
+        }
+    }
+
+    private static void handleSpecialLanguages() {
+        // Use special font for Khmer script, as the default Java font do not display these characters
+        if ("km".equals(Main.pref.get("language"))) {
+            Collection<String> fonts = Arrays.asList(
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+            for (String f : new String[]{"Khmer UI", "DaunPenh", "MoolBoran"}) {
+                if (fonts.contains(f)) {
+                    GuiHelper.setUIFont(f);
+                    break;
+                }
+            }
+        }
+    }
+
+    private static void processOffline(Map<Option, Collection<String>> args) {
+        if (args.containsKey(Option.OFFLINE)) {
+            for (String s : args.get(Option.OFFLINE).iterator().next().split(",")) {
+                try {
+                    Main.setOffline(OnlineResource.valueOf(s.toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    Main.error(tr("''{0}'' is not a valid value for argument ''{1}''. Possible values are {2}, possibly delimited by commas.",
+                            s.toUpperCase(), Option.OFFLINE.getName(), Arrays.toString(OnlineResource.values())));
+                    System.exit(1);
+                    return;
+                }
+            }
+            Set<OnlineResource> offline = Main.getOfflineResources();
+            if (!offline.isEmpty()) {
+                Main.warn(trn("JOSM is running in offline mode. This resource will not be available: {0}",
+                        "JOSM is running in offline mode. These resources will not be available: {0}",
+                        offline.size(), offline.size() == 1 ? offline.iterator().next() : Arrays.toString(offline.toArray())));
+            }
         }
     }
 
@@ -524,7 +581,7 @@ public class MainApplication extends Main {
                 ExtendedDialog ed = new ExtendedDialog(
                         Main.parent, title,
                         new String[]{tr("Change proxy settings"), tr("Cancel")});
-                ed.setButtonIcons(new String[]{"dialogs/settings.png", "cancel.png"}).setCancelButton(2);
+                ed.setButtonIcons(new String[]{"dialogs/settings", "cancel"}).setCancelButton(2);
                 ed.setMinimumSize(new Dimension(460, 260));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
                 ed.setContent(message);

@@ -63,7 +63,7 @@ public class GpxLayer extends Layer {
     private final GpxDrawHelper drawHelper;
 
     public GpxLayer(GpxData d) {
-        super((String) d.attr.get("name"));
+        super(d.getString(GpxConstants.META_NAME));
         data = d;
         drawHelper = new GpxDrawHelper(data);
         ensureTrackVisibilityLength();
@@ -123,11 +123,11 @@ public class GpxLayer extends Layer {
         StringBuilder info = new StringBuilder();
 
         if (data.attr.containsKey("name")) {
-            info.append(tr("Name: {0}", data.attr.get(GpxConstants.META_NAME))).append("<br>");
+            info.append(tr("Name: {0}", data.get(GpxConstants.META_NAME))).append("<br>");
         }
 
         if (data.attr.containsKey("desc")) {
-            info.append(tr("Description: {0}", data.attr.get(GpxConstants.META_DESC))).append("<br>");
+            info.append(tr("Description: {0}", data.get(GpxConstants.META_DESC))).append("<br>");
         }
 
         if (!data.tracks.isEmpty()) {
@@ -140,12 +140,12 @@ public class GpxLayer extends Layer {
 
             for (GpxTrack trk : data.tracks) {
                 info.append("<tr><td>");
-                if (trk.getAttributes().containsKey("name")) {
-                    info.append(trk.getAttributes().get("name"));
+                if (trk.getAttributes().containsKey(GpxConstants.GPX_NAME)) {
+                    info.append(trk.get(GpxConstants.GPX_NAME));
                 }
                 info.append("</td><td>");
-                if (trk.getAttributes().containsKey("desc")) {
-                    info.append(" ").append(trk.getAttributes().get("desc"));
+                if (trk.getAttributes().containsKey(GpxConstants.GPX_DESC)) {
+                    info.append(" ").append(trk.get(GpxConstants.GPX_DESC));
                 }
                 info.append("</td><td>");
                 info.append(getTimespanForTrack(trk));
@@ -153,7 +153,7 @@ public class GpxLayer extends Layer {
                 info.append(NavigatableComponent.getSystemOfMeasurement().getDistText(trk.length()));
                 info.append("</td><td>");
                 if (trk.getAttributes().containsKey("url")) {
-                    info.append(trk.getAttributes().get("url"));
+                    info.append(trk.get("url"));
                 }
                 info.append("</td></tr>");
             }
@@ -214,12 +214,12 @@ public class GpxLayer extends Layer {
     public String getToolTipText() {
         StringBuilder info = new StringBuilder().append("<html>");
 
-        if (data.attr.containsKey("name")) {
-            info.append(tr("Name: {0}", data.attr.get(GpxConstants.META_NAME))).append("<br>");
+        if (data.attr.containsKey(GpxConstants.META_NAME)) {
+            info.append(tr("Name: {0}", data.get(GpxConstants.META_NAME))).append("<br>");
         }
 
-        if (data.attr.containsKey("desc")) {
-            info.append(tr("Description: {0}", data.attr.get(GpxConstants.META_DESC))).append("<br>");
+        if (data.attr.containsKey(GpxConstants.META_DESC)) {
+            info.append(tr("Description: {0}", data.get(GpxConstants.META_DESC))).append("<br>");
         }
 
         info.append(trn("{0} track, ", "{0} tracks, ", data.tracks.size(), data.tracks.size()));
@@ -262,7 +262,7 @@ public class GpxLayer extends Layer {
 
             if (t==null) continue;
             long tm = t[1].getTime();
-            trackVisibility[i]= (tm==0 && showWithoutDate) || (from<=tm && tm <= to);
+            trackVisibility[i]= (tm==0 && showWithoutDate) || (from <= tm && tm <= to);
             i++;
         }
     }
@@ -279,36 +279,32 @@ public class GpxLayer extends Layer {
         lastTracks.clear();
         lastTracks.addAll(data.tracks);
 
-        LinkedList<WayPoint> visibleSegments = listVisibleSegments(box);
-        if(!visibleSegments.isEmpty()) {
+        List<WayPoint> visibleSegments = listVisibleSegments(box);
+        if (!visibleSegments.isEmpty()) {
             drawHelper.readPreferences(getName());
             drawHelper.drawAll(g, mv, visibleSegments);
             if (Main.map.mapView.getActiveLayer() == this) {
                 drawHelper.drawColorBar(g, mv);
             }
         }
-
     }
 
-    private LinkedList<WayPoint> listVisibleSegments(Bounds box) {
+    private List<WayPoint> listVisibleSegments(Bounds box) {
         WayPoint last = null;
         LinkedList<WayPoint> visibleSegments = new LinkedList<>();
 
         ensureTrackVisibilityLength();
         for (Collection<WayPoint> segment : data.getLinesIterable(trackVisibility)) {
 
-            for(WayPoint pt : segment)
-            {
+            for (WayPoint pt : segment) {
                 Bounds b = new Bounds(pt.getCoor());
-                // last should never be null when this is true!
-                if(pt.drawLine) {
+                if (pt.drawLine && last != null) {
                     b.extend(last.getCoor());
                 }
-                if(b.intersects(box))
-                {
-                    if(last != null && (visibleSegments.isEmpty()
+                if (b.intersects(box)) {
+                    if (last != null && (visibleSegments.isEmpty()
                             || visibleSegments.getLast() != last)) {
-                        if(last.drawLine) {
+                        if (last.drawLine) {
                             WayPoint l = new WayPoint(last);
                             l.drawLine = false;
                             visibleSegments.add(l);

@@ -13,6 +13,7 @@ public class TemplatedTMSTileSource extends TMSTileSource {
     private String[] randomParts = null;
     private Map<String, String> headers = new HashMap<>();
 
+    public static final String COOKIE_HEADER   = "Cookie";
     public static final String PATTERN_ZOOM    = "\\{(?:(\\d+)-)?z(?:oom)?([+-]\\d+)?\\}";
     public static final String PATTERN_X       = "\\{x\\}";
     public static final String PATTERN_Y       = "\\{y\\}";
@@ -26,13 +27,21 @@ public class TemplatedTMSTileSource extends TMSTileSource {
         PATTERN_SWITCH
     };
 
-    public TemplatedTMSTileSource(String name, String url, int maxZoom) {
-        super(name, url, maxZoom);
+    public TemplatedTMSTileSource(String name, String url, String id, int maxZoom) {
+        super(name, url, id, maxZoom);
         handleTemplate();
     }
 
-    public TemplatedTMSTileSource(String name, String url, int minZoom, int maxZoom) {
-        super(name, url, minZoom, maxZoom);
+    public TemplatedTMSTileSource(String name, String url, String id, int minZoom, int maxZoom) {
+        super(name, url, id, minZoom, maxZoom);
+        handleTemplate();
+    }
+
+    public TemplatedTMSTileSource(String name, String url, String id, int minZoom, int maxZoom, String cookies) {
+        super(name, url, id, minZoom, maxZoom);
+        if (cookies != null) {
+            headers.put(COOKIE_HEADER, cookies);
+        }
         handleTemplate();
     }
 

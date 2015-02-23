@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -44,7 +45,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
                 Point mouse = nc.getMousePosition();
                 if (mouse == null)
                     mouse = new Point((int)nc.getBounds().getCenterX(), (int)nc.getBounds().getCenterY());
-                MouseWheelEvent we = new MouseWheelEvent(nc, e.getID(), e.getWhen(), e.getModifiers(), mouse.x, mouse.y, 0, false, 
+                MouseWheelEvent we = new MouseWheelEvent(nc, e.getID(), e.getWhen(), e.getModifiers(), mouse.x, mouse.y, 0, false,
                         MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, ",".equals(action) ? -1 : 1);
                 mouseWheelMoved(we);
             } else {
@@ -82,7 +83,9 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     private boolean movementInPlace = false;
 
     /**
-     * COnstructs a new {@code MapMover}.
+     * Constructs a new {@code MapMover}.
+     * @param navComp the navigatable component
+     * @param contentPane the content pane
      */
     public MapMover(NavigatableComponent navComp, JPanel contentPane) {
         this.nc = navComp;
@@ -112,27 +115,33 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
                 "MapMover.Zoomer.down");
             contentPane.getActionMap().put("MapMover.Zoomer.down", new ZoomerAction("down"));
 
-            contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("view:zoominalternate", tr("Map: {0}", tr("Zoom in")), KeyEvent.VK_COMMA, Shortcut.CTRL).getKeyStroke(),
-                "MapMover.Zoomer.in");
-            contentPane.getActionMap().put("MapMover.Zoomer.in", new ZoomerAction(","));
+            // see #10592 - Disable these alternate shortcuts on OS X because of conflict with system shortcut
+            if (!Main.isPlatformOsx()) {
+                contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                    Shortcut.registerShortcut("view:zoominalternate", tr("Map: {0}", tr("Zoom in")), KeyEvent.VK_COMMA, Shortcut.CTRL).getKeyStroke(),
+                    "MapMover.Zoomer.in");
+                contentPane.getActionMap().put("MapMover.Zoomer.in", new ZoomerAction(","));
 
-            contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("view:zoomoutalternate", tr("Map: {0}", tr("Zoom out")), KeyEvent.VK_PERIOD, Shortcut.CTRL).getKeyStroke(),
-                "MapMover.Zoomer.out");
-            contentPane.getActionMap().put("MapMover.Zoomer.out", new ZoomerAction("."));
+                contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                    Shortcut.registerShortcut("view:zoomoutalternate", tr("Map: {0}", tr("Zoom out")), KeyEvent.VK_PERIOD, Shortcut.CTRL).getKeyStroke(),
+                    "MapMover.Zoomer.out");
+                contentPane.getActionMap().put("MapMover.Zoomer.out", new ZoomerAction("."));
+            }
         }
     }
 
     /**
-     * If the right (and only the right) mouse button is pressed, move the map
+     * If the right (and only the right) mouse button is pressed, move the map.
      */
     @Override
     public void mouseDragged(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
         int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
-        if ((e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK ||
-                Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
+        boolean stdMovement = (e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK;
+        boolean macMovement = Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask;
+        boolean allowedMode = !Main.map.mapModeSelect.equals(Main.map.mapMode)
+                          || SelectAction.Mode.SELECT.equals(Main.map.mapModeSelect.getMode());
+        if (stdMovement || (macMovement && allowedMode)) {
             if (mousePosMove == null)
                 startMovement(e);
             EastNorth center = nc.getCenter();
@@ -152,7 +161,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     public void mousePressed(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
         int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
-        if (e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0 || 
+        if (e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0 ||
                 Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
             startMovement(e);
         }

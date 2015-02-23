@@ -100,8 +100,9 @@ public class DNSName implements GeneralNameInterface {
     /**
      * Return the type of the GeneralName.
      */
+    @Override
     public int getType() {
-        return (GeneralNameInterface.NAME_DNS);
+        return GeneralNameInterface.NAME_DNS;
     }
 
     /**
@@ -118,6 +119,7 @@ public class DNSName implements GeneralNameInterface {
      * @param out the DER stream to encode the DNSName to.
      * @exception IOException on encoding errors.
      */
+    @Override
     public void encode(DerOutputStream out) throws IOException {
         out.putIA5String(name);
     }
@@ -127,7 +129,7 @@ public class DNSName implements GeneralNameInterface {
      */
     @Override
     public String toString() {
-        return ("DNSName: " + name);
+        return "DNSName: " + name;
     }
 
     /**
@@ -187,11 +189,12 @@ public class DNSName implements GeneralNameInterface {
      * order zero bit.
      * <p>
      * @param inputName to be checked for being constrained
-     * @returns constraint type above
+     * @return constraint type above
      * @throws UnsupportedOperationException if name is not exact match, but narrowing and widening are
      *          not supported for this name type.
      */
-    public int constrains(GeneralNameInterface inputName) throws UnsupportedOperationException {
+    @Override
+    public int constrains(GeneralNameInterface inputName) {
         int constraintType;
         if (inputName == null)
             constraintType = NAME_DIFF_TYPE;
@@ -227,10 +230,11 @@ public class DNSName implements GeneralNameInterface {
      * NameConstraints minimum and maximum bounds and for calculating
      * path lengths in name subtrees.
      *
-     * @returns distance of name from root
+     * @return distance of name from root
      * @throws UnsupportedOperationException if not supported for this name type
      */
-    public int subtreeDepth() throws UnsupportedOperationException {
+    @Override
+    public int subtreeDepth() {
         String subtree=name;
         int i=1;
 

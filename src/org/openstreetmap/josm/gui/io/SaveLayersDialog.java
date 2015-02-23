@@ -45,7 +45,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
-import org.openstreetmap.josm.gui.layer.ModifiableLayer;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -448,7 +448,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         protected void uploadLayers(List<SaveLayerInfo> toUpload) {
             for (final SaveLayerInfo layerInfo: toUpload) {
-                ModifiableLayer layer = layerInfo.getLayer();
+                AbstractModifiableLayer layer = layerInfo.getLayer();
                 if (canceled) {
                     model.setUploadState(layer, UploadOrSaveState.CANCELED);
                     continue;

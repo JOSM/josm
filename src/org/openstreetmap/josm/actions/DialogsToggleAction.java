@@ -7,9 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.Icon;
-
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -24,7 +23,7 @@ public class DialogsToggleAction extends ToggleAction {
      */
     public DialogsToggleAction() {
         super(tr("Toggle dialogs panel"),
-              (Icon) null, /* no icon */
+              (ImageProvider) null, /* no icon */
               tr("Toggle dialogs panel, maximize mapview"),
               Shortcut.registerShortcut("menu:view:dialogspanel", tr("Toggle dialogs panel"),KeyEvent.VK_TAB, Shortcut.DIRECT),
               true, "dialogspanel", /* register in toolbar */

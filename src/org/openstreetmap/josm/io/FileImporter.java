@@ -20,21 +20,34 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public abstract class FileImporter implements Comparable<FileImporter>, LayerChangeListener {
 
+    /**
+     * The extension file filter used to accept files.
+     */
     public final ExtensionFileFilter filter;
 
     private boolean enabled;
 
+    /**
+     * Constructs a new {@code FileImporter} with the given extension file filter.
+     * @param filter The extension file filter
+     */
     public FileImporter(ExtensionFileFilter filter) {
         this.filter = filter;
         this.enabled = true;
     }
 
+    /**
+     * Determines if this file importer accepts the given file.
+     * @param pathname The file to test
+     * @return {@code true} if this file importer accepts the given file, {@code false} otherwise
+     */
     public boolean acceptFile(File pathname) {
         return filter.acceptName(pathname.getName());
     }
 
     /**
      * A batch importer is a file importer that prefers to read multiple files at the same time.
+     * @return {@code true} if this importer is a batch importer
      */
     public boolean isBatchImporter() {
         return false;
@@ -42,6 +55,10 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
 
     /**
      * Needs to be implemented if isBatchImporter() returns false.
+     * @param file file to import
+     * @param progressMonitor progress monitor
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if invalid data is read
      */
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         throw new IOException(tr("Could not import ''{0}''.", file.getName()));
@@ -49,6 +66,10 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
 
     /**
      * Needs to be implemented if isBatchImporter() returns true.
+     * @param files files to import
+     * @param progressMonitor progress monitor
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if invalid data is read
      */
     public void importData(List<File> files, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         throw new IOException(tr("Could not import files."));

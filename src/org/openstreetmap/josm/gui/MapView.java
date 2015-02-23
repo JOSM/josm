@@ -32,22 +32,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.AbstractButton;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
-import javax.swing.JOptionPane;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
@@ -143,16 +141,30 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     /**
+     * Adds a layer change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     * @param initialFire fire an active-layer-changed-event right after adding
+     * the listener in case there is a layer present (should be)
+     */
+    public static void addLayerChangeListener(LayerChangeListener listener, boolean initialFire) {
+        addLayerChangeListener(listener);
+        if (initialFire && Main.isDisplayingMapView()) {
+            listener.activeLayerChange(null, Main.map.mapView.getActiveLayer());
+        }
+    }
+
+    /**
      * Adds an edit layer change listener
      *
      * @param listener the listener. Ignored if null or already registered.
-     * @param initialFire Fire an edit-layer-changed-event right after adding
+     * @param initialFire fire an edit-layer-changed-event right after adding
      * the listener in case there is an edit layer present
      */
     public static void addEditLayerChangeListener(EditLayerChangeListener listener, boolean initialFire) {
         addEditLayerChangeListener(listener);
         if (initialFire && Main.isDisplayingMapView() && Main.map.mapView.getEditLayer() != null) {
-            fireEditLayerChanged(null, Main.map.mapView.getEditLayer());
+            listener.editLayerChanged(null, Main.map.mapView.getEditLayer());
         }
     }
 
@@ -232,6 +244,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * the viewport is derived from the layer data.
      */
     public MapView(final JPanel contentPane, final ViewportData viewportData) {
+        initialViewport = viewportData;
         Main.pref.addPreferenceChangeListener(this);
         final boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null;
 
@@ -249,19 +262,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 scaler.setLocation(10,30);
 
                 mapMover = new MapMover(MapView.this, contentPane);
-                if (viewportData != null) {
-                    zoomTo(viewportData.getCenter(), viewportData.getScale());
-                } else {
-                    OsmDataLayer layer = getEditLayer();
-                    if (layer != null) {
-                        if (!zoomToDataSetBoundingBox(layer.data)) {
-                            // no bounding box defined
-                            AutoScaleAction.autoScale("data");
-                        }
-                    } else {
-                        AutoScaleAction.autoScale("layer");
-                    }
-                }
             }
         });
 
@@ -541,6 +541,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * Draw the component.
      */
     @Override public void paint(Graphics g) {
+        if (initialViewport != null) {
+            zoomTo(initialViewport);
+            initialViewport = null;
+        }
         if (BugReportExceptionHandler.exceptionHandlingInProgress())
             return;
 
@@ -696,19 +700,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Set the new dimension to the view.
+     * 
+     * @deprecated use #zoomTo(BoundingXYVisitor)
      */
+    @Deprecated
     public void recalculateCenterScale(BoundingXYVisitor box) {
-        if (box == null) {
-            box = new BoundingXYVisitor();
-        }
-        if (box.getBounds() == null) {
-            box.visit(getProjection().getWorldBoundsLatLon());
-        }
-        if (!box.hasExtend()) {
-            box.enlargeBoundingBox();
-        }
-
-        zoomTo(box.getBounds());
+        zoomTo(box);
     }
 
     /**
@@ -867,32 +864,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         return layers.contains(layer);
     }
 
-    /**
-     * Tries to zoom to the download boundingbox[es] of the current edit layer
-     * (aka {@link OsmDataLayer}). If the edit layer has multiple download bounding
-     * boxes it zooms to a large virtual bounding box containing all smaller ones.
-     *
-     * @return <code>true</code> if a zoom operation has been performed
-     */
-    public boolean zoomToDataSetBoundingBox(DataSet ds) {
-        // In case we already have an existing data layer ...
-        OsmDataLayer layer= getEditLayer();
-        if (layer == null)
-            return false;
-        Collection<DataSource> dataSources = ds.dataSources;
-        // ... with bounding box[es] of data loaded from OSM or a file...
-        BoundingXYVisitor bbox = new BoundingXYVisitor();
-        for (DataSource source : dataSources) {
-            bbox.visit(source.bounds);
-        }
-        if (bbox.hasExtend()) {
-            // ... we zoom to it's bounding box
-            recalculateCenterScale(bbox);
-            return true;
-        }
-        return false;
-    }
-
     public boolean addTemporaryLayer(MapViewPaintable mvp) {
         if (temporaryLayers.contains(mvp)) return false;
         return temporaryLayers.add(mvp);
@@ -922,11 +893,11 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     protected void refreshTitle() {
-        boolean dirty = editLayer != null && (editLayer.requiresSaveToFile() || (editLayer.requiresUploadToServer() && !editLayer.isUploadDiscouraged()));
-        if (dirty) {
-            JOptionPane.getFrameForComponent(Main.parent).setTitle("* " + tr("Java OpenStreetMap Editor"));
-        } else {
-            JOptionPane.getFrameForComponent(Main.parent).setTitle(tr("Java OpenStreetMap Editor"));
+        if (Main.parent != null) {
+            boolean dirty = editLayer != null &&
+                    (editLayer.requiresSaveToFile() || (editLayer.requiresUploadToServer() && !editLayer.isUploadDiscouraged()));
+            ((JFrame) Main.parent).setTitle((dirty ? "* " : "") + tr("Java OpenStreetMap Editor"));
+            ((JFrame) Main.parent).getRootPane().putClientProperty("Window.documentModified", dirty);
         }
     }
 

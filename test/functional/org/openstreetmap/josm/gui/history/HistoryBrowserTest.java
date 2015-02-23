@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.history;
 
 import java.awt.BorderLayout;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
@@ -20,8 +19,6 @@ import org.openstreetmap.josm.io.OsmTransferException;
 
 @Ignore
 public class HistoryBrowserTest extends JFrame {
-
-    static private Logger logger = Logger.getLogger(HistoryBrowserTest.class.getName());
 
     @BeforeClass
     static public void init() {

@@ -79,13 +79,33 @@ public abstract class CacheCustomContent<T extends Throwable> {
         this.path = new File(Main.pref.getCacheDirectory(), ident);
     }
 
+    private boolean needsUpdate() {
+        if (isOffline()) {
+            return false;
+        }
+        return Main.pref.getInteger("cache." + ident, 0) + updateInterval < System.currentTimeMillis()/1000
+                || !isCacheValid();
+    }
+
+    private boolean isOffline() {
+        try {
+            checkOfflineAccess();
+            return false;
+        } catch (OfflineAccessException e) {
+            return true;
+        }
+    }
+
+    protected void checkOfflineAccess() {
+        // To be overriden by subclasses
+    }
+
     /**
      * Updates data if required
      * @return Returns the data
      */
     public byte[] updateIfRequired() throws T {
-        if (Main.pref.getInteger("cache." + ident, 0) + updateInterval < System.currentTimeMillis()/1000
-                || !isCacheValid())
+        if (needsUpdate())
             return updateForce();
         return getData();
     }
@@ -95,8 +115,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @return Returns the data as string
      */
     public String updateIfRequiredString() throws T {
-        if (Main.pref.getInteger("cache." + ident, 0) + updateInterval < System.currentTimeMillis()/1000
-                || !isCacheValid())
+        if (needsUpdate())
             return updateForceString();
         return getDataString();
     }
@@ -137,18 +156,24 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @return the data as String
      */
     public String getDataString() throws T {
-        return new String(getData(), StandardCharsets.UTF_8);
+        byte[] array = getData();
+        if (array == null) {
+            return null;
+        }
+        return new String(array, StandardCharsets.UTF_8);
     }
 
     /**
-     * Tries to load the data using the given ident from disk. If this fails, data will be updated
+     * Tries to load the data using the given ident from disk. If this fails, data will be updated, unless run in offline mode
      */
     private void loadFromDisk() throws T {
         try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(path))) {
             this.data = new byte[input.available()];
             input.read(this.data);
         } catch (IOException e) {
-            this.data = updateForce();
+            if (!isOffline()) {
+                this.data = updateForce();
+            }
         }
     }
 
@@ -165,8 +190,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     }
 
     /**
-     * Flushes the data from memory. Class automatically reloads it from disk or updateData() if
-     * required
+     * Flushes the data from memory. Class automatically reloads it from disk or updateData() if required
      */
     public void flushData() {
         data = null;

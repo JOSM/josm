@@ -17,7 +17,7 @@ public class BBox {
 
     /**
      * Constructs a new {@code BBox} defined by a single point.
-     * 
+     *
      * @param x X coordinate
      * @param y Y coordinate
      * @since 6203
@@ -31,8 +31,8 @@ public class BBox {
     /**
      * Constructs a new {@code BBox} defined by points <code>a</code> and <code>b</code>.
      * Result is minimal BBox containing both points.
-     * 
-     * @param a 
+     *
+     * @param a
      * @param b
      */
     public BBox(LatLon a, LatLon b) {
@@ -41,7 +41,7 @@ public class BBox {
 
     /**
      * Constructs a new {@code BBox} from another one.
-     * 
+     *
      * @param copy the BBox to copy
      */
     public BBox(BBox copy) {
@@ -52,7 +52,7 @@ public class BBox {
     }
 
     public BBox(double a_x, double a_y, double b_x, double b_y)  {
-        
+
         if (a_x > b_x) {
             xmax = a_x;
             xmin = b_x;
@@ -60,7 +60,7 @@ public class BBox {
             xmax = b_x;
             xmin = a_x;
         }
-        
+
         if (a_y > b_y) {
             ymax = a_y;
             ymin = b_y;
@@ -68,7 +68,7 @@ public class BBox {
             ymax = b_y;
             ymin = a_y;
         }
-        
+
         sanity();
     }
 
@@ -259,7 +259,7 @@ public class BBox {
 
         return idx1;
     }
-    
+
     public Rectangle2D toRectangle() {
         return new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin);
     }

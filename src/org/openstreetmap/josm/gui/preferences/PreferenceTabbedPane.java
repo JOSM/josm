@@ -11,6 +11,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,6 +59,7 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorTestsPreference
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
@@ -68,7 +71,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public final class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener, ExpertModeChangeListener, ChangeListener {
-    
+
     /**
      * Allows PreferenceSettings to do validation of entered values when ok was pressed.
      * If data is invalid then event can return false to cancel closing of preferences dialog.
@@ -142,7 +145,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
     // all created tabs
     private final List<PreferenceTab> tabs = new ArrayList<>();
-    private static final Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<>();
+    private static final Collection<PreferenceSettingFactory> settingsFactories = new LinkedList<>();
+    private static final PreferenceSettingFactory advancedPreferenceFactory = new AdvancedPreference.Factory();
     private final List<PreferenceSetting> settings = new ArrayList<>();
 
     // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)
@@ -317,11 +321,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             @Override
             public void run() {
                 boolean requiresRestart = false;
-                if (task != null && !task.isCanceled()) {
-                    if (!task.getDownloadedPlugins().isEmpty()) {
-                        requiresRestart = true;
-                    }
-                }
 
                 for (PreferenceSetting setting : settingsInitialized) {
                     if (setting.ok()) {
@@ -336,6 +335,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 StringBuilder sb = new StringBuilder();
                 sb.append("<html>");
                 if (task != null && !task.isCanceled()) {
+                    PluginHandler.refreshLocalUpdatedPluginInfo(task.getDownloadedPlugins());
                     sb.append(PluginPreference.buildDownloadSummary(task));
                 }
                 if (requiresRestart) {
@@ -369,6 +369,45 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                             JOptionPane.WARNING_MESSAGE
                             );
                 }
+
+                // load the plugins that can be loaded at runtime
+                List<PluginInformation> newPlugins = preference.getNewlyActivatedPlugins();
+                if (newPlugins != null) {
+                    Collection<PluginInformation> downloadedPlugins = null;
+                    if (task != null && !task.isCanceled()) {
+                        downloadedPlugins = task.getDownloadedPlugins();
+                    }
+                    List<PluginInformation> toLoad = new ArrayList<>();
+                    for (PluginInformation pi : newPlugins) {
+                        if (toDownload.contains(pi) && downloadedPlugins != null && !downloadedPlugins.contains(pi)) {
+                            continue; // failed download
+                        }
+                        if (pi.canloadatruntime) {
+                            toLoad.add(pi);
+                        }
+                    }
+                    // check if plugin dependences can also be loaded
+                    Collection<PluginInformation> allPlugins = new HashSet<>(toLoad);
+                    for (PluginProxy proxy : PluginHandler.pluginList) {
+                        allPlugins.add(proxy.getPluginInformation());
+                    }
+                    boolean removed;
+                    do {
+                        removed = false;
+                        Iterator<PluginInformation> it = toLoad.iterator();
+                        while (it.hasNext()) {
+                            if (!PluginHandler.checkRequiredPluginsPreconditions(null, allPlugins, it.next(), requiresRestart)) {
+                                it.remove();
+                                removed = true;
+                            }
+                        }
+                    } while (removed);
+                    
+                    if (!toLoad.isEmpty()) {
+                        PluginHandler.loadPlugins(PreferenceTabbedPane.this, toLoad, null);
+                    }
+                }
+
                 Main.parent.repaint();
             }
         };
@@ -406,7 +445,11 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     public void buildGui() {
-        for (PreferenceSettingFactory factory : settingsFactory) {
+        Collection<PreferenceSettingFactory> factories = new ArrayList<>(settingsFactories);
+        factories.addAll(PluginHandler.getPreferenceSetting());
+        factories.add(advancedPreferenceFactory);
+
+        for (PreferenceSettingFactory factory : factories) {
             PreferenceSetting setting = factory.createPreferenceSetting();
             if (setting != null) {
                 settings.add(setting);
@@ -491,33 +534,28 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
     static {
         // order is important!
-        settingsFactory.add(new DisplayPreference.Factory());
-        settingsFactory.add(new DrawingPreference.Factory());
-        settingsFactory.add(new ColorPreference.Factory());
-        settingsFactory.add(new LafPreference.Factory());
-        settingsFactory.add(new LanguagePreference.Factory());
-        settingsFactory.add(new ServerAccessPreference.Factory());
-        settingsFactory.add(new AuthenticationPreference.Factory());
-        settingsFactory.add(new ProxyPreference.Factory());
-        settingsFactory.add(new MapPreference.Factory());
-        settingsFactory.add(new ProjectionPreference.Factory());
-        settingsFactory.add(new MapPaintPreference.Factory());
-        settingsFactory.add(new TaggingPresetPreference.Factory());
-        settingsFactory.add(new BackupPreference.Factory());
-        settingsFactory.add(new PluginPreference.Factory());
-        settingsFactory.add(Main.toolbar);
-        settingsFactory.add(new AudioPreference.Factory());
-        settingsFactory.add(new ShortcutPreference.Factory());
-        settingsFactory.add(new ValidatorPreference.Factory());
-        settingsFactory.add(new ValidatorTestsPreference.Factory());
-        settingsFactory.add(new ValidatorTagCheckerRulesPreference.Factory());
-        settingsFactory.add(new RemoteControlPreference.Factory());
-        settingsFactory.add(new ImageryPreference.Factory());
-
-        PluginHandler.getPreferenceSetting(settingsFactory);
-
-        // always the last: advanced tab
-        settingsFactory.add(new AdvancedPreference.Factory());
+        settingsFactories.add(new DisplayPreference.Factory());
+        settingsFactories.add(new DrawingPreference.Factory());
+        settingsFactories.add(new ColorPreference.Factory());
+        settingsFactories.add(new LafPreference.Factory());
+        settingsFactories.add(new LanguagePreference.Factory());
+        settingsFactories.add(new ServerAccessPreference.Factory());
+        settingsFactories.add(new AuthenticationPreference.Factory());
+        settingsFactories.add(new ProxyPreference.Factory());
+        settingsFactories.add(new MapPreference.Factory());
+        settingsFactories.add(new ProjectionPreference.Factory());
+        settingsFactories.add(new MapPaintPreference.Factory());
+        settingsFactories.add(new TaggingPresetPreference.Factory());
+        settingsFactories.add(new BackupPreference.Factory());
+        settingsFactories.add(new PluginPreference.Factory());
+        settingsFactories.add(Main.toolbar);
+        settingsFactories.add(new AudioPreference.Factory());
+        settingsFactories.add(new ShortcutPreference.Factory());
+        settingsFactories.add(new ValidatorPreference.Factory());
+        settingsFactories.add(new ValidatorTestsPreference.Factory());
+        settingsFactories.add(new ValidatorTagCheckerRulesPreference.Factory());
+        settingsFactories.add(new RemoteControlPreference.Factory());
+        settingsFactories.add(new ImageryPreference.Factory());
     }
 
     /**

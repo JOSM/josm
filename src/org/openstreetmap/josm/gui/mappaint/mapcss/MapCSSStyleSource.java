@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -30,8 +33,12 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.gui.mappaint.StyleKeys;
+import org.openstreetmap.josm.gui.mappaint.StyleSetting;
+import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
@@ -69,17 +76,58 @@ public class MapCSSStyleSource extends StyleSource {
     private ZipFile zipFile;
 
     /**
+     * This lock prevents concurrent execution of {@link MapCSSRuleIndex#clear() } /
+     * {@link MapCSSRuleIndex#initIndex()} and {@link MapCSSRuleIndex#getRuleCandidates }.
+     *
+     * For efficiency reasons, these methods are synchronized higher up the
+     * stack trace.
+     */
+    public final static ReadWriteLock STYLE_SOURCE_LOCK = new ReentrantReadWriteLock();
+
+    /**
+     * Set of all supported MapCSS keys.
+     */
+    public static final Set<String> SUPPORTED_KEYS = new HashSet<>();
+    static {
+        Field[] declaredFields = StyleKeys.class.getDeclaredFields();
+        for (Field f : declaredFields) {
+            try {
+                SUPPORTED_KEYS.add((String) f.get(null));
+                if (!f.getName().toLowerCase().replace("_", "-").equals(f.get(null))) {
+                    throw new RuntimeException(f.getName());
+                }
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        for (LineElemStyle.LineType lt : LineElemStyle.LineType.values()) {
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.COLOR);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES_BACKGROUND_COLOR);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES_BACKGROUND_OPACITY);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES_OFFSET);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.LINECAP);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.LINEJOIN);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.MITERLIMIT);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.OFFSET);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.OPACITY);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.REAL_WIDTH);
+            SUPPORTED_KEYS.add(lt.prefix + StyleKeys.WIDTH);
+        }
+    }
+
+    /**
      * A collection of {@link MapCSSRule}s, that are indexed by tag key and value.
-     * 
+     *
      * Speeds up the process of finding all rules that match a certain primitive.
-     * 
+     *
      * Rules with a {@link SimpleKeyValueCondition} [key=value] are indexed by
      * key and value in a HashMap. Now you only need to loop the tags of a
      * primitive to retrieve the possibly matching rules.
-     * 
+     *
      * Rules with no SimpleKeyValueCondition in the selector have to be
      * checked separately.
-     * 
+     *
      * The order of rules gets mixed up by this and needs to be sorted later.
      */
     public static class MapCSSRuleIndex {
@@ -89,13 +137,15 @@ public class MapCSSStyleSource extends StyleSource {
         public final Map<String,Map<String,Set<MapCSSRule>>> index = new HashMap<>();
         /* rules without SimpleKeyValueCondition */
         public final Set<MapCSSRule> remaining = new HashSet<>();
-        
+
         public void add(MapCSSRule rule) {
             rules.add(rule);
         }
 
         /**
          * Initialize the index.
+         *
+         * You must own the write lock of STYLE_SOURCE_LOCK when calling this method.
          */
         public void initIndex() {
             for (MapCSSRule r: rules) {
@@ -128,12 +178,14 @@ public class MapCSSStyleSource extends StyleSource {
                 rulesWithMatchingKeyValue.add(r);
             }
         }
-        
+
         /**
          * Get a subset of all rules that might match the primitive.
          * @param osm the primitive to match
          * @return a Collection of rules that filters out most of the rules
          * that cannot match, based on the tags of the primitive
+         *
+         * You must have a read lock of STYLE_SOURCE_LOCK when calling this method.
          */
         public Collection<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
             List<MapCSSRule> ruleCandidates = new ArrayList<>(remaining);
@@ -148,8 +200,13 @@ public class MapCSSStyleSource extends StyleSource {
             }
             Collections.sort(ruleCandidates);
             return ruleCandidates;
-        } 
+        }
 
+        /**
+         * Clear the index.
+         *
+         * You must own the write lock STYLE_SOURCE_LOCK when calling this method.
+         */
         public void clear() {
             rules.clear();
             index.clear();
@@ -180,95 +237,102 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public void loadStyleSource() {
-        init();
-        rules.clear();
-        nodeRules.clear();
-        wayRules.clear();
-        wayNoAreaRules.clear();
-        relationRules.clear();
-        multipolygonRules.clear();
-        canvasRules.clear();
-        try (InputStream in = getSourceInputStream()) {
-            try {
-                // evaluate @media { ... } blocks
-                MapCSSParser preprocessor = new MapCSSParser(in, "UTF-8", MapCSSParser.LexicalState.PREPROCESSOR);
-                String mapcss = preprocessor.pp_root(this);
+        STYLE_SOURCE_LOCK.writeLock().lock();
+        try {
+            init();
+            rules.clear();
+            nodeRules.clear();
+            wayRules.clear();
+            wayNoAreaRules.clear();
+            relationRules.clear();
+            multipolygonRules.clear();
+            canvasRules.clear();
+            try (InputStream in = getSourceInputStream()) {
+                try {
+                    // evaluate @media { ... } blocks
+                    MapCSSParser preprocessor = new MapCSSParser(in, "UTF-8", MapCSSParser.LexicalState.PREPROCESSOR);
+                    String mapcss = preprocessor.pp_root(this);
 
-                // do the actual mapcss parsing
-                InputStream in2 = new ByteArrayInputStream(mapcss.getBytes(StandardCharsets.UTF_8));
-                MapCSSParser parser = new MapCSSParser(in2, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
-                parser.sheet(this);
+                    // do the actual mapcss parsing
+                    InputStream in2 = new ByteArrayInputStream(mapcss.getBytes(StandardCharsets.UTF_8));
+                    MapCSSParser parser = new MapCSSParser(in2, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
+                    parser.sheet(this);
 
-                loadMeta();
-                loadCanvas();
-            } finally {
-                closeSourceInputStream(in);
+                    loadMeta();
+                    loadCanvas();
+                    loadSettings();
+                } finally {
+                    closeSourceInputStream(in);
+                }
+            } catch (IOException e) {
+                Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
+                Main.error(e);
+                logError(e);
+            } catch (TokenMgrError e) {
+                Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                Main.error(e);
+                logError(e);
+            } catch (ParseException e) {
+                Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                Main.error(e);
+                logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
             }
-        } catch (IOException e) {
-            Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
-            Main.error(e);
-            logError(e);
-        } catch (TokenMgrError e) {
-            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-            Main.error(e);
-            logError(e);
-        } catch (ParseException e) {
-            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-            Main.error(e);
-            logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
+            // optimization: filter rules for different primitive types
+            for (MapCSSRule r: rules) {
+                // find the rightmost selector, this must be a GeneralSelector
+                Selector selRightmost = r.selector;
+                while (selRightmost instanceof ChildOrParentSelector) {
+                    selRightmost = ((ChildOrParentSelector) selRightmost).right;
+                }
+                MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
+                final String base = ((GeneralSelector) selRightmost).getBase();
+                switch (base) {
+                    case "node":
+                        nodeRules.add(optRule);
+                        break;
+                    case "way":
+                        wayNoAreaRules.add(optRule);
+                        wayRules.add(optRule);
+                        break;
+                    case "area":
+                        wayRules.add(optRule);
+                        multipolygonRules.add(optRule);
+                        break;
+                    case "relation":
+                        relationRules.add(optRule);
+                        multipolygonRules.add(optRule);
+                        break;
+                    case "*":
+                        nodeRules.add(optRule);
+                        wayRules.add(optRule);
+                        wayNoAreaRules.add(optRule);
+                        relationRules.add(optRule);
+                        multipolygonRules.add(optRule);
+                        break;
+                    case "canvas":
+                        canvasRules.add(r);
+                        break;
+                    case "meta":
+                    case "setting":
+                        break;
+                    default:
+                        final RuntimeException e = new RuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
+                        Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                        Main.error(e);
+                        logError(e);
+                }
+            }
+            nodeRules.initIndex();
+            wayRules.initIndex();
+            wayNoAreaRules.initIndex();
+            relationRules.initIndex();
+            multipolygonRules.initIndex();
+            canvasRules.initIndex();
+        } finally {
+            STYLE_SOURCE_LOCK.writeLock().unlock();
         }
-        // optimization: filter rules for different primitive types
-        for (MapCSSRule r: rules) {
-            // find the rightmost selector, this must be a GeneralSelector
-            Selector selRightmost = r.selector;
-            while (selRightmost instanceof ChildOrParentSelector) {
-                selRightmost = ((ChildOrParentSelector) selRightmost).right;
-            }
-            MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
-            final String base = ((GeneralSelector) selRightmost).getBase();
-            switch (base) {
-                case "node":
-                    nodeRules.add(optRule);
-                    break;
-                case "way":
-                    wayNoAreaRules.add(optRule);
-                    wayRules.add(optRule);
-                    break;
-                case "area":
-                    wayRules.add(optRule);
-                    multipolygonRules.add(optRule);
-                    break;
-                case "relation":
-                    relationRules.add(optRule);
-                    multipolygonRules.add(optRule);
-                    break;
-                case "*":
-                    nodeRules.add(optRule);
-                    wayRules.add(optRule);
-                    wayNoAreaRules.add(optRule);
-                    relationRules.add(optRule);
-                    multipolygonRules.add(optRule);
-                    break;
-                case "canvas":
-                    canvasRules.add(r);
-                    break;
-                case "meta":
-                    break;
-                default:
-                    final RuntimeException e = new RuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
-                    Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-                    Main.error(e);
-                    logError(e);
-            }
-        }
-        nodeRules.initIndex();
-        wayRules.initIndex();
-        wayNoAreaRules.initIndex();
-        relationRules.initIndex();
-        multipolygonRules.initIndex();
-        canvasRules.initIndex();
     }
-    
+
     @Override
     public InputStream getSourceInputStream() throws IOException {
         if (css != null) {
@@ -327,6 +391,49 @@ public class MapCSSStyleSource extends StyleSource {
         }
     }
 
+    private void loadSettings() {
+        settings.clear();
+        settingValues.clear();
+        MultiCascade mc = new MultiCascade();
+        Node n = new Node();
+        String code = LanguageInfo.getJOSMLocaleCode();
+        n.put("lang", code);
+        // create a fake environment to read the meta data block
+        Environment env = new Environment(n, mc, "default", this);
+
+        for (MapCSSRule r : rules) {
+            if ((r.selector instanceof GeneralSelector)) {
+                GeneralSelector gs = (GeneralSelector) r.selector;
+                if (gs.getBase().equals("setting")) {
+                    if (!gs.matchesConditions(env)) {
+                        continue;
+                    }
+                    env.layer = null;
+                    env.layer = gs.getSubpart().getId(env);
+                    r.execute(env);
+                }
+            }
+        }
+        for (Entry<String, Cascade> e : mc.getLayers()) {
+            if ("default".equals(e.getKey())) {
+                Main.warn("setting requires layer identifier e.g. 'setting::my_setting {...}'");
+                continue;
+            }
+            Cascade c = e.getValue();
+            String type = c.get("type", null, String.class);
+            StyleSetting set = null;
+            if ("boolean".equals(type)) {
+                set = BooleanStyleSetting.create(c, this, e.getKey());
+            } else {
+                Main.warn("Unkown setting type: "+type);
+            }
+            if (set != null) {
+                settings.add(set);
+                settingValues.put(e.getKey(), set.getValue());
+            }
+        }
+    }
+
     private Cascade constructSpecial(String type) {
 
         MultiCascade mc = new MultiCascade();
@@ -356,7 +463,7 @@ public class MapCSSStyleSource extends StyleSource {
     }
 
     @Override
-    public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
+    public void apply(MultiCascade mc, OsmPrimitive osm, double scale, boolean pretendWayIsClosed) {
         Environment env = new Environment(osm, mc, null, this);
         MapCSSRuleIndex matchingRuleIndex;
         if (osm instanceof Node) {
@@ -376,14 +483,15 @@ public class MapCSSStyleSource extends StyleSource {
                 matchingRuleIndex = relationRules;
             }
         }
-        
+
         // the declaration indices are sorted, so it suffices to save the
         // last used index
         int lastDeclUsed = -1;
 
         for (MapCSSRule r : matchingRuleIndex.getRuleCandidates(osm)) {
             env.clearSelectorMatchingInformation();
-            env.layer = r.selector.getSubpart();
+            env.layer = null;
+            String sub = env.layer = r.selector.getSubpart().getId(env);
             if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                 Selector s = r.selector;
                 if (s.getRange().contains(scale)) {
@@ -395,11 +503,7 @@ public class MapCSSStyleSource extends StyleSource {
 
                 if (r.declaration.idx == lastDeclUsed) continue; // don't apply one declaration more than once
                 lastDeclUsed = r.declaration.idx;
-                String sub = s.getSubpart();
-                if (sub == null) {
-                    sub = "default";
-                }
-                else if ("*".equals(sub)) {
+                if ("*".equals(sub)) {
                     for (Entry<String, Cascade> entry : mc.getLayers()) {
                         env.layer = entry.getKey();
                         if ("*".equals(env.layer)) {
@@ -414,20 +518,28 @@ public class MapCSSStyleSource extends StyleSource {
         }
     }
 
-    public boolean evalMediaExpression(String feature, Object val) {
-        if ("user-agent".equals(feature)) {
-            String s = Cascade.convertTo(val, String.class);
-            if ("josm".equals(s)) return true;
+    public boolean evalSupportsDeclCondition(String feature, Object val) {
+        if (feature == null) return false;
+        if (SUPPORTED_KEYS.contains(feature)) return true;
+        switch (feature) {
+            case "user-agent":
+            {
+                String s = Cascade.convertTo(val, String.class);
+                return "josm".equals(s);
+            }
+            case "min-josm-version":
+            {
+                Float v = Cascade.convertTo(val, Float.class);
+                return v != null && Math.round(v) <= Version.getInstance().getVersion();
+            }
+            case "max-josm-version":
+            {
+                Float v = Cascade.convertTo(val, Float.class);
+                return v != null && Math.round(v) >= Version.getInstance().getVersion();
+            }
+            default:
+                return false;
         }
-        if ("min-josm-version".equals(feature)) {
-            Float v = Cascade.convertTo(val, Float.class);
-            if (v != null) return Math.round(v) <= Version.getInstance().getVersion();
-        }
-        if ("max-josm-version".equals(feature)) {
-            Float v = Cascade.convertTo(val, Float.class);
-            if (v != null) return Math.round(v) >= Version.getInstance().getVersion();
-        }
-        return false;
     }
 
     @Override

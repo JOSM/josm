@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -27,8 +28,6 @@ import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler;
-import org.openstreetmap.josm.tools.BugReportExceptionHandler;
-import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -120,6 +119,9 @@ public final class ShowStatusReportAction extends JosmAction {
                         shortenParam(it, param, envJavaHome, envJavaHomeAlt);
                         shortenParam(it, param, propJavaHome, propJavaHomeAlt);
                     }
+                } else if (value.startsWith("-X")) {
+                    // Remove arguments like -Xbootclasspath/a, -Xverify:remote, that can be very long and unhelpful
+                    it.remove();
                 }
             }
             if (!vmArguments.isEmpty()) {
@@ -147,6 +149,15 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("\n");
         text.append(PluginHandler.getBugReportText());
         text.append("\n");
+
+        Collection<String> errorsWarnings = Main.getLastErrorAndWarnings();
+        if (!errorsWarnings.isEmpty()) {
+            text.append("Last errors/warnings:\n");
+            for (String s : errorsWarnings) {
+                text.append("- ").append(s).append("\n");
+            }
+            text.append("\n");
+        }
 
         return text.toString();
     }
@@ -181,15 +192,14 @@ public final class ShowStatusReportAction extends JosmAction {
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Status Report"),
                 new String[] {tr("Copy to clipboard and close"), tr("Report bug"), tr("Close") });
-        ed.setButtonIcons(new String[] {"copy.png", "bug.png", "cancel.png" });
+        ed.setButtonIcons(new String[] {"copy", "bug", "cancel" });
         ed.setContent(sp, false);
         ed.setMinimumSize(new Dimension(380, 200));
         ed.setPreferredSize(new Dimension(700, Main.parent.getHeight()-50));
 
         switch (ed.showDialog().getValue()) {
             case 1: Utils.copyToClipboard(text.toString()); break;
-            case 2: OpenBrowser.displayUrl(BugReportExceptionHandler.getBugReportUrl(
-                        Utils.strip(reportHeader)).toExternalForm()) ; break;
+            case 2: ReportBugAction.reportBug(reportHeader) ; break;
         }
     }
 }

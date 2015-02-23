@@ -19,6 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.widgets.ChangesetIdTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.io.OnlineResource;
 
 /**
  * This panel allows to enter the ID of single changeset and to download
@@ -97,7 +98,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
         }
 
         protected void updateEnabledState() {
-            setEnabled(tfChangesetId.readIds());
+            setEnabled(tfChangesetId.readIds() && !Main.isOffline(OnlineResource.OSM_API));
         }
 
         @Override

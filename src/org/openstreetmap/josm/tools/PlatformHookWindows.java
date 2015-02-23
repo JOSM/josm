@@ -27,8 +27,13 @@ import static java.awt.event.KeyEvent.VK_Y;
 import static java.awt.event.KeyEvent.VK_Z;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyStore;
@@ -43,6 +48,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -55,30 +61,38 @@ import org.openstreetmap.josm.Main;
 public class PlatformHookWindows extends PlatformHookUnixoid implements PlatformHook {
 
     private static final byte[] INSECURE_PUBLIC_KEY = new byte[] {
-        0x30, (byte) 0x82, 0x1, 0x22, 0x30, 0xd, 0x6, 0x9, 0x2a, (byte) 0x86, 0x48, (byte) 0x86, (byte) 0xf7, 0xd, 0x1, 0x1, 0x1, 0x5, 0x0, 0x3, (byte) 0x82, 0x1, 0xf, 0x0,
+        0x30, (byte) 0x82, 0x1, 0x22, 0x30, 0xd, 0x6, 0x9, 0x2a, (byte) 0x86, 0x48,
+        (byte) 0x86, (byte) 0xf7, 0xd, 0x1, 0x1, 0x1, 0x5, 0x0, 0x3, (byte) 0x82, 0x1, 0xf, 0x0,
         0x30, (byte) 0x82, 0x01, 0x0a, 0x02, (byte) 0x82, 0x01, 0x01, 0x00, (byte) 0x95, (byte) 0x95, (byte) 0x88,
-        (byte) 0x84, (byte) 0xc8, (byte) 0xd9, 0x6b, (byte) 0xc5, (byte) 0xda, 0x0b, 0x69, (byte) 0xbf, (byte) 0xfc, 0x7e, (byte) 0xb9, (byte) 0x96, 0x2c, (byte) 0xeb, (byte) 0x8f,
-        (byte) 0xbc, 0x6e, 0x40, (byte) 0xe6, (byte) 0xe2, (byte) 0xfc, (byte) 0xf1, 0x7f, 0x73, (byte) 0xa7, (byte) 0x9d, (byte) 0xde, (byte) 0xc7, (byte) 0x88,
-        0x57, 0x51, (byte) 0x84, (byte) 0xed, (byte) 0x96, (byte) 0xfb, (byte) 0xe1, 0x38, (byte) 0xef, 0x08, 0x2b, (byte) 0xf3, (byte) 0xc7, (byte) 0xc3,
-        0x5d, (byte) 0xfe, (byte) 0xf9, 0x51, (byte) 0xe6, 0x29, (byte) 0xfc, (byte) 0xe5, 0x0d, (byte) 0xa1, 0x0d, (byte) 0xa8, (byte) 0xb4, (byte) 0xae,
-        0x26, 0x18, 0x19, 0x4d, 0x6c, 0x0c, 0x3b, 0x12, (byte) 0xba, (byte) 0xbc, 0x5f, 0x32, (byte) 0xb3, (byte) 0xbe,
-        (byte) 0x9d, 0x17, 0x0d, 0x4d, 0x2f, 0x1a, 0x48, (byte) 0xb7, (byte) 0xac, (byte) 0xf7, 0x1a, 0x43, 0x01, (byte) 0x97,
-        (byte) 0xf4, (byte) 0xf8, 0x4c, (byte) 0xbb, 0x6a, (byte) 0xbc, 0x33, (byte) 0xe1, 0x73, 0x1e, (byte) 0x86, (byte) 0xfb, 0x2e, (byte) 0xb1,
-        0x63, 0x75, (byte) 0x85, (byte) 0xdc, (byte) 0x82, 0x6c, 0x28, (byte) 0xf1, (byte) 0xe3, (byte) 0x90, 0x63, (byte) 0x9d, 0x3d, 0x48,
-        (byte) 0x8a, (byte) 0x8c, 0x47, (byte) 0xe2, 0x10, 0x0b, (byte) 0xef, (byte) 0x91, (byte) 0x94, (byte) 0xb0, 0x6c, 0x4c, (byte) 0x80, 0x76,
-        0x03, (byte) 0xe1, (byte) 0xb6, (byte) 0x90, (byte) 0x87, (byte) 0xd9, (byte) 0xae, (byte) 0xf4, (byte) 0x8e, (byte) 0xe0, (byte) 0x9f, (byte) 0xe7, 0x3a, 0x2c,
-        0x2f, 0x21, (byte) 0xd4, 0x46, (byte) 0xba, (byte) 0x95, 0x70, (byte) 0xa9, 0x5b, 0x20, 0x2a, (byte) 0xfa, 0x52, 0x3e,
-        (byte) 0x9d, (byte) 0xd9, (byte) 0xef, 0x28, (byte) 0xc5, (byte) 0xd1, 0x60, (byte) 0x89, 0x68, 0x6e, 0x7f, (byte) 0xd7, (byte) 0x9e, (byte) 0x89,
-        0x4c, (byte) 0xeb, 0x4d, (byte) 0xd2, (byte) 0xc6, (byte) 0xf4, 0x2d, 0x02, 0x5d, (byte) 0xda, (byte) 0xde, 0x33, (byte) 0xfe, (byte) 0xc1,
-        0x7e, (byte) 0xde, 0x4f, 0x1f, (byte) 0x9b, 0x6e, 0x6f, 0x0f, 0x66, 0x71, 0x19, (byte) 0xe9, 0x43, 0x3c,
-        (byte) 0x83, 0x0a, 0x0f, 0x28, 0x21, (byte) 0xc8, 0x38, (byte) 0xd3, 0x4e, 0x48, (byte) 0xdf, (byte) 0xd4, (byte) 0x99, (byte) 0xb5,
-        (byte) 0xc6, (byte) 0x8d, (byte) 0xd4, (byte) 0xc1, 0x69, 0x58, 0x79, (byte) 0x82, 0x32, (byte) 0x82, (byte) 0xd4, (byte) 0x86, (byte) 0xe2, 0x04,
-        0x08, 0x63, (byte) 0x87, (byte) 0xf0, 0x2a, (byte) 0xf6, (byte) 0xec, 0x3e, 0x51, 0x0f, (byte) 0xda, (byte) 0xb4, 0x67, 0x19,
-        0x5e, 0x16, 0x02, (byte) 0x9f, (byte) 0xf1, 0x19, 0x0c, 0x3e, (byte) 0xb8, 0x04, 0x49, 0x07, 0x53, 0x02,
-        0x03, 0x01, 0x00, 0x01
+        (byte) 0x84, (byte) 0xc8, (byte) 0xd9, 0x6b, (byte) 0xc5, (byte) 0xda, 0x0b, 0x69, (byte) 0xbf, (byte) 0xfc,
+        0x7e, (byte) 0xb9, (byte) 0x96, 0x2c, (byte) 0xeb, (byte) 0x8f, (byte) 0xbc, 0x6e, 0x40, (byte) 0xe6, (byte) 0xe2,
+        (byte) 0xfc, (byte) 0xf1, 0x7f, 0x73, (byte) 0xa7, (byte) 0x9d, (byte) 0xde, (byte) 0xc7, (byte) 0x88, 0x57, 0x51,
+        (byte) 0x84, (byte) 0xed, (byte) 0x96, (byte) 0xfb, (byte) 0xe1, 0x38, (byte) 0xef, 0x08, 0x2b, (byte) 0xf3,
+        (byte) 0xc7, (byte) 0xc3,  0x5d, (byte) 0xfe, (byte) 0xf9, 0x51, (byte) 0xe6, 0x29, (byte) 0xfc, (byte) 0xe5, 0x0d,
+        (byte) 0xa1, 0x0d, (byte) 0xa8, (byte) 0xb4, (byte) 0xae, 0x26, 0x18, 0x19, 0x4d, 0x6c, 0x0c, 0x3b, 0x12, (byte) 0xba,
+        (byte) 0xbc, 0x5f, 0x32, (byte) 0xb3, (byte) 0xbe, (byte) 0x9d, 0x17, 0x0d, 0x4d, 0x2f, 0x1a, 0x48, (byte) 0xb7,
+        (byte) 0xac, (byte) 0xf7, 0x1a, 0x43, 0x01, (byte) 0x97, (byte) 0xf4, (byte) 0xf8, 0x4c, (byte) 0xbb, 0x6a, (byte) 0xbc,
+        0x33, (byte) 0xe1, 0x73, 0x1e, (byte) 0x86, (byte) 0xfb, 0x2e, (byte) 0xb1, 0x63, 0x75, (byte) 0x85, (byte) 0xdc,
+        (byte) 0x82, 0x6c, 0x28, (byte) 0xf1, (byte) 0xe3, (byte) 0x90, 0x63, (byte) 0x9d, 0x3d, 0x48, (byte) 0x8a, (byte) 0x8c,
+        0x47, (byte) 0xe2, 0x10, 0x0b, (byte) 0xef, (byte) 0x91, (byte) 0x94, (byte) 0xb0, 0x6c, 0x4c, (byte) 0x80, 0x76, 0x03,
+        (byte) 0xe1, (byte) 0xb6, (byte) 0x90, (byte) 0x87, (byte) 0xd9, (byte) 0xae, (byte) 0xf4, (byte) 0x8e, (byte) 0xe0,
+        (byte) 0x9f, (byte) 0xe7, 0x3a, 0x2c, 0x2f, 0x21, (byte) 0xd4, 0x46, (byte) 0xba, (byte) 0x95, 0x70, (byte) 0xa9, 0x5b,
+        0x20, 0x2a, (byte) 0xfa, 0x52, 0x3e, (byte) 0x9d, (byte) 0xd9, (byte) 0xef, 0x28, (byte) 0xc5, (byte) 0xd1, 0x60,
+        (byte) 0x89, 0x68, 0x6e, 0x7f, (byte) 0xd7, (byte) 0x9e, (byte) 0x89, 0x4c, (byte) 0xeb, 0x4d, (byte) 0xd2, (byte) 0xc6,
+        (byte) 0xf4, 0x2d, 0x02, 0x5d, (byte) 0xda, (byte) 0xde, 0x33, (byte) 0xfe, (byte) 0xc1, 0x7e, (byte) 0xde, 0x4f, 0x1f,
+        (byte) 0x9b, 0x6e, 0x6f, 0x0f, 0x66, 0x71, 0x19, (byte) 0xe9, 0x43, 0x3c, (byte) 0x83, 0x0a, 0x0f, 0x28, 0x21, (byte) 0xc8,
+        0x38, (byte) 0xd3, 0x4e, 0x48, (byte) 0xdf, (byte) 0xd4, (byte) 0x99, (byte) 0xb5, (byte) 0xc6, (byte) 0x8d, (byte) 0xd4,
+        (byte) 0xc1, 0x69, 0x58, 0x79, (byte) 0x82, 0x32, (byte) 0x82, (byte) 0xd4, (byte) 0x86, (byte) 0xe2, 0x04, 0x08, 0x63,
+        (byte) 0x87, (byte) 0xf0, 0x2a, (byte) 0xf6, (byte) 0xec, 0x3e, 0x51, 0x0f, (byte) 0xda, (byte) 0xb4, 0x67, 0x19, 0x5e,
+        0x16, 0x02, (byte) 0x9f, (byte) 0xf1, 0x19, 0x0c, 0x3e, (byte) 0xb8, 0x04, 0x49, 0x07, 0x53, 0x02, 0x03, 0x01, 0x00, 0x01
     };
 
     private static final String WINDOWS_ROOT = "Windows-ROOT";
+
+    @Override
+    public void afterPrefStartupHook() {
+        extendFontconfig("fontconfig.properties.src");
+    }
 
     @Override
     public void openUrl(String url) throws IOException {
@@ -225,7 +239,8 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         // Remove insecure certificates
         if (!insecureCertificates.isEmpty()) {
             StringBuilder message = new StringBuilder("<html>");
-            message.append(tr("A previous version of JOSM has installed a custom certificate in order to provide HTTPS support for Remote Control:"));
+            message.append(tr("A previous version of JOSM has installed a custom certificate "+
+                    "in order to provide HTTPS support for Remote Control:"));
             message.append("<br><ul>");
             for (String alias : insecureCertificates) {
                 message.append("<li>");
@@ -234,7 +249,8 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
             }
             message.append("</ul>");
             message.append(tr("It appears it could be an important <b>security risk</b>.<br><br>"+
-                    "You are now going to be prompted by Windows to remove this insecure certificate.<br>For your own safety, <b>please click Yes</b> in next dialog."));
+                    "You are now going to be prompted by Windows to remove this insecure certificate.<br>"+
+                    "For your own safety, <b>please click Yes</b> in next dialog."));
             message.append("</html>");
             JOptionPane.showMessageDialog(Main.parent, message.toString(), tr("Warning"), JOptionPane.WARNING_MESSAGE);
             for (String alias : insecureCertificates) {
@@ -259,18 +275,111 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
             Main.debug(tr("JOSM localhost certificate found in {0} keystore: {1}", WINDOWS_ROOT, alias));
             return false;
         }
-        // JOSM certificate not found, warn user
-        StringBuilder message = new StringBuilder("<html>");
-        message.append(tr("Remote Control is configured to provide HTTPS support.<br>"+
-                "This requires to add a custom certificate generated by JOSM to the Windows Root CA store.<br><br>"+
-                "You are now going to be prompted by Windows to confirm this operation.<br>"+
-                "To enable proper HTTPS support, <b>please click Yes</b> in next dialog.<br><br>"+
-                "If unsure, you can also click No then disable HTTPS support in Remote Control preferences."));
-        message.append("</html>");
-        JOptionPane.showMessageDialog(Main.parent, message.toString(), tr("HTTPS support in Remote Control"), JOptionPane.INFORMATION_MESSAGE);
+        if (!GraphicsEnvironment.isHeadless()) {
+            // JOSM certificate not found, warn user
+            StringBuilder message = new StringBuilder("<html>");
+            message.append(tr("Remote Control is configured to provide HTTPS support.<br>"+
+                    "This requires to add a custom certificate generated by JOSM to the Windows Root CA store.<br><br>"+
+                    "You are now going to be prompted by Windows to confirm this operation.<br>"+
+                    "To enable proper HTTPS support, <b>please click Yes</b> in next dialog.<br><br>"+
+                    "If unsure, you can also click No then disable HTTPS support in Remote Control preferences."));
+            message.append("</html>");
+            JOptionPane.showMessageDialog(Main.parent, message.toString(),
+                    tr("HTTPS support in Remote Control"), JOptionPane.INFORMATION_MESSAGE);
+        }
         // install it to Windows-ROOT keystore, used by IE, Chrome and Safari, but not by Firefox
         Main.info(tr("Adding JOSM localhost certificate to {0} keystore", WINDOWS_ROOT));
         ks.setEntry(entryAlias, trustedCert, null);
         return true;
+    }
+
+    @Override
+    public File getDefaultCacheDirectory() {
+        String p = System.getenv("LOCALAPPDATA");
+        if (p == null || p.isEmpty()) {
+            // Fallback for Windows OS earlier than Windows Vista, where the variable is not defined
+            p = System.getenv("APPDATA");
+        }
+        return new File(new File(p, "JOSM"), "cache");
+    }
+
+    @Override
+    public File getDefaultPrefDirectory() {
+        return new File(System.getenv("APPDATA"), "JOSM");
+    }
+
+    @Override
+    public Collection<String> getInstalledFonts() {
+        // Cannot use GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()
+        // because we have to set the system property before Java initializes its fonts.
+        // Use more low-level method to find the installed fonts.
+        List<String> fontsAvail = new ArrayList<>();
+        Path fontPath = FileSystems.getDefault().getPath(System.getenv("SYSTEMROOT"), "Fonts");
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(fontPath)) {
+            for (Path p : ds) {
+                fontsAvail.add(p.getFileName().toString().toUpperCase());
+            }
+            fontsAvail.add(""); // for devanagari
+        } catch (IOException ex) {
+            Main.error(ex, false);
+            Main.warn("extended font config - failed to load available Fonts");
+            fontsAvail = null;
+        }
+        return fontsAvail;
+    }
+
+    @Override
+    public Collection<FontEntry> getAdditionalFonts() {
+        Collection<FontEntry> def = new ArrayList<>();
+        def.add(new FontEntry("devanagari", "", "")); // just include in fallback list
+                                                      // font already defined in template
+
+        // Windows scripts: https://msdn.microsoft.com/en-us/goglobal/bb688099.aspx
+        // IE default fonts: https://msdn.microsoft.com/en-us/library/ie/dn467844(v=vs.85).aspx
+
+        // Windows 8/8.1 and later
+        def.add(new FontEntry("javanese", "Javanese Text", "JAVATEXT.TTF"));           // ISO 639: jv
+        def.add(new FontEntry("leelawadee", "Leelawadee", "LEELAWAD.TTF"));            // ISO 639: bug
+        def.add(new FontEntry("myanmar", "Myanmar Text", "MMRTEXT.TTF"));              // ISO 639: my
+        def.add(new FontEntry("nirmala", "Nirmala UI", "NIRMALA.TTF"));                // ISO 639: sat,srb
+        def.add(new FontEntry("segoeui", "Segoe UI", "SEGOEUI.TTF"));                  // ISO 639: lis
+
+        // Windows 7 and later
+        def.add(new FontEntry("nko_tifinagh_vai_osmanya", "Ebrima", "EBRIMA.TTF"));    // ISO 639: ber. Nko only since Win 8
+        def.add(new FontEntry("khmer1", "Khmer UI", "KHMERUI.TTF"));                   // ISO 639: km
+        def.add(new FontEntry("lao1", "Lao UI", "LAOUI.TTF"));                         // ISO 639: lo
+        def.add(new FontEntry("tai_le", "Microsoft Tai Le", "TAILE.TTF"));             // ISO 639: khb
+        def.add(new FontEntry("new_tai_lue", "Microsoft New Tai Lue", "NTHAILU.TTF")); // ISO 639: khb
+
+        // Windows Vista and later:
+        def.add(new FontEntry("ethiopic", "Nyala", "NYALA.TTF"));                   // ISO 639: am,gez,ti
+        def.add(new FontEntry("tibetan", "Microsoft Himalaya", "HIMALAYA.TTF"));    // ISO 639: bo,dz
+        def.add(new FontEntry("cherokee", "Plantagenet Cherokee", "PLANTC.TTF"));   // ISO 639: chr
+        def.add(new FontEntry("unified_canadian", "Euphemia", "EUPHEMIA.TTF"));     // ISO 639: cr,in
+        def.add(new FontEntry("khmer2", "DaunPenh", "DAUNPENH.TTF"));               // ISO 639: km
+        def.add(new FontEntry("khmer3", "MoolBoran", "MOOLBOR.TTF"));               // ISO 639: km
+        def.add(new FontEntry("lao_thai", "DokChampa", "DOKCHAMP.TTF"));            // ISO 639: lo
+        def.add(new FontEntry("mongolian", "Mongolian Baiti", "MONBAITI.TTF"));     // ISO 639: mn
+        def.add(new FontEntry("oriya", "Kalinga", "KALINGA.TTF"));                  // ISO 639: or
+        def.add(new FontEntry("sinhala", "Iskoola Pota", "ISKPOTA.TTF"));           // ISO 639: si
+        def.add(new FontEntry("yi", "Yi Baiti", "MSYI.TTF"));                       // ISO 639: ii
+
+        // Windows XP and later
+        def.add(new FontEntry("gujarati", "Shruti", "SHRUTI.TTF"));
+        def.add(new FontEntry("kannada", "Tunga", "TUNGA.TTF"));
+        def.add(new FontEntry("gurmukhi", "Raavi", "RAAVI.TTF"));
+        def.add(new FontEntry("telugu", "Gautami", "GAUTAMI.TTF"));
+        def.add(new FontEntry("bengali", "Vrinda", "VRINDA.TTF"));                  // since XP SP2
+        def.add(new FontEntry("syriac", "Estrangelo Edessa", "ESTRE.TTF"));         // ISO 639: arc
+        def.add(new FontEntry("thaana", "MV Boli", "MVBOLI.TTF"));                  // ISO 639: dv
+        def.add(new FontEntry("malayalam", "Kartika", "KARTIKA.TTF"));              // ISO 639: ml; since XP SP2
+
+        // Windows 2000 and later
+        def.add(new FontEntry("tamil", "Latha", "LATHA.TTF"));
+
+        // Comes with MS Office & Outlook 2000. Good unicode coverage, so add if available.
+        def.add(new FontEntry("arialuni", "Arial Unicode MS", "ARIALUNI.TTF"));
+
+        return def;
     }
 }

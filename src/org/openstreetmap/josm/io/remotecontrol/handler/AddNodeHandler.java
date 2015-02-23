@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
+import java.util.Collections;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
@@ -28,6 +29,8 @@ public class AddNodeHandler extends RequestHandler {
 
     private double lat;
     private double lon;
+    
+    private Node node;
 
     @Override
     protected void handleRequest() {
@@ -86,30 +89,30 @@ public class AddNodeHandler extends RequestHandler {
         // Create a new node
         LatLon ll = new LatLon(lat, lon);
 
-        Node nd = null;
+        node = null;
 
         if (Main.isDisplayingMapView()) {
             Point p = Main.map.mapView.getPoint(ll);
-            nd = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
-            if (nd!=null && nd.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
-                nd = null; // node is too far
+            node = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
+            if (node!=null && node.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
+                node = null; // node is too far
             }
         }
 
-        if (nd==null) {
-            nd = new Node(ll);
+        if (node==null) {
+            node = new Node(ll);
             // Now execute the commands to add this node.
-            Main.main.undoRedo.add(new AddCommand(nd));
+            Main.main.undoRedo.add(new AddCommand(node));
         }
 
-        Main.main.getCurrentDataSet().setSelected(nd);
+        Main.main.getCurrentDataSet().setSelected(node);
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
         } else {
             Main.map.mapView.repaint();
         }
         // parse parameter addtags=tag1=value1|tag2=vlaue2
-        AddTagsDialog.addTags(args, sender);
+        AddTagsDialog.addTags(args, sender, Collections.singleton(node));
     }
 
     @Override

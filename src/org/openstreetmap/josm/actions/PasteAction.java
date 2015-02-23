@@ -92,7 +92,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         // We previously checked for modifier to know if the action has been trigerred via shortcut or via menu
         // But this does not work if the shortcut is changed to a single key (see #9055)
         // Observed behaviour: getActionCommand() returns Action.NAME when triggered via menu, but shortcut text when triggered with it
-        if (!getValue(NAME).equals(e.getActionCommand())) {
+        if (e != null && !getValue(NAME).equals(e.getActionCommand())) {
             final Point mp = MouseInfo.getPointerInfo().getLocation();
             final Point tl = Main.map.mapView.getLocationOnScreen();
             final Point pos = new Point(mp.x-tl.x, mp.y-tl.y);
@@ -179,7 +179,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Delete incomplete members?"),
                 new String[] {tr("Paste without incomplete members"), tr("Cancel")});
-        ed.setButtonIcons(new String[] {"dialogs/relation/deletemembers.png", "cancel.png"});
+        ed.setButtonIcons(new String[] {"dialogs/relation/deletemembers", "cancel"});
         ed.setContent(tr("The copied data contains incomplete objects.  "
                 + "When pasting the incomplete objects are removed.  "
                 + "Do you want to paste the data without the incomplete objects?"));

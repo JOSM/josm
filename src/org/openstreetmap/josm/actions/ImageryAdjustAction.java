@@ -33,13 +33,16 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * Adjust the position of an imagery layer.
+ * @since 3715
+ */
 public class ImageryAdjustAction extends MapMode implements MouseListener, MouseMotionListener, AWTEventListener{
-    static ImageryOffsetDialog offsetDialog;
-    static Cursor cursor = ImageProvider.getCursor("normal", "move");
+    private static ImageryOffsetDialog offsetDialog;
+    private static Cursor cursor = ImageProvider.getCursor("normal", "move");
 
-    double oldDx, oldDy;
-    boolean mouseDown;
-    EastNorth prevEastNorth;
+    private double oldDx, oldDy;
+    private EastNorth prevEastNorth;
     private ImageryLayer layer;
     private MapMode oldMapMode;
 
@@ -107,12 +110,14 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        if (!(event instanceof KeyEvent)) return;
-        if (event.getID() != KeyEvent.KEY_PRESSED) return;
-        if (layer == null) return;
-        if (offsetDialog != null && offsetDialog.areFieldsInFocus()) return;
+        if (!(event instanceof KeyEvent)
+          || (event.getID() != KeyEvent.KEY_PRESSED)
+          || (layer == null)
+          || (offsetDialog != null && offsetDialog.areFieldsInFocus())) {
+            return;
+        }
         KeyEvent kev = (KeyEvent)event;
-        double dx = 0, dy = 0;
+        int dx = 0, dy = 0;
         switch (kev.getKeyCode()) {
         case KeyEvent.VK_UP : dy = +1; break;
         case KeyEvent.VK_DOWN : dy = -1; break;
@@ -172,10 +177,14 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         super.actionPerformed(e);
     }
 
-    class ImageryOffsetDialog extends ExtendedDialog implements FocusListener {
-        public final JosmTextField tOffset = new JosmTextField();
-        JosmTextField tBookmarkName = new JosmTextField();
+    private class ImageryOffsetDialog extends ExtendedDialog implements FocusListener {
+        private final JosmTextField tOffset = new JosmTextField();
+        private final JosmTextField tBookmarkName = new JosmTextField();
         private boolean ignoreListener;
+
+        /**
+         * Constructs a new {@code ImageryOffsetDialog}.
+         */
         public ImageryOffsetDialog() {
             super(Main.parent,
                     tr("Adjust imagery offset"),
@@ -186,7 +195,8 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             JPanel pnl = new JPanel(new GridBagLayout());
             pnl.add(new JMultilineLabel(tr("Use arrow keys or drag the imagery layer with mouse to adjust the imagery offset.\n" +
                     "You can also enter east and north offset in the {0} coordinates.\n" +
-                    "If you want to save the offset as bookmark, enter the bookmark name below",Main.getProjection().toString())), GBC.eop());
+                    "If you want to save the offset as bookmark, enter the bookmark name below",
+                    Main.getProjection().toString())), GBC.eop());
             pnl.add(new JLabel(tr("Offset: ")),GBC.std());
             pnl.add(tOffset,GBC.eol().fill(GBC.HORIZONTAL).insets(0,0,0,5));
             pnl.add(new JLabel(tr("Bookmark name: ")),GBC.std());
@@ -198,12 +208,13 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             setupDialog();
         }
 
-        public boolean areFieldsInFocus() {
+        private boolean areFieldsInFocus() {
             return tOffset.hasFocus();
         }
 
         @Override
         public void focusGained(FocusEvent e) {
+            // Do nothing
         }
 
         @Override
@@ -229,13 +240,13 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             }
         }
 
-        public final void updateOffset() {
+        private final void updateOffset() {
             ignoreListener = true;
             updateOffsetIntl();
             ignoreListener = false;
         }
 
-        public final void updateOffsetIntl() {
+        private final void updateOffsetIntl() {
             // Support projections with very small numbers (e.g. 4326)
             int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
             // US locale to force decimal separator to be '.'
@@ -264,8 +275,9 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         @Override
         protected void buttonAction(int buttonIndex, ActionEvent evt) {
             if (buttonIndex == 0 && tBookmarkName.getText() != null && !tBookmarkName.getText().isEmpty() &&
-                    OffsetBookmark.getBookmarkByName(layer, tBookmarkName.getText()) != null) {
-                if (!confirmOverwriteBookmark()) return;
+                    OffsetBookmark.getBookmarkByName(layer, tBookmarkName.getText()) != null &&
+                    !confirmOverwriteBookmark()) {
+                return;
             }
             super.buttonAction(buttonIndex, evt);
         }

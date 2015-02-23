@@ -31,7 +31,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  * </p>
  *
- * @version $Id: BaseNCodec.java 1571406 2014-02-24 19:38:15Z ggregory $
+ * @version $Id: BaseNCodec.java 1634404 2014-10-26 23:06:10Z ggregory $
  */
 public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
 
@@ -263,6 +263,7 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
      *
      * @param size minimum spare space required
      * @param context the context to be used
+     * @return the buffer
      */
     protected byte[] ensureBufferSize(final int size, final Context context){
         if ((context.buffer == null) || (context.buffer.length < context.pos + size)){
@@ -445,7 +446,7 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
      *
      * @param value The value to test
      *
-     * @return {@code true} if the value is defined in the current alphabet, {@code false} otherwise.
+     * @return <code>true</code> if the value is defined in the current alphabet, <code>false</code> otherwise.
      */
     protected abstract boolean isInAlphabet(byte value);
 
@@ -454,10 +455,10 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
      * The method optionally treats whitespace and pad as valid.
      *
      * @param arrayOctet byte array to test
-     * @param allowWSPad if {@code true}, then whitespace and PAD are also allowed
+     * @param allowWSPad if <code>true</code>, then whitespace and PAD are also allowed
      *
-     * @return {@code true} if all bytes are valid characters in the alphabet or if the byte array is empty;
-     *         {@code false}, otherwise
+     * @return <code>true</code> if all bytes are valid characters in the alphabet or if the byte array is empty;
+     *         <code>false</code>, otherwise
      */
     public boolean isInAlphabet(final byte[] arrayOctet, final boolean allowWSPad) {
         for (int i = 0; i < arrayOctet.length; i++) {
@@ -474,8 +475,8 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
      * The method treats whitespace and PAD as valid.
      *
      * @param basen String to test
-     * @return {@code true} if all characters in the String are valid characters in the alphabet or if
-     *         the String is empty; {@code false}, otherwise
+     * @return <code>true</code> if all characters in the String are valid characters in the alphabet or if
+     *         the String is empty; <code>false</code>, otherwise
      * @see #isInAlphabet(byte[], boolean)
      */
     public boolean isInAlphabet(final String basen) {
@@ -489,7 +490,7 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
      *
      * @param arrayOctet
      *            byte array to test
-     * @return {@code true} if any byte is a valid character in the alphabet or PAD; {@code false} otherwise
+     * @return <code>true</code> if any byte is a valid character in the alphabet or PAD; <code>false</code> otherwise
      */
     protected boolean containsAlphabetOrPad(final byte[] arrayOctet) {
         if (arrayOctet == null) {

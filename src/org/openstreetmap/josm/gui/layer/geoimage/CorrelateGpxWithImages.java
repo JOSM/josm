@@ -62,6 +62,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
@@ -70,6 +71,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.GpxReader;
@@ -149,7 +151,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     return tr("GPX Files (*.gpx *.gpx.gz)");
                 }
             };
-            JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, filter, JFileChooser.FILES_ONLY, null);
+            AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, filter, JFileChooser.FILES_ONLY, null);
             if (fc == null)
                 return;
             File sel = fc.getSelectedFile();
@@ -381,7 +383,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 @Override
                 public void actionPerformed(ActionEvent ae) {
-                    JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(),
+                    AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(),
                             JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
                     if (fc == null)
                         return;
@@ -656,7 +658,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 false
         );
         syncDialog.setContent(panelTf, false);
-        syncDialog.setButtonIcons(new String[] { "ok.png", "cancel.png" });
+        syncDialog.setButtonIcons(new String[] { "ok", "cancel" });
         syncDialog.setupDialog();
         outerPanel.add(syncDialog.getContentPane(), BorderLayout.PAGE_START);
         syncDialog.setContentPane(outerPanel);
@@ -696,7 +698,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                             tr("Correlate images with GPX track"),
                             new String[] { tr("OK"), tr("Try Again") }).
                             setContent(tr("No images could be matched!")).
-                            setButtonIcons(new String[] { "ok.png", "dialogs/refresh.png"}).
+                            setButtonIcons(new String[] { "ok", "dialogs/refresh"}).
                             showDialog().getValue() == 2)
                     return AGAIN;
                 return DONE;
@@ -725,7 +727,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
 
                     yLayer.useThumbs = cbShowThumbs.isSelected();
-                    yLayer.loadThumbs();
+                    yLayer.startLoadThumbs();
 
                     // Search whether an other layer has yet defined some bounding box.
                     // If none, we'll zoom to the bounding box of the layer with the photos.
@@ -743,7 +745,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     if (! boundingBoxedLayerFound) {
                         BoundingXYVisitor bbox = new BoundingXYVisitor();
                         yLayer.visitBoundingBox(bbox);
-                        Main.map.mapView.recalculateCenterScale(bbox);
+                        Main.map.mapView.zoomTo(bbox);
                     }
 
                     for (ImageEntry ie : yLayer.data) {
@@ -979,7 +981,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             new ExtendedDialog(Main.parent,
                     tr("Adjust timezone and offset"),
                     new String[] { tr("Close")}).
-                    setContent(p).setButtonIcons(new String[] {"ok.png"}).showDialog();
+                    setContent(p).setButtonIcons(new String[] {"ok"}).showDialog();
         }
     }
 
@@ -1011,7 +1013,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             outer: for (GpxTrack trk : gpx.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     for (WayPoint curWp : segment.getWayPoints()) {
-                        String curDateWpStr = (String) curWp.attr.get("time");
+                        String curDateWpStr = curWp.getString(GpxConstants.PT_TIME);
                         if (curDateWpStr == null) {
                             continue;
                         }
@@ -1135,7 +1137,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 for (WayPoint curWp : segment.getWayPoints()) {
 
-                    String curWpTimeStr = (String) curWp.attr.get("time");
+                    String curWpTimeStr = curWp.getString(GpxConstants.PT_TIME);
                     if (curWpTimeStr != null) {
 
                         try {
@@ -1162,7 +1164,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private static Double getElevation(WayPoint wp) {
-        String value = (String) wp.attr.get("ele");
+        String value = wp.getString(GpxConstants.PT_ELE);
         if (value != null) {
             try {
                 return new Double(value);

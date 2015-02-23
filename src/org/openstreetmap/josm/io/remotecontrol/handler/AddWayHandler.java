@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,8 @@ public class AddWayHandler extends RequestHandler {
     public static final String command = "add_way";
 
     private final List<LatLon> allCoordinates = new ArrayList<>();
+    
+    private Way way;
 
     /**
      * The place to remeber already added nodes (they are reused if needed @since 5845
@@ -45,7 +48,7 @@ public class AddWayHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"way"};
     }
-    
+
     @Override
     public String[] getOptionalParams() {
         return new String[] { "addtags" };
@@ -63,16 +66,16 @@ public class AddWayHandler extends RequestHandler {
             "/add_way?&addtags=building=yes&way=45.437213,-2.810792;45.437988,-2.455983;45.224080,-2.455036;45.223302,-2.809845;45.437213,-2.810792"
         };
     }
-    
+
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override public void run() {
-                addWay();
+                way = addWay();
             }
         });
         // parse parameter addtags=tag1=value1|tag2=value2
-        AddTagsDialog.addTags(args, sender);
+        AddTagsDialog.addTags(args, sender, Collections.singleton(way));
     }
 
     @Override
@@ -149,7 +152,7 @@ public class AddWayHandler extends RequestHandler {
     /*
      * This function creates the way with given coordinates of nodes
      */
-    private void addWay() {
+    private Way addWay() {
         addedNodes = new HashMap<>();
         Way way = new Way();
         List<Command> commands = new LinkedList<>();
@@ -166,5 +169,6 @@ public class AddWayHandler extends RequestHandler {
         } else {
             Main.map.mapView.repaint();
         }
+        return way;
     }
 }

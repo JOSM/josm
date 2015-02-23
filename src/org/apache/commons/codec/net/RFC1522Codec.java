@@ -37,7 +37,7 @@ import org.apache.commons.codec.binary.StringUtils;
  *          Message Header Extensions for Non-ASCII Text</a>
  *
  * @since 1.3
- * @version $Id: RFC1522Codec.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: RFC1522Codec.java 1619948 2014-08-22 22:53:55Z ggregory $
  */
 abstract class RFC1522Codec {
 
@@ -115,7 +115,7 @@ abstract class RFC1522Codec {
      *
      * @param text
      *            a string to decode
-     * @return A new decoded String or {@code null} if the input is {@code null}.
+     * @return A new decoded String or <code>null</code> if the input is <code>null</code>.
      * @throws DecoderException
      *             thrown if there is an error condition during the decoding process.
      * @throws UnsupportedEncodingException

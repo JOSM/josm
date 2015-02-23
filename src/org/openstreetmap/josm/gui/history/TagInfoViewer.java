@@ -16,6 +16,7 @@ import javax.swing.ListSelectionModel;
  */
 public class TagInfoViewer extends HistoryViewerPanel {
 
+    @Override
     protected JTable buildReferenceTable() {
         JTable table = new JTable(
                 model.getTagTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME),
@@ -27,6 +28,7 @@ public class TagInfoViewer extends HistoryViewerPanel {
         return table;
     }
 
+    @Override
     protected JTable buildCurrentTable() {
         JTable table = new JTable(
                 model.getTagTableModel(PointInTimeType.CURRENT_POINT_IN_TIME),

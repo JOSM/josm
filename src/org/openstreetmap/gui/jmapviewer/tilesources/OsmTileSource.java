@@ -16,12 +16,12 @@ public class OsmTileSource {
         private static final String[] SERVER = { "a", "b", "c" };
 
         private int SERVER_NUM = 0;
-        
+
         /**
          * Constructs a new {@code "Mapnik"} tile source.
          */
         public Mapnik() {
-            super("Mapnik", PATTERN);
+            super("Mapnik", PATTERN, "MAPNIK");
         }
 
         @Override
@@ -56,7 +56,7 @@ public class OsmTileSource {
          * Constructs a new {@code CycleMap} tile source.
          */
         public CycleMap() {
-            super("Cyclemap", PATTERN);
+            super("Cyclemap", PATTERN, "opencyclemap");
         }
 
         @Override

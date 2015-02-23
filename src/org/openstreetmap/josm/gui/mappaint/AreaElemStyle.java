@@ -33,16 +33,16 @@ public class AreaElemStyle extends ElemStyle {
         this.text = text;
     }
 
-    public static AreaElemStyle create(Cascade c) {
+    public static AreaElemStyle create(final Environment env) {
+        final Cascade c = env.mc.getCascade(env.layer);
         MapImage fillImage = null;
         Color color = null;
 
         IconReference iconRef = c.get(FILL_IMAGE, null, IconReference.class);
         if (iconRef != null) {
             fillImage = new MapImage(iconRef.iconName, iconRef.source);
-            fillImage.getImage();
 
-            color = new Color(fillImage.getImage().getRGB(
+            color = new Color(fillImage.getImage(false).getRGB(
                     fillImage.getWidth() / 2, fillImage.getHeight() / 2)
             );
 
@@ -74,7 +74,7 @@ public class AreaElemStyle extends ElemStyle {
         TextElement text = null;
         Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
         if (textPos == null || "center".equals(textPos.val)) {
-            text = TextElement.create(c, PaintColors.AREA_TEXT.get(), true);
+            text = TextElement.create(env, PaintColors.AREA_TEXT.get(), true);
         }
 
         if (color != null)
@@ -84,19 +84,23 @@ public class AreaElemStyle extends ElemStyle {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings paintSettings, StyledMapRenderer painter,
+            boolean selected, boolean outermember, boolean member) {
+        Color myColor = color;
         if (osm instanceof Way) {
-            Color myColor = color;
-            if (color != null && osm.isSelected()) {
-                myColor = paintSettings.getSelectedColor(color.getAlpha());
+            if (color != null) {
+                if (selected) {
+                    myColor = paintSettings.getSelectedColor(color.getAlpha());
+                } else if (outermember) {
+                    myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
+                }
             }
-            painter.drawArea((Way) osm, myColor, fillImage, text);
+            painter.drawArea((Way) osm, myColor, fillImage, painter.isInactiveMode() || osm.isDisabled(), text);
         } else if (osm instanceof Relation) {
-            Color myColor = color;
-            if (color != null && selected) {
+            if (color != null && (selected || outermember)) {
                 myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
             }
-            painter.drawArea((Relation) osm, myColor, fillImage, text);
+            painter.drawArea((Relation) osm, myColor, fillImage, painter.isInactiveMode() || osm.isDisabled(), text);
         }
     }
 

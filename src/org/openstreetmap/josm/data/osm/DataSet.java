@@ -23,6 +23,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Data;
+import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -36,6 +39,7 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -89,7 +93,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public final class DataSet implements Cloneable, ProjectionChangeListener {
+public final class DataSet implements Data, Cloneable, ProjectionChangeListener {
 
     /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
@@ -101,9 +105,9 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      */
     private static final int MAX_EVENTS = 1000;
 
-    private Storage<OsmPrimitive> allPrimitives = new Storage<>(new Storage.PrimitiveIdHash(), true);
-    private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new Storage.PrimitiveIdHash());
-    private CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<>();
+    private final Storage<OsmPrimitive> allPrimitives = new Storage<>(new Storage.PrimitiveIdHash(), true);
+    private final Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new Storage.PrimitiveIdHash());
+    private final CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<>();
 
     // provide means to highlight map elements that are not osm primitives
     private Collection<WaySegment> highlightedVirtualNodes = new LinkedList<>();
@@ -121,6 +125,9 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Object selectionLock = new Object();
 
+    /**
+     * Constructs a new {@code DataSet}.
+     */
     public DataSet() {
         /*
          * Transparently register as projection change lister. No need to explicitly remove the
@@ -129,6 +136,10 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         Main.addProjectionChangeListener(this);
     }
 
+    /**
+     * Returns the lock used for reading.
+     * @return the lock used for reading
+     */
     public Lock getReadLock() {
         return lock.readLock();
     }
@@ -164,10 +175,14 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
-     * Maintain a list of used tags for autocompletion
+     * Maintains a list of used tags for autocompletion.
      */
     private AutoCompletionManager autocomplete;
 
+    /**
+     * Returns the autocompletion manager, which maintains a list of used tags for autocompletion.
+     * @return the autocompletion manager
+     */
     public AutoCompletionManager getAutoCompletionManager() {
         if (autocomplete == null) {
             autocomplete = new AutoCompletionManager(this);
@@ -199,10 +214,20 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         this.version = version;
     }
 
+    /**
+     * Determines if upload is being discouraged (i.e. this dataset contains private data which should not be uploaded)
+     * @return {@code true} if upload is being discouraged, {@code false} otherwise
+     * @see #setUploadDiscouraged
+     */
     public final boolean isUploadDiscouraged() {
         return uploadDiscouraged;
     }
 
+    /**
+     * Sets the "upload discouraged" flag.
+     * @param uploadDiscouraged {@code true} if this dataset contains private data which should not be uploaded
+     * @see #isUploadDiscouraged
+     */
     public final void setUploadDiscouraged(boolean uploadDiscouraged) {
         this.uploadDiscouraged = uploadDiscouraged;
     }
@@ -212,10 +237,21 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      */
     private Map<String, String> changeSetTags = new HashMap<>();
 
+    /**
+     * Replies the set of changeset tags to be applied when or if this is ever uploaded.
+     * @return the set of changeset tags
+     * @see #addChangeSetTag
+     */
     public Map<String, String> getChangeSetTags() {
         return changeSetTags;
     }
 
+    /**
+     * Adds a new changeset tag.
+     * @param k Key
+     * @param v Value
+     * @see #getChangeSetTags
+     */
     public void addChangeSetTag(String k, String v) {
         this.changeSetTags.put(k,v);
     }
@@ -224,7 +260,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * All nodes goes here, even when included in other data (ways etc). This enables the instant
      * conversion of the whole DataSet by iterating over this data structure.
      */
-    private QuadBuckets<Node> nodes = new QuadBuckets<>();
+    private final QuadBuckets<Node> nodes = new QuadBuckets<>();
 
     private <T extends OsmPrimitive> Collection<T> getPrimitives(Predicate<OsmPrimitive> predicate) {
         return new SubclassFilteredCollection<>(allPrimitives, predicate);
@@ -239,6 +275,11 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         return getPrimitives(OsmPrimitive.nodePredicate);
     }
 
+    /**
+     * Searches for nodes in the given bounding box.
+     * @param bbox the bounding box
+     * @return List of nodes in the given bbox. Can be empty but not null
+     */
     public List<Node> searchNodes(BBox bbox) {
         lock.readLock().lock();
         try {
@@ -249,11 +290,23 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
+     * Determines if the given node can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
+     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
+     *
+     * @param n The node to search
+     * @return {@code true} if {@code n} ban be retrieved in this data set, {@code false} otherwise
+     * @since 7501
+     */
+    public boolean containsNode(Node n) {
+        return nodes.contains(n);
+    }
+
+    /**
      * All ways (Streets etc.) in the DataSet.
      *
      * The way nodes are stored only in the way list.
      */
-    private QuadBuckets<Way> ways = new QuadBuckets<>();
+    private final QuadBuckets<Way> ways = new QuadBuckets<>();
 
     /**
      * Replies an unmodifiable collection of ways in this dataset
@@ -264,6 +317,11 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         return getPrimitives(OsmPrimitive.wayPredicate);
     }
 
+    /**
+     * Searches for ways in the given bounding box.
+     * @param bbox the bounding box
+     * @return List of ways in the given bbox. Can be empty but not null
+     */
     public List<Way> searchWays(BBox bbox) {
         lock.readLock().lock();
         try {
@@ -274,9 +332,21 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
+     * Determines if the given way can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
+     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
+     *
+     * @param w The way to search
+     * @return {@code true} if {@code w} ban be retrieved in this data set, {@code false} otherwise
+     * @since 7501
+     */
+    public boolean containsWay(Way w) {
+        return ways.contains(w);
+    }
+
+    /**
      * All relations/relationships
      */
-    private Collection<Relation> relations = new ArrayList<>();
+    private final Collection<Relation> relations = new ArrayList<>();
 
     /**
      * Replies an unmodifiable collection of relations in this dataset
@@ -287,6 +357,11 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         return getPrimitives(OsmPrimitive.relationPredicate);
     }
 
+    /**
+     * Searches for relations in the given bounding box.
+     * @param bbox the bounding box
+     * @return List of relations in the given bbox. Can be empty but not null
+     */
     public List<Relation> searchRelations(BBox bbox) {
         lock.readLock().lock();
         try {
@@ -304,38 +379,70 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
+     * Determines if the given relation can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
+     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
+     *
+     * @param r The relation to search
+     * @return {@code true} if {@code r} ban be retrieved in this data set, {@code false} otherwise
+     * @since 7501
+     */
+    public boolean containsRelation(Relation r) {
+        return relations.contains(r);
+    }
+
+    /**
      * All data sources of this DataSet.
      */
     public final Collection<DataSource> dataSources = new LinkedList<>();
 
     /**
-     * @return A collection containing all primitives of the dataset. Data are not ordered
+     * Returns a collection containing all primitives of the dataset.
+     * @return A collection containing all primitives of the dataset. Data is not ordered
      */
     public Collection<OsmPrimitive> allPrimitives() {
         return getPrimitives(OsmPrimitive.allPredicate);
     }
 
     /**
-     * @return A collection containing all not-deleted primitives (except keys).
+     * Returns a collection containing all not-deleted primitives.
+     * @return A collection containing all not-deleted primitives.
+     * @see OsmPrimitive#isDeleted
      */
     public Collection<OsmPrimitive> allNonDeletedPrimitives() {
         return getPrimitives(OsmPrimitive.nonDeletedPredicate);
     }
 
+    /**
+     * Returns a collection containing all not-deleted complete primitives.
+     * @return A collection containing all not-deleted complete primitives.
+     * @see OsmPrimitive#isDeleted
+     * @see OsmPrimitive#isIncomplete
+     */
     public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
         return getPrimitives(OsmPrimitive.nonDeletedCompletePredicate);
     }
 
+    /**
+     * Returns a collection containing all not-deleted complete physical primitives.
+     * @return A collection containing all not-deleted complete physical primitives (nodes and ways).
+     * @see OsmPrimitive#isDeleted
+     * @see OsmPrimitive#isIncomplete
+     */
     public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
         return getPrimitives(OsmPrimitive.nonDeletedPhysicalPredicate);
     }
 
+    /**
+     * Returns a collection containing all modified primitives.
+     * @return A collection containing all modified primitives.
+     * @see OsmPrimitive#isModified
+     */
     public Collection<OsmPrimitive> allModifiedPrimitives() {
         return getPrimitives(OsmPrimitive.modifiedPredicate);
     }
 
     /**
-     * Adds a primitive to the dataset
+     * Adds a primitive to the dataset.
      *
      * @param primitive the primitive.
      */
@@ -413,10 +520,18 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      */
     private static final Collection<SelectionChangedListener> selListeners = new CopyOnWriteArrayList<>();
 
+    /**
+     * Adds a new selection listener.
+     * @param listener The selection listener to add
+     */
     public static void addSelectionListener(SelectionChangedListener listener) {
         ((CopyOnWriteArrayList<SelectionChangedListener>)selListeners).addIfAbsent(listener);
     }
 
+    /**
+     * Removes a selection listener.
+     * @param listener The selection listener to remove
+     */
     public static void removeSelectionListener(SelectionChangedListener listener) {
         selListeners.remove(listener);
     }
@@ -436,6 +551,10 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     private Set<OsmPrimitive> selectedPrimitives = new LinkedHashSet<>();
     private Collection<OsmPrimitive> selectionSnapshot;
 
+    /**
+     * Returns selected nodes and ways.
+     * @return selected nodes and ways
+     */
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
         return new FilteredCollection<>(getSelected(), new Predicate<OsmPrimitive>() {
             @Override
@@ -446,7 +565,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
-     * returns an unmodifiable collection of *WaySegments* whose virtual
+     * Returns an unmodifiable collection of *WaySegments* whose virtual
      * nodes should be highlighted. WaySegments are used to avoid having
      * to create a VirtualNode class that wouldn't have much purpose otherwise.
      *
@@ -457,8 +576,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
-     * returns an unmodifiable collection of WaySegments that should be
-     * highlighted.
+     * Returns an unmodifiable collection of WaySegments that should be highlighted.
      *
      * @return unmodifiable collection of WaySegments
      */
@@ -494,37 +612,50 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
-     * Return selected nodes.
+     * Returns selected nodes.
+     * @return selected nodes
      */
     public Collection<Node> getSelectedNodes() {
         return new SubclassFilteredCollection<>(getSelected(), OsmPrimitive.nodePredicate);
     }
 
     /**
-     * Return selected ways.
+     * Returns selected ways.
+     * @return selected ways
      */
     public Collection<Way> getSelectedWays() {
         return new SubclassFilteredCollection<>(getSelected(), OsmPrimitive.wayPredicate);
     }
 
     /**
-     * Return selected relations.
+     * Returns selected relations.
+     * @return selected relations
      */
     public Collection<Relation> getSelectedRelations() {
         return new SubclassFilteredCollection<>(getSelected(), OsmPrimitive.relationPredicate);
     }
 
     /**
+     * Determines whether the selection is empty or not
      * @return whether the selection is empty or not
      */
     public boolean selectionEmpty() {
         return selectedPrimitives.isEmpty();
     }
 
+    /**
+     * Determines whether the given primitive is selected or not
+     * @param osm the primitive
+     * @return whether {@code osm} is selected or not
+     */
     public boolean isSelected(OsmPrimitive osm) {
         return selectedPrimitives.contains(osm);
     }
 
+    /**
+     * Toggles the selected state of the given collection of primitives.
+     * @param osm The primitives to toggle
+     */
     public void toggleSelected(Collection<? extends PrimitiveId> osm) {
         boolean changed = false;
         synchronized (selectionLock) {
@@ -539,9 +670,15 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
             fireSelectionChanged();
         }
     }
+
+    /**
+     * Toggles the selected state of the given collection of primitives.
+     * @param osm The primitives to toggle
+     */
     public void toggleSelected(PrimitiveId... osm) {
         toggleSelected(Arrays.asList(osm));
     }
+
     private boolean __toggleSelected(PrimitiveId primitiveId) {
         OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
         if (primitive == null)
@@ -616,6 +753,12 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         setSelected(selection, true /* fire selection change event */);
     }
 
+    /**
+     * Sets the current selection to the primitives in <code>osm</code>
+     * and notifies all {@link SelectionChangedListener}.
+     *
+     * @param osm the primitives to set
+     */
     public void setSelected(PrimitiveId... osm) {
         if (osm.length == 1 && osm[0] == null) {
             setSelected();
@@ -626,7 +769,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
-     * Adds   the primitives in <code>selection</code> to the current selection
+     * Adds the primitives in <code>selection</code> to the current selection
      * and notifies all {@link SelectionChangedListener}.
      *
      * @param selection the selection
@@ -635,6 +778,12 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         addSelected(selection, true /* fire selection change event */);
     }
 
+    /**
+     * Adds the primitives in <code>osm</code> to the current selection
+     * and notifies all {@link SelectionChangedListener}.
+     *
+     * @param osm the primitives to add
+     */
     public void addSelected(PrimitiveId... osm) {
         addSelected(Arrays.asList(osm));
     }
@@ -681,12 +830,17 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
-     * Remove the selection from every value in the collection.
+     * Removes the selection from every value in the collection.
      * @param osm The collection of ids to remove the selection from.
      */
     public void clearSelection(PrimitiveId... osm) {
         clearSelection(Arrays.asList(osm));
     }
+
+    /**
+     * Removes the selection from every value in the collection.
+     * @param list The collection of ids to remove the selection from.
+     */
     public void clearSelection(Collection<? extends PrimitiveId> list) {
         boolean changed = false;
         synchronized (selectionLock) {
@@ -704,6 +858,10 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
             fireSelectionChanged();
         }
     }
+
+    /**
+     * Clears the current selection.
+     */
     public void clearSelection() {
         if (!selectedPrimitives.isEmpty()) {
             synchronized (selectionLock) {
@@ -714,7 +872,8 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         }
     }
 
-    @Override public DataSet clone() {
+    @Override
+    public DataSet clone() {
         getReadLock().lock();
         try {
             DataSet ds = new DataSet();
@@ -760,23 +919,18 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         }
     }
 
-    /**
-     * Returns the total area of downloaded data (the "yellow rectangles").
-     * @return Area object encompassing downloaded data.
-     */
+    @Override
+    public Collection<DataSource> getDataSources() {
+        return dataSources;
+    }
+
+    @Override
     public Area getDataSourceArea() {
-        if (dataSources.isEmpty()) return null;
-        Area a = new Area();
-        for (DataSource source : dataSources) {
-            // create area from data bounds
-            a.add(new Area(source.bounds.asRect()));
-        }
-        return a;
+        return DataSource.getDataSourceArea(dataSources);
     }
 
     /**
-     * returns a  primitive with a given id from the data set. null, if no such primitive
-     * exists
+     * Returns a primitive with a given id from the data set. null, if no such primitive exists
      *
      * @param id  uniqueId of the primitive. Might be &lt; 0 for newly created primitives
      * @param type the type of  the primitive. Must not be null.
@@ -787,8 +941,14 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         return getPrimitiveById(new SimplePrimitiveId(id, type));
     }
 
+    /**
+     * Returns a primitive with a given id from the data set. null, if no such primitive exists
+     *
+     * @param primitiveId type and uniqueId of the primitive. Might be &lt; 0 for newly created primitives
+     * @return the primitive
+     */
     public OsmPrimitive getPrimitiveById(PrimitiveId primitiveId) {
-        return primitivesMap.get(primitiveId);
+        return primitiveId != null ? primitivesMap.get(primitiveId) : null;
     }
 
     /**
@@ -798,7 +958,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      */
     private OsmPrimitive getPrimitiveByIdChecked(PrimitiveId primitiveId) {
         OsmPrimitive result = getPrimitiveById(primitiveId);
-        if (result == null) {
+        if (result == null && primitiveId != null) {
             Main.warn(tr("JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
                     + "at {2}. This is not a critical error, it should be safe to continue in your work.",
                     primitiveId.getType(), Long.toString(primitiveId.getUniqueId()), Main.getJOSMWebsite()));
@@ -948,10 +1108,18 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         }
     }
 
+    /**
+     * Adds a new data set listener.
+     * @param dsl The data set listener to add
+     */
     public void addDataSetListener(DataSetListener dsl) {
         listeners.addIfAbsent(dsl);
     }
 
+    /**
+     * Removes a data set listener.
+     * @param dsl The data set listener to remove
+     */
     public void removeDataSetListener(DataSetListener dsl) {
         listeners.remove(dsl);
     }
@@ -1077,6 +1245,9 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         }
     }
 
+    /**
+     * Cleanups all deleted primitives (really delete them from the dataset).
+     */
     public void cleanupDeletedPrimitives() {
         beginUpdate();
         try {
@@ -1145,30 +1316,13 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         }
     }
 
-    /**
-     * <p>Replies the list of data source bounds.</p>
-     *
-     * <p>Dataset maintains a list of data sources which have been merged into the
-     * data set. Each of these sources can optionally declare a bounding box of the
-     * data it supplied to the dataset.</p>
-     *
-     * <p>This method replies the list of defined (non {@code null}) bounding boxes.</p>
-     *
-     * @return the list of data source bounds. An empty list, if no non-null data source
-     * bounds are defined.
-     */
+    @Override
     public List<Bounds> getDataSourceBounds() {
-        List<Bounds> ret = new ArrayList<>(dataSources.size());
-        for (DataSource ds : dataSources) {
-            if (ds.bounds != null) {
-                ret.add(ds.bounds);
-            }
-        }
-        return ret;
+        return DataSource.getDataSourceBounds(dataSources);
     }
 
     /**
-     * Moves all primitives and datasources from DataSet "from" to this DataSet
+     * Moves all primitives and datasources from DataSet "from" to this DataSet.
      * @param from The source DataSet
      */
     public void mergeFrom(DataSet from) {
@@ -1176,8 +1330,9 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
-     * Moves all primitives and datasources from DataSet "from" to this DataSet
+     * Moves all primitives and datasources from DataSet "from" to this DataSet.
      * @param from The source DataSet
+     * @param progressMonitor The progress monitor
      */
     public void mergeFrom(DataSet from, ProgressMonitor progressMonitor) {
         if (from != null) {
@@ -1194,4 +1349,16 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     public void projectionChanged(Projection oldValue, Projection newValue) {
         invalidateEastNorthCache();
     }
+
+    public ProjectionBounds getDataSourceBoundingBox() {
+        BoundingXYVisitor bbox = new BoundingXYVisitor();
+        for (DataSource source : dataSources) {
+            bbox.visit(source.bounds);
+        }
+        if (bbox.hasExtend()) {
+            return bbox.getBounds();
+        }
+        return null;
+    }
+
 }

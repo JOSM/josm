@@ -78,7 +78,7 @@ public class QuadStateCheckBox extends JCheckBox {
         setModel(model);
         setState(initial);
     }
-    
+
     /**
      * Constructs a new {@code QuadStateCheckBox}.
      * @param text the text of the check box
@@ -92,7 +92,7 @@ public class QuadStateCheckBox extends JCheckBox {
     /** Do not let anyone add mouse listeners */
     @Override
     public void addMouseListener(MouseListener l) { }
-    
+
     /**
      * Set the new state.
      * @param state The new state
@@ -100,15 +100,15 @@ public class QuadStateCheckBox extends JCheckBox {
     public final void setState(State state) {
         model.setState(state);
     }
-    
-    /** 
-     * Return the current state, which is determined by the selection status of the model. 
-     * @return The current state 
+
+    /**
+     * Return the current state, which is determined by the selection status of the model.
+     * @return The current state
      */
     public State getState() {
         return model.getState();
     }
-    
+
     @Override
     public void setSelected(boolean b) {
         if (b) {
@@ -120,11 +120,11 @@ public class QuadStateCheckBox extends JCheckBox {
 
     private final class QuadStateDecorator implements ButtonModel {
         private final ButtonModel other;
-        
+
         private QuadStateDecorator(ButtonModel other) {
             this.other = other;
         }
-        
+
         private void setState(State state) {
             if (state == State.NOT_SELECTED) {
                 other.setArmed(false);
@@ -148,7 +148,7 @@ public class QuadStateCheckBox extends JCheckBox {
                 setToolTipText(tr("unset: do not set this property on the selected objects"));
             }
         }
-        
+
         /**
          * The current state is embedded in the selection / armed
          * state of the model.

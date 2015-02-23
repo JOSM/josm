@@ -284,13 +284,18 @@ public final class Way extends OsmPrimitive implements IWay {
 
             WayData wayData = (WayData) data;
 
+            if (!wayData.getNodes().isEmpty() && getDataSet() == null) {
+                throw new AssertionError("Data consistency problem - way without dataset detected");
+            }
+
             List<Node> newNodes = new ArrayList<>(wayData.getNodes().size());
             for (Long nodeId : wayData.getNodes()) {
                 Node node = (Node)getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
                 if (node != null) {
                     newNodes.add(node);
-                } else
+                } else {
                     throw new AssertionError("Data consistency problem - way with missing node detected");
+                }
             }
             setNodes(newNodes);
         } finally {
@@ -595,7 +600,7 @@ public final class Way extends OsmPrimitive implements IWay {
             }
             if (Main.pref.getBoolean("debug.checkNullCoor", true)) {
                 for (Node n: nodes) {
-                    if (n.isVisible() && !n.isIncomplete() && (n.getCoor() == null || n.getEastNorth() == null))
+                    if (n.isVisible() && !n.isIncomplete() && !n.isLatLonKnown())
                         throw new DataIntegrityProblemException("Complete visible node with null coordinates: " + toString(),
                                 "<html>" + tr("Complete node {0} with null coordinates in way {1}",
                                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(n),
@@ -613,7 +618,7 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     @Override
-    public void setDataset(DataSet dataSet) {
+    void setDataset(DataSet dataSet) {
         super.setDataset(dataSet);
         checkNodes();
     }
@@ -738,9 +743,12 @@ public final class Way extends OsmPrimitive implements IWay {
     @Override
     protected void keysChangedImpl(Map<String, String> originalKeys) {
         super.keysChangedImpl(originalKeys);
+        clearCachedNodeStyles();
+    }
+
+    public final void clearCachedNodeStyles() {
         for (final Node n : nodes) {
             n.clearCachedStyle();
         }
     }
-    
 }

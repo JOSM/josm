@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -62,9 +63,9 @@ import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel;
 import org.openstreetmap.josm.gui.dialogs.FilterDialog;
-import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.MapPaintDialog;
+import org.openstreetmap.josm.gui.dialogs.NotesDialog;
 import org.openstreetmap.josm.gui.dialogs.RelationListDialog;
 import org.openstreetmap.josm.gui.dialogs.SelectionListDialog;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
@@ -131,6 +132,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public ValidatorDialog validatorDialog;
     public SelectionListDialog selectionListDialog;
     public PropertiesDialog propertiesDialog;
+    public NotesDialog noteDialog;
 
     // Map modes
     public final SelectAction mapModeSelect;
@@ -235,12 +237,12 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addToggleDialog(relationListDialog = new RelationListDialog());
         addToggleDialog(new CommandStackDialog());
         addToggleDialog(new UserListDialog());
-        addToggleDialog(new HistoryDialog(), true);
         addToggleDialog(conflictDialog = new ConflictDialog());
         addToggleDialog(validatorDialog = new ValidatorDialog());
         addToggleDialog(filterDialog = new FilterDialog());
         addToggleDialog(new ChangesetDialog(), true);
         addToggleDialog(new MapPaintDialog());
+        addToggleDialog(noteDialog = new NotesDialog());
         toolBarToggle.setFloatable(false);
 
         // status line below the map
@@ -402,7 +404,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * Fill the given panel by adding all necessary components to the different
      * locations.
      *
-     * @param panel The container to fill. Must have an BorderLayout.
+     * @param panel The container to fill. Must have a BorderLayout.
      */
     public void fillPanel(Container panel) {
         panel.add(this, BorderLayout.CENTER);
@@ -410,8 +412,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         /**
          * sideToolBar: add map modes icons
          */
-        if(Main.pref.getBoolean("sidetoolbar.mapmodes.visible", true)) {
-        toolBarActions.setAlignmentX(0.5f);
+        if (Main.pref.getBoolean("sidetoolbar.mapmodes.visible", true)) {
+            toolBarActions.setAlignmentX(0.5f);
+            toolBarActions.setBorder(null);
             toolBarActions.setInheritsPopupMenu(true);
             sideToolBar.add(toolBarActions);
             listAllMapModesButton.setAlignmentX(0.5f);
@@ -424,9 +427,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         /**
          * sideToolBar: add toggle dialogs icons
          */
-        if(Main.pref.getBoolean("sidetoolbar.toggledialogs.visible", true)) {
+        if (Main.pref.getBoolean("sidetoolbar.toggledialogs.visible", true)) {
             ((JToolBar)sideToolBar).addSeparator(new Dimension(0,18));
             toolBarToggle.setAlignmentX(0.5f);
+            toolBarToggle.setBorder(null);
             toolBarToggle.setInheritsPopupMenu(true);
             sideToolBar.add(toolBarToggle);
             listAllToggleDialogsButton.setAlignmentX(0.5f);
@@ -489,6 +493,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             }
         });
         ((JToolBar)sideToolBar).setFloatable(false);
+        sideToolBar.setBorder(BorderFactory.createEmptyBorder(0,1,0,1));
 
         /**
          * sideToolBar: decide scroll- and visibility

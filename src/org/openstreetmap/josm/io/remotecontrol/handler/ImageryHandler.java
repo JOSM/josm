@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -45,30 +47,59 @@ public class ImageryHandler extends RequestHandler {
         return PermissionPrefWithDefault.LOAD_IMAGERY;
     }
 
-    @Override
-    protected void handleRequest() throws RequestHandlerErrorException {
+    protected static ImageryInfo findBingEntry() {
+        for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
+            if (ImageryType.BING.equals(i.getImageryType())) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    protected ImageryInfo buildImageryInfo() {
         String url = args.get("url");
         String title = args.get("title");
         String type = args.get("type");
-        if ((title == null) || (title.isEmpty())) {
+        final ImageryInfo bing = ImageryType.BING.getTypeString().equals(type) ? findBingEntry() : null;
+        if ((title == null || title.isEmpty()) && bing != null) {
+            title = bing.getName();
+        }
+        if (title == null || title.isEmpty()) {
             title = tr("Remote imagery");
         }
         String cookies = args.get("cookies");
         final ImageryInfo imgInfo = new ImageryInfo(title, url, type, null, cookies);
-        String min_zoom = args.get("min_zoom");
-        if (min_zoom != null && !min_zoom.isEmpty()) {
+        if (bing != null) {
+            imgInfo.setIcon(bing.getIcon());
+        }
+        String minZoom = args.get("min_zoom");
+        if (minZoom != null && !minZoom.isEmpty()) {
             try {
-                imgInfo.setDefaultMinZoom(Integer.parseInt(min_zoom));
+                imgInfo.setDefaultMinZoom(Integer.parseInt(minZoom));
             } catch (NumberFormatException e) {
                 Main.error(e);
             }
         }
-        String max_zoom = args.get("max_zoom");
-        if (max_zoom != null && !max_zoom.isEmpty()) {
+        String maxZoom = args.get("max_zoom");
+        if (maxZoom != null && !maxZoom.isEmpty()) {
             try {
-                imgInfo.setDefaultMaxZoom(Integer.parseInt(max_zoom));
+                imgInfo.setDefaultMaxZoom(Integer.parseInt(maxZoom));
             } catch (NumberFormatException e) {
                 Main.error(e);
+            }
+        }
+        return imgInfo;
+    }
+
+    @Override
+    protected void handleRequest() throws RequestHandlerErrorException {
+        final ImageryInfo imgInfo = buildImageryInfo();
+        if (Main.isDisplayingMapView()) {
+            for (ImageryLayer layer : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {
+                if (layer.getInfo().equals(imgInfo)) {
+                    Main.info("Imagery layer already exists: "+imgInfo);
+                    return;
+                }
             }
         }
         GuiHelper.runInEDT(new Runnable() {
@@ -95,10 +126,8 @@ public class ImageryHandler extends RequestHandler {
                 if (urlIdx != -1) {
                     args.put("url", decodeParam(query.substring(urlIdx + 5)));
                     query = query.substring(0, urlIdx);
-                } else {
-                    if (query.indexOf('#') != -1) {
-                        query = query.substring(0, query.indexOf('#'));
-                    }
+                } else if (query.indexOf('#') != -1) {
+                    query = query.substring(0, query.indexOf('#'));
                 }
                 String[] params = query.split("&", -1);
                 for (String param : params) {
@@ -116,8 +145,9 @@ public class ImageryHandler extends RequestHandler {
     protected void validateRequest() throws RequestHandlerBadRequestException {
         String url = args.get("url");
         String type = args.get("type");
+        String cookies = args.get("cookies");
         try {
-            ImageryLayer.create(new ImageryInfo(null, url, type, null, null));
+            ImageryLayer.create(new ImageryInfo(null, url, type, null, cookies));
         } catch (IllegalArgumentException e) {
             throw new RequestHandlerBadRequestException(e.getMessage(), e);
         }

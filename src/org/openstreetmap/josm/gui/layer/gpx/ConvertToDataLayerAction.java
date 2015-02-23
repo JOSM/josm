@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -52,7 +53,7 @@ public class ConvertToDataLayerAction extends AbstractAction {
                 List<Node> nodes = new ArrayList<>();
                 for (WayPoint p : segment.getWayPoints()) {
                     Node n = new Node(p.getCoor());
-                    String timestr = p.getString("time");
+                    String timestr = p.getString(GpxConstants.PT_TIME);
                     if (timestr != null) {
                         n.setTimestamp(DateUtils.fromString(timestr));
                     }
@@ -67,5 +68,4 @@ public class ConvertToDataLayerAction extends AbstractAction {
         Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", layer.getName()), layer.getAssociatedFile()));
         Main.main.removeLayer(layer);
     }
-
 }

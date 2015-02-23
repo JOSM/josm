@@ -303,7 +303,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
         // rotate
         for (Node n: allNodes) {
-            EastNorth tmp = EN.rotate_cc(pivot, n.getEastNorth(), - headingAll);
+            EastNorth tmp = EN.rotateCC(pivot, n.getEastNorth(), - headingAll);
             nX.put(n, tmp.east());
             nY.put(n, tmp.north());
         }
@@ -383,7 +383,7 @@ public final class OrthogonalizeAction extends JosmAction {
         final Collection<Command> commands = new LinkedList<>();
         for (Node n: allNodes) {
             EastNorth tmp = new EastNorth(nX.get(n), nY.get(n));
-            tmp = EN.rotate_cc(pivot, tmp, headingAll);
+            tmp = EN.rotateCC(pivot, tmp, headingAll);
             final double dx = tmp.east()  - n.getEastNorth().east();
             final double dy = tmp.north() - n.getEastNorth().north();
             if (headingNodes.contains(n)) { // The heading nodes should not have changed
@@ -417,11 +417,13 @@ public final class OrthogonalizeAction extends JosmAction {
             nNode = way.getNodes().size();
             nSeg = nNode - 1;
         }
+
         /**
          * Estimate the direction of the segments, given the first segment points in the
          * direction <code>pInitialDirection</code>.
          * Then sum up all horizontal / vertical segments to have a good guess for the
          * heading of the entire way.
+         * @param pInitialDirection initial direction
          * @throws InvalidUserInputException
          */
         public void calcDirections(Direction pInitialDirection) throws InvalidUserInputException {
@@ -521,8 +523,10 @@ public final class OrthogonalizeAction extends JosmAction {
         private EN() {
             // Hide implicit public constructor for utility class
         }
-        // rotate counter-clock-wise
-        public static EastNorth rotate_cc(EastNorth pivot, EastNorth en, double angle) {
+        /**
+         * Rotate counter-clock-wise.
+         */
+        public static EastNorth rotateCC(EastNorth pivot, EastNorth en, double angle) {
             double cosPhi = Math.cos(angle);
             double sinPhi = Math.sin(angle);
             double x = en.east() - pivot.east();

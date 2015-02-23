@@ -28,7 +28,7 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
      * Constructs a new {@code UTMFranceDOMProjectionChoice}.
      */
     public UTMFranceDOMProjectionChoice() {
-        super(tr("UTM France (DOM)"), "core:utmfrancedom", utmGeodesicsNames, tr("UTM Geodesic system"));
+        super(tr("UTM France (DOM)"), /* NO-ICON */ "core:utmfrancedom", utmGeodesicsNames, tr("UTM Geodesic system"));
     }
 
     @Override

@@ -45,9 +45,9 @@ import org.openstreetmap.gui.jmapviewer.JobDispatcher;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
+import org.openstreetmap.gui.jmapviewer.TMSFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileClearController;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -79,6 +79,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -113,11 +114,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     static {
         String defPath = null;
         try {
-            defPath = OsmFileCacheTileLoader.getDefaultCacheDir().getAbsolutePath();
+            defPath = new File(Main.pref.getCacheDirectory(), "tms").getAbsolutePath();
         } catch (SecurityException e) {
             Main.warn(e);
         }
-        PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache_path", defPath);
+        PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache", defPath);
     }
 
     public interface TileLoaderFactory {
@@ -134,7 +135,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
             if (cachePath != null && !cachePath.isEmpty()) {
                 try {
-                    OsmFileCacheTileLoader loader = new OsmFileCacheTileLoader(listener, new File(cachePath));
+                    OsmFileCacheTileLoader loader;
+                    loader = new TMSFileCacheTileLoader(listener, new File(cachePath));
                     loader.headers.put("User-Agent", Version.getInstance().getFullAgentString());
                     return loader;
                 } catch (IOException e) {
@@ -172,11 +174,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (Main.isDebugEnabled()) {
             Main.debug("tileLoadingFinished() tile: " + tile + " success: " + success);
         }
-    }
-
-    @Override
-    public TileCache getTileCache() {
-        return tileCache;
     }
 
     private static class TmsTileClearController implements TileClearController, CancelListener {
@@ -318,6 +315,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     private static class CachedAttributionBingAerialTileSource extends BingAerialTileSource {
 
+        public CachedAttributionBingAerialTileSource(String id) {
+            super(id);
+        }
+
         class BingAttributionData extends CacheCustomContent<IOException> {
 
             public BingAttributionData() {
@@ -373,33 +374,37 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
         if (info.getImageryType() == ImageryType.TMS) {
             checkUrl(info.getUrl());
-            TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getMinZoom(), info.getMaxZoom());
+            TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getId(), info.getMinZoom(), info.getMaxZoom(),
+                    info.getCookies());
             info.setAttribution(t);
             return t;
         } else if (info.getImageryType() == ImageryType.BING)
-            return new CachedAttributionBingAerialTileSource();
+            return new CachedAttributionBingAerialTileSource(info.getId());
         else if (info.getImageryType() == ImageryType.SCANEX) {
-            return new ScanexTileSource(info.getName(), info.getUrl(), info.getMaxZoom());
+            return new ScanexTileSource(info.getName(), info.getUrl(), info.getId(), info.getMaxZoom());
         }
         return null;
     }
 
-    public static void checkUrl(String url) throws IllegalArgumentException {
-        if (url == null) {
-            throw new IllegalArgumentException();
-        } else {
-            Matcher m = Pattern.compile("\\{[^}]*\\}").matcher(url);
-            while (m.find()) {
-                boolean isSupportedPattern = false;
-                for (String pattern : TemplatedTMSTileSource.ALL_PATTERNS) {
-                    if (m.group().matches(pattern)) {
-                        isSupportedPattern = true;
-                        break;
-                    }
+    /**
+     * Checks validity of given URL.
+     * @param url URL to check
+     * @throws IllegalArgumentException if url is null or invalid
+     */
+    public static void checkUrl(String url) {
+        CheckParameterUtil.ensureParameterNotNull(url, "url");
+        Matcher m = Pattern.compile("\\{[^}]*\\}").matcher(url);
+        while (m.find()) {
+            boolean isSupportedPattern = false;
+            for (String pattern : TemplatedTMSTileSource.ALL_PATTERNS) {
+                if (m.group().matches(pattern)) {
+                    isSupportedPattern = true;
+                    break;
                 }
-                if (!isSupportedPattern) {
-                    throw new IllegalArgumentException(tr("{0} is not a valid TMS argument. Please check this server URL:\n{1}", m.group(), url));
-                }
+            }
+            if (!isSupportedPattern) {
+                throw new IllegalArgumentException(
+                        tr("{0} is not a valid TMS argument. Please check this server URL:\n{1}", m.group(), url));
             }
         }
     }

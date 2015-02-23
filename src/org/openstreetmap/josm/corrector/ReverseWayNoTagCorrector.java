@@ -28,7 +28,7 @@ public final class ReverseWayNoTagCorrector {
     private ReverseWayNoTagCorrector() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * Tags that imply a semantic meaning from the way direction and cannot be changed.
      */
@@ -44,7 +44,7 @@ public final class ReverseWayNoTagCorrector {
             new Tag("waterway", "drain"),
             new Tag("waterway", "canal")
     }));
-    
+
     /**
      * Replies the tags that imply a semantic meaning from <code>way</code> direction and cannot be changed.
      * @param way The way to look for
@@ -53,7 +53,7 @@ public final class ReverseWayNoTagCorrector {
     public static final TagCollection getDirectionalTags(Way way) {
         return directionalTags.intersect(TagCollection.from(way));
     }
-    
+
     /**
      * Tests whether way can be reversed without semantic change.
      * Looks for tags like natural=cliff, barrier=retaining_wall.
@@ -63,7 +63,7 @@ public final class ReverseWayNoTagCorrector {
     public static boolean isReversible(Way way) {
         return getDirectionalTags(way).isEmpty();
     }
-    
+
     protected static String getHTML(TagCollection tags) {
         if (tags.size() == 1) {
             return tags.iterator().next().toString();
@@ -73,7 +73,7 @@ public final class ReverseWayNoTagCorrector {
             return "";
         }
     }
-    
+
     protected static boolean confirmReverseWay(Way way, TagCollection tags) {
         String msg = trn(
                 // Singular, if a single tag is impacted
@@ -99,12 +99,14 @@ public final class ReverseWayNoTagCorrector {
                 null
         );
         switch(ret) {
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
-            case JOptionPane.YES_OPTION: return true;
-            default: return false;
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION:
+            case JOptionPane.YES_OPTION:
+                return true;
+            default:
+                return false;
         }
     }
-    
+
     /**
      * Checks the given way can be safely reversed and asks user to confirm the operation if it not the case.
      * @param way The way to check

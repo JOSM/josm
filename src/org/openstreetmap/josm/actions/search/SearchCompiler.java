@@ -154,9 +154,9 @@ public class SearchCompiler {
                             String rangeA1 = rangeA[0].trim();
                             String rangeA2 = rangeA[1].trim();
                             // if min timestap is empty: use lowest possible date
-                            long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); 
+                            long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime();
                             // if max timestamp is empty: use "now"
-                            long maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime(); 
+                            long maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime();
                             return new TimestampRange(minDate, maxDate);
                         } else {
                             // I18n: Don't translate timestamp keyword

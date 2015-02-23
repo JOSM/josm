@@ -53,16 +53,16 @@ public class FontFace extends SVGElement
     /**
      * Em size of coordinate system font is defined in
      */
-    int unitsPerEm = 1000;
-    int ascent = -1;
-    int descent = -1;
-    int accentHeight = -1;
-    int underlinePosition = -1;
-    int underlineThickness = -1;
-    int strikethroughPosition = -1;
-    int strikethroughThickness = -1;
-    int overlinePosition = -1;
-    int overlineThickness = -1;
+    private int unitsPerEm = 1000;
+    private int ascent = -1;
+    private int descent = -1;
+    private int accentHeight = -1;
+    private int underlinePosition = -1;
+    private int underlineThickness = -1;
+    private int strikethroughPosition = -1;
+    private int strikethroughThickness = -1;
+    private int overlinePosition = -1;
+    private int overlineThickness = -1;
 
     /**
      * Creates a new instance of Font
@@ -232,5 +232,85 @@ public class FontFace extends SVGElement
     {
         //Fonts can't change
         return false;
+    }
+
+    /**
+     * @param unitsPerEm the unitsPerEm to set
+     */
+    public void setUnitsPerEm(int unitsPerEm)
+    {
+        this.unitsPerEm = unitsPerEm;
+    }
+
+    /**
+     * @param ascent the ascent to set
+     */
+    public void setAscent(int ascent)
+    {
+        this.ascent = ascent;
+    }
+
+    /**
+     * @param descent the descent to set
+     */
+    public void setDescent(int descent)
+    {
+        this.descent = descent;
+    }
+
+    /**
+     * @param accentHeight the accentHeight to set
+     */
+    public void setAccentHeight(int accentHeight)
+    {
+        this.accentHeight = accentHeight;
+    }
+
+    /**
+     * @param underlinePosition the underlinePosition to set
+     */
+    public void setUnderlinePosition(int underlinePosition)
+    {
+        this.underlinePosition = underlinePosition;
+    }
+
+    /**
+     * @param underlineThickness the underlineThickness to set
+     */
+    public void setUnderlineThickness(int underlineThickness)
+    {
+        this.underlineThickness = underlineThickness;
+    }
+
+    /**
+     * @param strikethroughPosition the strikethroughPosition to set
+     */
+    public void setStrikethroughPosition(int strikethroughPosition)
+    {
+        this.strikethroughPosition = strikethroughPosition;
+    }
+
+    /**
+     * @param strikethroughThickness the strikethroughThickness to set
+     */
+    public void setStrikethroughThickness(int strikethroughThickness)
+    {
+        this.strikethroughThickness = strikethroughThickness;
+    }
+
+    /**
+     * @param overlinePosition the overlinePosition to set
+     */
+    public void setOverlinePosition(int overlinePosition)
+    {
+        this.overlinePosition = overlinePosition;
+    }
+
+    /**
+     * @param overlineThickness the overlineThickness to set
+     */
+    public void setOverlineThickness(int overlineThickness)
+    {
+        this.overlineThickness = overlineThickness;
     }
 }

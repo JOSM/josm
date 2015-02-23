@@ -6,7 +6,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 public class TileController {
     protected TileLoader tileLoader;
@@ -16,10 +15,10 @@ public class TileController {
     JobDispatcher jobDispatcher;
 
     public TileController(TileSource source, TileCache tileCache, TileLoaderListener listener) {
-        tileSource = new OsmTileSource.Mapnik();
-        tileLoader = new OsmTileLoader(listener);
+        this.tileSource = source;
+        this.tileLoader = new OsmTileLoader(listener);
         this.tileCache = tileCache;
-        jobDispatcher = JobDispatcher.getInstance();
+        this.jobDispatcher = JobDispatcher.getInstance();
     }
 
     /**
@@ -80,7 +79,7 @@ public class TileController {
     }
 
     /**
-     *
+     * Removes all jobs from the queue that are currently not being processed.
      */
     public void cancelOutstandingJobs() {
         jobDispatcher.cancelOutstandingJobs();

@@ -20,6 +20,7 @@ import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import java.awt.geom.AffineTransform;
 
 /**
  * Read out EXIF information from a JPEG file
@@ -36,7 +37,7 @@ public final class ExifReader {
      * Returns the date/time from the given JPEG file.
      * @param filename The JPEG file to read
      * @return The date/time read in the EXIF section, or {@code null} if not found
-     * @throws ParseException if {@link DateParser#parse} fails to parse date/time
+     * @throws ParseException if {@link PrimaryDateParser#parse} fails to parse date/time
      */
     public static Date readTime(File filename) throws ParseException {
         try {
@@ -174,7 +175,7 @@ public final class ExifReader {
             double sec = components[2].doubleValue();
 
             if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("deg, min and sec are NaN");
 
             value = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
 
@@ -186,5 +187,67 @@ public final class ExifReader {
             value = dirGps.getDouble(gpsTag);
         }
         return value;
+    }
+
+    /**
+     * Returns a Transform that fixes the image orientation.
+     *
+     * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated
+     * as 1.
+     * @param orientation the exif-orientation of the image
+     * @param width the original width of the image
+     * @param height the original height of the image
+     * @return a transform that rotates the image, so it is upright
+     */
+    public static AffineTransform getRestoreOrientationTransform(final int orientation, final int width, final int height) {
+        final int q;
+        final double ax, ay;
+        switch (orientation) {
+        case 8:
+            q = -1;
+            ax = width / 2;
+            ay = width / 2;
+            break;
+        case 3:
+            q = 2;
+            ax = width / 2;
+            ay = height / 2;
+            break;
+        case 6:
+            q = 1;
+            ax = height / 2;
+            ay = height / 2;
+            break;
+        default:
+            q = 0;
+            ax = 0;
+            ay = 0;
+        }
+        return AffineTransform.getQuadrantRotateInstance(q, ax, ay);
+    }
+
+    /**
+     * Check, if the given orientation switches width and height of the image.
+     * E.g. 90 degree rotation
+     *
+     * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated
+     * as 1.
+     * @param orientation the exif-orientation of the image
+     * @return true, if it switches width and height
+     */
+    public static boolean orientationSwitchesDimensions(int orientation) {
+        return orientation == 6 || orientation == 8;
+    }
+
+    /**
+     * Check, if the given orientation requires any correction to the image.
+     *
+     * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated
+     * as 1.
+     * @param orientation the exif-orientation of the image
+     * @return true, unless the orientation value is 1 or unsupported.
+     */
+    public static boolean orientationNeedsCorrection(int orientation) {
+        return orientation == 3 || orientation == 6 || orientation == 8;
     }
 }

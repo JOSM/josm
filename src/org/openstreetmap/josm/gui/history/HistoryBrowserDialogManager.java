@@ -25,8 +25,18 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Manager allowing to show/hide history dialogs.
+ * @since 2019
+ */
 public class HistoryBrowserDialogManager implements MapView.LayerChangeListener {
+
     private static HistoryBrowserDialogManager instance;
+
+    /**
+     * Replies the unique instance.
+     * @return the unique instance
+     */
     public static HistoryBrowserDialogManager getInstance() {
         if (instance == null) {
             instance = new HistoryBrowserDialogManager();
@@ -41,11 +51,16 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         MapView.addLayerChangeListener(this);
     }
 
+    /**
+     * Determines if an history dialog exists for the given object id.
+     * @param id the object id
+     * @return {@code true} if an history dialog exists for the given object id, {@code false} otherwise
+     */
     public boolean existsDialog(long id) {
         return dialogs.containsKey(id);
     }
 
-    public void show(long id, HistoryBrowserDialog dialog) {
+    protected void show(long id, HistoryBrowserDialog dialog) {
         if (dialogs.values().contains(dialog)) {
             show(id);
         } else {
@@ -55,7 +70,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         }
     }
 
-    public void show(long id) {
+    protected void show(long id) {
         if (dialogs.keySet().contains(id)) {
             dialogs.get(id).toFront();
         }
@@ -73,17 +88,21 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
 
     final String WINDOW_GEOMETRY_PREF = getClass().getName() + ".geometry";
 
-    public void placeOnScreen(HistoryBrowserDialog dialog) {
+    protected void placeOnScreen(HistoryBrowserDialog dialog) {
         WindowGeometry geometry = new WindowGeometry(WINDOW_GEOMETRY_PREF, WindowGeometry.centerOnScreen(new Dimension(850, 500)));
         geometry.applySafe(dialog);
         Point p = dialog.getLocation();
-        while(hasDialogWithCloseUpperLeftCorner(p)) {
+        while (hasDialogWithCloseUpperLeftCorner(p)) {
             p.x += 20;
             p.y += 20;
         }
         dialog.setLocation(p);
     }
 
+    /**
+     * Hides the specified history dialog and cleans associated resources.
+     * @param dialog History dialog to hide
+     */
     public void hide(HistoryBrowserDialog dialog) {
         long id = 0;
         for (long i: dialogs.keySet()) {
@@ -115,6 +134,10 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         }
     }
 
+    /**
+     * Show history dialog for the given history.
+     * @param h History to show
+     */
     public void show(History h) {
         if (h == null)
             return;
@@ -137,12 +160,15 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
     @Override
     public void layerRemoved(Layer oldLayer) {
         // remove all history browsers if the number of layers drops to 0
-        //
         if (Main.isDisplayingMapView() && Main.map.mapView.getNumLayers() == 0) {
             hideAll();
         }
     }
 
+    /**
+     * Show history dialog(s) for the given primitive(s).
+     * @param primitives The primitive(s) for which history will be displayed
+     */
     public void showHistory(final Collection<? extends PrimitiveId> primitives) {
         final Collection<? extends PrimitiveId> notNewPrimitives = Utils.filter(primitives, notNewPredicate);
         if (notNewPrimitives.isEmpty()) {

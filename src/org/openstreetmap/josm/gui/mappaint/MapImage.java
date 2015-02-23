@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -16,6 +17,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * An image that will be displayed on the map.
+ */
 public class MapImage {
 
     private static final int MAX_SIZE = 48;
@@ -25,33 +29,54 @@ public class MapImage {
      */
     private BufferedImage img;
 
-    /**
-     * The 5 following fields are only used to check for equality.
-     */
     public int alpha = 255;
     public String name;
     public StyleSource source;
     public int width = -1;
     public int height = -1;
+    public int offsetX = 0;
+    public int offsetY = 0;
 
     private boolean temporary;
-    private Image disabledImgCache;
+    private BufferedImage disabledImgCache;
 
     public MapImage(String name, StyleSource source) {
         this.name = name;
         this.source = source;
     }
 
-    public Image getDisabled() {
+    /**
+     * Get the image associated with this MapImage object.
+     * 
+     * @param disabled {@code} true to request disabled version, {@code false} for the standard version
+     * @return the image
+     */
+    public BufferedImage getImage(boolean disabled) {
+        if (disabled) {
+            return getDisabled();
+        } else {
+            return getImage();
+        }
+    }
+
+    private BufferedImage getDisabled() {
         if (disabledImgCache != null)
                 return disabledImgCache;
         if (img == null)
             getImage(); // fix #7498 ?
-        disabledImgCache = GuiHelper.getDisabledImage(img);
+        Image disImg = GuiHelper.getDisabledImage(img);
+        if (disImg instanceof BufferedImage) {
+            disabledImgCache = (BufferedImage) disImg;
+        } else {
+            disabledImgCache = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            Graphics g = disabledImgCache.getGraphics();
+            g.drawImage(disImg, 0, 0, null);
+            g.dispose();
+        }
         return disabledImgCache;
     }
 
-    public BufferedImage getImage() {
+    private BufferedImage getImage() {
         if (img != null)
             return img;
         temporary = false;
@@ -71,7 +96,7 @@ public class MapImage {
                                 ImageIcon noIcon = MapPaintStyles.getNoIcon_Icon(source);
                                 img = noIcon == null ? null : (BufferedImage) noIcon.getImage();
                             } else {
-                                img = (BufferedImage) result.getImage();
+                                img = (BufferedImage) rescale(result.getImage());
                             }
                             if (temporary) {
                                 disabledImgCache = null;
@@ -158,13 +183,12 @@ public class MapImage {
     }
 
     /**
-     * Returns the really displayed node icon for this {@code MapImage}.
-     * @param disabled {@code} true to request disabled version, {@code false} for the standard version
+     * Rescale excessively large images.
+     * @param image the unscaled image
      * @return The scaled down version to 16x16 pixels if the image height and width exceeds 48 pixels and no size has been explicitely specified
-     * @since 6174
      */
-    public Image getDisplayedNodeIcon(boolean disabled) {
-        final Image image = disabled ? getDisabled() : getImage();
+    private Image rescale(Image image) {
+        if (image == null) return null;
         // Scale down large (.svg) images to 16x16 pixels if no size is explicitely specified
         if (mustRescale(image)) {
             return ImageProvider.createBoundedImage(image, 16);

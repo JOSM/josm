@@ -62,7 +62,7 @@ public interface ProjectionChoice {
 
     /**
      * Return all projection codes supported by this projection choice.
-     * @return all supported projection codes 
+     * @return all supported projection codes
      */
     String[] allCodes();
 

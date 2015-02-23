@@ -25,16 +25,16 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * MapCSS selector.
- * 
+ *
  * A rule has two parts, a selector and a declaration block
  * e.g.
  * <pre>
- * way[highway=residential]    
- * { width: 10; color: blue; } 
+ * way[highway=residential]
+ * { width: 10; color: blue; }
  * </pre>
- * 
+ *
  * The selector decides, if the declaration block gets applied or not.
- * 
+ *
  * All implementing classes of Selector are immutable.
  */
 public interface Selector {
@@ -48,20 +48,20 @@ public interface Selector {
      * @return true, if the selector applies
      */
     boolean matches(Environment env);
-    
-    String getSubpart();
+
+    Subpart getSubpart();
 
     Range getRange();
-    
+
     /**
      * Create an "optimized" copy of this selector that omits the base check.
-     * 
+     *
      * For the style source, the list of rules is preprocessed, such that
      * there is a separate list of rules for nodes, ways, ...
-     * 
+     *
      * This means that the base check does not have to be performed
      * for each rule, but only once for each primitive.
-     * 
+     *
      * @return a selector that is identical to this object, except the base of the
      * "rightmost" selector is not checked
      */
@@ -371,7 +371,7 @@ public interface Selector {
         }
 
         @Override
-        public String getSubpart() {
+        public Subpart getSubpart() {
             return right.getSubpart();
         }
 
@@ -379,7 +379,7 @@ public interface Selector {
         public Range getRange() {
             return right.getRange();
         }
-        
+
         @Override
         public Selector optimizedBaseCheck() {
             return new ChildOrParentSelector(left, link, right.optimizedBaseCheck(), type);
@@ -413,6 +413,7 @@ public interface Selector {
          * @param env The environment to check
          * @return {@code true} if all conditions apply, false otherwise.
          */
+        @Override
         public boolean matches(Environment env) {
             if (conds == null) return true;
             for (Condition c : conds) {
@@ -426,6 +427,10 @@ public interface Selector {
             return true;
         }
 
+        /**
+         * Returns the list of conditions.
+         * @return the list of conditions
+         */
         public List<Condition> getConditions() {
             if (conds == null) {
                 return Collections.emptyList();
@@ -447,7 +452,7 @@ public interface Selector {
         }
 
         @Override
-        public String getSubpart() {
+        public Subpart getSubpart() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -469,10 +474,10 @@ public interface Selector {
 
     public static class GeneralSelector extends OptimizedGeneralSelector {
 
-        public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
+        public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, Subpart subpart) {
             super(base, zoom, conds, subpart);
         }
-        
+
         public boolean matchesConditions(Environment e) {
             return super.matches(e);
         }
@@ -487,13 +492,13 @@ public interface Selector {
             return matchesBase(e) && super.matches(e);
         }
     }
-    
+
     public static class OptimizedGeneralSelector extends AbstractSelector {
         public final String base;
         public final Range range;
-        public final String subpart;
+        public final Subpart subpart;
 
-        public OptimizedGeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
+        public OptimizedGeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, Subpart subpart) {
             super(conds);
             this.base = base;
             if (zoom != null) {
@@ -507,22 +512,22 @@ public interface Selector {
             } else {
                 range = Range.ZERO_TO_INFINITY;
             }
-            this.subpart = subpart;
+            this.subpart = subpart != null ? subpart : Subpart.DEFAULT_SUBPART;
         }
-        
-        public OptimizedGeneralSelector(String base, Range range, List<Condition> conds, String subpart) {
+
+        public OptimizedGeneralSelector(String base, Range range, List<Condition> conds, Subpart subpart) {
             super(conds);
             this.base = base;
             this.range = range;
-            this.subpart = subpart;
+            this.subpart = subpart != null ? subpart : Subpart.DEFAULT_SUBPART;
         }
-        
+
         public OptimizedGeneralSelector(GeneralSelector s) {
             this(s.base, s.range, s.conds, s.subpart);
         }
 
         @Override
-        public String getSubpart() {
+        public Subpart getSubpart() {
             return subpart;
         }
 
@@ -571,7 +576,7 @@ public interface Selector {
         public Selector optimizedBaseCheck() {
             throw new UnsupportedOperationException();
         }
-        
+
         public static Range fromLevel(int a, int b) {
             if (a > b)
                 throw new AssertionError();
@@ -590,10 +595,16 @@ public interface Selector {
 
         public static double level2scale(int lvl) {
             if (lvl < 0)
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("lvl must be >= 0 but is "+lvl);
             // preliminary formula - map such that mapnik imagery tiles of the same
             // or similar level are displayed at the given scale
             return 2.0 * Math.PI * R / Math.pow(2.0, lvl) / 2.56;
+        }
+
+        public static int scale2level(double scale) {
+            if (scale < 0)
+                throw new IllegalArgumentException("scale must be >= 0 but is "+scale);
+            return (int) Math.floor(Math.log(2 * Math.PI * R / 2.56 / scale) / Math.log(2));
         }
 
         @Override

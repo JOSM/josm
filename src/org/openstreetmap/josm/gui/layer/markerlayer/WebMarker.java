@@ -30,7 +30,7 @@ public class WebMarker extends ButtonMarker {
     private final URL webUrl;
 
     public WebMarker(LatLon ll, URL webUrl, MarkerLayer parentLayer, double time, double offset) {
-        super(ll, "web.png", parentLayer, time, offset);
+        super(ll, "web", parentLayer, time, offset);
         CheckParameterUtil.ensureParameterNotNull(webUrl, "webUrl");
         this.webUrl = webUrl;
     }
@@ -55,7 +55,7 @@ public class WebMarker extends ButtonMarker {
         WayPoint wpt = super.convertToWayPoint();
         GpxLink link = new GpxLink(webUrl.toString());
         link.type = "web";
-        wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
+        wpt.put(GpxConstants.META_LINKS, Collections.singleton(link));
         return wpt;
     }
 

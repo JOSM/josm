@@ -28,135 +28,92 @@ for my $arg (@ARGV ? @ARGV : @default)
     my $extends = "";
     while(my $l = <FILE>)
     {
-      if($l =~ /src\s*=\s*["'](.*?)["']/)
-      {
-        my $img = "styles/standard/$1";
-        $img = "styles/$1" if((!-f "images/$img") && -f "images/styles/$1");
-        $img = $1 if((!-f "images/$img") && -f "images/$1");
-        ++$icons{$img};
-      }
-      elsif($l =~ /icon\s*[:=]\s*["']([^+]+?)["']/)
+      next if $l =~ /NO-ICON/;
+      if($l =~ /icon\s*[:=]\s*["']([^+]+?)["']/)
       {
         ++$icons{$1};
       }
 
-      if($l =~ /(?:icon-image|repeat-image|fill-image)\s*:\s*\"?(.*?)\"?\s*;/)
+      if(($l =~ /(?:icon-image|repeat-image|fill-image)\s*:\s*(\"?(.*?)\"?)\s*;/) && ($1 ne "none"))
       {
-        my $img = "styles/standard/$1";
-        $img = "styles/$1" if((!-f "images/$img") && -f "images/styles/$1");
-        $img = $1 if((!-f "images/$img") && -f "images/$1");
+        my $val = $2;
+        my $img = "styles/standard/$val";
+        $img = "styles/$val" if((!-f "images/$img") && -f "images/styles/$val");
+        $img = $val if((!-f "images/$img") && -f "images/$val");
         ++$icons{$img};
       }
-      if($l =~ /ImageProvider\.get\(\"([^\"]*?)\"\)/)
+      if($l =~ /ImageProvider(?:\.get)?\(\"([^\"]*?)\"\)/)
       {
         my $i = $1;
-        $i .= ".png" if !($i =~ /\.png$/);
+        $i = "styles/standard/$i" if $i eq "misc/no_icon.png";
         ++$icons{$i};
       }
       while($l =~ /\/\*\s*ICON\s*\*\/\s*\"(.*?)\"/g)
       {
         my $i = $1;
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       while($l =~ /\/\*\s*ICON\((.*?)\)\s*\*\/\s*\"(.*?)\"/g)
       {
         my $i = "$1$2";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /new\s+ImageLabel\(\"(.*?)\"/)
       {
         my $i = "statusline/$1";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /createPreferenceTab\(\"(.*?)\"/)
       {
         my $i = "preferences/$1";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /ImageProvider\.get\(\"(.*?)\",\s*\"(.*?)\"\s*\)/)
       {
         my $i = "$1/$2";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /ImageProvider\.overlay\(.*?,\s*\"(.*?)\",/)
       {
         my $i = $1;
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /getCursor\(\"(.*?)\",\s*\"(.*?)\"/)
       {
         my $i = "cursor/modifier/$2";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
         $i = "cursor/$1";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /ImageProvider\.getCursor\(\"(.*?)\",\s*null\)/)
       {
         my $i = "cursor/$1";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /SideButton*\(\s*(?:mark)?tr\s*\(\s*\".*?\"\s*\)\s*,\s*\"(.*?)\"/)
       {
         my $i = "dialogs/$1";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /super\(\s*tr\(\".*?\"\),\s*\"(.*?)\"/s)
       {
         my $i = "$extends$1";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /super\(\s*trc\(\".*?\",\s*\".*?\"\),\s*\"(.*?)\"/s)
       {
         my $i = "$extends$1";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /audiotracericon\",\s*\"(.*?)\"/s)
       {
         my $i = "markers/$1";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
       if($l =~ /\"(.*?)\",\s*parentLayer/s)
       {
         my $i = "markers/$1";
-        $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
-      }
-      if($l =~ /allowedtypes\s+=.*\{(.*)\}/s)
-      {
-        my $t = $1;
-        while($t =~ /\"(.*?)\"/g)
-        {
-          ++$icons{"Mf_$1.png"};
-        }
-      }
-      if($l =~ /MODES\s+=.*\{(.*)\}/s)
-      {
-        my $t = $1;
-        while($t =~ /\"(.*?)\"/g)
-        {
-          ++$icons{"dialogs/autoscale/$1.png"};
-        }
-      }
-      if($l =~ /enum\s+DeleteMode\s*\{(.*)/s)
-      {
-        my $t = $1;
-        while($t =~ /\"(.*?)\"/g)
-        {
-          ++$icons{"cursor/modifier/$1.png"};
-        }
       }
       if($l =~ /\.setButtonIcons.*\{(.*)\}/)
       {
@@ -164,7 +121,6 @@ for my $arg (@ARGV ? @ARGV : @default)
         while($t =~ /\"(.*?)\"/g)
         {
           my $i = $1;
-          $i .= ".png" if !($i =~ /\.png$/);
           ++$icons{$i};
         }
       }
@@ -172,7 +128,7 @@ for my $arg (@ARGV ? @ARGV : @default)
       {
         $extends = "mapmode/";
       }
-      if($l =~ /extends ToggleDialog/)
+      elsif($l =~ /extends ToggleDialog/)
       {
         $extends = "dialogs/";
       }
@@ -183,7 +139,7 @@ for my $arg (@ARGV ? @ARGV : @default)
 
 my %haveicons;
 
-for($i = 1; my @ifiles = glob("images".("/*" x $i).".png"); ++$i)
+for($i = 1; my @ifiles = (glob("images".("/*" x $i).".png"), glob("images".("/*" x $i).".svg")); ++$i)
 {
   for my $ifile (sort @ifiles)
   {
@@ -194,8 +150,17 @@ for($i = 1; my @ifiles = glob("images".("/*" x $i).".png"); ++$i)
 
 for my $img (sort keys %icons)
 {
-  print STDERR "File $img does not exist!\n" if(!-f "images/$img");
-  delete $haveicons{$img};
+  if($img =~ /\.(png|svg)/)
+  {
+    print STDERR "File $img does not exist!\n" if(!-f "images/$img");
+    delete $haveicons{$img};
+  }
+  else
+  {
+    print STDERR "File $img(.svg|.png) does not exist!\n" if(!-f "images/$img.png" && !-f "images/$img.svg");
+    delete $haveicons{"$img.svg"};
+    delete $haveicons{"$img.png"};
+  }
 }
 
 for my $img (sort keys %haveicons)

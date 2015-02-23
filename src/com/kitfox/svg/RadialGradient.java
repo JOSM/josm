@@ -120,11 +120,7 @@ public class RadialGradient extends Gradient
         Paint paint;
         Point2D.Float pt1 = new Point2D.Float(cx, cy);
         Point2D.Float pt2 = new Point2D.Float(fx, fy);
-        if (pt1.equals(pt2))
-        {
-            Color[] colors = getStopColors();
-            paint = colors.length > 0 ? colors[0] : Color.black;
-        } else if (gradientUnits == GU_USER_SPACE_ON_USE)
+        if (gradientUnits == GU_USER_SPACE_ON_USE)
         {
             paint = new com.kitfox.svg.batik.RadialGradientPaint(
                 pt1,

@@ -170,7 +170,7 @@ public final class CSSColors {
     public static Color get(String key) {
         return CSS_COLORS.get(key);
     }
-    
+
     private CSSColors() {
         // Hide default constructor for utils classes
     }

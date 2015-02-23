@@ -18,6 +18,7 @@ public class WMSRequest implements Comparable<WMSRequest> {
     // Result
     private State state;
     private BufferedImage image;
+    private WMSException exception;
 
     public WMSRequest(int xIndex, int yIndex, double pixelPerDegree, boolean real, boolean allowPartialCacheMatch) {
         this(xIndex, yIndex, pixelPerDegree, real, allowPartialCacheMatch, null);
@@ -32,10 +33,10 @@ public class WMSRequest implements Comparable<WMSRequest> {
         this.allowPartialCacheMatch = allowPartialCacheMatch;
     }
 
-
-    public void finish(State state, BufferedImage image) {
+    public void finish(State state, BufferedImage image, WMSException exception) {
         this.state = state;
         this.image = image;
+        this.exception = exception;
     }
 
     public int getXIndex() {
@@ -96,12 +97,29 @@ public class WMSRequest implements Comparable<WMSRequest> {
         return priority - o.priority;
     }
 
+    /**
+     * Replies the resulting state.
+     * @return the resulting state
+     */
     public State getState() {
         return state;
     }
 
+    /**
+     * Replies the resulting image, if any.
+     * @return the resulting image, or {@code null}
+     */
     public BufferedImage getImage() {
         return image;
+    }
+
+    /**
+     * Replies the resulting exception, if any.
+     * @return the resulting exception, or {@code null}
+     * @since 7425
+     */
+    public WMSException getException() {
+        return exception;
     }
 
     @Override

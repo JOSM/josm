@@ -29,46 +29,63 @@ public class WikiReader {
      * Constructs a new {@code WikiReader}.
      */
     public WikiReader() {
-        this.baseurl = Main.pref.get("help.baseurl", Main.getJOSMWebsite());
+        this(Main.pref.get("help.baseurl", Main.getJOSMWebsite()));
+    }
+
+    /**
+     * Returns the base URL of wiki.
+     * @return the base URL of wiki
+     * @since 7434
+     */
+    public final String getBaseUrlWiki() {
+        return baseurl + "/wiki/";
     }
 
     /**
      * Read the page specified by the url and return the content.
      *
-     * If the url is within the baseurl path, parse it as an trac wikipage and replace relative
-     * pathes etc..
+     * If the url is within the baseurl path, parse it as an trac wikipage and replace relative paths etc..
+     * @param url the URL to read
+     * @return The page as string
      *
      * @throws IOException Throws, if the page could not be loaded.
      */
     public String read(String url) throws IOException {
         URL u = new URL(url);
         try (BufferedReader in = Utils.openURLReader(u)) {
-            if (url.startsWith(baseurl) && !url.endsWith("?format=txt"))
+            boolean txt = url.endsWith("?format=txt");
+            if (url.startsWith(getBaseUrlWiki()) && !txt)
                 return readFromTrac(in, u);
-            return readNormal(in);
+            return readNormal(in, !txt);
         }
     }
 
+    /**
+     * Reads the localized version of the given wiki page.
+     * @param text The page title, without locale prefix
+     * @return the localized version of the given wiki page
+     * @throws IOException if any I/O error occurs
+     */
     public String readLang(String text) throws IOException {
         String languageCode;
         String res = "";
 
         languageCode = LanguageInfo.getWikiLanguagePrefix(LocaleType.DEFAULTNOTENGLISH);
         if(languageCode != null) {
-            res = readLang(new URL(baseurl + "/wiki/" + languageCode + text));
+            res = readLang(new URL(getBaseUrlWiki() + languageCode + text));
         }
 
         if(res.isEmpty()) {
             languageCode = LanguageInfo.getWikiLanguagePrefix(LocaleType.BASELANGUAGE);
             if(languageCode != null) {
-                res = readLang(new URL(baseurl + "/wiki/" + languageCode + text));
+                res = readLang(new URL(getBaseUrlWiki() + languageCode + text));
             }
         }
 
         if(res.isEmpty()) {
             languageCode = LanguageInfo.getWikiLanguagePrefix(LocaleType.ENGLISH);
             if(languageCode != null) {
-                res = readLang(new URL(baseurl + "/wiki/" + languageCode + text));
+                res = readLang(new URL(getBaseUrlWiki() + languageCode + text));
             }
         }
 
@@ -88,14 +105,14 @@ public class WikiReader {
         }
     }
 
-    private String readNormal(BufferedReader in) throws IOException {
+    private String readNormal(BufferedReader in, boolean html) throws IOException {
         StringBuilder b = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (!line.contains("[[TranslatedPages]]")) {
                 b.append(line.replaceAll(" />", ">")).append("\n");
             }
         }
-        return "<html>" + b + "</html>";
+        return html ? "<html>" + b + "</html>" : b.toString();
     }
 
     protected String readFromTrac(BufferedReader in, URL url) throws IOException {

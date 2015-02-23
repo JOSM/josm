@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.data.validation.tests.Addresses;
+import org.openstreetmap.josm.data.validation.tests.ApiCapabilitiesTest;
 import org.openstreetmap.josm.data.validation.tests.BarriersEntrances;
 import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.ConditionalKeys;
@@ -36,6 +37,7 @@ import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
 import org.openstreetmap.josm.data.validation.tests.DuplicatedWayNodes;
 import org.openstreetmap.josm.data.validation.tests.Highways;
+import org.openstreetmap.josm.data.validation.tests.InternetTags;
 import org.openstreetmap.josm.data.validation.tests.Lanes;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
@@ -120,6 +122,8 @@ public class OsmValidator implements LayerChangeListener {
         MapCSSTagChecker.class, // 3000 .. 3099
         Lanes.class, // 3100 .. 3199
         ConditionalKeys.class, // 3200 .. 3299
+        InternetTags.class, // 3300 .. 3399
+        ApiCapabilitiesTest.class, // 3400 .. 3499
     };
 
     private static Map<String, Test> allTestsMap;
@@ -149,7 +153,7 @@ public class OsmValidator implements LayerChangeListener {
      * @return The validator directory
      */
     public static String getValidatorDir() {
-        return Main.pref.getPreferencesDir() + "validator/";
+        return new File(Main.pref.getUserDataDirectory(), "validator").getAbsolutePath();
     }
 
     /**
@@ -169,7 +173,7 @@ public class OsmValidator implements LayerChangeListener {
     private void loadIgnoredErrors() {
         ignoredErrors.clear();
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
-            Path path = Paths.get(getValidatorDir() + "ignorederrors");
+            Path path = Paths.get(getValidatorDir()).resolve("ignorederrors");
             if (Files.exists(path)) {
                 try {
                     ignoredErrors.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
@@ -191,8 +195,8 @@ public class OsmValidator implements LayerChangeListener {
     }
 
     public static void saveIgnoredErrors() {
-        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                new FileOutputStream(getValidatorDir() + "ignorederrors"), StandardCharsets.UTF_8), false)) {
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(
+                new File(getValidatorDir(), "ignorederrors")), StandardCharsets.UTF_8), false)) {
             for (String e : ignoredErrors) {
                 out.println(e);
             }
@@ -269,7 +273,7 @@ public class OsmValidator implements LayerChangeListener {
      * @return An array of the test classes
      */
     public static Class<Test>[] getAllAvailableTests() {
-        return Arrays.copyOf(allAvailableTests, allAvailableTests.length);
+        return Utils.copyArray(allAvailableTests);
     }
 
     /**
@@ -277,7 +281,7 @@ public class OsmValidator implements LayerChangeListener {
      * the original value fixed for EPSG:4326 (10000) using heuristics (that is, test&amp;error
      * until most bugs were discovered while keeping the processing time reasonable)
      */
-    public final void initializeGridDetail() {
+    public static final void initializeGridDetail() {
         String code = Main.getProjection().toCode();
         if (Arrays.asList(ProjectionPreference.wgs84.allCodes()).contains(code)) {
             OsmValidator.griddetail = 10000;

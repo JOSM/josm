@@ -49,7 +49,7 @@ public class UnclosedWays extends Test {
         private final List<String> specialValues;
         /** The boolean indicating if special values must be ignored or considered only */
         private final boolean ignore;
-        
+
         /**
          * Constructs a new {@code UnclosedWaysCheck}.
          * @param code The unique numeric code for this check
@@ -59,7 +59,7 @@ public class UnclosedWays extends Test {
         public UnclosedWaysCheck(int code, String key, String engMessage) {
             this(code, key, engMessage, Collections.<String>emptyList());
         }
-        
+
         /**
          * Constructs a new {@code UnclosedWaysCheck}.
          * @param code The unique numeric code for this check
@@ -70,7 +70,7 @@ public class UnclosedWays extends Test {
         public UnclosedWaysCheck(int code, String key, String engMessage, List<String> ignoredValues) {
             this(code, key, engMessage, ignoredValues, true);
         }
-        
+
         /**
          * Constructs a new {@code UnclosedWaysCheck}.
          * @param code The unique numeric code for this check
@@ -86,7 +86,7 @@ public class UnclosedWays extends Test {
             this.specialValues = specialValues;
             this.ignore = ignore;
         }
-        
+
         /**
          * Returns the test error of the given way, if any.
          * @param w The way to check
@@ -105,7 +105,7 @@ public class UnclosedWays extends Test {
             }
             return null;
         }
-        
+
         protected boolean isValueErroneous(String value) {
             return value != null && ignore != specialValues.contains(value);
         }
@@ -142,13 +142,13 @@ public class UnclosedWays extends Test {
         new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"), Arrays.asList("water_slide", "climbing")),
         new UnclosedWaysCheck(1105, "tourism",   marktr("tourism type {0}"), Arrays.asList("attraction")),
         new UnclosedWaysCheck(1106, "shop",      marktr("shop type {0}")),
-        new UnclosedWaysCheck(1107, "leisure",   marktr("leisure type {0}"), Arrays.asList("track")),
+        new UnclosedWaysCheck(1107, "leisure",   marktr("leisure type {0}"), Arrays.asList("track", "slipway")),
         new UnclosedWaysCheck(1108, "waterway",  marktr("waterway type {0}"), Arrays.asList("riverbank"), false),
         new UnclosedWaysCheck(1109, "boundary", marktr("boundary type {0}")),
         new UnclosedWaysBooleanCheck(1120, "building", marktr("building")),
         new UnclosedWaysBooleanCheck(1130, "area",     marktr("area")),
     };
-    
+
     /**
      * Returns the set of checked OSM keys.
      * @return The set of checked OSM keys.

@@ -159,7 +159,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
             // It is not granted this works on every platform (tested OK on Windows)
             JList<E> list = getList();
             if (list != null) {
-                if (list.getPrototypeCellValue() != prototype) {
+                if (!prototype.equals(list.getPrototypeCellValue())) {
                     list.setPrototypeCellValue(prototype);
                 }
                 int height = list.getFixedCellHeight();
@@ -180,7 +180,8 @@ public class JosmComboBox<E> extends JComboBox<E> {
         private JTextComponent component;
         private PopupMenuLauncher launcher;
 
-        @Override public void propertyChange(PropertyChangeEvent evt) {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
             if ("editable".equals(evt.getPropertyName())) {
                 if (evt.getNewValue().equals(true)) {
                     enableMenu();
@@ -196,14 +197,12 @@ public class JosmComboBox<E> extends JComboBox<E> {
         }
 
         private void enableMenu() {
-            if (launcher == null) {
-                if (editor != null) {
-                    Component editorComponent = editor.getEditorComponent();
-                    if (editorComponent instanceof JTextComponent) {
-                        component = (JTextComponent) editorComponent;
-                        component.addMouseListener(this);
-                        launcher = TextContextualPopupMenu.enableMenuFor(component);
-                    }
+            if (launcher == null && editor != null) {
+                Component editorComponent = editor.getEditorComponent();
+                if (editorComponent instanceof JTextComponent) {
+                    component = (JTextComponent) editorComponent;
+                    component.addMouseListener(this);
+                    launcher = TextContextualPopupMenu.enableMenuFor(component, true);
                 }
             }
         }
@@ -228,10 +227,8 @@ public class JosmComboBox<E> extends JComboBox<E> {
         }
 
         private void processEvent(MouseEvent e) {
-            if (launcher != null && !e.isPopupTrigger()) {
-                if (launcher.getMenu().isShowing()) {
-                    launcher.getMenu().setVisible(false);
-                }
+            if (launcher != null && !e.isPopupTrigger() && launcher.getMenu().isShowing()) {
+                launcher.getMenu().setVisible(false);
             }
         }
     }

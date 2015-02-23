@@ -49,6 +49,8 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePan
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.io.OfflineAccessException;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
@@ -73,7 +75,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     }
 
     private PluginPreference() {
-        super("plugin", tr("Plugins"), tr("Configure available plugins."), false, new JTabbedPane());
+        super(/* ICON(preferences/) */ "plugin", tr("Plugins"), tr("Configure available plugins."), false, new JTabbedPane());
     }
 
     /**
@@ -113,20 +115,20 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
         return sb.toString();
     }
-    
+
     /**
      * Notifies user about result of a finished plugin download task.
      * @param parent The parent component
      * @param task The finished plugin download task
      * @since 6797
      */
-    public static void notifyDownloadResults(final Component parent, PluginDownloadTask task) {
+    public static void notifyDownloadResults(final Component parent, PluginDownloadTask task, boolean restartRequired) {
         final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
         final Collection<PluginInformation> failed = task.getFailedPlugins();
         final StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(buildDownloadSummary(task));
-        if (!downloaded.isEmpty()) {
+        if (restartRequired) {
             sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
         }
         sb.append("</html>");
@@ -273,6 +275,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         return model != null ? model.getPluginsScheduledForUpdateOrDownload() : null;
     }
 
+    public List<PluginInformation> getNewlyActivatedPlugins() {
+        return model != null ? model.getNewlyActivatedPlugins() : null;
+    }
+
     @Override
     public boolean ok() {
         if (! pluginPreferencesActivated)
@@ -282,7 +288,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             LinkedList<String> l = new LinkedList<>(model.getSelectedPluginNames());
             Collections.sort(l);
             Main.pref.putCollection("plugins", l);
-            return true;
+            if (!model.getNewlyDeactivatedPlugins().isEmpty()) return true;
+            for (PluginInformation pi : model.getNewlyActivatedPlugins()) {
+                if (!pi.canloadatruntime) return true;
+            }
         }
         return false;
     }
@@ -312,9 +321,21 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         Main.worker.submit(r);
     }
 
+    private static Collection<String> getOnlinePluginSites() {
+        Collection<String> pluginSites = new ArrayList<>(Main.pref.getPluginSites());
+        for (Iterator<String> it = pluginSites.iterator(); it.hasNext();) {
+            try {
+                OnlineResource.JOSM_WEBSITE.checkOfflineAccess(it.next(), Main.getJOSMWebsite());
+            } catch (OfflineAccessException ex) {
+                Main.warn(ex.getMessage());
+                it.remove();
+            }
+        }
+        return pluginSites;
+    }
+
     /**
      * The action for downloading the list of available plugins
-     *
      */
     class DownloadAvailablePluginsAction extends AbstractAction {
 
@@ -326,7 +347,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final ReadRemotePluginInformationTask task = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
+            Collection<String> pluginSites = getOnlinePluginSites();
+            if (pluginSites.isEmpty()) {
+                return;
+            }
+            final ReadRemotePluginInformationTask task = new ReadRemotePluginInformationTask(pluginSites);
             Runnable continuation = new Runnable() {
                 @Override
                 public void run() {
@@ -344,11 +369,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             Main.worker.submit(task);
             Main.worker.submit(continuation);
         }
+
     }
 
     /**
-     * The action for downloading the list of available plugins
-     *
+     * The action for updating the list of selected plugins
      */
     class UpdateSelectedPluginsAction extends AbstractAction {
         public UpdateSelectedPluginsAction() {
@@ -386,7 +411,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     tr("Update plugins")
                     );
             // the async task for downloading plugin information
-            final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
+            final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(getOnlinePluginSites());
 
             // to be run asynchronously after the plugin download
             //
@@ -395,7 +420,14 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 public void run() {
                     if (pluginDownloadTask.isCanceled())
                         return;
-                    notifyDownloadResults(pnlPluginPreferences, pluginDownloadTask);
+                    boolean restartRequired = false;
+                    for (PluginInformation pi : pluginDownloadTask.getDownloadedPlugins()) {
+                        if (!model.getNewlyActivatedPlugins().contains(pi) || !pi.canloadatruntime) {
+                            restartRequired = true;
+                            break;
+                        }
+                    }
+                    notifyDownloadResults(pnlPluginPreferences, pluginDownloadTask, restartRequired);
                     model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
                     model.clearPendingPlugins(pluginDownloadTask.getDownloadedPlugins());
                     GuiHelper.runInEDT(new Runnable() {
@@ -417,7 +449,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     // select plugins which actually have to be updated
                     //
                     Iterator<PluginInformation> it = toUpdate.iterator();
-                    while(it.hasNext()) {
+                    while (it.hasNext()) {
                         PluginInformation pi = it.next();
                         if (!pi.isUpdateRequired()) {
                             it.remove();
@@ -571,4 +603,6 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             return ret;
         }
     }
+
+
 }

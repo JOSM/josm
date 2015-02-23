@@ -34,6 +34,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -65,13 +66,16 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
+import org.openstreetmap.josm.gui.mappaint.StyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
@@ -93,7 +97,7 @@ public class MapPaintDialog extends ToggleDialog {
     protected JCheckBox cbWireframe;
 
     public static final JosmAction PREFERENCE_ACTION = PreferencesAction.forPreferenceSubTab(
-            tr("Map paint preferences"), null, MapPaintPreference.class, "dialogs/mappaintpreference");
+            tr("Map paint preferences"), null, MapPaintPreference.class, /* ICON */ "dialogs/mappaintpreference");
 
     /**
      * Constructs a new {@code MapPaintDialog}.
@@ -440,7 +444,7 @@ public class MapPaintDialog extends ToggleDialog {
                 return;
             final StyleSource s = model.getRow(sel);
 
-            JFileChooserManager fcm = new JFileChooserManager(false, "mappaint.clone-style.lastDirectory", System.getProperty("user.home"));
+            FileChooserManager fcm = new FileChooserManager(false, "mappaint.clone-style.lastDirectory", System.getProperty("user.home"));
             String suggestion = fcm.getInitialDirectory() + File.separator + s.getFileNamePart();
 
             FileFilter ff;
@@ -451,7 +455,7 @@ public class MapPaintDialog extends ToggleDialog {
             }
             fcm.createFileChooser(false, null, Arrays.asList(ff, FileFilterAllFiles.getInstance()), ff, JFileChooser.FILES_ONLY)
                     .getFileChooser().setSelectedFile(new File(suggestion));
-            JFileChooser fc = fcm.openFileChooser();
+            AbstractFileChooser fc = fcm.openFileChooser();
             if (fc == null)
                 return;
             Main.worker.submit(new SaveToFileTask(s, fc.getSelectedFile()));
@@ -611,7 +615,7 @@ public class MapPaintDialog extends ToggleDialog {
 
         private void buildSourcePanel(StyleSource s, JPanel p) {
             JosmTextArea txtSource = new JosmTextArea();
-            txtSource.setFont(new Font("Monospaced", txtSource.getFont().getStyle(), txtSource.getFont().getSize()));
+            txtSource.setFont(GuiHelper.getMonospacedFont(txtSource));
             txtSource.setEditable(false);
             p.add(new JScrollPane(txtSource), GBC.std().fill());
 
@@ -632,7 +636,7 @@ public class MapPaintDialog extends ToggleDialog {
 
         private void buildErrorsPanel(StyleSource s, JPanel p) {
             JosmTextArea txtErrors = new JosmTextArea();
-            txtErrors.setFont(new Font("Monospaced", txtErrors.getFont().getStyle(), txtErrors.getFont().getSize()));
+            txtErrors.setFont(GuiHelper.getMonospacedFont(txtErrors));
             txtErrors.setEditable(false);
             p.add(new JScrollPane(txtErrors), GBC.std().fill());
             for (Throwable t : s.getErrors()) {
@@ -666,6 +670,27 @@ public class MapPaintDialog extends ToggleDialog {
         public MapPaintPopup() {
             add(reloadAction);
             add(new SaveAsAction());
+
+            JMenu setMenu = new JMenu(tr("Style settings"));
+            setMenu.setIcon(ImageProvider.overlay(ImageProvider.get("preference"),
+                ImageProvider.get("dialogs/mappaint", "pencil"),
+                ImageProvider.OverlayPosition.SOUTHEAST));
+            setMenu.setToolTipText(tr("Customize the style"));
+            add(setMenu);
+
+            int sel = tblStyles.getSelectionModel().getLeadSelectionIndex();
+            StyleSource style = null;
+            if (sel >= 0 && sel < model.getRowCount()) {
+                style = model.getRow(sel);
+            }
+            if (style == null || style.settings.isEmpty()) {
+                setMenu.setEnabled(false);
+            } else {
+                for (StyleSetting s : style.settings) {
+                    s.addMenuEntry(setMenu);
+                }
+            }
+
             addSeparator();
             add(new InfoAction());
         }

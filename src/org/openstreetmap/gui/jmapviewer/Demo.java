@@ -57,12 +57,8 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         treeMap = new JMapViewerTree("Zones");
 
         // Listen to the map viewer for user operations so components will
-        // recieve events and update
+        // receive events and update
         map().addJMVListener(this);
-
-        // final JMapViewer map = new JMapViewer(new MemoryTileCache(),4);
-        // map.setTileLoader(new OsmFileCacheTileLoader(map));
-        // new DefaultMapController(map);
 
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,8 +89,12 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
                 map().setDisplayToFitMapMarkers();
             }
         });
-        JComboBox<TileSource> tileSourceSelector = new JComboBox<>(new TileSource[] { new OsmTileSource.Mapnik(),
-                new OsmTileSource.CycleMap(), new BingAerialTileSource(), new MapQuestOsmTileSource(), new MapQuestOpenAerialTileSource() });
+        JComboBox<TileSource> tileSourceSelector = new JComboBox<>(new TileSource[] {
+                new OsmTileSource.Mapnik(),
+                new OsmTileSource.CycleMap(),
+                new BingAerialTileSource(),
+                new MapQuestOsmTileSource(),
+                new MapQuestOpenAerialTileSource() });
         tileSourceSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 map().setTileSource((TileSource) e.getItem());
@@ -148,7 +148,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         });
         panelBottom.add(showTileGrid);
         final JCheckBox showZoomControls = new JCheckBox("Show zoom controls");
-        showZoomControls.setSelected(map().getZoomContolsVisible());
+        showZoomControls.setSelected(map().getZoomControlsVisible());
         showZoomControls.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 map().setZoomContolsVisible(showZoomControls.isSelected());

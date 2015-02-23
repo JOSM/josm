@@ -31,9 +31,6 @@ public class PushbackTokenizer {
             return end;
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString() {
             return "Range [start=" + start + ", end=" + end + "]";

@@ -153,16 +153,26 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
      * Constructs a new {@code AutoCompletingTextField}.
      */
     public AutoCompletingTextField() {
-        init();
+        this(0);
     }
 
     /**
      * Constructs a new {@code AutoCompletingTextField}.
-     * @param columns the number of columns to use to calculate the preferred width; 
+     * @param columns the number of columns to use to calculate the preferred width;
      * if columns is set to zero, the preferred width will be whatever naturally results from the component implementation
      */
     public AutoCompletingTextField(int columns) {
-        super(columns);
+        this(columns, true);
+    }
+
+    /**
+     * Constructs a new {@code AutoCompletingTextField}.
+     * @param columns the number of columns to use to calculate the preferred width;
+     * if columns is set to zero, the preferred width will be whatever naturally results from the component implementation
+     * @param undoRedo Enables or not Undo/Redo feature. Not recommended for table cell editors, unless each cell provides its own editor
+     */
+    public AutoCompletingTextField(int columns, boolean undoRedo) {
+        super(null, null, columns, undoRedo);
         init();
     }
 

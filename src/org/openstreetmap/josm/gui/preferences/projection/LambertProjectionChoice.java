@@ -27,7 +27,7 @@ public class LambertProjectionChoice extends ListProjectionChoice {
      * Constructs a new {@code LambertProjectionChoice}.
      */
     public LambertProjectionChoice() {
-        super(tr("Lambert 4 Zones (France)"), "core:lambert", lambert4zones, tr("Lambert CC Zone"));
+        super(tr("Lambert 4 Zones (France)"), /* NO-ICON */ "core:lambert", lambert4zones, tr("Lambert CC Zone"));
     }
 
     private class LambertCBPanel extends CBPanel {

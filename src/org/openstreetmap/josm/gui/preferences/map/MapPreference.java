@@ -27,7 +27,7 @@ public final class MapPreference extends DefaultTabPreferenceSetting {
     }
     
     private MapPreference() {
-        super("map", tr("Map Settings"), tr("Settings for the map projection and data interpretation."), false, new JTabbedPane());
+        super(/* ICON(preferences/) */ "map", tr("Map Settings"), tr("Settings for the map projection and data interpretation."), false, new JTabbedPane());
     }
     
     @Override

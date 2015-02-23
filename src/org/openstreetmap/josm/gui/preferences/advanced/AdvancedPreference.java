@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -44,6 +45,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -63,7 +65,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
 
     private AdvancedPreference() {
-        super("advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
+        super(/* ICON(preferences/) */ "advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
     }
 
     @Override
@@ -195,7 +197,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                 return tr("JOSM custom settings files (*.xml)");
             }
         };
-        JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(!saveFileFlag, !saveFileFlag, title, filter, JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
+        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(!saveFileFlag, !saveFileFlag, title, filter,
+                JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
         if (fc != null) {
             File[] sel = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
             if (sel.length==1 && !sel[0].getName().contains(".")) sel[0]=new File(sel[0].getAbsolutePath()+".xml");
@@ -286,7 +289,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             }
             PrefEntry en = new PrefEntry(e.getKey(), value, def, false);
             // after changes we have nondefault value. Value is changed if is not equal to old value
-            if ( !Preferences.isEqual(old, value) ) {
+            if (!Objects.equals(old, value)) {
                 en.markAsChanged();
             }
             data.add(en);
@@ -363,7 +366,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                         }
                    }
                 }
-                for (File f: Main.pref.getPreferencesDirFile().listFiles()) {
+                for (File f: Main.pref.getPreferencesDirectory().listFiles()) {
                    String s = f.getName();
                    int idx = s.indexOf('_');
                    if (idx>=0) {

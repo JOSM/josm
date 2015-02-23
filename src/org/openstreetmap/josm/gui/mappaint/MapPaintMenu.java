@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -32,11 +33,12 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
         private JCheckBoxMenuItem button;
 
         public MapPaintAction(StyleSource style) {
-            super(style.getDisplayString(), style.icon == null ? null : ImageProvider.getIfAvailable(style.icon),
+            super(style.getDisplayString(), style.getIconProvider(),
                     tr("Select the map painting styles"), null, true, "mappaint/" + style.getDisplayString(), true);
             this.button = new StayOpenCheckBoxMenuItem(this);
             this.style = style;
             updateButton();
+            putValue("help", ht("/Dialog/MapPaint"));
         }
 
         private void updateButton() {
@@ -82,8 +84,9 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
      */
     public MapPaintMenu() {
         super(tr("Map Paint Styles"));
-        setIcon(ImageProvider.get("dialogs", "mapstyle"));
+        setIcon(new ImageProvider("dialogs", "mapstyle").setSize(ImageProvider.ImageSizes.MENU).get());
         MapPaintStyles.addMapPaintSylesUpdateListener(this);
+        putClientProperty("help", ht("/Dialog/MapPaint"));
     }
 
     @Override

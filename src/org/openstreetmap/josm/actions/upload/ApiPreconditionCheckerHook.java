@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
@@ -24,13 +25,13 @@ public class ApiPreconditionCheckerHook implements UploadHook {
     public boolean checkUpload(APIDataSet apiData) {
         OsmApi api = OsmApi.getOsmApi();
         try {
+            if (Main.isOffline(OnlineResource.OSM_API)) {
+                return false;
+            }
             // FIXME: this should run asynchronously and a progress monitor
             // should be displayed.
             api.initialize(NullProgressMonitor.INSTANCE);
-            long maxNodes = 0;
-            if (api.getCapabilities().isDefined("waynodes", "maximum")) {
-                maxNodes = api.getCapabilities().getLong("waynodes","maximum");
-            }
+            long maxNodes = api.getCapabilities().getMaxWayNodes();
             if (maxNodes > 0) {
                 if( !checkMaxNodes(apiData.getPrimitivesToAdd(), maxNodes))
                     return false;
@@ -39,7 +40,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                 if( !checkMaxNodes(apiData.getPrimitivesToDelete(), maxNodes))
                     return false;
             }
-        } catch(OsmTransferCanceledException e){
+        } catch (OsmTransferCanceledException e) {
             return false;
         } catch (OsmApiInitializationException e) {
             ExceptionDialogUtil.explainOsmTransferException(e);

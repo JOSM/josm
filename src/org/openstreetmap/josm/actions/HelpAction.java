@@ -13,17 +13,23 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Open a help browser and displays lightweight online help.
- *
+ * @since 155
  */
 public class HelpAction extends AbstractAction {
 
+    /**
+     * Constructs a new {@code HelpAction}.
+     */
     public HelpAction() {
-        super(tr("Help"), ImageProvider.get("help"));
+        super(tr("Help"));
+        new ImageProvider("help").getResource().getImageIcon(this);
         putValue("toolbar", "help");
+        setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
     }
 
     @Override

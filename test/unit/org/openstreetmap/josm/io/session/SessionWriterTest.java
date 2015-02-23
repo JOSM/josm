@@ -11,17 +11,14 @@ import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
-import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Pair;
@@ -78,11 +75,8 @@ public class SessionWriterTest {
      */
     @BeforeClass
     public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
+        JOSMFixture.createUnitTestFixture().init(true);
         ProjectionPreference.setProjection();
-        Main.toolbar = new ToolbarPreferences();
-        new MainApplication();
-        Main.main.createMapFrame(null, null);
     }
 
     private void testWrite(List<Layer> layers, final boolean zip) throws IOException {

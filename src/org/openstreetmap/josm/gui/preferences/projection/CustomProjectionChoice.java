@@ -45,7 +45,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
      * Constructs a new {@code CustomProjectionChoice}.
      */
     public CustomProjectionChoice() {
-        super(tr("Custom Projection"), "core:custom");
+        super(tr("Custom Projection"), /* NO-ICON */ "core:custom");
     }
 
     private static class PreferencePanel extends JPanel {
@@ -101,14 +101,14 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
                         test.update(input.getText());
                     } catch (ProjectionConfigurationException ex) {
                         error = ex.getMessage();
-                        valStatus.setIcon(ImageProvider.get("data", "error.png"));
+                        valStatus.setIcon(ImageProvider.get("data", "error"));
                         valStatus.setVisible(true);
                         errorsPanel.setText(error);
                         errorsPanel.setVisible(true);
                         return false;
                     }
                     errorsPanel.setVisible(false);
-                    valStatus.setIcon(ImageProvider.get("misc", "green_check.png"));
+                    valStatus.setIcon(ImageProvider.get("misc", "green_check"));
                     valStatus.setVisible(true);
                     return true;
                 }
@@ -187,7 +187,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Built-in:")+" ");
             s.append(listKeys(Projections.nadgrids)+"<br>");
             s.append("<b>+bounds=</b>minlon,minlat,maxlon,maxlat - <i>"+tr("Projection bounds (in degrees)")+"</i><br>");
-            s.append("<b>+wmssrs=</b>EPSG:123456 - <i>"+tr("WMS SRS (EPSG code)")+"</i><br>");
+            s.append("<b>+wmssrs=</b>EPSG:123456 - <i>"+tr("Sets the SRS=... parameter in the WMS request")+"</i><br>");
 
             return new HtmlPanel(s.toString());
         }
@@ -231,7 +231,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
     @Override
     public Collection<String> getPreferences(JPanel panel) {
         if (!(panel instanceof PreferencePanel)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Unsupported panel: "+panel);
         }
         PreferencePanel prefPanel = (PreferencePanel) panel;
         String pref = prefPanel.input.getText();

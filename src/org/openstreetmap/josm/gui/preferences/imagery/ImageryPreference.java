@@ -82,7 +82,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     private ImageryPreference() {
-        super("imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"), false, new JTabbedPane());
+        super(/* ICON(preferences/) */ "imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"), false, new JTabbedPane());
     }
 
     private ImageryProvidersPanel imageryProviders;
@@ -152,7 +152,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         ImageryLayerInfo.instance.load();
         Main.main.menu.imageryMenu.refreshOffsetMenu();
         OffsetBookmark.saveBookmarks();
-        
+
         DownloadDialog.getInstance().refreshTileSources();
 
         boolean commonRestartRequired = commonSettings.saveSettings();
@@ -183,8 +183,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     /**
      * Gets a server URL in the preferences dialog. Used by plugins.
      *
-     * @param server
-     *            The server name
+     * @param server The server name
      * @return The server URL
      */
     public String getServerUrl(String server) {
@@ -204,6 +203,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         public final JTable activeTable;
         /** The table of default providers **/
         public final JTable defaultTable;
+        /** The selection listener synchronizing map display with table of default providers **/
+        private final DefListSelectionListener defaultTableListener;
         /** The map displaying imagery bounds of selected default providers **/
         public final JMapViewer defaultMap;
 
@@ -225,11 +226,15 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         private final PreferenceTabbedPane gui;
         private final ImageryLayerInfo layerInfo;
 
-        private static class ImageryTableCellRenderer extends DefaultTableCellRenderer {
+        /**
+         * class to render the URL information of Imagery source
+         * @since 8065
+         */
+        private static class ImageryURLTableCellRenderer extends DefaultTableCellRenderer {
 
             private List<ImageryInfo> layers;
 
-            public ImageryTableCellRenderer(List<ImageryInfo> layers) {
+            public ImageryURLTableCellRenderer(List<ImageryInfo> layers) {
                 this.layers = layers;
             }
 
@@ -252,7 +257,28 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                             break;
                         }
                     }
+                    label.setToolTipText((String)value);
                 }
+                return label;
+            }
+        }
+
+        /**
+         * class to render the name information of Imagery source
+         * @since 8064
+         */
+        private static class ImageryNameTableCellRenderer extends DefaultTableCellRenderer {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean
+                    isSelected, boolean hasFocus, int row, int column) {
+                ImageryInfo info = (ImageryInfo) value;
+                JLabel label = (JLabel) super.getTableCellRendererComponent(
+                        table, info.getName(), isSelected, hasFocus, row, column);
+                label.setBackground(Main.pref.getUIColor("Table.background"));
+                if (isSelected) {
+                    label.setForeground(Main.pref.getUIColor("Table.foreground"));
+                }
+                label.setToolTipText(info.getToolTipText());
                 return label;
             }
         }
@@ -278,13 +304,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             activeTable.putClientProperty("terminateEditOnFocusLost", true);
 
             defaultModel = new ImageryDefaultLayerTableModel();
-            defaultTable = new JTable(defaultModel) {
-                @Override
-                public String getToolTipText(MouseEvent e) {
-                    java.awt.Point p = e.getPoint();
-                    return (String) defaultModel.getValueAt(rowAtPoint(p), columnAtPoint(p));
-                }
-            };
+            defaultTable = new JTable(defaultModel);
 
             defaultModel.addTableModelListener(
                     new TableModelListener() {
@@ -306,13 +326,14 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             TableColumnModel mod = defaultTable.getColumnModel();
             mod.getColumn(2).setPreferredWidth(800);
-            mod.getColumn(2).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getLayers()));
+            mod.getColumn(2).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getLayers()));
             mod.getColumn(1).setPreferredWidth(400);
+            mod.getColumn(1).setCellRenderer(new ImageryNameTableCellRenderer());
             mod.getColumn(0).setPreferredWidth(50);
 
             mod = activeTable.getColumnModel();
             mod.getColumn(1).setPreferredWidth(800);
-            mod.getColumn(1).setCellRenderer(new ImageryTableCellRenderer(layerInfo.getDefaultLayers()));
+            mod.getColumn(1).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getDefaultLayers()));
             mod.getColumn(0).setPreferredWidth(200);
 
             RemoveEntryAction remove = new RemoveEntryAction();
@@ -330,7 +351,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             defaultMap.setMinimumSize(new Dimension(100, 200));
             add(defaultMap, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
 
-            defaultTable.getSelectionModel().addListSelectionListener(new DefListSelectionListener());
+            defaultTableListener = new DefListSelectionListener();
+            defaultTable.getSelectionModel().addListSelectionListener(defaultTableListener);
 
             defaultToolbar = new JToolBar(JToolBar.VERTICAL);
             defaultToolbar.setFloatable(false);
@@ -366,7 +388,6 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             //activeToolbar.add(edit); TODO
             activeToolbar.add(remove);
             add(activeToolbar, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
-
         }
 
         // Listener of default providers list selection
@@ -380,16 +401,20 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 this.mapPolygons = new HashMap<>();
             }
 
+            private void clearMap() {
+                defaultMap.removeAllMapRectangles();
+                defaultMap.removeAllMapPolygons();
+                mapRectangles.clear();
+                mapPolygons.clear();
+            }
+
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                // First index is set to -1 when the list is refreshed, so discard all map rectangles and polygons
+                // First index can be set to -1 when the list is refreshed, so discard all map rectangles and polygons
                 if (e.getFirstIndex() == -1) {
-                    defaultMap.removeAllMapRectangles();
-                    defaultMap.removeAllMapPolygons();
-                    mapRectangles.clear();
-                    mapPolygons.clear();
-                    // Only process complete (final) selection events
+                    clearMap();
                 } else if (!e.getValueIsAdjusting()) {
+                    // Only process complete (final) selection events
                     for (int i = e.getFirstIndex(); i<=e.getLastIndex(); i++) {
                         updateBoundsAndShapes(i);
                     }
@@ -452,8 +477,12 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             public NewEntryAction(ImageryInfo.ImageryType type) {
                 putValue(NAME, type.toString());
                 putValue(SHORT_DESCRIPTION, tr("Add a new {0} entry by entering the URL", type.toString()));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs",
-                            "add" + (ImageryInfo.ImageryType.WMS.equals(type) ? "_wms" : ImageryInfo.ImageryType.TMS.equals(type) ? "_tms" : "")));
+                String icon = /* ICON(dialogs/) */ "add";
+                if(ImageryInfo.ImageryType.WMS.equals(type))
+                    icon = /* ICON(dialogs/) */ "add_wms";
+                else if(ImageryInfo.ImageryType.TMS.equals(type))
+                    icon = /* ICON(dialogs/) */ "add_tms";
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", icon));
                 this.type = type;
             }
 
@@ -489,6 +518,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
         private class RemoveEntryAction extends AbstractAction implements ListSelectionListener {
 
+            /**
+             * Constructs a new {@code RemoveEntryAction}.
+             */
             public RemoveEntryAction() {
                 putValue(NAME, tr("Remove"));
                 putValue(SHORT_DESCRIPTION, tr("Remove entry"));
@@ -515,6 +547,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         }
 
         private class ActivateAction extends AbstractAction implements ListSelectionListener {
+
+            /**
+             * Constructs a new {@code ActivateAction}.
+             */
             public ActivateAction() {
                 putValue(NAME, tr("Activate"));
                 putValue(SHORT_DESCRIPTION, tr("copy selected defaults"));
@@ -578,6 +614,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         }
 
         private class ReloadAction extends AbstractAction {
+
+            /**
+             * Constructs a new {@code ReloadAction}.
+             */
             public ReloadAction() {
                 putValue(SHORT_DESCRIPTION, tr("reload defaults"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
@@ -587,6 +627,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             public void actionPerformed(ActionEvent evt) {
                 layerInfo.loadDefaults(true);
                 defaultModel.fireTableDataChanged();
+                defaultTable.getSelectionModel().clearSelection();
+                defaultTableListener.clearMap();
+                /* loading new file may change active layers */
+                activeModel.fireTableDataChanged();
             }
         }
 
@@ -700,7 +744,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 case 0:
                     return info.getCountryCode();
                 case 1:
-                    return info.getName();
+                    return info;
                 case 2:
                     return info.getExtendedUrl();
                 }
@@ -735,8 +779,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 JScrollPane scrollPane = new JScrollPane(htmlPane);
                 scrollPane.setPreferredSize(new Dimension(400, 400));
                 box.add(scrollPane);
-                int option = JOptionPane.showConfirmDialog(Main.parent, box, tr("Please abort if you are not sure"), JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
+                int option = JOptionPane.showConfirmDialog(Main.parent, box, tr("Please abort if you are not sure"),
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (option == JOptionPane.YES_OPTION)
                     return true;
             } catch (MalformedURLException e2) {
@@ -804,7 +848,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         /**
          * The table model for imagery offsets list
          */
-        class OffsetsBookmarksModel extends DefaultTableModel {
+        private class OffsetsBookmarksModel extends DefaultTableModel {
+
+            /**
+             * Constructs a new {@code OffsetsBookmarksModel}.
+             */
             public OffsetsBookmarksModel() {
                 setColumnIdentifiers(new String[] { tr("Projection"),  tr("Layer"), tr("Name"), tr("Easting"), tr("Northing"),});
             }

@@ -1,6 +1,15 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -9,18 +18,18 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 /**
  * Test that validates {@code lane:} tags.
  * @since 6592
  */
 public class Lanes extends Test.TagTest {
+
+    private static final String[] BLACKLIST = {
+        "source:lanes",
+        "note:lanes",
+        "proposed:lanes",
+        "piste:lanes",
+    };
 
     /**
      * Constructs a new {@code Lanes} test.
@@ -34,8 +43,9 @@ public class Lanes extends Test.TagTest {
     }
 
     protected void checkNumberOfLanesByKey(final OsmPrimitive p, String lanesKey, String message) {
-        final Collection<String> keysForPattern = Utils.filter(p.keySet(),
-                Predicates.stringContainsPattern(Pattern.compile(":" + lanesKey + "$")));
+        final Collection<String> keysForPattern = new ArrayList<>(Utils.filter(p.keySet(),
+                Predicates.stringContainsPattern(Pattern.compile(":" + lanesKey + "$"))));
+        keysForPattern.removeAll(Arrays.asList(BLACKLIST));
         if (keysForPattern.size() < 1) {
             // nothing to check
             return;

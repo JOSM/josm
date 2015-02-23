@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -33,6 +32,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -41,17 +41,17 @@ import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
 /**
- * Open a file chooser dialog and select an file to import. Then call the gpx-import driver. Finally
- * open an internal frame into the main window with the gpx data shown.
+ * Open a file chooser dialog and select a file to import.
  *
  * @author imi
+ * @since 1146
  */
 public class OpenFileAction extends DiskAccessAction {
 
     /**
      * The {@link ExtensionFileFilter} matching .url files
      */
-    public static final ExtensionFileFilter urlFileFilter = new ExtensionFileFilter("url", "url", tr("URL Files") + " (*.url)");
+    public static final ExtensionFileFilter URL_FILE_FILTER = new ExtensionFileFilter("url", "url", tr("URL Files") + " (*.url)");
 
     /**
      * Create an open action. The name is "Open a file".
@@ -64,7 +64,7 @@ public class OpenFileAction extends DiskAccessAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JFileChooser fc = createAndOpenFileChooser(true, true, null);
+        AbstractFileChooser fc = createAndOpenFileChooser(true, true, null);
         if (fc == null)
             return;
         File[] files = fc.getSelectedFiles();
@@ -93,9 +93,11 @@ public class OpenFileAction extends DiskAccessAction {
     }
 
     public static class OpenFileTask extends PleaseWaitRunnable {
-        private List<File> files;
-        private List<File> successfullyOpenedFiles = new ArrayList<>();
-        private FileFilter fileFilter;
+        private final List<File> files;
+        private final List<File> successfullyOpenedFiles = new ArrayList<>();
+        private final Set<String> fileHistory = new LinkedHashSet<>();
+        private final Set<String> failedAll = new HashSet<>();
+        private final FileFilter fileFilter;
         private boolean canceled;
         private boolean recordHistory = false;
 
@@ -196,9 +198,11 @@ public class OpenFileAction extends DiskAccessAction {
              * Find the importer with the chosen file filter
              */
             FileImporter chosenImporter = null;
-            for (FileImporter importer : ExtensionFileFilter.importers) {
-                if (fileFilter == importer.filter) {
-                    chosenImporter = importer;
+            if (fileFilter != null) {
+                for (FileImporter importer : ExtensionFileFilter.importers) {
+                    if (fileFilter.equals(importer.filter)) {
+                        chosenImporter = importer;
+                    }
                 }
             }
             /**
@@ -255,7 +259,7 @@ public class OpenFileAction extends DiskAccessAction {
                             continue FILES;
                         }
                     }
-                    if (urlFileFilter.accept(f)) {
+                    if (URL_FILE_FILTER.accept(f)) {
                         urlFiles.add(f);
                     } else {
                         filesWithUnknownImporter.add(f);
@@ -268,25 +272,8 @@ public class OpenFileAction extends DiskAccessAction {
                 Collections.sort(importers);
                 Collections.reverse(importers);
 
-                Set<String> fileHistory = new LinkedHashSet<>();
-                Set<String> failedAll = new HashSet<>();
-
                 for (FileImporter importer : importers) {
-                    List<File> files = new ArrayList<>(importerMap.get(importer));
-                    importData(importer, files);
-                    // suppose all files will fail to load
-                    List<File> failedFiles = new ArrayList<>(files);
-
-                    if (recordHistory && !importer.isBatchImporter()) {
-                        // remove the files which didn't fail to load from the failed list
-                        failedFiles.removeAll(successfullyOpenedFiles);
-                        for (File f : successfullyOpenedFiles) {
-                            fileHistory.add(f.getCanonicalPath());
-                        }
-                        for (File f : failedFiles) {
-                            failedAll.add(f.getCanonicalPath());
-                        }
-                    }
+                    importData(importer, new ArrayList<>(importerMap.get(importer)));
                 }
 
                 for (File urlFile: urlFiles) {
@@ -303,15 +290,15 @@ public class OpenFileAction extends DiskAccessAction {
                         Main.error(e);
                     }
                 }
+            }
 
-                if (recordHistory) {
-                    Collection<String> oldFileHistory = Main.pref.getCollection("file-open.history");
-                    fileHistory.addAll(oldFileHistory);
-                    // remove the files which failed to load from the list
-                    fileHistory.removeAll(failedAll);
-                    int maxsize = Math.max(0, Main.pref.getInteger("file-open.history.max-size", 15));
-                    Main.pref.putCollectionBounded("file-open.history", maxsize, fileHistory);
-                }
+            if (recordHistory) {
+                Collection<String> oldFileHistory = Main.pref.getCollection("file-open.history");
+                fileHistory.addAll(oldFileHistory);
+                // remove the files which failed to load from the list
+                fileHistory.removeAll(failedAll);
+                int maxsize = Math.max(0, Main.pref.getInteger("file-open.history.max-size", 15));
+                Main.pref.putCollectionBounded("file-open.history", maxsize, fileHistory);
             }
         }
 
@@ -330,6 +317,19 @@ public class OpenFileAction extends DiskAccessAction {
                     getProgressMonitor().indeterminateSubTask(tr("Opening file ''{0}'' ...", f.getAbsolutePath()));
                     if (importer.importDataHandleExceptions(f, getProgressMonitor().createSubTaskMonitor(1, false))) {
                         successfullyOpenedFiles.add(f);
+                    }
+                }
+            }
+            if (recordHistory && !importer.isBatchImporter()) {
+                for (File f : files) {
+                    try {
+                        if (successfullyOpenedFiles.contains(f)) {
+                            fileHistory.add(f.getCanonicalPath());
+                        } else {
+                            failedAll.add(f.getCanonicalPath());
+                        }
+                    } catch (IOException e) {
+                        Main.warn(e);
                     }
                 }
             }

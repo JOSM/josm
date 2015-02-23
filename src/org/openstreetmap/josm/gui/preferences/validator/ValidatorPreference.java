@@ -30,7 +30,7 @@ public final class ValidatorPreference extends DefaultTabPreferenceSetting {
     }
 
     private ValidatorPreference() {
-        super("validator", tr("Data validator"),
+        super(/* ICON(preferences/) */ "validator", tr("Data validator"),
                 tr("An OSM data validator that checks for common errors made by users and editor programs."),
                 false, new JTabbedPane());
     }

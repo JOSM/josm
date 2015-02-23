@@ -31,6 +31,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -41,12 +42,15 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
@@ -82,6 +86,20 @@ public class NavigatableComponent extends JComponent implements Helpful {
          */
         void systemOfMeasurementChanged(String oldSoM, String newSoM);
     }
+
+    public Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
+        @Override
+        public boolean evaluate(OsmPrimitive prim) {
+            if (!prim.isSelectable()) return false;
+            // if it isn't displayed on screen, you cannot click on it
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+            try {
+                return !MapPaintStyles.getStyles().get(prim, getDist100Pixel(), NavigatableComponent.this).isEmpty();
+            } finally {
+                MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
+            }
+        }
+    };
 
     public static final IntegerProperty PROP_SNAP_DISTANCE = new IntegerProperty("mappaint.node.snap-distance", 10);
 
@@ -164,6 +182,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     private final Object paintRequestLock = new Object();
     private Rectangle paintRect = null;
     private Polygon paintPoly = null;
+
+    protected ViewportData initialViewport;
 
     /**
      * Constructs a new {@code NavigatableComponent}.
@@ -389,11 +409,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * Zoom to the given coordinate.
+     * Zoom to the given coordinate and scale.
+     *
      * @param newCenter The center x-value (easting) to zoom to.
      * @param newScale The scale to use.
      */
     public void zoomTo(EastNorth newCenter, double newScale) {
+        zoomTo(newCenter, newScale, false);
+    }
+
+    /**
+     * Zoom to the given coordinate and scale.
+     *
+     * @param newCenter The center x-value (easting) to zoom to.
+     * @param newScale The scale to use.
+     * @param initial true if this call initializes the viewport.
+     */
+    public void zoomTo(EastNorth newCenter, double newScale, boolean initial) {
         Bounds b = getProjection().getWorldBoundsLatLon();
         LatLon cl = Projections.inverseProject(newCenter);
         boolean changed = false;
@@ -429,30 +461,40 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
 
         if (!newCenter.equals(center) || (scale != newScale)) {
-            pushZoomUndo(center, scale);
-            zoomNoUndoTo(newCenter, newScale);
+            if (!initial) {
+                pushZoomUndo(center, scale);
+            }
+            zoomNoUndoTo(newCenter, newScale, initial);
         }
     }
 
     /**
      * Zoom to the given coordinate without adding to the zoom undo buffer.
+     *
      * @param newCenter The center x-value (easting) to zoom to.
      * @param newScale The scale to use.
+     * @param initial true if this call initializes the viewport.
      */
-    private void zoomNoUndoTo(EastNorth newCenter, double newScale) {
+    private void zoomNoUndoTo(EastNorth newCenter, double newScale, boolean initial) {
         if (!newCenter.equals(center)) {
             EastNorth oldCenter = center;
             center = newCenter;
-            firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
+            if (!initial) {
+                firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
+            }
         }
         if (scale != newScale) {
             double oldScale = scale;
             scale = newScale;
-            firePropertyChange(PROPNAME_SCALE, oldScale, newScale);
+            if (!initial) {
+                firePropertyChange(PROPNAME_SCALE, oldScale, newScale);
+            }
         }
 
-        repaint();
-        fireZoomChanged();
+        if (!initial) {
+            repaint();
+            fireZoomChanged();
+        }
     }
 
     public void zoomTo(EastNorth newCenter) {
@@ -540,6 +582,34 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 getProjection().latlon2eastNorth(box.getMax())));
     }
 
+    public void zoomTo(ViewportData viewport) {
+        if (viewport == null) return;
+        if (viewport.getBounds() != null) {
+            BoundingXYVisitor box = new BoundingXYVisitor();
+            box.visit(viewport.getBounds());
+            zoomTo(box);
+        } else {
+            zoomTo(viewport.getCenter(), viewport.getScale(), true);
+        }
+    }
+
+    /**
+     * Set the new dimension to the view.
+     */
+    public void zoomTo(BoundingXYVisitor box) {
+        if (box == null) {
+            box = new BoundingXYVisitor();
+        }
+        if (box.getBounds() == null) {
+            box.visit(getProjection().getWorldBoundsLatLon());
+        }
+        if (!box.hasExtend()) {
+            box.enlargeBoundingBox();
+        }
+
+        zoomTo(box.getBounds());
+    }
+
     private class ZoomData {
         final LatLon center;
         final double scale;
@@ -578,7 +648,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (!zoomUndoBuffer.isEmpty()) {
             ZoomData zoom = zoomUndoBuffer.pop();
             zoomRedoBuffer.push(new ZoomData(center, scale));
-            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale());
+            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale(), false);
         }
     }
 
@@ -586,7 +656,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (!zoomRedoBuffer.isEmpty()) {
             ZoomData zoom = zoomRedoBuffer.pop();
             zoomUndoBuffer.push(new ZoomData(center, scale));
-            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale());
+            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale(), false);
         }
     }
 

@@ -25,12 +25,13 @@ import org.apache.commons.codec.StringEncoder;
 /**
  * Encodes a string into a Cologne Phonetic value.
  * <p>
- * Implements the <a href="http://de.wikipedia.org/wiki/K%C3%B6lner_Phonetik">K&ouml;lner Phonetik</a>
- * (Cologne Phonetic) algorithm issued by Hans Joachim Postel in 1969.
+ * Implements the <a href="http://de.wikipedia.org/wiki/K%C3%B6lner_Phonetik">K&ouml;lner Phonetik</a> (Cologne
+ * Phonetic) algorithm issued by Hans Joachim Postel in 1969.
+ * </p>
  * <p>
- * The <i>K&ouml;lner Phonetik</i> is a phonetic algorithm which is optimized for the German language.
- * It is related to the well-known soundex algorithm.
- * <p>
+ * The <i>K&ouml;lner Phonetik</i> is a phonetic algorithm which is optimized for the German language. It is related to
+ * the well-known soundex algorithm.
+ * </p>
  *
  * <h2>Algorithm</h2>
  *
@@ -42,9 +43,9 @@ import org.apache.commons.codec.StringEncoder;
  * href="http://en.wikipedia.org/wiki/Germanic_umlaut">germanic umlauts</a>, removal of non alphabetical characters) the
  * letters of the supplied text are replaced by their phonetic code according to the following table.
  * <table border="1">
- * <caption style="caption-side: bottom"><small><i>(Source: <a href="http://de.wikipedia.org/wiki/K%C3%B6lner_Phonetik#Buchstabencodes">Wikipedia (de):
- * K&ouml;lner Phonetik -- Buchstabencodes</a>)</i></small></caption>
- * <tbody>
+ * <caption style="caption-side: bottom"><small><i>(Source: <a
+ * href="http://de.wikipedia.org/wiki/K%C3%B6lner_Phonetik#Buchstabencodes">Wikipedia (de): K&ouml;lner Phonetik --
+ * Buchstabencodes</a>)</i></small></caption> <tbody>
  * <tr>
  * <th>Letter</th>
  * <th>Context</th>
@@ -150,7 +151,8 @@ import org.apache.commons.codec.StringEncoder;
  *
  * <h4>Example:</h4>
  *
- * {@code "M}&uuml;{@code ller-L}&uuml;{@code denscheidt" => "MULLERLUDENSCHEIDT" => "6005507500206880022"}
+ * <code>"M</code>&uuml;<code>ller-L</code>&uuml;
+ * <code>denscheidt" =&gt; "MULLERLUDENSCHEIDT" =&gt; "6005507500206880022"</code>
  *
  * </li>
  *
@@ -158,7 +160,7 @@ import org.apache.commons.codec.StringEncoder;
  * <h3>Step 2:</h3>
  * Collapse of all multiple consecutive code digits.
  * <h4>Example:</h4>
- * {@code "6005507500206880022" => "6050750206802"}</li>
+ * <code>"6005507500206880022" =&gt; "6050750206802"</code></li>
  *
  * <li>
  * <h3>Step 3:</h3>
@@ -166,11 +168,13 @@ import org.apache.commons.codec.StringEncoder;
  * if they occur after removing the "0" digits.
  *
  * <h4>Example:</h4>
- * {@code "6050750206802" => "65752682"}</li>
+ * <code>"6050750206802" =&gt; "65752682"</code></li>
  *
  * </ul>
  *
+ * <p>
  * This class is thread-safe.
+ * </p>
  *
  * @see <a href="http://de.wikipedia.org/wiki/K%C3%B6lner_Phonetik">Wikipedia (de): K&ouml;lner Phonetik (in German)</a>
  * @since 1.5
@@ -309,7 +313,7 @@ public class ColognePhonetic implements StringEncoder {
      * In contrast to the initial description of the algorithm, this implementation does the encoding in one pass.
      * </p>
      *
-     * @param text
+     * @param text The source text to encode
      * @return the corresponding encoding according to the <i>K&ouml;lner Phonetik</i> algorithm
      */
     public String colognePhonetic(String text) {
