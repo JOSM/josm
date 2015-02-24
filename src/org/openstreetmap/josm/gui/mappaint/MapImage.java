@@ -68,7 +68,7 @@ public class MapImage {
         if (disImg instanceof BufferedImage) {
             disabledImgCache = (BufferedImage) disImg;
         } else {
-            disabledImgCache = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            disabledImgCache = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics g = disabledImgCache.getGraphics();
             g.drawImage(disImg, 0, 0, null);
             g.dispose();
