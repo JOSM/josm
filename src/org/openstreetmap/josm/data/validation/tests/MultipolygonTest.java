@@ -248,7 +248,7 @@ public class MultipolygonTest extends Test {
                             l.add(wOuter);
                             if (!area.equals(areaOuter)) {
                                 addError(r, new TestError(this, Severity.WARNING, !areaStyle ? tr("Style for outer way mismatches")
-                                : tr("Style for outer way mismatches polygon"),
+                                : tr("With the currently used mappaint style(s) the style for outer way mismatches polygon"),
                                 OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
                             } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
                                 addError(r, new TestError(this, Severity.WARNING, tr("Area style on outer way"), OUTER_STYLE,
