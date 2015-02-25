@@ -5750,7 +5750,7 @@
             <space />
             <key key="power" value="tower" />
             <text key="height" text="Height (meters)" />
-            <combo key="structure" text="Type of construction" values="lattice,tubular,solid " />
+            <combo key="structure" text="Type of construction" values="lattice,tubular,solid" />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
             <reference ref="ref_operator_branch" />
@@ -8045,7 +8045,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:enforcement" />
             <space />
             <key key="type" value="enforcement" />
-            <combo key="enforcement" text="Type of enforcement" values="maxheight,maxweight,maxspeed,mindistance,traffic_signals,check " />
+            <combo key="enforcement" text="Type of enforcement" values="maxheight,maxweight,maxspeed,mindistance,traffic_signals,check" />
             <text key="maxheight" text="Max. height (meters, only if enforcement=maxheight)" />
             <text key="maxweight" text="Max. weight (tonnes, only if enforcement=maxweight)" />
             <text key="maxspeed" text="Max. speed (km/h, only if enforcement=maxspeed)" />
