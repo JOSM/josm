@@ -8096,7 +8096,7 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway=path OR highway=track"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway"/>
                     <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
                     <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
                 </roles>
