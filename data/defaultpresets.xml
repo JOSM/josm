@@ -2735,13 +2735,13 @@
             </optional>
             <roles>
                 <role key="stop" text="Stop Position" requisite="optional" type="node" member_expression="public_transport=stop_position" />
-                <role key="platform" text="Platform" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
+                <role key="platform" text="Platform" requisite="optional" type="node,way,closedway,relation" member_expression="public_transport=platform" />
                 <role key="" text="Station or amenities" requisite="optional" type="node,way,closedway" member_expression="amenity|public_transport=station" />
             </roles>
         </item> <!-- Stop Area -->
         <separator/>
         <item name="Stop Position" type="node" icon="presets/barrier.png" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Stop_area" />
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Stop_position" />
             <space />
             <key key="public_transport" value="stop_position" />
             <text key="name" text="Name" />
