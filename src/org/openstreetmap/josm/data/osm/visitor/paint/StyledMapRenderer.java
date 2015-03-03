@@ -19,6 +19,7 @@ import java.awt.TexturePaint;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.font.LineMetrics;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
@@ -407,11 +408,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         } else if (text.haloRadius != null) {
             g.setStroke(new BasicStroke(2*text.haloRadius, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
             g.setColor(text.haloColor);
+            Shape textOutline;
             if (gv == null) {
                 FontRenderContext frc = g.getFontRenderContext();
-                gv = text.font.createGlyphVector(frc, s);
+                TextLayout tl = new TextLayout(s, text.font, frc);
+                textOutline = tl.getOutline(AffineTransform.getTranslateInstance(x, y));
+            } else {
+                textOutline = gv.getOutline(x, y);
             }
-            Shape textOutline = gv.getOutline(x, y);
             g.draw(textOutline);
             g.setStroke(new BasicStroke());
             g.setColor(text.color);
