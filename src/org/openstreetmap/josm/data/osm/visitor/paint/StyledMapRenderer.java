@@ -25,6 +25,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.text.Bidi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1203,7 +1204,17 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         FontRenderContext frc = g.getFontRenderContext();
-        GlyphVector gv = text.font.createGlyphVector(frc, name);
+        char[] chars = name.toCharArray();
+        int dirFlag = Bidi.DIRECTION_LEFT_TO_RIGHT;
+        if (Bidi.requiresBidi(chars, 0, chars.length)) {
+            Bidi bd = new Bidi(name, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+            if (bd.isRightToLeft()) {
+                dirFlag = Bidi.DIRECTION_RIGHT_TO_LEFT;
+            }
+        }
+        // only works for text that is completely left-to-right or completely
+        // right-to-left, not bi-directional text
+        GlyphVector gv = text.font.layoutGlyphVector(frc, chars, 0, chars.length, dirFlag);
 
         for (int i=0; i<gv.getNumGlyphs(); ++i) {
             Rectangle2D rect = gv.getGlyphLogicalBounds(i).getBounds2D();
