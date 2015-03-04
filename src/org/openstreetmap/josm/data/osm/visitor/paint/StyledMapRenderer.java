@@ -411,6 +411,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             g.setColor(text.haloColor);
             Shape textOutline;
             if (gv == null) {
+                if (s.isEmpty()) return;
                 FontRenderContext frc = g.getFontRenderContext();
                 TextLayout tl = new TextLayout(s, text.font, frc);
                 textOutline = tl.getOutline(AffineTransform.getTranslateInstance(x, y));
