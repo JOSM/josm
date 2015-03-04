@@ -58,7 +58,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
 
     @Override
     public String getTitle() {
-        return "Download OSM Notes";
+        return tr("Download OSM Notes");
     }
 
     @Override
@@ -82,16 +82,16 @@ public class DownloadNotesTask extends AbstractDownloadTask {
 
         @Override
         protected void finish() {
-            Main.debug("finish called in DownloadNotesTask");
             if (isCanceled() || isFailed()) {
-                Main.debug("was cancelled or failed");
                 return;
             }
 
             if (notesData == null) {
                 return;
             }
-            Main.debug("Notes downloaded: " + notesData.size());
+            if (Main.isDebugEnabled()) {
+                Main.debug("Notes downloaded: " + notesData.size());
+            }
 
             List<NoteLayer> noteLayers = null;
             if (Main.map != null) {
@@ -102,7 +102,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
                 layer = noteLayers.get(0);
                 layer.getNoteData().addNotes(notesData);
             } else {
-                layer = new NoteLayer(notesData, "Notes");
+                layer = new NoteLayer(notesData, tr("Notes"));
                 Main.main.addLayer(layer);
             }
         }
@@ -196,5 +196,4 @@ public class DownloadNotesTask extends AbstractDownloadTask {
             }
         }
     }
-
 }

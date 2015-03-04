@@ -86,7 +86,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     /** Creates a new toggle dialog for notes */
     public NotesDialog() {
-        super("Notes", "notes/note_open", "List of notes", null, 150);
+        super(tr("Notes"), "notes/note_open", tr("List of notes"), null, 150);
         addCommentAction = new AddCommentAction();
         closeAction = new CloseAction();
         newAction = new NewAction();
