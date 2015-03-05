@@ -149,9 +149,11 @@ class NotificationManager {
         @Override
         public void actionPerformed(ActionEvent e) {
             hideTimer.stop();
-            currentNotificationPanel.setVisible(false);
-            ((JFrame) Main.parent).getLayeredPane().remove(currentNotificationPanel);
-            currentNotificationPanel = null;
+            if (currentNotificationPanel != null) {
+                currentNotificationPanel.setVisible(false);
+                ((JFrame) Main.parent).getLayeredPane().remove(currentNotificationPanel);
+                currentNotificationPanel = null;
+            }
             pauseTimer.restart();
         }
     }
@@ -171,8 +173,10 @@ class NotificationManager {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            currentNotificationPanel.setNotificationBackground(PANEL_SEMITRANSPARENT);
-            currentNotificationPanel.repaint();
+            if (currentNotificationPanel != null) {
+                currentNotificationPanel.setNotificationBackground(PANEL_SEMITRANSPARENT);
+                currentNotificationPanel.repaint();
+            }
             startHideTimer();
         }
     }
