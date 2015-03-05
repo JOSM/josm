@@ -168,6 +168,11 @@ way[junction                   ][!highway][junction!=yes],
   throwOther: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
 }
 
+/* {0.tag} together with {1.tag}, see #10186 */
+*[highway=footway][bicycle=designated] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+}
+
 /*see #11127*/
 way[waterway][bridge=yes] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.tag}");
