@@ -131,6 +131,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         Tile tile;
         File tileCacheDir;
         File tileFile = null;
+        File tagsFile = null;
         Long fileMtime = null;
         Long now = null; // current time in milliseconds (keep consistent value for the whole run)
 
@@ -154,10 +155,12 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
             }
             now = System.currentTimeMillis();
             tileCacheDir = getSourceCacheDir(tile.getSource());
+            tileFile = getTileFile();
+            tagsFile = getTagsFile();
 
             loadTagsFromFile();
 
-            if (isTileFileValid() && (isNoTileAtZoom() || loadTileFromFile())) {
+            if (isCacheValid() && (isNoTileAtZoom() || loadTileFromFile())) {
                 log.log(Level.FINE, "TMS - found in tile cache: {0}", tile);
                 tile.setLoaded(true);
                 listener.tileLoadingFinished(tile, true);
@@ -286,7 +289,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
             return false;
         }
 
-        protected boolean isTileFileValid() {
+        protected boolean isCacheValid() {
             Long expires = null;
             try {
                 expires = Long.parseLong(tile.getValue("expires"));
@@ -304,10 +307,14 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                     // check for modification date only when tile file exists
                     // so handle properly the case, when only tags file exists
                     fileMtime = tileFile.lastModified();
-                    if (now - fileMtime > DEFAULT_EXPIRES_TIME) {
-                        log.log(Level.FINE, "TMS - Tile has expired, maximum file age reached {0}", tile);
-                        return false;
-                    }
+                } else if (tagsFile.exists()) {
+                    fileMtime = tagsFile.lastModified();
+                } else
+                    return false;
+
+                if (now - fileMtime > DEFAULT_EXPIRES_TIME) {
+                    log.log(Level.FINE, "TMS - Tile has expired, maximum file age reached {0}", tile);
+                    return false;
                 }
             }
             return true;
@@ -336,9 +343,9 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
             } catch (Exception e) {
                 log.log(Level.WARNING, "TMS - Error while loading image from tile cache: {0}; {1}", new Object[]{e.getMessage(), tile});
                 tileFile.delete();
-                File tileMetaData = getTagsFile();
-                if (tileMetaData.exists())
-                    tileMetaData.delete();
+                if (tagsFile.exists()) {
+                    tagsFile.delete();
+                }
                 tileFile = null;
                 fileMtime = null;
             }
@@ -453,7 +460,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         }
 
         protected boolean loadTagsFromFile() {
-            tileFile = getTileFile();
             File tagsFile = getTagsFile();
             try (BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(tagsFile), TAGS_CHARSET))) {
                 for (String line = f.readLine(); line != null; line = f.readLine()) {
