@@ -108,6 +108,27 @@ public class OsmTileLoader implements TileLoader {
         if (str != null) {
             tile.putValue("tile-info", str);
         }
+
+        Long lng = urlConn.getExpiration();
+        if (lng.equals(0L)) {
+            try {
+                str = urlConn.getHeaderField("Cache-Control");
+                if (str != null) {
+                    for (String token: str.split(",")) {
+                        if (token.startsWith("max-age=")) {
+                            lng = Math.min(
+                                    Long.parseLong(token.substring(8)),
+                                    86400 * 31 // cap max-age at one month
+                                    ) * 1000 +
+                                    System.currentTimeMillis();
+                        }
+                    }
+                }
+            } catch (NumberFormatException e) {} //ignore malformed Cache-Control headers
+        }
+        if (!lng.equals(0L)) {
+            tile.putValue("expires", lng.toString());
+        }
     }
 
     protected void prepareHttpUrlConnection(HttpURLConnection urlConn) {
