@@ -116,10 +116,7 @@ public class OsmTileLoader implements TileLoader {
                 if (str != null) {
                     for (String token: str.split(",")) {
                         if (token.startsWith("max-age=")) {
-                            lng = Math.min(
-                                    Long.parseLong(token.substring(8)),
-                                    86400 * 31 // cap max-age at one month
-                                    ) * 1000 +
+                            lng = Long.parseLong(token.substring(8)) * 1000 +
                                     System.currentTimeMillis();
                         }
                     }

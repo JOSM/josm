@@ -48,14 +48,19 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
 
     private static final Charset TAGS_CHARSET = Charset.forName("UTF-8");
 
-    private static final long DEFAULT_EXPIRES_TIME = 1000 * 60 * 60 * 24 * 7;
-
+    // Default expire time (i.e. maximum age of cached tile before refresh).
+    // Used when the server does not send an expires or max-age value in the http header.
+    protected static final long DEFAULT_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7 days
+    // Limit for the max-age value send by the server.
+    protected static final long EXPIRE_TIME_SERVER_LIMIT = 1000 * 60 * 60 * 24 * 28; // 4 weeks
+    // Absolute expire time limit. Cached tiles that are older will not be used,
+    // even if the refresh from the server fails.
+    protected static final long ABSOLUTE_EXPIRE_TIME_LIMIT = Long.MAX_VALUE; // unlimited
 
     protected String cacheDirBase;
 
     protected final Map<TileSource, File> sourceCacheDirMap;
 
-    protected long maxCacheFileAge = Long.MAX_VALUE;  // max. age not limited
 
     public static File getDefaultCacheDir() throws SecurityException {
         String tempDir = null;
@@ -199,7 +204,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         protected boolean loadOrUpdateTile() {
             try {
                 URLConnection urlConn = loadTileFromOsm(tile);
-                if (fileMtime != null && now - fileMtime <= maxCacheFileAge) {
+                if (fileMtime != null && now - fileMtime <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
                     switch (tile.getSource().getTileUpdate()) {
                     case IfModifiedSince:
                         urlConn.setIfModifiedSince(fileMtime);
@@ -235,7 +240,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                     tile.putValue("etag", urlConn.getHeaderField("ETag"));
                 }
                 if (urlConn instanceof HttpURLConnection && ((HttpURLConnection)urlConn).getResponseCode() == 304) {
-                    // If we are isModifiedSince or If-None-Match has been set
+                    // If isModifiedSince or If-None-Match has been set
                     // and the server answers with a HTTP 304 = "Not Modified"
                     switch (tile.getSource().getTileUpdate()) {
                     case IfModifiedSince:
@@ -291,28 +296,29 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
 
         protected boolean isCacheValid() {
             Long expires = null;
+            if (tileFile.exists()) {
+                fileMtime = tileFile.lastModified();
+            } else if (tagsFile.exists()) {
+                fileMtime = tagsFile.lastModified();
+            } else
+                return false;
+
             try {
                 expires = Long.parseLong(tile.getValue("expires"));
             } catch (NumberFormatException e) {}
 
-            if(expires != null && !expires.equals(0L)) {
-                // check by expire date set by server
+            // check by expire date set by server
+            if (expires != null && !expires.equals(0L)) {
+                // put a limit to the expire time (some servers send a value
+                // that is too large)
+                expires = Math.min(expires, fileMtime + EXPIRE_TIME_SERVER_LIMIT);
                 if (now > expires) {
                     log.log(Level.FINE, "TMS - Tile has expired -> not valid {0}", tile);
                     return false;
                 }
             } else {
                 // check by file modification date
-                if (tileFile.exists()) {
-                    // check for modification date only when tile file exists
-                    // so handle properly the case, when only tags file exists
-                    fileMtime = tileFile.lastModified();
-                } else if (tagsFile.exists()) {
-                    fileMtime = tagsFile.lastModified();
-                } else
-                    return false;
-
-                if (now - fileMtime > DEFAULT_EXPIRES_TIME) {
+                if (now - fileMtime > DEFAULT_EXPIRE_TIME) {
                     log.log(Level.FINE, "TMS - Tile has expired, maximum file age reached {0}", tile);
                     return false;
                 }
@@ -477,27 +483,6 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
 
             return true;
         }
-    }
-
-    public long getMaxFileAge() {
-        return maxCacheFileAge;
-    }
-
-    /**
-     * Sets the maximum age of the local cached tile in the file system. If a
-     * local tile is older than the specified file age
-     * {@link OsmFileCacheTileLoader} will connect to the tile server and check
-     * if a newer tile is available using the mechanism specified for the
-     * selected tile source/server.
-     *
-     * @param maxFileAge
-     *            maximum age in milliseconds
-     * @see #FILE_AGE_ONE_DAY
-     * @see #FILE_AGE_ONE_WEEK
-     * @see TileSource#getTileUpdate()
-     */
-    public void setCacheMaxFileAge(long maxFileAge) {
-        this.maxCacheFileAge = maxFileAge;
     }
 
     public String getCacheDirBase() {
