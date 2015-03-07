@@ -50,9 +50,9 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
 
     // Default expire time (i.e. maximum age of cached tile before refresh).
     // Used when the server does not send an expires or max-age value in the http header.
-    protected static final long DEFAULT_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7 days
+    protected static final long DEFAULT_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 7; // 7 days
     // Limit for the max-age value send by the server.
-    protected static final long EXPIRE_TIME_SERVER_LIMIT = 1000 * 60 * 60 * 24 * 28; // 4 weeks
+    protected static final long EXPIRE_TIME_SERVER_LIMIT = 1000L * 60 * 60 * 24 * 28; // 4 weeks
     // Absolute expire time limit. Cached tiles that are older will not be used,
     // even if the refresh from the server fails.
     protected static final long ABSOLUTE_EXPIRE_TIME_LIMIT = Long.MAX_VALUE; // unlimited
