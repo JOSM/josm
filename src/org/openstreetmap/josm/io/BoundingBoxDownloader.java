@@ -207,7 +207,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
 
     private Integer checkDaysClosed(Integer days) {
         if (days == null) {
-            days = Main.pref.getInteger("osm.notes.daysClosed", 1);
+            days = Main.pref.getInteger("osm.notes.daysClosed", 7);
         }
         if (days < -1) {
             Main.error("Requested days closed must be greater than -1");
