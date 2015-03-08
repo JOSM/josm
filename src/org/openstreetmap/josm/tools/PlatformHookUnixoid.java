@@ -485,9 +485,9 @@ public class PlatformHookUnixoid implements PlatformHook {
             Main.warn("extended font config - unable to find font config template file "+templateFile.toString());
             return;
         }
-        try {
+        try (FileInputStream fis = new FileInputStream(templateFile.toFile())) {
             Properties props = new Properties();
-            props.load(new FileInputStream(templateFile.toFile()));
+            props.load(fis);
             byte[] content = Files.readAllBytes(templateFile);
             File cachePath = Main.pref.getCacheDirectory();
             Path fontconfigFile = cachePath.toPath().resolve("fontconfig.properties");
