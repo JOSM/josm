@@ -2936,9 +2936,9 @@
             <key key="highway" value="bus_stop" />
             <optional>
                 <text key="name" text="Name" />
-                <combo key="shelter" text="Shelter" values="yes,no" />
-                <combo key="bench" text="Bench" values="yes,no" />
-                <combo key="tactile_paving" text="Tactile Paving" values="yes,no" />
+                <check key="shelter" text="Shelter" />
+                <check key="bench" text="Bench" />
+                <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             </optional>
         </item> <!-- Bus Stop -->
         <item name="Bus Platform" icon="presets/platform_bus.png" type="node,way,closedway" preset_name_label="true">
@@ -4241,7 +4241,7 @@
             <space />
             <key key="amenity" value="pharmacy" />
             <reference ref="name_operator_oh_wheelchair" />
-            <combo key="dispensing" text="Dispensing" values="yes,no" />
+            <check key="dispensing" text="Dispensing"/>
             <reference ref="link_contact_address_payment" />
         </item> <!-- Pharmacy -->
         <separator/>
@@ -4475,7 +4475,7 @@
                   zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=bench" />
             <space />
             <key key="amenity" value="bench" />
-            <combo key="backrest" text="Backrest" values="yes,no" />
+            <check key="backrest" text="Backrest" />
             <combo key="material" text="Material" values="stone,metal,wood,plastic" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             <combo key="seats" text="Amount of Seats" values="2,3,4,5,6,7,8,9,10" />
@@ -4504,9 +4504,9 @@
             <space />
             <key key="amenity" value="hunting_stand" />
             <combo key="height" text="Height" values="low,half,full,5,10,15,20" values_context="height" />
-            <combo key="shelter" text="Shelter" values="yes,no" />
-            <combo key="hide" text="Hide" values="yes,no" />
-            <combo key="lock" text="Lock" values="yes,no" />
+            <check key="shelter" text="Shelter" />
+            <check key="hide" text="Hide" />
+            <check key="lock" text="Lock" />
         </item> <!-- Hunting Stand -->
         <separator/>
         <item name="Drinking Water" icon="styles/standard/food/drinking_water.png" type="node" preset_name_label="true">
@@ -5195,7 +5195,7 @@
             <text key="depth" text="Depth in meters" />
             <text key="operator" text="Operator" />
             <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
-            <combo key="headframe" text="Visible Headframe" values="yes,no" />
+            <check key="headframe" text="Visible Headframe" />
             <check key="disused" text="Disused" />
         </item> <!-- Mineshaft -->
         <item name="Adit" icon="presets/adit.png" type="node" preset_name_label="true">
@@ -6658,7 +6658,7 @@
             <space />
             <key key="shop" value="medical_supply" />
             <reference ref="name_operator_oh_wheelchair" />
-            <combo key="dispensing" text="Dispensing" values="yes,no" />
+            <check key="dispensing" text="Dispensing" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Medical Supply -->
         <item name="Jewellery" icon="styles/standard/shop/jewelry.png" type="node,closedway" preset_name_label="true">
