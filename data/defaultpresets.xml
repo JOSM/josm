@@ -4347,7 +4347,7 @@
             <key key="amenity" value="post_box" />
             <text key="operator" text="Operator" />
             <text key="ref" text="Reference number" />
-            <combo key="collection_times" text="Collection times" delimiter="|" values="11:30|Mo-Fr 15:00,17:45,19:00,23:00; Sa 15:10; Su 10:30,23:00|Mo-Fr 09:00-12:00,17:15; Sa 14:00; Su,PH off" />
+            <combo key="collection_times" text="Collection times" delimiter="|" values="Mo-Sa 09:00|Mo-Fr 17:30; Sa 12:00|Mo-Fr 15:00,19:00; Sa 15:10; Su 10:30" />
             <check key="drive_through" text="Drive through" />
         </item> <!-- Post Box -->
         <item name="Telephone" icon="presets/telephone.png" type="node" preset_name_label="true">
