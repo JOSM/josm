@@ -762,10 +762,10 @@ public final class Geometry {
             EastNorth n1 = nodes.get((i+1) % nodes.size()).getEastNorth();
 
             if (n0 != null && n1 != null && n0.isValid() && n1.isValid()) {
-                BigDecimal x0 = new BigDecimal(n0.east());
-                BigDecimal y0 = new BigDecimal(n0.north());
-                BigDecimal x1 = new BigDecimal(n1.east());
-                BigDecimal y1 = new BigDecimal(n1.north());
+                BigDecimal x0 = BigDecimal.valueOf(n0.east());
+                BigDecimal y0 = BigDecimal.valueOf(n0.north());
+                BigDecimal x1 = BigDecimal.valueOf(n1.east());
+                BigDecimal y1 = BigDecimal.valueOf(n1.north());
 
                 BigDecimal k = x0.multiply(y1, MathContext.DECIMAL128).subtract(y0.multiply(x1, MathContext.DECIMAL128));
 
