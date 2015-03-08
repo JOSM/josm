@@ -71,7 +71,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class OsmValidator implements LayerChangeListener {
 
-    public static ValidatorLayer errorLayer = null;
+    public static volatile ValidatorLayer errorLayer = null;
 
     /** The validate action */
     public ValidateAction validateAction = new ValidateAction();

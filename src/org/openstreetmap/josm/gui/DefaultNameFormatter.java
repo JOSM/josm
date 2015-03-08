@@ -58,7 +58,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      *
      * @return the unique instance of this formatter
      */
-    public static DefaultNameFormatter getInstance() {
+    public static synchronized DefaultNameFormatter getInstance() {
         if (instance == null) {
             instance = new DefaultNameFormatter();
         }
@@ -108,7 +108,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      *
      * @return the list of naming tags used in relations
      */
-    public static List<String> getNamingtagsForRelations() {
+    public static synchronized List<String> getNamingtagsForRelations() {
         if (namingTagsForRelations == null) {
             namingTagsForRelations = new ArrayList<>(
                     Main.pref.getCollection("relation.nameOrder", Arrays.asList(DEFAULT_NAMING_TAGS_FOR_RELATIONS))

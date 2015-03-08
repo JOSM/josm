@@ -70,9 +70,9 @@ public class TagChecker extends Test.TagTest {
     public static final String SPELL_FILE = "resource://data/validator/words.cfg";
 
     /** The spell check key substitutions: the key should be substituted by the value */
-    private static Map<String, String> spellCheckKeyData;
+    private static volatile Map<String, String> spellCheckKeyData;
     /** The spell check preset values */
-    private static MultiMap<String, String> presetsValueData;
+    private static volatile MultiMap<String, String> presetsValueData;
     /** The TagChecker data */
     private static final List<CheckerData> checkerData = new ArrayList<>();
     private static final List<String> ignoreDataStartsWith = new ArrayList<>();
@@ -363,7 +363,7 @@ public class TagChecker extends Test.TagTest {
                         tr(s, key), MessageFormat.format(s, key), INVALID_KEY, p) );
                 withErrors.put(p, "IPK");
             }
-            if (checkKeys && key.indexOf(' ') >= 0 && !withErrors.contains(p, "IPK")) {
+            if (checkKeys && key != null && key.indexOf(' ') >= 0 && !withErrors.contains(p, "IPK")) {
                 errors.add( new TestError(this, Severity.WARNING, tr("Invalid white space in property key"),
                         tr(s, key), MessageFormat.format(s, key), INVALID_KEY_SPACE, p) );
                 withErrors.put(p, "IPK");
@@ -378,7 +378,7 @@ public class TagChecker extends Test.TagTest {
                         tr(s, key), MessageFormat.format(s, key), INVALID_HTML, p) );
                 withErrors.put(p, "HTML");
             }
-            if (checkValues && value != null && value.length() > 0 && presetsValueData != null) {
+            if (checkValues && key != null && value != null && value.length() > 0 && presetsValueData != null) {
                 final Set<String> values = presetsValueData.get(key);
                 final boolean keyInPresets = values != null;
                 final boolean tagInPresets = values != null && (values.isEmpty() || values.contains(prop.getValue()));
@@ -422,7 +422,7 @@ public class TagChecker extends Test.TagTest {
                     }
                 }
             }
-            if (checkFixmes && value != null && value.length() > 0) {
+            if (checkFixmes && key != null && value != null && value.length() > 0) {
                 if ((value.toLowerCase().contains("fixme")
                         || value.contains("check and delete")
                         || key.contains("todo") || key.toLowerCase().contains("fixme"))

@@ -20,7 +20,7 @@ public class OAuthAccessTokenHolder {
      * Replies the unique instance.
      * @return The unique instance of {@code OAuthAccessTokenHolder}
      */
-    public static OAuthAccessTokenHolder getInstance() {
+    public static synchronized OAuthAccessTokenHolder getInstance() {
         if (instance == null) {
             instance = new OAuthAccessTokenHolder();
         }

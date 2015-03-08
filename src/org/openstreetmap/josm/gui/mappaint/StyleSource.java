@@ -134,7 +134,7 @@ public abstract class StyleSource extends SourceEntry {
      * @since 8097
      * @see #getIconProvider()
      */
-    private static ImageProvider getDefaultIconProvider() {
+    private static synchronized ImageProvider getDefaultIconProvider() {
         if (defaultIconProvider == null) {
             defaultIconProvider = new ImageProvider("dialogs/mappaint", "pencil");
         }

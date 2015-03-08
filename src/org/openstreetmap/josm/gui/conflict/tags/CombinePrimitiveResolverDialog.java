@@ -99,7 +99,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * @deprecated use {@link #launchIfNecessary} instead.
      */
     @Deprecated
-    public static CombinePrimitiveResolverDialog getInstance() {
+    public static synchronized CombinePrimitiveResolverDialog getInstance() {
         if (instance == null) {
             GuiHelper.runInEDTAndWait(new Runnable() {
                 @Override public void run() {

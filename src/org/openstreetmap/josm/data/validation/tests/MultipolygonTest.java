@@ -56,7 +56,7 @@ public class MultipolygonTest extends Test {
     protected static final int NO_STYLE_POLYGON = 1611;
     protected static final int OUTER_STYLE = 1613;
 
-    private static ElemStyles styles;
+    private static volatile ElemStyles styles;
 
     private final List<List<Node>> nonClosedWays = new ArrayList<>();
     private final Set<String> keysCheckedByAnotherTest = new HashSet<>();
@@ -221,7 +221,7 @@ public class MultipolygonTest extends Test {
                         addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
                     } else {
                         /* old style multipolygon - solve: copy tags from outer way to multipolygon */
-                        addError(r, new TestError(this, Severity.WARNING, 
+                        addError(r, new TestError(this, Severity.WARNING,
                                 trn("Multipolygon relation should be tagged with area tags and not the outer way",
                                         "Multipolygon relation should be tagged with area tags and not the outer ways", polygon.getOuterWays().size()),
                            NO_STYLE_POLYGON, r));

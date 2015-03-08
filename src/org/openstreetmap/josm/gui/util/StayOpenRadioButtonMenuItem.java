@@ -16,7 +16,7 @@ import javax.swing.event.ChangeListener;
  */
 public class StayOpenRadioButtonMenuItem extends JRadioButtonMenuItem {
 
-  private static MenuElement[] path;
+  private static volatile MenuElement[] path;
 
   {
     getModel().addChangeListener(new ChangeListener() {

@@ -15,7 +15,7 @@ import org.openstreetmap.josm.io.OsmApi;
  * @since 2641
  */
 public final class DefaultAuthenticator extends Authenticator {
-    private static DefaultAuthenticator instance;
+    private static volatile DefaultAuthenticator instance;
 
     /**
      * Returns the unique instance

@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class CredentialsManager implements CredentialsAgent {
 
-    private static CredentialsManager instance;
+    private static volatile CredentialsManager instance;
 
     /**
      * Replies the single credential agent used in JOSM

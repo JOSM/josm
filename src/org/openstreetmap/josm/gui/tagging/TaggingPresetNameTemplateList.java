@@ -20,7 +20,7 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
      * Replies the unique instance.
      * @return the unique instance
      */
-    public static TaggingPresetNameTemplateList getInstance() {
+    public static synchronized TaggingPresetNameTemplateList getInstance() {
         if (instance == null) {
             instance = new TaggingPresetNameTemplateList();
             TaggingPresets.addListener(instance);

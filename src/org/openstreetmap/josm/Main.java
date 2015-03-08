@@ -153,7 +153,7 @@ public abstract class Main {
     /**
      * Global application.
      */
-    public static Main main;
+    public static volatile Main main;
 
     /**
      * Command-line arguments used to run the application.
@@ -190,7 +190,7 @@ public abstract class Main {
     /**
      * The toolbar preference control to register new actions.
      */
-    public static ToolbarPreferences toolbar;
+    public static volatile ToolbarPreferences toolbar;
 
     /**
      * The commands undo/redo handler.
@@ -467,7 +467,7 @@ public abstract class Main {
      * So if you need to hook into those early ones, split your class and send the one with the early hooks
      * to the JOSM team for inclusion.
      */
-    public static PlatformHook platform;
+    public static volatile PlatformHook platform;
 
     /**
      * Whether or not the java vm is openjdk
@@ -524,7 +524,7 @@ public abstract class Main {
         }
     }
 
-    private static InitStatusListener initListener = null;
+    private static volatile InitStatusListener initListener = null;
 
     public static interface InitStatusListener {
 
@@ -891,7 +891,7 @@ public abstract class Main {
      */
     public static final JPanel panel = new JPanel(new BorderLayout());
 
-    protected static WindowGeometry geometry;
+    protected static volatile WindowGeometry geometry;
     protected static int windowState = JFrame.NORMAL;
 
     private final CommandQueueListener redoUndoListener = new CommandQueueListener(){
@@ -1304,7 +1304,7 @@ public abstract class Main {
      * use {@link #getProjection()} and {@link #setProjection(Projection)} for access.
      * Use {@link #setProjection(Projection)} in order to trigger a projection change event.
      */
-    private static Projection proj;
+    private static volatile Projection proj;
 
     /**
      * Replies the current projection.
@@ -1480,7 +1480,7 @@ public abstract class Main {
 
         private static MasterWindowListener INSTANCE;
 
-        public static MasterWindowListener getInstance() {
+        public static synchronized MasterWindowListener getInstance() {
             if (INSTANCE == null) {
                 INSTANCE = new MasterWindowListener();
             }

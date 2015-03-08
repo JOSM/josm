@@ -45,7 +45,7 @@ public final class TaggingPresetReader {
         // Hide default constructor for utils classes
     }
 
-    private static File zipIcons = null;
+    private static volatile File zipIcons = null;
 
     /**
      * Returns the set of preset source URLs.

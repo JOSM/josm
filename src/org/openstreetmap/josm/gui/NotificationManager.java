@@ -75,7 +75,7 @@ class NotificationManager {
     private final Color PANEL_SEMITRANSPARENT = new Color(224, 236, 249, 230);
     private final Color PANEL_OPAQUE = new Color(224, 236, 249);
 
-    public static NotificationManager getInstance() {
+    public static synchronized NotificationManager getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new NotificationManager();
         }

@@ -79,7 +79,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class LayerListDialog extends ToggleDialog {
     /** the unique instance of the dialog */
-    private static LayerListDialog instance;
+    private static volatile LayerListDialog instance;
 
     /**
      * Creates the instance of the dialog. It's connected to the map frame <code>mapFrame</code>

@@ -49,7 +49,7 @@ public final class MessageNotifier {
 
     private static final Runnable WORKER = new Worker();
 
-    private static ScheduledFuture<?> task = null;
+    private static volatile ScheduledFuture<?> task = null;
 
     private static class Worker implements Runnable {
 

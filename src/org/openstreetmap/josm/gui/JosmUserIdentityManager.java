@@ -58,7 +58,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
      *
      * @return the unique instance of the JOSM user identity manager
      */
-    public static JosmUserIdentityManager getInstance() {
+    public static synchronized JosmUserIdentityManager getInstance() {
         if (instance == null) {
             instance = new JosmUserIdentityManager();
             if (OsmApi.isUsingOAuth() && OAuthAccessTokenHolder.getInstance().containsAccessToken() &&
@@ -282,7 +282,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
             accessTokenSecretChanged = false;
             if (OsmApi.isUsingOAuth()) {
                 try {
-                    instance.initFromOAuth(Main.parent);
+                    getInstance().initFromOAuth(Main.parent);
                 } catch (Exception e) {
                     Main.error(e);
                 }

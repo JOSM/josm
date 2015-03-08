@@ -24,7 +24,7 @@ public final class TaggingPresetSearchDialog extends ExtendedDialog {
      * Returns the unique instance of {@code TaggingPresetSearchDialog}.
      * @return the unique instance of {@code TaggingPresetSearchDialog}.
      */
-    public static TaggingPresetSearchDialog getInstance() {
+    public static synchronized TaggingPresetSearchDialog getInstance() {
         if (instance == null) {
             instance = new TaggingPresetSearchDialog();
         }

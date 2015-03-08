@@ -123,7 +123,7 @@ public final class MultikeyActionsHandler {
      * Replies the unique instance of this class.
      * @return The unique instance of this class
      */
-    public static MultikeyActionsHandler getInstance() {
+    public static synchronized MultikeyActionsHandler getInstance() {
         if (instance == null) {
             instance = new MultikeyActionsHandler();
         }

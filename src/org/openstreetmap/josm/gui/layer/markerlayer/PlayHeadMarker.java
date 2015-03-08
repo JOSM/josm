@@ -37,7 +37,7 @@ public final class PlayHeadMarker extends Marker {
 
     private Timer timer = null;
     private double animationInterval = 0.0; // seconds
-    private static PlayHeadMarker playHead = null;
+    private static volatile PlayHeadMarker playHead = null;
     private MapMode oldMode = null;
     private LatLon oldCoor;
     private boolean enabled;

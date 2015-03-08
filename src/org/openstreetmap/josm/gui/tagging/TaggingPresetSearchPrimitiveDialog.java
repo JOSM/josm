@@ -1,18 +1,18 @@
 package org.openstreetmap.josm.gui.tagging;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A dialog that allows to select a preset and then selects all matching OSM objects.
@@ -28,7 +28,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
      * Returns the unique instance of {@code TaggingPresetSearchPrimitiveDialog}.
      * @return the unique instance of {@code TaggingPresetSearchPrimitiveDialog}.
      */
-    public static TaggingPresetSearchPrimitiveDialog getInstance() {
+    public static synchronized TaggingPresetSearchPrimitiveDialog getInstance() {
         if (instance == null) {
             instance = new TaggingPresetSearchPrimitiveDialog();
         }
