@@ -333,7 +333,7 @@ public class Entities {
         {"euro", "8364"}, // -- euro sign, U+20AC NEW -->
     };
 
-    private static Map<String, String> mapNameToValue = null;
+    private static volatile Map<String, String> mapNameToValue = null;
 
     public String unescape(String str) {
         int firstAmp = str.indexOf('&');

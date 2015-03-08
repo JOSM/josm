@@ -37,7 +37,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
      * Replies the unique instance.
      * @return the unique instance
      */
-    public static HistoryBrowserDialogManager getInstance() {
+    public static synchronized HistoryBrowserDialogManager getInstance() {
         if (instance == null) {
             instance = new HistoryBrowserDialogManager();
         }

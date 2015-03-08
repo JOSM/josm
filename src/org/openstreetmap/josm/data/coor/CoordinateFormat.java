@@ -48,7 +48,7 @@ public enum CoordinateFormat {
         return getDisplayName();
     }
 
-    private static CoordinateFormat defaultCoordinateFormat = DECIMAL_DEGREES;
+    private static volatile CoordinateFormat defaultCoordinateFormat = DECIMAL_DEGREES;
 
     /**
      * Replies the default coordinate format to be use

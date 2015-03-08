@@ -15,7 +15,7 @@ import javax.swing.filechooser.FileFilter;
 public abstract class AbstractFileChooser {
 
     /** The locale for both implementations */
-    protected static Locale locale;
+    protected static volatile Locale locale;
 
     /**
      * Sets the default locale for all implementations.

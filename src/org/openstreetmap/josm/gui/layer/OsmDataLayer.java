@@ -231,7 +231,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     /**
      * a paint texture for non-downloaded area
      */
-    private static TexturePaint hatched;
+    private static volatile TexturePaint hatched;
 
     static {
         createHatchTexture();

@@ -901,7 +901,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
     }
 
-    private static List<MapMode> supportedMapModes = null;
+    private static volatile List<MapMode> supportedMapModes = null;
 
     /**
      * Registers a map mode for which the functionality of this layer should be available.

@@ -56,7 +56,7 @@ public class Version {
      *
      * @return the unique instance of the version information
      */
-    public static Version getInstance() {
+    public static synchronized Version getInstance() {
         if (instance == null) {
             instance = new Version();
             instance.init();

@@ -9,12 +9,17 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * A FileFilter that accepts all files.
+ * @since 5572
  */
 public class FileFilterAllFiles extends FileFilter {
 
     private static FileFilterAllFiles INSTANCE;
 
-    public static FileFilterAllFiles getInstance() {
+    /**
+     * Replies the unique instance.
+     * @return the unique instance
+     */
+    public static synchronized FileFilterAllFiles getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new FileFilterAllFiles();
         }

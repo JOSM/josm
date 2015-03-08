@@ -148,7 +148,7 @@ public class Multipolygon {
      * Init a private global matcher object which will listen to preference changes.
      */
     private static MultipolygonRoleMatcher roleMatcher;
-    private static MultipolygonRoleMatcher getMultipolygonRoleMatcher() {
+    private static synchronized MultipolygonRoleMatcher getMultipolygonRoleMatcher() {
         if (roleMatcher == null) {
             roleMatcher = new MultipolygonRoleMatcher();
             if (Main.pref != null){

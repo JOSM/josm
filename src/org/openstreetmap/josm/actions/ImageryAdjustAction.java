@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 3715
  */
 public class ImageryAdjustAction extends MapMode implements MouseListener, MouseMotionListener, AWTEventListener{
-    private static ImageryOffsetDialog offsetDialog;
+    private static volatile ImageryOffsetDialog offsetDialog;
     private static Cursor cursor = ImageProvider.getCursor("normal", "move");
 
     private double oldDx, oldDy;

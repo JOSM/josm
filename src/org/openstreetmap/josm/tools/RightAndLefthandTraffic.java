@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -46,8 +47,8 @@ public class RightAndLefthandTraffic {
         }
     }
 
-    private static Collection<Area> leftHandTrafficPolygons;
-    private static GeoPropertyIndex<Boolean> rlCache;
+    private static volatile Collection<Area> leftHandTrafficPolygons;
+    private static volatile GeoPropertyIndex<Boolean> rlCache;
 
     /**
      * Check if there is right-hand traffic at a certain location.

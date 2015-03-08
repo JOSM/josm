@@ -1355,7 +1355,7 @@ public class ImageProvider {
         return img;
     }
 
-    private static SVGUniverse getSvgUniverse() {
+    private static synchronized SVGUniverse getSvgUniverse() {
         if (svgUniverse == null) {
             svgUniverse = new SVGUniverse();
         }

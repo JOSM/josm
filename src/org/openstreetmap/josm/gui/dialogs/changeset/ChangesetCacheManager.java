@@ -68,7 +68,7 @@ public class ChangesetCacheManager extends JFrame {
     public static final ImageIcon UPDATE_CONTENT_ICON   = ImageProvider.get("dialogs/changeset", "updatechangesetcontent");
 
     /** the unique instance of the cache manager  */
-    private static ChangesetCacheManager instance;
+    private static volatile ChangesetCacheManager instance;
 
     /**
      * Replies the unique instance of the changeset cache manager

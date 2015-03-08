@@ -48,7 +48,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private boolean centerView = false;
 
     // Only one instance of that class is present at one time
-    private static ImageViewerDialog dialog;
+    private static volatile ImageViewerDialog dialog;
 
     private boolean collapseButtonClicked = false;
 

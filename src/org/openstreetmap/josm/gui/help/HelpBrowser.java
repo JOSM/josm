@@ -71,7 +71,7 @@ public class HelpBrowser extends JDialog {
      *
      * @return the unique instance of the help browser
      */
-    public static HelpBrowser getInstance() {
+    public static synchronized HelpBrowser getInstance() {
         if (instance == null) {
             instance = new HelpBrowser();
         }

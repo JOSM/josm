@@ -565,7 +565,7 @@ public final class PluginHandler {
      *
      * @return the class loader
      */
-    public static DynamicURLClassLoader getPluginClassLoader() {
+    public static synchronized DynamicURLClassLoader getPluginClassLoader() {
         if (pluginClassLoader == null) {
             pluginClassLoader = AccessController.doPrivileged(new PrivilegedAction<DynamicURLClassLoader>() {
                 public DynamicURLClassLoader run() {

@@ -58,7 +58,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
      *
      * @return The unique instance of this dialog
      */
-    public static DeleteFromRelationConfirmationDialog getInstance() {
+    public static synchronized DeleteFromRelationConfirmationDialog getInstance() {
         if (instance == null) {
             instance = new DeleteFromRelationConfirmationDialog();
         }
