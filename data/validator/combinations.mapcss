@@ -45,6 +45,7 @@ way[junction                   ][!highway][junction!=yes],
 *[have_riverbank               ][!waterway],
 *[border_type                  ][!boundary],
 *[bridge:structure             ][!bridge],
+*[piste:difficulty             ][!piste:type],
 *[source:date                  ][!source],
 *[source:name                  ][!name],
 *[source:maxspeed:forward      ][!maxspeed:forward],
@@ -238,7 +239,7 @@ way[highway][natural],
 }
 
 /* see #9593, #11183 */
-*[sport][!building][tourism != hotel][highway != raceway][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool|recreation_ground)$/][natural !~ /^(beach|bare_rock|peak)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/] {
+*[sport][!building][tourism != hotel][highway != raceway][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool|recreation_ground)$/][natural !~ /^(beach|bare_rock|peak)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"] {
     throwWarning: tr("sport without physical feature");
     assertMatch: "node sport=tennis";
     assertNoMatch: "node sport=tennis leisure=pitch";

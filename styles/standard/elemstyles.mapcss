@@ -1078,12 +1078,12 @@ way[piste:difficulty=novice]::core_piste {
     width: 6;
     color: piste_novice#00ff00;
 }
-node[piste:difficulty=easy],
-node[piste:difficulty=intermediate],
-node[piste:difficulty=advanced],
-node[piste:difficulty=expert],
-node[piste:difficulty=freeride],
-node[piste:difficulty=novice] {
+node[piste:type=downhill],
+node[piste:type=nordic],
+node[piste:type=skitour],
+node[piste:type=sled],
+node[piste:type=sleigh],
+node[piste:type=snow_park] {
     icon-image: "sport/skiing.png";
     set icon_z17;
 }
@@ -3724,16 +3724,10 @@ node[sport=swimming] {
     set icon_z17;
     text: auto;
 }
-area[sport=skiing],
 area[sport=table_tennis],
 area[sport=tennis],
 area[sport=paintball] {
     fill-color: sport#bde3cb;
-}
-node[sport=skiing] {
-    icon-image: "sport/skiing.png";
-    set icon_z17;
-    text: auto;
 }
 node[sport=table_tennis] {
     icon-image: "sport/table_tennis.png";

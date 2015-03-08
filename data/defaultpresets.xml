@@ -177,7 +177,7 @@
     </chunk>
     <chunk id="optional_sport">
         <optional text="Select sport:">
-            <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,handball,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" values_context="sport" />
+            <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,handball,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,soccer,swimming,table_tennis,tennis" values_context="sport" />
         </optional>
     </chunk>
     <chunk id="fee">
@@ -4773,11 +4773,12 @@
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Piste_Maps"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Piste_Maps" />
             <space />
-            <key key="sport" value="skiing" />
             <text key="name" text="Name" />
-            <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,snow_park" />
-            <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" values_context="piste:difficulty" values_searchable="true" />
-            <combo key="piste:grooming" text="Grooming" values="classic,mogul,skating,classic;skating,scooter,backcountry" values_context="piste:grooming" />
+            <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,sled,sleigh,snow_park" match="keyvalue"/>
+            <optional>
+                <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" values_context="piste:difficulty" values_searchable="true" />
+                <combo key="piste:grooming" text="Grooming" values="classic,mogul,skating,classic;skating,scooter,backcountry" values_context="piste:grooming" />
+            </optional>
         </item> <!-- Skiing -->
         <item name="Shooting" icon="presets/range.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=shooting"
