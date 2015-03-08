@@ -3235,6 +3235,7 @@
             <reference ref="name_operator" />
             <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;sushi" values_searchable="true" />
             <check key="microbrewery" text="Microbrewery" />
+            <check key="outdoor_seating" text="Outdoor seating" />
             <reference ref="oh_wheelchair" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
@@ -3252,6 +3253,7 @@
             <key key="amenity" value="fast_food" />
             <reference ref="name_operator" />
             <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese,french,sandwich,sushi,fish_and_chips,chicken" />
+            <check key="outdoor_seating" text="Outdoor seating" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3265,7 +3267,9 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=food_court" />
             <space />
             <key key="amenity" value="food_court" />
-            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="name_operator" />
+            <check key="outdoor_seating" text="Outdoor seating" />
+            <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
             <space />
@@ -3285,6 +3289,7 @@
             <key key="amenity" value="cafe" />
             <reference ref="name_operator" />
             <combo key="cuisine" text="Cuisine" values="ice_cream" />
+            <check key="outdoor_seating" text="Outdoor seating" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3301,6 +3306,7 @@
             <key key="amenity" value="pub" />
             <reference ref="name_operator" />
             <check key="microbrewery" text="Microbrewery" />
+            <check key="outdoor_seating" text="Outdoor seating" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3334,7 +3340,9 @@
                   zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:amenity=bar" />
             <space />
             <key key="amenity" value="bar" />
-            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="name_operator" />
+            <check key="outdoor_seating" text="Outdoor seating" />
+            <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
             <space />
