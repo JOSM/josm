@@ -391,3 +391,9 @@ way[sidewalk=yes] {
 *[foot=unknown] {
   throwWarning: tr("Unspecific tag {0}", "{0.tag}");
 }
+
+/* unclear definition, see #11183 */
+*[sport=skiing][!piste:type] {
+  throwWarning: tr("Definition of {0} is unclear", "{0.tag}");
+  suggestAlternative: {1.key};
+}
