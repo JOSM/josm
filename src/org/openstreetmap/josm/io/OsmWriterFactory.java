@@ -16,7 +16,7 @@ import java.io.PrintWriter;
  */
 public class OsmWriterFactory {
 
-    public static OsmWriterFactory theFactory;
+    public static volatile OsmWriterFactory theFactory;
     public static OsmWriter createOsmWriter(PrintWriter out, boolean osmConform, String version) {
         // pre-set factory with this default implementation; can still be overwritten
         // later. note that the default factory may already be used for constructing

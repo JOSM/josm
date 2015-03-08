@@ -73,7 +73,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      *
      * @return the unique instance of the upload dialog
      */
-    public static UploadDialog getUploadDialog() {
+    public static synchronized UploadDialog getUploadDialog() {
         if (uploadDialog == null) {
             uploadDialog = new UploadDialog();
         }

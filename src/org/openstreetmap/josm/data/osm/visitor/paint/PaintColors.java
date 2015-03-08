@@ -9,8 +9,8 @@ import java.util.List;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.ColorKey;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
+import org.openstreetmap.josm.gui.mappaint.StyleSource;
 
 public enum PaintColors implements ColorKey {
 
@@ -34,7 +34,7 @@ public enum PaintColors implements ColorKey {
     private final String name;
     private final Color defaultColor;
 
-    private static Color backgroundColorCache = null;
+    private static volatile Color backgroundColorCache = null;
 
     private static final MapPaintSylesUpdateListener styleOverrideListener = new MapPaintSylesUpdateListener() {
 

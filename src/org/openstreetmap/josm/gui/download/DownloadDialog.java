@@ -59,7 +59,7 @@ public class DownloadDialog extends JDialog  {
      *
      * @return the unique instance of the download dialog
      */
-    public static DownloadDialog getInstance() {
+    public static synchronized DownloadDialog getInstance() {
         if (instance == null) {
             instance = new DownloadDialog(Main.parent);
         }

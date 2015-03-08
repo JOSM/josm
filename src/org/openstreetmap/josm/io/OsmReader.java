@@ -54,7 +54,7 @@ public class OsmReader extends AbstractReader {
     protected boolean cancel;
 
     /** Used by plugins to register themselves as data postprocessors. */
-    private static List<OsmServerReadPostprocessor> postprocessors;
+    private static volatile List<OsmServerReadPostprocessor> postprocessors;
 
     /** register a new postprocessor */
     public static void registerPostprocessor(OsmServerReadPostprocessor pp) {

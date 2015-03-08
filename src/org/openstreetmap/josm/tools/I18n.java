@@ -75,8 +75,8 @@ public final class I18n {
         MODE_SL,*/
     }
 
-    private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
-    private static String loadedCode = "en";
+    private static volatile PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
+    private static volatile String loadedCode = "en";
 
     /* Localization keys for file chooser (and color chooser). */
     private static final String[] javaInternalMessageKeys = new String[] {
@@ -163,8 +163,8 @@ public final class I18n {
         "OptionPane.noButtonText",
         "OptionPane.cancelButtonText"
     };
-    private static Map<String, String> strings = null;
-    private static Map<String, String[]> pstrings = null;
+    private static volatile Map<String, String> strings = null;
+    private static volatile Map<String, String[]> pstrings = null;
     private static Map<String, PluralMode> languages = new HashMap<>();
 
     /**

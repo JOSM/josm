@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 public class AudioMarker extends ButtonMarker {
 
     private URL audioUrl;
-    private static AudioMarker recentlyPlayedMarker = null;
+    private static volatile AudioMarker recentlyPlayedMarker = null;
     public double syncOffset;
     public boolean timeFromAudio = false; // as opposed to from the GPX track
 

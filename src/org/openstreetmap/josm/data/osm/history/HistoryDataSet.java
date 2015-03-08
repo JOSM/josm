@@ -34,7 +34,7 @@ public class HistoryDataSet implements LayerChangeListener{
      *
      * @return the unique instance of the history data set
      */
-    public static HistoryDataSet getInstance() {
+    public static synchronized HistoryDataSet getInstance() {
         if (historyDataSet == null) {
             historyDataSet = new HistoryDataSet();
             MapView.addLayerChangeListener(historyDataSet);

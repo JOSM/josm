@@ -22,7 +22,7 @@ public class RemoteControlHttpServer extends Thread {
     /** The server socket */
     private ServerSocket server;
 
-    private static RemoteControlHttpServer instance;
+    private static volatile RemoteControlHttpServer instance;
 
     /**
      * Starts or restarts the HTTP server

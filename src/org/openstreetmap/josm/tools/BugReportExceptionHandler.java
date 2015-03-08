@@ -41,7 +41,7 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 public final class BugReportExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     private static boolean handlingInProgress = false;
-    private static BugReporterThread bugReporterThread = null;
+    private static volatile BugReporterThread bugReporterThread = null;
     private static int exceptionCounter = 0;
     private static boolean suppressExceptionDialogs = false;
 

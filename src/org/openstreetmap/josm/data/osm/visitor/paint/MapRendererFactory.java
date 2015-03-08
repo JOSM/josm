@@ -90,7 +90,7 @@ public final class MapRendererFactory {
      * Replies the unique instance
      * @return instance of map rending class
      */
-    public static MapRendererFactory getInstance() {
+    public static synchronized MapRendererFactory getInstance() {
         if (instance == null) {
             instance = new MapRendererFactory();
         }

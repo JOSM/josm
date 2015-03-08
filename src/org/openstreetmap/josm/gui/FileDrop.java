@@ -279,7 +279,7 @@ public class FileDrop
         }   // end else: does not support DnD
     }   // end constructor
 
-    private static boolean supportsDnD()
+    private static synchronized boolean supportsDnD()
     {   // Static Boolean
         if( supportsDnD == null )
         {

@@ -74,7 +74,7 @@ public class RemoteControlHttpsServer extends Thread {
     /** The server socket */
     private ServerSocket server;
 
-    private static RemoteControlHttpsServer instance;
+    private static volatile RemoteControlHttpsServer instance;
     private boolean initOK = false;
     private SSLContext sslContext;
 
