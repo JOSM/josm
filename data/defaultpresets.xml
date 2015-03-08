@@ -175,10 +175,8 @@
         <text key="name" text="Name" />
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
     </chunk>
-    <chunk id="optional_sport">
-        <optional text="Select sport:">
+    <chunk id="sport">
             <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,handball,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,soccer,swimming,table_tennis,tennis" values_context="sport" />
-        </optional>
     </chunk>
     <chunk id="fee">
         <combo key="fee" text="Fee" values="yes,no" />
@@ -4580,7 +4578,7 @@
             <space />
             <key key="leisure" value="stadium" />
             <text key="name" text="Name" />
-            <reference ref="optional_sport" />
+            <reference ref="sport" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Stadium -->
         <item name="Sports Centre" icon="styles/standard/sport/centre.png" type="node,closedway" preset_name_label="true">
@@ -4593,7 +4591,7 @@
             <space />
             <key key="leisure" value="sports_centre" />
             <text key="name" text="Name" />
-            <reference ref="optional_sport" />
+            <reference ref="sport" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Sports Centre -->
         <item name="Pitch" icon="styles/standard/sport/pitch.png" type="node,closedway" preset_name_label="true">
@@ -4609,7 +4607,8 @@
             <space />
             <key key="leisure" value="pitch" />
             <text key="name" text="Name" />
-            <reference ref="optional_sport" />
+            <reference ref="sport" />
+            <combo key="surface" text="Surface" values="artificial_turf,asphalt,clay,concrete,decoturf,grass,sand,tartan,ground" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Pitch -->
         <item name="Racetrack" icon="styles/standard/sport/track.png" type="node,way,closedway,relation" preset_name_label="true">
@@ -4623,7 +4622,7 @@
             <space />
             <key key="leisure" value="track" />
             <text key="name" text="Name" />
-            <reference ref="optional_sport" />
+            <reference ref="sport" />
         </item> <!-- Racetrack -->
         <item name="Golf Course" icon="styles/standard/sport/golf.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
