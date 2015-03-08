@@ -8074,7 +8074,7 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway"/>
                     <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
                     <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
                 </roles>
@@ -8119,7 +8119,7 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway=path OR highway=footway OR highway=track"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway"/>
                     <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
                     <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
                 </roles>
@@ -8179,7 +8179,7 @@
                     <text key="detour" text="Ref of the way this is a detour to"/>
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway"/>
                     <role key="fork" text="fork node for alternative routes" requisite="optional" type="node"/>
                 </roles>
             </item> <!-- Detour Route -->
