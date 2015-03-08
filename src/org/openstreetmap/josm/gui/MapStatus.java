@@ -660,7 +660,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                     if (event instanceof MouseEvent) {
                         mouseState.mousePos = ((MouseEvent)event).getPoint();
                     }
-                    collector.notify();
+                    collector.notifyAll();
                 }
             }
         }
@@ -672,7 +672,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             synchronized (collector) {
                 mouseState.modifiers = e.getModifiersEx();
                 mouseState.mousePos = e.getPoint();
-                collector.notify();
+                collector.notifyAll();
             }
         }
 
@@ -686,7 +686,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         @Override public void keyPressed(KeyEvent e) {
             synchronized (collector) {
                 mouseState.modifiers = e.getModifiersEx();
-                collector.notify();
+                collector.notifyAll();
             }
         }
 
