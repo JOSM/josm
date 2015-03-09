@@ -495,6 +495,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
             if (s.mode == SearchMode.replace) {
                 sel.clear();
+            } else if (s.mode == SearchMode.in_selection) {
+                foundMatches = sel.size();
             }
 
             Collection<OsmPrimitive> all;
@@ -503,6 +505,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             } else {
                 all = Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives();
             }
+
             for (OsmPrimitive osm : all) {
                 if (s.mode == SearchMode.replace) {
                     if (matcher.match(osm)) {
@@ -515,9 +518,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 } else if (s.mode == SearchMode.remove && p.evaluate(osm) && matcher.match(osm)) {
                     sel.remove(osm);
                     ++foundMatches;
-                } else if (s.mode == SearchMode.in_selection &&  p.evaluate(osm) && !matcher.match(osm)) {
+                } else if (s.mode == SearchMode.in_selection && p.evaluate(osm) && !matcher.match(osm)) {
                     sel.remove(osm);
-                    ++foundMatches;
+                    --foundMatches;
                 }
             }
         } catch (SearchCompiler.ParseError e) {
