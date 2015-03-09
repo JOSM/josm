@@ -178,7 +178,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
      * Superclass of internal download task.
      * @since 7636
      */
-    public static abstract class AbstractInternalTask extends PleaseWaitRunnable {
+    public abstract static class AbstractInternalTask extends PleaseWaitRunnable {
 
         protected final boolean newLayer;
         protected DataSet dataSet;

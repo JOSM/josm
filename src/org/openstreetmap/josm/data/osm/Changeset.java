@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 /**
  * Represents a single changeset in JOSM. For now its only used during
  * upload but in the future we may do more.
- *
+ * @since 625
  */
 public final class Changeset implements Tagged {
 
@@ -348,7 +348,7 @@ public final class Changeset implements Tagged {
      * @return the list of comments in the changeset discussion. May be empty but never null
      * @since 7704
      */
-    public synchronized final List<ChangesetDiscussionComment> getDiscussion() {
+    public final synchronized List<ChangesetDiscussionComment> getDiscussion() {
         if (discussion == null) {
             return Collections.emptyList();
         }
@@ -360,7 +360,7 @@ public final class Changeset implements Tagged {
      * @param comment the comment to add. Ignored if null
      * @since 7704
      */
-    public synchronized final void addDiscussionComment(ChangesetDiscussionComment comment) {
+    public final synchronized void addDiscussionComment(ChangesetDiscussionComment comment) {
         if (comment == null) {
             return;
         }
