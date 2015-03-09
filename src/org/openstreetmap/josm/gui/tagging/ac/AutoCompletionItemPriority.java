@@ -36,17 +36,17 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
     /** Unknown priority. This is the lowest priority. */
     public static final AutoCompletionItemPriority UNKNOWN = new AutoCompletionItemPriority(false, false, false);
 
-    private final static int NO_USER_INPUT = Integer.MAX_VALUE;
+    private static final int NO_USER_INPUT = Integer.MAX_VALUE;
 
     private final int userInput;
     private final boolean inDataSet;
     private final boolean inStandard;
     private final boolean selected;
-    
+
 
     /**
      * Create new AutoCompletionItemPriority object.
-     * 
+     *
      * @param inDataSet true, if the item is found in the currently active data layer
      * @param inStandard true, if the item is a standard tag, e.g. from the presets.
      * @param selected true, if it is found on an object that is currently selected
@@ -80,7 +80,7 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
     public Integer getUserInput() {
         return userInput == NO_USER_INPUT ? null : userInput;
     }
-    
+
     /**
      * Imposes an ordering on the priorities.
      * Currently, being in the current DataSet is worth more than being in the Presets.
@@ -114,8 +114,9 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
                 Math.min(userInput, other.userInput));
     }
 
-    @Override public String toString() {
-        return String.format("<Priority; userInput: %s, inDataSet: %b, inStandard: %b, selected: %b>", 
+    @Override
+    public String toString() {
+        return String.format("<Priority; userInput: %s, inDataSet: %b, inStandard: %b, selected: %b>",
                 userInput == NO_USER_INPUT ? "no" : Integer.toString(userInput), inDataSet, inStandard, selected);
     }
 }

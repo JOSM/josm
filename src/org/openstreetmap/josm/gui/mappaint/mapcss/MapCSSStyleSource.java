@@ -82,7 +82,7 @@ public class MapCSSStyleSource extends StyleSource {
      * For efficiency reasons, these methods are synchronized higher up the
      * stack trace.
      */
-    public final static ReadWriteLock STYLE_SOURCE_LOCK = new ReentrantReadWriteLock();
+    public static final ReadWriteLock STYLE_SOURCE_LOCK = new ReentrantReadWriteLock();
 
     /**
      * Set of all supported MapCSS keys.
