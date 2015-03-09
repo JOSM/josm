@@ -30,8 +30,8 @@ public class ImageryLayerInfo {
     public static final ImageryLayerInfo instance = new ImageryLayerInfo();
     private final List<ImageryInfo> layers = new ArrayList<>();
     private final Map<String, ImageryInfo> layerIds = new HashMap<>();
-    private final static List<ImageryInfo> defaultLayers = new ArrayList<>();
-    private final static Map<String, ImageryInfo> defaultLayerIds = new HashMap<>();
+    private static final List<ImageryInfo> defaultLayers = new ArrayList<>();
+    private static final Map<String, ImageryInfo> defaultLayerIds = new HashMap<>();
 
     private static final String[] DEFAULT_LAYER_SITES = {
         Main.getJOSMWebsite()+"/maps"

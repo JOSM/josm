@@ -76,9 +76,9 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     public static class GroupedMapCSSRule {
         /** MapCSS selectors **/
-        final public List<Selector> selectors;
+        public final List<Selector> selectors;
         /** MapCSS declaration **/
-        final public Declaration declaration;
+        public final Declaration declaration;
 
         /**
          * Constructs a new {@code GroupedMapCSSRule}.
