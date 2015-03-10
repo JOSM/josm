@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -20,7 +21,6 @@ import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
-import java.awt.geom.AffineTransform;
 
 /**
  * Read out EXIF information from a JPEG file
@@ -124,8 +124,8 @@ public final class ExifReader {
      */
     public static LatLon readLatLon(GpsDirectory dirGps) throws MetadataException {
         if (dirGps != null) {
-            double lat = readAxis(dirGps, GpsDirectory.TAG_GPS_LATITUDE, GpsDirectory.TAG_GPS_LATITUDE_REF, 'S');
-            double lon = readAxis(dirGps, GpsDirectory.TAG_GPS_LONGITUDE, GpsDirectory.TAG_GPS_LONGITUDE_REF, 'W');
+            double lat = readAxis(dirGps, GpsDirectory.TAG_LATITUDE, GpsDirectory.TAG_LATITUDE_REF, 'S');
+            double lon = readAxis(dirGps, GpsDirectory.TAG_LONGITUDE, GpsDirectory.TAG_LONGITUDE_REF, 'W');
             return new LatLon(lat, lon);
         }
         return null;
@@ -158,7 +158,7 @@ public final class ExifReader {
      */
     public static Double readDirection(GpsDirectory dirGps) {
         if (dirGps != null) {
-            Rational direction = dirGps.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+            Rational direction = dirGps.getRational(GpsDirectory.TAG_IMG_DIRECTION);
             if (direction != null) {
                 return direction.doubleValue();
             }

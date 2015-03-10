@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 
 package com.drew.metadata.exif;
@@ -29,7 +29,7 @@ import java.util.HashMap;
 /**
  * Describes Exif tags from the IFD0 directory.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifIFD0Directory extends Directory
 {
@@ -45,10 +45,22 @@ public class ExifIFD0Directory extends Directory
     public static final int TAG_ARTIST = 0x013B;
     public static final int TAG_WHITE_POINT = 0x013E;
     public static final int TAG_PRIMARY_CHROMATICITIES = 0x013F;
+
     public static final int TAG_YCBCR_COEFFICIENTS = 0x0211;
     public static final int TAG_YCBCR_POSITIONING = 0x0213;
     public static final int TAG_REFERENCE_BLACK_WHITE = 0x0214;
+
+
+    /** This tag is a pointer to the Exif SubIFD. */
+    public static final int TAG_EXIF_SUB_IFD_OFFSET = 0x8769;
+
+    /** This tag is a pointer to the Exif GPS IFD. */
+    public static final int TAG_GPS_INFO_OFFSET = 0x8825;
+
     public static final int TAG_COPYRIGHT = 0x8298;
+
+    /** Non-standard, but in use. */
+    public static final int TAG_TIME_ZONE_OFFSET = 0x882a;
 
     /** The image title, as used by Windows XP. */
     public static final int TAG_WIN_TITLE = 0x9C9B;
@@ -81,7 +93,10 @@ public class ExifIFD0Directory extends Directory
         _tagNameMap.put(TAG_YCBCR_COEFFICIENTS, "YCbCr Coefficients");
         _tagNameMap.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
         _tagNameMap.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
+
         _tagNameMap.put(TAG_COPYRIGHT, "Copyright");
+
+        _tagNameMap.put(TAG_TIME_ZONE_OFFSET, "Time Zone Offset");
 
         _tagNameMap.put(TAG_WIN_AUTHOR, "Windows XP Author");
         _tagNameMap.put(TAG_WIN_COMMENT, "Windows XP Comment");
@@ -95,12 +110,14 @@ public class ExifIFD0Directory extends Directory
         this.setDescriptor(new ExifIFD0Descriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Exif IFD0";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

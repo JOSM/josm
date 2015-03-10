@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,33 +15,29 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
- * A top-level object to hold the various types of metadata (Exif/IPTC/etc) related to one entity (such as a file
- * or stream).
- * <p/>
- * Metadata objects may contain zero or more directories.  Each directory may contain zero or more tags with
- * corresponding values.
+ * A top-level object that holds the metadata values extracted from an image.
+ * <p>
+ * Metadata objects may contain zero or more {@link Directory} objects.  Each directory may contain zero or more tags
+ * with corresponding values.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public final class Metadata
 {
     @NotNull
     private final Map<Class<? extends Directory>,Directory> _directoryByClass = new HashMap<Class<? extends Directory>, Directory>();
-    
+
     /**
      * List of Directory objects set against this object.  Keeping a list handy makes
      * creation of an Iterator and counting tags simple.
@@ -57,7 +53,7 @@ public final class Metadata
     @NotNull
     public Iterable<Directory> getDirectories()
     {
-        return _directoryList;
+        return Collections.unmodifiableCollection(_directoryList);
     }
 
     /**
@@ -71,9 +67,9 @@ public final class Metadata
     }
 
     /**
-     * Returns a <code>Directory</code> of specified type.  If this <code>Metadata</code> object already contains
+     * Returns a {@link Directory} of specified type.  If this {@link Metadata} object already contains
      * such a directory, it is returned.  Otherwise a new instance of this directory will be created and stored within
-     * this Metadata object.
+     * this {@link Metadata} object.
      *
      * @param type the type of the Directory implementation required.
      * @return a directory of the specified type.
@@ -103,12 +99,12 @@ public final class Metadata
     }
 
     /**
-     * If this <code>Metadata</code> object contains a <code>Directory</code> of the specified type, it is returned.
+     * If this {@link Metadata} object contains a {@link Directory} of the specified type, it is returned.
      * Otherwise <code>null</code> is returned.
      *
      * @param type the Directory type
      * @param <T> the Directory type
-     * @return a Directory of type T if it exists in this Metadata object, otherwise <code>null</code>.
+     * @return a Directory of type T if it exists in this {@link Metadata} object, otherwise <code>null</code>.
      */
     @Nullable
     @SuppressWarnings("unchecked")
@@ -122,10 +118,10 @@ public final class Metadata
 
     /**
      * Indicates whether a given directory type has been created in this metadata
-     * repository.  Directories are created by calling <code>getOrCreateDirectory(Class)</code>.
+     * repository.  Directories are created by calling {@link Metadata#getOrCreateDirectory(Class)}.
      *
-     * @param type the Directory type
-     * @return true if the metadata directory has been created
+     * @param type the {@link Directory} type
+     * @return true if the {@link Directory} has been created
      */
     public boolean containsDirectory(Class<? extends Directory> type)
     {
@@ -134,7 +130,7 @@ public final class Metadata
 
     /**
      * Indicates whether any errors were reported during the reading of metadata values.
-     * This value will be true if Directory.hasErrors() is true for one of the contained Directory objects.
+     * This value will be true if Directory.hasErrors() is true for one of the contained {@link Directory} objects.
      *
      * @return whether one of the contained directories has an error
      */
@@ -145,5 +141,15 @@ public final class Metadata
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("Metadata (%d %s)",
+            _directoryList.size(),
+            _directoryList.size() == 1
+                ? "directory"
+                : "directories");
     }
 }

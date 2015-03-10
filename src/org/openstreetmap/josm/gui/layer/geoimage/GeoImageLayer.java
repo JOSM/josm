@@ -626,8 +626,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
 
         try {
-            double speed = dirGps.getDouble(GpsDirectory.TAG_GPS_SPEED);
-            String speedRef = dirGps.getString(GpsDirectory.TAG_GPS_SPEED_REF);
+            double speed = dirGps.getDouble(GpsDirectory.TAG_SPEED);
+            String speedRef = dirGps.getString(GpsDirectory.TAG_SPEED_REF);
             if (speedRef != null) {
                 if (speedRef.equalsIgnoreCase("M")) {
                     // miles per hour
@@ -644,8 +644,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
 
         try {
-            double ele = dirGps.getDouble(GpsDirectory.TAG_GPS_ALTITUDE);
-            int d = dirGps.getInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
+            double ele = dirGps.getDouble(GpsDirectory.TAG_ALTITUDE);
+            int d = dirGps.getInt(GpsDirectory.TAG_ALTITUDE_REF);
             if (d == 1) {
                 ele *= -1;
             }
@@ -678,7 +678,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         // 1) GPS_TIME_STAMP not set -> date/time will be null
         // 2) GPS_DATE_STAMP not set -> use EXIF date or set to default
         // 3) GPS_TIME_STAMP and GPS_DATE_STAMP are set
-        int[] timeStampComps = dirGps.getIntArray(GpsDirectory.TAG_GPS_TIME_STAMP);
+        int[] timeStampComps = dirGps.getIntArray(GpsDirectory.TAG_TIME_STAMP);
         if (timeStampComps != null) {
             int gpsHour = timeStampComps[0];
             int gpsMin = timeStampComps[1];
@@ -687,7 +687,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
             // We have the time. Next step is to check if the GPS date stamp is set.
             // dirGps.getString() always succeeds, but the return value might be null.
-            String dateStampStr = dirGps.getString(GpsDirectory.TAG_GPS_DATE_STAMP);
+            String dateStampStr = dirGps.getString(GpsDirectory.TAG_DATE_STAMP);
             if (dateStampStr != null && dateStampStr.matches("^\\d+:\\d+:\\d+$")) {
                 String[] dateStampComps = dateStampStr.split(":");
                 cal.set(Calendar.YEAR, Integer.parseInt(dateStampComps[0]));

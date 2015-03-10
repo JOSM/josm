@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata;
 
@@ -27,7 +27,7 @@ import com.drew.lang.annotations.NotNull;
  * tags, it simply reports tag names using the format 'Unknown tag 0x00' (with the corresponding tag number in hex)
  * and gives descriptions using the default string representation of the value.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class DefaultTagDescriptor extends TagDescriptor<Directory>
 {

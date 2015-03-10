@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata.jpeg;
 
@@ -28,7 +28,7 @@ import com.drew.metadata.TagDescriptor;
  * Provides human-readable string versions of the tags stored in a JpegDirectory.
  * Thanks to Darrell Silver (www.darrellsilver.com) for the initial version of this class.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegDescriptor extends TagDescriptor<JpegDirectory>
 {
@@ -37,26 +37,27 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {
         switch (tagType)
         {
-            case JpegDirectory.TAG_JPEG_COMPRESSION_TYPE:
+            case JpegDirectory.TAG_COMPRESSION_TYPE:
                 return getImageCompressionTypeDescription();
-            case JpegDirectory.TAG_JPEG_COMPONENT_DATA_1:
+            case JpegDirectory.TAG_COMPONENT_DATA_1:
                 return getComponentDataDescription(0);
-            case JpegDirectory.TAG_JPEG_COMPONENT_DATA_2:
+            case JpegDirectory.TAG_COMPONENT_DATA_2:
                 return getComponentDataDescription(1);
-            case JpegDirectory.TAG_JPEG_COMPONENT_DATA_3:
+            case JpegDirectory.TAG_COMPONENT_DATA_3:
                 return getComponentDataDescription(2);
-            case JpegDirectory.TAG_JPEG_COMPONENT_DATA_4:
+            case JpegDirectory.TAG_COMPONENT_DATA_4:
                 return getComponentDataDescription(3);
-            case JpegDirectory.TAG_JPEG_DATA_PRECISION:
+            case JpegDirectory.TAG_DATA_PRECISION:
                 return getDataPrecisionDescription();
-            case JpegDirectory.TAG_JPEG_IMAGE_HEIGHT:
+            case JpegDirectory.TAG_IMAGE_HEIGHT:
                 return getImageHeightDescription();
-            case JpegDirectory.TAG_JPEG_IMAGE_WIDTH:
+            case JpegDirectory.TAG_IMAGE_WIDTH:
                 return getImageWidthDescription();
             default:
                 return super.getDescription(tagType);
@@ -66,7 +67,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getImageCompressionTypeDescription()
     {
-        Integer value = _directory.getInteger(JpegDirectory.TAG_JPEG_COMPRESSION_TYPE);
+        Integer value = _directory.getInteger(JpegDirectory.TAG_COMPRESSION_TYPE);
         if (value==null)
             return null;
         // Note there is no 2 or 12
@@ -92,7 +93,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getImageWidthDescription()
     {
-        final String value = _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
+        final String value = _directory.getString(JpegDirectory.TAG_IMAGE_WIDTH);
         if (value==null)
             return null;
         return value + " pixels";
@@ -101,7 +102,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getImageHeightDescription()
     {
-        final String value = _directory.getString(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
+        final String value = _directory.getString(JpegDirectory.TAG_IMAGE_HEIGHT);
         if (value==null)
             return null;
         return value + " pixels";
@@ -110,7 +111,7 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
     @Nullable
     public String getDataPrecisionDescription()
     {
-        final String value = _directory.getString(JpegDirectory.TAG_JPEG_DATA_PRECISION);
+        final String value = _directory.getString(JpegDirectory.TAG_DATA_PRECISION);
         if (value==null)
             return null;
         return value + " bits";
@@ -124,15 +125,8 @@ public class JpegDescriptor extends TagDescriptor<JpegDirectory>
         if (value==null)
             return null;
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(value.getComponentName());
-        sb.append(" component: Quantization table ");
-        sb.append(value.getQuantizationTableNumber());
-        sb.append(", Sampling factors ");
-        sb.append(value.getHorizontalSamplingFactor());
-        sb.append(" horiz/");
-        sb.append(value.getVerticalSamplingFactor());
-        sb.append(" vert");
-        return sb.toString();
+        return value.getComponentName() + " component: Quantization table " + value.getQuantizationTableNumber()
+            + ", Sampling factors " + value.getHorizontalSamplingFactor()
+            + " horiz/" + value.getVerticalSamplingFactor() + " vert";
     }
 }
