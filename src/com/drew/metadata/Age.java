@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 
 package com.drew.metadata;
@@ -26,23 +26,24 @@ import com.drew.lang.annotations.Nullable;
 
 /**
  * Represents an age in years, months, days, hours, minutes and seconds.
- * <p/>
+ * <p>
  * Used by certain Panasonic cameras which have face recognition features.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class Age
 {
-    private int _years;
-    private int _months;
-    private int _days;
-    private int _hours;
-    private int _minutes;
-    private int _seconds;
+    private final int _years;
+    private final int _months;
+    private final int _days;
+    private final int _hours;
+    private final int _minutes;
+    private final int _seconds;
 
     /**
      * Parses an age object from the string format used by Panasonic cameras:
      * <code>0031:07:15 00:00:00</code>
+     *
      * @param s The String in format <code>0031:07:15 00:00:00</code>.
      * @return The parsed Age object, or null if the value could not be parsed
      */

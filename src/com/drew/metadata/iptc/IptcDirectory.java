@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata.iptc;
 
@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Describes tags used by the International Press Telecommunications Council (IPTC) metadata format.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class IptcDirectory extends Directory
 {
@@ -210,12 +210,14 @@ public class IptcDirectory extends Directory
         this.setDescriptor(new IptcDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
-        return "Iptc";
+        return "IPTC";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

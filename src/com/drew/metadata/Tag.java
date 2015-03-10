@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata;
 
@@ -24,10 +24,10 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
 /**
- * Models a particular tag within a directory and provides methods for obtaining its value.  Note that a Tag instance is
- * specific to a particular metadata extraction and cannot be reused.
+ * Models a particular tag within a {@link com.drew.metadata.Directory} and provides methods for obtaining its value.
+ * Immutable.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class Tag
 {
@@ -78,6 +78,20 @@ public class Tag
     }
 
     /**
+     * Get whether this tag has a name.
+     *
+     * If <code>true</code>, it may be accessed via {@link #getTagName}.
+     * If <code>false</code>, {@link #getTagName} will return a string resembling <code>"Unknown tag (0x1234)"</code>.
+     *
+     * @return whether this tag has a name
+     */
+    @NotNull
+    public boolean hasTagName()
+    {
+        return _directory.hasTagName(_tagType);
+    }
+
+    /**
      * Get the name of the tag, such as <code>Aperture</code>, or
      * <code>InteropVersion</code>.
      *
@@ -90,10 +104,10 @@ public class Tag
     }
 
     /**
-     * Get the name of the directory in which the tag exists, such as
+     * Get the name of the {@link com.drew.metadata.Directory} in which the tag exists, such as
      * <code>Exif</code>, <code>GPS</code> or <code>Interoperability</code>.
      *
-     * @return name of the directory in which this tag exists
+     * @return name of the {@link com.drew.metadata.Directory} in which this tag exists
      */
     @NotNull
     public String getDirectoryName()
@@ -106,11 +120,12 @@ public class Tag
      *
      * @return the tag's type and value
      */
+    @Override
     @NotNull
     public String toString()
     {
         String description = getDescription();
-        if (description==null)
+        if (description == null)
             description = _directory.getString(getTagType()) + " (unable to formulate description)";
         return "[" + _directory.getName() + "] " + getTagName() + " - " + description;
     }

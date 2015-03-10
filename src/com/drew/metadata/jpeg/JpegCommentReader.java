@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,37 +15,43 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata.jpeg;
 
-import com.drew.lang.BufferBoundsException;
-import com.drew.lang.BufferReader;
+import com.drew.imaging.jpeg.JpegSegmentMetadataReader;
+import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataReader;
+
+import java.util.Arrays;
 
 /**
- * Decodes the comment stored within Jpeg files, populating a <code>Metadata</code> object with tag values in a
- * <code>JpegCommentDirectory</code>.
+ * Decodes the comment stored within JPEG files, populating a {@link Metadata} object with tag values in a
+ * {@link JpegCommentDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
-public class JpegCommentReader implements MetadataReader
+public class JpegCommentReader implements JpegSegmentMetadataReader
 {
-    /**
-     * Performs the Jpeg data extraction, adding found values to the specified
-     * instance of <code>Metadata</code>.
-     */
-    public void extract(@NotNull final BufferReader reader, @NotNull Metadata metadata)
+    @NotNull
+    public Iterable<JpegSegmentType> getSegmentTypes()
+    {
+        return Arrays.asList(JpegSegmentType.COM);
+    }
+
+    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    {
+        // The entire contents of the byte[] is the comment. There's nothing here to discriminate upon.
+        return true;
+    }
+
+    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
         JpegCommentDirectory directory = metadata.getOrCreateDirectory(JpegCommentDirectory.class);
 
-        try {
-            directory.setString(JpegCommentDirectory.TAG_JPEG_COMMENT, reader.getString(0, (int)reader.getLength()));
-        } catch (BufferBoundsException e) {
-            directory.addError("Exception reading JPEG comment string");
-        }
+        // The entire contents of the directory are the comment
+        directory.setString(JpegCommentDirectory.TAG_COMMENT, new String(segmentBytes));
     }
 }

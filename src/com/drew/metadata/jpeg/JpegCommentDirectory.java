@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata.jpeg;
 
@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Describes tags used by a JPEG file comment.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class JpegCommentDirectory extends Directory
 {
@@ -36,13 +36,13 @@ public class JpegCommentDirectory extends Directory
      * This value does not apply to a particular standard. Rather, this value has been fabricated to maintain
      * consistency with other directory types.
      */
-    public static final int TAG_JPEG_COMMENT = 0;
+    public static final int TAG_COMMENT = 0;
 
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
     static {
-        _tagNameMap.put(TAG_JPEG_COMMENT, "Jpeg Comment");
+        _tagNameMap.put(TAG_COMMENT, "JPEG Comment");
     }
 
     public JpegCommentDirectory()
@@ -50,12 +50,14 @@ public class JpegCommentDirectory extends Directory
         this.setDescriptor(new JpegCommentDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "JpegComment";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

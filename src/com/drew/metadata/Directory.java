@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata;
 
@@ -36,12 +36,10 @@ import java.util.*;
  * Abstract base class for all directory implementations, having methods for getting and setting tag values of various
  * data types.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public abstract class Directory
 {
-    // TODO get Array methods need to return cloned data, to maintain this directory's integrity
-
     /** Map of values hashed by type identifiers. */
     @NotNull
     protected final Map<Integer, Object> _tagMap = new HashMap<Integer, Object>();
@@ -103,7 +101,7 @@ public abstract class Directory
     @NotNull
     public Collection<Tag> getTags()
     {
-        return _definedTagList;
+        return Collections.unmodifiableCollection(_definedTagList);
     }
 
     /**
@@ -157,7 +155,7 @@ public abstract class Directory
     @NotNull
     public Iterable<String> getErrors()
     {
-        return _errorList;
+        return Collections.unmodifiableCollection(_errorList);
     }
 
     /** Returns the count of error messages in this directory. */
@@ -413,7 +411,9 @@ public abstract class Directory
         if (o == null)
             return null;
 
-        if (o instanceof String) {
+        if (o instanceof Number) {
+            return ((Number)o).intValue();
+        } else if (o instanceof String) {
             try {
                 return Integer.parseInt((String)o);
             } catch (NumberFormatException nfe) {
@@ -427,8 +427,6 @@ public abstract class Directory
                 }
                 return (int)val;
             }
-        } else if (o instanceof Number) {
-            return ((Number)o).intValue();
         } else if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             if (rationals.length == 1)
@@ -497,6 +495,8 @@ public abstract class Directory
         Object o = getObject(tagType);
         if (o == null)
             return null;
+        if (o instanceof int[])
+            return (int[])o;
         if (o instanceof Rational[]) {
             Rational[] rationals = (Rational[])o;
             int[] ints = new int[rationals.length];
@@ -505,14 +505,19 @@ public abstract class Directory
             }
             return ints;
         }
-        if (o instanceof int[])
-            return (int[])o;
+        if (o instanceof short[]) {
+            short[] shorts = (short[])o;
+            int[] ints = new int[shorts.length];
+            for (int i = 0; i < shorts.length; i++) {
+                ints[i] = shorts[i];
+            }
+            return ints;
+        }
         if (o instanceof byte[]) {
             byte[] bytes = (byte[])o;
             int[] ints = new int[bytes.length];
             for (int i = 0; i < bytes.length; i++) {
-                byte b = bytes[i];
-                ints[i] = b;
+                ints[i] = bytes[i];
             }
             return ints;
         }
@@ -526,7 +531,7 @@ public abstract class Directory
         }
         if (o instanceof Integer)
             return new int[] { (Integer)o };
-        
+
         return null;
     }
 
@@ -557,6 +562,13 @@ public abstract class Directory
             byte[] bytes = new byte[ints.length];
             for (int i = 0; i < ints.length; i++) {
                 bytes[i] = (byte)ints[i];
+            }
+            return bytes;
+        } else if (o instanceof short[]) {
+            short[] shorts = (short[])o;
+            byte[] bytes = new byte[shorts.length];
+            for (int i = 0; i < shorts.length; i++) {
+                bytes[i] = (byte)shorts[i];
             }
             return bytes;
         } else if (o instanceof CharSequence) {
@@ -702,7 +714,7 @@ public abstract class Directory
 
     /**
      * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
-     * <p/>
+     * <p>
      * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
      * the current {@link TimeZone}.  If the {@link TimeZone} is known, call the overload that accepts one as an argument.
      */
@@ -711,10 +723,10 @@ public abstract class Directory
     {
         return getDate(tagType, null);
     }
-    
+
     /**
      * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
-     * <p/>
+     * <p>
      * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
      * the {@link TimeZone} represented by the {@code timeZone} parameter (if it is non-null).  Note that this parameter
      * is only considered if the underlying value is a string and parsing occurs, otherwise it has no effect.
@@ -817,6 +829,7 @@ public abstract class Directory
             boolean isIntArray = componentType.getName().equals("int");
             boolean isLongArray = componentType.getName().equals("long");
             boolean isByteArray = componentType.getName().equals("byte");
+            boolean isShortArray = componentType.getName().equals("short");
             StringBuilder string = new StringBuilder();
             for (int i = 0; i < arrayLength; i++) {
                 if (i != 0)
@@ -825,6 +838,8 @@ public abstract class Directory
                     string.append(Array.get(o, i).toString());
                 else if (isIntArray)
                     string.append(Array.getInt(o, i));
+                else if (isShortArray)
+                    string.append(Array.getShort(o, i));
                 else if (isLongArray)
                     string.append(Array.getLong(o, i));
                 else if (isFloatArray)
@@ -895,6 +910,17 @@ public abstract class Directory
     }
 
     /**
+     * Gets whether the specified tag is known by the directory and has a name.
+     *
+     * @param tagType the tag type identifier
+     * @return whether this directory has a name for the specified tag
+     */
+    public boolean hasTagName(int tagType)
+    {
+        return getTagNameMap().containsKey(tagType);
+    }
+
+    /**
      * Provides a description of a tag's value using the descriptor set by
      * <code>setDescriptor(Descriptor)</code>.
      *
@@ -906,5 +932,16 @@ public abstract class Directory
     {
         assert(_descriptor != null);
         return _descriptor.getDescription(tagType);
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%s Directory (%d %s)",
+            getName(),
+            _tagMap.size(),
+            _tagMap.size() == 1
+                ? "tag"
+                : "tags");
     }
 }

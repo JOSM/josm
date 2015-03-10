@@ -34,7 +34,7 @@ Copyright rests with the contributors.
 -------------------------------- EXTERNAL CODE --------------------------------
 
 The jpeg metadata extraction code is from Drew Noakes
-(http://code.google.com/p/metadata-extractor/) and licensed
+(https://github.com/drewnoakes/metadata-extractor) and licensed
 with Apache license version 2.0.
 
 The Bzip2 code is from Apache Commons Compress and licensed

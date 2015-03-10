@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata;
 
@@ -25,7 +25,7 @@ import com.drew.lang.annotations.Nullable;
 
 /**
  * Class to hold information about a detected or recognized face in a photo.
- * <p/>
+ * <p>
  * When a face is <em>detected</em>, the camera believes that a face is present at a given location in
  * the image, but is not sure whose face it is.  When a face is <em>recognised</em>, then the face is
  * both detected and identified as belonging to a known person.
@@ -115,6 +115,7 @@ public class Face
         return result;
     }
 
+    @Override
     @NotNull
     public String toString()
     {
