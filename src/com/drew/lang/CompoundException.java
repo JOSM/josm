@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.lang;
 
@@ -31,7 +31,7 @@ import java.io.PrintWriter;
  * unavailable in previous versions.  This class allows support
  * of these previous JDK versions.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class CompoundException extends Exception
 {
@@ -62,6 +62,7 @@ public class CompoundException extends Exception
         return _innerException;
     }
 
+    @Override
     @NotNull
     public String toString()
     {
@@ -76,6 +77,7 @@ public class CompoundException extends Exception
         return string.toString();
     }
 
+    @Override
     public void printStackTrace(@NotNull PrintStream s)
     {
         super.printStackTrace(s);
@@ -85,6 +87,7 @@ public class CompoundException extends Exception
         }
     }
 
+    @Override
     public void printStackTrace(@NotNull PrintWriter s)
     {
         super.printStackTrace(s);
@@ -94,6 +97,7 @@ public class CompoundException extends Exception
         }
     }
 
+    @Override
     public void printStackTrace()
     {
         super.printStackTrace();

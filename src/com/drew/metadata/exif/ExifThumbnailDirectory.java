@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 
 package com.drew.metadata.exif;
@@ -33,7 +33,7 @@ import java.util.HashMap;
 /**
  * One of several Exif directories.  Otherwise known as IFD1, this directory holds information about an embedded thumbnail image.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifThumbnailDirectory extends Directory
 {
@@ -56,7 +56,7 @@ public class ExifThumbnailDirectory extends Directory
      * 6 = JPEG (old-style)
      * 7 = JPEG
      * 8 = Adobe Deflate
-     * 9 = JBIG B&W
+     * 9 = JBIG B&amp;W
      * 10 = JBIG Color
      * 32766 = Next
      * 32771 = CCIRLEW
@@ -97,14 +97,22 @@ public class ExifThumbnailDirectory extends Directory
      */
     public static final int TAG_PHOTOMETRIC_INTERPRETATION = 0x0106;
 
-    /** The position in the file of raster data. */
+    /**
+     * The position in the file of raster data.
+     */
     public static final int TAG_STRIP_OFFSETS = 0x0111;
     public static final int TAG_ORIENTATION = 0x0112;
-    /** Each pixel is composed of this many samples. */
+    /**
+     * Each pixel is composed of this many samples.
+     */
     public static final int TAG_SAMPLES_PER_PIXEL = 0x0115;
-    /** The raster is codified by a single block of data holding this many rows. */
+    /**
+     * The raster is codified by a single block of data holding this many rows.
+     */
     public static final int TAG_ROWS_PER_STRIP = 0x116;
-    /** The size of the raster data in bytes. */
+    /**
+     * The size of the raster data in bytes.
+     */
     public static final int TAG_STRIP_BYTE_COUNTS = 0x0117;
     /**
      * When image format is no compression YCbCr, this value shows byte aligns of
@@ -116,9 +124,13 @@ public class ExifThumbnailDirectory extends Directory
     public static final int TAG_Y_RESOLUTION = 0x011B;
     public static final int TAG_PLANAR_CONFIGURATION = 0x011C;
     public static final int TAG_RESOLUTION_UNIT = 0x0128;
-    /** The offset to thumbnail image bytes. */
+    /**
+     * The offset to thumbnail image bytes.
+     */
     public static final int TAG_THUMBNAIL_OFFSET = 0x0201;
-    /** The size of the thumbnail image data in bytes. */
+    /**
+     * The size of the thumbnail image data in bytes.
+     */
     public static final int TAG_THUMBNAIL_LENGTH = 0x0202;
     public static final int TAG_YCBCR_COEFFICIENTS = 0x0211;
     public static final int TAG_YCBCR_SUBSAMPLING = 0x0212;
@@ -128,8 +140,7 @@ public class ExifThumbnailDirectory extends Directory
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
-    static
-    {
+    static {
         _tagNameMap.put(TAG_THUMBNAIL_IMAGE_WIDTH, "Thumbnail Image Width");
         _tagNameMap.put(TAG_THUMBNAIL_IMAGE_HEIGHT, "Thumbnail Image Height");
         _tagNameMap.put(TAG_BITS_PER_SAMPLE, "Bits Per Sample");
@@ -160,12 +171,14 @@ public class ExifThumbnailDirectory extends Directory
         this.setDescriptor(new ExifThumbnailDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Exif Thumbnail";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {
@@ -192,7 +205,7 @@ public class ExifThumbnailDirectory extends Directory
     {
         byte[] data = _thumbnailData;
 
-        if (data==null)
+        if (data == null)
             throw new MetadataException("No thumbnail data exists.");
 
         FileOutputStream stream = null;
@@ -200,7 +213,7 @@ public class ExifThumbnailDirectory extends Directory
             stream = new FileOutputStream(filename);
             stream.write(data);
         } finally {
-            if (stream!=null)
+            if (stream != null)
                 stream.close();
         }
     }

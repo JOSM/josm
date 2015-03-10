@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,19 +15,27 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 
 package com.drew.lang;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 
-/** @author Drew Noakes http://drewnoakes.com */
+/**
+ * @author Drew Noakes https://drewnoakes.com
+ */
 public class StringUtil
 {
+    @NotNull
     public static String join(@NotNull Iterable<? extends CharSequence> strings, @NotNull String delimiter)
     {
         int capacity = 0;
@@ -49,6 +57,7 @@ public class StringUtil
         return buffer.toString();
     }
 
+    @NotNull
     public static <T extends CharSequence> String join(@NotNull T[] strings, @NotNull String delimiter)
     {
         int capacity = 0;
@@ -67,5 +76,40 @@ public class StringUtil
             buffer.append(value);
         }
         return buffer.toString();
+    }
+
+    @NotNull
+    public static String fromStream(@NotNull InputStream stream) throws IOException
+    {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+        return sb.toString();
+    }
+
+    public static int compare(@Nullable String s1, @Nullable String s2)
+    {
+        boolean null1 = s1 == null;
+        boolean null2 = s2 == null;
+
+        if (null1 && null2) {
+            return 0;
+        } else if (null1) {
+            return -1;
+        } else if (null2) {
+            return 1;
+        } else {
+            return s1.compareTo(s2);
+        }
+    }
+
+    @NotNull
+    public static String urlEncode(@NotNull String name)
+    {
+        // Sufficient for now, it seems
+        return name.replace(" ", "%20");
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata.exif;
 
@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Describes Exif tags from the SubIFD directory.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class ExifSubIFDDirectory extends Directory
 {
@@ -132,9 +132,9 @@ public class ExifSubIFDDirectory extends Directory
     public static final int TAG_SPECTRAL_SENSITIVITY = 0x8824;
     /**
      * Indicates the Opto-Electric Conversion Function (OECF) specified in ISO 14524.
-     * <p/>
+     * <p>
      * OECF is the relationship between the camera optical input and the image values.
-     * <p/>
+     * <p>
      * The values are:
      * <ul>
      *   <li>Two shorts, indicating respectively number of columns, and number of rows.</li>
@@ -259,10 +259,22 @@ public class ExifSubIFDDirectory extends Directory
      * Nice digital cameras actually save the focal length as a function of how far they are zoomed in.
      */
     public static final int TAG_FOCAL_LENGTH = 0x920A;
+
+    /**
+     * This tag holds the Exif Makernote. Makernotes are free to be in any format, though they are often IFDs.
+     * To determine the format, we consider the starting bytes of the makernote itself and sometimes the
+     * camera model and make.
+     * <p>
+     * The component count for this tag includes all of the bytes needed for the makernote.
+     */
+    public static final int TAG_MAKERNOTE = 0x927C;
+
     public static final int TAG_USER_COMMENT = 0x9286;
+
     public static final int TAG_SUBSECOND_TIME = 0x9290;
     public static final int TAG_SUBSECOND_TIME_ORIGINAL = 0x9291;
     public static final int TAG_SUBSECOND_TIME_DIGITIZED = 0x9292;
+
     public static final int TAG_FLASHPIX_VERSION = 0xA000;
     /**
      * Defines Color Space. DCF image must use sRGB color space so value is
@@ -273,8 +285,12 @@ public class ExifSubIFDDirectory extends Directory
     public static final int TAG_EXIF_IMAGE_WIDTH = 0xA002;
     public static final int TAG_EXIF_IMAGE_HEIGHT = 0xA003;
     public static final int TAG_RELATED_SOUND_FILE = 0xA004;
-    public static final int TAG_FOCAL_PLANE_X_RES = 0xA20E;
-    public static final int TAG_FOCAL_PLANE_Y_RES = 0xA20F;
+
+    /** This tag is a pointer to the Exif Interop IFD. */
+    public static final int TAG_INTEROP_OFFSET = 0xA005;
+
+    public static final int TAG_FOCAL_PLANE_X_RESOLUTION = 0xA20E;
+    public static final int TAG_FOCAL_PLANE_Y_RESOLUTION = 0xA20F;
     /**
      * Unit of FocalPlaneXResolution/FocalPlaneYResolution. '1' means no-unit,
      * '2' inch, '3' centimeter.
@@ -284,7 +300,7 @@ public class ExifSubIFDDirectory extends Directory
      * '8.3mm?'(1/3in.?) to their ResolutionUnit. Fuji's BUG? Finepix4900Z has
      * been changed to use value '2' but it doesn't match to actual value also.
      */
-    public static final int TAG_FOCAL_PLANE_UNIT = 0xA210;
+    public static final int TAG_FOCAL_PLANE_RESOLUTION_UNIT = 0xA210;
     public static final int TAG_EXPOSURE_INDEX = 0xA215;
     public static final int TAG_SENSING_METHOD = 0xA217;
     public static final int TAG_FILE_SOURCE = 0xA300;
@@ -511,8 +527,8 @@ public class ExifSubIFDDirectory extends Directory
         _tagNameMap.put(0x0156, "Transfer Range");
         _tagNameMap.put(0x0200, "JPEG Proc");
         _tagNameMap.put(TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL, "Compressed Bits Per Pixel");
-        _tagNameMap.put(0x927C, "Maker Note");
-        _tagNameMap.put(0xA005, "Interoperability Offset");
+        _tagNameMap.put(TAG_MAKERNOTE, "Makernote");
+        _tagNameMap.put(TAG_INTEROP_OFFSET, "Interoperability Offset");
 
         _tagNameMap.put(TAG_NEW_SUBFILE_TYPE, "New Subfile Type");
         _tagNameMap.put(TAG_SUBFILE_TYPE, "Subfile Type");
@@ -585,11 +601,11 @@ public class ExifSubIFDDirectory extends Directory
         // 0x920C in TIFF/EP
         _tagNameMap.put(TAG_SPATIAL_FREQ_RESPONSE_2, "Spatial Frequency Response");
         // 0x920E in TIFF/EP
-        _tagNameMap.put(TAG_FOCAL_PLANE_X_RES, "Focal Plane X Resolution");
+        _tagNameMap.put(TAG_FOCAL_PLANE_X_RESOLUTION, "Focal Plane X Resolution");
         // 0x920F in TIFF/EP
-        _tagNameMap.put(TAG_FOCAL_PLANE_Y_RES, "Focal Plane Y Resolution");
+        _tagNameMap.put(TAG_FOCAL_PLANE_Y_RESOLUTION, "Focal Plane Y Resolution");
         // 0x9210 in TIFF/EP
-        _tagNameMap.put(TAG_FOCAL_PLANE_UNIT, "Focal Plane Resolution Unit");
+        _tagNameMap.put(TAG_FOCAL_PLANE_RESOLUTION_UNIT, "Focal Plane Resolution Unit");
         // 0x9214 in TIFF/EP
         _tagNameMap.put(TAG_SUBJECT_LOCATION_2, "Subject Location");
         // 0x9215 in TIFF/EP
@@ -613,7 +629,7 @@ public class ExifSubIFDDirectory extends Directory
         _tagNameMap.put(TAG_DEVICE_SETTING_DESCRIPTION, "Device Setting Description");
         _tagNameMap.put(TAG_SUBJECT_DISTANCE_RANGE, "Subject Distance Range");
         _tagNameMap.put(TAG_IMAGE_UNIQUE_ID, "Unique Image ID");
-        
+
         _tagNameMap.put(TAG_CAMERA_OWNER_NAME, "Camera Owner Name");
         _tagNameMap.put(TAG_BODY_SERIAL_NUMBER, "Body Serial Number");
         _tagNameMap.put(TAG_LENS_SPECIFICATION, "Lens Specification");
@@ -633,12 +649,14 @@ public class ExifSubIFDDirectory extends Directory
         this.setDescriptor(new ExifSubIFDDescriptor(this));
     }
 
+    @Override
     @NotNull
     public String getName()
     {
         return "Exif SubIFD";
     }
 
+    @Override
     @NotNull
     protected HashMap<Integer, String> getTagNameMap()
     {

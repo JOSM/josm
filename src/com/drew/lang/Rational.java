@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 
 package com.drew.lang;
@@ -28,9 +28,12 @@ import java.io.Serializable;
 
 /**
  * Immutable class for holding a rational number without loss of precision.  Provides
- * a familiar representation via toString() in form <code>numerator/denominator</code>.
+ * a familiar representation via {@link Rational#toString} in form <code>numerator/denominator</code>.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * Note that any value with a numerator of zero will be treated as zero, even if the
+ * denominator is also zero.
+ *
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class Rational extends java.lang.Number implements Serializable
 {
@@ -60,9 +63,12 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>double</code>.
      */
+    @Override
     public double doubleValue()
     {
-        return (double) _numerator / (double) _denominator;
+        return _numerator == 0
+            ? 0.0
+            : (double) _numerator / (double) _denominator;
     }
 
     /**
@@ -72,19 +78,23 @@ public class Rational extends java.lang.Number implements Serializable
      * @return the numeric value represented by this object after conversion
      *         to type <code>float</code>.
      */
+    @Override
     public float floatValue()
     {
-        return (float) _numerator / (float) _denominator;
+        return _numerator == 0
+            ? 0.0f
+            : (float) _numerator / (float) _denominator;
     }
 
     /**
      * Returns the value of the specified number as a <code>byte</code>.
      * This may involve rounding or truncation.  This implementation simply
-     * casts the result of <code>doubleValue()</code> to <code>byte</code>.
+     * casts the result of {@link Rational#doubleValue} to <code>byte</code>.
      *
      * @return the numeric value represented by this object after conversion
      *         to type <code>byte</code>.
      */
+    @Override
     public final byte byteValue()
     {
         return (byte) doubleValue();
@@ -93,11 +103,12 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Returns the value of the specified number as an <code>int</code>.
      * This may involve rounding or truncation.  This implementation simply
-     * casts the result of <code>doubleValue()</code> to <code>int</code>.
+     * casts the result of {@link Rational#doubleValue} to <code>int</code>.
      *
      * @return the numeric value represented by this object after conversion
      *         to type <code>int</code>.
      */
+    @Override
     public final int intValue()
     {
         return (int) doubleValue();
@@ -106,11 +117,12 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Returns the value of the specified number as a <code>long</code>.
      * This may involve rounding or truncation.  This implementation simply
-     * casts the result of <code>doubleValue()</code> to <code>long</code>.
+     * casts the result of {@link Rational#doubleValue} to <code>long</code>.
      *
      * @return the numeric value represented by this object after conversion
      *         to type <code>long</code>.
      */
+    @Override
     public final long longValue()
     {
         return (long) doubleValue();
@@ -119,11 +131,12 @@ public class Rational extends java.lang.Number implements Serializable
     /**
      * Returns the value of the specified number as a <code>short</code>.
      * This may involve rounding or truncation.  This implementation simply
-     * casts the result of <code>doubleValue()</code> to <code>short</code>.
+     * casts the result of {@link Rational#doubleValue} to <code>short</code>.
      *
      * @return the numeric value represented by this object after conversion
      *         to type <code>short</code>.
      */
+    @Override
     public final short shortValue()
     {
         return (short) doubleValue();
@@ -153,7 +166,7 @@ public class Rational extends java.lang.Number implements Serializable
         return new Rational(this._denominator, this._numerator);
     }
 
-    /** Checks if this rational number is an Integer, either positive or negative. */
+    /** Checks if this {@link Rational} number is an Integer, either positive or negative. */
     public boolean isInteger()
     {
         return _denominator == 1 ||
@@ -166,13 +179,14 @@ public class Rational extends java.lang.Number implements Serializable
      *
      * @return a string representation of the object.
      */
+    @Override
     @NotNull
     public String toString()
     {
         return _numerator + "/" + _denominator;
     }
 
-    /** Returns the simplest representation of this Rational's value possible. */
+    /** Returns the simplest representation of this {@link Rational}'s value possible. */
     @NotNull
     public String toSimpleString(boolean allowDecimal)
     {
@@ -210,12 +224,12 @@ public class Rational extends java.lang.Number implements Serializable
     }
 
     /**
-     * Compares two <code>Rational</code> instances, returning true if they are mathematically
+     * Compares two {@link Rational} instances, returning true if they are mathematically
      * equivalent.
      *
-     * @param obj the Rational to compare this instance to.
+     * @param obj the {@link Rational} to compare this instance to.
      * @return true if instances are mathematically equivalent, otherwise false.  Will also
-     *         return false if <code>obj</code> is not an instance of <code>Rational</code>.
+     *         return false if <code>obj</code> is not an instance of {@link Rational}.
      */
     @Override
     public boolean equals(@Nullable Object obj)
@@ -234,7 +248,7 @@ public class Rational extends java.lang.Number implements Serializable
 
     /**
      * <p>
-     * Simplifies the Rational number.</p>
+     * Simplifies the {@link Rational} number.</p>
      * <p>
      * Prime number series: 1, 2, 3, 5, 7, 9, 11, 13, 17</p>
      * <p>
@@ -243,21 +257,21 @@ public class Rational extends java.lang.Number implements Serializable
      * the minimum number of checks required.</p>
      * <p>
      * However, generating the prime number series seems to be a hefty task.  Perhaps
-     * it's simpler to check if both d & n are divisible by all numbers from 2 ->
+     * it's simpler to check if both d &amp; n are divisible by all numbers from 2 {@literal ->}
      * (Math.min(denominator, numerator) / 2).  In doing this, one can check for 2
      * and 5 once, then ignore all even numbers, and all numbers ending in 0 or 5.
      * This leaves four numbers from every ten to check.</p>
      * <p>
      * Therefore, the max number of pairs of modulus divisions required will be:</p>
-     * <code><pre>
+     * <pre><code>
      *    4   Math.min(denominator, numerator) - 1
      *   -- * ------------------------------------ + 2
      *   10                    2
-     * <p/>
+     *
      *   Math.min(denominator, numerator) - 1
      * = ------------------------------------ + 2
      *                  5
-     * </pre></code>
+     * </code></pre>
      *
      * @return a simplified instance, or if the Rational could not be simplified,
      *         returns itself (unchanged)

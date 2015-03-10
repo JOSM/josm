@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 package com.drew.metadata.exif;
 
@@ -28,10 +28,12 @@ import com.drew.metadata.TagDescriptor;
 
 import java.text.DecimalFormat;
 
+import static com.drew.metadata.exif.GpsDirectory.*;
+
 /**
- * Provides human-readable string representations of tag values stored in a <code>GpsDirectory</code>.
+ * Provides human-readable string representations of tag values stored in a {@link GpsDirectory}.
  *
- * @author Drew Noakes http://drewnoakes.com
+ * @author Drew Noakes https://drewnoakes.com
  */
 public class GpsDescriptor extends TagDescriptor<GpsDirectory>
 {
@@ -40,41 +42,42 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         super(directory);
     }
 
+    @Override
     @Nullable
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case GpsDirectory.TAG_GPS_VERSION_ID:
+            case TAG_VERSION_ID:
                 return getGpsVersionIdDescription();
-            case GpsDirectory.TAG_GPS_ALTITUDE:
+            case TAG_ALTITUDE:
                 return getGpsAltitudeDescription();
-            case GpsDirectory.TAG_GPS_ALTITUDE_REF:
+            case TAG_ALTITUDE_REF:
                 return getGpsAltitudeRefDescription();
-            case GpsDirectory.TAG_GPS_STATUS:
+            case TAG_STATUS:
                 return getGpsStatusDescription();
-            case GpsDirectory.TAG_GPS_MEASURE_MODE:
+            case TAG_MEASURE_MODE:
                 return getGpsMeasureModeDescription();
-            case GpsDirectory.TAG_GPS_SPEED_REF:
+            case TAG_SPEED_REF:
                 return getGpsSpeedRefDescription();
-            case GpsDirectory.TAG_GPS_TRACK_REF:
-            case GpsDirectory.TAG_GPS_IMG_DIRECTION_REF:
-            case GpsDirectory.TAG_GPS_DEST_BEARING_REF:
+            case TAG_TRACK_REF:
+            case TAG_IMG_DIRECTION_REF:
+            case TAG_DEST_BEARING_REF:
                 return getGpsDirectionReferenceDescription(tagType);
-            case GpsDirectory.TAG_GPS_TRACK:
-            case GpsDirectory.TAG_GPS_IMG_DIRECTION:
-            case GpsDirectory.TAG_GPS_DEST_BEARING:
+            case TAG_TRACK:
+            case TAG_IMG_DIRECTION:
+            case TAG_DEST_BEARING:
                 return getGpsDirectionDescription(tagType);
-            case GpsDirectory.TAG_GPS_DEST_DISTANCE_REF:
+            case TAG_DEST_DISTANCE_REF:
                 return getGpsDestinationReferenceDescription();
-            case GpsDirectory.TAG_GPS_TIME_STAMP:
+            case TAG_TIME_STAMP:
                 return getGpsTimeStampDescription();
-            case GpsDirectory.TAG_GPS_LONGITUDE:
+            case TAG_LONGITUDE:
                 // three rational numbers -- displayed in HH"MM"SS.ss
                 return getGpsLongitudeDescription();
-            case GpsDirectory.TAG_GPS_LATITUDE:
+            case TAG_LATITUDE:
                 // three rational numbers -- displayed in HH"MM"SS.ss
                 return getGpsLatitudeDescription();
-            case GpsDirectory.TAG_GPS_DIFFERENTIAL:
+            case TAG_DIFFERENTIAL:
                 return getGpsDifferentialDescription();
             default:
                 return super.getDescription(tagType);
@@ -84,53 +87,36 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     private String getGpsVersionIdDescription()
     {
-        return convertBytesToVersionString(_directory.getIntArray(GpsDirectory.TAG_GPS_VERSION_ID), 1);
+        return getVersionBytesDescription(TAG_VERSION_ID, 1);
     }
 
     @Nullable
     public String getGpsLatitudeDescription()
     {
         GeoLocation location = _directory.getGeoLocation();
-
-        if (location == null)
-            return null;
-
-        return GeoLocation.decimalToDegreesMinutesSecondsString(location.getLatitude());
+        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLatitude());
     }
 
     @Nullable
     public String getGpsLongitudeDescription()
     {
         GeoLocation location = _directory.getGeoLocation();
-
-        if (location == null)
-            return null;
-
-        return GeoLocation.decimalToDegreesMinutesSecondsString(location.getLongitude());
+        return location == null ? null : GeoLocation.decimalToDegreesMinutesSecondsString(location.getLongitude());
     }
 
     @Nullable
     public String getGpsTimeStampDescription()
     {
         // time in hour, min, sec
-        int[] timeComponents = _directory.getIntArray(GpsDirectory.TAG_GPS_TIME_STAMP);
-        if (timeComponents==null)
-            return null;
-        StringBuilder description = new StringBuilder();
-        description.append(timeComponents[0]);
-        description.append(":");
-        description.append(timeComponents[1]);
-        description.append(":");
-        description.append(timeComponents[2]);
-        description.append(" UTC");
-        return description.toString();
+        int[] timeComponents = _directory.getIntArray(TAG_TIME_STAMP);
+        return timeComponents == null ? null : String.format("%d:%d:%d UTC", timeComponents[0], timeComponents[1], timeComponents[2]);
     }
 
     @Nullable
     public String getGpsDestinationReferenceDescription()
     {
-        final String value = _directory.getString(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF);
-        if (value==null)
+        final String value = _directory.getString(TAG_DEST_DISTANCE_REF);
+        if (value == null)
             return null;
         String distanceRef = value.trim();
         if ("K".equalsIgnoreCase(distanceRef)) {
@@ -150,18 +136,16 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
         Rational angle = _directory.getRational(tagType);
         // provide a decimal version of rational numbers in the description, to avoid strings like "35334/199 degrees"
         String value = angle != null
-                ? new DecimalFormat("0.##").format(angle.doubleValue())
-                : _directory.getString(tagType);
-        if (value==null || value.trim().length()==0)
-            return null;
-        return value.trim() + " degrees";
+            ? new DecimalFormat("0.##").format(angle.doubleValue())
+            : _directory.getString(tagType);
+        return value == null || value.trim().length() == 0 ? null : value.trim() + " degrees";
     }
 
     @Nullable
     public String getGpsDirectionReferenceDescription(int tagType)
     {
         final String value = _directory.getString(tagType);
-        if (value==null)
+        if (value == null)
             return null;
         String gpsDistRef = value.trim();
         if ("T".equalsIgnoreCase(gpsDistRef)) {
@@ -176,8 +160,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     public String getGpsSpeedRefDescription()
     {
-        final String value = _directory.getString(GpsDirectory.TAG_GPS_SPEED_REF);
-        if (value==null)
+        final String value = _directory.getString(TAG_SPEED_REF);
+        if (value == null)
             return null;
         String gpsSpeedRef = value.trim();
         if ("K".equalsIgnoreCase(gpsSpeedRef)) {
@@ -194,8 +178,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     public String getGpsMeasureModeDescription()
     {
-        final String value = _directory.getString(GpsDirectory.TAG_GPS_MEASURE_MODE);
-        if (value==null)
+        final String value = _directory.getString(TAG_MEASURE_MODE);
+        if (value == null)
             return null;
         String gpsSpeedMeasureMode = value.trim();
         if ("2".equalsIgnoreCase(gpsSpeedMeasureMode)) {
@@ -210,8 +194,8 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     public String getGpsStatusDescription()
     {
-        final String value = _directory.getString(GpsDirectory.TAG_GPS_STATUS);
-        if (value==null)
+        final String value = _directory.getString(TAG_STATUS);
+        if (value == null)
             return null;
         String gpsStatus = value.trim();
         if ("A".equalsIgnoreCase(gpsStatus)) {
@@ -226,46 +210,26 @@ public class GpsDescriptor extends TagDescriptor<GpsDirectory>
     @Nullable
     public String getGpsAltitudeRefDescription()
     {
-        Integer value = _directory.getInteger(GpsDirectory.TAG_GPS_ALTITUDE_REF);
-        if (value==null)
-            return null;
-        if (value == 0)
-            return "Sea level";
-        if (value == 1)
-            return "Below sea level";
-        return "Unknown (" + value + ")";
+        return getIndexedDescription(TAG_ALTITUDE_REF, "Sea level", "Below sea level");
     }
 
     @Nullable
     public String getGpsAltitudeDescription()
     {
-        final Rational value = _directory.getRational(GpsDirectory.TAG_GPS_ALTITUDE);
-        if (value==null)
-            return null;
-        return value.intValue() + " metres";
+        final Rational value = _directory.getRational(TAG_ALTITUDE);
+        return value == null ? null : value.intValue() + " metres";
     }
 
     @Nullable
     public String getGpsDifferentialDescription()
     {
-        final Integer value = _directory.getInteger(GpsDirectory.TAG_GPS_DIFFERENTIAL);
-        if (value==null)
-            return null;
-        if (value == 0)
-            return "No Correction";
-        if (value == 1)
-            return "Differential Corrected";
-        return "Unknown (" + value + ")";
+        return getIndexedDescription(TAG_DIFFERENTIAL, "No Correction", "Differential Corrected");
     }
 
     @Nullable
     public String getDegreesMinutesSecondsDescription()
     {
         GeoLocation location = _directory.getGeoLocation();
-
-        if (location == null)
-            return null;
-
-        return location.toDMSString();
+        return location == null ? null : location.toDMSString();
     }
 }

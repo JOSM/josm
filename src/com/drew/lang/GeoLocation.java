@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2012 Drew Noakes
+ * Copyright 2002-2015 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  *
  * More information about this project is available at:
  *
- *    http://drewnoakes.com/code/exif/
- *    http://code.google.com/p/metadata-extractor/
+ *    https://drewnoakes.com/code/exif/
+ *    https://github.com/drewnoakes/metadata-extractor
  */
 
 package com.drew.lang;
@@ -24,9 +24,13 @@ package com.drew.lang;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 
+import java.text.DecimalFormat;
+
 /**
  * Represents a latitude and longitude pair, giving a position on earth in spherical coordinates.
+ * <p>
  * Values of latitude and longitude are given in degrees.
+ * <p>
  * This type is immutable.
  */
 public final class GeoLocation
@@ -78,7 +82,8 @@ public final class GeoLocation
     public static String decimalToDegreesMinutesSecondsString(double decimal)
     {
         double[] dms = decimalToDegreesMinutesSeconds(decimal);
-        return dms[0] + "° " + dms[1] + "' " + dms[2] + '"';
+        DecimalFormat format = new DecimalFormat("0.##");
+        return String.format("%s° %s' %s\"", format.format(dms[0]), format.format(dms[1]), format.format(dms[2]));
     }
 
     /**
