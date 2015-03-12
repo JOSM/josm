@@ -86,11 +86,13 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
     }
 
     public static final NodeElemStyle SIMPLE_NODE_ELEMSTYLE;
+    public static final BoxProvider SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER;
     static {
         MultiCascade mc = new MultiCascade();
         mc.getOrCreateCascade("default");
         SIMPLE_NODE_ELEMSTYLE = create(new Environment(null, mc, "default", null), 4.1f, true);
         if (SIMPLE_NODE_ELEMSTYLE == null) throw new AssertionError();
+        SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER = SIMPLE_NODE_ELEMSTYLE.getBoxProvider();
     }
 
     public static final StyleList DEFAULT_NODE_STYLELIST = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
