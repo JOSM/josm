@@ -341,7 +341,7 @@ public class ElemStyles {
                     sl.add(nodeStyle);
                     addIfNotNull(sl, BoxTextElemStyle.create(env, nodeStyle.getBoxProvider()));
                 } else {
-                    addIfNotNull(sl, BoxTextElemStyle.create(env, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE.getBoxProvider()));
+                    addIfNotNull(sl, BoxTextElemStyle.create(env, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER));
                 }
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {
