@@ -63,6 +63,7 @@ node[man_made=bridge],
 node[man_made=breakwater],
 node[aeroway=apron],
 node[power=plant],
+node[building:part=yes],
 node[source:outline] {
   throwWarning: tr("{0} on a node. Should be drawn as an area.", "{0.tag}");
 }
