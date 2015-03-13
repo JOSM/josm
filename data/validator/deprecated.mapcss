@@ -404,3 +404,10 @@ way[sidewalk=yes] {
   suggestAlternative: "{0.key}=* + intermittent=yes";
   suggestAlternative: "natural=valley";
 }
+
+/* see #10346 */
+way[oneway=1] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "oneway=yes";
+  fixAdd: "oneway=yes";
+}

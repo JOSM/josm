@@ -108,7 +108,7 @@ node[restriction] {
 /* bridge, tunnel */
 /******************/
 
-way[bridge?]::core_bridge,
+way[bridge=yes]::core_bridge,
 way[bridge=viaduct]::core_bridge,
 way[bridge=swing]::core_bridge,
 way[bridge=movable]::core_bridge,
@@ -123,7 +123,7 @@ way[bridge=aqueduct]::core_bridge {
     color: bridge#0000FF;
     opacity: 0.9;
 }
-way[tunnel?]::core_tunnel,
+way[tunnel=yes]::core_tunnel,
 way[tunnel=culvert]::core_tunnel,
 way[tunnel=building_passage]::core_tunnel,
 way[tunnel=avalanche_protector]::core_tunnel {
@@ -231,7 +231,7 @@ node[traffic_sign][boat?!] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
 }
-node[noexit?] {
+node[noexit=yes] {
     icon-image: "vehicle/restriction/dead_end.png";
     set icon_z17;
 }
@@ -473,7 +473,7 @@ node[barrier=hampshire_gate] {
 /* highway tags */
 /****************/
 
-way[motorroad?]::core_motorroad {
+way[motorroad=yes]::core_motorroad {
     major-z-index: 2;
     z-index: -1;
     width: +4;
