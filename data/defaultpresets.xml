@@ -1673,6 +1673,7 @@
             <key key="waterway" value="drain" />
             <text key="name" text="Name" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
+            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
         </item> <!-- Drain -->
         <item name="Ditch" icon="presets/waterway.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=ditch"
@@ -1684,6 +1685,7 @@
             <key key="waterway" value="ditch" />
             <text key="name" text="Name" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
+            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
         </item> <!-- Ditch -->
         <item name="Stream" icon="presets/waterway.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=stream"
@@ -1700,14 +1702,8 @@
             <key key="waterway" value="stream" />
             <text key="name" text="Name" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
+            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
         </item> <!-- Stream -->
-        <item name="Wadi" icon="presets/waterway.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=wadi" />
-            <space />
-            <key key="waterway" value="wadi" />
-            <text key="name" text="Name" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-        </item> <!-- Wadi -->
         <item name="Canal" icon="presets/waterway.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=canal"
@@ -1735,6 +1731,7 @@
             <key key="waterway" value="river" />
             <reference ref="name_wikipedia" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
+            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
         </item> <!-- River -->
         <separator/>
         <item name="Spring" icon="presets/spring.png" type="node,closedway" preset_name_label="true">
@@ -1893,6 +1890,7 @@
             <space />
             <key key="waterway" value="riverbank" />
             <text key="name" text="Name" />
+            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
         </item> <!-- Riverbank -->
         <separator/>
         <item name="Wetland" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
@@ -7203,6 +7201,25 @@
                 <combo key="volcano:type" text="Type" values="stratovolcano,shield,scoria" />
             </optional>
         </item> <!-- Volcano -->
+        <item name="Ridge" icon="presets/ridge.svg" type="way,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=ridge"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=ridge"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=ridge"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=ridge"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=ridge" />
+            <label text="A mountain or hill ridge." />
+            <space />
+            <key key="natural" value="ridge" />
+            <reference ref="name_wikipedia" />
+            <text key="ele" text="Elevation" />
+        </item> <!-- Ridge -->
+        <item name="Valley" icon="presets/valley.svg" type="way,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=valley" />
+            <label text="A low area between hills." />
+            <space />
+            <key key="natural" value="valley" />
+            <reference ref="name_wikipedia" />
+        </item> <!-- Valley -->
         <item name="Cave Entrance" icon="presets/cave_entrance.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=cave_entrance"
@@ -7239,18 +7256,6 @@
             <key key="place" value="islet" />
             <reference ref="name_wikipedia" />
         </item> <!-- Islet -->
-        <item name="Ridge" icon="presets/empty.png" type="way,relation" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=ridge"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=ridge"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=ridge"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=ridge"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=ridge" />
-            <label text="A mountain or hill ridge." />
-            <space />
-            <key key="natural" value="ridge" />
-            <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation" />
-        </item> <!-- Ridge -->
     </group> <!-- Geography -->
     <group name="Nature" icon="styles/standard/misc/landmark/trees.png">
         <item name="Tree" icon="styles/standard/misc/landmark/trees.png" type="node" preset_name_label="true">

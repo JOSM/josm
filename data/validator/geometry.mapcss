@@ -29,12 +29,12 @@ node[railway=disused],
 node[railway=abandoned],
 node[waterway=river],
 node[waterway=canal],
-node[waterway=wadi],
 node[waterway=stream],
 node[waterway=ditch],
 node[waterway=drain],
 node[natural=coastline],
 node[natural=ridge],
+node[natural=valley],
 node[natural=tree_row] {
   throwWarning: tr("{0} on a node. Should be used on a way.", "{0.tag}");
   assertMatch: "node oneway=-1";
