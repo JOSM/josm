@@ -3908,6 +3908,10 @@ way[natural=ridge] {
     width: 1;
     color: natural#002f00;
 }
+way[natural=valley] {
+    width: 1;
+    color: natural#002f00;
+}
 area[natural=scree] {
     fill-color: natural#002f00;
 }
@@ -4019,7 +4023,8 @@ node[natural=beach],
 node[natural=sand],
 node[natural=land],
 node[natural=bare_rock],
-node[natural=ridge] {
+node[natural=ridge],
+node[natural=valley] {
     icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
@@ -4037,7 +4042,7 @@ area[waterway=riverbank] {
     width: 1;
     color: riverbank#0000cf;
 }
-way[waterway=canal], way[waterway=wadi] {
+way[waterway=canal] {
     width: 2;
     color: water#0000ff;
 }
@@ -4093,15 +4098,6 @@ way[waterway=weir] {
 }
 node[waterway=weir] {
     icon-image: "nautical/weir.png";
-    set icon_z17;
-    text: auto;
-}
-way[waterway=rapids] {
-    width: 2;
-    color: rapids#8080ff;
-}
-node[waterway=rapids] {
-    icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }

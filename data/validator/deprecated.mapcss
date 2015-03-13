@@ -397,3 +397,10 @@ way[sidewalk=yes] {
   throwWarning: tr("Definition of {0} is unclear", "{0.tag}");
   suggestAlternative: {1.key};
 }
+
+/* see #11223 */
+*[waterway=wadi] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "{0.key}=* + intermittent=yes";
+  suggestAlternative: "natural=valley";
+}
