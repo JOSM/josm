@@ -711,6 +711,11 @@ node[highway=speed_camera] {
     set icon_z17;
     text: auto;
 }
+relation[type=enforcement] >[role="device"] node {
+    icon-image: "vehicle/restriction/speed_trap.png";
+    set icon_z17;
+    text: auto;
+}
 node[traffic_sign=city_limit] {
     icon-image: "vehicle/restriction/citylimit.png";
     set icon_z17;
