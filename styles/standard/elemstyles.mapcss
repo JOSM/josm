@@ -290,6 +290,9 @@ way["addr:interpolation"=alphabetic] {
 area[building][!building?!] {
     fill-color: building#cb9999;
 }
+area[building:part=yes] {
+    fill-color: building#dcbbbb;
+}
 node[building][!building?!] {
     icon-image: "misc/landmark/building.png";
     set icon_z17;
@@ -330,7 +333,8 @@ node[entrance=emergency] {
     set icon_z17;
     text: auto;
 }
-node[building=entrance] {
+node[building=entrance],
+node[building:part] {
     icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
