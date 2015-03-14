@@ -290,8 +290,8 @@ way["addr:interpolation"=alphabetic] {
 area[building][!building?!] {
     fill-color: building#cb9999;
 }
-area[building:part=yes] {
-    fill-color: building#dcbbbb;
+area[building:part][!building:part?!] {
+    fill-color: buildingpart#dcbbbb;
 }
 node[building][!building?!] {
     icon-image: "misc/landmark/building.png";
