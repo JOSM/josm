@@ -793,7 +793,7 @@
             <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" values_context="overtaking" match="key" />
         </item> <!-- Road Restrictions -->
         <separator/>
-        <item name="Roundabout" icon="presets/roundabout.png" type="node,closedway" preset_name_label="true">
+        <item name="Roundabout" icon="presets/roundabout.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:junction=roundabout"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:junction=roundabout"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:junction=roundabout"
@@ -3657,7 +3657,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:leisure=playground" />
             <space />
             <key key="leisure" value="playground" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator_oh_wheelchair" />
         </item> <!-- Playground -->
         <item name="Picnic Site" icon="styles/standard/leisure/picnic.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=picnic_site"
