@@ -12,13 +12,13 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -136,7 +136,7 @@ public class MapCSSStyleSource extends StyleSource {
         /* tag based index */
         public final Map<String,Map<String,Set<MapCSSRule>>> index = new HashMap<>();
         /* rules without SimpleKeyValueCondition */
-        public final Set<MapCSSRule> remaining = new HashSet<>();
+        public final ArrayList<MapCSSRule> remaining = new ArrayList<>();
 
         public void add(MapCSSRule rule) {
             rules.add(rule);
@@ -177,6 +177,7 @@ public class MapCSSStyleSource extends StyleSource {
                 }
                 rulesWithMatchingKeyValue.add(r);
             }
+            Collections.sort(remaining);
         }
 
         /**
@@ -187,8 +188,8 @@ public class MapCSSStyleSource extends StyleSource {
          *
          * You must have a read lock of STYLE_SOURCE_LOCK when calling this method.
          */
-        public Collection<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
-            List<MapCSSRule> ruleCandidates = new ArrayList<>(remaining);
+        public PriorityQueue<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
+            PriorityQueue<MapCSSRule> ruleCandidates = new PriorityQueue<>(remaining);
             for (Map.Entry<String,String> e : osm.getKeys().entrySet()) {
                 Map<String,Set<MapCSSRule>> v = index.get(e.getKey());
                 if (v != null) {
@@ -198,7 +199,6 @@ public class MapCSSStyleSource extends StyleSource {
                     }
                 }
             }
-            Collections.sort(ruleCandidates);
             return ruleCandidates;
         }
 
@@ -488,7 +488,9 @@ public class MapCSSStyleSource extends StyleSource {
         // last used index
         int lastDeclUsed = -1;
 
-        for (MapCSSRule r : matchingRuleIndex.getRuleCandidates(osm)) {
+        PriorityQueue<MapCSSRule> candidates = matchingRuleIndex.getRuleCandidates(osm);
+        MapCSSRule r;
+        while ((r = candidates.poll()) != null) {
             env.clearSelectorMatchingInformation();
             env.layer = null;
             String sub = env.layer = r.selector.getSubpart().getId(env);
