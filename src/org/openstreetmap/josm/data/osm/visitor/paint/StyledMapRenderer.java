@@ -320,6 +320,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private Font orderFont;
 
     private boolean leftHandTraffic;
+    private Object antialiasing;
 
     /**
      * Constructs a new {@code StyledMapRenderer}.
@@ -438,6 +439,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Shape area = path.createTransformedShape(nc.getAffineTransform());
 
         if (!isOutlineOnly) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             if (fillImage == null) {
                 if (isInactiveMode) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.33f));
@@ -455,6 +457,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 g.fill(area);
                 g.setPaintMode();
             }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasing);
         }
 
         drawAreaText(osm, text, area);
@@ -1395,9 +1398,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         isOutlineOnly = paintSettings.isOutlineOnly();
         orderFont = new Font(Main.pref.get("mappaint.font", "Droid Sans"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
 
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
-                        RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+        antialiasing = Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
+                        RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF;
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasing);
 
         highlightLineWidth = Main.pref.getInteger("mappaint.highlight.width", 4);
         highlightPointRadius = Main.pref.getInteger("mappaint.highlight.radius", 7);
@@ -1644,7 +1647,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if (Main.isTraceEnabled()) {
                 timeStart = System.currentTimeMillis();
                 System.err.print("BENCHMARK: rendering ");
-                Main.debug(null);
             }
 
             List<Node> nodes = data.searchNodes(bbox);
