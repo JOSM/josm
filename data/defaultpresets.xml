@@ -176,7 +176,7 @@
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
     </chunk>
     <chunk id="sport">
-            <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,handball,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,soccer,swimming,table_tennis,tennis" values_context="sport" />
+            <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,handball,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,running,shooting,skateboard,skating,soccer,swimming,table_tennis,tennis" values_context="sport" />
     </chunk>
     <chunk id="fee">
         <combo key="fee" text="Fee" values="yes,no" />
