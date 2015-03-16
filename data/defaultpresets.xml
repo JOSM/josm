@@ -1703,6 +1703,8 @@
             <text key="name" text="Name" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
             <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
+            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
         </item> <!-- Stream -->
         <item name="Canal" icon="presets/waterway.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal"
@@ -1716,6 +1718,8 @@
             <key key="waterway" value="canal" />
             <reference ref="name_wikipedia" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
+            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
+            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
         </item> <!-- Canal -->
         <item name="River" icon="presets/river.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=river"
@@ -1732,6 +1736,8 @@
             <reference ref="name_wikipedia" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
             <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
+            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
         </item> <!-- River -->
         <separator/>
         <item name="Spring" icon="presets/spring.png" type="node,closedway" preset_name_label="true">
@@ -1862,6 +1868,8 @@
             <combo key="water" text="Water Body" values="canal,lake,lagoon,oxbow,pond,reservoir,river" match="key" values_searchable="true" />
             <check key="salt" text="Salt Water" disable_off="true" />
             <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
+            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
         </item> <!-- Water -->
         <item name="Coastline" icon="presets/coastline.png" type="way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline"
