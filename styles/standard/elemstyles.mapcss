@@ -1471,8 +1471,6 @@ node[office=government] {
 area[leisure=sports_centre],
 area[leisure=golf_course],
 area[leisure=stadium],
-area[leisure=track][!area?!]:closed,
-area[leisure=pitch],
 area[leisure=horse_riding],
 area[leisure=water_park] {
     fill-color: leisure#c7f1a3;
@@ -1492,20 +1490,6 @@ node[leisure=stadium] {
     set icon_z17;
     text: auto;
 }
-way[leisure=track] {
-    width: 2;
-    color: leisure#c7f1a3;
-}
-node[leisure=track] {
-    icon-image: "sport/track.png";
-    set icon_z17;
-    text: auto;
-}
-node[leisure=pitch] {
-    icon-image: "sport/pitch.png";
-    set icon_z17;
-    text: auto;
-}
 node[leisure=horse_riding] {
     icon-image: "presets/equestrian.png";
     icon-width: 16;
@@ -1514,6 +1498,26 @@ node[leisure=horse_riding] {
 }
 node[leisure=water_park] {
     icon-image: "leisure/water_park.png";
+    set icon_z17;
+    text: auto;
+}
+area[leisure=track][!area?!]:closed {
+    fill-color: leisuretrack#d4f4b9;
+}
+way[leisure=track] {
+    width: 2;
+    color: leisuretrack#d4f4b9;
+}
+node[leisure=track] {
+    icon-image: "sport/track.png";
+    set icon_z17;
+    text: auto;
+}
+area[leisure=pitch] {
+    fill-color: pitch#baee8d;
+}
+node[leisure=pitch] {
+    icon-image: "sport/pitch.png";
     set icon_z17;
     text: auto;
 }
