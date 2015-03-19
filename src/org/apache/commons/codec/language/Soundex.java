@@ -27,7 +27,7 @@ import org.apache.commons.codec.StringEncoder;
  * This class is thread-safe.
  * Although not strictly immutable, the {@link #maxLength} field is not actually used.
  *
- * @version $Id: Soundex.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: Soundex.java 1667895 2015-03-19 22:46:34Z ggregory $
  */
 public class Soundex implements StringEncoder {
 
@@ -168,7 +168,7 @@ public class Soundex implements StringEncoder {
     }
 
     /**
-     * Used internally by the SoundEx algorithm.
+     * Used internally by the Soundex algorithm.
      *
      * Consonants from the same code group separated by W or H are treated as one.
      *
