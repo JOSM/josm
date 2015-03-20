@@ -1444,6 +1444,15 @@ node[man_made=water_works] {
     set icon_z17;
     text: auto;
 }
+way[man_made=cutline] {
+    width: 2;
+    color: cutline#99ff55;
+}
+node[man_made=cutline] {
+    icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
 
 /***************/
 /* office tags */
