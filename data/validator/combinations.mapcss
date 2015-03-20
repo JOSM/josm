@@ -104,7 +104,8 @@ way[junction                   ][!highway][junction!=yes],
 *[castle_type                  ][historic!=castle],
 *[reservoir_type               ][landuse!=reservoir][water!=reservoir],
 *[bridge:movable               ][bridge!=movable],
-*[parking                      ][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking)$/]
+*[parking                      ][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking)$/],
+*[cutline                      ][man_made!=cutline],
 *[bunker_type                  ][military!=bunker] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
 }

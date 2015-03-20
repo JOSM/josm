@@ -7371,6 +7371,12 @@
             <text key="name" text="Name" />
             <reference ref="leaf" />
         </item> <!-- Forest -->
+        <item name="Cutline" icon="styles/standard/misc/landmark/cutline.svg" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=cutline" />
+            <space />
+            <key key="man_made" value="cutline" />
+            <combo key="cutline" text="Type" values="border,firebreak,hunting,loggingmachine,pipeline,piste,section" values_context="cutline" />
+        </item> <!-- Cutline -->
         <item name="Grassland" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=grassland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=grassland"
