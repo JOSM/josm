@@ -308,6 +308,24 @@
             <check key="toll" text="Toll" />
         </optional>
     </chunk>
+    <chunk id="waterway">
+        <reference ref="name_layer" />
+        <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+        <combo key="tunnel" text="Tunnel" values="culvert,yes" />
+        <text key="width" text="Width (meters)" />
+    </chunk>
+    <chunk id="waterway_wikipedia">
+        <reference ref="waterway" />
+        <text key="wikipedia" text="Wikipedia" />
+    </chunk>
+    <chunk id="water_access">
+        <optional text="Water access rules:">
+            <combo key="ship" text="Ship" values="yes,designated,destination,delivery,permissive,private,no" />
+            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
+            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
+            <combo key="canoe" text="Canoe" values="yes,designated,destination,delivery,permissive,private,no" />
+        </optional>
+    </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact_address">
     <preset_link preset_name="Contact (Common Schema)" />
@@ -1674,9 +1692,9 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:waterway=drain" />
             <space />
             <key key="waterway" value="drain" />
-            <text key="name" text="Name" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+            <optional>
+                <reference ref="waterway" />
+            </optional>
         </item> <!-- Drain -->
         <item name="Ditch" icon="presets/waterway.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=ditch"
@@ -1686,9 +1704,9 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:waterway=ditch" />
             <space />
             <key key="waterway" value="ditch" />
-            <text key="name" text="Name" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+            <optional>
+                <reference ref="waterway" />
+            </optional>
         </item> <!-- Ditch -->
         <item name="Stream" icon="presets/waterway.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=stream"
@@ -1703,27 +1721,11 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:waterway=stream" />
             <space />
             <key key="waterway" value="stream" />
-            <text key="name" text="Name" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
-            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
-            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
+            <optional>
+                <reference ref="waterway_wikipedia" />
+            </optional>
+            <reference ref="water_access" />
         </item> <!-- Stream -->
-        <item name="Canal" icon="presets/waterway.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=canal"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:waterway=canal"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:waterway=canal"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:waterway=canal"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:waterway=canal"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:waterway=canal" />
-            <space />
-            <key key="waterway" value="canal" />
-            <reference ref="name_wikipedia" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
-            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
-        </item> <!-- Canal -->
         <item name="River" icon="presets/river.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=river"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=river"
@@ -1736,12 +1738,29 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:waterway=river" />
             <space />
             <key key="waterway" value="river" />
-            <reference ref="name_wikipedia" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
-            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
-            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
+            <optional>
+                <reference ref="waterway_wikipedia" />
+            </optional>
+            <reference ref="water_access" />
         </item> <!-- River -->
+        <item name="Canal" icon="presets/waterway.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=canal"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:waterway=canal"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:waterway=canal"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:waterway=canal"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:waterway=canal"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:waterway=canal" />
+            <space />
+            <key key="waterway" value="canal" />
+            <optional>
+                <reference ref="name_layer" />
+                <combo key="tunnel" text="Tunnel" values="culvert,yes" />
+                <text key="width" text="Width (meters)" />
+                <text key="wikipedia" text="Wikipedia" />
+            </optional>
+            <reference ref="water_access" />
+        </item> <!-- Canal -->
         <separator/>
         <item name="Spring" icon="presets/spring.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=spring"
@@ -1871,8 +1890,8 @@
             <combo key="water" text="Water Body" values="canal,lake,lagoon,oxbow,pond,reservoir,river" match="key" values_searchable="true" />
             <check key="salt" text="Salt Water" disable_off="true" />
             <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
-            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
-            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
+            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="water_access" />
         </item> <!-- Water -->
         <item name="Coastline" icon="presets/coastline.png" type="way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline"
