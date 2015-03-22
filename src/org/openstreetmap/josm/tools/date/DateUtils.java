@@ -141,7 +141,7 @@ public final class DateUtils {
     }
 
     private static int parsePart(String str, int off, int len) {
-        return Integer.valueOf(str.substring(off, off+len));
+        return Integer.parseInt(str.substring(off, off+len));
     }
 
     /**

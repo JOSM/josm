@@ -41,7 +41,7 @@ public abstract class AbstractParser extends DefaultHandler {
         if (v == null) {
             throwException(tr("Missing mandatory attribute ''{0}''.", name));
         }
-        Long l = 0L;
+        long l = 0L;
         try {
             l = Long.parseLong(v);
         } catch(NumberFormatException e) {
