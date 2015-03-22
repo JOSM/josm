@@ -27,7 +27,7 @@ import org.apache.commons.codec.StringEncoder;
  * This class is thread-safe.
  * Although not strictly immutable, the {@link #maxLength} field is not actually used.
  *
- * @version $Id: Soundex.java 1667895 2015-03-19 22:46:34Z ggregory $
+ * @version $Id: Soundex.java 1668441 2015-03-22 18:48:52Z ggregory $
  */
 public class Soundex implements StringEncoder {
 
@@ -185,12 +185,13 @@ public class Soundex implements StringEncoder {
         final char mappedChar = this.map(str.charAt(index));
         // HW rule check
         if (index > 1 && mappedChar != '0') {
-            final char hwChar = str.charAt(index - 1);
-            if ('H' == hwChar || 'W' == hwChar) {
-                final char preHWChar = str.charAt(index - 2);
-                final char firstCode = this.map(preHWChar);
-                if (firstCode == mappedChar || 'H' == preHWChar || 'W' == preHWChar) {
+            for (int i=index-1 ; i>=0 ; i--) {
+                final char prevChar = str.charAt(i);
+                if (this.map(prevChar)==mappedChar) {
                     return 0;
+                }
+                if ('H'!=prevChar && 'W'!=prevChar) {
+                    break;
                 }
             }
         }
