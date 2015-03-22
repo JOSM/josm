@@ -56,8 +56,8 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.xml.bind.DatatypeConverter;
 
-import org.apache.commons.codec.binary.Base64;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.CachedFile;
@@ -823,7 +823,7 @@ public class ImageProvider {
                 String data = m.group(3);
                 byte[] bytes;
                 if (";base64".equals(base64)) {
-                    bytes = Base64.decodeBase64(data);
+                    bytes = DatatypeConverter.parseBase64Binary(data);
                 } else {
                     try {
                         bytes = URLDecoder.decode(data, "UTF-8").getBytes(StandardCharsets.UTF_8);

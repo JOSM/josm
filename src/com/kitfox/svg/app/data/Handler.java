@@ -44,6 +44,8 @@ import java.net.URLStreamHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.bind.DatatypeConverter;
+
 /**
  *
  * @author kitfox
@@ -66,12 +68,11 @@ public class Handler extends URLStreamHandler
 
             if (content.startsWith("base64,"))
             {
-                content = content.substring(7);
                 try
                 {
-                    buf = new sun.misc.BASE64Decoder().decodeBuffer(content);
+                    buf = DatatypeConverter.parseBase64Binary(content.substring(7));
                 }
-                catch (IOException e)
+                catch (IllegalArgumentException e)
                 {
                     Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING, null, e);
                 }
