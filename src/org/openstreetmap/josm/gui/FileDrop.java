@@ -14,6 +14,7 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.dnd.InvalidDnDOperationException;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.io.BufferedReader;
@@ -223,18 +224,16 @@ public class FileDrop
                     // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
                 }   // end else: not a file list
             }   // end try
-            catch ( IOException io)
-            {   Main.warn("FileDrop: IOException - abort:" );
-            Main.error(io);
-            evt.rejectDrop();
-            }   // end catch IOException
-            catch (UnsupportedFlavorException ufe)
-            {   Main.warn("FileDrop: UnsupportedFlavorException - abort:" );
-            Main.error(ufe);
-            evt.rejectDrop();
-            }   // end catch: UnsupportedFlavorException
-            finally
-            {
+            catch (IOException | UnsupportedFlavorException e) {
+                Main.warn("FileDrop: "+e.getClass().getSimpleName()+" - abort:" );
+                Main.error(e);
+                try {
+                    evt.rejectDrop();
+                } catch (InvalidDnDOperationException ex) {
+                    // Catch InvalidDnDOperationException to fix #11259
+                    Main.error(ex);
+                }
+            } finally {
                 // If it's a Swing component, reset its border
                 if( c instanceof JComponent )
                 {   JComponent jc = (JComponent) c;
