@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -206,6 +208,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             tOffset.addFocusListener(this);
             setContent(pnl);
             setupDialog();
+            addWindowListener(new WindowEventHandler());
         }
 
         private boolean areFieldsInFocus() {
@@ -299,6 +302,13 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
                 oldMapMode = null;
             } else {
                 Main.map.selectSelectTool(false);
+            }
+        }
+
+        class WindowEventHandler extends WindowAdapter {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
             }
         }
     }
