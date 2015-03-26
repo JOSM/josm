@@ -934,12 +934,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         int screen_y_offset = target.y - source.y;
         // And how many pixels into the image itself does that
         // correlate to?
-        int img_x_offset = (int)(screen_x_offset * imageXScaling);
-        int img_y_offset = (int)(screen_y_offset * imageYScaling);
+        int img_x_offset = (int)(screen_x_offset * imageXScaling + 0.5);
+        int img_y_offset = (int)(screen_y_offset * imageYScaling + 0.5);
         // Now calculate the other corner of the image that we need
         // by scaling the 'target' rectangle's dimensions.
-        int img_x_end   = img_x_offset + (int)(target.getWidth() * imageXScaling);
-        int img_y_end   = img_y_offset + (int)(target.getHeight() * imageYScaling);
+        int img_x_end = img_x_offset + (int)(target.getWidth() * imageXScaling + 0.5);
+        int img_y_end = img_y_offset + (int)(target.getHeight() * imageYScaling + 0.5);
 
         if (Main.isDebugEnabled()) {
             Main.debug("drawing image into target rect: " + target);
