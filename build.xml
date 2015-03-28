@@ -325,7 +325,7 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
     <target name="test-compile" depends="test-init,dist">
-        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.4.0.jar"/>
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.4.3.jar"/>
         <call-groovyc testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>
@@ -448,7 +448,7 @@ Build-Date: ${build.tstamp}
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-            <classpath path="tools/animal-sniffer-ant-tasks-1.13.jar"/>
+            <classpath path="tools/animal-sniffer-ant-tasks-1.14.jar"/>
         </typedef>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
