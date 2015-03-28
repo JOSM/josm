@@ -579,16 +579,57 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 if (!n.isTagged()) {
                     doneNodes.add(n);
                 }
-                WayPoint wpt = new WayPoint(n.getCoor());
-                if (!n.isTimestampEmpty()) {
-                    wpt.put("time", DateUtils.fromDate(n.getTimestamp()));
-                    wpt.setTime();
-                }
-                trkseg.add(wpt);
+                trkseg.add(nodeToWayPoint(n));
             }
 
             gpxData.tracks.add(new ImmutableGpxTrack(trk, trkAttr));
         }
+    }
+
+    private static WayPoint nodeToWayPoint(Node n) {
+        WayPoint wpt = new WayPoint(n.getCoor());
+
+        // Position info
+
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
+
+        if (!n.isTimestampEmpty()) {
+            wpt.put("time", DateUtils.fromDate(n.getTimestamp()));
+            wpt.setTime();
+        }
+
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_MAGVAR);
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_GEOIDHEIGHT);
+
+        // Description info
+
+        addStringIfPresent(wpt, n, GpxConstants.GPX_NAME);
+        addStringIfPresent(wpt, n, GpxConstants.GPX_DESC, "description");
+        addStringIfPresent(wpt, n, GpxConstants.GPX_CMT, "comment");
+        addStringIfPresent(wpt, n, GpxConstants.GPX_SRC, "source", "source:position");
+
+        Collection<GpxLink> links = new ArrayList<>();
+        for (String key : new String[]{"link", "url", "website", "contact:website"}) {
+            String value = n.get(key);
+            if (value != null) {
+                links.add(new GpxLink(value));
+            }
+        }
+        wpt.put(GpxConstants.META_LINKS, links);
+
+        addStringIfPresent(wpt, n, GpxConstants.PT_SYM, "wpt_symbol");
+        addStringIfPresent(wpt, n, GpxConstants.PT_TYPE);
+
+        // Accuracy info
+        addStringIfPresent(wpt, n, GpxConstants.PT_FIX, "gps:fix");
+        addIntegerIfPresent(wpt, n, GpxConstants.PT_SAT, "gps:sat");
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_HDOP, "gps:hdop");
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_VDOP, "gps:vdop");
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_PDOP, "gps:pdop");
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_AGEOFDGPSDATA, "gps:ageofdgpsdata");
+        addIntegerIfPresent(wpt, n, GpxConstants.PT_DGPSID, "gps:dgpsid");
+
+        return wpt;
     }
 
     private static void nodesToGpxData(Collection<Node> nodes, GpxData gpxData, HashSet<Node> doneNodes) {
@@ -599,49 +640,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             if (n.isIncomplete() || n.isDeleted()) {
                 continue;
             }
-            WayPoint wpt = new WayPoint(n.getCoor());
-
-            // Position info
-
-            addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
-
-            if (!n.isTimestampEmpty()) {
-                wpt.put("time", DateUtils.fromDate(n.getTimestamp()));
-                wpt.setTime();
-            }
-
-            addDoubleIfPresent(wpt, n, GpxConstants.PT_MAGVAR);
-            addDoubleIfPresent(wpt, n, GpxConstants.PT_GEOIDHEIGHT);
-
-            // Description info
-
-            addStringIfPresent(wpt, n, GpxConstants.GPX_NAME);
-            addStringIfPresent(wpt, n, GpxConstants.GPX_DESC, "description");
-            addStringIfPresent(wpt, n, GpxConstants.GPX_CMT, "comment");
-            addStringIfPresent(wpt, n, GpxConstants.GPX_SRC, "source", "source:position");
-
-            Collection<GpxLink> links = new ArrayList<>();
-            for (String key : new String[]{"link", "url", "website", "contact:website"}) {
-                String value = n.get(key);
-                if (value != null) {
-                    links.add(new GpxLink(value));
-                }
-            }
-            wpt.put(GpxConstants.META_LINKS, links);
-
-            addStringIfPresent(wpt, n, GpxConstants.PT_SYM, "wpt_symbol");
-            addStringIfPresent(wpt, n, GpxConstants.PT_TYPE);
-
-            // Accuracy info
-            addStringIfPresent(wpt, n, GpxConstants.PT_FIX, "gps:fix");
-            addIntegerIfPresent(wpt, n, GpxConstants.PT_SAT, "gps:sat");
-            addDoubleIfPresent(wpt, n, GpxConstants.PT_HDOP, "gps:hdop");
-            addDoubleIfPresent(wpt, n, GpxConstants.PT_VDOP, "gps:vdop");
-            addDoubleIfPresent(wpt, n, GpxConstants.PT_PDOP, "gps:pdop");
-            addDoubleIfPresent(wpt, n, GpxConstants.PT_AGEOFDGPSDATA, "gps:ageofdgpsdata");
-            addIntegerIfPresent(wpt, n, GpxConstants.PT_DGPSID, "gps:dgpsid");
-
-            gpxData.waypoints.add(wpt);
+            gpxData.waypoints.add(nodeToWayPoint(n));
         }
     }
 
