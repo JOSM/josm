@@ -278,7 +278,7 @@ Build-Date: ${build.tstamp}
             <include name="**/*.jar"/>
         </fileset>
         <pathelement path="dist/josm-custom.jar"/>
-        <pathelement path="tools/groovy-all-2.4.0.jar"/>
+        <pathelement path="tools/groovy-all-2.4.3.jar"/>
     </path>
     <macrodef name="init-test-preferences">
         <attribute name="testfamily"/>
