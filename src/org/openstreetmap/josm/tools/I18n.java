@@ -65,6 +65,9 @@ public final class I18n {
          * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ro">Romanian</a>.*
         MODE_RO,*/
         /** Special mode for
+         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#lt">Lithuanian</a>. */
+        MODE_LT,
+        /** Special mode for
          * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ru">Russian</a>. */
         MODE_RU,
         /** Special mode for
@@ -416,6 +419,7 @@ public final class I18n {
         languages.put("ja", PluralMode.MODE_NONE);
         // fully supported only with Java 8 and later (needs CLDR)
         languages.put("km", PluralMode.MODE_NONE);
+        languages.put("lt", PluralMode.MODE_LT);
         //languages.put("nb", PluralMode.MODE_NOTONE);
         languages.put("nl", PluralMode.MODE_NOTONE);
         languages.put("pl", PluralMode.MODE_PL);
@@ -705,6 +709,9 @@ public final class I18n {
                     && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
         //case MODE_RO:
         //    return ((n == 1) ? 0 : ((((n % 100) > 19) || (((n % 100) == 0) && (n != 0))) ? 2 : 1));
+        case MODE_LT:
+            return (((n % 10) == 1) && ((n % 100) != 11) ? 0 : (((n % 10) >= 2)
+                    && (((n % 100) < 10) || ((n % 100) >= 20)) ? 1 : 2));
         case MODE_RU:
             return ((((n % 10) == 1) && ((n % 100) != 11)) ? 0 : (((((n % 10) >= 2)
                     && ((n % 10) <= 4)) && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
