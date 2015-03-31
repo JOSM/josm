@@ -47,7 +47,7 @@
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
   fixAdd: "highway=road";
-  fixAdd: "incline=unpaved";
+  fixAdd: "surface=unpaved";
 }
   
 *[landuse=wood] {
