@@ -2528,6 +2528,7 @@
             <space />
             <key key="shop" value="car" />
             <reference ref="name_brand_operator_oh_wheelchair" />
+            <combo key="second_hand" text="Second hand" values="only,yes,no" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Car Dealer -->
         <item name="Repair" icon="presets/car_repair.png" type="node,closedway" preset_name_label="true">
@@ -2571,7 +2572,6 @@
             <space />
             <key key="amenity" value="car_rental" />
             <reference ref="name_brand_operator_oh_wheelchair" />
-            <combo key="second_hand" text="Second hand" values="only,yes,no" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Rental -->
         <item name="Sharing" icon="presets/car_sharing.png" type="node,closedway" preset_name_label="true">
