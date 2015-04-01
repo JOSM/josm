@@ -2762,6 +2762,7 @@
             <roles>
                 <role key="stop" text="Stop Position" requisite="optional" type="node" member_expression="public_transport=stop_position" />
                 <role key="platform" text="Platform" requisite="optional" type="node,way,closedway,relation" member_expression="public_transport=platform" />
+                <role key="" text="Subway entrance" requisite="optional" type="node" member_expression="railway=subway_entrance" />
                 <role key="" text="Station or amenities" requisite="optional" type="node,way,closedway" member_expression="amenity|public_transport=station" />
             </roles>
         </item> <!-- Stop Area -->
