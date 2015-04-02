@@ -922,6 +922,7 @@ way[cycleway:left=lane]::core_cycleway {
 way[cycleway:right=lane]::core_cycleway {
     set lR;
 }
+way[oneway=no][cycleway=lane]::core_cycleway,
 way[!oneway][cycleway=lane]::core_cycleway {
     set lL;
     set lR;
@@ -951,6 +952,7 @@ way[cycleway:left=track]::core_cycleway {
 way[cycleway:right=track]::core_cycleway {
     set tR;
 }
+way[oneway=no][cycleway=track]::core_cycleway,
 way[!oneway][cycleway=track]::core_cycleway {
     set tL;
     set tR;
