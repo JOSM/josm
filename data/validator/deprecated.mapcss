@@ -411,3 +411,8 @@ way[oneway=1] {
   suggestAlternative: "oneway=yes";
   fixAdd: "oneway=yes";
 }
+
+*[drinkable] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "drinking_water";
+}
