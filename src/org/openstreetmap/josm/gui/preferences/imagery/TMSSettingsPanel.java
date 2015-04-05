@@ -11,9 +11,11 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
+import org.openstreetmap.josm.data.imagery.TMSCachedTileLoaderJob;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * {@code JPanel} giving access to TMS settings.
@@ -28,6 +30,9 @@ public class TMSSettingsPanel extends JPanel {
     private final JSpinner maxZoomLvl;
     private final JCheckBox addToSlippyMapChosser = new JCheckBox();
     private final JosmTextField tilecacheDir = new JosmTextField();
+    private final JSpinner maxElementsOnDisk;
+    private final JSpinner maxConcurrentDownloads;
+
 
     /**
      * Constructs a new {@code TMSSettingsPanel}.
@@ -36,6 +41,8 @@ public class TMSSettingsPanel extends JPanel {
         super(new GridBagLayout());
         minZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.DEFAULT_MIN_ZOOM, TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
         maxZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.DEFAULT_MAX_ZOOM, TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
+        maxElementsOnDisk = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.get().intValue(), 0, Integer.MAX_VALUE, 1));
+        maxConcurrentDownloads = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoaderJob.THREAD_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
 
         add(new JLabel(tr("Auto zoom by default: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
@@ -60,8 +67,17 @@ public class TMSSettingsPanel extends JPanel {
         add(new JLabel(tr("Tile cache directory: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
         add(tilecacheDir, GBC.eol().fill(GBC.HORIZONTAL));
+
+        add(new JLabel(tr("Maximum concurrent downloads: ")), GBC.std());
+        add(GBC.glue(5, 0), GBC.std());
+        add(maxConcurrentDownloads, GBC.eol());
+
+        add(new JLabel(tr("Maximum elements in disk cache: ")), GBC.std());
+        add(GBC.glue(5, 0), GBC.std());
+        add(this.maxElementsOnDisk, GBC.eol());
+
     }
-    
+
     /**
      * Loads the TMS settings.
      */
@@ -72,15 +88,17 @@ public class TMSSettingsPanel extends JPanel {
         this.maxZoomLvl.setValue(TMSLayer.getMaxZoomLvl(null));
         this.minZoomLvl.setValue(TMSLayer.getMinZoomLvl(null));
         this.tilecacheDir.setText(TMSLayer.PROP_TILECACHE_DIR.get());
+        this.maxElementsOnDisk.setValue(TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.get());
+        this.maxConcurrentDownloads.setValue(TMSCachedTileLoaderJob.THREAD_LIMIT.get());
     }
-    
+
     /**
      * Saves the TMS settings.
      * @return true when restart is required
      */
     public boolean saveSettings() {
         boolean restartRequired = false;
-        
+
         if (TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get() != this.addToSlippyMapChosser.isSelected()) {
             restartRequired = true;
         }
@@ -89,8 +107,19 @@ public class TMSSettingsPanel extends JPanel {
         TMSLayer.PROP_DEFAULT_AUTOLOAD.put(this.autoloadTiles.isSelected());
         TMSLayer.setMaxZoomLvl((Integer)this.maxZoomLvl.getValue());
         TMSLayer.setMinZoomLvl((Integer)this.minZoomLvl.getValue());
-        TMSLayer.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
-        
+
+        TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.put((Integer) this.maxElementsOnDisk.getValue());
+
+        if (!TMSCachedTileLoaderJob.THREAD_LIMIT.get().equals(this.maxConcurrentDownloads.getValue())) {
+            restartRequired = true;
+            TMSCachedTileLoaderJob.THREAD_LIMIT.put((Integer) this.maxConcurrentDownloads.getValue());
+        }
+
+        if (!TMSLayer.PROP_TILECACHE_DIR.get().equals(this.tilecacheDir.getText())) {
+            restartRequired = true;
+            TMSLayer.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
+        }
+
         return restartRequired;
     }
 }
