@@ -45,7 +45,7 @@ public class TileController {
             tile.loadPlaceholderFromCache(tileCache);
         }
         if (!tile.isLoaded()) {
-            jobDispatcher.addJob(tileLoader.createTileLoaderJob(tile));
+            tileLoader.createTileLoaderJob(tile).submit();
         }
         return tile;
     }

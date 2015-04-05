@@ -10,7 +10,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -101,11 +100,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
             }
         });
         JComboBox<TileLoader> tileLoaderSelector;
-        try {
-            tileLoaderSelector = new JComboBox<>(new TileLoader[] { new OsmFileCacheTileLoader(map()), new OsmTileLoader(map()) });
-        } catch (IOException e) {
-            tileLoaderSelector = new JComboBox<>(new TileLoader[] { new OsmTileLoader(map()) });
-        }
+        tileLoaderSelector = new JComboBox<>(new TileLoader[] { new OsmTileLoader(map()) });
         tileLoaderSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 map().setTileLoader((TileLoader) e.getItem());

@@ -985,6 +985,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     }
 
     public void tileLoadingFinished(Tile tile, boolean success) {
+        tile.setLoaded(success);
         repaint();
     }
 
