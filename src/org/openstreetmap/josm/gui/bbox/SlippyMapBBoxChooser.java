@@ -11,8 +11,10 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -25,6 +27,7 @@ import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOpenAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOsmTileSource;
@@ -113,7 +116,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     private static final StringProperty PROP_MAPSTYLE = new StringProperty("slippy_map_chooser.mapstyle", "Mapnik");
     public static final String RESIZE_PROP = SlippyMapBBoxChooser.class.getName() + ".resize";
 
-    private OsmTileLoader cachedLoader;
+    private TileLoader cachedLoader;
     private OsmTileLoader uncachedLoader;
 
     private final SizeButton iSizeButton;
@@ -131,11 +134,14 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         debug = Main.isDebugEnabled();
         SpringLayout springLayout = new SpringLayout();
         setLayout(springLayout);
-        TMSLayer.setMaxWorkers();
-        cachedLoader = TMSLayer.loaderFactory.makeTileLoader(this);
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("User-Agent", Version.getInstance().getFullAgentString());
+
+        cachedLoader = TMSLayer.loaderFactory.makeTileLoader(this, headers);
 
         uncachedLoader = new OsmTileLoader(this);
-        uncachedLoader.headers.put("User-Agent", Version.getInstance().getFullAgentString());
+        uncachedLoader.headers.putAll(headers);
         setZoomContolsVisible(Main.pref.getBoolean("slippy_map_chooser.zoomcontrols",false));
         setMapMarkerVisible(false);
         setMinimumSize(new Dimension(350, 350 / 2));

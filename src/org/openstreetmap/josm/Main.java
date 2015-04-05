@@ -67,6 +67,7 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.ViewportData;
+import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -1088,6 +1089,7 @@ public abstract class Main {
      * @since 3378
      */
     public static boolean exitJosm(boolean exit, int exitCode) {
+        JCSCacheManager.shutdown();
         if (Main.saveUnsavedModifications()) {
             geometry.remember("gui.geometry");
             if (map != null) {

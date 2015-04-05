@@ -220,6 +220,14 @@ Build-Date: ${build.tstamp}
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="iso-8859-1">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
+        	<exclude name="org/apache/commons/jcs/admin/**"/>
+        	<exclude name="org/apache/commons/jcs/auxiliary/disk/jdbc/**"/>
+        	<exclude name="org/apache/commons/jcs/auxiliary/remote/**"/>
+        	<exclude name="org/apache/commons/jcs/utils/servlet/**"/>
+        	<exclude name="org/apache/commons/logging/impl/AvalonLogger.java"/>
+        	<exclude name="org/apache/commons/logging/impl/Log4JLogger.java"/>
+        	<exclude name="org/apache/commons/logging/impl/LogKitLogger.java"/>
+        	<exclude name="org/apache/commons/logging/impl/ServletContextCleaner.java"/>
         </javac>
         <!-- JMapViewer/JOSM -->
         <javac srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
