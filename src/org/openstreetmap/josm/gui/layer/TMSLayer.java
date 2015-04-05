@@ -21,13 +21,11 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,14 +39,12 @@ import javax.swing.JPopupMenu;
 
 import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.JobDispatcher;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
-import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
-import org.openstreetmap.gui.jmapviewer.TMSFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileClearController;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -63,6 +59,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -75,7 +72,6 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
@@ -108,7 +104,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static final IntegerProperty PROP_MAX_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".max_zoom_lvl", DEFAULT_MAX_ZOOM);
     //public static final BooleanProperty PROP_DRAW_DEBUG = new BooleanProperty(PREFERENCE_PREFIX + ".draw_debug", false);
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser", true);
-    public static final IntegerProperty PROP_TMS_JOBS = new IntegerProperty("tmsloader.maxjobs", 25);
     public static final StringProperty PROP_TILECACHE_DIR;
 
     static {
@@ -122,39 +117,49 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     public interface TileLoaderFactory {
-        OsmTileLoader makeTileLoader(TileLoaderListener listener);
+        TileLoader makeTileLoader(TileLoaderListener listener);
+        TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> headers);
     }
 
-    protected MemoryTileCache tileCache;
+    protected TileCache tileCache;
     protected TileSource tileSource;
-    protected OsmTileLoader tileLoader;
+    protected TileLoader tileLoader;
+
 
     public static TileLoaderFactory loaderFactory = new TileLoaderFactory() {
         @Override
-        public OsmTileLoader makeTileLoader(TileLoaderListener listener) {
-            String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
-            if (cachePath != null && !cachePath.isEmpty()) {
-                try {
-                    OsmFileCacheTileLoader loader;
-                    loader = new TMSFileCacheTileLoader(listener, new File(cachePath));
-                    loader.headers.put("User-Agent", Version.getInstance().getFullAgentString());
-                    return loader;
-                } catch (IOException e) {
-                    Main.warn(e);
-                }
+        public TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> inputHeaders) {
+            Map<String, String> headers = new HashMap<>();
+            headers.put("User-Agent", Version.getInstance().getFullAgentString());
+            headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
+            if (inputHeaders != null)
+                headers.putAll(inputHeaders);
+
+            try {
+                return new TMSCachedTileLoader(listener, "TMS",
+                        Main.pref.getInteger("socket.timeout.connect",15) * 1000,
+                        Main.pref.getInteger("socket.timeout.read", 30) * 1000,
+                        headers,
+                        PROP_TILECACHE_DIR.get());
+            } catch (IOException e) {
+                Main.warn(e);
             }
             return null;
+        }
+
+        @Override
+        public TileLoader makeTileLoader(TileLoaderListener listener) {
+            return makeTileLoader(listener, null);
         }
     };
 
     /**
      * Plugins that wish to set custom tile loader should call this method
      */
+
     public static void setCustomTileLoaderFactory(TileLoaderFactory loaderFactory) {
         TMSLayer.loaderFactory = loaderFactory;
     }
-
-    private Set<Tile> tileRequestsOutstanding = new HashSet<>();
 
     @Override
     public synchronized void tileLoadingFinished(Tile tile, boolean success) {
@@ -165,55 +170,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (sharpenLevel != 0 && success) {
             tile.setImage(sharpenImage(tile.getImage()));
         }
-        tile.setLoaded(true);
+        tile.setLoaded(success);
         needRedraw = true;
         if (Main.map != null) {
             Main.map.repaint(100);
         }
-        tileRequestsOutstanding.remove(tile);
         if (Main.isDebugEnabled()) {
             Main.debug("tileLoadingFinished() tile: " + tile + " success: " + success);
-        }
-    }
-
-    private static class TmsTileClearController implements TileClearController, CancelListener {
-
-        private final ProgressMonitor monitor;
-        private boolean cancel = false;
-
-        public TmsTileClearController(ProgressMonitor monitor) {
-            this.monitor = monitor;
-            this.monitor.addCancelListener(this);
-        }
-
-        @Override
-        public void initClearDir(File dir) {
-        }
-
-        @Override
-        public void initClearFiles(File[] files) {
-            monitor.setTicksCount(files.length);
-            monitor.setTicks(0);
-        }
-
-        @Override
-        public boolean cancel() {
-            return cancel;
-        }
-
-        @Override
-        public void fileDeleted(File file) {
-            monitor.setTicks(monitor.getTicks()+1);
-        }
-
-        @Override
-        public void clearFinished() {
-            monitor.finishTask();
-        }
-
-        @Override
-        public void operationCanceled() {
-            cancel = true;
         }
     }
 
@@ -225,13 +188,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * method.
      *
      * @param monitor
-     * @see MemoryTileCache#clear()
      * @see OsmFileCacheTileLoader#clearCache(org.openstreetmap.gui.jmapviewer.interfaces.TileSource, org.openstreetmap.gui.jmapviewer.interfaces.TileClearController)
      */
     void clearTileCache(ProgressMonitor monitor) {
         tileCache.clear();
         if (tileLoader instanceof CachedTileLoader) {
-            ((CachedTileLoader)tileLoader).clearCache(tileSource, new TmsTileClearController(monitor));
+            ((CachedTileLoader)tileLoader).clearCache();
         }
     }
 
@@ -415,26 +377,20 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         currentZoomLevel = getBestZoom();
 
-        tileCache = new MemoryTileCache();
-
-        tileLoader = loaderFactory.makeTileLoader(this);
-        if (tileLoader == null) {
-            tileLoader = new OsmTileLoader(this);
-        }
-        tileLoader.timeoutConnect = Main.pref.getInteger("socket.timeout.connect",15) * 1000;
-        tileLoader.timeoutRead = Main.pref.getInteger("socket.timeout.read", 30) * 1000;
+        Map<String, String> headers = null;
         if (tileSource instanceof TemplatedTMSTileSource) {
-            for(Entry<String, String> e : ((TemplatedTMSTileSource)tileSource).getHeaders().entrySet()) {
-                tileLoader.headers.put(e.getKey(), e.getValue());
-            }
+            headers = (((TemplatedTMSTileSource)tileSource).getHeaders());
         }
-        tileLoader.headers.put("User-Agent", Version.getInstance().getFullAgentString());
-    }
 
-    @Override
-    public void setOffset(double dx, double dy) {
-        super.setOffset(dx, dy);
-        needRedraw = true;
+        // FIXME: tileCache = new MemoryTileCache();
+        tileLoader = loaderFactory.makeTileLoader(this, headers);
+        if (tileLoader instanceof TMSCachedTileLoader) {
+            tileCache = (TileCache) tileLoader;
+        } else {
+            tileCache = new MemoryTileCache();
+        }
+        if (tileLoader == null)
+            tileLoader = new OsmTileLoader(this);
     }
 
     /**
@@ -471,27 +427,17 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return intResult;
     }
 
-    /**
-     * Function to set the maximum number of workers for tile loading to the value defined
-     * in preferences.
-     */
-    public static void setMaxWorkers() {
-        JobDispatcher.setMaxWorkers(PROP_TMS_JOBS.get());
-        JobDispatcher.getInstance().setLIFO(true);
-    }
-
     @SuppressWarnings("serial")
     public TMSLayer(ImageryInfo info) {
         super(info);
 
-        setMaxWorkers();
         if(!isProjectionSupported(Main.getProjection())) {
             JOptionPane.showMessageDialog(Main.parent,
-                tr("TMS layers do not support the projection {0}.\n{1}\n"
-                + "Change the projection or remove the layer.",
-                Main.getProjection().toCode(), nameSupportedProjections()),
-                tr("Warning"),
-                JOptionPane.WARNING_MESSAGE);
+                    tr("TMS layers do not support the projection {0}.\n{1}\n"
+                            + "Change the projection or remove the layer.",
+                            Main.getProjection().toCode(), nameSupportedProjections()),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE);
         }
 
         setBackgroundLayer(true);
@@ -684,8 +630,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             Main.debug("zoomChanged(): " + currentZoomLevel);
         }
         needRedraw = true;
-        JobDispatcher.getInstance().cancelOutstandingJobs();
-        tileRequestsOutstanding.clear();
     }
 
     int getMaxZoomLvl() {
@@ -770,7 +714,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * are temporary only and intentionally not inserted
      * into the tileCache.
      */
-    synchronized Tile tempCornerTile(Tile t) {
+    Tile tempCornerTile(Tile t) {
         int x = t.getXtile() + 1;
         int y = t.getYtile() + 1;
         int zoom = t.getZoom();
@@ -780,7 +724,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return new Tile(tileSource, x, y, zoom);
     }
 
-    synchronized Tile getOrCreateTile(int x, int y, int zoom) {
+    Tile getOrCreateTile(int x, int y, int zoom) {
         Tile tile = getTile(x, y, zoom);
         if (tile == null) {
             tile = new Tile(tileSource, x, y, zoom);
@@ -794,24 +738,21 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * This can and will return null for tiles that are not
      * already in the cache.
      */
-    synchronized Tile getTile(int x, int y, int zoom) {
+    Tile getTile(int x, int y, int zoom) {
         int max = (1 << zoom);
         if (x < 0 || x >= max || y < 0 || y >= max)
             return null;
         return tileCache.getTile(tileSource, x, y, zoom);
     }
 
-    synchronized boolean loadTile(Tile tile, boolean force) {
+    boolean loadTile(Tile tile, boolean force) {
         if (tile == null)
             return false;
-        if (!force && (tile.hasError() || tile.isLoaded()))
+        if (!force && (tile.isLoaded() || tile.hasError()))
             return false;
         if (tile.isLoading())
             return false;
-        if (tileRequestsOutstanding.contains(tile))
-            return false;
-        tileRequestsOutstanding.add(tile);
-        JobDispatcher.getInstance().addJob(tileLoader.createTileLoaderJob(tile));
+        tileLoader.createTileLoaderJob(tile).submit();
         return true;
     }
 
@@ -1268,28 +1209,32 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         public TileSet getTileSet(int zoom) {
             if (zoom < minZoom)
                 return nullTileSet;
-            TileSet ts = tileSets[zoom-minZoom];
-            if (ts == null) {
-                ts = new TileSet(topLeft, botRight, zoom);
-                tileSets[zoom-minZoom] = ts;
+            synchronized (tileSets) {
+                TileSet ts = tileSets[zoom-minZoom];
+                if (ts == null) {
+                    ts = new TileSet(topLeft, botRight, zoom);
+                    tileSets[zoom-minZoom] = ts;
+                }
+                return ts;
             }
-            return ts;
         }
+
         public TileSetInfo getTileSetInfo(int zoom) {
             if (zoom < minZoom)
                 return new TileSetInfo();
-            TileSetInfo tsi = tileSetInfos[zoom-minZoom];
-            if (tsi == null) {
-                tsi = TMSLayer.getTileSetInfo(getTileSet(zoom));
-                tileSetInfos[zoom-minZoom] = tsi;
+            synchronized (tileSetInfos) {
+                TileSetInfo tsi = tileSetInfos[zoom-minZoom];
+                if (tsi == null) {
+                    tsi = TMSLayer.getTileSetInfo(getTileSet(zoom));
+                    tileSetInfos[zoom-minZoom] = tsi;
+                }
+                return tsi;
             }
-            return tsi;
         }
     }
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bounds) {
-        //long start = System.currentTimeMillis();
         EastNorth topLeft = mv.getEastNorth(0, 0);
         EastNorth botRight = mv.getEastNorth(mv.getWidth(), mv.getHeight());
 
@@ -1435,6 +1380,14 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
             myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
             myDrawString(g, tr("Best zoom: {0}", Math.log(getScaleFactor(1))/Math.log(2)/2+1), 50, 185);
+            if(tileLoader instanceof TMSCachedTileLoader) {
+                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader)tileLoader;
+                int offset = 185;
+                for(String part: cachedTileLoader.getStats().split("\n")) {
+                    myDrawString(g, tr("Cache stats: {0}", part), 50, offset+=15);
+                }
+
+            }
         }
     }
 

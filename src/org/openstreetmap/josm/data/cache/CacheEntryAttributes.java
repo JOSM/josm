@@ -1,0 +1,66 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.data.cache;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.jcs.engine.ElementAttributes;
+
+/**
+ * Class that contains attirubtes for JCS cache entries. Parameters are used to properly handle HTTP caching
+ * 
+ * @author Wiktor Niesiobędzki
+ *
+ */
+public class CacheEntryAttributes extends ElementAttributes {
+    private static final long serialVersionUID = 1L; //version
+    private Map<String, String> attrs = new HashMap<String, String>();
+    private final static String NO_TILE_AT_ZOOM = "noTileAtZoom";
+    private final static String ETAG = "Etag";
+    private final static String LAST_MODIFICATION = "lastModification";
+    private final static String EXPIRATION_TIME = "expirationTime";
+
+    public CacheEntryAttributes() {
+        super();
+        attrs.put(NO_TILE_AT_ZOOM, "false");
+        attrs.put(ETAG, null);
+        attrs.put(LAST_MODIFICATION, "0");
+        attrs.put(EXPIRATION_TIME, "0");
+    }
+
+    public boolean isNoTileAtZoom() {
+        return Boolean.toString(true).equals(attrs.get(NO_TILE_AT_ZOOM));
+    }
+    public void setNoTileAtZoom(boolean noTileAtZoom) {
+        attrs.put(NO_TILE_AT_ZOOM, Boolean.toString(noTileAtZoom));
+    }
+    public String getEtag() {
+        return attrs.get(ETAG);
+    }
+    public void setEtag(String etag) {
+        attrs.put(ETAG, etag);
+    }
+
+    private long getLongAttr(String key) {
+        try {
+            return Long.parseLong(attrs.get(key));
+        } catch (NumberFormatException e) {
+            attrs.put(key, "0");
+            return 0;
+        }
+    }
+
+    public long getLastModification() {
+        return getLongAttr(LAST_MODIFICATION);
+    }
+    public void setLastModification(long lastModification) {
+        attrs.put(LAST_MODIFICATION, Long.toString(lastModification));
+    }
+    public long getExpirationTime() {
+        return getLongAttr(EXPIRATION_TIME);
+    }
+    public void setExpirationTime(long expirationTime) {
+        attrs.put(EXPIRATION_TIME, Long.toString(expirationTime));
+    }
+
+}
