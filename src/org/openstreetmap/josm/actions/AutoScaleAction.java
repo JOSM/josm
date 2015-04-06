@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,6 +22,7 @@ import javax.swing.event.TreeSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -30,7 +32,6 @@ import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVisitor;
-import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -54,6 +55,10 @@ public class AutoScaleAction extends JosmAction {
 
     protected ZoomChangeAdapter zoomChangeAdapter;
     protected MapFrameAdapter mapFrameAdapter;
+    /** Time of last zoom to bounds action */
+    protected long lastZoomTime = -1;
+    /** Last zommed bounds */
+    protected int lastZoomArea = -1;
 
     /**
      * Zooms the current map view to the currently selected primitives.
@@ -62,15 +67,15 @@ public class AutoScaleAction extends JosmAction {
      *
      */
     public static void zoomToSelection() {
-        if (Main.main == null || !Main.main.hasEditLayer()) return;
+        if (Main.main == null || !Main.main.hasEditLayer())
+            return;
         Collection<OsmPrimitive> sel = Main.main.getEditLayer().data.getSelected();
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Nothing selected to zoom to."),
                     tr("Information"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         zoomTo(sel);
@@ -125,8 +130,8 @@ public class AutoScaleAction extends JosmAction {
      */
     public AutoScaleAction(final String mode) {
         super(tr("Zoom to {0}", tr(mode)), "dialogs/autoscale/" + mode, tr("Zoom the view to {0}.", tr(mode)),
-                Shortcut.registerShortcut("view:zoom"+mode, tr("View: {0}", tr("Zoom to {0}", tr(mode))), getModeShortcut(mode), Shortcut.DIRECT),
-                true, null, false);
+                Shortcut.registerShortcut("view:zoom" + mode, tr("View: {0}", tr("Zoom to {0}", tr(mode))),
+                        getModeShortcut(mode), Shortcut.DIRECT), true, null, false);
         String modeHelp = Character.toUpperCase(mode.charAt(0)) + mode.substring(1);
         putValue("help", "Action/AutoScale/" + modeHelp);
         this.mode = mode;
@@ -156,14 +161,14 @@ public class AutoScaleAction extends JosmAction {
             putValue("help", ht("/Action/ZoomToNext"));
             break;
         default:
-            throw new IllegalArgumentException("Unknown mode: "+mode);
+            throw new IllegalArgumentException("Unknown mode: " + mode);
         }
         installAdapters();
     }
 
-    public void autoScale()  {
+    public void autoScale() {
         if (Main.isDisplayingMapView()) {
-            switch(mode) {
+            switch (mode) {
             case "previous":
                 Main.map.mapView.zoomPrevious();
                 break;
@@ -194,19 +199,22 @@ public class AutoScaleAction extends JosmAction {
      */
     protected Layer getFirstSelectedLayer() {
         List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
-        if (layers.isEmpty()) return null;
+        if (layers.isEmpty())
+            return null;
         return layers.get(0);
     }
 
     private BoundingXYVisitor getBoundingBox() {
         BoundingXYVisitor v = "problem".equals(mode) ? new ValidatorBoundingXYVisitor() : new BoundingXYVisitor();
 
-        switch(mode) {
+        switch (mode) {
         case "problem":
             TestError error = Main.map.validatorDialog.getSelectedError();
-            if (error == null) return null;
+            if (error == null)
+                return null;
             ((ValidatorBoundingXYVisitor) v).visit(error);
-            if (v.getBounds() == null) return null;
+            if (v.getBounds() == null)
+                return null;
             v.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));
             break;
         case "data":
@@ -219,7 +227,8 @@ public class AutoScaleAction extends JosmAction {
                 return null;
             // try to zoom to the first selected layer
             Layer l = getFirstSelectedLayer();
-            if (l == null) return null;
+            if (l == null)
+                return null;
             l.visitBoundingBox(v);
             break;
         case "selection":
@@ -240,8 +249,7 @@ public class AutoScaleAction extends JosmAction {
                         Main.parent,
                         ("selection".equals(mode) ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to")),
                         tr("Information"),
-                        JOptionPane.INFORMATION_MESSAGE
-                );
+                        JOptionPane.INFORMATION_MESSAGE);
                 return null;
             }
             for (OsmPrimitive osm : sel) {
@@ -255,13 +263,27 @@ public class AutoScaleAction extends JosmAction {
             v.enlargeToMinSize(Main.pref.getDouble("zoom_to_selection_min_size_in_meter", 100));
             break;
         case "download":
-            Bounds bounds = DownloadDialog.getSavedDownloadBounds();
-            if (bounds != null) {
-                try {
-                    v.visit(bounds);
-                } catch (Exception e) {
-                    Main.warn(e);
+
+            if (lastZoomTime > 0 && System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", 10*1000)) {
+                lastZoomTime = -1;
+            }
+            ArrayList<DataSource> dataSources = new ArrayList<>(Main.main.getCurrentDataSet().getDataSources());
+            int s = dataSources.size();
+            if(s > 0) {
+                if(lastZoomTime == -1 || lastZoomArea == -1 || lastZoomArea > s) {
+                    lastZoomArea = s-1;
+                    v.visit(dataSources.get(lastZoomArea).bounds);
+                } else if(lastZoomArea > 0) {
+                    lastZoomArea -= 1;
+                    v.visit(dataSources.get(lastZoomArea).bounds);
+                } else {
+                    lastZoomArea = -1;
+                    v.visit(new Bounds(Main.main.getCurrentDataSet().getDataSourceArea().getBounds2D()));
                 }
+                lastZoomTime = System.currentTimeMillis();
+            } else {
+                lastZoomTime = -1;
+                lastZoomArea = -1;
             }
             break;
         }
@@ -270,9 +292,9 @@ public class AutoScaleAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        switch(mode) {
+        switch (mode) {
         case "selection":
-            setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
+            setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
             break;
         case "layer":
             if (!Main.isDisplayingMapView() || Main.map.mapView.getAllLayersAsList().isEmpty()) {
@@ -295,8 +317,7 @@ public class AutoScaleAction extends JosmAction {
             setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomRedoEntries());
             break;
         default:
-            setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasLayers()
-            );
+            setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasLayers());
         }
     }
 
@@ -337,20 +358,23 @@ public class AutoScaleAction extends JosmAction {
         public MapFrameAdapter() {
             if ("conflict".equals(mode)) {
                 conflictSelectionListener = new ListSelectionListener() {
-                    @Override public void valueChanged(ListSelectionEvent e) {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e) {
                         updateEnabledState();
                     }
                 };
             } else if ("problem".equals(mode)) {
                 validatorSelectionListener = new TreeSelectionListener() {
-                    @Override public void valueChanged(TreeSelectionEvent e) {
+                    @Override
+                    public void valueChanged(TreeSelectionEvent e) {
                         updateEnabledState();
                     }
                 };
             }
         }
 
-        @Override public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
+        @Override
+        public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
             if (conflictSelectionListener != null) {
                 if (newFrame != null) {
                     newFrame.conflictDialog.addListSelectionListener(conflictSelectionListener);
