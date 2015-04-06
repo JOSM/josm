@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.dialogs.properties;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -50,10 +51,33 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                 str = (String) value;
             } else if (value instanceof Map<?, ?>) {
                 Map<?, ?> v = (Map<?, ?>) value;
-                if (v.size() != 1) {
-                    str=tr("<different>");
+                if (v.size() != 1) {    // Multiple values: give user a short summary of the values
+                    Integer blank_count;
+                    Integer other_count;
+                    if (v.get("") == null) {
+                        blank_count = 0;
+                        other_count = v.size();
+                    } else {
+                        blank_count = (Integer)v.get("");
+                        other_count = v.size()-1;
+                    }
+                    str = "<";
+                    if (other_count == 1) {
+                        for (Map.Entry<?, ?> entry : v.entrySet()) { // Find the non-blank value in the map
+                            if ( entry.getKey() != "") {
+                                str += entry.getValue().toString() + " '" + entry.getKey() + "'";
+                            }
+                        }
+                    } else {
+                        str += tr ("{0} different",  other_count);
+                    }
+                    if(blank_count > 0) {
+                        str += trn(", {0} unset", ", {0} unset", blank_count, blank_count);
+                    }
+                    str += ">";
                     c.setFont(c.getFont().deriveFont(Font.ITALIC));
-                } else {
+
+                } else {                // One value: display the value
                     final Map.Entry<?, ?> entry = v.entrySet().iterator().next();
                     str = (String) entry.getKey();
                 }

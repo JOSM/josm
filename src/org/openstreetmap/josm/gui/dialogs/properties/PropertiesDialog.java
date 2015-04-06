@@ -703,8 +703,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
 
         if(tagData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
-            setTitle(tr("Tags: {0} / Memberships: {1}",
+            if(newSel.size() > 1) {
+                setTitle(tr("Objects: {2} / Tags: {0} / Memberships: {1}",
+                    tagData.getRowCount(), membershipData.getRowCount(), newSel.size()));
+            } else {
+                setTitle(tr("Tags: {0} / Memberships: {1}",
                     tagData.getRowCount(), membershipData.getRowCount()));
+            }
         } else {
             setTitle(tr("Tags / Memberships"));
         }
