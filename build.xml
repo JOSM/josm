@@ -215,19 +215,28 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile" depends="init,javacc,jaxb">
         <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**" nowarn="on"
-            excludes="org/apache/commons/compress/compressors/lzma/**,org/apache/commons/compress/compressors/xz/**,org/apache/commons/compress/compressors/CompressorStreamFactory.java,org/apache/commons/compress/compressors/deflate/**,org/apache/commons/compress/compressors/gzip/**,org/apache/commons/compress/compressors/lzw/**,org/apache/commons/compress/compressors/pack200/**,org/apache/commons/compress/compressors/snappy/**,org/apache/commons/compress/compressors/z/**"
-            destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="iso-8859-1">
+        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**" nowarn="on" encoding="iso-8859-1"
+            destdir="build" target="1.7" source="1.7" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
-        	<exclude name="org/apache/commons/jcs/admin/**"/>
-        	<exclude name="org/apache/commons/jcs/auxiliary/disk/jdbc/**"/>
-        	<exclude name="org/apache/commons/jcs/auxiliary/remote/**"/>
-        	<exclude name="org/apache/commons/jcs/utils/servlet/**"/>
-        	<exclude name="org/apache/commons/logging/impl/AvalonLogger.java"/>
-        	<exclude name="org/apache/commons/logging/impl/Log4JLogger.java"/>
-        	<exclude name="org/apache/commons/logging/impl/LogKitLogger.java"/>
-        	<exclude name="org/apache/commons/logging/impl/ServletContextCleaner.java"/>
+            <exclude name="org/apache/commons/compress/compressors/lzma/**"/>
+            <exclude name="org/apache/commons/compress/compressors/xz/**"/>
+            <exclude name="org/apache/commons/compress/compressors/CompressorStreamFactory.java"/>
+            <exclude name="org/apache/commons/compress/compressors/deflate/**"/>
+            <exclude name="org/apache/commons/compress/compressors/gzip/**"/>
+            <exclude name="org/apache/commons/compress/compressors/lzw/**"/>
+            <exclude name="org/apache/commons/compress/compressors/pack200/**"/>
+            <exclude name="org/apache/commons/compress/compressors/snappy/**"/>
+            <exclude name="org/apache/commons/compress/compressors/z/**"/>
+            <exclude name="org/apache/commons/jcs/admin/**"/>
+            <exclude name="org/apache/commons/jcs/auxiliary/disk/jdbc/**"/>
+            <exclude name="org/apache/commons/jcs/auxiliary/remote/**"/>
+            <exclude name="org/apache/commons/jcs/utils/servlet/**"/>
+            <exclude name="org/apache/commons/logging/impl/AvalonLogger.java"/>
+            <exclude name="org/apache/commons/logging/impl/Jdk13LumberjackLogger.java"/>
+            <exclude name="org/apache/commons/logging/impl/Log4JLogger.java"/>
+            <exclude name="org/apache/commons/logging/impl/LogKitLogger.java"/>
+            <exclude name="org/apache/commons/logging/impl/ServletContextCleaner.java"/>
         </javac>
         <!-- JMapViewer/JOSM -->
         <javac srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
@@ -552,7 +561,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.objectweb.*"/>
             <ignore classname="org.python.*"/>
             <ignore classname="org.slf4j.*"/>
-        	<!-- plugins used by another ones -->
+            <!-- plugins used by another ones -->
             <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.jna.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.jts.*"/>
