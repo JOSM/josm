@@ -132,6 +132,7 @@ public class MainApplication extends Main {
                 "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
                 "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
                 "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
+                "\t--skip-plugins                            "+tr("Skip loading plugins")+"\n\n"+
                 "\t--offline=<osm_api|josm_website|all>      "+tr("Disable access to the given resource(s), separated by comma")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
                 "\t-Djosm.pref="    +tr("/PATH/TO/JOSM/PREF    ")+tr("Set the preferences directory")+"\n\n"+
@@ -194,7 +195,10 @@ public class MainApplication extends Main {
         /** --selection=&lt;searchstring&gt;           Select with the given search */
         SELECTION(true),
         /** --offline=&lt;osm_api|josm_website|all&gt; Disable access to the given resource(s), delimited by comma */
-        OFFLINE(true);
+        OFFLINE(true),
+        /* --skip-plugins */
+        SKIP_PLUGINS(false),
+        ;
 
         private String name;
         private boolean requiresArgument;
@@ -343,6 +347,12 @@ public class MainApplication extends Main {
             Main.info(tr("Printing debugging messages to console"));
         }
 
+        Boolean skipLoadingPlugins = false;
+        if (args.containsKey(Option.SKIP_PLUGINS)) {
+            skipLoadingPlugins = true;
+            Main.info(tr("Plugins loaded skipped"));
+        }
+
         if (args.containsKey(Option.TRACE)) {
             // Enable JOSM debug level
             logLevel = 5;
@@ -412,17 +422,22 @@ public class MainApplication extends Main {
             }
         });
 
-        Collection<PluginInformation> pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash, monitor.createSubTaskMonitor(1, false));
-        if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate(splash)) {
-            monitor.subTask(tr("Updating plugins"));
-            pluginsToLoad = PluginHandler.updatePlugins(splash, null, monitor.createSubTaskMonitor(1, false), false);
+        Collection<PluginInformation> pluginsToLoad = null;
+
+
+        if (!skipLoadingPlugins) {
+            pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash, monitor.createSubTaskMonitor(1, false));
+            if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate(splash)) {
+                monitor.subTask(tr("Updating plugins"));
+                pluginsToLoad = PluginHandler.updatePlugins(splash, null, monitor.createSubTaskMonitor(1, false), false);
+            }
+
+            monitor.indeterminateSubTask(tr("Installing updated plugins"));
+            PluginHandler.installDownloadedPlugins(true);
+
+            monitor.indeterminateSubTask(tr("Loading early plugins"));
+            PluginHandler.loadEarlyPlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
         }
-
-        monitor.indeterminateSubTask(tr("Installing updated plugins"));
-        PluginHandler.installDownloadedPlugins(true);
-
-        monitor.indeterminateSubTask(tr("Loading early plugins"));
-        PluginHandler.loadEarlyPlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
 
         monitor.indeterminateSubTask(tr("Setting defaults"));
         preConstructorInit(args);
@@ -430,9 +445,11 @@ public class MainApplication extends Main {
         monitor.indeterminateSubTask(tr("Creating main GUI"));
         final Main main = new MainApplication(mainFrame);
 
-        monitor.indeterminateSubTask(tr("Loading plugins"));
-        PluginHandler.loadLatePlugins(splash, pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
-        toolbar.refreshToolbarControl();
+        if (!skipLoadingPlugins) {
+            monitor.indeterminateSubTask(tr("Loading plugins"));
+            PluginHandler.loadLatePlugins(splash, pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
+            toolbar.refreshToolbarControl();
+        }
 
         // Wait for splash disappearance (fix #9714)
         GuiHelper.runInEDTAndWait(new Runnable() {
