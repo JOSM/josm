@@ -14,7 +14,7 @@ import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCache;
 import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheAttributes;
-import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheManager;
+import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheFactory;
 import org.apache.commons.jcs.engine.CompositeCacheAttributes;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes.DiskUsagePattern;
 import org.apache.commons.jcs.engine.control.CompositeCache;
@@ -27,7 +27,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
 /**
  * @author Wiktor Niesiobędzki
- * 
+ *
  * Wrapper class for JCS Cache. Sets some sane environment and returns instances of cache objects.
  * Static configuration for now assumes some small LRU cache in memory and larger LRU cache on disk
  *
@@ -38,6 +38,7 @@ public class JCSCacheManager {
     private static volatile CompositeCacheManager cacheManager = null;
     private static long maxObjectTTL        = Long.MAX_VALUE;
     private final static String PREFERENCE_PREFIX = "jcs.cache";
+    private final static IndexedDiskCacheFactory diskCacheFactory = new IndexedDiskCacheFactory();
 
     /**
      * default objects to be held in memory by JCS caches (per region)
@@ -140,7 +141,8 @@ public class JCSCacheManager {
         if (cachePath != null) {
             IndexedDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath);
             diskAttributes.setCacheName(cacheName);
-            IndexedDiskCache<K, V> diskCache = IndexedDiskCacheManager.getInstance(null, null, new StandardSerializer()).getCache(diskAttributes);
+            IndexedDiskCache<K, V> diskCache = diskCacheFactory.createCache(diskAttributes, cacheManager, null, new StandardSerializer());
+
             cc.setAuxCaches(new AuxiliaryCache[]{diskCache});
         }
         return new CacheAccess<K, V>(cc);
