@@ -350,7 +350,7 @@ public class MainApplication extends Main {
         Boolean skipLoadingPlugins = false;
         if (args.containsKey(Option.SKIP_PLUGINS)) {
             skipLoadingPlugins = true;
-            Main.info(tr("Plugins loaded skipped"));
+            Main.info(tr("Plugin loading skipped"));
         }
 
         if (args.containsKey(Option.TRACE)) {
