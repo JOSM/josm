@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.Map;
@@ -125,16 +126,21 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     @Override
     public void submit(ICachedLoaderListener listener) {
         boolean first = false;
-        String url = getUrl().toString();
-        if (url == null) {
+        URL url = getUrl();
+        String deduplicationKey = null;
+        if (url != null) {
+            // url might be null, for example when Bing Attribution is not loaded yet
+            deduplicationKey = url.toString();
+        }
+        if (deduplicationKey == null) {
             log.log(Level.WARNING, "No url returned for: {0}, skipping", getCacheKey());
             return;
         }
         synchronized (inProgress) {
-            Set<ICachedLoaderListener> newListeners = inProgress.get(url);
+            Set<ICachedLoaderListener> newListeners = inProgress.get(deduplicationKey);
             if (newListeners == null) {
                 newListeners = new HashSet<>();
-                inProgress.put(url, newListeners);
+                inProgress.put(deduplicationKey, newListeners);
                 first = true;
             }
             newListeners.add(listener);
@@ -161,7 +167,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     /**
-     * 
+     *
      * @return checks if object from cache has sufficient data to be returned
      */
     protected boolean isObjectLoadable() {
@@ -170,7 +176,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     /**
-     * 
+     *
      * @return cache object as empty, regardless of what remote resource has returned (ex. based on headers)
      */
     protected boolean cacheAsEmpty() {
@@ -263,6 +269,10 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         return true;
     }
 
+    /**
+     * @return true if object was successfully downloaded, false, if there was a loading failure
+     */
+
     private boolean loadObject() {
         try {
             // if we have object in cache, and host doesn't support If-Modified-Since nor If-None-Match
@@ -315,7 +325,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     log.log(Level.FINE, "JCS - downloaded key: {0}, length: {1}, url: {2}",
                             new Object[] {getCacheKey(), raw.length, getUrl()});
                     return true;
-                } else {
+                } else  {
                     cacheData = createCacheEntry(new byte[]{});
                     cache.put(getCacheKey(), cacheData, attributes);
                     log.log(Level.FINE, "JCS - Caching empty object {0}", getUrl());
@@ -325,8 +335,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         } catch (FileNotFoundException e) {
             log.log(Level.FINE, "JCS - Caching empty object as server returned 404 for: {0}", getUrl());
             cache.put(getCacheKey(), createCacheEntry(new byte[]{}), attributes);
-            handleNotFound();
-            return true;
+            return handleNotFound();
         } catch (Exception e) {
             log.log(Level.WARNING, "JCS - Exception during download " + getUrl(), e);
         }
@@ -335,7 +344,10 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     }
 
-    protected abstract void handleNotFound();
+    /**
+     *  @return if we should treat this object as properly loaded
+     */
+    protected abstract boolean handleNotFound();
 
     protected abstract V createCacheEntry(byte[] content);
 

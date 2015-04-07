@@ -124,7 +124,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         if (cacheData != null) {
             byte[] content = cacheData.getContent();
             try {
-                return (content != null && content.length > 0) || cacheData.getImage() != null || cacheAsEmpty();
+                return content != null  || cacheData.getImage() != null || cacheAsEmpty();
             } catch (IOException e) {
                 log.log(Level.WARNING, "JCS TMS - error loading from cache for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
             }
@@ -142,7 +142,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             tile.putValue("tile-info", "no-tile");
             return true;
         }
-        return false;
+        return false; // as there is no other cache to cache the Tile, also cache other empty requests
     }
 
     @Override
@@ -158,7 +158,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     @Override
     public void loadingFinished(CacheEntry object, boolean success) {
         try {
-            loadTile(object);
+            loadTile(object, success);
             if (listener != null) {
                 listener.tileLoadingFinished(tile, success);
             }
@@ -177,7 +177,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
      * @return tile or null, if nothing (useful) was found in cache
      */
     public Tile getCachedTile() {
-        BufferedImageCacheEntry data = super.get();
+        BufferedImageCacheEntry data = get();
         if (isObjectLoadable()) {
             try {
                 loadTile(data);
@@ -192,7 +192,8 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         }
     }
 
-    private void loadTile(CacheEntry object) throws IOException {
+    // loads tile when calling back from cache
+    private void loadTile(CacheEntry object, boolean success) throws IOException {
         tile.finishLoading();
         if (object != null) {
             byte[] content = object.getContent();
@@ -200,11 +201,15 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 tile.loadImage(new ByteArrayInputStream(content));
             }
         }
+        if (!success) {
+            tile.setError("Problem loading tile");
+        }
     }
 
+    // loads tile when geting stright from cache
     private void loadTile(BufferedImageCacheEntry object) throws IOException {
         tile.finishLoading();
-        if (object != null) {
+        if (cacheAsEmpty() || object != null) { // if cache as empty object, do not try to load image
             if (object.getImage() != null) {
                 tile.setImage(object.getImage());
             }
@@ -212,11 +217,17 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     }
 
     @Override
-    protected void handleNotFound() {
+    protected boolean handleNotFound() {
         tile.setError("No tile at this zoom level");
         tile.putValue("tile-info", "no-tile");
+        return true;
     }
 
+    /**
+     * For TMS use BaseURL as settings discovery, so for different paths, we will have different settings (useful for developer servers)
+     *
+     * @return base URL of TMS or server url as defined in super class
+     */
     @Override
     protected String getServerKey() {
         TileSource ts = tile.getSource();

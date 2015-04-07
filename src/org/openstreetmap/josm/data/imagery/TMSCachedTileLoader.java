@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
 /**
  * @author Wiktor Niesiobędzki
- * 
+ *
  * Wrapper class that bridges between JCS cache and Tile Loaders
  *
  */
@@ -72,7 +72,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
 
     @Override
     public void addTile(Tile tile) {
-        createTileLoaderJob(tile).submit();
+        createTileLoaderJob(tile).getTile();
     }
 
     @Override
