@@ -132,17 +132,23 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         return false;
     }
 
+    private boolean isNoTileAtZoom() {
+        return attributes != null && attributes.isNoTileAtZoom();
+    }
+
     @Override
     protected boolean cacheAsEmpty() {
-        if (attributes != null && attributes.isNoTileAtZoom()) {
-            // do not remove file - keep the information, that there is no tile, for further requests
-            // the code above will check, if this information is still valid
+        return isNoTileAtZoom();
+    }
+
+    private boolean handleNoTileAtZoom() {
+        if (isNoTileAtZoom()) {
             log.log(Level.FINE, "JCS TMS - Tile valid, but no file, as no tiles at this level {0}", tile);
             tile.setError("No tile at this zoom level");
             tile.putValue("tile-info", "no-tile");
             return true;
         }
-        return false; // as there is no other cache to cache the Tile, also cache other empty requests
+        return false;
     }
 
     @Override
@@ -156,11 +162,25 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     }
 
     @Override
-    public void loadingFinished(CacheEntry object, boolean success) {
+    public void loadingFinished(CacheEntry object, LoadResult result) {
         try {
-            loadTile(object, success);
+            tile.finishLoading(); // whatever happened set that loading has finished
+            switch(result){
+            case FAILURE:
+                tile.setError("Problem loading tile");
+            case SUCCESS:
+                handleNoTileAtZoom();
+                if (object != null) {
+                    byte[] content = object.getContent();
+                    if (content != null && content.length > 0) {
+                        tile.loadImage(new ByteArrayInputStream(content));
+                    }
+                }
+            case REJECTED:
+                // do not set anything here, leave waiting sign
+            }
             if (listener != null) {
-                listener.tileLoadingFinished(tile, success);
+                listener.tileLoadingFinished(tile, result.equals(LoadResult.SUCCESS));
             }
         } catch (IOException e) {
             log.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
@@ -180,7 +200,14 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         BufferedImageCacheEntry data = get();
         if (isObjectLoadable()) {
             try {
-                loadTile(data);
+                if (data != null && data.getImage() != null) {
+                    tile.setImage(data.getImage());
+                    tile.finishLoading();
+                }
+                if (isNoTileAtZoom()) {
+                    handleNoTileAtZoom();
+                    tile.finishLoading();
+                }
                 return tile;
             } catch (IOException e) {
                 log.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
@@ -188,31 +215,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             }
 
         } else {
-            return null;
-        }
-    }
-
-    // loads tile when calling back from cache
-    private void loadTile(CacheEntry object, boolean success) throws IOException {
-        tile.finishLoading();
-        if (object != null) {
-            byte[] content = object.getContent();
-            if (content != null && content.length > 0) {
-                tile.loadImage(new ByteArrayInputStream(content));
-            }
-        }
-        if (!success) {
-            tile.setError("Problem loading tile");
-        }
-    }
-
-    // loads tile when geting stright from cache
-    private void loadTile(BufferedImageCacheEntry object) throws IOException {
-        tile.finishLoading();
-        if (cacheAsEmpty() || object != null) { // if cache as empty object, do not try to load image
-            if (object.getImage() != null) {
-                tile.setImage(object.getImage());
-            }
+            return tile;
         }
     }
 

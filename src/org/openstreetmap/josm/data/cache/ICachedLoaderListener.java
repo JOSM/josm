@@ -2,12 +2,25 @@
 package org.openstreetmap.josm.data.cache;
 
 public interface ICachedLoaderListener {
+
     /**
-     * Will be called when K object was successfully downloaded
-     * 
-     * @param data
-     * @param success
+     * Result of download
+     *
      */
-    public void loadingFinished(CacheEntry data, boolean success);
+    enum LoadResult {
+        SUCCESS,
+        FAILURE,
+        REJECTED
+    }
+    /**
+     * Will be called when K object processed. The result might be:
+     * LoadResult.SUCCESS when object was fetched
+     * LoadResult.FAILURE when there was a failure during download
+     * LoadResult.REJECTED when job was rejected because of full queue
+     *
+     * @param data
+     * @param result
+     */
+    public void loadingFinished(CacheEntry data, LoadResult result);
 
 }
