@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
+import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
 /**
@@ -151,7 +152,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             if (cacheElement != null && isCacheElementValid() && (isObjectLoadable())) {
                 // we got something in cache, and it's valid, so lets return it
                 log.log(Level.FINE, "JCS - Returning object from cache: {0}", getCacheKey());
-                finishLoading(true);
+                finishLoading(LoadResult.SUCCESS);
                 return;
             }
             // object not in cache, so submit work to separate thread
@@ -161,7 +162,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             } catch (RejectedExecutionException e) {
                 // queue was full, try again later
                 log.log(Level.FINE, "JCS - rejected job for: {0}", getCacheKey());
-                finishLoading(false);
+                finishLoading(LoadResult.REJECTED);
             }
         }
     }
@@ -205,16 +206,16 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         try {
             // try to load object from remote resource
             if (loadObject()) {
-                finishLoading(true);
+                finishLoading(LoadResult.SUCCESS);
             } else {
                 // if loading failed - check if we can return stale entry
                 if (isObjectLoadable()) {
                     // try to get stale entry in cache
-                    finishLoading(true);
+                    finishLoading(LoadResult.SUCCESS);
                     log.log(Level.FINE, "JCS - found stale object in cache: {0}", getUrl());
                 } else {
                     // failed completely
-                    finishLoading(false);
+                    finishLoading(LoadResult.FAILURE);
                 }
             }
         } finally {
@@ -223,7 +224,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
 
-    private void finishLoading(boolean success) {
+    private void finishLoading(LoadResult result) {
         Set<ICachedLoaderListener> listeners = null;
         synchronized (inProgress) {
             listeners = inProgress.remove(getUrl().toString());
@@ -234,13 +235,13 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         }
         try {
             for (ICachedLoaderListener l: listeners) {
-                l.loadingFinished(cacheData, success);
+                l.loadingFinished(cacheData, result);
             }
         } catch (Exception e) {
             log.log(Level.WARNING, "JCS - Error while loading object from cache: {0}; {1}", new Object[]{e.getMessage(), getUrl()});
             log.log(Level.FINE, "Stacktrace", e);
             for (ICachedLoaderListener l: listeners) {
-                l.loadingFinished(cacheData, false);
+                l.loadingFinished(cacheData, LoadResult.FAILURE);
             }
 
         }
