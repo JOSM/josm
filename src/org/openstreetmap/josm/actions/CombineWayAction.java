@@ -94,7 +94,8 @@ public class CombineWayAction extends JosmAction {
     }
 
     /**
-     * @param ways
+     * Combine multiple ways into one.
+     * @param ways the way to combine to one way
      * @return null if ways cannot be combined. Otherwise returns the combined
      *              ways and the commands to combine
      * @throws UserCancelException
@@ -113,7 +114,7 @@ public class CombineWayAction extends JosmAction {
         // try to build a new way which includes all the combined
         // ways
         //
-        NodeGraph graph = NodeGraph.createUndirectedGraphFromNodeWays(ways);
+        NodeGraph graph = NodeGraph.createNearlyUndirectedGraphFromNodeWays(ways);
         List<Node> path = graph.buildSpanningPath();
         if (path == null) {
             warnCombiningImpossible();
@@ -420,6 +421,11 @@ public class CombineWayAction extends JosmAction {
             return graph;
         }
 
+        /**
+         * Create an undirected graph from the given ways.
+         * @param ways Ways to build the graph from
+         * @return node graph structure
+         */
         public static NodeGraph createUndirectedGraphFromNodeList(List<NodePair> pairs) {
             NodeGraph graph = new NodeGraph();
             for (NodePair pair: pairs) {
@@ -429,10 +435,33 @@ public class CombineWayAction extends JosmAction {
             return graph;
         }
 
+        /**
+         * Create an undirected graph from the given ways, but prevent reversing of all
+         * non-new ways by fix one direction.
+         * @param ways Ways to build the graph from
+         * @return node graph structure
+         * @since 8181
+         */
         public static NodeGraph createUndirectedGraphFromNodeWays(Collection<Way> ways) {
+            boolean dir = true;
             NodeGraph graph = new NodeGraph();
             for (Way w: ways) {
                 graph.add(buildNodePairs(w, false /* undirected */));
+            }
+            return graph;
+        }
+
+        public static NodeGraph createNearlyUndirectedGraphFromNodeWays(Collection<Way> ways) {
+            boolean dir = true;
+            NodeGraph graph = new NodeGraph();
+            for (Way w: ways) {
+                if(!w.isNew()) {
+                    /* let the first non-new way give the direction (see #5880) */
+                    graph.add(buildNodePairs(w, dir));
+                    dir = false;
+                } else {
+                    graph.add(buildNodePairs(w, false /* undirected */));
+                }
             }
             return graph;
         }
@@ -603,7 +632,7 @@ public class CombineWayAction extends JosmAction {
 
         /**
          * Tries to find a path through the graph which visits each edge (i.e.
-         * the segment of a way) exactly one.
+         * the segment of a way) exactly once.
          *
          * @return the path; null, if no path was found
          */
