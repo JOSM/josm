@@ -37,6 +37,8 @@ public class ReverseWayTagCorrectorTest {
             assertSwitch(new Tag(k, "down"), new Tag(k, "up"));
             assertSwitch(new Tag(k, "something"), new Tag(k, "something"));
         }
+        // :left/:right with oneway (see #10977)
+        assertSwitch(new Tag("cycleway:left:oneway", "-1"), new Tag("cycleway:right:oneway", "yes"));
         // :forward/:backward (see #8518)
         assertSwitch(new Tag("turn:forward", "right"), new Tag("turn:backward", "right"));
         assertSwitch(new Tag("change:forward", "not_right"), new Tag("change:backward", "not_right"));
