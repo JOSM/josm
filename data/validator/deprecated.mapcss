@@ -421,3 +421,18 @@ way[oneway=-1] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "drinking_water";
 }
+
+/* see #10329 */
+*[color][!colour] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "colour";
+  fixChangeKey: "color => colour";
+}
+*[color][colour][tag(color)=tag(colour)] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  set samecolor;
+  fixRemove: "color";
+}
+*[color][colour]!.samecolor {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+}
