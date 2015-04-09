@@ -82,8 +82,7 @@ public class BasicUploadSettingsPanel extends JPanel {
 
         hcbUploadSource.setToolTipText(tr("Enter a source"));
         hcbUploadSource.setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
-        List<String> sourceHistory = new LinkedList<>(Main.pref.getCollection(SOURCE_HISTORY_KEY,
-                Arrays.asList("knowledge", "survey", "Bing")));
+        List<String> sourceHistory = new LinkedList<>(Main.pref.getCollection(SOURCE_HISTORY_KEY, getDefaultSources()));
         Collections.reverse(sourceHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadSource.setPossibleItems(sourceHistory);
         CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);
@@ -91,6 +90,10 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadSource.getEditor().getEditorComponent().addFocusListener(sourceModelListener);
         pnl.add(hcbUploadSource, GBC.eol().fill(GBC.HORIZONTAL));
         return pnl;
+    }
+
+    static public List<String> getDefaultSources() {
+        return Arrays.asList("knowledge", "survey", "Bing");
     }
 
     protected void build() {
