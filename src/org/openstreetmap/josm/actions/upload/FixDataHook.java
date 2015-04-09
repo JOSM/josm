@@ -82,17 +82,14 @@ public class FixDataHook implements UploadHook {
                 boolean drop = k.isEmpty() || v.isEmpty();
                 if(!e.getKey().equals(k)) {
                     if(drop || !keys.containsKey(k)) {
-                        newKeys.remove(e.getKey());
+                        newKeys.put(e.getKey(), null);
                         if(!drop)
                             newKeys.put(k, v);
                     }
                 } else if(!e.getValue().equals(v)) {
-                    if(v.isEmpty())
-                        newKeys.remove(k);
-                    else
-                        newKeys.put(k, v);
+                    newKeys.put(k, v.isEmpty() ? null : v);
                 } else if (drop) {
-                    newKeys.remove(e.getKey());
+                    newKeys.put(e.getKey(), null);
                 }
             }
             boolean changed = !keys.equals(newKeys);
@@ -128,7 +125,10 @@ public class FixDataHook implements UploadHook {
         public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
             if(keys.containsKey(oldKey) && !keys.containsKey(newKey)) {
                 keys.put(newKey, keys.get(oldKey));
-                keys.remove(oldKey);
+                keys.put(oldKey, null);
+                return true;
+            } else if(keys.containsKey(oldKey) && keys.containsKey(newKey) && keys.get(oldKey).equals(keys.get(newKey))) {
+                keys.put(oldKey, null);
                 return true;
             }
             return false;
@@ -168,7 +168,7 @@ public class FixDataHook implements UploadHook {
             if(oldValue.equals(keys.get(oldKey)) && (newKey.equals(oldKey) || !keys.containsKey(newKey))) {
                 keys.put(newKey, newValue);
                 if(!newKey.equals(oldKey))
-                    keys.remove(oldKey);
+                    keys.put(oldKey, null);
                 return true;
             }
             return false;
@@ -188,7 +188,7 @@ public class FixDataHook implements UploadHook {
         Collection<Command> cmds = new LinkedList<>();
 
         for (OsmPrimitive osm : objectsToUpload) {
-            Map<String, String> keys = osm.getKeys();
+            HashMap<String, String> keys = new HashMap<>(osm.getKeys());
             if(!keys.isEmpty()) {
                 boolean modified = false;
                 for (FixData fix : deprecated) {
@@ -196,7 +196,7 @@ public class FixDataHook implements UploadHook {
                         modified = true;
                 }
                 if(modified)
-                    cmds.add(new ChangePropertyCommand(Collections.singleton(osm), new HashMap<>(keys)));
+                    cmds.add(new ChangePropertyCommand(Collections.singleton(osm), keys));
             }
         }
 
