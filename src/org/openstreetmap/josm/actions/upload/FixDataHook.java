@@ -165,7 +165,8 @@ public class FixDataHook implements UploadHook {
 
         @Override
         public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
-            if(oldValue.equals(keys.get(oldKey)) && (newKey.equals(oldKey) || !keys.containsKey(newKey))) {
+            if(oldValue.equals(keys.get(oldKey)) && (newKey.equals(oldKey)
+            || !keys.containsKey(newKey) || keys.get(newKey).equals(newValue))) {
                 keys.put(newKey, newValue);
                 if(!newKey.equals(oldKey))
                     keys.put(oldKey, null);
