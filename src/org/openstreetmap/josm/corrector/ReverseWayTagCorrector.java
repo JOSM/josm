@@ -122,6 +122,12 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 } else if (OsmUtils.isTrue(value)) {
                     newValue = OsmUtils.reverseval;
                 }
+                for (StringSwitcher prefixSuffixSwitcher : stringSwitchers) {
+                    newKey = prefixSuffixSwitcher.apply(key);
+                    if (!key.equals(newKey)) {
+                        break;
+                    }
+                }
             } else if (key.startsWith("incline") || key.endsWith("incline")
                     || key.startsWith("direction") || key.endsWith("direction")) {
                 newValue = UP_DOWN.apply(value);
@@ -131,7 +137,6 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             } else if (key.endsWith(":forward") || key.endsWith(":backward")) {
                 // Change key but not left/right value (fix #8518)
                 newKey = FORWARD_BACKWARD.apply(key);
-
             } else if (!ignoreKeyForCorrection(key)) {
                 for (StringSwitcher prefixSuffixSwitcher : stringSwitchers) {
                     newKey = prefixSuffixSwitcher.apply(key);
