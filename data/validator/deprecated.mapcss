@@ -412,6 +412,11 @@ way[oneway=1] {
   fixAdd: "oneway=yes";
 }
 
+/* see #11329 */
+way[oneway=-1] {
+  throwWarning: tr("{0} is not recommended. Use the Reverse Ways function from the Tools menu.", "{0.tag}");
+}
+
 *[drinkable] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "drinking_water";
