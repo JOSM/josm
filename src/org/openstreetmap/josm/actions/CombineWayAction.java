@@ -443,7 +443,6 @@ public class CombineWayAction extends JosmAction {
          * @since 8181
          */
         public static NodeGraph createUndirectedGraphFromNodeWays(Collection<Way> ways) {
-            boolean dir = true;
             NodeGraph graph = new NodeGraph();
             for (Way w: ways) {
                 graph.add(buildNodePairs(w, false /* undirected */));
