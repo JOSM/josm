@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.data.cache;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileLock;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Handler;
@@ -39,17 +41,27 @@ public class JCSCacheManager {
     private static long maxObjectTTL        = Long.MAX_VALUE;
     private final static String PREFERENCE_PREFIX = "jcs.cache";
     private final static IndexedDiskCacheFactory diskCacheFactory = new IndexedDiskCacheFactory();
+    private static FileLock cacheDirLock = null;
 
     /**
      * default objects to be held in memory by JCS caches (per region)
      */
     public static final IntegerProperty DEFAULT_MAX_OBJECTS_IN_MEMORY  = new IntegerProperty(PREFERENCE_PREFIX + ".max_objects_in_memory", 1000);
 
+    @SuppressWarnings("resource")
     private static void initialize() throws IOException {
         File cacheDir = new File(Main.pref.getCacheDirectory(), "jcs");
 
         if ((!cacheDir.exists() && !cacheDir.mkdirs()))
             throw new IOException("Cannot access cache directory");
+
+        File cacheDirLockPath = new File(cacheDir, ".lock");
+        if (!cacheDirLockPath.exists())
+            cacheDirLockPath.createNewFile();
+        cacheDirLock = new FileOutputStream(cacheDirLockPath).getChannel().tryLock();
+
+        if (cacheDirLock == null)
+            log.log(Level.WARNING, "Cannot lock cache directory. Will not use disk cache");
 
         // raising logging level gives ~500x performance gain
         // http://westsworld.dk/blog/2008/01/jcs-and-performance/
@@ -138,7 +150,7 @@ public class JCSCacheManager {
     private static <K,V> CacheAccess<K, V> getCacheInner(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
         CompositeCache<K, V> cc = cacheManager.getCache(cacheName, getCacheAttributes(maxMemoryObjects));
 
-        if (cachePath != null) {
+        if (cachePath != null && cacheDirLock != null) {
             IndexedDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath);
             diskAttributes.setCacheName(cacheName);
             IndexedDiskCache<K, V> diskCache = diskCacheFactory.createCache(diskAttributes, cacheManager, null, new StandardSerializer());

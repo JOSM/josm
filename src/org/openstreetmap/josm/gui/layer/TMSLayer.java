@@ -193,7 +193,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     void clearTileCache(ProgressMonitor monitor) {
         tileCache.clear();
         if (tileLoader instanceof CachedTileLoader) {
-            ((CachedTileLoader)tileLoader).clearCache();
+            ((CachedTileLoader)tileLoader).clearCache(tileSource);
         }
     }
 

@@ -61,7 +61,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
     }
 
     @Override
-    public void clearCache() {
+    public void clearCache(TileSource source) {
         this.cache.clear();
     }
 
