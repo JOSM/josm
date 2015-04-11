@@ -2039,6 +2039,7 @@
             <space />
             <key key="leisure" value="marina" />
             <text key="name" text="Name" />
+            <combo key="sanitary_dump_station" text="Dump Station" values="yes,public,customers,no" />
         </item> <!-- Marina -->
         <item name="Pier" icon="presets/pier.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pier"
@@ -3228,12 +3229,13 @@
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <reference ref="wheelchair" />
             <space />
-            <reference ref="internet_smoking" />
-            <space />
             <text key="capacity" text="Number of places" />
             <reference ref="fee_interval" />
+            <combo key="sanitary_dump_station" text="Dump Station" values="yes,public,customers,no" />
             <check key="power_supply" text="Power supply" />
             <check key="tents" text="Tents allowed" />
+            <space />
+            <reference ref="internet_smoking" />
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Caravan Site/RV Park -->
@@ -3251,6 +3253,7 @@
             <reference ref="name_operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <reference ref="wheelchair" />
+            <combo key="sanitary_dump_station" text="Dump Station" values="yes,public,customers,no" />
             <space />
             <reference ref="internet_smoking" />
             <space />
@@ -4501,6 +4504,17 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=waste_disposal" />
             <key key="amenity" value="waste_disposal" />
         </item> <!-- Waste Disposal/Dumpster -->
+        <item name="Sanitary Dump Station" icon="styles/standard/service/recycling/sanitary_dump_station.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=sanitary_dump_station" />
+            <space />
+            <key key="amenity" value="sanitary_dump_station" />
+            <check key="sanitary_dump_station:suction" text="Suction pumpout" />
+            <check key="sanitary_dump_station:gravity" text="Gravity dump station" />
+            <combo key="access" text="Access" values="yes,public,customers,no" />
+            <reference ref="fee" />
+            <text key="operator" text="Operator" />
+            <combo key="opening_hours" text="Operation times" values="24/7" />
+        </item> <!-- Sanitary Dump Station -->
         <separator/>
         <item name="Bench" icon="presets/bench.png" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bench"
