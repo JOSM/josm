@@ -65,13 +65,16 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                     if (other_count == 1) {
                         for (Map.Entry<?, ?> entry : v.entrySet()) { // Find the non-blank value in the map
                             if ( entry.getKey() != "") {
-                                str += entry.getValue().toString() + " '" + entry.getKey() + "'";
+                                /* I18n: properties display partial string joined with comma, frst is count, second is value */
+                                str += tr("{0} ''{1}''", entry.getValue().toString(), entry.getKey());
                             }
                         }
                     } else {
-                        str += tr ("{0} different",  other_count);
+                        /* I18n: properties display partial string joined with comma */
+                        str += trn("{0} different", "{0} different", other_count, other_count);
                     }
                     if(blank_count > 0) {
+                        /* I18n: properties display partial string joined with comma */
                         str += trn(", {0} unset", ", {0} unset", blank_count, blank_count);
                     }
                     str += ">";
