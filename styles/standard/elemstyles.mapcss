@@ -2322,7 +2322,8 @@ node[amenity=clock] {
 area[emergency=aed],
 area[amenity=toilets],
 area[amenity=shower],
-area[amenity=recycling] {
+area[amenity=recycling],
+area[amenity=sanitary_dump_station] {
     fill-color: amenity_light#f7efb7;
 }
 node[emergency=phone] {
@@ -2362,6 +2363,11 @@ node[amenity=waste_basket] {
 }
 node[amenity=waste_disposal] {
     icon-image: "service/recycling/waste_disposal.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=sanitary_dump_station] {
+    icon-image: "service/recycling/sanitary_dump_station.svg";
     set icon_z17;
     text: auto;
 }
