@@ -27,4 +27,10 @@ class SimplePrimitiveIdTest extends GroovyTestCase {
         assert SimplePrimitiveId.fuzzyParse("foo relation/123 bar").toString() == "[relation 123]"
         assert SimplePrimitiveId.fuzzyParse("foo relation/123 and way/345 but also node/789").toString() == "[relation 123, way 345, node 789]"
     }
+
+    void testFromCopyAction() {
+        assert SimplePrimitiveId.fromString("node 123") == new SimplePrimitiveId(123, OsmPrimitiveType.NODE)
+        assert SimplePrimitiveId.fromString("way 123") == new SimplePrimitiveId(123, OsmPrimitiveType.WAY)
+        assert SimplePrimitiveId.fromString("relation 123") == new SimplePrimitiveId(123, OsmPrimitiveType.RELATION)
+    }
 }
