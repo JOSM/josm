@@ -4,17 +4,17 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Handler to load data directly from the URL.
@@ -35,24 +35,13 @@ public class LoadDataHandler extends RequestHandler {
     private String data;
 
     /**
-     * Holds the mime type. Currently only OSM_MIME_TYPE is supported
-     * But it could be extended to text/csv, application/gpx+xml, ... or even binary encoded data
+     * Holds the parsed data set
      */
-    private String mimeType;
+    private DataSet dataSet;
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
-        try {
-            // Transform data string to inputstream
-            InputStream source = new ByteArrayInputStream(data.getBytes("UTF-8"));
-            DataSet dataSet = new DataSet();
-            if (mimeType != null && mimeType.contains(OSM_MIME_TYPE))
-                dataSet = OsmReader.parseDataSet(source, null);
-            Main.worker.submit(new LoadDataTask(isLoadInNewLayer(), dataSet, args.get("layer_name")));
-        } catch (Exception e) {
-            Main.warn("Problem with data: " + data);
-            throw new RequestHandlerErrorException(e);
-        }
+        Main.worker.submit(new LoadDataTask(isLoadInNewLayer(), dataSet, args.get("layer_name")));
     }
 
     @Override
@@ -72,8 +61,13 @@ public class LoadDataHandler extends RequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        return new String[] {
-                "/load_data?layer_name=extra_layer&new_layer=true&data=%3Cosm%3E%3Cnode%3E...%3C%2Fnode%3E%3C%2Fosm%3E" };
+        try {
+            final String data = URLEncoder.encode("<osm version='0.6'><node id='-1' lat='1' lon='2' /></osm>", "UTF-8");
+            return new String[]{
+                    "/load_data?layer_name=extra_layer&new_layer=true&data=" + data};
+        } catch (UnsupportedEncodingException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     @Override
@@ -89,37 +83,22 @@ public class LoadDataHandler extends RequestHandler {
     }
 
     @Override
-    protected void parseArgs() {
-        if (request.indexOf('?') == -1)
-            return; // nothing to do
-
-        Map<String, String> args = new HashMap<>();
-
-        // The data itself shouldn't contain any &, = or ? chars.
-        // Those are reserved for the URL parsing
-        // and should be URL encoded as %26, %3D or %3F
-        String query = request.substring(request.indexOf('?') + 1);
-        String[] params = query.split("&");
-        for (String param : params) {
-            String[] kv = param.split("=");
-            if (kv.length == 2)
-                args.put(kv[0], kv[1]);
-        }
-        this.args = args;
-    }
-
-    @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
-        if (args.get("data") == null)
-            throw new RequestHandlerBadRequestException("RemoteControl: No data defined in URL");
+        this.data = args.get("data");
+        /**
+         * Holds the mime type. Currently only OSM_MIME_TYPE is supported
+         * But it could be extended to text/csv, application/gpx+xml, ... or even binary encoded data
+         */
+        final String mimeType = Utils.firstNonNull(args.get("mime_type"), OSM_MIME_TYPE);
         try {
-            data = URLDecoder.decode(args.get("data"), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RequestHandlerBadRequestException("RemoteControl: UnsupportedEncodingException: " + e.getMessage(), e);
-        }
-        mimeType = args.get("mime_type");
-        if (mimeType == null) {
-            mimeType = OSM_MIME_TYPE;
+            if (OSM_MIME_TYPE.equals(mimeType)) {
+                final ByteArrayInputStream in = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
+                dataSet = OsmReader.parseDataSet(in, null);
+            } else {
+                dataSet = new DataSet();
+            }
+        } catch (IllegalDataException e) {
+            throw new RequestHandlerBadRequestException("Failed to parse " + data + ": " + e.getMessage(), e);
         }
     }
 
