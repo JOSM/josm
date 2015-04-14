@@ -1,9 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Utils;
 
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -13,12 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
-import org.openstreetmap.josm.tools.Utils;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * This is the parent of all classes that handle a specific remote control command
@@ -192,25 +193,30 @@ public abstract class RequestHandler {
      */
     protected void parseArgs() {
         try {
-            String req = URLDecoder.decode(this.request, "UTF-8");
-            HashMap<String, String> args = new HashMap<>();
-            if (req.indexOf('?') != -1) {
-                String query = req.substring(req.indexOf('?') + 1);
-                if (query.indexOf('#') != -1) {
-                            query = query.substring(0, query.indexOf('#'));
-                        }
-                String[] params = query.split("&", -1);
-                for (String param : params) {
-                    int eq = param.indexOf('=');
-                    if (eq != -1) {
-                        args.put(param.substring(0, eq), param.substring(eq + 1));
-                    }
-                }
-            }
-            this.args = args;
-        } catch (UnsupportedEncodingException ex) {
-            throw new IllegalStateException(ex);
+            this.args = getRequestParameter(new URI(this.request));
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * @see <a href="http://blog.lunatech.com/2009/02/03/what-every-web-developer-must-know-about-url-encoding">
+     *      What every web developer must know about URL encoding</a>
+     */
+    static Map<String, String> getRequestParameter(URI uri) {
+        Map<String, String> r = new HashMap<>();
+        if (uri.getRawQuery() == null) {
+            return r;
+        }
+        for (String kv : uri.getRawQuery().split("&")) {
+            try {
+                final String[] kvs = URLDecoder.decode(kv, "UTF-8").split("=", 2);
+                r.put(kvs[0], kvs.length > 1 ? kvs[1] : null);
+            } catch (UnsupportedEncodingException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        return r;
     }
 
     void checkMandatoryParams() throws RequestHandlerBadRequestException {
@@ -268,7 +274,7 @@ public abstract class RequestHandler {
                 : Main.pref.getBoolean(loadInNewLayerKey, loadInNewLayerDefault);
     }
 
-    protected final String decodeParam(String param) {
+    protected static String decodeParam(String param) {
         try {
             return URLDecoder.decode(param, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -316,6 +322,35 @@ public abstract class RequestHandler {
 
         public RequestHandlerForbiddenException(String message) {
             super(message);
+        }
+    }
+
+    public static abstract class RawURLParseRequestHandler extends RequestHandler {
+        @Override
+        protected void parseArgs() {
+            HashMap<String, String> args = new HashMap<>();
+            if (request.indexOf('?') != -1) {
+                String query = request.substring(request.indexOf('?') + 1);
+                if (query.indexOf("url=") == 0) {
+                    args.put("url", decodeParam(query.substring(4)));
+                } else {
+                    int urlIdx = query.indexOf("&url=");
+                    if (urlIdx != -1) {
+                        args.put("url", decodeParam(query.substring(urlIdx + 5)));
+                        query = query.substring(0, urlIdx);
+                    } else if (query.indexOf('#') != -1) {
+                        query = query.substring(0, query.indexOf('#'));
+                    }
+                    String[] params = query.split("&", -1);
+                    for (String param : params) {
+                        int eq = param.indexOf('=');
+                        if (eq != -1) {
+                            args.put(param.substring(0, eq), decodeParam(param.substring(eq + 1)));
+                        }
+                    }
+                }
+            }
+            this.args = args;
         }
     }
 }

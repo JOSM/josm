@@ -441,3 +441,9 @@ way[oneway=-1] {
 *[/=|\+|\/|&|<|>|;|'|"|%|#|@|\\|,|\./] {
   throwWarning: tr("key with uncommon character");
 }
+
+/* see #11330 */
+*[/^.$/],
+*[/^..$/][!to] {
+  throwWarning: tr("uncommon short key");
+}
