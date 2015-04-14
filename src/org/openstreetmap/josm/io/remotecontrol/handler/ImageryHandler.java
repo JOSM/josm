@@ -4,7 +4,6 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -19,7 +18,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Adds an imagery (WMS/TMS) layer. For instance, {@code /imagery?title=...&type=...&url=...}.
  * @since 3715
  */
-public class ImageryHandler extends RequestHandler {
+public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
 
     /**
      * The remote control command name used to add an imagery layer.
@@ -112,33 +111,6 @@ public class ImageryHandler extends RequestHandler {
                 }
             }
         });
-    }
-
-    @Override
-    protected void parseArgs() {
-        HashMap<String, String> args = new HashMap<>();
-        if (request.indexOf('?') != -1) {
-            String query = request.substring(request.indexOf('?') + 1);
-            if (query.indexOf("url=") == 0) {
-                args.put("url", decodeParam(query.substring(4)));
-            } else {
-                int urlIdx = query.indexOf("&url=");
-                if (urlIdx != -1) {
-                    args.put("url", decodeParam(query.substring(urlIdx + 5)));
-                    query = query.substring(0, urlIdx);
-                } else if (query.indexOf('#') != -1) {
-                    query = query.substring(0, query.indexOf('#'));
-                }
-                String[] params = query.split("&", -1);
-                for (String param : params) {
-                    int eq = param.indexOf('=');
-                    if (eq != -1) {
-                        args.put(param.substring(0, eq), decodeParam(param.substring(eq + 1)));
-                    }
-                }
-            }
-        }
-        this.args = args;
     }
 
     @Override

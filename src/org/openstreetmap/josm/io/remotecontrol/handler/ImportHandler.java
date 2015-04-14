@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
@@ -17,7 +16,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Handler for import request
  */
-public class ImportHandler extends RequestHandler {
+public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
 
     /**
      * The remote control command name used to import data.
@@ -80,35 +79,6 @@ public class ImportHandler extends RequestHandler {
     @Override
     public PermissionPrefWithDefault getPermissionPref() {
         return PermissionPrefWithDefault.IMPORT_DATA;
-    }
-
-    @Override
-    protected void parseArgs() {
-        HashMap<String, String> args = new HashMap<>();
-        if (request.indexOf('?') != -1) {
-            String query = request.substring(request.indexOf('?') + 1);
-            if (query.indexOf("url=") == 0) {
-                args.put("url", decodeParam(query.substring(4)));
-            } else {
-                int urlIdx = query.indexOf("&url=");
-                if (urlIdx != -1) {
-                    args.put("url", decodeParam(query.substring(urlIdx + 5)));
-                    query = query.substring(0, urlIdx);
-                } else {
-                    if (query.indexOf('#') != -1) {
-                        query = query.substring(0, query.indexOf('#'));
-                    }
-                }
-                String[] params = query.split("&", -1);
-                for (String param : params) {
-                    int eq = param.indexOf('=');
-                    if (eq != -1) {
-                        args.put(param.substring(0, eq), param.substring(eq + 1));
-                    }
-                }
-            }
-        }
-        this.args = args;
     }
 
     @Override
