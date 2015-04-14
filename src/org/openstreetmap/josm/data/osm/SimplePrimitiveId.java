@@ -11,7 +11,7 @@ public class SimplePrimitiveId implements PrimitiveId, Serializable {
     private final long id;
     private final OsmPrimitiveType type;
 
-    public static final Pattern ID_PATTERN = Pattern.compile("((n(ode)?|w(ay)?|r(el(ation)?)?)/?)(\\d+)");
+    public static final Pattern ID_PATTERN = Pattern.compile("((n(ode)?|w(ay)?|r(el(ation)?)?)[ /]?)(\\d+)");
 
     public SimplePrimitiveId(long id, OsmPrimitiveType type) {
         this.id = id;
