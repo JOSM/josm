@@ -56,16 +56,20 @@ public final class CopyAction extends JosmAction {
      */
     public static void copy(OsmDataLayer source, Collection<OsmPrimitive> primitives) {
         /* copy ids to the clipboard */
+        String ids = getCopyString(primitives);
+        Utils.copyToClipboard(ids);
+
+        Main.pasteBuffer.makeCopy(primitives);
+        Main.pasteSource = source;
+    }
+
+    public static String getCopyString(Collection<? extends OsmPrimitive> primitives) {
         StringBuilder idsBuilder = new StringBuilder();
         for (OsmPrimitive p : primitives) {
             idsBuilder.append(OsmPrimitiveType.from(p).getAPIName()).append(" ");
             idsBuilder.append(p.getId()).append(",");
         }
-        String ids = idsBuilder.substring(0, idsBuilder.length() - 1);
-        Utils.copyToClipboard(ids);
-
-        Main.pasteBuffer.makeCopy(primitives);
-        Main.pasteSource = source;
+        return idsBuilder.substring(0, idsBuilder.length() - 1);
     }
 
     @Override
