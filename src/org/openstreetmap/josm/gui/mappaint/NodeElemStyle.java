@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.SimpleBoxProvider;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class NodeElemStyle extends ElemStyle implements StyleKeys {
     public final MapImage mapImage;
+    public final RotationAngle mapImageAngle;
     public final Symbol symbol;
 
     private Image enabledNodeIcon;
@@ -98,10 +100,11 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
     public static final StyleList DEFAULT_NODE_STYLELIST = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
     public static final StyleList DEFAULT_NODE_STYLELIST_TEXT = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE, BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
 
-    protected NodeElemStyle(Cascade c, MapImage mapImage, Symbol symbol, float default_major_z_index) {
+    protected NodeElemStyle(Cascade c, MapImage mapImage, Symbol symbol, float default_major_z_index, RotationAngle rotationAngle) {
         super(c, default_major_z_index);
         this.mapImage = mapImage;
         this.symbol = symbol;
+        this.mapImageAngle = rotationAngle;
     }
 
     public static NodeElemStyle create(Environment env) {
@@ -116,13 +119,23 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         if (mapImage == null) {
             symbol = createSymbol(env);
         }
+        final String rotationString = c.get("icon-rotation", null, String.class);
+        RotationAngle rotationAngle = null;
+        if ("way".equalsIgnoreCase(rotationString)) {
+            rotationAngle = RotationAngle.buildWayDirectionRotation();
+        } else if (rotationString != null) {
+            try {
+                rotationAngle = RotationAngle.buildStaticRotation(rotationString);
+            } catch (RuntimeException ignore) {
+            }
+        }
 
         // optimization: if we neither have a symbol, nor a mapImage
         // we don't have to check for the remaining style properties and we don't
         // have to allocate a node element style.
         if (!allowDefault && symbol == null && mapImage == null) return null;
 
-        return new NodeElemStyle(c, mapImage, symbol, default_major_z_index);
+        return new NodeElemStyle(c, mapImage, symbol, default_major_z_index, rotationAngle);
     }
 
     public static MapImage createIcon(final Environment env, final String[] keys) {
@@ -256,7 +269,8 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         if (primitive instanceof Node) {
             Node n = (Node) primitive;
             if (mapImage != null && painter.isShowIcons()) {
-                painter.drawNodeIcon(n, mapImage, painter.isInactiveMode() || n.isDisabled(), selected, member);
+                painter.drawNodeIcon(n, mapImage, painter.isInactiveMode() || n.isDisabled(), selected, member,
+                        mapImageAngle == null ? 0.0 : mapImageAngle.getRotationAngle(primitive));
             } else if (symbol != null) {
                 Color fillColor = symbol.fillColor;
                 if (fillColor != null) {
