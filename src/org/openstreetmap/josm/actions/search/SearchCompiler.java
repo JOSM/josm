@@ -98,7 +98,7 @@ public class SearchCompiler {
 
     public class CoreSimpleMatchFactory implements SimpleMatchFactory {
         private Collection<String> keywords = Arrays.asList("id", "version",
-                "changeset", "nodes", "tags", "areasize", "modified", "selected",
+                "changeset", "nodes", "tags", "areasize", "waylength", "modified", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
                 "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%");
 
@@ -140,6 +140,8 @@ public class SearchCompiler {
                         return new TagCountRange(tokenizer);
                     case "areasize":
                         return new AreaSize(tokenizer);
+                    case "waylength":
+                        return new WayLength(tokenizer);
                     case "nth":
                         return new Nth(tokenizer, false);
                     case "nth%":
@@ -1110,6 +1112,33 @@ public class SearchCompiler {
         @Override
         protected String getString() {
             return "areasize";
+        }
+    }
+
+    /**
+     * Matches if the length of a way is within the given range
+     */
+    private static class WayLength extends RangeMatch {
+
+        public WayLength(Range range) {
+            super(range);
+        }
+
+        public WayLength(PushbackTokenizer tokenizer) throws ParseError {
+            this(tokenizer.readRange(tr("Range of numbers expected")));
+        }
+
+        @Override
+        protected Long getNumber(OsmPrimitive osm) {
+            if (!(osm instanceof Way))
+                return null;
+            Way way = (Way) osm;
+            return (long) way.getLength();
+        }
+
+        @Override
+        protected String getString() {
+            return "waylength";
         }
     }
 
