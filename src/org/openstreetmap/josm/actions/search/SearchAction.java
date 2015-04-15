@@ -434,6 +434,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("tags:<i>5-10</i>", "tags:", tr("objects having 5 to 10 tags"))
                 .addKeyword("role:", "role:", tr("objects with given role in a relation"))
                 .addKeyword("areasize:<i>-100</i>", "areasize:", tr("closed ways with an area of 100 m\u00b2"))
+                .addKeyword("waylength:<i>200-</i>", "waylength:", tr("ways with a length of 200 m or more"))
                 , GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("state"))
