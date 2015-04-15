@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -27,6 +28,12 @@ public class DownloadNotesTask extends AbstractDownloadTask {
     private static final String PATTERN_DUMP_FILE = "https?://.*/(.*\\.osn(.bz2)?)";
 
     private DownloadTask downloadTask;
+
+    public Future<?> download(boolean newLayer, long id, ProgressMonitor progressMonitor) {
+        final String url = OsmApi.getOsmApi().getBaseUrl() + "notes/" + id;
+        downloadTask = new DownloadRawUrlTask(new OsmServerLocationReader(url), progressMonitor);
+        return Main.worker.submit(downloadTask);
+    }
 
     @Override
     public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {

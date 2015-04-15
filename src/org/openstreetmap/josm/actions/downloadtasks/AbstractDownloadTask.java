@@ -107,6 +107,11 @@ public abstract class AbstractDownloadTask implements DownloadTask {
         return getClass().getName();
     }
 
+    @Override
+    public String toString() {
+        return this.getTitle();
+    }
+
     // Default pattern to keep old plugins compatible
     @Override
     public String[] getPatterns() {

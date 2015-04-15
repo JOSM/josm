@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -17,12 +18,15 @@ import java.util.concurrent.Future;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesUrlBoundsTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesUrlIdTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmChangeCompressedTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmChangeTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmCompressedTask;
@@ -66,6 +70,8 @@ public class OpenLocationAction extends JosmAction {
         addDownloadTaskClass(DownloadOsmCompressedTask.class);
         addDownloadTaskClass(DownloadOsmChangeCompressedTask.class);
         addDownloadTaskClass(DownloadSessionTask.class);
+        addDownloadTaskClass(DownloadNotesUrlBoundsTask.class);
+        addDownloadTaskClass(DownloadNotesUrlIdTask.class);
     }
 
     /**
@@ -182,25 +188,52 @@ public class OpenLocationAction extends JosmAction {
     public void openUrl(boolean newLayer, final String url) {
         PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
         Collection<DownloadTask> tasks = findDownloadTasks(url, false);
-        DownloadTask task = null;
-        Future<?> future = null;
-        if (!tasks.isEmpty()) {
-            // TODO: handle multiple suitable tasks ?
+
+        if (tasks.size() > 1) {
+            tasks = askWhichTasksToLoad(tasks);
+        } else if (tasks.isEmpty()) {
+            warnNoSuitableTasks(url);
+            return;
+        }
+
+        for (final DownloadTask task : tasks) {
             try {
-                task = tasks.iterator().next();
-                future = task.loadUrl(newLayer, url, monitor);
+                Future<?> future = task.loadUrl(newLayer, url, monitor);
+                Main.worker.submit(new PostDownloadHandler(task, future));
             } catch (IllegalArgumentException e) {
                 Main.error(e);
             }
         }
-        if (future != null) {
-            Main.worker.submit(new PostDownloadHandler(task, future));
-        } else {
-            final String details = findSummaryDocumentation();    // Explain what patterns are supported
-            HelpAwareOptionPane.showMessageDialogInEDT(Main.parent, "<html><p>" + tr(
-                    "Cannot open URL ''{0}''<br>The following download tasks accept the URL patterns shown:<br>{1}",
-                    url, details) + "</p></html>", tr("Download Location"), JOptionPane.ERROR_MESSAGE, HelpUtil.ht("/Action/OpenLocation"));
-        }
+
+    }
+
+    /**
+     * Asks the user which of the possible tasks to perform.
+     * @param tasks a list of possible tasks
+     * @return the selected tasks from the user or an empty list if the dialog has been canceled
+     */
+    Collection<DownloadTask> askWhichTasksToLoad(final Collection<DownloadTask> tasks) {
+        final JList<DownloadTask> list = new JList<>(tasks.toArray(new DownloadTask[tasks.size()]));
+        list.addSelectionInterval(0, tasks.size() - 1);
+        final ExtendedDialog dialog = new ExtendedDialog(Main.parent, tr("Which tasks to perform?"), new String[]{tr("Ok"), tr("Cancel")}, true) {{
+            final JPanel pane = new JPanel(new GridLayout(2, 1));
+            pane.add(new JLabel(tr("Which tasks to perform?")));
+            pane.add(list);
+            setContent(pane);
+        }};
+        dialog.showDialog();
+        return dialog.getValue() == 1 ? list.getSelectedValuesList() : Collections.<DownloadTask>emptyList();
+    }
+
+    /**
+     * Displays an error message dialog that no suitable tasks have been found for the given url.
+     * @param url the given url
+     */
+    void warnNoSuitableTasks(final String url) {
+        final String details = findSummaryDocumentation();    // Explain what patterns are supported
+        HelpAwareOptionPane.showMessageDialogInEDT(Main.parent, "<html><p>" + tr(
+                "Cannot open URL ''{0}''<br>The following download tasks accept the URL patterns shown:<br>{1}",
+                url, details) + "</p></html>", tr("Download Location"), JOptionPane.ERROR_MESSAGE, HelpUtil.ht("/Action/OpenLocation"));
     }
 
     /**
