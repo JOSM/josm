@@ -6,8 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -29,9 +32,14 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
         try {
-            if (suitableDownloadTasks != null && !suitableDownloadTasks.isEmpty()) {
-                // TODO: handle multiple suitable download tasks ?
-                suitableDownloadTasks.iterator().next().loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
+            if (Main.pref.getBoolean("remotecontrol.import.interactive", true)) {
+                // OpenLocationAction queries the user if more than one task is suitable
+                new OpenLocationAction().openUrl(isLoadInNewLayer(), url.toExternalForm());
+            } else {
+                // Otherwise perform all tasks
+                for (DownloadTask task : suitableDownloadTasks) {
+                    task.loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
+                }
             }
         } catch (Exception ex) {
             Main.warn("RemoteControl: Error parsing import remote control request:");
@@ -67,13 +75,14 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
         // Other API instances will however use the import handler to force JOSM to make requests to this API instance.
         // (Example with OSM-FR website that makes calls to the OSM-FR API)
         // For user-friendliness, let's try to decode these OSM API calls to give a better confirmation message.
-        String taskMessage = null;
+        Set<String> taskMessages = new LinkedHashSet<>();
         if (suitableDownloadTasks != null && !suitableDownloadTasks.isEmpty()) {
-            // TODO: handle multiple suitable download tasks ?
-            taskMessage = suitableDownloadTasks.iterator().next().getConfirmationMessage(url);
+            for (DownloadTask task : suitableDownloadTasks) {
+                taskMessages.add(Utils.firstNonNull(task.getConfirmationMessage(url), url.toString()));
+            }
         }
         return tr("Remote Control has been asked to import data from the following URL:")
-                + "<br>" + (taskMessage == null ? url.toString() : taskMessage);
+                + Utils.joinAsHtmlUnorderedList(taskMessages);
     }
 
     @Override
