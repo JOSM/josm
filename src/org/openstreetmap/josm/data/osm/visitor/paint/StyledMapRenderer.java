@@ -733,7 +733,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    public void drawNodeIcon(Node n, MapImage img, boolean disabled, boolean selected, boolean member) {
+    public void drawNodeIcon(Node n, MapImage img, boolean disabled, boolean selected, boolean member, double theta) {
         Point p = nc.getPoint(n);
 
         final int w = img.getWidth(), h = img.getHeight();
@@ -746,7 +746,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (alpha != 1f) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         }
+        g.rotate(theta, p.x, p.y);
         g.drawImage(img.getImage(disabled), p.x - w/2 + img.offsetX, p.y - h/2 + img.offsetY, nc);
+        g.rotate(-theta, p.x, p.y);
         g.setPaintMode();
         if (selected || member)
         {
