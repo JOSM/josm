@@ -72,7 +72,21 @@ public class SearchNotesDownloadAction extends JosmAction {
         searchTermBox.addCurrentItemToHistory();
         Main.pref.putCollection(HISTORY_KEY, searchTermBox.getHistory());
 
+        performSearch(searchTerm);
+
+    }
+
+    public void performSearch(String searchTerm) {
+
         searchTerm = searchTerm.trim();
+
+        try {
+            final long id = Long.parseLong(searchTerm);
+            new DownloadNotesTask().download(false, id, null);
+            return;
+        } catch (NumberFormatException ignore) {
+        }
+
         int noteLimit = Main.pref.getInteger("osm.notes.downloadLimit", 1000);
         int closedLimit = Main.pref.getInteger("osm.notes.daysCloased", 7);
 
