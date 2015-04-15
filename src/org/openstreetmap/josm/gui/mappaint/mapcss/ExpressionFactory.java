@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Predicates;
@@ -543,6 +544,33 @@ public final class ExpressionFactory {
          */
         public static boolean less(float a, float b) {
             return a < b;
+        }
+
+        /**
+         * Converts an angle in degrees to radians.
+         * @param degree the angle in degrees
+         * @return the angle in radians
+         * @see Math#toRadians(double)
+         */
+        public static double degree_to_radians(double degree) {
+            return Math.toRadians(degree);
+        }
+
+        /**
+         * Converts an angle diven in cardinal directions to radians.
+         * The following values are supported: {@code n}, {@code north}, {@code ne}, {@code northeast},
+         * {@code e}, {@code east}, {@code se}, {@code southeast}, {@code s}, {@code south},
+         * {@code sw}, {@code southwest}, {@code w}, {@code west}, {@code nw}, {@code northwest}.
+         * @param cardinal the angle in cardinal directions.
+         * @see RotationAngle#parseCardinalRotation(String)
+         * @return the angle in radians
+         */
+        public static Double cardinal_to_radians(String cardinal) {
+            try {
+                return RotationAngle.parseCardinalRotation(cardinal);
+            } catch (IllegalArgumentException ignore) {
+                return null;
+            }
         }
 
         /**
