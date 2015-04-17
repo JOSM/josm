@@ -24,6 +24,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -267,23 +268,26 @@ public class AutoScaleAction extends JosmAction {
             if (lastZoomTime > 0 && System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", 10*1000)) {
                 lastZoomTime = -1;
             }
-            ArrayList<DataSource> dataSources = new ArrayList<>(Main.main.getCurrentDataSet().getDataSources());
-            int s = dataSources.size();
-            if(s > 0) {
-                if(lastZoomTime == -1 || lastZoomArea == -1 || lastZoomArea > s) {
-                    lastZoomArea = s-1;
-                    v.visit(dataSources.get(lastZoomArea).bounds);
-                } else if(lastZoomArea > 0) {
-                    lastZoomArea -= 1;
-                    v.visit(dataSources.get(lastZoomArea).bounds);
+            DataSet dataset = Main.main.getCurrentDataSet();
+            if(dataset != null) {
+                ArrayList<DataSource> dataSources = new ArrayList<>(dataset.getDataSources());
+                int s = dataSources.size();
+                if(s > 0) {
+                    if(lastZoomTime == -1 || lastZoomArea == -1 || lastZoomArea > s) {
+                        lastZoomArea = s-1;
+                        v.visit(dataSources.get(lastZoomArea).bounds);
+                    } else if(lastZoomArea > 0) {
+                        lastZoomArea -= 1;
+                        v.visit(dataSources.get(lastZoomArea).bounds);
+                    } else {
+                        lastZoomArea = -1;
+                        v.visit(new Bounds(Main.main.getCurrentDataSet().getDataSourceArea().getBounds2D()));
+                    }
+                    lastZoomTime = System.currentTimeMillis();
                 } else {
+                    lastZoomTime = -1;
                     lastZoomArea = -1;
-                    v.visit(new Bounds(Main.main.getCurrentDataSet().getDataSourceArea().getBounds2D()));
                 }
-                lastZoomTime = System.currentTimeMillis();
-            } else {
-                lastZoomTime = -1;
-                lastZoomArea = -1;
             }
             break;
         }
