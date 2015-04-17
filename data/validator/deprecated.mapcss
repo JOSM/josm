@@ -436,6 +436,14 @@ way[oneway=-1] {
 *[color][colour]!.samecolor {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
 }
+*[/:color/]{
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: ":colour";
+}
+*[/color:/] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "colour:";
+}
 
 /* see #11234 */
 *[/=|\+|\/|&|<|>|;|'|"|%|#|@|\\|,|\./] {
@@ -444,6 +452,20 @@ way[oneway=-1] {
 
 /* see #11330 */
 *[/^.$/],
-*[/^..$/][!to] {
+node[/^..$/],
+way[/^..$/],
+relation[/^..$/][!to] {
   throwWarning: tr("uncommon short key");
+}
+
+/* see #11344 */
+*[tower=air_to_ground] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "tower=transition";
+  fixAdd: "tower=transition";
+}
+*[pole=air_to_ground] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "pole=transition";
+  fixAdd: "pole=transition";
 }
