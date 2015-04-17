@@ -270,7 +270,11 @@ public abstract class Condition {
         @Override
         public boolean applies(Environment env) {
             if (env.index == null) return false;
-            return op.eval(Integer.toString(env.index + 1), index);
+            if (index.startsWith("-")) {
+                return env.count != null && op.eval(Integer.toString(env.index - env.count), index);
+            } else {
+                return op.eval(Integer.toString(env.index + 1), index);
+            }
         }
     }
 

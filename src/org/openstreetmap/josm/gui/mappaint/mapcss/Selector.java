@@ -149,9 +149,10 @@ public interface Selector {
                 for (int i=0; i<w.getNodesCount(); i++) {
                     Node n = w.getNode(i);
                     if (n.equals(e.osm)) {
-                        if (link.matches(e.withParentAndIndexAndLinkContext(w, i))) {
+                        if (link.matches(e.withParentAndIndexAndLinkContext(w, i, w.getNodesCount()))) {
                             e.parent = w;
                             e.index = i;
+                            e.count = w.getNodesCount();
                             return;
                         }
                     }
@@ -171,9 +172,10 @@ public interface Selector {
                 for (int i=0; i < r.getMembersCount(); i++) {
                     RelationMember m = r.getMember(i);
                     if (m.getMember().equals(e.osm)) {
-                        if (link.matches(e.withParentAndIndexAndLinkContext(r, i))) {
+                        if (link.matches(e.withParentAndIndexAndLinkContext(r, i, r.getMembersCount()))) {
                             e.parent = r;
                             e.index = i;
+                            e.count = r.getMembersCount();
                             return;
                         }
                     }
@@ -328,6 +330,7 @@ public interface Selector {
                             if (left.matches(e2) && link.matches(e2.withLinkContext())) {
                                 e.child = n;
                                 e.index = i;
+                                e.count = w.getNodesCount();
                                 e.parent = w;
                                 return true;
                             }
@@ -345,9 +348,11 @@ public interface Selector {
                     for (int i=0; i<wayNodes.size(); i++) {
                         Node n = wayNodes.get(i);
                         if (left.matches(e.withPrimitive(n))) {
-                            if (link.matches(e.withChildAndIndexAndLinkContext(n, i))) {
+                            if (link.matches(e.withChildAndIndexAndLinkContext(n, i, wayNodes.size()))) {
+                                e = e.withChildAndIndexAndLinkContext(n, i, wayNodes.size());
                                 e.child = n;
                                 e.index = i;
+                                e.count = wayNodes.size();
                                 return true;
                             }
                         }
@@ -358,9 +363,10 @@ public interface Selector {
                     for (int i=0; i<members.size(); i++) {
                         OsmPrimitive member = members.get(i).getMember();
                         if (left.matches(e.withPrimitive(member))) {
-                            if (link.matches(e.withChildAndIndexAndLinkContext(member, i))) {
+                            if (link.matches(e.withChildAndIndexAndLinkContext(member, i, members.size()))) {
                                 e.child = member;
                                 e.index = i;
+                                e.count = members.size();
                                 return true;
                             }
                         }
