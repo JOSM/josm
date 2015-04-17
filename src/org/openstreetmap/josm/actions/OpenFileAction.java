@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -101,10 +102,30 @@ public class OpenFileAction extends DiskAccessAction {
         private boolean canceled;
         private boolean recordHistory = false;
 
-        public OpenFileTask(List<File> files, FileFilter fileFilter, String title) {
+        public OpenFileTask(final List<File> files, final FileFilter fileFilter, final String title) {
             super(title, false /* don't ignore exception */);
-            this.files = new ArrayList<>(files);
             this.fileFilter = fileFilter;
+            this.files = new ArrayList<>(files.size());
+            for (final File file : files) {
+                if (file.exists()) {
+                    this.files.add(file);
+                } else {
+                    // try to guess an extension using the specified fileFilter
+                    final File[] matchingFiles = file.getParentFile().listFiles(new FilenameFilter() {
+                        @Override
+                        public boolean accept(File dir, String name) {
+                            return name.startsWith(file.getName()) && fileFilter.accept(new File(dir, name));
+                        }
+                    });
+                    if (matchingFiles.length == 1) {
+                        // use the unique match as filename
+                        this.files.add(matchingFiles[0]);
+                    } else {
+                        // add original filename for error reporting later on
+                        this.files.add(file);
+                    }
+                }
+            }
         }
 
         public OpenFileTask(List<File> files, FileFilter fileFilter) {
