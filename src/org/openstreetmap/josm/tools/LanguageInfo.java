@@ -90,6 +90,8 @@ public final class LanguageInfo {
             return "he";
         else if ("in".equals(full))
             return "id";
+        else if ("ca__valencia".equals(full))
+            return "ca@valencia";
         else if (I18n.hasCode(full)) // catch all non-single codes
             return full;
 
@@ -106,6 +108,9 @@ public final class LanguageInfo {
      * @return the resulting locale
      */
     public static Locale getLocale(String localeName) {
+        if ("ca@valencia".equals(localeName) || "ca__valencia".equals(localeName)) {
+            return new Locale("ca", "", "valencia");
+        }
         if ("he".equals(localeName)) {
             localeName = "iw_IL";
         }
