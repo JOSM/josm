@@ -216,6 +216,7 @@ public class OpenLocationAction extends JosmAction {
         final JList<DownloadTask> list = new JList<>(tasks.toArray(new DownloadTask[tasks.size()]));
         list.addSelectionInterval(0, tasks.size() - 1);
         final ExtendedDialog dialog = new ExtendedDialog(Main.parent, tr("Which tasks to perform?"), new String[]{tr("Ok"), tr("Cancel")}, true) {{
+            setButtonIcons(new String[]{"ok", "cancel"});
             final JPanel pane = new JPanel(new GridLayout(2, 1));
             pane.add(new JLabel(tr("Which tasks to perform?")));
             pane.add(list);
