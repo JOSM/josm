@@ -3,9 +3,11 @@ package org.openstreetmap.josm.actions.mapmode;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -14,6 +16,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.NotesDialog;
+import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -21,7 +24,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Map mode to add a new note. Listens for a mouse click and then
  * prompts the user for text and adds a note to the note layer
  */
-public class AddNoteAction extends MapMode {
+public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
 
     private NoteData noteData;
 
@@ -47,16 +50,22 @@ public class AddNoteAction extends MapMode {
     public void enterMode() {
         super.enterMode();
         Main.map.mapView.addMouseListener(this);
+        Main.map.keyDetector.addKeyListener(this);
     }
 
     @Override
     public void exitMode() {
         super.exitMode();
         Main.map.mapView.removeMouseListener(this);
+        Main.map.keyDetector.removeKeyListener(this);
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if (!SwingUtilities.isLeftMouseButton(e)) {
+            // allow to pan without distraction
+            return;
+        }
         Main.map.selectMapMode(Main.map.mapModeSelect);
         LatLon latlon = Main.map.mapView.getLatLon(e.getPoint().x, e.getPoint().y);
 
@@ -75,5 +84,16 @@ public class AddNoteAction extends MapMode {
             notification.setIcon(JOptionPane.WARNING_MESSAGE);
             notification.show();
         }
+    }
+
+    @Override
+    public void doKeyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            Main.map.selectMapMode(Main.map.mapModeSelect);
+        }
+    }
+
+    @Override
+    public void doKeyReleased(KeyEvent e) {
     }
 }
