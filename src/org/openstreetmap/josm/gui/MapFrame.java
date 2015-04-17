@@ -28,6 +28,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -76,6 +77,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.AdvancedKeyPressDetector;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 
@@ -540,11 +542,13 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         public ListAllButtonsAction(Collection<? extends HideableButton> buttons) {
             this.buttons = buttons;
-            putValue(NAME, ">>");
         }
 
         public void setButton(JButton button) {
             this.button =  button;
+            final ImageIcon icon = ImageProvider.get("audio-fwd");
+            putValue(SMALL_ICON, icon);
+            button.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight() + 64));
         }
 
         @Override
