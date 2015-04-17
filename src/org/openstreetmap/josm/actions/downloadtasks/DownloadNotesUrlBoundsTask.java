@@ -18,7 +18,7 @@ public class DownloadNotesUrlBoundsTask extends DownloadNotesTask {
     @Override
     public String[] getPatterns() {
         return new String[]{
-                "https?://www\\.(osm|openstreetmap)\\.org/(.*)?#map=\\p{Digit}+/.*/.*&layers=N"};
+                "https?://www\\.(osm|openstreetmap)\\.org/(.*)?#map=\\p{Digit}+/.*/.*&layers=[A-MO-Z]*N[A-MO-Z]*"};
     }
     @Override
     public String getTitle() {
