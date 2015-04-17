@@ -39,6 +39,11 @@ public class Environment {
     public Integer index = null;
 
     /**
+     * count of nodes in parent way or members in parent relation. Must be != null in LINK context.
+     */
+    public Integer count = null;
+
+    /**
      * Creates a new uninitialized environment.
      */
     public Environment() {}
@@ -68,6 +73,7 @@ public class Environment {
         this.child = other.child;
         this.source = other.source;
         this.index = other.index;
+        this.count = other.count;
         this.context = other.getContext();
     }
 
@@ -98,15 +104,17 @@ public class Environment {
      * Creates a clone of this environment, with the specified parent, index, and context set to {@link Context#LINK}.
      * @param parent the matching parent object
      * @param index index of node in parent way or member in parent relation
+     * @param count count of nodes in parent way or members in parent relation
      * @return A clone of this environment, with the specified parent, index, and context set to {@link Context#LINK}
      * @since 6175
      * @see #parent
      * @see #index
      */
-    public Environment withParentAndIndexAndLinkContext(OsmPrimitive parent, int index) {
+    public Environment withParentAndIndexAndLinkContext(OsmPrimitive parent, int index, int count) {
         Environment e = new Environment(this);
         e.parent = parent;
         e.index = index;
+        e.count = count;
         e.context = Context.LINK;
         return e;
     }
@@ -127,15 +135,17 @@ public class Environment {
      * Creates a clone of this environment, with the specified child, index, and context set to {@link Context#LINK}.
      * @param child the matching child object
      * @param index index of node in parent way or member in parent relation
+     * @param count count of nodes in parent way or members in parent relation
      * @return A clone of this environment, with the specified child, index, and context set to {@code Context#LINK}
      * @since 6175
      * @see #child
      * @see #index
      */
-    public Environment withChildAndIndexAndLinkContext(OsmPrimitive child, int index) {
+    public Environment withChildAndIndexAndLinkContext(OsmPrimitive child, int index, int count) {
         Environment e = new Environment(this);
         e.child = child;
         e.index = index;
+        e.count = count;
         e.context = Context.LINK;
         return e;
     }
@@ -143,12 +153,14 @@ public class Environment {
     /**
      * Creates a clone of this environment, with the specified index.
      * @param index index of node in parent way or member in parent relation
+     * @param count count of nodes in parent way or members in parent relation
      * @return A clone of this environment, with the specified index
      * @see #index
      */
-    public Environment withIndex(int index) {
+    public Environment withIndex(int index, int count) {
         Environment e = new Environment(this);
         e.index = index;
+        e.count = count;
         return e;
     }
 
@@ -213,6 +225,7 @@ public class Environment {
         parent = null;
         child = null;
         index = null;
+        count = null;
     }
 
     public Cascade getCascade(String layer) {
