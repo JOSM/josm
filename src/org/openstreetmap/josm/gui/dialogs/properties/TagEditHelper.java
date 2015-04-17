@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -76,6 +77,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -633,6 +635,19 @@ class TagEditHelper {
             popupMenu.add(rememberLastTags);
         }
 
+        @Override
+        public void setContentPane(Container contentPane) {
+            final String text = "<html>" + Utils.join("<br>", Arrays.asList(
+                    tr("<code>Ctrl-1</code> to apply first suggestion"),
+                    tr("<code>Shift-Enter</code> to add without closing the dialog"),
+                    tr("<code>Shift-Ctrl-1</code> to add first suggestion without closing the dialog")
+            ));
+            final JLabel helpLabel = new JLabel(text);
+            helpLabel.setFont(helpLabel.getFont().deriveFont(Font.PLAIN));
+            contentPane.add(helpLabel, GBC.eol().insets(1, 2, 1, 2));
+            super.setContentPane(contentPane);
+        }
+
         private void selectNumberOfTags() {
             String s = JOptionPane.showInputDialog(this, tr("Please enter the number of recently added tags to display"));
             if (s!=null) try {
@@ -709,8 +724,12 @@ class TagEditHelper {
                 // Create tag label
                 final String color = action.isEnabled() ? "" : "; color:gray";
                 final JLabel tagLabel = new JLabel("<html>"
-                    + "<style>td{border:1px solid gray; font-weight:normal"+color+"}</style>"
-                    + "<table><tr><td>" + XmlWriter.encode(t.toString(), true) + "</td></tr></table></html>");
+                        + "<style>td{" + color + "}</style>"
+                        + "<table><tr>"
+                        + "<td>" + count + ".</td>"
+                        + "<td style='border:1px solid gray'>" + XmlWriter.encode(t.toString(), true) + "<" +
+                        "/td></tr></table></html>");
+                tagLabel.setFont(tagLabel.getFont().deriveFont(Font.PLAIN));
                 if (action.isEnabled()) {
                     // Register action
                     mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), actionShortcutKey);
