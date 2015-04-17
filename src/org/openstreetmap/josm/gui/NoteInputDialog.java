@@ -10,8 +10,8 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class NoteInputDialog extends ExtendedDialog {
 
-    private JTextArea textArea = new JTextArea();
+    private JosmTextArea textArea = new JosmTextArea();
 
     /**
      * Construct the dialog with a title and button text. A cancel button is
@@ -44,6 +44,7 @@ public class NoteInputDialog extends ExtendedDialog {
         textArea.setRows(6);
         textArea.setColumns(30);
         textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT); //without this the label gets pushed to the right
 
