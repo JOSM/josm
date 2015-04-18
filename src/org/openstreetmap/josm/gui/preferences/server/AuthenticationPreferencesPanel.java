@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -41,7 +42,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     /** the panel for the OAuth authentication parameters */
     private OAuthAuthenticationPreferencesPanel pnlOAuthPreferences;
     /** the panel for messages notifier preferences */
-    private MessagesNotifierPanel pnlMessagesPreferences;
+    private FeaturesPanel pnlFeaturesPreferences;
 
     /**
      * builds the UI
@@ -93,11 +94,14 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         rbBasicAuthentication.setSelected(true);
         pnlAuthenticationParameteters.add(pnlBasicAuthPreferences, BorderLayout.CENTER);
 
-        //-- the panel for messages preferences
         gc.gridy = 2;
+        add(new JSeparator(), gc);
+
+        //-- the panel for API feature preferences
+        gc.gridy = 3;
         gc.fill = GridBagConstraints.NONE;
-        pnlMessagesPreferences = new MessagesNotifierPanel();
-        add(pnlMessagesPreferences, gc);
+        pnlFeaturesPreferences = new FeaturesPanel();
+        add(pnlFeaturesPreferences, gc);
     }
 
     /**
@@ -124,7 +128,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         }
         pnlBasicAuthPreferences.initFromPreferences();
         pnlOAuthPreferences.initFromPreferences();
-        pnlMessagesPreferences.initFromPreferences();
+        pnlFeaturesPreferences.initFromPreferences();
     }
 
     /**
@@ -151,7 +155,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             pnlOAuthPreferences.saveToPreferences();
         }
         // save message notifications preferences. To be done after authentication preferences.
-        pnlMessagesPreferences.saveToPreferences();
+        pnlFeaturesPreferences.saveToPreferences();
     }
 
     /**

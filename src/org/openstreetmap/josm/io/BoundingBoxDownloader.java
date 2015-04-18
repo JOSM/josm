@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -161,21 +160,13 @@ public class BoundingBoxDownloader extends OsmServerReader {
     }
 
     @Override
-    public List<Note> parseNotes(Integer noteLimit, Integer daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException, MoreNotesException {
+    public List<Note> parseNotes(int noteLimit, int daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException, MoreNotesException {
         progressMonitor.beginTask("Downloading notes");
-        noteLimit = checkNoteLimit(noteLimit);
-        daysClosed = checkDaysClosed(daysClosed);
-        String url = new StringBuilder()
-        .append("notes?limit=")
-        .append(noteLimit)
-        .append("&closed=")
-        .append(daysClosed)
-        .append("&bbox=")
-        .append(lon1)
-        .append(",").append(lat1)
-        .append(",").append(lon2)
-        .append(",").append(lat2)
-        .toString();
+        CheckParameterUtil.ensureThat(noteLimit > 0, "Requested note limit is less than 1.");
+        // see max_number_of_nodes in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
+        CheckParameterUtil.ensureThat(noteLimit <= 50000, "Requested note limit is over API hard limit of 50000.");
+        CheckParameterUtil.ensureThat(daysClosed >= 0, "Requested note limit is less than 0.");
+        String url = "notes?limit=" + noteLimit + "&closed=" + daysClosed + "&bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
         try {
             InputStream is = getInputStream(url, progressMonitor.createSubTaskMonitor(1, false));
             NoteReader reader = new NoteReader(is);
@@ -210,33 +201,6 @@ public class BoundingBoxDownloader extends OsmServerReader {
             this.notes = notes;
             this.limit = limit;
         }
-    }
-
-    private Integer checkNoteLimit(Integer limit) {
-        if (limit == null) {
-            limit = Main.pref.getInteger("osm.notes.downloadLimit", 1000);
-        }
-        if (limit > 50000) {
-            // see max_number_of_nodes in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
-            Main.error("Requested note limit is over API hard limit of 50000. Reducing to 50000.");
-            limit = 50000;
-        }
-        if (limit < 1) {
-            Main.error("Requested note limit is less than 1. Setting to 1.");
-            limit = 1;
-        }
-        return limit;
-    }
-
-    private Integer checkDaysClosed(Integer days) {
-        if (days == null) {
-            days = Main.pref.getInteger("osm.notes.daysClosed", 7);
-        }
-        if (days < -1) {
-            Main.error("Requested days closed must be greater than -1");
-            days = -1;
-        }
-        return days;
     }
 
 }
