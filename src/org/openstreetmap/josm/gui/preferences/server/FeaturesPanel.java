@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.MessageNotifier;
 import org.openstreetmap.josm.tools.GBC;
@@ -20,16 +21,17 @@ import org.openstreetmap.josm.tools.GBC;
  * Preferences panel for OSM messages notifier.
  * @since 6349
  */
-public class MessagesNotifierPanel extends JPanel {
+public class FeaturesPanel extends JPanel {
 
     private JCheckBox notifier;
     private JLabel intervalLabel;
     private final JosmTextField notifierInterval = new JosmTextField(4);
+    private final JosmTextField notesDaysClosed = new JosmTextField(4);
 
     /**
      * Constructs a new {@code MessagesNotifierPanel}.
      */
-    public MessagesNotifierPanel() {
+    public FeaturesPanel() {
         build();
         initFromPreferences();
         updateEnabledState();
@@ -49,11 +51,19 @@ public class MessagesNotifierPanel extends JPanel {
         });
         
         intervalLabel = new JLabel(tr("Check interval (minutes):"));
-        add(intervalLabel, GBC.std().insets(25,0,0,0));
+        add(intervalLabel, GBC.std().insets(25, 0, 0, 0));
 
         notifierInterval.setToolTipText(tr("Default value: {0}", MessageNotifier.PROP_INTERVAL.getDefaultValue()));
         notifierInterval.setMinimumSize(notifierInterval.getPreferredSize());
         add(notifierInterval, GBC.eol().insets(5,0,0,0));
+
+        final JLabel notesDaysClosedLabel = new JLabel(tr("Max age for closed notes (days):"));
+        notesDaysClosedLabel.setToolTipText(tr("Specifies the number of days a note needs to be closed to no longer be downloaded"));
+        add(notesDaysClosedLabel, GBC.std().insets(0, 20, 0, 0));
+        notesDaysClosed.setToolTipText(tr("Default value: {0}", DownloadNotesTask.DAYS_CLOSED.getDefaultValue()));
+        notesDaysClosed.setMinimumSize(notesDaysClosed.getPreferredSize());
+        add(notesDaysClosed, GBC.eol().insets(5, 20, 0, 0));
+
     }
     
     private void updateEnabledState() {
@@ -61,6 +71,7 @@ public class MessagesNotifierPanel extends JPanel {
         intervalLabel.setEnabled(enabled);
         notifierInterval.setEnabled(enabled);
         notifierInterval.setEditable(enabled);
+        notesDaysClosed.setEditable(enabled);
     }
 
     /**
@@ -69,6 +80,7 @@ public class MessagesNotifierPanel extends JPanel {
     public final void initFromPreferences() {
         notifier.setSelected(MessageNotifier.PROP_NOTIFIER_ENABLED.get());
         notifierInterval.setText(Integer.toString(MessageNotifier.PROP_INTERVAL.get()));
+        notesDaysClosed.setText(Integer.toString(DownloadNotesTask.DAYS_CLOSED.get()));
     }
 
     /**
@@ -78,6 +90,7 @@ public class MessagesNotifierPanel extends JPanel {
         final boolean enabled = notifier.isSelected();
         boolean changed = MessageNotifier.PROP_NOTIFIER_ENABLED.put(enabled);
         changed |= MessageNotifier.PROP_INTERVAL.parseAndPut(notifierInterval.getText());
+        changed |= DownloadNotesTask.DAYS_CLOSED.parseAndPut(notesDaysClosed.getText());
         // If parameters have changed, restart notifier
         if (changed) {
             MessageNotifier.stop();

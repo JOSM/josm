@@ -353,13 +353,13 @@ public abstract class OsmServerReader extends OsmConnection {
     /**
      * Downloads notes from the API, given API limit parameters
      *
-     * @param noteLimit How many notes to download. Defaults to 1000 if not specified. API has a hard limit of 10000
+     * @param noteLimit How many notes to download.
      * @param daysClosed Return notes closed this many days in the past. -1 means all notes, ever. 0 means only unresolved notes.
      * @param progressMonitor Progress monitor for user feedback
      * @return List of notes returned by the API
      * @throws OsmTransferException if any errors happen
      */
-    public List<Note> parseNotes(Integer noteLimit, Integer daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException {
+    public List<Note> parseNotes(int noteLimit, int daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
 
