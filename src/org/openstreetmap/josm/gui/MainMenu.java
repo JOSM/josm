@@ -51,6 +51,7 @@ import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.DialogsToggleAction;
 import org.openstreetmap.josm.actions.DistributeAction;
 import org.openstreetmap.josm.actions.DownloadAction;
+import org.openstreetmap.josm.actions.DownloadNotesInViewAction;
 import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.actions.DownloadReferrersAction;
 import org.openstreetmap.josm.actions.DuplicateAction;
@@ -166,6 +167,8 @@ public class MainMenu extends JMenuBar {
     public final DownloadAction download = new DownloadAction();
     /** File / Download object... **/
     public final DownloadPrimitiveAction downloadPrimitive = new DownloadPrimitiveAction();
+    /** File / Download notes in current view **/
+    public final DownloadNotesInViewAction downloadNotesInView = DownloadNotesInViewAction.newActionWithNoteIcon();
     /** File / Search Notes... **/
     public final SearchNotesDownloadAction searchNotes = new SearchNotesDownloadAction();
     /** File / Download parent ways/relations... **/
@@ -637,6 +640,7 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, download);
         add(fileMenu, downloadPrimitive);
         add(fileMenu, searchNotes);
+        add(fileMenu, downloadNotesInView);
         add(fileMenu, downloadReferrers);
         add(fileMenu, update);
         add(fileMenu, updateSelection);

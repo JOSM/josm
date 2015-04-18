@@ -30,6 +30,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.DownloadNotesInViewAction;
 import org.openstreetmap.josm.actions.UploadNotesAction;
 import org.openstreetmap.josm.actions.mapmode.AddNoteAction;
 import org.openstreetmap.josm.data.notes.Note;
@@ -77,6 +78,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     private JList<Note> displayList;
     private final AddCommentAction addCommentAction;
     private final CloseAction closeAction;
+    private final DownloadNotesInViewAction downloadNotesInViewAction;
     private final NewAction newAction;
     private final ReopenAction reopenAction;
     private final SortAction sortAction;
@@ -89,6 +91,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         super(tr("Notes"), "notes/note_open", tr("List of notes"), null, 150);
         addCommentAction = new AddCommentAction();
         closeAction = new CloseAction();
+        downloadNotesInViewAction = DownloadNotesInViewAction.newActionWithDownloadIcon();
         newAction = new NewAction();
         reopenAction = new ReopenAction();
         sortAction = new SortAction();
@@ -131,6 +134,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         pane.add(new JScrollPane(displayList), BorderLayout.CENTER);
 
         createLayout(pane, false, Arrays.asList(new SideButton[]{
+                new SideButton(downloadNotesInViewAction, false),
                 new SideButton(newAction, false),
                 new SideButton(addCommentAction, false),
                 new SideButton(closeAction, false),
