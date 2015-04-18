@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -185,16 +186,13 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         if (newLayer instanceof NoteLayer) {
             noteData = ((NoteLayer)newLayer).getNoteData();
             model.setData(noteData.getNotes());
-            setNoteList(noteData.getNotes());
+            setNotes(noteData.getSortedNotes());
         }
     }
 
     @Override
     public void layerRemoved(Layer oldLayer) {
         if (oldLayer instanceof NoteLayer) {
-            if (Main.isDebugEnabled()) {
-                Main.debug("note layer removed. Clearing everything");
-            }
             noteData = null;
             model.clearData();
             if (Main.map.mapMode instanceof AddNoteAction) {
@@ -208,7 +206,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
      * The dialog should match the notes displayed in the note layer.
      * @param noteList List of notes to display
      */
-    public void setNoteList(List<Note> noteList) {
+    public void setNotes(Collection<Note> noteList) {
         model.setData(noteList);
         updateButtonStates();
         this.repaint();
@@ -264,7 +262,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         private List<Note> data;
 
         public NoteTableModel() {
-            data = new ArrayList<Note>();
+            data = new ArrayList<>();
         }
 
         @Override
@@ -280,7 +278,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             return data.get(index);
         }
 
-        public void setData(List<Note> noteList) {
+        public void setData(Collection<Note> noteList) {
             data.clear();
             data.addAll(noteList);
             fireContentsChanged(this, 0, noteList.size());
@@ -314,7 +312,6 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Comment on note"), tr("Add comment"));
             dialog.showNoteDialog(tr("Add comment to note:"), NotesDialog.ICON_COMMENT);
             if (dialog.getValue() != 1) {
-                Main.debug("User aborted note reopening");
                 return;
             }
             int selectedIndex = displayList.getSelectedIndex();
@@ -336,7 +333,6 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Close note"), tr("Close note"));
             dialog.showNoteDialog(tr("Close note with message:"), NotesDialog.ICON_CLOSED);
             if (dialog.getValue() != 1) {
-                Main.debug("User aborted note closing");
                 return;
             }
             Note note = displayList.getSelectedValue();
@@ -376,7 +372,6 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Reopen note"), tr("Reopen note"));
             dialog.showNoteDialog(tr("Reopen note with message:"), NotesDialog.ICON_OPEN);
             if (dialog.getValue() != 1) {
-                Main.debug("User aborted note reopening");
                 return;
             }
 
