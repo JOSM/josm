@@ -161,7 +161,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
     }
 
     @Override
-    public List<Note> parseNotes(Integer noteLimit, Integer daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException {
+    public List<Note> parseNotes(Integer noteLimit, Integer daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException, MoreNotesException {
         progressMonitor.beginTask("Downloading notes");
         noteLimit = checkNoteLimit(noteLimit);
         daysClosed = checkDaysClosed(daysClosed);
@@ -179,7 +179,11 @@ public class BoundingBoxDownloader extends OsmServerReader {
         try {
             InputStream is = getInputStream(url, progressMonitor.createSubTaskMonitor(1, false));
             NoteReader reader = new NoteReader(is);
-            return reader.parse();
+            final List<Note> notes = reader.parse();
+            if (notes.size() == noteLimit) {
+                throw new MoreNotesException(noteLimit);
+            }
+            return notes;
         } catch (IOException e) {
             throw new OsmTransferException(e);
         } catch (SAXException e) {
@@ -189,19 +193,33 @@ public class BoundingBoxDownloader extends OsmServerReader {
         }
     }
 
+    /**
+     * Indicates that the number of fetched notes equals the specified limit. Thus there might be more notes to download.
+     */
+    public static class MoreNotesException extends RuntimeException{
+        /**
+         * The download limit sent to the server.
+         */
+        public final int limit;
+
+        public MoreNotesException(int limit) {
+            this.limit = limit;
+        }
+    }
+
     private Integer checkNoteLimit(Integer limit) {
         if (limit == null) {
             limit = Main.pref.getInteger("osm.notes.downloadLimit", 1000);
         }
-        if (limit > 10000) {
-            Main.error("Requested note limit is over API hard limit of 10000. Reducing to 10000.");
-            limit = 10000;
+        if (limit > 50000) {
+            // see max_number_of_nodes in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
+            Main.error("Requested note limit is over API hard limit of 50000. Reducing to 50000.");
+            limit = 50000;
         }
         if (limit < 1) {
             Main.error("Requested note limit is less than 1. Setting to 1.");
             limit = 1;
         }
-        Main.debug("returning note limit: " + limit);
         return limit;
     }
 
@@ -213,7 +231,6 @@ public class BoundingBoxDownloader extends OsmServerReader {
             Main.error("Requested days closed must be greater than -1");
             days = -1;
         }
-        Main.debug("returning days closed: " + days);
         return days;
     }
 
