@@ -650,7 +650,10 @@ class TagEditHelper {
 
         private void selectNumberOfTags() {
             String s = JOptionPane.showInputDialog(this, tr("Please enter the number of recently added tags to display"));
-            if (s!=null) try {
+            if (s == null) {
+                return;
+            }
+            try {
                 int v = Integer.parseInt(s);
                 if (v>=0 && v<=MAX_LRU_TAGS_NUMBER) {
                     PROPERTY_RECENT_TAGS_NUMBER.put(v);
