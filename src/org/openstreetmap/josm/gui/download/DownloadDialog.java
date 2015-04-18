@@ -30,6 +30,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
@@ -91,16 +93,27 @@ public class DownloadDialog extends JDialog  {
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
 
+        final ChangeListener checkboxChangeListener = new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                // size check depends on selected data source
+                updateSizeCheck();
+            }
+        };
+
         // adding the download tasks
         pnl.add(new JLabel(tr("Data Sources and Types:")), GBC.std().insets(5,5,1,5));
         cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), true);
         cbDownloadOsmData.setToolTipText(tr("Select to download OSM data in the selected download area."));
-        pnl.add(cbDownloadOsmData,  GBC.std().insets(1,5,1,5));
+        cbDownloadOsmData.getModel().addChangeListener(checkboxChangeListener);
+        pnl.add(cbDownloadOsmData, GBC.std().insets(1, 5, 1, 5));
         cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
         cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces in the selected download area."));
-        pnl.add(cbDownloadGpxData,  GBC.std().insets(5,5,1,5));
+        cbDownloadGpxData.getModel().addChangeListener(checkboxChangeListener);
+        pnl.add(cbDownloadGpxData, GBC.std().insets(5, 5, 1, 5));
         cbDownloadNotes = new JCheckBox(tr("Notes"));
         cbDownloadNotes.setToolTipText(tr("Select to download notes in the selected download area."));
+        cbDownloadNotes.getModel().addChangeListener(checkboxChangeListener);
         pnl.add(cbDownloadNotes, GBC.eol().insets(50, 5, 1, 5));
 
         // hook for subclasses
@@ -230,10 +243,18 @@ public class DownloadDialog extends JDialog  {
     }
 
     private void updateSizeCheck() {
+        boolean isAreaTooLarge = false;
         if (currentBounds == null) {
             sizeCheck.setText(tr("No area selected yet"));
             sizeCheck.setForeground(Color.darkGray);
-        } else if (currentBounds.getArea() > Main.pref.getDouble("osm-server.max-request-area", 0.25)) {
+        } else if (isDownloadNotes() && !isDownloadOsmData() && !isDownloadGpxData()) {
+            // see max_note_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
+            isAreaTooLarge = currentBounds.getArea() > Main.pref.getDouble("osm-server.max-request-area-notes", 25);
+        } else {
+            // see max_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
+            isAreaTooLarge = currentBounds.getArea() > Main.pref.getDouble("osm-server.max-request-area", 0.25);
+        }
+        if (isAreaTooLarge) {
             sizeCheck.setText(tr("Download area too large; will probably be rejected by server"));
             sizeCheck.setForeground(Color.red);
         } else {
