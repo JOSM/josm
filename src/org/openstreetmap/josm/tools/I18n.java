@@ -1,4 +1,3 @@
-// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
 import java.io.BufferedInputStream;
@@ -348,7 +347,7 @@ public final class I18n {
     }
 
     private static URL getTranslationFile(String lang) {
-        return Main.class.getResource("/data/"+lang+".lang");
+        return Main.class.getResource("/data/"+lang.replace("@","-")+".lang");
     }
 
     /**

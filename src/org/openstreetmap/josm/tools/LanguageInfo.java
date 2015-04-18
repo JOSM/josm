@@ -47,8 +47,12 @@ public final class LanguageInfo {
             } else {
                 return null;
             }
-        } else if(type == LocaleType.DEFAULTNOTENGLISH && "en".equals(code))
+        } else if(type == LocaleType.DEFAULTNOTENGLISH && "en".equals(code)) {
             return null;
+        } else if(code.matches(".+@.+")) {
+          return code.substring(0,1).toUpperCase() + code.substring(1,2)
+          + "-" + code.substring(3,4).toUpperCase() + code.substring(4) + ":";
+        }
         return code.substring(0,1).toUpperCase() + code.substring(1) + ":";
     }
 
@@ -108,7 +112,7 @@ public final class LanguageInfo {
      * @return the resulting locale
      */
     public static Locale getLocale(String localeName) {
-        if ("ca@valencia".equals(localeName) || "ca__valencia".equals(localeName)) {
+        if ("ca@valencia".equals(localeName)) {
             return new Locale("ca", "", "valencia");
         }
         if ("he".equals(localeName)) {
@@ -151,7 +155,9 @@ public final class LanguageInfo {
      * @see #getJOSMLocaleCode()
      */
     public static String getLanguageCodeXML() {
-        return getJOSMLocaleCode()+".";
+        String code = getJOSMLocaleCode();
+        code = code.replace("@", "-");
+        return code+".";
     }
 
     /**
@@ -161,6 +167,8 @@ public final class LanguageInfo {
      * @see #getJOSMLocaleCode()
      */
     public static String getLanguageCodeManifest() {
-        return getJOSMLocaleCode()+"_";
+        String code = getJOSMLocaleCode();
+        code = code.replace("@", "-");
+        return code+"_";
     }
 }
