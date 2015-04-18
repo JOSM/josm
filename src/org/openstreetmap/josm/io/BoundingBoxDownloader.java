@@ -181,7 +181,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
             NoteReader reader = new NoteReader(is);
             final List<Note> notes = reader.parse();
             if (notes.size() == noteLimit) {
-                throw new MoreNotesException(noteLimit);
+                throw new MoreNotesException(notes, noteLimit);
             }
             return notes;
         } catch (IOException e) {
@@ -198,11 +198,16 @@ public class BoundingBoxDownloader extends OsmServerReader {
      */
     public static class MoreNotesException extends RuntimeException{
         /**
+         * The downloaded notes
+         */
+        public final List<Note> notes;
+        /**
          * The download limit sent to the server.
          */
         public final int limit;
 
-        public MoreNotesException(int limit) {
+        public MoreNotesException(List<Note> notes, int limit) {
+            this.notes = notes;
             this.limit = limit;
         }
     }

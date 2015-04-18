@@ -144,6 +144,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
             try {
                 notesData = reader.parseNotes(null, null, subMonitor);
             } catch (BoundingBoxDownloader.MoreNotesException e) {
+                notesData = e.notes;
                 JOptionPane.showMessageDialog(Main.parent, "<html>"
                                 + trn("{0} note has been downloaded.", "{0} notes have been downloaded.", e.limit, e.limit)
                                 + "<br>"
