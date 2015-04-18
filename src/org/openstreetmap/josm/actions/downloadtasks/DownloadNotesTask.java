@@ -2,11 +2,14 @@
 package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -140,6 +143,15 @@ public class DownloadNotesTask extends AbstractDownloadTask {
             ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
             try {
                 notesData = reader.parseNotes(null, null, subMonitor);
+            } catch (BoundingBoxDownloader.MoreNotesException e) {
+                JOptionPane.showMessageDialog(Main.parent, "<html>"
+                                + trn("{0} note has been downloaded.", "{0} notes have been downloaded.", e.limit, e.limit)
+                                + "<br>"
+                                + tr("Since the download limit was {0}, there might be more notes to download.", e.limit)
+                                + "<br>"
+                                + tr("Request a smaller area to make sure that all notes are being downloaded.")
+                                + "</html>",
+                        tr("More notes to download"), JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
                 if (isCanceled())
                     return;
