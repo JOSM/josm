@@ -178,6 +178,9 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public void visitBoundingBox(BoundingXYVisitor v) {
+        for (Note note : noteData.getNotes()) {
+            v.visit(note.getLatLon());
+        }
     }
 
     @Override
