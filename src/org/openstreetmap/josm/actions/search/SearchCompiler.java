@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -98,7 +99,7 @@ public class SearchCompiler {
 
     public class CoreSimpleMatchFactory implements SimpleMatchFactory {
         private Collection<String> keywords = Arrays.asList("id", "version",
-                "changeset", "nodes", "tags", "areasize", "waylength", "modified", "selected",
+                "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
                 "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%");
 
@@ -136,6 +137,8 @@ public class SearchCompiler {
                         return new ChangesetId(tokenizer);
                     case "nodes":
                         return new NodeCountRange(tokenizer);
+                    case "ways":
+                        return new WayCountRange(tokenizer);
                     case "tags":
                         return new TagCountRange(tokenizer);
                     case "areasize":
@@ -921,15 +924,47 @@ public class SearchCompiler {
 
         @Override
         protected Long getNumber(OsmPrimitive osm) {
-            if (!(osm instanceof Way))
-                return null;
-            else
+            if (osm instanceof Way) {
                 return (long) ((Way) osm).getRealNodesCount();
+            } else if (osm instanceof Relation) {
+                return (long) ((Relation) osm).getMemberPrimitives(Node.class).size();
+            } else {
+                return null;
+            }
         }
 
         @Override
         protected String getString() {
             return "nodes";
+        }
+    }
+
+    /**
+     * Matches objects with the number of referring/contained ways in the given range
+     */
+    private static class WayCountRange extends RangeMatch {
+        public WayCountRange(Range range) {
+            super(range);
+        }
+
+        public WayCountRange(PushbackTokenizer tokenizer) throws ParseError {
+            this(tokenizer.readRange(tr("Range of numbers expected")));
+        }
+
+        @Override
+        protected Long getNumber(OsmPrimitive osm) {
+            if (osm instanceof Way) {
+                return (long) Utils.filteredCollection(osm.getReferrers(), Way.class).size();
+            } else if (osm instanceof Relation) {
+                return (long) ((Relation) osm).getMemberPrimitives(Way.class).size();
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        protected String getString() {
+            return "ways";
         }
     }
 
