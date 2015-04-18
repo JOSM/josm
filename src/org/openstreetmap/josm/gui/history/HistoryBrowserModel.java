@@ -83,13 +83,13 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      */
     private HistoryOsmPrimitive latest;
 
-    private VersionTableModel versionTableModel;
-    private TagTableModel currentTagTableModel;
-    private TagTableModel referenceTagTableModel;
-    private DiffTableModel currentRelationMemberTableModel;
-    private DiffTableModel referenceRelationMemberTableModel;
-    private DiffTableModel referenceNodeListTableModel;
-    private DiffTableModel currentNodeListTableModel;
+    private final VersionTableModel versionTableModel;
+    private final TagTableModel currentTagTableModel;
+    private final TagTableModel referenceTagTableModel;
+    private final DiffTableModel currentRelationMemberTableModel;
+    private final DiffTableModel referenceRelationMemberTableModel;
+    private final DiffTableModel referenceNodeListTableModel;
+    private final DiffTableModel currentNodeListTableModel;
 
     /**
      * constructor
@@ -222,32 +222,23 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * TODO: Maybe rename to reflect this? eg. updateNodeListTableModels
      */
     protected void initNodeListTableModels() {
-
         if(current.getType() != OsmPrimitiveType.WAY || reference.getType() != OsmPrimitiveType.WAY)
             return;
         TwoColumnDiff diff = new TwoColumnDiff(
                 ((HistoryWay)reference).getNodes().toArray(),
                 ((HistoryWay)current).getNodes().toArray());
-        referenceNodeListTableModel.setRows(diff.referenceDiff);
-        currentNodeListTableModel.setRows(diff.currentDiff);
-
-        referenceNodeListTableModel.fireTableDataChanged();
-        currentNodeListTableModel.fireTableDataChanged();
+        referenceNodeListTableModel.setRows(diff.referenceDiff, diff.referenceReversed);
+        currentNodeListTableModel.setRows(diff.currentDiff, false);
     }
 
     protected void initMemberListTableModels() {
         if(current.getType() != OsmPrimitiveType.RELATION || reference.getType() != OsmPrimitiveType.RELATION)
             return;
-
         TwoColumnDiff diff = new TwoColumnDiff(
                 ((HistoryRelation)reference).getMembers().toArray(),
                 ((HistoryRelation)current).getMembers().toArray());
-
-        referenceRelationMemberTableModel.setRows(diff.referenceDiff);
-        currentRelationMemberTableModel.setRows(diff.currentDiff);
-
-        currentRelationMemberTableModel.fireTableDataChanged();
-        referenceRelationMemberTableModel.fireTableDataChanged();
+        referenceRelationMemberTableModel.setRows(diff.referenceDiff, diff.referenceReversed);
+        currentRelationMemberTableModel.setRows(diff.currentDiff, false);
     }
 
     /**

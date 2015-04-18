@@ -17,6 +17,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
@@ -59,10 +61,10 @@ public class NodeListViewer extends JPanel {
     }
 
     protected JTable buildReferenceNodeListTable() {
-        JTable table = new JTable(
-                model.getNodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME),
-                new NodeListTableColumnModel()
-        );
+        final DiffTableModel tableModel = model.getNodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
+        final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
+        final JTable table = new JTable(tableModel, columnModel);
+        tableModel.addTableModelListener(newReversedChangeListener(table, columnModel));
         table.setName("table.referencenodelisttable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
@@ -72,16 +74,36 @@ public class NodeListViewer extends JPanel {
     }
 
     protected JTable buildCurrentNodeListTable() {
-        JTable table = new JTable(
-                model.getNodeListTableModel(PointInTimeType.CURRENT_POINT_IN_TIME),
-                new NodeListTableColumnModel()
-        );
+        final DiffTableModel tableModel = model.getNodeListTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
+        final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
+        final JTable table = new JTable(tableModel, columnModel);
+        tableModel.addTableModelListener(newReversedChangeListener(table, columnModel));
         table.setName("table.currentnodelisttable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.addMouseListener(new InternalPopupMenuLauncher());
         table.addMouseListener(new DoubleClickAdapter(table));
         return table;
+    }
+
+    protected TableModelListener newReversedChangeListener(final JTable table, final NodeListTableColumnModel columnModel) {
+        return new TableModelListener() {
+            private Boolean reversed = null;
+            final String nonReversedText = tr("Nodes") + (table.getFont().canDisplay('\u25bc') ? " \u25bc" : " (1-n)");
+            final String reversedText = tr("Nodes") + (table.getFont().canDisplay('\u25b2') ? " \u25b2" : " (n-1)");
+
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (e.getSource() instanceof DiffTableModel) {
+                    final DiffTableModel model = (DiffTableModel) e.getSource();
+                    if (reversed == null || reversed != model.isReversed()) {
+                        reversed = model.isReversed();
+                        columnModel.getColumn(0).setHeaderValue(reversed ? reversedText : nonReversedText);
+                        table.getTableHeader().repaint();
+                    }
+                }
+            }
+        };
     }
 
     protected void build() {
