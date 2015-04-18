@@ -9,7 +9,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Dialog to display and manipulate notes.
@@ -228,7 +229,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     private class NoteRenderer implements ListCellRenderer<Note> {
 
         private DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
-        private final SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy kk:mm");
+        private final DateFormat dateFormat = DateUtils.getDateTimeFormat(DateFormat.MEDIUM, DateFormat.SHORT);
 
         @Override
         public Component getListCellRendererComponent(JList<? extends Note> list, Note note, int index,
@@ -240,7 +241,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 if (userName == null || userName.isEmpty()) {
                     userName = "<Anonymous>";
                 }
-                String toolTipText = userName + " @ " + sdf.format(note.getCreatedAt());
+                String toolTipText = userName + " @ " + dateFormat.format(note.getCreatedAt());
                 JLabel jlabel = (JLabel)comp;
                 jlabel.setText(note.getId() + ": " +text);
                 ImageIcon icon;

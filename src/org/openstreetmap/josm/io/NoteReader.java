@@ -5,12 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -21,6 +18,7 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.notes.NoteComment.Action;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -48,9 +46,6 @@ public class NoteReader {
      * Reads both API style and planet dump style formats.
      */
     private class Parser extends DefaultHandler {
-
-        private final SimpleDateFormat ISO8601_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.ENGLISH);
-        private final SimpleDateFormat NOTE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.ENGLISH);
 
         private NoteParseMode parseMode;
         private StringBuffer buffer = new StringBuffer();
@@ -105,9 +100,9 @@ public class NoteReader {
                     thisNote.setState(Note.State.open);
                 } else {
                     thisNote.setState(Note.State.closed);
-                    thisNote.setClosedAt(parseDate(ISO8601_FORMAT, closedTimeStr));
+                    thisNote.setClosedAt(DateUtils.fromString(closedTimeStr));
                 }
-                thisNote.setCreatedAt(parseDate(ISO8601_FORMAT, attrs.getValue("created_at")));
+                thisNote.setCreatedAt(DateUtils.fromString(attrs.getValue("created_at")));
                 break;
             case "comment":
                 String uidStr = attrs.getValue("uid");
@@ -118,7 +113,7 @@ public class NoteReader {
                 }
                 commentUsername = attrs.getValue("user");
                 noteAction = Action.valueOf(attrs.getValue("action"));
-                commentCreateDate = parseDate(ISO8601_FORMAT, attrs.getValue("timestamp"));
+                commentCreateDate = DateUtils.fromString(attrs.getValue("timestamp"));
                 String isNew = attrs.getValue("is_new");
                 if(isNew == null) {
                     commentIsNew = false;
@@ -165,13 +160,13 @@ public class NoteReader {
                 thisNote.setState(Note.State.valueOf(buffer.toString()));
                 break;
             case "date_created":
-                thisNote.setCreatedAt(parseDate(NOTE_DATE_FORMAT, buffer.toString()));
+                thisNote.setCreatedAt(DateUtils.fromString(buffer.toString()));
                 break;
             case "date_closed":
-                thisNote.setClosedAt(parseDate(NOTE_DATE_FORMAT, buffer.toString()));
+                thisNote.setClosedAt(DateUtils.fromString(buffer.toString()));
                 break;
             case "date":
-                commentCreateDate = parseDate(NOTE_DATE_FORMAT, buffer.toString());
+                commentCreateDate = DateUtils.fromString(buffer.toString());
                 break;
             case "user":
                 commentUsername = buffer.toString();
@@ -195,22 +190,6 @@ public class NoteReader {
         @Override
         public void endDocument() throws SAXException  {
             parsedNotes = notes;
-        }
-
-        /**
-         * Convenience method to handle the date parsing try/catch. Will return null if
-         * there is a parsing exception. This means whatever generated this XML is in error
-         * and there isn't anything we can do about it.
-         * @param dateStr - String to parse
-         * @return Parsed date, null if parsing fails
-         */
-        private Date parseDate(SimpleDateFormat sdf, String dateStr) {
-            try {
-                return sdf.parse(dateStr);
-            } catch(ParseException e) {
-                Main.error(e);
-                return null;
-            }
         }
     }
 

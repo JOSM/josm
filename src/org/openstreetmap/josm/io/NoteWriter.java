@@ -6,13 +6,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.text.DateFormat;
 
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Class to write a collection of notes out to XML.
@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.User;
  */
 public class NoteWriter extends XmlWriter {
 
-    private final SimpleDateFormat ISO8601_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.ENGLISH);
+    private final DateFormat ISO8601_FORMAT = DateUtils.newIsoDateTimeFormat();
 
     /**
      * Create a NoteWriter that will write to the given PrintWriter
