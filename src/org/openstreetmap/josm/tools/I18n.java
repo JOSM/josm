@@ -348,7 +348,7 @@ public final class I18n {
     }
 
     private static URL getTranslationFile(String lang) {
-        return Main.class.getResource("/data/"+lang+".lang");
+        return Main.class.getResource("/data/"+lang.replace("@","-")+".lang");
     }
 
     /**
