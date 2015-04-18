@@ -194,7 +194,6 @@ public class NoteReader {
 
         @Override
         public void endDocument() throws SAXException  {
-            Main.info("parsed notes: " + notes.size());
             parsedNotes = notes;
         }
 
@@ -209,7 +208,7 @@ public class NoteReader {
             try {
                 return sdf.parse(dateStr);
             } catch(ParseException e) {
-                Main.error("error parsing date in note parser");
+                Main.error(e);
                 return null;
             }
         }

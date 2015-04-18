@@ -2,10 +2,10 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
@@ -14,6 +14,8 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class to hold and perform operations on a set of notes
@@ -22,7 +24,7 @@ public class NoteData {
 
     private long newNoteId = -1;
 
-    private final List<Note> noteList;
+    private final Storage<Note> noteList;
     private Note selectedNote = null;
     private Comparator<Note> comparator = DEFAULT_COMPARATOR;
 
@@ -84,20 +86,13 @@ public class NoteData {
     };
 
     /**
-     * Construct a new note container with an empty note list
-     */
-    public NoteData() {
-        noteList = new ArrayList<>();
-    }
-
-    /**
      * Construct a new note container with a given list of notes
      * @param notes The list of notes to populate the container with
      */
-    public NoteData(List<Note> notes) {
-        noteList = notes;
-        Collections.sort(notes, comparator);
+    public NoteData(Collection<Note> notes) {
+        noteList = new Storage<>();
         for (Note note : notes) {
+            noteList.add(note);
             if (note.getId() <= newNoteId) {
                 newNoteId = note.getId() - 1;
             }
@@ -106,10 +101,20 @@ public class NoteData {
 
     /**
      * Returns the notes stored in this layer
-     * @return List of Note objects
+     * @return collection of notes
      */
-    public List<Note> getNotes() {
-        return noteList;
+    public Collection<Note> getNotes() {
+        return Collections.unmodifiableCollection(noteList);
+    }
+
+    /**
+     * Returns the notes stored in this layer sorted according to {@link #comparator}
+     * @return sorted collection of notes
+     */
+    public Collection<Note> getSortedNotes() {
+        final ArrayList<Note> list = new ArrayList<>(noteList);
+        Collections.sort(list, comparator);
+        return list;
     }
 
     /** Returns the currently selected note
@@ -154,19 +159,30 @@ public class NoteData {
      * Add notes to the data set. It only adds a note if the ID is not already present
      * @param newNotes A list of notes to add
      */
-    public synchronized void addNotes(List<Note> newNotes) {
+    public synchronized void addNotes(Collection<Note> newNotes) {
         for (Note newNote : newNotes) {
             if (!noteList.contains(newNote)) {
                 noteList.add(newNote);
+            } else {
+                final Note existingNote = noteList.get(newNote);
+                final boolean isDirty = Utils.exists(existingNote.getComments(), new Predicate<NoteComment>() {
+                    @Override
+                    public boolean evaluate(NoteComment object) {
+                        return object.getIsNew();
+                    }
+                });
+                if (!isDirty) {
+                    noteList.put(newNote);
+                } else {
+                    // TODO merge comments?
+                    Main.info("Keeping existing note id={0} with uncommitted changes", String.valueOf(newNote.getId()));
+                }
             }
             if (newNote.getId() <= newNoteId) {
                 newNoteId = newNote.getId() - 1;
             }
         }
         dataUpdated();
-        if (Main.isDebugEnabled()) {
-            Main.debug("notes in current set: " + noteList.size());
-        }
     }
 
     /**
@@ -255,8 +271,7 @@ public class NoteData {
     }
 
     private void dataUpdated() {
-        Collections.sort(noteList, comparator);
-        Main.map.noteDialog.setNoteList(noteList);
+        Main.map.noteDialog.setNotes(getSortedNotes());
         Main.map.mapView.repaint();
     }
 
