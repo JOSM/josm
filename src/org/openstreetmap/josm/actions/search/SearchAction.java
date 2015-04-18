@@ -348,6 +348,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("*=<i>value</i>", null, tr("''value'' in any key"))
                 .addKeyword("<i>key</i>=", null, tr("matches if ''key'' exists"))
                 .addKeyword("<i>key</i>><i>value</i>", null, tr("matches if ''key'' is greater than ''value'' (analogously, less than)"))
+                .addKeyword("\"key\"=\"value\"", "\"\"=\"\"", tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."), "\"addr:street\"")
                 , GBC.eol());
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("combinators"))
@@ -356,7 +357,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("<i>expr</i> OR <i>expr</i>", "OR ", tr("logical or (at least one expression has to be satisfied)"))
                 .addKeyword("-<i>expr</i>", null, tr("logical not"))
                 .addKeyword("(<i>expr</i>)", "()", tr("use parenthesis to group expressions"))
-                .addKeyword("\"key\"=\"value\"", "\"\"=\"\"", tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."), "\"addr:street\"")
                 , GBC.eol());
 
         if (Main.pref.getBoolean("expert", false)) {
@@ -378,7 +378,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 , GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("properties"))
-                .addKeyword("nodes:<i>20-</i>", "nodes:", tr("objects with at least 20 nodes"))
+                .addKeyword("nodes:<i>20-</i>", "nodes:", tr("ways with at least 20 nodes, or relations containing at least 20 nodes"))
+                .addKeyword("ways:<i>3-</i>", "ways:", tr("nodes with at least 3 referring ways, or relations containing at least 3 ways"))
                 .addKeyword("tags:<i>5-10</i>", "tags:", tr("objects having 5 to 10 tags"))
                 .addKeyword("role:", "role:", tr("objects with given role in a relation"))
                 .addKeyword("areasize:<i>-100</i>", "areasize:", tr("closed ways with an area of 100 m\u00b2"))
