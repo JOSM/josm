@@ -12,6 +12,8 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.Action;
@@ -55,15 +57,14 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
      * @param notes A list of notes to show in this layer
      * @param name The name of the layer. Typically "Notes"
      */
-    public NoteLayer(List<Note> notes, String name) {
+    public NoteLayer(Collection<Note> notes, String name) {
         super(name);
         noteData = new NoteData(notes);
     }
 
     /** Convenience constructor that creates a layer with an empty note list */
     public NoteLayer() {
-        super(tr("Notes"));
-        noteData = new NoteData();
+        this(Collections.<Note>emptySet(), tr("Notes"));
     }
 
     @Override
@@ -96,7 +97,6 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public boolean requiresSaveToFile() {
-        Main.debug("associated notes file: " + getAssociatedFile());
         return getAssociatedFile() != null && isModified();
     }
 
