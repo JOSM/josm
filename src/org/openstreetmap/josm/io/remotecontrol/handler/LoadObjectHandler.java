@@ -39,7 +39,7 @@ public class LoadObjectHandler extends RequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"new_layer", "addtags", "relation_members", "referrers"};
+        return new String[] {"new_layer", "layer_name", "addtags", "relation_members", "referrers"};
     }
 
     @Override
@@ -63,9 +63,9 @@ public class LoadObjectHandler extends RequestHandler {
         if (!ps.isEmpty()) {
             final boolean newLayer = isLoadInNewLayer();
             final boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
-            final boolean referrers = args.containsKey("referrers") ? Boolean.parseBoolean(args.get("referrers")) : true;
+            final boolean referrers = Boolean.parseBoolean(args.get("referrers"));
             final DownloadPrimitivesWithReferrersTask task = new DownloadPrimitivesWithReferrersTask(
-                    newLayer, ps, referrers, relationMembers, null);
+                    newLayer, ps, referrers, relationMembers, args.get("layer_name"), null);
             Main.worker.submit(task);
             Main.worker.submit(new Runnable() {
                 @Override

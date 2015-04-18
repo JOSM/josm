@@ -63,17 +63,18 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
      * @param downloadReferrers if the referrers of the object should be downloaded as well,
      *     i.e., parent relations, and for nodes, additionally, parent ways
      * @param full if the members of a relation should be downloaded as well
+     * @param newLayerName the name to use for the new layer, can be {@code null}.
      * @param monitor ProgressMonitor to use, or null to create a new one
      */
     public DownloadPrimitivesWithReferrersTask(boolean newLayer, List<PrimitiveId> ids, boolean downloadReferrers,
-            boolean full, ProgressMonitor monitor) {
+            boolean full, String newLayerName, ProgressMonitor monitor) {
         super(tr("Download objects"), monitor, false);
         this.ids = ids;
         this.downloadReferrers = downloadReferrers;
         this.full = full;
         this.newLayer = newLayer;
         // All downloaded primitives are put in a tmpLayer
-        tmpLayer = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
+        tmpLayer = new OsmDataLayer(new DataSet(), newLayerName != null ? newLayerName : OsmDataLayer.createNewName(), null);
     }
 
     /**
