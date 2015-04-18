@@ -72,7 +72,7 @@ public class LoadAndZoomHandler extends RequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"new_layer", "addtags", "select", "zoom_mode", "changeset_comment", "changeset_source", "search"};
+        return new String[] {"new_layer", "layer_name", "addtags", "select", "zoom_mode", "changeset_comment", "changeset_source", "search"};
     }
 
     @Override
@@ -101,7 +101,11 @@ public class LoadAndZoomHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
-        DownloadTask osmTask = new DownloadOsmTask();
+        DownloadTask osmTask = new DownloadOsmTask() {
+            {
+                newLayerName = args.get("layer_name");
+            }
+        };
         try {
             boolean newLayer = isLoadInNewLayer();
 
