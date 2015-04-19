@@ -101,7 +101,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
     }
 
     @Override
-    public void paint(Graphics2D g, MapView mv, Bounds box) {
+    public void paint(Graphics2D g, final MapView mv, Bounds box) {
         for (Note note : noteData.getNotes()) {
             Point p = mv.getPoint(note.getLatLon());
 
@@ -134,13 +134,16 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
                     sb.append(comment.getText().trim());
                 }
             }
-            JTextArea toolTip = new JTextArea();
+            JTextArea toolTip = new JTextArea() {
+                {
+                    setColumns(Math.min(480, mv.getWidth() / 2) / getColumnWidth());
+                    setSize(getPreferredSize().width + 6, getPreferredSize().height + 6); // +6 for border
+                }
+            };
             toolTip.setText(sb.toString());
             toolTip.setLineWrap(true);
             toolTip.setWrapStyleWord(true);
             toolTip.setBackground(PROP_BACKGROUND_COLOR.get());
-            toolTip.setSize(Math.min(480, mv.getWidth() / 2), 1);
-            toolTip.setSize(toolTip.getPreferredSize().width + 6, toolTip.getPreferredSize().height + 6); // +6 for border
             toolTip.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
             Point p = mv.getPoint(noteData.getSelectedNote().getLatLon());
