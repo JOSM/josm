@@ -8,11 +8,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -409,6 +411,12 @@ public abstract class Condition {
                 return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
             case "righthandtraffic":
                 return ExpressionFactory.Functions.is_right_hand_traffic(e);
+            case "unclosed_multipolygon":
+                return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() &&
+                        !MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) e.osm).getOpenEnds().isEmpty();
+            case "open_end":
+                // handling at org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector.MultipolygonOpenEndFinder
+                return true;
             }
             return false;
         }
