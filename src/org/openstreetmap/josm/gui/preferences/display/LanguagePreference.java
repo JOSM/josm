@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.preferences.display;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Language preferences.
@@ -72,7 +72,7 @@ public class LanguagePreference implements SubPreferenceSetting {
             return Main.pref.put("language", null);
         else
             return Main.pref.put("language",
-                    ((Locale)langCombo.getSelectedItem()).toString());
+                    LanguageInfo.getJOSMLocaleCode((Locale)langCombo.getSelectedItem()));
     }
 
     private static class LanguageComboBoxModel extends DefaultComboBoxModel<Locale> {
@@ -86,6 +86,7 @@ public class LanguagePreference implements SubPreferenceSetting {
         public void selectLanguage(String language) {
             setSelectedItem(null);
             if (language != null) {
+                language = LanguageInfo.getJavaLocaleCode(language);
                 for (Locale locale: data) {
                     if (locale == null) {
                         continue;
@@ -120,9 +121,7 @@ public class LanguagePreference implements SubPreferenceSetting {
             return dispatch.getListCellRendererComponent(list,
                     l == null
                             ? tr("Default (Auto determined)")
-                            : "ca__valencia".equals(l.toString())
-                            ? trc("language", "Valencian")
-                            : l.getDisplayName(l),
+                            : LanguageInfo.getDisplayName(l),
                     index, isSelected, cellHasFocus);
         }
     }
