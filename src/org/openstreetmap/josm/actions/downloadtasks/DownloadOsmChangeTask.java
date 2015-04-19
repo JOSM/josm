@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -31,6 +33,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -41,9 +44,12 @@ import org.openstreetmap.josm.io.OsmTransferException;
  */
 public class DownloadOsmChangeTask extends DownloadOsmTask {
 
+    private static final String OSM_WEBSITE_PATTERN = "https?://www\\.(osm|openstreetmap)\\.org/changeset/(\\p{Digit}+).*";
+
     @Override
     public String[] getPatterns() {
         return new String[]{"https?://.*/api/0.6/changeset/\\p{Digit}+/download", // OSM API 0.6 changesets
+            OSM_WEBSITE_PATTERN, // OSM changesets
             "https?://.*/.*\\.osc" // Remote .osc files
         };
     }
@@ -60,11 +66,12 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
     }
 
     @Override
-    public Future<?> loadUrl(boolean new_layer, String url,
-            ProgressMonitor progressMonitor) {
-        downloadTask = new DownloadTask(new_layer,
-                new OsmServerLocationReader(url),
-                progressMonitor);
+    public Future<?> loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
+        final Matcher matcher = Pattern.compile(OSM_WEBSITE_PATTERN).matcher(url);
+        if (matcher.matches()) {
+            url = OsmApi.getOsmApi().getBaseUrl() + "changeset/" + Long.parseLong(matcher.group(2)) + "/download";
+        }
+        downloadTask = new DownloadTask(new_layer, new OsmServerLocationReader(url), progressMonitor);
         // Extract .osc filename from URL to set the new layer name
         extractOsmFilename("https?://.*/(.*\\.osc)", url);
         return Main.worker.submit(downloadTask);
