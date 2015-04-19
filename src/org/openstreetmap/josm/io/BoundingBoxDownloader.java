@@ -163,8 +163,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
     public List<Note> parseNotes(int noteLimit, int daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException, MoreNotesException {
         progressMonitor.beginTask("Downloading notes");
         CheckParameterUtil.ensureThat(noteLimit > 0, "Requested note limit is less than 1.");
-        // see max_number_of_nodes in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
-        CheckParameterUtil.ensureThat(noteLimit <= 50000, "Requested note limit is over API hard limit of 50000.");
+        // see result_limit in https://github.com/openstreetmap/openstreetmap-website/blob/master/app/controllers/notes_controller.rb
+        CheckParameterUtil.ensureThat(noteLimit <= 10000, "Requested note limit is over API hard limit of 10000.");
         CheckParameterUtil.ensureThat(daysClosed >= 0, "Requested note limit is less than 0.");
         String url = "notes?limit=" + noteLimit + "&closed=" + daysClosed + "&bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
         try {
