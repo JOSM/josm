@@ -953,7 +953,7 @@ public class SearchCompiler {
 
         @Override
         protected Long getNumber(OsmPrimitive osm) {
-            if (osm instanceof Way) {
+            if (osm instanceof Node) {
                 return (long) Utils.filteredCollection(osm.getReferrers(), Way.class).size();
             } else if (osm instanceof Relation) {
                 return (long) ((Relation) osm).getMemberPrimitives(Way.class).size();
