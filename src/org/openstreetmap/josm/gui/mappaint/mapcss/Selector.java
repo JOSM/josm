@@ -349,7 +349,6 @@ public interface Selector {
                         Node n = wayNodes.get(i);
                         if (left.matches(e.withPrimitive(n))) {
                             if (link.matches(e.withChildAndIndexAndLinkContext(n, i, wayNodes.size()))) {
-                                e = e.withChildAndIndexAndLinkContext(n, i, wayNodes.size());
                                 e.child = n;
                                 e.index = i;
                                 e.count = wayNodes.size();
