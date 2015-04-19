@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -218,6 +219,34 @@ public interface Selector {
             }
         }
 
+        private class MultipolygonOpenEndFinder extends AbstractFinder {
+
+            @Override
+            public void visit(Way w) {
+                w.visitReferrers(innerVisitor);
+            }
+
+            public MultipolygonOpenEndFinder(Environment e) {
+                super(e);
+            }
+
+            private final AbstractVisitor innerVisitor = new AbstractFinder(e) {
+                @Override
+                public void visit(Relation r) {
+                    if (left.matches(e.withPrimitive(r))) {
+                        final List<Node> openEnds = MultipolygonCache.getInstance().get(Main.map.mapView, r).getOpenEnds();
+                        final int openEndIndex = openEnds.indexOf((Node) e.osm);
+                        if (openEndIndex >= 0) {
+                            e.parent = r;
+                            e.index = openEndIndex;
+                            e.count = openEnds.size();
+                        }
+                    }
+                }
+            };
+
+        }
+
         private final class CrossingFinder extends AbstractFinder {
             private CrossingFinder(Environment e) {
                 super(e);
@@ -336,6 +365,14 @@ public interface Selector {
                             }
                         }
                     }
+                }
+            } else if (ChildOrParentSelectorType.CHILD.equals(type)
+                    && link.conds != null && !link.conds.isEmpty()
+                    && link.conds.get(0) instanceof Condition.PseudoClassCondition
+                    && "open_end".equals(((Condition.PseudoClassCondition) link.conds.get(0)).id)) {
+                if (e.osm instanceof Node) {
+                    e.osm.visitReferrers(new MultipolygonOpenEndFinder(e));
+                    return e.parent != null;
                 }
             } else if (ChildOrParentSelectorType.CHILD.equals(type)) {
                 MatchingReferrerFinder collector = new MatchingReferrerFinder(e);

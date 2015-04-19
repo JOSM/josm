@@ -287,6 +287,10 @@ public class Multipolygon {
             return wayIds;
         }
 
+        public List<Node> getNodes() {
+            return nodes;
+        }
+
         private void resetNodes(DataSet dataSet) {
             if (!nodes.isEmpty()) {
                 DataSet ds = dataSet;
@@ -354,9 +358,8 @@ public class Multipolygon {
 
     private final List<Way> innerWays = new ArrayList<>();
     private final List<Way> outerWays = new ArrayList<>();
-    private final List<PolyData> innerPolygons = new ArrayList<>();
-    private final List<PolyData> outerPolygons = new ArrayList<>();
     private final List<PolyData> combinedPolygons = new ArrayList<>();
+    private final List<Node> openEnds = new ArrayList<>();
 
     private boolean incomplete;
 
@@ -390,10 +393,12 @@ public class Multipolygon {
             }
         }
 
+        final List<PolyData> innerPolygons = new ArrayList<>();
+        final List<PolyData> outerPolygons = new ArrayList<>();
         createPolygons(innerWays, innerPolygons);
         createPolygons(outerWays, outerPolygons);
         if (!outerPolygons.isEmpty()) {
-            addInnerToOuters();
+            addInnerToOuters(innerPolygons, outerPolygons);
         }
     }
 
@@ -413,6 +418,10 @@ public class Multipolygon {
 
         for (JoinedWay jw: joinWays(waysToJoin)) {
             result.add(new PolyData(jw));
+            if (!jw.isClosed()) {
+                openEnds.add(jw.getNodes().get(0));
+                openEnds.add(jw.getNodes().get(jw.getNodes().size() - 1));
+            }
         }
     }
 
@@ -544,7 +553,7 @@ public class Multipolygon {
         return result;
     }
 
-    private final void addInnerToOuters()  {
+    private final void addInnerToOuters(List<PolyData> innerPolygons, List<PolyData> outerPolygons)  {
 
         if (innerPolygons.isEmpty()) {
             combinedPolygons.addAll(outerPolygons);
@@ -567,10 +576,6 @@ public class Multipolygon {
                 o.addInner(pdInner);
             }
         }
-
-        // Clear inner and outer polygons to reduce memory footprint
-        innerPolygons.clear();
-        outerPolygons.clear();
     }
 
     /**
@@ -591,5 +596,25 @@ public class Multipolygon {
 
     public List<PolyData> getCombinedPolygons() {
         return combinedPolygons;
+    }
+
+    public List<PolyData> getInnerPolygons() {
+        final List<PolyData> innerPolygons = new ArrayList<>();
+        createPolygons(innerWays, innerPolygons);
+        return innerPolygons;
+    }
+
+    public List<PolyData> getOuterPolygons() {
+        final List<PolyData> outerPolygons = new ArrayList<>();
+        createPolygons(outerWays, outerPolygons);
+        return outerPolygons;
+    }
+
+    /**
+     * Returns the start and end node of non-closed rings.
+     * @return the start and end node of non-closed rings.
+     */
+    public List<Node> getOpenEnds() {
+        return openEnds;
     }
 }
