@@ -28,6 +28,11 @@ public abstract class RotationAngle {
             public double getRotationAngle(OsmPrimitive p) {
                 return angle;
             }
+
+            @Override
+            public String toString() {
+                return angle + "rad";
+            }
         };
     }
 
@@ -114,6 +119,11 @@ public abstract class RotationAngle {
                 } else {
                     return -Geometry.getSegmentAngle(w.getNode(idx - 1).getEastNorth(), n.getEastNorth());
                 }
+            }
+
+            @Override
+            public String toString() {
+                return "way-direction";
             }
         };
     }

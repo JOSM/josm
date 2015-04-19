@@ -358,6 +358,7 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         int hash = super.hashCode();
         hash = 17 * hash + (mapImage != null ? mapImage.hashCode() : 0);
         hash = 17 * hash + (symbol != null ? symbol.hashCode() : 0);
+        hash = 17 * hash + (mapImageAngle != null ? mapImageAngle.hashCode() : 0);
         return hash;
     }
 
@@ -374,6 +375,8 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
             return false;
         if (!Objects.equals(symbol, other.symbol))
             return false;
+        if (!Objects.equals(mapImageAngle, other.mapImageAngle))
+            return false;
         return true;
     }
 
@@ -386,6 +389,9 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         }
         if (symbol != null) {
             s.append(" symbol=[" + symbol + "]");
+        }
+        if (mapImageAngle != null) {
+            s.append(" mapImageAngle=[" + mapImageAngle + "]");
         }
         s.append('}');
         return s.toString();
