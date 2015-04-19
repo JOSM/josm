@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.trc;
+
 import java.util.Locale;
 
 public final class LanguageInfo {
@@ -106,20 +108,52 @@ public final class LanguageInfo {
     /**
      * Replies the locale code used by Java for a given locale.
      *
+     * @param locale the locale. Replies "en" if null.
+     * @return the Java code for the given locale
+     * @since 8232
+     */
+    public static String getJavaLocaleCode(String localeName) {
+        if (localeName == null) return "en";
+        if ("ca@valencia".equals(localeName)) {
+            localeName = "ca__valencia";
+        } else if ("he".equals(localeName)) {
+            localeName = "iw_IL";
+        } else if ("id".equals(localeName)) {
+            localeName = "in";
+        }
+        return localeName;
+    }
+
+    /**
+     * Replies the display string used by JOSM for a given locale.
+     *
+     * In most cases returns text replied by {@link Locale#getDisplayName()}, for some
+     * locales an override is used (i.e. when unsupported by Java).
+     *
+     * @param locale the locale. Replies "en" if null.
+     * @return the display string for the given locale
+     * @since 8232
+     */
+    public static String getDisplayName(Locale locale) {
+        String full = locale.toString();
+        if ("ca__valencia".equals(full))
+            return trc("language", "Valencian");
+
+        return locale.getDisplayName();
+    }
+
+    /**
+     * Replies the locale code used by Java for a given locale.
+     *
      * In most cases JOSM and Java uses the same codes, but for some exceptions this is needed.
      *
      * @param localeName the locale code.
      * @return the resulting locale
      */
     public static Locale getLocale(String localeName) {
-        if ("ca@valencia".equals(localeName)) {
+        localeName = getJavaLocaleCode(localeName);
+        if ("ca__valencia".equals(localeName)) {
             return new Locale("ca", "", "valencia");
-        }
-        if ("he".equals(localeName)) {
-            localeName = "iw_IL";
-        }
-        else if ("id".equals(localeName)) {
-            localeName = "in";
         }
         Locale l;
         int i = localeName.indexOf('_');
