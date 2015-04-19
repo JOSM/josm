@@ -799,6 +799,8 @@ class TagEditHelper {
             commandCount++;
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
             changedKey = key;
+            keys.getEditor().setItem("");
+            values.getEditor().setItem("");
         }
 
         public void undoAllTagsAdding() {
