@@ -602,8 +602,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
         try {
             metadata = JpegMetadataReader.readMetadata(e.getFile());
-            dirExif = metadata.getDirectory(ExifIFD0Directory.class);
-            dirGps = metadata.getDirectory(GpsDirectory.class);
+            dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
         } catch (CompoundException | IOException p) {
             e.setExifCoor(null);
             e.setPos(null);
