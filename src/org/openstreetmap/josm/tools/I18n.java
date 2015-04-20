@@ -662,7 +662,7 @@ public final class I18n {
             } else {
                 if (!"en".equals(l.getLanguage())) {
                     Main.info(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
-                            l.getDisplayName(), Locale.getDefault().getDisplayName()));
+                            LanguageInfo.getDisplayName(l), LanguageInfo.getDisplayName(Locale.getDefault())));
                 } else {
                     strings = null;
                     pstrings = null;
