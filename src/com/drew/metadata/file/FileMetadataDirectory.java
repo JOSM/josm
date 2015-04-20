@@ -18,37 +18,41 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.metadata.exif;
+package com.drew.metadata.file;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.metadata.Directory;
 
 import java.util.HashMap;
 
 /**
- * Describes Exif interoperability tags.
- *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class ExifInteropDirectory extends ExifDirectoryBase
+public class FileMetadataDirectory extends Directory
 {
+    public static final int TAG_FILE_NAME = 1;
+    public static final int TAG_FILE_SIZE = 2;
+    public static final int TAG_FILE_MODIFIED_DATE = 3;
+
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
-    static
-    {
-        addExifTagNames(_tagNameMap);
+    static {
+        _tagNameMap.put(TAG_FILE_NAME, "File Name");
+        _tagNameMap.put(TAG_FILE_SIZE, "File Size");
+        _tagNameMap.put(TAG_FILE_MODIFIED_DATE, "File Modified Date");
     }
 
-    public ExifInteropDirectory()
+    public FileMetadataDirectory()
     {
-        this.setDescriptor(new ExifInteropDescriptor(this));
+        this.setDescriptor(new FileMetadataDescriptor(this));
     }
 
     @Override
     @NotNull
     public String getName()
     {
-        return "Interoperability";
+        return "File";
     }
 
     @Override

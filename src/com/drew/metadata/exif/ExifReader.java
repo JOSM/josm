@@ -25,6 +25,7 @@ import com.drew.imaging.jpeg.JpegSegmentType;
 import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.ByteArrayReader;
+import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
 import com.drew.metadata.Metadata;
 
@@ -40,11 +41,8 @@ import java.util.Arrays;
  */
 public class ExifReader implements JpegSegmentMetadataReader
 {
-    /**
-     * The offset at which the TIFF data actually starts. This may be necessary when, for example, processing
-     * JPEG Exif data from APP0 which has a 6-byte preamble before starting the TIFF data.
-     */
-    private static final String JPEG_EXIF_SEGMENT_PREAMBLE = "Exif\0\0";
+    /** Exif data stored in JPEG files' APP1 segment are preceded by this six character preamble. */
+    public static final String JPEG_SEGMENT_PREAMBLE = "Exif\0\0";
 
     private boolean _storeThumbnailBytes = true;
 
@@ -64,47 +62,34 @@ public class ExifReader implements JpegSegmentMetadataReader
         return Arrays.asList(JpegSegmentType.APP1);
     }
 
-    public boolean canProcess(@NotNull final byte[] segmentBytes, @NotNull final JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
     {
-        return segmentBytes.length >= JPEG_EXIF_SEGMENT_PREAMBLE.length() && new String(segmentBytes, 0, JPEG_EXIF_SEGMENT_PREAMBLE.length()).equalsIgnoreCase(JPEG_EXIF_SEGMENT_PREAMBLE);
+        assert(segmentType == JpegSegmentType.APP1);
+
+        for (byte[] segmentBytes : segments) {
+            // Filter any segments containing unexpected preambles
+            if (segmentBytes.length < JPEG_SEGMENT_PREAMBLE.length() || !new String(segmentBytes, 0, JPEG_SEGMENT_PREAMBLE.length()).equals(JPEG_SEGMENT_PREAMBLE))
+                continue;
+            extract(new ByteArrayReader(segmentBytes), metadata, JPEG_SEGMENT_PREAMBLE.length());
+        }
     }
 
-    public void extract(@NotNull final byte[] segmentBytes, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
+    /** Reads TIFF formatted Exif data from start of the specified {@link RandomAccessReader}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata)
     {
-        if (segmentBytes == null)
-            throw new NullPointerException("segmentBytes cannot be null");
-        if (metadata == null)
-            throw new NullPointerException("metadata cannot be null");
-        if (segmentType == null)
-            throw new NullPointerException("segmentType cannot be null");
+        extract(reader, metadata, 0);
+    }
 
+    /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset)
+    {
         try {
-            ByteArrayReader reader = new ByteArrayReader(segmentBytes);
-
-            //
-            // Check for the header preamble
-            //
-            try {
-                if (!reader.getString(0, JPEG_EXIF_SEGMENT_PREAMBLE.length()).equals(JPEG_EXIF_SEGMENT_PREAMBLE)) {
-                    // TODO what do to with this error state?
-                    System.err.println("Invalid JPEG Exif segment preamble");
-                    return;
-                }
-            } catch (IOException e) {
-                // TODO what do to with this error state?
-                e.printStackTrace(System.err);
-                return;
-            }
-
-            //
             // Read the TIFF-formatted Exif data
-            //
             new TiffReader().processTiff(
                 reader,
                 new ExifTiffHandler(metadata, _storeThumbnailBytes),
-                JPEG_EXIF_SEGMENT_PREAMBLE.length()
+                readerOffset
             );
-
         } catch (TiffProcessingException e) {
             // TODO what do to with this error state?
             e.printStackTrace(System.err);

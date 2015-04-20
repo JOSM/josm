@@ -126,6 +126,24 @@ public abstract class RandomAccessReader
     }
 
     /**
+     * Gets whether a bit at a specific index is set or not.
+     *
+     * @param index the number of bits at which to test
+     * @return true if the bit is set, otherwise false
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public boolean getBit(int index) throws IOException
+    {
+        int byteIndex = index / 8;
+        int bitIndex = index % 8;
+
+        validateIndex(byteIndex, 1);
+
+        byte b = getByte(byteIndex);
+        return ((b >> bitIndex) & 1) == 1;
+    }
+
+    /**
      * Returns an unsigned 8-bit int calculated from one byte of data at the specified index.
      *
      * @param index position within the data buffer to read byte
@@ -194,6 +212,30 @@ public abstract class RandomAccessReader
             // Intel ordering - LSB first
             return (short) (((short)getByte(index + 1) << 8 & (short)0xFF00) |
                             ((short)getByte(index    )      & (short)0xFF));
+        }
+    }
+
+    /**
+     * Get a 24-bit unsigned integer from the buffer, returning it as an int.
+     *
+     * @param index position within the data buffer to read first byte
+     * @return the unsigned 24-bit int value as a long, between 0x00000000 and 0x00FFFFFF
+     * @throws IOException the buffer does not contain enough bytes to service the request, or index is negative
+     */
+    public int getInt24(int index) throws IOException
+    {
+        validateIndex(index, 3);
+
+        if (_isMotorolaByteOrder) {
+            // Motorola - MSB first (big endian)
+            return (((int)getByte(index    )) << 16 & 0xFF0000) |
+                   (((int)getByte(index + 1)) << 8  & 0xFF00) |
+                   (((int)getByte(index + 2))       & 0xFF);
+        } else {
+            // Intel ordering - LSB first (little endian)
+            return (((int)getByte(index + 2)) << 16 & 0xFF0000) |
+                   (((int)getByte(index + 1)) << 8  & 0xFF00) |
+                   (((int)getByte(index    ))       & 0xFF);
         }
     }
 
