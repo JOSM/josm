@@ -62,20 +62,17 @@ public class JpegReader implements JpegSegmentMetadataReader
         );
     }
 
-    public boolean canProcess(@NotNull byte[] segmentBytes, @NotNull JpegSegmentType segmentType)
+    public void readJpegSegments(@NotNull Iterable<byte[]> segments, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
     {
-        return true;
+        for (byte[] segmentBytes : segments) {
+            extract(segmentBytes, metadata, segmentType);
+        }
     }
 
-    public void extract(@NotNull byte[] segmentBytes, @NotNull Metadata metadata, @NotNull JpegSegmentType segmentType)
+    public void extract(byte[] segmentBytes, Metadata metadata, JpegSegmentType segmentType)
     {
-        if (metadata.containsDirectory(JpegDirectory.class)) {
-            // If this directory is already present, discontinue this operation.
-            // We only store metadata for the *first* matching SOFn segment.
-            return;
-        }
-
-        JpegDirectory directory = metadata.getOrCreateDirectory(JpegDirectory.class);
+        JpegDirectory directory = new JpegDirectory();
+        metadata.addDirectory(directory);
 
         // The value of TAG_COMPRESSION_TYPE is determined by the segment type found
         directory.setInt(JpegDirectory.TAG_COMPRESSION_TYPE, segmentType.byteValue - JpegSegmentType.SOF0.byteValue);
@@ -100,7 +97,6 @@ public class JpegReader implements JpegSegmentMetadataReader
                 final JpegComponent component = new JpegComponent(componentId, samplingFactorByte, quantizationTableNumber);
                 directory.setObject(JpegDirectory.TAG_COMPONENT_DATA_1 + i, component);
             }
-
         } catch (IOException ex) {
             directory.addError(ex.getMessage());
         }

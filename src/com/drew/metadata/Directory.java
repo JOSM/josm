@@ -82,6 +82,14 @@ public abstract class Directory
 // VARIOUS METHODS
 
     /**
+     * Gets a value indicating whether the directory is empty, meaning it contains no errors and no tag values.
+     */
+    public boolean isEmpty()
+    {
+        return _errorList.isEmpty() && _definedTagList.isEmpty();
+    }
+
+    /**
      * Indicates whether the specified tag type has been set.
      *
      * @param tagType the tag type to check for
@@ -758,6 +766,9 @@ public abstract class Directory
                     DateFormat parser = new SimpleDateFormat(datePattern);
                     if (timeZone != null)
                         parser.setTimeZone(timeZone);
+                    else
+                        parser.setTimeZone(TimeZone.getTimeZone("GMT")); // don't interpret zone time
+
                     return parser.parse(dateString);
                 } catch (ParseException ex) {
                     // simply try the next pattern

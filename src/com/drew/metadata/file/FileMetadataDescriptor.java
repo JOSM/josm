@@ -18,19 +18,43 @@
  *    https://drewnoakes.com/code/exif/
  *    https://github.com/drewnoakes/metadata-extractor
  */
-package com.drew.metadata.exif;
+package com.drew.metadata.file;
 
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.TagDescriptor;
 
 /**
- * Provides human-readable string representations of tag values stored in a {@link ExifInteropDirectory}.
- *
  * @author Drew Noakes https://drewnoakes.com
  */
-public class ExifInteropDescriptor extends ExifDescriptorBase<ExifInteropDirectory>
+public class FileMetadataDescriptor extends TagDescriptor<FileMetadataDirectory>
 {
-    public ExifInteropDescriptor(@NotNull ExifInteropDirectory directory)
+    public FileMetadataDescriptor(@NotNull FileMetadataDirectory directory)
     {
         super(directory);
     }
+
+    @Override
+    @Nullable
+    public String getDescription(int tagType)
+    {
+        switch (tagType) {
+            case FileMetadataDirectory.TAG_FILE_SIZE:
+                return getFileSizeDescription();
+            default:
+                return super.getDescription(tagType);
+        }
+    }
+
+    @Nullable
+    private String getFileSizeDescription()
+    {
+        Long size = _directory.getLongObject(FileMetadataDirectory.TAG_FILE_SIZE);
+
+        if (size == null)
+            return null;
+
+        return Long.toString(size) + " bytes";
+    }
 }
+
