@@ -46,9 +46,10 @@ public final class ExifReader {
             OUTER:
             for (Directory dirIt : metadata.getDirectories()) {
                 for (Tag tag : dirIt.getTags()) {
-                    if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */) {
+                    if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */ &&
+                            !tag.getDescription().matches("\\[[0-9]+ .+\\]")) {
                         dateStr = tag.getDescription();
-                        break OUTER; // prefer this tag
+                        break OUTER; // prefer this tag if known
                     }
                     if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */ ||
                         tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
