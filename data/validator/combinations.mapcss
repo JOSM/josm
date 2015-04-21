@@ -197,7 +197,7 @@ way[waterway][bridge=yes] {
 /* see #9811 */
 *[place][place!=farm][/^addr:/],
 *[boundary][/^addr:/],
-*[highway][/^addr:/] {
+*[highway][/^addr:/][highway!=services][highway!=rest_area] {
   throwWarning: tr("{0} together with addr:*", "{0.key}");
 }
 
