@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -175,7 +176,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 fn += "." + extension;
             }
             file = new File(fn);
-            if (!confirmOverwrite(file))
+            // Confirm overwrite, except for OSX native file dialogs which already ask for confirmation (see #11362)
+            if (!(Main.isPlatformOsx() && FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get()) && !confirmOverwrite(file))
                 return null;
         }
         return file;
