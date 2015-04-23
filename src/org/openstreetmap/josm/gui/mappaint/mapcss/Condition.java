@@ -413,6 +413,7 @@ public abstract class Condition {
                 return ExpressionFactory.Functions.is_right_hand_traffic(e);
             case "unclosed_multipolygon":
                 return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() &&
+                        !e.osm.isIncomplete() && !((Relation) e.osm).hasIncompleteMembers() &&
                         !MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) e.osm).getOpenEnds().isEmpty();
             case "open_end":
                 // handling at org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector.MultipolygonOpenEndFinder
