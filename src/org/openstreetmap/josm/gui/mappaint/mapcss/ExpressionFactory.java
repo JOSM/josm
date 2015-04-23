@@ -27,11 +27,13 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Utils;
@@ -495,6 +497,34 @@ public final class ExpressionFactory {
          */
         public static String role(final Environment env) {
             return env.getRole();
+        }
+
+        /**
+         * Returns the area of a closed way in square meters or {@code null}.
+         * @param env the environment
+         * @return the area of a closed way in square meters or {@code null}
+         * @see Geometry#closedWayArea(Way)
+         */
+        public static Float areasize(final Environment env) {
+            if (env.osm instanceof Way && ((Way) env.osm).isClosed()) {
+                return (float) Geometry.closedWayArea((Way) env.osm);
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * Returns the length of the way in metres or {@code null}.
+         * @param env the environment
+         * @return the length of the way in metres or {@code null}.
+         * @see Way#getLength()
+         */
+        public static Float waylength(final Environment env) {
+            if (env.osm instanceof Way) {
+                return (float) ((Way) env.osm).getLength();
+            } else {
+                return null;
+            }
         }
 
         /**
