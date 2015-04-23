@@ -32,7 +32,13 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
         try {
-            if (Main.pref.getBoolean("remotecontrol.import.interactive", true)) {
+            if (suitableDownloadTasks.isEmpty()) {
+                // It should maybe be better to reject the request in that case ?
+                // For compatibility reasons with older instances of JOSM, arbitrary choice of DownloadOsmTask
+                // As of 2015-04, Overpass Turbo requires this branch of code ...
+                Main.debug("Remote control, /import: defaulting to DownloadOsmTask");
+                new DownloadOsmTask().loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
+            } else if (Main.pref.getBoolean("remotecontrol.import.interactive", true)) {
                 // OpenLocationAction queries the user if more than one task is suitable
                 new OpenLocationAction().openUrl(isLoadInNewLayer(), url.toExternalForm());
             } else {
@@ -104,10 +110,5 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
         }
         // Find download tasks for the given URL
         suitableDownloadTasks = Main.main.menu.openLocation.findDownloadTasks(urlString, true);
-        if (suitableDownloadTasks.isEmpty()) {
-            // It should maybe be better to reject the request in that case ?
-            // For compatibility reasons with older instances of JOSM, arbitrary choice of DownloadOsmTask
-            suitableDownloadTasks.add(new DownloadOsmTask());
-        }
     }
 }
