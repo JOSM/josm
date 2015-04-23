@@ -20,6 +20,20 @@ public class RotationAngleTest {
     }
 
     @Test
+    public void testParseGrad() throws Exception {
+        assertThat(RotationAngle.buildStaticRotation("200grad").getRotationAngle(null), is(Math.PI));
+        assertThat(RotationAngle.buildStaticRotation("100grad").getRotationAngle(null), is(Math.PI / 2));
+        assertThat(RotationAngle.buildStaticRotation("400grad").getRotationAngle(null), is(Math.PI * 2));
+    }
+
+    @Test
+    public void testParseTurn() throws Exception {
+        assertThat(RotationAngle.buildStaticRotation("0.5turn").getRotationAngle(null), is(Math.PI));
+        assertThat(RotationAngle.buildStaticRotation("0.25turn").getRotationAngle(null), is(Math.PI / 2));
+        assertThat(RotationAngle.buildStaticRotation("1turn").getRotationAngle(null), is(Math.PI * 2));
+    }
+
+    @Test
     public void testParseCardinal() throws Exception {
         assertThat(RotationAngle.buildStaticRotation("south").getRotationAngle(null), is(Math.PI));
         assertThat(RotationAngle.buildStaticRotation("s").getRotationAngle(null), is(Math.PI));
