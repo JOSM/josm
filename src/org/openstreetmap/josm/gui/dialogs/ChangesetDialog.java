@@ -205,7 +205,6 @@ public class ChangesetDialog extends ToggleDialog{
 
         // -- launch changeset manager action
         launchChangesetManagerAction = new LaunchChangesetManagerAction();
-        cbInSelectionOnly.addItemListener(launchChangesetManagerAction);
 
         popupMenu = new ChangesetDialogPopup(lstInActiveDataLayer, lstInSelection);
 
@@ -461,14 +460,27 @@ public class ChangesetDialog extends ToggleDialog{
      * Show information about the currently selected changesets
      *
      */
-    class LaunchChangesetManagerAction extends AbstractAction implements ListSelectionListener, ItemListener {
+    class LaunchChangesetManagerAction extends AbstractAction {
         public LaunchChangesetManagerAction() {
             putValue(NAME, tr("Details"));
             putValue(SHORT_DESCRIPTION, tr("Opens the Changeset Manager window for the selected changesets"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "changesetmanager"));
         }
 
-        protected void launchChangesetManager(Collection<Integer> toSelect) {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            ChangesetListModel model = getCurrentChangesetListModel();
+            Set<Integer> sel = model.getSelectedChangesetIds();
+            LaunchChangesetManager.displayChangesets(sel);
+        }
+    }
+
+    /**
+     * A utility class to fetch changesets and display the changeset dialog.
+     */
+    public static class LaunchChangesetManager {
+
+        protected static void launchChangesetManager(Collection<Integer> toSelect) {
             ChangesetCacheManager cm = ChangesetCacheManager.getInstance();
             if (cm.isVisible()) {
                 cm.setExtendedState(Frame.NORMAL);
@@ -482,10 +494,11 @@ public class ChangesetDialog extends ToggleDialog{
             cm.setSelectedChangesetsById(toSelect);
         }
 
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            ChangesetListModel model = getCurrentChangesetListModel();
-            Set<Integer> sel = model.getSelectedChangesetIds();
+        /**
+         * Fetches changesets and display the changeset dialog.
+         * @param sel the changeset ids to fetch and display.
+         */
+        public static void displayChangesets(final Set<Integer> sel) {
             final Set<Integer> toDownload = new HashSet<>();
             if (!Main.isOffline(OnlineResource.OSM_API)) {
                 ChangesetCache cc = ChangesetCache.getInstance();
@@ -533,20 +546,12 @@ public class ChangesetDialog extends ToggleDialog{
                     GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {
-                            launchChangesetManager(toDownload);
+                            launchChangesetManager(sel);
                         }
                     });
                 }
             };
             Main.worker.submit(r);
-        }
-
-        @Override
-        public void itemStateChanged(ItemEvent arg0) {
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
         }
     }
 
