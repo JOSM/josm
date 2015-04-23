@@ -845,9 +845,6 @@ public class SearchCompiler {
         }
 
         private Nth(int nth, boolean modulo) throws ParseError {
-            if (nth <= 0) {
-                throw new ParseError(tr("Positive integer expected"));
-            }
             this.nth = nth;
             this.modulo = modulo;
         }
@@ -855,21 +852,30 @@ public class SearchCompiler {
         @Override
         public boolean match(OsmPrimitive osm) {
             for (OsmPrimitive p : osm.getReferrers()) {
-                Integer idx = null;
+                final int idx;
+                final int maxIndex;
                 if (p instanceof Way) {
                     Way w = (Way) p;
                     idx = w.getNodes().indexOf(osm);
+                    maxIndex = w.getNodesCount();
                 } else if (p instanceof Relation) {
                     Relation r = (Relation) p;
                     idx = r.getMemberPrimitivesList().indexOf(osm);
+                    maxIndex = r.getMembersCount();
+                } else {
+                    continue;
                 }
-                if (idx != null) {
-                    if (idx.intValue() == nth || (modulo && idx.intValue() % nth == 0)) {
-                        return true;
-                    }
-                }
+                if (nth < 0 && idx - maxIndex == nth) {
+                    return true;
+                } else if (idx == nth || (modulo && idx % nth == 0))
+                    return true;
             }
             return false;
+        }
+
+        @Override
+        public String toString() {
+            return "Nth{nth=" + nth + ", modulo=" + modulo + '}';
         }
     }
 
