@@ -617,6 +617,16 @@ public final class ExpressionFactory {
         }
 
         /**
+         * Determines if the objects {@code a} and {@code b} are not equal.
+         * @param a First object
+         * @param b Second object
+         * @return {@code false} if objects are equal, {@code true} otherwise
+         * @see Object#equals(Object)
+         */
+        public static boolean not_equal(Object a, Object b) {
+            return !equal(a,b);
+        }
+        /**
          * Determines whether the JOSM search with {@code searchStr} applies to the object.
          * @param env the environment
          * @param searchStr the search string
