@@ -15,6 +15,11 @@ import org.openstreetmap.josm.data.coor.LatLon;
 public final class Ellipsoid {
 
     /**
+     * Clarke 1866 ellipsoid
+     */
+    public static final Ellipsoid clarke1866 = Ellipsoid.create_a_b(6378206.4, 6356583.8);
+
+    /**
      * Clarke 1880 IGN (French national geographic institute)
      */
     public static final Ellipsoid clarkeIGN = Ellipsoid.create_a_b(6378249.2, 6356515.0);
