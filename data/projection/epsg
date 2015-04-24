@@ -1,3 +1,23 @@
+# NAD27(76) / MTM zone 8
+<2017> +proj=tmerc +lat_0=0 +lon_0=-73.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-75.5,40,-74,60  <>
+# NAD27(76) / MTM zone 9
+<2018> +proj=tmerc +lat_0=0 +lon_0=-76.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-78.5,40,-74.5,60  <>
+# NAD27(76) / MTM zone 10
+<2019> +proj=tmerc +lat_0=0 +lon_0=-79.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-81.5,40,-77.5,60  <>
+# NAD27(76) / MTM zone 11
+<2020> +proj=tmerc +lat_0=0 +lon_0=-82.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-84,40,-80.5,60  <>
+# NAD27(76) / MTM zone 12
+<2021> +proj=tmerc +lat_0=0 +lon_0=-81 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-83,40,-79,60  <>
+# NAD27(76) / MTM zone 13
+<2022> +proj=tmerc +lat_0=0 +lon_0=-84 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-86,40,-82,60  <>
+# NAD27(76) / MTM zone 14
+<2023> +proj=tmerc +lat_0=0 +lon_0=-87 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-89,40,-85,60  <>
+# NAD27(76) / MTM zone 15
+<2024> +proj=tmerc +lat_0=0 +lon_0=-90 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-92,40,-88,60  <>
+# NAD27(76) / MTM zone 16
+<2025> +proj=tmerc +lat_0=0 +lon_0=-93 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-95,40,-91,60  <>
+# NAD27(76) / MTM zone 17
+<2026> +proj=tmerc +lat_0=0 +lon_0=-96 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-96,40,-94,60  <>
 # Lambert 93 (France)
 <2154> +proj=lcc +lat_0=46.5 +lat_1=44 +lat_2=49 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,41,10.2,51  <>
 # PUWG 2000 Zone 5 (Poland)
