@@ -87,7 +87,7 @@ public class RelationSorter {
 
         @Override
         public boolean acceptsMember(RelationMember m) {
-            return "platform".equals(m.getRole()) || "stop".equals(m.getRole());
+            return m.getRole() != null && m.getRole().startsWith("platform") || m.getRole().startsWith("stop");
         }
 
         @Override
