@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage
 
 import javax.imageio.ImageIO
 
+import groovy.json.JsonBuilder
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Version
 import org.openstreetmap.josm.data.coor.LatLon
@@ -234,69 +235,59 @@ class taginfoextract {
         parse_style_sheet()
         collect_tags()
 
-        def datetime = new Date().format("yyyyMMdd'T'hhmmssZ")
-        output """{
-                |  "data_format": 1,
-                |  "data_updated": "${datetime}",
-                |  "project": {
-                |    "name": "JOSM main mappaint style",
-                |    "description": "Tags supported by the main mappaint style in the OSM editor JOSM",
-                |    "project_url": "http://josm.openstreetmap.de/",
-                |    "icon_url": "http://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png",
-                |    "contact_name": "JOSM developer team",
-                |    "contact_email": "josm-dev@openstreetmap.org"
-                |  },
-                |  "tags": [
-                |""".stripMargin()
-        // another optional field is "data_url": ...
-
-        def sep = ""
-        for (tag in tags) {
+        def tags = tags.collect {
+            def tag = it
             def types = []
             def final_url = null
 
             def node_url = new NodeChecker(tag).find_url(true)
             if (node_url) {
-                types += '"node"'
+                types += 'node'
                 final_url = node_url
             }
             def way_url = new WayChecker(tag).find_url(final_url == null)
             if (way_url) {
-                types += '"way"'
+                types += 'way'
                 if (!final_url) {
                     final_url = way_url
                 }
             }
             def area_url = new AreaChecker(tag).find_url(final_url == null)
             if (area_url) {
-                types += '"area"'
+                types += 'area'
                 if (!final_url) {
                     final_url = area_url
                 }
             }
 
-            output """${sep}    {
-                     |      "key": "${tag[0]}",
-                     |      "value": "${tag[1]}",
-                     |      "object_types": ${types}""".stripMargin()
-            if (final_url != null) {
-                output """,
-                     |      "icon_url": "${final_url}"
-                     |    }""".stripMargin()
-            } else {
-                output """
-                     |    }""".stripMargin()
-            }
-            sep = ",\n"
+            def obj = [key: tag[0], value: tag[1]]
+            if (types) obj += [object_types: types]
+            if (final_url) obj += [icon_url: final_url]
+            obj
         }
-        output """
-        |  ]
-        |}
-        |""".stripMargin()
+
+        def json = get_json("JOSM main mappaint style", "Tags supported by the main mappaint style in the OSM editor JOSM", tags)
 
         if (output_file != null) {
+            json.writeTo(output_file)
             output_file.close()
+        } else {
+            print json.toPrettyString()
         }
+    }
+
+    static JsonBuilder get_json(name, description, tags) {
+        def json = new JsonBuilder()
+        def project = [
+                name: name,
+                description: description,
+                project_url: "http://josm.openstreetmap.de/",
+                icon_url: "http://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png",
+                contact_name: "JOSM developer team",
+                contact_email: "josm-dev@openstreetmap.org",
+        ]
+        json data_format: 1, data_updated: new Date().format("yyyyMMdd'T'hhmmssZ"), project: project, tags: tags
+        return json
     }
 
     /**
@@ -372,25 +363,6 @@ class taginfoextract {
                 }
             }
         }
-    }
-
-    /**
-     * Write the JSON output (either to file or to command line).
-     */
-    def output(x) {
-        if (output_file != null) {
-            output_file.write(x)
-        } else {
-            print x
-        }
-    }
-
-    static def err_println(s) {
-        System.err.println(s);
-    }
-
-    static def err_print(s) {
-        System.err.print(s);
     }
 
 }
