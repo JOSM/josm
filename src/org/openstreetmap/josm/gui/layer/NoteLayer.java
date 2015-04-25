@@ -1,10 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -17,10 +16,9 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JTextArea;
+import javax.swing.JToolTip;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveActionBase;
@@ -30,12 +28,12 @@ import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.dialogs.NotesDialog;
 import org.openstreetmap.josm.io.NoteExporter;
+import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -45,12 +43,6 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public class NoteLayer extends AbstractModifiableLayer implements MouseListener {
 
     private final NoteData noteData;
-
-    /**
-     * Property for note comment background
-     */
-    public static final ColorProperty PROP_BACKGROUND_COLOR = new ColorProperty(
-            marktr("Note comment background"), Color.decode("#b8cfe5"));
 
     /**
      * Create a new note layer with a set of notes
@@ -101,7 +93,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
     }
 
     @Override
-    public void paint(Graphics2D g, final MapView mv, Bounds box) {
+    public void paint(Graphics2D g, MapView mv, Bounds box) {
         for (Note note : noteData.getNotes()) {
             Point p = mv.getPoint(note.getLatLon());
 
@@ -118,34 +110,31 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             g.drawImage(icon.getImage(), p.x - (width / 2), p.y - height, Main.map.mapView);
         }
         if (noteData.getSelectedNote() != null) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder("<html>");
             sb.append(tr("Note"));
             sb.append(" ").append(noteData.getSelectedNote().getId());
             for (NoteComment comment : noteData.getSelectedNote().getComments()) {
                 String commentText = comment.getText();
                 //closing a note creates an empty comment that we don't want to show
                 if (commentText != null && commentText.trim().length() > 0) {
-                    sb.append("\n\n");
-                    String userName = comment.getUser().getName().trim();
-                    sb.append(userName.isEmpty() ? "<Anonymous>" : userName);
+                    sb.append("<hr/>");
+                    String userName = XmlWriter.encode(comment.getUser().getName());
+                    if (userName == null || userName.trim().length() == 0) {
+                        userName = "&lt;Anonymous&gt;";
+                    }
+                    sb.append(userName);
                     sb.append(" on ");
                     sb.append(DateUtils.getDateFormat(DateFormat.MEDIUM).format(comment.getCommentTimestamp()));
-                    sb.append(":\n");
-                    sb.append(comment.getText().trim());
+                    sb.append(":<br/>");
+                    String htmlText = XmlWriter.encode(comment.getText(), true);
+                    htmlText = htmlText.replace("&#xA;", "<br/>"); //encode method leaves us with entity instead of \n
+                    htmlText = htmlText.replace("/", "/\u200b"); //zero width space to wrap long URLs (see #10864)
+                    sb.append(htmlText);
                 }
             }
-            JTextArea toolTip = new JTextArea() {
-                {
-                    setColumns(Math.min(480, mv.getWidth() / 2) / getColumnWidth());
-                    setSize(getPreferredSize().width + 6, getPreferredSize().height + 6); // +6 for border
-                }
-            };
-            toolTip.setText(sb.toString());
-            toolTip.setLineWrap(true);
-            toolTip.setWrapStyleWord(true);
-            toolTip.setBackground(PROP_BACKGROUND_COLOR.get());
-            toolTip.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-
+            sb.append("</html>");
+            JToolTip toolTip = new JToolTip();
+            toolTip.setTipText(sb.toString());
             Point p = mv.getPoint(noteData.getSelectedNote().getLatLon());
 
             g.setColor(ColorHelper.html2color(Main.pref.get("color.selected")));
@@ -154,7 +143,23 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             int tx = p.x + (NotesDialog.ICON_SMALL_SIZE / 2) + 5;
             int ty = p.y - NotesDialog.ICON_SMALL_SIZE - 1;
             g.translate(tx, ty);
-            toolTip.paint(g);
+
+            //Carried over from the OSB plugin. Not entirely sure why it is needed
+            //but without it, the tooltip doesn't get sized correctly
+            for (int x = 0; x < 2; x++) {
+                Dimension d = toolTip.getUI().getPreferredSize(toolTip);
+                d.width = Math.min(d.width, (mv.getWidth() / 2));
+                if (d.width > 0 && d.height > 0) {
+                    toolTip.setSize(d);
+                    try {
+                        toolTip.paint(g);
+                    } catch (IllegalArgumentException e) {
+                        // See #11123 - https://bugs.openjdk.java.net/browse/JDK-6719550
+                        // Ignore the exception, as Netbeans does: http://hg.netbeans.org/main-silver/rev/c96f4d5fbd20
+                        Main.error(e, false);
+                    }
+                }
+            }
             g.translate(-tx, -ty);
         }
     }
