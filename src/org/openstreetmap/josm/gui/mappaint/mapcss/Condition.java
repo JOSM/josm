@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
@@ -339,8 +340,15 @@ public abstract class Condition {
             }
         }
 
-        public Tag asTag() {
-            return new Tag(label);
+        public Tag asTag(OsmPrimitive p) {
+            String key = label;
+            if (KeyMatchType.REGEX.equals(matchType)) {
+                final Collection<String> matchingKeys = Utils.filter(p.keySet(), containsPattern);
+                if (!matchingKeys.isEmpty()) {
+                    key = matchingKeys.iterator().next();
+                }
+            }
+            return new Tag(key, p.get(key));
         }
 
         @Override
