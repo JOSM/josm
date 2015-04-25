@@ -119,14 +119,21 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         if (mapImage == null) {
             symbol = createSymbol(env);
         }
-        final String rotationString = c.get("icon-rotation", null, String.class);
         RotationAngle rotationAngle = null;
-        if ("way".equalsIgnoreCase(rotationString)) {
-            rotationAngle = RotationAngle.buildWayDirectionRotation();
-        } else if (rotationString != null) {
-            try {
-                rotationAngle = RotationAngle.buildStaticRotation(rotationString);
-            } catch (RuntimeException ignore) {
+        final Float angle = c.get(ICON_ROTATION, null, Float.class, true);
+        if (angle != null) {
+            rotationAngle = RotationAngle.buildStaticRotation(angle);
+        } else {
+            final Keyword rotationKW = c.get(ICON_ROTATION, null, Keyword.class);
+            if (rotationKW != null) {
+                if ("way".equals(rotationKW.val)) {
+                    rotationAngle = RotationAngle.buildWayDirectionRotation();
+                } else {
+                    try {
+                        rotationAngle = RotationAngle.buildStaticRotation(rotationKW.val);
+                    } catch (IllegalArgumentException ignore) {
+                    }
+                }
             }
         }
 
