@@ -1,18 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Comparator;
-
-import org.junit.Test;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmUtils;
-import org.openstreetmap.josm.data.osm.Way;
 
 /**
  * Various utils, useful for unit tests.
@@ -49,20 +41,6 @@ public class TestUtils {
      */
     public static String getRegressionDataFile(int ticketid, String filename) {
         return getRegressionDataDir(ticketid) + '/' + filename;
-    }
-
-    @Test
-    public void testCreatePrimitive() throws Exception {
-        final OsmPrimitive p = OsmUtils.createPrimitive("way name=Foo railway=rail");
-        assertTrue(p instanceof Way);
-        assertThat(p.keySet().size(), is(2));
-        assertThat(p.get("name"), is("Foo"));
-        assertThat(p.get("railway"), is("rail"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCreatePrimitiveFail() throws Exception {
-        OsmUtils.createPrimitive("noway name=Foo");
     }
 
     /**

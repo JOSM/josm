@@ -66,13 +66,13 @@ public final class OsmUtils {
         final String[] x = assertion.split("\\s+", 2);
         final OsmPrimitive p = "n".equals(x[0]) || "node".equals(x[0])
                 ? new Node(LatLon.ZERO)
-                : "w".equals(x[0]) || "way".equals(x[0])
+                : "w".equals(x[0]) || "way".equals(x[0]) || /*for MapCSS related usage*/ "area".equals(x[0])
                 ? new Way()
                 : "r".equals(x[0]) || "relation".equals(x[0])
                 ? new Relation()
                 : null;
         if (p == null) {
-            throw new IllegalArgumentException("Expecting n/node/w/way/r/relation, but got " + x[0]);
+            throw new IllegalArgumentException("Expecting n/node/w/way/r/relation/area, but got '" + x[0] + "'");
         }
         for (final Map.Entry<String, String> i : TextTagParser.readTagsFromText(x[1]).entrySet()) {
             p.put(i.getKey(), i.getValue());
