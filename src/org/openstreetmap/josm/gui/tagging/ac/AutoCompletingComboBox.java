@@ -64,6 +64,8 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
 
         @Override
         public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+            // TODO get rid of code duplication w.r.t. AutoCompletingTextField.AutoCompletionDocument.insertString
+
             if (selecting || (offs == 0 && str.equals(getText(0, getLength()))))
                 return;
             if (maxTextLength > -1 && str.length()+getLength() > maxTextLength)
@@ -81,6 +83,14 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             // input method for non-latin characters (e.g. scim)
             if (a != null && a.isDefined(StyleConstants.ComposedTextAttribute))
                 return;
+
+            // if the current offset isn't at the end of the document we don't autocomplete.
+            // If a highlighted autocompleted suffix was present and we get here Swing has
+            // already removed it from the document. getLength() therefore doesn't include the
+            // autocompleted suffix.
+            if (offs + str.length() < getLength()) {
+                return;
+            }
 
             int size = getLength();
             int start = offs+str.length();
