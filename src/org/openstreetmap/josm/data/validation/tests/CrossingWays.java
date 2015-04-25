@@ -61,7 +61,7 @@ public abstract class CrossingWays extends Test {
         public boolean isPrimitiveUsable(OsmPrimitive w) {
             return super.isPrimitiveUsable(w)
                     && !isProposedOrAbandoned(w)
-                    && (w.hasKey(HIGHWAY)
+                    && ((w.hasKey(HIGHWAY) && !w.hasTag(HIGHWAY, "rest_area", "services"))
                     || w.hasKey(WATERWAY)
                     || (w.hasKey(RAILWAY) && !isSubwayOrTram(w))
                     || isCoastline(w)
