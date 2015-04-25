@@ -40,26 +40,11 @@ public abstract class RotationAngle {
      * Parses the rotation angle from the specified {@code string}.
      */
     public static RotationAngle buildStaticRotation(final String string) {
-        final Pattern radiansPattern = Pattern.compile("(\\d+\\.?\\d*)\\s*(rad)?");
-        final Pattern degreesPattern = Pattern.compile("(\\d+\\.?\\d*)\\s*(deg|°)");
-        final Pattern gradianPattern = Pattern.compile("(\\d+\\.?\\d*)\\s*(grad)");
-        final Pattern turnPattern = Pattern.compile("(\\d+\\.?\\d*)\\s*(turn)");
         final double value;
-        Matcher matcher;
-        if ((matcher = radiansPattern.matcher(string)).matches()) {
-            value = Double.parseDouble(matcher.group(1));
-        } else if ((matcher = degreesPattern.matcher(string)).matches()) {
-            value = Math.toRadians(Double.parseDouble(matcher.group(1)));
-        } else if ((matcher = gradianPattern.matcher(string)).matches()) {
-            value = Double.parseDouble(matcher.group(1)) / 200 * Math.PI;
-        } else if ((matcher = turnPattern.matcher(string)).matches()) {
-            value = Double.parseDouble(matcher.group(1)) * 2 * Math.PI;
-        } else {
-            try {
-                value = parseCardinalRotation(string);
-            } catch (IllegalArgumentException ignore) {
-                throw new IllegalArgumentException("Invalid string: " + string);
-            }
+        try {
+            value = parseCardinalRotation(string);
+        } catch (IllegalArgumentException ignore) {
+            throw new IllegalArgumentException("Invalid string: " + string);
         }
         return buildStaticRotation(value);
     }
