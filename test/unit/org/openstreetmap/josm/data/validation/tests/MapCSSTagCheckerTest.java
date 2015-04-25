@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,8 +17,13 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.PseudoCommand;
+import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
 
@@ -48,9 +54,9 @@ public class MapCSSTagCheckerTest {
         final MapCSSTagChecker.TagCheck check = checks.get(0);
         assertThat(check, notNullValue());
         assertThat(check.getDescription(null), is("{0.key}=null is deprecated"));
-        assertThat(check.change.get(0).apply(null), is(new Tag("{0.key}")));
-        assertThat(check.change.get(1).apply(null), is(new Tag("natural", "wetland")));
-        assertThat(check.change.get(2).apply(null), is(new Tag("wetland", "marsh")));
+        assertThat(check.fixCommands.get(0).toString(), is("fixRemove: {0.key}"));
+        assertThat(check.fixCommands.get(1).toString(), is("fixAdd: natural=wetland"));
+        assertThat(check.fixCommands.get(2).toString(), is("fixAdd: wetland=marsh"));
         final Node n1 = new Node();
         n1.put("natural", "marsh");
         assertTrue(check.evaluate(n1));
@@ -64,6 +70,21 @@ public class MapCSSTagCheckerTest {
         assertFalse(check.evaluate(n2));
         assertThat(MapCSSTagChecker.TagCheck.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}"),
                 is("The key is natural and the value is marsh"));
+    }
+
+    @Test
+    public void test10913() throws Exception {
+        final OsmPrimitive p = OsmUtils.createPrimitive("way highway=tertiary construction=yes");
+        final TagCheck check = TagCheck.readMapCSS(new StringReader("way {" +
+                "throwError: \"error\";" +
+                "fixChangeKey: \"highway => construction\";\n" +
+                "fixAdd: \"highway=construction\";\n" +
+                "}")).get(0);
+        final Command command = check.fixPrimitive(p);
+        assertThat(command instanceof SequenceCommand, is(true));
+        final Iterator<PseudoCommand> it = command.getChildren().iterator();
+        assertThat(it.next() instanceof ChangePropertyKeyCommand, is(true));
+        assertThat(it.next() instanceof ChangePropertyCommand, is(true));
     }
 
     @Test
