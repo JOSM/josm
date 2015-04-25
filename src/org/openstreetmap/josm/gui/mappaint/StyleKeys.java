@@ -20,6 +20,7 @@ public interface StyleKeys {
     String ICON_OFFSET_X = "icon-offset-x";
     String ICON_OFFSET_Y = "icon-offset-y";
     String ICON_OPACITY = "icon-opacity";
+    String ICON_ROTATION = "icon-rotation";
     String ICON_WIDTH = "icon-width";
     String LINECAP = "linecap";
     String LINEJOIN = "linejoin";

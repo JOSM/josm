@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory.NullExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.LiteralExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
@@ -183,6 +184,7 @@ TOKEN:
 |   < DOLLAR: "$" >
 |   < CARET: "^" >
 |   < FULLSTOP: "." >
+|   < DEG: "°" >
 |   < ELEMENT_OF: "∈" >
 |   < CROSSING: "⧉" >
 |   < COMMENT_START: "/*" > : COMMENT
@@ -1027,7 +1029,12 @@ Expression primary() :
     LOOKAHEAD(3) // both function and identifier start with an identifier (+ optional whitespace)
         fn=function() { return fn; }
     |
-        lit=literal() { return new LiteralExpression(lit); }
+        lit=literal()
+        { 
+            if (lit == null)
+                return NullExpression.INSTANCE;
+            return new LiteralExpression(lit);
+        }
     |
         <LPAR> w() nested=expression() <RPAR> { return nested; }
 }
@@ -1053,7 +1060,7 @@ Object literal() :
 {
     String val, pref;
     Token t;
-    float f;
+    Float f;
 }
 {
         LOOKAHEAD(2)
@@ -1066,9 +1073,51 @@ Object literal() :
     |
         <PLUS> f=ufloat() { return new Instruction.RelativeFloat(f); }
     |
+        LOOKAHEAD(2)
+        f=ufloat_unit() { return f; }
+    |
         f=ufloat() { return f; }
     |
         t=<HEXCOLOR> { return ColorHelper.html2color(t.image); }
+}
+
+/**
+ * Number followed by a unit.
+ *
+ * Returns angles in radians and lengths in pixels.
+ */
+Float ufloat_unit() :
+{
+    float f;
+    String u;
+}
+{
+    f=ufloat() ( u=ident() | <DEG> { u = "°"; } )
+    {
+        Double m = unit_factor(u);
+        if (m == null)
+            return null;
+        return (float) (f * m);
+    }
+}
+
+JAVACODE
+private Double unit_factor(String unit) {
+    switch (unit) {
+        case "deg":
+        case "°": return Math.PI / 180;
+        case "rad": return 1.;
+        case "grad": return Math.PI / 200;
+        case "turn": return 2 * Math.PI;
+        case "px": return 1.;
+        case "cm": return 96/2.54;
+        case "mm": return 9.6/2.54;
+        case "in": return 96.;
+        case "q": return 2.4/2.54;
+        case "pc": return 16.;
+        case "pt": return 96./72;
+        default: return null;
+    }
 }
 
 JAVACODE
