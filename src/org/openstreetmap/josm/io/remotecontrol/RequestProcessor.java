@@ -91,8 +91,7 @@ public class RequestProcessor extends Thread {
      * @param command The command to handle.
      * @param handler The additional request handler.
      */
-    static void addRequestHandlerClass(String command,
-            Class<? extends RequestHandler> handler) {
+    public static void addRequestHandlerClass(String command, Class<? extends RequestHandler> handler) {
         addRequestHandlerClass(command, handler, false);
     }
 
