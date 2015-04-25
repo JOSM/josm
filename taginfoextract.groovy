@@ -4,7 +4,8 @@
  *
  * Run from the base directory of a JOSM checkout:
  *
- * groovy -cp dist/josm-custom.jar taginfoextract.groovy
+ * groovy -cp dist/josm-custom.jar taginfoextract.groovy -t mappaint
+ * groovy -cp dist/josm-custom.jar taginfoextract.groovy -t presets
  */
 import java.awt.image.BufferedImage
 
@@ -29,7 +30,12 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
+import org.openstreetmap.josm.gui.tagging.TaggingPreset
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems
+import org.openstreetmap.josm.gui.tagging.TaggingPresetReader
+import org.openstreetmap.josm.gui.tagging.TaggingPresetType
 import org.openstreetmap.josm.io.CachedFile
+import org.openstreetmap.josm.tools.Utils
 
 class taginfoextract {
 
@@ -73,22 +79,6 @@ class taginfoextract {
             }
             env.layer = "default"
             return env
-        }
-
-        /**
-         * Determine full image url (can refer to JOSM or OSM repository).
-         */
-        def find_image_url(path) {
-            def f = new File("${base_dir}/images/styles/standard/${path}")
-            if (f.exists()) {
-                def rev = osm_svn_revision()
-                return "http://trac.openstreetmap.org/export/${rev}/subversion/applications/share/map-icons/classic.small/${path}"
-            }
-            f = new File("${base_dir}/images/${path}")
-            if (f.exists()) {
-                return "http://josm.openstreetmap.de/export/${josm_svn_revision}/josm/trunk/images/${path}"
-            }
-            assert false, "Cannot find image url for ${path}"
         }
 
         /**
@@ -188,7 +178,15 @@ class taginfoextract {
     static main(def args) {
         parse_command_line_arguments(args)
         def script = new taginfoextract()
-        script.run()
+        if (!options.t || options.t == 'mappaint') {
+            script.run()
+        } else if (options.t == 'presets') {
+            script.run_presets()
+        } else {
+            System.err.println 'Invalid type ' + options.t
+            System.exit(1)
+        }
+
         System.exit(0)
     }
 
@@ -200,9 +198,10 @@ class taginfoextract {
             header:"Options:",
             footer:"[inputfile]           the file to process (optional, default is 'resource://styles/standard/elemstyles.mapcss')")
         cli.o(args:1, argName: "file", "output file (json), - prints to stdout (default: -)")
-        cli._(longOpt:'svnrev', args:1, argName:"revision", "corresponding revision of the repository http://svn.openstreetmap.org/ (optional, current revision is read from the local checkout or from the web if not given, see --svnweb)")
+        cli.t(args:1, argName: "type", "the project type to be generated")
+        cli._(longOpt:'svnrev', args:1, argName:"revision", "corresponding revision of the repository https://svn.openstreetmap.org/ (optional, current revision is read from the local checkout or from the web if not given, see --svnweb)")
         cli._(longOpt:'imgdir', args:1, argName:"directory", "directory to put the generated images in (default: ./taginfo-img)")
-        cli._(longOpt:'svnweb', 'fetch revision of the repository http://svn.openstreetmap.org/ from web and not from the local repository')
+        cli._(longOpt:'svnweb', 'fetch revision of the repository https://svn.openstreetmap.org/ from web and not from the local repository')
         cli._(longOpt:'imgurlprefix', args:1, argName:'prefix', 'image URLs prefix for generated image files')
         cli.h(longOpt:'help', "show this help")
         options = cli.parse(args)
@@ -227,6 +226,34 @@ class taginfoextract {
         if (!image_dir_file.exists()) {
             image_dir_file.mkdirs()
         }
+    }
+
+    void run_presets() {
+        init()
+        def tags = []
+        def presets = TaggingPresetReader.readAll(input_file, true)
+        for (TaggingPreset preset : presets) {
+            for (TaggingPresetItems.KeyedItem item : Utils.filteredCollection(preset.data, TaggingPresetItems.KeyedItem.class)) {
+                def values
+                switch (TaggingPresetItems.MatchType.ofString(item.match)) {
+                    case TaggingPresetItems.MatchType.KEY_REQUIRED: values = item.getValues(); break;
+                    case TaggingPresetItems.MatchType.KEY_VALUE_REQUIRED: values = item.getValues(); break;
+                    default: values = [];
+                }
+                for (String value : values) {
+                    def tag = [
+                            description: preset.name,
+                            key: item.key,
+                            value: value,
+                            type: preset.types.collect {it == TaggingPresetType.CLOSEDWAY ? "area" : it.toString().toLowerCase()},
+                    ]
+                    if (preset.iconName) tag += [icon: find_image_url(preset.iconName)]
+                    tags += tag
+                }
+            }
+        }
+
+        write_json("JOSM main presets", "Tags supported by the default presets in the OSM editor JOSM", tags)
     }
 
     void run() {
@@ -265,7 +292,20 @@ class taginfoextract {
             obj
         }
 
-        def json = get_json("JOSM main mappaint style", "Tags supported by the main mappaint style in the OSM editor JOSM", tags)
+        write_json("JOSM main mappaint style", "Tags supported by the main mappaint style in the OSM editor JOSM", tags)
+    }
+
+    void write_json(name, description, tags) {
+        def json = new JsonBuilder()
+        def project = [
+                name: name,
+                description: description,
+                project_url: "https://josm.openstreetmap.de/",
+                icon_url: "https://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png",
+                contact_name: "JOSM developer team",
+                contact_email: "josm-dev@openstreetmap.org",
+        ]
+        json data_format: 1, data_updated: new Date().format("yyyyMMdd'T'hhmmssZ"), project: project, tags: tags
 
         if (output_file != null) {
             json.writeTo(output_file)
@@ -275,20 +315,6 @@ class taginfoextract {
         }
     }
 
-    static JsonBuilder get_json(name, description, tags) {
-        def json = new JsonBuilder()
-        def project = [
-                name: name,
-                description: description,
-                project_url: "http://josm.openstreetmap.de/",
-                icon_url: "http://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png",
-                contact_name: "JOSM developer team",
-                contact_email: "josm-dev@openstreetmap.org",
-        ]
-        json data_format: 1, data_updated: new Date().format("yyyyMMdd'T'hhmmssZ"), project: project, tags: tags
-        return json
-    }
-
     /**
      * Initialize the script.
      */
@@ -296,12 +322,15 @@ class taginfoextract {
         Main.initApplicationPreferences()
         Main.pref.enableSaveOnPut(false)
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"))
+        System.setProperty("josm.home", File.createTempDir().toString());
 
         josm_svn_revision = Version.getInstance().getVersion()
         assert josm_svn_revision != Version.JOSM_UNKNOWN_VERSION
 
-        if (options.arguments().size() == 0) {
+        if (options.arguments().size() == 0 && (!options.t || options.t == 'mappaint')) {
             input_file = "resource://styles/standard/elemstyles.mapcss"
+        } else if (options.arguments().size() == 0 && options.t == 'presets') {
+            input_file = "resource://data/defaultpresets.xml"
         } else {
             input_file = options.arguments()[0]
         }
@@ -313,7 +342,23 @@ class taginfoextract {
     }
 
     /**
-     * Get revision for the repository http://svn.openstreetmap.org.
+     * Determine full image url (can refer to JOSM or OSM repository).
+     */
+    def find_image_url(path) {
+        def f = new File("${base_dir}/images/styles/standard/${path}")
+        if (f.exists()) {
+            def rev = osm_svn_revision()
+            return "https://trac.openstreetmap.org/export/${rev}/subversion/applications/share/map-icons/classic.small/${path}"
+        }
+        f = new File("${base_dir}/images/${path}")
+        if (f.exists()) {
+            return "https://josm.openstreetmap.de/export/${josm_svn_revision}/josm/trunk/images/${path}"
+        }
+        assert false, "Cannot find image url for ${path}"
+    }
+
+    /**
+     * Get revision for the repository https://svn.openstreetmap.org.
      */
     def osm_svn_revision() {
         if (cached_svnrev != null) return cached_svnrev
@@ -323,7 +368,7 @@ class taginfoextract {
         }
         def xml
         if (options.svnweb) {
-            xml = "svn info --xml http://svn.openstreetmap.org/applications/share/map-icons/classic.small".execute().text
+            xml = "svn info --xml https://svn.openstreetmap.org/applications/share/map-icons/classic.small".execute().text
         } else {
             xml = "svn info --xml ${base_dir}/images/styles/standard/".execute().text
         }
