@@ -119,25 +119,30 @@ public class BoxTextElemStyle extends ElemStyle {
 
         HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
         Keyword hAlignKW = c.get(TEXT_ANCHOR_HORIZONTAL, Keyword.RIGHT, Keyword.class);
-        if ("left".equals(hAlignKW.val)) {
-            hAlign = HorizontalTextAlignment.LEFT;
-        } else if ("center".equals(hAlignKW.val)) {
-            hAlign = HorizontalTextAlignment.CENTER;
-        } else if ("right".equals(hAlignKW.val)) {
-            hAlign = HorizontalTextAlignment.RIGHT;
+        switch (hAlignKW.val) {
+            case "left":
+                hAlign = HorizontalTextAlignment.LEFT;
+                break;
+            case "center":
+                hAlign = HorizontalTextAlignment.CENTER;
         }
         VerticalTextAlignment vAlign = VerticalTextAlignment.BOTTOM;
-        String vAlignStr = c.get(TEXT_ANCHOR_VERTICAL, Keyword.BOTTOM, Keyword.class).val;
-        if ("above".equals(vAlignStr)) {
-            vAlign = VerticalTextAlignment.ABOVE;
-        } else if ("top".equals(vAlignStr)) {
-            vAlign = VerticalTextAlignment.TOP;
-        } else if ("center".equals(vAlignStr)) {
-            vAlign = VerticalTextAlignment.CENTER;
-        } else if ("bottom".equals(vAlignStr)) {
-            vAlign = VerticalTextAlignment.BOTTOM;
-        } else if ("below".equals(vAlignStr)) {
-            vAlign = VerticalTextAlignment.BELOW;
+        Keyword vAlignKW = c.get(TEXT_ANCHOR_VERTICAL, Keyword.BOTTOM, Keyword.class);
+        switch (vAlignKW.val) {
+            case "bottom":
+                vAlign = VerticalTextAlignment.BOTTOM;
+                break;
+            case "above":
+                vAlign = VerticalTextAlignment.ABOVE;
+                break;
+            case "top":
+                vAlign = VerticalTextAlignment.TOP;
+                break;
+            case "center":
+                vAlign = VerticalTextAlignment.CENTER;
+                break;
+            case "below":
+                vAlign = VerticalTextAlignment.BELOW;
         }
 
         return new BoxTextElemStyle(c, text, boxProvider, box, hAlign, vAlign);
