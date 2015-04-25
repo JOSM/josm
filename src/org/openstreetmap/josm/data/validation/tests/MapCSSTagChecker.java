@@ -146,7 +146,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     static abstract class FixCommand {
         /**
          * Creates the fixing {@link Command} for the given primitive. The {@code matchingSelector} is used to
-         * evaluate placeholders (cf. {@link org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck#insertArguments(Selector, String)}).
+         * evaluate placeholders (cf. {@link org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck#insertArguments(Selector, String, OsmPrimitive)}).
          */
         abstract Command createCommand(final OsmPrimitive p, final Selector matchingSelector);
 
@@ -166,7 +166,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             } else {
                 return null;
             }
-            return TagCheck.insertArguments(matchingSelector, s);
+            return TagCheck.insertArguments(matchingSelector, s, p);
         }
 
         /**
@@ -385,11 +385,11 @@ public class MapCSSTagChecker extends Test.TagTest {
          * Determines the {@code index}-th key/value/tag (depending on {@code type}) of the
          * {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector}.
          */
-        static String determineArgument(Selector.GeneralSelector matchingSelector, int index, String type) {
+        static String determineArgument(Selector.GeneralSelector matchingSelector, int index, String type, OsmPrimitive p) {
             try {
                 final Condition c = matchingSelector.getConditions().get(index);
                 final Tag tag = c instanceof Condition.KeyCondition
-                        ? ((Condition.KeyCondition) c).asTag()
+                        ? ((Condition.KeyCondition) c).asTag(p)
                         : c instanceof Condition.SimpleKeyValueCondition
                         ? ((Condition.SimpleKeyValueCondition) c).asTag()
                         : c instanceof Condition.KeyValueCondition
@@ -416,16 +416,16 @@ public class MapCSSTagChecker extends Test.TagTest {
          * Replaces occurrences of <code>{i.key}</code>, <code>{i.value}</code>, <code>{i.tag}</code> in {@code s} by the corresponding
          * key/value/tag of the {@code index}-th {@link Condition} of {@code matchingSelector}.
          */
-        static String insertArguments(Selector matchingSelector, String s) {
+        static String insertArguments(Selector matchingSelector, String s, OsmPrimitive p) {
             if (s != null && matchingSelector instanceof Selector.ChildOrParentSelector) {
-                return  insertArguments(((Selector.ChildOrParentSelector)matchingSelector).right, s);
+                return insertArguments(((Selector.ChildOrParentSelector)matchingSelector).right, s, p);
             } else if (s == null || !(matchingSelector instanceof GeneralSelector)) {
                 return s;
             }
             final Matcher m = Pattern.compile("\\{(\\d+)\\.(key|value|tag)\\}").matcher(s);
             final StringBuffer sb = new StringBuffer();
             while (m.find()) {
-                final String argument = determineArgument((Selector.GeneralSelector) matchingSelector, Integer.parseInt(m.group(1)), m.group(2));
+                final String argument = determineArgument((Selector.GeneralSelector) matchingSelector, Integer.parseInt(m.group(1)), m.group(2), p);
                 try {
                     // Perform replacement with null-safe + regex-safe handling
                     m.appendReplacement(sb, String.valueOf(argument).replace("^(", "").replace(")$", ""));
@@ -500,7 +500,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @return a description (possibly with alternative suggestions)
          */
         String getDescriptionForMatchingSelector(OsmPrimitive p, Selector matchingSelector) {
-            return insertArguments(matchingSelector, getDescription(p));
+            return insertArguments(matchingSelector, getDescription(p), p);
         }
 
         Severity getSeverity() {
