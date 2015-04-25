@@ -140,12 +140,97 @@ public class MapCSSTagChecker extends Test.TagTest {
         super(tr("Tag checker (MapCSS based)"), tr("This test checks for errors in tag keys and values."));
     }
 
+    /**
+     * Represents a fix to a validation test. The fixing {@link Command} can be obtained by {@link #createCommand(OsmPrimitive, Selector)}.
+     */
+    static abstract class FixCommand {
+        /**
+         * Creates the fixing {@link Command} for the given primitive. The {@code matchingSelector} is used to
+         * evaluate placeholders (cf. {@link org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck#insertArguments(Selector, String)}).
+         */
+        abstract Command createCommand(final OsmPrimitive p, final Selector matchingSelector);
+
+        private static void checkObject(final Object obj) {
+            CheckParameterUtil.ensureThat(obj instanceof Expression || obj instanceof String, "instance of Exception or String expected, but got " + obj);
+        }
+
+        /**
+         * Evaluates given object as {@link Expression} or {@link String} on the matched {@link OsmPrimitive} and {@code matchingSelector}.
+         */
+        private static String evaluateObject(final Object obj, final OsmPrimitive p, final Selector matchingSelector) {
+            final String s;
+            if (obj instanceof Expression) {
+                s = (String) ((Expression) obj).evaluate(new Environment().withPrimitive(p));
+            } else if (obj instanceof String) {
+                s = (String) obj;
+            } else {
+                return null;
+            }
+            return TagCheck.insertArguments(matchingSelector, s);
+        }
+
+        /**
+         * Creates a fixing command which executes a {@link ChangePropertyCommand} on the specified tag.
+         */
+        static FixCommand fixAdd(final Object obj) {
+            checkObject(obj);
+            return new FixCommand() {
+                @Override
+                Command createCommand(OsmPrimitive p, Selector matchingSelector) {
+                    final Tag tag = Tag.ofString(evaluateObject(obj, p, matchingSelector));
+                    return new ChangePropertyCommand(p, tag.getKey(), tag.getValue());
+                }
+
+                @Override
+                public String toString() {
+                    return "fixAdd: " + obj;
+                }
+            };
+
+        }
+
+        /**
+         * Creates a fixing command which executes a {@link ChangePropertyCommand} to delete the specified key.
+         */
+        static FixCommand fixRemove(final Object obj) {
+            checkObject(obj);
+            return new FixCommand() {
+                @Override
+                Command createCommand(OsmPrimitive p, Selector matchingSelector) {
+                    final String key = evaluateObject(obj, p, matchingSelector);
+                    return new ChangePropertyCommand(p, key, "");
+                }
+
+                @Override
+                public String toString() {
+                    return "fixRemove: " + obj;
+                }
+            };
+        }
+
+        /**
+         * Creates a fixing command which executes a {@link ChangePropertyKeyCommand} on the specified keys.
+         */
+        static FixCommand fixChangeKey(final String oldKey, final String newKey) {
+            return new FixCommand() {
+                @Override
+                Command createCommand(OsmPrimitive p, Selector matchingSelector) {
+                    return new ChangePropertyKeyCommand(p, oldKey, newKey);
+                }
+
+                @Override
+                public String toString() {
+                    return "fixChangeKey: " + oldKey + " => " + newKey;
+                }
+            };
+        }
+    }
+
     final MultiMap<String, TagCheck> checks = new MultiMap<>();
 
     static class TagCheck implements Predicate<OsmPrimitive> {
         protected final GroupedMapCSSRule rule;
-        protected final List<PrimitiveToTag> change = new ArrayList<>();
-        protected final Map<String, String> keyChange = new LinkedHashMap<>();
+        protected final List<FixCommand> fixCommands = new ArrayList<>();
         protected final List<String> alternatives = new ArrayList<>();
         protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<>();
         protected final Map<String, Boolean> assertions = new HashMap<>();
@@ -154,43 +239,6 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         TagCheck(GroupedMapCSSRule rule) {
             this.rule = rule;
-        }
-
-        /**
-         * A function mapping the matched {@link OsmPrimitive} to a {@link Tag}.
-         */
-        abstract static class PrimitiveToTag implements Utils.Function<OsmPrimitive, Tag> {
-
-            private PrimitiveToTag() {
-                // Hide implicit public constructor for utility class
-            }
-
-            /**
-             * Creates a new mapping from an {@code MapCSS} object.
-             * In case of an {@link Expression}, that is evaluated on the matched {@link OsmPrimitive}.
-             * In case of a {@link String}, that is "compiled" to a {@link Tag} instance.
-             */
-            static PrimitiveToTag ofMapCSSObject(final Object obj, final boolean keyOnly) {
-                if (obj instanceof Expression) {
-                    return new PrimitiveToTag() {
-                        @Override
-                        public Tag apply(OsmPrimitive p) {
-                            final String s = (String) ((Expression) obj).evaluate(new Environment().withPrimitive(p));
-                            return keyOnly? new Tag(s) : Tag.ofString(s);
-                        }
-                    };
-                } else if (obj instanceof String) {
-                    final Tag tag = keyOnly ? new Tag((String) obj) : Tag.ofString((String) obj);
-                    return new PrimitiveToTag() {
-                        @Override
-                        public Tag apply(OsmPrimitive ignore) {
-                            return tag;
-                        }
-                    };
-                } else {
-                    return null;
-                }
-            }
         }
 
         static final String POSSIBLE_THROWS = possibleThrows();
@@ -232,25 +280,15 @@ public class MapCSSTagChecker extends Test.TagTest {
                             Main.warn("Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS);
                         }
                     } else if ("fixAdd".equals(ai.key)) {
-                        final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, false);
-                        if (toTag != null) {
-                            check.change.add(toTag);
-                        } else {
-                            Main.warn("Invalid value for "+ai.key+": "+ai.val);
-                        }
+                        check.fixCommands.add(FixCommand.fixAdd(ai.val));
                     } else if ("fixRemove".equals(ai.key)) {
                         CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !(val != null && val.contains("=")),
                                 "Unexpected '='. Please only specify the key to remove!");
-                        final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, true);
-                        if (toTag != null) {
-                            check.change.add(toTag);
-                        } else {
-                            Main.warn("Invalid value for "+ai.key+": "+ai.val);
-                        }
+                        check.fixCommands.add(FixCommand.fixRemove(ai.val));
                     } else if ("fixChangeKey".equals(ai.key) && val != null) {
                         CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
                         final String[] x = val.split("=>", 2);
-                        check.keyChange.put(Tag.removeWhiteSpaces(x[0]), Tag.removeWhiteSpaces(x[1]));
+                        check.fixCommands.add(FixCommand.fixChangeKey(Tag.removeWhiteSpaces(x[0]), Tag.removeWhiteSpaces(x[1])));
                     } else if ("fixDeleteObject".equals(ai.key) && val != null) {
                         CheckParameterUtil.ensureThat(val.equals("this"), "fixDeleteObject must be followed by 'this'");
                         check.deletion = true;
@@ -407,21 +445,13 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @return the fix or {@code null}
          */
         Command fixPrimitive(OsmPrimitive p) {
-            if (change.isEmpty() && keyChange.isEmpty() && !deletion) {
+            if (fixCommands.isEmpty() && !deletion) {
                 return null;
             }
             final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
             Collection<Command> cmds = new LinkedList<>();
-            for (PrimitiveToTag toTag : change) {
-                final Tag tag = toTag.apply(p);
-                final String key = insertArguments(matchingSelector, tag.getKey());
-                final String value = insertArguments(matchingSelector, tag.getValue());
-                cmds.add(new ChangePropertyCommand(p, key, value));
-            }
-            for (Map.Entry<String, String> i : keyChange.entrySet()) {
-                final String oldKey = insertArguments(matchingSelector, i.getKey());
-                final String newKey = insertArguments(matchingSelector, i.getValue());
-                cmds.add(new ChangePropertyKeyCommand(p, oldKey, newKey));
+            for (FixCommand fixCommand : fixCommands) {
+                cmds.add(fixCommand.createCommand(p, matchingSelector));
             }
             if (deletion) {
                 cmds.add(new DeleteCommand(p));
