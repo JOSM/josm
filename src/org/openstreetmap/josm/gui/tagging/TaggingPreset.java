@@ -75,6 +75,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     public TaggingPresetMenu group = null;
     public String name;
+    public String iconName;
     public String name_context;
     public String locale_name;
     public boolean preset_name_label;
@@ -146,6 +147,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * This task is performed in the background in order to speedup startup.
      */
     public void setIcon(final String iconName) {
+        this.iconName = iconName;
         File arch = TaggingPresetReader.getZipIcons();
         final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
         ImageProvider imgProv = new ImageProvider(iconName);
