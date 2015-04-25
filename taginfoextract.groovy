@@ -63,7 +63,6 @@ class taginfoextract {
             def env = new Environment(osm, mc, null, style_source)
             for (def r in style_source.rules) {
                 env.clearSelectorMatchingInformation()
-                env.layer = r.selector.getSubpart()
                 if (r.selector.matches(env)) {
                     // ignore selector range
                     if (env.layer == null) {
