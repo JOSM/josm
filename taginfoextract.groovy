@@ -8,6 +8,9 @@
  * groovy -cp dist/josm-custom.jar taginfoextract.groovy -t presets
  */
 import java.awt.image.BufferedImage
+import java.nio.file.Files
+import java.nio.file.FileSystems
+import java.nio.file.Path
 
 import javax.imageio.ImageIO
 
@@ -322,7 +325,8 @@ class taginfoextract {
         Main.initApplicationPreferences()
         Main.pref.enableSaveOnPut(false)
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"))
-        System.setProperty("josm.home", File.createTempDir().toString());
+        Path tmpdir = Files.createTempDirectory(FileSystems.getDefault().getPath(base_dir), "pref")
+        System.setProperty("josm.home", tmpdir.toString())
 
         josm_svn_revision = Version.getInstance().getVersion()
         assert josm_svn_revision != Version.JOSM_UNKNOWN_VERSION
