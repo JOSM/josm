@@ -3657,9 +3657,12 @@ area[sport=golf],
 area[sport=gymnastics],
 area[sport=hockey],
 area[sport=horse_racing],
-area[sport=karting],
-area[sport=motocross],
-area[sport=motor] {
+area[sport=karting][highway!=raceway],
+area[sport=karting][highway=raceway][area=yes],
+area[sport=motocross][highway!=raceway],
+area[sport=motocross][highway=raceway][area=yes],
+area[sport=motor][highway!=raceway],
+area[sport=motor][highway=raceway][area=yes] {
     fill-color: sport#bde3cb;
 }
 node[sport=cycling] {
