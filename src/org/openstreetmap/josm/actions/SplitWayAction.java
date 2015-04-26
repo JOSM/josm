@@ -124,7 +124,8 @@ public class SplitWayAction extends JosmAction {
 
         List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
         List<Way> selectedWays = OsmPrimitive.getFilteredList(selection, Way.class);
-        List<Relation> selectedRelations = OsmPrimitive.getFilteredList(selection, Relation.class);
+        List<Relation> selectedRelations =
+            OsmPrimitive.getFilteredList( selection, Relation.class);
         List<Way> applicableWays = getApplicableWays(selectedWays, selectedNodes);
 
         if (applicableWays == null) {
@@ -141,18 +142,18 @@ public class SplitWayAction extends JosmAction {
             return;
         }
 
-        // If several ways have been found, remove ways that doesn't have selected node in the middle
+        // If several ways have been found, remove ways that doesn't have selected
+        // node in the middle
         if (applicableWays.size() > 1) {
-            WAY_LOOP:
-                for (Iterator<Way> it = applicableWays.iterator(); it.hasNext();) {
-                    Way w = it.next();
-                    for (Node n : selectedNodes) {
-                        if (!w.isInnerNode(n)) {
-                            it.remove();
-                            continue WAY_LOOP;
-                        }
+            for (Iterator<Way> it = applicableWays.iterator(); it.hasNext();) {
+                Way w = it.next();
+                for (Node n : selectedNodes) {
+                    if (!w.isInnerNode(n)) {
+                        it.remove();
+                        break;
                     }
                 }
+            }
         }
 
         if (applicableWays.isEmpty()) {
@@ -187,21 +188,27 @@ public class SplitWayAction extends JosmAction {
         }
     }
 
+    /**
+     * Determine witch ways to split.
+     * @param selectedWays List of user selected ways.
+     * @param selectedNodes List of user selected nodes.
+     * @return List of ways to split
+     */
     private List<Way> getApplicableWays(List<Way> selectedWays, List<Node> selectedNodes) {
         if (selectedNodes.isEmpty())
             return null;
 
-        // Special case - one of the selected ways touches (not cross) way that we want to split
+        // Special case - one of the selected ways touches (not cross) way that we
+        // want to split
         if (selectedNodes.size() == 1) {
             Node n = selectedNodes.get(0);
-            List<Way> referedWays = OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
+            List<Way> referedWays =
+                OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
             Way inTheMiddle = null;
-            boolean foundSelected = false;
             for (Way w: referedWays) {
-                if (selectedWays.contains(w)) {
-                    foundSelected = true;
-                }
-                if (w.getNode(0) != n && w.getNode(w.getNodesCount() - 1) != n) {
+                // Need to look at all nodes see #11184 for a case where node n is
+                // firstNode, lastNode and also in the middle
+                if (selectedWays.contains(w) && w.isInnerNode(n)) {
                     if (inTheMiddle == null) {
                         inTheMiddle = w;
                     } else {
@@ -210,12 +217,14 @@ public class SplitWayAction extends JosmAction {
                     }
                 }
             }
-            if (foundSelected && inTheMiddle != null)
+            if (inTheMiddle != null)
                 return Collections.singletonList(inTheMiddle);
         }
 
         // List of ways shared by all nodes
-        List<Way> result = new ArrayList<>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
+        List<Way> result =
+            new ArrayList<>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(),
+                                                         Way.class));
         for (int i=1; i<selectedNodes.size(); i++) {
             List<OsmPrimitive> ref = selectedNodes.get(i).getReferrers();
             for (Iterator<Way> it = result.iterator(); it.hasNext(); ) {
