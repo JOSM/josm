@@ -56,7 +56,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     /**
      * maximum download threads that will be started
      */
-    public static IntegerProperty THREAD_LIMIT = new IntegerProperty("cache.jcs.max_threads", 10);
+    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("cache.jcs.max_threads", 10);
     private static Executor DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
             2, // we have a small queue, so threads will be quickly started (threads are started only, when queue is full)
             THREAD_LIMIT.get().intValue(), // do not this number of threads
