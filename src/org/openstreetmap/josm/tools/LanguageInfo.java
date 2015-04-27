@@ -3,6 +3,8 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Locale;
 
 public final class LanguageInfo {
@@ -85,23 +87,25 @@ public final class LanguageInfo {
      * In most cases JOSM uses the 2-character ISO 639 language code ({@link Locale#getLanguage()}
      * to identify the locale of a localized resource, but in some cases it may use the
      * programmatic name for locales, as replied by {@link Locale#toString()}.
+     * 
+     * For unknown country codes and variants this functuion already does fallback to
+     * internally known translations.
      *
      * @param locale the locale. Replies "en" if null.
      * @return the JOSM code for the given locale
      */
     public static String getJOSMLocaleCode(Locale locale) {
         if (locale == null) return "en";
-        String full = locale.toString();
-        if ("iw_IL".equals(full))
-            return "he";
-        else if ("in".equals(full))
-            return "id";
-        else if ("ca__valencia".equals(full))
-            return "ca@valencia";
-        else if (I18n.hasCode(full)) // catch all non-single codes
-            return full;
+        for(String full : getLanguageCodes(locale)) {
+            if ("iw_IL".equals(full))
+                return "he";
+            else if ("in".equals(full))
+                return "id";
+            else if (I18n.hasCode(full)) // catch all non-single codes
+                return full;
+        }
 
-        // return single code
+        // return single code as fallback
         return locale.getLanguage();
     }
 
@@ -153,14 +157,17 @@ public final class LanguageInfo {
      * @return the resulting locale
      */
     public static Locale getLocale(String localeName) {
-        localeName = getJavaLocaleCode(localeName);
-        if ("ca__valencia".equals(localeName)) {
-            return new Locale("ca", "", "valencia");
-        }
+        int country = localeName.indexOf("_");
+        int variant = localeName.indexOf("@");
+        if (variant < 0 && country >= 0)
+            variant = localeName.indexOf("_", country+1);
         Locale l;
-        int i = localeName.indexOf('_');
-        if (i > 0) {
-            l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
+        if (variant > 0 && country > 0) {
+            l = new Locale(localeName.substring(0, country), localeName.substring(country+1, variant), localeName.substring(variant + 1));
+        } else if (variant > 0) {
+            l = new Locale(localeName.substring(0, variant), "", localeName.substring(variant + 1));
+        } else if (country > 0) {
+            l = new Locale(localeName.substring(0, country), localeName.substring(country + 1));
         } else {
             l = new Locale(localeName);
         }
@@ -206,5 +213,39 @@ public final class LanguageInfo {
         String code = getJOSMLocaleCode();
         code = code.replace("@", "-");
         return code+"_";
+    }
+
+    /**
+     * Replies a list of language codes for local names. Prefixes range from very specific
+     * to more generic.
+     * <ul>
+     *   <li>lang_COUNTRY@variant  of the current locale</li>
+     *   <li>lang@variant  of the current locale</li>
+     *   <li>lang_COUNTRY of the current locale</li>
+     *   <li>lang of the current locale</li>
+     * </ul>
+     *
+     * @param locale the locale to use, <code>null</code> for default locale
+     * @since 8283
+     * @return list of codes
+     */
+    public static Collection<String> getLanguageCodes(Locale l) {
+        Collection<String> list = new LinkedList<String>();
+        if(l == null)
+            l = Locale.getDefault();
+        String lang = l.getLanguage();
+        String c = l.getCountry();
+        String v = l.getVariant();
+        if(c.isEmpty())
+            c = null;
+        if(v != null && !v.isEmpty()) {
+            if(c != null)
+                list.add(lang+"_"+c+"@"+v);
+            list.add(lang+"@"+v);
+        }
+        if(c != null)
+            list.add(lang+"_"+c);
+        list.add(lang);
+        return list;
     }
 }
