@@ -88,7 +88,7 @@ public final class LanguageInfo {
      * to identify the locale of a localized resource, but in some cases it may use the
      * programmatic name for locales, as replied by {@link Locale#toString()}.
      * 
-     * For unknown country codes and variants this functuion already does fallback to
+     * For unknown country codes and variants this function already does fallback to
      * internally known translations.
      *
      * @param locale the locale. Replies "en" if null.
