@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
@@ -17,6 +16,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -85,7 +85,7 @@ public class OsmHistoryReader {
         InputSource inputSource = new InputSource(new InputStreamReader(in, StandardCharsets.UTF_8));
         progressMonitor.beginTask(tr("Parsing OSM history data ..."));
         try {
-            SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new Parser());
+            Utils.newSafeSAXParser().parse(inputSource, new Parser());
         } catch (ParserConfigurationException e) {
             Main.error(e); // broken SAXException chaining
             throw new SAXException(e);

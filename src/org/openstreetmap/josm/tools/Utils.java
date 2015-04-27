@@ -49,9 +49,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.xml.sax.SAXException;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -1162,5 +1168,19 @@ public final class Utils {
             return old;
         }
         return null;
+    }
+
+    /**
+     * Returns a new secure SAX parser, supporting XML namespaces.
+     * @return a new secure SAX parser, supporting XML namespaces
+     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
+     * @throws SAXException for SAX errors.
+     * @since 8287
+     */
+    public static SAXParser newSafeSAXParser() throws ParserConfigurationException, SAXException {
+        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        parserFactory.setNamespaceAware(true);
+        return parserFactory.newSAXParser();
     }
 }

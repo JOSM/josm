@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -20,6 +19,7 @@ import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -48,14 +48,12 @@ public class ImageryReader {
     public List<ImageryInfo> parse() throws SAXException, IOException {
         Parser parser = new Parser();
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
             try (InputStream in = new CachedFile(source)
                     .setMaxAge(1*CachedFile.DAYS)
                     .setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince)
                     .getInputStream()) {
                 InputSource is = new InputSource(UTFInputStreamReader.create(in));
-                factory.newSAXParser().parse(is, parser);
+                Utils.newSafeSAXParser().parse(is, parser);
                 return parser.entries;
             }
         } catch (SAXException e) {
