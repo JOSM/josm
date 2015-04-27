@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Show list of recently opened files
  */
 public class RecentlyOpenedFilesMenu extends JMenu {
-    ClearAction clearAction;
+    private ClearAction clearAction;
 
     public RecentlyOpenedFilesMenu() {
         super(tr("Open Recent"));

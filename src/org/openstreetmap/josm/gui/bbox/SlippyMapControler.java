@@ -18,6 +18,7 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+
 import org.openstreetmap.josm.Main;
 
 /**
@@ -167,7 +168,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     private class MoveXAction extends AbstractAction {
 
-        int direction;
+        private int direction;
 
         public MoveXAction(int direction) {
             this.direction = direction;
@@ -181,7 +182,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     private class MoveYAction extends AbstractAction {
 
-        int direction;
+        private int direction;
 
         public MoveYAction(int direction) {
             this.direction = direction;

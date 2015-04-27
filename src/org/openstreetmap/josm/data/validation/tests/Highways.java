@@ -56,12 +56,12 @@ public class Highways extends Test {
 
     protected static final List<String> ISO_COUNTRIES = Arrays.asList(Locale.getISOCountries());
 
-    boolean leftByPedestrians = false;
-    boolean leftByCyclists = false;
-    boolean leftByCars = false;
-    int pedestrianWays = 0;
-    int cyclistWays = 0;
-    int carsWays = 0;
+    private boolean leftByPedestrians = false;
+    private boolean leftByCyclists = false;
+    private boolean leftByCars = false;
+    private int pedestrianWays = 0;
+    private int cyclistWays = 0;
+    private int carsWays = 0;
 
     /**
      * Constructs a new {@code Highways} test.

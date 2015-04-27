@@ -392,7 +392,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     }
 
     private class ToolbarPopupMenu extends JPopupMenu  {
-        ActionDefinition act;
+        private ActionDefinition act;
 
         private void setActionAndAdapt(ActionDefinition action) {
             this.act = action;
@@ -401,7 +401,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             shortcutEdit.setVisible(act!=null);
         }
 
-        JMenuItem remove = new JMenuItem(new AbstractAction(tr("Remove from toolbar")) {
+        private JMenuItem remove = new JMenuItem(new AbstractAction(tr("Remove from toolbar")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                                 Collection<String> t = new LinkedList<>(getToolString());
@@ -415,7 +415,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                             }
                 });
 
-        JMenuItem configure = new JMenuItem(new AbstractAction(tr("Configure toolbar")) {
+        private JMenuItem configure = new JMenuItem(new AbstractAction(tr("Configure toolbar")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                     final PreferenceDialog p =new PreferenceDialog(Main.parent);
@@ -424,7 +424,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
             });
 
-        JMenuItem shortcutEdit = new JMenuItem(new AbstractAction(tr("Edit shortcut")) {
+        private JMenuItem shortcutEdit = new JMenuItem(new AbstractAction(tr("Edit shortcut")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                     final PreferenceDialog p =new PreferenceDialog(Main.parent);
@@ -436,7 +436,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
             });
 
-        JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide toolbar and menu")) {
+        private JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide toolbar and menu")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
@@ -624,7 +624,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             });
 
             ListCellRenderer<ActionDefinition> renderer = new ListCellRenderer<ActionDefinition>() {
-                final DefaultListCellRenderer def = new DefaultListCellRenderer();
+                private final DefaultListCellRenderer def = new DefaultListCellRenderer();
                 @Override
                 public Component getListCellRendererComponent(JList<? extends ActionDefinition> list,
                         ActionDefinition action, int index, boolean isSelected, boolean cellHasFocus) {

@@ -613,7 +613,7 @@ public class TagTable extends JTable  {
      *
      */
     class CellEditorRemover implements PropertyChangeListener {
-        KeyboardFocusManager focusManager;
+        private KeyboardFocusManager focusManager;
 
         public CellEditorRemover(KeyboardFocusManager fm) {
             this.focusManager = fm;

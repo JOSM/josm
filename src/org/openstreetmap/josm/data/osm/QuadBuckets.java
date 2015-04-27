@@ -495,9 +495,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     }
 
     class QuadBucketIterator implements Iterator<T> {
-        QBLevel<T> current_node;
-        int content_index;
-        int iterated_over;
+        private QBLevel<T> current_node;
+        private int content_index;
+        private int iterated_over;
 
         final QBLevel<T> next_content_node(QBLevel<T> q) {
             if (q == null)

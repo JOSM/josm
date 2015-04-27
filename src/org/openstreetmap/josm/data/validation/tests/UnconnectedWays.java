@@ -292,9 +292,9 @@ public abstract class UnconnectedWays extends Test {
         public final boolean highway;
         private final double len;
         private Set<Node> nearbyNodeCache;
-        double nearbyNodeCacheDist = -1.0;
-        final Node n1;
-        final Node n2;
+        private double nearbyNodeCacheDist = -1.0;
+        private final Node n1;
+        private final Node n2;
 
         public MyWaySegment(Way w, Node n1, Node n2) {
             this.w = w;

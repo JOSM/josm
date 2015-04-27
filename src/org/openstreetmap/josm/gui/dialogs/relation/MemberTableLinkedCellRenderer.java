@@ -16,11 +16,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
 
-    static final Image arrowUp = ImageProvider.get("dialogs/relation", "arrowup").getImage();
-    static final Image arrowDown = ImageProvider.get("dialogs/relation", "arrowdown").getImage();
-    static final Image corners = ImageProvider.get("dialogs/relation", "roundedcorners").getImage();
-    static final Image roundabout_right = ImageProvider.get("dialogs/relation", "roundabout_right_tiny").getImage();
-    static final Image roundabout_left = ImageProvider.get("dialogs/relation", "roundabout_left_tiny").getImage();
+    private static final Image arrowUp = ImageProvider.get("dialogs/relation", "arrowup").getImage();
+    private static final Image arrowDown = ImageProvider.get("dialogs/relation", "arrowdown").getImage();
+    private static final Image corners = ImageProvider.get("dialogs/relation", "roundedcorners").getImage();
+    private static final Image roundabout_right = ImageProvider.get("dialogs/relation", "roundabout_right_tiny").getImage();
+    private static final Image roundabout_left = ImageProvider.get("dialogs/relation", "roundabout_left_tiny").getImage();
     private WayConnectionType value = new WayConnectionType();
 
     @Override

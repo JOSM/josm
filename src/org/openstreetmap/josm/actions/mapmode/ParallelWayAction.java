@@ -20,9 +20,9 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -123,10 +123,14 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     private EastNorth helperLineStart;
     private EastNorth helperLineEnd;
 
-    Stroke helpLineStroke;
-    Stroke refLineStroke;
-    Color mainColor;
+    private Stroke helpLineStroke;
+    private Stroke refLineStroke;
+    private Color mainColor;
 
+    /**
+     * Constructs a new {@code ParallelWayAction}.
+     * @param mapFrame Map frame
+     */
     public ParallelWayAction(MapFrame mapFrame) {
         super(tr("Parallel"), "parallel", tr("Make parallel copies of ways"),
             Shortcut.registerShortcut("mapmode:parallel", tr("Mode: {0}",
@@ -302,8 +306,8 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         updateFlagsChangeableAlways();
 
         // Since the created way is left selected, we need to unselect again here
-        if (pWays != null && pWays.ways != null) {
-            getCurrentDataSet().clearSelection(pWays.ways);
+        if (pWays != null && pWays.getWays() != null) {
+            getCurrentDataSet().clearSelection(pWays.getWays());
             pWays = null;
         }
 
@@ -544,7 +548,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             }
             pWays = new ParallelWays(sourceWays, copyTags, referenceWayIndex);
             pWays.commit();
-            getCurrentDataSet().setSelected(pWays.ways);
+            getCurrentDataSet().setSelected(pWays.getWays());
             return true;
         } catch (IllegalArgumentException e) {
             // TODO: Not ideal feedback. Maybe changing the cursor could be a good mechanism?

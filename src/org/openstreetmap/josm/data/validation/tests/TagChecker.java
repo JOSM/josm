@@ -129,7 +129,7 @@ public class TagChecker extends Test.TagTest {
 
     protected static final Entities entities = new Entities();
 
-    static final List<String> DEFAULT_SOURCES = Arrays.asList(DATA_FILE, IGNORE_FILE, SPELL_FILE);
+    private static final List<String> DEFAULT_SOURCES = Arrays.asList(DATA_FILE, IGNORE_FILE, SPELL_FILE);
 
     /**
      * Constructor

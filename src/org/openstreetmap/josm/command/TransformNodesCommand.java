@@ -93,8 +93,8 @@ public abstract class TransformNodesCommand extends Command {
     public void undoCommand() {
         for (Node n : nodes) {
             OldNodeState os = oldStates.get(n);
-            n.setCoor(os.latlon);
-            n.setModified(os.modified);
+            n.setCoor(os.getLatlon());
+            n.setModified(os.isModified());
         }
     }
 

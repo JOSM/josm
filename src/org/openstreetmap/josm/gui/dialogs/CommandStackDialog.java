@@ -245,7 +245,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     /**
      * Simple listener setup to update the button enabled state when the side dialog shows.
      */
-    Set<IEnabledStateUpdating> showNotifyListener = new LinkedHashSet<>();
+    private Set<IEnabledStateUpdating> showNotifyListener = new LinkedHashSet<>();
 
     private void addShowNotifyListener(IEnabledStateUpdating listener) {
         showNotifyListener.add(listener);

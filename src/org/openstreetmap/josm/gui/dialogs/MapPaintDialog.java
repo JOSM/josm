@@ -205,7 +205,7 @@ public class MapPaintDialog extends ToggleDialog {
 
     protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
 
-        List<StyleSource> data = new ArrayList<>();
+        private List<StyleSource> data = new ArrayList<>();
 
         public StylesModel() {
             data = new ArrayList<>(MapPaintStyles.getStyles().getStyleSources());
@@ -238,7 +238,7 @@ public class MapPaintDialog extends ToggleDialog {
             return column == 0;
         }
 
-        Class<?>[] columnClasses = {Boolean.class, StyleSource.class};
+        private Class<?>[] columnClasses = {Boolean.class, StyleSource.class};
 
         @Override
         public Class<?> getColumnClass(int column) {
@@ -347,7 +347,7 @@ public class MapPaintDialog extends ToggleDialog {
      */
     protected class MoveUpDownAction extends AbstractAction implements ListSelectionListener {
 
-        final int increment;
+        private final int increment;
 
         public MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
@@ -522,8 +522,8 @@ public class MapPaintDialog extends ToggleDialog {
 
     protected class InfoAction extends AbstractAction {
 
-        boolean errorsTabLoaded;
-        boolean sourceTabLoaded;
+        private boolean errorsTabLoaded;
+        private boolean sourceTabLoaded;
 
         public InfoAction() {
             putValue(NAME, tr("Info"));

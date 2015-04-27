@@ -176,7 +176,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             lstLayers = new JList<>();
             lstLayers.setCellRenderer(
                     new ListCellRenderer<SaveLayerInfo>() {
-                        final DefaultListCellRenderer def = new DefaultListCellRenderer();
+                        private final DefaultListCellRenderer def = new DefaultListCellRenderer();
                         @Override
                         public Component getListCellRendererComponent(JList<? extends SaveLayerInfo> list, SaveLayerInfo info, int index,
                                 boolean isSelected, boolean cellHasFocus) {

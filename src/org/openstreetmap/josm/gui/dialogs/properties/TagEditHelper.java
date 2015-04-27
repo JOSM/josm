@@ -89,12 +89,12 @@ class TagEditHelper {
     private final Map<String, Map<String, Integer>> valueCount;
 
     // Selection that we are editing by using both dialogs
-    Collection<OsmPrimitive> sel;
+    private Collection<OsmPrimitive> sel;
 
     private String changedKey;
     private String objKey;
 
-    Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
+    private Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
         @Override
         public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
             return String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
@@ -155,7 +155,7 @@ class TagEditHelper {
         objKey=key;
 
         @SuppressWarnings("unchecked")
-        final EditTagDialog editDialog = new EditTagDialog(key, row,
+        final EditTagDialog editDialog = new EditTagDialog(key,
                 (Map<String, Integer>) tagData.getValueAt(row, 1), focusOnKey);
         editDialog.showDialog();
         if (editDialog.getValue() !=1 ) return;
@@ -240,11 +240,10 @@ class TagEditHelper {
     }
 
     public final class EditTagDialog extends AbstractTagsDialog {
-        final String key;
-        final Map<String, Integer> m;
-        final int row;
+        private final String key;
+        private final Map<String, Integer> m;
 
-        Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
+        private Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
                 @Override
                 public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
                     boolean c1 = m.containsKey(o1.getValue());
@@ -258,8 +257,8 @@ class TagEditHelper {
                 }
             };
 
-        ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
-            final DefaultListCellRenderer def = new DefaultListCellRenderer();
+        private ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
+            private final DefaultListCellRenderer def = new DefaultListCellRenderer();
             @Override
             public Component getListCellRendererComponent(JList<? extends AutoCompletionListItem> list,
                     AutoCompletionListItem value, int index, boolean isSelected,  boolean cellHasFocus){
@@ -279,13 +278,12 @@ class TagEditHelper {
             }
         };
 
-        private EditTagDialog(String key, int row, Map<String, Integer> map, final boolean initialFocusOnKey) {
+        private EditTagDialog(String key, Map<String, Integer> map, final boolean initialFocusOnKey) {
             super(Main.parent, trn("Change value?", "Change values?", map.size()), new String[] {tr("OK"),tr("Cancel")});
             setButtonIcons(new String[] {"ok","cancel"});
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/EditValue", true /* show help button */);
             this.key = key;
-            this.row = row;
             this.m = map;
 
             JPanel mainPanel = new JPanel(new BorderLayout());
@@ -420,9 +418,9 @@ class TagEditHelper {
     public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags", DEFAULT_LRU_TAGS_NUMBER);
 
     abstract class AbstractTagsDialog extends ExtendedDialog {
-        AutoCompletingComboBox keys;
-        AutoCompletingComboBox values;
-        Component componentUnderMouse;
+        protected AutoCompletingComboBox keys;
+        protected AutoCompletingComboBox values;
+        protected Component componentUnderMouse;
 
         public AbstractTagsDialog(Component parent, String title, String[] buttonTexts) {
             super(parent, title, buttonTexts);
@@ -517,7 +515,7 @@ class TagEditHelper {
         }
 
         protected JPopupMenu popupMenu = new JPopupMenu() {
-            JCheckBoxMenuItem fixTagLanguageCb = new JCheckBoxMenuItem(
+            private JCheckBoxMenuItem fixTagLanguageCb = new JCheckBoxMenuItem(
                 new AbstractAction(tr("Use English language for tag by default")){
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -533,7 +531,7 @@ class TagEditHelper {
     }
 
     class AddTagsDialog extends AbstractTagsDialog {
-        List<JosmAction> recentTagsActions = new ArrayList<>();
+        private List<JosmAction> recentTagsActions = new ArrayList<>();
 
         // Counter of added commands for possible undo
         private int commandCount;

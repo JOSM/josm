@@ -41,16 +41,16 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class MapListEditor extends ExtendedDialog {
 
-    EntryListModel entryModel;
-    PrefEntry entry;
+    private EntryListModel entryModel;
+    private PrefEntry entry;
 
-    JList<String> entryList;
-    JTable table;
-    MapTableModel tableModel;
+    private JList<String> entryList;
+    private JTable table;
+    private MapTableModel tableModel;
 
-    List<List<String>> dataKeys;
-    List<List<String>> dataValues;
-    Integer entryIdx;
+    private List<List<String>> dataKeys;
+    private List<List<String>> dataValues;
+    private Integer entryIdx;
 
     public MapListEditor(JComponent gui, PrefEntry entry, MapListSetting setting) {
         super(gui, tr("Change list of maps setting"), new String[] {tr("OK"), tr("Cancel")});

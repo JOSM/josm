@@ -235,7 +235,7 @@ public interface Selector {
                 public void visit(Relation r) {
                     if (left.matches(e.withPrimitive(r))) {
                         final List<Node> openEnds = MultipolygonCache.getInstance().get(Main.map.mapView, r).getOpenEnds();
-                        final int openEndIndex = openEnds.indexOf((Node) e.osm);
+                        final int openEndIndex = openEnds.indexOf(e.osm);
                         if (openEndIndex >= 0) {
                             e.parent = r;
                             e.index = openEndIndex;
@@ -633,7 +633,7 @@ public interface Selector {
             return new Range(lower, upper);
         }
 
-        static final double R = 6378135;
+        private static final double R = 6378135;
 
         public static double level2scale(int lvl) {
             if (lvl < 0)

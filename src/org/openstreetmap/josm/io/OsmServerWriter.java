@@ -56,7 +56,7 @@ public class OsmServerWriter {
     private static final int SECONDS_PER_MINUTE = 60;
     private static final int MSECS_PER_MINUTE = MSECS_PER_SECOND * SECONDS_PER_MINUTE;
 
-    long uploadStartTime;
+    private long uploadStartTime;
 
     public String timeLeft(int progress, int list_size) {
         long now = System.currentTimeMillis();

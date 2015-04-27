@@ -373,7 +373,7 @@ public class Storage<T> extends AbstractSet<T> {
      */
 
     private final class FMap<K> implements Map<K,T> {
-        Hash<K,? super T> fHash;
+        private Hash<K,? super T> fHash;
 
         private FMap(Hash<K,? super T> h) {
             fHash = h;
@@ -456,8 +456,8 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     private final class SafeReadonlyIter implements Iterator<T> {
-        final T[] data;
-        int slot = 0;
+        private final T[] data;
+        private int slot = 0;
 
         SafeReadonlyIter(T[] data) {
             this.data = data;
@@ -490,8 +490,8 @@ public class Storage<T> extends AbstractSet<T> {
 
     private final class Iter implements Iterator<T> {
         private final int mods;
-        int slot = 0;
-        int removeSlot = -1;
+        private int slot = 0;
+        private int removeSlot = -1;
 
         Iter() {
             mods = modCount;

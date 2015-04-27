@@ -69,11 +69,11 @@ public class GpxDrawHelper {
     private int largePointAlpha;
 
     // default access is used to allow changing from plugins
-    ColorScale velocityScale;
+    private ColorScale velocityScale;
     /** Colors (without custom alpha channel, if given) for HDOP painting. **/
-    ColorScale hdopScale;
-    ColorScale dateScale;
-    ColorScale directionScale;
+    private ColorScale hdopScale;
+    private ColorScale dateScale;
+    private ColorScale directionScale;
 
     /** Opacity for hdop points **/
     private int hdopAlpha;

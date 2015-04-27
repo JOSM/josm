@@ -434,7 +434,8 @@ public class LatLonDialog extends ExtendedDialog {
     }
 
     private static class LatLonHolder {
-        double lat, lon;
+        private double lat;
+        private double lon;
     }
 
     private static void setLatLonObj(final LatLonHolder latLon,

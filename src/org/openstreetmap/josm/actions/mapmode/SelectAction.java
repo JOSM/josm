@@ -136,7 +136,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     /**
      * point where user pressed the mouse to start movement
      */
-    EastNorth startEN;
+    private EastNorth startEN;
     /**
      * The last known position of the mouse.
      */
@@ -214,8 +214,6 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         Main.map.keyDetector.removeKeyListener(this);
         removeHighlighting();
     }
-
-    int previousModifiers;
 
     @Override
     public void modifiersChanged(int modifiers) {
@@ -948,8 +946,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         this.lassoMode = lassoMode;
     }
 
-    CycleManager cycleManager = new CycleManager();
-    VirtualManager virtualManager = new VirtualManager();
+    private CycleManager cycleManager = new CycleManager();
+    private VirtualManager virtualManager = new VirtualManager();
 
     private class CycleManager {
 

@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class CodeProjectionChoice extends AbstractProjectionChoice implements SubPrefsOptions {
 
-    String code;
+    private String code;
 
     /**
      * Constructs a new {@code CodeProjectionChoice}.
@@ -47,11 +47,11 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         public JosmTextField filter;
         private ProjectionCodeListModel model;
         public JList<String> selectionList;
-        List<String> data;
-        List<String> filteredData;
-        static final String DEFAULT_CODE = "EPSG:3857";
-        String lastCode = DEFAULT_CODE;
-        ActionListener listener;
+        private List<String> data;
+        private List<String> filteredData;
+        private static final String DEFAULT_CODE = "EPSG:3857";
+        private String lastCode = DEFAULT_CODE;
+        private ActionListener listener;
 
         public CodeSelectionPanel(String initialCode, ActionListener listener) {
             this.listener = listener;
@@ -67,7 +67,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
          * Comparator that compares the number part of the code numerically.
          */
         private static class CodeComparator implements Comparator<String> {
-            final Pattern codePattern = Pattern.compile("([a-zA-Z]+):(\\d+)");
+            private final Pattern codePattern = Pattern.compile("([a-zA-Z]+):(\\d+)");
             @Override
             public int compare(String c1, String c2) {
                 Matcher matcher1 = codePattern.matcher(c1);

@@ -791,8 +791,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     static class OffsetBookmarksPanel extends JPanel {
-        List<OffsetBookmark> bookmarks = OffsetBookmark.allBookmarks;
-        OffsetsBookmarksModel model = new OffsetsBookmarksModel();
+        private List<OffsetBookmark> bookmarks = OffsetBookmark.allBookmarks;
+        private OffsetsBookmarksModel model = new OffsetsBookmarksModel();
 
         public OffsetBookmarksPanel(final PreferenceTabbedPane gui) {
             super(new GridBagLayout());

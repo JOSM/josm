@@ -66,8 +66,8 @@ public final class MultikeyActionsHandler {
 
     private class MyAction extends AbstractAction {
 
-        final MultikeyShortcutAction action;
-        final Shortcut shortcut;
+        private final MultikeyShortcutAction action;
+        private final Shortcut shortcut;
 
         MyAction(MultikeyShortcutAction action) {
             this.action = action;

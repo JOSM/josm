@@ -198,7 +198,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     private static class PresetPanel extends JPanel {
-        boolean hasElements = false;
+        private boolean hasElements = false;
         PresetPanel() {
             super(new GridBagLayout());
         }

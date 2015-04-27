@@ -86,7 +86,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         return false;
     }
 
-    final String WINDOW_GEOMETRY_PREF = getClass().getName() + ".geometry";
+    private final String WINDOW_GEOMETRY_PREF = getClass().getName() + ".geometry";
 
     protected void placeOnScreen(HistoryBrowserDialog dialog) {
         WindowGeometry geometry = new WindowGeometry(WINDOW_GEOMETRY_PREF, WindowGeometry.centerOnScreen(new Dimension(850, 500)));
@@ -216,7 +216,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
 
     private final Predicate<PrimitiveId> unloadedHistoryPredicate = new Predicate<PrimitiveId>() {
 
-        HistoryDataSet hds = HistoryDataSet.getInstance();
+        private HistoryDataSet hds = HistoryDataSet.getInstance();
 
         @Override
         public boolean evaluate(PrimitiveId p) {

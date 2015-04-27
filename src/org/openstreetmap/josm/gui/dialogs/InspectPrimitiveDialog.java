@@ -62,7 +62,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     protected List<OsmPrimitive> primitives;
     protected OsmDataLayer layer;
     private JosmTextArea txtMappaint;
-    boolean mappaintTabLoaded;
+    private boolean mappaintTabLoaded;
 
     public InspectPrimitiveDialog(Collection<OsmPrimitive> primitives, OsmDataLayer layer) {
         super(Main.parent, tr("Advanced object info"), new String[] {tr("Close")});
@@ -116,8 +116,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     class DataText {
-        static final String INDENT = "  ";
-        static final String NL = "\n";
+        private static final String INDENT = "  ";
+        private static final String NL = "\n";
 
         private StringBuilder s = new StringBuilder();
 

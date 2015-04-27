@@ -72,9 +72,9 @@ public class FilterMatcher {
     }
 
     private static class FilterInfo {
-        final Match match;
-        final boolean isDelete;
-        final boolean isInverted;
+        private final Match match;
+        private final boolean isDelete;
+        private final boolean isInverted;
 
         FilterInfo(Filter filter) throws ParseError {
             if (filter.mode == SearchMode.remove || filter.mode == SearchMode.in_selection) {

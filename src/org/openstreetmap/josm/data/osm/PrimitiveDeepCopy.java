@@ -55,7 +55,7 @@ public class PrimitiveDeepCopy {
         final Set<Long> visitedRelationIds = new HashSet<>();
 
         new AbstractVisitor() {
-            boolean firstIteration;
+            private boolean firstIteration;
 
             @Override
             public void visit(Node n) {

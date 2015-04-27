@@ -93,7 +93,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     private int currentPhoto = -1;
 
     boolean useThumbs = false;
-    ExecutorService thumbsLoaderExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+    private ExecutorService thumbsLoaderExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
@@ -101,8 +101,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             return t;
         }
     });
-    ThumbsLoader thumbsloader;
-    boolean thumbsLoaderRunning = false;
+    private ThumbsLoader thumbsloader;
+    private boolean thumbsLoaderRunning = false;
     volatile boolean thumbsLoaded = false;
     private BufferedImage offscreenBuffer;
     boolean updateOffscreenBuffer = true;
