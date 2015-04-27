@@ -248,9 +248,9 @@ class taginfoextract {
                             description: preset.name,
                             key: item.key,
                             value: value,
-                            type: preset.types.collect {it == TaggingPresetType.CLOSEDWAY ? "area" : it.toString().toLowerCase()},
+                            object_types: preset.types.collect {it == TaggingPresetType.CLOSEDWAY ? "area" : it.toString().toLowerCase()},
                     ]
-                    if (preset.iconName) tag += [icon: find_image_url(preset.iconName)]
+                    if (preset.iconName) tag += [icon_url: find_image_url(preset.iconName)]
                     tags += tag
                 }
             }
