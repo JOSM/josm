@@ -47,6 +47,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * basic gui utils
@@ -308,7 +309,7 @@ public final class GuiHelper {
      */
     public static Font getMonospacedFont(JComponent component) {
         // Special font for Khmer script
-        if ("km".equals(Main.pref.get("language"))) {
+        if ("km".equals(LanguageInfo.getJOSMLocaleCode())) {
             return component.getFont();
         } else {
             return new Font("Monospaced", component.getFont().getStyle(), component.getFont().getSize());
@@ -328,7 +329,7 @@ public final class GuiHelper {
     public static Font getTitleFont() {
         List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         // Special font for Khmer script
-        if ("km".equals(Main.pref.get("language"))) {
+        if ("km".equals(LanguageInfo.getJOSMLocaleCode())) {
             return UIManager.getFont("Label.font").deriveFont(20.0f);
         }
         // Helvetica is the preferred choice but is not available by default on Windows

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.awt.GraphicsEnvironment;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +26,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter.TranslationAdapter;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 
 /**
@@ -732,5 +734,24 @@ public final class I18n {
                 return I18n.tr(text, objects);
             }
         };
+    }
+
+    /**
+     * Setup special font for Khmer script, as the default Java font do not display these characters.
+     *
+     * @since 8281
+     */
+    public static void setupLanguageFonts() {
+        // Use special font for Khmer script, as the default Java font do not display these characters
+        if ("km".equals(LanguageInfo.getJOSMLocaleCode())) {
+            Collection<String> fonts = Arrays.asList(
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+            for (String f : new String[]{"Khmer UI", "DaunPenh", "MoolBoran"}) {
+                if (fonts.contains(f)) {
+                    GuiHelper.setUIFont(f);
+                    break;
+                }
+            }
+        }
     }
 }
