@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -21,6 +22,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -48,7 +50,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
      * ImageryInfo objects are normally sorted by country code first
      * (for the preferences). We don't want this in the imagery menu.
      */
-    public static Comparator<ImageryInfo> alphabeticImageryComparator = new Comparator<ImageryInfo>() {
+    public static final Comparator<ImageryInfo> alphabeticImageryComparator = new Comparator<ImageryInfo>() {
         @Override
         public int compare(ImageryInfo ii1, ImageryInfo ii2) {
             return ii1.getName().toLowerCase().compareTo(ii2.getName().toLowerCase());

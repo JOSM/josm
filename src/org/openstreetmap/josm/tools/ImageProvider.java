@@ -144,13 +144,13 @@ public class ImageProvider {
      * Property set on {@code BufferedImage} returned by {@link #makeImageTransparent}.
      * @since 7132
      */
-    public static String PROP_TRANSPARENCY_FORCED = "josm.transparency.forced";
+    public static final String PROP_TRANSPARENCY_FORCED = "josm.transparency.forced";
 
     /**
      * Property set on {@code BufferedImage} returned by {@link #read} if metadata is required.
      * @since 7132
      */
-    public static String PROP_TRANSPARENCY_COLOR = "josm.transparency.color";
+    public static final String PROP_TRANSPARENCY_COLOR = "josm.transparency.color";
 
     /** directories in which images are searched */
     protected Collection<String> dirs;

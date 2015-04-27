@@ -31,7 +31,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
     private TileLoaderListener listener;
     public static final String PREFERENCE_PREFIX   = "imagery.tms.cache.";
     // average tile size is about 20kb
-    public static IntegerProperty MAX_OBJECTS_ON_DISK = new IntegerProperty(PREFERENCE_PREFIX + "max_objects_disk", 25000); // 25000 is around 500MB under this assumptions
+    public static final IntegerProperty MAX_OBJECTS_ON_DISK = new IntegerProperty(PREFERENCE_PREFIX + "max_objects_disk", 25000); // 25000 is around 500MB under this assumptions
 
 
     /**
