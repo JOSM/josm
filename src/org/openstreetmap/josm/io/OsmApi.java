@@ -166,8 +166,8 @@ public class OsmApi extends OsmConnection {
 
         private static final String CAPABILITIES = "capabilities";
 
-        ProgressMonitor monitor;
-        boolean fastFail;
+        private ProgressMonitor monitor;
+        private boolean fastFail;
 
         public CapabilitiesCache(ProgressMonitor monitor, boolean fastFail) {
             super(CAPABILITIES + getBaseUrl().hashCode(), CacheCustomContent.INTERVAL_WEEKLY);

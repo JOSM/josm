@@ -470,8 +470,8 @@ public class MenuScroller {
 
         UP(9, 1, 9),
         DOWN(1, 9, 1);
-        static final int[] XPOINTS = {1, 5, 9};
-        final int[] yPoints;
+        private static final int[] XPOINTS = {1, 5, 9};
+        private final int[] yPoints;
 
         MenuIcon(int... yPoints) {
             this.yPoints = yPoints;

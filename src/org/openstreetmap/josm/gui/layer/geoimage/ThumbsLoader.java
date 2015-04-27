@@ -19,11 +19,11 @@ public class ThumbsLoader implements Runnable {
     public static final int maxSize = 120;
     public static final int minSize = 22;
     public volatile boolean stop = false;
-    List<ImageEntry> data;
-    GeoImageLayer layer;
-    MediaTracker tracker;
-    CacheFiles cache;
-    boolean cacheOff = Main.pref.getBoolean("geoimage.noThumbnailCache", false);
+    private List<ImageEntry> data;
+    private GeoImageLayer layer;
+    private MediaTracker tracker;
+    private CacheFiles cache;
+    private boolean cacheOff = Main.pref.getBoolean("geoimage.noThumbnailCache", false);
 
     public ThumbsLoader(GeoImageLayer layer) {
         this.layer = layer;

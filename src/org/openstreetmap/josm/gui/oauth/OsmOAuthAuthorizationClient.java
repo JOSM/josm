@@ -51,9 +51,9 @@ public class OsmOAuthAuthorizationClient {
     private HttpURLConnection connection;
 
     private static class SessionId {
-        String id;
-        String token;
-        String userName;
+        private String id;
+        private String token;
+        private String userName;
     }
 
     /**

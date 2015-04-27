@@ -44,8 +44,8 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         IN_EDT_CONSOLIDATED}
 
     private static class ListenerInfo {
-        final DataSetListener listener;
-        final boolean consolidate;
+        private final DataSetListener listener;
+        private final boolean consolidate;
 
         public ListenerInfo(DataSetListener listener, boolean consolidate) {
             this.listener = listener;

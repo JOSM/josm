@@ -47,7 +47,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
     private static class BugReporterThread extends Thread {
 
-        final Throwable e;
+        private final Throwable e;
 
         public BugReporterThread(Throwable t) {
             super("Bug Reporter");

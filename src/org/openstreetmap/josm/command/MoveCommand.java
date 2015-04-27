@@ -170,8 +170,8 @@ public class MoveCommand extends Command {
         Iterator<OldNodeState> it = oldState.iterator();
         for (Node n : nodes) {
             OldNodeState os = it.next();
-            if (os.eastNorth != null) {
-                n.setEastNorth(os.eastNorth.add(x, y));
+            if (os.getEastNorth() != null) {
+                n.setEastNorth(os.getEastNorth().add(x, y));
             }
         }
     }
@@ -196,8 +196,8 @@ public class MoveCommand extends Command {
         Iterator<OldNodeState> it = oldState.iterator();
         for (Node n : nodes) {
             OldNodeState os = it.next();
-            n.setCoor(os.latlon);
-            n.setModified(os.modified);
+            n.setCoor(os.getLatlon());
+            n.setModified(os.isModified());
         }
     }
 

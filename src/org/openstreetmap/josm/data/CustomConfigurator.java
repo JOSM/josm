@@ -414,13 +414,12 @@ public final class CustomConfigurator {
 
     public static class XMLCommandProcessor {
 
-        Preferences mainPrefs;
-        Map<String,Element> tasksMap = new HashMap<>();
+        private Preferences mainPrefs;
+        private Map<String,Element> tasksMap = new HashMap<>();
 
         private boolean lastV; // last If condition result
 
-
-        ScriptEngine engine ;
+        private ScriptEngine engine;
 
         public void openAndReadXML(File file) {
             log("-- Reading custom preferences from " + file.getAbsolutePath() + " --");

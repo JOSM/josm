@@ -90,9 +90,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
     private static List<GpxData> loadedGpxData = new ArrayList<>();
 
-    GeoImageLayer yLayer = null;
-    double timezone;
-    long delta;
+    private GeoImageLayer yLayer = null;
+    private double timezone;
+    private long delta;
 
     /**
      * Constructs a new {@code CorrelateGpxWithImages} action.
@@ -104,9 +104,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private static class GpxDataWrapper {
-        String name;
-        GpxData data;
-        File file;
+        private String name;
+        private GpxData data;
+        private File file;
 
         public GpxDataWrapper(String name, GpxData data, File file) {
             this.name = name;
@@ -120,19 +120,19 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
-    ExtendedDialog syncDialog;
-    List<GpxDataWrapper> gpxLst = new ArrayList<>();
-    JPanel outerPanel;
-    JosmComboBox<GpxDataWrapper> cbGpx;
-    JosmTextField tfTimezone;
-    JosmTextField tfOffset;
-    JCheckBox cbExifImg;
-    JCheckBox cbTaggedImg;
-    JCheckBox cbShowThumbs;
-    JLabel statusBarText;
+    private ExtendedDialog syncDialog;
+    private List<GpxDataWrapper> gpxLst = new ArrayList<>();
+    private JPanel outerPanel;
+    private JosmComboBox<GpxDataWrapper> cbGpx;
+    private JosmTextField tfTimezone;
+    private JosmTextField tfOffset;
+    private JCheckBox cbExifImg;
+    private JCheckBox cbTaggedImg;
+    private JCheckBox cbShowThumbs;
+    private JLabel statusBarText;
 
     // remember the last number of matched photos
-    int lastNumMatched = 0;
+    private int lastNumMatched = 0;
 
     /** This class is called when the user doesn't find the GPX file he needs in the files that have
      * been loaded yet. It displays a FileChooser dialog to select the GPX file to be loaded.
@@ -230,12 +230,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
      *
      */
     private class SetOffsetActionListener implements ActionListener {
-        JPanel panel;
-        JLabel lbExifTime;
-        JosmTextField tfGpsTime;
-        JosmComboBox<String> cbTimezones;
-        ImageDisplay imgDisp;
-        JList<String> imgList;
+        private JPanel panel;
+        private JLabel lbExifTime;
+        private JosmTextField tfGpsTime;
+        private JosmComboBox<String> cbTimezones;
+        private ImageDisplay imgDisp;
+        private JList<String> imgList;
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
@@ -664,10 +664,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
         syncDialog.setContentPane(outerPanel);
         syncDialog.pack();
         syncDialog.addWindowListener(new WindowAdapter() {
-            static final int CANCEL = -1;
-            static final int DONE = 0;
-            static final int AGAIN = 1;
-            static final int NOTHING = 2;
+            private static final int CANCEL = -1;
+            private static final int DONE = 0;
+            private static final int AGAIN = 1;
+            private static final int NOTHING = 2;
             private int checkAndSave() {
                 if (syncDialog.isVisible())
                     // nothing happened: JOSM was minimized or similar
@@ -763,8 +763,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
         syncDialog.showDialog();
     }
 
-    StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
-    StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
+    private StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
+    private StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
 
     private class StatusBarUpdater implements  DocumentListener, ItemListener, ActionListener {
         private boolean doRepaint;
@@ -834,7 +834,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
-    RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
+    private RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
     private class RepaintTheMapListener implements FocusListener {
         @Override
         public void focusGained(FocusEvent e) { // do nothing

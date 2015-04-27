@@ -69,7 +69,7 @@ public class PurgeAction extends JosmAction {
     }
 
     protected OsmDataLayer layer;
-    JCheckBox cbClearUndoRedo;
+    protected JCheckBox cbClearUndoRedo;
 
     protected Set<OsmPrimitive> toPurge;
     /**

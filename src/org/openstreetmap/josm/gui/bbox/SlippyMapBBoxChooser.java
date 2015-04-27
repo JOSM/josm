@@ -51,7 +51,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
      * TMS TileSource provider for the slippymap chooser
      */
     public static class TMSTileSourceProvider implements TileSourceProvider {
-        static final Set<String> existingSlippyMapUrls = new HashSet<>();
+        private static final Set<String> existingSlippyMapUrls = new HashSet<>();
         static {
             // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
             existingSlippyMapUrls.add("https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik
@@ -124,8 +124,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     private Bounds bbox;
 
     // upper left and lower right corners of the selection rectangle (x/y on ZOOM_MAX)
-    Point iSelectionRectStart;
-    Point iSelectionRectEnd;
+    private Point iSelectionRectStart;
+    private Point iSelectionRectEnd;
 
     /**
      * Constructs a new {@code SlippyMapBBoxChooser}.

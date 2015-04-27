@@ -57,7 +57,6 @@ public class NTV2SubGrid implements Cloneable, Serializable {
     private float[] latAccuracy;
     private float[] lonAccuracy;
 
-    boolean bigEndian;
     private NTV2SubGrid[] subGrid;
 
     /**

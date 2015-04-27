@@ -90,7 +90,7 @@ public class LafPreference implements SubPreferenceSetting {
         }
 
         lafCombo.setRenderer(new ListCellRenderer<LookAndFeelInfo>(){
-            final DefaultListCellRenderer def = new DefaultListCellRenderer();
+            private final DefaultListCellRenderer def = new DefaultListCellRenderer();
             @Override
             public Component getListCellRendererComponent(JList<? extends LookAndFeelInfo> list, LookAndFeelInfo value,
                     int index, boolean isSelected, boolean cellHasFocus) {

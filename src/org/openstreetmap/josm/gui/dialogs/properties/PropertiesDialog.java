@@ -895,7 +895,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     class DeleteAction extends JosmAction implements ListSelectionListener {
 
-        static final String DELETE_FROM_RELATION_PREF = "delete_from_relation";
+        private static final String DELETE_FROM_RELATION_PREF = "delete_from_relation";
 
         public DeleteAction() {
             super(tr("Delete"), /* ICON() */ "dialogs/delete", tr("Delete the selected key in all objects"),
@@ -1247,7 +1247,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     class SearchAction extends AbstractAction {
-        final boolean sameType;
+        private final boolean sameType;
 
         public SearchAction(boolean sameType) {
             this.sameType = sameType;

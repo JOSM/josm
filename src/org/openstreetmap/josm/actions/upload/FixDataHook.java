@@ -106,9 +106,9 @@ public class FixDataHook implements UploadHook {
      */
     public static class FixDataKey implements FixData {
         /** key of wrong data */
-        String oldKey;
+        private String oldKey;
         /** key of correct data */
-        String newKey;
+        private String newKey;
 
         /**
          * Setup key check for wrong spelled keys
@@ -140,13 +140,13 @@ public class FixDataHook implements UploadHook {
      */
     public static class FixDataTag implements FixData {
         /** key of wrong data */
-        String oldKey;
+        private String oldKey;
         /** value of wrong data */
-        String oldValue;
+        private String oldValue;
         /** key of correct data */
-        String newKey;
+        private String newKey;
         /** value of correct data */
-        String newValue;
+        private String newValue;
 
         /**
          * Setup key check for wrong spelled keys

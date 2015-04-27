@@ -44,8 +44,8 @@ public class NTV2GridShift implements Serializable {
     private double latShift;
     private double lonAccuracy;
     private double latAccuracy;
-    boolean latAccuracyAvailable;
-    boolean lonAccuracyAvailable;
+    private boolean latAccuracyAvailable;
+    private boolean lonAccuracyAvailable;
     private String subGridName;
 
     /**

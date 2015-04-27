@@ -152,7 +152,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)
     private final List<PreferenceSetting> settingsInitialized = new ArrayList<>();
 
-    List<ValidationListener> validationListeners = new ArrayList<>();
+    final List<ValidationListener> validationListeners = new ArrayList<>();
 
     /**
      * Add validation listener to currently open preferences dialog. Calling to removeValidationListener is not necessary, all listeners will
@@ -402,7 +402,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                             }
                         }
                     } while (removed);
-                    
+
                     if (!toLoad.isEmpty()) {
                         PluginHandler.loadPlugins(PreferenceTabbedPane.this, toLoad, null);
                     }

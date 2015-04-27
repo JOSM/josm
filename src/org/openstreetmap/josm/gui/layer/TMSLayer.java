@@ -206,10 +206,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     private Tile clickedTile;
     private boolean needRedraw;
     private JPopupMenu tileOptionMenu;
-    JCheckBoxMenuItem autoZoomPopup;
-    JCheckBoxMenuItem autoLoadPopup;
-    JCheckBoxMenuItem showErrorsPopup;
-    Tile showMetadataTile;
+    private JCheckBoxMenuItem autoZoomPopup;
+    private JCheckBoxMenuItem autoLoadPopup;
+    private JCheckBoxMenuItem showErrorsPopup;
+    private Tile showMetadataTile;
     private AttributionSupport attribution = new AttributionSupport();
     private static final Font InfoFont = new Font("sansserif", Font.BOLD, 13);
 
@@ -782,11 +782,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         ts.loadAllErrorTiles(force);
     }
 
-    /*
-     * Attempt to approximate how much the image is being scaled. For instance,
-     * a 100x100 image being scaled to 50x50 would return 0.25.
-     */
-    Image lastScaledImage = null;
     @Override
     public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
         boolean done = ((infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0);
@@ -1036,9 +1031,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     private final TileSet nullTileSet = new TileSet((LatLon)null, (LatLon)null, 0);
     private class TileSet {
-        int x0, x1, y0, y1;
-        int zoom;
-        int tileMax = -1;
+        private int x0, x1, y0, y1;
+        private int zoom;
+        private int tileMax = -1;
 
         /**
          * Create a TileSet by EastNorth bbox taking a layer shift in account
@@ -1194,8 +1189,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     private class DeepTileSet {
-        final EastNorth topLeft, botRight;
-        final int minZoom, maxZoom;
+        private final EastNorth topLeft, botRight;
+        private final int minZoom, maxZoom;
         private final TileSet[] tileSets;
         private final TileSetInfo[] tileSetInfos;
         public DeepTileSet(EastNorth topLeft, EastNorth botRight, int minZoom, int maxZoom) {

@@ -36,13 +36,13 @@ public class AddWayHandler extends RequestHandler {
     public static final String command = "add_way";
 
     private final List<LatLon> allCoordinates = new ArrayList<>();
-    
+
     private Way way;
 
     /**
      * The place to remeber already added nodes (they are reused if needed @since 5845
      */
-    Map<LatLon, Node> addedNodes;
+    private Map<LatLon, Node> addedNodes;
 
     @Override
     public String[] getMandatoryParams() {

@@ -611,8 +611,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private class ZoomData {
-        final LatLon center;
-        final double scale;
+        private final LatLon center;
+        private final double scale;
 
         public ZoomData(EastNorth center, double scale) {
             this.center = Projections.inverseProject(center);
@@ -1456,8 +1456,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private static class CursorInfo {
-        final Cursor cursor;
-        final Object object;
+        private final Cursor cursor;
+        private final Object object;
         public CursorInfo(Cursor c, Object o) {
             cursor = c;
             object = o;

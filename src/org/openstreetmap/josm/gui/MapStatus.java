@@ -174,14 +174,14 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
     }
 
-    final ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
-    final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
-    final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6, PROP_BACKGROUND_COLOR.get());
-    final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6, PROP_BACKGROUND_COLOR.get());
-    final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
-    final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20, PROP_BACKGROUND_COLOR.get());
-    final JosmTextField helpText = new JosmTextField();
-    final JProgressBar progressBar = new JProgressBar();
+    private final ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20, PROP_BACKGROUND_COLOR.get());
+    private final JosmTextField helpText = new JosmTextField();
+    private final JProgressBar progressBar = new JProgressBar();
     public final BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
 
     private final SoMChangeListener somListener;
@@ -201,8 +201,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     private final List<StatusTextHistory> statusText = new ArrayList<>();
 
     private static class StatusTextHistory {
-        final Object id;
-        final String text;
+        private final Object id;
+        private final String text;
 
         public StatusTextHistory(Object id, String text) {
             this.id = id;
@@ -642,13 +642,13 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      * @author imi
      */
     static class MouseState {
-        Point mousePos;
-        int modifiers;
+        private Point mousePos;
+        private int modifiers;
     }
     /**
      * The last sent mouse movement event.
      */
-    MouseState mouseState = new MouseState();
+    private MouseState mouseState = new MouseState();
 
     private AWTEventListener awtListener = new AWTEventListener() {
          @Override

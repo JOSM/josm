@@ -189,9 +189,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     private static class StyleRecord implements Comparable<StyleRecord> {
-        final ElemStyle style;
-        final OsmPrimitive osm;
-        final int flags;
+        private final ElemStyle style;
+        private final OsmPrimitive osm;
+        private final int flags;
 
         public StyleRecord(ElemStyle style, OsmPrimitive osm, int flags) {
             this.style = style;

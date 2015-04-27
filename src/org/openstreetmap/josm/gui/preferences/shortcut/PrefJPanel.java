@@ -98,7 +98,7 @@ public class PrefJPanel extends JPanel {
     private JCheckBox cbDisable = new JCheckBox();
     private JosmComboBox<String> tfKey = new JosmComboBox<>();
 
-    JTable shortcutTable = new JTable();
+    private JTable shortcutTable = new JTable();
 
     private JosmTextField filterField = new JosmTextField();
 

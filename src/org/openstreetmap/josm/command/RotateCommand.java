@@ -75,7 +75,7 @@ public class RotateCommand extends TransformNodesCommand {
         for (Node n : nodes) {
             double cosPhi = Math.cos(rotationAngle);
             double sinPhi = Math.sin(rotationAngle);
-            EastNorth oldEastNorth = oldStates.get(n).eastNorth;
+            EastNorth oldEastNorth = oldStates.get(n).getEastNorth();
             double x = oldEastNorth.east() - pivot.east();
             double y = oldEastNorth.north() - pivot.north();
             double nx =  cosPhi * x + sinPhi * y + pivot.east();

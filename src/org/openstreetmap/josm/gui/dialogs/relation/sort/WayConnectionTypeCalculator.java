@@ -105,7 +105,7 @@ public class WayConnectionTypeCalculator {
         return con;
     }
 
-    int firstGroupIdx;
+    private int firstGroupIdx;
     private void makeLoopIfNeeded(final List<WayConnectionType> con, final int i) {
         boolean loop;
         if (i == firstGroupIdx) { //is primitive loop
@@ -135,8 +135,9 @@ public class WayConnectionTypeCalculator {
         return NONE;
     }
 
-    int lastForwardWay, lastBackwardWay;
-    boolean onewayBeginning;
+    private int lastForwardWay;
+    private int lastBackwardWay;
+    private boolean onewayBeginning;
     private WayConnectionType determineOnewayConnectionType(final List<WayConnectionType> con,
             RelationMember m, int i, final WayConnectionType wct) {
         Direction dirFW = determineDirection(lastForwardWay, con.get(lastForwardWay).direction, i);

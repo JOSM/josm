@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import java.util.concurrent.Future;
-
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -18,7 +18,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
  */
 public class DownloadOsmCompressedTask extends DownloadOsmTask {
 
-    static final String PATTERN_COMPRESS =  "https?://.*/.*\\.osm.(gz|bz2?|zip)";
+    private static final String PATTERN_COMPRESS =  "https?://.*/.*\\.osm.(gz|bz2?|zip)";
 
     @Override
     public String[] getPatterns() {
@@ -29,13 +29,13 @@ public class DownloadOsmCompressedTask extends DownloadOsmTask {
     public String getTitle() {
         return tr("Download Compressed OSM");
     }
-    
+
     @Override
     public Future<?> download(boolean newLayer, Bounds downloadArea,
             ProgressMonitor progressMonitor) {
         return null;
     }
-    
+
     /**
      * Loads a given URL
      * @param new_layer {@code true} if the data should be saved to a new layer

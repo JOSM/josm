@@ -9,16 +9,16 @@ import java.util.Queue;
 public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     private static class Request {
-        AbstractProgressMonitor originator;
-        int childTicks;
-        double currentValue;
+        private AbstractProgressMonitor originator;
+        private int childTicks;
+        private double currentValue;
 
-        String title;
-        String customText;
-        String extraText;
-        Boolean intermediate;
+        private String title;
+        private String customText;
+        private String extraText;
+        private Boolean intermediate;
 
-        boolean finishRequested;
+        private boolean finishRequested;
     }
 
     private final CancelHandler cancelHandler;
@@ -27,8 +27,8 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     protected State state = State.INIT;
 
-    int ticksCount;
-    int ticks;
+    private int ticksCount;
+    private int ticks;
     private int childTicks;
 
     private String taskTitle;

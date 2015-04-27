@@ -113,13 +113,13 @@ public class LayerListDialog extends ToggleDialog {
 
     private SideButton opacityButton;
 
-    ActivateLayerAction activateLayerAction;
-    ShowHideLayerAction showHideLayerAction;
+    private ActivateLayerAction activateLayerAction;
+    private ShowHideLayerAction showHideLayerAction;
 
     //TODO This duplicates ShowHide actions functionality
     /** stores which layer index to toggle and executes the ShowHide action if the layer is present */
     private final class ToggleLayerIndexVisibility extends AbstractAction {
-        int layerIndex = -1;
+        private int layerIndex = -1;
         public ToggleLayerIndexVisibility(int layerIndex) {
             this.layerIndex = layerIndex;
         }
@@ -945,7 +945,7 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     private static class ActiveLayerCellRenderer implements TableCellRenderer {
-        final JCheckBox cb;
+        private final JCheckBox cb;
         public ActiveLayerCellRenderer() {
             cb = new ActiveLayerCheckBox();
         }
@@ -960,7 +960,7 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     private static class LayerVisibleCellRenderer implements TableCellRenderer {
-        final LayerVisibleCheckBox cb;
+        private final LayerVisibleCheckBox cb;
         public LayerVisibleCellRenderer() {
             this.cb = new LayerVisibleCheckBox();
         }
@@ -975,7 +975,7 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     private static class LayerVisibleCellEditor extends DefaultCellEditor {
-        final LayerVisibleCheckBox cb;
+        private final LayerVisibleCheckBox cb;
         public LayerVisibleCellEditor(LayerVisibleCheckBox cb) {
             super(cb);
             this.cb = cb;

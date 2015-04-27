@@ -67,8 +67,8 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     private class Parser extends DefaultHandler {
-        Stack<Object> current = new Stack<>();
-        StringBuilder characters = new StringBuilder(64);
+        private Stack<Object> current = new Stack<>();
+        private StringBuilder characters = new StringBuilder(64);
 
         private Locator locator;
 
@@ -184,9 +184,9 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     private static class Entry {
-        Class<?> klass;
-        boolean onStart;
-        boolean both;
+        private Class<?> klass;
+        private boolean onStart;
+        private boolean both;
         private final Map<String, Field> fields = new HashMap<>();
         private final Map<String, Method> methods = new HashMap<>();
 

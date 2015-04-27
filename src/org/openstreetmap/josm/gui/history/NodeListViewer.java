@@ -89,8 +89,8 @@ public class NodeListViewer extends JPanel {
     protected TableModelListener newReversedChangeListener(final JTable table, final NodeListTableColumnModel columnModel) {
         return new TableModelListener() {
             private Boolean reversed = null;
-            final String nonReversedText = tr("Nodes") + (table.getFont().canDisplay('\u25bc') ? " \u25bc" : " (1-n)");
-            final String reversedText = tr("Nodes") + (table.getFont().canDisplay('\u25b2') ? " \u25b2" : " (n-1)");
+            private final String nonReversedText = tr("Nodes") + (table.getFont().canDisplay('\u25bc') ? " \u25bc" : " (1-n)");
+            private final String reversedText = tr("Nodes") + (table.getFont().canDisplay('\u25b2') ? " \u25b2" : " (n-1)");
 
             @Override
             public void tableChanged(TableModelEvent e) {

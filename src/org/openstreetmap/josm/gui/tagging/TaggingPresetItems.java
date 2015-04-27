@@ -288,9 +288,9 @@ public final class TaggingPresetItems {
     }
 
     public static class Usage {
-        TreeSet<String> values;
-        boolean hadKeys = false;
-        boolean hadEmpty = false;
+        private TreeSet<String> values;
+        private boolean hadKeys = false;
+        private boolean hadEmpty = false;
 
         public boolean hasUniqueValue() {
             return values.size() == 1 && !hadEmpty;
@@ -1167,7 +1167,7 @@ public final class TaggingPresetItems {
 
         private static final ListCellRenderer<PresetListEntry> RENDERER = new ListCellRenderer<PresetListEntry>() {
 
-            JLabel lbl = new JLabel();
+            private JLabel lbl = new JLabel();
 
             @Override
             public Component getListCellRendererComponent(

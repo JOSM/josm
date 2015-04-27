@@ -48,8 +48,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class ChooseTrackVisibilityAction extends AbstractAction {
     private final GpxLayer layer;
 
-    DateFilterPanel dateFilter;
-    JTable table;
+    private DateFilterPanel dateFilter;
+    private JTable table;
 
     /**
      * Constructs a new {@code ChooseTrackVisibilityAction}.
@@ -180,7 +180,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         return t;
     }
 
-    boolean noUpdates=false;
+    private boolean noUpdates=false;
 
     /** selects all rows (=tracks) in the table that are currently visible on the layer*/
     private void selectVisibleTracksInTable() {

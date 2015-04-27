@@ -18,17 +18,17 @@ public class XmlStyleSourceHandler extends DefaultHandler {
     private boolean hadLine, hadLineMod, hadIcon, hadArea;
     private RuleElem rule = new RuleElem();
 
-    XmlStyleSource style;
+    private XmlStyleSource style;
 
     static class RuleElem {
-        XmlCondition cond = new XmlCondition();
-        Collection<XmlCondition> conditions;
-        double scaleMax;
-        double scaleMin;
-        LinePrototype line = new LinePrototype();
-        LinemodPrototype linemod = new LinemodPrototype();
-        AreaPrototype area = new AreaPrototype();
-        IconPrototype icon = new IconPrototype();
+        private XmlCondition cond = new XmlCondition();
+        private Collection<XmlCondition> conditions;
+        private double scaleMax;
+        private double scaleMin;
+        private LinePrototype line = new LinePrototype();
+        private LinemodPrototype linemod = new LinemodPrototype();
+        private AreaPrototype area = new AreaPrototype();
+        private IconPrototype icon = new IconPrototype();
         public void init() {
             conditions = null;
             scaleMax = Double.POSITIVE_INFINITY;
