@@ -12,13 +12,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetDiscussionComment;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.Attributes;
@@ -277,7 +277,7 @@ public final class OsmChangesetParser {
             progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing list of changesets..."));
             InputSource inputSource = new InputSource(new InvalidXmlCharacterFilter(new InputStreamReader(source, StandardCharsets.UTF_8)));
-            SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser.new Parser());
+            Utils.newSafeSAXParser().parse(inputSource, parser.new Parser());
             return parser.getChangesets();
         } catch(ParserConfigurationException | SAXException e) {
             throw new IllegalDataException(e.getMessage(), e);

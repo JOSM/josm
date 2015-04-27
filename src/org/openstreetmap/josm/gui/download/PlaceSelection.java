@@ -45,7 +45,6 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -379,7 +378,7 @@ public class PlaceSelection implements DownloadSelection {
                 ) {
                     InputSource inputSource = new InputSource(reader);
                     NameFinderResultParser parser = new NameFinderResultParser();
-                    SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
+                    Utils.newSafeSAXParser().parse(inputSource, parser);
                     this.data = parser.getResult();
                 }
             } catch (SAXParseException e) {

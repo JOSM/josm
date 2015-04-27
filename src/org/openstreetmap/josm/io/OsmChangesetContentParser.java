@@ -10,7 +10,6 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
@@ -18,6 +17,7 @@ import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationTyp
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -149,7 +149,7 @@ public class OsmChangesetContentParser {
         try {
             progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing changeset content ..."));
-            SAXParserFactory.newInstance().newSAXParser().parse(source, new Parser());
+            Utils.newSafeSAXParser().parse(source, new Parser());
         } catch(XmlParsingException e) {
             throw e;
         } catch (ParserConfigurationException | SAXException | IOException e) {

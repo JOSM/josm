@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -18,6 +17,7 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.notes.NoteComment.Action;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -221,9 +221,7 @@ public class NoteReader {
     public List<Note> parse() throws SAXException, IOException {
         DefaultHandler parser = new Parser();
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.newSAXParser().parse(inputSource, parser);
+            Utils.newSafeSAXParser().parse(inputSource, parser);
         } catch (ParserConfigurationException e) {
             Main.error(e); // broken SAXException chaining
             throw new SAXException(e);
