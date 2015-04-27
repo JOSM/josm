@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -693,36 +694,19 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
-     * Replies the a localized name for this primitive given by the value of the tags (in this order)
-     * <ul>
-     *   <li>name:lang_COUNTRY_Variant  of the current locale</li>
-     *   <li>name:lang_COUNTRY of the current locale</li>
-     *   <li>name:lang of the current locale</li>
-     *   <li>name of the current locale</li>
-     * </ul>
+     * Replies a localized name for this primitive given by the value of the name tags
+     * accessed from very specific (language variant) to more generic (default name).
      *
-     * null, if no such tag exists
-     *
-     * @return the name of this primitive
+     * @see LanguageInfo#getLanguageCodes()
+     * @return the name of this primitive, <code>null</code> if no name exists
      */
     @Override
     public String getLocalName() {
-        final Locale locale = Locale.getDefault();
-        String key = "name:" + locale.toString();
-        String val = get(key);
-        if (val != null)
-            return val;
-
-        final String language = locale.getLanguage();
-        key = "name:" + language + "_" + locale.getCountry();
-        val = get(key);
-        if (val != null)
-            return val;
-
-        key = "name:" + language;
-        val = get(key);
-        if (val != null)
-            return val;
+        for(String s : LanguageInfo.getLanguageCodes(null)) {
+            String val = get("name:" + s);
+            if (val != null)
+                return val;
+        }
 
         return getName();
     }
