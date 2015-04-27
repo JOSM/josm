@@ -25,7 +25,7 @@ public final class AuthenticationPreference implements SubPreferenceSetting {
         }
     }
 
-    AuthenticationPreferencesPanel pnlAuthPreferences;
+    private AuthenticationPreferencesPanel pnlAuthPreferences;
 
     private AuthenticationPreference() {
         super();

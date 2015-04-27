@@ -115,7 +115,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     /** add all selected primitives to the given relations */
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
 
-    HighlightHelper highlightHelper = new HighlightHelper();
+    private final HighlightHelper highlightHelper = new HighlightHelper();
     private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
 
     /**

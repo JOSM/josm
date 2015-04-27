@@ -19,8 +19,8 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class StringEditor extends ExtendedDialog {
 
-    PrefEntry entry;
-    JosmTextField tvalue;
+    private PrefEntry entry;
+    private JosmTextField tvalue;
 
     /**
      * Constructs a new {@code StringEditor}.

@@ -179,8 +179,8 @@ public class BasicUploadSettingsPanel extends JPanel {
      */
     static class CommentModelListener extends FocusAdapter implements ActionListener {
 
-        final HistoryComboBox source;
-        final ChangesetCommentModel destination;
+        private final HistoryComboBox source;
+        private final ChangesetCommentModel destination;
 
         CommentModelListener(HistoryComboBox source, ChangesetCommentModel destination) {
             this.source = source;

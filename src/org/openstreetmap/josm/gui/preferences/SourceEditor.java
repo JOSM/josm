@@ -938,7 +938,7 @@ public abstract class SourceEditor extends JPanel {
      * The action to move the currently selected entries up or down in the list.
      */
     class MoveUpDownAction extends AbstractAction implements ListSelectionListener, TableModelListener {
-        final int increment;
+        private final int increment;
         public MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
             putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));

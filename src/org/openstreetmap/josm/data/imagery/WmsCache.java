@@ -56,14 +56,14 @@ public class WmsCache {
     private static final String LAYERS_INDEX_FILENAME = "layers.properties";
 
     private static class CacheEntry {
-        final double pixelPerDegree;
-        final double east;
-        final double north;
-        final ProjectionBounds bounds;
-        final String filename;
+        private final double pixelPerDegree;
+        private final double east;
+        private final double north;
+        private final ProjectionBounds bounds;
+        private final String filename;
 
-        long lastUsed;
-        long lastModified;
+        private long lastUsed;
+        private long lastModified;
 
         CacheEntry(double pixelPerDegree, double east, double north, int tileSize, String filename) {
             this.pixelPerDegree = pixelPerDegree;
@@ -82,9 +82,9 @@ public class WmsCache {
     }
 
     private static class ProjectionEntries {
-        final String projection;
-        final String cacheDirectory;
-        final List<CacheEntry> entries = new ArrayList<>();
+        private final String projection;
+        private final String cacheDirectory;
+        private final List<CacheEntry> entries = new ArrayList<>();
 
         ProjectionEntries(String projection, String cacheDirectory) {
             this.projection = projection;

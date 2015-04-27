@@ -25,9 +25,9 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
  */
 public class DownloadAlongTrackAction extends DownloadAlongAction {
 
-    static final int NEAR_TRACK = 0;
-    static final int NEAR_WAYPOINTS = 1;
-    static final int NEAR_BOTH = 2;
+    private static final int NEAR_TRACK = 0;
+    private static final int NEAR_WAYPOINTS = 1;
+    private static final int NEAR_BOTH = 2;
 
     private static final String PREF_DOWNLOAD_ALONG_TRACK_OSM = "downloadAlongTrack.download.osm";
     private static final String PREF_DOWNLOAD_ALONG_TRACK_GPS = "downloadAlongTrack.download.gps";

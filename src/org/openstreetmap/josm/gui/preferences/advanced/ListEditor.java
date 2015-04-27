@@ -29,8 +29,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class ListEditor extends ExtendedDialog {
 
-    List<String> data;
-    PrefEntry entry;
+    private List<String> data;
+    private PrefEntry entry;
 
     /**
      * Constructs a new {@code ListEditor}.

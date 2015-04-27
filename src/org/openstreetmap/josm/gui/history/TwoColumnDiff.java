@@ -54,8 +54,8 @@ class TwoColumnDiff {
 
     public List<Item> referenceDiff;
     public List<Item> currentDiff;
-    Object[] reference;
-    Object[] current;
+    private Object[] reference;
+    private Object[] current;
     boolean referenceReversed = false;
 
     public TwoColumnDiff(Object[] reference, Object[] current) {

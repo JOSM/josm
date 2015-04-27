@@ -8,7 +8,6 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -153,7 +152,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     private static class DescriptionTextBuilder {
 
-        StringBuilder s = new StringBuilder(4096);
+        private final StringBuilder s = new StringBuilder(4096);
 
         public StringBuilder append(String string) {
             return s.append(string);

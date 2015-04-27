@@ -933,7 +933,7 @@ public class Diff {
         }
 
         /** Number of elements (lines) in this file. */
-        final int buffered_lines;
+        private final int buffered_lines;
 
         /** Vector, indexed by line number, containing an equivalence code for
            each line.  It is this vector that is actually compared with that
@@ -942,18 +942,18 @@ public class Diff {
 
         /** Vector, like the previous one except that
            the elements for discarded lines have been squeezed out.  */
-        final int[]    undiscarded;
+        private final int[]    undiscarded;
 
         /** Vector mapping virtual line numbers (not counting discarded lines)
            to real ones (counting those lines).  Both are origin-0.  */
-        final int[]    realindexes;
+        private final int[]    realindexes;
 
         /** Total number of nondiscarded lines. */
-        int         nondiscarded_lines;
+        private int         nondiscarded_lines;
 
         /** Array, indexed by real origin-1 line number,
            containing true for a line that is an insertion or a deletion.
            The results of comparison are stored here.  */
-        boolean[]       changed_flag;
+        private boolean[]       changed_flag;
     }
 }

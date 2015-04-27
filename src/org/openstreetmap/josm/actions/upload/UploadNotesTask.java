@@ -41,8 +41,8 @@ public class UploadNotesTask {
     private class UploadTask extends PleaseWaitRunnable {
 
         private boolean isCanceled = false;
-        Map<Note, Note> updatedNotes = new HashMap<>();
-        Map<Note, Exception> failedNotes = new HashMap<>();
+        private Map<Note, Note> updatedNotes = new HashMap<>();
+        private Map<Note, Exception> failedNotes = new HashMap<>();
 
         /**
          * Constructs a new {@code UploadTask}.

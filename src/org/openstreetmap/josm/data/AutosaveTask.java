@@ -71,10 +71,10 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     public static final BooleanProperty PROP_NOTIFICATION = new BooleanProperty("autosave.notification", false);
 
     private static class AutosaveLayerInfo {
-        OsmDataLayer layer;
-        String layerName;
-        String layerFileName;
-        final Deque<File> backupFiles = new LinkedList<>();
+        private OsmDataLayer layer;
+        private String layerName;
+        private String layerFileName;
+        private final Deque<File> backupFiles = new LinkedList<>();
     }
 
     private final DataSetListenerAdapter datasetAdapter = new DataSetListenerAdapter(this);

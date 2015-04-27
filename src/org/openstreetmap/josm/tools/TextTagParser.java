@@ -39,12 +39,12 @@ public final class TextTagParser {
     }
 
     public static class TextAnalyzer {
-        boolean quotesStarted = false;
-        boolean esc = false;
-        StringBuilder s = new StringBuilder(200);
-        int pos;
-        String data;
-        int n;
+        private boolean quotesStarted = false;
+        private boolean esc = false;
+        private StringBuilder s = new StringBuilder(200);
+        private int pos;
+        private String data;
+        private int n;
 
         public TextAnalyzer(String text) {
             pos = 0;

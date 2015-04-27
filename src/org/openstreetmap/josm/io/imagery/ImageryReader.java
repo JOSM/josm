@@ -71,22 +71,23 @@ public class ImageryReader {
 
         private Stack<State> states;
 
-        List<ImageryInfo> entries;
+        private List<ImageryInfo> entries;
 
         /**
          * Skip the current entry because it has mandatory attributes
          * that this version of JOSM cannot process.
          */
-        boolean skipEntry;
+        private boolean skipEntry;
 
-        ImageryInfo entry;
-        ImageryBounds bounds;
-        Shape shape;
+        private ImageryInfo entry;
+        private ImageryBounds bounds;
+        private Shape shape;
         // language of last element, does only work for simple ENTRY_ATTRIBUTE's
-        String lang;
-        List<String> projections;
+        private String lang;
+        private List<String> projections;
 
-        @Override public void startDocument() {
+        @Override
+        public void startDocument() {
             accumulator = new StringBuffer();
             skipEntry = false;
             states = new Stack<>();

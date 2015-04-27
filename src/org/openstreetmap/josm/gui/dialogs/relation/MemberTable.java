@@ -121,7 +121,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         scrollRectToVisible(getCellRect(index, 0, true));
     }
 
-    ListSelectionListener highlighterListener = new ListSelectionListener() {
+    private ListSelectionListener highlighterListener = new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent lse) {
                 if (Main.isDisplayingMapView()) {

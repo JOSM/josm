@@ -32,7 +32,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
     private Color color;
     /** Is the error selected ? */
     private boolean selected;
-    
+
     private final Set<PaintedPoint> paintedPoints = new HashSet<>();
     private final Set<PaintedSegment> paintedSegments = new HashSet<>();
 
@@ -54,7 +54,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
             this.p1 = p1;
             this.color = color;
         }
-        
+
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -63,7 +63,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
             result = prime * result + color.hashCode();
             return result;
         }
-        
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -82,8 +82,8 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
     }
 
     protected static class PaintedSegment extends PaintedPoint {
-        final LatLon p2;
-        
+        private final LatLon p2;
+
         public PaintedSegment(LatLon p1, LatLon p2, Color color) {
             super(p1, color);
             this.p2 = p2;
@@ -132,11 +132,11 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
      */
     protected void drawNode(Node n, Color color) {
         PaintedPoint pp = new PaintedPoint(n.getCoor(), color);
-        
+
         if (!paintedPoints.contains(pp)) {
             Point p = mv.getPoint(n);
             g.setColor(color);
-            
+
             if (selected) {
                 g.fillOval(p.x - 5, p.y - 5, 10, 10);
             } else {
@@ -155,7 +155,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
      */
     protected void drawSegment(Point p1, Point p2, Color color) {
         g.setColor(color);
-        
+
         double t = Math.atan2(p2.x - p1.x, p2.y - p1.y);
         double cosT = 5 * Math.cos(t);
         double sinT = 5 * Math.sin(t);
@@ -271,7 +271,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
             lastN = n;
         }
     }
-    
+
     /**
      * Clears the internal painted objects collections.
      */

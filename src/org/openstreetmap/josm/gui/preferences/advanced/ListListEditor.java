@@ -37,15 +37,15 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class ListListEditor extends ExtendedDialog {
 
-    EntryListModel entryModel;
-    List<List<String>> data;
-    PrefEntry entry;
+    private EntryListModel entryModel;
+    private List<List<String>> data;
+    private PrefEntry entry;
 
-    JList<String> entryList;
-    Integer entryIdx;
-    JTable table;
+    private JList<String> entryList;
+    private Integer entryIdx;
+    private JTable table;
 
-    ListTableModel tableModel;
+    private ListTableModel tableModel;
 
     /**
      * Constructs a new {@code ListListEditor}.

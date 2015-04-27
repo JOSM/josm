@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.Geometry;
  * @author Ole Jørgen Brønner (olejorgenb)
  */
 public class ParallelWays {
-    final List<Way> ways;
+    private final List<Way> ways;
     private final List<Node> sortedNodes;
 
     private final int nodeCount;
@@ -193,5 +193,9 @@ public class ParallelWays {
             n.setCoor(source.getCoor());
             return n;
         }
+    }
+
+    public final List<Way> getWays() {
+        return ways;
     }
 }

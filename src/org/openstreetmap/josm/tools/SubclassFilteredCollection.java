@@ -19,7 +19,7 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
 
     private final Collection<? extends S> collection;
     private final Predicate<? super S> predicate;
-    int size = -1;
+    private int size = -1;
 
     private class FilterIterator implements Iterator<T> {
 

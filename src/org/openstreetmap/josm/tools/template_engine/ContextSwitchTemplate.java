@@ -40,7 +40,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
     };
 
     private abstract class ContextProvider extends Match {
-        Match condition;
+        protected Match condition;
         abstract List<OsmPrimitive> getPrimitives(OsmPrimitive root);
     }
 

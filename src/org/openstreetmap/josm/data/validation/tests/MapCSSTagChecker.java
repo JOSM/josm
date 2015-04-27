@@ -241,7 +241,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             this.rule = rule;
         }
 
-        static final String POSSIBLE_THROWS = possibleThrows();
+        private static final String POSSIBLE_THROWS = possibleThrows();
 
         static final String possibleThrows() {
             StringBuffer sb = new StringBuffer();

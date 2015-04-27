@@ -56,7 +56,7 @@ public class NoteReader {
         private Date commentCreateDate;
         private Boolean commentIsNew;
         private List<Note> notes;
-        String commentText;
+        private String commentText;
 
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {

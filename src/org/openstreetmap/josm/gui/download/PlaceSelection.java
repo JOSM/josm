@@ -449,8 +449,8 @@ public class PlaceSelection implements DownloadSelection {
     }
 
     static class NamedResultTableColumnModel extends DefaultTableColumnModel {
-        TableColumn col3 = null;
-        TableColumn col4 = null;
+        private TableColumn col3 = null;
+        private TableColumn col4 = null;
         protected final void createColumns() {
             TableColumn col = null;
             NamedResultCellRenderer renderer = new NamedResultCellRenderer();

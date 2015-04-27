@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 public class RelationDialogManager extends WindowAdapter implements MapView.LayerChangeListener{
 
     /** keeps track of open relation editors */
-    static RelationDialogManager relationDialogManager;
+    private static RelationDialogManager relationDialogManager;
 
     /**
      * Replies the singleton {@link RelationDialogManager}

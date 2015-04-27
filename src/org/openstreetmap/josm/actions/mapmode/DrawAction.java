@@ -1285,7 +1285,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     private class SnapHelper {
-        boolean snapOn; // snapping is turned on
+        private boolean snapOn; // snapping is turned on
 
         private boolean active; // snapping is active for current mouse position
         private boolean fixed; // snap angle is fixed
@@ -1297,31 +1297,31 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         private boolean snapToProjections;
 
-        EastNorth dir2;
-        EastNorth projected;
-        String labelText;
-        double lastAngle;
+        private EastNorth dir2;
+        private EastNorth projected;
+        private String labelText;
+        private double lastAngle;
 
-        double customBaseHeading=-1; // angle of base line, if not last segment)
+        private double customBaseHeading=-1; // angle of base line, if not last segment)
         private EastNorth segmentPoint1; // remembered first point of base segment
         private EastNorth segmentPoint2; // remembered second point of base segment
         private EastNorth projectionSource; // point that we are projecting to the line
 
-        double[] snapAngles;
-        double snapAngleTolerance;
+        private double[] snapAngles;
+        private double snapAngleTolerance;
 
-        double pe,pn; // (pe,pn) - direction of snapping line
-        double e0,n0; // (e0,n0) - origin of snapping line
+        private double pe,pn; // (pe,pn) - direction of snapping line
+        private double e0,n0; // (e0,n0) - origin of snapping line
 
-        final String fixFmt="%d "+tr("FIX");
-        Color snapHelperColor;
+        private final String fixFmt="%d "+tr("FIX");
+        private Color snapHelperColor;
         private Color highlightColor;
 
         private Stroke normalStroke;
         private Stroke helperStroke;
         private Stroke highlightStroke;
 
-        JCheckBoxMenuItem checkBox;
+        private JCheckBoxMenuItem checkBox;
         public final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(),Color.ORANGE.getGreen(),Color.ORANGE.getBlue(),128);
 
         public void init() {
@@ -1671,15 +1671,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         }
 
-        MouseListener anglePopupListener = new PopupMenuLauncher( new JPopupMenu() {
-            JCheckBoxMenuItem repeatedCb = new JCheckBoxMenuItem(new AbstractAction(tr("Toggle snapping by {0}", getShortcut().getKeyText())){
+        private MouseListener anglePopupListener = new PopupMenuLauncher(new JPopupMenu() {
+            private JCheckBoxMenuItem repeatedCb = new JCheckBoxMenuItem(
+                    new AbstractAction(tr("Toggle snapping by {0}", getShortcut().getKeyText())) {
                 @Override public void actionPerformed(ActionEvent e) {
                     boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
                     Main.pref.put("draw.anglesnap.toggleOnRepeatedA", sel);
                     init();
                 }
             });
-            JCheckBoxMenuItem helperCb = new JCheckBoxMenuItem(new AbstractAction(tr("Show helper geometry")){
+            private JCheckBoxMenuItem helperCb = new JCheckBoxMenuItem(
+                    new AbstractAction(tr("Show helper geometry")) {
                 @Override public void actionPerformed(ActionEvent e) {
                     boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
                     Main.pref.put("draw.anglesnap.drawConstructionGeometry", sel);
@@ -1689,7 +1691,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     enableSnapping();
                 }
             });
-            JCheckBoxMenuItem projectionCb = new JCheckBoxMenuItem(new AbstractAction(tr("Snap to node projections")){
+            private JCheckBoxMenuItem projectionCb = new JCheckBoxMenuItem(
+                    new AbstractAction(tr("Snap to node projections")) {
                 @Override public void actionPerformed(ActionEvent e) {
                     boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
                     Main.pref.put("draw.anglesnap.projectionsnap", sel);

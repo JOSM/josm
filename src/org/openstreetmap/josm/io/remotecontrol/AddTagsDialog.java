@@ -56,7 +56,7 @@ public class AddTagsDialog extends ExtendedDialog {
      * Class for displaying "delete from ... objects" in the table
      */
     static class DeleteTagMarker {
-        int num;
+        private int num;
         public DeleteTagMarker(int num) {
             this.num = num;
         }
@@ -70,8 +70,8 @@ public class AddTagsDialog extends ExtendedDialog {
      * Class for displaying list of existing tag values in the table
      */
     static class ExistingValues {
-        String tag;
-        Map<String, Integer> valueCount;
+        private String tag;
+        private Map<String, Integer> valueCount;
         public ExistingValues(String tag) {
             this.tag=tag; valueCount=new HashMap<>();
         }
@@ -125,7 +125,7 @@ public class AddTagsDialog extends ExtendedDialog {
         this.sender = senderName;
 
         final DefaultTableModel tm = new DefaultTableModel(new String[] {tr("Assume"), tr("Key"), tr("Value"), tr("Existing values")}, tags.length) {
-            final Class<?>[] types = {Boolean.class, String.class, Object.class, ExistingValues.class};
+            private final Class<?>[] types = {Boolean.class, String.class, Object.class, ExistingValues.class};
             @Override
             public Class<?> getColumnClass(int c) {
                 return types[c];

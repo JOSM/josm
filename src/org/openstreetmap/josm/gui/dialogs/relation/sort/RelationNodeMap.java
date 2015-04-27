@@ -166,9 +166,9 @@ public class RelationNodeMap {
         ts2.add(n);
     }
 
-    Integer firstOneway = null;
-    Node lastOnewayNode = null;
-    Node firstCircular = null;
+    private Integer firstOneway = null;
+    private Node lastOnewayNode = null;
+    private Node firstCircular = null;
 
     /**
      * Return a relation member that is linked to the

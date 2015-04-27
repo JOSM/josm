@@ -25,12 +25,12 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class ConditionalKeys extends Test.TagTest {
 
-    final OpeningHourTest openingHourTest = new OpeningHourTest();
-    static final Set<String> RESTRICTION_TYPES = new HashSet<>(Arrays.asList("oneway", "toll", "noexit", "maxspeed", "minspeed", "maxstay",
+    private final OpeningHourTest openingHourTest = new OpeningHourTest();
+    private static final Set<String> RESTRICTION_TYPES = new HashSet<>(Arrays.asList("oneway", "toll", "noexit", "maxspeed", "minspeed", "maxstay",
             "maxweight", "maxaxleload", "maxheight", "maxwidth", "maxlength", "overtaking", "maxgcweight", "maxgcweightrating", "fee"));
-    static final Set<String> RESTRICTION_VALUES = new HashSet<>(Arrays.asList("yes", "official", "designated", "destination",
+    private static final Set<String> RESTRICTION_VALUES = new HashSet<>(Arrays.asList("yes", "official", "designated", "destination",
             "delivery", "permissive", "private", "agricultural", "forestry", "no"));
-    static final Set<String> TRANSPORT_MODES = new HashSet<>(Arrays.asList("access", "foot", "ski", "inline_skates", "ice_skates",
+    private static final Set<String> TRANSPORT_MODES = new HashSet<>(Arrays.asList("access", "foot", "ski", "inline_skates", "ice_skates",
             "horse", "vehicle", "bicycle", "carriage", "trailer", "caravan", "motor_vehicle", "motorcycle", "moped", "mofa",
             "motorcar", "motorhome", "psv", "bus", "taxi", "tourist_bus", "goods", "hgv", "agricultural", "atv", "snowmobile"
             /*,"hov","emergency","hazmat","disabled"*/));

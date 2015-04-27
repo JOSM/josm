@@ -159,7 +159,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         final JButton more = new JButton(tr("More..."));
         p.add(more, GBC.std().insets(5,5,0,0));
         more.addActionListener(new ActionListener() {
-            JPopupMenu menu = buildPopupMenu();
+            private JPopupMenu menu = buildPopupMenu();
             @Override public void actionPerformed(ActionEvent ev) {
                 menu.show(more, 0, 0);
             }
@@ -311,7 +311,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         return data;
     }
 
-    Map<String,String> profileTypes = new LinkedHashMap<>();
+    private Map<String,String> profileTypes = new LinkedHashMap<>();
 
     private JPopupMenu buildPopupMenu() {
         JPopupMenu menu = new JPopupMenu();
