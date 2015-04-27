@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -541,9 +541,7 @@ public class GpxReader implements GpxConstants {
     public boolean parse(boolean tryToFinish) throws SAXException, IOException {
         Parser parser = new Parser();
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.newSAXParser().parse(inputSource, parser);
+            Utils.newSafeSAXParser().parse(inputSource, parser);
             return true;
         } catch (SAXException e) {
             if (tryToFinish) {

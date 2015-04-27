@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -271,7 +271,7 @@ public class Capabilities {
          */
         public static Capabilities parse(InputSource inputSource) throws SAXException, IOException, ParserConfigurationException {
             CapabilitiesParser parser = new CapabilitiesParser();
-            SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
+            Utils.newSafeSAXParser().parse(inputSource, parser);
             return parser.getCapabilities();
         }
     }
