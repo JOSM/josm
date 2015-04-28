@@ -15,7 +15,6 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.text.html.StyleSheet;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
