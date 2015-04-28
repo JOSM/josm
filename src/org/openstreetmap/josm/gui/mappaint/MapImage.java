@@ -32,6 +32,7 @@ public class MapImage {
     public int alpha = 255;
     public String name;
     public StyleSource source;
+    public boolean autoRescale;
     public int width = -1;
     public int height = -1;
     public int offsetX = 0;
@@ -41,8 +42,13 @@ public class MapImage {
     private BufferedImage disabledImgCache;
 
     public MapImage(String name, StyleSource source) {
+        this(name, source, true);
+    }
+
+    public MapImage(String name, StyleSource source, boolean autoRescale) {
         this.name = name;
         this.source = source;
+        this.autoRescale = autoRescale;
     }
 
     /**
@@ -198,8 +204,8 @@ public class MapImage {
     }
 
     private boolean mustRescale(Image image) {
-        return ((width  == -1 && image.getWidth(null) > MAX_SIZE)
-             && (height == -1 && image.getHeight(null) > MAX_SIZE));
+        return autoRescale && width  == -1 && image.getWidth(null) > MAX_SIZE
+             && height == -1 && image.getHeight(null) > MAX_SIZE;
     }
 
     @Override
@@ -211,6 +217,7 @@ public class MapImage {
         return  alpha == other.alpha &&
                 Objects.equals(name, other.name) &&
                 Objects.equals(source, other.source) &&
+                autoRescale == other.autoRescale &&
                 width == other.width &&
                 height == other.height;
     }
@@ -221,6 +228,7 @@ public class MapImage {
         hash = 67 * hash + alpha;
         hash = 67 * hash + name.hashCode();
         hash = 67 * hash + source.hashCode();
+        hash = 67 * hash + (autoRescale ? 1 : 0);
         hash = 67 * hash + width;
         hash = 67 * hash + height;
         return hash;
