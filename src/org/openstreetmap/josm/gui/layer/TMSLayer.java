@@ -394,6 +394,14 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     /**
+     * Marks layer as needing redraw on offset change
+     */
+    @Override
+    public void setOffset(double dx, double dy) {
+        super.setOffset(dx, dy);
+        needRedraw = true;
+    }
+    /**
      * Returns average number of screen pixels per tile pixel for current mapview
      */
     private double getScaleFactor(int zoom) {
