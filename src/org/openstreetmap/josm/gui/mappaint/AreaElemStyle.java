@@ -40,7 +40,7 @@ public class AreaElemStyle extends ElemStyle {
 
         IconReference iconRef = c.get(FILL_IMAGE, null, IconReference.class);
         if (iconRef != null) {
-            fillImage = new MapImage(iconRef.iconName, iconRef.source);
+            fillImage = new MapImage(iconRef.iconName, iconRef.source, false);
 
             color = new Color(fillImage.getImage(false).getRGB(
                     fillImage.getWidth() / 2, fillImage.getHeight() / 2)
