@@ -64,7 +64,7 @@ public class Environment {
      * @param other the other environment. Must not be null.
      * @throws IllegalArgumentException if {@code param} is {@code null}
      */
-    public Environment(Environment other) throws IllegalArgumentException {
+    public Environment(Environment other) {
         CheckParameterUtil.ensureParameterNotNull(other);
         this.osm = other.osm;
         this.mc = other.mc;

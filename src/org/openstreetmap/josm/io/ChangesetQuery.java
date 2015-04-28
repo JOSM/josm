@@ -31,8 +31,7 @@ public class ChangesetQuery {
      *
      * @param query the query part
      * @return the query object
-     * @throws ChangesetQueryUrlException thrown if query doesn't consist of valid query parameters
-     *
+     * @throws ChangesetQueryUrlException if query doesn't consist of valid query parameters
      */
     public static ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException{
         return new ChangesetQueryUrlParser().parse(query);
@@ -66,10 +65,10 @@ public class ChangesetQuery {
      *
      * @param uid the uid of the user. &gt; 0 expected.
      * @return the query object with the applied restriction
-     * @throws IllegalArgumentException thrown if uid &lt;= 0
+     * @throws IllegalArgumentException if uid &lt;= 0
      * @see #forUser(String)
      */
-    public ChangesetQuery forUser(int uid) throws IllegalArgumentException{
+    public ChangesetQuery forUser(int uid) {
         if (uid <= 0)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "uid", uid));
         this.uid = uid;
@@ -85,7 +84,7 @@ public class ChangesetQuery {
      *
      * @param username the username. Must not be null.
      * @return the query object with the applied restriction
-     * @throws IllegalArgumentException thrown if username is null.
+     * @throws IllegalArgumentException if username is null.
      * @see #forUser(int)
      */
     public ChangesetQuery forUser(String username) {
@@ -132,10 +131,10 @@ public class ChangesetQuery {
      * @param maxLat  max latitude of the bounding box.  Valid latitude value expected.
      *
      * @return the restricted changeset query
-     * @throws IllegalArgumentException thrown if either of the parameters isn't a valid longitude or
+     * @throws IllegalArgumentException if either of the parameters isn't a valid longitude or
      * latitude value
      */
-    public ChangesetQuery inBbox(double minLon, double minLat, double maxLon, double maxLat) throws IllegalArgumentException{
+    public ChangesetQuery inBbox(double minLon, double minLat, double maxLon, double maxLat) {
         if (!LatLon.isValidLon(minLon))
             throw new IllegalArgumentException(tr("Illegal longitude value for parameter ''{0}'', got {1}", "minLon", minLon));
         if (!LatLon.isValidLon(maxLon))
@@ -155,8 +154,8 @@ public class ChangesetQuery {
      * @param max the max lat/lon coordiantes of the bounding box. Must not be null.
      *
      * @return the restricted changeset query
-     * @throws IllegalArgumentException thrown if min is null
-     * @throws IllegalArgumentException thrown if max is null
+     * @throws IllegalArgumentException if min is null
+     * @throws IllegalArgumentException if max is null
      */
     public ChangesetQuery inBbox(LatLon min, LatLon max) {
         CheckParameterUtil.ensureParameterNotNull(min, "min");
@@ -170,9 +169,9 @@ public class ChangesetQuery {
      *
      * @param bbox the bounding box. Must not be null.
      * @return the changeset query
-     * @throws IllegalArgumentException thrown if bbox is null.
+     * @throws IllegalArgumentException if bbox is null.
      */
-    public ChangesetQuery inBbox(Bounds bbox) throws IllegalArgumentException {
+    public ChangesetQuery inBbox(Bounds bbox) {
         CheckParameterUtil.ensureParameterNotNull(bbox, "bbox");
         this.bounds = bbox;
         return this;
@@ -184,9 +183,9 @@ public class ChangesetQuery {
      *
      * @param d the date . Must not be null.
      * @return the restricted changeset query
-     * @throws IllegalArgumentException thrown if d is null
+     * @throws IllegalArgumentException if d is null
      */
-    public ChangesetQuery closedAfter(Date d) throws IllegalArgumentException{
+    public ChangesetQuery closedAfter(Date d) {
         CheckParameterUtil.ensureParameterNotNull(d, "d");
         this.closedAfter = d;
         return this;
@@ -200,10 +199,10 @@ public class ChangesetQuery {
      * @param closedAfter only reply changesets closed after this date. Must not be null.
      * @param createdBefore only reply changesets created before this date. Must not be null.
      * @return the restricted changeset query
-     * @throws IllegalArgumentException thrown if closedAfter is null
-     * @throws IllegalArgumentException thrown if createdBefore is null
+     * @throws IllegalArgumentException if closedAfter is null
+     * @throws IllegalArgumentException if createdBefore is null
      */
-    public ChangesetQuery closedAfterAndCreatedBefore(Date closedAfter, Date createdBefore ) throws IllegalArgumentException {
+    public ChangesetQuery closedAfterAndCreatedBefore(Date closedAfter, Date createdBefore ) {
         CheckParameterUtil.ensureParameterNotNull(closedAfter, "closedAfter");
         CheckParameterUtil.ensureParameterNotNull(createdBefore, "createdBefore");
         this.closedAfter = closedAfter;
@@ -240,7 +239,7 @@ public class ChangesetQuery {
      *
      * @param changesetIds the changeset ids
      * @return the query object with the applied restriction
-     * @throws IllegalArgumentException thrown if changesetIds is null.
+     * @throws IllegalArgumentException if changesetIds is null.
      */
     public ChangesetQuery forChangesetIds(Collection<Long> changesetIds) {
         CheckParameterUtil.ensureParameterNotNull(changesetIds, "changesetIds");

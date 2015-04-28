@@ -99,10 +99,10 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
      * by the user name of its OSM account.
      *
      * @param userName the user name. Must not be null. Must not be empty (whitespace only).
-     * @throws IllegalArgumentException thrown if userName is null
-     * @throws IllegalArgumentException thrown if userName is empty
+     * @throws IllegalArgumentException if userName is null
+     * @throws IllegalArgumentException if userName is empty
      */
-    public void setPartiallyIdentified(String userName) throws IllegalArgumentException {
+    public void setPartiallyIdentified(String userName) {
         CheckParameterUtil.ensureParameterNotNull(userName, "userName");
         if (userName.trim().isEmpty())
             throw new IllegalArgumentException(MessageFormat.format("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
@@ -116,11 +116,11 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
      *
      * @param username the user name. Must not be null. Must not be empty.
      * @param userinfo additional information about the user, retrieved from the OSM server and including the user id
-     * @throws IllegalArgumentException thrown if userName is null
-     * @throws IllegalArgumentException thrown if userName is empty
-     * @throws IllegalArgumentException thrown if userinfo is null
+     * @throws IllegalArgumentException if userName is null
+     * @throws IllegalArgumentException if userName is empty
+     * @throws IllegalArgumentException if userinfo is null
      */
-    public void setFullyIdentified(String username, UserInfo userinfo) throws IllegalArgumentException {
+    public void setFullyIdentified(String username, UserInfo userinfo) {
         CheckParameterUtil.ensureParameterNotNull(username, "username");
         if (username.trim().isEmpty())
             throw new IllegalArgumentException(tr("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));

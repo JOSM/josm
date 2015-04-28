@@ -53,9 +53,9 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
      * @param parent the parent component relative to which the {@link org.openstreetmap.josm.gui.PleaseWaitDialog} is displayed
      * @param toUpdate a collection of plugin descriptions for plugins to update/download. Must not be null.
      * @param title the title to display in the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
-     * @throws IllegalArgumentException thrown if toUpdate is null
+     * @throws IllegalArgumentException if toUpdate is null
      */
-    public PluginDownloadTask(Component parent, Collection<PluginInformation> toUpdate, String title) throws IllegalArgumentException{
+    public PluginDownloadTask(Component parent, Collection<PluginInformation> toUpdate, String title) {
         super(parent, title == null ? "" : title, false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(toUpdate, "toUpdate");
         this.toUpdate.addAll(toUpdate);
@@ -67,7 +67,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
      * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @param toUpdate a collection of plugin descriptions for plugins to update/download. Must not be null.
      * @param title the title to display in the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
-     * @throws IllegalArgumentException thrown if toUpdate is null
+     * @throws IllegalArgumentException if toUpdate is null
      */
     public PluginDownloadTask(ProgressMonitor monitor, Collection<PluginInformation> toUpdate, String title) {
         super(title, monitor == null? NullProgressMonitor.INSTANCE: monitor, false /* don't ignore exceptions */);
@@ -79,9 +79,9 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
      * Sets the collection of plugins to update.
      *
      * @param toUpdate the collection of plugins to update. Must not be null.
-     * @throws IllegalArgumentException thrown if toUpdate is null
+     * @throws IllegalArgumentException if toUpdate is null
      */
-    public void setPluginsToDownload(Collection<PluginInformation> toUpdate) throws IllegalArgumentException{
+    public void setPluginsToDownload(Collection<PluginInformation> toUpdate) {
         CheckParameterUtil.ensureParameterNotNull(toUpdate, "toUpdate");
         this.toUpdate.clear();
         this.toUpdate.addAll(toUpdate);

@@ -146,7 +146,7 @@ public final class Node extends OsmPrimitive implements INode {
      * @param id The id. Must be &gt;= 0
      * @throws IllegalArgumentException if id &lt; 0
      */
-    public Node(long id) throws IllegalArgumentException {
+    public Node(long id) {
         super(id, false);
     }
 
@@ -156,7 +156,7 @@ public final class Node extends OsmPrimitive implements INode {
      * @param version The version
      * @throws IllegalArgumentException if id &lt; 0
      */
-    public Node(long id, int version) throws IllegalArgumentException {
+    public Node(long id, int version) {
         super(id, version, false);
     }
 
@@ -234,9 +234,9 @@ public final class Node extends OsmPrimitive implements INode {
      * have an assigend OSM id, the IDs have to be the same.
      *
      * @param other the other primitive. Must not be null.
-     * @throws IllegalArgumentException thrown if other is null.
-     * @throws DataIntegrityProblemException thrown if either this is new and other is not, or other is new and this is not
-     * @throws DataIntegrityProblemException thrown if other is new and other.getId() != this.getId()
+     * @throws IllegalArgumentException if other is null.
+     * @throws DataIntegrityProblemException if either this is new and other is not, or other is new and this is not
+     * @throws DataIntegrityProblemException if other is new and other.getId() != this.getId()
      */
     @Override
     public void mergeFrom(OsmPrimitive other) {

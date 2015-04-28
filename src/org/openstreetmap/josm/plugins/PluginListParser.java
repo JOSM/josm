@@ -54,7 +54,7 @@ public class PluginListParser {
      *
      * @param in the input stream from which to parse
      * @return the list of plugin information objects
-     * @throws PluginListParseException thrown if something goes wrong while parsing
+     * @throws PluginListParseException if something goes wrong while parsing
      */
     public List<PluginInformation> parse(InputStream in) throws PluginListParseException{
         List<PluginInformation> ret = new LinkedList<>();

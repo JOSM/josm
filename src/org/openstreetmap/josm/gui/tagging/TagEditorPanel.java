@@ -9,8 +9,8 @@ import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.EnumSet;
-import javax.swing.AbstractAction;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -174,9 +174,9 @@ public class TagEditorPanel extends JPanel {
      * tag values are proposed as auto completion items.
      *
      * @param layer the data layer. Must not be null.
-     * @throws IllegalArgumentException thrown if {@code layer} is null
+     * @throws IllegalArgumentException if {@code layer} is null
      */
-    public void initAutoCompletion(OsmDataLayer layer) throws IllegalArgumentException{
+    public void initAutoCompletion(OsmDataLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
 
         AutoCompletionManager autocomplete = layer.data.getAutoCompletionManager();

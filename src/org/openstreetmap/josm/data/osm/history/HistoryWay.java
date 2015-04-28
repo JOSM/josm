@@ -33,7 +33,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * @param timestamp the timestamp (!= null required if {@code checkHistoricParams} is true)
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp) throws IllegalArgumentException {
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp) {
         super(id, version, visible, user, changesetId, timestamp);
     }
 
@@ -51,7 +51,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
      */
-    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) throws IllegalArgumentException {
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) {
         super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
     }
 
@@ -67,7 +67,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * @param nodeIdList the node ids (!= null required)
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, List<Long> nodeIdList) throws IllegalArgumentException {
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, List<Long> nodeIdList) {
         this(id, version, visible, user, changesetId, timestamp);
         CheckParameterUtil.ensureParameterNotNull(nodeIdList, "nodeIdList");
         this.nodeIds.addAll(nodeIdList);
@@ -94,7 +94,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      *
      * @param idx the index
      * @return the idx-th node id
-     * @exception IndexOutOfBoundsException thrown, if  idx &lt; 0 || idx &gt;= {#see {@link #getNumNodes()}
+     * @throws IndexOutOfBoundsException if  idx &lt; 0 || idx &gt;= {#see {@link #getNumNodes()}
      */
     public long getNodeId(int idx) throws IndexOutOfBoundsException {
         if (idx < 0 || idx >= nodeIds.size())

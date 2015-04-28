@@ -596,10 +596,10 @@ public class TagCollection implements Iterable<Tag> {
      * primitive is null
      *
      * @param primitive  the primitive
-     * @throws IllegalStateException thrown if this tag collection can't be applied
+     * @throws IllegalStateException if this tag collection can't be applied
      * because there are keys with multiple values
      */
-    public void applyTo(Tagged primitive) throws IllegalStateException {
+    public void applyTo(Tagged primitive) {
         if (primitive == null) return;
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
@@ -616,11 +616,11 @@ public class TagCollection implements Iterable<Tag> {
      * Applies this tag collection to a collection of {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s. Does nothing if
      * primitives is null
      *
-     * @param primitives  the collection of primitives
-     * @throws IllegalStateException thrown if this tag collection can't be applied
+     * @param primitives the collection of primitives
+     * @throws IllegalStateException if this tag collection can't be applied
      * because there are keys with multiple values
      */
-    public void applyTo(Collection<? extends Tagged> primitives) throws IllegalStateException{
+    public void applyTo(Collection<? extends Tagged> primitives) {
         if (primitives == null) return;
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
@@ -634,10 +634,10 @@ public class TagCollection implements Iterable<Tag> {
      * primitive is null
      *
      * @param primitive  the primitive
-     * @throws IllegalStateException thrown if this tag collection can't be applied
+     * @throws IllegalStateException if this tag collection can't be applied
      * because there are keys with multiple values
      */
-    public void replaceTagsOf(Tagged primitive) throws IllegalStateException {
+    public void replaceTagsOf(Tagged primitive) {
         if (primitive == null) return;
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
@@ -652,10 +652,10 @@ public class TagCollection implements Iterable<Tag> {
      * Does nothing if primitives is null
      *
      * @param primitives the collection of primitives
-     * @throws IllegalStateException thrown if this tag collection can't be applied
+     * @throws IllegalStateException if this tag collection can't be applied
      * because there are keys with multiple values
      */
-    public void replaceTagsOf(Collection<? extends Tagged> primitives) throws IllegalStateException {
+    public void replaceTagsOf(Collection<? extends Tagged> primitives) {
         if (primitives == null) return;
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));

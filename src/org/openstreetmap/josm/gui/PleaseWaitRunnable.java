@@ -57,9 +57,9 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      * @param ignoreException If true, exception will be silently ignored. If false then
      * exception will be handled by showing a dialog. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
-     * @throws IllegalArgumentException thrown if parent is null
+     * @throws IllegalArgumentException if parent is null
      */
-    public PleaseWaitRunnable(Component parent, String title, boolean ignoreException) throws IllegalArgumentException{
+    public PleaseWaitRunnable(Component parent, String title, boolean ignoreException) {
         CheckParameterUtil.ensureParameterNotNull(parent, "parent");
         this.title = title;
         this.progressMonitor = new PleaseWaitProgressMonitor(parent, title);

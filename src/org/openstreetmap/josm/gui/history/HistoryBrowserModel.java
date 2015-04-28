@@ -114,7 +114,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * Creates a new history browser model for a given history.
      *
      * @param history the history. Must not be null.
-     * @throws IllegalArgumentException thrown if history is null
+     * @throws IllegalArgumentException if history is null
      */
     public HistoryBrowserModel(History history) {
         this();
@@ -246,9 +246,9 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      *
      * @param pointInTimeType the type of the point in time (must not be null)
      * @return the tag table model
-     * @exception IllegalArgumentException thrown, if pointInTimeType is null
+     * @throws IllegalArgumentException if pointInTimeType is null
      */
-    public TagTableModel getTagTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
+    public TagTableModel getTagTableModel(PointInTimeType pointInTimeType) {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentTagTableModel;
@@ -259,7 +259,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         return null;
     }
 
-    public DiffTableModel getNodeListTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
+    public DiffTableModel getNodeListTableModel(PointInTimeType pointInTimeType) {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentNodeListTableModel;
@@ -270,7 +270,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         return null;
     }
 
-    public DiffTableModel getRelationMemberTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
+    public DiffTableModel getRelationMemberTableModel(PointInTimeType pointInTimeType) {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentRelationMemberTableModel;
@@ -286,14 +286,14 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * in time (see {@link PointInTimeType}).
      *
      * @param reference the reference history primitive. Must not be null.
-     * @throws IllegalArgumentException thrown if reference is null
-     * @throws IllegalStateException thrown if this model isn't a assigned a history yet
+     * @throws IllegalArgumentException if reference is null
+     * @throws IllegalStateException if this model isn't a assigned a history yet
      * @throws IllegalArgumentException if reference isn't an history primitive for the history managed by this mode
      *
      * @see #setHistory(History)
      * @see PointInTimeType
      */
-    public void setReferencePointInTime(HistoryOsmPrimitive reference) throws IllegalArgumentException, IllegalStateException{
+    public void setReferencePointInTime(HistoryOsmPrimitive reference) {
         CheckParameterUtil.ensureParameterNotNull(reference, "reference");
         if (history == null)
             throw new IllegalStateException(tr("History not initialized yet. Failed to set reference primitive."));
@@ -316,14 +316,14 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * in time (see {@link PointInTimeType}).
      *
      * @param current the reference history primitive. Must not be {@code null}.
-     * @throws IllegalArgumentException thrown if reference is {@code null}
-     * @throws IllegalStateException thrown if this model isn't a assigned a history yet
+     * @throws IllegalArgumentException if reference is {@code null}
+     * @throws IllegalStateException if this model isn't a assigned a history yet
      * @throws IllegalArgumentException if reference isn't an history primitive for the history managed by this mode
      *
      * @see #setHistory(History)
      * @see PointInTimeType
      */
-    public void setCurrentPointInTime(HistoryOsmPrimitive current) throws IllegalArgumentException, IllegalStateException{
+    public void setCurrentPointInTime(HistoryOsmPrimitive current) {
         CheckParameterUtil.ensureParameterNotNull(current, "current");
         if (history == null)
             throw new IllegalStateException(tr("History not initialized yet. Failed to set current primitive."));
@@ -363,9 +363,9 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      *
      * @param type the type of the point in time (must not be null)
      * @return the respective primitive. Can be null.
-     * @exception IllegalArgumentException thrown, if type is null
+     * @throws IllegalArgumentException if type is null
      */
-    public HistoryOsmPrimitive getPointInTime(PointInTimeType type) throws IllegalArgumentException  {
+    public HistoryOsmPrimitive getPointInTime(PointInTimeType type)  {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         if (type.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return current;

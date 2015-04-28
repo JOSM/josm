@@ -77,7 +77,7 @@ public enum ComparePairType {
      *
      * @param role one of the two roles in this pair
      * @return the opposite role
-     * @exception IllegalStateException  if role is not participating in this pair
+     * @throws IllegalStateException  if role is not participating in this pair
      */
     public ListRole getOppositeRole(ListRole role) {
         if (!isParticipatingIn(role))

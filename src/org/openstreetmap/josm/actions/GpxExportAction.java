@@ -72,8 +72,8 @@ public class GpxExportAction extends DiskAccessAction {
      * {@link OsmDataLayer} or {@link GpxLayer}.
      *
      * @param layer the layer
-     * @exception IllegalArgumentException thrown if layer is null
-     * @exception IllegalArgumentException thrown if layer is neither an instance of {@link OsmDataLayer}
+     * @throws IllegalArgumentException if layer is null
+     * @throws IllegalArgumentException if layer is neither an instance of {@link OsmDataLayer}
      *  nor of {@link GpxLayer}
      */
     public void export(Layer layer) {

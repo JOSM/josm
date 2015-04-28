@@ -221,7 +221,7 @@ public class WindowGeometry {
      * key <code>preferenceKey</code>
      *
      * @param preferenceKey the preference key
-     * @throws WindowGeometryException thrown if no such key exist or if the preference value has
+     * @throws WindowGeometryException if no such key exist or if the preference value has
      * an illegal format
      */
     public WindowGeometry(String preferenceKey) throws WindowGeometryException {

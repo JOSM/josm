@@ -98,7 +98,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
      * Access Token is currently managed by this CredentialManager.
      *
      * @return the current OAuth Access Token to access the OSM server.
-     * @throws CredentialsAgentException thrown if something goes wrong
+     * @throws CredentialsAgentException if something goes wrong
      */
     @Override
     public OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
@@ -113,7 +113,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
      * Stores the OAuth Access Token <code>accessToken</code>.
      *
      * @param accessToken the access Token. null, to remove the Access Token.
-     * @throws CredentialsAgentException thrown if something goes wrong
+     * @throws CredentialsAgentException if something goes wrong
      */
     @Override
     public void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException {

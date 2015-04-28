@@ -37,9 +37,12 @@ import org.xml.sax.SAXException;
 
 /**
  * Uploads the current selection to the server.
- *
+ * @since 2250
  */
-public class UploadSelectionAction extends JosmAction{
+public class UploadSelectionAction extends JosmAction {
+    /**
+     * Constructs a new {@code UploadSelectionAction}.
+     */
     public UploadSelectionAction() {
         super(
                 tr("Upload selection"),
@@ -238,9 +241,9 @@ public class UploadSelectionAction extends JosmAction{
          *
          * @param base the base collection. Must not be null.
          * @return the "hull"
-         * @throws IllegalArgumentException thrown if base is null
+         * @throws IllegalArgumentException if base is null
          */
-        public Set<OsmPrimitive> build(Collection<OsmPrimitive> base) throws IllegalArgumentException{
+        public Set<OsmPrimitive> build(Collection<OsmPrimitive> base) {
             CheckParameterUtil.ensureParameterNotNull(base, "base");
             hull = new HashSet<>();
             for (OsmPrimitive p: base) {

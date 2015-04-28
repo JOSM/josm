@@ -102,8 +102,8 @@ public class OsmChangeReader extends OsmReader {
      * {@link org.openstreetmap.josm.gui.progress.NullProgressMonitor#INSTANCE} is assumed
      *
      * @return the dataset with the parsed data
-     * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
-     * @throws IllegalArgumentException thrown if source is <code>null</code>
+     * @throws IllegalDataException if the an error was found while parsing the data from the source
+     * @throws IllegalArgumentException if source is <code>null</code>
      */
     public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         return new OsmChangeReader().doParseDataSet(source, progressMonitor);

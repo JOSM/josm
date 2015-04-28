@@ -53,9 +53,9 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
      * Creates the task.
      *
      * @param query the query to submit to the OSM server. Must not be null.
-     * @throws IllegalArgumentException thrown if query is null.
+     * @throws IllegalArgumentException if query is null.
      */
-    public ChangesetQueryTask(ChangesetQuery query) throws IllegalArgumentException {
+    public ChangesetQueryTask(ChangesetQuery query) {
         super(tr("Querying and downloading changesets",false /* don't ignore exceptions */));
         CheckParameterUtil.ensureParameterNotNull(query, "query");
         this.query = query;
@@ -67,10 +67,10 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
      * @param parent the parent component relative to which the {@link org.openstreetmap.josm.gui.PleaseWaitDialog} is displayed.
      * Must not be null.
      * @param query the query to submit to the OSM server. Must not be null.
-     * @throws IllegalArgumentException thrown if query is null.
-     * @throws IllegalArgumentException thrown if parent is null
+     * @throws IllegalArgumentException if query is null.
+     * @throws IllegalArgumentException if parent is null
      */
-    public ChangesetQueryTask(Component parent, ChangesetQuery query) throws IllegalArgumentException {
+    public ChangesetQueryTask(Component parent, ChangesetQuery query) {
         super(parent, tr("Querying and downloading changesets"), false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(query, "query");
         this.query = query;
@@ -143,7 +143,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
     /**
      * Tries to fully identify the current JOSM user
      *
-     * @throws OsmTransferException thrown if something went wrong
+     * @throws OsmTransferException if something went wrong
      */
     protected void fullyIdentifyCurrentUser() throws OsmTransferException {
         getProgressMonitor().indeterminateSubTask(tr("Determine user id for current user..."));

@@ -246,9 +246,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      *
      * @param id the id
      * @param allowNegativeId
-     * @throws IllegalArgumentException thrown if id &lt; 0 and allowNegativeId is false
+     * @throws IllegalArgumentException if id &lt; 0 and allowNegativeId is false
      */
-    protected OsmPrimitive(long id, boolean allowNegativeId) throws IllegalArgumentException {
+    protected OsmPrimitive(long id, boolean allowNegativeId) {
         if (allowNegativeId) {
             this.id = id;
         } else {
@@ -277,9 +277,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param id
      * @param version
      * @param allowNegativeId
-     * @throws IllegalArgumentException thrown if id &lt; 0 and allowNegativeId is false
+     * @throws IllegalArgumentException if id &lt; 0 and allowNegativeId is false
      */
-    protected OsmPrimitive(long id, int version, boolean allowNegativeId) throws IllegalArgumentException {
+    protected OsmPrimitive(long id, int version, boolean allowNegativeId) {
         this(id, allowNegativeId);
         this.version = (id > 0 ? version : 0);
         setIncomplete(id > 0 && version == 0);
@@ -357,9 +357,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      *
      * @param id the id. &gt; 0 required
      * @param version the version &gt; 0 required
-     * @throws IllegalArgumentException thrown if id &lt;= 0
-     * @throws IllegalArgumentException thrown if version &lt;= 0
-     * @throws DataIntegrityProblemException If id is changed and primitive was already added to the dataset
+     * @throws IllegalArgumentException if id &lt;= 0
+     * @throws IllegalArgumentException if version &lt;= 0
+     * @throws DataIntegrityProblemException if id is changed and primitive was already added to the dataset
      */
     @Override
     public void setOsmId(long id, int version) {
@@ -410,7 +410,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     @Override
-    public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {
+    public void setChangesetId(int changesetId) {
         boolean locked = writeLock();
         try {
             int old = this.changesetId;
@@ -542,7 +542,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     @Override
-    public void setVisible(boolean visible) throws IllegalStateException {
+    public void setVisible(boolean visible) {
         boolean locked = writeLock();
         try {
             super.setVisible(visible);
@@ -1131,9 +1131,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * have an assigend OSM id, the IDs have to be the same.
      *
      * @param other the other primitive. Must not be null.
-     * @throws IllegalArgumentException thrown if other is null.
-     * @throws DataIntegrityProblemException thrown if either this is new and other is not, or other is new and this is not
-     * @throws DataIntegrityProblemException thrown if other isn't new and other.getId() != this.getId()
+     * @throws IllegalArgumentException if other is null.
+     * @throws DataIntegrityProblemException if either this is new and other is not, or other is new and this is not
+     * @throws DataIntegrityProblemException if other isn't new and other.getId() != this.getId()
      */
     public void mergeFrom(OsmPrimitive other) {
         boolean locked = writeLock();

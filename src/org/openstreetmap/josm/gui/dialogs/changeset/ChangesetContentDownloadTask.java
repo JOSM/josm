@@ -63,9 +63,9 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
      * Creates a download task for a single changeset
      *
      * @param changesetId the changeset id. &gt; 0 required.
-     * @throws IllegalArgumentException thrown if changesetId &lt;= 0
+     * @throws IllegalArgumentException if changesetId &lt;= 0
      */
-    public ChangesetContentDownloadTask(int changesetId) throws IllegalArgumentException{
+    public ChangesetContentDownloadTask(int changesetId) {
         super(tr("Downloading changeset content"), false /* don't ignore exceptions */);
         if (changesetId <= 0)
             throw new IllegalArgumentException(MessageFormat.format("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
@@ -88,10 +88,10 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
      *
      * @param parent the parent component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be {@code null}.
      * @param changesetId the changeset id. {@code >0} required.
-     * @throws IllegalArgumentException thrown if {@code changesetId <= 0}
-     * @throws IllegalArgumentException thrown if parent is {@code null}
+     * @throws IllegalArgumentException if {@code changesetId <= 0}
+     * @throws IllegalArgumentException if parent is {@code null}
      */
-    public ChangesetContentDownloadTask(Component parent, int changesetId) throws IllegalArgumentException{
+    public ChangesetContentDownloadTask(Component parent, int changesetId) {
         super(parent, tr("Downloading changeset content"), false /* don't ignore exceptions */);
         if (changesetId <= 0)
             throw new IllegalArgumentException(MessageFormat.format("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
@@ -104,9 +104,9 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
      *
      * @param parent the parent component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be {@code null}.
      * @param changesetIds the changeset ids. Empty collection assumed, if {@code null}.
-     * @throws IllegalArgumentException thrown if parent is {@code null}
+     * @throws IllegalArgumentException if parent is {@code null}
      */
-    public ChangesetContentDownloadTask(Component parent, Collection<Integer> changesetIds) throws IllegalArgumentException {
+    public ChangesetContentDownloadTask(Component parent, Collection<Integer> changesetIds) {
         super(parent, tr("Downloading changeset content"), false /* don't ignore exceptions */);
         init(changesetIds);
     }
@@ -128,7 +128,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
      * information, no content)
      *
      * @param changesetId the changeset id
-     * @throws OsmTransferException thrown if something went wrong
+     * @throws OsmTransferException if something went wrong
      */
     protected void downloadChangeset(int changesetId) throws OsmTransferException {
         synchronized(this) {

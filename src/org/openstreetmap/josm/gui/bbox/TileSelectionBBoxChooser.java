@@ -529,7 +529,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         private TileBounds tileBounds = null;
 
-        public TileAddressValidator(JTextComponent tc) throws IllegalArgumentException {
+        public TileAddressValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -588,7 +588,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         private int zoomLevel;
         private int tileIndex;
 
-        public TileCoordinateValidator(JTextComponent tc) throws IllegalArgumentException {
+        public TileCoordinateValidator(JTextComponent tc) {
             super(tc);
         }
 

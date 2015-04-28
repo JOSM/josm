@@ -66,10 +66,10 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param rowSelectionModel the row selection model. Must not be null.
      * @param colSelectionModel the column selection model. Must not be null.
-     * @throws IllegalArgumentException thrown if {@code rowSelectionModel} is null
-     * @throws IllegalArgumentException thrown if {@code colSelectionModel} is null
+     * @throws IllegalArgumentException if {@code rowSelectionModel} is null
+     * @throws IllegalArgumentException if {@code colSelectionModel} is null
      */
-    public TagEditorModel(DefaultListSelectionModel rowSelectionModel, DefaultListSelectionModel colSelectionModel) throws IllegalArgumentException{
+    public TagEditorModel(DefaultListSelectionModel rowSelectionModel, DefaultListSelectionModel colSelectionModel) {
         CheckParameterUtil.ensureParameterNotNull(rowSelectionModel, "rowSelectionModel");
         CheckParameterUtil.ensureParameterNotNull(colSelectionModel, "colSelectionModel");
         this.rowSelectionModel = rowSelectionModel;
@@ -172,7 +172,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param tag the tag. Must not be null.
      *
-     * @exception IllegalArgumentException thrown, if tag is null
+     * @throws IllegalArgumentException if tag is null
      */
     public void add(TagModel tag) {
         CheckParameterUtil.ensureParameterNotNull(tag, "tag");

@@ -62,12 +62,12 @@ public class OsmExporter extends FileExporter {
      *                 after a successful export
      * @throws IllegalArgumentException if {@code layer} is not an instance of {@code OsmDataLayer}
      */
-    public void exportData(File file, Layer layer, boolean noBackup) throws IllegalArgumentException {
+    public void exportData(File file, Layer layer, boolean noBackup) {
         checkOsmDataLayer(layer);
         save(file, (OsmDataLayer) layer, noBackup);
     }
 
-    protected static void checkOsmDataLayer(Layer layer) throws IllegalArgumentException {
+    protected static void checkOsmDataLayer(Layer layer) {
         if (!(layer instanceof OsmDataLayer)) {
             throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer. Got ''{0}''.", layer
                     .getClass().getName()));

@@ -26,8 +26,8 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      * @param my  my way (i.e. the way in the local dataset)
      * @param their their way (i.e. the way in the server dataset)
      * @param mergedMap The map of merged primitives if the conflict results from merging two layers
-     * @exception IllegalArgumentException thrown, if my is null
-     * @exception IllegalArgumentException  thrown, if their is null
+     * @throws IllegalArgumentException if my is null
+     * @throws IllegalArgumentException if their is null
      */
     public void populate(Way my, Way their, Map<PrimitiveId, PrimitiveId> mergedMap) {
         initPopulate(my, their, mergedMap);
@@ -53,7 +53,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      *
      * @param conflict the conflict data set
      * @return the command
-     * @exception IllegalStateException thrown, if the merge is not yet frozen
+     * @throws IllegalStateException if the merge is not yet frozen
      */
     public WayNodesConflictResolverCommand buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
         if (! isFrozen())

@@ -38,8 +38,8 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         /**
          * Constructs a new {@code Bookmark} with the given contents.
          * @param list Bookmark contents as a list of 5 elements. First item is the name, then come bounds arguments (minlat, minlon, maxlat, maxlon)
-         * @throws NumberFormatException If the bounds arguments are not numbers
-         * @throws IllegalArgumentException If list contain less than 5 elements
+         * @throws NumberFormatException if the bounds arguments are not numbers
+         * @throws IllegalArgumentException if list contain less than 5 elements
          */
         public Bookmark(Collection<String> list) throws NumberFormatException, IllegalArgumentException {
             List<String> array = new ArrayList<>(list);

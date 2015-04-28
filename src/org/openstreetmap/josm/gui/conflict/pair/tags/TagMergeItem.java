@@ -43,9 +43,9 @@ public class TagMergeItem {
      * @param key  the tag key common to the merged OSM primitives. Must not be null.
      * @param my  my version of the OSM primitive (i.e. the version known in the local dataset). Must not be null.
      * @param their their version of the OSM primitive (i.e. the version known on the server). Must not be null.
-     * @throws IllegalArgumentException thrown if key is null
-     * @throws IllegalArgumentException thrown if my is null
-     * @throws IllegalArgumentException thrown if their is null
+     * @throws IllegalArgumentException if key is null
+     * @throws IllegalArgumentException if my is null
+     * @throws IllegalArgumentException if their is null
      */
     public TagMergeItem(String key, OsmPrimitive my, OsmPrimitive their) {
         CheckParameterUtil.ensureParameterNotNull(key, "key");
@@ -60,10 +60,9 @@ public class TagMergeItem {
      * applies a merge decision to this merge item
      *
      * @param decision the merge decision. Must not be null.
-     * @exception IllegalArgumentException thrown if decision is null
-     *
+     * @throws IllegalArgumentException if decision is null
      */
-    public void decide(MergeDecisionType decision) throws IllegalArgumentException {
+    public void decide(MergeDecisionType decision) {
         CheckParameterUtil.ensureParameterNotNull(decision, "decision");
         this.mergeDecision = decision;
     }
@@ -90,10 +89,10 @@ public class TagMergeItem {
      * not 'their' primitive)
      *
      * @param primitive the OSM primitive. Must not be null.
-     * @exception IllegalArgumentException thrown, if primitive is null
-     * @exception IllegalStateException  thrown, if this merge item is undecided
+     * @throws IllegalArgumentException if primitive is null
+     * @throws IllegalStateException if this merge item is undecided
      */
-    public void applyToMyPrimitive(OsmPrimitive primitive) throws IllegalArgumentException, IllegalStateException {
+    public void applyToMyPrimitive(OsmPrimitive primitive) {
         CheckParameterUtil.ensureParameterNotNull(primitive, "primitive");
         if (mergeDecision == MergeDecisionType.UNDECIDED) {
             throw new IllegalStateException(tr("Cannot apply undecided tag merge item."));

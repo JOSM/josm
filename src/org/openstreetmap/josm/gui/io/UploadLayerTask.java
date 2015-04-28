@@ -55,8 +55,8 @@ public class UploadLayerTask extends AbstractIOTask implements Runnable {
      * @param layer the layer. Must not be null.
      * @param monitor  a progress monitor. If monitor is null, uses {@link NullProgressMonitor#INSTANCE}
      * @param changeset the changeset to be used
-     * @throws IllegalArgumentException thrown, if layer is null
-     * @throws IllegalArgumentException thrown if strategy is null
+     * @throws IllegalArgumentException if layer is null
+     * @throws IllegalArgumentException if strategy is null
      */
     public UploadLayerTask(UploadStrategySpecification strategy, OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
@@ -85,7 +85,7 @@ public class UploadLayerTask extends AbstractIOTask implements Runnable {
      *
      * @param e the exception throw by the API
      * @param monitor a progress monitor
-     * @throws OsmTransferException  thrown if we can't recover from the exception
+     * @throws OsmTransferException if we can't recover from the exception
      */
     protected void recoverFromGoneOnServer(OsmApiPrimitiveGoneException e, ProgressMonitor monitor) throws OsmTransferException{
         if (!e.isKnownPrimitive()) throw e;

@@ -105,8 +105,8 @@ public final class CheckParameterUtil {
      *
      * @param id  the primitive  id
      * @param parameterName the name of the parameter to be checked
-     * @throws IllegalArgumentException thrown if id is null
-     * @throws IllegalArgumentException thrown if id.getType() != NODE
+     * @throws IllegalArgumentException if id is null
+     * @throws IllegalArgumentException if id.getType() != NODE
      */
     public static void ensureValidNodeId(PrimitiveId id, String parameterName) throws IllegalArgumentException {
         ensureParameterNotNull(id, parameterName);

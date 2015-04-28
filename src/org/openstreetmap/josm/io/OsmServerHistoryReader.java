@@ -28,9 +28,9 @@ public class OsmServerHistoryReader extends OsmServerReader {
      *   Must not be null.
      * @param id the id of the primitive
      *
-     *  @exception IllegalArgumentException thrown, if type is null
+     *  @throws IllegalArgumentException if type is null
      */
-    public OsmServerHistoryReader(OsmPrimitiveType type, long id) throws IllegalArgumentException {
+    public OsmServerHistoryReader(OsmPrimitiveType type, long id) {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         if (id < 0)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' >= 0 expected. Got ''{1}''.", "id", id));
@@ -51,7 +51,7 @@ public class OsmServerHistoryReader extends OsmServerReader {
      * Fetches the history from the OSM API and parses it
      *
      * @return the data set with the parsed history data
-     * @throws OsmTransferException thrown, if an exception occurs
+     * @throws OsmTransferException if an exception occurs
      */
     public HistoryDataSet parseHistory(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask("");

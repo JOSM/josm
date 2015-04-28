@@ -30,7 +30,7 @@ public class HistoryNode extends HistoryOsmPrimitive {
      * @param coords the coordinates
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords) throws IllegalArgumentException {
+    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords) {
         this(id, version, visible, user, changesetId, timestamp, coords, true);
     }
 
@@ -49,7 +49,7 @@ public class HistoryNode extends HistoryOsmPrimitive {
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
      */
-    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords, boolean checkHistoricParams) throws IllegalArgumentException {
+    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords, boolean checkHistoricParams) {
         super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
         setCoords(coords);
     }

@@ -38,8 +38,8 @@ public class HelpContentReader extends WikiReader {
      *
      * @param helpTopicUrl  the absolute help topic URL
      * @return the content, filtered and transformed for being displayed in the internal help browser
-     * @throws HelpContentReaderException thrown if problem occurs
-     * @throws MissingHelpContentException thrown if this helpTopicUrl doesn't point to an existing Wiki help page
+     * @throws HelpContentReaderException if problem occurs
+     * @throws MissingHelpContentException if this helpTopicUrl doesn't point to an existing Wiki help page
      */
     public String fetchHelpTopicContent(String helpTopicUrl, boolean dotest) throws HelpContentReaderException {
         if(helpTopicUrl == null)
@@ -76,8 +76,8 @@ public class HelpContentReader extends WikiReader {
      *
      * @param in the input stream
      * @return the content
-     * @throws HelpContentReaderException thrown if an exception occurs
-     * @throws MissingHelpContentException thrown, if the content read isn't a help page
+     * @throws HelpContentReaderException if an exception occurs
+     * @throws MissingHelpContentException if the content read isn't a help page
      * @since 5936
      */
     protected String prepareHelpContent(BufferedReader in, boolean dotest, URL url) throws HelpContentReaderException {

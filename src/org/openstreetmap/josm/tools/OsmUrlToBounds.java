@@ -21,7 +21,7 @@ public final class OsmUrlToBounds {
         // Hide default constructor for utils classes
     }
 
-    public static Bounds parse(String url) throws IllegalArgumentException {
+    public static Bounds parse(String url) {
         try {
             // a percent sign indicates an encoded URL (RFC 1738).
             if (url.contains("%")) {
@@ -82,7 +82,7 @@ public final class OsmUrlToBounds {
      * @param url string for parsing
      * @return Bounds if hashurl, {@code null} otherwise
      */
-    private static Bounds parseHashURLs(String url) throws IllegalArgumentException {
+    private static Bounds parseHashURLs(String url) {
         int startIndex = url.indexOf("#map=");
         if (startIndex == -1) return null;
         int endIndex = url.indexOf('&', startIndex);

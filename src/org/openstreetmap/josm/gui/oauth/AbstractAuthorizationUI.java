@@ -124,9 +124,9 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
      * Initializes the authorisation UI with preference values in <code>pref</code>.
      *
      * @param pref the preferences. Must not be null.
-     * @throws IllegalArgumentException thrown if pref is null
+     * @throws IllegalArgumentException if pref is null
      */
-    public void initFromPreferences(Preferences pref) throws IllegalArgumentException{
+    public void initFromPreferences(Preferences pref) {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
         pnlAdvancedProperties.initFromPreferences(pref);
     }

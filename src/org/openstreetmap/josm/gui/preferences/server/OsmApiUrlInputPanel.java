@@ -241,7 +241,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     }
 
     private static class ApiUrlValidator extends AbstractTextComponentValidator {
-        public ApiUrlValidator(JTextComponent tc) throws IllegalArgumentException {
+        public ApiUrlValidator(JTextComponent tc) {
             super(tc);
         }
 

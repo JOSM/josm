@@ -126,7 +126,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
      *
      * @param tags  the tag collection with the tags. Must not be null.
      * @param keysWithConflicts the set of tag keys with conflicts
-     * @throws IllegalArgumentException thrown if tags is null
+     * @throws IllegalArgumentException if tags is null
      */
     public void populate(TagCollection tags, Set<String> keysWithConflicts) {
         CheckParameterUtil.ensureParameterNotNull(tags, "tags");

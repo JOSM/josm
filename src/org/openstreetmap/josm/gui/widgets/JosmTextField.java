@@ -42,7 +42,7 @@ public class JosmTextField extends JTextField implements FocusListener {
      *   the preferred width &gt;= 0; if <code>columns</code>
      *   is set to zero, the preferred width will be whatever
      *   naturally results from the component implementation
-     * @exception IllegalArgumentException if <code>columns</code> &lt; 0
+     * @throws IllegalArgumentException if <code>columns</code> &lt; 0
      */
     public JosmTextField(Document doc, String text, int columns) {
         this(doc, text, columns, true);
@@ -63,7 +63,7 @@ public class JosmTextField extends JTextField implements FocusListener {
      *   is set to zero, the preferred width will be whatever
      *   naturally results from the component implementation
      * @param undoRedo Enables or not Undo/Redo feature. Not recommended for table cell editors, unless each cell provides its own editor
-     * @exception IllegalArgumentException if <code>columns</code> &lt; 0
+     * @throws IllegalArgumentException if <code>columns</code> &lt; 0
      */
     public JosmTextField(Document doc, String text, int columns, boolean undoRedo) {
         super(doc, text, columns);

@@ -623,7 +623,7 @@ public class TagChecker extends Test.TagTest {
             public boolean valueAll = false;
             public boolean valueBool = false;
 
-            private Pattern getPattern(String str) throws IllegalStateException, PatternSyntaxException {
+            private Pattern getPattern(String str) throws PatternSyntaxException {
                 if (str.endsWith("/i"))
                     return Pattern.compile(str.substring(1,str.length()-2), Pattern.CASE_INSENSITIVE);
                 if (str.endsWith("/"))
@@ -631,7 +631,7 @@ public class TagChecker extends Test.TagTest {
 
                 throw new IllegalStateException();
             }
-            public CheckerElement(String exp) throws IllegalStateException, PatternSyntaxException {
+            public CheckerElement(String exp) throws PatternSyntaxException {
                 Matcher m = Pattern.compile("(.+)([!=]=)(.+)").matcher(exp);
                 m.matches();
 

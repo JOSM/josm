@@ -329,8 +329,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param nc the map viewport. Must not be null.
      * @param isInactiveMode if true, the paint visitor shall render OSM objects such that they
      * look inactive. Example: rendering of data in an inactive layer using light gray as color only.
-     * @throws IllegalArgumentException thrown if {@code g} is null
-     * @throws IllegalArgumentException thrown if {@code nc} is null
+     * @throws IllegalArgumentException if {@code g} is null
+     * @throws IllegalArgumentException if {@code nc} is null
      */
     public StyledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         super(g, nc, isInactiveMode);

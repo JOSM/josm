@@ -68,9 +68,9 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
      * @param full if true, parent relations are fully downloaded (i.e. with their members)
      * @param monitor the progress monitor to be used
      *
-     * @exception IllegalArgumentException thrown if child is null
-     * @exception IllegalArgumentException thrown if layer is null
-     * @exception IllegalArgumentException thrown if child.getId() == 0
+     * @throws IllegalArgumentException if child is null
+     * @throws IllegalArgumentException if layer is null
+     * @throws IllegalArgumentException if child.getId() == 0
      */
     public ParentRelationLoadingTask(Relation child, OsmDataLayer layer, boolean full, PleaseWaitProgressMonitor monitor ) {
         super(tr("Download referring relations"), monitor, false /* don't ignore exception */);

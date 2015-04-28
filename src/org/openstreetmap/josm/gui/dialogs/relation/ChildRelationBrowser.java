@@ -113,9 +113,9 @@ public class ChildRelationBrowser extends JPanel {
      * constructor
      *
      * @param layer the {@link OsmDataLayer} this browser is related to. Must not be null.
-     * @exception IllegalArgumentException thrown, if layer is null
+     * @throws IllegalArgumentException if layer is null
      */
-    public ChildRelationBrowser(OsmDataLayer layer) throws IllegalArgumentException {
+    public ChildRelationBrowser(OsmDataLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         model = new RelationTreeModel();
@@ -127,9 +127,9 @@ public class ChildRelationBrowser extends JPanel {
      *
      * @param layer the {@link OsmDataLayer} this browser is related to. Must not be null.
      * @param root the root relation
-     * @exception IllegalArgumentException thrown, if layer is null
+     * @throws IllegalArgumentException if layer is null
      */
-    public ChildRelationBrowser(OsmDataLayer layer, Relation root) throws IllegalArgumentException {
+    public ChildRelationBrowser(OsmDataLayer layer, Relation root) {
         this(layer);
         populate(root);
     }

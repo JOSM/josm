@@ -41,10 +41,9 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
      * i.e. from {@link DataSet#getSelected()}.
      *
      * @param selectionBase the dataset. Must not be null.
-     * @exception IllegalArgumentException thrown if selectionBase is null
-     *
+     * @throws IllegalArgumentException if selectionBase is null
      */
-    public MergeSourceBuildingVisitor(DataSet selectionBase) throws IllegalArgumentException {
+    public MergeSourceBuildingVisitor(DataSet selectionBase) {
         CheckParameterUtil.ensureParameterNotNull(selectionBase, "selectionBase");
         this.selectionBase = selectionBase;
         this.hull = new DataSet();
