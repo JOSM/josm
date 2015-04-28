@@ -39,8 +39,8 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
      * is displayed
      * @param parameters the OAuth parameters. Must not be null.
      * @param requestToken the request token for which an Access Token is retrieved. Must not be null.
-     * @throws IllegalArgumentException thrown if parameters is null.
-     * @throws IllegalArgumentException thrown if requestToken is null.
+     * @throws IllegalArgumentException if parameters is null.
+     * @throws IllegalArgumentException if requestToken is null.
      */
     public RetrieveAccessTokenTask(Component parent, OAuthParameters parameters, OAuthToken requestToken) {
         super(parent, tr("Retrieving OAuth Access Token..."), false /* don't ignore exceptions */);

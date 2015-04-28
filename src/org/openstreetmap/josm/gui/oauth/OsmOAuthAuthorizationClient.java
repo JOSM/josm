@@ -72,7 +72,7 @@ public class OsmOAuthAuthorizationClient {
      * @param parameters the OAuth parameters. Must not be null.
      * @throws IllegalArgumentException if parameters is null
      */
-    public OsmOAuthAuthorizationClient(OAuthParameters parameters) throws IllegalArgumentException {
+    public OsmOAuthAuthorizationClient(OAuthParameters parameters) {
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
         oauthProviderParameters = new OAuthParameters(parameters);
         consumer = oauthProviderParameters.buildConsumer();
@@ -88,7 +88,7 @@ public class OsmOAuthAuthorizationClient {
      * @throws IllegalArgumentException if parameters is null
      * @throws IllegalArgumentException if requestToken is null
      */
-    public OsmOAuthAuthorizationClient(OAuthParameters parameters, OAuthToken requestToken) throws IllegalArgumentException {
+    public OsmOAuthAuthorizationClient(OAuthParameters parameters, OAuthToken requestToken) {
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
         oauthProviderParameters = new OAuthParameters(parameters);
         consumer = oauthProviderParameters.buildConsumer();
@@ -509,7 +509,7 @@ public class OsmOAuthAuthorizationClient {
      * @throws OsmOAuthAuthorizationException if the authorisation fails
      * @throws OsmTransferCanceledException if the task is canceled by the user
      */
-    public void authorise(OAuthToken requestToken, String osmUserName, String osmPassword, OsmPrivileges privileges, ProgressMonitor monitor) throws IllegalArgumentException, OsmOAuthAuthorizationException, OsmTransferCanceledException{
+    public void authorise(OAuthToken requestToken, String osmUserName, String osmPassword, OsmPrivileges privileges, ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCanceledException{
         CheckParameterUtil.ensureParameterNotNull(requestToken, "requestToken");
         CheckParameterUtil.ensureParameterNotNull(osmUserName, "osmUserName");
         CheckParameterUtil.ensureParameterNotNull(osmPassword, "osmPassword");

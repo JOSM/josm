@@ -27,7 +27,7 @@ public interface CredentialsAgent {
      * for a proxy server
      * @param host the hostname for these credentials
      * @return the credentials
-     * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
+     * @throws CredentialsAgentException if a problem occurs in a implementation of this interface
      */
     PasswordAuthentication lookup(RequestorType requestorType, String host) throws CredentialsAgentException;
 
@@ -38,7 +38,7 @@ public interface CredentialsAgent {
      * for a proxy server
      * @param host the hostname for these credentials
      * @param credentials the credentials
-     * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
+     * @throws CredentialsAgentException if a problem occurs in a implementation of this interface
      */
     void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException;
 
@@ -49,7 +49,7 @@ public interface CredentialsAgent {
      * @param host the hostname for these credentials
      * @param noSuccessWithLastResponse true, if the last request with the supplied credentials failed; false otherwise.
      * If true, implementations of this interface are advised to prompt the user for new credentials.
-     * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
+     * @throws CredentialsAgentException if a problem occurs in a implementation of this interface
 
      */
     CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException;
@@ -59,7 +59,7 @@ public interface CredentialsAgent {
      * Access Token is currently managed by this CredentialAgent.
      *
      * @return the current OAuth Access Token to access the OSM server.
-     * @throws CredentialsAgentException thrown if something goes wrong
+     * @throws CredentialsAgentException if something goes wrong
      */
     OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException;
 
@@ -67,7 +67,7 @@ public interface CredentialsAgent {
      * Stores the OAuth Access Token <code>accessToken</code>.
      *
      * @param accessToken the access Token. null, to remove the Access Token.
-     * @throws CredentialsAgentException thrown if something goes wrong
+     * @throws CredentialsAgentException if something goes wrong
      */
     void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException;
 

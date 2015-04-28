@@ -153,8 +153,7 @@ public abstract class AbstractFileChooser {
      * <li>JFileChooser.FILES_AND_DIRECTORIES
      * </ul>
      *
-     * @exception IllegalArgumentException  if <code>mode</code> is an
-     *                          illegal file selection mode
+     * @throws IllegalArgumentException if <code>mode</code> is an illegal file selection mode
      */
     public abstract void setFileSelectionMode(int selectionMode);
 
@@ -196,8 +195,7 @@ public abstract class AbstractFileChooser {
      * <li>JFileChooser.ERROR_OPTION if an error occurs or the
      *                  dialog is dismissed
      * </ul>
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
-     * returns true.
+     * @throws HeadlessException if GraphicsEnvironment.isHeadless() returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public abstract int showOpenDialog(Component parent);
@@ -217,8 +215,7 @@ public abstract class AbstractFileChooser {
      * <li>JFileChooser.ERROR_OPTION if an error occurs or the
      *                  dialog is dismissed
      * </ul>
-     * @exception HeadlessException if GraphicsEnvironment.isHeadless()
-     * returns true.
+     * @throws HeadlessException if GraphicsEnvironment.isHeadless() returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public abstract int showSaveDialog(Component parent);

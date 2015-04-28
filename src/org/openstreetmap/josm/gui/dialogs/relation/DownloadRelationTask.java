@@ -38,10 +38,10 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
      *
      * @param relations a collection of relations. Must not be null.
      * @param layer the layer which data is to be merged into
-     * @throws IllegalArgumentException thrown if relations is null
-     * @throws IllegalArgumentException thrown if layer is null
+     * @throws IllegalArgumentException if relations is null
+     * @throws IllegalArgumentException if layer is null
      */
-    public DownloadRelationTask(Collection<Relation> relations, OsmDataLayer layer) throws IllegalArgumentException{
+    public DownloadRelationTask(Collection<Relation> relations, OsmDataLayer layer) {
         super(tr("Download relations"), false /* don't ignore exception */);
         CheckParameterUtil.ensureParameterNotNull(relations, "relations");
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");

@@ -25,9 +25,9 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
      * constructor
      *
      * @param layer  the data layer. Must not be null.
-     * @exception IllegalArgumentException thrown if layer is null
+     * @throws IllegalArgumentException if layer is null
      */
-    public SelectionTableModel(OsmDataLayer layer) throws IllegalArgumentException {
+    public SelectionTableModel(OsmDataLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         cache = new ArrayList<>();

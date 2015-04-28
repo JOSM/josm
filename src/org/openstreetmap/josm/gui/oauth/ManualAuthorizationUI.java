@@ -28,9 +28,9 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is an UI which supports a JOSM user to get an OAuth Access Token in a fully
@@ -176,7 +176,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
 
     private static class AccessTokenKeyValidator extends AbstractTextComponentValidator {
 
-        public AccessTokenKeyValidator(JTextComponent tc) throws IllegalArgumentException {
+        public AccessTokenKeyValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -196,7 +196,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
     }
 
     private static class AccessTokenSecretValidator extends AbstractTextComponentValidator {
-        public AccessTokenSecretValidator(JTextComponent tc) throws IllegalArgumentException {
+        public AccessTokenSecretValidator(JTextComponent tc) {
             super(tc);
         }
 

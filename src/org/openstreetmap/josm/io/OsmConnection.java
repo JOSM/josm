@@ -72,7 +72,7 @@ public class OsmConnection {
      * Adds an authentication header for basic authentication
      *
      * @param con the connection
-     * @throws OsmTransferException thrown if something went wrong. Check for nested exceptions
+     * @throws OsmTransferException if something went wrong. Check for nested exceptions
      */
     protected void addBasicAuthorizationHeader(HttpURLConnection con) throws OsmTransferException {
         CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
@@ -109,8 +109,8 @@ public class OsmConnection {
      *
      * @param connection the connection
      *
-     * @throws OsmTransferException thrown if there is currently no OAuth Access Token configured
-     * @throws OsmTransferException thrown if signing fails
+     * @throws OsmTransferException if there is currently no OAuth Access Token configured
+     * @throws OsmTransferException if signing fails
      */
     protected void addOAuthAuthorizationHeader(HttpURLConnection connection) throws OsmTransferException {
         if (oauthParameters == null) {

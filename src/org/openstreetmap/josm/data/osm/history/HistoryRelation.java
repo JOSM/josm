@@ -34,7 +34,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      *
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp) throws IllegalArgumentException {
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp) {
         super(id, version, visible, user, changesetId, timestamp);
     }
 
@@ -52,7 +52,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
      */
-    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) throws IllegalArgumentException {
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) {
         super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
     }
 
@@ -67,7 +67,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @param timestamp the timestamp (!= null required)
      * @param members list of members for this relation
      *
-     * @throws IllegalArgumentException thrown if preconditions are violated
+     * @throws IllegalArgumentException if preconditions are violated
      */
     public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp, List<RelationMemberData> members) {
         this(id, version, visible, user, changesetId, timestamp);
@@ -107,7 +107,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * replies the idx-th member
      * @param idx the index
      * @return the idx-th member
-     * @throws IndexOutOfBoundsException thrown, if idx is out of bounds
+     * @throws IndexOutOfBoundsException if idx is out of bounds
      */
     public RelationMemberData getRelationMember(int idx) throws IndexOutOfBoundsException  {
         if (idx < 0 || idx >= members.size())
@@ -128,9 +128,9 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * adds a member to the list of members
      *
      * @param member the member (must not be null)
-     * @exception IllegalArgumentException thrown, if member is null
+     * @throws IllegalArgumentException if member is null
      */
-    public void addMember(RelationMemberData member) throws IllegalArgumentException {
+    public void addMember(RelationMemberData member) {
         CheckParameterUtil.ensureParameterNotNull(member, "member");
         members.add(member);
     }

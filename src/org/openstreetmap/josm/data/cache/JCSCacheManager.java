@@ -91,7 +91,7 @@ public class JCSCacheManager {
             }
 
             @Override
-            public void close() throws SecurityException {
+            public void close() {
             }
         });
 

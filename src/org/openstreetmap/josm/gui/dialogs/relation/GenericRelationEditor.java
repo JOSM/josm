@@ -747,8 +747,7 @@ public class GenericRelationEditor extends RelationEditor  {
      * @return The resulting command
      * @throws IllegalArgumentException if orig is null
      */
-    public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd)
-            throws IllegalArgumentException {
+    public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd) {
         CheckParameterUtil.ensureParameterNotNull(orig, "orig");
         try {
             final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(

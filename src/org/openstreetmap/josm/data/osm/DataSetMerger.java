@@ -51,9 +51,9 @@ public class DataSetMerger {
      *
      * @param targetDataSet dataset with my primitives. Must not be null.
      * @param sourceDataSet dataset with their primitives. Ignored, if null.
-     * @throws IllegalArgumentException thrown if myDataSet is null
+     * @throws IllegalArgumentException if myDataSet is null
      */
-    public DataSetMerger(DataSet targetDataSet, DataSet sourceDataSet) throws IllegalArgumentException {
+    public DataSetMerger(DataSet targetDataSet, DataSet sourceDataSet) {
         CheckParameterUtil.ensureParameterNotNull(targetDataSet, "targetDataSet");
         this.targetDataSet = targetDataSet;
         this.sourceDataSet = sourceDataSet;
@@ -123,7 +123,7 @@ public class DataSetMerger {
         objectsWithChildrenToMerge.add(source.getPrimitiveId());
     }
 
-    protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) throws IllegalStateException {
+    protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) {
         PrimitiveId targetId = mergedMap.get(mergeSource.getPrimitiveId());
         if (targetId == null)
             return null;
@@ -228,11 +228,11 @@ public class DataSetMerger {
      * Merges the node list of a source way onto its target way.
      *
      * @param source the source way
-     * @throws IllegalStateException thrown if no target way can be found for the source way
-     * @throws IllegalStateException thrown if there isn't a target node for one of the nodes in the source way
+     * @throws IllegalStateException if no target way can be found for the source way
+     * @throws IllegalStateException if there isn't a target node for one of the nodes in the source way
      *
      */
-    private void mergeNodeList(Way source) throws IllegalStateException {
+    private void mergeNodeList(Way source) {
         Way target = (Way)getMergeTarget(source);
         if (target == null)
             throw new IllegalStateException(tr("Missing merge target for way with id {0}", source.getUniqueId()));
@@ -255,11 +255,11 @@ public class DataSetMerger {
     /**
      * Merges the relation members of a source relation onto the corresponding target relation.
      * @param source the source relation
-     * @throws IllegalStateException thrown if there is no corresponding target relation
-     * @throws IllegalStateException thrown if there isn't a corresponding target object for one of the relation
+     * @throws IllegalStateException if there is no corresponding target relation
+     * @throws IllegalStateException if there isn't a corresponding target object for one of the relation
      * members in source
      */
-    private void mergeRelationMembers(Relation source) throws IllegalStateException {
+    private void mergeRelationMembers(Relation source) {
         Relation target = (Relation) getMergeTarget(source);
         if (target == null)
             throw new IllegalStateException(tr("Missing merge target for relation with id {0}", source.getUniqueId()));

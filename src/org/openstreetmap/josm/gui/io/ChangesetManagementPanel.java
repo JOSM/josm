@@ -161,7 +161,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
      * Creates a new panel
      *
      * @param changesetCommentModel the changeset comment model. Must not be null.
-     * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
+     * @throws IllegalArgumentException if {@code changesetCommentModel} is null
      */
     public ChangesetManagementPanel(ChangesetCommentModel changesetCommentModel) {
         CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");

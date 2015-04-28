@@ -320,8 +320,8 @@ public class DeleteAction extends MapMode implements ModifierListener {
      *
      * @param layer the layer in whose context the relation is deleted. Must not be null.
      * @param toDelete  the relation to be deleted. Must  not be null.
-     * @exception IllegalArgumentException thrown if layer is null
-     * @exception IllegalArgumentException thrown if toDelete is nul
+     * @throws IllegalArgumentException if layer is null
+     * @throws IllegalArgumentException if toDelete is nul
      */
     public static void deleteRelation(OsmDataLayer layer, Relation toDelete) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");

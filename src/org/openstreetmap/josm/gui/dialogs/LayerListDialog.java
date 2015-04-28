@@ -96,10 +96,10 @@ public class LayerListDialog extends ToggleDialog {
      * Replies the instance of the dialog
      *
      * @return the instance of the dialog
-     * @throws IllegalStateException thrown, if the dialog is not created yet
+     * @throws IllegalStateException if the dialog is not created yet
      * @see #createInstance(MapFrame)
      */
-    public static LayerListDialog getInstance() throws IllegalStateException {
+    public static LayerListDialog getInstance() {
         if (instance == null)
             throw new IllegalStateException("Dialog not created yet. Invoke createInstance() first");
         return instance;
@@ -534,9 +534,9 @@ public class LayerListDialog extends ToggleDialog {
          * opacity of one or more layers.
          *
          * @param layer  the layer. Must not be null.
-         * @exception IllegalArgumentException thrown, if layer is null
+         * @throws IllegalArgumentException if layer is null
          */
-        public LayerOpacityAction(Layer layer) throws IllegalArgumentException {
+        public LayerOpacityAction(Layer layer) {
             this();
             putValue(NAME, tr("Opacity"));
             CheckParameterUtil.ensureParameterNotNull(layer, "layer");
@@ -755,7 +755,7 @@ public class LayerListDialog extends ToggleDialog {
          * @param layer the layer
          * @throws IllegalArgumentException if {@code layer} is null
          */
-        public MergeAction(Layer layer) throws IllegalArgumentException {
+        public MergeAction(Layer layer) {
             this();
             CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;
@@ -830,7 +830,7 @@ public class LayerListDialog extends ToggleDialog {
          * @param layer the layer
          * @throws IllegalArgumentException if {@code layer} is null
          */
-        public DuplicateAction(Layer layer) throws IllegalArgumentException {
+        public DuplicateAction(Layer layer) {
             this();
             CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;

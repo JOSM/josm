@@ -50,7 +50,7 @@ public class JosmTextArea extends JTextArea implements FocusListener {
      *
      * @param rows the number of rows &gt;= 0
      * @param columns the number of columns &gt;= 0
-     * @exception IllegalArgumentException if the rows or columns
+     * @throws IllegalArgumentException if the rows or columns
      *  arguments are negative.
      */
     public JosmTextArea(int rows, int columns) {
@@ -64,7 +64,7 @@ public class JosmTextArea extends JTextArea implements FocusListener {
      * @param text the text to be displayed, or null
      * @param rows the number of rows &gt;= 0
      * @param columns the number of columns &gt;= 0
-     * @exception IllegalArgumentException if the rows or columns
+     * @throws IllegalArgumentException if the rows or columns
      *  arguments are negative.
      */
     public JosmTextArea(String text, int rows, int columns) {
@@ -80,7 +80,7 @@ public class JosmTextArea extends JTextArea implements FocusListener {
      * @param text the text to be displayed, null if none
      * @param rows the number of rows &gt;= 0
      * @param columns the number of columns &gt;= 0
-     * @exception IllegalArgumentException if the rows or columns
+     * @throws IllegalArgumentException if the rows or columns
      *  arguments are negative.
      */
     public JosmTextArea(Document doc, String text, int rows, int columns) {

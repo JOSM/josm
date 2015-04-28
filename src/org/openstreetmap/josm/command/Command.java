@@ -118,9 +118,9 @@ public abstract class Command extends PseudoCommand {
      * Creates a new command in the context of a specific data layer
      *
      * @param layer the data layer. Must not be null.
-     * @throws IllegalArgumentException thrown if layer is null
+     * @throws IllegalArgumentException if layer is null
      */
-    public Command(OsmDataLayer layer) throws IllegalArgumentException {
+    public Command(OsmDataLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
     }

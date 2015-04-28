@@ -35,9 +35,9 @@ public class OAuthToken {
      * Creates a clone of another token
      *
      * @param other the other token. Must not be null.
-     * @throws IllegalArgumentException thrown if other is null
+     * @throws IllegalArgumentException if other is null
      */
-    public OAuthToken(OAuthToken other) throws IllegalArgumentException {
+    public OAuthToken(OAuthToken other) {
         CheckParameterUtil.ensureParameterNotNull(other, "other");
         this.key = other.key;
         this.secret = other.secret;

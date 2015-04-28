@@ -89,7 +89,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
      *   the preferred width &gt;= 0; if <code>columns</code>
      *   is set to zero, the preferred width will be whatever
      *   naturally results from the component implementation
-     * @exception IllegalArgumentException if <code>columns</code> &lt; 0
+     * @throws IllegalArgumentException if <code>columns</code> &lt; 0
      */
     public DisableShortcutsOnFocusGainedTextField(Document doc, String text, int columns) {
         super(doc, text, columns);

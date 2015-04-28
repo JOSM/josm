@@ -38,7 +38,7 @@ public class JosmEditorPane extends JEditorPane {
      * Creates a <code>JosmEditorPane</code> based on a specified URL for input.
      *
      * @param initialPage the URL
-     * @exception IOException if the URL is <code>null</code> or cannot be accessed
+     * @throws IOException if the URL is <code>null</code> or cannot be accessed
      */
     public JosmEditorPane(URL initialPage) throws IOException {
         this();
@@ -50,7 +50,7 @@ public class JosmEditorPane extends JEditorPane {
      * a URL specification.
      *
      * @param url the URL
-     * @exception IOException if the URL is <code>null</code> or cannot be accessed
+     * @throws IOException if the URL is <code>null</code> or cannot be accessed
      */
     public JosmEditorPane(String url) throws IOException {
         this();
@@ -64,7 +64,7 @@ public class JosmEditorPane extends JEditorPane {
      *
      * @param type mime type of the given text
      * @param text the text to initialize with; may be <code>null</code>
-     * @exception NullPointerException if the <code>type</code> parameter
+     * @throws NullPointerException if the <code>type</code> parameter
      *      is <code>null</code>
      */
     public JosmEditorPane(String type, String text) {

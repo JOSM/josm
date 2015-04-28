@@ -46,10 +46,10 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      *
      * @param primitive  the primitive to be read. Must not be null. primitive.id &gt; 0 expected
      *
-     * @exception IllegalArgumentException thrown if primitive is null
-     * @exception IllegalArgumentException thrown if primitive.id &lt;= 0
+     * @throws IllegalArgumentException if primitive is null
+     * @throws IllegalArgumentException if primitive.id &lt;= 0
      */
-    public OsmServerBackreferenceReader(OsmPrimitive primitive) throws IllegalArgumentException {
+    public OsmServerBackreferenceReader(OsmPrimitive primitive) {
         CheckParameterUtil.ensureValidPrimitiveId(primitive, "primitive");
         this.id = primitive.getId();
         this.primitiveType = OsmPrimitiveType.from(primitive);
@@ -62,11 +62,10 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @param id  the id of the primitive. &gt; 0 expected
      * @param type the type of the primitive. Must not be null.
      *
-     * @exception IllegalArgumentException thrown if id &lt;= 0
-     * @exception IllegalArgumentException thrown if type is null
-     *
+     * @throws IllegalArgumentException if id &lt;= 0
+     * @throws IllegalArgumentException if type is null
      */
-    public OsmServerBackreferenceReader(long id, OsmPrimitiveType type) throws IllegalArgumentException   {
+    public OsmServerBackreferenceReader(long id, OsmPrimitiveType type) {
         if (id <= 0)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
         CheckParameterUtil.ensureParameterNotNull(type, "type");
@@ -94,11 +93,10 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @param type the type of the primitive
      * @param readFull true, if referers should be read fully (i.e. including their immediate children)
      *
-     * @exception IllegalArgumentException thrown if id &lt;= 0
-     * @exception IllegalArgumentException thrown if type is null
-     *
+     * @throws IllegalArgumentException if id &lt;= 0
+     * @throws IllegalArgumentException if type is null
      */
-    public OsmServerBackreferenceReader(long id, OsmPrimitiveType type, boolean readFull) throws IllegalArgumentException  {
+    public OsmServerBackreferenceReader(long id, OsmPrimitiveType type, boolean readFull)  {
         this(id, type);
         this.readFull = readFull;
     }
@@ -184,7 +182,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @param ds the original dataset
      * @param progressMonitor  the progress monitor
      * @return the modified dataset
-     * @throws OsmTransferException thrown if an exception occurs.
+     * @throws OsmTransferException if an exception occurs.
      */
     protected DataSet readIncompletePrimitives(DataSet ds, ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(null, 2);
@@ -223,7 +221,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      *
      * @param progressMonitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null.
      * @return the dataset with the referring primitives
-     * @exception OsmTransferException thrown if an error occurs while communicating with the server
+     * @throws OsmTransferException if an error occurs while communicating with the server
      */
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {

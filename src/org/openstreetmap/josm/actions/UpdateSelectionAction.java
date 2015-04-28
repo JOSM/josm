@@ -64,13 +64,11 @@ public class UpdateSelectionAction extends JosmAction {
      * with the data currently kept on the server.
      *
      * @param id  the id of a primitive in the {@link DataSet} of the current edit layer. Must not be null.
-     * @throws IllegalArgumentException thrown if id is null
-     * @exception IllegalStateException thrown if there is no primitive with <code>id</code> in
-     *   the current dataset
-     * @exception IllegalStateException thrown if there is no current dataset
-     *
+     * @throws IllegalArgumentException if id is null
+     * @throws IllegalStateException if there is no primitive with <code>id</code> in the current dataset
+     * @throws IllegalStateException if there is no current dataset
      */
-    public static void updatePrimitive(PrimitiveId id) throws IllegalStateException, IllegalArgumentException{
+    public static void updatePrimitive(PrimitiveId id) {
         ensureParameterNotNull(id, "id");
         if (getEditLayer() == null)
             throw new IllegalStateException(tr("No current dataset found"));

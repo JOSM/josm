@@ -33,7 +33,7 @@ public final class OpenBrowser {
      * A web resource will launch platform's browser, an audio file URI will launch audio player, etc.
      * @param uri The URI to display
      * @return <code>null</code> for success or a string in case of an error.
-     * @throws IllegalStateException thrown if no platform is set to which opening the URL can be dispatched,
+     * @throws IllegalStateException if no platform is set to which opening the URL can be dispatched,
      * {@link Main#platform}
      */
     public static String displayUrl(URI uri) {
@@ -80,7 +80,7 @@ public final class OpenBrowser {
      * A web resource will launch platform's browser, an audio file URL will launch audio player, etc.
      * @param url The URL to display
      * @return <code>null</code> for success or a string in case of an error.
-     * @throws IllegalStateException thrown if no platform is set to which opening the URL can be dispatched,
+     * @throws IllegalStateException if no platform is set to which opening the URL can be dispatched,
      * {@link Main#platform}
      */
     public static String displayUrl(String url) {

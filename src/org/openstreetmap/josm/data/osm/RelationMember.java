@@ -127,7 +127,7 @@ public class RelationMember implements PrimitiveId {
      * Constructs a new {@code RelationMember}.
      * @param role Can be null, in this case it's save as ""
      * @param member Cannot be null
-     * @throws IllegalArgumentException thrown if member is <code>null</code>
+     * @throws IllegalArgumentException if member is <code>null</code>
      */
     public RelationMember(String role, OsmPrimitive member) {
         CheckParameterUtil.ensureParameterNotNull(member, "member");

@@ -57,8 +57,8 @@ public class OsmServerChangesetReader extends OsmServerReader {
      * @param query  the query specification. Must not be null.
      * @param monitor a progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the list of changesets read from the server
-     * @throws IllegalArgumentException thrown if query is null
-     * @throws OsmTransferException thrown if something goes wrong w
+     * @throws IllegalArgumentException if query is null
+     * @throws OsmTransferException if something goes wrong w
      */
     public List<Changeset> queryChangesets(ChangesetQuery query, ProgressMonitor monitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(query, "query");
@@ -95,7 +95,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
      * @param includeDiscussion determines if discussion comments must be downloaded or not
      * @param monitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the changeset read
-     * @throws OsmTransferException thrown if something goes wrong
+     * @throws OsmTransferException if something goes wrong
      * @throws IllegalArgumentException if id &lt;= 0
      * @since 7704
      */
@@ -136,7 +136,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
      * @param includeDiscussion determines if discussion comments must be downloaded or not
      * @param monitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the changeset read
-     * @throws OsmTransferException thrown if something goes wrong
+     * @throws OsmTransferException if something goes wrong
      * @throws IllegalArgumentException if id &lt;= 0
      * @since 7704
      */
@@ -186,10 +186,10 @@ public class OsmServerChangesetReader extends OsmServerReader {
      * @param id the changeset id. &gt; 0 required.
      * @param monitor the progress monitor. {@link NullProgressMonitor#INSTANCE} assumed if null.
      * @return the changeset content
-     * @throws IllegalArgumentException thrown if id &lt;= 0
-     * @throws OsmTransferException thrown if something went wrong
+     * @throws IllegalArgumentException if id &lt;= 0
+     * @throws OsmTransferException if something went wrong
      */
-    public ChangesetDataSet downloadChangeset(int id, ProgressMonitor monitor) throws IllegalArgumentException, OsmTransferException {
+    public ChangesetDataSet downloadChangeset(int id, ProgressMonitor monitor) throws OsmTransferException {
         if (id <= 0)
             throw new IllegalArgumentException(MessageFormat.format("Expected value of type integer > 0 for parameter ''{0}'', got {1}", "id", id));
         if (monitor == null) {

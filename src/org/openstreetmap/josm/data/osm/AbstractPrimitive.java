@@ -186,9 +186,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
      *
      * @param id the id. &gt; 0 required
      * @param version the version &gt; 0 required
-     * @throws IllegalArgumentException thrown if id &lt;= 0
-     * @throws IllegalArgumentException thrown if version &lt;= 0
-     * @throws DataIntegrityProblemException If id is changed and primitive was already added to the dataset
+     * @throws IllegalArgumentException if id &lt;= 0
+     * @throws IllegalArgumentException if version &lt;= 0
+     * @throws DataIntegrityProblemException if id is changed and primitive was already added to the dataset
      */
     @Override
     public void setOsmId(long id, int version) {
@@ -257,11 +257,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * primitive.
      *
      * @param changesetId the id. &gt;= 0 required.
-     * @throws IllegalStateException thrown if this primitive is new.
-     * @throws IllegalArgumentException thrown if id &lt; 0
+     * @throws IllegalStateException if this primitive is new.
+     * @throws IllegalArgumentException if id &lt; 0
      */
     @Override
-    public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {
+    public void setChangesetId(int changesetId) {
         if (this.changesetId == changesetId)
             return;
         if (changesetId < 0)
@@ -395,11 +395,10 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * and not deleted on the server.
      *
      * @see #isVisible()
-     * @throws IllegalStateException thrown if visible is set to false on an primitive with
-     * id==0
+     * @throws IllegalStateException if visible is set to false on an primitive with id==0
      */
     @Override
-    public void setVisible(boolean visible) throws IllegalStateException{
+    public void setVisible(boolean visible) {
         if (isNew() && !visible)
             throw new IllegalStateException(tr("A primitive with ID = 0 cannot be invisible."));
         updateFlags(FLAG_VISIBLE, visible);

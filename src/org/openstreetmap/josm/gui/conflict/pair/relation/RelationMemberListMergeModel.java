@@ -101,9 +101,9 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
      * @param my  my relation. Must not be null.
      * @param their  their relation. Must not be null
      * @return the command
-     * @exception IllegalArgumentException thrown, if my is null
-     * @exception IllegalArgumentException thrown, if their is null
-     * @exception IllegalStateException thrown, if the merge is not yet frozen
+     * @throws IllegalArgumentException if my is null
+     * @throws IllegalArgumentException if their is null
+     * @throws IllegalStateException if the merge is not yet frozen
      */
     public RelationMemberConflictResolverCommand buildResolveCommand(Relation my, Relation their) {
         CheckParameterUtil.ensureParameterNotNull(my, "my");

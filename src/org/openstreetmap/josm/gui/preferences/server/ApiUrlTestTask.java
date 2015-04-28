@@ -42,9 +42,9 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
      *
      * @param parent the parent component relative to which the {@link PleaseWaitRunnable}-Dialog is displayed
      * @param url the url. Must not be null.
-     * @throws IllegalArgumentException thrown if url is null.
+     * @throws IllegalArgumentException if url is null.
      */
-    public ApiUrlTestTask(Component parent, String url) throws IllegalArgumentException {
+    public ApiUrlTestTask(Component parent, String url) {
         super(parent, tr("Testing OSM API URL ''{0}''", url), false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(url,"url");
         this.parent = parent;

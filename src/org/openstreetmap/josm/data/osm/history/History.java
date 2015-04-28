@@ -47,9 +47,8 @@ public class History {
      * @param id the id. &gt; 0 required.
      * @param type the primitive type. Must not be null.
      * @param versions a list of versions. Can be null.
-     * @throws IllegalArgumentException thrown if id &lt;= 0
+     * @throws IllegalArgumentException if id &lt;= 0
      * @throws IllegalArgumentException if type is null
-     *
      */
     protected History(long id, OsmPrimitiveType type, List<HistoryOsmPrimitive> versions) {
         if (id <= 0)

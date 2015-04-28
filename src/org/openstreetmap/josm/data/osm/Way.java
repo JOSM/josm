@@ -126,7 +126,7 @@ public final class Way extends OsmPrimitive implements IWay {
      *
      * @param index the position
      * @return  the node at position <code>index</code>
-     * @exception IndexOutOfBoundsException thrown if <code>index</code> &lt; 0
+     * @throws IndexOutOfBoundsException if <code>index</code> &lt; 0
      * or <code>index</code> &gt;= {@link #getNodesCount()}
      * @since 1862
      */
@@ -261,7 +261,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @throws IllegalArgumentException if id &lt; 0
      * @since 343
      */
-    public Way(long id) throws IllegalArgumentException {
+    public Way(long id) {
         super(id, false);
     }
 
@@ -272,7 +272,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @throws IllegalArgumentException if id &lt; 0
      * @since 2620
      */
-    public Way(long id, int version) throws IllegalArgumentException {
+    public Way(long id, int version) {
         super(id, version, false);
     }
 
@@ -418,11 +418,11 @@ public final class Way extends OsmPrimitive implements IWay {
      * Adds a node to the end of the list of nodes. Ignored, if n is null.
      *
      * @param n the node. Ignored, if null
-     * @throws IllegalStateException thrown, if this way is marked as incomplete. We can't add a node
+     * @throws IllegalStateException if this way is marked as incomplete. We can't add a node
      * to an incomplete way
      * @since 1313
      */
-    public void addNode(Node n) throws IllegalStateException {
+    public void addNode(Node n) {
         if (n==null) return;
 
         boolean locked = writeLock();
@@ -444,12 +444,12 @@ public final class Way extends OsmPrimitive implements IWay {
      *
      * @param offs the offset
      * @param n the node. Ignored, if null.
-     * @throws IllegalStateException thrown, if this way is marked as incomplete. We can't add a node
+     * @throws IllegalStateException if this way is marked as incomplete. We can't add a node
      * to an incomplete way
-     * @throws IndexOutOfBoundsException thrown if offs is out of bounds
+     * @throws IndexOutOfBoundsException if offs is out of bounds
      * @since 1313
      */
-    public void addNode(int offs, Node n) throws IllegalStateException, IndexOutOfBoundsException {
+    public void addNode(int offs, Node n) throws IndexOutOfBoundsException {
         if (n==null) return;
 
         boolean locked = writeLock();

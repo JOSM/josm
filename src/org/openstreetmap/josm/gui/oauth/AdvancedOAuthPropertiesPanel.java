@@ -205,9 +205,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      * Sets the advanced parameters to be displayed
      *
      * @param parameters the advanced parameters. Must not be null.
-     * @throws IllegalArgumentException thrown if parameters is null.
+     * @throws IllegalArgumentException if parameters is null.
      */
-    public void setAdvancedParameters(OAuthParameters parameters) throws IllegalArgumentException{
+    public void setAdvancedParameters(OAuthParameters parameters) {
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
         if (parameters.equals(OAuthParameters.createDefault(apiUrl))) {
             cbUseDefaults.setSelected(true);
@@ -234,9 +234,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      * Initializes the panel from the values in the preferences <code>preferences</code>.
      *
      * @param pref the preferences. Must not be null.
-     * @throws IllegalArgumentException thrown if pref is null
+     * @throws IllegalArgumentException if pref is null
      */
-    public void initFromPreferences(Preferences pref) throws IllegalArgumentException {
+    public void initFromPreferences(Preferences pref) {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
         setApiUrl(pref.get("osm-server.url"));
         boolean useDefault = pref.getBoolean("oauth.settings.use-default", true);
@@ -259,9 +259,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      * Remembers the current values in the preferences <code>pref</code>.
      *
      * @param pref the preferences. Must not be null.
-     * @throws IllegalArgumentException thrown if pref is null.
+     * @throws IllegalArgumentException if pref is null.
      */
-    public void rememberPreferences(Preferences pref) throws IllegalArgumentException  {
+    public void rememberPreferences(Preferences pref) {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
         pref.put("oauth.settings.use-default", cbUseDefaults.isSelected());
         if (cbUseDefaults.isSelected()) {

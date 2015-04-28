@@ -253,7 +253,7 @@ public class MergeNodesAction extends JosmAction {
      * @param layer layer the reference data layer. Must not be null
      * @param nodes the collection of nodes. Ignored if null
      * @param targetLocationNode this node's location will be used for the target node
-     * @throws IllegalArgumentException thrown if {@code layer} is null
+     * @throws IllegalArgumentException if {@code layer} is null
      */
     public static void doMergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetLocationNode) {
         if (nodes == null) {
@@ -283,7 +283,7 @@ public class MergeNodesAction extends JosmAction {
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetLocationNode this node's location will be used for the targetNode.
      * @return The command necessary to run in order to perform action, or {@code null} if there is nothing to do
-     * @throws IllegalArgumentException thrown if {@code layer} is null
+     * @throws IllegalArgumentException if {@code layer} is null
      */
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetLocationNode) {
         if (nodes == null) {
@@ -303,7 +303,7 @@ public class MergeNodesAction extends JosmAction {
      * @param targetNode the target node the collection of nodes is merged to. Must not be null.
      * @param targetLocationNode this node's location will be used for the targetNode.
      * @return The command necessary to run in order to perform action, or {@code null} if there is nothing to do
-     * @throws IllegalArgumentException thrown if layer is null
+     * @throws IllegalArgumentException if layer is null
      */
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode, Node targetLocationNode) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");

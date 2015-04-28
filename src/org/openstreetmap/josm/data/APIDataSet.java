@@ -214,7 +214,7 @@ public class APIDataSet {
      * This method detects cyclic dependencies in new relation. Relations with cyclic
      * dependencies can't be uploaded.
      *
-     * @throws CyclicUploadDependencyException thrown, if a cyclic dependency is detected
+     * @throws CyclicUploadDependencyException if a cyclic dependency is detected
      */
     public void adjustRelationUploadOrder() throws CyclicUploadDependencyException{
         LinkedList<OsmPrimitive> newToAdd = new LinkedList<>();

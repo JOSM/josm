@@ -45,7 +45,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @param urlStr The url to connect to.
      * @param progressMonitor progress monitoring and abort handler
      * @return A reader reading the input stream (servers answer) or <code>null</code>.
-     * @throws OsmTransferException thrown if data transfer errors occur
+     * @throws OsmTransferException if data transfer errors occur
      */
     protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
         return getInputStream(urlStr, progressMonitor, null);
@@ -59,7 +59,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @param progressMonitor progress monitoring and abort handler
      * @param reason The reason to show on console. Can be {@code null} if no reason is given
      * @return A reader reading the input stream (servers answer) or <code>null</code>.
-     * @throws OsmTransferException thrown if data transfer errors occur
+     * @throws OsmTransferException if data transfer errors occur
      */
     protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor, String reason) throws OsmTransferException  {
         try {
@@ -85,7 +85,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @param urlStr The exact url to connect to.
      * @param progressMonitor progress monitoring and abort handler
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
-     * @throws OsmTransferException thrown if data transfer errors occur
+     * @throws OsmTransferException if data transfer errors occur
      */
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException {
         return getInputStreamRaw(urlStr, progressMonitor, null);
@@ -98,7 +98,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @param progressMonitor progress monitoring and abort handler
      * @param reason The reason to show on console. Can be {@code null} if no reason is given
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
-     * @throws OsmTransferException thrown if data transfer errors occur
+     * @throws OsmTransferException if data transfer errors occur
      */
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason) throws OsmTransferException {
         return getInputStreamRaw(urlStr, progressMonitor, reason, false);
@@ -113,7 +113,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @param uncompressAccordingToContentDisposition Whether to inspect the HTTP header {@code Content-Disposition}
      *                                                for {@code filename} and uncompress a gzip/bzip2 stream.
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
-     * @throws OsmTransferException thrown if data transfer errors occur
+     * @throws OsmTransferException if data transfer errors occur
      */
     @SuppressWarnings("resource")
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason, boolean uncompressAccordingToContentDisposition) throws OsmTransferException {

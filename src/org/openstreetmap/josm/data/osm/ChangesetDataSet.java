@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -35,10 +35,10 @@ public class ChangesetDataSet {
      *
      * @param primitive the primitive. Must not be null.
      * @param cmt the modification type. Must not be null.
-     * @throws IllegalArgumentException thrown if primitive is null
-     * @throws IllegalArgumentException thrown if cmt is null
+     * @throws IllegalArgumentException if primitive is null
+     * @throws IllegalArgumentException if cmt is null
      */
-    public void put(HistoryOsmPrimitive primitive, ChangesetModificationType cmt) throws IllegalArgumentException{
+    public void put(HistoryOsmPrimitive primitive, ChangesetModificationType cmt) {
         CheckParameterUtil.ensureParameterNotNull(primitive,"primitive");
         CheckParameterUtil.ensureParameterNotNull(cmt,"cmt");
         primitives.put(primitive.getPrimitiveId(), primitive);
@@ -111,9 +111,9 @@ public class ChangesetDataSet {
      *
      * @param cmt the modification type. Must not be null.
      * @return the set of primitives
-     * @throws IllegalArgumentException thrown if cmt is null
+     * @throws IllegalArgumentException if cmt is null
      */
-    public Set<HistoryOsmPrimitive> getPrimitivesByModificationType(ChangesetModificationType cmt) throws IllegalArgumentException {
+    public Set<HistoryOsmPrimitive> getPrimitivesByModificationType(ChangesetModificationType cmt) {
         CheckParameterUtil.ensureParameterNotNull(cmt,"cmt");
         HashSet<HistoryOsmPrimitive> ret = new HashSet<>();
         for (Entry<PrimitiveId, ChangesetModificationType> entry: modificationTypes.entrySet()) {

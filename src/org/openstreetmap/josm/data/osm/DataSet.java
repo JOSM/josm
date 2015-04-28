@@ -935,7 +935,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @param id  uniqueId of the primitive. Might be &lt; 0 for newly created primitives
      * @param type the type of  the primitive. Must not be null.
      * @return the primitive
-     * @exception NullPointerException thrown, if type is null
+     * @throws NullPointerException if type is null
      */
     public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type) {
         return getPrimitiveById(new SimplePrimitiveId(id, type));
