@@ -7,7 +7,6 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
@@ -196,7 +195,7 @@ public class MainApplication extends Main {
         SELECTION(true),
         /** --offline=&lt;osm_api|josm_website|all&gt; Disable access to the given resource(s), delimited by comma */
         OFFLINE(true),
-        /* --skip-plugins */
+        /** --skip-plugins */
         SKIP_PLUGINS(false),
         ;
 

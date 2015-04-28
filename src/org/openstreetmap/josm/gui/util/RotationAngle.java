@@ -1,7 +1,5 @@
+// License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.util;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;

@@ -88,7 +88,7 @@ public class Storage<T> extends AbstractSet<T> {
     private T[] data;
     private int mask;
     private int size;
-    private transient volatile int modCount = 0;
+    private volatile int modCount = 0;
     private float loadFactor = 0.6f;
     private static final int DEFAULT_CAPACITY = 16;
     private final boolean safeIterator;

@@ -76,8 +76,8 @@ import org.openstreetmap.josm.actions.OpenFileAction;
  */
 public class FileDrop
 {
-    private transient Border normalBorder;
-    private transient DropTargetListener dropListener;
+    private Border normalBorder;
+    private DropTargetListener dropListener;
 
     /** Discover if the running JVM is modern enough to have drag and drop. */
     private static Boolean supportsDnD;
