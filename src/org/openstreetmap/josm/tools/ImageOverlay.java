@@ -2,8 +2,6 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -22,7 +20,7 @@ public class ImageOverlay {
     private double offsetTop;
     /** offset of the image from bottom border, values between 0 and 1 */
     private double offsetBottom;
-    
+
     /**
      * Create an overlay info. All values are relative sizes between 0 and 1. Size of the image
      * is the result of the difference between left/right and top/bottom.
@@ -41,7 +39,7 @@ public class ImageOverlay {
         this.offsetRight = offsetRight;
         this.offsetBottom = offsetBottom;
     }
-    
+
     /**
      * Create an overlay in southeast corner. All values are relative sizes between 0 and 1.
      * Size of the image is the result of the difference between left/right and top/bottom.
