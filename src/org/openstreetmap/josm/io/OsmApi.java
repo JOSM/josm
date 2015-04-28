@@ -89,7 +89,7 @@ public class OsmApi extends OsmConnection {
      *
      * @param serverUrl  the server URL
      * @return the OsmApi
-     * @throws IllegalArgumentException thrown, if serverUrl is null
+     * @throws IllegalArgumentException if serverUrl is null
      *
      */
     public static OsmApi getOsmApi(String serverUrl) {
@@ -133,7 +133,7 @@ public class OsmApi extends OsmConnection {
      * Constructs a new {@code OsmApi} for a specific server URL.
      *
      * @param serverUrl the server URL. Must not be null
-     * @throws IllegalArgumentException thrown, if serverUrl is null
+     * @throws IllegalArgumentException if serverUrl is null
      */
     protected OsmApi(String serverUrl)  {
         CheckParameterUtil.ensureParameterNotNull(serverUrl, "serverUrl");
@@ -416,7 +416,7 @@ public class OsmApi extends OsmConnection {
      * @param changeset the changeset toe be created. Must not be null.
      * @param progressMonitor the progress monitor
      * @throws OsmTransferException signifying a non-200 return code, or connection errors
-     * @throws IllegalArgumentException thrown if changeset is null
+     * @throws IllegalArgumentException if changeset is null
      */
     public void openChangeset(Changeset changeset, ProgressMonitor progressMonitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
@@ -486,8 +486,8 @@ public class OsmApi extends OsmConnection {
      * @param monitor the progress monitor. If null, uses {@link NullProgressMonitor#INSTANCE}
      *
      * @throws OsmTransferException if something goes wrong.
-     * @throws IllegalArgumentException thrown if changeset is null
-     * @throws IllegalArgumentException thrown if changeset.getId() &lt;= 0
+     * @throws IllegalArgumentException if changeset is null
+     * @throws IllegalArgumentException if changeset.getId() &lt;= 0
      */
     public void closeChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
@@ -755,8 +755,7 @@ public class OsmApi extends OsmConnection {
     /**
      * Ensures that the current changeset can be used for uploading data
      *
-     * @throws OsmTransferException thrown if the current changeset can't be used for
-     * uploading data
+     * @throws OsmTransferException if the current changeset can't be used for uploading data
      */
     protected void ensureValidChangeset() throws OsmTransferException {
         if (changeset == null)
@@ -780,8 +779,8 @@ public class OsmApi extends OsmConnection {
      * it must be open.
      *
      * @param changeset the changeset
-     * @throws IllegalArgumentException thrown if changeset.getId() &lt;= 0
-     * @throws IllegalArgumentException thrown if !changeset.isOpen()
+     * @throws IllegalArgumentException if changeset.getId() &lt;= 0
+     * @throws IllegalArgumentException if !changeset.isOpen()
      */
     public void setChangeset(Changeset changeset) {
         if (changeset == null) {

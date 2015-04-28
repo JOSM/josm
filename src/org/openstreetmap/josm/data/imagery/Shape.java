@@ -22,7 +22,7 @@ public class Shape {
 
     private List<Coordinate> coords = new ArrayList<>();
 
-    public Shape(String asString, String separator) throws IllegalArgumentException {
+    public Shape(String asString, String separator) {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
         String[] components = asString.split(separator);
         if (components.length % 2 != 0)
@@ -60,7 +60,7 @@ public class Shape {
         return Geometry.nodeInsidePolygon(new Node(latlon), nodes);
     }
 
-    public void addPoint(String sLat, String sLon) throws IllegalArgumentException {
+    public void addPoint(String sLat, String sLon) {
         CheckParameterUtil.ensureParameterNotNull(sLat, "sLat");
         CheckParameterUtil.ensureParameterNotNull(sLon, "sLon");
 

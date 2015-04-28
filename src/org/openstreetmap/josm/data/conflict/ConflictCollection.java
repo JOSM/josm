@@ -101,10 +101,9 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * Adds a conflict to the collection
      *
      * @param conflict the conflict
-     * @exception IllegalStateException thrown, if this collection already includes a
-     * conflict for conflict.getMy()
+     * @throws IllegalStateException if this collection already includes a conflict for conflict.getMy()
      */
-    protected void addConflict(Conflict<?> conflict) throws IllegalStateException {
+    protected void addConflict(Conflict<?> conflict) {
         if (hasConflictForMy(conflict.getMy()))
             throw new IllegalStateException(tr("Already registered a conflict for primitive ''{0}''.", conflict.getMy().toString()));
         if (!conflicts.contains(conflict)) {
@@ -116,11 +115,10 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * Adds a conflict to the collection of conflicts.
      *
      * @param conflict the conflict to add. Must not be null.
-     * @throws IllegalArgumentException thrown, if conflict is null
-     * @throws IllegalStateException thrown if this collection already includes a conflict for conflict.getMy()
-     *
+     * @throws IllegalArgumentException if conflict is null
+     * @throws IllegalStateException if this collection already includes a conflict for conflict.getMy()
      */
-    public void add(Conflict<?> conflict) throws IllegalStateException {
+    public void add(Conflict<?> conflict) {
         CheckParameterUtil.ensureParameterNotNull(conflict, "conflict");
         addConflict(conflict);
         fireConflictAdded();

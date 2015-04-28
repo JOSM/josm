@@ -56,7 +56,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * Must not be null.
      * @param changesets the collection of changesets. Assumes an empty collection if null.
      * @return the download task
-     * @throws IllegalArgumentException thrown if parent is null
+     * @throws IllegalArgumentException if parent is null
      */
     public static ChangesetHeaderDownloadTask buildTaskForChangesets(Component parent, Collection<Changeset> changesets) {
         CheckParameterUtil.ensureParameterNotNull(parent, "parent");
@@ -123,9 +123,9 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      *
      * @param dialogParent the parent reference component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be null.
      * @param ids the collection of ids. Empty collection assumed if null.
-     * @throws IllegalArgumentException thrown if dialogParent is null
+     * @throws IllegalArgumentException if dialogParent is null
      */
-    public ChangesetHeaderDownloadTask(Component dialogParent, Collection<Integer> ids) throws IllegalArgumentException{
+    public ChangesetHeaderDownloadTask(Component dialogParent, Collection<Integer> ids) {
         this(dialogParent, ids, false);
     }
 
@@ -138,11 +138,10 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * @param dialogParent the parent reference component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be null.
      * @param ids the collection of ids. Empty collection assumed if null.
      * @param includeDiscussion determines if discussion comments must be downloaded or not
-     * @throws IllegalArgumentException thrown if dialogParent is null
+     * @throws IllegalArgumentException if dialogParent is null
      * @since 7704
      */
-    public ChangesetHeaderDownloadTask(Component dialogParent, Collection<Integer> ids, boolean includeDiscussion)
-            throws IllegalArgumentException {
+    public ChangesetHeaderDownloadTask(Component dialogParent, Collection<Integer> ids, boolean includeDiscussion) {
         super(dialogParent, tr("Download changesets"), false /* don't ignore exceptions */);
         init(ids);
         this.includeDiscussion = includeDiscussion;

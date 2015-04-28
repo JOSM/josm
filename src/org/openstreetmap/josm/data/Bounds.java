@@ -163,15 +163,15 @@ public class Bounds {
         }
     }
 
-    public Bounds(String asString, String separator) throws IllegalArgumentException {
+    public Bounds(String asString, String separator) {
         this(asString, separator, ParseMethod.MINLAT_MINLON_MAXLAT_MAXLON);
     }
 
-    public Bounds(String asString, String separator, ParseMethod parseMethod) throws IllegalArgumentException {
+    public Bounds(String asString, String separator, ParseMethod parseMethod) {
         this(asString, separator, parseMethod, true);
     }
 
-    public Bounds(String asString, String separator, ParseMethod parseMethod, boolean roundToOsmPrecision) throws IllegalArgumentException {
+    public Bounds(String asString, String separator, ParseMethod parseMethod, boolean roundToOsmPrecision) {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
         String[] components = asString.split(separator);
         if (components.length != 4)
@@ -233,9 +233,9 @@ public class Bounds {
      * @param center  the center coordinate pair. Must not be null.
      * @param latExtent the latitude extent. &gt; 0 required.
      * @param lonExtent the longitude extent. &gt; 0 required.
-     * @throws IllegalArgumentException thrown if center is null
-     * @throws IllegalArgumentException thrown if latExtent &lt;= 0
-     * @throws IllegalArgumentException thrown if lonExtent &lt;= 0
+     * @throws IllegalArgumentException if center is null
+     * @throws IllegalArgumentException if latExtent &lt;= 0
+     * @throws IllegalArgumentException if lonExtent &lt;= 0
      */
     public Bounds(LatLon center, double latExtent, double lonExtent) {
         CheckParameterUtil.ensureParameterNotNull(center, "center");

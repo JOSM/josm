@@ -77,7 +77,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
     /**
      * sets the value
      * @param value the value; must not be null
-     * @exception IllegalArgumentException thrown, if value if null
+     * @throws IllegalArgumentException if value if null
      */
     public void setValue(String value) {
         CheckParameterUtil.ensureParameterNotNull(value, "value");

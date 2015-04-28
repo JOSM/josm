@@ -108,7 +108,7 @@ public class BasicUploadSettingsPanel extends JPanel {
      *
      * @param changesetCommentModel the model for the changeset comment. Must not be null
      * @param changesetSourceModel the model for the changeset source. Must not be null.
-     * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
+     * @throws IllegalArgumentException if {@code changesetCommentModel} is null
      */
     public BasicUploadSettingsPanel(ChangesetCommentModel changesetCommentModel, ChangesetCommentModel changesetSourceModel) {
         CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");

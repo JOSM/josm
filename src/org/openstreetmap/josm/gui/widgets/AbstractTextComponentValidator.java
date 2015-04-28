@@ -84,9 +84,9 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
      * Creates the validator and weires it to the text component <code>tc</code>.
      *
      * @param tc the text component. Must not be null.
-     * @throws IllegalArgumentException thrown if tc is null
+     * @throws IllegalArgumentException if tc is null
      */
-    public AbstractTextComponentValidator(JTextComponent tc) throws IllegalArgumentException {
+    public AbstractTextComponentValidator(JTextComponent tc) {
         this(tc, true);
     }
 
@@ -94,11 +94,11 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
      * Alternative constructor that allows to turn off the actionListener.
      * This can be useful if the enter key stroke needs to be forwarded to the default button in a dialog.
      */
-    public AbstractTextComponentValidator(JTextComponent tc, boolean addActionListener) throws IllegalArgumentException {
+    public AbstractTextComponentValidator(JTextComponent tc, boolean addActionListener) {
         this(tc, true, true, addActionListener);
     }
 
-    public AbstractTextComponentValidator(JTextComponent tc, boolean addFocusListener, boolean addDocumentListener, boolean addActionListener) throws IllegalArgumentException {
+    public AbstractTextComponentValidator(JTextComponent tc, boolean addFocusListener, boolean addDocumentListener, boolean addActionListener) {
         CheckParameterUtil.ensureParameterNotNull(tc, "tc");
         this.tc = tc;
         if (addFocusListener) {

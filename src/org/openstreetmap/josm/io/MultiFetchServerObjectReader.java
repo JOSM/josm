@@ -112,7 +112,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @throws IllegalArgumentException if ds is null
      * @throws NoSuchElementException if ds does not include an {@link OsmPrimitive} with id=<code>id</code>
      */
-    protected void remember(DataSet ds, long id, OsmPrimitiveType type) throws IllegalArgumentException, NoSuchElementException{
+    protected void remember(DataSet ds, long id, OsmPrimitiveType type) throws NoSuchElementException{
         CheckParameterUtil.ensureParameterNotNull(ds, "ds");
         if (id <= 0) return;
         OsmPrimitive primitive = ds.getPrimitiveById(id, type);

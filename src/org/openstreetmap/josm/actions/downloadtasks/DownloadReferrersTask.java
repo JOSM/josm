@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
 
 /**
  * The asynchronous task for downloading referring primitives
- *
+ * @since 2923
  */
 public class DownloadReferrersTask extends PleaseWaitRunnable {
     private boolean canceled;
@@ -55,7 +55,6 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
      *
      * @param targetLayer  the target layer for the downloaded primitives. Must not be null.
      * @param children the collection of child primitives for which parents are to be downloaded
-     *
      */
     public DownloadReferrersTask(OsmDataLayer targetLayer, Collection<OsmPrimitive> children) {
         super("Download referrers", false /* don't ignore exception*/);
@@ -102,12 +101,11 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
      * @param targetLayer  the target layer. Must not be null.
      * @param id the primitive id. id &gt; 0 required.
      * @param type the primitive type. type != null required
-     * @exception IllegalArgumentException thrown if id &lt;= 0
-     * @exception IllegalArgumentException thrown if type == null
-     * @exception IllegalArgumentException thrown if targetLayer == null
-     *
+     * @throws IllegalArgumentException if id &lt;= 0
+     * @throws IllegalArgumentException if type == null
+     * @throws IllegalArgumentException if targetLayer == null
      */
-    public DownloadReferrersTask(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) throws IllegalArgumentException {
+    public DownloadReferrersTask(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) {
         super("Download referrers", false /* don't ignore exception*/);
         CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
         if (id <= 0)
@@ -125,11 +123,10 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
      *
      * @param targetLayer the target layer. Must not be null.
      * @param primitiveId a PrimitiveId object.
-     * @exception IllegalArgumentException thrown if id &lt;= 0
-     * @exception IllegalArgumentException thrown if targetLayer == null
-     *
+     * @throws IllegalArgumentException if id &lt;= 0
+     * @throws IllegalArgumentException if targetLayer == null
      */
-    public DownloadReferrersTask(OsmDataLayer targetLayer, PrimitiveId primitiveId) throws IllegalArgumentException {
+    public DownloadReferrersTask(OsmDataLayer targetLayer, PrimitiveId primitiveId) {
         this(targetLayer,  primitiveId, null);
     }
 
@@ -139,16 +136,16 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
      * @param targetLayer the target layer. Must not be null.
      * @param primitiveId a PrimitiveId object.
      * @param progressMonitor ProgressMonitor to use or null to create a new one.
-     * @exception IllegalArgumentException thrown if id &lt;= 0
-     * @exception IllegalArgumentException thrown if targetLayer == null
-     *
+     * @throws IllegalArgumentException if id &lt;= 0
+     * @throws IllegalArgumentException if targetLayer == null
      */
     public DownloadReferrersTask(OsmDataLayer targetLayer, PrimitiveId primitiveId,
-            ProgressMonitor progressMonitor) throws IllegalArgumentException {
+            ProgressMonitor progressMonitor) {
         super("Download referrers", progressMonitor, false /* don't ignore exception*/);
         CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
         if (primitiveId.isNew())
-            throw new IllegalArgumentException(MessageFormat.format("Cannot download referrers for new primitives (ID {0})", primitiveId.getUniqueId()));
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "Cannot download referrers for new primitives (ID {0})", primitiveId.getUniqueId()));
         canceled = false;
         this.children = new HashMap<>();
         this.children.put(primitiveId.getUniqueId(), primitiveId.getType());

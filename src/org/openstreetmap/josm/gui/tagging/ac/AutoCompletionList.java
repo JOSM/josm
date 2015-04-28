@@ -56,7 +56,7 @@ public class AutoCompletionList extends AbstractTableModel {
      *
      * @param filter  the filter expression; must not be null
      *
-     * @exception IllegalArgumentException thrown, if filter is null
+     * @throws IllegalArgumentException if filter is null
      */
     public void applyFilter(String filter) {
         CheckParameterUtil.ensureParameterNotNull(filter, "filter");
@@ -99,7 +99,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * added it is not null and if it does not exist in the list yet.
      *
      * @param other another auto completion list; must not be null
-     * @exception IllegalArgumentException thrown, if other is null
+     * @throws IllegalArgumentException if other is null
      */
     public void add(AutoCompletionList other) {
         CheckParameterUtil.ensureParameterNotNull(other, "other");
@@ -115,7 +115,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * are not null and which do not exist yet in the list are added.
      *
      * @param other a list of AutoCompletionListItem; must not be null
-     * @exception IllegalArgumentException thrown, if other is null
+     * @throws IllegalArgumentException if other is null
      */
     public void add(List<AutoCompletionListItem> other) {
         CheckParameterUtil.ensureParameterNotNull(other, "other");
@@ -263,7 +263,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * @param idx the index; must be in the range 0 &lt;= idx &lt; {@link #getFilteredSize()}
      * @return the item
      *
-     * @exception IndexOutOfBoundsException thrown, if idx is out of bounds
+     * @throws IndexOutOfBoundsException if idx is out of bounds
      */
     public AutoCompletionListItem getFilteredItem(int idx) {
         if (idx < 0 || idx >= getFilteredSize())

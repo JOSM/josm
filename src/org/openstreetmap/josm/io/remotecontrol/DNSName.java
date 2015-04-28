@@ -117,7 +117,7 @@ public class DNSName implements GeneralNameInterface {
      * Encode the DNS name into the DerOutputStream.
      *
      * @param out the DER stream to encode the DNSName to.
-     * @exception IOException on encoding errors.
+     * @throws IOException on encoding errors.
      */
     @Override
     public void encode(DerOutputStream out) throws IOException {

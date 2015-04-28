@@ -105,7 +105,7 @@ public class PluginInformation {
      * {@code file}.
      * @param file the plugin jar
      * @param name the plugin name
-     * @throws PluginException thrown if reading the manifest file fails
+     * @throws PluginException if reading the manifest file fails
      */
     public PluginInformation(File file, String name) throws PluginException {
         if (!PluginHandler.isValidJar(file)) {
@@ -134,7 +134,7 @@ public class PluginInformation {
      * @param manifestStream the stream to read the manifest from
      * @param name the plugin name
      * @param url the download URL for the plugin
-     * @throws PluginException thrown if the plugin information can't be read from the input stream
+     * @throws PluginException if the plugin information can't be read from the input stream
      */
     public PluginInformation(InputStream manifestStream, String name, String url) throws PluginException {
         this.name = name;

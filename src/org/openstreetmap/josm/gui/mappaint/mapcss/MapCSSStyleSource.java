@@ -227,9 +227,9 @@ public class MapCSSStyleSource extends StyleSource {
      * {@code css}</p>
      *
      * @param css the MapCSS style declaration. Must not be null.
-     * @throws IllegalArgumentException thrown if {@code css} is null
+     * @throws IllegalArgumentException if {@code css} is null
      */
-    public MapCSSStyleSource(String css) throws IllegalArgumentException{
+    public MapCSSStyleSource(String css) {
         super(null, null, null);
         CheckParameterUtil.ensureParameterNotNull(css);
         this.css = css;

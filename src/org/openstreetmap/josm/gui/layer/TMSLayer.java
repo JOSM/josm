@@ -333,7 +333,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * @return a new TileSource instance or null if no TileSource for the ImageryInfo/ImageryType could be found.
      * @throws IllegalArgumentException
      */
-    public static TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
+    public static TileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.TMS) {
             checkUrl(info.getUrl());
             TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getId(), info.getMinZoom(), info.getMaxZoom(),

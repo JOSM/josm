@@ -69,9 +69,9 @@ public class OsmChangeBuilder {
     /**
      * Writes the prolog of the OsmChange document
      *
-     * @throws IllegalStateException thrown if the prologs has already been written
+     * @throws IllegalStateException if the prologs has already been written
      */
-    public void start() throws IllegalStateException{
+    public void start() {
         if (prologWritten)
             throw new IllegalStateException(tr("Prolog of OsmChange document already written. Please write only once."));
         writer.print("<osmChange version=\"");
@@ -84,11 +84,11 @@ public class OsmChangeBuilder {
      * Appends a collection of Primitives to the OsmChange document.
      *
      * @param primitives the collection of primitives. Ignored if null.
-     * @throws IllegalStateException thrown if the prologs has not been written yet
+     * @throws IllegalStateException if the prologs has not been written yet
      * @see #start()
      * @see #append(IPrimitive)
      */
-    public void append(Collection<? extends IPrimitive> primitives) throws IllegalStateException{
+    public void append(Collection<? extends IPrimitive> primitives) {
         if (primitives == null) return;
         if (!prologWritten)
             throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write first."));
@@ -101,10 +101,9 @@ public class OsmChangeBuilder {
      * Appends an Primitive to the OsmChange document.
      *
      * @param p the primitive. Ignored if null.
-     * @throws IllegalStateException thrown if the prologs has not been written yet
+     * @throws IllegalStateException if the prologs has not been written yet
      * @see #start()
      * @see #append(Collection)
-
      */
     public void append(IPrimitive p) {
         if (p == null) return;
@@ -116,9 +115,9 @@ public class OsmChangeBuilder {
     /**
      * Writes the epilog of the OsmChange document
      *
-     * @throws IllegalStateException thrown if the prologs has not been written yet
+     * @throws IllegalStateException if the prologs has not been written yet
      */
-    public void finish() throws IllegalStateException {
+    public void finish() {
         if (!prologWritten)
             throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write first."));
         if (currentMode != null) {

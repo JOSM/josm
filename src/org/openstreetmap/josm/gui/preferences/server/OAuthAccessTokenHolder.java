@@ -144,9 +144,9 @@ public class OAuthAccessTokenHolder {
      *
      * @param pref the preferences. Must not be null.
      * @param cm the credential manager. Must not be null.
-     * @throws IllegalArgumentException thrown if cm is null
+     * @throws IllegalArgumentException if cm is null
      */
-    public void init(Preferences pref, CredentialsAgent cm) throws IllegalArgumentException {
+    public void init(Preferences pref, CredentialsAgent cm) {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
         CheckParameterUtil.ensureParameterNotNull(cm, "cm");
         OAuthToken token = null;
@@ -170,10 +170,10 @@ public class OAuthAccessTokenHolder {
      *
      * @param preferences the preferences. Must not be null.
      * @param cm the credentials manager. Must not be null.
-     * @throws IllegalArgumentException thrown if preferences is null
-     * @throws IllegalArgumentException thrown if cm is null
+     * @throws IllegalArgumentException if preferences is null
+     * @throws IllegalArgumentException if cm is null
      */
-    public void save(Preferences preferences, CredentialsAgent cm) throws IllegalArgumentException {
+    public void save(Preferences preferences, CredentialsAgent cm) {
         CheckParameterUtil.ensureParameterNotNull(preferences, "preferences");
         CheckParameterUtil.ensureParameterNotNull(cm, "cm");
         preferences.put("oauth.access-token.save-to-preferences", saveToPreferences);

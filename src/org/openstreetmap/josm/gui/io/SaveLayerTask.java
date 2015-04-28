@@ -33,7 +33,7 @@ public class SaveLayerTask extends AbstractIOTask {
      *
      * @param layerInfo information about the layer to be saved to save. Must not be null.
      * @param monitor the monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
-     * @throws IllegalArgumentException thrown if layer is null
+     * @throws IllegalArgumentException if layer is null
      */
     protected SaveLayerTask(SaveLayerInfo layerInfo, ProgressMonitor monitor) {
         CheckParameterUtil.ensureParameterNotNull(layerInfo, "layerInfo");

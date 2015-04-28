@@ -209,9 +209,9 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * as incomplete.
      *
      * @param id the id. &gt; 0 required
-     * @throws IllegalArgumentException thrown if id &lt; 0
+     * @throws IllegalArgumentException if id &lt; 0
      */
-    public Relation(long id) throws IllegalArgumentException {
+    public Relation(long id) {
         super(id, false);
     }
 

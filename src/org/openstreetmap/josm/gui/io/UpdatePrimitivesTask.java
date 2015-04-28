@@ -44,9 +44,9 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
      * @param layer the layer in which primitives are updated. Must not be null.
      * @param toUpdate a collection of primitives to update from the server. Set to
      * the empty collection if null.
-     * @throws IllegalArgumentException thrown if layer is null.
+     * @throws IllegalArgumentException if layer is null.
      */
-    public UpdatePrimitivesTask(OsmDataLayer layer, Collection<? extends OsmPrimitive> toUpdate) throws IllegalArgumentException{
+    public UpdatePrimitivesTask(OsmDataLayer layer, Collection<? extends OsmPrimitive> toUpdate) {
         super(tr("Update objects"), false /* don't ignore exception */);
         ensureParameterNotNull(layer, "layer");
         if (toUpdate == null) {

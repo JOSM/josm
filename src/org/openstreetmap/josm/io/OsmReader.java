@@ -643,8 +643,8 @@ public class OsmReader extends AbstractReader {
      * @param progressMonitor  the progress monitor. If null, {@link NullProgressMonitor#INSTANCE} is assumed
      *
      * @return the dataset with the parsed data
-     * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
-     * @throws IllegalArgumentException thrown if source is null
+     * @throws IllegalDataException if the an error was found while parsing the data from the source
+     * @throws IllegalArgumentException if source is null
      */
     public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         return new OsmReader().doParseDataSet(source, progressMonitor);

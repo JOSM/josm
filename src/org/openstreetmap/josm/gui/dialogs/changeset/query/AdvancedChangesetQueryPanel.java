@@ -513,12 +513,11 @@ public class AdvancedChangesetQueryPanel extends JPanel {
          * restrictions.
          *
          * @param query the query. Must not be null.
-         * @throws IllegalArgumentException thrown if query is null
-         * @throws IllegalStateException thrown if one of the available values for query parameters in
+         * @throws IllegalArgumentException if query is null
+         * @throws IllegalStateException if one of the available values for query parameters in
          * this panel isn't valid
-         *
          */
-        public void fillInQuery(ChangesetQuery query) throws IllegalStateException, IllegalArgumentException  {
+        public void fillInQuery(ChangesetQuery query) {
             CheckParameterUtil.ensureParameterNotNull(query, "query");
             if (rbRestrictToMyself.isSelected()) {
                 JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
@@ -837,7 +836,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             restoreFromSettings();
         }
 
-        public void fillInQuery(ChangesetQuery query) throws IllegalStateException{
+        public void fillInQuery(ChangesetQuery query) {
             if (!isValidChangesetQuery())
                 throw new IllegalStateException(tr("Cannot build changeset query with time based restrictions. Input is not valid."));
             if (rbClosedAfter.isSelected()) {

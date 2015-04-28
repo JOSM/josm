@@ -36,7 +36,7 @@ public class RetrieveRequestTokenTask extends PleaseWaitRunnable {
      * @param parent the parent component relative to which the {@link PleaseWaitRunnable}-Dialog
      * is displayed
      * @param parameters the OAuth parameters. Must not be null.
-     * @throws IllegalArgumentException thrown if parameters is null.
+     * @throws IllegalArgumentException if parameters is null.
      */
     public RetrieveRequestTokenTask(Component parent, OAuthParameters parameters ) {
         super(parent, tr("Retrieving OAuth Request Token..."), false /* don't ignore exceptions */);

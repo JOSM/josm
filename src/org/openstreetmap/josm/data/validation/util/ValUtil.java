@@ -113,7 +113,7 @@ public final class ValUtil {
      * @return A list with the coordinates of all cells
      * @throws IllegalArgumentException if n1 or n2 is {@code null} or without coordinates
      */
-    public static List<Point2D> getSegmentCells(Node n1, Node n2, double gridDetail) throws IllegalArgumentException {
+    public static List<Point2D> getSegmentCells(Node n1, Node n2, double gridDetail) {
         CheckParameterUtil.ensureParameterNotNull(n1, "n1");
         CheckParameterUtil.ensureParameterNotNull(n1, "n2");
         return getSegmentCells(n1.getEastNorth(), n2.getEastNorth(), gridDetail);
@@ -130,7 +130,7 @@ public final class ValUtil {
      * @throws IllegalArgumentException if en1 or en2 is {@code null}
      * @since 6869
      */
-    public static List<Point2D> getSegmentCells(EastNorth en1, EastNorth en2, double gridDetail) throws IllegalArgumentException {
+    public static List<Point2D> getSegmentCells(EastNorth en1, EastNorth en2, double gridDetail) {
         CheckParameterUtil.ensureParameterNotNull(en1, "en1");
         CheckParameterUtil.ensureParameterNotNull(en2, "en2");
         List<Point2D> cells = new ArrayList<>();

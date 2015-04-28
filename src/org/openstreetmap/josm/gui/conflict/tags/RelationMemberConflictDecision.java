@@ -17,7 +17,7 @@ public class RelationMemberConflictDecision {
     private String role;
     private RelationMemberConflictDecisionType decision;
 
-    public RelationMemberConflictDecision(Relation relation, int pos) throws IllegalArgumentException {
+    public RelationMemberConflictDecision(Relation relation, int pos) {
         CheckParameterUtil.ensureParameterNotNull(relation, "relation");
         RelationMember member = relation.getMember(pos);
         if (member == null)

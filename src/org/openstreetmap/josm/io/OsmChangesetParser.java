@@ -268,7 +268,7 @@ public final class OsmChangesetParser {
      * @param progressMonitor  the progress monitor
      *
      * @return the list of changesets
-     * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
+     * @throws IllegalDataException if the an error was found while parsing the data from the source
      */
     @SuppressWarnings("resource")
     public static List<Changeset> parse(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {

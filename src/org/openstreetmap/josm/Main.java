@@ -660,7 +660,7 @@ public abstract class Main {
                         }
 
                         @Override
-                        public void close() throws SecurityException {
+                        public void close() {
                         }
                     });
                 }

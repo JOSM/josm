@@ -101,9 +101,9 @@ public class CoordinateInfoViewer extends JPanel {
     /**
      *
      * @param model the model. Must not be null.
-     * @throws IllegalArgumentException thrown if model is null
+     * @throws IllegalArgumentException if model is null
      */
-    public CoordinateInfoViewer(HistoryBrowserModel model) throws IllegalArgumentException{
+    public CoordinateInfoViewer(HistoryBrowserModel model) {
         CheckParameterUtil.ensureParameterNotNull(model, "model");
         setModel(model);
         build();

@@ -205,9 +205,9 @@ public class OAuthAuthorizationWizard extends JDialog {
      * Creates the wizard.
      *
      * @param apiUrl the API URL. Must not be null.
-     * @throws IllegalArgumentException thrown if apiUrl is null
+     * @throws IllegalArgumentException if apiUrl is null
      */
-    public OAuthAuthorizationWizard(String apiUrl) throws IllegalArgumentException {
+    public OAuthAuthorizationWizard(String apiUrl) {
         this(Main.parent, apiUrl);
     }
 
@@ -216,7 +216,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      *
      * @param parent the component relative to which the dialog is displayed
      * @param apiUrl the API URL. Must not be null.
-     * @throws IllegalArgumentException thrown if apiUrl is null
+     * @throws IllegalArgumentException if apiUrl is null
      */
     public OAuthAuthorizationWizard(Component parent, String apiUrl) {
         super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);

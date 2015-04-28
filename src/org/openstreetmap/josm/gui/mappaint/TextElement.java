@@ -112,9 +112,9 @@ public class TextElement implements StyleKeys {
      *   doesn't include respective style declarations
      * @return the text element or null, if the style properties don't include
      * properties for text rendering
-     * @throws IllegalArgumentException thrown if {@code defaultTextColor} is null
+     * @throws IllegalArgumentException if {@code defaultTextColor} is null
      */
-    public static TextElement create(Environment env, Color defaultTextColor, boolean defaultAnnotate)  throws IllegalArgumentException{
+    public static TextElement create(Environment env, Color defaultTextColor, boolean defaultAnnotate) {
         CheckParameterUtil.ensureParameterNotNull(defaultTextColor);
         Cascade c = env.mc.getCascade(env.layer);
 

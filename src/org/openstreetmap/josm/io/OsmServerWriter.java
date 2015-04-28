@@ -82,7 +82,7 @@ public class OsmServerWriter {
      *
      * @param primitives the collection of primitives to upload
      * @param progressMonitor the progress monitor
-     * @throws OsmTransferException thrown if an exception occurs
+     * @throws OsmTransferException if an exception occurs
      */
     protected void uploadChangesIndividually(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
@@ -124,7 +124,7 @@ public class OsmServerWriter {
      *
      * @param primitives the collection of primitives to upload
      * @param progressMonitor  the progress monitor
-     * @throws OsmTransferException thrown if an exception occurs
+     * @throws OsmTransferException if an exception occurs
      */
     protected void uploadChangesAsDiffUpload(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
@@ -143,8 +143,8 @@ public class OsmServerWriter {
      * @param primitives the collection of primitives to upload
      * @param progressMonitor  the progress monitor
      * @param chunkSize the size of the individual upload chunks. &gt; 0 required.
-     * @throws IllegalArgumentException thrown if chunkSize &lt;= 0
-     * @throws OsmTransferException thrown if an exception occurs
+     * @throws IllegalArgumentException if chunkSize &lt;= 0
+     * @throws OsmTransferException if an exception occurs
      */
     protected void uploadChangesInChunks(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor, int chunkSize) throws OsmTransferException, IllegalArgumentException {
         if (chunkSize <=0)
@@ -185,9 +185,9 @@ public class OsmServerWriter {
      * @param primitives list of objects to send
      * @param changeset the changeset the data is uploaded to. Must not be null.
      * @param monitor the progress monitor. If null, assumes {@link NullProgressMonitor#INSTANCE}
-     * @throws IllegalArgumentException thrown if changeset is null
-     * @throws IllegalArgumentException thrown if strategy is null
-     * @throws OsmTransferException thrown if something goes wrong
+     * @throws IllegalArgumentException if changeset is null
+     * @throws IllegalArgumentException if strategy is null
+     * @throws OsmTransferException if something goes wrong
      */
     public void uploadOsm(UploadStrategySpecification strategy, Collection<? extends OsmPrimitive> primitives, Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");

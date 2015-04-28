@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
@@ -377,7 +376,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         return ret;
     }
 
-    private HttpURLConnection getURLConnection() throws IOException, MalformedURLException {
+    private HttpURLConnection getURLConnection() throws IOException {
         HttpURLConnection urlConn = (HttpURLConnection) getUrl().openConnection();
         urlConn.setRequestProperty("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         urlConn.setReadTimeout(readTimeout); // 30 seconds read timeout

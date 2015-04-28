@@ -116,7 +116,7 @@ public class CloseChangesetAction extends JosmAction {
          * the users id yet
          *
          * @return the user info
-         * @throws OsmTransferException thrown in case of any communication exception
+         * @throws OsmTransferException in case of any communication exception
          */
         protected UserInfo fetchUserInfo() throws OsmTransferException {
             OsmServerUserInfoReader reader = new OsmServerUserInfoReader();

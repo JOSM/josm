@@ -53,9 +53,9 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
      * the empty collection if null.
      * @param fullRelation true if a full download is required, i.e.,
      * a download including the immediate children of a relation.
-     * @throws IllegalArgumentException thrown if layer is null.
+     * @throws IllegalArgumentException if layer is null.
      */
-    public DownloadPrimitivesTask(OsmDataLayer layer, List<PrimitiveId> ids, boolean fullRelation) throws IllegalArgumentException {
+    public DownloadPrimitivesTask(OsmDataLayer layer, List<PrimitiveId> ids, boolean fullRelation) {
         this(layer, ids, fullRelation, null);
     }
 
@@ -68,10 +68,10 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
      * @param fullRelation true if a full download is required, i.e.,
      *     a download including the immediate children of a relation.
      * @param progressMonitor ProgressMonitor to use or null to create a new one.
-     * @throws IllegalArgumentException thrown if layer is null.
+     * @throws IllegalArgumentException if layer is null.
      */
     public DownloadPrimitivesTask(OsmDataLayer layer, List<PrimitiveId> ids, boolean fullRelation,
-            ProgressMonitor progressMonitor) throws IllegalArgumentException {
+            ProgressMonitor progressMonitor) {
         super(tr("Download objects"), progressMonitor, false /* don't ignore exception */);
         ensureParameterNotNull(layer, "layer");
         this.ids = ids;

@@ -59,10 +59,10 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
      * @param toUpload the collection of primitives to upload. Set to the empty collection if null.
      * @param changeset the changeset to use for uploading. Must not be null. changeset.getId()
      * can be 0 in which case the upload task creates a new changeset
-     * @throws IllegalArgumentException thrown if layer is null
-     * @throws IllegalArgumentException thrown if toUpload is null
-     * @throws IllegalArgumentException thrown if strategy is null
-     * @throws IllegalArgumentException thrown if changeset is null
+     * @throws IllegalArgumentException if layer is null
+     * @throws IllegalArgumentException if toUpload is null
+     * @throws IllegalArgumentException if strategy is null
+     * @throws IllegalArgumentException if changeset is null
      */
     public UploadPrimitivesTask(UploadStrategySpecification strategy, OsmDataLayer layer, APIDataSet toUpload, Changeset changeset) {
         super(tr("Uploading data for layer ''{0}''", layer.getName()),false /* don't ignore exceptions */);
@@ -183,7 +183,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
      *
      * @param e the exception throw by the API
      * @param monitor a progress monitor
-     * @throws OsmTransferException  thrown if we can't recover from the exception
+     * @throws OsmTransferException if we can't recover from the exception
      */
     protected void recoverFromGoneOnServer(OsmApiPrimitiveGoneException e, ProgressMonitor monitor) throws OsmTransferException{
         if (!e.isKnownPrimitive()) throw e;

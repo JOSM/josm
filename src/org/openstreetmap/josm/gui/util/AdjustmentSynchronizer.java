@@ -89,9 +89,9 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      *
      * @param adjustable the adjustable
      * @return true, if the adjustable is participating in synchronized scrolling, false otherwise
-     * @throws IllegalStateException thrown, if adjustable is not registered for synchronized scrolling
+     * @throws IllegalStateException if adjustable is not registered for synchronized scrolling
      */
-    protected boolean isParticipatingInSynchronizedScrolling(Adjustable adjustable) throws IllegalStateException {
+    protected boolean isParticipatingInSynchronizedScrolling(Adjustable adjustable) {
         if (! synchronizedAdjustables.contains(adjustable))
             throw new IllegalStateException(tr("Adjustable {0} not registered yet.", adjustable));
 
@@ -109,8 +109,8 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      *
      * @param view  the checkbox to control whether an adjustable participates in synchronized adjustment
      * @param adjustable the adjustable
-     * @exception IllegalArgumentException thrown, if view is null
-     * @exception IllegalArgumentException thrown, if adjustable is null
+     * @throws IllegalArgumentException if view is null
+     * @throws IllegalArgumentException if adjustable is null
      */
     public void adapt(final JCheckBox view, final Adjustable adjustable)  {
         CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");

@@ -51,7 +51,7 @@ public abstract class AbstractReader {
      * Data structure for relation objects
      */
     protected final Map<Long, Collection<RelationMemberData>> relations = new HashMap<>();
-    
+
     /**
      * Replies the parsed data set
      *
@@ -60,7 +60,7 @@ public abstract class AbstractReader {
     public DataSet getDataSet() {
         return ds;
     }
-    
+
     /**
      * Processes the parsed nodes after parsing. Just adds them to
      * the dataset
@@ -78,7 +78,7 @@ public abstract class AbstractReader {
      * Processes the ways after parsing. Rebuilds the list of nodes of each way and
      * adds the way to the dataset
      *
-     * @throws IllegalDataException thrown if a data integrity problem is detected
+     * @throws IllegalDataException if a data integrity problem is detected
      */
     protected void processWaysAfterParsing() throws IllegalDataException{
         for (Long externalWayId: ways.keySet()) {
@@ -118,9 +118,8 @@ public abstract class AbstractReader {
     /**
      * Completes the parsed relations with its members.
      *
-     * @throws IllegalDataException thrown if a data integrity problem is detected, i.e. if a
+     * @throws IllegalDataException if a data integrity problem is detected, i.e. if a
      * relation member refers to a local primitive which wasn't available in the data
-     *
      */
     protected void processRelationsAfterParsing() throws IllegalDataException {
 
@@ -190,7 +189,7 @@ public abstract class AbstractReader {
             }
         }
     }
-    
+
     protected final void prepareDataSet() throws IllegalDataException {
         try {
             ds.beginUpdate();

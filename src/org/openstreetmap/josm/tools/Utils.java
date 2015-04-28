@@ -352,8 +352,8 @@ public final class Utils {
      * @param in The source file
      * @param out The destination file
      * @return the path to the target file
-     * @throws java.io.IOException If any I/O error occurs
-     * @throws IllegalArgumentException If {@code in} or {@code out} is {@code null}
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalArgumentException if {@code in} or {@code out} is {@code null}
      * @since 7003
      */
     public static Path copyFile(File in, File out) throws IOException {
@@ -366,8 +366,8 @@ public final class Utils {
      * Recursive directory copy function
      * @param in The source directory
      * @param out The destination directory
-     * @throws IOException If any I/O error ooccurs
-     * @throws IllegalArgumentException If {@code in} or {@code out} is {@code null}
+     * @throws IOException if any I/O error ooccurs
+     * @throws IllegalArgumentException if {@code in} or {@code out} is {@code null}
      * @since 7835
      */
     public static void copyDirectory(File in, File out) throws IOException {
