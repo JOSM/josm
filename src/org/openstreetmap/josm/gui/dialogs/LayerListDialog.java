@@ -1227,9 +1227,10 @@ public class LayerListDialog extends ToggleDialog {
          */
         public List<Layer> getSelectedLayers() {
             List<Layer> selected = new ArrayList<>();
-            for (int i=0; i<getLayers().size(); i++) {
+            List<Layer> layers = getLayers();
+            for (int i=0; i<layers.size(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
-                    selected.add(getLayers().get(i));
+                    selected.add(layers.get(i));
                 }
             }
             return selected;
@@ -1315,11 +1316,9 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /**
-         * Replies true if the currently selected layers can move up
-         * by one position
+         * Replies true if the currently selected layers can move up by one position
          *
-         * @return true if the currently selected layers can move up
-         * by one position
+         * @return true if the currently selected layers can move up by one position
          */
         public boolean canMoveUp() {
             List<Integer> sel = getSelectedRows();
@@ -1333,10 +1332,11 @@ public class LayerListDialog extends ToggleDialog {
         public void moveUp() {
             if (!canMoveUp()) return;
             List<Integer> sel = getSelectedRows();
+            List<Layer> layers = getLayers();
             for (int row : sel) {
-                Layer l1 = getLayers().get(row);
-                Layer l2 = getLayers().get(row-1);
-                Main.map.mapView.moveLayer(l2,row);
+                Layer l1 = layers.get(row);
+                Layer l2 = layers.get(row-1);
+                Main.map.mapView.moveLayer(l2, row);
                 Main.map.mapView.moveLayer(l1, row-1);
             }
             fireTableDataChanged();
@@ -1348,11 +1348,9 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /**
-         * Replies true if the currently selected layers can move down
-         * by one position
+         * Replies true if the currently selected layers can move down by one position
          *
-         * @return true if the currently selected layers can move down
-         * by one position
+         * @return true if the currently selected layers can move down by one position
          */
         public boolean canMoveDown() {
             List<Integer> sel = getSelectedRows();
@@ -1367,9 +1365,10 @@ public class LayerListDialog extends ToggleDialog {
             if (!canMoveDown()) return;
             List<Integer> sel = getSelectedRows();
             Collections.reverse(sel);
+            List<Layer> layers = getLayers();
             for (int row : sel) {
-                Layer l1 = getLayers().get(row);
-                Layer l2 = getLayers().get(row+1);
+                Layer l1 = layers.get(row);
+                Layer l2 = layers.get(row+1);
                 Main.map.mapView.moveLayer(l1, row+1);
                 Main.map.mapView.moveLayer(l2, row);
             }
@@ -1389,8 +1388,9 @@ public class LayerListDialog extends ToggleDialog {
         protected void ensureSelectedIsVisible() {
             int index = selectionModel.getMinSelectionIndex();
             if (index < 0) return;
-            if (index >= getLayers().size()) return;
-            Layer layer = getLayers().get(index);
+            List<Layer> layers = getLayers();
+            if (index >= layers.size()) return;
+            Layer layer = layers.get(index);
             fireMakeVisible(index, layer);
         }
 
@@ -1435,12 +1435,13 @@ public class LayerListDialog extends ToggleDialog {
          *
          */
         protected void ensureActiveSelected() {
-            if (getLayers().isEmpty())
+            List<Layer> layers = getLayers();
+            if (layers.isEmpty())
                 return;
             final Layer activeLayer = getActiveLayer();
             if (activeLayer != null) {
                 // there's an active layer - select it and make it visible
-                int idx = getLayers().indexOf(activeLayer);
+                int idx = layers.indexOf(activeLayer);
                 selectionModel.setSelectionInterval(idx, idx);
                 ensureSelectedIsVisible();
             } else {
@@ -1478,11 +1479,12 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public Object getValueAt(int row, int col) {
-            if (row >= 0 && row < getLayers().size()) {
+            List<Layer> layers = getLayers();
+            if (row >= 0 && row < layers.size()) {
                 switch (col) {
-                case 0: return getLayers().get(row) == getActiveLayer();
-                case 1: return getLayers().get(row);
-                case 2: return getLayers().get(row);
+                case 0: return layers.get(row) == getActiveLayer();
+                case 1: return layers.get(row);
+                case 2: return layers.get(row);
                 default: throw new RuntimeException();
                 }
             }
@@ -1498,21 +1500,24 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public void setValueAt(Object value, int row, int col) {
-            Layer l = getLayers().get(row);
-            switch (col) {
-            case 0:
-                Main.map.mapView.setActiveLayer(l);
-                l.setVisible(true);
-                break;
-            case 1:
-                l.setVisible((Boolean) value);
-                break;
-            case 2:
-                l.setName((String) value);
-                break;
-            default: throw new RuntimeException();
+            List<Layer> layers = getLayers();
+            if (row < layers.size()) {
+                Layer l = layers.get(row);
+                switch (col) {
+                case 0:
+                    Main.map.mapView.setActiveLayer(l);
+                    l.setVisible(true);
+                    break;
+                case 1:
+                    l.setVisible((Boolean) value);
+                    break;
+                case 2:
+                    l.setName((String) value);
+                    break;
+                default: throw new RuntimeException();
+                }
+                fireTableCellUpdated(row, col);
             }
-            fireTableCellUpdated(row, col);
         }
 
         /* ------------------------------------------------------------------------------ */
