@@ -441,7 +441,7 @@ public final class I18n {
         languages.put("zh_TW", PluralMode.MODE_NONE);
 
         /* try initial language settings, may be changed later again */
-        if(!load(Locale.getDefault().toString())) {
+        if(!load(LanguageInfo.getJOSMLocaleCode())) {
             Locale.setDefault(Locale.ENGLISH);
         }
     }
