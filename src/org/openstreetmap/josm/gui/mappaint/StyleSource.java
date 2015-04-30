@@ -56,10 +56,20 @@ public abstract class StyleSource extends SourceEntry {
      */
     public Map<String, Object> settingValues = new HashMap<>();
 
+    /**
+     * Constructs a new, active {@link StyleSource}.
+     * @param url URL that {@link org.openstreetmap.josm.io.CachedFile} understands
+     * @param name The name for this StyleSource
+     * @param title The title that can be used as menu entry
+     */
     public StyleSource(String url, String name, String title) {
         super(url, name, title, true);
     }
 
+    /**
+     * Constructs a new {@link StyleSource}
+     * @param entry The entry to copy the data (url, name, ...) from.
+     */
     public StyleSource(SourceEntry entry) {
         super(entry);
     }

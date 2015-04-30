@@ -12,13 +12,14 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -40,6 +41,10 @@ import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.KeyCondition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.KeyMatchType;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.KeyValueCondition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Op;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
@@ -53,6 +58,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * This is a mappaint style that is based on MapCSS rules.
+ */
 public class MapCSSStyleSource extends StyleSource {
 
     /**
@@ -121,34 +129,116 @@ public class MapCSSStyleSource extends StyleSource {
      *
      * Speeds up the process of finding all rules that match a certain primitive.
      *
-     * Rules with a {@link SimpleKeyValueCondition} [key=value] are indexed by
-     * key and value in a HashMap. Now you only need to loop the tags of a
-     * primitive to retrieve the possibly matching rules.
+     * Rules with a {@link SimpleKeyValueCondition} [key=value] or rules that require a specific key to be set are
+     * indexed. Now you only need to loop the tags of a primitive to retrieve the possibly matching rules.
      *
-     * Rules with no SimpleKeyValueCondition in the selector have to be
-     * checked separately.
-     *
-     * The order of rules gets mixed up by this and needs to be sorted later.
+     * To use this index, you need to {@link #add(MapCSSRule)} all rules to it. You then need to call
+     * {@link #initIndex()}. Afterwards, you can use {@link #getRuleCandidates(OsmPrimitive)} to get an iterator over
+     * all rules that might be applied to that primitive.
      */
     public static class MapCSSRuleIndex {
-        /* all rules for this index */
-        public final List<MapCSSRule> rules = new ArrayList<>();
-        /* tag based index */
-        public final Map<String,Map<String,Set<MapCSSRule>>> index = new HashMap<>();
-        /* rules without SimpleKeyValueCondition */
-        public final ArrayList<MapCSSRule> remaining = new ArrayList<>();
+        /**
+         * This is an iterator over all rules that are marked as possible in the bitset.
+         *
+         * @author Michael Zangl
+         */
+        private final class RuleCandidatesIterator implements Iterator<MapCSSRule> {
+            private final BitSet ruleCandidates;
+            private int next;
 
+            private RuleCandidatesIterator(BitSet ruleCandidates) {
+                this.ruleCandidates = ruleCandidates;
+                next = ruleCandidates.nextSetBit(0);
+            }
+
+            @Override
+            public boolean hasNext() {
+                return next >= 0;
+            }
+
+            @Override
+            public MapCSSRule next() {
+                MapCSSRule rule = rules.get(next);
+                next = ruleCandidates.nextSetBit(next + 1);
+                return rule;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        /**
+         * This is a map of all rules that are only applied if the primitive has a given key (and possibly value)
+         *
+         * @author Michael Zangl
+         */
+        private final static class MapCSSKeyRules {
+            /**
+             * The indexes of rules that might be applied if this tag is present and the value has no special handling.
+             */
+            BitSet generalRules = new BitSet();
+
+            /**
+             * A map that sores the indexes of rules that might be applied if the key=value pair is present on this
+             * primitive. This includes all key=* rules.
+             */
+            HashMap<String, BitSet> specialRules = new HashMap<>();
+
+            public void addForKey(int ruleIndex) {
+                generalRules.set(ruleIndex);
+                for (BitSet r : specialRules.values()) {
+                    r.set(ruleIndex);
+                }
+            }
+
+            public void addForKeyAndValue(String value, int ruleIndex) {
+                BitSet forValue = specialRules.get(value);
+                if (forValue == null) {
+                    forValue = new BitSet();
+                    forValue.or(generalRules);
+                    specialRules.put(value.intern(), forValue);
+                }
+                forValue.set(ruleIndex);
+            }
+
+            public BitSet get(String value) {
+                BitSet forValue = specialRules.get(value);
+                if (forValue != null) return forValue; else return generalRules;
+            }
+        }
+
+        /**
+         * All rules this index is for. Once this index is built, this list is sorted.
+         */
+        private final List<MapCSSRule> rules = new ArrayList<>();
+        /**
+         * All rules that only apply when the given key is present.
+         */
+        private final Map<String, MapCSSKeyRules> index = new HashMap<>();
+        /**
+         * Rules that do not require any key to be present. Only the index in the {@link #rules} array is stored.
+         */
+        private final BitSet remaining = new BitSet();
+
+        /**
+         * Add a rule to this index. This needs to be called before {@link #initIndex()} is called.
+         * @param rule The rule to add.
+         */
         public void add(MapCSSRule rule) {
             rules.add(rule);
         }
 
         /**
          * Initialize the index.
-         *
+         * <p>
          * You must own the write lock of STYLE_SOURCE_LOCK when calling this method.
          */
         public void initIndex() {
-            for (MapCSSRule r: rules) {
+            Collections.sort(rules);
+            for (int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++) {
+                MapCSSRule r = rules.get(ruleIndex);
                 // find the rightmost selector, this must be a GeneralSelector
                 Selector selRightmost = r.selector;
                 while (selRightmost instanceof ChildOrParentSelector) {
@@ -156,55 +246,88 @@ public class MapCSSStyleSource extends StyleSource {
                 }
                 OptimizedGeneralSelector s = (OptimizedGeneralSelector) selRightmost;
                 if (s.conds == null) {
-                    remaining.add(r);
+                    remaining.set(ruleIndex);
                     continue;
                 }
-                List<SimpleKeyValueCondition> sk = new ArrayList<>(Utils.filteredCollection(s.conds, SimpleKeyValueCondition.class));
-                if (sk.isEmpty()) {
-                    remaining.add(r);
-                    continue;
-                }
-                SimpleKeyValueCondition c = sk.get(sk.size() - 1);
-                Map<String,Set<MapCSSRule>> rulesWithMatchingKey = index.get(c.k);
-                if (rulesWithMatchingKey == null) {
-                    rulesWithMatchingKey = new HashMap<>();
-                    index.put(c.k, rulesWithMatchingKey);
-                }
-                Set<MapCSSRule> rulesWithMatchingKeyValue = rulesWithMatchingKey.get(c.v);
-                if (rulesWithMatchingKeyValue == null) {
-                    rulesWithMatchingKeyValue = new HashSet<>();
-                    rulesWithMatchingKey.put(c.v, rulesWithMatchingKeyValue);
-                }
-                rulesWithMatchingKeyValue.add(r);
-            }
-            Collections.sort(remaining);
-        }
-
-        /**
-         * Get a subset of all rules that might match the primitive.
-         * @param osm the primitive to match
-         * @return a Collection of rules that filters out most of the rules
-         * that cannot match, based on the tags of the primitive
-         *
-         * You must have a read lock of STYLE_SOURCE_LOCK when calling this method.
-         */
-        public PriorityQueue<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
-            PriorityQueue<MapCSSRule> ruleCandidates = new PriorityQueue<>(remaining);
-            for (Map.Entry<String,String> e : osm.getKeys().entrySet()) {
-                Map<String,Set<MapCSSRule>> v = index.get(e.getKey());
-                if (v != null) {
-                    Set<MapCSSRule> rs = v.get(e.getValue());
-                    if (rs != null)  {
-                        ruleCandidates.addAll(rs);
+                List<SimpleKeyValueCondition> sk = new ArrayList<>(Utils.filteredCollection(s.conds,
+                        SimpleKeyValueCondition.class));
+                if (!sk.isEmpty()) {
+                    SimpleKeyValueCondition c = sk.get(sk.size() - 1);
+                    getEntryInIndex(c.k).addForKeyAndValue(c.v, ruleIndex);
+                } else {
+                    String key = findAnyRequiredKey(s.conds);
+                    if (key != null) {
+                        getEntryInIndex(key).addForKey(ruleIndex);
+                    } else {
+                        remaining.set(ruleIndex);
                     }
                 }
             }
-            return ruleCandidates;
+        }
+
+        /**
+         * Search for any key that condition might depend on.
+         *
+         * @param conds The conditions to search through.
+         * @return An arbitrary key this rule depends on or <code>null</code> if there is no such key.
+         */
+        private String findAnyRequiredKey(List<Condition> conds) {
+            String key = null;
+            for (Condition c : conds) {
+                if (c instanceof KeyCondition) {
+                    KeyCondition keyCondition = (KeyCondition) c;
+                    if (!keyCondition.negateResult && conditionRequiresKeyPresence(keyCondition.matchType)) {
+                        key = keyCondition.label;
+                    }
+                } else if (c instanceof KeyValueCondition) {
+                    KeyValueCondition keyValueCondition = (KeyValueCondition) c;
+                    if (!Op.NEGATED_OPS.contains(keyValueCondition)) {
+                        key = keyValueCondition.k;
+                    }
+                }
+            }
+            return key;
+        }
+
+        private boolean conditionRequiresKeyPresence(KeyMatchType matchType) {
+            return matchType != KeyMatchType.REGEX;
+        }
+
+        private MapCSSKeyRules getEntryInIndex(String key) {
+            MapCSSKeyRules rulesWithMatchingKey = index.get(key);
+            if (rulesWithMatchingKey == null) {
+                rulesWithMatchingKey = new MapCSSKeyRules();
+                index.put(key.intern(), rulesWithMatchingKey);
+            }
+            return rulesWithMatchingKey;
+        }
+
+        /**
+         * Get a subset of all rules that might match the primitive. Rules not included in the result are guaranteed to
+         * not match this primitive.
+         * <p>
+         * You must have a read lock of STYLE_SOURCE_LOCK when calling this method.
+         *
+         * @param osm the primitive to match
+         * @return An iterator over possible rules in the right order.
+         */
+        public Iterator<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
+            final BitSet ruleCandidates = new BitSet(rules.size());
+            ruleCandidates.or(remaining);
+
+            for (Map.Entry<String, String> e : osm.getKeys().entrySet()) {
+                MapCSSKeyRules v = index.get(e.getKey());
+                if (v != null) {
+                    BitSet rs = v.get(e.getValue());
+                    ruleCandidates.or(rs);
+                }
+            }
+            return new RuleCandidatesIterator(ruleCandidates);
         }
 
         /**
          * Clear the index.
-         *
+         * <p>
          * You must own the write lock STYLE_SOURCE_LOCK when calling this method.
          */
         public void clear() {
@@ -214,10 +337,20 @@ public class MapCSSStyleSource extends StyleSource {
         }
     }
 
+    /**
+     * Constructs a new, active {@link MapCSSStyleSource}.
+     * @param url URL that {@link org.openstreetmap.josm.io.CachedFile} understands
+     * @param name The name for this StyleSource
+     * @param shortdescription The title for that source.
+     */
     public MapCSSStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
     }
 
+    /**
+     * Constructs a new {@link MapCSSStyleSource}
+     * @param entry The entry to copy the data (url, name, ...) from.
+     */
     public MapCSSStyleSource(SourceEntry entry) {
         super(entry);
     }
@@ -488,9 +621,9 @@ public class MapCSSStyleSource extends StyleSource {
         // last used index
         int lastDeclUsed = -1;
 
-        PriorityQueue<MapCSSRule> candidates = matchingRuleIndex.getRuleCandidates(osm);
-        MapCSSRule r;
-        while ((r = candidates.poll()) != null) {
+        Iterator<MapCSSRule> candidates = matchingRuleIndex.getRuleCandidates(osm);
+        while (candidates.hasNext()) {
+            MapCSSRule r = candidates.next();
             env.clearSelectorMatchingInformation();
             env.layer = null;
             String sub = env.layer = r.selector.getSubpart().getId(env);
@@ -503,7 +636,8 @@ public class MapCSSStyleSource extends StyleSource {
                     continue;
                 }
 
-                if (r.declaration.idx == lastDeclUsed) continue; // don't apply one declaration more than once
+                if (r.declaration.idx == lastDeclUsed)
+                    continue; // don't apply one declaration more than once
                 lastDeclUsed = r.declaration.idx;
                 if ("*".equals(sub)) {
                     for (Entry<String, Cascade> entry : mc.getLayers()) {
