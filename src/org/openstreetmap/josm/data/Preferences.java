@@ -16,8 +16,6 @@ import java.io.Reader;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
-import java.net.InetAddress;
-import java.net.Inet6Address;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -926,36 +924,6 @@ public class Preferences {
                 Main.warn(tr("Failed to initialize preferences. Failed to reset preference file to default: {0}", getPreferenceFile()));
             }
         }
-        if("auto".equals(get("prefer.ipv6", "auto"))) {
-             new Thread(new Runnable() { /* this may take some time (DNS, Connect) */
-                public void run() {
-                    boolean hasv6 = false;
-                    try {
-                        /* Use the check result from last run of the software, as after the test value
-                           changes have no effect anymore */
-                        if(getBoolean("validated.ipv6", false)) {
-                            Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
-                        }
-                        for(InetAddress a : InetAddress.getAllByName("josm.openstreetmap.de")) {
-                            if(a instanceof Inet6Address) {
-                                if(a.isReachable(1000)) {
-                                    Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
-                                    if(!getBoolean("validated.ipv6", false)) {
-                                        Main.info(tr("Automatics detected useable IPv6 network, prefering IPv6 over IPv4 after next restart."));
-                                    } else {
-                                        Main.info(tr("Automatics detected useable IPv6 network, prefering IPv6 over IPv4."));
-                                    }
-                                    hasv6 = true;
-                                }
-                                break; /* we're done */
-                            }
-                        }
-                    } catch (Exception e) {
-                    }
-                    put("validated.ipv6", hasv6);
-                }
-            }).start();
-        }
     }
 
     public final void resetToDefault(){
@@ -1406,7 +1374,9 @@ public class Preferences {
     public void updateSystemProperties() {
         if("true".equals(get("prefer.ipv6", "auto"))) {
             // never set this to false, only true!
-            Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
+            if(!"true".equals(Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true"))) {
+                Main.info(tr("Try enabling IPv6 network, prefering IPv4 over IPv6 (only works on early startup)."));
+            }
         }
         Utils.updateSystemProperty("http.agent", Version.getInstance().getAgentString());
         Utils.updateSystemProperty("user.language", get("language"));
