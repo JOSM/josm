@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
+import java.net.InetAddress;
+import java.net.Inet6Address;
 import java.net.ProxySelector;
 import java.net.URL;
 import java.security.AllPermission;
@@ -362,10 +364,19 @@ public class MainApplication extends Main {
 
         Main.pref.init(args.containsKey(Option.RESET_PREFERENCES));
 
+        if (args.containsKey(Option.SET)) {
+            for (String i : args.get(Option.SET)) {
+                String[] kv = i.split("=", 2);
+                Main.pref.put(kv[0], "null".equals(kv[1]) ? null : kv[1]);
+            }
+        }
+
         if (!languageGiven) {
             I18n.set(Main.pref.get("language", null));
         }
         Main.pref.updateSystemProperties();
+
+        checkIPv6();
 
         // asking for help? show help and exit
         if (args.containsKey(Option.HELP)) {
@@ -393,13 +404,6 @@ public class MainApplication extends Main {
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
-            }
-        }
-
-        if (args.containsKey(Option.SET)) {
-            for (String i : args.get(Option.SET)) {
-                String[] kv = i.split("=", 2);
-                Main.pref.put(kv[0], "null".equals(kv[1]) ? null : kv[1]);
             }
         }
 
@@ -524,6 +528,47 @@ public class MainApplication extends Main {
         }
     }
 
+    /**
+     * Check if IPv6 can be safely enabled and do so. Because this cannot be done after network activation,
+     * disabling or enabling IPV6 may only be done with next start.
+     */
+    private static void checkIPv6() {
+        if("auto".equals(Main.pref.get("prefer.ipv6", "auto"))) {
+             new Thread(new Runnable() { /* this may take some time (DNS, Connect) */
+                public void run() {
+                    boolean hasv6 = false;
+                    boolean wasv6 = Main.pref.getBoolean("validated.ipv6", false);
+                    try {
+                        /* Use the check result from last run of the software, as after the test, value
+                           changes have no effect anymore */
+                        if(wasv6) {
+                            Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
+                        }
+                        for(InetAddress a : InetAddress.getAllByName("josm.openstreetmap.de")) {
+                            if(a instanceof Inet6Address) {
+                                if(a.isReachable(1000)) {
+                                    Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
+                                    if(!wasv6) {
+                                        Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4 after next restart."));
+                                    } else {
+                                        Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4."));
+                                    }
+                                    hasv6 = true;
+                                }
+                                break; /* we're done */
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                    if(wasv6 && !hasv6) {
+                        Main.info(tr("Automatics detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
+                    }
+                    Main.pref.put("validated.ipv6", hasv6);
+                }
+            }).start();
+        }
+    }
+    
     private static class GuiFinalizationWorker implements Runnable {
 
         private final Map<Option, Collection<String>> args;
