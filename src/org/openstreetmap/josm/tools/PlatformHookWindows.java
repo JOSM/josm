@@ -317,7 +317,10 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         Path fontPath = FileSystems.getDefault().getPath(System.getenv("SYSTEMROOT"), "Fonts");
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(fontPath)) {
             for (Path p : ds) {
-                fontsAvail.add(p.getFileName().toString().toUpperCase());
+                Path filename = p.getFileName();
+                if (filename != null) {
+                    fontsAvail.add(filename.toString().toUpperCase());
+                }
             }
             fontsAvail.add(""); // for devanagari
         } catch (IOException ex) {

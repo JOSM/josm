@@ -97,8 +97,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     private JButton btnUpload;
 
     /** the changeset comment model keeping the state of the changeset comment */
-    private final ChangesetCommentModel changesetCommentModel = new ChangesetCommentModel();
-    private final ChangesetCommentModel changesetSourceModel = new ChangesetCommentModel();
+    private final transient ChangesetCommentModel changesetCommentModel = new ChangesetCommentModel();
+    private final transient ChangesetCommentModel changesetSourceModel = new ChangesetCommentModel();
 
     /**
      * builds the content panel for the upload dialog

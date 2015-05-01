@@ -48,8 +48,8 @@ public class BasicUploadSettingsPanel extends JPanel {
     /** the panel with a summary of the upload parameters */
     private final UploadParameterSummaryPanel pnlUploadParameterSummary = new UploadParameterSummaryPanel();
     /** the changeset comment model */
-    private final ChangesetCommentModel changesetCommentModel;
-    private final ChangesetCommentModel changesetSourceModel;
+    private final transient ChangesetCommentModel changesetCommentModel;
+    private final transient ChangesetCommentModel changesetSourceModel;
 
     protected JPanel buildUploadCommentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());

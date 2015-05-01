@@ -13,8 +13,8 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> {
 
     /** the relation */
-    private Relation relation;
-    private List<Relation> referrers;
+    private transient Relation relation;
+    private transient List<Relation> referrers;
 
     /**
      * Constructs a new {@code ReferringRelationsBrowserModel}.

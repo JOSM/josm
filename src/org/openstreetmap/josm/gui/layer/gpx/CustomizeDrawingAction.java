@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class CustomizeDrawingAction extends AbstractAction implements LayerAction, MultiLayerAction {
-    private List<Layer> layers;
+    private transient List<Layer> layers;
 
     public CustomizeDrawingAction(List<Layer> l) {
         this();

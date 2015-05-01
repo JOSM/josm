@@ -47,7 +47,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     private JosmTextField tfRequestTokenURL;
     private JosmTextField tfAccessTokenURL;
     private JosmTextField tfAuthoriseURL;
-    private UseDefaultItemListener ilUseDefault;
+    private transient UseDefaultItemListener ilUseDefault;
     private String apiUrl;
 
     protected final void build() {

@@ -327,7 +327,7 @@ public class PlaceSelection implements DownloadSelection {
 
         private String searchExpression;
         private HttpURLConnection connection;
-        private List<SearchResult> data;
+        private transient List<SearchResult> data;
         private boolean canceled = false;
         private Server useserver;
         private Exception lastException;
@@ -408,8 +408,8 @@ public class PlaceSelection implements DownloadSelection {
     }
 
     static class NamedResultTableModel extends DefaultTableModel {
-        private List<SearchResult> data;
-        private ListSelectionModel selectionModel;
+        private transient List<SearchResult> data;
+        private transient ListSelectionModel selectionModel;
 
         public NamedResultTableModel(ListSelectionModel selectionModel) {
             data = new ArrayList<>();

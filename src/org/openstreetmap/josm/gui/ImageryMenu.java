@@ -57,7 +57,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         }
     };
 
-    private Action offsetAction = new JosmAction(
+    private transient Action offsetAction = new JosmAction(
             tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false) {
         {
             putValue("toolbar", "imagery-offset");
@@ -255,7 +255,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
      * (and possibly recreated) when refreshImageryMenu() is called.
      * @since 5803
      */
-    private List <Object> dynamicItems = new ArrayList<>(20);
+    private transient List <Object> dynamicItems = new ArrayList<>(20);
 
     /**
      * Remove all the items in @field dynamicItems collection

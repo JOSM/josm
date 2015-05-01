@@ -42,14 +42,14 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class MapListEditor extends ExtendedDialog {
 
     private EntryListModel entryModel;
-    private PrefEntry entry;
+    private transient PrefEntry entry;
 
     private JList<String> entryList;
     private JTable table;
     private MapTableModel tableModel;
 
-    private List<List<String>> dataKeys;
-    private List<List<String>> dataValues;
+    private transient List<List<String>> dataKeys;
+    private transient List<List<String>> dataValues;
     private Integer entryIdx;
 
     public MapListEditor(JComponent gui, PrefEntry entry, MapListSetting setting) {

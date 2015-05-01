@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAction {
 
-    private Collection<OsmPrimitive> incompleteMembers;
+    private transient Collection<OsmPrimitive> incompleteMembers;
 
     /**
      * Constructs a new <code>DownloadSelectedIncompleteMembersAction</code>.

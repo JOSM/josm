@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class WMSException extends Exception {
 
-    private final WMSRequest request;
+    private final transient WMSRequest request;
     private final URL url;
     private final String[] exceptions;
 

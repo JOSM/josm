@@ -37,6 +37,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class LatLon extends Coordinate {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Minimum difference in location to not be represented as the same position.
      * The API returns 7 decimals.

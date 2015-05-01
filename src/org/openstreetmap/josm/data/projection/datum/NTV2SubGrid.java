@@ -38,6 +38,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class NTV2SubGrid implements Cloneable, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String subGridName;
     private String parentSubGridName;
     private String created;

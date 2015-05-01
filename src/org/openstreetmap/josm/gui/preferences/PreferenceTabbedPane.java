@@ -91,7 +91,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     public static final class PreferencePanel extends JPanel implements PreferenceTab {
-        private final TabPreferenceSetting preferenceSetting;
+        private final transient TabPreferenceSetting preferenceSetting;
 
         private PreferencePanel(TabPreferenceSetting preferenceSetting) {
             super(new GridBagLayout());
@@ -121,7 +121,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     public static final class PreferenceScrollPane extends JScrollPane implements PreferenceTab {
-        private final TabPreferenceSetting preferenceSetting;
+        private final transient TabPreferenceSetting preferenceSetting;
 
         private PreferenceScrollPane(Component view, TabPreferenceSetting preferenceSetting) {
             super(view);
@@ -144,15 +144,15 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     // all created tabs
-    private final List<PreferenceTab> tabs = new ArrayList<>();
+    private final transient List<PreferenceTab> tabs = new ArrayList<>();
     private static final Collection<PreferenceSettingFactory> settingsFactories = new LinkedList<>();
     private static final PreferenceSettingFactory advancedPreferenceFactory = new AdvancedPreference.Factory();
-    private final List<PreferenceSetting> settings = new ArrayList<>();
+    private final transient List<PreferenceSetting> settings = new ArrayList<>();
 
     // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)
-    private final List<PreferenceSetting> settingsInitialized = new ArrayList<>();
+    private final transient List<PreferenceSetting> settingsInitialized = new ArrayList<>();
 
-    final List<ValidationListener> validationListeners = new ArrayList<>();
+    final transient List<ValidationListener> validationListeners = new ArrayList<>();
 
     /**
      * Add validation listener to currently open preferences dialog. Calling to removeValidationListener is not necessary, all listeners will

@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.Utils;
  * A panel displaying the list of known plugins.
  */
 public class PluginListPanel extends VerticallyScrollablePanel {
-    private PluginPreferencesModel model;
+    private transient PluginPreferencesModel model;
 
     /**
      * Constructs a new {@code PluginListPanel} with a default model.
@@ -109,7 +109,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
      *
      */
     private class JPluginCheckBox extends JCheckBox {
-        public final PluginInformation pi;
+        public final transient PluginInformation pi;
         public JPluginCheckBox(final PluginInformation pi, boolean selected) {
             this.pi = pi;
             setSelected(selected);

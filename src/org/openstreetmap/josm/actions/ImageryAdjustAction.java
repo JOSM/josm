@@ -45,7 +45,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
 
     private double oldDx, oldDy;
     private EastNorth prevEastNorth;
-    private ImageryLayer layer;
+    private transient ImageryLayer layer;
     private MapMode oldMapMode;
 
     /**

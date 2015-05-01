@@ -312,7 +312,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     private static class ActionParametersTableModel extends AbstractTableModel {
 
-        private ActionDefinition currentAction = ActionDefinition.getSeparator();
+        private transient ActionDefinition currentAction = ActionDefinition.getSeparator();
 
         @Override
         public int getColumnCount() {
@@ -392,7 +392,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     }
 
     private class ToolbarPopupMenu extends JPopupMenu  {
-        private ActionDefinition act;
+        private transient ActionDefinition act;
 
         private void setActionAndAdapt(ActionDefinition action) {
             this.act = action;

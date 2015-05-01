@@ -707,7 +707,7 @@ public class MultiSplitLayout implements LayoutManager {
      * incorrectly.
      */
     public static class InvalidLayoutException extends RuntimeException {
-        private final Node node;
+        private final transient Node node;
         public InvalidLayoutException (String msg, Node node) {
             super(msg);
             this.node = node;

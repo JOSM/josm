@@ -43,8 +43,9 @@ public class OsmChangesetContentParser {
             throw new XmlParsingException(message).rememberLocation(locator);
         }
 
-        protected void throwException(Exception e) throws XmlParsingException {
-            throw new XmlParsingException(e).rememberLocation(locator);
+        @Override
+        protected void throwException(String message, Exception e) throws XmlParsingException {
+            throw new XmlParsingException(message, e).rememberLocation(locator);
         }
 
         @Override
@@ -102,12 +103,12 @@ public class OsmChangesetContentParser {
 
         @Override
         public void error(SAXParseException e) throws SAXException {
-            throwException(e);
+            throwException(null, e);
         }
 
         @Override
         public void fatalError(SAXParseException e) throws SAXException {
-            throwException(e);
+            throwException(null, e);
         }
     }
 

@@ -101,11 +101,11 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     private double snapDistanceChinese;
     private double snapDistanceNautical;
 
-    private ModifiersSpec snapModifierCombo;
-    private ModifiersSpec copyTagsModifierCombo;
-    private ModifiersSpec addToSelectionModifierCombo;
-    private ModifiersSpec toggleSelectedModifierCombo;
-    private ModifiersSpec setSelectedModifierCombo;
+    private transient ModifiersSpec snapModifierCombo;
+    private transient ModifiersSpec copyTagsModifierCombo;
+    private transient ModifiersSpec addToSelectionModifierCombo;
+    private transient ModifiersSpec toggleSelectedModifierCombo;
+    private transient ModifiersSpec setSelectedModifierCombo;
 
     private int initialMoveDelay;
 
@@ -117,14 +117,14 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     private long mousePressedTime;
     private boolean mouseHasBeenDragged;
 
-    private WaySegment referenceSegment;
-    private ParallelWays pWays;
-    private Set<Way> sourceWays;
+    private transient WaySegment referenceSegment;
+    private transient ParallelWays pWays;
+    private transient Set<Way> sourceWays;
     private EastNorth helperLineStart;
     private EastNorth helperLineEnd;
 
-    private Stroke helpLineStroke;
-    private Stroke refLineStroke;
+    private transient Stroke helpLineStroke;
+    private transient Stroke refLineStroke;
     private Color mainColor;
 
     /**

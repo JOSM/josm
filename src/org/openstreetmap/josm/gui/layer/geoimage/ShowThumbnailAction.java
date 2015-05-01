@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
 
@@ -20,7 +21,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class ShowThumbnailAction extends AbstractAction implements LayerAction {
 
-    private final GeoImageLayer layer;
+    private final transient GeoImageLayer layer;
 
     /**
      * Constructs a new {@code ToggleGeoImageThumbAction} action.

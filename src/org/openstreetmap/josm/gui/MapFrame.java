@@ -102,7 +102,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     /**
      * This object allows to detect key press and release events
      */
-    public final AdvancedKeyPressDetector keyDetector = new AdvancedKeyPressDetector();
+    public final transient AdvancedKeyPressDetector keyDetector = new AdvancedKeyPressDetector();
 
     /**
      * The toolbar with the action icons. To add new toggle dialog buttons,
@@ -113,10 +113,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     private final JToolBar toolBarActions = new JToolBar(JToolBar.VERTICAL);
     private final JToolBar toolBarToggle = new JToolBar(JToolBar.VERTICAL);
 
-    private final List<ToggleDialog> allDialogs = new ArrayList<>();
-    private final List<MapMode> mapModes = new ArrayList<>();
-    private final List<IconToggleButton> allDialogButtons = new ArrayList<>();
-    public final List<IconToggleButton> allMapModeButtons = new ArrayList<>();
+    private final transient List<ToggleDialog> allDialogs = new ArrayList<>();
+    private final transient List<MapMode> mapModes = new ArrayList<>();
+    private final transient List<IconToggleButton> allDialogButtons = new ArrayList<>();
+    public final transient List<IconToggleButton> allMapModeButtons = new ArrayList<>();
 
     private final ListAllButtonsAction listAllDialogsAction = new ListAllButtonsAction(allDialogButtons);
     private final ListAllButtonsAction listAllMapModesAction = new ListAllButtonsAction(allMapModeButtons);
@@ -140,7 +140,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public final SelectAction mapModeSelect;
     public LassoModeAction mapModeSelectLasso;
 
-    private final Map<Layer, MapMode> lastMapMode = new HashMap<>();
+    private final transient Map<Layer, MapMode> lastMapMode = new HashMap<>();
     private final MapMode mapModeDraw;
     private final MapMode mapModeZoom;
 
@@ -537,7 +537,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     class ListAllButtonsAction extends AbstractAction {
 
         private JButton button;
-        private Collection<? extends HideableButton> buttons;
+        private transient Collection<? extends HideableButton> buttons;
 
 
         public ListAllButtonsAction(Collection<? extends HideableButton> buttons) {
@@ -669,7 +669,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      */
     private static final CopyOnWriteArrayList<MapModeChangeListener> mapModeChangeListeners = new CopyOnWriteArrayList<>();
 
-    private PreferenceChangedListener sidetoolbarPreferencesChangedListener;
+    private transient PreferenceChangedListener sidetoolbarPreferencesChangedListener;
     /**
      * Adds a mapMode change listener
      *

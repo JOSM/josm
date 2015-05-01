@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 2533
  */
 public class FullscreenToggleAction extends ToggleAction {
-    private GraphicsDevice gd;
+    private transient GraphicsDevice gd;
     private Rectangle prevBounds;
 
     /**

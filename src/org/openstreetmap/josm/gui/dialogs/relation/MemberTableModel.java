@@ -48,16 +48,16 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /**
      * data of the table model: The list of members and the cached WayConnectionType of each member.
      **/
-    private List<RelationMember> members;
-    private List<WayConnectionType> connectionType = null;
+    private transient List<RelationMember> members;
+    private transient List<WayConnectionType> connectionType = null;
 
     private DefaultListSelectionModel listSelectionModel;
     private final CopyOnWriteArrayList<IMemberModelListener> listeners;
-    private final OsmDataLayer layer;
-    private final PresetHandler presetHandler;
+    private final transient OsmDataLayer layer;
+    private final transient PresetHandler presetHandler;
 
-    private final WayConnectionTypeCalculator wayConnectionTypeCalculator = new WayConnectionTypeCalculator();
-    private final RelationSorter relationSorter = new RelationSorter();
+    private final transient WayConnectionTypeCalculator wayConnectionTypeCalculator = new WayConnectionTypeCalculator();
+    private final transient RelationSorter relationSorter = new RelationSorter();
 
     /**
      * constructor

@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
 public class ValidateAction extends JosmAction {
 
     /** Last selection used to validate */
-    private Collection<OsmPrimitive> lastSelection;
+    private transient Collection<OsmPrimitive> lastSelection;
 
     /**
      * Constructor

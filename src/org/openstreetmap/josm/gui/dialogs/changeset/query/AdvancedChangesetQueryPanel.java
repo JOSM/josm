@@ -378,9 +378,9 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         private JRadioButton rbRestrictToUid;
         private JRadioButton rbRestrictToUserName;
         private JosmTextField tfUid;
-        private UidInputFieldValidator valUid;
+        private transient UidInputFieldValidator valUid;
         private JosmTextField tfUserName;
-        private UserNameInputValidator valUserName;
+        private transient UserNameInputValidator valUserName;
         private JMultilineLabel lblRestrictedToMyself;
 
         protected JPanel buildUidInputPanel() {
@@ -638,17 +638,17 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         private JRadioButton rbClosedAfter;
         private JRadioButton rbClosedAfterAndCreatedBefore;
         private JosmTextField tfClosedAfterDate1;
-        private DateValidator valClosedAfterDate1;
+        private transient DateValidator valClosedAfterDate1;
         private JosmTextField tfClosedAfterTime1;
-        private TimeValidator valClosedAfterTime1;
+        private transient TimeValidator valClosedAfterTime1;
         private JosmTextField tfClosedAfterDate2;
-        private DateValidator valClosedAfterDate2;
+        private transient DateValidator valClosedAfterDate2;
         private JosmTextField tfClosedAfterTime2;
-        private TimeValidator valClosedAfterTime2;
+        private transient TimeValidator valClosedAfterTime2;
         private JosmTextField tfCreatedBeforeDate;
-        private DateValidator valCreatedBeforeDate;
+        private transient DateValidator valCreatedBeforeDate;
         private JosmTextField tfCreatedBeforeTime;
-        private TimeValidator valCreatedBeforeTime;
+        private transient TimeValidator valCreatedBeforeTime;
 
         protected JPanel buildClosedAfterInputPanel() {
             JPanel pnl = new JPanel(new GridBagLayout());

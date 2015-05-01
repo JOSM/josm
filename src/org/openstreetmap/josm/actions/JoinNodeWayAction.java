@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -170,7 +171,10 @@ public class JoinNodeWayAction extends JosmAction {
     /**
      * Sorts collinear nodes by their distance to a common reference node.
      */
-    private static class NodeDistanceToRefNodeComparator implements Comparator<Node> {
+    private static class NodeDistanceToRefNodeComparator implements Comparator<Node>, Serializable {
+
+        private static final long serialVersionUID = 1L;
+
         private final EastNorth refPoint;
         private EastNorth refPoint2;
         private final boolean projectToSegment;

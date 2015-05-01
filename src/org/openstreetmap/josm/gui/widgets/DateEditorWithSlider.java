@@ -34,7 +34,7 @@ public class DateEditorWithSlider extends JPanel {
     private static final int MAX_SLIDER=300;
     private boolean watchSlider = true;
 
-    private List<ChangeListener> listeners = new ArrayList<>();
+    private transient List<ChangeListener> listeners = new ArrayList<>();
 
     /**
      * Constructs a new {@code DateEditorWithSlider} with a given label

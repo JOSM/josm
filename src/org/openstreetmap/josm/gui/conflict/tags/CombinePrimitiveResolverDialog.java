@@ -115,7 +115,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     protected RelationMemberConflictResolver pnlRelationMemberConflictResolver;
     private boolean canceled;
     private JPanel pnlButtons;
-    protected OsmPrimitive targetPrimitive;
+    protected transient OsmPrimitive targetPrimitive;
 
     /** the private help action */
     private ContextSensitiveHelpAction helpAction;

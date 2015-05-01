@@ -467,7 +467,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     public static final class ShowHideMarkerText extends AbstractAction implements LayerAction {
-        private final MarkerLayer layer;
+        private final transient MarkerLayer layer;
 
         public ShowHideMarkerText(MarkerLayer layer) {
             super(tr("Show Text/Icons"), ImageProvider.get("dialogs", "showhide"));

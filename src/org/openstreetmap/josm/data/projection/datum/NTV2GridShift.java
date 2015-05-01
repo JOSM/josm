@@ -36,6 +36,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public class NTV2GridShift implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private static final double METRE_PER_SECOND = 2.0 * Math.PI * 6378137.0 / 3600.0 / 360.0;
     private static final double RADIANS_PER_SECOND = 2.0 * Math.PI / 3600.0 / 360.0;
     private double lon;

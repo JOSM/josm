@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -8,7 +9,10 @@ import java.util.Comparator;
  *
  * @author viesturs
  */
-public class NodePositionComparator implements Comparator<Node> {
+public class NodePositionComparator implements Comparator<Node>, Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Override
     public int compare(Node n1, Node n2) {
 

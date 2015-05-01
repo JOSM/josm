@@ -75,13 +75,13 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     private final JCheckBox ckSearchInTags;
     private final EnumSet<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
     private boolean typesInSelectionDirty = true;
-    private final PresetClassifications classifications = new PresetClassifications();
+    private final transient PresetClassifications classifications = new PresetClassifications();
     private final ResultListModel lsResultModel = new ResultListModel();
 
-    private final List<ListSelectionListener> listSelectionListeners = new ArrayList<>();
+    private final transient List<ListSelectionListener> listSelectionListeners = new ArrayList<>();
 
-    private ActionListener dblClickListener;
-    private ActionListener clickListener;
+    private transient ActionListener dblClickListener;
+    private transient ActionListener clickListener;
 
     private static class ResultListCellRenderer implements ListCellRenderer<TaggingPreset> {
         private final DefaultListCellRenderer def = new DefaultListCellRenderer();
@@ -96,7 +96,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
     private static class ResultListModel extends AbstractListModel<TaggingPreset> {
 
-        private List<PresetClassification> presets = new ArrayList<>();
+        private transient List<PresetClassification> presets = new ArrayList<>();
 
         public synchronized void setPresets(List<PresetClassification> presets) {
             this.presets = presets;

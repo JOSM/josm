@@ -41,7 +41,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
     private static final GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
-    private final CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
+    private final transient CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
     private File value;
 
     /** constructor that sets the default on each element **/

@@ -16,11 +16,11 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public abstract class OsmPrimitivesTable extends JTable {
-    
+
     /**
      * the data layer in whose context primitives are edited in this table
      */
-    private OsmDataLayer layer;
+    private transient OsmDataLayer layer;
 
     /** the popup menu */
     private JPopupMenu popupMenu;
@@ -39,7 +39,7 @@ public abstract class OsmPrimitivesTable extends JTable {
         addMouseListener(new PopupMenuLauncher(getPopUpMenu()));
         addMouseListener(new DblClickHandler());
     }
-    
+
     public OsmPrimitivesTableModel getOsmPrimitivesTableModel() {
         return (OsmPrimitivesTableModel) getModel();
     }
@@ -55,7 +55,7 @@ public abstract class OsmPrimitivesTable extends JTable {
         }
         return popupMenu;
     }
-    
+
     protected abstract ZoomToAction buildZoomToAction();
 
     protected JPopupMenu buildPopupMenu() {
@@ -66,11 +66,11 @@ public abstract class OsmPrimitivesTable extends JTable {
         menu.add(zoomToAction);
         return menu;
     }
-    
+
     public void unlinkAsListener() {
         MapView.removeLayerChangeListener(zoomToAction);
     }
-        
+
     public OsmPrimitive getPrimitiveInLayer(int row, OsmDataLayer layer) {
         return getOsmPrimitivesTableModel().getReferredPrimitive(row);
     }

@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class LayerListPopup extends JPopupMenu {
 
     public static final class InfoAction extends AbstractAction {
-        private final Layer layer;
+        private final transient Layer layer;
 
         /**
          * Constructs a new {@code InfoAction} for the given layer.

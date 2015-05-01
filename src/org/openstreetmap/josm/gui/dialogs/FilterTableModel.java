@@ -53,8 +53,8 @@ public class FilterTableModel extends AbstractTableModel {
         loadPrefs();
     }
 
-    private final List<Filter> filters = new LinkedList<>();
-    private final FilterMatcher filterMatcher = new FilterMatcher();
+    private final transient List<Filter> filters = new LinkedList<>();
+    private final transient FilterMatcher filterMatcher = new FilterMatcher();
 
     private void updateFilters() {
         try {

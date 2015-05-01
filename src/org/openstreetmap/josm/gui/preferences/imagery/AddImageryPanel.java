@@ -29,7 +29,7 @@ public abstract class AddImageryPanel extends JPanel {
     protected final JosmTextArea rawUrl = new JosmTextArea(3, 40);
     protected final JosmTextField name = new JosmTextField();
 
-    protected final Collection<ContentValidationListener> listeners = new ArrayList<>();
+    protected final transient Collection<ContentValidationListener> listeners = new ArrayList<>();
 
     /**
      * A listener notified when the validation status of this panel change.

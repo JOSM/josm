@@ -48,6 +48,11 @@ public class OsmHistoryReader {
         }
 
         @Override
+        protected void throwException(String message, Exception e) throws SAXException {
+            throw new SAXException(getCurrentPosition() + message, e);
+        }
+
+        @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             doStartElement(qName, atts);
         }

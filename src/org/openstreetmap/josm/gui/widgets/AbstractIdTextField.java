@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class AbstractIdTextField<T extends AbstractTextComponentValidator> extends JosmTextField {
 
-    protected final T validator;
+    protected final transient T validator;
 
     /**
      * Constructs a new {@link AbstractIdTextField}
@@ -55,11 +55,11 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
      * Clears field if content is invalid
      */
     public final void clearTextIfInvalid() {
-        if (!validator.isValid()) 
+        if (!validator.isValid())
             setText("");
         validator.validate();
     }
-    
+
     /**
      * Reads the id(s).
      * @return true if at least a valid id has been successfully read, false otherwise

@@ -38,7 +38,7 @@ public class TagEditorPanel extends JPanel {
     private TagTable tagTable;
 
     private PresetListPanel presetListPanel;
-    private final PresetHandler presetHandler;
+    private final transient PresetHandler presetHandler;
 
     /**
      * builds the panel with the table for editing tags

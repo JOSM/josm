@@ -21,7 +21,7 @@ public class SaveLayersModel extends DefaultTableModel {
         UPLOADING_AND_SAVING
     }
 
-    private List<SaveLayerInfo> layerInfo;
+    private transient List<SaveLayerInfo> layerInfo;
     private Mode mode;
     private PropertyChangeSupport support;
 

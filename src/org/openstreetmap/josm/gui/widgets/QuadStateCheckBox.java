@@ -42,7 +42,7 @@ public class QuadStateCheckBox extends JCheckBox {
         PARTIAL
     }
 
-    private final QuadStateDecorator model;
+    private final transient QuadStateDecorator model;
     private State[] allowed;
 
     /**

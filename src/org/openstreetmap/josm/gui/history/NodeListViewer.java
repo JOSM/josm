@@ -47,11 +47,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class NodeListViewer extends JPanel {
 
-    private HistoryBrowserModel model;
+    private transient HistoryBrowserModel model;
     private VersionInfoPanel referenceInfoPanel;
     private VersionInfoPanel currentInfoPanel;
-    private AdjustmentSynchronizer adjustmentSynchronizer;
-    private SelectionSynchronizer selectionSynchronizer;
+    private transient AdjustmentSynchronizer adjustmentSynchronizer;
+    private transient SelectionSynchronizer selectionSynchronizer;
     private NodeListPopupMenu popupMenu;
 
     protected JScrollPane embeddInScrollPane(JTable table) {
@@ -214,8 +214,11 @@ public class NodeListViewer extends JPanel {
     }
 
     static class ZoomToNodeAction extends AbstractAction {
-        private PrimitiveId primitiveId;
+        private transient PrimitiveId primitiveId;
 
+        /**
+         * Constructs a new {@code ZoomToNodeAction}.
+         */
         public ZoomToNodeAction() {
             putValue(NAME, tr("Zoom to node"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to this node in the current data layer"));
@@ -257,8 +260,11 @@ public class NodeListViewer extends JPanel {
     }
 
     static class ShowHistoryAction extends AbstractAction {
-        private PrimitiveId primitiveId;
+        private transient PrimitiveId primitiveId;
 
+        /**
+         * Constructs a new {@code ShowHistoryAction}.
+         */
         public ShowHistoryAction() {
             putValue(NAME, tr("Show history"));
             putValue(SHORT_DESCRIPTION, tr("Open a history browser with the history of this node"));

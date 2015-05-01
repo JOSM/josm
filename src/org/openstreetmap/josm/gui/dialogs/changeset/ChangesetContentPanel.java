@@ -61,7 +61,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class ChangesetContentPanel extends JPanel implements PropertyChangeListener {
 
     private ChangesetContentTableModel model;
-    private Changeset currentChangeset;
+    private transient Changeset currentChangeset;
 
     private DownloadChangesetContentAction actDownloadContentAction;
     private ShowHistoryAction actShowHistory;
@@ -420,7 +420,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     private static class HeaderPanel extends JPanel {
 
         private JMultilineLabel lblMessage;
-        private Changeset current;
+        private transient Changeset current;
 
         protected final void build() {
             setLayout(new FlowLayout(FlowLayout.LEFT));

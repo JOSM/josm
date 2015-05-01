@@ -19,7 +19,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
 
     private final DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
 
-    private final OsmPrimitivRenderer primitiveRenderer = new OsmPrimitivRenderer() {
+    private final transient OsmPrimitivRenderer primitiveRenderer = new OsmPrimitivRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table,
                 Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -28,7 +28,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         }
     };
 
-    private final TableCellRenderer tableRenderer = new TableCellRenderer() {
+    private final transient TableCellRenderer tableRenderer = new TableCellRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {

@@ -55,7 +55,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * to remove the highlight from them again as otherwise the whole data
      * set would have to be checked.
      */
-    private WaySegment oldHighlightedWaySegment = null;
+    private transient WaySegment oldHighlightedWaySegment = null;
 
     private static final HighlightHelper highlightHelper = new HighlightHelper();
     private boolean drawTargetHighlight;

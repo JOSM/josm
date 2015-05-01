@@ -11,7 +11,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  * @author Immanuel.Scholz
  */
 public class PluginException extends Exception {
-    public final PluginProxy plugin;
+    public final transient PluginProxy plugin;
     public final String name;
 
     public PluginException(PluginProxy plugin, String name, Throwable cause) {

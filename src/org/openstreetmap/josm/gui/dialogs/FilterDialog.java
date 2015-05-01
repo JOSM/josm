@@ -367,7 +367,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     abstract class AbstractFilterAction extends AbstractAction implements MultikeyShortcutAction {
 
-        protected Filter lastFilter;
+        protected transient Filter lastFilter;
 
         @Override
         public void actionPerformed(ActionEvent e) {

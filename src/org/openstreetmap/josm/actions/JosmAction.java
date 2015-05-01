@@ -39,9 +39,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public abstract class JosmAction extends AbstractAction implements Destroyable {
 
-    protected Shortcut sc;
-    private LayerChangeAdapter layerChangeAdapter;
-    private SelectionChangeAdapter selectionChangeAdapter;
+    protected transient Shortcut sc;
+    private transient LayerChangeAdapter layerChangeAdapter;
+    private transient SelectionChangeAdapter selectionChangeAdapter;
 
     /**
      * Returns the shortcut for this action.

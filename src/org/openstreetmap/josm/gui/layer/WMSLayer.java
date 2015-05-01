@@ -127,8 +127,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     protected boolean autoDownloadEnabled = true;
     protected boolean autoResolutionEnabled = PROP_DEFAULT_AUTOZOOM.get();
     protected boolean settingsChanged;
-    public WmsCache cache;
-    private AttributionSupport attribution = new AttributionSupport();
+    public transient WmsCache cache;
+    private transient AttributionSupport attribution = new AttributionSupport();
 
     // Image index boundary for current view
     private volatile int bminx;
@@ -139,16 +139,16 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     private volatile int bottomEdge;
 
     // Request queue
-    private final List<WMSRequest> requestQueue = new ArrayList<>();
-    private final List<WMSRequest> finishedRequests = new ArrayList<>();
+    private final transient List<WMSRequest> requestQueue = new ArrayList<>();
+    private final transient List<WMSRequest> finishedRequests = new ArrayList<>();
     /**
      * List of request currently being processed by download threads
      */
-    private final List<WMSRequest> processingRequests = new ArrayList<>();
-    private final Lock requestQueueLock = new ReentrantLock();
-    private final Condition queueEmpty = requestQueueLock.newCondition();
-    private final List<WMSGrabber> grabbers = new ArrayList<>();
-    private final List<Thread> grabberThreads = new ArrayList<>();
+    private final transient List<WMSRequest> processingRequests = new ArrayList<>();
+    private final transient Lock requestQueueLock = new ReentrantLock();
+    private final transient Condition queueEmpty = requestQueueLock.newCondition();
+    private final transient List<WMSGrabber> grabbers = new ArrayList<>();
+    private final transient List<Thread> grabberThreads = new ArrayList<>();
     private boolean canceled;
 
     /** set to true if this layer uses an invalid base url */

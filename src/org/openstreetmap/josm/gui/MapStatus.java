@@ -120,7 +120,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      * The MapView this status belongs to.
      */
     private final MapView mv;
-    private final Collector collector;
+    private final transient Collector collector;
 
     public class BackgroundProgressMonitor implements ProgressMonitorDialog {
 
@@ -174,17 +174,23 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
     }
 
-    private final ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
-    private final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
-    private final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6, PROP_BACKGROUND_COLOR.get());
-    private final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6, PROP_BACKGROUND_COLOR.get());
-    private final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
-    private final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel latText = new ImageLabel("lat",
+            tr("The geographic latitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel lonText = new ImageLabel("lon",
+            tr("The geographic longitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel headingText = new ImageLabel("heading",
+            tr("The (compass) heading of the line segment being drawn."), 6, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel angleText = new ImageLabel("angle",
+            tr("The angle between the previous and the current way segment."), 6, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel distText = new ImageLabel("dist",
+            tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
+    private final ImageLabel nameText = new ImageLabel("name",
+            tr("The name of the object at the mouse pointer."), 20, PROP_BACKGROUND_COLOR.get());
     private final JosmTextField helpText = new JosmTextField();
     private final JProgressBar progressBar = new JProgressBar();
-    public final BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
+    public final transient BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
 
-    private final SoMChangeListener somListener;
+    private final transient SoMChangeListener somListener;
 
     // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
     private double distValue;
@@ -196,9 +202,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      * This is the thread that runs in the background and collects the information displayed.
      * It gets destroyed by destroy() when the MapFrame itself is destroyed.
      */
-    private Thread thread;
+    private transient Thread thread;
 
-    private final List<StatusTextHistory> statusText = new ArrayList<>();
+    private final transient List<StatusTextHistory> statusText = new ArrayList<>();
 
     private static class StatusTextHistory {
         private final Object id;
@@ -648,9 +654,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     /**
      * The last sent mouse movement event.
      */
-    private MouseState mouseState = new MouseState();
+    private transient MouseState mouseState = new MouseState();
 
-    private AWTEventListener awtListener = new AWTEventListener() {
+    private transient AWTEventListener awtListener = new AWTEventListener() {
          @Override
          public void eventDispatched(AWTEvent event) {
             if (event instanceof InputEvent &&
@@ -666,7 +672,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         }
     };
 
-    private MouseMotionListener mouseMotionListener = new MouseMotionListener() {
+    private transient MouseMotionListener mouseMotionListener = new MouseMotionListener() {
         @Override
         public void mouseMoved(MouseEvent e) {
             synchronized (collector) {
@@ -682,7 +688,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         }
     };
 
-    private KeyAdapter keyAdapter = new KeyAdapter() {
+    private transient KeyAdapter keyAdapter = new KeyAdapter() {
         @Override public void keyPressed(KeyEvent e) {
             synchronized (collector) {
                 mouseState.modifiers = e.getModifiersEx();
@@ -721,7 +727,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         private final JMenuItem jumpButton = add(Main.main.menu.jumpToAct);
 
-        private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
+        private final transient Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
 
         private final JSeparator separator = new JSeparator();
 

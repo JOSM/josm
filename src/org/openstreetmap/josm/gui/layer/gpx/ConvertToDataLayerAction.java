@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 public class ConvertToDataLayerAction extends AbstractAction {
-    private final GpxLayer layer;
+    private final transient GpxLayer layer;
 
     public ConvertToDataLayerAction(final GpxLayer layer) {
         super(tr("Convert to data layer"), ImageProvider.get("converttoosm"));

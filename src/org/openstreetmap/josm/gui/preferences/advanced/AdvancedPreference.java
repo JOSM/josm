@@ -356,29 +356,41 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             @Override
             public void menuSelected(MenuEvent me) {
                 p.removeAll();
-                for (File f: new File(".").listFiles()) {
-                   String s = f.getName();
-                   int idx = s.indexOf('_');
-                   if (idx>=0) {
-                        String t=s.substring(0,idx);
-                        if (profileTypes.containsKey(t)) {
-                            p.add(new ImportProfileAction(s, f, t));
-                        }
-                   }
+                File[] files = new File(".").listFiles();
+                if (files != null) {
+                    for (File f: files) {
+                       String s = f.getName();
+                       int idx = s.indexOf('_');
+                       if (idx>=0) {
+                            String t=s.substring(0,idx);
+                            if (profileTypes.containsKey(t)) {
+                                p.add(new ImportProfileAction(s, f, t));
+                            }
+                       }
+                    }
                 }
-                for (File f: Main.pref.getPreferencesDirectory().listFiles()) {
-                   String s = f.getName();
-                   int idx = s.indexOf('_');
-                   if (idx>=0) {
-                        String t=s.substring(0,idx);
-                        if (profileTypes.containsKey(t)) {
-                            p.add(new ImportProfileAction(s, f, t));
-                        }
-                   }
+                files = Main.pref.getPreferencesDirectory().listFiles();
+                if (files != null) {
+                    for (File f: files) {
+                       String s = f.getName();
+                       int idx = s.indexOf('_');
+                       if (idx>=0) {
+                            String t=s.substring(0,idx);
+                            if (profileTypes.containsKey(t)) {
+                                p.add(new ImportProfileAction(s, f, t));
+                            }
+                       }
+                    }
                 }
             }
-            @Override public void menuDeselected(MenuEvent me) { }
-            @Override public void menuCanceled(MenuEvent me) { }
+            @Override
+            public void menuDeselected(MenuEvent me) {
+                // Not implemented
+            }
+            @Override
+            public void menuCanceled(MenuEvent me) {
+                // Not implemented
+            }
         });
         return p;
     }

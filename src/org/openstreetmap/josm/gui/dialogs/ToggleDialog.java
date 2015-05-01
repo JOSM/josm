@@ -94,7 +94,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      */
     public static final BooleanProperty PROP_DYNAMIC_BUTTONS = new BooleanProperty("dialog.dynamic.buttons", false);
 
-    private final ParametrizedEnumProperty<ButtonHidingType> PROP_BUTTON_HIDING = new ParametrizedEnumProperty<ToggleDialog.ButtonHidingType>(
+    private final transient ParametrizedEnumProperty<ButtonHidingType> PROP_BUTTON_HIDING = new ParametrizedEnumProperty<ToggleDialog.ButtonHidingType>(
             ButtonHidingType.class, ButtonHidingType.DYNAMIC) {
         @Override
         protected String getKey(String... params) {
@@ -151,7 +151,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     protected JToggleButton button;
     private JPanel buttonsPanel;
-    private List<javax.swing.Action> buttonActions = new ArrayList<>();
+    private transient List<javax.swing.Action> buttonActions = new ArrayList<>();
 
     /** holds the menu entry in the windows menu. Required to properly
      * toggle the checkbox on show/hide

@@ -99,7 +99,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     /** Property key for proxy exceptions list */
     public static final String PROXY_EXCEPTIONS = "proxy.exceptions";
 
-    private Map<ProxyPolicy, JRadioButton> rbProxyPolicy;
+    private transient Map<ProxyPolicy, JRadioButton> rbProxyPolicy;
     private JosmTextField tfProxyHttpHost;
     private JosmTextField tfProxyHttpPort;
     private JosmTextField tfProxySocksHost;

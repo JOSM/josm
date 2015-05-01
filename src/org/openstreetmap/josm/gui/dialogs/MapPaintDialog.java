@@ -205,7 +205,7 @@ public class MapPaintDialog extends ToggleDialog {
 
     protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
 
-        private List<StyleSource> data = new ArrayList<>();
+        private transient List<StyleSource> data = new ArrayList<>();
 
         public StylesModel() {
             data = new ArrayList<>(MapPaintStyles.getStyles().getStyleSources());

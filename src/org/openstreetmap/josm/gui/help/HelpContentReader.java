@@ -43,7 +43,7 @@ public class HelpContentReader extends WikiReader {
      */
     public String fetchHelpTopicContent(String helpTopicUrl, boolean dotest) throws HelpContentReaderException {
         if(helpTopicUrl == null)
-            throw new MissingHelpContentException(helpTopicUrl);
+            throw new MissingHelpContentException("helpTopicUrl is null");
         HttpURLConnection con = null;
         try {
             URL u = new URL(helpTopicUrl);

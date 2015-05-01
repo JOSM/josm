@@ -15,8 +15,8 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 public class MemberRoleCellEditor extends AbstractCellEditor implements TableCellEditor {
     private AutoCompletingTextField editor = null;
-    private final DataSet ds;
-    private final Relation relation;
+    private final transient DataSet ds;
+    private final transient Relation relation;
 
     /** user input is matched against this list of auto completion items */
     private AutoCompletionList autoCompletionList = null;

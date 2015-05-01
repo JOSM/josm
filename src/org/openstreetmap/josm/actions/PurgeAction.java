@@ -68,23 +68,23 @@ public class PurgeAction extends JosmAction {
         putValue("help", HelpUtil.ht("/Action/Purge"));
     }
 
-    protected OsmDataLayer layer;
+    protected transient OsmDataLayer layer;
     protected JCheckBox cbClearUndoRedo;
 
-    protected Set<OsmPrimitive> toPurge;
+    protected transient Set<OsmPrimitive> toPurge;
     /**
      * finally, contains all objects that are purged
      */
-    protected Set<OsmPrimitive> toPurgeChecked;
+    protected transient Set<OsmPrimitive> toPurgeChecked;
     /**
      * Subset of toPurgeChecked. Marks primitives that remain in the
      * dataset, but incomplete.
      */
-    protected Set<OsmPrimitive> makeIncomplete;
+    protected transient Set<OsmPrimitive> makeIncomplete;
     /**
      * Subset of toPurgeChecked. Those that have not been in the selection.
      */
-    protected List<OsmPrimitive> toPurgeAdditionally;
+    protected transient List<OsmPrimitive> toPurgeAdditionally;
 
     @Override
     public void actionPerformed(ActionEvent e) {
