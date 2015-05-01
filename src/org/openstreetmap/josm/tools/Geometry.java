@@ -687,16 +687,26 @@ public final class Geometry {
      * @throws IllegalArgumentException if way is not closed (see {@link Way#isClosed}).
      */
     public static boolean isClockwise(Way w) {
-        if (!w.isClosed()) {
+        return isClockwise(w.getNodes());
+    }
+
+    /**
+     * Determines whether path from nodes list is oriented clockwise.
+     * @see #isClockwise(Way)
+     * @param nodes Nodes list to be checked.
+     * @return true if and only if way is oriented clockwise.
+     * @throws IllegalArgumentException if way is not closed (see {@link Way#isClosed}).
+     */
+    public static boolean isClockwise(List<Node> nodes) {
+        double area2 = 0.;
+        int nodesCount = nodes.size();
+        if (nodesCount < 3 || nodes.get(0) != nodes.get(nodesCount - 1)) {
             throw new IllegalArgumentException("Way must be closed to check orientation.");
         }
 
-        double area2 = 0.;
-        int nodesCount = w.getNodesCount();
-
         for (int node = 1; node <= /*sic! consider last-first as well*/ nodesCount; node++) {
-            LatLon coorPrev = w.getNode(node - 1).getCoor();
-            LatLon coorCurr = w.getNode(node % nodesCount).getCoor();
+            LatLon coorPrev = nodes.get(node - 1).getCoor();
+            LatLon coorCurr = nodes.get(node % nodesCount).getCoor();
             area2 += coorPrev.lon() * coorCurr.lat();
             area2 -= coorCurr.lon() * coorPrev.lat();
         }
