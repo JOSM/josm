@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -112,8 +113,8 @@ public final class CreateCircleAction extends JosmAction {
     /**
      * Comparator used to order PolarNode relative to their angle.
      */
-    private static class PolarNodeComparator implements Comparator<PolarNode> {
-
+    private static class PolarNodeComparator implements Comparator<PolarNode>, Serializable {
+        private static final long serialVersionUID = 1L;
         @Override
         public int compare(PolarNode pc1, PolarNode pc2) {
             return Double.compare(pc1.a, pc2.a);

@@ -158,7 +158,7 @@ public abstract class ImageryLayer extends Layer {
     }
 
     class ApplyOffsetAction extends AbstractAction {
-        private OffsetBookmark b;
+        private transient OffsetBookmark b;
         ApplyOffsetAction(OffsetBookmark b) {
             super(b.name);
             this.b = b;

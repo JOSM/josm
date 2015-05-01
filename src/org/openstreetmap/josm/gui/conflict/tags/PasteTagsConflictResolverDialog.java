@@ -57,7 +57,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     }
 
     private TagConflictResolver allPrimitivesResolver;
-    private Map<OsmPrimitiveType, TagConflictResolver> resolvers;
+    private transient Map<OsmPrimitiveType, TagConflictResolver> resolvers;
     private JTabbedPane tpResolvers;
     private Mode mode;
     private boolean canceled = false;
@@ -394,7 +394,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
     private static class StatisticsTableModel extends DefaultTableModel {
         private static final String[] HEADERS = new String[] {tr("Paste ..."), tr("From ..."), tr("To ...") };
-        private List<StatisticsInfo> data;
+        private transient List<StatisticsInfo> data;
 
         public StatisticsTableModel() {
             data = new ArrayList<>();

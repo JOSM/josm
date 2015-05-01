@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.Destroyable;
 public class IconToggleButton extends JToggleButton implements HideableButton, PropertyChangeListener, Destroyable, ExpertModeChangeListener {
 
     public boolean groupbutton;
-    private ShowHideButtonListener listener;
+    private transient ShowHideButtonListener listener;
     private boolean hideIfDisabled = false;
     private boolean isExpert;
 

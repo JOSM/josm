@@ -19,9 +19,9 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginHandler;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * A panel for configuring whether JOSM shall update plugins at startup.
@@ -54,8 +54,8 @@ public class PluginUpdatePolicyPanel extends JPanel {
         }
     }
 
-    private Map<Policy, JRadioButton> rbVersionBasedUpatePolicy;
-    private Map<Policy, JRadioButton> rbTimeBasedUpatePolicy;
+    private transient Map<Policy, JRadioButton> rbVersionBasedUpatePolicy;
+    private transient Map<Policy, JRadioButton> rbTimeBasedUpatePolicy;
     private JosmTextField tfUpdateInterval;
     private JLabel lblUpdateInterval;
 

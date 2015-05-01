@@ -33,7 +33,7 @@ public class RelationMemberConflictDecisionEditor extends JosmComboBox<RelationM
         return this;
     }
 
-    private final CellEditorSupport tableCellEditorSupport;
+    private final transient CellEditorSupport tableCellEditorSupport;
     private RelationMemberConflictDecisionType originalValue;
 
     @Override

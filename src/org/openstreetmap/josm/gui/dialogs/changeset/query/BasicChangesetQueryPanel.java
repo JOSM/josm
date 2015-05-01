@@ -40,8 +40,8 @@ public class BasicChangesetQueryPanel extends JPanel {
         CHANGESETS_IN_MAP_VIEW;
     }
 
-    private Map<BasicQuery, JRadioButton> rbQueries;
-    private Map<BasicQuery, JMultilineLabel> lblQueries;
+    private transient Map<BasicQuery, JRadioButton> rbQueries;
+    private transient Map<BasicQuery, JMultilineLabel> lblQueries;
     private JCheckBox cbMyChangesetsOnly;
 
     protected JPanel buildQueriesPanel() {

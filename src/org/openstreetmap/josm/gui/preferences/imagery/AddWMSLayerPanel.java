@@ -35,9 +35,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class AddWMSLayerPanel extends AddImageryPanel {
 
-    private final WMSImagery wms = new WMSImagery();
+    private final transient WMSImagery wms = new WMSImagery();
     private final JCheckBox endpoint = new JCheckBox(tr("Store WMS endpoint only, select layers at usage"));
-    private final WMSLayerTree tree = new WMSLayerTree();
+    private final transient WMSLayerTree tree = new WMSLayerTree();
     private final JComboBox<String> formats = new JComboBox<>();
     private final JLabel wmsInstruction;
     private final JosmTextArea wmsUrl = new JosmTextArea(3, 40);

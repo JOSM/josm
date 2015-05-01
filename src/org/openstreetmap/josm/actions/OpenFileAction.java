@@ -117,7 +117,7 @@ public class OpenFileAction extends DiskAccessAction {
                             return name.startsWith(file.getName()) && fileFilter.accept(new File(dir, name));
                         }
                     });
-                    if (matchingFiles.length == 1) {
+                    if (matchingFiles != null && matchingFiles.length == 1) {
                         // use the unique match as filename
                         this.files.add(matchingFiles[0]);
                     } else {

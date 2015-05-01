@@ -10,7 +10,7 @@ import javax.swing.table.AbstractTableModel;
 
 public abstract class CorrectionTableModel<C extends Correction> extends AbstractTableModel {
 
-    private List<C> corrections;
+    private transient List<C> corrections;
     private boolean[] apply;
     private int applyColumn;
 

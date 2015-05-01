@@ -8,7 +8,7 @@ import org.openstreetmap.josm.tools.template_engine.Tokenizer.TokenType;
 
 public class ParseError extends Exception {
 
-    private final Token unexpectedToken;
+    private final transient Token unexpectedToken;
 
     public ParseError(Token unexpectedToken) {
         super(tr("Unexpected token ({0}) on position {1}", unexpectedToken.getType(), unexpectedToken.getPosition()));

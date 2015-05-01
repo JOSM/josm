@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import javax.swing.Action;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -35,7 +34,7 @@ import org.openstreetmap.josm.tools.ImageResource;
  * @since 3715
  */
 public class AddImageryLayerAction extends JosmAction implements AdaptableAction {
-    private final ImageryInfo info;
+    private final transient ImageryInfo info;
 
     /**
      * Constructs a new {@code AddImageryLayerAction} for the given {@code ImageryInfo}.

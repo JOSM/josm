@@ -45,7 +45,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public class VersionInfoPanel extends JPanel implements Observer{
     private PointInTimeType pointInTimeType;
-    private HistoryBrowserModel model;
+    private transient HistoryBrowserModel model;
     private JMultilineLabel lblInfo;
     private UrlLabel lblUser;
     private UrlLabel lblChangeset;

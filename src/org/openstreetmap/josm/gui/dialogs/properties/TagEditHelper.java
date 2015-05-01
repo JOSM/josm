@@ -241,9 +241,9 @@ class TagEditHelper {
 
     public final class EditTagDialog extends AbstractTagsDialog {
         private final String key;
-        private final Map<String, Integer> m;
+        private final transient Map<String, Integer> m;
 
-        private Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
+        private transient Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
                 @Override
                 public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
                     boolean c1 = m.containsKey(o1.getValue());
@@ -257,7 +257,7 @@ class TagEditHelper {
                 }
             };
 
-        private ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
+        private transient ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
             private final DefaultListCellRenderer def = new DefaultListCellRenderer();
             @Override
             public Component getListCellRendererComponent(JList<? extends AutoCompletionListItem> list,
@@ -531,7 +531,7 @@ class TagEditHelper {
     }
 
     class AddTagsDialog extends AbstractTagsDialog {
-        private List<JosmAction> recentTagsActions = new ArrayList<>();
+        private transient List<JosmAction> recentTagsActions = new ArrayList<>();
 
         // Counter of added commands for possible undo
         private int commandCount;

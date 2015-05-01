@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 
@@ -48,8 +49,8 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -71,10 +72,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     private boolean nodeDragWithoutCtrl;
 
     private long mouseDownTime = 0;
-    private WaySegment selectedSegment = null;
-    private Node selectedNode = null;
+    private transient WaySegment selectedSegment = null;
+    private transient Node selectedNode = null;
     private Color mainColor;
-    private Stroke mainStroke;
+    private transient Stroke mainStroke;
 
     /** settings value whether shared nodes should be ignored or not */
     private boolean ignoreSharedNodes;
@@ -85,15 +86,15 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * drawing settings for helper lines
      */
     private Color helperColor;
-    private Stroke helperStrokeDash;
-    private Stroke helperStrokeRA;
+    private transient Stroke helperStrokeDash;
+    private transient Stroke helperStrokeRA;
 
-    private Stroke oldLineStroke;
+    private transient Stroke oldLineStroke;
     private double symbolSize;
     /**
      * Possible directions to move to.
      */
-    private List<ReferenceSegment> possibleMoveDirections;
+    private transient List<ReferenceSegment> possibleMoveDirections;
 
 
     /**
@@ -104,7 +105,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /**
      * The direction that is currently active.
      */
-    private ReferenceSegment activeMoveDirection;
+    private transient ReferenceSegment activeMoveDirection;
 
     /**
      * The position of the mouse cursor when the drag action was initiated.
@@ -134,12 +135,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /**
      * the command that performed last move.
      */
-    private MoveCommand moveCommand;
+    private transient MoveCommand moveCommand;
     /**
      *  The command used for dual alignment movement.
      *  Needs to be separate, due to two nodes moving in different directions.
      */
-    private MoveCommand moveCommand2;
+    private transient MoveCommand moveCommand2;
 
     /** The cursor for the 'create_new' mode. */
     private final Cursor cursorCreateNew;
@@ -175,13 +176,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /** {@code true}, if dual alignment is active. User is dragging the mouse, required conditions are met. Treat {@link #mode} (extrude/translate/create_new) as dual aligned. */
     private boolean dualAlignActive;
     /** Dual alignment reference segments */
-    private ReferenceSegment dualAlignSegment1, dualAlignSegment2;
+    private transient ReferenceSegment dualAlignSegment1, dualAlignSegment2;
     /** {@code true}, if new segment was collapsed */
     private boolean dualAlignSegmentCollapsed = false;
     // Dual alignment UI stuff
     private final DualAlignChangeAction dualAlignChangeAction;
     private final JCheckBoxMenuItem dualAlignCheckboxMenuItem;
-    private final Shortcut dualAlignShortcut;
+    private final transient Shortcut dualAlignShortcut;
     private boolean useRepeatedShortcut;
     private boolean ignoreNextKeyRelease;
 

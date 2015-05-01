@@ -77,12 +77,12 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     private SideButton selectButton;
 
     private final JPopupMenu popupMenu = new JPopupMenu();
-    private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
+    private final transient PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
     /** Last selected element */
     private DefaultMutableTreeNode lastSelectedNode = null;
 
-    private OsmDataLayer linkedLayer;
+    private transient OsmDataLayer linkedLayer;
 
     /**
      * Constructor

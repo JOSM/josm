@@ -86,7 +86,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     private final SortAction sortAction;
     private final UploadNotesAction uploadAction;
 
-    private NoteData noteData;
+    private transient NoteData noteData;
 
     /** Creates a new toggle dialog for notes */
     public NotesDialog() {
@@ -260,7 +260,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     }
 
     class NoteTableModel extends AbstractListModel<Note> {
-        private List<Note> data;
+        private transient List<Note> data;
 
         public NoteTableModel() {
             data = new ArrayList<>();

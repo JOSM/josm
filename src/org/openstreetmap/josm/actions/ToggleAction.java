@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public abstract class ToggleAction extends JosmAction {
 
-    private final List<ButtonModel> buttonModels = new ArrayList<>();
+    private final transient List<ButtonModel> buttonModels = new ArrayList<>();
 
     /**
      * Constructs a {@code ToggleAction}.

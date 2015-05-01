@@ -22,6 +22,7 @@ package org.openstreetmap.josm.tools;
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  */
+import java.io.Serializable;
 import java.text.Collator;
 import java.util.Comparator;
 import java.util.Locale;
@@ -37,7 +38,9 @@ import java.util.Locale;
  * Bogus, and David Koelle and others.
  *
  */
-public class AlphanumComparator implements Comparator<String> {
+public class AlphanumComparator implements Comparator<String>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private static final AlphanumComparator INSTANCE = new AlphanumComparator();
 

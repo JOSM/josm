@@ -90,7 +90,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
     private static List<GpxData> loadedGpxData = new ArrayList<>();
 
-    private GeoImageLayer yLayer = null;
+    private transient GeoImageLayer yLayer = null;
     private double timezone;
     private long delta;
 
@@ -121,7 +121,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private ExtendedDialog syncDialog;
-    private List<GpxDataWrapper> gpxLst = new ArrayList<>();
+    private transient List<GpxDataWrapper> gpxLst = new ArrayList<>();
     private JPanel outerPanel;
     private JosmComboBox<GpxDataWrapper> cbGpx;
     private JosmTextField tfTimezone;
@@ -763,8 +763,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
         syncDialog.showDialog();
     }
 
-    private StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
-    private StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
+    private transient StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
+    private transient StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
 
     private class StatusBarUpdater implements  DocumentListener, ItemListener, ActionListener {
         private boolean doRepaint;
@@ -834,7 +834,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
-    private RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
+    private transient RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
     private class RepaintTheMapListener implements FocusListener {
         @Override
         public void focusGained(FocusEvent e) { // do nothing

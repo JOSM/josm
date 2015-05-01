@@ -30,9 +30,9 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     public static final String NUM_CONFLICTS_PROP = RelationMemberConflictResolverModel.class.getName() + ".numConflicts";
 
     /** the list of conflict decisions */
-    protected final List<RelationMemberConflictDecision> decisions;
+    protected final transient List<RelationMemberConflictDecision> decisions;
     /** the collection of relations for which we manage conflicts */
-    protected Collection<Relation> relations;
+    protected transient Collection<Relation> relations;
     /** the number of conflicts */
     private int numConflicts;
     private final PropertyChangeSupport support;

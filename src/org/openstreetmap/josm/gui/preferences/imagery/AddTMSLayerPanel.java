@@ -22,7 +22,7 @@ public class AddTMSLayerPanel extends AddImageryPanel {
 
     private final JosmTextField tmsZoom = new JosmTextField();
     private final JosmTextArea tmsUrl = new JosmTextArea(3, 40);
-    private final KeyAdapter keyAdapter = new KeyAdapter() {
+    private final transient KeyAdapter keyAdapter = new KeyAdapter() {
         @Override
         public void keyReleased(KeyEvent e) {
             tmsUrl.setText(buildTMSUrl());

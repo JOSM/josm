@@ -18,8 +18,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class SelectionTableModel extends AbstractTableModel implements SelectionChangedListener, MapView.LayerChangeListener{
 
     /** this selection table model only displays selected primitives in this layer */
-    private OsmDataLayer layer;
-    private List<OsmPrimitive> cache;
+    private transient OsmDataLayer layer;
+    private transient List<OsmPrimitive> cache;
 
     /**
      * constructor

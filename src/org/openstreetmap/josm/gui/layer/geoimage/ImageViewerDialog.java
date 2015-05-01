@@ -273,8 +273,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         getInstance().btnNext.setEnabled(value);
     }
 
-    private GeoImageLayer currentLayer = null;
-    private ImageEntry currentEntry = null;
+    private transient GeoImageLayer currentLayer = null;
+    private transient ImageEntry currentEntry = null;
 
     public void displayImage(GeoImageLayer layer, ImageEntry entry) {
         boolean imageChanged;

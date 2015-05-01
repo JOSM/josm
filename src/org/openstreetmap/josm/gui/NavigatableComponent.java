@@ -87,7 +87,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         void systemOfMeasurementChanged(String oldSoM, String newSoM);
     }
 
-    public Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
+    public transient Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
         @Override
         public boolean evaluate(OsmPrimitive prim) {
             if (!prim.isSelectable()) return false;
@@ -179,11 +179,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     protected EastNorth center = calculateDefaultCenter();
 
-    private final Object paintRequestLock = new Object();
+    private final transient Object paintRequestLock = new Object();
     private Rectangle paintRect = null;
     private Polygon paintPoly = null;
 
-    protected ViewportData initialViewport;
+    protected transient ViewportData initialViewport;
 
     /**
      * Constructs a new {@code NavigatableComponent}.

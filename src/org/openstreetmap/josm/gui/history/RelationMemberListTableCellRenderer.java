@@ -30,7 +30,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
     public static final Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
     public static final Color BGCOLOR_SELECTED = new Color(143,170,255);
 
-    private Map<OsmPrimitiveType, ImageIcon> icons;
+    private transient Map<OsmPrimitiveType, ImageIcon> icons;
 
     /**
      * Constructs a new {@code RelationMemberListTableCellRenderer}.

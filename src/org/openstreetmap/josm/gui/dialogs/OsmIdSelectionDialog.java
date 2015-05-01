@@ -50,7 +50,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
     protected final OsmPrimitiveTypesComboBox cbType = new OsmPrimitiveTypesComboBox();
     protected final OsmIdTextField tfId = new OsmIdTextField();
     protected final HistoryComboBox cbId = new HistoryComboBox();
-    protected final GroupLayout layout = new GroupLayout(panel);
+    protected final transient GroupLayout layout = new GroupLayout(panel);
 
     public OsmIdSelectionDialog(Component parent, String title, String[] buttonTexts) {
         super(parent, title, buttonTexts);

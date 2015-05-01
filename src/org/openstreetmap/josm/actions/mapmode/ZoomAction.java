@@ -31,10 +31,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class ZoomAction extends MapMode implements SelectionEnded {
 
     /**
-     * Manager that manages the selection rectangle with the aspect ratio of the
-     * MapView.
+     * Manager that manages the selection rectangle with the aspect ratio of the MapView.
      */
-    private final SelectionManager selectionManager;
+    private final transient SelectionManager selectionManager;
 
     /**
      * Construct a ZoomAction without a label.

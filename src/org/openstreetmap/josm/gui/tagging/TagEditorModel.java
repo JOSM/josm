@@ -35,7 +35,7 @@ public class TagEditorModel extends AbstractTableModel {
     public static final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
     /** the list holding the tags */
-    protected final List<TagModel> tags =new ArrayList<>();
+    protected final transient List<TagModel> tags =new ArrayList<>();
 
     /** indicates whether the model is dirty */
     private boolean dirty =  false;

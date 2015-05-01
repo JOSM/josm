@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +13,7 @@ import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item.DiffItemType;
  * used a {@link javax.swing.table.DefaultTableModel} instead.
  */
 class DiffTableModel extends AbstractTableModel {
-    private List<TwoColumnDiff.Item> rows = new ArrayList<>();
+    private transient List<TwoColumnDiff.Item> rows = new ArrayList<>();
     private boolean reversed = false;
 
     public void setRows(List<TwoColumnDiff.Item> rows, boolean reversed) {

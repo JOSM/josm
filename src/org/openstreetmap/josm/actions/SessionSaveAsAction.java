@@ -48,9 +48,9 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class SessionSaveAsAction extends DiskAccessAction {
 
-    private List<Layer> layers;
-    private Map<Layer, SessionLayerExporter> exporters;
-    private MultiMap<Layer, Layer> dependencies;
+    private transient List<Layer> layers;
+    private transient Map<Layer, SessionLayerExporter> exporters;
+    private transient MultiMap<Layer, Layer> dependencies;
 
     /**
      * Constructs a new {@code SessionSaveAsAction}.

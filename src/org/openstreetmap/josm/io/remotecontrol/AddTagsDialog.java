@@ -45,7 +45,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class AddTagsDialog extends ExtendedDialog {
 
     private final JTable propertyTable;
-    private final Collection<? extends OsmPrimitive> sel;
+    private final transient Collection<? extends OsmPrimitive> sel;
     private final int[] count;
 
     private final String sender;

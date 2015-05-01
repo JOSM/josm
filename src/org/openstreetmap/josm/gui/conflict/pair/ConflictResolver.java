@@ -71,10 +71,10 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     private NodeListMerger nodeListMerger;
     private RelationMemberMerger relationMemberMerger;
     private PropertiesMerger propertiesMerger;
-    private final List<IConflictResolver> conflictResolvers = new ArrayList<>();
-    private OsmPrimitive my;
-    private OsmPrimitive their;
-    private Conflict<? extends OsmPrimitive> conflict;
+    private final transient List<IConflictResolver> conflictResolvers = new ArrayList<>();
+    private transient OsmPrimitive my;
+    private transient OsmPrimitive their;
+    private transient Conflict<? extends OsmPrimitive> conflict;
 
     private ImageIcon mergeComplete;
     private ImageIcon mergeIncomplete;

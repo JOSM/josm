@@ -64,7 +64,7 @@ public class TagTable extends JTable  {
      * cell editing this table.
      */
     private final CopyOnWriteArrayList<Component> doNotStopCellEditingWhenFocused = new CopyOnWriteArrayList<>();
-    private CellEditorRemover editorRemover;
+    private transient CellEditorRemover editorRemover;
 
     /**
      * The table has two columns. The first column is used for editing rendering and

@@ -29,9 +29,9 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     /** the name of the property for the currently selected changeset in the detail view */
     public static final String CHANGESET_IN_DETAIL_VIEW_PROP = ChangesetCacheManagerModel.class.getName() + ".changesetInDetailView";
 
-    private final List<Changeset> data = new ArrayList<>();
+    private final transient List<Changeset> data = new ArrayList<>();
     private DefaultListSelectionModel selectionModel;
-    private Changeset changesetInDetailView;
+    private transient Changeset changesetInDetailView;
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     public ChangesetCacheManagerModel(DefaultListSelectionModel selectionModel) {

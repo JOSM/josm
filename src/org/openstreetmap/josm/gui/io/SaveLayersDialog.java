@@ -67,7 +67,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     private SaveAndProceedAction saveAndProceedAction;
     private DiscardAndProceedAction discardAndProceedAction;
     private CancelAction cancelAction;
-    private SaveAndUploadTask saveAndUploadTask;
+    private transient SaveAndUploadTask saveAndUploadTask;
 
     /**
      * builds the GUI
@@ -367,10 +367,10 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     final class SaveAndProceedAction extends AbstractAction implements PropertyChangeListener {
         private static final int is = 24; // icon size
         private static final String BASE_ICON = "BASE_ICON";
-        private final Image save = ImageProvider.get("save").getImage();
-        private final Image upld = ImageProvider.get("upload").getImage();
-        private final Image saveDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
-        private final Image upldDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
+        private final transient Image save = ImageProvider.get("save").getImage();
+        private final transient Image upld = ImageProvider.get("upload").getImage();
+        private final transient Image saveDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
+        private final transient Image upldDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
 
         public SaveAndProceedAction() {
             // get disabled versions of icons

@@ -21,7 +21,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
     private static final Image corners = ImageProvider.get("dialogs/relation", "roundedcorners").getImage();
     private static final Image roundabout_right = ImageProvider.get("dialogs/relation", "roundabout_right_tiny").getImage();
     private static final Image roundabout_left = ImageProvider.get("dialogs/relation", "roundabout_left_tiny").getImage();
-    private WayConnectionType value = new WayConnectionType();
+    private transient WayConnectionType value = new WayConnectionType();
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,

@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class CustomizeColor extends AbstractAction implements LayerAction, MultiLayerAction {
-    private List<Layer> layers;
+    private transient List<Layer> layers;
 
     public CustomizeColor(List<Layer> l) {
         this();

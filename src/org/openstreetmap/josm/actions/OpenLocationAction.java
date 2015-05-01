@@ -51,7 +51,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class OpenLocationAction extends JosmAction {
 
-    protected final List<Class<? extends DownloadTask>> downloadTasks;
+    protected final transient List<Class<? extends DownloadTask>> downloadTasks;
 
     /**
      * Create an open action. The name is "Open a file".

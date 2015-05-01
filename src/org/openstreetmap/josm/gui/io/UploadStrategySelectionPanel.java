@@ -50,9 +50,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
     private static final Color BG_COLOR_ERROR = new Color(255,224,224);
 
-    private Map<UploadStrategy, JRadioButton> rbStrategy;
-    private Map<UploadStrategy, JLabel> lblNumRequests;
-    private Map<UploadStrategy, JMultilineLabel> lblStrategies;
+    private transient Map<UploadStrategy, JRadioButton> rbStrategy;
+    private transient Map<UploadStrategy, JLabel> lblNumRequests;
+    private transient Map<UploadStrategy, JMultilineLabel> lblStrategies;
     private JosmTextField tfChunkSize;
     private JPanel pnlMultiChangesetPolicyPanel;
     private JRadioButton rbFillOneChangeset;

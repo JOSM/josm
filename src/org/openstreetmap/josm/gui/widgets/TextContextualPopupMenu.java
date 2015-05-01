@@ -50,7 +50,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
     protected final RedoAction redoAction = new RedoAction();
     protected final UndoManager undo = new UndoManager();
 
-    protected final UndoableEditListener undoEditListener = new UndoableEditListener() {
+    protected final transient UndoableEditListener undoEditListener = new UndoableEditListener() {
         @Override
         public void undoableEditHappened(UndoableEditEvent e) {
             undo.addEdit(e.getEdit());
@@ -59,7 +59,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
         }
     };
 
-    protected final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+    protected final transient PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (EDITABLE.equals(evt.getPropertyName())) {

@@ -23,10 +23,10 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     /** checkbox for selecting whether an atomic upload is to be used  */
     private final TagEditorPanel pnlTagEditor = new TagEditorPanel(null);
     /** the model for the changeset comment */
-    private final ChangesetCommentModel changesetCommentModel;
-    private final ChangesetCommentModel changesetSourceModel;
+    private final transient ChangesetCommentModel changesetCommentModel;
+    private final transient ChangesetCommentModel changesetSourceModel;
     /** tags that applied to uploaded changesets by default*/
-    private final Map<String, String> defaultTags = new HashMap<>();
+    private final transient Map<String, String> defaultTags = new HashMap<>();
 
     protected void build() {
         setLayout(new BorderLayout());

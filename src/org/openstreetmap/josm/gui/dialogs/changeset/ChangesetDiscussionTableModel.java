@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.osm.ChangesetDiscussionComment;
  */
 public class ChangesetDiscussionTableModel extends AbstractTableModel {
 
-    private final List<ChangesetDiscussionComment> data = new ArrayList<>();
+    private final transient List<ChangesetDiscussionComment> data = new ArrayList<>();
 
     @Override
     public int getRowCount() {

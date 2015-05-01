@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.osm.history.History;
 public class HistoryBrowser extends JPanel {
 
     /** the model */
-    private HistoryBrowserModel model;
+    private transient HistoryBrowserModel model;
     private TagInfoViewer tagInfoViewer;
     private NodeListViewer nodeListViewer;
     private RelationMemberListViewer relationMemberListViewer;

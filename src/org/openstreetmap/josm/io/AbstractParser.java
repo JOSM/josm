@@ -24,7 +24,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 6201
  */
 public abstract class AbstractParser extends DefaultHandler {
-    
+
     /** the current primitive to be read */
     protected HistoryOsmPrimitive currentPrimitive;
     protected Locator locator;
@@ -33,8 +33,10 @@ public abstract class AbstractParser extends DefaultHandler {
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
-    
+
     protected abstract void throwException(String message) throws SAXException;
+
+    protected abstract void throwException(String message, Exception e) throws SAXException;
 
     protected final long getMandatoryAttributeLong(Attributes attr, String name) throws SAXException {
         String v = attr.getValue(name);
@@ -45,7 +47,7 @@ public abstract class AbstractParser extends DefaultHandler {
         try {
             l = Long.parseLong(v);
         } catch(NumberFormatException e) {
-            throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long. Got ''{1}''.", name, v));
+            throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long. Got ''{1}''.", name, v), e);
         }
         if (l < 0) {
             throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long (>=0). Got ''{1}''.", name, v));
@@ -61,7 +63,7 @@ public abstract class AbstractParser extends DefaultHandler {
         try {
             l = Long.parseLong(v);
         } catch(NumberFormatException e) {
-            throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long. Got ''{1}''.", name, v));
+            throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long. Got ''{1}''.", name, v), e);
         }
         if (l < 0) {
             throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long (>=0). Got ''{1}''.", name, v));
@@ -78,7 +80,7 @@ public abstract class AbstractParser extends DefaultHandler {
         try {
             d = Double.parseDouble(v);
         } catch(NumberFormatException e) {
-            throwException(tr("Illegal value for attribute ''{0}'' of type double. Got ''{1}''.", name, v));
+            throwException(tr("Illegal value for attribute ''{0}'' of type double. Got ''{1}''.", name, v), e);
         }
         return d;
     }
@@ -101,7 +103,7 @@ public abstract class AbstractParser extends DefaultHandler {
         throwException(tr("Illegal value for mandatory attribute ''{0}'' of type boolean. Got ''{1}''.", name, v));
         return false; // not reached
     }
-    
+
     protected final HistoryOsmPrimitive createPrimitive(Attributes atts, OsmPrimitiveType type) throws SAXException {
         long id = getMandatoryAttributeLong(atts,"id");
         long version = getMandatoryAttributeLong(atts,"version");
@@ -151,7 +153,7 @@ public abstract class AbstractParser extends DefaultHandler {
     protected final void startWay(Attributes atts) throws SAXException {
         currentPrimitive = createPrimitive(atts, OsmPrimitiveType.WAY);
     }
-    
+
     protected final void startRelation(Attributes atts) throws SAXException {
         currentPrimitive = createPrimitive(atts, OsmPrimitiveType.RELATION);
     }
@@ -174,13 +176,13 @@ public abstract class AbstractParser extends DefaultHandler {
         try {
             type = OsmPrimitiveType.fromApiTypeName(v);
         } catch(IllegalArgumentException e) {
-            throwException(tr("Illegal value for mandatory attribute ''{0}'' of type OsmPrimitiveType. Got ''{1}''.", "type", v));
+            throwException(tr("Illegal value for mandatory attribute ''{0}'' of type OsmPrimitiveType. Got ''{1}''.", "type", v), e);
         }
         String role = getMandatoryAttributeString(atts, "role");
         RelationMemberData member = new RelationMemberData(role, type,ref);
         ((HistoryRelation)currentPrimitive).addMember(member);
     }
-    
+
     protected final boolean doStartElement(String qName, Attributes atts) throws SAXException {
         switch (qName) {
         case "node":

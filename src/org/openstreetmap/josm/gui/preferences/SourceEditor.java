@@ -110,7 +110,7 @@ public abstract class SourceEditor extends JPanel {
     protected final JList<ExtendedSourceEntry> lstAvailableSources;
     protected final AvailableSourcesListModel availableSourcesModel;
     protected final String availableSourcesUrl;
-    protected final List<SourceProvider> sourceProviders;
+    protected final transient List<SourceProvider> sourceProviders;
 
     protected JTable tblIconPaths;
     protected IconPathTableModel iconPathsModel;
@@ -446,7 +446,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     protected static class AvailableSourcesListModel extends DefaultListModel<ExtendedSourceEntry> {
-        private List<ExtendedSourceEntry> data;
+        private transient List<ExtendedSourceEntry> data;
         private DefaultListSelectionModel selectionModel;
 
         public AvailableSourcesListModel(DefaultListSelectionModel selectionModel) {
@@ -498,7 +498,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     protected class ActiveSourcesModel extends AbstractTableModel {
-        private List<SourceEntry> data;
+        private transient List<SourceEntry> data;
         private DefaultListSelectionModel selectionModel;
 
         public ActiveSourcesModel(DefaultListSelectionModel selectionModel) {
@@ -1036,7 +1036,7 @@ public abstract class SourceEditor extends JPanel {
 
     class ReloadSourcesAction extends AbstractAction {
         private final String url;
-        private final List<SourceProvider> sourceProviders;
+        private final transient List<SourceProvider> sourceProviders;
         public ReloadSourcesAction(String url, List<SourceProvider> sourceProviders) {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr(getStr(I18nString.RELOAD_ALL_AVAILABLE), url));
@@ -1054,7 +1054,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     protected static class IconPathTableModel extends AbstractTableModel {
-        private List<String> data;
+        private transient List<String> data;
         private DefaultListSelectionModel selectionModel;
 
         public IconPathTableModel(DefaultListSelectionModel selectionModel) {
@@ -1239,7 +1239,7 @@ public abstract class SourceEditor extends JPanel {
 
     class SourceLoader extends PleaseWaitRunnable {
         private final String url;
-        private final List<SourceProvider> sourceProviders;
+        private final transient List<SourceProvider> sourceProviders;
         private BufferedReader reader;
         private boolean canceled;
         private final List<ExtendedSourceEntry> sources = new ArrayList<>();

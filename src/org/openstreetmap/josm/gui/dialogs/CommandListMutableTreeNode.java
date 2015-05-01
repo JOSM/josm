@@ -11,7 +11,7 @@ import org.openstreetmap.josm.command.PseudoCommand;
  */
 public class CommandListMutableTreeNode extends DefaultMutableTreeNode {
 
-    protected PseudoCommand cmd;
+    protected transient PseudoCommand cmd;
     protected int idx;
 
     public CommandListMutableTreeNode(PseudoCommand cmd, int idx) {

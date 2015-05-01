@@ -82,7 +82,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
     /** the current bounding box */
-    private Bounds bbox;
+    private transient Bounds bbox;
     /** the map viewer showing the selected bounding box */
     private TileBoundsMapView mapViewer;
     /** a panel for entering a bounding box given by a  tile grid and a zoom level */
@@ -223,12 +223,12 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         private JosmTextField tfMinY;
         private JosmTextField tfMaxX;
         private JosmTextField tfMinX;
-        private TileCoordinateValidator valMaxY;
-        private TileCoordinateValidator valMinY;
-        private TileCoordinateValidator valMaxX;
-        private TileCoordinateValidator valMinX;
+        private transient TileCoordinateValidator valMaxY;
+        private transient TileCoordinateValidator valMinY;
+        private transient TileCoordinateValidator valMaxX;
+        private transient TileCoordinateValidator valMinX;
         private JSpinner spZoomLevel;
-        private TileBoundsBuilder tileBoundsBuilder = new TileBoundsBuilder();
+        private transient TileBoundsBuilder tileBoundsBuilder = new TileBoundsBuilder();
         private boolean doFireTileBoundChanged = true;
 
         protected JPanel buildTextPanel() {
@@ -441,7 +441,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         public static final String TILE_BOUNDS_PROP = TileAddressInputPanel.class.getName() + ".tileBounds";
 
         private JosmTextField tfTileAddress;
-        private TileAddressValidator valTileAddress;
+        private transient TileAddressValidator valTileAddress;
 
         protected JPanel buildTextPanel() {
             JPanel pnl = new JPanel(new BorderLayout());

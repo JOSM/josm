@@ -191,7 +191,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
         /**
          * The downloaded notes
          */
-        public final List<Note> notes;
+        public final transient List<Note> notes;
         /**
          * The download limit sent to the server.
          */

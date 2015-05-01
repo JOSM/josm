@@ -27,9 +27,9 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is the UI for running a semic-automic authorisation procedure.
@@ -41,7 +41,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
  */
 public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     private AccessTokenInfoPanel pnlAccessTokenInfo;
-    private OAuthToken requestToken;
+    private transient OAuthToken requestToken;
 
     private RetrieveRequestTokenPanel pnlRetrieveRequestToken;
     private RetrieveAccessTokenPanel pnlRetrieveAccessToken;

@@ -60,13 +60,13 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
     protected DefaultTreeModel valTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
 
     /** The list of errors shown in the tree */
-    private List<TestError> errors = new ArrayList<>();
+    private transient List<TestError> errors = new ArrayList<>();
 
     /**
      * If {@link #filter} is not <code>null</code> only errors are displayed
      * that refer to one of the primitives in the filter.
      */
-    private Set<OsmPrimitive> filter = null;
+    private transient Set<OsmPrimitive> filter = null;
 
     /** a counter to check if tree has been rebuild */
     private int updateCount;

@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
 
 public class DownloadWmsAlongTrackAction extends AbstractAction {
 
-    private final GpxData data;
+    private final transient GpxData data;
 
     public DownloadWmsAlongTrackAction(final GpxData data) {
         super(tr("Precache imagery tiles along this track"), ImageProvider.get("downloadalongtrack"));

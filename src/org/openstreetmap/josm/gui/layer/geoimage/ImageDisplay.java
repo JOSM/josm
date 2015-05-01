@@ -34,7 +34,7 @@ public class ImageDisplay extends JComponent {
     private File file = null;
 
     /** The image currently displayed */
-    private Image image = null;
+    private transient Image image = null;
 
     /** The image currently displayed */
     private boolean errorLoading = false;

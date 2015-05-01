@@ -241,7 +241,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
     /* TableCellEditor interface                                                            */
     /* ------------------------------------------------------------------------------------ */
 
-    private CellEditorSupport tableCellEditorSupport;
+    private transient CellEditorSupport tableCellEditorSupport;
     private String originalValue;
 
     @Override

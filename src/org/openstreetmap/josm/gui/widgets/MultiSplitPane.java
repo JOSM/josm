@@ -46,9 +46,9 @@ import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Node;
  * @author Hans Muller - SwingX
  */
 public class MultiSplitPane extends JPanel {
-    private AccessibleContext accessibleContext = null;
+    private transient AccessibleContext accessibleContext = null;
     private boolean continuousLayout = true;
-    private DividerPainter dividerPainter = new DefaultDividerPainter();
+    private transient DividerPainter dividerPainter = new DefaultDividerPainter();
 
     /**
      * Creates a MultiSplitPane with it's LayoutManager set to
@@ -221,7 +221,7 @@ public class MultiSplitPane extends JPanel {
     }
 
     private boolean dragUnderway = false;
-    private MultiSplitLayout.Divider dragDivider = null;
+    private transient MultiSplitLayout.Divider dragDivider = null;
     private Rectangle initialDividerBounds = null;
     private boolean oldFloatingDividers = true;
     private int dragOffsetX = 0;

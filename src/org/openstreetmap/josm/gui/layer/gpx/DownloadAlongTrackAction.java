@@ -36,7 +36,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
     private static final String PREF_DOWNLOAD_ALONG_TRACK_AREA = "downloadAlongTrack.area";
     private static final String PREF_DOWNLOAD_ALONG_TRACK_NEAR = "downloadAlongTrack.near";
 
-    private final GpxData data;
+    private final transient GpxData data;
 
     /**
      * Constructs a new {@code DownloadAlongTrackAction}

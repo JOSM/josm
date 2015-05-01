@@ -69,7 +69,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
     /**
      * List of available rectifier services.
      */
-    private final List<RectifierService> services = new ArrayList<>();
+    private final transient List<RectifierService> services = new ArrayList<>();
 
     /**
      * Constructs a new {@code MapRectifierWMSmenuAction}.

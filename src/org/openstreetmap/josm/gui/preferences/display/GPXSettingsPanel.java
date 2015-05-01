@@ -47,7 +47,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private JRadioButton drawRawGpsLinesAll = new JRadioButton(tr("All"));
     private JRadioButton drawRawGpsLinesLocal = new JRadioButton(tr("Local files"));
     private JRadioButton drawRawGpsLinesNone = new JRadioButton(tr("None"));
-    private ActionListener drawRawGpsLinesActionListener;
+    private transient ActionListener drawRawGpsLinesActionListener;
     private JosmTextField drawRawGpsMaxLineLength = new JosmTextField(8);
     private JosmTextField drawRawGpsMaxLineLengthLocal = new JosmTextField(8);
     private JosmTextField drawLineWidth = new JosmTextField(2);

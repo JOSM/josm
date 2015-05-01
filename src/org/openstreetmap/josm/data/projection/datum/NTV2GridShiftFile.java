@@ -62,6 +62,8 @@ import java.util.List;
  */
 public class NTV2GridShiftFile implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private int overviewHeaderCount;
     private int subGridHeaderCount;
     private int subGridCount;

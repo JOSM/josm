@@ -302,14 +302,17 @@ public final class CustomConfigurator {
 
     public static void deleteFileOrDirectory(File f) {
         if (f.isDirectory()) {
-            for (File f1: f.listFiles()) {
-                deleteFileOrDirectory(f1);
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File f1: files) {
+                    deleteFileOrDirectory(f1);
+                }
             }
         }
         try {
             f.delete();
         } catch (Exception e) {
-            log("Warning: Can not delete file "+f.getPath());
+            log("Warning: Can not delete file "+f.getPath()+": "+e.getMessage());
         }
     }
 

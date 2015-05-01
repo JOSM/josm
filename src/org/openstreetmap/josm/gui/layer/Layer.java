@@ -379,7 +379,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      *
      */
     public static class LayerSaveAction extends AbstractAction {
-        private Layer layer;
+        private final transient Layer layer;
         public LayerSaveAction(Layer layer) {
             putValue(SMALL_ICON, ImageProvider.get("save"));
             putValue(SHORT_DESCRIPTION, tr("Save the current data."));
@@ -395,7 +395,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     }
 
     public static class LayerSaveAsAction extends AbstractAction {
-        private Layer layer;
+        private final transient Layer layer;
         public LayerSaveAsAction(Layer layer) {
             putValue(SMALL_ICON, ImageProvider.get("save_as"));
             putValue(SHORT_DESCRIPTION, tr("Save the current data to a new file."));
@@ -411,7 +411,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     }
 
     public static class LayerGpxExportAction extends AbstractAction {
-        private Layer layer;
+        private final transient Layer layer;
         public LayerGpxExportAction(Layer layer) {
             putValue(SMALL_ICON, ImageProvider.get("exportgpx"));
             putValue(SHORT_DESCRIPTION, tr("Export the data to GPX file."));

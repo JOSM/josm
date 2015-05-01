@@ -27,7 +27,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 public class ExportProfileAction extends AbstractAction {
     private final String prefPattern;
     private final String schemaKey;
-    private final Preferences prefs;
+    private final transient Preferences prefs;
 
     /**
      * Constructs a new {@code ExportProfileAction}.

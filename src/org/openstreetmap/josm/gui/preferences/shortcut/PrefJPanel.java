@@ -118,7 +118,7 @@ public class PrefJPanel extends JPanel {
 
     private static class ScListModel extends AbstractTableModel {
         private String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
-        private List<Shortcut> data;
+        private transient List<Shortcut> data;
 
         public ScListModel() {
             data = Shortcut.listAll();

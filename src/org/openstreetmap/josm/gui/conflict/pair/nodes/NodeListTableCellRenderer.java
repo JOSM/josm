@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public  class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
 
     private final ImageIcon icon;
-    private final Border rowNumberBorder;
+    private final transient Border rowNumberBorder;
 
     /**
      * constructor

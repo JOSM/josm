@@ -116,12 +116,12 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     private static final StringProperty PROP_MAPSTYLE = new StringProperty("slippy_map_chooser.mapstyle", "Mapnik");
     public static final String RESIZE_PROP = SlippyMapBBoxChooser.class.getName() + ".resize";
 
-    private TileLoader cachedLoader;
-    private OsmTileLoader uncachedLoader;
+    private transient TileLoader cachedLoader;
+    private transient OsmTileLoader uncachedLoader;
 
     private final SizeButton iSizeButton;
     private final SourceButton iSourceButton;
-    private Bounds bbox;
+    private transient Bounds bbox;
 
     // upper left and lower right corners of the selection rectangle (x/y on ZOOM_MAX)
     private Point iSelectionRectStart;

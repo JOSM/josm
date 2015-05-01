@@ -45,7 +45,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  */
 public class VersionTable extends JTable implements Observer{
     private VersionTablePopupMenu popupMenu;
-    private final HistoryBrowserModel model;
+    private final transient HistoryBrowserModel model;
 
     protected void build() {
         getTableHeader().setFont(getTableHeader().getFont().deriveFont(9f));
@@ -147,8 +147,11 @@ public class VersionTable extends JTable implements Observer{
     }
 
     static class ChangesetInfoAction extends AbstractInfoAction {
-        private HistoryOsmPrimitive primitive;
+        private transient HistoryOsmPrimitive primitive;
 
+        /**
+         * Constructs a new {@code ChangesetInfoAction}.
+         */
         public ChangesetInfoAction() {
             super(true);
             putValue(NAME, tr("Changeset info"));
@@ -177,8 +180,11 @@ public class VersionTable extends JTable implements Observer{
     }
 
     static class UserInfoAction extends AbstractInfoAction {
-        private HistoryOsmPrimitive primitive;
+        private transient HistoryOsmPrimitive primitive;
 
+        /**
+         * Constructs a new {@code UserInfoAction}.
+         */
         public UserInfoAction() {
             super(true);
             putValue(NAME, tr("User info"));
