@@ -4,8 +4,8 @@
  *
  * Run from the base directory of a JOSM checkout:
  *
- * groovy -cp dist/josm-custom.jar taginfoextract.groovy -t mappaint
- * groovy -cp dist/josm-custom.jar taginfoextract.groovy -t presets
+ * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t mappaint
+ * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t presets
  */
 import java.awt.image.BufferedImage
 import java.nio.file.Files
