@@ -4,8 +4,6 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.Main;
@@ -61,13 +59,9 @@ public class LoadDataHandler extends RequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        try {
-            final String data = URLEncoder.encode("<osm version='0.6'><node id='-1' lat='1' lon='2' /></osm>", "UTF-8");
-            return new String[]{
-                    "/load_data?layer_name=extra_layer&new_layer=true&data=" + data};
-        } catch (UnsupportedEncodingException ex) {
-            throw new IllegalStateException(ex);
-        }
+        final String data = Utils.encodeUrl("<osm version='0.6'><node id='-1' lat='1' lon='2' /></osm>");
+        return new String[]{
+                "/load_data?layer_name=extra_layer&new_layer=true&data=" + data};
     }
 
     @Override

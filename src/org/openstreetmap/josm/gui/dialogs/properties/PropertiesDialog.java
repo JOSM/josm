@@ -13,11 +13,9 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1072,10 +1070,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 int row;
                 if (tagTable.getSelectedRowCount() == 1) {
                     row = tagTable.getSelectedRow();
-                    String key = URLEncoder.encode(tagData.getValueAt(row, 0).toString(), "UTF-8");
+                    String key = Utils.encodeUrl(tagData.getValueAt(row, 0).toString());
                     @SuppressWarnings("unchecked")
                     Map<String, Integer> m = (Map<String, Integer>) tagData.getValueAt(row, 1);
-                    String val = URLEncoder.encode(m.entrySet().iterator().next().getKey(), "UTF-8");
+                    String val = Utils.encodeUrl(m.entrySet().iterator().next().getKey());
 
                     uris.add(new URI(String.format("%s%sTag:%s=%s", base, lang, key, val)));
                     uris.add(new URI(String.format("%sTag:%s=%s", base, key, val)));
@@ -1087,7 +1085,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     row = membershipTable.getSelectedRow();
                     String type = ((Relation)membershipData.getValueAt(row, 0)).get("type");
                     if (type != null) {
-                        type = URLEncoder.encode(type, "UTF-8");
+                        type = Utils.encodeUrl(type);
                     }
 
                     if (type != null && !type.isEmpty()) {
@@ -1148,7 +1146,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         }
                     }
                 });
-            } catch (URISyntaxException | UnsupportedEncodingException e1) {
+            } catch (URISyntaxException e1) {
                 Main.error(e1);
             }
         }

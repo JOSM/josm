@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -1115,14 +1116,51 @@ public final class Utils {
             if (URL_CHARS.contains(c)) {
                 sb.append(c);
             } else {
-                try {
-                    sb.append(URLEncoder.encode(c, "UTF-8"));
-                } catch (UnsupportedEncodingException ex) {
-                    throw new RuntimeException(ex);
-                }
+                sb.append(encodeUrl(c));
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Translates a string into <code>application/x-www-form-urlencoded</code>
+     * format. This method uses UTF-8 encoding scheme to obtain the bytes for unsafe
+     * characters.
+     *
+     * @param   s <code>String</code> to be translated.
+     * @return  the translated <code>String</code>.
+     * @see #decodeUrl(String)
+     * @since 8304
+     */
+    public static String encodeUrl(String s) {
+        final String enc = StandardCharsets.UTF_8.name();
+        try {
+            return URLEncoder.encode(s, enc);
+        } catch (UnsupportedEncodingException e) {
+            Main.error(e);
+            return null;
+        }
+    }
+
+    /**
+     * Decodes a <code>application/x-www-form-urlencoded</code> string.
+     * UTF-8 encoding is used to determine
+     * what characters are represented by any consecutive sequences of the
+     * form "<code>%<i>xy</i></code>".
+     *
+     * @param s the <code>String</code> to decode
+     * @return the newly decoded <code>String</code>
+     * @see #encodeUrl(String)
+     * @since 8304
+     */
+    public static String decodeUrl(String s) {
+        final String enc = StandardCharsets.UTF_8.name();
+        try {
+            return URLDecoder.decode(s, enc);
+        } catch (UnsupportedEncodingException e) {
+            Main.error(e);
+            return null;
+        }
     }
 
     /**

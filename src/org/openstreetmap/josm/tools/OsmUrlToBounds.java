@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,9 +23,9 @@ public final class OsmUrlToBounds {
         try {
             // a percent sign indicates an encoded URL (RFC 1738).
             if (url.contains("%")) {
-                url = URLDecoder.decode(url, "UTF-8");
+                url = Utils.decodeUrl(url);
             }
-        } catch (UnsupportedEncodingException | IllegalArgumentException x) {
+        } catch (IllegalArgumentException x) {
             Main.error(x);
         }
         Bounds b = parseShortLink(url);

@@ -8,12 +8,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -250,22 +248,18 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected String buildPostRequest(Map<String,String> parameters) throws OsmOAuthAuthorizationException {
-        try {
-            StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-            for(Iterator<Entry<String,String>> it = parameters.entrySet().iterator(); it.hasNext();) {
-                Entry<String,String> entry = it.next();
-                String value = entry.getValue();
-                value = (value == null) ? "" : value;
-                sb.append(entry.getKey()).append("=").append(URLEncoder.encode(value, "UTF-8"));
-                if (it.hasNext()) {
-                    sb.append("&");
-                }
+        for(Iterator<Entry<String,String>> it = parameters.entrySet().iterator(); it.hasNext();) {
+            Entry<String,String> entry = it.next();
+            String value = entry.getValue();
+            value = (value == null) ? "" : value;
+            sb.append(entry.getKey()).append("=").append(Utils.encodeUrl(value));
+            if (it.hasNext()) {
+                sb.append("&");
             }
-            return sb.toString();
-        } catch(UnsupportedEncodingException e) {
-            throw new OsmOAuthAuthorizationException(e);
         }
+        return sb.toString();
     }
 
     /**

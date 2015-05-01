@@ -10,8 +10,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Collections;
 import java.util.Observable;
@@ -184,8 +182,8 @@ public class VersionInfoPanel extends JPanel implements Observer{
         build();
     }
 
-    protected static String getUserUrl(String username) throws UnsupportedEncodingException {
-        return Main.getBaseUserUrl() + "/" +  URLEncoder.encode(username, "UTF-8").replaceAll("\\+", "%20");
+    protected static String getUserUrl(String username) {
+        return Main.getBaseUserUrl() + "/" +  Utils.encodeUrl(username).replaceAll("\\+", "%20");
     }
 
     @Override
@@ -208,14 +206,9 @@ public class VersionInfoPanel extends JPanel implements Observer{
                 username = user.getName();
             }
             lblUser.setDescription(username);
-            try {
-                if (user != null && user != User.getAnonymous()) {
-                    lblUser.setUrl(getUserUrl(username));
-                } else {
-                    lblUser.setUrl(null);
-                }
-            } catch(UnsupportedEncodingException e) {
-                Main.error(e);
+            if (user != null && user != User.getAnonymous()) {
+                lblUser.setUrl(getUserUrl(username));
+            } else {
                 lblUser.setUrl(null);
             }
         } else {
@@ -225,12 +218,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
                 lblUser.setUrl(null);
             } else {
                 lblUser.setDescription(username);
-                try {
-                    lblUser.setUrl(getUserUrl(username));
-                } catch(UnsupportedEncodingException e) {
-                    Main.error(e);
-                    lblUser.setUrl(null);
-                }
+                lblUser.setUrl(getUserUrl(username));
             }
             lblChangeset.setDescription(tr("none"));
             lblChangeset.setUrl(null);
