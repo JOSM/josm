@@ -13,7 +13,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem
 
     private int maxSize = 10;
 
-    private List<HistoryChangedListener> listeners = new ArrayList<>();
+    private transient List<HistoryChangedListener> listeners = new ArrayList<>();
 
     public ComboBoxHistory(int size) {
         maxSize = size;

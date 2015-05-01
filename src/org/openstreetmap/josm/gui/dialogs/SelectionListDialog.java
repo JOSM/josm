@@ -97,7 +97,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
     /** the popup menu and its handler */
     private final ListPopupMenu popupMenu;
-    private final PopupMenuHandler popupMenuHandler;
+    private final transient PopupMenuHandler popupMenuHandler;
 
     /**
      * Builds the content panel for this dialog
@@ -476,7 +476,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         // Variable to store history from currentDataSet()
         private LinkedList<Collection<? extends OsmPrimitive>> history;
-        private final List<OsmPrimitive> selection = new ArrayList<>();
+        private final transient List<OsmPrimitive> selection = new ArrayList<>();
         private DefaultListSelectionModel selectionModel;
 
         /**
@@ -736,7 +736,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * @author Jan Peter Stotz
      */
     protected static class SearchMenuItem extends JMenuItem implements ActionListener {
-        protected final SearchSetting s;
+        protected final transient SearchSetting s;
 
         public SearchMenuItem(SearchSetting s) {
             super(Utils.shortenString(s.toString(),
@@ -777,8 +777,8 @@ public class SelectionListDialog extends ToggleDialog  {
      * @author Jan Peter Stotz
      */
     protected static class SelectionMenuItem extends JMenuItem implements ActionListener {
-        private final DefaultNameFormatter df = DefaultNameFormatter.getInstance();
-        protected Collection<? extends OsmPrimitive> sel;
+        private final transient DefaultNameFormatter df = DefaultNameFormatter.getInstance();
+        protected transient Collection<? extends OsmPrimitive> sel;
 
         public SelectionMenuItem(Collection<? extends OsmPrimitive> sel) {
             super();

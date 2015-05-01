@@ -42,7 +42,7 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class PreferencesTable extends JTable {
     private AllSettingsTableModel model;
-    private final List<PrefEntry> displayData;
+    private final transient List<PrefEntry> displayData;
 
     /**
      * Constructs a new {@code PreferencesTable}.

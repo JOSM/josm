@@ -132,7 +132,7 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
-    private final Shortcut[] visibilityToggleShortcuts = new Shortcut[10];
+    private final transient Shortcut[] visibilityToggleShortcuts = new Shortcut[10];
     private final ToggleLayerIndexVisibility[] visibilityToggleActions = new ToggleLayerIndexVisibility[10];
 
     /**
@@ -439,8 +439,8 @@ public class LayerListDialog extends ToggleDialog {
      */
     public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction, MultikeyShortcutAction {
 
-        private WeakReference<Layer> lastLayer;
-        private Shortcut multikeyShortcut;
+        private transient WeakReference<Layer> lastLayer;
+        private transient Shortcut multikeyShortcut;
 
         /**
          * Creates a {@link ShowHideLayerAction} which will toggle the visibility of
@@ -525,7 +525,7 @@ public class LayerListDialog extends ToggleDialog {
      * Action which allows to change the opacity of one or more layers.
      */
     public final class LayerOpacityAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
-        private Layer layer;
+        private transient Layer layer;
         private JPopupMenu popup;
         private JSlider slider = new JSlider(JSlider.VERTICAL);
 
@@ -636,8 +636,8 @@ public class LayerListDialog extends ToggleDialog {
      */
 
     public final class ActivateLayerAction extends AbstractAction implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction{
-        private  Layer layer;
-        private Shortcut multikeyShortcut;
+        private transient Layer layer;
+        private transient Shortcut multikeyShortcut;
 
         /**
          * Constructs a new {@code ActivateLayerAction}.
@@ -748,7 +748,7 @@ public class LayerListDialog extends ToggleDialog {
      * The action to merge the currently selected layer into another layer.
      */
     public final class MergeAction extends AbstractAction implements IEnabledStateUpdating {
-        private  Layer layer;
+        private transient Layer layer;
 
         /**
          * Constructs a new {@code MergeAction}.
@@ -823,7 +823,7 @@ public class LayerListDialog extends ToggleDialog {
      * The action to merge the currently selected layer into another layer.
      */
     public final class DuplicateAction extends AbstractAction implements IEnabledStateUpdating {
-        private Layer layer;
+        private transient Layer layer;
 
         /**
          * Constructs a new {@code DuplicateAction}.

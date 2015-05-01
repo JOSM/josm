@@ -34,7 +34,7 @@ public class SizeButton extends JComponent {
         addMouseListener(mouseListener);
     }
 
-    private final MouseAdapter mouseListener = new MouseAdapter() {
+    private final transient MouseAdapter mouseListener = new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1) {

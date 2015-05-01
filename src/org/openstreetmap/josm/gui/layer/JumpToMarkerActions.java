@@ -43,9 +43,9 @@ public final class JumpToMarkerActions {
 
     private abstract static class JumpToMarker extends AbstractAction implements MultikeyShortcutAction {
 
-        private final Layer layer;
-        private final Shortcut multikeyShortcut;
-        private WeakReference<Layer> lastLayer;
+        private final transient Layer layer;
+        private final transient Shortcut multikeyShortcut;
+        private transient WeakReference<Layer> lastLayer;
 
         public JumpToMarker(JumpToMarkerLayer layer, Shortcut shortcut) {
             this.layer = (Layer) layer;

@@ -728,7 +728,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      */
     protected class EntriesSelectionModel extends DefaultListSelectionModel {
-        private final List<T> entries;
+        private final transient List<T> entries;
 
         public EntriesSelectionModel(ArrayList<T> nodes) {
             this.entries = nodes;
@@ -822,7 +822,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     public class ComparePairListModel extends AbstractListModel<ComparePairType> implements ComboBoxModel<ComparePairType> {
 
         private int selectedIdx;
-        private final List<ComparePairType> compareModes;
+        private final transient List<ComparePairType> compareModes;
 
         /**
          * Constructs a new {@code ComparePairListModel}.

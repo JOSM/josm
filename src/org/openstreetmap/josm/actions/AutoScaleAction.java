@@ -54,8 +54,8 @@ public class AutoScaleAction extends JosmAction {
 
     private final String mode;
 
-    protected ZoomChangeAdapter zoomChangeAdapter;
-    protected MapFrameAdapter mapFrameAdapter;
+    protected transient ZoomChangeAdapter zoomChangeAdapter;
+    protected transient MapFrameAdapter mapFrameAdapter;
     /** Time of last zoom to bounds action */
     protected long lastZoomTime = -1;
     /** Last zommed bounds */

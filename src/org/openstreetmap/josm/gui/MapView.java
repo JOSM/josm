@@ -206,35 +206,35 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * A list of all layers currently loaded.
      */
-    private final List<Layer> layers = new ArrayList<>();
+    private final transient List<Layer> layers = new ArrayList<>();
     /**
      * The play head marker: there is only one of these so it isn't in any specific layer
      */
-    public PlayHeadMarker playHeadMarker = null;
+    public transient PlayHeadMarker playHeadMarker = null;
 
     /**
      * The layer from the layers list that is currently active.
      */
-    private Layer activeLayer;
+    private transient Layer activeLayer;
 
-    private OsmDataLayer editLayer;
+    private transient OsmDataLayer editLayer;
 
     /**
      * The last event performed by mouse.
      */
     public MouseEvent lastMEvent = new MouseEvent(this, 0, 0, 0, 0, 0, 0, false); // In case somebody reads it before first mouse move
 
-    private final List<MapViewPaintable> temporaryLayers = new LinkedList<>();
+    private final transient List<MapViewPaintable> temporaryLayers = new LinkedList<>();
 
-    private BufferedImage nonChangedLayersBuffer;
-    private BufferedImage offscreenBuffer;
+    private transient BufferedImage nonChangedLayersBuffer;
+    private transient BufferedImage offscreenBuffer;
     // Layers that wasn't changed since last paint
-    private final List<Layer> nonChangedLayers = new ArrayList<>();
-    private Layer changedLayer;
+    private final transient List<Layer> nonChangedLayers = new ArrayList<>();
+    private transient Layer changedLayer;
     private int lastViewID;
     private boolean paintPreferencesChanged = true;
     private Rectangle lastClipBounds = new Rectangle();
-    private MapMover mapMover;
+    private transient MapMover mapMover;
 
     /**
      * Constructs a new {@code MapView}.
@@ -908,8 +908,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
     }
 
-    private SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener(){
-        @Override public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    private transient SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener(){
+        @Override
+        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             repaint();
         }
     };

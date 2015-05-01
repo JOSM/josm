@@ -23,7 +23,7 @@ import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class ImportImagesAction extends AbstractAction {
-    private final GpxLayer layer;
+    private final transient GpxLayer layer;
 
     public ImportImagesAction(final GpxLayer layer) {
         super(tr("Import images"), ImageProvider.get("dialogs/geoimage"));

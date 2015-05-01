@@ -76,15 +76,15 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     }
 
     /** the collection of conflicts displayed by this conflict dialog */
-    private ConflictCollection conflicts;
+    private transient ConflictCollection conflicts;
 
     /** the model for the list of conflicts */
-    private ConflictListModel model;
+    private transient ConflictListModel model;
     /** the list widget for the list of conflicts */
     private JList<OsmPrimitive> lstConflicts;
 
     private final JPopupMenu popupMenu = new JPopupMenu();
-    private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
+    private final transient PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
     private ResolveAction actResolve;
     private SelectAction actSelect;

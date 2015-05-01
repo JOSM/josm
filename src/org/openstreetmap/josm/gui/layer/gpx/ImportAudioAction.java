@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 5715
  */
 public class ImportAudioAction extends AbstractAction {
-    private final GpxLayer layer;
+    private final transient GpxLayer layer;
 
     private static class Markers {
         public boolean timedMarkersOmitted = false;

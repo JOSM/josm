@@ -54,7 +54,7 @@ public class JoinAreasAction extends JosmAction {
     // This will be used to commit commands and unite them into one large command sequence at the end
     private final LinkedList<Command> cmds = new LinkedList<>();
     private int cmdsCount = 0;
-    private final List<Relation> addedRelations = new LinkedList<>();
+    private final transient List<Relation> addedRelations = new LinkedList<>();
 
     /**
      * This helper class describes join areas action result.

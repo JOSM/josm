@@ -377,12 +377,15 @@ public final class Utils {
         if (!out.exists() && !out.mkdirs()) {
             Main.warn("Unable to create directory "+out.getPath());
         }
-        for (File f : in.listFiles()) {
-            File target = new File(out, f.getName());
-            if (f.isDirectory()) {
-                copyDirectory(f, target);
-            } else {
-                copyFile(f, target);
+        File[] files = in.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                File target = new File(out, f.getName());
+                if (f.isDirectory()) {
+                    copyDirectory(f, target);
+                } else {
+                    copyFile(f, target);
+                }
             }
         }
     }
@@ -414,11 +417,13 @@ public final class Utils {
     public static boolean deleteDirectory(File path) {
         if( path.exists() ) {
             File[] files = path.listFiles();
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    deleteDirectory(file);
-                } else if (!file.delete()) {
-                    Main.warn("Unable to delete file: "+file.getPath());
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
+                    } else if (!file.delete()) {
+                        Main.warn("Unable to delete file: "+file.getPath());
+                    }
                 }
             }
         }

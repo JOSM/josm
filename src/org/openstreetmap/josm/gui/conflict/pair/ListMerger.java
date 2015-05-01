@@ -52,7 +52,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     protected OsmPrimitivesTable mergedEntriesTable;
     protected OsmPrimitivesTable theirEntriesTable;
 
-    protected ListMergeModel<T> model;
+    protected transient ListMergeModel<T> model;
 
     private CopyStartLeftAction copyStartLeftAction;
     private CopyBeforeCurrentLeftAction copyBeforeCurrentLeftAction;
@@ -71,7 +71,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     private RemoveMergedAction removeMergedAction;
     private FreezeAction freezeAction;
 
-    private AdjustmentSynchronizer adjustmentSynchronizer;
+    private transient AdjustmentSynchronizer adjustmentSynchronizer;
 
     private  JLabel lblMyVersion;
     private  JLabel lblMergedVersion;

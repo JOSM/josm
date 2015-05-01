@@ -59,8 +59,8 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public class InspectPrimitiveDialog extends ExtendedDialog {
 
-    protected List<OsmPrimitive> primitives;
-    protected OsmDataLayer layer;
+    protected transient List<OsmPrimitive> primitives;
+    protected transient OsmDataLayer layer;
     private JosmTextArea txtMappaint;
     private boolean mappaintTabLoaded;
 

@@ -16,24 +16,24 @@ import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
  * @since 6207
  */
 public abstract class HistoryViewerPanel extends JPanel {
-    
-    protected HistoryBrowserModel model;
+
+    protected transient HistoryBrowserModel model;
     protected VersionInfoPanel referenceInfoPanel;
     protected VersionInfoPanel currentInfoPanel;
-    protected AdjustmentSynchronizer adjustmentSynchronizer;
-    protected SelectionSynchronizer selectionSynchronizer;
+    protected transient AdjustmentSynchronizer adjustmentSynchronizer;
+    protected transient SelectionSynchronizer selectionSynchronizer;
 
     protected HistoryViewerPanel(HistoryBrowserModel model) {
         setModel(model);
         build();
     }
-    
+
     private JScrollPane embedInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
         adjustmentSynchronizer.participateInSynchronizedScrolling(pane.getVerticalScrollBar());
         return pane;
     }
-    
+
     /**
      * Sets the history browsing model.
      * @param model The history browsing model
@@ -47,7 +47,7 @@ public abstract class HistoryViewerPanel extends JPanel {
             registerAsObserver(model);
         }
     }
-    
+
     protected final void unregisterAsObserver(HistoryBrowserModel model) {
         if (currentInfoPanel != null) {
             model.deleteObserver(currentInfoPanel);
@@ -56,7 +56,7 @@ public abstract class HistoryViewerPanel extends JPanel {
             model.deleteObserver(referenceInfoPanel);
         }
     }
-    
+
     protected final void registerAsObserver(HistoryBrowserModel model) {
         if (currentInfoPanel != null) {
             model.addObserver(currentInfoPanel);
@@ -65,11 +65,11 @@ public abstract class HistoryViewerPanel extends JPanel {
             model.addObserver(referenceInfoPanel);
         }
     }
-    
+
     protected abstract JTable buildReferenceTable();
-    
+
     protected abstract JTable buildCurrentTable();
-    
+
     private void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();

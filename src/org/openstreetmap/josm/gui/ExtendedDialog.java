@@ -76,7 +76,7 @@ public class ExtendedDialog extends JDialog {
     public static final int DialogClosedOtherwise = 0;
     private boolean toggleable = false;
     private String rememberSizePref = "";
-    private WindowGeometry defaultWindowGeometry = null;
+    private transient WindowGeometry defaultWindowGeometry = null;
     private String togglePref = "";
     private int toggleValue = -1;
     private ConditionalOptionPaneUtil.MessagePanel togglePanel;
@@ -84,11 +84,11 @@ public class ExtendedDialog extends JDialog {
     private Component content;
     private final String[] bTexts;
     private String[] bToolTipTexts;
-    private Icon[] bIcons;
-    private List<Integer> cancelButtonIdx = Collections.emptyList();
+    private transient Icon[] bIcons;
+    private transient List<Integer> cancelButtonIdx = Collections.emptyList();
     private int defaultButtonIdx = 1;
     protected JButton defaultButton = null;
-    private Icon icon;
+    private transient Icon icon;
     private boolean modal;
     private boolean focusOnDefaultButton = false;
 
@@ -104,8 +104,8 @@ public class ExtendedDialog extends JDialog {
     private boolean placeContentInScrollPane;
 
     // For easy access when inherited
-    protected Insets contentInsets = new Insets(10,5,0,5);
-    protected List<JButton> buttons = new ArrayList<>();
+    protected transient Insets contentInsets = new Insets(10,5,0,5);
+    protected transient List<JButton> buttons = new ArrayList<>();
 
     /**
      * This method sets up the most basic options for the dialog. Add more

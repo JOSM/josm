@@ -99,8 +99,11 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 return;
             }
 
-            for (File f: deletedLayersDir.listFiles()) {
-                deletedLayers.add(f); // FIXME: sort by mtime
+            File[] files = deletedLayersDir.listFiles();
+            if (files != null) {
+                for (File f: files) {
+                    deletedLayers.add(f); // FIXME: sort by mtime
+                }
             }
 
             timer = new Timer(true);

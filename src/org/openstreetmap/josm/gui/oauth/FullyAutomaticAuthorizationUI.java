@@ -59,8 +59,8 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     private JosmTextField tfUserName;
     private JosmPasswordField tfPassword;
-    private UserNameValidator valUserName;
-    private PasswordValidator valPassword;
+    private transient UserNameValidator valUserName;
+    private transient PasswordValidator valPassword;
     private AccessTokenInfoPanel pnlAccessTokenInfo;
     private OsmPrivilegesPanel pnlOsmPrivileges;
     private JPanel pnlPropertiesPanel;

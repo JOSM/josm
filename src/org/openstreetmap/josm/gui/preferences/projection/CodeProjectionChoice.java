@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,11 +48,11 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         public JosmTextField filter;
         private ProjectionCodeListModel model;
         public JList<String> selectionList;
-        private List<String> data;
-        private List<String> filteredData;
+        private transient List<String> data;
+        private transient List<String> filteredData;
         private static final String DEFAULT_CODE = "EPSG:3857";
         private String lastCode = DEFAULT_CODE;
-        private ActionListener listener;
+        private transient ActionListener listener;
 
         public CodeSelectionPanel(String initialCode, ActionListener listener) {
             this.listener = listener;
@@ -66,7 +67,8 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         /**
          * Comparator that compares the number part of the code numerically.
          */
-        private static class CodeComparator implements Comparator<String> {
+        private static class CodeComparator implements Comparator<String>, Serializable {
+            private static final long serialVersionUID = 1L;
             private final Pattern codePattern = Pattern.compile("([a-zA-Z]+):(\\d+)");
             @Override
             public int compare(String c1, String c2) {

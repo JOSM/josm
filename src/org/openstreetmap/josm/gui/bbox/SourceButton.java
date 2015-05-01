@@ -28,7 +28,7 @@ public class SourceButton extends JComponent {
     private static final int TOP_PADDING = 5;
     private static final int BOTTOM_PADDING = 5;
 
-    private TileSource[] sources;
+    private transient TileSource[] sources;
 
     private final ImageIcon enlargeImage;
     private final ImageIcon shrinkImage;
@@ -56,7 +56,7 @@ public class SourceButton extends JComponent {
         addMouseListener(mouseListener);
     }
 
-    private final MouseListener mouseListener = new MouseAdapter() {
+    private final transient MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1) {

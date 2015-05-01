@@ -204,7 +204,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         /** The table of default providers **/
         public final JTable defaultTable;
         /** The selection listener synchronizing map display with table of default providers **/
-        private final DefListSelectionListener defaultTableListener;
+        private final transient DefListSelectionListener defaultTableListener;
         /** The map displaying imagery bounds of selected default providers **/
         public final JMapViewer defaultMap;
 
@@ -224,7 +224,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
         // Private members
         private final PreferenceTabbedPane gui;
-        private final ImageryLayerInfo layerInfo;
+        private final transient ImageryLayerInfo layerInfo;
 
         /**
          * class to render the URL information of Imagery source
@@ -232,7 +232,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
          */
         private static class ImageryURLTableCellRenderer extends DefaultTableCellRenderer {
 
-            private List<ImageryInfo> layers;
+            private transient List<ImageryInfo> layers;
 
             public ImageryURLTableCellRenderer(List<ImageryInfo> layers) {
                 this.layers = layers;
@@ -791,9 +791,12 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     static class OffsetBookmarksPanel extends JPanel {
-        private List<OffsetBookmark> bookmarks = OffsetBookmark.allBookmarks;
+        private transient List<OffsetBookmark> bookmarks = OffsetBookmark.allBookmarks;
         private OffsetsBookmarksModel model = new OffsetsBookmarksModel();
 
+        /**
+         * Constructs a new {@code OffsetBookmarksPanel}.
+         */
         public OffsetBookmarksPanel(final PreferenceTabbedPane gui) {
             super(new GridBagLayout());
             final JTable list = new JTable(model) {

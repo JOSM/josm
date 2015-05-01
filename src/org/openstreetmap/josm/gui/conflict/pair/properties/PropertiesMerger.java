@@ -47,7 +47,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     private JLabel lblMyReferrers;
     private JLabel lblTheirReferrers;
 
-    private final PropertiesMergeModel model;
+    private final transient PropertiesMergeModel model;
 
     protected JLabel buildValueLabel(String name) {
         JLabel lbl = new JLabel();

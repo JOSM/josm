@@ -193,7 +193,7 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     static class OsmPrimitiveListModel extends AbstractListModel<OsmPrimitive> {
-        private List<OsmPrimitive> data;
+        private transient List<OsmPrimitive> data;
 
         public OsmPrimitiveListModel() {
         }

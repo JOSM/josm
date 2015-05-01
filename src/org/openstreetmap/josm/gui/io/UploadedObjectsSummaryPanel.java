@@ -154,7 +154,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
      *
      */
     static class PrimitiveListModel extends AbstractListModel<OsmPrimitive> {
-        private List<OsmPrimitive> primitives;
+        private transient List<OsmPrimitive> primitives;
 
         public PrimitiveListModel() {
             primitives = new ArrayList<>();

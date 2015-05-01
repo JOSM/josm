@@ -38,8 +38,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class ListListEditor extends ExtendedDialog {
 
     private EntryListModel entryModel;
-    private List<List<String>> data;
-    private PrefEntry entry;
+    private transient List<List<String>> data;
+    private transient PrefEntry entry;
 
     private JList<String> entryList;
     private Integer entryIdx;

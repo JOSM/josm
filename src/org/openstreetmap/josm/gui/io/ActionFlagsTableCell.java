@@ -37,9 +37,9 @@ import org.openstreetmap.josm.tools.GBC;
  */
 class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
     private final JCheckBox[] checkBoxes = new JCheckBox[2];
-    private final CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
+    private final transient CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
 
-    private ActionListener al = new ActionListener() {
+    private transient ActionListener al = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             cellEditorSupport.fireEditingStopped();

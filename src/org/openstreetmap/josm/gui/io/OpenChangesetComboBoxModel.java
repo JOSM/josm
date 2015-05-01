@@ -17,8 +17,8 @@ import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
  *
  */
 public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> implements ChangesetCacheListener {
-    private List<Changeset> changesets;
-    private Changeset selectedChangeset = null;
+    private transient List<Changeset> changesets;
+    private transient Changeset selectedChangeset = null;
 
     protected Changeset getChangesetById(long id) {
         for (Changeset cs : changesets) {

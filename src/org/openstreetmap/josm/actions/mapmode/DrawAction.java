@@ -75,20 +75,20 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private final Cursor cursorJoinNode;
     private final Cursor cursorJoinWay;
 
-    private Node lastUsedNode = null;
+    private transient Node lastUsedNode = null;
     private static final double PHI = Math.toRadians(90);
     private double toleranceMultiplier;
 
-    private Node mouseOnExistingNode;
-    private Set<Way> mouseOnExistingWays = new HashSet<>();
+    private transient Node mouseOnExistingNode;
+    private transient Set<Way> mouseOnExistingWays = new HashSet<>();
     // old highlights store which primitives are currently highlighted. This
     // is true, even if target highlighting is disabled since the status bar
     // derives its information from this list as well.
-    private Set<OsmPrimitive> oldHighlights = new HashSet<>();
+    private transient Set<OsmPrimitive> oldHighlights = new HashSet<>();
     // new highlights contains a list of primitives that should be highlighted
     // but haven’t been so far. The idea is to compare old and new and only
     // repaint if there are changes.
-    private Set<OsmPrimitive> newHighlights = new HashSet<>();
+    private transient Set<OsmPrimitive> newHighlights = new HashSet<>();
     private boolean drawHelperLine;
     private boolean wayIsFinished = false;
     private boolean drawTargetHighlight;
@@ -96,21 +96,21 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private Point oldMousePos;
     private Color rubberLineColor;
 
-    private Node currentBaseNode;
-    private Node previousNode;
+    private transient Node currentBaseNode;
+    private transient Node previousNode;
     private EastNorth currentMouseEastNorth;
 
-    private final SnapHelper snapHelper = new SnapHelper();
+    private final transient SnapHelper snapHelper = new SnapHelper();
 
-    private final Shortcut backspaceShortcut;
+    private final transient Shortcut backspaceShortcut;
     private final BackSpaceAction backspaceAction;
-    private final Shortcut snappingShortcut;
+    private final transient Shortcut snappingShortcut;
     private boolean ignoreNextKeyRelease;
 
     private final SnapChangeAction snapChangeAction;
     private final JCheckBoxMenuItem snapCheckboxMenuItem;
     private boolean useRepeatedShortcut;
-    private Stroke rubberLineStroke;
+    private transient Stroke rubberLineStroke;
     private static final BasicStroke BASIC_STROKE = new BasicStroke(1);
 
     private static int snapToIntersectionThreshold;

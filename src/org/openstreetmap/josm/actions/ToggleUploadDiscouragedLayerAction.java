@@ -10,8 +10,8 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public class ToggleUploadDiscouragedLayerAction extends JosmAction {
 
-    private OsmDataLayer layer;
-    
+    private transient OsmDataLayer layer;
+
     public ToggleUploadDiscouragedLayerAction(OsmDataLayer layer) {
         super(tr("Encourage/discourage upload"), null, null, null, false);
         this.layer = layer;

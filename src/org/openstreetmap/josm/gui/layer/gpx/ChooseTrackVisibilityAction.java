@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
@@ -46,7 +47,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * they can be chosen from the gpx layer context menu.
  */
 public class ChooseTrackVisibilityAction extends AbstractAction {
-    private final GpxLayer layer;
+    private final transient GpxLayer layer;
 
     private DateFilterPanel dateFilter;
     private JTable table;
@@ -88,7 +89,9 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     /**
      * Comparator for TrackLength objects
      */
-    private static final class LengthContentComparator implements Comparator<TrackLength> {
+    private static final class LengthContentComparator implements Comparator<TrackLength>, Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         /**
          * Compare 2 TrackLength objects relative to the real length

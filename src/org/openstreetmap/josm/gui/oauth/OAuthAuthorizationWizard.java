@@ -332,7 +332,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     }
 
     class AcceptAccessTokenAction extends AbstractAction implements PropertyChangeListener {
-        private OAuthToken token;
+        private transient OAuthToken token;
 
         public AcceptAccessTokenAction() {
             putValue(NAME, tr("Accept Access Token"));

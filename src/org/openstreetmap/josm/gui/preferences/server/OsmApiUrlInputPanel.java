@@ -49,12 +49,12 @@ public class OsmApiUrlInputPanel extends JPanel {
     private JLabel lblValid;
     private JLabel lblApiUrl;
     private JosmTextField tfOsmServerUrl;
-    private ApiUrlValidator valOsmServerUrl;
+    private transient ApiUrlValidator valOsmServerUrl;
     private SideButton btnTest;
     /** indicates whether to use the default OSM URL or not */
     private JCheckBox cbUseDefaultServerUrl;
 
-    private ApiUrlPropagator propagator;
+    private transient ApiUrlPropagator propagator;
 
     protected JComponent buildDefaultServerUrlPanel() {
         cbUseDefaultServerUrl = new JCheckBox(tr("<html>Use the default OSM server URL (<strong>{0}</strong>)</html>", OsmApi.DEFAULT_API_URL));

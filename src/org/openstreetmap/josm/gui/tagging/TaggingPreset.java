@@ -85,10 +85,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * The types as preparsed collection.
      */
     public EnumSet<TaggingPresetType> types;
-    public List<TaggingPresetItem> data = new LinkedList<>();
-    public Roles roles;
-    public TemplateEntry nameTemplate;
-    public Match nameTemplateFilter;
+    public transient List<TaggingPresetItem> data = new LinkedList<>();
+    public transient Roles roles;
+    public transient TemplateEntry nameTemplate;
+    public transient Match nameTemplateFilter;
 
     /**
      * Create an empty tagging preset. This will not have any items and

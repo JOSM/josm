@@ -152,17 +152,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final JPopupMenu blankSpaceMenu = new JPopupMenu();
 
     // Popup menu handlers
-    private final PopupMenuHandler tagMenuHandler = new PopupMenuHandler(tagMenu);
-    private final PopupMenuHandler membershipMenuHandler = new PopupMenuHandler(membershipMenu);
-    private final PopupMenuHandler blankSpaceMenuHandler = new PopupMenuHandler(blankSpaceMenu);
+    private final transient PopupMenuHandler tagMenuHandler = new PopupMenuHandler(tagMenu);
+    private final transient PopupMenuHandler membershipMenuHandler = new PopupMenuHandler(membershipMenu);
+    private final transient PopupMenuHandler blankSpaceMenuHandler = new PopupMenuHandler(blankSpaceMenu);
 
-    private final Map<String, Map<String, Integer>> valueCount = new TreeMap<>();
+    private final transient Map<String, Map<String, Integer>> valueCount = new TreeMap<>();
     /**
      * This sub-object is responsible for all adding and editing of tags
      */
-    private final TagEditHelper editHelper = new TagEditHelper(tagData, valueCount);
+    private final transient TagEditHelper editHelper = new TagEditHelper(tagData, valueCount);
 
-    private final DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
+    private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private final HelpAction helpAction = new HelpAction();
     private final PasteValueAction pasteValueAction = new PasteValueAction();
     private final CopyValueAction copyValueAction = new CopyValueAction();
@@ -186,7 +186,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
     private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
 
-    private final HighlightHelper highlightHelper= new HighlightHelper();
+    private final transient HighlightHelper highlightHelper= new HighlightHelper();
 
     /**
      * The Add button (needed to be able to disable it)
@@ -211,7 +211,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final JLabel selectSth = new JLabel("<html><p>"
             + tr("Select objects for which to change tags.") + "</p></html>");
 
-    private final PresetHandler presetHandler = new PresetHandler() {
+    private final transient PresetHandler presetHandler = new PresetHandler() {
         @Override public void updateTags(List<Tag> tags) {
             Command command = TaggingPreset.createCommand(getSelection(), tags);
             if (command != null) Main.main.undoRedo.add(command);

@@ -62,8 +62,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     private final JTree undoTree = new JTree(undoTreeModel);
     private final JTree redoTree = new JTree(redoTreeModel);
 
-    private UndoRedoSelectionListener undoSelectionListener;
-    private UndoRedoSelectionListener redoSelectionListener;
+    private transient UndoRedoSelectionListener undoSelectionListener;
+    private transient UndoRedoSelectionListener redoSelectionListener;
 
     private JScrollPane scrollPane;
     private JSeparator separator = new JSeparator();
@@ -245,7 +245,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     /**
      * Simple listener setup to update the button enabled state when the side dialog shows.
      */
-    private Set<IEnabledStateUpdating> showNotifyListener = new LinkedHashSet<>();
+    private transient Set<IEnabledStateUpdating> showNotifyListener = new LinkedHashSet<>();
 
     private void addShowNotifyListener(IEnabledStateUpdating listener) {
         showNotifyListener.add(listener);

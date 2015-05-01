@@ -46,9 +46,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class UnGlueAction extends JosmAction {
 
-    private Node selectedNode;
-    private Way selectedWay;
-    private Set<Node> selectedNodes;
+    private transient Node selectedNode;
+    private transient Way selectedWay;
+    private transient Set<Node> selectedNodes;
 
     /**
      * Create a new UnGlueAction.

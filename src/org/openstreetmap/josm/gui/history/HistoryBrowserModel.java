@@ -530,7 +530,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      */
     public class TagTableModel extends AbstractTableModel {
 
-        private List<String> keys;
+        private transient List<String> keys;
         private PointInTimeType pointInTimeType;
 
         protected void initKeyList() {

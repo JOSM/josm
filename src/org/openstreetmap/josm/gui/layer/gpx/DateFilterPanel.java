@@ -25,9 +25,9 @@ public class DateFilterPanel extends JPanel {
     private DateEditorWithSlider dateFrom = new DateEditorWithSlider(tr("From"));
     private DateEditorWithSlider dateTo = new DateEditorWithSlider(tr("To"));
     private JCheckBox noTimestampCb  = new JCheckBox(tr("No timestamp"));
-    private GpxLayer layer;
+    private transient GpxLayer layer;
 
-    private ActionListener filterAppliedListener;
+    private transient ActionListener filterAppliedListener;
 
     private final String PREF_DATE_0;
     private final String PREF_DATE_MIN;
@@ -66,7 +66,7 @@ public class DateFilterPanel extends JPanel {
         noTimestampCb.addChangeListener(changeListener);
     }
 
-    private ChangeListener changeListener = new ChangeListener() {
+    private transient ChangeListener changeListener = new ChangeListener() {
         @Override public void stateChanged(ChangeEvent e) {
             if (isEnabled()) applyFilterWithDelay();
         }

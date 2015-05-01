@@ -8,6 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SimplePrimitiveId implements PrimitiveId, Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private final long id;
     private final OsmPrimitiveType type;
 

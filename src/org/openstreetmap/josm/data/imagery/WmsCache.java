@@ -226,17 +226,23 @@ public class WmsCache {
                     referencedFiles.add(ce.filename);
                 }
 
-                for (File file: projectionDir.listFiles()) {
-                    if (!referencedFiles.contains(file.getName())) {
-                        file.delete();
+                File[] files = projectionDir.listFiles();
+                if (files != null) {
+                    for (File file: files) {
+                        if (!referencedFiles.contains(file.getName())) {
+                            file.delete();
+                        }
                     }
                 }
             }
         }
 
-        for (File projectionDir: cacheDir.listFiles()) {
-            if (projectionDir.isDirectory() && !usedProjections.contains(projectionDir.getName())) {
-                Utils.deleteDirectory(projectionDir);
+        File[] files = cacheDir.listFiles();
+        if (files != null) {
+            for (File projectionDir: files) {
+                if (projectionDir.isDirectory() && !usedProjections.contains(projectionDir.getName())) {
+                    Utils.deleteDirectory(projectionDir);
+                }
             }
         }
     }

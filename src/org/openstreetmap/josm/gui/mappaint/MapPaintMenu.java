@@ -29,7 +29,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
 
     private static class MapPaintAction extends JosmAction {
 
-        private StyleSource style;
+        private transient StyleSource style;
         private JCheckBoxMenuItem button;
 
         public MapPaintAction(StyleSource style) {
@@ -77,7 +77,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
             return false;
         }
     }
-    private final Map<String, MapPaintAction> actions = new HashMap<>();
+    private final transient Map<String, MapPaintAction> actions = new HashMap<>();
 
     /**
      * Constructs a new {@code MapPaintMenu}

@@ -31,7 +31,7 @@ public class CoordinateInfoViewer extends JPanel {
     public static final Color BGCOLOR_DIFFERENCE = new Color(255,197,197);
 
     /** the model */
-    private HistoryBrowserModel model;
+    private transient HistoryBrowserModel model;
     /** the common info panel for the history node in role REFERENCE_POINT_IN_TIME */
     private VersionInfoPanel referenceInfoPanel;
     /** the common info panel for the history node in role CURRENT_POINT_IN_TIME */
@@ -170,7 +170,7 @@ public class CoordinateInfoViewer extends JPanel {
 
         private JLabel lblLat;
         private JLabel lblLon;
-        private HistoryBrowserModel model;
+        private transient HistoryBrowserModel model;
         private PointInTimeType role;
 
         protected HistoryOsmPrimitive getPrimitive() {

@@ -121,7 +121,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     private MouseEvent oldEvent = null;
 
     private Mode mode = null;
-    private final SelectionManager selectionManager;
+    private final transient SelectionManager selectionManager;
     private boolean cancelDrawMode = false;
     private boolean drawTargetHighlight;
     private boolean didMouseDrag = false;
@@ -170,7 +170,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * to remove the highlight from them again as otherwise the whole data
      * set would have to be checked.
      */
-    private Set<OsmPrimitive> oldHighlights = new HashSet<>();
+    private transient Set<OsmPrimitive> oldHighlights = new HashSet<>();
 
     /**
      * Create a new SelectAction
@@ -946,8 +946,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         this.lassoMode = lassoMode;
     }
 
-    private CycleManager cycleManager = new CycleManager();
-    private VirtualManager virtualManager = new VirtualManager();
+    private transient CycleManager cycleManager = new CycleManager();
+    private transient VirtualManager virtualManager = new VirtualManager();
 
     private class CycleManager {
 

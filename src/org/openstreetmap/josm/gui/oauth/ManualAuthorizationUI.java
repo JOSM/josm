@@ -41,9 +41,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class ManualAuthorizationUI extends AbstractAuthorizationUI{
 
     private JosmTextField tfAccessTokenKey;
-    private AccessTokenKeyValidator valAccessTokenKey;
+    private transient AccessTokenKeyValidator valAccessTokenKey;
     private JosmTextField tfAccessTokenSecret;
-    private AccessTokenSecretValidator valAccessTokenSecret;
+    private transient AccessTokenSecretValidator valAccessTokenSecret;
     private JCheckBox cbSaveToPreferences;
     private HtmlPanel pnlMessage;
 

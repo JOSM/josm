@@ -41,7 +41,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
     private JTable mergedTable;
     private JTable theirTable;
     private final TagMergeModel model;
-    private AdjustmentSynchronizer adjustmentSynchronizer;
+    private transient AdjustmentSynchronizer adjustmentSynchronizer;
 
     /**
      * embeds table in a new {@link JScrollPane} and returns th scroll pane

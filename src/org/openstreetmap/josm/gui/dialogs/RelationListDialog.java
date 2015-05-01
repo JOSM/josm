@@ -95,7 +95,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     /** the popup menu and its handler */
     private final JPopupMenu popupMenu = new JPopupMenu();
-    private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
+    private final transient PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
     private final JosmTextField filter;
 
@@ -115,7 +115,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     /** add all selected primitives to the given relations */
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
 
-    private final HighlightHelper highlightHelper = new HighlightHelper();
+    private final transient HighlightHelper highlightHelper = new HighlightHelper();
     private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
 
     /**
@@ -389,10 +389,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      *
      */
     private class RelationListModel extends AbstractListModel<Relation> {
-        private final List<Relation> relations = new ArrayList<>();
-        private List<Relation> filteredRelations;
+        private final transient List<Relation> relations = new ArrayList<>();
+        private transient List<Relation> filteredRelations;
         private DefaultListSelectionModel selectionModel;
-        private SearchCompiler.Match filter;
+        private transient SearchCompiler.Match filter;
 
         public RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;

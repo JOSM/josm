@@ -12,12 +12,12 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
- * Ancestor for all actions that want to work with relation collection and 
+ * Ancestor for all actions that want to work with relation collection and
  * to be disabled if the collection is empty
  * @since 5793
  */
 public abstract class AbstractRelationAction extends AbstractAction implements OsmPrimitiveAction {
-    protected Collection<Relation> relations = Collections.<Relation>emptySet();
+    protected transient Collection<Relation> relations = Collections.<Relation>emptySet();
 
     protected static final Collection<Relation> getRelations(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null || primitives.isEmpty()) {
@@ -27,13 +27,13 @@ public abstract class AbstractRelationAction extends AbstractAction implements O
                     primitives, OsmPrimitive.relationPredicate);
         }
     }
-    
+
     @Override
     public void setPrimitives(Collection<? extends OsmPrimitive> primitives) {
         this.relations = getRelations(primitives);
         updateEnabledState();
     }
-    
+
     protected void updateEnabledState() {
         setEnabled(!relations.isEmpty());
     }

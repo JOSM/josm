@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,10 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
  * </ul>
  * @since 4113
  */
-public class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
+public class OsmPrimitiveComparator implements Comparator<OsmPrimitive>, Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private final Map<OsmPrimitive, String> cache = new HashMap<>();
     private final boolean relationsFirst;
     private final boolean quick;

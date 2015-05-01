@@ -55,7 +55,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     private JosmComboBox<Changeset> cbOpenChangesets;
     private JCheckBox cbCloseAfterUpload;
     private OpenChangesetComboBoxModel model;
-    private ChangesetCommentModel changesetCommentModel;
+    private transient ChangesetCommentModel changesetCommentModel;
 
     /**
      * builds the GUI

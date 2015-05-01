@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.projection.Projection;
  */
 public class CachedLatLon extends LatLon {
     private EastNorth eastNorth;
-    private Projection proj;
+    private transient Projection proj;
 
     public CachedLatLon(double lat, double lon) {
         super(lat, lon);

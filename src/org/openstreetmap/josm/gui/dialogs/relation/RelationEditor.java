@@ -50,15 +50,15 @@ public abstract class RelationEditor extends ExtendedDialog {
     /**
      * The relation that this editor is working on.
      */
-    private Relation relation;
+    private transient Relation relation;
 
     /**
      * The version of the relation when editing is started.  This is
      * null if a new relation is created. */
-    private Relation relationSnapshot;
+    private transient Relation relationSnapshot;
 
     /** the data layer the relation belongs to */
-    private OsmDataLayer layer;
+    private transient OsmDataLayer layer;
 
     /**
      * This is a factory method that creates an appropriate RelationEditor

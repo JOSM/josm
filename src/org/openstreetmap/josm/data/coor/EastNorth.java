@@ -10,6 +10,8 @@ package org.openstreetmap.josm.data.coor;
  */
 public class EastNorth extends Coordinate {
 
+    private static final long serialVersionUID = 1L;
+
     public EastNorth(double east, double north) {
         super(east,north);
     }

@@ -44,7 +44,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
 
     /** the additional actions in popup menu */
     private ZoomToGapAction zoomToGap;
-    private HighlightHelper highlightHelper = new HighlightHelper();
+    private transient HighlightHelper highlightHelper = new HighlightHelper();
     private boolean highlightEnabled;
 
     /**
@@ -121,7 +121,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         scrollRectToVisible(getCellRect(index, 0, true));
     }
 
-    private ListSelectionListener highlighterListener = new ListSelectionListener() {
+    private transient ListSelectionListener highlighterListener = new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent lse) {
                 if (Main.isDisplayingMapView()) {
@@ -268,6 +268,9 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
 
     private class ZoomToGapAction extends AbstractAction implements LayerChangeListener, ListSelectionListener {
 
+        /**
+         * Constructs a new {@code ZoomToGapAction}.
+         */
         public ZoomToGapAction() {
             putValue(NAME, tr("Zoom to Gap"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to the gap in the way sequence"));
@@ -278,7 +281,8 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             return getMemberTableModel().getWayConnection(getSelectedRows()[0]);
         }
 
-        private final Collection<Direction> connectionTypesOfInterest = Arrays.asList(WayConnectionType.Direction.FORWARD, WayConnectionType.Direction.BACKWARD);
+        private final transient Collection<Direction> connectionTypesOfInterest = Arrays.asList(
+                WayConnectionType.Direction.FORWARD, WayConnectionType.Direction.BACKWARD);
 
         private boolean hasGap() {
             WayConnectionType connectionType = getConnectionType();

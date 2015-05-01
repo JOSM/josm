@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class SplashScreen extends JFrame {
 
-    private final SwingRenderingProgressMonitor progressMonitor;
+    private final transient SwingRenderingProgressMonitor progressMonitor;
 
     /**
      * Constructs a new {@code SplashScreen}.
