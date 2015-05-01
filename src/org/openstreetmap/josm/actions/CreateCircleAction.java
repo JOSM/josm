@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -114,12 +116,7 @@ public final class CreateCircleAction extends JosmAction {
 
         @Override
         public int compare(PolarNode pc1, PolarNode pc2) {
-            if(pc1.a < pc2.a)
-                return -1;
-            else if(pc1.a == pc2.a)
-                return 0;
-            else
-                return 1;
+            return Double.compare(pc1.a, pc2.a);
         }
     }
 
@@ -136,27 +133,20 @@ public final class CreateCircleAction extends JosmAction {
         }
 
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        List<Node> nodes = new LinkedList<>();
-        Way existingWay = null;
+        List<Node> nodes = OsmPrimitive.getFilteredList(sel, Node.class);
+        List<Way> ways = OsmPrimitive.getFilteredList(sel, Way.class);
 
-        for (OsmPrimitive osm : sel)
-            if (osm instanceof Node) {
-                nodes.add((Node)osm);
-            }
+        Way existingWay = null;
 
         // special case if no single nodes are selected and exactly one way is:
         // then use the way's nodes
-        if (nodes.isEmpty() && (sel.size() == 1)) {
-            for (OsmPrimitive osm : sel)
-                if (osm instanceof Way) {
-                    existingWay = ((Way)osm);
-                    for (Node n : ((Way)osm).getNodes())
-                    {
-                        if(!nodes.contains(n)) {
-                            nodes.add(n);
-                        }
-                    }
+        if (nodes.isEmpty() && (ways.size() == 1)) {
+            existingWay = ways.get(0);
+            for (Node n : existingWay.getNodes()) {
+                if(!nodes.contains(n)) {
+                    nodes.add(n);
                 }
+            }
         }
 
         if (nodes.size() < 2 || nodes.size() > 3) {
@@ -209,9 +199,9 @@ public final class CreateCircleAction extends JosmAction {
                 numberOfNodesInCircle >= nodes.size() ? numberOfNodesInCircle - nodes.size() : 0);
 
         // build a way for the circle
-        List<Node> wayToAdd = new ArrayList<>();
+        List<Node> nodesToAdd = new ArrayList<>();
         for(int i = 0; i < nodes.size(); i++) {
-            wayToAdd.add(angles[i].node);
+            nodesToAdd.add(angles[i].node);
             double delta = angles[(i+1) % nodes.size()].a - angles[i].a;
             if(delta < 0)
                 delta += 2*Math.PI;
@@ -225,23 +215,64 @@ public final class CreateCircleAction extends JosmAction {
                     return;
                 }
                 Node n = new Node(ll);
-                wayToAdd.add(n);
+                nodesToAdd.add(n);
                 cmds.add(new AddCommand(n));
             }
         }
-        wayToAdd.add(wayToAdd.get(0)); // close the circle
+        nodesToAdd.add(nodesToAdd.get(0)); // close the circle
+        if (existingWay != null && existingWay.getNodesCount() >= 3) {
+            nodesToAdd = orderNodesByWay(nodesToAdd, existingWay);
+        } else {
+            nodesToAdd = orderNodesByTrafficHand(nodesToAdd);
+        }
         if (existingWay == null) {
             Way newWay = new Way();
-            newWay.setNodes(wayToAdd);
+            newWay.setNodes(nodesToAdd);
             cmds.add(new AddCommand(newWay));
         } else {
             Way newWay = new Way(existingWay);
-            newWay.setNodes(wayToAdd);
+            newWay.setNodes(nodesToAdd);
             cmds.add(new ChangeCommand(existingWay, newWay));
         }
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Create Circle"), cmds));
         Main.map.repaint();
+    }
+
+    /**
+     * Order nodes according to left/right hand traffic.
+     * @param nodes Nodes list to be ordered.
+     * @return Modified nodes list ordered according hand traffic.
+     */
+    private List<Node> orderNodesByTrafficHand(List<Node> nodes) {
+        boolean rightHandTraffic = true;
+        for (Node n: nodes) {
+            if (!RightAndLefthandTraffic.isRightHandTraffic(n.getCoor())) {
+                rightHandTraffic = false;
+                break;
+            }
+        }
+        if (rightHandTraffic == Geometry.isClockwise(nodes)) {
+            Collections.reverse(nodes);
+        }
+        return nodes;
+    }
+
+    /**
+     * Order nodes according to way direction.
+     * @param nodes Nodes list to be ordered.
+     * @param way Way used to determine direction.
+     * @return Modified nodes list with same direction as way.
+     */
+    private List<Node> orderNodesByWay(List<Node> nodes, Way way) {
+        List<Node> wayNodes = way.getNodes();
+        if (!way.isClosed()) {
+            wayNodes.add(wayNodes.get(0));
+        }
+        if (Geometry.isClockwise(wayNodes) != Geometry.isClockwise(nodes)) {
+            Collections.reverse(nodes);
+        }
+        return nodes;
     }
 
     private static void notifyNodesNotOnCircle() {
