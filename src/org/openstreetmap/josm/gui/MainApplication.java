@@ -561,7 +561,7 @@ public class MainApplication extends Main {
                     } catch (Exception e) {
                     }
                     if(wasv6 && !hasv6) {
-                        Main.info(tr("Automatics detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
+                        Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
                     }
                     Main.pref.put("validated.ipv6", hasv6);
                 }
