@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +20,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action to use the Notes search API to download all notes matching a given search term.
@@ -97,12 +96,7 @@ public class SearchNotesDownloadAction extends JosmAction {
         sb.append("&closed=");
         sb.append(closedLimit);
         sb.append("&q=");
-        try {
-            sb.append(URLEncoder.encode(searchTerm, "UTF-8"));
-        } catch (UnsupportedEncodingException ex) {
-            Main.error(ex, true); // thrown if UTF-8 isn't supported which seems unlikely.
-            return;
-        }
+        sb.append(Utils.encodeUrl(searchTerm));
 
         new DownloadNotesTask().loadUrl(false, sb.toString(), null);
     }

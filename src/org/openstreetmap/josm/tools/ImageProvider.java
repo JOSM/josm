@@ -26,11 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -286,6 +283,7 @@ public class ImageProvider {
      * Specify a zip file where the image is located.
      *
      * (optional)
+     * @param archive zip file where the image is located
      * @return the current object, for convenience
      */
     public ImageProvider setArchive(File archive) {
@@ -815,51 +813,47 @@ public class ImageProvider {
      * @return the requested image or null if the request failed
      */
     private static ImageResource getIfAvailableDataUrl(String url) {
-        try {
-            Matcher m = dataUrlPattern.matcher(url);
-            if (m.matches()) {
-                String mediatype = m.group(1);
-                String base64 = m.group(2);
-                String data = m.group(3);
-                byte[] bytes;
-                if (";base64".equals(base64)) {
-                    bytes = DatatypeConverter.parseBase64Binary(data);
-                } else {
-                    try {
-                        bytes = URLDecoder.decode(data, "UTF-8").getBytes(StandardCharsets.UTF_8);
-                    } catch (IllegalArgumentException ex) {
-                        Main.warn("Unable to decode URL data part: "+ex.getMessage() + " (" + data + ")");
-                        return null;
-                    }
-                }
-                if ("image/svg+xml".equals(mediatype)) {
-                    String s = new String(bytes, StandardCharsets.UTF_8);
-                    SVGDiagram svg = null;
-                    synchronized (getSvgUniverse()) {
-                        URI uri = getSvgUniverse().loadSVG(new StringReader(s), URLEncoder.encode(s, "UTF-8"));
-                        svg = getSvgUniverse().getDiagram(uri);
-                    }
-                    if (svg == null) {
-                        Main.warn("Unable to process svg: "+s);
-                        return null;
-                    }
-                    return new ImageResource(svg);
-                } else {
-                    try {
-                        // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
-                        // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
-                        // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
-                        Image img = read(new ByteArrayInputStream(bytes), false, true);
-                        return img == null ? null : new ImageResource(img);
-                    } catch (IOException e) {
-                        Main.warn("IOException while reading image: "+e.getMessage());
-                    }
+        Matcher m = dataUrlPattern.matcher(url);
+        if (m.matches()) {
+            String mediatype = m.group(1);
+            String base64 = m.group(2);
+            String data = m.group(3);
+            byte[] bytes;
+            if (";base64".equals(base64)) {
+                bytes = DatatypeConverter.parseBase64Binary(data);
+            } else {
+                try {
+                    bytes = Utils.decodeUrl(data).getBytes(StandardCharsets.UTF_8);
+                } catch (IllegalArgumentException ex) {
+                    Main.warn("Unable to decode URL data part: "+ex.getMessage() + " (" + data + ")");
+                    return null;
                 }
             }
-            return null;
-        } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
+            if ("image/svg+xml".equals(mediatype)) {
+                String s = new String(bytes, StandardCharsets.UTF_8);
+                SVGDiagram svg = null;
+                synchronized (getSvgUniverse()) {
+                    URI uri = getSvgUniverse().loadSVG(new StringReader(s), Utils.encodeUrl(s));
+                    svg = getSvgUniverse().getDiagram(uri);
+                }
+                if (svg == null) {
+                    Main.warn("Unable to process svg: "+s);
+                    return null;
+                }
+                return new ImageResource(svg);
+            } else {
+                try {
+                    // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
+                    // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
+                    // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
+                    Image img = read(new ByteArrayInputStream(bytes), false, true);
+                    return img == null ? null : new ImageResource(img);
+                } catch (IOException e) {
+                    Main.warn("IOException while reading image: "+e.getMessage());
+                }
+            }
         }
+        return null;
     }
 
     /**

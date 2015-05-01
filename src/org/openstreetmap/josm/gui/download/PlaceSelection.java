@@ -363,7 +363,7 @@ public class PlaceSelection implements DownloadSelection {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            String urlString = useserver.url+java.net.URLEncoder.encode(searchExpression, "UTF-8");
+            String urlString = useserver.url+Utils.encodeUrl(searchExpression);
 
             try {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));

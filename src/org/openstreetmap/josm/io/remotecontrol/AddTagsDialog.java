@@ -10,8 +10,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +33,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Dialog to add tags as part of the remotecontrol.
@@ -262,11 +261,7 @@ public class AddTagsDialog extends ExtendedDialog {
                 @Override
                 public void run() {
                     String[] tags = null;
-                    try {
-                        tags = URLDecoder.decode(args.get("addtags"), "UTF-8").split("\\|");
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
+                    tags = Utils.decodeUrl(args.get("addtags")).split("\\|");
                     Set<String> tagSet = new HashSet<>();
                     for (String tag : tags) {
                         if (!tag.trim().isEmpty() && tag.contains("=")) {
