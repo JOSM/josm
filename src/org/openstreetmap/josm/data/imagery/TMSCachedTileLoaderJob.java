@@ -5,8 +5,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -19,6 +21,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntry;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener;
@@ -41,30 +44,104 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
      * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for TMS
      */
     public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobs", 25);
+
+    /**
+     * Limit definition for per host concurrent connections
+     */
+    public static final IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
+
+
+    private static class LIFOQueue extends LinkedBlockingDeque<Runnable> {
+        public LIFOQueue(int capacity) {
+            super(capacity);
+        }
+
+        private final static Semaphore getSemaphore(Runnable r) {
+            if (!(r instanceof TMSCachedTileLoaderJob))
+                return null;
+            TMSCachedTileLoaderJob cachedJob = (TMSCachedTileLoaderJob) r;
+            Semaphore limit = HOST_LIMITS.get(cachedJob.getUrl().getHost());
+            if (limit == null) {
+                synchronized(HOST_LIMITS) {
+                    limit = HOST_LIMITS.get(cachedJob.getUrl().getHost());
+                    if (limit == null) {
+                        limit = new Semaphore(HOST_LIMIT.get().intValue());
+                        HOST_LIMITS.put(cachedJob.getUrl().getHost(), limit);
+                    }
+                }
+            }
+            return limit;
+        }
+
+        private boolean acquireSemaphore(Runnable r) {
+            boolean ret = true;
+            Semaphore limit = getSemaphore(r);
+            if (limit != null) {
+                ret = limit.tryAcquire();
+                if (!ret) {
+                    Main.debug("rejecting job because of per host limit");
+                }
+            }
+            return ret;
+        }
+
+        @Override
+        public boolean offer(Runnable t) {
+            return acquireSemaphore(t) && super.offerFirst(t);
+        }
+
+        private Runnable releaseSemaphore(Runnable r) {
+            Semaphore limit = getSemaphore(r);
+            if (limit != null)
+                limit.release();
+            return r;
+        }
+
+        @Override
+        public Runnable remove() {
+            return releaseSemaphore(super.removeFirst());
+        }
+
+        @Override
+        public Runnable poll(long timeout, TimeUnit unit) throws InterruptedException {
+            return releaseSemaphore(super.poll(timeout, unit));
+        }
+
+        @Override
+        public Runnable take() throws InterruptedException {
+            return releaseSemaphore(super.take());
+        }
+    }
+
+    private static Map<String, Semaphore> HOST_LIMITS = new ConcurrentHashMap<>();
+
     /**
      * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS
      * and for TMS imagery
      */
-    private static ThreadPoolExecutor DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
-            THREAD_LIMIT.get().intValue(), // keep the thread number constant
-            THREAD_LIMIT.get().intValue(), // do not this number of threads
-            30, // keepalive for thread
-            TimeUnit.SECONDS,
-            // make queue of LIFO type - so recently requested tiles will be loaded first (assuming that these are which user is waiting to see)
-            new LinkedBlockingDeque<Runnable>(5) {
-                /* keep the queue size fairly small, we do not want to
-                 download a lot of tiles, that user is not seeing anyway */
-                @Override
-                public boolean offer(Runnable t) {
-                    return super.offerFirst(t);
-                }
+    private static ThreadPoolExecutor DOWNLOAD_JOB_DISPATCHER = getThreadPoolExecutor();
 
-                @Override
-                public Runnable remove() {
-                    return super.removeFirst();
-                }
-            }
-            );
+    private static ThreadPoolExecutor getThreadPoolExecutor() {
+        return new ThreadPoolExecutor(
+                THREAD_LIMIT.get().intValue(), // keep the thread number constant
+                THREAD_LIMIT.get().intValue(), // do not this number of threads
+                30, // keepalive for thread
+                TimeUnit.SECONDS,
+                // make queue of LIFO type - so recently requested tiles will be loaded first (assuming that these are which user is waiting to see)
+                new LIFOQueue(5)
+                    /* keep the queue size fairly small, we do not want to
+                     download a lot of tiles, that user is not seeing anyway */
+                );
+    }
+
+    /**
+     * Reconfigures download dispatcher using current values of THREAD_LIMIT and HOST_LIMIT
+     */
+    public static final void reconfigureDownloadDispatcher() {
+        HOST_LIMITS = new ConcurrentHashMap<>();
+        DOWNLOAD_JOB_DISPATCHER = getThreadPoolExecutor();
+    }
+
 
     /**
      * Constructor for creating a job, to get a specific tile from cache
