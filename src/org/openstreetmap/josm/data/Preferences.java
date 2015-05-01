@@ -1375,7 +1375,7 @@ public class Preferences {
         if("true".equals(get("prefer.ipv6", "auto"))) {
             // never set this to false, only true!
             if(!"true".equals(Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true"))) {
-                Main.info(tr("Try enabling IPv6 network, prefering IPv4 over IPv6 (only works on early startup)."));
+                Main.info(tr("Try enabling IPv6 network, prefering IPv6 over IPv4 (only works on early startup)."));
             }
         }
         Utils.updateSystemProperty("http.agent", Version.getInstance().getAgentString());
