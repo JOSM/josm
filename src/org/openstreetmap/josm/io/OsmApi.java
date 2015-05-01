@@ -14,13 +14,11 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
@@ -814,7 +812,7 @@ public class OsmApi extends OsmConnection {
             .append("&lon=")
             .append(latlon.lon())
             .append("&text=")
-            .append(urlEncode(text)).toString();
+            .append(Utils.encodeUrl(text)).toString();
 
         String response = sendRequest("POST", noteUrl, null, monitor, true, false);
         return parseSingleNote(response);
@@ -832,7 +830,7 @@ public class OsmApi extends OsmConnection {
         initialize(monitor);
         String noteUrl = noteStringBuilder(note)
             .append("/comment?text=")
-            .append(urlEncode(comment)).toString();
+            .append(Utils.encodeUrl(comment)).toString();
 
         String response = sendRequest("POST", noteUrl, null, monitor, true, false);
         return parseSingleNote(response);
@@ -848,7 +846,7 @@ public class OsmApi extends OsmConnection {
      */
     public Note closeNote(Note note, String closeMessage, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
-        String encodedMessage = urlEncode(closeMessage);
+        String encodedMessage = Utils.encodeUrl(closeMessage);
         StringBuilder urlBuilder = noteStringBuilder(note)
             .append("/close");
         if (encodedMessage != null && !encodedMessage.trim().isEmpty()) {
@@ -870,7 +868,7 @@ public class OsmApi extends OsmConnection {
      */
     public Note reopenNote(Note note, String reactivateMessage, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
-        String encodedMessage = urlEncode(reactivateMessage);
+        String encodedMessage = Utils.encodeUrl(reactivateMessage);
         StringBuilder urlBuilder = noteStringBuilder(note)
             .append("/reopen");
         if (encodedMessage != null && !encodedMessage.trim().isEmpty()) {
@@ -894,16 +892,6 @@ public class OsmApi extends OsmConnection {
         } catch (SAXException|IOException e) {
             Main.error(e, true);
             throw new OsmTransferException(tr("Error parsing note response from server"), e);
-        }
-    }
-
-    /** URL encodes a string. Useful for transforming user input into URL query strings*/
-    private String urlEncode(String string) throws OsmTransferException {
-        try {
-            return URLEncoder.encode(string, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            Main.error(e, true);
-            throw new OsmTransferException(tr("Error encoding string: {0}", string), e);
         }
     }
 }

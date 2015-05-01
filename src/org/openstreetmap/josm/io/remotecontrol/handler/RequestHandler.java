@@ -1,16 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
-import org.openstreetmap.josm.tools.Utils;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,7 +13,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the parent of all classes that handle a specific remote control command
@@ -209,12 +208,8 @@ public abstract class RequestHandler {
             return r;
         }
         for (String kv : uri.getRawQuery().split("&")) {
-            try {
-                final String[] kvs = URLDecoder.decode(kv, "UTF-8").split("=", 2);
-                r.put(kvs[0], kvs.length > 1 ? kvs[1] : null);
-            } catch (UnsupportedEncodingException ex) {
-                throw new IllegalStateException(ex);
-            }
+            final String[] kvs = Utils.decodeUrl(kv).split("=", 2);
+            r.put(kvs[0], kvs.length > 1 ? kvs[1] : null);
         }
         return r;
     }
@@ -274,14 +269,6 @@ public abstract class RequestHandler {
                 : Main.pref.getBoolean(loadInNewLayerKey, loadInNewLayerDefault);
     }
 
-    protected static String decodeParam(String param) {
-        try {
-            return URLDecoder.decode(param, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void setSender(String sender) {
         this.sender = sender;
     }
@@ -332,11 +319,11 @@ public abstract class RequestHandler {
             if (request.indexOf('?') != -1) {
                 String query = request.substring(request.indexOf('?') + 1);
                 if (query.indexOf("url=") == 0) {
-                    args.put("url", decodeParam(query.substring(4)));
+                    args.put("url", Utils.decodeUrl(query.substring(4)));
                 } else {
                     int urlIdx = query.indexOf("&url=");
                     if (urlIdx != -1) {
-                        args.put("url", decodeParam(query.substring(urlIdx + 5)));
+                        args.put("url", Utils.decodeUrl(query.substring(urlIdx + 5)));
                         query = query.substring(0, urlIdx);
                     } else if (query.indexOf('#') != -1) {
                         query = query.substring(0, query.indexOf('#'));
@@ -345,7 +332,7 @@ public abstract class RequestHandler {
                     for (String param : params) {
                         int eq = param.indexOf('=');
                         if (eq != -1) {
-                            args.put(param.substring(0, eq), decodeParam(param.substring(eq + 1)));
+                            args.put(param.substring(0, eq), Utils.decodeUrl(param.substring(eq + 1)));
                         }
                     }
                 }

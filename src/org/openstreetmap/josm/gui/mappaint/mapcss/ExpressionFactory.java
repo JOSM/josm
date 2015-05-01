@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.awt.Color;
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,7 +9,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -800,11 +798,7 @@ public final class ExpressionFactory {
          * @return the encoded string
          */
         public static String URL_encode(String s) {
-            try {
-                return s == null ? null : URLEncoder.encode(s, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                throw new RuntimeException(ex);
-            }
+            return s == null ? null : Utils.encodeUrl(s);
         }
 
         /**
