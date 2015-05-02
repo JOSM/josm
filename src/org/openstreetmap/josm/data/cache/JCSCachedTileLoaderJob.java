@@ -55,27 +55,46 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     /**
      * maximum download threads that will be started
      */
-    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("cache.jcs.max_threads", 10);
+    public final static IntegerProperty THREAD_LIMIT = new IntegerProperty("cache.jcs.max_threads", 10);
+
+    public static class LIFOQueue extends LinkedBlockingDeque<Runnable> {
+        public LIFOQueue(int capacity) {
+            super(capacity);
+        }
+
+        @Override
+        public boolean offer(Runnable t) {
+            return super.offerFirst(t);
+        }
+
+        @Override
+        public Runnable remove() {
+            return super.removeFirst();
+        }
+    }
+
+
+    /*
+     * ThreadPoolExecutor starts new threads, until THREAD_LIMIT is reached. Then it puts tasks into LIFOQueue, which is fairly
+     * small, but we do not want a lot of outstanding tasks queued, but rather prefer the class consumer to resubmit the task, which are
+     * important right now.
+     *
+     * This way, if some task gets outdated (for example - user paned the map, and we do not want to download this tile any more),
+     * the task will not be resubmitted, and thus - never queued.
+     *
+     * There is no point in canceling tasks, that are already taken by worker threads (if we made so much effort, we can at least cache
+     * the response, so later it could be used). We could actually cancel what is in LIFOQueue, but this is a tradeoff between simplicity
+     * and performance (we do want to have something to offer to worker threads before tasks will be resubmitted by class consumer)
+     */
     private static Executor DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
             2, // we have a small queue, so threads will be quickly started (threads are started only, when queue is full)
             THREAD_LIMIT.get().intValue(), // do not this number of threads
             30, // keepalive for thread
             TimeUnit.SECONDS,
             // make queue of LIFO type - so recently requested tiles will be loaded first (assuming that these are which user is waiting to see)
-            new LinkedBlockingDeque<Runnable>(5) {
-                /* keep the queue size fairly small, we do not want to
-                 download a lot of tiles, that user is not seeing anyway */
-                @Override
-                public boolean offer(Runnable t) {
-                    return super.offerFirst(t);
-                }
-
-                @Override
-                public Runnable remove() {
-                    return super.removeFirst();
-                }
-            }
+            new LIFOQueue(5)
             );
+
     private static ConcurrentMap<String,Set<ICachedLoaderListener>> inProgress = new ConcurrentHashMap<>();
     private static ConcurrentMap<String, Boolean> useHead = new ConcurrentHashMap<>();
 
@@ -156,14 +175,36 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             }
             // object not in cache, so submit work to separate thread
             try {
-                // use getter method, so subclasses may override executors, to get separate thread pool
-                getDownloadExecutor().execute(JCSCachedTileLoaderJob.this);
+                if (executionGuard()) {
+                    // use getter method, so subclasses may override executors, to get separate thread pool
+                    getDownloadExecutor().execute(this);
+                } else {
+                    log.log(Level.FINE, "JCS - guard rejected job for: {0}", getCacheKey());
+                    finishLoading(LoadResult.REJECTED);
+                }
             } catch (RejectedExecutionException e) {
                 // queue was full, try again later
                 log.log(Level.FINE, "JCS - rejected job for: {0}", getCacheKey());
                 finishLoading(LoadResult.REJECTED);
             }
         }
+    }
+
+    /**
+     * Guard method for execution. If guard returns true, the execution of download task will commence
+     * otherwise, execution will finish with result LoadResult.REJECTED
+     *
+     * It is responsibility of the overriding class, to handle properly situation in finishLoading class
+     * @return
+     */
+    protected boolean executionGuard() {
+        return true;
+    }
+
+    /**
+     * This method is run when job has finished
+     */
+    protected void executionFinished() {
     }
 
     /**
@@ -218,6 +259,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 }
             }
         } finally {
+            executionFinished();
             currentThread.setName(oldName);
         }
     }
