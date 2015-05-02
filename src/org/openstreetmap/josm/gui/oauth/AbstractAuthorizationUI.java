@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.oauth;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
@@ -20,7 +22,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
 
     private String apiUrl;
     private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
-    private OAuthToken accessToken;
+    private transient OAuthToken accessToken;
 
     protected void fireAccessTokenChanged(OAuthToken oldValue, OAuthToken newValue) {
         firePropertyChange(ACCESS_TOKEN_PROP, oldValue, newValue);
@@ -98,7 +100,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
             fireAccessTokenChanged(oldValue, this.accessToken);
         } else if (oldValue == null && this.accessToken == null) {
             // no change - don't fire an event
-        } else if (! oldValue.equals(this.accessToken)) {
+        } else if (!Objects.equals(oldValue, this.accessToken)) {
             fireAccessTokenChanged(oldValue, this.accessToken);
         }
     }
