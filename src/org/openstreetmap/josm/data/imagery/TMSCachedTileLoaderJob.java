@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -41,79 +40,59 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private volatile URL url;
 
     /**
-     * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for TMS
-     */
-    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobs", 25);
-
-    /**
      * Limit definition for per host concurrent connections
      */
-    public static final IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
+    public final static IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
 
+     /*
+     * Host limit guards the area - between submission to the queue up to loading is finished. It uses executionGuard method
+     * from JCSCachedTileLoaderJob to acquire the semaphore, and releases it - when loadingFinished is called (but not when
+     * LoadResult.GUARD_REJECTED is set)
+     *
+     */
 
-    private static class LIFOQueue extends LinkedBlockingDeque<Runnable> {
-        public LIFOQueue(int capacity) {
-            super(capacity);
-        }
-
-        private final static Semaphore getSemaphore(Runnable r) {
-            if (!(r instanceof TMSCachedTileLoaderJob))
-                return null;
-            TMSCachedTileLoaderJob cachedJob = (TMSCachedTileLoaderJob) r;
-            Semaphore limit = HOST_LIMITS.get(cachedJob.getUrl().getHost());
-            if (limit == null) {
-                synchronized(HOST_LIMITS) {
-                    limit = HOST_LIMITS.get(cachedJob.getUrl().getHost());
-                    if (limit == null) {
-                        limit = new Semaphore(HOST_LIMIT.get().intValue());
-                        HOST_LIMITS.put(cachedJob.getUrl().getHost(), limit);
-                    }
+    private Semaphore getSemaphore() {
+        String host = getUrl().getHost();
+        Semaphore limit = HOST_LIMITS.get(host);
+        if (limit == null) {
+            synchronized(HOST_LIMITS) {
+                limit = HOST_LIMITS.get(host);
+                if (limit == null) {
+                    limit = new Semaphore(HOST_LIMIT.get().intValue());
+                    HOST_LIMITS.put(host, limit);
                 }
             }
-            return limit;
         }
+        return limit;
+    }
 
-        private boolean acquireSemaphore(Runnable r) {
-            boolean ret = true;
-            Semaphore limit = getSemaphore(r);
-            if (limit != null) {
-                ret = limit.tryAcquire();
-                if (!ret) {
-                    Main.debug("rejecting job because of per host limit");
-                }
+    private boolean acquireSemaphore() {
+        boolean ret = true;
+        Semaphore limit = getSemaphore();
+        if (limit != null) {
+            ret = limit.tryAcquire();
+            if (!ret) {
+                Main.debug("rejecting job because of per host limit");
             }
-            return ret;
         }
+        return ret;
 
-        @Override
-        public boolean offer(Runnable t) {
-            return acquireSemaphore(t) && super.offerFirst(t);
-        }
+    }
 
-        private Runnable releaseSemaphore(Runnable r) {
-            Semaphore limit = getSemaphore(r);
-            if (limit != null)
-                limit.release();
-            return r;
-        }
-
-        @Override
-        public Runnable remove() {
-            return releaseSemaphore(super.removeFirst());
-        }
-
-        @Override
-        public Runnable poll(long timeout, TimeUnit unit) throws InterruptedException {
-            return releaseSemaphore(super.poll(timeout, unit));
-        }
-
-        @Override
-        public Runnable take() throws InterruptedException {
-            return releaseSemaphore(super.take());
+    private void releaseSemaphore() {
+        Semaphore limit = getSemaphore();
+        if (limit != null) {
+            limit.release();
         }
     }
 
+
     private static Map<String, Semaphore> HOST_LIMITS = new ConcurrentHashMap<>();
+
+    /**
+     * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for TMS
+     */
+    public final static IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobs", 25);
 
     /**
      * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS
@@ -141,7 +120,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         HOST_LIMITS = new ConcurrentHashMap<>();
         DOWNLOAD_JOB_DISPATCHER = getThreadPoolExecutor();
     }
-
 
     /**
      * Constructor for creating a job, to get a specific tile from cache
@@ -174,7 +152,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     /*
      *  this doesn't needs to be synchronized, as it's not that costly to keep only one execution
      *  in parallel, but URL creation and Tile.getUrl() are costly and are not needed when fetching
-     *  data from cache
+     *  data from cache, that's why URL creation is postponed until it's needed
      *
      *  We need to have static url value for TileLoaderJob, as for some TileSources we might get different
      *  URL's each call we made (servers switching), and URL's are used below as a key for duplicate detection
@@ -233,6 +211,16 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         return DOWNLOAD_JOB_DISPATCHER;
     }
 
+    @Override
+    protected boolean executionGuard() {
+        return acquireSemaphore();
+    }
+
+    @Override
+    protected void executionFinished() {
+        releaseSemaphore();
+    }
+
     public void submit() {
         tile.initLoading();
         super.submit(this);
@@ -245,6 +233,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             switch(result){
             case FAILURE:
                 tile.setError("Problem loading tile");
+                // no break intentional here
             case SUCCESS:
                 handleNoTileAtZoom();
                 if (object != null) {
@@ -253,8 +242,9 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                         tile.loadImage(new ByteArrayInputStream(content));
                     }
                 }
+                // no break intentional here
             case REJECTED:
-                // do not set anything here, leave waiting sign
+                // do nothing
             }
             if (listener != null) {
                 listener.tileLoadingFinished(tile, result.equals(LoadResult.SUCCESS));
