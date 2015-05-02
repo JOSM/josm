@@ -7,8 +7,6 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-import com.sun.org.apache.xerces.internal.utils.Objects;
-
 /**
  * This is the abstract base class for the three authorisation UIs.
  *
@@ -22,7 +20,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
 
     private String apiUrl;
     private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
-    private transient OAuthToken accessToken;
+    private OAuthToken accessToken;
 
     protected void fireAccessTokenChanged(OAuthToken oldValue, OAuthToken newValue) {
         firePropertyChange(ACCESS_TOKEN_PROP, oldValue, newValue);
@@ -100,7 +98,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
             fireAccessTokenChanged(oldValue, this.accessToken);
         } else if (oldValue == null && this.accessToken == null) {
             // no change - don't fire an event
-        } else if (!Objects.equals(oldValue, this.accessToken)) {
+        } else if (! oldValue.equals(this.accessToken)) {
             fireAccessTokenChanged(oldValue, this.accessToken);
         }
     }
