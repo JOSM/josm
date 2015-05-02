@@ -14,12 +14,15 @@ import org.apache.commons.jcs.engine.ElementAttributes;
  */
 public class CacheEntryAttributes extends ElementAttributes {
     private static final long serialVersionUID = 1L; //version
-    private transient Map<String, String> attrs = new HashMap<String, String>();
+    private Map<String, String> attrs = new HashMap<String, String>();
     private final static String NO_TILE_AT_ZOOM = "noTileAtZoom";
     private final static String ETAG = "Etag";
     private final static String LAST_MODIFICATION = "lastModification";
     private final static String EXPIRATION_TIME = "expirationTime";
 
+    /**
+     * Constructs a new {@code CacheEntryAttributes}.
+     */
     public CacheEntryAttributes() {
         super();
         attrs.put(NO_TILE_AT_ZOOM, "false");
