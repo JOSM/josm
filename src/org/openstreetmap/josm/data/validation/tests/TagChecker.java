@@ -63,7 +63,7 @@ import org.openstreetmap.josm.tools.MultiMap;
 public class TagChecker extends Test.TagTest {
 
     /** The default data file of tagchecker rules */
-    public static final String DATA_FILE = "resource://data/validator/tagchecker.cfg";
+    //public static final String DATA_FILE = "resource://data/validator/tagchecker.cfg";
     /** The config file of ignored tags */
     public static final String IGNORE_FILE = "resource://data/validator/ignoretags.cfg";
     /** The config file of dictionary words */
@@ -129,7 +129,7 @@ public class TagChecker extends Test.TagTest {
 
     protected static final Entities entities = new Entities();
 
-    private static final List<String> DEFAULT_SOURCES = Arrays.asList(DATA_FILE, IGNORE_FILE, SPELL_FILE);
+    private static final List<String> DEFAULT_SOURCES = Arrays.asList(/*DATA_FILE, */IGNORE_FILE, SPELL_FILE);
 
     /**
      * Constructor
@@ -489,7 +489,7 @@ public class TagChecker extends Test.TagTest {
         prefCheckComplexBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckComplexBeforeUpload, a);
 
-        final Collection<String> sources = Main.pref.getCollection(PREF_SOURCES, Arrays.asList(DATA_FILE, IGNORE_FILE, SPELL_FILE));
+        final Collection<String> sources = Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES);
         sourcesList = new EditableList(tr("TagChecker source"));
         sourcesList.setItems(sources);
         testPanel.add(new JLabel(tr("Data sources ({0})", "*.cfg")), GBC.eol().insets(23, 0, 0, 0));
