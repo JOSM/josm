@@ -128,7 +128,7 @@ public class MultipolygonTest extends Test {
     public void visit(Way w) {
         if (!w.isArea() && ElemStyles.hasOnlyAreaElemStyle(w)) {
             List<Node> nodes = w.getNodes();
-            if (nodes.size()<1) return; // fix zero nodes bug
+            if (nodes.isEmpty()) return; // fix zero nodes bug
             for (String key : keysCheckedByAnotherTest) {
                 if (w.hasKey(key)) {
                     return;

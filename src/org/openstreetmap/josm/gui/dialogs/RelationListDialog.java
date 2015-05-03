@@ -579,7 +579,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         public void updateTitle() {
-            if (relations.size() > 0 && relations.size() != getSize()) {
+            if (!relations.isEmpty() && relations.size() != getSize()) {
                 RelationListDialog.this.setTitle(tr("Relations: {0}/{1}", getSize(), relations.size()));
             } else if (getSize() > 0) {
                 RelationListDialog.this.setTitle(tr("Relations: {0}", getSize()));

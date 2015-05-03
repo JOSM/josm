@@ -26,21 +26,20 @@ import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
-
 /**
  * @author Wiktor Niesiobędzki
  *
  * Wrapper class for JCS Cache. Sets some sane environment and returns instances of cache objects.
  * Static configuration for now assumes some small LRU cache in memory and larger LRU cache on disk
- *
+ * @since 8168
  */
 public class JCSCacheManager {
     private static final Logger log = FeatureAdapter.getLogger(JCSCacheManager.class.getCanonicalName());
 
     private static volatile CompositeCacheManager cacheManager = null;
     private static long maxObjectTTL        = Long.MAX_VALUE;
-    private final static String PREFERENCE_PREFIX = "jcs.cache";
-    private final static IndexedDiskCacheFactory diskCacheFactory = new IndexedDiskCacheFactory();
+    private static final String PREFERENCE_PREFIX = "jcs.cache";
+    private static final IndexedDiskCacheFactory diskCacheFactory = new IndexedDiskCacheFactory();
     private static FileLock cacheDirLock = null;
 
     /**

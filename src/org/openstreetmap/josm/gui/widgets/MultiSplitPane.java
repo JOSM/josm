@@ -144,7 +144,7 @@ public class MultiSplitPane extends JPanel {
      * @see #getDividerPainter
      * @see #setDividerPainter
      */
-    public abstract static class DividerPainter {
+    public interface DividerPainter {
         /**
          * Paint a single Divider.
          *
@@ -154,7 +154,7 @@ public class MultiSplitPane extends JPanel {
         public abstract void paint(Graphics g, Divider divider);
     }
 
-    private class DefaultDividerPainter extends DividerPainter {
+    private class DefaultDividerPainter implements DividerPainter {
         @Override
         public void paint(Graphics g, Divider divider) {
             if ((divider == activeDivider()) && !isContinuousLayout()) {

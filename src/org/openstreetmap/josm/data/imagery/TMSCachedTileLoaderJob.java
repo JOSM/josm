@@ -31,7 +31,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  * @author Wiktor Niesiobędzki
  *
  * Class bridging TMS requests to JCS cache requests
- *
+ * @since 8168
  */
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener  {
     private static final Logger log = FeatureAdapter.getLogger(TMSCachedTileLoaderJob.class.getCanonicalName());
@@ -42,7 +42,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     /**
      * Limit definition for per host concurrent connections
      */
-    public final static IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
+    public static final IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
 
      /*
      * Host limit guards the area - between submission to the queue up to loading is finished. It uses executionGuard method
@@ -76,7 +76,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             }
         }
         return ret;
-
     }
 
     private void releaseSemaphore() {
@@ -86,13 +85,12 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         }
     }
 
-
     private static Map<String, Semaphore> HOST_LIMITS = new ConcurrentHashMap<>();
 
     /**
      * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for TMS
      */
-    public final static IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobs", 25);
+    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobs", 25);
 
     /**
      * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS

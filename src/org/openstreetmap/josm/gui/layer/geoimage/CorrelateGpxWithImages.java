@@ -998,7 +998,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             PrimaryDateParser dateParser = new PrimaryDateParser();
 
             // no images found, exit
-            if(imgs.size() <= 0) {
+            if(imgs.isEmpty()) {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected photos do not contain time information."),
                         tr("Photos do not contain time information"), JOptionPane.WARNING_MESSAGE);
@@ -1206,10 +1206,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         // First trackpoint, then interval is set to five seconds, i.e. photos up to five seconds
         // before the first point will be geotagged with the starting point
         if (prevWpTime == 0 || curWpTime <= prevWpTime) {
-            while (true) {
-                if (i < 0) {
-                    break;
-                }
+            while (i >= 0) {
                 final ImageEntry curImg = images.get(i);
                 long time = curImg.getExifTime().getTime();
                 if (time > curWpTime || time < curWpTime - interval) {
@@ -1230,10 +1227,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         // This code gives a simple linear interpolation of the coordinates between current and
         // previous track point assuming a constant speed in between
-        while (true) {
-            if (i < 0) {
-                break;
-            }
+        while (i >= 0) {
             ImageEntry curImg = images.get(i);
             long imgTime = curImg.getExifTime().getTime();
             if (imgTime < prevWpTime) {

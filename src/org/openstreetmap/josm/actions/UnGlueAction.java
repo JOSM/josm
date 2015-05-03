@@ -120,7 +120,7 @@ public class UnGlueAction extends JosmAction {
                     tmpNodes.add(n);
                 }
             }
-            if (tmpNodes.size() < 1) {
+            if (tmpNodes.isEmpty()) {
                 if (selection.size() > 1) {
                     errMsg =  tr("None of these nodes are glued to anything else.");
                 } else {
@@ -261,7 +261,7 @@ public class UnGlueAction extends JosmAction {
      * nodes into "selectedNodes".
      */
     private boolean checkSelection2(Collection<? extends OsmPrimitive> selection) {
-        if (selection.size() < 1)
+        if (selection.isEmpty())
             return false;
 
         selectedWay = null;
@@ -285,7 +285,7 @@ public class UnGlueAction extends JosmAction {
             }
         }
 
-        if (selectedNodes.size() < 1) {
+        if (selectedNodes.isEmpty()) {
             selectedNodes.addAll(selectedWay.getNodes());
         }
 

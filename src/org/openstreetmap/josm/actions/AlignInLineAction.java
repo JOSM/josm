@@ -285,7 +285,7 @@ public final class AlignInLineAction extends JosmAction {
                     neighbors.add(nodes.get(i-1));
                     neighbors.add(nodes.get(i+1));
                 }
-            if(neighbors.size() == 0)
+            if(neighbors.isEmpty())
                 continue;
             else if(neighbors.size() == 2)
                 // Non self crossing

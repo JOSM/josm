@@ -1598,11 +1598,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private class ConcurrentTasksHelper {
 
         private final List<StyleRecord> allStyleElems;
-        private final DataSet data;
 
-        public ConcurrentTasksHelper(List<StyleRecord> allStyleElems, DataSet data) {
+        public ConcurrentTasksHelper(List<StyleRecord> allStyleElems) {
             this.allStyleElems = allStyleElems;
-            this.data = data;
         }
 
         void process(List<? extends OsmPrimitive> prims) {
@@ -1657,7 +1655,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
 
-            ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems, data);
+            ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems);
 
             // Need to process all relations first.
             // Reason: Make sure, ElemStyles.getStyleCacheWithRange is

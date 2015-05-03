@@ -42,6 +42,8 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  *
  * This class will keep only one Job running for specified tile. All others will just finish, but
  * listeners will be gathered and notified, once download job will be finished
+ *
+ * @since 8168
  */
 public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements ICachedLoaderJob<K>, Runnable {
     private static final Logger log = FeatureAdapter.getLogger(JCSCachedTileLoaderJob.class.getCanonicalName());
@@ -55,7 +57,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     /**
      * maximum download threads that will be started
      */
-    public final static IntegerProperty THREAD_LIMIT = new IntegerProperty("cache.jcs.max_threads", 10);
+    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("cache.jcs.max_threads", 10);
 
     public static class LIFOQueue extends LinkedBlockingDeque<Runnable> {
         public LIFOQueue(int capacity) {
