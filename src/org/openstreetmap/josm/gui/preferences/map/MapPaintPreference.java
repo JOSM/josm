@@ -43,8 +43,6 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
     private static final List<SourceProvider> styleSourceProviders = new ArrayList<>();
 
-    private static final String OLD_ELEMSTYLES_XML = "resource://styles/standard/elemstyles.xml";
-
     /**
      * Registers a new additional style source provider.
      * @param provider The style source provider
@@ -244,8 +242,6 @@ public class MapPaintPreference implements SubPreferenceSetting {
             for (SourceEntry def : defaults) {
                 knownDefaults.add(def.url);
             }
-            // XML style is not bundled anymore
-            knownDefaults.remove(OLD_ELEMSTYLES_XML);
             Main.pref.putCollection("mappaint.style.known-defaults", knownDefaults);
 
             // XML style is not bundled anymore
