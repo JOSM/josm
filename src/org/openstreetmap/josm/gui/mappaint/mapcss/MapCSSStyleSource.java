@@ -174,7 +174,7 @@ public class MapCSSStyleSource extends StyleSource {
          *
          * @author Michael Zangl
          */
-        private final static class MapCSSKeyRules {
+        private static final class MapCSSKeyRules {
             /**
              * The indexes of rules that might be applied if this tag is present and the value has no special handling.
              */

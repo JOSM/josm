@@ -518,7 +518,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             // If ctrl is pressed we are in merge mode. Look for a nearby node,
             // highlight it and adjust the cursor accordingly.
             final boolean canMerge = ctrl && !getCurrentDataSet().getSelectedNodes().isEmpty();
-            final OsmPrimitive p = canMerge ? (OsmPrimitive)findNodeToMergeTo(e.getPoint()) : null;
+            final OsmPrimitive p = canMerge ? findNodeToMergeTo(e.getPoint()) : null;
             boolean needsRepaint = removeHighlighting();
             if(p != null) {
                 p.setHighlighted(true);

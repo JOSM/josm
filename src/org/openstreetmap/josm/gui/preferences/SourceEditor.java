@@ -1239,7 +1239,7 @@ public abstract class SourceEditor extends JPanel {
 
     class SourceLoader extends PleaseWaitRunnable {
         private final String url;
-        private final transient List<SourceProvider> sourceProviders;
+        private final List<SourceProvider> sourceProviders;
         private BufferedReader reader;
         private boolean canceled;
         private final List<ExtendedSourceEntry> sources = new ArrayList<>();

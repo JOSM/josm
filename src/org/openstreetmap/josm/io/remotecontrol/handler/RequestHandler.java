@@ -312,7 +312,7 @@ public abstract class RequestHandler {
         }
     }
 
-    public static abstract class RawURLParseRequestHandler extends RequestHandler {
+    public abstract static class RawURLParseRequestHandler extends RequestHandler {
         @Override
         protected void parseArgs() {
             HashMap<String, String> args = new HashMap<>();

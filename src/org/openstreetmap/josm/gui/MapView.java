@@ -47,7 +47,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -699,16 +698,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     /**
-     * Set the new dimension to the view.
-     *
-     * @deprecated use #zoomTo(BoundingXYVisitor)
-     */
-    @Deprecated
-    public void recalculateCenterScale(BoundingXYVisitor box) {
-        zoomTo(box);
-    }
-
-    /**
      * @return An unmodifiable collection of all layers
      */
     public Collection<Layer> getAllLayers() {
@@ -732,7 +721,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *
      * @return an unmodifiable list of layers of a certain type.
      */
-    public <T extends Layer> List<T>  getLayersOfType(Class<T> ofType) {
+    public <T extends Layer> List<T> getLayersOfType(Class<T> ofType) {
         return new ArrayList<>(Utils.filteredCollection(getAllLayers(), ofType));
     }
 

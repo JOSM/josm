@@ -59,7 +59,7 @@ public class LoadAndZoomHandler extends RequestHandler {
     public String getPermissionMessage() {
         String msg = tr("Remote Control has been asked to load data from the API.") +
                 "<br>" + tr("Bounding box: ") + new BBox(minlon, minlat, maxlon, maxlat).toStringCSV(", ");
-        if (args.containsKey("select") && toSelect.size() > 0) {
+        if (args.containsKey("select") && !toSelect.isEmpty()) {
             msg += "<br>" + tr("Selection: {0}", toSelect.size());
         }
         return msg;

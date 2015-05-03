@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class DownloadNotesUrlIdTask extends DownloadNotesTask {
 
@@ -26,10 +26,6 @@ public class DownloadNotesUrlIdTask extends DownloadNotesTask {
     @Override
     public String[] getPatterns() {
         return new String[]{URL_ID_PATTERN};
-    }
-
-    public boolean acceptsUrl(String url) {
-        return super.acceptsUrl(url);
     }
 
     @Override

@@ -92,7 +92,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         return pnl;
     }
 
-    static public List<String> getDefaultSources() {
+    public static List<String> getDefaultSources() {
         return Arrays.asList("knowledge", "survey", "Bing");
     }
 

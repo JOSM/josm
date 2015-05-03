@@ -208,8 +208,8 @@ public final class StyleCache {
     }
 
     public void consistencyTest() {
-        if (bd.size() < 2) throw new AssertionError();
-        if (data.size() < 1) throw new AssertionError();
+        if (bd.size() < 2) throw new AssertionError(bd);
+        if (data.isEmpty()) throw new AssertionError(data);
         if (bd.size() != data.size() + 1) throw new AssertionError();
         if (bd.get(0) != 0) throw new AssertionError();
         if (bd.get(bd.size() - 1) != Double.POSITIVE_INFINITY) throw new AssertionError();

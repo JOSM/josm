@@ -113,7 +113,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
                 noteLayers = Main.map.mapView.getLayersOfType(NoteLayer.class);
             }
             NoteLayer layer;
-            if (noteLayers != null && noteLayers.size() > 0) {
+            if (noteLayers != null && !noteLayers.isEmpty()) {
                 layer = noteLayers.get(0);
                 layer.getNoteData().addNotes(notesData);
             } else {

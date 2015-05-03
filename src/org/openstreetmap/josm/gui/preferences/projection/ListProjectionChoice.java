@@ -63,7 +63,7 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
     @Override
     public void setPreferences(Collection<String> args) {
         String zone = null;
-        if (args != null && args.size() >= 1) {
+        if (args != null && !args.isEmpty()) {
             zone = args.iterator().next();
         }
         int idx;

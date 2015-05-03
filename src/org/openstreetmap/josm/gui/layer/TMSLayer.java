@@ -1323,7 +1323,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             if (newzoom < MIN_ZOOM) {
                 continue;
             }
-            if (missedTiles.size() <= 0) {
+            if (missedTiles.isEmpty()) {
                 break;
             }
             List<Tile> newlyMissedTiles = new LinkedList<>();
@@ -1350,7 +1350,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
             missedTiles = newlyMissedTiles;
         }
-        if (Main.isDebugEnabled() && missedTiles.size() > 0) {
+        if (Main.isDebugEnabled() && !missedTiles.isEmpty()) {
             Main.debug("still missed "+missedTiles.size()+" in the end");
         }
         g.setColor(Color.red);

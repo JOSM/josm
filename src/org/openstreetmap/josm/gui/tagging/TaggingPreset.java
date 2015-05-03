@@ -418,7 +418,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             cmds.add(new ChangePropertyCommand(sel, tag.getKey(), tag.getValue()));
         }
 
-        if (cmds.size() == 0)
+        if (cmds.isEmpty())
             return null;
         else if (cmds.size() == 1)
             return cmds.get(0);

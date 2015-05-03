@@ -102,11 +102,6 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         MapView.addLayerChangeListener(this);
     }
 
-    @Override
-    public void showDialog() {
-        super.showDialog();
-    }
-
     private void buildDialog() {
         model = new NoteTableModel();
         displayList = new JList<Note>(model);
