@@ -11,9 +11,9 @@ ARCH="`dpkg --print-architecture 2> /dev/null || true`"
 
 # If OpenJDK is only available headless, do not try it
 if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null ; then
-	JAVA_CMDS="$JAVA_HOME/bin/java /usr/lib/jvm/java-7-openjdk/bin/java /usr/lib/jvm/java-7-openjdk-$ARCH/bin/java /usr/lib/jvm/java-7-oracle/bin/java /usr/lib/jvm/java-8-oracle/bin/java"
+	JAVA_CMDS="$JAVA_HOME/bin/java /usr/lib/jvm/java-8-openjdk/bin/java /usr/lib/jvm/java-8-openjdk-$ARCH/bin/java /usr/lib/jvm/java-8-oracle/bin/java /usr/lib/jvm/java-7-openjdk/bin/java /usr/lib/jvm/java-7-openjdk-$ARCH/bin/java /usr/lib/jvm/java-7-oracle/bin/java"
 else
-	JAVA_CMDS="$JAVA_HOME/bin/java /usr/lib/jvm/java-7-oracle/bin/java /usr/lib/jvm/java-8-oracle/bin/java /usr/bin/java"
+	JAVA_CMDS="$JAVA_HOME/bin/java /usr/lib/jvm/java-8-oracle/bin/java /usr/lib/jvm/java-7-oracle/bin/java /usr/bin/java"
 fi
 
 JAVA_OPTS="-Djosm.restart=true -Djava.net.useSystemProxies=true $JAVA_OPTS"
