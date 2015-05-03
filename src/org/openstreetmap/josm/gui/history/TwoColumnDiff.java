@@ -108,7 +108,7 @@ class TwoColumnDiff {
                 } else if(inserted > 0) {
                     referenceDiff.add(new Item(DiffItemType.EMPTY, null));
                     currentDiff.add(new Item(DiffItemType.INSERTED, b[ib++]));
-                } else if(deleted > 0) {
+                } else {
                     referenceDiff.add(new Item(DiffItemType.DELETED, a[ia++]));
                     currentDiff.add(new Item(DiffItemType.EMPTY, null));
                 }

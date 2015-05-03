@@ -281,14 +281,14 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         if (rows == null || rows.length == 0)
             return false;
         Arrays.sort(rows);
-        return rows[0] > 0 && members.size() > 0;
+        return rows[0] > 0 && !members.isEmpty();
     }
 
     public boolean canMoveDown(int[] rows) {
         if (rows == null || rows.length == 0)
             return false;
         Arrays.sort(rows);
-        return members.size() > 0 && rows[rows.length - 1] < members.size() - 1;
+        return !members.isEmpty() && rows[rows.length - 1] < members.size() - 1;
     }
 
     public boolean canRemove(int[] rows) {

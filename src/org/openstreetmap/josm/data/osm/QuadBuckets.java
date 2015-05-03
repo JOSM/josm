@@ -574,30 +574,23 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
     @Override
     public boolean isEmpty() {
-        if (this.size() == 0)
-            return true;
-        return false;
+        return size == 0;
     }
 
     public List<T> search(BBox search_bbox) {
         List<T> ret = new ArrayList<>();
         // Doing this cuts down search cost on a real-life data set by about 25%
-        boolean cache_searches = true;
-        if (cache_searches) {
-            if (search_cache == null) {
-                search_cache = root;
-            }
-            // Walk back up the tree when the last search spot can not cover the current search
-            while (search_cache != null && !search_cache.bbox().bounds(search_bbox)) {
-                search_cache = search_cache.parent;
-            }
-
-            if (search_cache == null) {
-                search_cache = root;
-                Main.info("bbox: " + search_bbox + " is out of the world");
-            }
-        } else {
+        if (search_cache == null) {
             search_cache = root;
+        }
+        // Walk back up the tree when the last search spot can not cover the current search
+        while (search_cache != null && !search_cache.bbox().bounds(search_bbox)) {
+            search_cache = search_cache.parent;
+        }
+
+        if (search_cache == null) {
+            search_cache = root;
+            Main.info("bbox: " + search_bbox + " is out of the world");
         }
 
         // Save parent because search_cache might change during search call

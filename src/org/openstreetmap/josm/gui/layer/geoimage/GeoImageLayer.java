@@ -712,7 +712,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public void showNextPhoto() {
-        if (data != null && data.size() > 0) {
+        if (data != null && !data.isEmpty()) {
             currentPhoto++;
             if (currentPhoto >= data.size()) {
                 currentPhoto = data.size() - 1;
@@ -738,7 +738,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public void showFirstPhoto() {
-        if (data != null && data.size() > 0) {
+        if (data != null && !data.isEmpty()) {
             currentPhoto = 0;
             ImageViewerDialog.showImage(this, data.get(currentPhoto));
         } else {
@@ -748,7 +748,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public void showLastPhoto() {
-        if (data != null && data.size() > 0) {
+        if (data != null && !data.isEmpty()) {
             currentPhoto = data.size() - 1;
             ImageViewerDialog.showImage(this, data.get(currentPhoto));
         } else {
@@ -763,7 +763,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public void removeCurrentPhoto() {
-        if (data != null && data.size() > 0 && currentPhoto >= 0 && currentPhoto < data.size()) {
+        if (data != null && !data.isEmpty() && currentPhoto >= 0 && currentPhoto < data.size()) {
             data.remove(currentPhoto);
             if (currentPhoto >= data.size()) {
                 currentPhoto = data.size() - 1;
@@ -780,7 +780,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     public void removeCurrentPhotoFromDisk() {
         ImageEntry toDelete = null;
-        if (data != null && data.size() > 0 && currentPhoto >= 0 && currentPhoto < data.size()) {
+        if (data != null && !data.isEmpty() && currentPhoto >= 0 && currentPhoto < data.size()) {
             toDelete = data.get(currentPhoto);
 
             int result = new ExtendedDialog(
@@ -827,7 +827,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     public void copyCurrentPhotoPath() {
         ImageEntry toCopy = null;
-        if (data != null && data.size() > 0 && currentPhoto >= 0 && currentPhoto < data.size()) {
+        if (data != null && !data.isEmpty() && currentPhoto >= 0 && currentPhoto < data.size()) {
             toCopy = data.get(currentPhoto);
             String copyString = toCopy.getFile().toString();
             Utils.copyToClipboard(copyString);

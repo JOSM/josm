@@ -10,15 +10,15 @@ import org.apache.commons.jcs.engine.ElementAttributes;
  * Class that contains attirubtes for JCS cache entries. Parameters are used to properly handle HTTP caching
  *
  * @author Wiktor Niesiobędzki
- *
+ * @since 8168
  */
 public class CacheEntryAttributes extends ElementAttributes {
     private static final long serialVersionUID = 1L; //version
-    private Map<String, String> attrs = new HashMap<String, String>();
-    private final static String NO_TILE_AT_ZOOM = "noTileAtZoom";
-    private final static String ETAG = "Etag";
-    private final static String LAST_MODIFICATION = "lastModification";
-    private final static String EXPIRATION_TIME = "expirationTime";
+    private final Map<String, String> attrs = new HashMap<String, String>();
+    private static final String NO_TILE_AT_ZOOM = "noTileAtZoom";
+    private static final String ETAG = "Etag";
+    private static final String LAST_MODIFICATION = "lastModification";
+    private static final String EXPIRATION_TIME = "expirationTime";
 
     /**
      * Constructs a new {@code CacheEntryAttributes}.

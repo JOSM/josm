@@ -327,7 +327,7 @@ public class PlaceSelection implements DownloadSelection {
 
         private String searchExpression;
         private HttpURLConnection connection;
-        private transient List<SearchResult> data;
+        private List<SearchResult> data;
         private boolean canceled = false;
         private Server useserver;
         private Exception lastException;

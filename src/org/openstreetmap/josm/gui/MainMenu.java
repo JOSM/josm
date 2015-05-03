@@ -1015,7 +1015,7 @@ public class MainMenu extends JMenuBar {
             }
 
             List<JMenuItem> searchResult = mainMenu.findMenuItems(currentSearchText);
-            if(searchResult.size() == 0) {
+            if(searchResult.isEmpty()) {
                 // Nothing found
                 hideMenu();
                 return;

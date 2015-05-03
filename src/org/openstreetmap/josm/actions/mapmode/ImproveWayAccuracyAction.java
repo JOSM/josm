@@ -611,14 +611,12 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
             // Starting improving the single selected way
             startImproving(wayList.get(0));
             return;
-        } else if (nodeList.size() > 0) {
+        } else if (nodeList.size() == 1) {
             // Starting improving the only way of the single selected node
-            if (nodeList.size() == 1) {
-                List<OsmPrimitive> r = nodeList.get(0).getReferrers();
-                if (r.size() == 1 && (r.get(0) instanceof Way)) {
-                    startImproving((Way) r.get(0));
-                    return;
-                }
+            List<OsmPrimitive> r = nodeList.get(0).getReferrers();
+            if (r.size() == 1 && (r.get(0) instanceof Way)) {
+                startImproving((Way) r.get(0));
+                return;
             }
         }
 

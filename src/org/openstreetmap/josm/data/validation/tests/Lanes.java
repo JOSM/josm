@@ -46,7 +46,7 @@ public class Lanes extends Test.TagTest {
         final Collection<String> keysForPattern = new ArrayList<>(Utils.filter(p.keySet(),
                 Predicates.stringContainsPattern(Pattern.compile(":" + lanesKey + "$"))));
         keysForPattern.removeAll(Arrays.asList(BLACKLIST));
-        if (keysForPattern.size() < 1) {
+        if (keysForPattern.isEmpty()) {
             // nothing to check
             return;
         }
