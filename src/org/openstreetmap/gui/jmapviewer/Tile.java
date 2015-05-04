@@ -48,9 +48,9 @@ public class Tile {
     protected int zoom;
     protected BufferedImage image;
     protected String key;
-    protected boolean loaded = false;
-    protected boolean loading = false;
-    protected boolean error = false;
+    protected volatile boolean loaded = false; // field accessed by multiple threads without any monitors, needs to be volatile
+    protected volatile boolean loading = false;
+    protected volatile boolean error = false;
     protected String error_message;
 
     /** TileLoader-specific tile metadata */
