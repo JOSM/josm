@@ -68,6 +68,7 @@ public final class DateUtils {
         // "2007-07-25T09:26:24{Z|{+|-}01:00}"
         if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
+                checkLayout(str, "xxxx-xx-xx xx:xx:xx UTC") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx:00") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx:00")) {
             calendar.set(
