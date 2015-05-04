@@ -686,7 +686,7 @@ public final class Way extends OsmPrimitive implements IWay {
     /**
      * Replies the length of the longest segement of the way, in metres, as computed by {@link LatLon#greatCircleDistance}.
      * @return The length of the segment, in metres
-     * @since 4138
+     * @since 8320
      */
     public double getLongestSegmentLength() {
         double length = 0;

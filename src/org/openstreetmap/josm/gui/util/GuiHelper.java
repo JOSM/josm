@@ -46,7 +46,9 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
@@ -155,11 +157,9 @@ public final class GuiHelper {
                 title, new String[] {tr("Cancel"), tr("Continue")});
         dlg.setContent(content);
         dlg.setButtonIcons(new Icon[] {
-                ImageProvider.get("cancel"),
-                ImageProvider.overlay(
-                        ImageProvider.get("upload"),
-                        new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(10 , 10, Image.SCALE_SMOOTH)),
-                        ImageProvider.OverlayPosition.SOUTHEAST)});
+                    new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get(),
+                    new ImageProvider("upload").setMaxSize(ImageSizes.LARGEICON).addOverlay(
+                            new ImageOverlay(new ImageProvider("warning-small"), 0.5,0.5,1.0,1.0)).get()});
         dlg.setToolTipTexts(new String[] {
                 tr("Cancel"),
                 continueToolTip});

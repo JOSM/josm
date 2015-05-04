@@ -129,12 +129,20 @@ public class ImageProvider {
         MAP,
         /** map icon maximum size */
         MAPMAX,
-        /** menu icon size */
+        /** cursor icon size */
         CURSOR,
-        /** Cursor overlay icon size */
+        /** cursor overlay icon size */
         CURSOROVERLAY,
-        /** Cursor icon size */
+        /** menu icon size */
         MENU,
+        /** menu icon size in popup menus
+         * @since 8323
+         */
+        POPUPMENU,
+        /** Layer list icon size
+         * @since 8323
+         */
+        LAYER
     }
 
     /**
@@ -331,11 +339,13 @@ public class ImageProvider {
         switch(size) {
         case MAPMAX: sizeval = Main.pref.getInteger("iconsize.mapmax", 48); break;
         case MAP: sizeval = Main.pref.getInteger("iconsize.mapmax", 16); break;
+        case POPUPMENU: /* POPUPMENU is LARGELICON - only provided in case of future changes */
         case LARGEICON: sizeval = Main.pref.getInteger("iconsize.largeicon", 24); break;
         case MENU: /* MENU is SMALLICON - only provided in case of future changes */
         case SMALLICON: sizeval = Main.pref.getInteger("iconsize.smallicon", 16); break;
         case CURSOROVERLAY: /* same as cursor - only provided in case of future changes */
         case CURSOR: sizeval = Main.pref.getInteger("iconsize.cursor", 32); break;
+        case LAYER: sizeval = Main.pref.getInteger("iconsize.layer", 16); break;
         default: sizeval = Main.pref.getInteger("iconsize.default", 24); break;
         }
         return new Dimension(sizeval, sizeval);
