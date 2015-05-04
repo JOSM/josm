@@ -17,7 +17,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
     /** Preference: should arrows for oneways be displayed */
     private boolean showOnewayArrow;
     private int defaultSegmentWidth;
-    /** Preference: should the segement numbers of ways be displayed */
+    /** Preference: should the segment numbers of ways be displayed */
     private boolean showOrderNumber;
     /** Preference: should only the last arrow of a way be displayed */
     private boolean showHeadArrowOnly;
