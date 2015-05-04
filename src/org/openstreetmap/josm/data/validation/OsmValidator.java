@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.validation.tests.DuplicatedWayNodes;
 import org.openstreetmap.josm.data.validation.tests.Highways;
 import org.openstreetmap.josm.data.validation.tests.InternetTags;
 import org.openstreetmap.josm.data.validation.tests.Lanes;
+import org.openstreetmap.josm.data.validation.tests.LongSegment;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.data.validation.tests.NameMismatch;
@@ -124,6 +125,7 @@ public class OsmValidator implements LayerChangeListener {
         ConditionalKeys.class, // 3200 .. 3299
         InternetTags.class, // 3300 .. 3399
         ApiCapabilitiesTest.class, // 3400 .. 3499
+        LongSegment.class, // 3500 .. 3599
     };
 
     private static Map<String, Test> allTestsMap;

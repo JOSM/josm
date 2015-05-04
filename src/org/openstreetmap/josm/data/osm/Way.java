@@ -684,6 +684,30 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     /**
+     * Replies the length of the longest segement of the way, in metres, as computed by {@link LatLon#greatCircleDistance}.
+     * @return The length of the segment, in metres
+     * @since 4138
+     */
+    public double getLongestSegmentLength() {
+        double length = 0;
+        Node lastN = null;
+        for (Node n:nodes) {
+            if (lastN != null) {
+                LatLon lastNcoor = lastN.getCoor();
+                LatLon coor = n.getCoor();
+                if (lastNcoor != null && coor != null) {
+                    double l = coor.greatCircleDistance(lastNcoor);
+                    if (l > length) {
+                        length = l;
+                    }
+                }
+            }
+            lastN = n;
+        }
+        return length;
+    }
+
+    /**
      * Tests if this way is a oneway.
      * @return {@code 1} if the way is a oneway,
      *         {@code -1} if the way is a reversed oneway,
