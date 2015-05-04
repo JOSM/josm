@@ -51,7 +51,6 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.DatatypeConverter;
 
@@ -1143,53 +1142,6 @@ public class ImageProvider {
         }
         return Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
                 "crosshair".equals(name) ? new Point(10, 10) : new Point(3, 2), "Cursor");
-    }
-
-    /**
-     * Decorate one icon with an overlay icon.
-     *
-     * @param ground the base image
-     * @param overlay the overlay image (can be smaller than the base image)
-     * @param pos position of the overlay image inside the base image (positioned
-     * in one of the corners)
-     * @return an icon that represent the overlay of the two given icons. The second icon is layed
-     * on the first relative to the given position.
-     * FIXME: This function does not fit into the ImageProvider concept as public function!
-     * Overlay should be handled like all the other functions only settings arguments and
-     * overlay must be transparent in the background.
-     * Also scaling is not cared about with current implementation.
-     * @deprecated this method will be refactored
-     */
-    @Deprecated
-    public static ImageIcon overlay(Icon ground, Icon overlay, OverlayPosition pos) {
-        int w = ground.getIconWidth();
-        int h = ground.getIconHeight();
-        int wo = overlay.getIconWidth();
-        int ho = overlay.getIconHeight();
-        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = img.createGraphics();
-        ground.paintIcon(null, g, 0, 0);
-        int x = 0, y = 0;
-        switch (pos) {
-        case NORTHWEST:
-            x = 0;
-            y = 0;
-            break;
-        case NORTHEAST:
-            x = w - wo;
-            y = 0;
-            break;
-        case SOUTHWEST:
-            x = 0;
-            y = h - ho;
-            break;
-        case SOUTHEAST:
-            x = w - wo;
-            y = h - ho;
-            break;
-        }
-        overlay.paintIcon(null, g, x, y);
-        return new ImageIcon(img);
     }
 
     /** 90 degrees in radians units */

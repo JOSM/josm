@@ -53,7 +53,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     protected boolean showOnewayArrow;
     /** Preference: should only the last arrow of a way be displayed */
     protected boolean showHeadArrowOnly;
-    /** Preference: should the segement numbers of ways be displayed */
+    /** Preference: should the segment numbers of ways be displayed */
     protected boolean showOrderNumber;
     /** Preference: should selected nodes be filled */
     protected boolean fillSelectedNode;

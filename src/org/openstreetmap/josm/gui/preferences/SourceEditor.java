@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -49,7 +48,6 @@ import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -95,7 +93,9 @@ import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -1001,10 +1001,8 @@ public abstract class SourceEditor extends JPanel {
                     ExtendedDialog dlg = new ExtendedDialog(Main.parent, tr("Warning"), new String [] { tr("Cancel"), tr("Continue anyway") });
                     dlg.setButtonIcons(new Icon[] {
                         ImageProvider.get("cancel"),
-                        ImageProvider.overlay(
-                            ImageProvider.get("ok"),
-                            new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(12 , 12, Image.SCALE_SMOOTH)),
-                            ImageProvider.OverlayPosition.SOUTHEAST)
+                        new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).addOverlay(
+                                new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get()
                     });
                     dlg.setToolTipTexts(new String[] {
                         tr("Cancel and return to the previous dialog"),
