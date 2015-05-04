@@ -79,7 +79,9 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -672,9 +674,8 @@ public class MapPaintDialog extends ToggleDialog {
             add(new SaveAsAction());
 
             JMenu setMenu = new JMenu(tr("Style settings"));
-            setMenu.setIcon(ImageProvider.overlay(ImageProvider.get("preference"),
-                ImageProvider.get("dialogs/mappaint", "pencil"),
-                ImageProvider.OverlayPosition.SOUTHEAST));
+            setMenu.setIcon(new ImageProvider("preference").setMaxSize(ImageSizes.POPUPMENU).addOverlay(
+                new ImageOverlay(new ImageProvider("dialogs/mappaint", "pencil"), 0.5, 0.5, 1.0, 1.0)).get());
             setMenu.setToolTipText(tr("Customize the style"));
             add(setMenu);
 
