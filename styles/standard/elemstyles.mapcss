@@ -2319,7 +2319,6 @@ node[amenity=clock] {
     set icon_z17;
     text: auto;
 }
-area[emergency=aed],
 area[amenity=toilets],
 area[amenity=shower],
 area[amenity=recycling],
@@ -2328,11 +2327,6 @@ area[amenity=sanitary_dump_station] {
 }
 node[emergency=phone] {
     icon-image: "vehicle/emergency_phone.png";
-    set icon_z17;
-    text: auto;
-}
-node[emergency=aed] {
-    icon-image: "presets/aed.svg";
     set icon_z17;
     text: auto;
 }
