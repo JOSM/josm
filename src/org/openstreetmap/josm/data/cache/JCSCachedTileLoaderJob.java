@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
@@ -282,7 +283,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             }
         } catch (Exception e) {
             log.log(Level.WARNING, "JCS - Error while loading object from cache: {0}; {1}", new Object[]{e.getMessage(), getUrl()});
-            log.log(Level.FINE, "Stacktrace", e);
+            Main.warn(e);
             for (ICachedLoaderListener l: listeners) {
                 l.loadingFinished(cacheData, LoadResult.FAILURE);
             }
@@ -381,7 +382,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             cache.put(getCacheKey(), createCacheEntry(new byte[]{}), attributes);
             return handleNotFound();
         } catch (Exception e) {
-            log.log(Level.WARNING, "JCS - Exception during download " + getUrl(), e);
+            log.log(Level.WARNING, "JCS - Exception during download {0}",  getUrl());
+            Main.warn(e);
         }
         log.log(Level.WARNING, "JCS - Silent failure during download: {0}", getUrl());
         return false;
