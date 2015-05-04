@@ -534,20 +534,6 @@ public class Preferences {
     }
 
     /**
-     * Returns the location of the user defined preferences directory
-     * @return The location of the user defined preferences directory
-     * @deprecated use #getPreferencesDirectory() to access preferences directory
-     * or #getUserDataDirectory to access user data directory
-     */
-    @Deprecated
-    public String getPreferencesDir() {
-        final String path = getPreferencesDirectory().getPath();
-        if (path.endsWith(File.separator))
-            return path;
-        return path + File.separator;
-    }
-
-    /**
      * Returns the user defined preferences directory, containing the preferences.xml file
      * @return The user defined preferences directory, containing the preferences.xml file
      * @since 7834
@@ -1694,7 +1680,7 @@ public class Preferences {
                              if ("url".equals(mkey) && val.contains("josm.openstreetmap.de/josmfile") && !val.contains("zip=1")) {
                                  val += "&zip=1";
                                  modified = true;
-                                 
+
                              }
                              newmap.put(mkey, val);
                          }

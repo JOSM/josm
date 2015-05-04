@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -55,42 +54,6 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
             // this is handled by special name "core:none"
         }
         return sc;
-    }
-
-    /**
-     * Constructs a {@code JosmAction}.
-     *
-     * @param name the action's text as displayed on the menu (if it is added to a menu)
-     * @param icon the icon to use
-     * @param tooltip  a longer description of the action that will be displayed in the tooltip. Please note
-     *           that html is not supported for menu actions on some platforms.
-     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut. But you always
-     *            do want a shortcut, remember you can always register it with group=none, so you
-     *            won't be assigned a shortcut unless the user configures one. If you pass null here,
-     *            the user CANNOT configure a shortcut for your action.
-     * @param registerInToolbar register this action for the toolbar preferences?
-     * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
-     * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
-     * @deprecated do not pass Icon, pass ImageProvider instead
-     */
-    @Deprecated
-    public JosmAction(String name, Icon icon, String tooltip, Shortcut shortcut, boolean registerInToolbar, String toolbarId, boolean installAdapters) {
-        super(name, icon);
-        setHelpId();
-        sc = shortcut;
-        if (sc != null) {
-            Main.registerActionShortcut(this, sc);
-        }
-        setTooltip(tooltip);
-        if (getValue("toolbar") == null) {
-            putValue("toolbar", toolbarId);
-        }
-        if (registerInToolbar && Main.toolbar != null) {
-            Main.toolbar.register(this);
-        }
-        if (installAdapters) {
-            installAdapters();
-        }
     }
 
     /**

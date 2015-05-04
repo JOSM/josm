@@ -204,18 +204,6 @@ public final class ExpressionFactory {
         }
 
         /**
-         * Returns the first non-null object. The name originates from the {@code COALESCE} SQL function.
-         * @param args arguments
-         * @return the first non-null object
-         * @deprecated Deprecated in favour of {@link #any(Object...)} from the MapCSS standard.
-         */
-        @NullableArguments
-        @Deprecated
-        public static Object coalesce(Object... args) {
-            return any(args);
-        }
-
-        /**
          * Returns the first non-null object.
          * The name originates from <a href="http://wiki.openstreetmap.org/wiki/MapCSS/0.2/eval">MapCSS standard</a>.
          * @param args arguments
