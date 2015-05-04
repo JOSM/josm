@@ -4,8 +4,11 @@ package org.openstreetmap.josm.data.imagery;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -36,8 +39,11 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener  {
     private static final Logger log = FeatureAdapter.getLogger(TMSCachedTileLoaderJob.class.getCanonicalName());
     private Tile tile;
-    private TileLoaderListener listener;
     private volatile URL url;
+
+    // we need another deduplication of Tile Loader listeners, as for each submit, new TMSCachedTileLoaderJob was created
+    // that way, we reduce calls to tileLoadingFinished, and general CPU load due to surplus Map repaints
+    private static final ConcurrentMap<String,Set<TileLoaderListener>> inProgress = new ConcurrentHashMap<>();
 
     /**
      * Limit definition for per host concurrent connections
@@ -132,7 +138,17 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             Map<String, String> headers) {
         super(cache, connectTimeout, readTimeout, headers);
         this.tile = tile;
-        this.listener = listener;
+        if (listener != null) {
+            String deduplicationKey = getCacheKey();
+            synchronized (inProgress) {
+                Set<TileLoaderListener> newListeners = inProgress.get(deduplicationKey);
+                if (newListeners == null) {
+                    newListeners = new HashSet<>();
+                    inProgress.put(deduplicationKey, newListeners);
+                }
+                newListeners.add(listener);
+            }
+        }
     }
 
     @Override
@@ -226,33 +242,46 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     @Override
     public void loadingFinished(CacheEntry object, LoadResult result) {
+        Set<TileLoaderListener> listeners;
+        synchronized (inProgress) {
+            listeners = inProgress.remove(getCacheKey());
+        }
+
         try {
-            tile.finishLoading(); // whatever happened set that loading has finished
-            switch(result){
-            case FAILURE:
-                tile.setError("Problem loading tile");
-                // no break intentional here
-            case SUCCESS:
-                handleNoTileAtZoom();
-                if (object != null) {
-                    byte[] content = object.getContent();
-                    if (content != null && content.length > 0) {
-                        tile.loadImage(new ByteArrayInputStream(content));
+            if(!tile.isLoaded()) { //if someone else already loaded tile, skip all the handling
+                tile.finishLoading(); // whatever happened set that loading has finished
+                switch(result){
+                case FAILURE:
+                    tile.setError("Problem loading tile");
+                    // no break intentional here
+                case SUCCESS:
+                    handleNoTileAtZoom();
+                    if (object != null) {
+                        byte[] content = object.getContent();
+                        if (content != null && content.length > 0) {
+                            tile.loadImage(new ByteArrayInputStream(content));
+                        }
                     }
+                    // no break intentional here
+                case REJECTED:
+                    // do nothing
                 }
-                // no break intentional here
-            case REJECTED:
-                // do nothing
             }
-            if (listener != null) {
-                listener.tileLoadingFinished(tile, result.equals(LoadResult.SUCCESS));
+
+            // always check, if there is some listener interested in fact, that tile has finished loading
+            if (listeners != null) { // listeners might be null, if some other thread notified already about success
+                for(TileLoaderListener l: listeners) {
+                    l.tileLoadingFinished(tile, result.equals(LoadResult.SUCCESS));
+                }
             }
         } catch (IOException e) {
             log.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
             tile.setError(e.getMessage());
             tile.setLoaded(false);
-            if (listener != null) {
-                listener.tileLoadingFinished(tile, false);
+            if (listeners != null) { // listeners might be null, if some other thread notified already about success
+                for(TileLoaderListener l: listeners) {
+                    l.tileLoadingFinished(tile, false);
+                }
             }
         }
     }
