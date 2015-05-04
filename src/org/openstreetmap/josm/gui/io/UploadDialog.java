@@ -49,7 +49,9 @@ import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -425,12 +427,10 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                     new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")});
             dlg.setContent("<html>" + message + "</html>");
             dlg.setButtonIcons(new Icon[] {
-                    ImageProvider.get("ok"),
-                    ImageProvider.get("cancel"),
-                    ImageProvider.overlay(
-                            ImageProvider.get("upload"),
-                            new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(10 , 10, Image.SCALE_SMOOTH)),
-                            ImageProvider.OverlayPosition.SOUTHEAST)});
+                    new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).get(),
+                    new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get(),
+                    new ImageProvider("upload").setMaxSize(ImageSizes.LARGEICON).addOverlay(
+                            new ImageOverlay(new ImageProvider("warning-small"), 0.5,0.5,1.0,1.0)).get()});
             dlg.setToolTipTexts(new String[] {
                     tr("Return to the previous dialog to enter a more descriptive comment"),
                     tr("Cancel and return to the previous dialog"),

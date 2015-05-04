@@ -89,7 +89,9 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -285,23 +287,22 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         DataSet.addSelectionListener(this);
     }
 
-    protected Icon getBaseIcon() {
-        return ImageProvider.get("layer", "osmdata_small");
+    /**
+     * Return the image provider to get the base icon
+     * @return image provider class which can be modified
+     * @since 8323
+     */
+    protected ImageProvider getBaseIconProvider() {
+        return new ImageProvider("layer", "osmdata_small");
     }
 
-    /**
-     * TODO: @return Return a dynamic drawn icon of the map data. The icon is
-     *         updated by a background thread to not disturb the running programm.
-     */
-    @Override public Icon getIcon() {
-        Icon baseIcon = getBaseIcon();
+    @Override
+    public Icon getIcon() {
+        ImageProvider base = getBaseIconProvider().setMaxSize(ImageSizes.LAYER);
         if (isUploadDiscouraged()) {
-            return ImageProvider.overlay(baseIcon,
-                    new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(8, 8, Image.SCALE_SMOOTH)),
-                    ImageProvider.OverlayPosition.SOUTHEAST);
-        } else {
-            return baseIcon;
+            base.addOverlay(new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0));
         }
+        return base.get();
     }
 
     /**
