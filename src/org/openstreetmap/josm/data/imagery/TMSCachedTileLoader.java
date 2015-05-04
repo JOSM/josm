@@ -46,7 +46,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
      */
     public TMSCachedTileLoader(TileLoaderListener listener, String name, int connectTimeout, int readTimeout, Map<String, String> headers, String cacheDir) throws IOException {
         this.cache = JCSCacheManager.getCache(name,
-                1000, // use JCS memory cache instead of MemoryTileCache
+                200, // use fairly small memory cache, as cached objects are quite big, as they contain BufferedImages
                 MAX_OBJECTS_ON_DISK.get(),
                 cacheDir);
         this.connectTimeout = connectTimeout;
