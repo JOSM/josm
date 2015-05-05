@@ -4565,14 +4565,15 @@
             <key key="amenity" value="waste_disposal" />
         </item> <!-- Waste Disposal/Dumpster -->
         <item name="Sanitary Dump Station" icon="styles/standard/service/recycling/sanitary_dump_station.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=sanitary_dump_station"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=sanitary_dump_station"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=sanitary_dump_station"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=sanitary_dump_station" />
+            <link href="http://wiki.openstreetmap.org/wiki/Toilet_Holding_Tank_Disposal"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Toilet_Holding_Tank_Disposal"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Toilet_Holding_Tank_Disposal"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Toilet_Holding_Tank_Disposal" />
             <space />
             <key key="amenity" value="sanitary_dump_station" />
-            <check key="sanitary_dump_station:suction" text="Suction pumpout" />
-            <check key="sanitary_dump_station:gravity" text="Gravity dump station" />
+            <check key="sanitary_dump_station:pump-out" text="Suction pumpout" />
+            <check key="sanitary_dump_station:round_drain" text="Gravity drain for hose" />
+            <check key="sanitary_dump_station:basin" text="Casette or Elsan Disposal" />
             <combo key="access" text="Access" values="yes,public,customers,no" />
             <reference ref="fee" />
             <text key="operator" text="Operator" />
