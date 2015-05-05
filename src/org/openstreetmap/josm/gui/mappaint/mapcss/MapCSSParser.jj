@@ -8,6 +8,7 @@ PARSER_BEGIN(MapCSSParser)
 package org.openstreetmap.josm.gui.mappaint.mapcss.parsergen;
 
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -86,6 +87,19 @@ public class MapCSSParser {
         } catch(java.io.UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+        return new MapCSSParserTokenManager(scs, initState.idx);
+    }
+
+    /**
+     * Constructor which initializes the parser with a certain lexical state.
+     */
+    public MapCSSParser(Reader in, LexicalState initState) {
+        this(createTokenManager(in, initState));
+        declarationCounter = 0;
+    }
+
+    protected static MapCSSParserTokenManager createTokenManager(Reader in, LexicalState initState) {
+        final SimpleCharStream scs = new SimpleCharStream(in, 1, 1);
         return new MapCSSParserTokenManager(scs, initState.idx);
     }
 }
