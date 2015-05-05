@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
@@ -203,9 +204,9 @@ public final class Cascade implements Cloneable {
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder("Cascade{ ");
-        for (String key : prop.keySet()) {
-            res.append(key+":");
-            Object val = prop.get(key);
+        for (Entry<String, Object> entry : prop.entrySet()) {
+            res.append(entry.getKey()+":");
+            Object val = entry.getValue();
             if (val instanceof float[]) {
                 res.append(Arrays.toString((float[]) val));
             } else if (val instanceof Color) {

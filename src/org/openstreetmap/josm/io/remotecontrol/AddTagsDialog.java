@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -93,22 +94,21 @@ public class AddTagsDialog extends ExtendedDialog {
         }
 
         private String getToolTip() {
-            StringBuilder sb=new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.append("<html>");
             sb.append(tr("Old values of"));
             sb.append(" <b>");
             sb.append(tag);
             sb.append("</b><br/>");
-            for (String k: valueCount.keySet()) {
+            for (Entry<String, Integer> e : valueCount.entrySet()) {
                 sb.append("<b>");
-                sb.append(valueCount.get(k));
+                sb.append(e.getValue());
                 sb.append(" x </b>");
-                sb.append(k);
+                sb.append(e.getKey());
                 sb.append("<br/>");
             }
             sb.append("</html>");
             return sb.toString();
-
         }
     }
 

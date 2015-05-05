@@ -18,17 +18,21 @@ import org.openstreetmap.josm.Main;
  * @param <T> a {@link Throwable} that may be thrown during {@link #updateData()},
  * use {@link RuntimeException} if no exception must be handled.
  * @author xeen
- *
+ * @since 1450
  */
 public abstract class CacheCustomContent<T extends Throwable> {
-    /**
-     * Common intervals
-     */
+
+    /** Update interval meaning an update is always needed */
     public static final int INTERVAL_ALWAYS = -1;
+    /** Update interval meaning an update is needed each hour */
     public static final int INTERVAL_HOURLY = 60*60;
+    /** Update interval meaning an update is needed each day */
     public static final int INTERVAL_DAILY = INTERVAL_HOURLY * 24;
+    /** Update interval meaning an update is needed each week */
     public static final int INTERVAL_WEEKLY = INTERVAL_DAILY * 7;
+    /** Update interval meaning an update is needed each month */
     public static final int INTERVAL_MONTHLY = INTERVAL_WEEKLY * 4;
+    /** Update interval meaning an update is never needed */
     public static final int INTERVAL_NEVER = Integer.MAX_VALUE;
 
     /**
@@ -60,23 +64,23 @@ public abstract class CacheCustomContent<T extends Throwable> {
     protected abstract byte[] updateData() throws T;
 
     /**
-     * This function serves as a comfort hook to perform additional checks if the cache is valid
-     * @return True if the cached copy is still valid
-     */
-    protected boolean isCacheValid() {
-        return true;
-    }
-
-    /**
      * Initializes the class. Note that all read data will be stored in memory until it is flushed
      * by flushData().
-     * @param ident
-     * @param updateInterval
+     * @param ident ident that identifies the stored file. Includes file-ending.
+     * @param updateInterval update interval in seconds. -1 means always
      */
     public CacheCustomContent(String ident, int updateInterval) {
         this.ident = ident;
         this.updateInterval = updateInterval;
         this.path = new File(Main.pref.getCacheDirectory(), ident);
+    }
+
+    /**
+     * This function serves as a comfort hook to perform additional checks if the cache is valid
+     * @return True if the cached copy is still valid
+     */
+    protected boolean isCacheValid() {
+        return true;
     }
 
     private boolean needsUpdate() {
@@ -103,6 +107,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Updates data if required
      * @return Returns the data
+     * @throws T if an error occurs
      */
     public byte[] updateIfRequired() throws T {
         if (needsUpdate())
@@ -113,6 +118,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Updates data if required
      * @return Returns the data as string
+     * @throws T if an error occurs
      */
     public String updateIfRequiredString() throws T {
         if (needsUpdate())
@@ -123,6 +129,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Executes an update regardless of updateInterval
      * @return Returns the data
+     * @throws T if an error occurs
      */
     public byte[] updateForce() throws T {
         this.data = updateData();
@@ -134,6 +141,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Executes an update regardless of updateInterval
      * @return Returns the data as String
+     * @throws T if an error occurs
      */
     public String updateForceString() throws T {
         updateForce();
@@ -143,6 +151,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Returns the data without performing any updates
      * @return the data
+     * @throws T if an error occurs
      */
     public byte[] getData() throws T {
         if (data == null) {
@@ -154,6 +163,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Returns the data without performing any updates
      * @return the data as String
+     * @throws T if an error occurs
      */
     public String getDataString() throws T {
         byte[] array = getData();
@@ -169,7 +179,9 @@ public abstract class CacheCustomContent<T extends Throwable> {
     private void loadFromDisk() throws T {
         try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(path))) {
             this.data = new byte[input.available()];
-            input.read(this.data);
+            if (input.read(this.data) < this.data.length) {
+                Main.error("Failed to read expected contents from "+path);
+            }
         } catch (IOException e) {
             if (!isOffline()) {
                 this.data = updateForce();

@@ -19,6 +19,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -274,9 +275,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
     protected UploadStrategy getUploadStrategy() {
         UploadStrategy strategy = null;
-        for (UploadStrategy s: rbStrategy.keySet()) {
-            if (rbStrategy.get(s).isSelected()) {
-                strategy = s;
+        for (Entry<UploadStrategy, JRadioButton> e : rbStrategy.entrySet()) {
+            if (e.getValue().isSelected()) {
+                strategy = e.getKey();
                 break;
             }
         }

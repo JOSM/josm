@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import javax.swing.ButtonGroup;
@@ -1122,10 +1123,10 @@ public final class TaggingPresetItems {
             }
 
             if (display != null) {
-                for (String val : lhm.keySet()) {
-                    String k = lhm.get(val).toString();
+                for (Entry<String, PresetListEntry> entry : lhm.entrySet()) {
+                    String k = entry.getValue().toString();
                     if (k != null && k.equals(display)) {
-                        value = val;
+                        value = entry.getKey();
                         break;
                     }
                 }

@@ -8,8 +8,11 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -104,17 +107,13 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
      * @param dialog History dialog to hide
      */
     public void hide(HistoryBrowserDialog dialog) {
-        long id = 0;
-        for (long i: dialogs.keySet()) {
-            if (dialogs.get(i) == dialog) {
-                id = i;
+        for (Iterator<Entry<Long, HistoryBrowserDialog>> it = dialogs.entrySet().iterator(); it.hasNext(); ) {
+            if (Objects.equals(it.next().getValue(), dialog)) {
+                it.remove();
+                if (dialogs.isEmpty()) {
+                    new WindowGeometry(dialog).remember(WINDOW_GEOMETRY_PREF);
+                }
                 break;
-            }
-        }
-        if (id > 0) {
-            dialogs.remove(id);
-            if (dialogs.isEmpty()) {
-                new WindowGeometry(dialog).remember(WINDOW_GEOMETRY_PREF);
             }
         }
         dialog.setVisible(false);

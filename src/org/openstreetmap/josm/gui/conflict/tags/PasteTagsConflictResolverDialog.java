@@ -67,6 +67,10 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     private StatisticsTableModel statisticsModel;
     private JPanel pnlTagResolver;
 
+    /**
+     * Constructs a new {@code PasteTagsConflictResolverDialog}.
+     * @param owner parent component
+     */
     public PasteTagsConflictResolverDialog(Component owner) {
         super(JOptionPane.getFrameForComponent(owner), ModalityType.DOCUMENT_MODAL);
         build();
@@ -113,8 +117,8 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         // -- apply button
         ApplyAction applyAction = new ApplyAction();
         allPrimitivesResolver.getModel().addPropertyChangeListener(applyAction);
-        for (OsmPrimitiveType type: resolvers.keySet()) {
-            resolvers.get(type).getModel().addPropertyChangeListener(applyAction);
+        for (TagConflictResolver r : resolvers.values()) {
+            r.getModel().addPropertyChangeListener(applyAction);
         }
         pnl.add(new SideButton(applyAction));
 
@@ -265,7 +269,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
     class CancelAction extends AbstractAction {
 
-        public CancelAction() {
+        private CancelAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel conflict resolution"));
             putValue(Action.NAME, tr("Cancel"));
             putValue(Action.SMALL_ICON, ImageProvider.get("", "cancel"));
@@ -281,7 +285,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
     class ApplyAction extends AbstractAction implements PropertyChangeListener {
 
-        public ApplyAction() {
+        private ApplyAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Apply resolved conflicts"));
             putValue(Action.NAME, tr("Apply"));
             putValue(Action.SMALL_ICON, ImageProvider.get("ok"));
@@ -353,19 +357,19 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    public static class StatisticsInfo {
+    private static class StatisticsInfo {
         public int numTags;
         public Map<OsmPrimitiveType, Integer> sourceInfo;
         public Map<OsmPrimitiveType, Integer> targetInfo;
 
-        public StatisticsInfo() {
+        private StatisticsInfo() {
             sourceInfo = new HashMap<>();
             targetInfo = new HashMap<>();
         }
     }
 
     private static class StatisticsTableColumnModel extends DefaultTableColumnModel {
-        public StatisticsTableColumnModel() {
+        private StatisticsTableColumnModel() {
             TableCellRenderer renderer = new StatisticsInfoRenderer();
             TableColumn col = null;
 
@@ -396,7 +400,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         private static final String[] HEADERS = new String[] {tr("Paste ..."), tr("From ..."), tr("To ...") };
         private transient List<StatisticsInfo> data;
 
-        public StatisticsTableModel() {
+        private StatisticsTableModel() {
             data = new ArrayList<>();
         }
 
@@ -515,7 +519,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             add(infoTable, BorderLayout.CENTER);
         }
 
-        public StatisticsInfoTable(StatisticsTableModel model) {
+        private StatisticsInfoTable(StatisticsTableModel model) {
             build(model);
         }
 

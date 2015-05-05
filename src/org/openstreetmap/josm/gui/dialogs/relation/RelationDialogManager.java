@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.MapView;
@@ -120,9 +121,10 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     public void updateContext(OsmDataLayer layer, Relation relation, RelationEditor editor) {
         // lookup the entry for editor and remove it
         //
-        for (DialogContext context: openDialogs.keySet()) {
-            if (openDialogs.get(context) == editor) {
-                openDialogs.remove(context);
+        for (Iterator<Entry<DialogContext, RelationEditor>> it = openDialogs.entrySet().iterator(); it.hasNext();) {
+            Entry<DialogContext, RelationEditor> entry = it.next();
+            if (Objects.equals(entry.getValue(), editor)) {
+                it.remove();
                 break;
             }
         }
@@ -214,15 +216,11 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     @Override
     public void windowClosed(WindowEvent e) {
         RelationEditor editor = (RelationEditor)e.getWindow();
-        DialogContext context = null;
-        for (DialogContext c : openDialogs.keySet()) {
-            if (editor.equals(openDialogs.get(c))) {
-                context = c;
+        for (Iterator<Entry<DialogContext, RelationEditor>> it = openDialogs.entrySet().iterator(); it.hasNext(); ) {
+            if (editor.equals(it.next().getValue())) {
+                it.remove();
                 break;
             }
-        }
-        if (context != null) {
-            openDialogs.remove(context);
         }
     }
 
