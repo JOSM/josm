@@ -117,6 +117,15 @@ public class MapCSSTagCheckerTest {
     }
 
     @Test
+    public void testPreprocessing() throws Exception {
+        final MapCSSTagChecker test = buildTagChecker("" +
+                "@media (min-josm-version: 1) { *[foo] { throwWarning: \"!\"; } }\n" +
+                "@media (min-josm-version: 2147483647) { *[bar] { throwWarning: \"!\"; } }\n");
+        assertThat(test.getErrorsForPrimitive(OsmUtils.createPrimitive("way foo=1"), false).size(), is(1));
+        assertThat(test.getErrorsForPrimitive(OsmUtils.createPrimitive("way bar=1"), false).size(), is(0));
+    }
+
+    @Test
     public void testInit() throws Exception {
         MapCSSTagChecker c = new MapCSSTagChecker();
         c.initialize();
