@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -81,10 +82,11 @@ public abstract class AbstractReader {
      * @throws IllegalDataException if a data integrity problem is detected
      */
     protected void processWaysAfterParsing() throws IllegalDataException{
-        for (Long externalWayId: ways.keySet()) {
+        for (Entry<Long, Collection<Long>> entry : ways.entrySet()) {
+            Long externalWayId = entry.getKey();
             Way w = (Way)externalIdMap.get(new SimplePrimitiveId(externalWayId, OsmPrimitiveType.WAY));
             List<Node> wayNodes = new ArrayList<>();
-            for (long id : ways.get(externalWayId)) {
+            for (long id : entry.getValue()) {
                 Node n = (Node)externalIdMap.get(new SimplePrimitiveId(id, OsmPrimitiveType.NODE));
                 if (n == null) {
                     if (id <= 0)
@@ -131,12 +133,13 @@ public abstract class AbstractReader {
             ds.addPrimitive(relation);
         }
 
-        for (Long externalRelationId : relations.keySet()) {
+        for (Entry<Long, Collection<RelationMemberData>> entry : relations.entrySet()) {
+            Long externalRelationId = entry.getKey();
             Relation relation = (Relation) externalIdMap.get(
                     new SimplePrimitiveId(externalRelationId, OsmPrimitiveType.RELATION)
             );
             List<RelationMember> relationMembers = new ArrayList<>();
-            for (RelationMemberData rm : relations.get(externalRelationId)) {
+            for (RelationMemberData rm : entry.getValue()) {
                 OsmPrimitive primitive = null;
 
                 // lookup the member from the map of already created primitives

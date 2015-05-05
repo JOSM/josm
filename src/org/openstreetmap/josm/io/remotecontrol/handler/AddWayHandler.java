@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -118,7 +119,7 @@ public class AddWayHandler extends RequestHandler {
     /**
      * Find the node with almost the same ccords in dataset or in already added nodes
      * @since 5845
-     **/
+     */
     Node findOrCreateNode(LatLon ll,  List<Command> commands) {
         Node nd = null;
 
@@ -131,9 +132,10 @@ public class AddWayHandler extends RequestHandler {
         }
 
         Node prev = null;
-        for (LatLon lOld: addedNodes.keySet()) {
+        for (Entry<LatLon, Node> entry : addedNodes.entrySet()) {
+            LatLon lOld = entry.getKey();
             if (lOld.greatCircleDistance(ll) < Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
-                prev = addedNodes.get(lOld);
+                prev = entry.getValue();
                 break;
             }
         }

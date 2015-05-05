@@ -572,6 +572,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         public boolean regexSearch;
         public boolean allElements;
 
+        /**
+         * Constructs a new {@code SearchSetting}.
+         */
         public SearchSetting() {
             this("", SearchMode.replace, false /* case insensitive */,
                     false /* no regexp */, false /* only useful primitives */);
