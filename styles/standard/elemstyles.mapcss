@@ -1253,6 +1253,7 @@ area[bridge:support],
 area[man_made=chimney],
 area[man_made=crane],
 area[man_made=gasometer],
+area[man_made=storage_tank],
 area[man_made=bunker_silo],
 area[man_made=lighthouse],
 area[man_made=monitoring_station],
@@ -1291,6 +1292,12 @@ node[man_made=flagpole] {
 }
 node[man_made=gasometer] {
     icon-image: "presets/gasometer.png";
+    icon-width: 16;
+    set icon_z17;
+    text: auto;
+}
+node[man_made=storage_tank] {
+    icon-image: "presets/storage_tank.png";
     icon-width: 16;
     set icon_z17;
     text: auto;
