@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -316,13 +317,13 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         static List<TagCheck> readMapCSS(Reader css) throws ParseException {
             CheckParameterUtil.ensureParameterNotNull(css, "css");
-            return readMapCSS(new MapCSSParser(css));
-        }
 
-        static List<TagCheck> readMapCSS(MapCSSParser css) throws ParseException {
-            CheckParameterUtil.ensureParameterNotNull(css, "css");
             final MapCSSStyleSource source = new MapCSSStyleSource("");
-            css.sheet(source);
+            final MapCSSParser preprocessor = new MapCSSParser(css, MapCSSParser.LexicalState.PREPROCESSOR);
+
+            css = new StringReader(preprocessor.pp_root(source));
+            final MapCSSParser parser = new MapCSSParser(css, MapCSSParser.LexicalState.DEFAULT);
+            parser.sheet(source);
             assert source.getErrors().isEmpty();
             // Ignore "meta" rule(s) from external rules of JOSM wiki
             removeMetaRules(source);
