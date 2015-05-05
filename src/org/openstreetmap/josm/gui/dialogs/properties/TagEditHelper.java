@@ -642,7 +642,7 @@ class TagEditHelper {
             ));
             final JLabel helpLabel = new JLabel(text);
             helpLabel.setFont(helpLabel.getFont().deriveFont(Font.PLAIN));
-            contentPane.add(helpLabel, GBC.eol().insets(1, 2, 1, 2));
+            contentPane.add(helpLabel, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(1, 2, 1, 2));
             super.setContentPane(contentPane);
         }
 
