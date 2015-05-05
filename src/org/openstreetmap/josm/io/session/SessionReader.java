@@ -483,12 +483,12 @@ public class SessionReader {
         }
 
         layers = new ArrayList<>();
-        for (int idx : layersMap.keySet()) {
-            Layer layer = layersMap.get(idx);
+        for (Entry<Integer, Layer> entry : layersMap.entrySet()) {
+            Layer layer = entry.getValue();
             if (layer == null) {
                 continue;
             }
-            Element el = elems.get(idx);
+            Element el = elems.get(entry.getKey());
             if (el.hasAttribute("visible")) {
                 layer.setVisible(Boolean.parseBoolean(el.getAttribute("visible")));
             }
