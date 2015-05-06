@@ -5301,6 +5301,16 @@
             <key key="man_made" value="gasometer" />
             <text key="name" text="Name" />
         </item> <!-- Gasometer -->
+        <item name="Storage Tank" icon="presets/storage_tank.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=storage_tank"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=storage_tank"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=storage_tank" />
+            <key key="man_made" value="storage_tank" />
+            <combo key="building" text="Building" values="storage_tank" values_context="building" />
+            <combo key="content"  text="Content" values="fuel,manure,oil,sewage,silage,slurry,water,wine" values_context="content" />
+            <text key="operator" text="Operator" />
+            <text key="height" text="Height (meters)" length="7" />
+        </item> <!-- Storage Tank -->
         <item name="Bunker Silo" icon="styles/standard/bunker_silo.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=bunker_silo"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=bunker_silo" />
@@ -5383,16 +5393,6 @@
             <key key="man_made" value="water_tower" />
             <text key="name" text="Name" />
         </item> <!-- Water Tower -->
-        <item name="Storage Tank" icon="presets/storage_tank.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=storage_tank"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=storage_tank"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=storage_tank" />
-            <key key="man_made" value="storage_tank" />
-            <combo key="building" text="Building" values="storage_tank" values_context="building" />
-            <combo key="content"  text="Content" values="fuel,manure,oil,sewage,silage,slurry,water,wine" values_context="content" />
-            <text key="operator" text="Operator" />
-            <text key="height" text="Height (meters)" length="7" />
-        </item> <!-- Storage Tank -->
         <item name="Water Works" icon="presets/water_works.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=water_works"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=water_works"
