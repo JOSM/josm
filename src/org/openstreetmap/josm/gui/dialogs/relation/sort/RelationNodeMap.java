@@ -232,7 +232,7 @@ public class RelationNodeMap {
 
     private Integer popBackwardOnewayPart(int way){
         if (lastOnewayNode != null) {
-            TreeSet<Node> nodes = new TreeSet<>();
+            Set<Node> nodes = new TreeSet<>();
             if (onewayReverseMap.ways.containsKey(way)) {
                 nodes.addAll(onewayReverseMap.ways.get(way));
             }

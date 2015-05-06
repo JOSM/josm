@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.command.Command;
@@ -83,11 +84,11 @@ public class RelationChecker extends Test {
     }
 
     private static class RolePreset {
-        public RolePreset(LinkedList<Role> roles, String name) {
+        public RolePreset(List<Role> roles, String name) {
             this.roles = roles;
             this.name = name;
         }
-        private final LinkedList<Role> roles;
+        private final List<Role> roles;
         private final String name;
     }
 
@@ -150,7 +151,7 @@ public class RelationChecker extends Test {
             if (matches && r != null) {
                 for(Role role: r.roles) {
                     String key = role.key;
-                    LinkedList<Role> roleGroup = null;
+                    List<Role> roleGroup = null;
                     if (allroles.containsKey(key)) {
                         roleGroup = allroles.get(key).roles;
                     } else {

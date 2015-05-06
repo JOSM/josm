@@ -319,12 +319,13 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * of "my" in the conflicts managed by this collection.
      */
     public Set<OsmPrimitive> getMyConflictParties() {
-        HashSet<OsmPrimitive> ret = new HashSet<>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         for (Conflict<?> c: conflicts) {
             ret.add(c.getMy());
         }
         return ret;
     }
+
     /**
      * Replies the set of  {@link OsmPrimitive} which participate in the role
      * of "their" in the conflicts managed by this collection.
@@ -333,7 +334,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * of "their" in the conflicts managed by this collection.
      */
     public Set<OsmPrimitive> getTheirConflictParties() {
-        HashSet<OsmPrimitive> ret = new HashSet<>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         for (Conflict<?> c: conflicts) {
             ret.add(c.getTheir());
         }

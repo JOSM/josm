@@ -157,7 +157,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         model.removeAllElements();
         Collection<Collection<String>> args = Main.pref.getArray("bookmarks", null);
         if(args != null) {
-            LinkedList<Bookmark> bookmarks = new LinkedList<>();
+            List<Bookmark> bookmarks = new LinkedList<>();
             for(Collection<String> entry : args) {
                 try {
                     bookmarks.add(new Bookmark(entry));
@@ -177,7 +177,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
      * Saves all bookmarks to the preferences file
      */
     public final void save() {
-        LinkedList<Collection<String>> coll = new LinkedList<>();
+        List<Collection<String>> coll = new LinkedList<>();
         for (Object o : ((DefaultListModel<Bookmark>)getModel()).toArray()) {
             String[] array = new String[5];
             Bookmark b = (Bookmark) o;

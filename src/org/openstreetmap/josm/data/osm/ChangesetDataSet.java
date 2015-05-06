@@ -115,7 +115,7 @@ public class ChangesetDataSet {
      */
     public Set<HistoryOsmPrimitive> getPrimitivesByModificationType(ChangesetModificationType cmt) {
         CheckParameterUtil.ensureParameterNotNull(cmt,"cmt");
-        HashSet<HistoryOsmPrimitive> ret = new HashSet<>();
+        Set<HistoryOsmPrimitive> ret = new HashSet<>();
         for (Entry<PrimitiveId, ChangesetModificationType> entry: modificationTypes.entrySet()) {
             if (entry.getValue().equals(cmt)) {
                 ret.add(primitives.get(entry.getKey()));

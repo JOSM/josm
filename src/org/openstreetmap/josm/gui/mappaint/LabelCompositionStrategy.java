@@ -187,7 +187,7 @@ public abstract class LabelCompositionStrategy {
             if (nameTags == null) {
                 nameTags = Collections.emptyList();
             }
-            ArrayList<String> result = new ArrayList<>();
+            List<String> result = new ArrayList<>();
             for(String tag: nameTags) {
                 if (tag == null) {
                     continue;

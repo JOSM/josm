@@ -228,7 +228,7 @@ public class DuplicateRelation extends Test {
     public Command fixError(TestError testError) {
         if (testError.getCode() == SAME_RELATION) return null;
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        HashSet<Relation> relFix = new HashSet<>();
+        Set<Relation> relFix = new HashSet<>();
 
         for (OsmPrimitive osm : sel)
             if (osm instanceof Relation && !osm.isDeleted()) {
@@ -291,7 +291,7 @@ public class DuplicateRelation extends Test {
 
         // We fix it only if there is no more than one relation that is relation member.
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        HashSet<Relation> relations = new HashSet<>();
+        Set<Relation> relations = new HashSet<>();
 
         for (OsmPrimitive osm : sel)
             if (osm instanceof Relation) {

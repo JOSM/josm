@@ -228,7 +228,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
 
         public Set<OsmPrimitive> getObjectsToDelete() {
-            HashSet<OsmPrimitive> ret = new HashSet<>();
+            Set<OsmPrimitive> ret = new HashSet<>();
             for (RelationToChildReference ref: data) {
                 ret.add(ref.getChild());
             }
@@ -240,7 +240,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
 
         public Set<OsmPrimitive> getParentRelations() {
-            HashSet<OsmPrimitive> ret = new HashSet<>();
+            Set<OsmPrimitive> ret = new HashSet<>();
             for (RelationToChildReference ref: data) {
                 ret.add(ref.getParent());
             }

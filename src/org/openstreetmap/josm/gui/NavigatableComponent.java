@@ -683,7 +683,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     private Map<Double, List<Node>> getNearestNodesImpl(Point p,
             Predicate<OsmPrimitive> predicate) {
-        TreeMap<Double, List<Node>> nearestMap = new TreeMap<>();
+        Map<Double, List<Node>> nearestMap = new TreeMap<>();
         DataSet ds = getCurrentDataSet();
 
         if (ds != null) {

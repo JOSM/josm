@@ -64,7 +64,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
             changesets = Collections.emptyList();
         }
 
-        HashSet<Integer> ids = new HashSet<>();
+        Set<Integer> ids = new HashSet<>();
         for (Changeset cs: changesets) {
             if (cs == null || cs.isNew()) {
                 continue;

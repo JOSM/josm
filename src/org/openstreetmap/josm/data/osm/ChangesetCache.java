@@ -47,8 +47,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
     /** the cached changesets */
     private final Map<Integer, Changeset> cache = new HashMap<>();
 
-    private final CopyOnWriteArrayList<ChangesetCacheListener> listeners =
-        new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<ChangesetCacheListener> listeners = new CopyOnWriteArrayList<>();
 
     private ChangesetCache() {
         Main.pref.addPreferenceChangeListener(this);

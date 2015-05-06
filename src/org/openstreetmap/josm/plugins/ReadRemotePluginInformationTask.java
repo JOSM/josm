@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -275,7 +276,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      */
     protected List<PluginInformation> filterDeprecatedPlugins(List<PluginInformation> plugins) {
         List<PluginInformation> ret = new ArrayList<>(plugins.size());
-        HashSet<String> deprecatedPluginNames = new HashSet<>();
+        Set<String> deprecatedPluginNames = new HashSet<>();
         for (PluginHandler.DeprecatedPlugin p : PluginHandler.DEPRECATED_PLUGINS) {
             deprecatedPluginNames.add(p.name);
         }

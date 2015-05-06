@@ -238,7 +238,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @return the subset of ids
      */
     protected Set<Long> extractIdPackage(Set<Long> ids) {
-        HashSet<Long> pkg = new HashSet<>();
+        Set<Long> pkg = new HashSet<>();
         if (ids.isEmpty())
             return pkg;
         if (ids.size() > MAX_IDS_PER_REQUEST) {

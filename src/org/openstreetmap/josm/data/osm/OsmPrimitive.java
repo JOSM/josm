@@ -160,7 +160,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * empty set if primitives is null or if there are no referring primitives
      */
     public static Set<OsmPrimitive> getReferrer(Collection<? extends OsmPrimitive> primitives) {
-        HashSet<OsmPrimitive> ret = new HashSet<>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         if (primitives == null || primitives.isEmpty()) return ret;
         for (OsmPrimitive p: primitives) {
             ret.addAll(p.getReferrers());
@@ -172,13 +172,15 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Some predicates, that describe conditions on primitives.
      */
     public static final Predicate<OsmPrimitive> isUsablePredicate = new Predicate<OsmPrimitive>() {
-        @Override public boolean evaluate(OsmPrimitive primitive) {
+        @Override
+        public boolean evaluate(OsmPrimitive primitive) {
             return primitive.isUsable();
         }
     };
 
     public static final Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
-        @Override public boolean evaluate(OsmPrimitive primitive) {
+        @Override
+        public boolean evaluate(OsmPrimitive primitive) {
             return primitive.isSelectable();
         }
     };
@@ -664,7 +666,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public static Collection<String> getUninterestingKeys() {
         if (uninteresting == null) {
-            LinkedList<String> l = new LinkedList<>(Arrays.asList(
+            List<String> l = new LinkedList<>(Arrays.asList(
                 "source", "source_ref", "source:", "comment",
                 "converted_by", "watch", "watch:",
                 "description", "attribution"));
@@ -1363,7 +1365,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @return the set of referring relations
      */
     public static Set<Relation> getParentRelations(Collection<? extends OsmPrimitive> primitives) {
-        HashSet<Relation> ret = new HashSet<>();
+        Set<Relation> ret = new HashSet<>();
         for (OsmPrimitive w : primitives) {
             ret.addAll(OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class));
         }

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -39,7 +40,7 @@ public class ParallelWays {
 
         // Make a deep copy of the ways, keeping the copied ways connected
         // TODO: This assumes the first/last nodes of the ways are the only possible shared nodes.
-        HashMap<Node, Node> splitNodeMap = new HashMap<>(sourceWays.size());
+        Map<Node, Node> splitNodeMap = new HashMap<>(sourceWays.size());
         for (Way w : sourceWays) {
             if (!splitNodeMap.containsKey(w.firstNode())) {
                 splitNodeMap.put(w.firstNode(), copyNode(w.firstNode(), copyTags));

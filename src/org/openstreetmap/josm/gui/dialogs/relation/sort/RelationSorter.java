@@ -174,7 +174,7 @@ public class RelationSorter {
             }
         }
 
-        for (LinkedList<Integer> tmpGroup : allGroups) {
+        for (List<Integer> tmpGroup : allGroups) {
             for (Integer p : tmpGroup) {
                 newMembers.add(defaultMembers.get(p));
             }

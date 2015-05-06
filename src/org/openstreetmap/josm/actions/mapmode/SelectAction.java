@@ -247,7 +247,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         updateKeyModifiers(modifiers);
         determineMapMode(!c.isEmpty());
 
-        HashSet<OsmPrimitive> newHighlights = new HashSet<>();
+        Set<OsmPrimitive> newHighlights = new HashSet<>();
 
         virtualManager.clear();
         if(mode == Mode.MOVE) {

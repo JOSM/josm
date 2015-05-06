@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.openstreetmap.josm.Main;
@@ -38,7 +39,7 @@ public class SelectByInternalPointAction extends JosmAction {
             return Collections.emptySet();
         }
         final Node n = new Node(internalPoint);
-        final TreeMap<Double, OsmPrimitive> found = new TreeMap<>();
+        final Map<Double, OsmPrimitive> found = new TreeMap<>();
         for (Way w : ds.getWays()) {
             if (w.isUsable() && w.isClosed() && w.isSelectable()) {
                 if (Geometry.nodeInsidePolygon(n, w.getNodes())) {

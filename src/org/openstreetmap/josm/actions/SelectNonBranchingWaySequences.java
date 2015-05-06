@@ -134,7 +134,7 @@ public class SelectNonBranchingWaySequences {
      */
     public void extend(DataSet data) {
         Collection<OsmPrimitive> currentSelection;
-        LinkedList<OsmPrimitive> selection;
+        Collection<OsmPrimitive> selection;
         boolean selectionChanged = false;
         Way way;
 

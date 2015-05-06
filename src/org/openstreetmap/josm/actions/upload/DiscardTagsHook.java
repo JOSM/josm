@@ -3,11 +3,11 @@ package org.openstreetmap.josm.actions.upload;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -36,7 +36,7 @@ public class DiscardTagsHook implements UploadHook {
         }
 
         if (needsChange) {
-            AbstractMap<String, String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             for (String key : discardableKeys) {
                 map.put(key, null);
             }

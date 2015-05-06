@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
+import java.util.Set;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -534,7 +535,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         private PointInTimeType pointInTimeType;
 
         protected void initKeyList() {
-            HashSet<String> keySet = new HashSet<>();
+            Set<String> keySet = new HashSet<>();
             if (current != null) {
                 keySet.addAll(current.getTags().keySet());
             }

@@ -182,6 +182,6 @@ public class SessionWriterTest {
     @Test
     public void testWriteGpxAndMarkerJoz() throws IOException {
         GpxLayer gpx = createGpxLayer();
-        testWrite(Pair.toArrayList(new Pair<Layer, Layer>(gpx, createMarkerLayer(gpx))), true);
+        testWrite(Pair.toList(new Pair<Layer, Layer>(gpx, createMarkerLayer(gpx))), true);
     }
 }

@@ -184,7 +184,7 @@ public class MapCSSStyleSource extends StyleSource {
              * A map that sores the indexes of rules that might be applied if the key=value pair is present on this
              * primitive. This includes all key=* rules.
              */
-            HashMap<String, BitSet> specialRules = new HashMap<>();
+            Map<String, BitSet> specialRules = new HashMap<>();
 
             public void addForKey(int ruleIndex) {
                 generalRules.set(ruleIndex);

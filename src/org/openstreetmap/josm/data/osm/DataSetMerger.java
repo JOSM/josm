@@ -263,7 +263,7 @@ public class DataSetMerger {
         Relation target = (Relation) getMergeTarget(source);
         if (target == null)
             throw new IllegalStateException(tr("Missing merge target for relation with id {0}", source.getUniqueId()));
-        LinkedList<RelationMember> newMembers = new LinkedList<>();
+        List<RelationMember> newMembers = new LinkedList<>();
         for (RelationMember sourceMember : source.getMembers()) {
             OsmPrimitive targetMember = getMergeTarget(sourceMember.getMember());
             if (targetMember == null)

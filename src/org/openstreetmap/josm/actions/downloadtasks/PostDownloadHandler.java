@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
@@ -76,7 +77,7 @@ public class PostDownloadHandler implements Runnable {
 
         // make sure errors are reported only once
         //
-        LinkedHashSet<Object> errors = new LinkedHashSet<>();
+        Set<Object> errors = new LinkedHashSet<>();
         errors.addAll(task.getErrorObjects());
         if (errors.isEmpty())
             return;

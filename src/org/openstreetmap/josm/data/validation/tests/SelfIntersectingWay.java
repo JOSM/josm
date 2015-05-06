@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
@@ -28,8 +29,9 @@ public class SelfIntersectingWay extends Test {
                         "that contain some of their nodes more than once."));
     }
 
-    @Override public void visit(Way w) {
-        HashSet<Node> nodes = new HashSet<>();
+    @Override
+    public void visit(Way w) {
+        Set<Node> nodes = new HashSet<>();
 
         for (int i = 1; i < w.getNodesCount() - 1; i++) {
             Node n = w.getNode(i);

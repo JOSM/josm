@@ -189,7 +189,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         Set<DefaultMutableTreeNode> processedNodes = new HashSet<>();
 
-        LinkedList<TestError> errorsToFix = new LinkedList<>();
+        List<TestError> errorsToFix = new LinkedList<>();
         for (TreePath path : selectionPaths) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
             if (node == null) {
@@ -547,8 +547,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (newSelection.isEmpty()) {
             tree.setFilter(null);
         }
-        HashSet<OsmPrimitive> filter = new HashSet<>(newSelection);
-        tree.setFilter(filter);
+        tree.setFilter(new HashSet<>(newSelection));
     }
 
     @Override
