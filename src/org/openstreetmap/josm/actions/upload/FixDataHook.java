@@ -189,7 +189,7 @@ public class FixDataHook implements UploadHook {
         Collection<Command> cmds = new LinkedList<>();
 
         for (OsmPrimitive osm : objectsToUpload) {
-            HashMap<String, String> keys = new HashMap<>(osm.getKeys());
+            Map<String, String> keys = new HashMap<>(osm.getKeys());
             if(!keys.isEmpty()) {
                 boolean modified = false;
                 for (FixData fix : deprecated) {

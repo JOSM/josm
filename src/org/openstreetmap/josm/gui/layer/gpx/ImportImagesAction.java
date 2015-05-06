@@ -58,7 +58,7 @@ public class ImportImagesAction extends AbstractAction {
         if (fc != null) {
             File[] sel = fc.getSelectedFiles();
             if (sel != null && sel.length > 0) {
-                LinkedList<File> files = new LinkedList<>();
+                List<File> files = new LinkedList<>();
                 addRecursiveFiles(files, sel);
                 importer.importDataHandleExceptions(files, NullProgressMonitor.INSTANCE);
             }

@@ -387,7 +387,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * member of this relation
      */
     public Set<OsmPrimitive> getMemberPrimitives() {
-        HashSet<OsmPrimitive> ret = new HashSet<>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         RelationMember[] members = this.members;
         for (RelationMember m: members) {
             if (m.getMember() != null) {

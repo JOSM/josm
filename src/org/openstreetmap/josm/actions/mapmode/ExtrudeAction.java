@@ -100,7 +100,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /**
      * Collection of nodes that is moved
      */
-    private ArrayList<Node> movingNodeList;
+    private List<Node> movingNodeList;
 
     /**
      * The direction that is currently active.
@@ -625,7 +625,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         // segmentAngleZero marks subset of nodeOverlapsSegment. nodeOverlapsSegment is true if angle between segments is 0 or PI, segmentAngleZero only if angle is 0
         boolean segmentAngleZero = prevNode != null && Math.abs(Geometry.getCornerAngle(prevNode.getEastNorth(), initialN1en, newN1en)) < 1e-5;
         boolean hasOtherWays = hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
-        ArrayList<Node> changedNodes = new ArrayList<>();
+        List<Node> changedNodes = new ArrayList<>();
         if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
             //move existing node
             Node n1Old = selectedSegment.getFirstNode();

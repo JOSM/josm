@@ -236,7 +236,7 @@ public class DuplicateWay extends Test {
     @Override
     public Command fixError(TestError testError) {
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        HashSet<Way> ways = new HashSet<>();
+        Set<Way> ways = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Way && !osm.isDeleted()) {
@@ -304,7 +304,7 @@ public class DuplicateWay extends Test {
 
         // We fix it only if there is no more than one way that is relation member.
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        HashSet<Way> ways = new HashSet<>();
+        Set<Way> ways = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Way) {

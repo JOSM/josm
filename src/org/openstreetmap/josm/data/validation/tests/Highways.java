@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -151,7 +152,7 @@ public class Highways extends Test {
             return true;
         }
 
-        final HashSet<OsmPrimitive> referrers = new HashSet<>();
+        final Set<OsmPrimitive> referrers = new HashSet<>();
 
         if (way.isClosed()) {
             // for closed way we need to check all adjacent ways

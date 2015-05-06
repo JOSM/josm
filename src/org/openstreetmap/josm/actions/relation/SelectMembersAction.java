@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -16,7 +17,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 5793
  */
 public class SelectMembersAction extends AbstractRelationAction {
-    
+
     private final boolean add;
 
     /**
@@ -34,8 +35,8 @@ public class SelectMembersAction extends AbstractRelationAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty() || !Main.isDisplayingMapView()) return;
-        
-        HashSet<OsmPrimitive> members = new HashSet<>();
+
+        Set<OsmPrimitive> members = new HashSet<>();
         for (Relation r: relations) {
             members.addAll(r.getMemberPrimitives());
         }

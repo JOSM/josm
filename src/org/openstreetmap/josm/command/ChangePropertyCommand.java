@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,7 +38,7 @@ public class ChangePropertyCommand extends Command {
      * key. Otherwise, change the tags of all objects to the given value or create keys of
      * those objects that do not have the key yet.
      */
-    private final AbstractMap<String, String> tags;
+    private final Map<String, String> tags;
 
     /**
      * Creates a command to change multiple tags of multiple objects
@@ -47,7 +46,7 @@ public class ChangePropertyCommand extends Command {
      * @param objects the objects to modify
      * @param tags the tags to set
      */
-    public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, AbstractMap<String, String> tags) {
+    public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, Map<String, String> tags) {
         this.objects = new LinkedList<>();
         this.tags = tags;
         init(objects);

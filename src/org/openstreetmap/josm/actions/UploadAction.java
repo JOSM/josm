@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -238,7 +239,7 @@ public class UploadAction extends JosmAction{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                final HashMap<String, String> tags = new HashMap<>(layer.data.getChangeSetTags());
+                final Map<String, String> tags = new HashMap<>(layer.data.getChangeSetTags());
                 if (!tags.containsKey("source")) {
                     tags.put("source", dialog.getLastChangesetSourceFromHistory());
                 }

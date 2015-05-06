@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
@@ -244,7 +245,7 @@ public class CacheFiles {
     public void cleanUp() {
         if(!this.enabled || maxsize == -1) return;
 
-        TreeMap<Long, File> modtime = new TreeMap<>();
+        SortedMap<Long, File> modtime = new TreeMap<>();
         long dirsize = 0;
 
         File[] files = dir.listFiles();

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -84,7 +85,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     /**
      * The types as preparsed collection.
      */
-    public EnumSet<TaggingPresetType> types;
+    public Set<TaggingPresetType> types;
     public transient List<TaggingPresetItem> data = new LinkedList<>();
     public transient Roles roles;
     public transient TemplateEntry nameTemplate;
@@ -501,7 +502,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public ToolbarButtonAction() {
             super("", ImageProvider.get("dialogs", "pin"));
             putValue(SHORT_DESCRIPTION, tr("Add or remove toolbar button"));
-            LinkedList<String> t = new LinkedList<>(ToolbarPreferences.getToolString());
+            List<String> t = new LinkedList<>(ToolbarPreferences.getToolString());
             toolbarIndex = t.indexOf(getToolbarString());
             putValue(SELECTED_KEY, toolbarIndex >= 0);
         }

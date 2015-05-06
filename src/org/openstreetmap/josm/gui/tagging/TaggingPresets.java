@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.tagging;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -50,7 +51,7 @@ public final class TaggingPresets {
             Main.main.menu.presetsMenu.setVisible(false);
         } else {
             AutoCompletionManager.cachePresets(taggingPresets);
-            HashMap<TaggingPresetMenu,JMenu> submenus = new HashMap<>();
+            Map<TaggingPresetMenu,JMenu> submenus = new HashMap<>();
             for (final TaggingPreset p : taggingPresets) {
                 JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
                 if (p instanceof TaggingPresetSeparator) {

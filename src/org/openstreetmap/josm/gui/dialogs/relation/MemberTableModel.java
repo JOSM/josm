@@ -513,7 +513,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @return the set of selected referers
      */
     public Set<OsmPrimitive> getChildPrimitives(Collection<? extends OsmPrimitive> referenceSet) {
-        HashSet<OsmPrimitive> ret = new HashSet<>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         if (referenceSet == null) return null;
         for (RelationMember m: members) {
             if (referenceSet.contains(m.getMember())) {
@@ -605,7 +605,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     public static boolean hasMembersReferringTo(Collection<RelationMember> members, Collection<OsmPrimitive> primitives) {
         if (primitives == null || primitives.isEmpty())
             return false;
-        HashSet<OsmPrimitive> referrers = new HashSet<>();
+        Set<OsmPrimitive> referrers = new HashSet<>();
         for (RelationMember member : members) {
             referrers.add(member.getMember());
         }

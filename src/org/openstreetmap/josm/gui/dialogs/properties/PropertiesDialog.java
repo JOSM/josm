@@ -607,7 +607,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         final Map<String, Integer> keyCount = new HashMap<>();
         final Map<String, String> tags = new HashMap<>();
         valueCount.clear();
-        EnumSet<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
+        Set<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
         for (OsmPrimitive osm : newSel) {
             types.add(TaggingPresetType.forPrimitive(osm));
             for (String key : osm.keySet()) {
@@ -618,7 +618,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         Map<String, Integer> v = valueCount.get(key);
                         v.put(value, v.containsKey(value) ? v.get(value) + 1 : 1);
                     } else {
-                        TreeMap<String, Integer> v = new TreeMap<>();
+                        Map<String, Integer> v = new TreeMap<>();
                         v.put(value, 1);
                         valueCount.put(key, v);
                     }
@@ -752,7 +752,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public Tag getSelectedProperty() {
         int row = tagTable.getSelectedRow();
         if (row == -1) return null;
-        TreeMap<String, Integer> map = (TreeMap<String, Integer>) tagData.getValueAt(row, 1);
+        Map<String, Integer> map = (TreeMap<String, Integer>) tagData.getValueAt(row, 1);
         return new Tag(
                 tagData.getValueAt(row, 0).toString(),
                 map.size() > 1 ? "" : map.keySet().iterator().next());
@@ -904,7 +904,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         protected void deleteTags(int[] rows){
             // convert list of rows to HashMap (and find gap for nextKey)
-            HashMap<String, String> tags = new HashMap<>(rows.length);
+            Map<String, String> tags = new HashMap<>(rows.length);
             int nextKeyIndex = rows[0];
             for (int row : rows) {
                 String key = tagData.getValueAt(row, 0).toString();

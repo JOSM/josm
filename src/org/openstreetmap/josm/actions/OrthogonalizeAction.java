@@ -282,7 +282,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         // put the nodes of all ways in a set
-        final HashSet<Node> allNodes = new HashSet<>();
+        final Set<Node> allNodes = new HashSet<>();
         for (WayData w : wayDataList) {
             for (Node n : w.way.getNodes()) {
                 allNodes.add(n);
@@ -290,8 +290,8 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         // the new x and y value for each node
-        final HashMap<Node, Double> nX = new HashMap<>();
-        final HashMap<Node, Double> nY = new HashMap<>();
+        final Map<Node, Double> nX = new HashMap<>();
+        final Map<Node, Double> nY = new HashMap<>();
 
         // calculate the centroid of all nodes
         // it is used as rotation center
@@ -313,7 +313,7 @@ public final class OrthogonalizeAction extends JosmAction {
         final Direction[] VERTICAL = {Direction.UP, Direction.DOWN};
         final Direction[][] ORIENTATIONS = {HORIZONTAL, VERTICAL};
         for (Direction[] orientation : ORIENTATIONS){
-            final HashSet<Node> s = new HashSet<>(allNodes);
+            final Set<Node> s = new HashSet<>(allNodes);
             int s_size = s.size();
             for (int dummy = 0; dummy < s_size; ++dummy) {
                 if (s.isEmpty()) {
@@ -321,8 +321,8 @@ public final class OrthogonalizeAction extends JosmAction {
                 }
                 final Node dummy_n = s.iterator().next();     // pick arbitrary element of s
 
-                final HashSet<Node> cs = new HashSet<>(); // will contain each node that can be reached from dummy_n
-                cs.add(dummy_n);                              // walking only on horizontal / vertical segments
+                final Set<Node> cs = new HashSet<>(); // will contain each node that can be reached from dummy_n
+                cs.add(dummy_n);                      // walking only on horizontal / vertical segments
 
                 boolean somethingHappened = true;
                 while (somethingHappened) {
@@ -348,7 +348,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     s.remove(n);
                 }
 
-                final HashMap<Node, Double> nC = (orientation == HORIZONTAL) ? nY : nX;
+                final Map<Node, Double> nC = (orientation == HORIZONTAL) ? nY : nX;
 
                 double average = 0;
                 for (Node n : cs) {

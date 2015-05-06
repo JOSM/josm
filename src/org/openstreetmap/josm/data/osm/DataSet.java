@@ -728,7 +728,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
     public void setSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
         boolean changed;
         synchronized (selectionLock) {
-            LinkedHashSet<OsmPrimitive> oldSelection = new LinkedHashSet<>(selectedPrimitives);
+            Set<OsmPrimitive> oldSelection = new LinkedHashSet<>(selectedPrimitives);
             selectedPrimitives = new LinkedHashSet<>();
             addSelected(selection, false);
             changed = !oldSelection.equals(selectedPrimitives);
@@ -877,7 +877,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
         getReadLock().lock();
         try {
             DataSet ds = new DataSet();
-            HashMap<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
+            Map<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
             for (Node n : nodes) {
                 Node newNode = new Node(n);
                 primMap.put(n, newNode);

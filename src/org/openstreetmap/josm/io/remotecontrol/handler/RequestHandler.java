@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -227,7 +228,7 @@ public abstract class RequestHandler {
                 missingKeys.add(key);
             }
         }
-        HashSet<String> knownParams = new HashSet<>();
+        Set<String> knownParams = new HashSet<>();
         if (mandatory != null) Collections.addAll(knownParams, mandatory);
         if (optional != null) Collections.addAll(knownParams, optional);
         for (String par: args.keySet()) {
@@ -315,7 +316,7 @@ public abstract class RequestHandler {
     public abstract static class RawURLParseRequestHandler extends RequestHandler {
         @Override
         protected void parseArgs() {
-            HashMap<String, String> args = new HashMap<>();
+            Map<String, String> args = new HashMap<>();
             if (request.indexOf('?') != -1) {
                 String query = request.substring(request.indexOf('?') + 1);
                 if (query.indexOf("url=") == 0) {

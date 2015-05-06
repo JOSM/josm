@@ -41,7 +41,7 @@ public final class OsmUrlToBounds {
             return null;
         }
         String[] args = url.substring(i+1).split("&");
-        HashMap<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (String arg : args) {
             int eq = arg.indexOf('=');
             if (eq != -1) {

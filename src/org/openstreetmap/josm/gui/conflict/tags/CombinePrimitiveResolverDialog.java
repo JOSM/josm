@@ -252,7 +252,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     protected List<Command> buildTagChangeCommand(OsmPrimitive primitive, TagCollection tc) {
-        LinkedList<Command> cmds = new LinkedList<>();
+        List<Command> cmds = new LinkedList<>();
         for (String key : tc.getKeys()) {
             if (tc.hasUniqueEmptyValue(key)) {
                 if (primitive.get(key) != null) {

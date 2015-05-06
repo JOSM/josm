@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -61,7 +62,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
         if (buttonIndex == 0) {
             TaggingPreset preset = selector.getSelectedPreset();
             if (preset != null) {
-                final HashSet<OsmPrimitive> matching = new HashSet<>(Utils.filter(Main.main.getCurrentDataSet().allPrimitives(), preset));
+                final Set<OsmPrimitive> matching = new HashSet<>(Utils.filter(Main.main.getCurrentDataSet().allPrimitives(), preset));
                 Main.main.getCurrentDataSet().setSelected(matching);
             }
         }

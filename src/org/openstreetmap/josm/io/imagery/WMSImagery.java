@@ -232,7 +232,7 @@ public class WMSImagery {
     public ImageryInfo toImageryInfo(String name, Collection<LayerDetails> selectedLayers) {
         ImageryInfo i = new ImageryInfo(name, buildGetMapUrl(selectedLayers));
         if (selectedLayers != null) {
-            HashSet<String> proj = new HashSet<>();
+            Set<String> proj = new HashSet<>();
             for (WMSImagery.LayerDetails l : selectedLayers) {
                 proj.addAll(l.getProjections());
             }

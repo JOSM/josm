@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -183,8 +182,8 @@ public class CombineWayAction extends JosmAction {
 
         List<Command> resolution = CombinePrimitiveResolverDialog.launchIfNecessary(wayTags, ways, Collections.singleton(targetWay));
 
-        LinkedList<Command> cmds = new LinkedList<>();
-        LinkedList<Way> deletedWays = new LinkedList<>(ways);
+        List<Command> cmds = new LinkedList<>();
+        List<Way> deletedWays = new LinkedList<>(ways);
         deletedWays.remove(targetWay);
 
         cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
@@ -560,7 +559,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Set<Node> getNodes(Stack<NodePair> pairs) {
-            HashSet<Node> nodes = new LinkedHashSet<>(2*pairs.size());
+            Set<Node> nodes = new LinkedHashSet<>(2*pairs.size());
             for (NodePair pair: pairs) {
                 nodes.add(pair.getA());
                 nodes.add(pair.getB());
@@ -593,7 +592,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected List<Node> buildPathFromNodePairs(Stack<NodePair> path) {
-            LinkedList<Node> ret = new LinkedList<>();
+            List<Node> ret = new LinkedList<>();
             for (NodePair pair: path) {
                 ret.add(pair.getA());
             }

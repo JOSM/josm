@@ -185,7 +185,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
      */
     private void get(OsmPrimitive primitive, boolean closed, WayPrototypesRecord p, Double scale, MultiCascade mc) {
         String lineIdx = null;
-        HashMap<String, LinemodPrototype> overlayMap = new HashMap<>();
+        Map<String, LinemodPrototype> overlayMap = new HashMap<>();
         boolean isNotArea = primitive.isKeyFalse("area");
         for (String key : primitive.keySet()) {
             String val = primitive.get(key);

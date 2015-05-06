@@ -184,7 +184,7 @@ public class APIDataSet {
      * @return all primitives
      */
     public List<OsmPrimitive> getPrimitives() {
-        LinkedList<OsmPrimitive> ret = new LinkedList<>();
+        List<OsmPrimitive> ret = new LinkedList<>();
         ret.addAll(toAdd);
         ret.addAll(toUpdate);
         ret.addAll(toDelete);
@@ -217,7 +217,7 @@ public class APIDataSet {
      * @throws CyclicUploadDependencyException if a cyclic dependency is detected
      */
     public void adjustRelationUploadOrder() throws CyclicUploadDependencyException{
-        LinkedList<OsmPrimitive> newToAdd = new LinkedList<>();
+        List<OsmPrimitive> newToAdd = new LinkedList<>();
         newToAdd.addAll(Utils.filteredCollection(toAdd, Node.class));
         newToAdd.addAll(Utils.filteredCollection(toAdd, Way.class));
 
@@ -230,7 +230,7 @@ public class APIDataSet {
         newToAdd.addAll(graph.computeUploadOrder());
         toAdd = newToAdd;
 
-        LinkedList<OsmPrimitive> newToDelete = new LinkedList<>();
+        List<OsmPrimitive> newToDelete = new LinkedList<>();
         graph = new RelationUploadDependencyGraph(Utils.filteredCollection(toDelete, Relation.class), false);
         newToDelete.addAll(graph.computeUploadOrder());
         newToDelete.addAll(Utils.filteredCollection(toDelete, Way.class));

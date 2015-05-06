@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -73,7 +74,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     private final JList<TaggingPreset> lsResult;
     private final JCheckBox ckOnlyApplicable;
     private final JCheckBox ckSearchInTags;
-    private final EnumSet<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
+    private final Set<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
     private boolean typesInSelectionDirty = true;
     private final transient PresetClassifications classifications = new PresetClassifications();
     private final ResultListModel lsResultModel = new ResultListModel();
@@ -355,7 +356,8 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
         private final List<PresetClassification> classifications = new ArrayList<>();
 
-        public List<PresetClassification> getMatchingPresets(String searchText, boolean onlyApplicable, boolean inTags, EnumSet<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
+        public List<PresetClassification> getMatchingPresets(String searchText, boolean onlyApplicable, boolean inTags,
+                Set<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
             final String[] groupWords;
             final String[] nameWords;
 
@@ -370,7 +372,8 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             return getMatchingPresets(groupWords, nameWords, onlyApplicable, inTags, presetTypes, selectedPrimitives);
         }
 
-        public List<PresetClassification> getMatchingPresets(String[] groupWords, String[] nameWords, boolean onlyApplicable, boolean inTags, EnumSet<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
+        public List<PresetClassification> getMatchingPresets(String[] groupWords, String[] nameWords, boolean onlyApplicable,
+                boolean inTags, Set<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
 
             final List<PresetClassification> result = new ArrayList<>();
             for (PresetClassification presetClassification : classifications) {
@@ -450,7 +453,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         }
     }
 
-    private EnumSet<TaggingPresetType> getTypesInSelection() {
+    private Set<TaggingPresetType> getTypesInSelection() {
         if (typesInSelectionDirty) {
             synchronized (typesInSelection) {
                 typesInSelectionDirty = false;

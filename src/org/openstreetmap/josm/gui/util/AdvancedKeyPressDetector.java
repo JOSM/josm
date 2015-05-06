@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -34,8 +35,8 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     private KeyEvent releaseEvent;
     private Timer timer;
 
-    private final ArrayList<KeyPressReleaseListener> keyListeners = new ArrayList<>();
-    private final ArrayList<ModifierListener> modifierListeners = new ArrayList<>();
+    private final List<KeyPressReleaseListener> keyListeners = new ArrayList<>();
+    private final List<ModifierListener> modifierListeners = new ArrayList<>();
     private int previousModifiers;
 
     private boolean enabled = true;

@@ -730,7 +730,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     protected class EntriesSelectionModel extends DefaultListSelectionModel {
         private final transient List<T> entries;
 
-        public EntriesSelectionModel(ArrayList<T> nodes) {
+        public EntriesSelectionModel(List<T> nodes) {
             this.entries = nodes;
         }
 

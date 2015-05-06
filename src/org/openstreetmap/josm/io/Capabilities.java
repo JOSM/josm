@@ -50,7 +50,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class Capabilities {
 
-    private final Map<String, HashMap<String,String>> capabilities;
+    private final Map<String, Map<String,String>> capabilities;
     private final List<String> imageryBlacklist;
 
     /**
@@ -70,7 +70,7 @@ public class Capabilities {
      */
     public boolean isDefined(String element, String attribute) {
         if (! capabilities.containsKey(element)) return false;
-        HashMap<String, String> e = capabilities.get(element);
+        Map<String, String> e = capabilities.get(element);
         if (e == null) return false;
         return (e.get(attribute) != null);
     }
@@ -84,7 +84,7 @@ public class Capabilities {
      */
     public String get(String element, String attribute) {
         if (! capabilities.containsKey(element)) return null;
-        HashMap<String, String> e = capabilities.get(element);
+        Map<String, String> e = capabilities.get(element);
         if (e == null) return null;
         return e.get(attribute);
     }
@@ -131,10 +131,10 @@ public class Capabilities {
             }
         } else {
             if (! capabilities.containsKey(element))  {
-                HashMap<String,String> h = new HashMap<>();
+                Map<String,String> h = new HashMap<>();
                 capabilities.put(element, h);
             }
-            HashMap<String, String> e = capabilities.get(element);
+            Map<String, String> e = capabilities.get(element);
             e.put(attribute, value);
         }
     }

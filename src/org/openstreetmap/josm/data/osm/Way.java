@@ -167,7 +167,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 4671
      */
     public Set<Node> getNeighbours(Node node) {
-        HashSet<Node> neigh = new HashSet<>();
+        Set<Node> neigh = new HashSet<>();
 
         if (node == null) return neigh;
 

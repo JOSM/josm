@@ -286,7 +286,7 @@ public final class TaggingPresetReader {
      * @return Collection of all presets successfully read
      */
     public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate, boolean displayErrMsg) {
-        LinkedList<TaggingPreset> allPresets = new LinkedList<>();
+        List<TaggingPreset> allPresets = new LinkedList<>();
         for(String source : sources)  {
             try {
                 allPresets.addAll(readAll(source, validate));

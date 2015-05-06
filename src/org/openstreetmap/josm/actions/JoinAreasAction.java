@@ -1070,7 +1070,7 @@ public class JoinAreasAction extends JosmAction {
         // In multigonWays collection, some way are just a point (i.e. way like nodeA-nodeA)
         // This seems to appear when is apply over invalid way like #9911 test-case
         // Remove all of these way to make the next work.
-        ArrayList<WayInPolygon> cleanMultigonWays = new ArrayList<>();
+        List<WayInPolygon> cleanMultigonWays = new ArrayList<>();
         for(WayInPolygon way: multigonWays)
             if(way.way.getNodesCount() == 2 && way.way.firstNode() == way.way.lastNode())
                 discardedWays.add(way);
@@ -1082,7 +1082,7 @@ public class JoinAreasAction extends JosmAction {
 
         WayInPolygon startWay;
         while((startWay = traverser.startNewWay()) != null) {
-            ArrayList<WayInPolygon> path = new ArrayList<>();
+            List<WayInPolygon> path = new ArrayList<>();
             List<WayInPolygon> startWays = new ArrayList<>();
             path.add(startWay);
             while(true) {

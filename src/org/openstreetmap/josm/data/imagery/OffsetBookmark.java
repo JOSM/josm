@@ -85,7 +85,7 @@ public class OffsetBookmark {
     }
 
     public static void saveBookmarks() {
-        LinkedList<Collection<String>> coll = new LinkedList<>();
+        List<Collection<String>> coll = new LinkedList<>();
         for (OffsetBookmark b : allBookmarks) {
             coll.add(b.getInfoArray());
         }
