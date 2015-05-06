@@ -19,8 +19,10 @@ import org.openstreetmap.josm.Main;
  */
 public class RemoteControlHttpServer extends Thread {
 
-    /** The server socket */
-    private ServerSocket server;
+    /** The server socket for IPv4 */
+    private ServerSocket server4 = null;
+    /** The server socket for IPv6 */
+    private ServerSocket server6 = null;
 
     private static volatile RemoteControlHttpServer instance;
 
@@ -65,10 +67,16 @@ public class RemoteControlHttpServer extends Thread {
     public RemoteControlHttpServer(int port) throws IOException {
         super("RemoteControl HTTP Server");
         this.setDaemon(true);
-        // Start the server socket with only 1 connection.
-        // Also make sure we only listen on the local interface so nobody from the outside can connect!
-        // NOTE: On a dual stack machine with old Windows OS this may not listen on both interfaces!
-        this.server = new ServerSocket(port, 1, RemoteControl.getInetAddress());
+        try {
+            this.server4 = new ServerSocket(port, 1, RemoteControl.getInet4Address());
+        } catch (IOException e) {
+        }
+        try {
+            this.server6 = new ServerSocket(port, 1, RemoteControl.getInet6Address());
+        } catch (IOException e) {
+            if(this.server4 == null) /* both failed */
+                throw e;
+        }
     }
 
     /**
@@ -76,18 +84,38 @@ public class RemoteControlHttpServer extends Thread {
      */
     @Override
     public void run() {
-        Main.info(marktr("RemoteControl::Accepting connections on {0}:{1}"),
-                server.getInetAddress(), Integer.toString(server.getLocalPort()));
+        if(server4 != null) {
+            Main.info(marktr("RemoteControl::Accepting IPv4 connections on {0}:{1}"),
+                server4.getInetAddress(), Integer.toString(server4.getLocalPort()));
+        }
+        if(server6 != null) {
+            Main.info(marktr("RemoteControl::Accepting IPv6 connections on {0}:{1}"),
+                server6.getInetAddress(), Integer.toString(server6.getLocalPort()));
+        }
         while (true) {
-            try {
-                @SuppressWarnings("resource")
-                Socket request = server.accept();
-                RequestProcessor.processRequest(request);
-            } catch (SocketException se) {
-                if (!server.isClosed())
-                    Main.error(se);
-            } catch (IOException ioe) {
-                Main.error(ioe);
+            if(server4 != null) {
+                try {
+                    @SuppressWarnings("resource")
+                    Socket request = server4.accept();
+                    RequestProcessor.processRequest(request);
+                } catch (SocketException se) {
+                    if (!server4.isClosed())
+                        Main.error(se);
+                } catch (IOException ioe) {
+                    Main.error(ioe);
+                }
+            }
+            if(server6 != null) {
+                try {
+                    @SuppressWarnings("resource")
+                    Socket request = server6.accept();
+                    RequestProcessor.processRequest(request);
+                } catch (SocketException se) {
+                    if (!server6.isClosed())
+                        Main.error(se);
+                } catch (IOException ioe) {
+                    Main.error(ioe);
+                }
             }
         }
     }
@@ -98,7 +126,10 @@ public class RemoteControlHttpServer extends Thread {
      * @throws IOException
      */
     public void stopServer() throws IOException {
-        server.close();
+        if(server4 != null)
+            server4.close();
+        if(server6 != null)
+            server6.close();
         Main.info(marktr("RemoteControl::Server stopped."));
     }
 }
