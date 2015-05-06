@@ -28,7 +28,7 @@ public class LongSegment extends Test {
      */
     public LongSegment() {
         super(tr("Long segments"),
-              tr("This for long way segments, which are usually errors."));
+              tr("This tests for long way segments, which are usually errors."));
     }
 
     @Override
