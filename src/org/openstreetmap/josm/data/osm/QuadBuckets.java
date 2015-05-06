@@ -476,8 +476,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         return bucket != null && bucket.content != null && bucket.content.contains(t);
     }
 
-    public ArrayList<T> toArrayList() {
-        ArrayList<T> a = new ArrayList<>();
+    public List<T> toList() {
+        List<T> a = new ArrayList<>();
         for (T n : this) {
             a.add(n);
         }
@@ -486,12 +486,12 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
     @Override
     public Object[] toArray() {
-        return this.toArrayList().toArray();
+        return this.toList().toArray();
     }
 
     @Override
     public <A> A[] toArray(A[] template) {
-        return this.toArrayList().toArray(template);
+        return this.toList().toArray(template);
     }
 
     class QuadBucketIterator implements Iterator<T> {

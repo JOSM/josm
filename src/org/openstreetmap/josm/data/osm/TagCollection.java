@@ -498,7 +498,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of keys of this tag collection
      */
     public Set<String> getKeys() {
-        HashSet<String> ret = new HashSet<>();
+        Set<String> ret = new HashSet<>();
         for (Tag tag: tags) {
             ret.add(tag.getKey());
         }
@@ -511,7 +511,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of keys which have at least 2 matching tags.
      */
     public Set<String> getKeysWithMultipleValues() {
-        HashMap<String, Integer> counters = new HashMap<>();
+        Map<String, Integer> counters = new HashMap<>();
         for (Tag tag: tags) {
             Integer v = counters.get(tag.getKey());
             counters.put(tag.getKey(),(v==null) ? 1 : v+1);
@@ -556,7 +556,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of values
      */
     public Set<String> getValues() {
-        HashSet<String> ret = new HashSet<>();
+        Set<String> ret = new HashSet<>();
         for (Tag tag: tags) {
             ret.add(tag.getValue());
         }
@@ -572,7 +572,7 @@ public class TagCollection implements Iterable<Tag> {
      * are no values for the given key
      */
     public Set<String> getValues(String key) {
-        HashSet<String> ret = new HashSet<>();
+        Set<String> ret = new HashSet<>();
         if (key == null) return ret;
         for (Tag tag: tags) {
             if (tag.matchesKey(key)) {

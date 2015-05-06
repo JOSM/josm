@@ -385,7 +385,7 @@ public class DuplicateNode extends Test {
     public Command fixError(TestError testError) {
         if (!isFixable(testError)) return null;
         Collection<OsmPrimitive> sel = new LinkedList<>(testError.getPrimitives());
-        LinkedHashSet<Node> nodes = new LinkedHashSet<>(OsmPrimitive.getFilteredList(sel, Node.class));
+        Set<Node> nodes = new LinkedHashSet<>(OsmPrimitive.getFilteredList(sel, Node.class));
 
         // Filter nodes that have already been deleted (see #5764 and #5773)
         for (Iterator<Node> it = nodes.iterator(); it.hasNext();) {

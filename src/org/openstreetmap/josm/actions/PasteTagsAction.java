@@ -118,7 +118,7 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         protected Map<OsmPrimitiveType, Integer> getSourceStatistics() {
-            HashMap<OsmPrimitiveType, Integer> ret = new HashMap<>();
+            Map<OsmPrimitiveType, Integer> ret = new HashMap<>();
             for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
                 if (!getSourceTagsByType(type).isEmpty()) {
                     ret.put(type, getSourcePrimitivesByType(type).size());
@@ -128,7 +128,7 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         protected Map<OsmPrimitiveType, Integer> getTargetStatistics() {
-            HashMap<OsmPrimitiveType, Integer> ret = new HashMap<>();
+            Map<OsmPrimitiveType, Integer> ret = new HashMap<>();
             for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
                 int count = OsmPrimitive.getFilteredList(target, type.getOsmClass()).size();
                 if (count > 0) {

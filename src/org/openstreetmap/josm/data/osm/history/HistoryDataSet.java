@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.Main;
@@ -186,7 +187,7 @@ public class HistoryDataSet implements LayerChangeListener{
     }
 
     public Collection<Long> getChangesetIds() {
-        final HashSet<Long> ids = new HashSet<>();
+        final Set<Long> ids = new HashSet<>();
         for (Collection<HistoryOsmPrimitive> i : data.values()) {
             for (HistoryOsmPrimitive j : i) {
                 ids.add(j.getChangesetId());

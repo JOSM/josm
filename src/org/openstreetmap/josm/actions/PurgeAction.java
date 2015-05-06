@@ -100,7 +100,7 @@ public class PurgeAction extends JosmAction {
 
         // Add referrer, unless the object to purge is not new
         // and the parent is a relation
-        HashSet<OsmPrimitive> toPurgeRecursive = new HashSet<>();
+        Set<OsmPrimitive> toPurgeRecursive = new HashSet<>();
         while (!toPurge.isEmpty()) {
 
             for (OsmPrimitive osm: toPurge) {

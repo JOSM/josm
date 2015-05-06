@@ -68,7 +68,7 @@ public class UploadSelectionAction extends JosmAction {
     }
 
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {
-        HashSet<OsmPrimitive> ret = new HashSet<>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         for (OsmPrimitive p: ds.allPrimitives()) {
             if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
                 ret.add(p);
@@ -78,7 +78,7 @@ public class UploadSelectionAction extends JosmAction {
     }
 
     protected Set<OsmPrimitive> getModifiedPrimitives(Collection<OsmPrimitive> primitives) {
-        HashSet<OsmPrimitive> ret = new HashSet<>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         for (OsmPrimitive p: primitives) {
             if (p.isNewOrUndeleted()) {
                 ret.add(p);
@@ -305,7 +305,7 @@ public class UploadSelectionAction extends JosmAction {
          * @return primitives to check
          */
         protected Set<OsmPrimitive> getPrimitivesToCheckForParents() {
-            HashSet<OsmPrimitive> ret = new HashSet<>();
+            Set<OsmPrimitive> ret = new HashSet<>();
             for (OsmPrimitive p: toUpload) {
                 if (p.isDeleted() && !p.isNewOrUndeleted()) {
                     ret.add(p);

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -201,7 +202,7 @@ public final class CustomConfigurator {
      * @param keys - which preferences keys you need to export ("imagery.entries", for example)
      */
     public static void exportPreferencesKeysToFile(String filename, boolean append, String... keys) {
-        HashSet<String> keySet = new HashSet<>();
+        Set<String> keySet = new HashSet<>();
         Collections.addAll(keySet, keys);
         exportPreferencesKeysToFile(filename, append, keySet);
     }

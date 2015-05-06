@@ -285,7 +285,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             return false;
         pnlPluginUpdatePolicy.rememberInPreferences();
         if (model.isActivePluginsChanged()) {
-            LinkedList<String> l = new LinkedList<>(model.getSelectedPluginNames());
+            List<String> l = new LinkedList<>(model.getSelectedPluginNames());
             Collections.sort(l);
             Main.pref.putCollection("plugins", l);
             if (!model.getNewlyDeactivatedPlugins().isEmpty()) return true;

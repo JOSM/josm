@@ -96,7 +96,7 @@ public class SimplePrimitiveId implements PrimitiveId, Serializable {
      * @return the parsed list of {@code OsmPrimitiveType}s.
      */
     public static List<SimplePrimitiveId> fuzzyParse(String s) {
-        final ArrayList<SimplePrimitiveId> ids = new ArrayList<>();
+        final List<SimplePrimitiveId> ids = new ArrayList<>();
         final Matcher m = ID_PATTERN.matcher(s);
         while (m.find()) {
             final char firstChar = s.charAt(m.start());

@@ -286,7 +286,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         protected Map<User, Integer> computeStatistics(Collection<? extends OsmPrimitive> primitives) {
-            HashMap<User, Integer> ret = new HashMap<>();
+            Map<User, Integer> ret = new HashMap<>();
             if (primitives == null || primitives.isEmpty()) return ret;
             for (OsmPrimitive primitive: primitives) {
                 if (ret.containsKey(primitive.getUser())) {
@@ -353,7 +353,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         public List<User> getSelectedUsers(int[] rows) {
-            LinkedList<User> ret = new LinkedList<>();
+            List<User> ret = new LinkedList<>();
             if (rows == null || rows.length == 0) return ret;
             for (int row: rows) {
                 if (data.get(row).user == null) {

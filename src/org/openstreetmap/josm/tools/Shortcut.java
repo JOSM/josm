@@ -309,7 +309,7 @@ public final class Shortcut {
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();
         // (2) User defined shortcuts
-        LinkedList<Shortcut> newshortcuts = new LinkedList<>();
+        List<Shortcut> newshortcuts = new LinkedList<>();
         for(String s : Main.pref.getAllPrefixCollectionKeys("shortcut.entry.")) {
             newshortcuts.add(new Shortcut(s));
         }

@@ -309,7 +309,7 @@ public class TagEditorModel extends AbstractTableModel {
     public void deleteTags(int [] tagIndices) {
         if (tags == null)
             return;
-        ArrayList<TagModel> toDelete = new ArrayList<>();
+        List<TagModel> toDelete = new ArrayList<>();
         for (int tagIdx : tagIndices) {
             TagModel tag = tags.get(tagIdx);
             if (tag != null) {
@@ -487,7 +487,7 @@ public class TagEditorModel extends AbstractTableModel {
     protected Command createDeleteTagsCommand(Collection<OsmPrimitive> primitives) {
 
         List<String> currentkeys = getKeys();
-        ArrayList<Command> commands = new ArrayList<>();
+        List<Command> commands = new ArrayList<>();
 
         for (OsmPrimitive primitive : primitives) {
             for (String oldkey : primitive.keySet()) {
@@ -511,7 +511,7 @@ public class TagEditorModel extends AbstractTableModel {
      * @return the list of keys managed by this model
      */
     public List<String> getKeys() {
-        ArrayList<String> keys = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
         for (TagModel tag: tags) {
             if (!tag.getName().trim().isEmpty()) {
                 keys.add(tag.getName());

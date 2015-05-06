@@ -949,7 +949,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     private static void pruneSuccsAndReverse(List<Integer> is) {
-        HashSet<Integer> is2 = new HashSet<>();
+        Set<Integer> is2 = new HashSet<>();
         for (int i : is) {
             if (!is2.contains(i - 1) && !is2.contains(i + 1)) {
                 is2.add(i);

@@ -163,7 +163,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
         updateAllFormatsImporter();
-        LinkedList<ExtensionFileFilter> filters = new LinkedList<>();
+        List<ExtensionFileFilter> filters = new LinkedList<>();
         for (FileImporter importer : importers) {
             filters.add(importer.filter);
         }
@@ -180,7 +180,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 2029
      */
     public static List<ExtensionFileFilter> getExportExtensionFileFilters() {
-        LinkedList<ExtensionFileFilter> filters = new LinkedList<>();
+        List<ExtensionFileFilter> filters = new LinkedList<>();
         for (FileExporter exporter : exporters) {
             if (filters.contains(exporter.filter) || !exporter.isEnabled()) {
                 continue;

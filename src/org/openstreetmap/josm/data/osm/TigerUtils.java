@@ -45,7 +45,7 @@ public final class TigerUtils {
     }
 
     public static String combineTags(String name, Set<String> values) {
-        TreeSet<Object> resultSet = new TreeSet<>();
+        Set<Object> resultSet = new TreeSet<>();
         for (String value: values) {
             String[] parts = value.split(":");
             for (String part: parts) {

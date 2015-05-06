@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
@@ -112,7 +113,7 @@ public class NoteData {
      * @return sorted collection of notes
      */
     public Collection<Note> getSortedNotes() {
-        final ArrayList<Note> list = new ArrayList<>(noteList);
+        final List<Note> list = new ArrayList<>(noteList);
         Collections.sort(list, comparator);
         return list;
     }

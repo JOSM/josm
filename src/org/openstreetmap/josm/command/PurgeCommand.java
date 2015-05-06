@@ -200,7 +200,7 @@ public class PurgeCommand extends Command {
         Set<Relation> childlessR = new HashSet<>();
         List<Relation> outR = new ArrayList<>(inR.size());
 
-        HashMap<Relation, Integer> numChilds = new HashMap<>();
+        Map<Relation, Integer> numChilds = new HashMap<>();
 
         // calculate initial number of childs
         for (Relation r : inR) {

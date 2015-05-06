@@ -744,7 +744,7 @@ public final class PluginHandler {
                 Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while loading locally available plugin information");
                 return null;
             }
-            HashMap<String, PluginInformation> ret = new HashMap<>();
+            Map<String, PluginInformation> ret = new HashMap<>();
             for (PluginInformation pi: task.getAvailablePlugins()) {
                 ret.put(pi.name, pi);
             }
@@ -1318,7 +1318,7 @@ public final class PluginHandler {
      */
     public static String getBugReportText() {
         StringBuilder text = new StringBuilder();
-        LinkedList <String> pl = new LinkedList<>(Main.pref.getCollection("plugins", new LinkedList<String>()));
+        List <String> pl = new LinkedList<>(Main.pref.getCollection("plugins", new LinkedList<String>()));
         for (final PluginProxy pp : pluginList) {
             PluginInformation pi = pp.getPluginInformation();
             pl.remove(pi.name);

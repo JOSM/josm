@@ -29,6 +29,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.swing.ButtonGroup;
@@ -80,7 +82,7 @@ public final class TaggingPresetItems {
     private static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
 
     // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
-    private static final Map<String,EnumSet<TaggingPresetType>> TYPE_CACHE = new LinkedHashMap<>(16, 1.1f, true);
+    private static final Map<String,Set<TaggingPresetType>> TYPE_CACHE = new LinkedHashMap<>(16, 1.1f, true);
 
     /**
      * Last value of each key used in presets, used for prefilling corresponding fields
@@ -166,7 +168,7 @@ public final class TaggingPresetItems {
     }
 
     public static class Role {
-        public EnumSet<TaggingPresetType> types;
+        public Set<TaggingPresetType> types;
         public String key;
         /** The text to display */
         public String text;
@@ -289,7 +291,7 @@ public final class TaggingPresetItems {
     }
 
     public static class Usage {
-        private TreeSet<String> values;
+        private SortedSet<String> values;
         private boolean hadKeys = false;
         private boolean hadEmpty = false;
 
@@ -1395,7 +1397,7 @@ public final class TaggingPresetItems {
                 clearSelection();
             } else {
                 String s = o.toString();
-                TreeSet<String> parts = new TreeSet<>(Arrays.asList(s.split(delimiter)));
+                Set<String> parts = new TreeSet<>(Arrays.asList(s.split(delimiter)));
                 ListModel<PresetListEntry> lm = getModel();
                 int[] intParts = new int[lm.getSize()];
                 int j = 0;
@@ -1428,10 +1430,10 @@ public final class TaggingPresetItems {
         }
     }
 
-    public static EnumSet<TaggingPresetType> getType(String types) throws SAXException {
+    public static Set<TaggingPresetType> getType(String types) throws SAXException {
         if (TYPE_CACHE.containsKey(types))
             return TYPE_CACHE.get(types);
-        EnumSet<TaggingPresetType> result = EnumSet.noneOf(TaggingPresetType.class);
+        Set<TaggingPresetType> result = EnumSet.noneOf(TaggingPresetType.class);
         for (String type : Arrays.asList(types.split(","))) {
             try {
                 TaggingPresetType presetType = TaggingPresetType.fromString(type);

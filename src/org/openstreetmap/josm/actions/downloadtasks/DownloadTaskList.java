@@ -125,7 +125,7 @@ public class DownloadTaskList {
      * @return the set of ids of all complete, non-new primitives
      */
     protected Set<OsmPrimitive> getCompletePrimitives(DataSet ds) {
-        HashSet<OsmPrimitive> ret = new HashSet<>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         for (OsmPrimitive primitive : ds.allPrimitives()) {
             if (!primitive.isIncomplete() && !primitive.isNew()) {
                 ret.add(primitive);
@@ -215,7 +215,7 @@ public class DownloadTaskList {
      * @return the set of primitive ids which have been downloaded by this task list
      */
     public Set<OsmPrimitive> getDownloadedPrimitives() {
-        HashSet<OsmPrimitive> ret = new HashSet<>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         for (DownloadTask task : tasks) {
             if (task instanceof DownloadOsmTask) {
                 DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
@@ -252,7 +252,7 @@ public class DownloadTaskList {
                     return;
                 }
             }
-            LinkedHashSet<Object> errors = new LinkedHashSet<>();
+            Set<Object> errors = new LinkedHashSet<>();
             for (DownloadTask dt : tasks) {
                 errors.addAll(dt.getErrorObjects());
             }

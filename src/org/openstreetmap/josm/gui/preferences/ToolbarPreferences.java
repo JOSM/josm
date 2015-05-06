@@ -1070,7 +1070,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
      * @param removeIfExists if true and the button already exists, remove it
      */
     public void addCustomButton(String definitionText, int preferredIndex, boolean removeIfExists) {
-        LinkedList<String> t = new LinkedList<>(getToolString());
+        List<String> t = new LinkedList<>(getToolString());
         if (t.contains(definitionText)) {
             if (!removeIfExists) return; // do nothing
             t.remove(definitionText);

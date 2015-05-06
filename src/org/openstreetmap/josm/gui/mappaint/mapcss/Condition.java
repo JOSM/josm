@@ -145,9 +145,6 @@ public abstract class Condition {
         LINK
     }
 
-    public static final EnumSet<Op> COMPARISON_OPERATERS =
-        EnumSet.of(Op.GREATER_OR_EQUAL, Op.GREATER, Op.LESS_OR_EQUAL, Op.LESS);
-
     /**
      * Most common case of a KeyValueCondition.
      *
@@ -222,7 +219,7 @@ public abstract class Condition {
     public static class KeyValueRegexpCondition extends KeyValueCondition {
 
         public final Pattern pattern;
-        public static final EnumSet<Op> SUPPORTED_OPS = EnumSet.of(Op.REGEX, Op.NREGEX);
+        public static final Set<Op> SUPPORTED_OPS = EnumSet.of(Op.REGEX, Op.NREGEX);
 
         public KeyValueRegexpCondition(String k, String v, Op op, boolean considerValAsKey) {
             super(k, v, op, considerValAsKey);
