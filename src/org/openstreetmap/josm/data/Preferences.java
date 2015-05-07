@@ -1694,6 +1694,7 @@ public class Preferences {
         }
 
         String[] obsolete = {
+                "remote.control.host", // replaced by individual values for IPv4 and IPv6. To remove end of 2015
                 "osm.notes.enableDownload", // was used prior to r8071 when notes was an hidden feature. To remove end of 2015
                 "mappaint.style.migration.switchedToMapCSS", // was used prior to 8315 for MapCSS switch. To remove end of 2015
                 "mappaint.style.migration.changedXmlName" // was used prior to 8315 for MapCSS switch. To remove end of 2015
