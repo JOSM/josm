@@ -1,0 +1,50 @@
+## Licensed to the Apache Software Foundation (ASF) under one
+## or more contributor license agreements.  See the NOTICE file
+## distributed with this work for additional information
+## regarding copyright ownership.  The ASF licenses this file
+## to you under the Apache License, Version 2.0 (the
+## "License"); you may not use this file except in compliance
+## with the License.  You may obtain a copy of the License at
+##
+##   http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing,
+## software distributed under the License is distributed on an
+## "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+## KIND, either express or implied.  See the License for the
+## specific language governing permissions and limitations
+## under the License.
+<html>
+
+<head><title> JCS Admin Servlet Region Detail </title></head>
+
+<body>
+
+<h1> Keys for region: $cacheName </h1>
+
+<table border="1" cellpadding="5" >
+    <tr>
+        <th> Key </th>
+        <th> Eternal? </th>
+        <th> Create time </th>
+        <th> Max Life (s) </th>
+        <th> Till Expiration (s) </th>
+    </tr>
+
+    #foreach ( $element in $elementInfoRecords )
+
+        <tr>
+            <td> $element.key </td>
+            <td> $element.eternal </td>
+            <td> $element.createTime </td>
+            <td> $element.maxLifeSeconds </td>
+            <td> $element.expiresInSeconds </td>
+            <td> <a href="?action=remove&cacheName=${cacheName}&key=${element.key}"> Remove </a> </td>
+        </tr>
+    #end
+
+</table>
+
+</body>
+
+</html>
