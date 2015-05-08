@@ -440,7 +440,7 @@ public class RemoteControlHttpsServer extends Thread {
      * @throws IOException if any I/O error occurs
      */
     public void stopServer() throws IOException {
-        Main.info(marktr("RemoteControl::Server {0}:{1} stopped.\n"),
+        Main.info(marktr("RemoteControl::Server {0}:{1} stopped."),
         server.getInetAddress(), Integer.toString(server.getLocalPort()));
         server.close();
     }
