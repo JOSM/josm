@@ -60,18 +60,18 @@ public class RemoteControlHttpServer extends Thread {
         if (instance4 != null) {
             try {
                 instance4.stopServer();
-                instance4 = null;
             } catch (IOException ioe) {
                 Main.error(ioe);
             }
+            instance4 = null;
         }
         if (instance6 != null) {
             try {
                 instance6.stopServer();
-                instance6 = null;
             } catch (IOException ioe) {
                 Main.error(ioe);
             }
+            instance6 = null;
         }
     }
 
