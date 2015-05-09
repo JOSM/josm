@@ -211,8 +211,7 @@ public class Marker implements TemplateEngineDataProvider {
                         symbolName = wpt.getString(GpxConstants.PT_SYM);
                     }
                     return new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
-                }
-                else if (url.toString().endsWith(".wav")) {
+                } else if (url.toString().endsWith(".wav")) {
                     AudioMarker audioMarker = new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
                     Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
                     if (exts != null && exts.containsKey("offset")) {

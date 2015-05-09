@@ -78,8 +78,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
                 g.drawImage(corners,xoff,y1-3,xoff+3,y1, 0,0,3,3, new Color(0,0,0,0), null);
                 g.drawImage(corners,xoff+xloop-2,y1-3,xoff+xloop+1,y1, 2,0,5,3, new Color(0,0,0,0), null);
                 g.drawLine(xoff+3,y1-3,xoff+xloop-3,y1-3);
-            }
-            else {
+            } else {
                 g.setColor(Color.red);
                 if(value.isOnewayHead) {
                     g.drawRect(xoff-1, p - 3 - w, w, w);
@@ -106,8 +105,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
                 g.drawLine(xoff, y2, xoff, y2+2);
                 g.drawImage(corners,xoff+xloop-2,y2+1,xoff+xloop+1,y2+4, 2,2,5,5, new Color(0,0,0,0), null);
                 g.drawLine(xoff+3-1,y2+3,xoff+xloop-3,y2+3);
-            }
-            else {
+            } else {
                 g.setColor(Color.red);
                 if(value.isOnewayTail) {
                     g.drawRect(xoff-1, ymax - p + 3, w, w);

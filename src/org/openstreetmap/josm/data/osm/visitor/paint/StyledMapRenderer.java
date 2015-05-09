@@ -945,22 +945,18 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             return;
 
         Node viaNode;
-        if(via instanceof Node)
-        {
+        if(via instanceof Node) {
             viaNode = (Node) via;
             if(!fromWay.isFirstLastNode(viaNode))
                 return;
-        }
-        else
-        {
+        } else {
             Way viaWay = (Way) via;
             Node firstNode = viaWay.firstNode();
             Node lastNode = viaWay.lastNode();
             Boolean onewayvia = false;
 
             String onewayviastr = viaWay.get("oneway");
-            if(onewayviastr != null)
-            {
+            if(onewayviastr != null) {
                 if("-1".equals(onewayviastr)) {
                     onewayvia = true;
                     Node tmp = firstNode;

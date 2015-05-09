@@ -398,8 +398,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             setMaximumSize(new Dimension(Integer.MAX_VALUE,20));
             setMinimumSize(new Dimension(Integer.MAX_VALUE,20));
             titleBar.lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
-        }
-        else throw new IllegalStateException();
+        } else
+            throw new IllegalStateException();
     }
 
     /**
@@ -412,8 +412,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             setPreferredSize(new Dimension(0,preferredHeight));
             setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
             titleBar.lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
-        }
-        else throw new IllegalStateException();
+        } else
+            throw new IllegalStateException();
     }
 
     /**

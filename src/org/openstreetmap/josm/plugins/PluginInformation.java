@@ -272,8 +272,7 @@ public class PluginInformation {
                             }
                         }
                     }
-                }
-                catch(Exception e) {
+                } catch(Exception e) {
                     Main.error(e);
                 }
             }

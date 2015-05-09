@@ -170,33 +170,30 @@ public final class AlignInLineAction extends JosmAction {
 
         try {
             Command cmd = null;
-            //// Decide what to align based on selection:
+            // Decide what to align based on selection:
 
-            /// Only ways selected -> For each way align their nodes taking care of intersection
             if(selectedNodes.isEmpty() && !selectedWays.isEmpty()) {
+                // Only ways selected -> For each way align their nodes taking care of intersection
                 cmd = alignMultiWay(selectedWays);
-            }
-            /// Only 1 node selected -> align this node relative to referers way
-            else if(selectedNodes.size() == 1) {
+            } else if(selectedNodes.size() == 1) {
+                // Only 1 node selected -> align this node relative to referers way
                 Node selectedNode = selectedNodes.get(0);
                 List<Way> involvedWays = null;
                 if(selectedWays.isEmpty())
-                    /// No selected way, all way containing this node are used
+                    // No selected way, all way containing this node are used
                     involvedWays = OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class);
                 else
-                    /// Selected way, use only these ways
+                    // Selected way, use only these ways
                     involvedWays = selectedWays;
                 List<Line> lines = getInvolvedLines(selectedNode, involvedWays);
                 if(lines.size() > 2 || lines.isEmpty())
                     throw new InvalidSelection();
                 cmd = alignSingleNode(selectedNodes.get(0), lines);
-            }
-            // More than 3 nodes and way(s) selected -> align selected nodes. Don't care of way(s).
-            else if(selectedNodes.size() >= 3) {
+            } else if(selectedNodes.size() >= 3) {
+                // More than 3 nodes and way(s) selected -> align selected nodes. Don't care of way(s).
                 cmd = alignOnlyNodes(selectedNodes);
-            }
-            /// All others cases are invalid
-            else {
+            } else {
+                // All others cases are invalid
                 throw new InvalidSelection();
             }
 
@@ -256,12 +253,10 @@ public final class AlignInLineAction extends JosmAction {
                 Way way = referers.get(0);
                 if(n == way.firstNode() || n == way.lastNode()) continue;
                 cmds.add(lines.get(way).projectionCommand(n));
-            }
-            else if(referers.size() == 2) {
+            } else if(referers.size() == 2) {
                 Command cmd = lines.get(referers.get(0)).intersectionCommand(n, lines.get(referers.get(1)));
                 cmds.add(cmd);
-            }
-            else
+            } else
                 throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
         }
         return new SequenceCommand(tr("Align Nodes in Line"), cmds);

@@ -129,8 +129,7 @@ public class OsmApiException extends OsmTransferException {
         sb.append("ResponseCode=")
         .append(responseCode);
         String eh = "";
-        try
-        {
+        try {
             if(errorHeader != null)
                 eh = tr(errorHeader.trim());
             if (!eh.isEmpty()) {
@@ -138,20 +137,17 @@ public class OsmApiException extends OsmTransferException {
                 .append(eh)
                 .append(">");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Ignored
         }
-        try
-        {
+        try {
             String eb = errorBody != null ? tr(errorBody.trim()) : "";
             if (!eb.isEmpty() && !eb.equals(eh)) {
                 sb.append(", Error Body=<")
                 .append(eb)
                 .append(">");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Ignored
         }
         return sb.toString();

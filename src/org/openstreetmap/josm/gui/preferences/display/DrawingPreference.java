@@ -189,8 +189,7 @@ public class DrawingPreference implements SubPreferenceSetting {
             if (vn < 1) {
                 vn = 8;
             }
-        }
-        else {
+        } else {
             vn = 0;
         }
         Main.pref.putInteger("mappaint.node.virtual-size", vn);

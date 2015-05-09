@@ -647,8 +647,7 @@ public final class TaggingPresetItems {
                     } catch (NumberFormatException ex) {
                         // Ignore - cannot auto-increment if last was non-numeric
                     }
-                }
-                else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
+                } else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default values feature is enabled
                     if (!"false".equals(use_last_as_default) && LAST_VALUES.containsKey(key) && !presetInitiallyMatches) {
                         textField.setText(LAST_VALUES.get(key));

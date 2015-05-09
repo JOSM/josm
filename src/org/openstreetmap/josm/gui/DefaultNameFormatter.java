@@ -167,8 +167,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                             /* I18n: house number, street as parameter, number should remain
                         before street for better visibility */
                             n =  tr("House number {0} at {1}", s, t);
-                        }
-                        else {
+                        } else {
                             /* I18n: house number as parameter */
                             n = tr("House number {0}", s);
                         }
@@ -266,8 +265,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                             /* I18n: house number, street as parameter, number should remain
                         before street for better visibility */
                             n =  tr("House number {0} at {1}", s, t);
-                        }
-                        else {
+                        } else {
                             /* I18n: house number as parameter */
                             n = tr("House number {0}", s);
                         }
