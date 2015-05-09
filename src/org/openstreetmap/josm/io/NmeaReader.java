@@ -375,8 +375,7 @@ public class NmeaReader {
                 if(!accu.isEmpty()) {
                     currentwp.put(GpxConstants.PT_PDOP, Float.parseFloat(accu));
                 }
-            }
-            else if("$GPRMC".equals(e[0]) || "$GNRMC".equals(e[0])) {
+            } else if("$GPRMC".equals(e[0]) || "$GNRMC".equals(e[0])) {
                 // coordinates
                 LatLon latLon = parseLatLon(
                         e[GPRMC.WIDTH_NORTH_NAME.position],

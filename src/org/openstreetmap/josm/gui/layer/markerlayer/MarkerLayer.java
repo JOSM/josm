@@ -420,9 +420,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                         }
                         return previousMarker;
                     }
-                }
-                else if (marker.getClass() == AudioMarker.class)
-                {
+                } else if (marker.getClass() == AudioMarker.class) {
                     if(nextTime || startMarker == null)
                         return marker;
                     previousMarker = marker;

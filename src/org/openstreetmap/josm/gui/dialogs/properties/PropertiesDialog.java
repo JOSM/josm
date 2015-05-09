@@ -790,9 +790,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 } else if (e.getSource() == membershipTable) {
                     tagTable.clearSelection();
                 }
-            }
-            // double click, edit or add tag
-            else if (e.getSource() == tagTable) {
+            } else if (e.getSource() == tagTable) {
+                // double click, edit or add tag
                 int row = tagTable.rowAtPoint(e.getPoint());
                 if (row > -1) {
                     boolean focusOnKey = (tagTable.columnAtPoint(e.getPoint()) == 0);
@@ -806,8 +805,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 if (row > -1) {
                     editMembership(row);
                 }
-            }
-            else {
+            } else {
                 editHelper.addTag();
                 btnAdd.requestFocusInWindow();
             }

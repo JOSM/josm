@@ -268,8 +268,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
     }
 
     public void add(XmlCondition c, Collection<XmlCondition> conditions, Prototype prot) {
-         if(conditions != null)
-         {
+         if(conditions != null) {
             prot.conditions = conditions;
             if (prot instanceof IconPrototype) {
                 iconsList.add((IconPrototype) prot);
@@ -281,8 +280,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
                 areasList.add((AreaPrototype) prot);
             } else
                 throw new RuntimeException();
-         }
-         else {
+         } else {
              String key = c.getKey();
             prot.code = key;
             if (prot instanceof IconPrototype) {

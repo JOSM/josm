@@ -393,8 +393,7 @@ public interface Selector {
                             }
                         }
                     }
-                }
-                else if (e.osm instanceof Relation) {
+                } else if (e.osm instanceof Relation) {
                     List<RelationMember> members = ((Relation) e.osm).getMembers();
                     for (int i=0; i<members.size(); i++) {
                         OsmPrimitive member = members.get(i).getMember();

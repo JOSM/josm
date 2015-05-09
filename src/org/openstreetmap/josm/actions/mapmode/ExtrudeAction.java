@@ -528,8 +528,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 if( e.getClickCount() == 2 && e.getPoint().equals(initialMousePos) ) {
                     // double click adds a new node
                     addNewNode(e);
-                }
-                else if (e.getPoint().distance(initialMousePos) > initialMoveThreshold && newN1en != null && selectedSegment != null) {
+                } else if (e.getPoint().distance(initialMousePos) > initialMoveThreshold && newN1en != null && selectedSegment != null) {
                     // main extrusion commands
                     performExtrusion();
                 }
@@ -1176,8 +1175,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             double linelength = Math.abs(widthpoint.getX()) + Math.abs(widthpoint.getY()) + Math.abs(heightpoint.getX()) + Math.abs(heightpoint.getY());
 
             return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * linelength) , start.getY() + (unitvector.getY() * linelength)));
-        }
-        catch (NoninvertibleTransformException e) {
+        } catch (NoninvertibleTransformException e) {
             return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * 10) , start.getY() + (unitvector.getY() * 10)));
         }
     }

@@ -113,8 +113,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize / Undo"), commands));
                     Main.map.repaint();
                 } else throw new InvalidUserInputException();
-            }
-            catch (InvalidUserInputException ex) {
+            } catch (InvalidUserInputException ex) {
                 new Notification(
                         tr("Orthogonalize Shape / Undo<br>"+
                         "Please select nodes that were moved by the previous Orthogonalize Shape action!"))
@@ -153,8 +152,7 @@ public final class OrthogonalizeAction extends JosmAction {
             for (OsmPrimitive p : sel) {
                 if (p instanceof Node) {
                     nodeList.add((Node) p);
-                }
-                else if (p instanceof Way) {
+                } else if (p instanceof Way) {
                     wayDataList.add(new WayData((Way) p));
                 } else
                     throw new InvalidUserInputException(tr("Selection must consist only of ways and nodes."));
@@ -168,8 +166,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
                     if (nodeList.size() == 2) {  // fixed direction
                         commands.addAll(orthogonalize(wayDataList, nodeList));
-                    }
-                    else if (nodeList.isEmpty()) {
+                    } else if (nodeList.isEmpty()) {
                         List<List<WayData>> groups = buildGroups(wayDataList);
                         for (List<WayData> g: groups) {
                             commands.addAll(orthogonalize(g, nodeList));
@@ -266,8 +263,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     totSum = EN.sum(totSum, w.segSum);
                 }
                 headingAll = EN.polar(new EastNorth(0., 0.), totSum);
-            }
-            else {
+            } else {
                 headingAll = EN.polar(headingNodes.get(0).getEastNorth(), headingNodes.get(1).getEastNorth());
                 for (WayData w : wayDataList) {
                     w.calcDirections(Direction.RIGHT);
@@ -391,8 +387,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 if (Math.abs(dx) > Math.abs(EPSILON * tmp.east()) ||
                         Math.abs(dy) > Math.abs(EPSILON * tmp.east()))
                     throw new AssertionError();
-            }
-            else {
+            } else {
                 OrthogonalizeAction.rememberMovements.put(n, new EastNorth(dx, dy));
                 commands.add(new MoveCommand(n, dx, dy));
             }

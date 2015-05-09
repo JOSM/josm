@@ -147,9 +147,8 @@ public class PluginListPanel extends VerticallyScrollablePanel {
                 selectRequiredPlugins(cb.pi);
                 // Alert user if plugin requirements are not met
                 PluginHandler.checkRequiredPluginsPreconditions(PluginListPanel.this, model.getAvailablePlugins(), cb.pi, false);
-            }
-            // If the plugin has been unselected, was it required by other plugins still selected ?
-            else if (!cb.isSelected()) {
+            } else if (!cb.isSelected()) {
+                // If the plugin has been unselected, was it required by other plugins still selected ?
                 Set<String> otherPlugins = new HashSet<>();
                 for (PluginInformation pi : model.getAvailablePlugins()) {
                     if (!pi.equals(cb.pi) && pi.requires != null && model.isSelectedPlugin(pi.getName())) {

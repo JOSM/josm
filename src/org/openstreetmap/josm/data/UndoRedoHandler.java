@@ -95,8 +95,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
                     break;
                 }
             }
-        }
-        finally {
+        } finally {
             Main.main.getCurrentDataSet().endUpdate();
         }
         fireCommandsChanged();

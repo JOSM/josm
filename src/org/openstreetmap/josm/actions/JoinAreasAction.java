@@ -149,8 +149,7 @@ public class JoinAreasAction extends JosmAction {
                     for (int pos = 0; pos < way.way.getNodesCount() - 1; pos++) {
                         nodes.add(way.way.getNode(pos));
                     }
-                }
-                else {
+                } else {
                     for (int pos = way.way.getNodesCount() - 1; pos > 0; pos--) {
                         nodes.add(way.way.getNode(pos));
                     }
@@ -1291,8 +1290,7 @@ public class JoinAreasAction extends JosmAction {
                 if ("outer".equalsIgnoreCase(rm.getRole())) {
                     outerWays.add(rm.getWay());
                     hasKnownOuter |= selectedWays.contains(rm.getWay());
-                }
-                else if ("inner".equalsIgnoreCase(rm.getRole())) {
+                } else if ("inner".equalsIgnoreCase(rm.getRole())) {
                     innerWays.add(rm.getWay());
                 }
             }

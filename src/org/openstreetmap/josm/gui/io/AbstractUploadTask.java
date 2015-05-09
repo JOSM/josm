@@ -319,23 +319,16 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         }
         if (e instanceof OsmApiException) {
             OsmApiException ex = (OsmApiException)e;
-            // There was an upload conflict. Let the user decide whether
-            // and how to resolve it
-            //
             if(ex.getResponseCode() == HttpURLConnection.HTTP_CONFLICT) {
+                // There was an upload conflict. Let the user decide whether and how to resolve it
                 handleUploadConflict(ex);
                 return;
-            }
-            // There was a precondition failed. Notify the user.
-            //
-            else if (ex.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
+            } else if (ex.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
+                // There was a precondition failed. Notify the user.
                 handlePreconditionFailed(ex);
                 return;
-            }
-            // Tried to update or delete a primitive which never existed on
-            // the server?
-            //
-            else if (ex.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+            } else if (ex.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                // Tried to update or delete a primitive which never existed on the server?
                 ExceptionDialogUtil.explainNotFound(ex);
                 return;
             }

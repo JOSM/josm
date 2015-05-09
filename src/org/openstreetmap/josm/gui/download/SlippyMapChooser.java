@@ -59,16 +59,13 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
             // retrieve the size of the display
             Dimension iScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-            // enlarge
-            if(iDownloadDialogDimension == null) {
-                // make the each dimension 90% of the absolute display size
+            if (iDownloadDialogDimension == null) {
+                // enlarge: make the each dimension 90% of the absolute display size
                 w = iScreenSize.width * 90 / 100;
                 h = iScreenSize.height * 90 / 100;
                 iDownloadDialogDimension = iGui.getSize();
-            }
-            // shrink
-            else {
-                // set the size back to the initial dimensions
+            } else {
+                // shrink: set the size back to the initial dimensions
                 w = iDownloadDialogDimension.width;
                 h = iDownloadDialogDimension.height;
                 iDownloadDialogDimension = null;

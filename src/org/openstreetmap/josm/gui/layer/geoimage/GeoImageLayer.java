@@ -498,8 +498,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                         if (clip.intersects(target)) {
                             tempG.drawImage(e.thumbnail, target.x, target.y, target.width, target.height, null);
                         }
-                    }
-                    else { // thumbnail not loaded yet
+                    } else { // thumbnail not loaded yet
                         icon.paintIcon(mv, tempG,
                                 p.x - icon.getIconWidth() / 2,
                                 p.y - icon.getIconHeight() / 2);
@@ -508,8 +507,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 updateOffscreenBuffer = false;
             }
             g.drawImage(offscreenBuffer, 0, 0, null);
-        }
-        else {
+        } else {
             for (ImageEntry e : data) {
                 if (e.getPos() == null) {
                     continue;
@@ -533,8 +531,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     Dimension d = scaledDimension(e.thumbnail);
                     imgWidth = d.width;
                     imgHeight = d.height;
-                }
-                else {
+                } else {
                     imgWidth = selectedIcon.getIconWidth();
                     imgHeight = selectedIcon.getIconHeight();
                 }
@@ -693,8 +690,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 cal.set(Calendar.YEAR, Integer.parseInt(dateStampComps[0]));
                 cal.set(Calendar.MONTH, Integer.parseInt(dateStampComps[1]) - 1);
                 cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateStampComps[2]));
-            }
-            else {
+            } else {
                 // No GPS date stamp in EXIF data. Copy it from EXIF time.
                 // Date is not set if EXIF time is not available.
                 if (e.hasExifTime()) {

@@ -186,8 +186,7 @@ public abstract class OsmServerReader extends OsmConnection {
                                 errorBody.append("\n");
                             }
                         }
-                    }
-                    catch(Exception e) {
+                    } catch(Exception e) {
                         errorBody.append(tr("Reading error text failed."));
                     }
 

@@ -227,8 +227,7 @@ public final class User {
         s.append("id:").append(uid);
         if (names.size() == 1) {
             s.append(" name:").append(getName());
-        }
-        else if (names.size() > 1) {
+        } else if (names.size() > 1) {
             s.append(String.format(" %d names:%s", names.size(), getName()));
         }
         return s.toString();

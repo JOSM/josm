@@ -322,8 +322,7 @@ public class RelationChecker extends Test {
                 String s = marktr("Role {0} missing");
                 errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                         tr(s, keyname), MessageFormat.format(s, keyname), ROLE_MISSING, n));
-            }
-            else if (vc > count) {
+            } else if (vc > count) {
                 String s = marktr("Number of {0} roles too low ({1})");
                 errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                         tr(s, keyname, count), MessageFormat.format(s, keyname, count), LOW_COUNT, n));
