@@ -855,9 +855,39 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         if (target == null)
             return;
 
+        if (selNodes.size() == 1) {
+            // Move all selected primitive to preserve shape #10748
+            Collection<OsmPrimitive> selection =
+                getCurrentDataSet().getSelectedNodesAndWays();
+            Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
+            Command c = getLastCommand();
+            getCurrentDataSet().beginUpdate();
+            if (c instanceof MoveCommand
+                && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+                Node selectedNode = selNodes.iterator().next();
+                EastNorth selectedEN = selectedNode.getEastNorth();
+                EastNorth targetEN = target.getEastNorth();
+                ((MoveCommand) c).moveAgain(targetEN.getX() - selectedEN.getX(),
+                                            targetEN.getY() - selectedEN.getY());
+            }
+            getCurrentDataSet().endUpdate();
+        }
+
         Collection<Node> nodesToMerge = new LinkedList<>(selNodes);
         nodesToMerge.add(target);
-        MergeNodesAction.doMergeNodes(Main.main.getEditLayer(), nodesToMerge, target);
+        mergeNodes(Main.main.getEditLayer(), nodesToMerge, target);
+    }
+
+    /**
+     * Merge nodes using {@code MergeNodesAction}.
+     * Can be overridden for testing purpose.
+     * @param layer layer the reference data layer. Must not be null
+     * @param nodes the collection of nodes. Ignored if null
+     * @param targetLocationNode this node's location will be used for the target node
+     */
+    public void mergeNodes(OsmDataLayer layer, Collection<Node> nodes,
+                           Node targetLocationNode) {
+        MergeNodesAction.doMergeNodes(layer, nodes, targetLocationNode);
     }
 
     /**
