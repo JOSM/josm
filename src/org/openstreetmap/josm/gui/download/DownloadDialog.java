@@ -380,8 +380,7 @@ public class DownloadDialog extends JDialog  {
                     mv.getLatLon(mv.getWidth(), 0)
             );
             boundingBoxChanged(currentBounds,null);
-        }
-        else {
+        } else {
             Bounds bounds = getSavedDownloadBounds();
             if (bounds != null) {
                 currentBounds = bounds;

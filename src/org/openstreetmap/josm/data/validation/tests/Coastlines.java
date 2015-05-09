@@ -188,8 +188,7 @@ public class Coastlines extends Test {
 
                 errors.add(new TestError(this, Severity.ERROR, tr("Unordered coastline"),
                         UNORDERED_COASTLINE, primitives, highlight));
-            }
-            else if (reversed) {
+            } else if (reversed) {
                 errors.add(new TestError(this, Severity.ERROR, tr("Reversed coastline"),
                         REVERSED_COASTLINE, primitives));
             }

@@ -118,8 +118,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             final String url = wms.buildGetMapUrl(
                     tree.getSelectedLayers(), (String) formats.getSelectedItem());
             return new ImageryInfo(info.getName(), url, "wms", info.getEulaAcceptanceRequired(), info.getCookies());
-        } // exception handling from AddWMSLayerPanel.java
-        catch (MalformedURLException ex) {
+        } catch (MalformedURLException ex) {
             JOptionPane.showMessageDialog(Main.parent, tr("Invalid service URL."),
                     tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
         } catch (IOException ex) {

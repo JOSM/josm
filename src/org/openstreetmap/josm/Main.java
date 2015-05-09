@@ -915,8 +915,7 @@ public abstract class Main {
             String laf = Main.pref.get("laf", defaultlaf);
             try {
                 UIManager.setLookAndFeel(laf);
-            }
-            catch (final NoClassDefFoundError | ClassNotFoundException e) {
+            } catch (final NoClassDefFoundError | ClassNotFoundException e) {
                 // Try to find look and feel in plugin classloaders
                 Class<?> klass = null;
                 for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
@@ -937,8 +936,7 @@ public abstract class Main {
                     info("Look and Feel not found: " + laf);
                     Main.pref.put("laf", defaultlaf);
                 }
-            }
-            catch (final UnsupportedLookAndFeelException e) {
+            } catch (final UnsupportedLookAndFeelException e) {
                 info("Look and Feel not supported: " + laf);
                 Main.pref.put("laf", defaultlaf);
             }

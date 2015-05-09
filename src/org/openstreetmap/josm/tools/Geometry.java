@@ -182,8 +182,7 @@ public final class Geometry {
                                     cmds.add(new AddCommand(intNode));
                                 }
                             }
-                        }
-                        else if (test && !intersectionNodes.isEmpty())
+                        } else if (test && !intersectionNodes.isEmpty())
                             return intersectionNodes;
                     }
                 }

@@ -169,16 +169,15 @@ public final class StyleCache {
             if (data.get(i) != null)
                 throw new AssertionError("the new range must be within a subrange that has no data");
 
-            //  --|-------|--------|--
-            //   i-1      i       i+1
-            //            (--------]
             if (bd.get(i+1) == upper) {
+                //  --|-------|--------|--
+                //   i-1      i       i+1
+                //            (--------]
                 data.set(i, sl);
-            }
-            //  --|-------|--------|--
-            //   i-1      i       i+1
-            //            (-----]
-            else {
+            } else {
+                //  --|-------|--------|--
+                //   i-1      i       i+1
+                //            (-----]
                 bd.add(i+1, upper);
                 data.add(i, sl);
             }

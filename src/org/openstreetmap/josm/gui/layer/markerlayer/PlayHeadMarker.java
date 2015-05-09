@@ -102,8 +102,8 @@ public final class PlayHeadMarker extends Marker {
         }
         wasPlaying = AudioPlayer.playing();
         if (wasPlaying) {
-            try { AudioPlayer.pause(); }
-            catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
+            try { AudioPlayer.pause();
+            } catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
         }
     }
 
@@ -112,8 +112,8 @@ public final class PlayHeadMarker extends Marker {
      */
     private void endDrag(boolean reset) {
         if (! wasPlaying || reset) {
-            try { AudioPlayer.pause(); }
-            catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
+            try { AudioPlayer.pause();
+            } catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
         }
         if (reset) {
             setCoor(oldCoor);
@@ -242,8 +242,7 @@ public final class PlayHeadMarker extends Marker {
                     JOptionPane.ERROR_MESSAGE
                     );
             endDrag(true);
-        }
-        else if (recent.parentLayer.synchronizeAudioMarkers(ca)) {
+        } else if (recent.parentLayer.synchronizeAudioMarkers(ca)) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Audio synchronized at point {0}.", recent.parentLayer.syncAudioMarker.getText()),

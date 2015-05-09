@@ -131,8 +131,7 @@ public class OverlappingWays extends Test {
                             errortype = tr("Ways share segment with area");
                             type = OVERLAPPING_WAY_AREA;
                         }
-                    }
-                    else if (highway == ways) {
+                    } else if (highway == ways) {
                         errortype = tr("Overlapping highways");
                         type = OVERLAPPING_HIGHWAY;
                     } else if (railway == ways) {

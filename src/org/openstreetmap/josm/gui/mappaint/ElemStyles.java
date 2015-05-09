@@ -273,9 +273,7 @@ public class ElemStyles {
                 }
             }
             return p;
-        }
-        else if (osm instanceof Relation)
-        {
+        } else if (osm instanceof Relation) {
             Pair<StyleList, Range> p = generateStyles(osm, scale, true);
             if (drawMultipolygon && ((Relation)osm).isMultipolygon()) {
                 if (!Utils.exists(p.a, AreaElemStyle.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {

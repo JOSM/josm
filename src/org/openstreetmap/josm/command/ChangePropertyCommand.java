@@ -96,8 +96,7 @@ public class ChangePropertyCommand extends Command {
                     if (oldVal != null)
                         // new value is null and tag exists (will delete tag)
                         modified = true;
-                }
-                else if (oldVal == null || !newVal.equals(oldVal))
+                } else if (oldVal == null || !newVal.equals(oldVal))
                     // new value is not null and is different from current value
                     modified = true;
             }
@@ -120,8 +119,7 @@ public class ChangePropertyCommand extends Command {
                     if (newVal == null || newVal.isEmpty()) {
                         if (oldVal != null)
                             osm.remove(tag.getKey());
-                    }
-                    else if (oldVal == null || !newVal.equals(oldVal))
+                    } else if (oldVal == null || !newVal.equals(oldVal))
                         osm.put(tag.getKey(), newVal);
                 }
                 // init() only keeps modified primitives. Therefore the modified
@@ -129,8 +127,7 @@ public class ChangePropertyCommand extends Command {
                 osm.setModified(true);
             }
             return true;
-        }
-        finally {
+        } finally {
             Main.main.getCurrentDataSet().endUpdate();
         }
     }
@@ -170,8 +167,7 @@ public class ChangePropertyCommand extends Command {
                 /* I18n: plural form for objects, but value < 2 not possible! */
                 text = trn("Set {0}={1} for {2} object", "Set {0}={1} for {2} objects", objects.size(), entry.getKey(), entry.getValue(), objects.size());
             }
-        }
-        else {
+        } else {
             boolean allnull = true;
             for (Map.Entry<String, String> tag : this.tags.entrySet()) {
                 if (tag.getValue() != null) {

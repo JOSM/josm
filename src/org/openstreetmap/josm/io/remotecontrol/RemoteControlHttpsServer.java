@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;

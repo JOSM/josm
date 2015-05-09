@@ -136,8 +136,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
                 }
                 p.add(dlg, 0);
                 p.setVisible(true);
-            }
-            else if (dlg.isDialogInCollapsedView()) {
+            } else if (dlg.isDialogInCollapsedView()) {
                 p.add(dlg, 0);
                 p.setVisible(true);
             }

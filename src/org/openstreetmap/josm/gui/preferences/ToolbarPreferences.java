@@ -613,8 +613,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     if (node.getUserObject() == null) {
                         comp.setText(tr("Separator"));
                         comp.setIcon(ImageProvider.get("preferences/separator"));
-                    }
-                    else if (node.getUserObject() instanceof Action) {
+                    } else if (node.getUserObject() instanceof Action) {
                         Action action = (Action) node.getUserObject();
                         comp.setText((String) action.getValue(Action.NAME));
                         comp.setIcon((Icon) action.getValue(Action.SMALL_ICON));
@@ -782,8 +781,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         Object obj = node.getUserObject();
                         if (obj == null) {
                             dragActions.add(ActionDefinition.getSeparator());
-                        }
-                        else if (obj instanceof Action) {
+                        } else if (obj instanceof Action) {
                             dragActions.add(new ActionDefinition((Action) obj));
                         }
                     }

@@ -161,8 +161,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             for(Collection<String> entry : args) {
                 try {
                     bookmarks.add(new Bookmark(entry));
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Main.error(tr("Error reading bookmark entry: %s", e.getMessage()));
                 }
             }
