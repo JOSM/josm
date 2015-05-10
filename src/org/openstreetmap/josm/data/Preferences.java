@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
@@ -21,6 +23,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -37,6 +40,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
+import javax.json.JsonWriter;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.xml.XMLConstants;
@@ -1265,6 +1274,33 @@ public class Preferences {
         return vals;
     }
 
+    @SuppressWarnings("rawtypes")
+    private static String mapToJson(Map map) {
+        StringWriter stringWriter = new StringWriter();
+        try (JsonWriter writer = Json.createWriter(stringWriter)) {
+            JsonObjectBuilder object = Json.createObjectBuilder();
+            for(Object o: map.entrySet()) {
+                Entry e = (Entry) o;
+                object.add(e.getKey().toString(), e.getValue().toString());
+            }
+            writer.writeObject(object.build());
+        }
+        return stringWriter.toString();
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static Map mapFromJson(String s) {
+        Map ret = null;
+        try (JsonReader reader = Json.createReader(new StringReader(s))) {
+            JsonObject object = reader.readObject();
+            ret = new HashMap(object.size());
+            for (Entry<String, JsonValue> e: object.entrySet()) {
+                ret.put(e.getKey(), e.getValue().toString());
+            }
+        }
+        return ret;
+    }
+
     public static <T> Map<String,String> serializeStruct(T struct, Class<T> klass) {
         T structPrototype;
         try {
@@ -1284,7 +1320,12 @@ public class Preferences {
                 Object defaultFieldValue = f.get(structPrototype);
                 if (fieldValue != null) {
                     if (f.getAnnotation(writeExplicitly.class) != null || !Objects.equals(fieldValue, defaultFieldValue)) {
-                        hash.put(f.getName().replace("_", "-"), fieldValue.toString());
+                        String key = f.getName().replace("_", "-");
+                        if (fieldValue instanceof Map) {
+                            hash.put(key, mapToJson((Map) fieldValue));
+                        } else {
+                            hash.put(key, fieldValue.toString());
+                        }
                     }
                 }
             } catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -1331,7 +1372,10 @@ public class Preferences {
                 }
             } else  if (f.getType() == String.class) {
                 value = key_value.getValue();
-            } else
+            } else if (f.getType().isAssignableFrom(Map.class)) {
+                value = mapFromJson(key_value.getValue());
+            }
+            else
                 throw new RuntimeException("unsupported preference primitive type");
 
             try {
