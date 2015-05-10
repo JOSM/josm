@@ -19,8 +19,9 @@ public interface ICachedLoaderListener {
      * LoadResult.REJECTED when job was rejected because of full queue
      *
      * @param data
+     * @param attributes
      * @param result
      */
-    public void loadingFinished(CacheEntry data, LoadResult result);
+    public void loadingFinished(CacheEntry data, CacheEntryAttributes attributes, LoadResult result);
 
 }

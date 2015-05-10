@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -38,6 +40,7 @@ public class ImageryReader {
         CODE,
         BOUNDS,
         SHAPE,
+        NO_TILE,
         UNKNOWN,            // element is not recognized in the current context
     }
 
@@ -83,6 +86,7 @@ public class ImageryReader {
         // language of last element, does only work for simple ENTRY_ATTRIBUTE's
         private String lang;
         private List<String> projections;
+        private Map<String, String> noTileHeaders;
 
         @Override
         public void startDocument() {
@@ -94,6 +98,7 @@ public class ImageryReader {
             entry = null;
             bounds = null;
             projections = null;
+            noTileHeaders = null;
         }
 
         @Override
@@ -149,6 +154,10 @@ public class ImageryReader {
                 } else if ("projections".equals(qName)) {
                     projections = new ArrayList<>();
                     newState = State.PROJECTIONS;
+                } else if ("no-tile-header".equals(qName)) {
+                    noTileHeaders = new HashMap<>();
+                    noTileHeaders.put(atts.getValue("name"), atts.getValue("value"));
+                    newState = State.NO_TILE;
                 }
                 break;
             case BOUNDS:
@@ -307,6 +316,11 @@ public class ImageryReader {
                 entry.setServerProjections(projections);
                 projections = null;
                 break;
+            case NO_TILE:
+                entry.setNoTileHeaders(noTileHeaders);
+                noTileHeaders = null;
+                break;
+
             }
         }
     }

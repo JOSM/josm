@@ -670,6 +670,12 @@
 									</xs:all>
 								</xs:complexType>
 							</xs:element>
+							<xs:element name="no-tile-header" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="name" type="xs:string" />
+									<xs:attribute name="value" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
 						</xs:choice>
 					</xs:sequence>
 					<xs:attribute name="last-check" type="xs:date" use="optional" />

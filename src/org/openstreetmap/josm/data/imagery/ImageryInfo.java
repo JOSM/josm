@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -20,6 +21,7 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
+import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.pref;
@@ -34,7 +36,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  *
  * @author Frederik Ramm
  */
-public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
+public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInfo>, Attributed {
 
     /**
      * Type of imagery entry.
@@ -52,6 +54,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         SCANEX("scanex"),
         /** A WMS endpoint entry only stores the WMS server info, without layer, which are chosen later by the user. **/
         WMS_ENDPOINT("wms_endpoint");
+
 
         private final String typeString;
 
@@ -150,16 +153,11 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         }
     }
 
-    /** name of the imagery entry (gets translated by josm usually) */
-    private String name;
+
     /** original name of the imagery entry in case of translation call, for multiple languages English when possible */
     private String origName;
     /** (original) language of the translated name entry */
     private String langName;
-    /** id for this imagery entry, optional at the moment */
-    private String id;
-    /** URL of the imagery service */
-    private String url = null;
     /** whether this is a entry activated by default or not */
     private boolean defaultEntry = false;
     /** The data part of HTTP cookies header in case the service requires cookies to work */
@@ -198,6 +196,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     /** icon used in menu */
     private String icon;
     // when adding a field, also adapt the ImageryInfo(ImageryInfo) constructor
+    private Map<String, String> noTileHeaders;
 
     /**
      * Auxiliary class to save an {@link ImageryInfo} object in the preferences.
@@ -224,6 +223,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         @pref String projections;
         @pref String icon;
         @pref String description;
+        @pref Map<String, String> noTileHeaders;
 
         /**
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
@@ -277,6 +277,9 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
                 }
                 projections = val.toString();
             }
+            if (i.noTileHeaders != null && !i.noTileHeaders.isEmpty()) {
+                noTileHeaders = i.noTileHeaders;
+            }
         }
 
         @Override
@@ -294,6 +297,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * Constructs a new WMS {@code ImageryInfo}.
      */
     public ImageryInfo() {
+        super();
     }
 
     /**
@@ -301,7 +305,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * @param name The entry name
      */
     public ImageryInfo(String name) {
-        this.name=name;
+        super(name);
     }
 
     /**
@@ -310,7 +314,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * @param url The entry extended URL
      */
     public ImageryInfo(String name, String url) {
-        this.name=name;
+        this(name);
         setExtendedUrl(url);
     }
 
@@ -321,7 +325,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * @param eulaAcceptanceRequired The EULA URL
      */
     public ImageryInfo(String name, String url, String eulaAcceptanceRequired) {
-        this.name=name;
+        this(name);
         setExtendedUrl(url);
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
@@ -336,7 +340,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * @throws IllegalArgumentException if type refers to an unknown imagery type
      */
     public ImageryInfo(String name, String url, String type, String eulaAcceptanceRequired, String cookies) {
-        this.name=name;
+        this(name);
         setExtendedUrl(url);
         ImageryType t = ImageryType.fromString(type);
         this.cookies=cookies;
@@ -346,6 +350,11 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         } else if (type != null && !type.trim().isEmpty()) {
             throw new IllegalArgumentException("unknown type: "+type);
         }
+    }
+
+    public ImageryInfo(String name, String url, String type, String eulaAcceptanceRequired, String cookies, String id) {
+        this(name, url, type, eulaAcceptanceRequired, cookies);
+        setId(id);
     }
 
     /**
@@ -389,6 +398,9 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         termsOfUseURL = e.terms_of_use_url;
         countryCode = e.country_code;
         icon = e.icon;
+        if (e.noTileHeaders != null) {
+            noTileHeaders = e.noTileHeaders;
+        }
     }
 
     /**
@@ -687,6 +699,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * Returns the entry name.
      * @return The entry name
      */
+    @Override
     public String getName() {
         return this.name;
     }
@@ -758,6 +771,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * Returns the entry URL.
      * @return The entry URL
      */
+    @Override
     public String getUrl() {
         return this.url;
     }
@@ -790,6 +804,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * Return the data part of HTTP cookies header in case the service requires cookies to work
      * @return the cookie data part
      */
+    @Override
     public String getCookies() {
         return this.cookies;
     }
@@ -802,6 +817,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * Returns the maximum zoom level.
      * @return The maximum zoom level
      */
+    @Override
     public int getMaxZoom() {
         return this.defaultMaxZoom;
     }
@@ -810,6 +826,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * Returns the minimum zoom level.
      * @return The minimum zoom level
      */
+    @Override
     public int getMinZoom() {
         return this.defaultMinZoom;
     }
@@ -1024,5 +1041,14 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     public boolean isBlacklisted() {
         Capabilities capabilities = OsmApi.getOsmApi().getCapabilities();
         return capabilities != null && capabilities.isOnImageryBlacklist(this.url);
+    }
+
+    public void setNoTileHeaders(Map<String, String> noTileHeaders) {
+       this.noTileHeaders = noTileHeaders;
+    }
+
+    @Override
+    public Map<String, String> getNoTileHeaders() {
+        return noTileHeaders;
     }
 }

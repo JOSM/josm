@@ -277,8 +277,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     private static class CachedAttributionBingAerialTileSource extends BingAerialTileSource {
 
-        public CachedAttributionBingAerialTileSource(String id) {
-            super(id);
+        public CachedAttributionBingAerialTileSource(ImageryInfo info) {
+            super(info);
         }
 
         class BingAttributionData extends CacheCustomContent<IOException> {
@@ -336,14 +336,15 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static TileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.TMS) {
             checkUrl(info.getUrl());
-            TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getId(), info.getMinZoom(), info.getMaxZoom(),
-                    info.getCookies());
+            TMSTileSource t = new TemplatedTMSTileSource(info);
             info.setAttribution(t);
             return t;
-        } else if (info.getImageryType() == ImageryType.BING)
-            return new CachedAttributionBingAerialTileSource(info.getId());
-        else if (info.getImageryType() == ImageryType.SCANEX) {
-            return new ScanexTileSource(info.getName(), info.getUrl(), info.getId(), info.getMaxZoom());
+        } else if (info.getImageryType() == ImageryType.BING) {
+            //return new CachedAttributionBingAerialTileSource(info.getId());
+            return new CachedAttributionBingAerialTileSource(info);
+        } else if (info.getImageryType() == ImageryType.SCANEX) {
+            //return new ScanexTileSource(info.getName(), info.getUrl(), info.getId(), info.getMaxZoom());
+            return new ScanexTileSource(info);
         }
         return null;
     }

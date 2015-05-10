@@ -42,7 +42,7 @@ public class BufferedImageCacheEntry extends CacheEntry {
             if (img != null)
                 return img;
             byte[] content = getContent();
-            if (content != null) {
+            if (content != null && content.length > 0) {
                 img = ImageIO.read(new ByteArrayInputStream(content));
 
                 if (writtenToDisk)
