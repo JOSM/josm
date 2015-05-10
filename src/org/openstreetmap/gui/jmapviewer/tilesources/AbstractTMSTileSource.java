@@ -2,6 +2,9 @@
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 
@@ -10,14 +13,16 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     protected String name;
     protected String baseUrl;
     protected String id;
+    private Map<String, String> noTileHeaders;
 
-    public AbstractTMSTileSource(String name, String base_url, String id) {
-        this.name = name;
-        this.baseUrl = base_url;
+    public AbstractTMSTileSource(TileSourceInfo info) {
+        this.name = info.getName();
+        this.baseUrl = info.getUrl();
         if(baseUrl.endsWith("/")) {
             baseUrl = baseUrl.substring(0,baseUrl.length()-1);
         }
-        this.id = id;
+        this.id = info.getUrl();
+        this.noTileHeaders = info.getNoTileHeaders();
     }
 
     @Override
@@ -121,5 +126,18 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     @Override
     public double tileXToLon(int x, int zoom) {
         return OsmMercator.XToLon(x * OsmMercator.TILE_SIZE, zoom);
+    }
+
+    @Override
+    public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content) {
+        if(noTileHeaders != null) {
+            for (Entry<String, String> searchEntry: noTileHeaders.entrySet()) {
+                List<String> headerVals = headers.get(searchEntry.getKey());
+                if (headerVals != null && headerVals.contains(searchEntry.getValue())) {
+                    return true;
+                }
+            }
+        }
+        return super.isNoTileAtZoom(headers, statusCode, content);
     }
 }

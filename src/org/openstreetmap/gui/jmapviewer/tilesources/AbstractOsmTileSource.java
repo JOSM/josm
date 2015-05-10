@@ -6,7 +6,7 @@ import java.awt.Image;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 
 /**
- * Abstract clas for OSM Tile sources
+ * Abstract class for OSM Tile sources
  */
 public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
     
@@ -23,9 +23,11 @@ public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
      * are safe for file names; can be null
      */
     public AbstractOsmTileSource(String name, String base_url, String id) {
-        super(name, base_url, id);
+        super(new TileSourceInfo(name, base_url, id));
+
     }
 
+    @Override
     public int getMaxZoom() {
         return 19;
     }

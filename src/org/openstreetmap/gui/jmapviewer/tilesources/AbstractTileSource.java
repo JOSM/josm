@@ -2,9 +2,11 @@
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Image;
+import java.util.List;
+import java.util.Map;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 abstract public class AbstractTileSource implements TileSource {
 
@@ -74,4 +76,8 @@ abstract public class AbstractTileSource implements TileSource {
         this.termsOfUseURL = termsOfUseURL;
     }
 
+    public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content) {
+        // default handler - when HTTP 404 is returned, then treat this situation as no tile at this zoom level
+        return statusCode == 404;
+    }
 }

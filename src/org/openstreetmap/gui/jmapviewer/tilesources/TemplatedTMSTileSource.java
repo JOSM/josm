@@ -1,11 +1,11 @@
 // License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TemplatedTMSTileSource extends TMSTileSource {
 
@@ -27,20 +27,10 @@ public class TemplatedTMSTileSource extends TMSTileSource {
         PATTERN_SWITCH
     };
 
-    public TemplatedTMSTileSource(String name, String url, String id, int maxZoom) {
-        super(name, url, id, maxZoom);
-        handleTemplate();
-    }
-
-    public TemplatedTMSTileSource(String name, String url, String id, int minZoom, int maxZoom) {
-        super(name, url, id, minZoom, maxZoom);
-        handleTemplate();
-    }
-
-    public TemplatedTMSTileSource(String name, String url, String id, int minZoom, int maxZoom, String cookies) {
-        super(name, url, id, minZoom, maxZoom);
-        if (cookies != null) {
-            headers.put(COOKIE_HEADER, cookies);
+    public TemplatedTMSTileSource(TileSourceInfo info) {
+        super(info);
+        if (info.getCookies() != null) {
+            headers.put(COOKIE_HEADER, info.getCookies());
         }
         handleTemplate();
     }

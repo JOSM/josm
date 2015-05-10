@@ -331,4 +331,12 @@ public class Tile {
         loading = false;
         loaded = true;
     }
+
+    /**
+     *
+     * @return TileSource from which this tile comes
+     */
+    public TileSource getTileSource() {
+        return source;
+    }
 }

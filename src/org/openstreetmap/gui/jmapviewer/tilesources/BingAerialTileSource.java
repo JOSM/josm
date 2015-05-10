@@ -52,14 +52,11 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
      * Constructs a new {@code BingAerialTileSource}.
      */
     public BingAerialTileSource() {
-        this("Bing");
+        super(new TileSourceInfo("Bing", null, null));
     }
 
-    /**
-     * Constructs a new {@code BingAerialTileSource}.
-     */
-    public BingAerialTileSource(String id) {
-        super("Bing Aerial Maps", "http://example.com/", id);
+    public BingAerialTileSource(TileSourceInfo info) {
+        super(info);
     }
 
     protected class Attribution {
