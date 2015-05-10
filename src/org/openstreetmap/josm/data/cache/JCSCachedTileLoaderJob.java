@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -223,7 +224,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      *
      * @return cache object as empty, regardless of what remote resource has returned (ex. based on headers)
      */
-    protected boolean cacheAsEmpty() {
+    protected boolean cacheAsEmpty(Map<String, List<String>> headers, int statusCode, byte[] content) {
         return false;
     }
 
@@ -279,13 +280,13 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         }
         try {
             for (ICachedLoaderListener l: listeners) {
-                l.loadingFinished(cacheData, result);
+                l.loadingFinished(cacheData, attributes, result);
             }
         } catch (Exception e) {
             log.log(Level.WARNING, "JCS - Error while loading object from cache: {0}; {1}", new Object[]{e.getMessage(), getUrl()});
             Main.warn(e);
             for (ICachedLoaderListener l: listeners) {
-                l.loadingFinished(cacheData, LoadResult.FAILURE);
+                l.loadingFinished(cacheData, attributes, LoadResult.FAILURE);
             }
 
         }
@@ -328,7 +329,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 log.log(Level.FINE, "JCS - cache entry verified using HEAD request: {0}", getUrl());
                 return true;
             }
-            URLConnection urlConn = getURLConnection();
+            HttpURLConnection urlConn = getURLConnection();
 
             if (isObjectLoadable()  &&
                     (now - attributes.getLastModification()) <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
@@ -337,7 +338,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             if (isObjectLoadable() && attributes.getEtag() != null) {
                 urlConn.addRequestProperty("If-None-Match", attributes.getEtag());
             }
-            if (urlConn instanceof HttpURLConnection && ((HttpURLConnection)urlConn).getResponseCode() == 304) {
+            if (urlConn.getResponseCode() == 304) {
                 // If isModifiedSince or If-None-Match has been set
                 // and the server answers with a HTTP 304 = "Not Modified"
                 log.log(Level.FINE, "JCS - IfModifiedSince/Etag test: local version is up to date: {0}", getUrl());
@@ -358,13 +359,14 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             attributes = parseHeaders(urlConn);
 
             for (int i = 0; i < 5; ++i) {
-                if (urlConn instanceof HttpURLConnection && ((HttpURLConnection)urlConn).getResponseCode() == 503) {
+                if (urlConn.getResponseCode() == 503) {
                     Thread.sleep(5000+(new Random()).nextInt(5000));
                     continue;
                 }
                 byte[] raw = read(urlConn);
 
-                if (!cacheAsEmpty() && raw != null && raw.length > 0) {
+                if (!cacheAsEmpty(urlConn.getHeaderFields(), urlConn.getResponseCode(), raw) &&
+                        raw != null && raw.length > 0) {
                     cacheData = createCacheEntry(raw);
                     cache.put(getCacheKey(), cacheData, attributes);
                     log.log(Level.FINE, "JCS - downloaded key: {0}, length: {1}, url: {2}",
@@ -399,7 +401,6 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     private CacheEntryAttributes parseHeaders(URLConnection urlConn) {
         CacheEntryAttributes ret = new CacheEntryAttributes();
-        ret.setNoTileAtZoom("no-tile".equals(urlConn.getHeaderField("X-VE-Tile-Info")));
 
         Long lng = urlConn.getExpiration();
         if (lng.equals(0L)) {

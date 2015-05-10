@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +27,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntry;
+import org.openstreetmap.josm.data.cache.CacheEntryAttributes;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener;
 import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -193,7 +195,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         if (cacheData != null) {
             byte[] content = cacheData.getContent();
             try {
-                return content != null  || cacheData.getImage() != null || cacheAsEmpty();
+                return content != null  || cacheData.getImage() != null || isNoTileAtZoom();
             } catch (IOException e) {
                 log.log(Level.WARNING, "JCS TMS - error loading from cache for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
             }
@@ -202,12 +204,19 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     }
 
     private boolean isNoTileAtZoom() {
+        if (attributes == null) {
+            log.warning("Cache attributes are null");
+        }
         return attributes != null && attributes.isNoTileAtZoom();
     }
 
     @Override
-    protected boolean cacheAsEmpty() {
-        return isNoTileAtZoom();
+    protected boolean cacheAsEmpty(Map<String, List<String>> headers, int statusCode, byte[] content) {
+        if (tile.getTileSource().isNoTileAtZoom(headers, statusCode, content)) {
+            attributes.setNoTileAtZoom(true);
+            return true;
+        }
+        return false;
     }
 
     private boolean handleNoTileAtZoom() {
@@ -241,7 +250,8 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     }
 
     @Override
-    public void loadingFinished(CacheEntry object, LoadResult result) {
+    public void loadingFinished(CacheEntry object, CacheEntryAttributes attributes, LoadResult result) {
+        this.attributes = attributes; // as we might get notification from other object than our selfs, pass attributes along
         Set<TileLoaderListener> listeners;
         synchronized (inProgress) {
             listeners = inProgress.remove(getCacheKey());
@@ -315,9 +325,12 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     @Override
     protected boolean handleNotFound() {
-        tile.setError("No tile at this zoom level");
-        tile.putValue("tile-info", "no-tile");
-        return true;
+        if (tile.getSource().isNoTileAtZoom(null, 404, null)) {
+            tile.setError("No tile at this zoom level");
+            tile.putValue("tile-info", "no-tile");
+            return true;
+        }
+        return false;
     }
 
     /**
