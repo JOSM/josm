@@ -277,7 +277,7 @@ public final class OsmChangesetParser {
             progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing list of changesets..."));
             InputSource inputSource = new InputSource(new InvalidXmlCharacterFilter(new InputStreamReader(source, StandardCharsets.UTF_8)));
-            Utils.newSafeSAXParser().parse(inputSource, parser.new Parser());
+            Utils.parseSafeSAX(inputSource, parser.new Parser());
             return parser.getChangesets();
         } catch(ParserConfigurationException | SAXException e) {
             throw new IllegalDataException(e.getMessage(), e);
