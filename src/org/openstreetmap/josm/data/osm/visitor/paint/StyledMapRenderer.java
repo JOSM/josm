@@ -1663,7 +1663,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             if (Main.isTraceEnabled()) {
                 timePhase1 = System.currentTimeMillis();
-                System.err.print("phase 1 (calculate styles): " + (timePhase1 - timeStart) + " ms");
+                System.err.print("phase 1 (calculate styles): " + Utils.getDurationString(timePhase1 - timeStart));
             }
 
             Collections.sort(allStyleElems); // TODO: try parallel sort when switching to Java 8
@@ -1681,7 +1681,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             if (Main.isTraceEnabled()) {
                 timeFinished = System.currentTimeMillis();
-                System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms" +
+                System.err.println("; phase 2 (draw): " + Utils.getDurationString(timeFinished - timePhase1) +
+                    "; total: " + Utils.getDurationString(timeFinished - timeStart) +
                     " (scale: " + circum + " zoom level: " + Selector.GeneralSelector.scale2level(circum) + ")");
             }
 
