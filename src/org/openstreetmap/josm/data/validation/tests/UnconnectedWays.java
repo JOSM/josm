@@ -136,7 +136,7 @@ public abstract class UnconnectedWays extends Test {
 
     private Set<MyWaySegment> ways;
     private QuadBuckets<Node> endnodes; // nodes at end of way
-    private QuadBuckets<Node> endnodes_highway; // nodes at end of way
+    private QuadBuckets<Node> endnodesHighway; // nodes at end of way
     private QuadBuckets<Node> middlenodes; // nodes in middle of way
     private Set<Node> othernodes; // nodes appearing at least twice
     private Area dsArea;
@@ -158,7 +158,7 @@ public abstract class UnconnectedWays extends Test {
         super.startTest(monitor);
         ways = new HashSet<>();
         endnodes = new QuadBuckets<>();
-        endnodes_highway = new QuadBuckets<>();
+        endnodesHighway = new QuadBuckets<>();
         middlenodes = new QuadBuckets<>();
         othernodes = new HashSet<>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
@@ -175,7 +175,7 @@ public abstract class UnconnectedWays extends Test {
                     return map;
                 }
                 for (Node en : s.nearbyNodes(mindist)) {
-                    if (en == null || !s.highway || !endnodes_highway.contains(en)) {
+                    if (en == null || !s.highway || !endnodesHighway.contains(en)) {
                         continue;
                     }
                     if (en.hasTag("highway", "turning_circle", "bus_stop")
@@ -208,7 +208,7 @@ public abstract class UnconnectedWays extends Test {
                 if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
                     continue;
                 }
-                if (endnodes_highway.contains(en) && !s.highway && !s.w.concernsArea()) {
+                if (endnodesHighway.contains(en) && !s.highway && !s.w.concernsArea()) {
                     map.put(en, s.w);
                 } else if (endnodes.contains(en) && !s.w.concernsArea()) {
                     map.put(en, s.w);
@@ -277,7 +277,7 @@ public abstract class UnconnectedWays extends Test {
         }
         ways = null;
         endnodes = null;
-        endnodes_highway = null;
+        endnodesHighway = null;
         middlenodes = null;
         othernodes = null;
         dsArea = null;
@@ -388,7 +388,7 @@ public abstract class UnconnectedWays extends Test {
             // overlap a bit and can return duplicate nodes.
             nearbyNodeCache = null;
             List<LatLon> bounds = this.getBounds(dist);
-            List<Node> found_nodes = endnodes_highway.search(new BBox(bounds.get(0), bounds.get(1)));
+            List<Node> found_nodes = endnodesHighway.search(new BBox(bounds.get(0), bounds.get(1)));
             found_nodes.addAll(endnodes.search(new BBox(bounds.get(0), bounds.get(1))));
 
             for (Node n : found_nodes) {
@@ -447,7 +447,7 @@ public abstract class UnconnectedWays extends Test {
             ways.addAll(getWaySegments(w));
             QuadBuckets<Node> set = endnodes;
             if (w.hasKey("highway") || w.hasKey("railway")) {
-                set = endnodes_highway;
+                set = endnodesHighway;
             }
             addNode(w.firstNode(), set);
             addNode(w.lastNode(), set);
@@ -457,7 +457,7 @@ public abstract class UnconnectedWays extends Test {
     private void addNode(Node n, QuadBuckets<Node> s) {
         boolean m = middlenodes.contains(n);
         boolean e = endnodes.contains(n);
-        boolean eh = endnodes_highway.contains(n);
+        boolean eh = endnodesHighway.contains(n);
         boolean o = othernodes.contains(n);
         if (!m && !e && !o && !eh) {
             s.add(n);
@@ -466,7 +466,7 @@ public abstract class UnconnectedWays extends Test {
             if (e) {
                 endnodes.remove(n);
             } else if (eh) {
-                endnodes_highway.remove(n);
+                endnodesHighway.remove(n);
             } else {
                 middlenodes.remove(n);
             }

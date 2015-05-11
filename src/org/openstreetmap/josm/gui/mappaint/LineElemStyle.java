@@ -46,11 +46,11 @@ public class LineElemStyle extends ElemStyle {
         RIGHT_CASING("right-casing-", 2.1f);
 
         public final String prefix;
-        public final float default_major_z_index;
+        public final float defaultMajorZIndex;
 
         LineType(String prefix, float default_major_z_index) {
             this.prefix = prefix;
-            this.default_major_z_index = default_major_z_index;
+            this.defaultMajorZIndex = default_major_z_index;
         }
     }
 
@@ -257,7 +257,7 @@ public class LineElemStyle extends ElemStyle {
             dashesLine = new BasicStroke(width, cap, join, miterlimit, dashes2, dashes2[0] + dashesOffset);
         }
 
-        return new LineElemStyle(c, type.default_major_z_index, line, color, dashesLine, dashesBackground, offset, realWidth);
+        return new LineElemStyle(c, type.defaultMajorZIndex, line, color, dashesLine, dashesBackground, offset, realWidth);
     }
 
     @Override

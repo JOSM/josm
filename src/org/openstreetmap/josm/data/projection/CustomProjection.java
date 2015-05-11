@@ -174,19 +174,19 @@ public class CustomProjection extends AbstractProjection {
             proj = parseProjection(parameters, ellps);
             String s = parameters.get(Param.x_0.key);
             if (s != null) {
-                this.x_0 = parseDouble(s, Param.x_0.key);
+                this.x0 = parseDouble(s, Param.x_0.key);
             }
             s = parameters.get(Param.y_0.key);
             if (s != null) {
-                this.y_0 = parseDouble(s, Param.y_0.key);
+                this.y0 = parseDouble(s, Param.y_0.key);
             }
             s = parameters.get(Param.lon_0.key);
             if (s != null) {
-                this.lon_0 = parseAngle(s, Param.lon_0.key);
+                this.lon0 = parseAngle(s, Param.lon_0.key);
             }
             s = parameters.get(Param.k_0.key);
             if (s != null) {
-                this.k_0 = parseDouble(s, Param.k_0.key);
+                this.k0 = parseDouble(s, Param.k_0.key);
             }
             s = parameters.get(Param.bounds.key);
             if (s != null) {
@@ -385,15 +385,15 @@ public class CustomProjection extends AbstractProjection {
         String s;
         s = parameters.get(Param.lat_0.key);
         if (s != null) {
-            projParams.lat_0 = parseAngle(s, Param.lat_0.key);
+            projParams.lat0 = parseAngle(s, Param.lat_0.key);
         }
         s = parameters.get(Param.lat_1.key);
         if (s != null) {
-            projParams.lat_1 = parseAngle(s, Param.lat_1.key);
+            projParams.lat1 = parseAngle(s, Param.lat_1.key);
         }
         s = parameters.get(Param.lat_2.key);
         if (s != null) {
-            projParams.lat_2 = parseAngle(s, Param.lat_2.key);
+            projParams.lat2 = parseAngle(s, Param.lat_2.key);
         }
         proj.initialize(projParams);
         return proj;

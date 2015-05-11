@@ -25,10 +25,10 @@ public abstract class AbstractProjection implements Projection {
     protected Ellipsoid ellps;
     protected Datum datum;
     protected Proj proj;
-    protected double x_0 = 0.0;     /* false easting (in meters) */
-    protected double y_0 = 0.0;     /* false northing (in meters) */
-    protected double lon_0 = 0.0;   /* central meridian */
-    protected double k_0 = 1.0;     /* general scale factor */
+    protected double x0 = 0.0;     /* false easting (in meters) */
+    protected double y0 = 0.0;     /* false northing (in meters) */
+    protected double lon0 = 0.0;   /* central meridian */
+    protected double k0 = 1.0;     /* general scale factor */
 
     public final Ellipsoid getEllipsoid() {
         return ellps;
@@ -47,32 +47,32 @@ public abstract class AbstractProjection implements Projection {
     }
 
     public final double getFalseEasting() {
-        return x_0;
+        return x0;
     }
 
     public final double getFalseNorthing() {
-        return y_0;
+        return y0;
     }
 
     public final double getCentralMeridian() {
-        return lon_0;
+        return lon0;
     }
 
     public final double getScaleFactor() {
-        return k_0;
+        return k0;
     }
 
     @Override
     public EastNorth latlon2eastNorth(LatLon ll) {
         ll = datum.fromWGS84(ll);
-        double[] en = proj.project(Math.toRadians(ll.lat()), Math.toRadians(ll.lon() - lon_0));
-        return new EastNorth(ellps.a * k_0 * en[0] + x_0, ellps.a * k_0 * en[1] + y_0);
+        double[] en = proj.project(Math.toRadians(ll.lat()), Math.toRadians(ll.lon() - lon0));
+        return new EastNorth(ellps.a * k0 * en[0] + x0, ellps.a * k0 * en[1] + y0);
     }
 
     @Override
     public LatLon eastNorth2latlon(EastNorth en) {
-        double[] latlon_rad = proj.invproject((en.east() - x_0) / ellps.a / k_0, (en.north() - y_0) / ellps.a / k_0);
-        LatLon ll = new LatLon(Math.toDegrees(latlon_rad[0]), Math.toDegrees(latlon_rad[1]) + lon_0);
+        double[] latlon_rad = proj.invproject((en.east() - x0) / ellps.a / k0, (en.north() - y0) / ellps.a / k0);
+        LatLon ll = new LatLon(Math.toDegrees(latlon_rad[0]), Math.toDegrees(latlon_rad[1]) + lon0);
         return datum.toWGS84(ll);
     }
 

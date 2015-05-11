@@ -39,7 +39,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     private String message;
     /** Deeper error description */
     private String description;
-    private String description_en;
+    private String descriptionEn;
     /** The affected primitives */
     private Collection<? extends OsmPrimitive> primitives;
     /** The primitives or way segments to be highlighted */
@@ -65,7 +65,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         this.severity = severity;
         this.message = message;
         this.description = description;
-        this.description_en = description_en;
+        this.descriptionEn = description_en;
         this.primitives = primitives;
         this.highlighted = highlighted;
         this.code = code;
@@ -193,8 +193,8 @@ public class TestError implements Comparable<TestError>, DataSetListener {
 
     public String getIgnoreSubGroup() {
         String ignorestring = getIgnoreGroup();
-        if (description_en != null) {
-            ignorestring += "_" + description_en;
+        if (descriptionEn != null) {
+            ignorestring += "_" + descriptionEn;
         }
         return ignorestring;
     }

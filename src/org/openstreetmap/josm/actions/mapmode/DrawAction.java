@@ -72,11 +72,14 @@ import org.openstreetmap.josm.tools.Utils;
  * Mapmode to add nodes, create and extend ways.
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, KeyPressReleaseListener, ModifierListener {
+
+    private static final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(),Color.ORANGE.getGreen(),Color.ORANGE.getBlue(),128);
+    private static final double PHI = Math.toRadians(90);
+
     private final Cursor cursorJoinNode;
     private final Cursor cursorJoinWay;
 
     private transient Node lastUsedNode = null;
-    private static final double PHI = Math.toRadians(90);
     private double toleranceMultiplier;
 
     private transient Node mouseOnExistingNode;
@@ -115,6 +118,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private static int snapToIntersectionThreshold;
 
+    /**
+     * Constructs a new {@code DrawAction}.
+     * @param mapFrame Map frame
+     */
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
                 Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.DIRECT),
@@ -1322,7 +1329,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         private Stroke highlightStroke;
 
         private JCheckBoxMenuItem checkBox;
-        public final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(),Color.ORANGE.getGreen(),Color.ORANGE.getBlue(),128);
 
         public void init() {
             snapOn=false;

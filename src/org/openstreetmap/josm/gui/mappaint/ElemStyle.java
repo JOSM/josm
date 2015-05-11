@@ -22,23 +22,23 @@ public abstract class ElemStyle implements StyleKeys {
     public static final String[] ICON_KEYS = {ICON_IMAGE, ICON_WIDTH, ICON_HEIGHT, ICON_OPACITY, ICON_OFFSET_X, ICON_OFFSET_Y};
     public static final String[] REPEAT_IMAGE_KEYS = {REPEAT_IMAGE, REPEAT_IMAGE_WIDTH, REPEAT_IMAGE_HEIGHT, REPEAT_IMAGE_OPACITY, null, null};
 
-    public float major_z_index;
-    public float z_index;
-    public float object_z_index;
+    public float majorZIndex;
+    public float zIndex;
+    public float objectZIndex;
     public boolean isModifier;  // false, if style can serve as main style for the
     // primitive; true, if it is a highlight or modifier
 
     public ElemStyle(float major_z_index, float z_index, float object_z_index, boolean isModifier) {
-        this.major_z_index = major_z_index;
-        this.z_index = z_index;
-        this.object_z_index = object_z_index;
+        this.majorZIndex = major_z_index;
+        this.zIndex = z_index;
+        this.objectZIndex = object_z_index;
         this.isModifier = isModifier;
     }
 
     protected ElemStyle(Cascade c, float default_major_z_index) {
-        major_z_index = c.get(MAJOR_Z_INDEX, default_major_z_index, Float.class);
-        z_index = c.get(Z_INDEX, 0f, Float.class);
-        object_z_index = c.get(OBJECT_Z_INDEX, 0f, Float.class);
+        majorZIndex = c.get(MAJOR_Z_INDEX, default_major_z_index, Float.class);
+        zIndex = c.get(Z_INDEX, 0f, Float.class);
+        objectZIndex = c.get(OBJECT_Z_INDEX, 0f, Float.class);
         isModifier = c.get(MODIFIER, false, Boolean.class);
     }
 
@@ -207,24 +207,24 @@ public abstract class ElemStyle implements StyleKeys {
         if (!(o instanceof ElemStyle))
             return false;
         ElemStyle s = (ElemStyle) o;
-        return major_z_index == s.major_z_index &&
-                z_index == s.z_index &&
-                object_z_index == s.object_z_index &&
+        return majorZIndex == s.majorZIndex &&
+                zIndex == s.zIndex &&
+                objectZIndex == s.objectZIndex &&
                 isModifier == s.isModifier;
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 41 * hash + Float.floatToIntBits(this.major_z_index);
-        hash = 41 * hash + Float.floatToIntBits(this.z_index);
-        hash = 41 * hash + Float.floatToIntBits(this.object_z_index);
+        hash = 41 * hash + Float.floatToIntBits(this.majorZIndex);
+        hash = 41 * hash + Float.floatToIntBits(this.zIndex);
+        hash = 41 * hash + Float.floatToIntBits(this.objectZIndex);
         hash = 41 * hash + (isModifier ? 1 : 0);
         return hash;
     }
 
     @Override
     public String toString() {
-        return String.format("z_idx=[%s/%s/%s] ", major_z_index, z_index, object_z_index) + (isModifier ? "modifier " : "");
+        return String.format("z_idx=[%s/%s/%s] ", majorZIndex, zIndex, objectZIndex) + (isModifier ? "modifier " : "");
     }
 }

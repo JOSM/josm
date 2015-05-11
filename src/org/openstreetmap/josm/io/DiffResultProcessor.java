@@ -34,8 +34,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class DiffResultProcessor  {
 
     private static class DiffResultEntry {
-        public long new_id;
-        public int new_version;
+        private long newId;
+        private int newVersion;
     }
 
     /**
@@ -127,7 +127,7 @@ public class DiffResultProcessor  {
                 }
                 processed.add(p);
                 if (!p.isDeleted()) {
-                    p.setOsmId(entry.new_id, entry.new_version);
+                    p.setOsmId(entry.newId, entry.newVersion);
                     p.setVisible(true);
                 } else {
                     p.setVisible(false);
@@ -173,10 +173,10 @@ public class DiffResultProcessor  {
                     );
                     DiffResultEntry entry = new DiffResultEntry();
                     if (atts.getValue("new_id") != null) {
-                        entry.new_id = Long.parseLong(atts.getValue("new_id"));
+                        entry.newId = Long.parseLong(atts.getValue("new_id"));
                     }
                     if (atts.getValue("new_version") != null) {
-                        entry.new_version = Integer.parseInt(atts.getValue("new_version"));
+                        entry.newVersion = Integer.parseInt(atts.getValue("new_version"));
                     }
                     diffResults.put(id, entry);
                     break;
