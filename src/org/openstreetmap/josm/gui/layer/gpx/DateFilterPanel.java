@@ -29,9 +29,9 @@ public class DateFilterPanel extends JPanel {
 
     private transient ActionListener filterAppliedListener;
 
-    private final String PREF_DATE_0;
-    private final String PREF_DATE_MIN;
-    private final String PREF_DATE_MAX;
+    private final String prefDate0;
+    private final String prefDateMin;
+    private final String prefDateMax;
 
     /**
      * Create the panel to filter tracks on GPX layer @param layer by date
@@ -40,9 +40,9 @@ public class DateFilterPanel extends JPanel {
      */
     public DateFilterPanel(GpxLayer layer, String preferencePrefix, boolean enabled) {
         super(new GridBagLayout());
-        PREF_DATE_0 = preferencePrefix+".showzerotimestamp";
-        PREF_DATE_MIN = preferencePrefix+".mintime";
-        PREF_DATE_MAX = preferencePrefix+".maxtime";
+        prefDate0 = preferencePrefix+".showzerotimestamp";
+        prefDateMin = preferencePrefix+".mintime";
+        prefDateMax = preferencePrefix+".maxtime";
         this.layer = layer;
 
         final Date startTime, endTime;
@@ -100,9 +100,9 @@ public class DateFilterPanel extends JPanel {
      * Called by other components when it is correct time to save date filtering parameters
      */
     public void saveInPrefs() {
-        Main.pref.putLong(PREF_DATE_MIN, dateFrom.getDate().getTime());
-        Main.pref.putLong(PREF_DATE_MAX, dateTo.getDate().getTime());
-        Main.pref.put(PREF_DATE_0, noTimestampCb.isSelected());
+        Main.pref.putLong(prefDateMin, dateFrom.getDate().getTime());
+        Main.pref.putLong(prefDateMax, dateTo.getDate().getTime());
+        Main.pref.put(prefDate0, noTimestampCb.isSelected());
     }
 
     /**
@@ -110,11 +110,11 @@ public class DateFilterPanel extends JPanel {
      * Called by other components when it is needed.
      */
     public void loadFromPrefs() {
-        long t1 =Main.pref.getLong(PREF_DATE_MIN, 0);
+        long t1 =Main.pref.getLong(prefDateMin, 0);
         if (t1!=0) dateFrom.setDate(new Date(t1));
-        long t2 =Main.pref.getLong(PREF_DATE_MAX, 0);
+        long t2 =Main.pref.getLong(prefDateMax, 0);
         if (t2!=0) dateTo.setDate(new Date(t2));
-        noTimestampCb.setSelected(Main.pref.getBoolean(PREF_DATE_0, false));
+        noTimestampCb.setSelected(Main.pref.getBoolean(prefDate0, false));
     }
 
     public void setFilterAppliedListener(ActionListener filterAppliedListener) {

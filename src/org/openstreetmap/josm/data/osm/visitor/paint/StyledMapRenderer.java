@@ -107,7 +107,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
          * line from 'prev' to 'prev0' is perpendicular to the way segment from
          * 'prev' to the next point.
          */
-        private int x_prev0, y_prev0;
+        private int xPrev0, yPrev0;
 
         public OffsetIterator(List<Node> nodes, float offset) {
             this.nodes = nodes;
@@ -129,7 +129,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if (idx == nodes.size() - 1) {
                 ++idx;
                 if (prev != null) {
-                    return new Point(x_prev0 + current.x - prev.x, y_prev0 + current.y - prev.y);
+                    return new Point(xPrev0 + current.x - prev.x, yPrev0 + current.y - prev.y);
                 } else {
                     return current;
                 }
@@ -151,8 +151,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if (idx==0) {
                 ++idx;
                 prev = current;
-                x_prev0 = x_current0;
-                y_prev0 = y_current0;
+                xPrev0 = x_current0;
+                yPrev0 = y_current0;
                 return new Point(x_current0, y_current0);
             } else {
                 int dx_prev = current.x - prev.x;
@@ -165,19 +165,19 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (det == 0) {
                     ++idx;
                     prev = current;
-                    x_prev0 = x_current0;
-                    y_prev0 = y_current0;
+                    xPrev0 = x_current0;
+                    yPrev0 = y_current0;
                     return new Point(x_current0, y_current0);
                 }
 
-                int m = dx_next*(y_current0 - y_prev0) - dy_next*(x_current0 - x_prev0);
+                int m = dx_next*(y_current0 - yPrev0) - dy_next*(x_current0 - xPrev0);
 
-                int cx_ = x_prev0 + Math.round((float)m * dx_prev / det);
-                int cy_ = y_prev0 + Math.round((float)m * dy_prev / det);
+                int cx_ = xPrev0 + Math.round((float)m * dx_prev / det);
+                int cy_ = yPrev0 + Math.round((float)m * dy_prev / det);
                 ++idx;
                 prev = current;
-                x_prev0 = x_current0;
-                y_prev0 = y_current0;
+                xPrev0 = x_current0;
+                yPrev0 = y_current0;
                 return new Point(cx_, cy_);
             }
         }
@@ -206,7 +206,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if ((this.flags & FLAG_DISABLED) == 0 && (other.flags & FLAG_DISABLED) != 0)
                 return 1;
 
-            int d0 = Float.compare(this.style.major_z_index, other.style.major_z_index);
+            int d0 = Float.compare(this.style.majorZIndex, other.style.majorZIndex);
             if (d0 != 0)
                 return d0;
 
@@ -217,7 +217,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if (this.flags < other.flags)
                 return -1;
 
-            int dz = Float.compare(this.style.z_index, other.style.z_index);
+            int dz = Float.compare(this.style.zIndex, other.style.zIndex);
             if (dz != 0)
                 return dz;
 
@@ -234,7 +234,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if (id < 0)
                 return -1;
 
-            return Float.compare(this.style.object_z_index, other.style.object_z_index);
+            return Float.compare(this.style.objectZIndex, other.style.objectZIndex);
         }
     }
 

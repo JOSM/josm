@@ -11,7 +11,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class DownloadNotesUrlIdTask extends DownloadNotesTask {
 
-    private final String URL_ID_PATTERN = "https?://www\\.(osm|openstreetmap)\\.org/note/(\\p{Digit}+).*";
+    private static final String URL_ID_PATTERN = "https?://www\\.(osm|openstreetmap)\\.org/note/(\\p{Digit}+).*";
 
     @Override
     public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {

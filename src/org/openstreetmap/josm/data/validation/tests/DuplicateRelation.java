@@ -168,7 +168,7 @@ public class DuplicateRelation extends Test {
     private MultiMap<RelationPair, OsmPrimitive> relations;
 
     /** MultiMap of all relations, regardless of keys */
-    private MultiMap<List<RelationMember>, OsmPrimitive> relations_nokeys;
+    private MultiMap<List<RelationMember>, OsmPrimitive> relationsNoKeys;
 
     /** List of keys without useful information */
     private final Set<String> ignoreKeys = new HashSet<>(OsmPrimitive.getUninterestingKeys());
@@ -185,7 +185,7 @@ public class DuplicateRelation extends Test {
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         relations = new MultiMap<>(1000);
-        relations_nokeys = new MultiMap<>(1000);
+        relationsNoKeys = new MultiMap<>(1000);
     }
 
     @Override
@@ -198,13 +198,13 @@ public class DuplicateRelation extends Test {
             }
         }
         relations = null;
-        for (Set<OsmPrimitive> duplicated : relations_nokeys.values()) {
+        for (Set<OsmPrimitive> duplicated : relationsNoKeys.values()) {
             if (duplicated.size() > 1) {
                 TestError testError = new TestError(this, Severity.WARNING, tr("Relations with same members"), SAME_RELATION, duplicated);
                 errors.add( testError );
             }
         }
-        relations_nokeys = null;
+        relationsNoKeys = null;
     }
 
     @Override
@@ -217,7 +217,7 @@ public class DuplicateRelation extends Test {
             rkeys.remove(key);
         RelationPair rKey = new RelationPair(rMembers, rkeys);
         relations.put(rKey, r);
-        relations_nokeys.put(rMembers, r);
+        relationsNoKeys.put(rMembers, r);
     }
 
     /**

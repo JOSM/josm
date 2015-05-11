@@ -153,10 +153,10 @@ public class NmeaReader {
         return ps.unknown;
     }
     public int getParserZeroCoordinates() {
-        return ps.zero_coord;
+        return ps.zeroCoord;
     }
     public int getParserChecksumErrors() {
-        return ps.checksum_errors+ps.no_checksum;
+        return ps.checksumErrors+ps.noChecksum;
     }
     public int getParserMalformed() {
         return ps.malformed;
@@ -179,7 +179,7 @@ public class NmeaReader {
                 //TODO tell user about the problem?
                 return;
             sb.append((char)loopstart_char);
-            ps.p_Date="010100"; // TODO date problem
+            ps.pDate="010100"; // TODO date problem
             while(true) {
                 // don't load unparsable files completely to memory
                 if(sb.length()>=1020) {
@@ -208,16 +208,16 @@ public class NmeaReader {
 
     private static class NMEAParserState {
         protected Collection<WayPoint> waypoints = new ArrayList<>();
-        protected String p_Time;
-        protected String p_Date;
-        protected WayPoint p_Wp;
+        protected String pTime;
+        protected String pDate;
+        protected WayPoint pWp;
 
-        protected int success = 0; // number of successfully parsend sentences
+        protected int success = 0; // number of successfully parsed sentences
         protected int malformed = 0;
-        protected int checksum_errors = 0;
-        protected int no_checksum = 0;
+        protected int checksumErrors = 0;
+        protected int noChecksum = 0;
         protected int unknown = 0;
-        protected int zero_coord = 0;
+        protected int zeroCoord = 0;
     }
 
     // Parses split up sentences into WayPoints which are stored
@@ -242,19 +242,19 @@ public class NmeaReader {
                     chk ^= chb[i];
                 }
                 if (Integer.parseInt(chkstrings[1].substring(0,2),16) != chk) {
-                    ps.checksum_errors++;
-                    ps.p_Wp=null;
+                    ps.checksumErrors++;
+                    ps.pWp=null;
                     return false;
                 }
             } else {
-                ps.no_checksum++;
+                ps.noChecksum++;
             }
             // now for the content
             String[] e = chkstrings[0].split(",");
             String accu;
 
-            WayPoint currentwp = ps.p_Wp;
-            String currentDate = ps.p_Date;
+            WayPoint currentwp = ps.pWp;
+            String currentDate = ps.pDate;
 
             // handle the packet content
             if("$GPGGA".equals(e[0]) || "$GNGGA".equals(e[0])) {
@@ -270,7 +270,7 @@ public class NmeaReader {
                 }
 
                 if ((latLon.lat()==0.0) && (latLon.lon()==0.0)) {
-                    ps.zero_coord++;
+                    ps.zeroCoord++;
                     return false;
                 }
 
@@ -278,11 +278,11 @@ public class NmeaReader {
                 accu = e[GPGGA.TIME.position];
                 Date d = readTime(currentDate+accu);
 
-                if((ps.p_Time==null) || (currentwp==null) || !ps.p_Time.equals(accu)) {
+                if((ps.pTime==null) || (currentwp==null) || !ps.pTime.equals(accu)) {
                     // this node is newer than the previous, create a new waypoint.
                     // no matter if previous WayPoint was null, we got something
                     // better now.
-                    ps.p_Time=accu;
+                    ps.pTime=accu;
                     currentwp = new WayPoint(latLon);
                 }
                 if(!currentwp.attr.containsKey("time")) {
@@ -383,8 +383,8 @@ public class NmeaReader {
                         e[GPRMC.WIDTH_NORTH.position],
                         e[GPRMC.LENGTH_EAST.position]
                 );
-                if((latLon.lat()==0.0) && (latLon.lon()==0.0)) {
-                    ps.zero_coord++;
+                if(latLon.lat()==0.0 && latLon.lon()==0.0) {
+                    ps.zeroCoord++;
                     return false;
                 }
                 // time
@@ -393,9 +393,9 @@ public class NmeaReader {
 
                 Date d = readTime(currentDate+time);
 
-                if((ps.p_Time==null) || (currentwp==null) || !ps.p_Time.equals(time)) {
+                if(ps.pTime==null || currentwp==null || !ps.pTime.equals(time)) {
                     // this node is newer than the previous, create a new waypoint.
-                    ps.p_Time=time;
+                    ps.pTime=time;
                     currentwp = new WayPoint(latLon);
                 }
                 // time: this sentence has complete time so always use it.
@@ -425,12 +425,12 @@ public class NmeaReader {
                 ps.unknown++;
                 return false;
             }
-            ps.p_Date = currentDate;
-            if(ps.p_Wp != currentwp) {
-                if(ps.p_Wp!=null) {
-                    ps.p_Wp.setTime();
+            ps.pDate = currentDate;
+            if(ps.pWp != currentwp) {
+                if(ps.pWp!=null) {
+                    ps.pWp.setTime();
                 }
-                ps.p_Wp = currentwp;
+                ps.pWp = currentwp;
                 ps.waypoints.add(currentwp);
                 ps.success++;
                 return true;
@@ -440,7 +440,7 @@ public class NmeaReader {
         } catch (RuntimeException x) {
             // out of bounds and such
             ps.malformed++;
-            ps.p_Wp=null;
+            ps.pWp=null;
             return false;
         }
     }

@@ -14,6 +14,7 @@ import static java.lang.Math.tan;
 import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.data.projection.CustomProjection.Param;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
@@ -59,7 +60,7 @@ public class LambertConformalConic implements Proj {
     /**
      * projection factor
      */
-    protected double F;
+    protected double f;
     /**
      * radius of the parallel of latitude of the false origin (2SP) or at
      * natural origin (1SP)
@@ -75,12 +76,12 @@ public class LambertConformalConic implements Proj {
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
         ellps = params.ellps;
         e = ellps.e;
-        if (params.lat_0 == null)
-            throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
-        if (params.lat_1 != null && params.lat_2 != null) {
-            initialize2SP(params.lat_0, params.lat_1, params.lat_2);
+        if (params.lat0 == null)
+            throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", Param.lat_0.key));
+        if (params.lat1 != null && params.lat2 != null) {
+            initialize2SP(params.lat0, params.lat1, params.lat2);
         } else {
-            initialize1SP(params.lat_0);
+            initialize1SP(params.lat0);
         }
     }
 
@@ -102,8 +103,8 @@ public class LambertConformalConic implements Proj {
         final double tf = t(toRadians(lat_0));
 
         n  = (log(m1) - log(m2)) / (log(t1) - log(t2));
-        F  = m1 / (n * pow(t1, n));
-        r0 = F * pow(tf, n);
+        f  = m1 / (n * pow(t1, n));
+        r0 = f * pow(tf, n);
     }
 
     /**
@@ -119,8 +120,8 @@ public class LambertConformalConic implements Proj {
         final double t0 = t(lat_0_rad);
 
         n = sin(lat_0_rad);
-        F  = m0 / (n * pow(t0, n));
-        r0 = F * pow(t0, n);
+        f  = m0 / (n * pow(t0, n));
+        r0 = f * pow(t0, n);
     }
 
     /**
@@ -152,7 +153,7 @@ public class LambertConformalConic implements Proj {
     public double[] project(double phi, double lambda) {
         double sinphi = sin(phi);
         double L = (0.5*log((1+sinphi)/(1-sinphi))) - e/2*log((1+e*sinphi)/(1-e*sinphi));
-        double r = F*exp(-n*L);
+        double r = f*exp(-n*L);
         double gamma = n*lambda;
         double X = r*sin(gamma);
         double Y = r0 - r*cos(gamma);
@@ -164,7 +165,7 @@ public class LambertConformalConic implements Proj {
         double r = sqrt(pow(east,2) + pow(north-r0, 2));
         double gamma = atan(east / (r0-north));
         double lambda = gamma/n;
-        double latIso = (-1/n) * log(abs(r/F));
+        double latIso = (-1/n) * log(abs(r/f));
         double phi = ellps.latitude(latIso, e, epsilon);
         return new double[] { phi, lambda };
     }

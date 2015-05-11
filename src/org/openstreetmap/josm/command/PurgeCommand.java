@@ -37,7 +37,7 @@ public class PurgeCommand extends Command {
     protected List<OsmPrimitive> toPurge;
     protected Storage<PrimitiveData> makeIncompleteData;
 
-    protected Map<PrimitiveId, PrimitiveData> makeIncompleteData_byPrimId;
+    protected Map<PrimitiveId, PrimitiveData> makeIncompleteDataByPrimId;
 
     protected final ConflictCollection purgedConflicts = new ConflictCollection();
 
@@ -68,7 +68,7 @@ public class PurgeCommand extends Command {
 
     protected final void saveIncomplete(Collection<OsmPrimitive> makeIncomplete) {
         makeIncompleteData = new Storage<>(new Storage.PrimitiveIdHash());
-        makeIncompleteData_byPrimId = makeIncompleteData.foreignKey(new Storage.PrimitiveIdHash());
+        makeIncompleteDataByPrimId = makeIncompleteData.foreignKey(new Storage.PrimitiveIdHash());
 
         for (OsmPrimitive osm : makeIncomplete) {
             makeIncompleteData.add(osm.save());
@@ -85,7 +85,7 @@ public class PurgeCommand extends Command {
              */
             for (int i=toPurge.size()-1; i>=0; --i) {
                 OsmPrimitive osm = toPurge.get(i);
-                if (makeIncompleteData_byPrimId.containsKey(osm)) {
+                if (makeIncompleteDataByPrimId.containsKey(osm)) {
                     // we could simply set the incomplete flag
                     // but that would not free memory in case the
                     // user clears undo/redo buffer after purge
@@ -120,7 +120,7 @@ public class PurgeCommand extends Command {
             return;
 
         for (OsmPrimitive osm : toPurge) {
-            PrimitiveData data = makeIncompleteData_byPrimId.get(osm);
+            PrimitiveData data = makeIncompleteDataByPrimId.get(osm);
             if (data != null) {
                 if (ds.getPrimitiveById(osm) != osm)
                     throw new AssertionError(String.format("Primitive %s has been made incomplete when purging, but it cannot be found on undo.", osm));
