@@ -448,10 +448,10 @@ public final class Geometry {
         CheckParameterUtil.ensureValidCoordinates(firstNode, "firstNode");
         CheckParameterUtil.ensureValidCoordinates(secondNode, "secondNode");
 
-        double dy1 = (firstNode.getY() - commonNode.getY());
-        double dy2 = (secondNode.getY() - commonNode.getY());
-        double dx1 = (firstNode.getX() - commonNode.getX());
-        double dx2 = (secondNode.getX() - commonNode.getX());
+        double dy1 = firstNode.getY() - commonNode.getY();
+        double dy2 = secondNode.getY() - commonNode.getY();
+        double dx1 = firstNode.getX() - commonNode.getX();
+        double dx2 = secondNode.getX() - commonNode.getX();
 
         return dy1 * dx2 - dx1 * dy2 > 0;
     }
@@ -650,7 +650,7 @@ public final class Geometry {
         dlon = lon2 - lon1;
         dlat = lat2 - lat1;
 
-        double a = (Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2));
+        double a = Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return 6367000 * c;
     }
@@ -667,7 +667,7 @@ public final class Geometry {
         dlon = lon2 - lon1;
         dlat = lat2 - lat1;
 
-        double a = (Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2));
+        double a = Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return 6367000 * c;
     }

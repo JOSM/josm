@@ -438,10 +438,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         HttpURLConnection urlConn = (HttpURLConnection) getUrl().openConnection();
         urlConn.setRequestMethod("HEAD");
         long lastModified = urlConn.getLastModified();
-        return (
-                (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getRequestProperty("ETag"))) ||
-                (lastModified != 0 && lastModified <= attributes.getLastModification())
-                );
+        return (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getRequestProperty("ETag"))) ||
+               (lastModified != 0 && lastModified <= attributes.getLastModification());
     }
 
     private static byte[] read(URLConnection urlConn) throws IOException {

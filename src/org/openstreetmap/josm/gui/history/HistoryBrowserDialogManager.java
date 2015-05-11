@@ -225,7 +225,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
                 return true;
             else
                 // reload if the history object of the selected object is not in the cache yet
-                return (!p.isNew() && h.getByVersion(p.getUniqueId()) == null);
+                return !p.isNew() && h.getByVersion(p.getUniqueId()) == null;
         }
     };
 

@@ -600,10 +600,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             String cs = caseSensitive ?
                     /*case sensitive*/  trc("search", "CS") :
                         /*case insensitive*/  trc("search", "CI");
-                    String rx = regexSearch ? (", " +
-                            /*regex search*/ trc("search", "RX")) : "";
-                    String all = allElements ? (", " +
-                            /*all elements*/ trc("search", "A")) : "";
+                    String rx = regexSearch ? ", " +
+                            /*regex search*/ trc("search", "RX") : "";
+                    String all = allElements ? ", " +
+                            /*all elements*/ trc("search", "A") : "";
                     return "\"" + text + "\" (" + cs + rx + all + ", " + mode + ")";
         }
 
@@ -612,11 +612,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             if(!(other instanceof SearchSetting))
                 return false;
             SearchSetting o = (SearchSetting) other;
-            return (o.caseSensitive == this.caseSensitive
+            return o.caseSensitive == this.caseSensitive
                     && o.regexSearch == this.regexSearch
                     && o.allElements == this.allElements
                     && o.mode.equals(this.mode)
-                    && o.text.equals(this.text));
+                    && o.text.equals(this.text);
         }
 
         @Override

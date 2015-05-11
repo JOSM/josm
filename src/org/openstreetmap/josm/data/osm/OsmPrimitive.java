@@ -518,7 +518,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * completely hidden on the map.
      */
     public boolean isDisabledAndHidden() {
-        return (((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0));
+        return ((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0);
     }
 
     /**

@@ -302,7 +302,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
         boolean useMinMaxScale = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
 
         if (osm instanceof Node || (osm instanceof Relation && "restriction".equals(osm.get("type")))) {
-            IconPrototype icon = getNode(osm, (useMinMaxScale ? scale : null), mc);
+            IconPrototype icon = getNode(osm, useMinMaxScale ? scale : null, mc);
             if (icon != null) {
                 def.put(ICON_IMAGE, icon.icon);
                 if (osm instanceof Node) {
@@ -317,7 +317,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             }
         } else if (osm instanceof Way || (osm instanceof Relation && ((Relation)osm).isMultipolygon())) {
             WayPrototypesRecord p = new WayPrototypesRecord();
-            get(osm, pretendWayIsClosed || !(osm instanceof Way) || ((Way) osm).isClosed(), p, (useMinMaxScale ? scale : null), mc);
+            get(osm, pretendWayIsClosed || !(osm instanceof Way) || ((Way) osm).isClosed(), p, useMinMaxScale ? scale : null, mc);
             if (p.line != null) {
                 def.put(WIDTH, new Float(p.line.getWidth()));
                 def.putOrClear(REAL_WIDTH, p.line.realWidth != null ? new Float(p.line.realWidth) : null);

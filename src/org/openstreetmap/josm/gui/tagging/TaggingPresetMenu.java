@@ -41,9 +41,9 @@ public class TaggingPresetMenu extends TaggingPreset {
     public void setDisplayName() {
         putValue(Action.NAME, getName());
         /** Tooltips should be shown for the toolbar buttons, but not in the menu. */
-        putValue(OPTIONAL_TOOLTIP_TEXT, (group != null ?
+        putValue(OPTIONAL_TOOLTIP_TEXT, group != null ?
                 tr("Preset group {1} / {0}", getLocaleName(), group.getName()) :
-                    tr("Preset group {0}", getLocaleName())));
+                    tr("Preset group {0}", getLocaleName()));
         putValue("toolbar", "tagginggroup_" + getRawName());
     }
 

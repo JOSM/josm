@@ -962,7 +962,7 @@ public abstract class Main {
         }
 
         geometry = WindowGeometry.mainWindow("gui.geometry",
-            (args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null),
+            args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null,
             !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
     }
 

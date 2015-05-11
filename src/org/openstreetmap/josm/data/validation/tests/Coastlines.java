@@ -236,7 +236,7 @@ public class Coastlines extends Test {
     @Override
     public boolean isFixable(TestError testError) {
         if (testError.getTester() instanceof Coastlines)
-            return (testError.getCode() == REVERSED_COASTLINE);
+            return testError.getCode() == REVERSED_COASTLINE;
 
         return false;
     }

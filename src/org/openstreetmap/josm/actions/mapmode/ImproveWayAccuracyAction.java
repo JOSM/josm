@@ -411,8 +411,11 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                         int i = -1;
                         for (Pair<Node, Node> wpp : wpps) {
                             ++i;
-                            if ((wpp.a.equals(candidateSegment.getFirstNode())
-                                    && wpp.b.equals(candidateSegment.getSecondNode()) || (wpp.b.equals(candidateSegment.getFirstNode()) && wpp.a.equals(candidateSegment.getSecondNode())))) {
+                            boolean ab = wpp.a.equals(candidateSegment.getFirstNode())
+                                    && wpp.b.equals(candidateSegment.getSecondNode());
+                            boolean ba = wpp.b.equals(candidateSegment.getFirstNode())
+                                    && wpp.a.equals(candidateSegment.getSecondNode());
+                            if (ab || ba) {
                                 virtualSegments.add(new WaySegment(w, i));
                             }
                         }

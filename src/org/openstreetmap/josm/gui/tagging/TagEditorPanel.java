@@ -182,7 +182,7 @@ public class TagEditorPanel extends JPanel {
         AutoCompletionManager autocomplete = layer.data.getAutoCompletionManager();
         AutoCompletionList acList = new AutoCompletionList();
 
-        TagCellEditor editor = ((TagCellEditor) tagTable.getColumnModel().getColumn(0).getCellEditor());
+        TagCellEditor editor = (TagCellEditor) tagTable.getColumnModel().getColumn(0).getCellEditor();
         editor.setAutoCompletionManager(autocomplete);
         editor.setAutoCompletionList(acList);
         editor = ((TagCellEditor) tagTable.getColumnModel().getColumn(1).getCellEditor());

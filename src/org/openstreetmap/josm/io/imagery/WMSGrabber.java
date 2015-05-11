@@ -246,7 +246,7 @@ public class WMSGrabber implements Runnable {
             }
         }
 
-        if ((!request.isReal() && !layer.hasAutoDownload())){
+        if (!request.isReal() && !layer.hasAutoDownload()){
             request.finish(State.NOT_IN_CACHE, null, null);
             return true;
         }

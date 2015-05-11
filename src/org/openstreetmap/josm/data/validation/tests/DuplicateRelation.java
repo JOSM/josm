@@ -308,6 +308,6 @@ public class DuplicateRelation extends Test {
                 ++relationsWithRelations;
             }
         }
-        return (relationsWithRelations <= 1);
+        return relationsWithRelations <= 1;
     }
 }

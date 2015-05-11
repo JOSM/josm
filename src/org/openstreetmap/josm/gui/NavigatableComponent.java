@@ -1291,9 +1291,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     public static double perDist(Point2D pt, Point2D a, Point2D b) {
         if (pt != null && a != null && b != null) {
-            double pd = (
+            double pd =
                     (a.getX()-pt.getX())*(b.getX()-a.getX()) -
-                    (a.getY()-pt.getY())*(b.getY()-a.getY()) );
+                    (a.getY()-pt.getY())*(b.getY()-a.getY());
             return Math.abs(pd) / a.distance(b);
         }
         return 0d;
@@ -1309,10 +1309,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public static Point2D project(Point2D pt, Point2D a, Point2D b) {
         if (pt != null && a != null && b != null) {
-            double r = ((
+            double r = (
                     (pt.getX()-a.getX())*(b.getX()-a.getX()) +
                     (pt.getY()-a.getY())*(b.getY()-a.getY()) )
-                    / a.distanceSq(b));
+                    / a.distanceSq(b);
             return project(r, a, b);
         }
         return null;

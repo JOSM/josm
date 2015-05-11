@@ -169,7 +169,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is an infrastructure TLD
      */
     public boolean isValidInfrastructureTld(String iTld) {
-        return Arrays.binarySearch(INFRASTRUCTURE_TLDS, (chompLeadingDot(iTld.toLowerCase()))) >= 0;
+        return Arrays.binarySearch(INFRASTRUCTURE_TLDS, chompLeadingDot(iTld.toLowerCase())) >= 0;
     }
 
     /**

@@ -128,7 +128,7 @@ public class LambertConformalConic implements Proj {
      */
     protected double t(double lat_rad) {
         return tan(PI/4 - lat_rad / 2.0)
-            / pow(( (1.0 - e * sin(lat_rad)) / (1.0 + e * sin(lat_rad))) , e/2);
+            / pow((1.0 - e * sin(lat_rad)) / (1.0 + e * sin(lat_rad)), e/2);
     }
 
     /**

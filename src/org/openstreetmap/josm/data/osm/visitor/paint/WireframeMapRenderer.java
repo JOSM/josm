@@ -263,9 +263,9 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                 }
             }
 
-            final int size = max((ds.isSelected(n) ? selectedNodeSize : 0),
-                    (isNodeTagged(n) ? taggedNodeSize : 0),
-                    (n.isConnectionNode() ? connectionNodeSize : 0),
+            final int size = max(ds.isSelected(n) ? selectedNodeSize : 0,
+                    isNodeTagged(n) ? taggedNodeSize : 0,
+                    n.isConnectionNode() ? connectionNodeSize : 0,
                     unselectedNodeSize);
 
             final boolean fill = (ds.isSelected(n) && fillSelectedNode) ||

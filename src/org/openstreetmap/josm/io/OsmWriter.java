@@ -89,7 +89,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
 
     protected static final Comparator<OsmPrimitive> byIdComparator = new Comparator<OsmPrimitive>() {
         @Override public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-            return (o1.getUniqueId()<o2.getUniqueId() ? -1 : (o1.getUniqueId()==o2.getUniqueId() ? 0 : 1));
+            return o1.getUniqueId()<o2.getUniqueId() ? -1 : (o1.getUniqueId()==o2.getUniqueId() ? 0 : 1);
         }
     };
 
