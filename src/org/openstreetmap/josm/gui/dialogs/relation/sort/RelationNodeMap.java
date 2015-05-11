@@ -85,7 +85,7 @@ public class RelationNodeMap {
             }
 
             Way w = m.getWay();
-            if ((RelationSortUtils.roundaboutType(w) != NONE)) {
+            if (RelationSortUtils.roundaboutType(w) != NONE) {
                 for (Node nd : w.getNodes()) {
                     addPair(nd, i);
                 }

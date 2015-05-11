@@ -359,8 +359,7 @@ public class WmsCache {
 
     public synchronized boolean hasExactMatch(Projection projection, double pixelPerDegree, double east, double north) {
         ProjectionEntries projectionEntries = getProjectionEntries(projection);
-        CacheEntry entry = findEntry(projectionEntries, pixelPerDegree, east, north);
-        return (entry != null);
+        return findEntry(projectionEntries, pixelPerDegree, east, north) != null;
     }
 
     public BufferedImage getExactMatch(Projection projection, double pixelPerDegree, double east, double north) {

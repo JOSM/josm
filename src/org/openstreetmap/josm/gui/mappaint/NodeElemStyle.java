@@ -82,8 +82,8 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         @Override
         public String toString() {
             return "symbol=" + symbol + " size=" + size +
-                    (stroke != null ? (" stroke=" + stroke + " strokeColor=" + strokeColor) : "") +
-                    (fillColor != null ? (" fillColor=" + fillColor) : "");
+                    (stroke != null ? " stroke=" + stroke + " strokeColor=" + strokeColor : "") +
+                    (fillColor != null ? " fillColor=" + fillColor : "");
         }
     }
 
@@ -324,9 +324,9 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
                     }
                 }
 
-                final int size = Utils.max((selected ? settings.getSelectedNodeSize() : 0),
-                        (n.isTagged() ? settings.getTaggedNodeSize() : 0),
-                        (isConnection ? settings.getConnectionNodeSize() : 0),
+                final int size = Utils.max(selected ? settings.getSelectedNodeSize() : 0,
+                        n.isTagged() ? settings.getTaggedNodeSize() : 0,
+                        isConnection ? settings.getConnectionNodeSize() : 0,
                         settings.getUnselectedNodeSize());
 
                 final boolean fill = (selected && settings.isFillSelectedNode()) ||

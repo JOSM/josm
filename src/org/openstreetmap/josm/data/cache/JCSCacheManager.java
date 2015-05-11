@@ -51,7 +51,7 @@ public class JCSCacheManager {
     private static void initialize() throws IOException {
         File cacheDir = new File(Main.pref.getCacheDirectory(), "jcs");
 
-        if ((!cacheDir.exists() && !cacheDir.mkdirs()))
+        if (!cacheDir.exists() && !cacheDir.mkdirs())
             throw new IOException("Cannot access cache directory");
 
         File cacheDirLockPath = new File(cacheDir, ".lock");

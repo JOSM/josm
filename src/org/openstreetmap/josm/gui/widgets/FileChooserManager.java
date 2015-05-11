@@ -71,7 +71,7 @@ public class FileChooserManager {
         this.open = open;
         this.lastDirProperty = lastDirProperty == null || lastDirProperty.isEmpty() ? "lastDirectory" : lastDirProperty;
         this.curDir = Main.pref.get(this.lastDirProperty).isEmpty() ?
-                (defaultDir == null || defaultDir.isEmpty() ? "." : defaultDir)
+                defaultDir == null || defaultDir.isEmpty() ? "." : defaultDir
                 : Main.pref.get(this.lastDirProperty);
     }
 

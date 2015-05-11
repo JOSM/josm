@@ -290,10 +290,10 @@ public final class OsmUrlToBounds {
      */
     public static String getURL(double dlat, double dlon, int zoom) {
         // Truncate lat and lon to something more sensible
-        int decimals = (int) Math.pow(10, (zoom / 3));
-        double lat = (Math.round(dlat * decimals));
+        int decimals = (int) Math.pow(10, zoom / 3);
+        double lat = Math.round(dlat * decimals);
         lat /= decimals;
-        double lon = (Math.round(dlon * decimals));
+        double lon = Math.round(dlon * decimals);
         lon /= decimals;
         return Main.getOSMWebsite() + "/#map="+zoom+"/"+lat+"/"+lon;
     }

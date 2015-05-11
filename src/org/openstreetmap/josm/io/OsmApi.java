@@ -419,7 +419,7 @@ public class OsmApi extends OsmConnection {
     public void openChangeset(Changeset changeset, ProgressMonitor progressMonitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
         try {
-            progressMonitor.beginTask((tr("Creating changeset...")));
+            progressMonitor.beginTask(tr("Creating changeset..."));
             initialize(progressMonitor);
             String ret = "";
             try {
@@ -429,7 +429,7 @@ public class OsmApi extends OsmConnection {
             } catch(NumberFormatException e){
                 throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret));
             }
-            progressMonitor.setCustomText((tr("Successfully opened changeset {0}",changeset.getId())));
+            progressMonitor.setCustomText(tr("Successfully opened changeset {0}",changeset.getId()));
         } finally {
             progressMonitor.finishTask();
         }

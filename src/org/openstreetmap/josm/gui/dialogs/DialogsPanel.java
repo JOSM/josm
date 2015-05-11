@@ -156,7 +156,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
                 if (dlg.isDialogInDefaultView()) {
                     final int ph = dlg.getPreferredHeight();
                     final int ah = dlg.getSize().height;
-                    dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, (ah < 20 ? ph : ah)));
+                    dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, ah < 20 ? ph : ah));
                 }
             }
         } else {

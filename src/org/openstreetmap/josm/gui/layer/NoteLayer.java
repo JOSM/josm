@@ -148,7 +148,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             //but without it, the tooltip doesn't get sized correctly
             for (int x = 0; x < 2; x++) {
                 Dimension d = toolTip.getUI().getPreferredSize(toolTip);
-                d.width = Math.min(d.width, (mv.getWidth() / 2));
+                d.width = Math.min(d.width, mv.getWidth() / 2);
                 if (d.width > 0 && d.height > 0) {
                     toolTip.setSize(d);
                     try {

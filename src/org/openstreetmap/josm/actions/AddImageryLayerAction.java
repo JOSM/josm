@@ -94,7 +94,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
     protected ImageryInfo getWMSLayerInfo() {
         try {
-            assert (ImageryType.WMS_ENDPOINT.equals(info.getImageryType()));
+            assert ImageryType.WMS_ENDPOINT.equals(info.getImageryType());
             final WMSImagery wms = new WMSImagery();
             wms.attemptGetCapabilities(info.getUrl());
 

@@ -374,6 +374,6 @@ public class CacheFiles {
     private boolean isExpired(File file) {
         if(CacheFiles.EXPIRE_NEVER == this.expire)
             return false;
-        return (file.lastModified() < (System.currentTimeMillis() - expire*1000));
+        return file.lastModified() < (System.currentTimeMillis() - expire*1000);
     }
 }

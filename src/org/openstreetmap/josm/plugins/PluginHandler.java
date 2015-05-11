@@ -1366,8 +1366,8 @@ public final class PluginHandler {
                 }
             }), GBC.eol());
 
-            JosmTextArea description = new JosmTextArea((info.description == null ? tr("no description available")
-                    : info.description));
+            JosmTextArea description = new JosmTextArea(info.description == null ? tr("no description available")
+                    : info.description);
             description.setEditable(false);
             description.setFont(new JLabel().getFont().deriveFont(Font.ITALIC));
             description.setLineWrap(true);

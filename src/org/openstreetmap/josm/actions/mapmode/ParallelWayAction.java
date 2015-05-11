@@ -244,7 +244,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     private boolean updateModifiersState(int modifiers) {
         boolean oldAlt = alt, oldShift = shift, oldCtrl = ctrl;
         updateKeyModifiers(modifiers);
-        return (oldAlt != alt || oldShift != shift || oldCtrl != ctrl);
+        return oldAlt != alt || oldShift != shift || oldCtrl != ctrl;
     }
 
     private void updateCursor() {
@@ -287,7 +287,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             mv.isActiveLayerDrawable() &&
             ((Boolean) this.getValue("active"));
         // @formatter:on
-        assert (areWeSane); // mad == bad
+        assert areWeSane; // mad == bad
         return areWeSane;
     }
 
@@ -497,21 +497,21 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
     //// We keep the source ways and the selection in sync so the user can see the source way's tags
     private void addSourceWay(Way w) {
-        assert (sourceWays != null);
+        assert sourceWays != null;
         getCurrentDataSet().addSelected(w);
         w.setHighlighted(true);
         sourceWays.add(w);
     }
 
     private void removeSourceWay(Way w) {
-        assert (sourceWays != null);
+        assert sourceWays != null;
         getCurrentDataSet().clearSelection(w);
         w.setHighlighted(false);
         sourceWays.remove(w);
     }
 
     private void clearSourceWays() {
-        assert (sourceWays != null);
+        assert sourceWays != null;
         getCurrentDataSet().clearSelection(sourceWays);
         for (Way w : sourceWays) {
             w.setHighlighted(false);

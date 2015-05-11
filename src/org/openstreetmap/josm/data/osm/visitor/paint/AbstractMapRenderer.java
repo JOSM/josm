@@ -183,7 +183,7 @@ public abstract class AbstractMapRenderer implements Rendering {
     public static boolean isLargeSegment(Point2D p1, Point2D p2, int space) {
         double xd = Math.abs(p1.getX()-p2.getX());
         double yd = Math.abs(p1.getY()-p2.getY());
-        return (xd+yd > space);
+        return xd + yd > space;
     }
 
     /**

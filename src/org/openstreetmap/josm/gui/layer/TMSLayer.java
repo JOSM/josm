@@ -309,7 +309,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                     while (true) {
                         try {
                             String xml = attributionLoader.updateIfRequiredString();
-                            return parseAttributionText(new InputSource(new StringReader((xml))));
+                            return parseAttributionText(new InputSource(new StringReader(xml)));
                         } catch (IOException ex) {
                             Main.warn("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
                             Thread.sleep(waitTimeSec * 1000L);
@@ -748,7 +748,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * already in the cache.
      */
     Tile getTile(int x, int y, int zoom) {
-        int max = (1 << zoom);
+        int max = 1 << zoom;
         if (x < 0 || x >= max || y < 0 || y >= max)
             return null;
         return tileCache.getTile(tileSource, x, y, zoom);
@@ -793,7 +793,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     @Override
     public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-        boolean done = ((infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0);
+        boolean done = (infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0;
         needRedraw = true;
         if (Main.isDebugEnabled()) {
             Main.debug("imageUpdate() done: " + done + " calling repaint");

@@ -362,7 +362,7 @@ public final class Way extends OsmPrimitive implements IWay {
         if (n == null || isIncomplete()) return;
         boolean locked = writeLock();
         try {
-            boolean closed = (lastNode() == n && firstNode() == n);
+            boolean closed = lastNode() == n && firstNode() == n;
             int i;
             List<Node> copy = getNodes();
             while ((i = copy.indexOf(n)) >= 0) {
@@ -390,7 +390,7 @@ public final class Way extends OsmPrimitive implements IWay {
         if (selection == null || isIncomplete()) return;
         boolean locked = writeLock();
         try {
-            boolean closed = (lastNode() == firstNode() && selection.contains(lastNode()));
+            boolean closed = lastNode() == firstNode() && selection.contains(lastNode());
             List<Node> copy = new ArrayList<>();
 
             for (Node n: nodes) {
