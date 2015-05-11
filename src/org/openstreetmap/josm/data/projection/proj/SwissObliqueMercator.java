@@ -34,16 +34,16 @@ public class SwissObliqueMercator implements Proj {
     private double kR;
     private double alpha;
     private double b0;
-    private double K;
+    private double k;
 
     private static final double EPSILON = 1e-11;
 
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
-        if (params.lat_0 == null)
+        if (params.lat0 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
         ellps = params.ellps;
-        initialize(params.lat_0);
+        initialize(params.lat0);
     }
 
     private void initialize(double lat_0) {
@@ -51,7 +51,7 @@ public class SwissObliqueMercator implements Proj {
         kR = sqrt(1 - ellps.e2) / (1 - (ellps.e2 * pow(sin(phi0), 2)));
         alpha = sqrt(1 + (ellps.eb2 * pow(cos(phi0), 4)));
         b0 = asin(sin(phi0) / alpha);
-        K = log(tan(PI / 4 + b0 / 2)) - alpha
+        k = log(tan(PI / 4 + b0 / 2)) - alpha
             * log(tan(PI / 4 + phi0 / 2)) + alpha * ellps.e / 2
             * log((1 + ellps.e * sin(phi0)) / (1 - ellps.e * sin(phi0)));
     }
@@ -70,7 +70,7 @@ public class SwissObliqueMercator implements Proj {
     public double[] project(double phi, double lambda) {
 
         double S = alpha * log(tan(PI / 4 + phi / 2)) - alpha * ellps.e / 2
-            * log((1 + ellps.e * sin(phi)) / (1 - ellps.e * sin(phi))) + K;
+            * log((1 + ellps.e * sin(phi)) / (1 - ellps.e * sin(phi))) + k;
         double b = 2 * (atan(exp(S)) - PI / 4);
         double l = alpha * lambda;
 
@@ -93,7 +93,7 @@ public class SwissObliqueMercator implements Proj {
 
         double lambda = l / alpha;
         double phi = b;
-        double S = 0;
+        double s = 0;
 
         double prevPhi = -1000;
         int iteration = 0;
@@ -102,9 +102,9 @@ public class SwissObliqueMercator implements Proj {
             if (++iteration > 30)
                 throw new RuntimeException("Two many iterations");
             prevPhi = phi;
-            S = 1 / alpha * (log(tan(PI / 4 + b / 2)) - K) + ellps.e
+            s = 1 / alpha * (log(tan(PI / 4 + b / 2)) - k) + ellps.e
             * log(tan(PI / 4 + asin(ellps.e * sin(phi)) / 2));
-            phi = 2 * atan(exp(S)) - PI / 2;
+            phi = 2 * atan(exp(s)) - PI / 2;
         }
         return new double[] { phi, lambda };
     }

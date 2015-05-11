@@ -15,7 +15,7 @@ package org.openstreetmap.josm.tools;
  * Test new direct equivalence API
  *
  * Revision 1.13  2009/12/07 17:43:17  stuart
- * Compute equiv_max for int[] ctor
+ * Compute equivMax for int[] ctor
  *
  * Revision 1.12  2009/12/07 17:34:46  stuart
  * Ctor with int[].
@@ -101,7 +101,7 @@ public class Diff {
 
     /** 1 more than the maximum equivalence value used for this or its
      sibling file. */
-    private int equiv_max = 1;
+    private int equivMax = 1;
 
     /** When set to true, the comparison uses a heuristic to speed it up.
     With this heuristic, for files with a constant small density
@@ -110,7 +110,7 @@ public class Diff {
 
     /** When set to true, the algorithm returns a guarranteed minimal
       set of changes.  This makes things slower, sometimes much slower. */
-    public boolean no_discards = false;
+    public boolean noDiscards = false;
 
     private int[] xvec, yvec; /* Vectors being compared. */
     private int[] fdiag;      /* Vector, indexed by diagonal, containing
@@ -351,11 +351,11 @@ public class Diff {
         /* Handle simple cases. */
         if (xoff == xlim) {
             while (yoff < ylim) {
-                filevec[1].changed_flag[1+filevec[1].realindexes[yoff++]] = true;
+                filevec[1].changedFlag[1+filevec[1].realindexes[yoff++]] = true;
             }
         } else if (yoff == ylim) {
             while (xoff < xlim) {
-                filevec[0].changed_flag[1+filevec[0].realindexes[xoff++]] = true;
+                filevec[0].changedFlag[1+filevec[0].realindexes[xoff++]] = true;
             }
         } else {
             /* Find a point of correspondence in the middle of the files.  */
@@ -523,14 +523,14 @@ public class Diff {
         yvec = filevec[1].undiscarded;
 
         int diags =
-            filevec[0].nondiscarded_lines + filevec[1].nondiscarded_lines + 3;
+            filevec[0].nondiscardedLines + filevec[1].nondiscardedLines + 3;
         fdiag = new int[diags];
-        fdiagoff = filevec[1].nondiscarded_lines + 1;
+        fdiagoff = filevec[1].nondiscardedLines + 1;
         bdiag = new int[diags];
-        bdiagoff = filevec[1].nondiscarded_lines + 1;
+        bdiagoff = filevec[1].nondiscardedLines + 1;
 
-        compareseq (0, filevec[0].nondiscarded_lines,
-                0, filevec[1].nondiscarded_lines);
+        compareseq (0, filevec[0].nondiscardedLines,
+                0, filevec[1].nondiscardedLines);
         fdiag = null;
         bdiag = null;
 
@@ -542,10 +542,10 @@ public class Diff {
         /* Get the results of comparison in the form of a chain
        of `struct change's -- an edit script.  */
         return bld.build_script(
-                filevec[0].changed_flag,
-                filevec[0].buffered_lines,
-                filevec[1].changed_flag,
-                filevec[1].buffered_lines
+                filevec[0].changedFlag,
+                filevec[0].bufferedLines,
+                filevec[1].changedFlag,
+                filevec[1].bufferedLines
         );
 
     }
@@ -606,7 +606,7 @@ public class Diff {
                is an insertion or deletion.
                Allocate an extra element, always zero, at each end of each vector.
              */
-            changed_flag = new boolean[buffered_lines + 2];
+            changedFlag = new boolean[bufferedLines + 2];
         }
 
         /** Return equiv_count[I] as the number of lines in this file
@@ -614,8 +614,8 @@ public class Diff {
          @return the array of equivalence class counts.
          */
         int[] equivCount() {
-            int[] equiv_count = new int[equiv_max];
-            for (int i = 0; i < buffered_lines; ++i) {
+            int[] equiv_count = new int[equivMax];
+            for (int i = 0; i < bufferedLines; ++i) {
                 ++equiv_count[equivs[i]];
             }
             return equiv_count;
@@ -657,7 +657,7 @@ public class Diff {
          *  for each line
          */
         private byte[] discardable(final int[] counts) {
-            final int end = buffered_lines;
+            final int end = bufferedLines;
             final byte[] discards = new byte[end];
             final int[] equivs = this.equivs;
             int many = 5;
@@ -691,7 +691,7 @@ public class Diff {
          * and end.
          */
         private void filterDiscards(final byte[] discards) {
-            final int end = buffered_lines;
+            final int end = bufferedLines;
 
             for (int i = 0; i < end; i++)
             {
@@ -807,24 +807,24 @@ public class Diff {
             @param discards flags lines to be discarded
          */
         private void discard(final byte[] discards) {
-            final int end = buffered_lines;
+            final int end = bufferedLines;
             int j = 0;
             for (int i = 0; i < end; ++i)
-                if (no_discards || discards[i] == 0)
+                if (noDiscards || discards[i] == 0)
                 {
                     undiscarded[j] = equivs[i];
                     realindexes[j++] = i;
                 } else {
-                    changed_flag[1+i] = true;
+                    changedFlag[1+i] = true;
                 }
-            nondiscarded_lines = j;
+            nondiscardedLines = j;
         }
 
         FileData(int length) {
-            buffered_lines = length;
+            bufferedLines = length;
             equivs = new int[length];
-            undiscarded = new int[buffered_lines];
-            realindexes = new int[buffered_lines];
+            undiscarded = new int[bufferedLines];
+            realindexes = new int[bufferedLines];
         }
 
         FileData(Object[] data, Map<Object,Integer> h) {
@@ -833,7 +833,7 @@ public class Diff {
             for (int i = 0; i < data.length; ++i) {
                 Integer ir = h.get(data[i]);
                 if (ir == null) {
-                    h.put(data[i],equivs[i] = equiv_max++);
+                    h.put(data[i],equivs[i] = equivMax++);
                 } else {
                     equivs[i] = ir.intValue();
                 }
@@ -854,11 +854,11 @@ public class Diff {
          */
 
         void shift_boundaries(FileData f) {
-            final boolean[] changed = changed_flag;
-            final boolean[] other_changed = f.changed_flag;
+            final boolean[] changed = changedFlag;
+            final boolean[] other_changed = f.changedFlag;
             int i = 0;
             int j = 0;
-            int i_end = buffered_lines;
+            int i_end = bufferedLines;
             int preceding = -1;
             int other_preceding = -1;
 
@@ -929,7 +929,7 @@ public class Diff {
         }
 
         /** Number of elements (lines) in this file. */
-        private final int buffered_lines;
+        private final int bufferedLines;
 
         /** Vector, indexed by line number, containing an equivalence code for
            each line.  It is this vector that is actually compared with that
@@ -945,11 +945,11 @@ public class Diff {
         private final int[]    realindexes;
 
         /** Total number of nondiscarded lines. */
-        private int         nondiscarded_lines;
+        private int         nondiscardedLines;
 
         /** Array, indexed by real origin-1 line number,
            containing true for a line that is an insertion or a deletion.
            The results of comparison are stored here.  */
-        private boolean[]       changed_flag;
+        private boolean[]       changedFlag;
     }
 }

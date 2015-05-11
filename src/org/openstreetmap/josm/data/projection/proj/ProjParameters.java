@@ -10,8 +10,7 @@ public class ProjParameters {
 
     public Ellipsoid ellps;
 
-    public Double lat_0;
-    public Double lat_1;
-    public Double lat_2;
-
+    public Double lat0;
+    public Double lat1;
+    public Double lat2;
 }

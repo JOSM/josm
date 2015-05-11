@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public class NoteWriter extends XmlWriter {
 
-    private final DateFormat ISO8601_FORMAT = DateUtils.newIsoDateTimeFormat();
+    private final DateFormat iso8601Format = DateUtils.newIsoDateTimeFormat();
 
     /**
      * Create a NoteWriter that will write to the given PrintWriter
@@ -52,9 +52,9 @@ public class NoteWriter extends XmlWriter {
             out.print("id=\"" + note.getId() + "\" ");
             out.print("lat=\"" + note.getLatLon().lat() + "\" ");
             out.print("lon=\"" + note.getLatLon().lon() + "\" ");
-            out.print("created_at=\"" + ISO8601_FORMAT.format(note.getCreatedAt()) + "\" ");
+            out.print("created_at=\"" + iso8601Format.format(note.getCreatedAt()) + "\" ");
             if (note.getClosedAt() != null) {
-                out.print("closed_at=\"" + ISO8601_FORMAT.format(note.getClosedAt()) + "\" ");
+                out.print("closed_at=\"" + iso8601Format.format(note.getClosedAt()) + "\" ");
             }
 
             out.println(">");
@@ -71,7 +71,7 @@ public class NoteWriter extends XmlWriter {
     private void writeComment(NoteComment comment) {
         out.print("    <comment");
         out.print(" action=\"" + comment.getNoteAction() + "\" ");
-        out.print("timestamp=\"" + ISO8601_FORMAT.format(comment.getCommentTimestamp()) + "\" ");
+        out.print("timestamp=\"" + iso8601Format.format(comment.getCommentTimestamp()) + "\" ");
         if (comment.getUser() != null && !comment.getUser().equals(User.getAnonymous())) {
             out.print("uid=\"" + comment.getUser().getId() + "\" ");
             out.print("user=\"" + encode(comment.getUser().getName()) + "\" ");

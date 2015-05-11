@@ -303,7 +303,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             if (!this.bbox().intersects(search_bbox))
                 return;
             else if (bbox().bounds(search_bbox)) {
-                buckets.search_cache = this;
+                buckets.searchCache = this;
             }
 
             if (this.hasContent()) {
@@ -392,7 +392,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     }
 
     private QBLevel<T> root;
-    private QBLevel<T> search_cache;
+    private QBLevel<T> searchCache;
     private int size;
 
     /**
@@ -405,7 +405,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     @Override
     public final void clear() {
         root = new QBLevel<>(this);
-        search_cache = null;
+        searchCache = null;
         size = 0;
     }
 
@@ -459,7 +459,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     public boolean remove(Object o) {
         @SuppressWarnings("unchecked")
         T t = (T) o;
-        search_cache = null; // Search cache might point to one of removed buckets
+        searchCache = null; // Search cache might point to one of removed buckets
         QBLevel<T> bucket = root.findBucket(t.getBBox());
         if (bucket.remove_content(t)) {
             size--;
@@ -495,9 +495,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     }
 
     class QuadBucketIterator implements Iterator<T> {
-        private QBLevel<T> current_node;
-        private int content_index;
-        private int iterated_over;
+        private QBLevel<T> currentNode;
+        private int contentIndex;
+        private int iteratedOver;
 
         final QBLevel<T> next_content_node(QBLevel<T> q) {
             if (q == null)
@@ -513,11 +513,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         public QuadBucketIterator(QuadBuckets<T> qb) {
             if (!qb.root.hasChildren() || qb.root.hasContent()) {
-                current_node = qb.root;
+                currentNode = qb.root;
             } else {
-                current_node = next_content_node(qb.root);
+                currentNode = next_content_node(qb.root);
             }
-            iterated_over = 0;
+            iteratedOver = 0;
         }
 
         @Override
@@ -528,25 +528,25 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         }
 
         T peek() {
-            if (current_node == null)
+            if (currentNode == null)
                 return null;
-            while ((current_node.content == null) || (content_index >= current_node.content.size())) {
-                content_index = 0;
-                current_node = next_content_node(current_node);
-                if (current_node == null) {
+            while ((currentNode.content == null) || (contentIndex >= currentNode.content.size())) {
+                contentIndex = 0;
+                currentNode = next_content_node(currentNode);
+                if (currentNode == null) {
                     break;
                 }
             }
-            if (current_node == null || current_node.content == null)
+            if (currentNode == null || currentNode.content == null)
                 return null;
-            return current_node.content.get(content_index);
+            return currentNode.content.get(contentIndex);
         }
 
         @Override
         public T next() {
             T ret = peek();
-            content_index++;
-            iterated_over++;
+            contentIndex++;
+            iteratedOver++;
             return ret;
         }
 
@@ -556,9 +556,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             // 1. Back up to the thing we just returned
             // 2. move the index back since we removed
             //    an element
-            content_index--;
+            contentIndex--;
             T object = peek();
-            current_node.remove_content(object);
+            currentNode.remove_content(object);
         }
     }
 
@@ -580,23 +580,23 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     public List<T> search(BBox search_bbox) {
         List<T> ret = new ArrayList<>();
         // Doing this cuts down search cost on a real-life data set by about 25%
-        if (search_cache == null) {
-            search_cache = root;
+        if (searchCache == null) {
+            searchCache = root;
         }
         // Walk back up the tree when the last search spot can not cover the current search
-        while (search_cache != null && !search_cache.bbox().bounds(search_bbox)) {
-            search_cache = search_cache.parent;
+        while (searchCache != null && !searchCache.bbox().bounds(search_bbox)) {
+            searchCache = searchCache.parent;
         }
 
-        if (search_cache == null) {
-            search_cache = root;
+        if (searchCache == null) {
+            searchCache = root;
             Main.info("bbox: " + search_bbox + " is out of the world");
         }
 
-        // Save parent because search_cache might change during search call
-        QBLevel<T> tmp = search_cache.parent;
+        // Save parent because searchCache might change during search call
+        QBLevel<T> tmp = searchCache.parent;
 
-        search_cache.search(search_bbox, ret);
+        searchCache.search(search_bbox, ret);
 
         // A way that spans this bucket may be stored in one
         // of the nodes which is a parent of the search cache

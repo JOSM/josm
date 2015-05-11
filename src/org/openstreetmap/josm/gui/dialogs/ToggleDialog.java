@@ -94,8 +94,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      */
     public static final BooleanProperty PROP_DYNAMIC_BUTTONS = new BooleanProperty("dialog.dynamic.buttons", false);
 
-    private final transient ParametrizedEnumProperty<ButtonHidingType> PROP_BUTTON_HIDING = new ParametrizedEnumProperty<ToggleDialog.ButtonHidingType>(
-            ButtonHidingType.class, ButtonHidingType.DYNAMIC) {
+    private final transient ParametrizedEnumProperty<ButtonHidingType> propButtonHiding =
+            new ParametrizedEnumProperty<ToggleDialog.ButtonHidingType>(ButtonHidingType.class, ButtonHidingType.DYNAMIC) {
         @Override
         protected String getKey(String... params) {
             return preferencePrefix + ".buttonhiding";
@@ -106,7 +106,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 return super.parse(s);
             } catch (IllegalArgumentException e) {
                 // Legacy settings
-                return Boolean.parseBoolean(s)?ButtonHidingType.DYNAMIC:ButtonHidingType.ALWAYS_SHOWN;
+                return Boolean.parseBoolean(s) ? ButtonHidingType.DYNAMIC : ButtonHidingType.ALWAYS_SHOWN;
             }
         }
     };
@@ -240,7 +240,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
         isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
         isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
-        buttonHiding = PROP_BUTTON_HIDING.get();
+        buttonHiding = propButtonHiding.get();
 
         /** show the minimize button */
         titleBar = new TitleBar(name, iconName);
@@ -489,7 +489,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         private final JLabel lblMinimized;
         /** the label which displays the dialog's title **/
         private final JLabel lblTitle;
-        private final JComponent lblTitle_weak;
+        private final JComponent lblTitleWeak;
         /** the button which shows whether buttons are dynamic or not */
         private final JButton buttonsHide;
         /** the contextual menu **/
@@ -511,15 +511,15 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             add(conceal, GBC.std());
 
             // Cannot add the label directly since it would displace other elements on resize
-            lblTitle_weak = new JComponent() {
+            lblTitleWeak = new JComponent() {
                 @Override
                 public void paintComponent(Graphics g) {
                     lblTitle.paint(g);
                 }
             };
-            lblTitle_weak.setPreferredSize(new Dimension(Integer.MAX_VALUE,20));
-            lblTitle_weak.setMinimumSize(new Dimension(0,20));
-            add(lblTitle_weak, GBC.std().fill(GBC.HORIZONTAL));
+            lblTitleWeak.setPreferredSize(new Dimension(Integer.MAX_VALUE,20));
+            lblTitleWeak.setMinimumSize(new Dimension(0,20));
+            add(lblTitleWeak, GBC.std().fill(GBC.HORIZONTAL));
 
             buttonsHide = new JButton(ImageProvider.get("misc", buttonHiding != ButtonHidingType.ALWAYS_SHOWN
                 ? /* ICON(misc/)*/ "buttonhide" :  /* ICON(misc/)*/ "buttonshow"));
@@ -596,7 +596,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
         public void setTitle(String title) {
             lblTitle.setText(title);
-            lblTitle_weak.repaint();
+            lblTitleWeak.repaint();
         }
 
         public String getTitle() {
@@ -766,7 +766,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     protected void setIsButtonHiding(ButtonHidingType val) {
         buttonHiding = val;
-        PROP_BUTTON_HIDING.put(val);
+        propButtonHiding.put(val);
         refreshHidingButtons();
     }
 
