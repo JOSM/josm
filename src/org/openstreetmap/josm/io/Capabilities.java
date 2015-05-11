@@ -271,7 +271,7 @@ public class Capabilities {
          */
         public static Capabilities parse(InputSource inputSource) throws SAXException, IOException, ParserConfigurationException {
             CapabilitiesParser parser = new CapabilitiesParser();
-            Utils.newSafeSAXParser().parse(inputSource, parser);
+            Utils.parseSafeSAX(inputSource, parser);
             return parser.getCapabilities();
         }
     }

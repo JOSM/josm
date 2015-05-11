@@ -83,7 +83,7 @@ public class DiffResultProcessor  {
         try {
             progressMonitor.beginTask(tr("Parsing response from server..."));
             InputSource inputSource = new InputSource(new StringReader(diffUploadResponse));
-            Utils.newSafeSAXParser().parse(inputSource, new Parser());
+            Utils.parseSafeSAX(inputSource, new Parser());
         } catch(XmlParsingException e) {
             throw e;
         } catch(IOException | ParserConfigurationException | SAXException e) {

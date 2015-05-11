@@ -221,7 +221,7 @@ public class NoteReader {
     public List<Note> parse() throws SAXException, IOException {
         DefaultHandler parser = new Parser();
         try {
-            Utils.newSafeSAXParser().parse(inputSource, parser);
+            Utils.parseSafeSAX(inputSource, parser);
         } catch (ParserConfigurationException e) {
             Main.error(e); // broken SAXException chaining
             throw new SAXException(e);

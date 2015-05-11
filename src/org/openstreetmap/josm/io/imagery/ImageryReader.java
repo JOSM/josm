@@ -56,7 +56,7 @@ public class ImageryReader {
                     .setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince)
                     .getInputStream()) {
                 InputSource is = new InputSource(UTFInputStreamReader.create(in));
-                Utils.newSafeSAXParser().parse(is, parser);
+                Utils.parseSafeSAX(is, parser);
                 return parser.entries;
             }
         } catch (SAXException e) {
