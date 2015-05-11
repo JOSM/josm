@@ -150,7 +150,7 @@ public class OsmChangesetContentParser {
         try {
             progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing changeset content ..."));
-            Utils.newSafeSAXParser().parse(source, new Parser());
+            Utils.parseSafeSAX(source, new Parser());
         } catch(XmlParsingException e) {
             throw e;
         } catch (ParserConfigurationException | SAXException | IOException e) {

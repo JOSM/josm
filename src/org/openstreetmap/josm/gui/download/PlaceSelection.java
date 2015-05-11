@@ -378,7 +378,7 @@ public class PlaceSelection implements DownloadSelection {
                 ) {
                     InputSource inputSource = new InputSource(reader);
                     NameFinderResultParser parser = new NameFinderResultParser();
-                    Utils.newSafeSAXParser().parse(inputSource, parser);
+                    Utils.parseSafeSAX(inputSource, parser);
                     this.data = parser.getResult();
                 }
             } catch (SAXParseException e) {

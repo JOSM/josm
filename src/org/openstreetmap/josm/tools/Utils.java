@@ -58,7 +58,9 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -1225,5 +1227,27 @@ public final class Utils {
         parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         parserFactory.setNamespaceAware(true);
         return parserFactory.newSAXParser();
+    }
+
+    /**
+     * Parse the content given {@link org.xml.sax.InputSource} as XML using the specified {@link org.xml.sax.helpers.DefaultHandler}.
+     * This method uses a secure SAX parser, supporting XML namespaces.
+     *
+     * @param is The InputSource containing the content to be parsed.
+     * @param dh The SAX DefaultHandler to use.
+     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
+     * @throws SAXException for SAX errors.
+     * @throws IOException if any IO errors occur.
+     * @since 8347
+     */
+    public static void parseSafeSAX(InputSource is, DefaultHandler dh) throws ParserConfigurationException, SAXException, IOException {
+        long start = System.currentTimeMillis();
+        if (Main.isDebugEnabled()) {
+            Main.debug("Starting SAX parsing of "+is+" using "+dh);
+        }
+        newSafeSAXParser().parse(is, dh);
+        if (Main.isDebugEnabled()) {
+            Main.debug("SAX parsing done in " + getDurationString(System.currentTimeMillis()-start));
+        }
     }
 }

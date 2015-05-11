@@ -90,7 +90,7 @@ public class OsmHistoryReader {
         InputSource inputSource = new InputSource(new InputStreamReader(in, StandardCharsets.UTF_8));
         progressMonitor.beginTask(tr("Parsing OSM history data ..."));
         try {
-            Utils.newSafeSAXParser().parse(inputSource, new Parser());
+            Utils.parseSafeSAX(inputSource, new Parser());
         } catch (ParserConfigurationException e) {
             Main.error(e); // broken SAXException chaining
             throw new SAXException(e);
