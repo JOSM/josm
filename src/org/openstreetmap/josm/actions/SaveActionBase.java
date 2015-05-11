@@ -193,7 +193,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             dialog.setContent(tr("File exists. Overwrite?"));
             dialog.setButtonIcons(new String[] {"save_as", "cancel"});
             dialog.showDialog();
-            return (dialog.getValue() == 1);
+            return dialog.getValue() == 1;
         }
         return true;
     }

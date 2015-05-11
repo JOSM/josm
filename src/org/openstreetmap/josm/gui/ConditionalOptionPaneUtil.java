@@ -161,7 +161,7 @@ public final class ConditionalOptionPaneUtil {
             return ret == trueOption;
         MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));
         ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
-        if ((isYesOrNo(ret))) {
+        if (isYesOrNo(ret)) {
             pnl.getNotShowAgain().store(preferenceKey, ret);
         }
         return ret == trueOption;

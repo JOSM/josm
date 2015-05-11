@@ -19,7 +19,7 @@ public class ModifiersSpec {
      * @param str
      */
     public ModifiersSpec(String str) {
-        assert (str.length() == 3);
+        assert str.length() == 3;
         char a = str.charAt(0);
         char s = str.charAt(1);
         char c = str.charAt(2);
@@ -45,7 +45,7 @@ public class ModifiersSpec {
     }
 
     private boolean match(final int a, final int knownValue) {
-        assert (knownValue == ON | knownValue == OFF);
+        assert knownValue == ON | knownValue == OFF;
         return a == knownValue || a == UNKNOWN;
     }
 

@@ -131,6 +131,6 @@ public class EastNorth extends Coordinate {
      * @return true if "x" and "y" values are within 1E-6 of each other
      */
     public boolean equalsEpsilon(EastNorth other, double e) {
-        return (Math.abs(x - other.x) < e && Math.abs(y - other.y) < e);
+        return Math.abs(x - other.x) < e && Math.abs(y - other.y) < e;
     }
 }

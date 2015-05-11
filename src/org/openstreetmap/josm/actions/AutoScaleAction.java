@@ -248,7 +248,7 @@ public class AutoScaleAction extends JosmAction {
             if (sel.isEmpty()) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        ("selection".equals(mode) ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to")),
+                        "selection".equals(mode) ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"),
                         tr("Information"),
                         JOptionPane.INFORMATION_MESSAGE);
                 return null;

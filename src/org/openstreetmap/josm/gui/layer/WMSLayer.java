@@ -393,7 +393,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
      * @return Size of image in original zoom
      */
     public int getBaseImageWidth() {
-        int overlap = PROP_OVERLAP.get() ? (PROP_OVERLAP_EAST.get() * imageSize / 100) : 0;
+        int overlap = PROP_OVERLAP.get() ? PROP_OVERLAP_EAST.get() * imageSize / 100 : 0;
         return imageSize + overlap;
     }
 
@@ -402,7 +402,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
      * @return Size of image in original zoom
      */
     public int getBaseImageHeight() {
-        int overlap = PROP_OVERLAP.get() ? (PROP_OVERLAP_NORTH.get() * imageSize / 100) : 0;
+        int overlap = PROP_OVERLAP.get() ? PROP_OVERLAP_NORTH.get() * imageSize / 100 : 0;
         return imageSize + overlap;
     }
 
@@ -1080,7 +1080,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     @Override
     public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-        boolean done = ((infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0);
+        boolean done = (infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0;
         Main.map.repaint(done ? 0 : 100);
         return !done;
     }

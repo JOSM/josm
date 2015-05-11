@@ -693,29 +693,29 @@ public final class I18n {
     private static int pluralEval(long n) {
         switch(pluralMode) {
         case MODE_NOTONE: /* bg, da, de, el, en, en_GB, es, et, eu, fi, gl, is, it, iw_IL, nb, nl, sv */
-            return ((n != 1) ? 1 : 0);
+            return (n != 1) ? 1 : 0;
         case MODE_NONE: /* id, ja, km, tr, zh_CN, zh_TW */
             return 0;
         case MODE_GREATERONE: /* fr, pt_BR */
-            return ((n > 1) ? 1 : 0);
+            return (n > 1) ? 1 : 0;
         case MODE_CS:
-            return ((n == 1) ? 0 : (((n >= 2) && (n <= 4)) ? 1 : 2));
+            return (n == 1) ? 0 : (((n >= 2) && (n <= 4)) ? 1 : 2);
         //case MODE_AR:
         //    return ((n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? 2 : ((((n % 100) >= 3)
         //            && ((n % 100) <= 10)) ? 3 : ((((n % 100) >= 11) && ((n % 100) <= 99)) ? 4 : 5)))));
         case MODE_PL:
-            return ((n == 1) ? 0 : (((((n % 10) >= 2) && ((n % 10) <= 4))
-                    && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
+            return (n == 1) ? 0 : (((((n % 10) >= 2) && ((n % 10) <= 4))
+                    && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2);
         //case MODE_RO:
         //    return ((n == 1) ? 0 : ((((n % 100) > 19) || (((n % 100) == 0) && (n != 0))) ? 2 : 1));
         case MODE_LT:
-            return (((n % 10) == 1) && ((n % 100) != 11) ? 0 : (((n % 10) >= 2)
-                    && (((n % 100) < 10) || ((n % 100) >= 20)) ? 1 : 2));
+            return ((n % 10) == 1) && ((n % 100) != 11) ? 0 : (((n % 10) >= 2)
+                    && (((n % 100) < 10) || ((n % 100) >= 20)) ? 1 : 2);
         case MODE_RU:
-            return ((((n % 10) == 1) && ((n % 100) != 11)) ? 0 : (((((n % 10) >= 2)
-                    && ((n % 10) <= 4)) && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
+            return (((n % 10) == 1) && ((n % 100) != 11)) ? 0 : (((((n % 10) >= 2)
+                    && ((n % 10) <= 4)) && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2);
         case MODE_SK:
-            return ((n == 1) ? 1 : (((n >= 2) && (n <= 4)) ? 2 : 0));
+            return (n == 1) ? 1 : (((n >= 2) && (n <= 4)) ? 2 : 0);
         //case MODE_SL:
         //    return (((n % 100) == 1) ? 1 : (((n % 100) == 2) ? 2 : ((((n % 100) == 3)
         //            || ((n % 100) == 4)) ? 3 : 0)));

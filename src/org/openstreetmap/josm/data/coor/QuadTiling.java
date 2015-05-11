@@ -8,7 +8,7 @@ public final class QuadTiling {
     }
 
     public static final int NR_LEVELS = 24;
-    public static final double WORLD_PARTS = (1 << NR_LEVELS);
+    public static final double WORLD_PARTS = 1 << NR_LEVELS;
 
     public static final int TILES_PER_LEVEL_SHIFT = 2; // Has to be 2. Other parts of QuadBuckets code rely on it
     public static final int TILES_PER_LEVEL = 1<<TILES_PER_LEVEL_SHIFT;
@@ -52,8 +52,8 @@ public final class QuadTiling {
         int i;
         for (i = NR_LEVELS-1; i >= 0; i--)
         {
-            long xbit = ((x >> i) & 1);
-            long ybit = ((y >> i) & 1);
+            long xbit = (x >> i) & 1;
+            long ybit = (y >> i) & 1;
             tile <<= 2;
             // Note that x is the MSB
             tile |= (xbit<<1) | ybit;

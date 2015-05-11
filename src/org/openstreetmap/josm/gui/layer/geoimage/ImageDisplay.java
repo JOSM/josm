@@ -323,10 +323,10 @@ public class ImageDisplay extends JComponent {
                 Point p = comp2imgCoord(visibleRect, e.getX(), e.getY());
                 checkPointInVisibleRect(p, visibleRect);
                 Rectangle rect = new Rectangle(
-                        (p.x < mousePointInImg.x ? p.x : mousePointInImg.x),
-                        (p.y < mousePointInImg.y ? p.y : mousePointInImg.y),
-                        (p.x < mousePointInImg.x ? mousePointInImg.x - p.x : p.x - mousePointInImg.x),
-                        (p.y < mousePointInImg.y ? mousePointInImg.y - p.y : p.y - mousePointInImg.y));
+                        p.x < mousePointInImg.x ? p.x : mousePointInImg.x,
+                        p.y < mousePointInImg.y ? p.y : mousePointInImg.y,
+                        p.x < mousePointInImg.x ? mousePointInImg.x - p.x : p.x - mousePointInImg.x,
+                        p.y < mousePointInImg.y ? mousePointInImg.y - p.y : p.y - mousePointInImg.y);
                 checkVisibleRectSize(image, rect);
                 checkVisibleRectPos(image, rect);
                 ImageDisplay.this.selectedRect = rect;

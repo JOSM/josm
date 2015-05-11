@@ -72,7 +72,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
             while (errorMessages.hasMoreElements()) {
                 Object tn = errorMessages.nextElement().getUserObject();
                 if (tn instanceof TestError) {
-                    paintVisitor.visit(((TestError) tn));
+                    paintVisitor.visit((TestError) tn);
                 }
             }
 

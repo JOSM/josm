@@ -865,7 +865,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if(path == null)
             return;
         g.setColor(highlightColorTransparent);
-        float w = (line.getLineWidth() + highlightLineWidth);
+        float w = line.getLineWidth() + highlightLineWidth;
         if (useWiderHighlight) w+=widerHighlight;
         while(w >= line.getLineWidth()) {
             g.setStroke(new BasicStroke(w, line.getEndCap(), line.getLineJoin(), line.getMiterLimit()));
@@ -994,8 +994,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
            away from the "via" node along the first segment of the "from" way)
          */
         double distanceFromVia=14;
-        double dx = (pFrom.x >= pVia.x) ? (pFrom.x - pVia.x) : (pVia.x - pFrom.x);
-        double dy = (pFrom.y >= pVia.y) ? (pFrom.y - pVia.y) : (pVia.y - pFrom.y);
+        double dx = pFrom.x >= pVia.x ? pFrom.x - pVia.x : pVia.x - pFrom.x;
+        double dy = pFrom.y >= pVia.y ? pFrom.y - pVia.y : pVia.y - pFrom.y;
 
         double fromAngle;
         if(dx == 0.0) {

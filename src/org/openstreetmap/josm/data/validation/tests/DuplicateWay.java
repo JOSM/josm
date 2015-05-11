@@ -322,6 +322,6 @@ public class DuplicateWay extends Test {
                 ++waysWithRelations;
             }
         }
-        return (waysWithRelations <= 1);
+        return waysWithRelations <= 1;
     }
 }

@@ -324,7 +324,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 if (value == null)
                     return this;
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                boolean isDisabledAndHidden = (((Relation)table.getValueAt(row, 0))).isDisabledAndHidden();
+                boolean isDisabledAndHidden = ((Relation)table.getValueAt(row, 0)).isDisabledAndHidden();
                 if (c instanceof JLabel) {
                     JLabel label = (JLabel) c;
                     label.setText(((MemberInfo) value).getRoleString());
@@ -340,7 +340,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                boolean isDisabledAndHidden = (((Relation)table.getValueAt(row, 0))).isDisabledAndHidden();
+                boolean isDisabledAndHidden = ((Relation)table.getValueAt(row, 0)).isDisabledAndHidden();
                 if (c instanceof JLabel) {
                     JLabel label = (JLabel)c;
                     label.setText(((MemberInfo) table.getValueAt(row, 1)).getPositionString());
@@ -794,7 +794,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 // double click, edit or add tag
                 int row = tagTable.rowAtPoint(e.getPoint());
                 if (row > -1) {
-                    boolean focusOnKey = (tagTable.columnAtPoint(e.getPoint()) == 0);
+                    boolean focusOnKey = tagTable.columnAtPoint(e.getPoint()) == 0;
                     editHelper.editTag(row, focusOnKey);
                 } else {
                     editHelper.addTag();
@@ -941,7 +941,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             Relation nextRelation = null;
             int rowCount = membershipTable.getRowCount();
             if (rowCount > 1) {
-                nextRelation = (Relation)membershipData.getValueAt((row + 1 < rowCount ? row + 1 : row - 1), 0);
+                nextRelation = (Relation)membershipData.getValueAt(row + 1 < rowCount ? row + 1 : row - 1, 0);
             }
 
             ExtendedDialog ed = new ExtendedDialog(Main.parent,

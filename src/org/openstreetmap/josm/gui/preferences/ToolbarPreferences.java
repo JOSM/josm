@@ -321,7 +321,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         @Override
         public int getRowCount() {
-            int adaptable = ((currentAction.getAction() instanceof AdaptableAction) ? 2 : 0);
+            int adaptable = (currentAction.getAction() instanceof AdaptableAction) ? 2 : 0;
             if (currentAction.isSeparator() || !(currentAction.getAction() instanceof ParameterizedAction))
                 return adaptable;
             ParameterizedAction pa = (ParameterizedAction)currentAction.getAction();
@@ -902,7 +902,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
         for (MenuElement item : menuElement.getSubElements()) {
             if (item instanceof JMenuItem) {
-                JMenuItem menuItem = ((JMenuItem)item);
+                JMenuItem menuItem = (JMenuItem)item;
                 if (menuItem.getAction() != null) {
                     Action action = menuItem.getAction();
                     userObject = action;

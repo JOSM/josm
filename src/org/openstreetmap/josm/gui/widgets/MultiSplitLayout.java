@@ -559,7 +559,7 @@ public class MultiSplitLayout implements LayoutManager {
         } else if (root instanceof Split) {
             Split split = (Split)root;
             boolean grow = split.isRowLayout()
-            ? (split.getBounds().width <= bounds.width)
+            ? split.getBounds().width <= bounds.width
                     : (split.getBounds().height <= bounds.height);
             if (grow) {
                 layoutGrow(split, bounds);
@@ -1121,7 +1121,7 @@ public class MultiSplitLayout implements LayoutManager {
     }
 
     private static void parseAttribute(String name, StreamTokenizer st, Node node) throws Exception {
-        if ((st.nextToken() != '=')) {
+        if (st.nextToken() != '=') {
             throwParseException(st, "expected '=' after " + name);
         }
         if ("WEIGHT".equalsIgnoreCase(name)) {

@@ -72,7 +72,7 @@ public class Capabilities {
         if (! capabilities.containsKey(element)) return false;
         Map<String, String> e = capabilities.get(element);
         if (e == null) return false;
-        return (e.get(attribute) != null);
+        return e.get(attribute) != null;
     }
 
     /**

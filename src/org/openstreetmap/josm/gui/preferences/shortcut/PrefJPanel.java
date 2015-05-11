@@ -360,7 +360,7 @@ public class PrefJPanel extends JPanel {
             if (expr.isEmpty()) { expr=null; }
             try {
                 final TableRowSorter<? extends TableModel> sorter =
-                    ((TableRowSorter<? extends TableModel> )shortcutTable.getRowSorter());
+                    (TableRowSorter<? extends TableModel> )shortcutTable.getRowSorter();
                 if (expr == null) {
                     sorter.setRowFilter(null);
                 } else {

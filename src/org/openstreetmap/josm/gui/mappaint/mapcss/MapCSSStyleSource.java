@@ -535,7 +535,7 @@ public class MapCSSStyleSource extends StyleSource {
         Environment env = new Environment(n, mc, "default", this);
 
         for (MapCSSRule r : rules) {
-            if ((r.selector instanceof GeneralSelector)) {
+            if (r.selector instanceof GeneralSelector) {
                 GeneralSelector gs = (GeneralSelector) r.selector;
                 if (gs.getBase().equals("setting")) {
                     if (!gs.matchesConditions(env)) {
@@ -577,7 +577,7 @@ public class MapCSSStyleSource extends StyleSource {
         Environment env = new Environment(n, mc, "default", this);
 
         for (MapCSSRule r : rules) {
-            if ((r.selector instanceof GeneralSelector)) {
+            if (r.selector instanceof GeneralSelector) {
                 GeneralSelector gs = (GeneralSelector) r.selector;
                 if (gs.getBase().equals(type)) {
                     if (!gs.matchesConditions(env)) {

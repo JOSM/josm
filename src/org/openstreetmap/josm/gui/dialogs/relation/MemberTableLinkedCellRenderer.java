@@ -185,7 +185,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             }
         }
 
-        if ((arrow != null)) {
+        if (arrow != null) {
             g.drawImage(arrow, xoff+xowloop-3, (y1 + y2) / 2 - 2, null);
         }
     }

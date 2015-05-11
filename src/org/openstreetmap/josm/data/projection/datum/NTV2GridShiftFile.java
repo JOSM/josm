@@ -275,7 +275,7 @@ public class NTV2GridShiftFile implements Serializable {
     }
 
     public boolean isLoaded() {
-        return (topLevelSubGrid != null);
+        return topLevelSubGrid != null;
     }
 
     public void unload() {

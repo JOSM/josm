@@ -1124,7 +1124,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         double raoffsety = symbolSize*factor*normal.getY();
 
         double cx = center.getX(), cy = center.getY();
-        double k = (mirror ? -1 : 1);
+        double k = mirror ? -1 : 1;
         Point2D ra1 = new Point2D.Double(cx + raoffsetx, cy + raoffsety);
         Point2D ra3 = new Point2D.Double(cx - raoffsety*k, cy + raoffsetx*k);
         Point2D ra2 = new Point2D.Double(ra1.getX() - raoffsety*k, ra1.getY() + raoffsetx*k);
