@@ -149,10 +149,15 @@ public class ImageryLayerInfo {
         Collection<String> newKnownDefaults = new TreeSet<>(knownDefaults);
         for (ImageryInfo def : defaultLayers) {
             // temporary migration code, so all user preferences will get updated with new settings from JOSM site (can be removed ~Dez. 2015)
-            if (def.getNoTileHeaders() != null) {
+            if (def.getNoTileHeaders() != null || def.getTileSize() > 0) {
                 for (ImageryInfo i: layers) {
                     if (isSimilar(def,  i)) {
-                        i.setNoTileHeaders(def.getNoTileHeaders());
+                        if (def.getNoTileHeaders() != null) {
+                            i.setNoTileHeaders(def.getNoTileHeaders());
+                        }
+                        if (def.getTileSize() > 0) {
+                            i.setTileSize(def.getTileSize());
+                        }
                         changed = true;
                     }
                 }

@@ -137,6 +137,7 @@ public class ImageryReader {
                         "terms-of-use-url",
                         "country-code",
                         "icon",
+                        "tile-size",
                 }).contains(qName)) {
                     newState = State.ENTRY_ATTRIBUTE;
                     lang = atts.getValue("lang");
@@ -298,6 +299,19 @@ public class ImageryReader {
                     break;
                 case "icon":
                     entry.setIcon(accumulator.toString());
+                    break;
+                case "tile-size":
+                    Integer tileSize = null;
+                    try {
+                        tileSize  = Integer.parseInt(accumulator.toString());
+                    } catch(NumberFormatException e) {
+                        tileSize = null;
+                    }
+                    if (tileSize == null) {
+                        skipEntry = true;
+                    } else {
+                        entry.setTileSize(tileSize.intValue());
+                    }
                     break;
                 }
                 break;

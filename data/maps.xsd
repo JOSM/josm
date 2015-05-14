@@ -670,12 +670,15 @@
 									</xs:all>
 								</xs:complexType>
 							</xs:element>
+							<!-- list of HTTP headers, that indicate "no tile at this zoom level" situation -->
 							<xs:element name="no-tile-header" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:attribute name="name" type="xs:string" />
 									<xs:attribute name="value" type="xs:string" />
 								</xs:complexType>
 							</xs:element>
+							<!-- tile size provided by imagery source. Default - 256 -->
+							<xs:element name="tile-size" minOccurs="0" maxOccurs="1" type="xs:positiveInteger" />
 						</xs:choice>
 					</xs:sequence>
 					<xs:attribute name="last-check" type="xs:date" use="optional" />
