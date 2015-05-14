@@ -62,20 +62,20 @@ class DiffResultProcessorTest {
 		SimplePrimitiveId id = new SimplePrimitiveId(-1, OsmPrimitiveType.NODE)
 		def entry = processor.@diffResults[id]
 		assert entry != null
-		assert entry.new_id == 1
-		assert entry.new_version == 1
+		assert entry.newId == 1
+		assert entry.newVersion == 1
 
 		id = new SimplePrimitiveId(-2, OsmPrimitiveType.WAY)
 		entry = processor.@diffResults[id]
 		assert entry != null
-		assert entry.new_id == 2
-		assert entry.new_version == 1
+		assert entry.newId == 2
+		assert entry.newVersion == 1
 
 		id = new SimplePrimitiveId(-3, OsmPrimitiveType.RELATION)
 		entry = processor.@diffResults[id]
 		assert entry != null
-		assert entry.new_id == 3
-		assert entry.new_version == 1
+		assert entry.newId == 3
+		assert entry.newVersion == 1
 	}
 
 	@Test
