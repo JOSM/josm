@@ -584,7 +584,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                             tile = tileController.getTile(tilex, tiley, zoom);
                         }
                         if (tile != null) {
-                            tile.paint(g, posx, posy);
+                            tile.paint(g, posx, posy, tilesize, tilesize);
                             if (tileGridVisible) {
                                 g.drawRect(posx, posy, tilesize, tilesize);
                             }

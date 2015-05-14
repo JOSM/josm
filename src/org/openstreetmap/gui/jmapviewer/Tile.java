@@ -219,6 +219,23 @@ public class Tile {
         g.drawImage(image, x, y, null);
     }
 
+    /**
+     * Paints the tile-image on the {@link Graphics} <code>g</code> at the
+     * position <code>x</code>/<code>y</code>.
+     *
+     * @param g the Graphics object
+     * @param x x-coordinate in <code>g</code>
+     * @param y y-coordinate in <code>g</code>
+     * @param width width that tile should have
+     * @param height height that tile should have
+     */
+    public void paint(Graphics g, int x, int y, int width, int height) {
+        if (image == null)
+            return;
+        g.drawImage(image, x, y, width, height, null);
+    }
+
+
     @Override
     public String toString() {
         return "Tile " + key;
