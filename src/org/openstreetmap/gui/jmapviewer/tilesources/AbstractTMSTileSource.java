@@ -14,6 +14,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     protected String baseUrl;
     protected String id;
     private Map<String, String> noTileHeaders;
+    protected int tileSize;
+    protected OsmMercator osmMercator;
 
     public AbstractTMSTileSource(TileSourceInfo info) {
         this.name = info.getName();
@@ -23,6 +25,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         }
         this.id = info.getUrl();
         this.noTileHeaders = info.getNoTileHeaders();
+        this.tileSize = info.getTileSize();
+        osmMercator = new OsmMercator(this.tileSize);
     }
 
     @Override
@@ -80,52 +84,52 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
      */
     @Override
     public int getTileSize() {
-        return OsmMercator.TILE_SIZE;
+        return tileSize;
     }
 
     @Override
     public double getDistance(double lat1, double lon1, double lat2, double lon2) {
-        return OsmMercator.getDistance(lat1, lon1, lat2, lon2);
+        return osmMercator.getDistance(lat1, lon1, lat2, lon2);
     }
 
     @Override
     public int LonToX(double lon, int zoom) {
-        return (int )OsmMercator.LonToX(lon, zoom);
+        return (int )osmMercator.LonToX(lon, zoom);
     }
 
     @Override
     public int LatToY(double lat, int zoom) {
-        return (int )OsmMercator.LatToY(lat, zoom);
+        return (int )osmMercator.LatToY(lat, zoom);
     }
 
     @Override
     public double XToLon(int x, int zoom) {
-        return OsmMercator.XToLon(x, zoom);
+        return osmMercator.XToLon(x, zoom);
     }
 
     @Override
     public double YToLat(int y, int zoom) {
-        return OsmMercator.YToLat(y, zoom);
+        return osmMercator.YToLat(y, zoom);
     }
 
     @Override
     public double latToTileY(double lat, int zoom) {
-        return OsmMercator.LatToY(lat, zoom) / OsmMercator.TILE_SIZE;
+        return osmMercator.LatToY(lat, zoom) / tileSize;
     }
 
     @Override
     public double lonToTileX(double lon, int zoom) {
-        return OsmMercator.LonToX(lon, zoom) / OsmMercator.TILE_SIZE;
+        return osmMercator.LonToX(lon, zoom) / tileSize;
     }
 
     @Override
     public double tileYToLat(int y, int zoom) {
-        return OsmMercator.YToLat(y * OsmMercator.TILE_SIZE, zoom);
+        return osmMercator.YToLat(y * tileSize, zoom);
     }
 
     @Override
     public double tileXToLon(int x, int zoom) {
-        return OsmMercator.XToLon(x * OsmMercator.TILE_SIZE, zoom);
+        return osmMercator.XToLon(x * tileSize, zoom);
     }
 
     @Override

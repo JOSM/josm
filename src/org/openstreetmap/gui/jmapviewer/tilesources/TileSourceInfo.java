@@ -3,6 +3,8 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.util.Map;
 
+import org.openstreetmap.gui.jmapviewer.OsmMercator;
+
 /**
  * Data class that keeps basic information about a tile source.
  */
@@ -27,6 +29,8 @@ public class TileSourceInfo {
     /** cookies that needs to be sent to tile source */
     protected String cookies;
 
+    /** tile size of the displayed tiles */
+    private int tileSize = OsmMercator.DEFAUL_TILE_SIZE;
 
     /**
      * Create a TileSourceInfo class
@@ -57,7 +61,7 @@ public class TileSourceInfo {
     }
 
     /**
-     *
+     * Request name of the tile source
      * @return name of the tile source
      */
     public String getName() {
@@ -65,7 +69,7 @@ public class TileSourceInfo {
     }
 
     /**
-     *
+     * Request URL of the tile source
      * @return url of the tile source
      */
     public String getUrl() {
@@ -73,7 +77,7 @@ public class TileSourceInfo {
     }
 
     /**
-     *
+     * Request header information for empty tiles for servers delivering such tile types
      * @return map of headers, that when set, means that this is "no tile at this zoom level" situation
      */
     public Map<String, String> getNoTileHeaders() {
@@ -81,7 +85,7 @@ public class TileSourceInfo {
     }
 
     /**
-     *
+     * Request supported minimum zoom level
      * @return minimum zoom level supported by tile source
      */
     public int getMinZoom() {
@@ -89,7 +93,7 @@ public class TileSourceInfo {
     }
 
     /**
-     *
+     * Request supported maximum zoom level
      * @return maximum zoom level supported by tile source
      */
     public int getMaxZoom() {
@@ -97,11 +101,29 @@ public class TileSourceInfo {
     }
 
     /**
-     *
+     * Request cookies to be sent together with request
      * @return cookies to be sent along with request to tile source
      */
     public String getCookies() {
         return cookies;
     }
 
+    /**
+     * Request tile size of this tile source
+     * @return tile size provided by this tile source
+     */
+    public int getTileSize() {
+        return tileSize;
+    }
+
+    /**
+     * Sets the tile size provided by this tile source
+     * @param tileSize
+     */
+    public void setTileSize(int tileSize) {
+        if (tileSize <= 0) {
+            throw new AssertionError("Invalid tile size: " + tileSize);
+        }
+        this.tileSize = tileSize;
+    }
 }
