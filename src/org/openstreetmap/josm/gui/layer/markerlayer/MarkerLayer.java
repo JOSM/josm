@@ -101,11 +101,13 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             if (wpt_has_link) {
                 for (GpxLink oneLink : wpt.<GpxLink>getCollection(GpxConstants.META_LINKS)) {
                     String uri = oneLink.uri;
-                    if (!uri.equals(lastLinkedFile)) {
-                        firstTime = time;
+                    if (uri != null) {
+                        if (!uri.equals(lastLinkedFile)) {
+                            firstTime = time;
+                        }
+                        lastLinkedFile = uri;
+                        break;
                     }
-                    lastLinkedFile = uri;
-                    break;
                 }
             }
             Double offset = null;
