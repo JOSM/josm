@@ -667,6 +667,7 @@
 										<xs:element name="projections" minOccurs="0" maxOccurs="1" type="tns:projections" />
 										<xs:element name="min-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
 										<xs:element name="max-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
+										<xs:element name="tile-size" minOccurs="0" maxOccurs="1" type="xs:positiveInteger" />
 									</xs:all>
 								</xs:complexType>
 							</xs:element>
