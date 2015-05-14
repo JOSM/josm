@@ -3313,7 +3313,7 @@
             <space />
             <key key="amenity" value="restaurant" />
             <reference ref="name_operator" />
-            <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;sushi" values_searchable="true" />
+            <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;sushi;steak_house" values_searchable="true" />
             <check key="microbrewery" text="Microbrewery" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <reference ref="oh_wheelchair" />
