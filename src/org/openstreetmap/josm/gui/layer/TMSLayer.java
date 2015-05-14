@@ -65,6 +65,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -422,12 +423,18 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     private final int getBestZoom() {
-        double factor = getScaleFactor(1);
+        double factor = getScaleFactor(1); // check the ratio between area of tilesize at zoom 1 to current view
         double result = Math.log(factor)/Math.log(2)/2+1;
-        // In general, smaller zoom levels are more readable.  We prefer big,
-        // block, pixelated (but readable) map text to small, smeared,
-        // unreadable underzoomed text.  So, use .floor() instead of rounding
-        // to skew things a bit toward the lower zooms.
+        /*
+         * Math.log(factor)/Math.log(2) - gives log base 2 of factor
+         * We divide result by 2, as factor contains ratio between areas. We could do Math.sqrt before log, or just divide log by 2
+         * In general, smaller zoom levels are more readable.  We prefer big,
+         * block, pixelated (but readable) map text to small, smeared,
+         * unreadable underzoomed text.  So, use .floor() instead of rounding
+         * to skew things a bit toward the lower zooms.
+         * Remember, that result here, should correspond to TMSLayer.paint(...)
+         * getScaleFactor(...) is supposed to be between 0.75 and 3
+         */
         int intResult = (int)Math.floor(result);
         if (intResult > getMaxZoomLvl())
             return getMaxZoomLvl();
@@ -513,8 +520,19 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (clickedTile != null) {
-                    showMetadataTile = clickedTile;
-                    redraw();
+                    ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), new String[]{tr("OK")});
+                    ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
+                    StringBuilder content = new StringBuilder();
+                    content.append("Tile name: ").append(clickedTile.getKey()).append("\n");
+                    try {
+                        content.append("Tile url: ").append(clickedTile.getUrl()).append("\n");
+                    } catch (IOException e) {
+                    }
+                    content.append("Tile size: ").append(clickedTile.getTileSource().getTileSize()).append("x").append(clickedTile.getTileSource().getTileSize()).append("\n");
+                    Rectangle displaySize = tileToRect(clickedTile);
+                    content.append("Tile display size: ").append(displaySize.width).append("x").append(displaySize.height).append("\n");
+                    ed.setContent(content.toString());
+                    ed.showDialog();
                 }
             }
         }));
@@ -1383,7 +1401,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             myDrawString(g, tr("Current zoom: {0}", currentZoomLevel), 50, 140);
             myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
             myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
-            myDrawString(g, tr("Best zoom: {0}", Math.log(getScaleFactor(1))/Math.log(2)/2+1), 50, 185);
+            myDrawString(g, tr("Best zoom: {0}", getBestZoom()), 50, 185);
             if(tileLoader instanceof TMSCachedTileLoader) {
                 TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader)tileLoader;
                 int offset = 185;

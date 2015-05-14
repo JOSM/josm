@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
@@ -224,6 +225,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref String icon;
         @pref String description;
         @pref Map<String, String> noTileHeaders;
+        @pref int tileSize = OsmMercator.DEFAUL_TILE_SIZE;
 
         /**
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
@@ -280,6 +282,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             if (i.noTileHeaders != null && !i.noTileHeaders.isEmpty()) {
                 noTileHeaders = i.noTileHeaders;
             }
+
+            tileSize = i.getTileSize();
         }
 
         @Override
@@ -401,6 +405,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         if (e.noTileHeaders != null) {
             noTileHeaders = e.noTileHeaders;
         }
+        setTileSize(e.tileSize);
     }
 
     /**
