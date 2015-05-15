@@ -159,7 +159,7 @@ public abstract class Main {
     /**
      * Command-line arguments used to run the application.
      */
-    public static String[] commandLineArgs;
+    protected static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
 
     /**
      * The worker thread slave. This is for executing all long and intensive
@@ -1641,6 +1641,15 @@ public abstract class Main {
      */
     public static Map<String, Throwable> getNetworkErrors() {
         return new HashMap<>(NETWORK_ERRORS);
+    }
+
+    /**
+     * Returns the command-line arguments used to run the application.
+     * @return the command-line arguments used to run the application
+     * @since 8356
+     */
+    public static List<String> getCommandLineArgs() {
+        return Collections.unmodifiableList(COMMAND_LINE_ARGS);
     }
 
     /**
