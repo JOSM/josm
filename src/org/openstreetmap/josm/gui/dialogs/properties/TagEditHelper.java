@@ -635,12 +635,19 @@ class TagEditHelper {
 
         @Override
         public void setContentPane(Container contentPane) {
-            final String text = "<html>" + Utils.join("<br>", Arrays.asList(
-                    tr("<code>Ctrl-1</code> to apply first suggestion"),
-                    tr("<code>Shift-Enter</code> to add without closing the dialog"),
-                    tr("<code>Shift-Ctrl-1</code> to add first suggestion without closing the dialog")
-            ));
-            final JLabel helpLabel = new JLabel(text);
+            final int commandDownMask = GuiHelper.getMenuShortcutKeyMaskEx();
+            ArrayList<String> lines = new ArrayList<>();
+            Shortcut sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask);
+            if (sc != null) {
+                lines.add("<code>"+sc.getKeyText()+"</code> "+tr("to apply first suggestion"));
+            }
+            lines.add("<code>"+KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+"+"+KeyEvent.getKeyText(KeyEvent.VK_ENTER)+"</code> "
+                    +tr("to add without closing the dialog"));
+            sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask|KeyEvent.SHIFT_DOWN_MASK);
+            if (sc != null) {
+                lines.add("<code>"+sc.getKeyText()+"</code> "+tr("to add first suggestion without closing the dialog"));
+            }
+            final JLabel helpLabel = new JLabel("<html>" + Utils.join("<br>", lines) + "</html>");
             helpLabel.setFont(helpLabel.getFont().deriveFont(Font.PLAIN));
             contentPane.add(helpLabel, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(1, 2, 1, 2));
             super.setContentPane(contentPane);
@@ -671,7 +678,7 @@ class TagEditHelper {
 
             int count = 1;
             // We store the maximum number (9) of recent tags to allow dynamic change of number of tags shown in the preferences.
-            // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum numbern and not the number of tags to show.
+            // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum number and not the number of tags to show.
             // However, as Set does not allow to iterate in descending order, we need to copy its elements into a List we can access in reverse order.
             List<Tag> tags = new LinkedList<>(recentTags.keySet());
             for (int i = tags.size()-1; i >= 0 && count <= tagsToShow; i--, count++) {
