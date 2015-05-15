@@ -15,8 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
-import java.net.InetAddress;
 import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.ProxySelector;
 import java.net.URL;
 import java.security.AllPermission;
@@ -201,12 +201,12 @@ public class MainApplication extends Main {
         SKIP_PLUGINS(false),
         ;
 
-        private String name;
-        private boolean requiresArgument;
+        private final String name;
+        private final boolean requiresArg;
 
         private Option(boolean requiresArgument) {
             this.name = name().toLowerCase().replace("_", "-");
-            this.requiresArgument = requiresArgument;
+            this.requiresArg = requiresArgument;
         }
 
         /**
@@ -222,7 +222,7 @@ public class MainApplication extends Main {
          * @return {@code true} if this option requires an argument, {@code false} otherwise
          */
         public boolean requiresArgument() {
-            return requiresArgument;
+            return requiresArg;
         }
 
         public static Map<Option, Collection<String>> fromStringMap(Map<String, Collection<String>> opts) {
@@ -335,7 +335,7 @@ public class MainApplication extends Main {
         // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
-        Main.commandLineArgs = Utils.copyArray(argArray);
+        Main.COMMAND_LINE_ARGS.addAll(Arrays.asList(argArray));
 
         if (args.containsKey(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
@@ -568,7 +568,7 @@ public class MainApplication extends Main {
             }).start();
         }
     }
-    
+
     private static class GuiFinalizationWorker implements Runnable {
 
         private final Map<Option, Collection<String>> args;

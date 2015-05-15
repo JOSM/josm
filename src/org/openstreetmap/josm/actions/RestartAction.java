@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -136,7 +135,7 @@ public class RestartAction extends JosmAction {
                     cmd.add(jnlp);
                 }
                 // finally add program arguments
-                cmd.addAll(Arrays.asList(Main.commandLineArgs));
+                cmd.addAll(Main.getCommandLineArgs());
             }
             Main.info("Restart "+cmd);
             if (Main.isDebugEnabled() && Main.pref.getBoolean("restart.debug.simulation")) {

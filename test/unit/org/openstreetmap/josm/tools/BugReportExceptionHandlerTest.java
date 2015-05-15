@@ -27,7 +27,6 @@ public class BugReportExceptionHandlerTest {
      */
     @Before
     public void setUp() {
-        Main.commandLineArgs = new String[0];
         JOSMFixture.createUnitTestFixture().init();
     }
 
