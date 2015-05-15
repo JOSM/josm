@@ -196,7 +196,10 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             if (!oldFile.delete()) {
                 Main.warn(tr("Unable to delete old backup file {0}", oldFile.getAbsolutePath()));
             } else {
-                getPidFile(oldFile).delete();
+                File pidFile = getPidFile(oldFile);
+                if (!pidFile.delete()) {
+                    Main.warn(tr("Unable to delete old backup file {0}", pidFile.getAbsolutePath()));
+                }
             }
         }
     }

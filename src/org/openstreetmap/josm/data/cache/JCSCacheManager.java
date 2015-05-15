@@ -55,8 +55,9 @@ public class JCSCacheManager {
             throw new IOException("Cannot access cache directory");
 
         File cacheDirLockPath = new File(cacheDir, ".lock");
-        if (!cacheDirLockPath.exists())
-            cacheDirLockPath.createNewFile();
+        if (!cacheDirLockPath.exists() && !cacheDirLockPath.createNewFile()) {
+            log.log(Level.WARNING, "Cannot create cache dir lock file");
+        }
         cacheDirLock = new FileOutputStream(cacheDirLockPath).getChannel().tryLock();
 
         if (cacheDirLock == null)

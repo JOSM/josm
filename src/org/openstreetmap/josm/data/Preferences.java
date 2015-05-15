@@ -814,18 +814,30 @@ public class Preferences {
 
         File tmpFile = new File(prefFile + "_tmp");
         Utils.copyFile(tmpFile, prefFile);
-        tmpFile.delete();
+        if (!tmpFile.delete()) {
+            Main.warn(tr("Unable to delete temporary file {0}", tmpFile.getAbsolutePath()));
+        }
 
         setCorrectPermissions(prefFile);
         setCorrectPermissions(backupFile);
     }
 
     private void setCorrectPermissions(File file) {
-        file.setReadable(false, false);
-        file.setWritable(false, false);
-        file.setExecutable(false, false);
-        file.setReadable(true, true);
-        file.setWritable(true, true);
+        if (!file.setReadable(false, false) && Main.isDebugEnabled()) {
+            Main.debug(tr("Unable to set file non-readable {0}", file.getAbsolutePath()));
+        }
+        if (!file.setWritable(false, false) && Main.isDebugEnabled()) {
+            Main.debug(tr("Unable to set file non-writable {0}", file.getAbsolutePath()));
+        }
+        if (!file.setExecutable(false, false) && Main.isDebugEnabled()) {
+            Main.debug(tr("Unable to set file non-executable {0}", file.getAbsolutePath()));
+        }
+        if (!file.setReadable(true, true) && Main.isDebugEnabled()) {
+            Main.debug(tr("Unable to set file readable {0}", file.getAbsolutePath()));
+        }
+        if (!file.setWritable(true, true) && Main.isDebugEnabled()) {
+            Main.debug(tr("Unable to set file writable {0}", file.getAbsolutePath()));
+        }
     }
 
     /**
