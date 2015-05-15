@@ -111,7 +111,9 @@ public class WmsCache {
 
     public WmsCache(String url, int tileSize) {
         File globalCacheDir = new File(cacheDirPath());
-        globalCacheDir.mkdirs();
+        if (!globalCacheDir.mkdirs()) {
+            Main.warn("Unable to create global cache directory: "+globalCacheDir.getAbsolutePath());
+        }
         cacheDir = new File(globalCacheDir, getCacheDirectory(url));
         cacheDir.mkdirs();
         this.tileSize = tileSize;
@@ -229,8 +231,8 @@ public class WmsCache {
                 File[] files = projectionDir.listFiles();
                 if (files != null) {
                     for (File file: files) {
-                        if (!referencedFiles.contains(file.getName())) {
-                            file.delete();
+                        if (!referencedFiles.contains(file.getName()) && !file.delete()) {
+                            Main.warn("Unable to delete file: "+file.getAbsolutePath());
                         }
                     }
                 }
@@ -529,7 +531,9 @@ public class WmsCache {
             totalFileSize -= imageFile.length();
         }
 
-        imageFile.getParentFile().mkdirs();
+        if (!imageFile.getParentFile().mkdirs()) {
+            Main.warn("Unable to create parent directory: "+imageFile.getParentFile().getAbsolutePath());
+        }
 
         if (img != null) {
             BufferedImage copy = new BufferedImage(tileSize, tileSize, img.getType());
@@ -554,7 +558,9 @@ public class WmsCache {
                         totalFileSizeDirty = true; // File probably doesn't exist
                     }
                     totalFileSize -= size;
-                    file.delete();
+                    if (!file.delete()) {
+                        Main.warn("Unable to delete file: "+file.getAbsolutePath());
+                    }
                     it.remove();
                 }
             }

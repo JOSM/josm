@@ -336,7 +336,7 @@ public final class AlignInLineAction extends JosmAction {
     /**
      * Class that represent a line
      */
-    private class Line {
+    private static class Line {
 
         /**
          * Line equation ax + by + c = 0

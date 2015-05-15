@@ -764,9 +764,8 @@ public class JoinAreasAction extends JosmAction {
 
         List<WayInPolygon> result = new ArrayList<>();
 
-        //prepare prev and next maps
+        //prepare next map
         Map<Way, Way> nextWayMap = new HashMap<>();
-        Map<Way, Way> prevWayMap = new HashMap<>();
 
         for (int pos = 0; pos < parts.size(); pos ++) {
 
@@ -774,7 +773,6 @@ public class JoinAreasAction extends JosmAction {
                 throw new RuntimeException("Way not circular");
 
             nextWayMap.put(parts.get(pos), parts.get((pos + 1) % parts.size()));
-            prevWayMap.put(parts.get(pos), parts.get((pos + parts.size() - 1) % parts.size()));
         }
 
         //find the node with minimum y - it's guaranteed to be outer. (What about the south pole?)
