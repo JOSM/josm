@@ -131,8 +131,9 @@ public final class ShowStatusReportAction extends JosmAction {
         } catch (SecurityException e) {
             // Ignore exception
         }
-        if (Main.commandLineArgs.length > 0) {
-            text.append("Program arguments: "+ Arrays.toString(Main.commandLineArgs));
+        List<String> commandLineArgs = Main.getCommandLineArgs();
+        if (!commandLineArgs.isEmpty()) {
+            text.append("Program arguments: "+ Arrays.toString(commandLineArgs.toArray()));
             text.append("\n");
         }
         if (Main.main != null) {
