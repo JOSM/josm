@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -33,6 +34,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -694,6 +697,7 @@ public final class TaggingPresetItems {
                     aibutton.setToolTipText(tr("Select auto-increment of {0} for this field", ai));
                     aibutton.setMargin(new java.awt.Insets(0,0,0,0));
                     aibutton.setFocusable(false);
+                    saveHorizontalSpace(aibutton);
                     bg.add(aibutton);
                     try {
                         // TODO there must be a better way to parse a number like "+3" than this.
@@ -730,12 +734,22 @@ public final class TaggingPresetItems {
                         clearbutton.setSelected(true);
                     }
                 });
+                saveHorizontalSpace(releasebutton);
                 pnl.add(releasebutton, GBC.eol());
                 value = pnl;
             }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
+        }
+
+        private static void saveHorizontalSpace(AbstractButton button) {
+            Insets insets = button.getBorder().getBorderInsets(button);
+            // Ensure the current look&feel does not waste horizontal space (as seen in Nimbus & Aqua)
+            if (insets != null && insets.left+insets.right > insets.top+insets.bottom) {
+                int min = Math.min(insets.top, insets.bottom);
+                button.setBorder(BorderFactory.createEmptyBorder(insets.top, min, insets.bottom, min));
+            }
         }
 
         private static String getValue(Component comp) {
