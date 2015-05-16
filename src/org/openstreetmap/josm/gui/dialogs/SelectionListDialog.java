@@ -597,11 +597,13 @@ public class SelectionListDialog extends ToggleDialog  {
          *
          * @param selection the collection of currently selected OSM objects
          */
-        public synchronized void setJOSMSelection(final Collection<? extends OsmPrimitive> selection) {
-            this.selection.clear();
-            if (selection != null) {
-                this.selection.addAll(selection);
-                sort();
+        public void setJOSMSelection(final Collection<? extends OsmPrimitive> selection) {
+            synchronized (this) {
+                this.selection.clear();
+                if (selection != null) {
+                    this.selection.addAll(selection);
+                    sort();
+                }
             }
             GuiHelper.runInEDTAndWait(new Runnable() {
                 @Override public void run() {
