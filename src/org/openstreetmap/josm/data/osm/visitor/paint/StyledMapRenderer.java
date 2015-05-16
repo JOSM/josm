@@ -882,7 +882,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         int s = size + highlightPointRadius;
         if (useWiderHighlight) s+=widerHighlight;
         while(s >= size) {
-            int r = (int) Math.floor(s/2);
+            int r = (int) Math.floor(s/2d);
             g.fillRoundRect(p.x-r, p.y-r, s, s, r, r);
             s -= highlightStep;
         }
