@@ -51,7 +51,7 @@ public class OverlappingWays extends Test {
     protected static final int DUPLICATE_WAY_SEGMENT = 121;
 
     protected static final CollectionProperty IGNORED_KEYS = new CollectionProperty(
-            "overlapping-ways.ignored-keys", Arrays.asList("barrier", "building", "historic:building"));
+            "overlapping-ways.ignored-keys", Arrays.asList("barrier", "building", "historic:building", "man_made"));
 
     /** Constructor */
     public OverlappingWays() {
