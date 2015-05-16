@@ -290,7 +290,7 @@ public final class OsmUrlToBounds {
      */
     public static String getURL(double dlat, double dlon, int zoom) {
         // Truncate lat and lon to something more sensible
-        int decimals = (int) Math.pow(10, zoom / 3);
+        int decimals = (int) Math.pow(10, zoom / 3d);
         double lat = Math.round(dlat * decimals);
         lat /= decimals;
         double lon = Math.round(dlon * decimals);

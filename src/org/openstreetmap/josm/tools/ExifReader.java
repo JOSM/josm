@@ -206,18 +206,18 @@ public final class ExifReader {
         switch (orientation) {
         case 8:
             q = -1;
-            ax = width / 2;
-            ay = width / 2;
+            ax = width / 2d;
+            ay = width / 2d;
             break;
         case 3:
             q = 2;
-            ax = width / 2;
-            ay = height / 2;
+            ax = width / 2d;
+            ay = height / 2d;
             break;
         case 6:
             q = 1;
-            ax = height / 2;
-            ay = height / 2;
+            ax = height / 2d;
+            ay = height / 2d;
             break;
         default:
             q = 0;

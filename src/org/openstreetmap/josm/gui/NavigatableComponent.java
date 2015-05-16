@@ -369,8 +369,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public Point2D getPoint2D(EastNorth p) {
         if (null == p)
             return new Point();
-        double x = (p.east()-center.east())/scale + getWidth()/2;
-        double y = (center.north()-p.north())/scale + getHeight()/2;
+        double x = (p.east()-center.east())/scale + getWidth()/2d;
+        double y = (center.north()-p.north())/scale + getHeight()/2d;
         return new Point2D.Double(x, y);
     }
 
