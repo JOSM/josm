@@ -14,8 +14,17 @@ public class NodeData extends PrimitiveData implements INode {
     private double lat = Double.NaN;
     private double lon = Double.NaN;
 
-    public NodeData() {}
+    /**
+     * Constructs a new {@code NodeData}.
+     */
+    public NodeData() {
 
+    }
+
+    /**
+     * Constructs a new {@code NodeData}.
+     * @param data node data to copy
+     */
     public NodeData(NodeData data) {
         super(data);
         setCoor(data.getCoor());
@@ -43,17 +52,14 @@ public class NodeData extends PrimitiveData implements INode {
 
     @Override
     public EastNorth getEastNorth() {
-        /*
-         * No internal caching of projected coordinates needed. In contrast to getEastNorth()
-         * on Node, this method is rarely used. Caching would be overkill.
-         */
+        // No internal caching of projected coordinates needed. In contrast to getEastNorth()
+        // on Node, this method is rarely used. Caching would be overkill.
         return Projections.project(getCoor());
     }
 
     @Override
     public void setEastNorth(EastNorth eastNorth) {
-        LatLon ll = Projections.inverseProject(eastNorth);
-        setCoor(ll);
+        setCoor(Projections.inverseProject(eastNorth));
     }
 
     @Override
@@ -75,5 +81,4 @@ public class NodeData extends PrimitiveData implements INode {
     public void accept(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
-
 }

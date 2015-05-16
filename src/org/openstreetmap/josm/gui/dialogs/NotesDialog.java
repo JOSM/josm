@@ -221,7 +221,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         updateButtonStates();
     }
 
-    private class NoteRenderer implements ListCellRenderer<Note> {
+    private static class NoteRenderer implements ListCellRenderer<Note> {
 
         private DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
         private final DateFormat dateFormat = DateUtils.getDateTimeFormat(DateFormat.MEDIUM, DateFormat.SHORT);

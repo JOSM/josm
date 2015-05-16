@@ -949,7 +949,7 @@ public class MainMenu extends JMenuBar {
      * This listener is designed to handle ENTER key pressed in menu search field.
      * When user presses Enter key then selected item of "searchResultsMenu" is triggered.
      */
-    private class SearchFieldKeyListener implements KeyListener {
+    private static class SearchFieldKeyListener implements KeyListener {
 
         @Override
         public void keyPressed(KeyEvent e) {
@@ -969,10 +969,14 @@ public class MainMenu extends JMenuBar {
         }
 
         @Override
-        public void keyTyped(KeyEvent e) { }
+        public void keyTyped(KeyEvent e) {
+            // Not used
+        }
 
         @Override
-        public void keyReleased(KeyEvent e) { }
+        public void keyReleased(KeyEvent e) {
+            // Not used
+        }
     }
 
     private class SearchFieldTextListener implements DocumentListener {

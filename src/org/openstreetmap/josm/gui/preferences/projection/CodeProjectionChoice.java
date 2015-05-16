@@ -80,7 +80,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
                         if (cmp1 != 0) return cmp1;
                         int num1 = Integer.parseInt(matcher1.group(2));
                         int num2 = Integer.parseInt(matcher2.group(2));
-                        return Integer.valueOf(num1).compareTo(num2);
+                        return Integer.compare(num1, num2);
                     } else
                         return -1;
                 } else if (matcher2.matches())

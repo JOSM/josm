@@ -71,10 +71,10 @@ public class ImageOverlay {
         int width = -1;
         int height = -1;
         if (offsetRight > 0 && offsetLeft > 0) {
-            width = new Double(w*(offsetRight-offsetLeft)).intValue();
+            width = (int) (w*(offsetRight-offsetLeft));
         }
         if (offsetTop > 0 && offsetBottom > 0) {
-            width = new Double(h*(offsetBottom-offsetTop)).intValue();
+            width = (int) (h*(offsetBottom-offsetTop));
         }
         ImageIcon overlay;
         if(width != -1 || height != -1) {

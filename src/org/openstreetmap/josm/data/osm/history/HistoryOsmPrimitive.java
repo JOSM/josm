@@ -155,7 +155,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     public int compareTo(HistoryOsmPrimitive o) {
         if (this.id != o.id)
             throw new ClassCastException(tr("Cannot compare primitive with ID ''{0}'' to primitive with ID ''{1}''.", o.id, this.id));
-        return Long.valueOf(this.version).compareTo(o.version);
+        return Long.compare(this.version, o.version);
     }
 
     public void put(String key, String value) {

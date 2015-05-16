@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.Objects;
@@ -28,12 +27,6 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
     public final MapImage mapImage;
     public final RotationAngle mapImageAngle;
     public final Symbol symbol;
-
-    private Image enabledNodeIcon;
-    private Image disabledNodeIcon;
-
-    private boolean enabledNodeIconIsTemporary;
-    private boolean disabledNodeIconIsTemporary;
 
     public enum SymbolShape { SQUARE, CIRCLE, TRIANGLE, PENTAGON, HEXAGON, HEPTAGON, OCTAGON, NONAGON, DECAGON }
 

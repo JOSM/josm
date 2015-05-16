@@ -212,7 +212,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
                             if (cmp != 0) return cmp;
                             cmp = o1.getParent().getDisplayName(nf).compareTo(o2.getParent().getDisplayName(nf));
                             if (cmp != 0) return cmp;
-                            return Integer.valueOf(o1.getPosition()).compareTo(o2.getPosition());
+                            return Integer.compare(o1.getPosition(), o2.getPosition());
                         }
                     }
             );

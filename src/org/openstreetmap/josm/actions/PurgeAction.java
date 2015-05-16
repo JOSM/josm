@@ -244,7 +244,7 @@ public class PurgeAction extends JosmAction {
                     int type = o2.getType().compareTo(o1.getType());
                     if (type != 0)
                         return type;
-                    return (Long.valueOf(o1.getUniqueId())).compareTo(o2.getUniqueId());
+                    return Long.compare(o1.getUniqueId(), o2.getUniqueId());
                 }
             });
             JList<OsmPrimitive> list = new JList<>(toPurgeAdditionally.toArray(new OsmPrimitive[toPurgeAdditionally.size()]));

@@ -130,7 +130,7 @@ public class DuplicateRelation extends Test {
     /**
      * Class to store relation data (keys are usually cleanup and may not be equal to original relation)
      */
-    private class RelationPair {
+    private static class RelationPair {
         /** Member objects of the relation */
         private RelationMembers members;
         /** Tags of the relation */

@@ -222,7 +222,7 @@ public class SimilarNamedWays extends Test {
         String normalize(String name);
     }
 
-    public class RegExprRule implements NormalizeRule {
+    public static class RegExprRule implements NormalizeRule {
         private final Pattern regExpr;
         private final String replacement;
 
@@ -242,7 +242,7 @@ public class SimilarNamedWays extends Test {
         }
     }
 
-    public class SynonymRule implements NormalizeRule {
+    public static class SynonymRule implements NormalizeRule {
 
         private final String[] words;
         private final Pattern regExpr;

@@ -337,7 +337,7 @@ public class APIDataSet {
                     new Comparator<Relation>() {
                         @Override
                         public int compare(Relation o1, Relation o2) {
-                            return Integer.valueOf(uploadOrder.indexOf(o1)).compareTo(uploadOrder.indexOf(o2));
+                            return Integer.compare(uploadOrder.indexOf(o1), uploadOrder.indexOf(o2));
                         }
                     }
                     );

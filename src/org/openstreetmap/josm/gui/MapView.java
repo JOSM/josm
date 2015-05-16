@@ -508,19 +508,18 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             }
         }
         // sort according to position in the list of layers, with one exception:
-        // an active data layer always becomes a higher Z-Order than all other
-        // data layers
-        //
+        // an active data layer always becomes a higher Z-Order than all other data layers
         Collections.sort(
                 ret,
                 new Comparator<Layer>() {
-                    @Override public int compare(Layer l1, Layer l2) {
+                    @Override
+                    public int compare(Layer l1, Layer l2) {
                         if (l1 instanceof OsmDataLayer && l2 instanceof OsmDataLayer) {
                             if (l1 == getActiveLayer()) return -1;
                             if (l2 == getActiveLayer()) return 1;
-                            return Integer.valueOf(layers.indexOf(l1)).compareTo(layers.indexOf(l2));
+                            return Integer.compare(layers.indexOf(l1), layers.indexOf(l2));
                         } else
-                            return Integer.valueOf(layers.indexOf(l1)).compareTo(layers.indexOf(l2));
+                            return Integer.compare(layers.indexOf(l1), layers.indexOf(l2));
                     }
                 }
         );
@@ -539,7 +538,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * Draw the component.
      */
-    @Override public void paint(Graphics g) {
+    @Override
+    public void paint(Graphics g) {
         if (initialViewport != null) {
             zoomTo(initialViewport);
             initialViewport = null;
