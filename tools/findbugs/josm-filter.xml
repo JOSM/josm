@@ -25,6 +25,12 @@
 		<Class name="~org.openstreetmap.gui.jmapviewer.*" />
 	</Match>
     <Match>
+        <Class name="~org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.*" />
+    </Match>
+    <Match>
+        <Class name="~org.openstreetmap.josm.data.imagery.types.*" />
+    </Match>
+    <Match>
         <Class name="~org.w3._2001.xmlschema.*" />
     </Match>
 
