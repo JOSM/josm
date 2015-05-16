@@ -2211,6 +2211,10 @@ node[amenity=ice_cream] {
     set icon_z17;
     text: auto;
 }
+way[amenity=bicycle_parking] {
+    width: 2;
+    color: amenity_traffic#f7efb7;
+}
 area[amenity=parking_space],
 area[amenity=parking],
 area[amenity=motorcycle_parking],
