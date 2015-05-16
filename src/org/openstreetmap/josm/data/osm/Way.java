@@ -350,7 +350,7 @@ public final class Way extends OsmPrimitive implements IWay {
     public int compareTo(OsmPrimitive o) {
         if (o instanceof Relation)
             return 1;
-        return o instanceof Way ? Long.valueOf(getUniqueId()).compareTo(o.getUniqueId()) : -1;
+        return o instanceof Way ? Long.compare(getUniqueId(), o.getUniqueId()) : -1;
     }
 
     /**

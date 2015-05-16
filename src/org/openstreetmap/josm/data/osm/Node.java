@@ -295,7 +295,7 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public int compareTo(OsmPrimitive o) {
-        return o instanceof Node ? Long.valueOf(getUniqueId()).compareTo(o.getUniqueId()) : 1;
+        return o instanceof Node ? Long.compare(getUniqueId(), o.getUniqueId()) : 1;
     }
 
     @Override

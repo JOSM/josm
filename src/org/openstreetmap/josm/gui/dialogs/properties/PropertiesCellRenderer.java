@@ -39,8 +39,8 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             c.setBackground(defaults.getColor("Table."+(isSelected ? "selectionB" : "b")+"ackground"));
         }
     }
-    
-    @Override 
+
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
         if (value == null)
@@ -52,32 +52,33 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             } else if (value instanceof Map<?, ?>) {
                 Map<?, ?> v = (Map<?, ?>) value;
                 if (v.size() != 1) {    // Multiple values: give user a short summary of the values
-                    Integer blank_count;
-                    Integer other_count;
+                    Integer blankCount;
+                    Integer otherCount;
                     if (v.get("") == null) {
-                        blank_count = 0;
-                        other_count = v.size();
+                        blankCount = 0;
+                        otherCount = v.size();
                     } else {
-                        blank_count = (Integer)v.get("");
-                        other_count = v.size()-1;
+                        blankCount = (Integer)v.get("");
+                        otherCount = v.size()-1;
                     }
-                    str = "<";
-                    if (other_count == 1) {
+                    StringBuilder sb = new StringBuilder("<");
+                    if (otherCount == 1) {
                         for (Map.Entry<?, ?> entry : v.entrySet()) { // Find the non-blank value in the map
                             if ( entry.getKey() != "") {
                                 /* I18n: properties display partial string joined with comma, frst is count, second is value */
-                                str += tr("{0} ''{1}''", entry.getValue().toString(), entry.getKey());
+                                sb.append(tr("{0} ''{1}''", entry.getValue().toString(), entry.getKey()));
                             }
                         }
                     } else {
                         /* I18n: properties display partial string joined with comma */
-                        str += trn("{0} different", "{0} different", other_count, other_count);
+                        sb.append(trn("{0} different", "{0} different", otherCount, otherCount));
                     }
-                    if(blank_count > 0) {
+                    if(blankCount > 0) {
                         /* I18n: properties display partial string joined with comma */
-                        str += trn(", {0} unset", ", {0} unset", blank_count, blank_count);
+                        sb.append(trn(", {0} unset", ", {0} unset", blankCount, blankCount));
                     }
-                    str += ">";
+                    sb.append(">");
+                    str = sb.toString();
                     c.setFont(c.getFont().deriveFont(Font.ITALIC));
 
                 } else {                // One value: display the value

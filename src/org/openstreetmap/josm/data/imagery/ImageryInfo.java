@@ -677,10 +677,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 this.url = m.group(3);
                 this.imageryType = type;
                 if (m.group(2) != null) {
-                    defaultMaxZoom = Integer.valueOf(m.group(2));
+                    defaultMaxZoom = Integer.parseInt(m.group(2));
                 }
                 if (m.group(1) != null) {
-                    defaultMinZoom = Integer.valueOf(m.group(1));
+                    defaultMinZoom = Integer.parseInt(m.group(1));
                 }
                 break;
             }
