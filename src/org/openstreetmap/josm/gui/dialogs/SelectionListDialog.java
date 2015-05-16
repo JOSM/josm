@@ -492,7 +492,7 @@ public class SelectionListDialog extends ToggleDialog  {
          *
          * @return a summary of the current JOSM selection
          */
-        public String getJOSMSelectionSummary() {
+        public synchronized String getJOSMSelectionSummary() {
             if (selection.isEmpty()) return tr("Selection");
             int numNodes = 0;
             int numWays = 0;
@@ -544,12 +544,12 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         @Override
-        public OsmPrimitive getElementAt(int index) {
+        public synchronized OsmPrimitive getElementAt(int index) {
             return selection.get(index);
         }
 
         @Override
-        public int getSize() {
+        public synchronized int getSize() {
             return selection.size();
         }
 
@@ -559,7 +559,7 @@ public class SelectionListDialog extends ToggleDialog  {
          *
          * @return choosen elements in the view
          */
-        public Collection<OsmPrimitive> getSelected() {
+        public synchronized Collection<OsmPrimitive> getSelected() {
             Set<OsmPrimitive> sel = new HashSet<>();
             for(int i=0; i< getSize();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
@@ -574,7 +574,7 @@ public class SelectionListDialog extends ToggleDialog  {
          *
          * @param sel the collection of primitives to select
          */
-        public void setSelected(Collection<OsmPrimitive> sel) {
+        public synchronized void setSelected(Collection<OsmPrimitive> sel) {
             selectionModel.clearSelection();
             if (sel == null) return;
             for (OsmPrimitive p: sel){
@@ -597,7 +597,7 @@ public class SelectionListDialog extends ToggleDialog  {
          *
          * @param selection the collection of currently selected OSM objects
          */
-        public void setJOSMSelection(final Collection<? extends OsmPrimitive> selection) {
+        public synchronized void setJOSMSelection(final Collection<? extends OsmPrimitive> selection) {
             this.selection.clear();
             if (selection != null) {
                 this.selection.addAll(selection);
@@ -635,7 +635,7 @@ public class SelectionListDialog extends ToggleDialog  {
          *
          * @param toUpdate the collection of primitives to update
          */
-        public void update(Collection<? extends OsmPrimitive> toUpdate) {
+        public synchronized void update(Collection<? extends OsmPrimitive> toUpdate) {
             if (toUpdate == null) return;
             if (toUpdate.isEmpty()) return;
             Collection<OsmPrimitive> sel = getSelected();
@@ -651,7 +651,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /**
          * Sorts the current elements in the selection
          */
-        public void sort() {
+        public synchronized void sort() {
             if (this.selection.size() <= Main.pref.getInteger("selection.no_sort_above", 100000)) {
                 boolean quick = this.selection.size() > Main.pref.getInteger("selection.fast_sort_above", 10000);
                 Collections.sort(this.selection, new OsmPrimitiveComparator(quick, false));
