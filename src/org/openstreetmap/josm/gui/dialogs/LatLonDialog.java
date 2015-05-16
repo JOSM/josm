@@ -55,7 +55,7 @@ public class LatLonDialog extends ExtendedDialog {
     private static final char E_TR = LatLon.EAST.charAt(0);
     private static final char W_TR = LatLon.WEST.charAt(0);
 
-    private static final Pattern p = Pattern.compile(
+    private static final Pattern P = Pattern.compile(
             "([+|-]?\\d+[.,]\\d+)|"             // (1)
             + "([+|-]?\\d+)|"                   // (2)
             + "("+DEG+"|o|deg)|"                // (3)
@@ -65,6 +65,9 @@ public class LatLonDialog extends ExtendedDialog {
             + "([NSEW"+N_TR+S_TR+E_TR+W_TR+"])|"// (7)
             + "\\s+|"
             + "(.+)");
+
+    private static final Pattern P_XML = Pattern.compile(
+            "lat=[\"']([+|-]?\\d+[.,]\\d+)[\"']\\s+lon=[\"']([+|-]?\\d+[.,]\\d+)[\"']");
 
     protected JPanel buildLatLon() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -335,87 +338,96 @@ public class LatLonDialog extends ExtendedDialog {
             }
         }
         @Override
-        public void focusLost(FocusEvent e) {}
+        public void focusLost(FocusEvent e) {
+            // Not used
+        }
     }
 
     public static LatLon parseLatLon(final String coord) {
-        final Matcher m = p.matcher(coord);
-
-        final StringBuilder sb = new StringBuilder();
-        final List<Object> list = new ArrayList<>();
-
-        while (m.find()) {
-            if (m.group(1) != null) {
-                sb.append('R');     // floating point number
-                list.add(Double.parseDouble(m.group(1).replace(',', '.')));
-            } else if (m.group(2) != null) {
-                sb.append('Z');     // integer number
-                list.add(Double.parseDouble(m.group(2)));
-            } else if (m.group(3) != null) {
-                sb.append('o');     // degree sign
-            } else if (m.group(4) != null) {
-                sb.append('\'');    // seconds sign
-            } else if (m.group(5) != null) {
-                sb.append('"');     // minutes sign
-            } else if (m.group(6) != null) {
-                sb.append(',');     // separator
-            } else if (m.group(7) != null) {
-                sb.append("x");     // cardinal direction
-                String c = m.group(7).toUpperCase();
-                if ("N".equals(c) || "S".equals(c) || "E".equals(c) || "W".equals(c)) {
-                    list.add(c);
-                } else {
-                    list.add(c.replace(N_TR, 'N').replace(S_TR, 'S')
-                            .replace(E_TR, 'E').replace(W_TR, 'W'));
-                }
-            } else if (m.group(8) != null) {
-                throw new IllegalArgumentException("invalid token: " + m.group(8));
-            }
-        }
-
-        final String pattern = sb.toString();
-
-        final Object[] params = list.toArray();
         final LatLonHolder latLon = new LatLonHolder();
-
-        if (pattern.matches("Ro?,?Ro?")) {
+        final Matcher mXml = P_XML.matcher(coord);
+        if (mXml.matches()) {
             setLatLonObj(latLon,
-                    params[0], ZERO, ZERO, "N",
-                    params[1], ZERO, ZERO, "E");
-        } else if (pattern.matches("xRo?,?xRo?")) {
-            setLatLonObj(latLon,
-                    params[1], ZERO, ZERO, params[0],
-                    params[3], ZERO, ZERO, params[2]);
-        } else if (pattern.matches("Ro?x,?Ro?x")) {
-            setLatLonObj(latLon,
-                    params[0], ZERO, ZERO, params[1],
-                    params[2], ZERO, ZERO, params[3]);
-        } else if (pattern.matches("Zo[RZ]'?,?Zo[RZ]'?|Z[RZ],?Z[RZ]")) {
-            setLatLonObj(latLon,
-                    params[0], params[1], ZERO, "N",
-                    params[2], params[3], ZERO, "E");
-        } else if (pattern.matches("xZo[RZ]'?,?xZo[RZ]'?|xZo?[RZ],?xZo?[RZ]")) {
-            setLatLonObj(latLon,
-                    params[1], params[2], ZERO, params[0],
-                    params[4], params[5], ZERO, params[3]);
-        } else if (pattern.matches("Zo[RZ]'?x,?Zo[RZ]'?x|Zo?[RZ]x,?Zo?[RZ]x")) {
-            setLatLonObj(latLon,
-                    params[0], params[1], ZERO, params[2],
-                    params[3], params[4], ZERO, params[5]);
-        } else if (pattern.matches("ZoZ'[RZ]\"?x,?ZoZ'[RZ]\"?x|ZZ[RZ]x,?ZZ[RZ]x")) {
-            setLatLonObj(latLon,
-                    params[0], params[1], params[2], params[3],
-                    params[4], params[5], params[6], params[7]);
-        } else if (pattern.matches("xZoZ'[RZ]\"?,?xZoZ'[RZ]\"?|xZZ[RZ],?xZZ[RZ]")) {
-            setLatLonObj(latLon,
-                    params[1], params[2], params[3], params[0],
-                    params[5], params[6], params[7], params[4]);
-        } else if (pattern.matches("ZZ[RZ],?ZZ[RZ]")) {
-            setLatLonObj(latLon,
-                    params[0], params[1], params[2], "N",
-                    params[3], params[4], params[5], "E");
+                    Double.parseDouble(mXml.group(1).replace(',', '.')), ZERO, ZERO, "N",
+                    Double.parseDouble(mXml.group(2).replace(',', '.')), ZERO, ZERO, "E");
         } else {
-            throw new IllegalArgumentException("invalid format: " + pattern);
+            final Matcher m = P.matcher(coord);
+
+            final StringBuilder sb = new StringBuilder();
+            final List<Object> list = new ArrayList<>();
+
+            while (m.find()) {
+                if (m.group(1) != null) {
+                    sb.append('R');     // floating point number
+                    list.add(Double.parseDouble(m.group(1).replace(',', '.')));
+                } else if (m.group(2) != null) {
+                    sb.append('Z');     // integer number
+                    list.add(Double.parseDouble(m.group(2)));
+                } else if (m.group(3) != null) {
+                    sb.append('o');     // degree sign
+                } else if (m.group(4) != null) {
+                    sb.append('\'');    // seconds sign
+                } else if (m.group(5) != null) {
+                    sb.append('"');     // minutes sign
+                } else if (m.group(6) != null) {
+                    sb.append(',');     // separator
+                } else if (m.group(7) != null) {
+                    sb.append("x");     // cardinal direction
+                    String c = m.group(7).toUpperCase();
+                    if ("N".equals(c) || "S".equals(c) || "E".equals(c) || "W".equals(c)) {
+                        list.add(c);
+                    } else {
+                        list.add(c.replace(N_TR, 'N').replace(S_TR, 'S')
+                                .replace(E_TR, 'E').replace(W_TR, 'W'));
+                    }
+                } else if (m.group(8) != null) {
+                    throw new IllegalArgumentException("invalid token: " + m.group(8));
+                }
+            }
+
+            final String pattern = sb.toString();
+
+            final Object[] params = list.toArray();
+
+            if (pattern.matches("Ro?,?Ro?")) {
+                setLatLonObj(latLon,
+                        params[0], ZERO, ZERO, "N",
+                        params[1], ZERO, ZERO, "E");
+            } else if (pattern.matches("xRo?,?xRo?")) {
+                setLatLonObj(latLon,
+                        params[1], ZERO, ZERO, params[0],
+                        params[3], ZERO, ZERO, params[2]);
+            } else if (pattern.matches("Ro?x,?Ro?x")) {
+                setLatLonObj(latLon,
+                        params[0], ZERO, ZERO, params[1],
+                        params[2], ZERO, ZERO, params[3]);
+            } else if (pattern.matches("Zo[RZ]'?,?Zo[RZ]'?|Z[RZ],?Z[RZ]")) {
+                setLatLonObj(latLon,
+                        params[0], params[1], ZERO, "N",
+                        params[2], params[3], ZERO, "E");
+            } else if (pattern.matches("xZo[RZ]'?,?xZo[RZ]'?|xZo?[RZ],?xZo?[RZ]")) {
+                setLatLonObj(latLon,
+                        params[1], params[2], ZERO, params[0],
+                        params[4], params[5], ZERO, params[3]);
+            } else if (pattern.matches("Zo[RZ]'?x,?Zo[RZ]'?x|Zo?[RZ]x,?Zo?[RZ]x")) {
+                setLatLonObj(latLon,
+                        params[0], params[1], ZERO, params[2],
+                        params[3], params[4], ZERO, params[5]);
+            } else if (pattern.matches("ZoZ'[RZ]\"?x,?ZoZ'[RZ]\"?x|ZZ[RZ]x,?ZZ[RZ]x")) {
+                setLatLonObj(latLon,
+                        params[0], params[1], params[2], params[3],
+                        params[4], params[5], params[6], params[7]);
+            } else if (pattern.matches("xZoZ'[RZ]\"?,?xZoZ'[RZ]\"?|xZZ[RZ],?xZZ[RZ]")) {
+                setLatLonObj(latLon,
+                        params[1], params[2], params[3], params[0],
+                        params[5], params[6], params[7], params[4]);
+            } else if (pattern.matches("ZZ[RZ],?ZZ[RZ]")) {
+                setLatLonObj(latLon,
+                        params[0], params[1], params[2], "N",
+                        params[3], params[4], params[5], "E");
+            } else {
+                throw new IllegalArgumentException("invalid format: " + pattern);
+            }
         }
 
         return new LatLon(latLon.lat, latLon.lon);
