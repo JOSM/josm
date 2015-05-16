@@ -299,20 +299,23 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     @Override
     public int compareTo(OsmPrimitive o) {
-        return o instanceof Relation ? Long.valueOf(getUniqueId()).compareTo(o.getUniqueId()) : -1;
+        return o instanceof Relation ? Long.compare(getUniqueId(), o.getUniqueId()) : -1;
     }
 
+    /**
+     * Returns the first member.
+     * @return first member, or {@code null}
+     */
     public RelationMember firstMember() {
-        if (isIncomplete()) return null;
-
-        RelationMember[] members = this.members;
-        return (members.length == 0) ? null : members[0];
+        return (isIncomplete() || members.length == 0) ? null : members[0];
     }
-    public RelationMember lastMember() {
-        if (isIncomplete()) return null;
 
-        RelationMember[] members = this.members;
-        return (members.length == 0) ? null : members[members.length - 1];
+    /**
+     * Returns the last member.
+     * @return last member, or {@code null}
+     */
+    public RelationMember lastMember() {
+        return (isIncomplete() || members.length == 0) ? null : members[members.length - 1];
     }
 
     /**

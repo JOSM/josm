@@ -92,7 +92,7 @@ public final class Changeset implements Tagged {
     }
 
     public int compareTo(Changeset other) {
-        return Integer.valueOf(getId()).compareTo(other.getId());
+        return Integer.compare(getId(), other.getId());
     }
 
     public String getName() {

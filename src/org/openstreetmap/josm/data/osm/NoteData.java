@@ -51,7 +51,7 @@ public class NoteData {
             if (n1.getState() == State.open && n2.getState() == State.closed) {
                 return -1;
             }
-            return Long.valueOf(Math.abs(n1.getId())).compareTo(Long.valueOf(Math.abs(n2.getId())));
+            return Long.compare(Math.abs(n1.getId()), Math.abs(n2.getId()));
         }
     };
 

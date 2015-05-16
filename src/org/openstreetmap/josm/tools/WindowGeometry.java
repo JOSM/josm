@@ -186,12 +186,12 @@ public class WindowGeometry {
         if (arg != null) {
             final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(arg);
             if (m.matches()) {
-                int w = Integer.valueOf(m.group(1));
-                int h = Integer.valueOf(m.group(2));
+                int w = Integer.parseInt(m.group(1));
+                int h = Integer.parseInt(m.group(2));
                 int x = screenDimension.x, y = screenDimension.y;
                 if (m.group(3) != null) {
-                    x = Integer.valueOf(m.group(5));
-                    y = Integer.valueOf(m.group(7));
+                    x = Integer.parseInt(m.group(5));
+                    y = Integer.parseInt(m.group(7));
                     if ("-".equals(m.group(4))) {
                         x = screenDimension.x + screenDimension.width - x - w;
                     }

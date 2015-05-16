@@ -1374,7 +1374,7 @@ public final class TaggingPresetItems {
             // modify preferred height of scroll pane to match that row count.
             if (rows != null) {
                 double height = renderer.getListCellRendererComponent(list,
-                        new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * Integer.valueOf(rows);
+                        new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * Integer.parseInt(rows);
                 sp.setPreferredSize(new Dimension((int) sp.getPreferredSize().getWidth(), (int) height));
             }
             p.add(sp, GBC.eol().fill(GBC.HORIZONTAL));
