@@ -182,19 +182,12 @@ public class PrimaryDateParser {
     }
 
     private Date parseShortStandardDate(String date) {
-        int year;
-        int month;
-        int day;
-        int hour;
-        int minute;
-        int second;
-
-        year = Integer.parseInt(date.substring(0, 4));
-        month = Integer.parseInt(date.substring(5, 7));
-        day = Integer.parseInt(date.substring(8, 10));
-        hour = Integer.parseInt(date.substring(11, 13));
-        minute = Integer.parseInt(date.substring(14, 16));
-        second = Integer.parseInt(date.substring(17, 19));
+        int year = Integer.parseInt(date.substring(0, 4));
+        int month = Integer.parseInt(date.substring(5, 7));
+        int day = Integer.parseInt(date.substring(8, 10));
+        int hour = Integer.parseInt(date.substring(11, 13));
+        int minute = Integer.parseInt(date.substring(14, 16));
+        int second = Integer.parseInt(date.substring(17, 19));
 
         calendar.clear();
         calendar.set(Calendar.YEAR, year);
@@ -208,21 +201,13 @@ public class PrimaryDateParser {
     }
 
     private Date parseLongStandardDate(String date) {
-        int year;
-        int month;
-        int day;
-        int hour;
-        int minute;
-        int second;
-        int millisecond;
-
-        year = Integer.parseInt(date.substring(0, 4));
-        month = Integer.parseInt(date.substring(5, 7));
-        day = Integer.parseInt(date.substring(8, 10));
-        hour = Integer.parseInt(date.substring(11, 13));
-        minute = Integer.parseInt(date.substring(14, 16));
-        second = Integer.parseInt(date.substring(17, 19));
-        millisecond = Integer.parseInt(date.substring(20, 23));
+        int year = Integer.parseInt(date.substring(0, 4));
+        int month = Integer.parseInt(date.substring(5, 7));
+        int day = Integer.parseInt(date.substring(8, 10));
+        int hour = Integer.parseInt(date.substring(11, 13));
+        int minute = Integer.parseInt(date.substring(14, 16));
+        int second = Integer.parseInt(date.substring(17, 19));
+        int millisecond = Integer.parseInt(date.substring(20, 23));
 
         calendar.clear();
         calendar.set(Calendar.YEAR, year);

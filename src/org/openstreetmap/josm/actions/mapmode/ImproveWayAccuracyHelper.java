@@ -56,10 +56,7 @@ final class ImproveWayAccuracyHelper {
             }
         }
 
-        candidate = Main.map.mapView.getNearestWay(p,
-                OsmPrimitive.isSelectablePredicate);
-
-        return candidate;
+        return Main.map.mapView.getNearestWay(p, OsmPrimitive.isSelectablePredicate);
     }
 
     /**
@@ -144,11 +141,11 @@ final class ImproveWayAccuracyHelper {
 
             EastNorth a = wpp.a.getEastNorth();
             EastNorth b = wpp.b.getEastNorth();
-            
+
             // Finding intersection of the segment with its altitude from p
             EastNorth altitudeIntersection = Geometry.closestPointToSegment(a, b, pEN);
             currentDistance = pEN.distance(altitudeIntersection);
-            
+
             if (!altitudeIntersection.equals(a) && !altitudeIntersection.equals(b)) {
                 // If the segment intersects with the altitude from p,
                 // make an angle too big to let this candidate win any others
