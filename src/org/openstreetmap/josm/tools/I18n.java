@@ -450,8 +450,8 @@ public final class I18n {
     public static void addTexts(File source) {
         if ("en".equals(loadedCode))
             return;
-        String enfile = "data/en.lang";
-        String langfile = "data/"+loadedCode+".lang";
+        final String enfile = "data/en.lang";
+        final String langfile = "data/"+loadedCode+".lang";
         try (
             FileInputStream fis = new FileInputStream(source);
             JarInputStream jar = new JarInputStream(fis)
@@ -460,7 +460,7 @@ public final class I18n {
             boolean found = false;
             while (!found && (e = jar.getNextEntry()) != null) {
                 String name = e.getName();
-                if(name.equals(enfile))
+                if (enfile.equals(name))
                     found = true;
             }
             if (found) {

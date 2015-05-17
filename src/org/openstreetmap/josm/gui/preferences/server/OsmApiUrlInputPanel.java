@@ -118,7 +118,7 @@ public class OsmApiUrlInputPanel extends JPanel {
      */
     public void initFromPreferences() {
         String url =  Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
-        if (url.trim().equals(OsmApi.DEFAULT_API_URL)) {
+        if (OsmApi.DEFAULT_API_URL.equals(url.trim())) {
             cbUseDefaultServerUrl.setSelected(true);
             propagator.propagate(OsmApi.DEFAULT_API_URL);
         } else {
@@ -136,7 +136,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         String hmiUrl = getStrippedApiUrl();
         if (cbUseDefaultServerUrl.isSelected()) {
             Main.pref.put("osm-server.url", null);
-        } else if (hmiUrl.equals(OsmApi.DEFAULT_API_URL)) {
+        } else if (OsmApi.DEFAULT_API_URL.equals(hmiUrl)) {
             Main.pref.put("osm-server.url", null);
         } else {
             Main.pref.put("osm-server.url", hmiUrl);

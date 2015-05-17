@@ -291,7 +291,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                         final String[] x = val.split("=>", 2);
                         check.fixCommands.add(FixCommand.fixChangeKey(Tag.removeWhiteSpaces(x[0]), Tag.removeWhiteSpaces(x[1])));
                     } else if ("fixDeleteObject".equals(ai.key) && val != null) {
-                        CheckParameterUtil.ensureThat(val.equals("this"), "fixDeleteObject must be followed by 'this'");
+                        CheckParameterUtil.ensureThat("this".equals(val), "fixDeleteObject must be followed by 'this'");
                         check.deletion = true;
                     } else if ("suggestAlternative".equals(ai.key) && val != null) {
                         check.alternatives.add(val);

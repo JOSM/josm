@@ -53,7 +53,7 @@ public class GpxData extends WithAttributes implements Data {
         for (Map.Entry<String, Object> ent : other.attr.entrySet()) {
             // TODO: Detect conflicts.
             String k = ent.getKey();
-            if (k.equals(META_LINKS) && attr.containsKey(META_LINKS)) {
+            if (META_LINKS.equals(k) && attr.containsKey(META_LINKS)) {
                 Collection<GpxLink> my = super.<GpxLink>getCollection(META_LINKS);
                 @SuppressWarnings("unchecked")
                 Collection<GpxLink> their = (Collection<GpxLink>) ent.getValue();

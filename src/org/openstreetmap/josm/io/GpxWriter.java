@@ -94,14 +94,14 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
 
     private void writeAttr(IWithAttributes obj, List<String> keys) {
         for (String key : keys) {
-            if (key.equals(META_LINKS)) {
+            if (META_LINKS.equals(key)) {
                 Collection<GpxLink> lValue = obj.<GpxLink>getCollection(key);
                 if (lValue != null) {
                     for (GpxLink link : lValue) {
                         gpxLink(link);
                     }
                 }
-            } else if (key.equals(META_EXTENSIONS)) {
+            } else if (META_EXTENSIONS.equals(key)) {
                 Extensions extensions = (Extensions) obj.get(key);
                 if (extensions != null) {
                     gpxExtensions(extensions);
