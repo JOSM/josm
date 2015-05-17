@@ -469,3 +469,10 @@ relation[/^..$/][!to] {
   suggestAlternative: "pole=transition";
   fixAdd: "pole=transition";
 }
+
+/* see #11439 */
+*[sport=hockey] {
+  throwWarning: tr("{0} is inaccurate", "{0.tag}");
+  suggestAlternative: "sport=field_hockey";
+  suggestAlternative: "sport=ice_hockey";
+}
