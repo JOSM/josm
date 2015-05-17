@@ -972,7 +972,7 @@ public final class Utils {
         }
         // Is it less than 1 minute ?
         if (elapsedTime < MILLIS_OF_MINUTE) {
-            return String.format("%.1d %s", elapsedTime / (double) MILLIS_OF_SECOND, tr("s"));
+            return String.format("%.1f %s", elapsedTime / (double) MILLIS_OF_SECOND, tr("s"));
         }
         // Is it less than 1 hour ?
         if (elapsedTime < MILLIS_OF_HOUR) {

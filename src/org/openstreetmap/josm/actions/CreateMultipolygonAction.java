@@ -260,7 +260,9 @@ public class CreateMultipolygonAction extends JosmAction {
       */
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        if (update) {
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+        } else if (update) {
             setEnabled(getSelectedMultipolygonRelation() != null);
         } else {
             setEnabled(!getCurrentDataSet().getSelectedWays().isEmpty());
