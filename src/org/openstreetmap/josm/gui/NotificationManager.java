@@ -356,11 +356,11 @@ class NotificationManager {
                     RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setColor(getBackground());
             float lineWidth = 1.4f;
-            Shape rect = new RoundRectangle2D.Float(
-                    lineWidth/2 + getInsets().left,
-                    lineWidth/2 + getInsets().top,
-                    getWidth() - lineWidth/2 - getInsets().left - getInsets().right,
-                    getHeight() - lineWidth/2 - getInsets().top - getInsets().bottom,
+            Shape rect = new RoundRectangle2D.Double(
+                    lineWidth/2d + getInsets().left,
+                    lineWidth/2d + getInsets().top,
+                    getWidth() - lineWidth/2d - getInsets().left - getInsets().right,
+                    getHeight() - lineWidth/2d - getInsets().top - getInsets().bottom,
                     20, 20);
 
             g.fill(rect);

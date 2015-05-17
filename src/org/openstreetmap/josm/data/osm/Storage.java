@@ -89,7 +89,7 @@ public class Storage<T> extends AbstractSet<T> {
     private int mask;
     private int size;
     private volatile int modCount = 0;
-    private float loadFactor = 0.6f;
+    private double loadFactor = 0.6d;
     private static final int DEFAULT_CAPACITY = 16;
     private final boolean safeIterator;
     private boolean arrayCopyNecessary;

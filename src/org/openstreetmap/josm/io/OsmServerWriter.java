@@ -64,16 +64,16 @@ public class OsmServerWriter {
         if (elapsed == 0) {
             elapsed = 1;
         }
-        float uploads_per_ms = (float)progress / elapsed;
-        float uploads_left = list_size - progress;
-        int ms_left = (int)(uploads_left / uploads_per_ms);
-        int minutes_left = ms_left / MSECS_PER_MINUTE;
-        int seconds_left = (ms_left / MSECS_PER_SECOND) % SECONDS_PER_MINUTE ;
-        String time_left_str = Integer.toString(minutes_left) + ":";
+        double uploads_per_ms = (double)progress / elapsed;
+        double uploads_left = list_size - progress;
+        long ms_left = (long)(uploads_left / uploads_per_ms);
+        long minutes_left = ms_left / MSECS_PER_MINUTE;
+        long seconds_left = (ms_left / MSECS_PER_SECOND) % SECONDS_PER_MINUTE ;
+        String time_left_str = Long.toString(minutes_left) + ":";
         if (seconds_left < 10) {
             time_left_str += "0";
         }
-        return time_left_str + Integer.toString(seconds_left);
+        return time_left_str + Long.toString(seconds_left);
     }
 
     /**

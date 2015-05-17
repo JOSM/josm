@@ -273,15 +273,15 @@ public class BBox {
     public boolean equals(Object o) {
         if (o instanceof BBox) {
             BBox b = (BBox)o;
-            return b.xmax == xmax && b.ymax == ymax && b.xmin == xmin && b.ymin == ymin;
+            return Utils.equalsEpsilon(b.xmax, xmax) && Utils.equalsEpsilon(b.ymax, ymax)
+                    && Utils.equalsEpsilon(b.xmin, xmin) && Utils.equalsEpsilon(b.ymin, ymin);
         } else
             return false;
     }
 
     @Override
     public String toString() {
-        return "[ x: " + xmin + " -> " + xmax +
-        ", y: " + ymin + " -> " + ymax + " ]";
+        return "[ x: " + xmin + " -> " + xmax + ", y: " + ymin + " -> " + ymax + " ]";
     }
 
     public String toStringCSV(String separator) {

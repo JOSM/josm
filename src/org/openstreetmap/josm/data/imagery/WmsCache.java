@@ -353,7 +353,8 @@ public class WmsCache {
 
     private CacheEntry findEntry(ProjectionEntries projectionEntries, double pixelPerDegree, double east, double north) {
         for (CacheEntry entry: projectionEntries.entries) {
-            if (entry.pixelPerDegree == pixelPerDegree && entry.east == east && entry.north == north)
+            if (Utils.equalsEpsilon(entry.pixelPerDegree, pixelPerDegree)
+                    && Utils.equalsEpsilon(entry.east, east) && Utils.equalsEpsilon(entry.north, north))
                 return entry;
         }
         return null;

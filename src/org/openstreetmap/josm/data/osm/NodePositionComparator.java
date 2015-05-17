@@ -25,7 +25,7 @@ public class NodePositionComparator implements Comparator<Node>, Serializable {
         if (dLat < 0)
             return -1;
         double dLon = n1.getCoor().lon() - n2.getCoor().lon();
-        if (dLon == 0)
+        if (Double.doubleToRawLongBits(dLon) == 0)
             return 0;
         return dLon > 0 ? 1 : -1;
     }

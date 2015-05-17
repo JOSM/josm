@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
+import org.openstreetmap.josm.tools.Utils;
+
 public final class QuadTiling {
 
     private QuadTiling() {
@@ -67,7 +69,7 @@ public final class QuadTiling {
 
     static long lon2x(double lon) {
         long ret = (long)((lon + 180.0) * WORLD_PARTS / 360.0);
-        if (ret == WORLD_PARTS) {
+        if (Utils.equalsEpsilon(ret, WORLD_PARTS)) {
             ret--;
         }
         return ret;
@@ -75,7 +77,7 @@ public final class QuadTiling {
 
     static long lat2y(double lat) {
         long ret = (long)((lat + 90.0) * WORLD_PARTS / 180.0);
-        if (ret == WORLD_PARTS) {
+        if (Utils.equalsEpsilon(ret, WORLD_PARTS)) {
             ret--;
         }
         return ret;

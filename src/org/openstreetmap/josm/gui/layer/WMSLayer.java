@@ -66,6 +66,7 @@ import org.openstreetmap.josm.io.imagery.WMSException;
 import org.openstreetmap.josm.io.imagery.WMSGrabber;
 import org.openstreetmap.josm.io.imagery.WMSRequest;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
@@ -326,10 +327,11 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         return info.getPixelPerDegree() / getPPD() > minZoom;
     }
 
-    @Override public void paint(Graphics2D g, final MapView mv, Bounds b) {
+    @Override
+    public void paint(Graphics2D g, final MapView mv, Bounds b) {
         if(info.getUrl() == null || (usesInvalidUrl && !isInvalidUrlConfirmed)) return;
 
-        if (autoResolutionEnabled && getBestZoom() != mv.getDist100Pixel()) {
+        if (autoResolutionEnabled && !Utils.equalsEpsilon(getBestZoom(), mv.getDist100Pixel())) {
             changeResolution(this, true);
         }
 
@@ -532,7 +534,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
      * @return -1 if request is no longer needed, otherwise priority of request (lower number &lt;=&gt; more important request)
      */
     private int getRequestPriority(WMSRequest request) {
-        if (request.getPixelPerDegree() != info.getPixelPerDegree())
+        if (!Utils.equalsEpsilon(request.getPixelPerDegree(), info.getPixelPerDegree()))
             return -1;
         if (bminx > request.getXIndex()
                 || bmaxx < request.getXIndex()

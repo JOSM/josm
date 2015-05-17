@@ -98,8 +98,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      */
     private class OffsetIterator implements Iterator<Point> {
 
-        private List<Node> nodes;
-        private float offset;
+        private final List<Node> nodes;
+        private final double offset;
         private int idx;
 
         private Point prev = null;
@@ -109,7 +109,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
          */
         private int xPrev0, yPrev0;
 
-        public OffsetIterator(List<Node> nodes, float offset) {
+        public OffsetIterator(List<Node> nodes, double offset) {
             this.nodes = nodes;
             this.offset = offset;
             idx = 0;
@@ -122,7 +122,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         @Override
         public Point next() {
-            if (Math.abs(offset) < 0.1f) return nc.getPoint(nodes.get(idx++));
+            if (Math.abs(offset) < 0.1d) return nc.getPoint(nodes.get(idx++));
 
             Point current = nc.getPoint(nodes.get(idx));
 
@@ -137,48 +137,47 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             Point next = nc.getPoint(nodes.get(idx+1));
 
-            int dx_next = next.x - current.x;
-            int dy_next = next.y - current.y;
-            double len_next = Math.sqrt(dx_next*dx_next + dy_next*dy_next);
+            int dxNext = next.x - current.x;
+            int dyNext = next.y - current.y;
+            double lenNext = Math.sqrt(dxNext*dxNext + dyNext*dyNext);
 
-            if (len_next == 0) {
-                len_next = 1; // value does not matter, because dy_next and dx_next is 0
+            if (Double.doubleToRawLongBits(lenNext) == 0) {
+                lenNext = 1; // value does not matter, because dy_next and dx_next is 0
             }
 
-            int x_current0 = current.x + (int) Math.round(offset * dy_next / len_next);
-            int y_current0 = current.y - (int) Math.round(offset * dx_next / len_next);
+            int xCurrent0 = current.x + (int) Math.round(offset * dyNext / lenNext);
+            int yCurrent0 = current.y - (int) Math.round(offset * dxNext / lenNext);
 
             if (idx==0) {
                 ++idx;
                 prev = current;
-                xPrev0 = x_current0;
-                yPrev0 = y_current0;
-                return new Point(x_current0, y_current0);
+                xPrev0 = xCurrent0;
+                yPrev0 = yCurrent0;
+                return new Point(xCurrent0, yCurrent0);
             } else {
-                int dx_prev = current.x - prev.x;
-                int dy_prev = current.y - prev.y;
+                int dxPrev = current.x - prev.x;
+                int dyPrev = current.y - prev.y;
 
-                // determine intersection of the lines parallel to the two
-                // segments
-                int det = dx_next*dy_prev - dx_prev*dy_next;
+                // determine intersection of the lines parallel to the two segments
+                int det = dxNext*dyPrev - dxPrev*dyNext;
 
                 if (det == 0) {
                     ++idx;
                     prev = current;
-                    xPrev0 = x_current0;
-                    yPrev0 = y_current0;
-                    return new Point(x_current0, y_current0);
+                    xPrev0 = xCurrent0;
+                    yPrev0 = yCurrent0;
+                    return new Point(xCurrent0, yCurrent0);
                 }
 
-                int m = dx_next*(y_current0 - yPrev0) - dy_next*(x_current0 - xPrev0);
+                int m = dxNext*(yCurrent0 - yPrev0) - dyNext*(xCurrent0 - xPrev0);
 
-                int cx_ = xPrev0 + Math.round((float)m * dx_prev / det);
-                int cy_ = yPrev0 + Math.round((float)m * dy_prev / det);
+                int cx = xPrev0 + (int) Math.round((double)m * dxPrev / det);
+                int cy = yPrev0 + (int) Math.round((double)m * dyPrev / det);
                 ++idx;
                 prev = current;
-                xPrev0 = x_current0;
-                yPrev0 = y_current0;
-                return new Point(cx_, cy_);
+                xPrev0 = xCurrent0;
+                yPrev0 = yCurrent0;
+                return new Point(cx, cy);
             }
         }
 
@@ -451,7 +450,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
                 g.setPaint(texture);
                 Float alpha = fillImage.getAlphaFloat();
-                if (alpha != 1f) {
+                if (!Utils.equalsEpsilon(alpha, 1f)) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
                 }
                 g.fill(area);
@@ -601,9 +600,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             FontRenderContext frc = g.getFontRenderContext();
             LineMetrics metrics = text.font.getLineMetrics(s, frc);
             if (bs.vAlign == VerticalTextAlignment.ABOVE) {
-                y -= - box.y + metrics.getDescent();
+                y -= -box.y + metrics.getDescent();
             } else if (bs.vAlign == VerticalTextAlignment.TOP) {
-                y -= - box.y - metrics.getAscent();
+                y -= -box.y - metrics.getAscent();
             } else if (bs.vAlign == VerticalTextAlignment.CENTER) {
                 y += (metrics.getAscent() - metrics.getDescent()) / 2;
             } else if (bs.vAlign == VerticalTextAlignment.BELOW) {
@@ -622,10 +621,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param offset offset from the way
      * @param spacing spacing between two images
      * @param phase initial spacing
-     * @param align alignment of the image. The top, center or bottom edge
-     * can be aligned with the way.
+     * @param align alignment of the image. The top, center or bottom edge can be aligned with the way.
      */
-    public void drawRepeatImage(Way way, MapImage pattern, boolean disabled, float offset, float spacing, float phase, LineImageAlignment align) {
+    public void drawRepeatImage(Way way, MapImage pattern, boolean disabled, double offset, double spacing, double phase,
+            LineImageAlignment align) {
         final int imgWidth = pattern.getWidth();
         final double repeat = imgWidth + spacing;
         final int imgHeight = pattern.getHeight();
@@ -743,7 +742,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         float alpha = img.getAlphaFloat();
 
-        if (alpha != 1f) {
+        if (!Utils.equalsEpsilon(alpha, 1f)) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         }
         g.rotate(theta, p.x, p.y);
@@ -998,7 +997,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         double dy = pFrom.y >= pVia.y ? pFrom.y - pVia.y : pVia.y - pFrom.y;
 
         double fromAngle;
-        if(dx == 0.0) {
+        if (Double.doubleToRawLongBits(dx) == 0) {
             fromAngle = Math.PI/2;
         } else {
             fromAngle = Math.atan(dy / dx);
@@ -1156,7 +1155,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 double start = longHalfSegmentStart.get(i);
                 double end = longHalfSegmentEnd.get(i);
                 double dist = Math.abs(0.5 * (end + start) - 0.5 * pathLength);
-                if (longHalfsegmentQuality.get(i) > bestQuality || (dist < bestDistanceToCenter && longHalfsegmentQuality.get(i) == bestQuality)) {
+                if (longHalfsegmentQuality.get(i) > bestQuality
+                        || (dist < bestDistanceToCenter && Utils.equalsEpsilon(longHalfsegmentQuality.get(i), bestQuality))) {
                     bestStart = start;
                     bestEnd = end;
                     bestDistanceToCenter = dist;
@@ -1314,7 +1314,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     /* draw arrow */
                     if (showHeadArrowOnly ? !it.hasNext() : showOrientation) {
                         final double segmentLength = p1.distance(p2);
-                        if (segmentLength != 0.0) {
+                        if (Double.doubleToRawLongBits(segmentLength) != 0) {
                             final double l =  (10. + line.getLineWidth()) / segmentLength;
 
                             final double sx = l * (p1.x - p2.x);
@@ -1327,7 +1327,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     }
                     if (showOneway) {
                         final double segmentLength = p1.distance(p2);
-                        if (segmentLength != 0.0) {
+                        if (Double.doubleToRawLongBits(segmentLength) != 0) {
                             final double nx = (p2.x - p1.x) / segmentLength;
                             final double ny = (p2.y - p1.y) / segmentLength;
 

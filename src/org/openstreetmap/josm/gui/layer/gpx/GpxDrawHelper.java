@@ -279,11 +279,12 @@ public class GpxDrawHelper {
         double now = System.currentTimeMillis()/1000.0;
         if (colored == ColorMode.TIME) {
             Date[] bounds = data.getMinMaxTimeForAllTracks();
-            if (bounds!=null) {
+            if (bounds.length >= 2) {
                 minval = bounds[0].getTime()/1000.0;
                 maxval = bounds[1].getTime()/1000.0;
             } else {
-                minval = 0; maxval=now;
+                minval = 0;
+                maxval = now;
             }
             dateScale.setRange(minval, maxval);
         }
@@ -456,7 +457,9 @@ public class GpxDrawHelper {
                         new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | hdopAlpha<<24, true);
                     g.setColor(customColoringTransparent);
                     // hdop cirles
-                    int hdopp = mv.getPoint(new LatLon(trkPnt.getCoor().lat(), trkPnt.getCoor().lon() + 2*6*hdop*360/40000000)).x - screen.x;
+                    int hdopp = mv.getPoint(new LatLon(
+                            trkPnt.getCoor().lat(),
+                            trkPnt.getCoor().lon() + 2*6*hdop*360/40000000d)).x - screen.x;
                     g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
                 }
                 if (large) {

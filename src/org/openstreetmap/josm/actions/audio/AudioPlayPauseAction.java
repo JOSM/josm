@@ -13,6 +13,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * If not playing, play the sound track from the first Audio Marker, or from the point at which it was paused.<br>
@@ -37,7 +38,7 @@ public class AudioPlayPauseAction extends JosmAction {
             if (AudioPlayer.paused() && url != null) {
                 AudioPlayer.play(url);
             } else if (AudioPlayer.playing()){
-                if (AudioPlayer.speed() != 1.0)
+                if (!Utils.equalsEpsilon(AudioPlayer.speed(), 1.0))
                     AudioPlayer.play(url, AudioPlayer.position());
                 else
                     AudioPlayer.pause();

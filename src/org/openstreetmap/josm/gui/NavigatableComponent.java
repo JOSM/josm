@@ -460,7 +460,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         }
 
-        if (!newCenter.equals(center) || (scale != newScale)) {
+        if (!newCenter.equals(center) || !Utils.equalsEpsilon(scale, newScale)) {
             if (!initial) {
                 pushZoomUndo(center, scale);
             }
@@ -483,7 +483,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
             }
         }
-        if (scale != newScale) {
+        if (!Utils.equalsEpsilon(scale, newScale)) {
             double oldScale = scale;
             scale = newScale;
             if (!initial) {
@@ -842,9 +842,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     // that is selected. This is required in order to drag
                     // the selected node if multiple nodes have the same
                     // coordinates (e.g. after unglue)
-                    useNtsel |= (distSq == minDistSq);
+                    useNtsel |= Utils.equalsEpsilon(distSq, minDistSq);
                 }
-                if (ntref == null && preferredRefs != null && distSq == minDistSq) {
+                if (ntref == null && preferredRefs != null && Utils.equalsEpsilon(distSq, minDistSq)) {
                     List<OsmPrimitive> ndRefs = nd.getReferrers();
                     for (OsmPrimitive ref: preferredRefs) {
                         if (ndRefs.contains(ref)) {

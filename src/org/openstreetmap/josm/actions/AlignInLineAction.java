@@ -362,7 +362,7 @@ public final class AlignInLineAction extends JosmAction {
             a = yB - yM;
             b = xM - xB;
             double norm = Math.sqrt(a*a + b*b);
-            if (norm == 0)
+            if (Double.doubleToRawLongBits(norm) == 0)
                 // Nodes have same coordinates !
                 throw new InvalidSelection();
             a /= norm;
