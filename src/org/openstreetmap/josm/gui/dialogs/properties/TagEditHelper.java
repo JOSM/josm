@@ -576,11 +576,11 @@ class TagEditHelper {
             keys.setPossibleACItems(keyList);
             keys.setEditable(true);
 
-            mainPanel.add(keys, GBC.eop().fill());
+            mainPanel.add(keys, GBC.eop().fill(GBC.HORIZONTAL));
 
             mainPanel.add(new JLabel(tr("Please select a value")), GBC.eol());
             values.setEditable(true);
-            mainPanel.add(values, GBC.eop().fill());
+            mainPanel.add(values, GBC.eop().fill(GBC.HORIZONTAL));
             if (itemToSelect != null) {
                 keys.setSelectedItem(itemToSelect);
                 if (lastAddValue != null) {
@@ -610,6 +610,7 @@ class TagEditHelper {
 
             suggestRecentlyAddedTags(mainPanel, recentTagsToShow, focus);
 
+            mainPanel.add(Box.createVerticalGlue(), GBC.eop().fill());
             setContent(mainPanel, false);
 
             selectKeysComboBox();
