@@ -281,7 +281,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
      * @return The URL label to create a JOSM bug report with the given debug text
      * @since 5849
      */
-    public static final UrlLabel getBugReportUrlLabel(String debugText) {
+    public static UrlLabel getBugReportUrlLabel(String debugText) {
         URL url = getBugReportUrl(debugText);
         if (url != null) {
             return new UrlLabel(url.toString(), Main.getJOSMWebsite()+"/josmticket?...", 2);

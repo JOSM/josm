@@ -102,7 +102,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
          * @param tag The tag to reverse
          * @return The reversed tag (is equal to <code>tag</code> if no change is needed)
          */
-        public static final Tag apply(final Tag tag) {
+        public static Tag apply(final Tag tag) {
             return apply(tag.getKey(), tag.getValue());
         }
 
@@ -112,7 +112,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
          * @param value The tag value
          * @return The reversed tag (is equal to <code>key=value</code> if no change is needed)
          */
-        public static final Tag apply(final String key, final String value) {
+        public static Tag apply(final String key, final String value) {
             String newKey = key;
             String newValue = value;
 

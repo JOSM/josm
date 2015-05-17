@@ -152,7 +152,7 @@ public final class GuiHelper {
      * @param continueToolTip Tooltip to display for "continue" button
      * @return true if the user wants to cancel, false if they want to continue
      */
-    public static final boolean warnUser(String title, String content, ImageIcon baseActionIcon, String continueToolTip) {
+    public static boolean warnUser(String title, String content, ImageIcon baseActionIcon, String continueToolTip) {
         ExtendedDialog dlg = new ExtendedDialog(Main.parent,
                 title, new String[] {tr("Cancel"), tr("Continue")});
         dlg.setContent(content);
@@ -176,7 +176,7 @@ public final class GuiHelper {
      * @param html HTML content to display (real error message)
      * @since 7312
      */
-    public static final void notifyUserHtmlError(Component parent, String title, String message, String html) {
+    public static void notifyUserHtmlError(Component parent, String title, String message, String html) {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(message), GBC.eol());
         p.add(new JLabel(tr("Received error page:")), GBC.eol());
@@ -196,7 +196,7 @@ public final class GuiHelper {
      * @return The disabled (grayed) version of the specified image, brightened by 20%.
      * @since 5484
      */
-    public static final Image getDisabledImage(Image image) {
+    public static Image getDisabledImage(Image image) {
         return Toolkit.getDefaultToolkit().createImage(
                 new FilteredImageSource(image.getSource(), new GrayFilter(true, 20)));
     }
@@ -207,7 +207,7 @@ public final class GuiHelper {
      * @return The disabled (grayed) version of the specified icon, brightened by 20%.
      * @since 5484
      */
-    public static final ImageIcon getDisabledIcon(ImageIcon icon) {
+    public static ImageIcon getDisabledIcon(ImageIcon icon) {
         return new ImageIcon(getDisabledImage(icon.getImage()));
     }
 
@@ -220,7 +220,7 @@ public final class GuiHelper {
      * @return {@code pane}
      * @since 5493
      */
-    public static final Component prepareResizeableOptionPane(final Component pane, final Dimension minDimension) {
+    public static Component prepareResizeableOptionPane(final Component pane, final Dimension minDimension) {
         if (pane != null) {
             pane.addHierarchyListener(new HierarchyListener() {
                 @Override
@@ -249,7 +249,7 @@ public final class GuiHelper {
      * @return The (started) timer.
      * @since 5735
      */
-    public static final Timer scheduleTimer(int initialDelay, ActionListener actionListener, boolean repeats) {
+    public static Timer scheduleTimer(int initialDelay, ActionListener actionListener, boolean repeats) {
         Timer timer = new Timer(initialDelay, actionListener);
         timer.setRepeats(repeats);
         timer.start();
