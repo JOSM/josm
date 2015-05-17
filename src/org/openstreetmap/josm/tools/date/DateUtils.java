@@ -150,7 +150,7 @@ public final class DateUtils {
      * @return a new ISO 8601 date format, for date only.
      * @since 7299
      */
-    public static final SimpleDateFormat newIsoDateFormat() {
+    public static SimpleDateFormat newIsoDateFormat() {
         return new SimpleDateFormat("yyyy-MM-dd");
     }
 
@@ -159,7 +159,7 @@ public final class DateUtils {
      * @return a new ISO 8601 date format, for date and time.
      * @since 7299
      */
-    public static final SimpleDateFormat newIsoDateTimeFormat() {
+    public static SimpleDateFormat newIsoDateTimeFormat() {
         return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
     }
 
@@ -168,7 +168,7 @@ public final class DateUtils {
      * @return a new date format, for date and time, to use for OSM API error handling.
      * @since 7299
      */
-    public static final SimpleDateFormat newOsmApiDateTimeFormat() {
+    public static SimpleDateFormat newOsmApiDateTimeFormat() {
         // Example: "2010-09-07 14:39:41 UTC".
         // Always parsed with US locale regardless of the current locale in JOSM
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US);
@@ -180,7 +180,7 @@ public final class DateUtils {
      * @return The date format
      * @since 7299
      */
-    public static final DateFormat getDateFormat(int dateStyle) {
+    public static DateFormat getDateFormat(int dateStyle) {
         if (PROP_ISO_DATES.get()) {
             return newIsoDateFormat();
         } else {
@@ -195,7 +195,7 @@ public final class DateUtils {
      * @return The formatted date
      * @since 7299
      */
-    public static final String formatDate(Date date, int dateStyle) {
+    public static String formatDate(Date date, int dateStyle) {
         CheckParameterUtil.ensureParameterNotNull(date, "date");
         return getDateFormat(dateStyle).format(date);
     }
@@ -206,7 +206,7 @@ public final class DateUtils {
      * @return The time format
      * @since 7299
      */
-    public static final DateFormat getTimeFormat(int timeStyle) {
+    public static DateFormat getTimeFormat(int timeStyle) {
         if (PROP_ISO_DATES.get()) {
             // This is not strictly conform to ISO 8601. We just want to avoid US-style times such as 3.30pm
             return new SimpleDateFormat("HH:mm:ss");
@@ -221,7 +221,7 @@ public final class DateUtils {
      * @return The formatted time
      * @since 7299
      */
-    public static final String formatTime(Date time, int timeStyle) {
+    public static String formatTime(Date time, int timeStyle) {
         CheckParameterUtil.ensureParameterNotNull(time, "time");
         return getTimeFormat(timeStyle).format(time);
     }
@@ -233,7 +233,7 @@ public final class DateUtils {
      * @return The date/time format
      * @since 7299
      */
-    public static final DateFormat getDateTimeFormat(int dateStyle, int timeStyle) {
+    public static DateFormat getDateTimeFormat(int dateStyle, int timeStyle) {
         if (PROP_ISO_DATES.get()) {
             // This is not strictly conform to ISO 8601. We just want to avoid US-style times such as 3.30pm
             // and we don't want to use the 'T' separator as a space character is much more readable
@@ -251,7 +251,7 @@ public final class DateUtils {
      * @return The formatted date/time
      * @since 7299
      */
-    public static final String formatDateTime(Date datetime, int dateStyle, int timeStyle) {
+    public static String formatDateTime(Date datetime, int dateStyle, int timeStyle) {
         CheckParameterUtil.ensureParameterNotNull(datetime, "datetime");
         return getDateTimeFormat(dateStyle, timeStyle).format(datetime);
     }
