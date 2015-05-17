@@ -117,7 +117,7 @@ public class ListListEditor extends ExtendedDialog {
     class EntryListModel extends AbstractListModel<String> {
         @Override
         public String getElementAt(int index) {
-            return (index+1) + ": " + data.get(index).toString();
+            return (index+1) + ": " + data.get(index);
         }
 
         @Override

@@ -98,7 +98,7 @@ public class RestartAction extends JosmAction {
                 // vm arguments
                 List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
                 if (Main.isDebugEnabled()) {
-                    Main.debug("VM arguments: "+arguments.toString());
+                    Main.debug("VM arguments: "+arguments);
                 }
                 for (String arg : arguments) {
                     // When run from jp2launcher.exe, jnlpx.remove is true, while it is not when run from javaws

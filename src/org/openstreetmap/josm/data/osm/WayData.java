@@ -50,7 +50,7 @@ public class WayData extends PrimitiveData implements IWay {
 
     @Override
     public String toString() {
-        return super.toString() + " WAY" + nodes.toString();
+        return super.toString() + " WAY" + nodes;
     }
 
     @Override

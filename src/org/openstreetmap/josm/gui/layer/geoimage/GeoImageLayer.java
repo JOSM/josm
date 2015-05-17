@@ -803,7 +803,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 }
 
                 if (toDelete.getFile().delete()) {
-                    Main.info("File "+toDelete.getFile().toString()+" deleted. ");
+                    Main.info("File "+toDelete.getFile()+" deleted. ");
                 } else {
                     JOptionPane.showMessageDialog(
                             Main.parent,
