@@ -558,7 +558,10 @@ public class MainApplication extends Main {
                                 break; /* we're done */
                             }
                         }
-                    } catch (Exception e) {
+                    } catch (IOException | SecurityException e) {
+                        if (Main.isDebugEnabled()) {
+                            Main.debug("Exception while checking IPv6 connectivity: "+e);
+                        }
                     }
                     if(wasv6 && !hasv6) {
                         Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));

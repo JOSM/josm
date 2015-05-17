@@ -375,7 +375,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         @Override
         public void actionPerformed(ActionEvent e) {
             TreePath path;
-            undoTree.getSelectionPath();
             if (!undoTree.isSelectionEmpty()) {
                 path = undoTree.getSelectionPath();
             } else if (!redoTree.isSelectionEmpty()) {
@@ -385,7 +384,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
             OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer == null) return;
-            editLayer.data.setSelected( getAffectedPrimitives(path));
+            editLayer.data.setSelected(getAffectedPrimitives(path));
         }
 
         @Override

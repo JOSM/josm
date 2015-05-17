@@ -305,23 +305,16 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         }
 
         this.bbox = bbox;
-        double minLon = bbox.getMinLon();
-        double maxLon = bbox.getMaxLon();
-
-        if (bbox.crosses180thMeridian()) {
-            minLon -= 360.0;
-        }
-
         iSelectionRectStart = new Coordinate(bbox.getMinLat(), bbox.getMinLon());
         iSelectionRectEnd = new Coordinate(bbox.getMaxLat(), bbox.getMaxLon());
 
         // calc the screen coordinates for the new selection rectangle
-        MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
-        MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
+        MapMarkerDot min = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
+        MapMarkerDot max = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
 
         List<MapMarker> marker = new ArrayList<>(2);
-        marker.add(xmin_ymin);
-        marker.add(xmax_ymax);
+        marker.add(min);
+        marker.add(max);
         setMapMarkerList(marker);
         setDisplayToFitMapMarkers();
         zoomOut();

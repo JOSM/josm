@@ -630,8 +630,6 @@ public final class Geometry {
         Node lastN = null;
         for (Node n : way.getNodes()) {
             if (lastN != null) {
-                n.getEastNorth().getX();
-
                 area += (calcX(n) * calcY(lastN)) - (calcY(n) * calcX(lastN));
             }
             lastN = n;

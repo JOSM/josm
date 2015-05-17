@@ -83,14 +83,14 @@ public class ImageOverlay {
         overlay = image.get();
         int x, y;
         if (width == -1 && offsetLeft < 0) {
-            x = new Double(w*offsetRight).intValue() - overlay.getIconWidth();
+            x = (int)(w*offsetRight) - overlay.getIconWidth();
         } else {
-            x = new Double(w*offsetLeft).intValue();
+            x = (int)(w*offsetLeft);
         }
         if (height == -1 && offsetTop < 0) {
-            y = new Double(h*offsetBottom).intValue() - overlay.getIconHeight();
+            y = (int)(h*offsetBottom) - overlay.getIconHeight();
         } else {
-            y = new Double(h*offsetTop).intValue();
+            y = (int)(h*offsetTop);
         }
         overlay.paintIcon(null, ground.getGraphics(), x, y);
         return ground;

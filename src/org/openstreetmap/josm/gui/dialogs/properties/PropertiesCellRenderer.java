@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -64,7 +65,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                     StringBuilder sb = new StringBuilder("<");
                     if (otherCount == 1) {
                         for (Map.Entry<?, ?> entry : v.entrySet()) { // Find the non-blank value in the map
-                            if ( entry.getKey() != "") {
+                            if (!Objects.equals(entry.getKey(), "")) {
                                 /* I18n: properties display partial string joined with comma, frst is count, second is value */
                                 sb.append(tr("{0} ''{1}''", entry.getValue().toString(), entry.getKey()));
                             }

@@ -2,9 +2,6 @@
 package org.openstreetmap.josm.gui.progress;
 
 import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -34,7 +31,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     }
 
     public static final int PROGRESS_BAR_MAX = 10000;
-    private final Window dialogParent;
+    private final Component dialogParent;
 
     private int currentProgressValue = 0;
     private String customText;
@@ -153,12 +150,10 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             @Override
             public void run() {
                 Main.currentProgressMonitor = PleaseWaitProgressMonitor.this;
-                if (dialogParent instanceof Frame && dialog == null) {
-                    dialog = new PleaseWaitDialog(dialogParent);
-                } else if (dialogParent instanceof Dialog && dialog == null) {
+                if (dialogParent != null && dialog == null) {
                     dialog = new PleaseWaitDialog(dialogParent);
                 } else
-                    throw new ProgressException("PleaseWaitDialog parent must be either Frame or Dialog");
+                    throw new ProgressException("PleaseWaitDialog parent must be set");
 
                 if (windowTitle != null) {
                     dialog.setTitle(windowTitle);
