@@ -122,7 +122,7 @@ public class DeleteCommand extends Command {
         // Make copy and remove all references (to prevent inconsistent dataset (delete referenced) while command is executed)
         for (OsmPrimitive osm: toDelete) {
             if (osm.isDeleted())
-                throw new IllegalArgumentException(osm.toString() + " is already deleted");
+                throw new IllegalArgumentException(osm + " is already deleted");
             clonedPrimitives.put(osm, osm.save());
 
             if (osm instanceof Way) {

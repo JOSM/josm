@@ -642,7 +642,7 @@ public class MapPaintDialog extends ToggleDialog {
             txtErrors.setEditable(false);
             p.add(new JScrollPane(txtErrors), GBC.std().fill());
             for (Throwable t : s.getErrors()) {
-                txtErrors.append(t.toString() + "\n");
+                txtErrors.append(t + "\n");
             }
         }
     }

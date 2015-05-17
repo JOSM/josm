@@ -139,7 +139,7 @@ public class UploadLayerTask extends AbstractIOTask implements Runnable {
             }
         } catch (Exception sxe) {
             if (isCanceled()) {
-                Main.info("Ignoring exception caught because upload is canceled. Exception is: " + sxe.toString());
+                Main.info("Ignoring exception caught because upload is canceled. Exception is: " + sxe);
                 return;
             }
             setLastException(sxe);

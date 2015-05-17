@@ -245,7 +245,7 @@ public final class Utils {
                 a = "";
             }
             if (s != null) {
-                s.append(sep).append(a.toString());
+                s.append(sep).append(a);
             } else {
                 s = new StringBuilder(a.toString());
             }

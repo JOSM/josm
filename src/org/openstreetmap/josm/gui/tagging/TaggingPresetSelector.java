@@ -205,7 +205,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
         @Override
         public String toString() {
-            return classification + " " + preset.toString();
+            return classification + " " + preset;
         }
     }
 

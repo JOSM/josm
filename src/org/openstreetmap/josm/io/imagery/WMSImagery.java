@@ -138,7 +138,7 @@ public class WMSImagery {
             return;
         }
 
-        Main.info("GET " + getCapabilitiesUrl.toString());
+        Main.info("GET " + getCapabilitiesUrl);
         URLConnection openConnection = Utils.openHttpConnection(getCapabilitiesUrl);
         StringBuilder ba = new StringBuilder();
 

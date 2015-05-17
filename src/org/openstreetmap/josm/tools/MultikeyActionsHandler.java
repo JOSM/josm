@@ -84,7 +84,7 @@ public final class MultikeyActionsHandler {
 
         @Override
         public String toString() {
-            return "MultikeyAction" + action.toString();
+            return "MultikeyAction" + action;
         }
     }
 

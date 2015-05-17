@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  * Marker class with Web URL activation.
  *
  * @author Frederik Ramm
- *
+ * @since 200
  */
 public class WebMarker extends ButtonMarker {
 
@@ -35,13 +35,14 @@ public class WebMarker extends ButtonMarker {
         this.webUrl = webUrl;
     }
 
-    @Override public void actionPerformed(ActionEvent ev) {
+    @Override
+    public void actionPerformed(ActionEvent ev) {
         String error = OpenBrowser.displayUrl(webUrl.toString());
         if (error != null) {
             setErroneous(true);
             new Notification(
                     "<b>" + tr("There was an error while trying to display the URL for this marker") + "</b><br>" +
-                                  tr("(URL was: ") + webUrl.toString() + ")" + "<br>" + error)
+                                  tr("(URL was: ") + webUrl + ")" + "<br>" + error)
                     .setIcon(JOptionPane.ERROR_MESSAGE)
                     .setDuration(Notification.TIME_LONG)
                     .show();

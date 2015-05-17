@@ -35,15 +35,12 @@ public final class CompoundTemplateEntry implements TemplateEntry {
         return true;
     }
 
-
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         for (TemplateEntry te: entries) {
-            result.append(te.toString());
+            result.append(te);
         }
         return result.toString();
     }
-
-
 }
