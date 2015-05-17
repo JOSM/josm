@@ -196,7 +196,7 @@ public final class I18n {
      * @see #trc
      * @see #trnc
      */
-    public static final String tr(String text, Object... objects) {
+    public static String tr(String text, Object... objects) {
         if (text == null) return null;
         return MessageFormat.format(gettext(text, null), objects);
     }
@@ -213,7 +213,7 @@ public final class I18n {
      * @see #trn
      * @see #trnc
      */
-    public static final String trc(String context, String text) {
+    public static String trc(String context, String text) {
         if (context == null)
             return tr(text);
         if (text == null)
@@ -221,7 +221,7 @@ public final class I18n {
         return MessageFormat.format(gettext(text, context), (Object)null);
     }
 
-    public static final String trc_lazy(String context, String text) {
+    public static String trc_lazy(String context, String text) {
         if (context == null)
             return tr(text);
         if (text == null)
@@ -239,11 +239,11 @@ public final class I18n {
      * @param text the string to be marked for translation.
      * @return {@code text} unmodified.
      */
-    public static final String marktr(String text) {
+    public static String marktr(String text) {
         return text;
     }
 
-    public static final String marktrc(String context, String text) {
+    public static String marktrc(String context, String text) {
         return text;
     }
 
@@ -270,7 +270,7 @@ public final class I18n {
      * @see #trc
      * @see #trnc
      */
-    public static final String trn(String singularText, String pluralText, long n, Object... objects) {
+    public static String trn(String singularText, String pluralText, long n, Object... objects) {
         return MessageFormat.format(gettextn(singularText, pluralText, null, n), objects);
     }
 
@@ -297,11 +297,11 @@ public final class I18n {
      * @see #trc
      * @see #trn
      */
-    public static final String trnc(String context, String singularText, String pluralText, long n, Object... objects) {
+    public static String trnc(String context, String singularText, String pluralText, long n, Object... objects) {
         return MessageFormat.format(gettextn(singularText, pluralText, context, n), objects);
     }
 
-    private static final String gettext(String text, String ctx, boolean lazy) {
+    private static String gettext(String text, String ctx, boolean lazy) {
         int i;
         if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0) {
             ctx = text.substring(2,i-1);
@@ -321,16 +321,16 @@ public final class I18n {
         return lazy ? gettext(text, null) : text;
     }
 
-    private static final String gettext(String text, String ctx) {
+    private static String gettext(String text, String ctx) {
         return gettext(text, ctx, false);
     }
 
     /* try without context, when context try fails */
-    private static final String gettext_lazy(String text, String ctx) {
+    private static String gettext_lazy(String text, String ctx) {
         return gettext(text, ctx, true);
     }
 
-    private static final String gettextn(String text, String plural, String ctx, long num) {
+    private static String gettextn(String text, String plural, String ctx, long num) {
         int i;
         if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0) {
             ctx = text.substring(2,i-1);
@@ -359,7 +359,7 @@ public final class I18n {
      * Get a list of all available JOSM Translations.
      * @return an array of locale objects.
      */
-    public static final Locale[] getAvailableTranslations() {
+    public static Locale[] getAvailableTranslations() {
         Collection<Locale> v = new ArrayList<>(languages.size());
         if(getTranslationFile("en") != null) {
             for (String loc : languages.keySet()) {

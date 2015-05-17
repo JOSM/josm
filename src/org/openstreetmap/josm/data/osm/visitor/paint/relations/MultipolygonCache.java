@@ -57,7 +57,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
      * Replies the unique instance.
      * @return the unique instance
      */
-    public static final MultipolygonCache getInstance() {
+    public static MultipolygonCache getInstance() {
         return INSTANCE;
     }
 
@@ -146,7 +146,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         return result;
     }
 
-    private static final boolean isMultipolygon(OsmPrimitive p) {
+    private static boolean isMultipolygon(OsmPrimitive p) {
         return p instanceof Relation && ((Relation) p).isMultipolygon();
     }
 

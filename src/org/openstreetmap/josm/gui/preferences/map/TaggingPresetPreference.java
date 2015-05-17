@@ -66,7 +66,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
      * @param provider The preset source provider
      * @return {@code true}, if the provider has been added, {@code false} otherwise
      */
-    public static final boolean registerSourceProvider(SourceProvider provider) {
+    public static boolean registerSourceProvider(SourceProvider provider) {
         if (provider != null)
             return presetSourceProviders.add(provider);
         return false;

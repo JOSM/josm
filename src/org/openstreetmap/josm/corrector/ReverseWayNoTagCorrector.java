@@ -50,7 +50,7 @@ public final class ReverseWayNoTagCorrector {
      * @param way The way to look for
      * @return tags that imply a semantic meaning from <code>way</code> direction and cannot be changed
      */
-    public static final TagCollection getDirectionalTags(Way way) {
+    public static TagCollection getDirectionalTags(Way way) {
         return directionalTags.intersect(TagCollection.from(way));
     }
 
