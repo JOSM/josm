@@ -537,7 +537,7 @@ public class MapCSSStyleSource extends StyleSource {
         for (MapCSSRule r : rules) {
             if (r.selector instanceof GeneralSelector) {
                 GeneralSelector gs = (GeneralSelector) r.selector;
-                if (gs.getBase().equals("setting")) {
+                if ("setting".equals(gs.getBase())) {
                     if (!gs.matchesConditions(env)) {
                         continue;
                     }

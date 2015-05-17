@@ -481,7 +481,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+            if (JSplitPane.DIVIDER_LOCATION_PROPERTY.equals(evt.getPropertyName())) {
                 int newVal = (Integer) evt.getNewValue();
                 if (getHeight() != 0) {
                     dividerLocation = (double) newVal / (double) getHeight();

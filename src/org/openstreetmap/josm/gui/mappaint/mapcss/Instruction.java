@@ -39,7 +39,7 @@ public interface Instruction extends StyleKeys {
                 Object litValue = ((LiteralExpression) val).evaluate(null);
                 if (litValue instanceof Keyword && "none".equals(((Keyword) litValue).val)) {
                     this.val = null;
-                } else if (key.equals(TEXT)) {
+                } else if (TEXT.equals(key)) {
                     /* Special case for declaration 'text: ...'
                      *
                      * - Treat the value 'auto' as keyword.
@@ -76,7 +76,7 @@ public interface Instruction extends StyleKeys {
             } else {
                 value = val;
             }
-            if (key.equals(ICON_IMAGE) || key.equals(FILL_IMAGE) || key.equals(REPEAT_IMAGE)) {
+            if (ICON_IMAGE.equals(key) || FILL_IMAGE.equals(key) || REPEAT_IMAGE.equals(key)) {
                 if (value instanceof String) {
                     value = new IconReference((String) value, env.source);
                 }
