@@ -1,6 +1,4 @@
-//License: GPL. For details, see LICENSE file.
-
-//TODO: this is far from complete, but can emulate old RawGps behaviour
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;

@@ -1,4 +1,4 @@
-// License: GPL.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
 //// Taken from http://www.bmsi.com/java/#diff

@@ -1,4 +1,4 @@
-// License: GPL. See LICENSE file for details.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.util;
 
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -16,8 +16,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author frsantos
  */
-public class MultipleNameVisitor extends NameVisitor
-{
+public class MultipleNameVisitor extends NameVisitor {
+
     public static final int MULTIPLE_NAME_MAX_LENGTH = 80;
 
     /** The class name of the combined primitives */

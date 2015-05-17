@@ -1,4 +1,4 @@
-// License: GPL. See LICENSE file for details.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -9,6 +9,7 @@ import java.beans.PropertyChangeListener;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.bbox.BBoxChooser;
 import org.openstreetmap.josm.gui.bbox.TileSelectionBBoxChooser;
+
 /**
  * Tile selector.
  *

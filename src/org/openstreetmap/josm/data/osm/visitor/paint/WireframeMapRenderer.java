@@ -1,4 +1,4 @@
-/* License: GPL. For details, see LICENSE file. */
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import java.awt.BasicStroke;

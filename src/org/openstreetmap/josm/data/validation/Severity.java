@@ -1,4 +1,4 @@
-// License: GPL. See LICENSE file for details.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;

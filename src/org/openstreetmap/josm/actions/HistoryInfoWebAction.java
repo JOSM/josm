@@ -1,4 +1,4 @@
-//License: GPL. For details, see LICENSE file.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
@@ -13,6 +13,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class HistoryInfoWebAction extends AbstractInfoAction {
 
+    /**
+     * Constructs a new {@code HistoryInfoWebAction}.
+     */
     public HistoryInfoWebAction() {
         super(tr("History (web)"), "dialogs/history",
                 tr("Display history information about OSM ways, nodes, or relations in web browser."),
