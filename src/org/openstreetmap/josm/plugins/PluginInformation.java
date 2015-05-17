@@ -304,8 +304,8 @@ public class PluginInformation {
      */
     public String getDescriptionAsHtml() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html><body>");
-        sb.append(description == null ? tr("no description available") : description);
+        sb.append("<html><body>")
+          .append(description == null ? tr("no description available") : description);
         if (link != null) {
             sb.append(" <a href=\"").append(link).append("\">").append(tr("More info...")).append("</a>");
         }

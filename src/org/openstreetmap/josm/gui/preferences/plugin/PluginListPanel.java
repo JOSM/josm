@@ -177,15 +177,14 @@ public class PluginListPanel extends VerticallyScrollablePanel {
      */
     private static void alertPluginStillRequired(Component parent, String plugin, Set<String> otherPlugins) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append(trn("Plugin {0} is still required by this plugin:",
+        sb.append("<html>")
+          .append(trn("Plugin {0} is still required by this plugin:",
                 "Plugin {0} is still required by these {1} plugins:",
                 otherPlugins.size(),
                 plugin,
-                otherPlugins.size()
-        ));
-        sb.append(Utils.joinAsHtmlUnorderedList(otherPlugins));
-        sb.append("</html>");
+                otherPlugins.size()))
+          .append(Utils.joinAsHtmlUnorderedList(otherPlugins))
+          .append("</html>");
         JOptionPane.showMessageDialog(
                 parent,
                 sb.toString(),

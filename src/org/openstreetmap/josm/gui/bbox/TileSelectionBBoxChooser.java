@@ -630,20 +630,19 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
     /**
      * Represents a rectangular area of tiles at a given zoom level.
-     *
      */
     private static class TileBounds {
-        public Point min;
-        public Point max;
-        public int zoomLevel;
+        private Point min;
+        private Point max;
+        private int zoomLevel;
 
-        public TileBounds() {
+        private TileBounds() {
             zoomLevel = 0;
             min = new Point(0,0);
             max = new Point(0,0);
         }
 
-        public TileBounds(Point min, Point max, int zoomLevel) {
+        private TileBounds(Point min, Point max, int zoomLevel) {
             this.min = min;
             this.max = max;
             this.zoomLevel = zoomLevel;
@@ -652,9 +651,9 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append("min=").append(min.x).append(",").append(min.y).append(",");
-            sb.append("max=").append(max.x).append(",").append(max.y).append(",");
-            sb.append("zoom=").append(zoomLevel);
+            sb.append("min=").append(min.x).append(",").append(min.y).append(",")
+              .append("max=").append(max.x).append(",").append(max.y).append(",")
+              .append("zoom=").append(zoomLevel);
             return sb.toString();
         }
     }
@@ -666,7 +665,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         private Point min;
         private Point max;
 
-        public TileBoundsMapView() {
+        private TileBoundsMapView() {
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             TileLoader loader = tileController.getTileLoader();
             if (loader instanceof OsmTileLoader) {

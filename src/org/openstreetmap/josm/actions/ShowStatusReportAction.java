@@ -68,35 +68,36 @@ public final class ShowStatusReportAction extends JosmAction {
      */
     public static String getReportHeader() {
         StringBuilder text = new StringBuilder();
-        text.append(Version.getInstance().getReleaseAttributes());
-        text.append("\n");
-        text.append("Identification: " + Version.getInstance().getAgentString());
-        text.append("\n");
-        text.append("Memory Usage: ");
-        text.append(Runtime.getRuntime().totalMemory()/1024/1024);
-        text.append(" MB / ");
-        text.append(Runtime.getRuntime().maxMemory()/1024/1024);
-        text.append(" MB (");
-        text.append(Runtime.getRuntime().freeMemory()/1024/1024);
-        text.append(" MB allocated, but free)");
-        text.append("\n");
-        text.append("Java version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + ", " + System.getProperty("java.vm.name"));
-        text.append("\n");
+        text.append(Version.getInstance().getReleaseAttributes())
+            .append("\n")
+            .append("Identification: ").append(Version.getInstance().getAgentString())
+            .append("\n")
+            .append("Memory Usage: ")
+            .append(Runtime.getRuntime().totalMemory()/1024/1024)
+            .append(" MB / ")
+            .append(Runtime.getRuntime().maxMemory()/1024/1024)
+            .append(" MB (")
+            .append(Runtime.getRuntime().freeMemory()/1024/1024)
+            .append(" MB allocated, but free)")
+            .append("\n")
+            .append("Java version: ").append(System.getProperty("java.version")).append(", ")
+            .append(System.getProperty("java.vendor")).append(", ").append(System.getProperty("java.vm.name"))
+            .append("\n");
         if (Main.platform.getClass() == PlatformHookUnixoid.class) {
             // Add Java package details
             String packageDetails = ((PlatformHookUnixoid) Main.platform).getJavaPackageDetails();
             if (packageDetails != null) {
-                text.append("Java package: ");
-                text.append(packageDetails);
-                text.append("\n");
+                text.append("Java package: ")
+                    .append(packageDetails)
+                    .append("\n");
             }
             // Add WebStart package details if run from JNLP
             if (Package.getPackage("javax.jnlp") != null) {
                 String webStartDetails = ((PlatformHookUnixoid) Main.platform).getWebStartPackageDetails();
                 if (webStartDetails != null) {
-                    text.append("WebStart package: ");
-                    text.append(webStartDetails);
-                    text.append("\n");
+                    text.append("WebStart package: ")
+                        .append(webStartDetails)
+                        .append("\n");
                 }
             }
         }
@@ -147,9 +148,9 @@ public final class ShowStatusReportAction extends JosmAction {
                 }
             }
         }
-        text.append("\n");
-        text.append(PluginHandler.getBugReportText());
-        text.append("\n");
+        text.append("\n")
+            .append(PluginHandler.getBugReportText())
+            .append("\n");
 
         Collection<String> errorsWarnings = Main.getLastErrorAndWarnings();
         if (!errorsWarnings.isEmpty()) {

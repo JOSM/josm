@@ -677,8 +677,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             if (allElements) {
                 result.append('A');
             }
-            result.append(' ');
-            result.append(text);
+            result.append(' ')
+                  .append(text);
             return result.toString();
         }
     }

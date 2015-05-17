@@ -141,11 +141,11 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
 
     protected void updateSummary() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append(buildStrategySummary());
-        sb.append("<br><br>");
-        sb.append(buildChangesetSummary());
-        sb.append("</html>");
+        sb.append("<html>")
+          .append(buildStrategySummary())
+          .append("<br><br>")
+          .append(buildChangesetSummary())
+          .append("</html>");
         jepMessage.setText(sb.toString());
     }
 

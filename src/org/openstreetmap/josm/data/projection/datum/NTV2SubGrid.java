@@ -300,29 +300,29 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @return textual details about the sub grid
      */
     public String getDetails() {
-        StringBuilder buf = new StringBuilder("Sub Grid : ");
-        buf.append(subGridName);
-        buf.append("\nParent   : ");
-        buf.append(parentSubGridName);
-        buf.append("\nCreated  : ");
-        buf.append(created);
-        buf.append("\nUpdated  : ");
-        buf.append(updated);
-        buf.append("\nMin Lat  : ");
-        buf.append(minLat);
-        buf.append("\nMax Lat  : ");
-        buf.append(maxLat);
-        buf.append("\nMin Lon  : ");
-        buf.append(minLon);
-        buf.append("\nMax Lon  : ");
-        buf.append(maxLon);
-        buf.append("\nLat Intvl: ");
-        buf.append(latInterval);
-        buf.append("\nLon Intvl: ");
-        buf.append(lonInterval);
-        buf.append("\nNode Cnt : ");
-        buf.append(nodeCount);
-        return buf.toString();
+        StringBuilder buff = new StringBuilder("Sub Grid : ");
+        buff.append(subGridName)
+            .append("\nParent   : ")
+            .append(parentSubGridName)
+            .append("\nCreated  : ")
+            .append(created)
+            .append("\nUpdated  : ")
+            .append(updated)
+            .append("\nMin Lat  : ")
+            .append(minLat)
+            .append("\nMax Lat  : ")
+            .append(maxLat)
+            .append("\nMin Lon  : ")
+            .append(minLon)
+            .append("\nMax Lon  : ")
+            .append(maxLon)
+            .append("\nLat Intvl: ")
+            .append(latInterval)
+            .append("\nLon Intvl: ")
+            .append(lonInterval)
+            .append("\nNode Cnt : ")
+            .append(nodeCount);
+        return buff.toString();
     }
 
     /**
