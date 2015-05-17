@@ -203,7 +203,7 @@ public class SessionWriter {
             el.setAttribute("index", Integer.toString(index+1));
             el.setAttribute("name", layer.getName());
             el.setAttribute("visible", Boolean.toString(layer.isVisible()));
-            if (layer.getOpacity() != 1.0) {
+            if (!Utils.equalsEpsilon(layer.getOpacity(), 1.0)) {
                 el.setAttribute("opacity", Double.toString(layer.getOpacity()));
             }
             Set<Layer> deps = dependencies.get(layer);

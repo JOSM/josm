@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a simple data class for "rectangular" areas of the world, given in
@@ -24,24 +25,27 @@ public class ProjectionBounds {
         this.maxEast = max.east();
         this.maxNorth = max.north();
     }
+
     public ProjectionBounds(EastNorth p) {
         this.minEast = this.maxEast = p.east();
         this.minNorth = this.maxNorth = p.north();
     }
+
     public ProjectionBounds(EastNorth center, double east, double north) {
         this.minEast = center.east()-east/2.0;
         this.minNorth = center.north()-north/2.0;
         this.maxEast = center.east()+east/2.0;
         this.maxNorth = center.north()+north/2.0;
     }
+
     public ProjectionBounds(double minEast, double minNorth, double maxEast, double maxNorth) {
         this.minEast = minEast;
         this.minNorth = minNorth;
         this.maxEast = maxEast;
         this.maxNorth = maxNorth;
     }
-    public void extend(EastNorth e)
-    {
+
+    public void extend(EastNorth e) {
         if (e.east() < minEast) {
             minEast = e.east();
         }
@@ -55,12 +59,13 @@ public class ProjectionBounds {
             maxNorth = e.north();
         }
     }
-    public EastNorth getCenter()
-    {
+
+    public EastNorth getCenter() {
         return new EastNorth((minEast + maxEast) / 2.0, (minNorth + maxNorth) / 2.0);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "ProjectionBounds["+minEast+","+minNorth+","+maxEast+","+maxNorth+"]";
     }
 
@@ -84,6 +89,6 @@ public class ProjectionBounds {
     }
 
     public boolean hasExtend() {
-        return minEast != maxEast || minNorth != maxNorth;
+        return !Utils.equalsEpsilon(minEast, maxEast) || !Utils.equalsEpsilon(minNorth, maxNorth);
     }
 }

@@ -59,7 +59,7 @@ public class PlayHeadDragMode extends MapMode {
             playHeadMarker.startDrag();
             dragging = true;
         }
-        if (p.distance(mousePos) == 0) return;
+        if (Double.doubleToRawLongBits(p.distance(mousePos)) == 0) return;
         playHeadMarker.drag(Main.map.mapView.getEastNorth(ev.getX(), ev.getY()));
         mousePos = p;
     }

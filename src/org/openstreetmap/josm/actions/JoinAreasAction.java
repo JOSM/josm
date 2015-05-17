@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Join Areas (i.e. closed ways and multipolygons).
@@ -356,7 +357,7 @@ public class JoinAreasAction extends JosmAction {
 
                 double candidateAngle = getAngle(headNode, candidatePrevNode, prevNode);
 
-                if(mostLeft == null || candidateAngle < angle || (candidateAngle == angle && !candidateComingToHead)) {
+                if(mostLeft == null || candidateAngle < angle || (Utils.equalsEpsilon(candidateAngle, angle) && !candidateComingToHead)) {
                     // Candidate is most left
                     mostLeft = candidateWay;
                     comingToHead = candidateComingToHead;

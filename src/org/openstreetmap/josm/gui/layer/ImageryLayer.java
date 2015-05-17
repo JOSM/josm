@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 public abstract class ImageryLayer extends Layer {
 
@@ -142,7 +143,7 @@ public abstract class ImageryLayer extends Layer {
                 panel.add(new JLabel(tr("URL: ")), GBC.std().insets(0, 5, 2, 0));
                 panel.add(new UrlLabel(url), GBC.eol().insets(2, 5, 10, 0));
             }
-            if (dx != 0.0 || dy != 0.0) {
+            if (Double.doubleToRawLongBits(dx) != 0 || Double.doubleToRawLongBits(dy) != 0) {
                 panel.add(new JLabel(tr("Offset: ") + dx + ";" + dy), GBC.eol().insets(0, 5, 10, 0));
             }
         }
@@ -207,7 +208,7 @@ public abstract class ImageryLayer extends Layer {
                 continue;
             }
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(new ApplyOffsetAction(b));
-            if (b.dx == dx && b.dy == dy) {
+            if (Utils.equalsEpsilon(b.dx, dx) && Utils.equalsEpsilon(b.dy, dy)) {
                 item.setSelected(true);
             }
             subMenu.add(item);

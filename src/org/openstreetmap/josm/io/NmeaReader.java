@@ -269,7 +269,7 @@ public class NmeaReader {
                     throw new IllegalDataException("Malformed lat/lon");
                 }
 
-                if ((latLon.lat()==0.0) && (latLon.lon()==0.0)) {
+                if (LatLon.ZERO.equals(latLon)) {
                     ps.zeroCoord++;
                     return false;
                 }
@@ -383,7 +383,7 @@ public class NmeaReader {
                         e[GPRMC.WIDTH_NORTH.position],
                         e[GPRMC.LENGTH_EAST.position]
                 );
-                if(latLon.lat()==0.0 && latLon.lon()==0.0) {
+                if (LatLon.ZERO.equals(latLon)) {
                     ps.zeroCoord++;
                     return false;
                 }

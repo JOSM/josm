@@ -906,7 +906,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 public void stateChanged(ChangeEvent e) {
                     // parse slider position into real timezone
                     double tz = Math.abs(sldTimezone.getValue());
-                    String zone = tz % 2 == 0
+                    String zone = Double.doubleToRawLongBits(tz % 2) == 0
                     ? (int)Math.floor(tz/2) + ":00"
                             : (int)Math.floor(tz/2) + ":30";
                     if(sldTimezone.getValue() < 0) {
