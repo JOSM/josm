@@ -230,7 +230,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
      * @return the name of this primitive
      */
     public String getLocalName() {
-        String key = "name:" + Locale.getDefault().toString();
+        String key = "name:" + Locale.getDefault();
         if (get(key) != null)
             return get(key);
         key = "name:" + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry();

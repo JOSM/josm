@@ -178,7 +178,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 }
             }
             for (Entry<String, Setting<?>> entry : settings.entrySet()) {
-                text.append(entry.getKey()).append("=").append(entry.getValue().getValue().toString()).append("\n");
+                text.append(entry.getKey()).append("=").append(entry.getValue().getValue()).append("\n");
             }
         } catch (Exception x) {
             Main.error(x);

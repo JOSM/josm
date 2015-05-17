@@ -84,17 +84,19 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
         this.value = value;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("<val='");
         sb.append(value);
         sb.append("',");
-        sb.append(priority.toString());
+        sb.append(priority);
         sb.append(">");
         return sb.toString();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result
@@ -103,7 +105,8 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
         return result;
     }
 
-    @Override public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)

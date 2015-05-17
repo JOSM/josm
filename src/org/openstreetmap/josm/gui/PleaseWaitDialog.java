@@ -31,7 +31,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
 
     private final JProgressBar progressBar = new JProgressBar();
 
-    public final JLabel currentAction = new JLabel("");
+    private final JLabel currentAction = new JLabel("");
     private final JLabel customText = new JLabel("");
     public final transient BoundedRangeModel progress = progressBar.getModel();
     private JButton btnCancel;

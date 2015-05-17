@@ -1112,7 +1112,7 @@ public class MultiSplitLayout implements LayoutManager {
 
         @Override
         public String toString() {
-            return "MultiSplitLayout.Divider " + getBounds().toString();
+            return "MultiSplitLayout.Divider " + getBounds();
         }
     }
 

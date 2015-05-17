@@ -212,7 +212,7 @@ public final class Cascade implements Cloneable {
             } else if (val instanceof Color) {
                 res.append(Utils.toString((Color)val));
             } else if (val != null) {
-                res.append(val.toString());
+                res.append(val);
             }
             res.append("; ");
         }

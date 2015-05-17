@@ -58,7 +58,7 @@ public class ThumbsLoader implements Runnable {
     }
 
     private BufferedImage loadThumb(ImageEntry entry) {
-        final String cacheIdent = entry.getFile().toString()+":"+maxSize;
+        final String cacheIdent = entry.getFile()+":"+maxSize;
 
         if (!cacheOff) {
             BufferedImage cached = cache.getImg(cacheIdent);
