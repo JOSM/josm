@@ -134,7 +134,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
 
     @Override
     public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content) {
-        if(noTileHeaders != null) {
+        if (noTileHeaders != null && headers != null) {
             for (Entry<String, String> searchEntry: noTileHeaders.entrySet()) {
                 List<String> headerVals = headers.get(searchEntry.getKey());
                 if (headerVals != null) {
