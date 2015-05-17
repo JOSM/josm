@@ -107,7 +107,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
             if (title != null) {
                 requestedState.title = title;
             }
-            requestedState.intermediate = false;
+            requestedState.intermediate = Boolean.FALSE;
         } else {
             checkState(State.IN_TASK);
             if (title != null) {
@@ -125,7 +125,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
             if (title != null) {
                 requestedState.title = title;
             }
-            requestedState.intermediate = true;
+            requestedState.intermediate = Boolean.TRUE;
         } else {
             checkState(State.IN_TASK);
             if (title != null) {

@@ -28,9 +28,9 @@ public class RightAndLefthandTraffic {
         public Boolean get(LatLon ll) {
             for (Area a : leftHandTrafficPolygons) {
                 if (a.contains(ll.lon(), ll.lat()))
-                    return true;
+                    return Boolean.TRUE;
             }
-            return false;
+            return Boolean.FALSE;
         }
 
         @Override
@@ -39,11 +39,11 @@ public class RightAndLefthandTraffic {
             for (Area a : leftHandTrafficPolygons) {
                 PolygonIntersection is = Geometry.polygonIntersection(abox, a, 1e-10 /* using deg and not meters */);
                 if (is == PolygonIntersection.FIRST_INSIDE_SECOND)
-                    return true;
+                    return Boolean.TRUE;
                 if (is != PolygonIntersection.OUTSIDE)
                     return null;
             }
-            return false;
+            return Boolean.FALSE;
         }
     }
 

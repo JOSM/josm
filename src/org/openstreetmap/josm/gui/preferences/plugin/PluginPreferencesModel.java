@@ -83,7 +83,7 @@ public class PluginPreferencesModel extends Observable {
         for (PluginInformation pi: availablePlugins) {
             if (selectedPluginsMap.get(pi) == null) {
                 if (activePlugins.contains(pi.name)) {
-                    selectedPluginsMap.put(pi, true);
+                    selectedPluginsMap.put(pi, Boolean.TRUE);
                 }
             }
         }

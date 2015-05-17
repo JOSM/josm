@@ -275,14 +275,13 @@ public class ColorPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        Boolean ret = false;
+        boolean ret = false;
         for(String d : del) {
             Main.pref.put("color."+d, null);
         }
         for (int i = 0; i < colors.getRowCount(); ++i) {
             String key = (String)colors.getValueAt(i, 0);
-            if(Main.pref.putColor(key, (Color)colors.getValueAt(i, 1)))
-            {
+            if(Main.pref.putColor(key, (Color)colors.getValueAt(i, 1))) {
                 if(key.startsWith("mappaint.")) {
                     ret = true;
                 }

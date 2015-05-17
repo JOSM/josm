@@ -110,7 +110,7 @@ public final class DistributeAction extends JosmAction {
      * @param nodes Selected nodes
      * @return true in this case
      */
-    private Boolean checkDistributeWay(Collection<Way> ways, Collection<Node> nodes) {
+    private boolean checkDistributeWay(Collection<Way> ways, Collection<Node> nodes) {
         if(ways.size() == 1 && nodes.size() <= 2) {
             Way w = ways.iterator().next();
             Set<Node> unduplicated = new HashSet<>(w.getNodes());

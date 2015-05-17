@@ -554,11 +554,11 @@ public final class TaggingPresetItems {
             case NONE:
                 return null;
             case KEY:
-                return tags.containsKey(key) ? true : null;
+                return tags.containsKey(key) ? Boolean.TRUE : null;
             case KEY_REQUIRED:
                 return tags.containsKey(key);
             case KEY_VALUE:
-                return tags.containsKey(key) && getValues().contains(tags.get(key)) ? true : null;
+                return tags.containsKey(key) && getValues().contains(tags.get(key)) ? Boolean.TRUE : null;
             case KEY_VALUE_REQUIRED:
                 return tags.containsKey(key) && getValues().contains(tags.get(key));
             default:

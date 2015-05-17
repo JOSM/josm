@@ -133,7 +133,8 @@ public class RemoteControlHttpsServer extends Thread {
      * @param algorithm the signing algorithm, eg "SHA256withRSA"
      * @param san SubjectAlternativeName extension (optional)
      */
-    private static X509Certificate generateCertificate(String dn, KeyPair pair, int days, String algorithm, String san) throws GeneralSecurityException, IOException {
+    private static X509Certificate generateCertificate(String dn, KeyPair pair, int days, String algorithm, String san)
+            throws GeneralSecurityException, IOException {
         PrivateKey privkey = pair.getPrivate();
         X509CertInfo info = new X509CertInfo();
         Date from = new Date();
@@ -165,9 +166,9 @@ public class RemoteControlHttpsServer extends Thread {
 
         CertificateExtensions ext = new CertificateExtensions();
         // Critical: Not CA, max path len 0
-        ext.set(BasicConstraintsExtension.NAME, new BasicConstraintsExtension(true, false, 0));
+        ext.set(BasicConstraintsExtension.NAME, new BasicConstraintsExtension(Boolean.TRUE, false, 0));
         // Critical: only allow TLS ("serverAuth" = 1.3.6.1.5.5.7.3.1)
-        ext.set(ExtendedKeyUsageExtension.NAME, new ExtendedKeyUsageExtension(true,
+        ext.set(ExtendedKeyUsageExtension.NAME, new ExtendedKeyUsageExtension(Boolean.TRUE,
                 new Vector<ObjectIdentifier>(Arrays.asList(new ObjectIdentifier("1.3.6.1.5.5.7.3.1")))));
 
         if (san != null) {
@@ -184,7 +185,7 @@ public class RemoteControlHttpsServer extends Thread {
                 gnames.add(createGeneralName(t, v));
             }
             // Non critical
-            ext.set(SubjectAlternativeNameExtension.NAME, new SubjectAlternativeNameExtension(false, gnames));
+            ext.set(SubjectAlternativeNameExtension.NAME, new SubjectAlternativeNameExtension(Boolean.FALSE, gnames));
         }
 
         info.set(X509CertInfo.EXTENSIONS, ext);

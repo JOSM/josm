@@ -17,7 +17,7 @@ public class NoteComment {
     private Action action;
 
     //not currently used. I'm planning on using this to keep track of new actions that need to be uploaded
-    private Boolean isNew;
+    private boolean isNew;
 
     /**
      * Every comment has an associated action. Some comments are just comments
@@ -32,7 +32,7 @@ public class NoteComment {
      * @param action The action associated with this comment
      * @param isNew Whether or not this comment is new and needs to be uploaded
      */
-    public NoteComment(Date createDate, User user, String commentText, Action action, Boolean isNew) {
+    public NoteComment(Date createDate, User user, String commentText, Action action, boolean isNew) {
         this.text = commentText;
         this.user = user;
         this.commentTimestamp = createDate;
@@ -60,12 +60,12 @@ public class NoteComment {
         return action;
     }
 
-    public void setIsNew(Boolean isNew) {
+    public void setIsNew(boolean isNew) {
         this.isNew = isNew;
     }
 
     /** @return true if this is a new comment/action and needs to be uploaded to the API */
-    public Boolean getIsNew() {
+    public boolean getIsNew() {
         return isNew;
     }
 }

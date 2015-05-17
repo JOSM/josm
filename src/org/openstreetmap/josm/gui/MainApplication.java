@@ -348,7 +348,7 @@ public class MainApplication extends Main {
             Main.info(tr("Printing debugging messages to console"));
         }
 
-        Boolean skipLoadingPlugins = false;
+        boolean skipLoadingPlugins = false;
         if (args.containsKey(Option.SKIP_PLUGINS)) {
             skipLoadingPlugins = true;
             Main.info(tr("Plugin loading skipped"));

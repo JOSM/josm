@@ -39,7 +39,7 @@ public abstract class ElemStyle implements StyleKeys {
         majorZIndex = c.get(MAJOR_Z_INDEX, default_major_z_index, Float.class);
         zIndex = c.get(Z_INDEX, 0f, Float.class);
         objectZIndex = c.get(OBJECT_Z_INDEX, 0f, Float.class);
-        isModifier = c.get(MODIFIER, false, Boolean.class);
+        isModifier = c.get(MODIFIER, Boolean.FALSE, Boolean.class);
     }
 
     /**

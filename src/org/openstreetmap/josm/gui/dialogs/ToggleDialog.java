@@ -311,8 +311,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         // toggling the selected value in order to enforce PropertyChangeEvents
         setIsShowing(true);
         windowMenuItem.setState(true);
-        toggleAction.putValue("selected", false);
-        toggleAction.putValue("selected", true);
+        toggleAction.putValue("selected", Boolean.FALSE);
+        toggleAction.putValue("selected", Boolean.TRUE);
     }
 
     /**

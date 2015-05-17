@@ -124,7 +124,7 @@ public class JosmEditorPane extends JEditorPane {
             UIDefaults defaults = new UIDefaults();
             defaults.put("EditorPane[Enabled].backgroundPainter", bgColor);
             pane.putClientProperty("Nimbus.Overrides", defaults);
-            pane.putClientProperty("Nimbus.Overrides.InheritDefaults", true);
+            pane.putClientProperty("Nimbus.Overrides.InheritDefaults", Boolean.TRUE);
             pane.setBackground(bgColor);
         }
     }
