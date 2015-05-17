@@ -31,8 +31,8 @@ public class CyclicUploadDependencyException extends Exception {
     @Override
     public String getMessage() {
         StringBuilder sb = new StringBuilder();
-        sb.append(tr("Cyclic dependency between relations:"));
-        sb.append("[");
+        sb.append(tr("Cyclic dependency between relations:"))
+          .append("[");
         for (int i=0; i< cycle.size(); i++) {
             if (i >0 ) {
                 sb.append(",");

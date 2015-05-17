@@ -72,7 +72,6 @@ public class SearchNotesDownloadAction extends JosmAction {
         Main.pref.putCollection(HISTORY_KEY, searchTermBox.getHistory());
 
         performSearch(searchTerm);
-
     }
 
     public void performSearch(String searchTerm) {
@@ -90,13 +89,13 @@ public class SearchNotesDownloadAction extends JosmAction {
         int closedLimit = Main.pref.getInteger("osm.notes.daysCloased", 7);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(OsmApi.getOsmApi().getBaseUrl());
-        sb.append("notes/search?limit=");
-        sb.append(noteLimit);
-        sb.append("&closed=");
-        sb.append(closedLimit);
-        sb.append("&q=");
-        sb.append(Utils.encodeUrl(searchTerm));
+        sb.append(OsmApi.getOsmApi().getBaseUrl())
+            .append("notes/search?limit=")
+            .append(noteLimit)
+            .append("&closed=")
+            .append(closedLimit)
+            .append("&q=")
+            .append(Utils.encodeUrl(searchTerm));
 
         new DownloadNotesTask().loadUrl(false, sb.toString(), null);
     }

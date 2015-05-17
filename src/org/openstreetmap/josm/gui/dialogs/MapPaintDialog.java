@@ -605,8 +605,8 @@ public class MapPaintDialog extends ToggleDialog {
             if (s.getBackgroundColorOverride() != null) {
                 text.append(tableRow(tr("Background:"), Utils.toString(s.getBackgroundColorOverride())));
             }
-            text.append(tableRow(tr("Style is currently active?"), s.active ? tr("Yes") : tr("No")));
-            text.append("</table>");
+            text.append(tableRow(tr("Style is currently active?"), s.active ? tr("Yes") : tr("No")))
+                .append("</table>");
             p.add(new JScrollPane(new HtmlPanel(text.toString())), GBC.eol().fill(GBC.BOTH));
             return p;
         }

@@ -168,26 +168,26 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
 
         private JComponent build() {
             StringBuilder s = new StringBuilder();
-            s.append("<b>+proj=...</b> - <i>"+tr("Projection name")+"</i><br>");
-            s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Supported values:")+" ");
-            s.append(listKeys(Projections.projs)+"<br>");
-            s.append("<b>+lat_0=..., +lat_1=..., +lat_2=...</b> - <i>"+tr("Projection parameters")+"</i><br>");
-            s.append("<b>+x_0=..., +y_0=...</b> - <i>"+tr("False easting and false northing")+"</i><br>");
-            s.append("<b>+lon_0=...</b> - <i>"+tr("Central meridian")+"</i><br>");
-            s.append("<b>+k_0=...</b> - <i>"+tr("Scaling factor")+"</i><br>");
-            s.append("<b>+ellps=...</b> - <i>"+tr("Ellipsoid name")+"</i><br>");
-            s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Supported values:")+" ");
-            s.append(listKeys(Projections.ellipsoids)+"<br>");
-            s.append("<b>+a=..., +b=..., +rf=..., +f=..., +es=...</b> - <i>"+tr("Ellipsoid parameters")+"</i><br>");
-            s.append("<b>+datum=...</b> - <i>"+tr("Datum name")+"</i><br>");
-            s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Supported values:")+" ");
-            s.append(listKeys(Projections.datums)+"<br>");
-            s.append("<b>+towgs84=...</b> - <i>"+tr("3 or 7 term datum transform parameters")+"</i><br>");
-            s.append("<b>+nadgrids=...</b> - <i>"+tr("NTv2 grid file")+"</i><br>");
-            s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Built-in:")+" ");
-            s.append(listKeys(Projections.nadgrids)+"<br>");
-            s.append("<b>+bounds=</b>minlon,minlat,maxlon,maxlat - <i>"+tr("Projection bounds (in degrees)")+"</i><br>");
-            s.append("<b>+wmssrs=</b>EPSG:123456 - <i>"+tr("Sets the SRS=... parameter in the WMS request")+"</i><br>");
+            s.append("<b>+proj=...</b> - <i>"+tr("Projection name")+"</i><br>")
+             .append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Supported values:")+" ")
+             .append(listKeys(Projections.projs)+"<br>")
+             .append("<b>+lat_0=..., +lat_1=..., +lat_2=...</b> - <i>"+tr("Projection parameters")+"</i><br>")
+             .append("<b>+x_0=..., +y_0=...</b> - <i>"+tr("False easting and false northing")+"</i><br>")
+             .append("<b>+lon_0=...</b> - <i>"+tr("Central meridian")+"</i><br>")
+             .append("<b>+k_0=...</b> - <i>"+tr("Scaling factor")+"</i><br>")
+             .append("<b>+ellps=...</b> - <i>"+tr("Ellipsoid name")+"</i><br>")
+             .append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Supported values:")+" ")
+             .append(listKeys(Projections.ellipsoids)+"<br>")
+             .append("<b>+a=..., +b=..., +rf=..., +f=..., +es=...</b> - <i>"+tr("Ellipsoid parameters")+"</i><br>")
+             .append("<b>+datum=...</b> - <i>"+tr("Datum name")+"</i><br>")
+             .append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Supported values:")+" ")
+             .append(listKeys(Projections.datums)+"<br>")
+             .append("<b>+towgs84=...</b> - <i>"+tr("3 or 7 term datum transform parameters")+"</i><br>")
+             .append("<b>+nadgrids=...</b> - <i>"+tr("NTv2 grid file")+"</i><br>")
+             .append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Built-in:")+" ")
+             .append(listKeys(Projections.nadgrids)+"<br>")
+             .append("<b>+bounds=</b>minlon,minlat,maxlon,maxlat - <i>"+tr("Projection bounds (in degrees)")+"</i><br>")
+             .append("<b>+wmssrs=</b>EPSG:123456 - <i>"+tr("Sets the SRS=... parameter in the WMS request")+"</i><br>");
 
             return new HtmlPanel(s.toString());
         }

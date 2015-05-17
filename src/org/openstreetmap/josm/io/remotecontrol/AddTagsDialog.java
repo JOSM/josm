@@ -95,17 +95,17 @@ public class AddTagsDialog extends ExtendedDialog {
 
         private String getToolTip() {
             StringBuilder sb = new StringBuilder();
-            sb.append("<html>");
-            sb.append(tr("Old values of"));
-            sb.append(" <b>");
-            sb.append(tag);
-            sb.append("</b><br/>");
+            sb.append("<html>")
+              .append(tr("Old values of"))
+              .append(" <b>")
+              .append(tag)
+              .append("</b><br/>");
             for (Entry<String, Integer> e : valueCount.entrySet()) {
-                sb.append("<b>");
-                sb.append(e.getValue());
-                sb.append(" x </b>");
-                sb.append(e.getKey());
-                sb.append("<br/>");
+                sb.append("<b>")
+                  .append(e.getValue())
+                  .append(" x </b>")
+                  .append(e.getKey())
+                  .append("<br/>");
             }
             sb.append("</html>");
             return sb.toString();

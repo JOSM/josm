@@ -356,10 +356,10 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
             items.add(tr("{0} more...", deletedIds.size() - MAX_DELETED_PRIMITIVE_IN_DIALOG));
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append(tr("The following objects could not be copied to the target object<br>because they are deleted in the target dataset:"));
-        sb.append(Utils.joinAsHtmlUnorderedList(items));
-        sb.append("</html>");
+        sb.append("<html>")
+          .append(tr("The following objects could not be copied to the target object<br>because they are deleted in the target dataset:"))
+          .append(Utils.joinAsHtmlUnorderedList(items))
+          .append("</html>");
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 sb.toString(),

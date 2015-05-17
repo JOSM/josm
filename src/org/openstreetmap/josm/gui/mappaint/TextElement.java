@@ -177,8 +177,8 @@ public class TextElement implements StyleKeys {
 
     protected String toStringImpl() {
         StringBuilder sb = new StringBuilder();
-        sb.append("labelCompositionStrategy=" + labelCompositionStrategy);
-        sb.append(" font=" + font);
+        sb.append("labelCompositionStrategy=" + labelCompositionStrategy)
+          .append(" font=" + font);
         if (xOffset != 0) {
             sb.append(" xOffset=" + xOffset);
         }
@@ -187,8 +187,8 @@ public class TextElement implements StyleKeys {
         }
         sb.append(" color=" + Utils.toString(color));
         if (haloRadius != null) {
-            sb.append(" haloRadius=" + haloRadius);
-            sb.append(" haloColor=" + haloColor);
+            sb.append(" haloRadius=" + haloRadius)
+              .append(" haloColor=" + haloColor);
         }
         return sb.toString();
     }

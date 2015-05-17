@@ -511,8 +511,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     private String buildDefaultToolTip(long id, Map<String, String> tags) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<strong>id</strong>=")
+        sb.append("<html>")
+        .append("<strong>id</strong>=")
         .append(id)
         .append("<br>");
         List<String> keyList = new ArrayList<>(tags.keySet());

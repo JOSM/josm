@@ -284,29 +284,29 @@ public class NTV2GridShiftFile implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder buf = new StringBuilder("Headers  : ");
-        buf.append(overviewHeaderCount);
-        buf.append("\nSub Hdrs : ");
-        buf.append(subGridHeaderCount);
-        buf.append("\nSub Grids: ");
-        buf.append(subGridCount);
-        buf.append("\nType     : ");
-        buf.append(shiftType);
-        buf.append("\nVersion  : ");
-        buf.append(version);
-        buf.append("\nFr Ellpsd: ");
-        buf.append(fromEllipsoid);
-        buf.append("\nTo Ellpsd: ");
-        buf.append(toEllipsoid);
-        buf.append("\nFr Maj Ax: ");
-        buf.append(fromSemiMajorAxis);
-        buf.append("\nFr Min Ax: ");
-        buf.append(fromSemiMinorAxis);
-        buf.append("\nTo Maj Ax: ");
-        buf.append(toSemiMajorAxis);
-        buf.append("\nTo Min Ax: ");
-        buf.append(toSemiMinorAxis);
-        return buf.toString();
+        StringBuilder buff = new StringBuilder("Headers  : ");
+        buff.append(overviewHeaderCount)
+            .append("\nSub Hdrs : ")
+            .append(subGridHeaderCount)
+            .append("\nSub Grids: ")
+            .append(subGridCount)
+            .append("\nType     : ")
+            .append(shiftType)
+            .append("\nVersion  : ")
+            .append(version)
+            .append("\nFr Ellpsd: ")
+            .append(fromEllipsoid)
+            .append("\nTo Ellpsd: ")
+            .append(toEllipsoid)
+            .append("\nFr Maj Ax: ")
+            .append(fromSemiMajorAxis)
+            .append("\nFr Min Ax: ")
+            .append(fromSemiMinorAxis)
+            .append("\nTo Maj Ax: ")
+            .append(toSemiMajorAxis)
+            .append("\nTo Min Ax: ")
+            .append(toSemiMinorAxis);
+        return buff.toString();
     }
 
     /**

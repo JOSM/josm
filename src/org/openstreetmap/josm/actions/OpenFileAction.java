@@ -156,8 +156,7 @@ public class OpenFileAction extends DiskAccessAction {
 
         protected void alertFilesNotMatchingWithImporter(Collection<File> files, FileImporter importer) {
             final StringBuilder msg = new StringBuilder();
-            msg.append("<html>");
-            msg.append(
+            msg.append("<html>").append(
                     trn(
                             "Cannot open {0} file with the file importer ''{1}''.",
                             "Cannot open {0} files with the file importer ''{1}''.",
@@ -165,8 +164,7 @@ public class OpenFileAction extends DiskAccessAction {
                             files.size(),
                             importer.filter.getDescription()
                     )
-            ).append("<br>");
-            msg.append("<ul>");
+            ).append("<br>").append("<ul>");
             for (File f: files) {
                 msg.append("<li>").append(f.getAbsolutePath()).append("</li>");
             }
@@ -183,22 +181,18 @@ public class OpenFileAction extends DiskAccessAction {
 
         protected void alertFilesWithUnknownImporter(Collection<File> files) {
             final StringBuilder msg = new StringBuilder();
-            msg.append("<html>");
-            msg.append(
+            msg.append("<html>").append(
                     trn(
                             "Cannot open {0} file because file does not exist or no suitable file importer is available.",
                             "Cannot open {0} files because files do not exist or no suitable file importer is available.",
                             files.size(),
                             files.size()
                     )
-            ).append("<br>");
-            msg.append("<ul>");
+            ).append("<br>").append("<ul>");
             for (File f: files) {
-                msg.append("<li>");
-                msg.append(f.getAbsolutePath());
-                msg.append(" (<i>");
-                msg.append(f.exists() ? tr("no importer") : tr("does not exist"));
-                msg.append("</i>)</li>");
+                msg.append("<li>").append(f.getAbsolutePath()).append(" (<i>")
+                   .append(f.exists() ? tr("no importer") : tr("does not exist"))
+                   .append("</i>)</li>");
             }
             msg.append("</ul>");
 

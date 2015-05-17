@@ -266,24 +266,25 @@ public final class Relation extends OsmPrimitive implements IRelation {
         return data;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         StringBuilder result = new StringBuilder();
-        result.append("{Relation id=");
-        result.append(getUniqueId());
-        result.append(" version=");
-        result.append(getVersion());
-        result.append(" ");
-        result.append(getFlagsAsString());
-        result.append(" [");
+        result.append("{Relation id=")
+              .append(getUniqueId())
+              .append(" version=")
+              .append(getVersion())
+              .append(" ")
+              .append(getFlagsAsString())
+              .append(" [");
         for (RelationMember rm:getMembers()) {
-            result.append(OsmPrimitiveType.from(rm.getMember()));
-            result.append(" ");
-            result.append(rm.getMember().getUniqueId());
-            result.append(", ");
+            result.append(OsmPrimitiveType.from(rm.getMember()))
+                  .append(" ")
+                  .append(rm.getMember().getUniqueId())
+                  .append(", ");
         }
-        result.delete(result.length()-2, result.length());
-        result.append("]");
-        result.append("}");
+        result.delete(result.length()-2, result.length())
+              .append("]")
+              .append("}");
         return result.toString();
     }
 
