@@ -165,11 +165,11 @@ public class PrefJPanel extends JPanel {
             if (isSelected) {
                 label.setForeground(Main.pref.getUIColor("Table.foreground"));
             }
-            if(sc.getAssignedUser()) {
+            if(sc.isAssignedUser()) {
                 label.setBackground(Main.pref.getColor(
                         marktr("Shortcut Background: User"),
                         new Color(200,255,200)));
-            } else if(!sc.getAssignedDefault()) {
+            } else if(!sc.isAssignedDefault()) {
                 label.setBackground(Main.pref.getColor(
                         marktr("Shortcut Background: Modified"),
                         new Color(255,255,200)));
@@ -288,7 +288,7 @@ public class PrefJPanel extends JPanel {
             if (!lsm.isSelectionEmpty()) {
                 int row = panel.shortcutTable.convertRowIndexToModel(lsm.getMinSelectionIndex());
                 Shortcut sc = (Shortcut)panel.model.getValueAt(row, -1);
-                panel.cbDefault.setSelected(!sc.getAssignedUser());
+                panel.cbDefault.setSelected(!sc.isAssignedUser());
                 panel.cbDisable.setSelected(sc.getKeyStroke() == null);
                 panel.cbShift.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.SHIFT_DOWN_MASK) != 0);
                 panel.cbCtrl.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.CTRL_DOWN_MASK) != 0);

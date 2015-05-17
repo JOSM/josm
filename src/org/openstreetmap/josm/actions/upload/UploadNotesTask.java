@@ -71,7 +71,7 @@ public class UploadNotesTask {
                     break;
                 }
                 for (NoteComment comment : note.getComments()) {
-                    if (comment.getIsNew()) {
+                    if (comment.isNew()) {
                         if (Main.isDebugEnabled()) {
                             Main.debug("found note change to upload");
                         }
