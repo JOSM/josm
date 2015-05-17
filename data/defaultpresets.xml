@@ -4893,7 +4893,7 @@
             <text key="name" text="Name" />
         </item> <!-- Scuba Diving -->
         <item name="Skiing" icon="styles/standard/sport/skiing.png" type="node,way,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps"
+            <link href="http://wiki.openstreetmap.org/wiki/Piste_Maps"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Piste_Maps"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Piste_Maps"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Piste_Maps" />
@@ -8535,7 +8535,7 @@
         </item> <!-- Destination Sign -->
         <separator/>
         <item name="Waterway" icon="presets/river.png" type="relation" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Waterway" />
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:waterway" />
             <space />
             <key key="type" value="waterway" />
             <combo key="waterway" text="Subtype of waterway (largest one of members)" values="river,stream,canal,drain,ditch" values_searchable="true" />
