@@ -116,9 +116,9 @@ public class OsmServerObjectReader extends OsmServerReader {
         try {
             progressMonitor.indeterminateSubTask(tr("Downloading OSM data..."));
             StringBuilder sb = new StringBuilder();
-            sb.append(id.getType().getAPIName());
-            sb.append("/");
-            sb.append(id.getUniqueId());
+            sb.append(id.getType().getAPIName())
+              .append("/")
+              .append(id.getUniqueId());
             if (full && ! id.getType().equals(OsmPrimitiveType.NODE)) {
                 sb.append("/full");
             } else if (version > 0) {

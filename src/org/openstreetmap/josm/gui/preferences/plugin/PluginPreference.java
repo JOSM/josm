@@ -126,8 +126,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
         final Collection<PluginInformation> failed = task.getFailedPlugins();
         final StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append(buildDownloadSummary(task));
+        sb.append("<html>")
+          .append(buildDownloadSummary(task));
         if (restartRequired) {
             sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
         }

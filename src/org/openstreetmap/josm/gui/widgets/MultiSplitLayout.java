@@ -1020,10 +1020,10 @@ public class MultiSplitLayout implements LayoutManager {
         public String toString() {
             int nChildren = getChildren().size();
             StringBuffer sb = new StringBuffer("MultiSplitLayout.Split");
-            sb.append(isRowLayout() ? " ROW [" : " COLUMN [");
-            sb.append(nChildren + ((nChildren == 1) ? " child" : " children"));
-            sb.append("] ");
-            sb.append(getBounds());
+            sb.append(isRowLayout() ? " ROW [" : " COLUMN [")
+              .append(nChildren + ((nChildren == 1) ? " child" : " children"))
+              .append("] ")
+              .append(getBounds());
             return sb.toString();
         }
     }
@@ -1073,13 +1073,13 @@ public class MultiSplitLayout implements LayoutManager {
         @Override
         public String toString() {
             StringBuffer sb = new StringBuffer("MultiSplitLayout.Leaf");
-            sb.append(" \"");
-            sb.append(getName());
-            sb.append('\"');
-            sb.append(" weight=");
-            sb.append(getWeight());
-            sb.append(' ');
-            sb.append(getBounds());
+            sb.append(" \"")
+              .append(getName())
+              .append('\"')
+              .append(" weight=")
+              .append(getWeight())
+              .append(' ')
+              .append(getBounds());
             return sb.toString();
         }
     }

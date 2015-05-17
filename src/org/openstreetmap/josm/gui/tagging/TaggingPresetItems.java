@@ -120,13 +120,13 @@ public final class TaggingPresetItems {
                 return "&nbsp;";
 
             final StringBuilder res = new StringBuilder("<b>");
-            res.append(getDisplayValue(true).replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
-            res.append("</b>");
+            res.append(getDisplayValue(true).replaceAll("<", "&lt;").replaceAll(">", "&gt;"))
+               .append("</b>");
             if (getShortDescription(true) != null) {
                 // wrap in table to restrict the text width
-                res.append("<div style=\"width:300px; padding:0 0 5px 5px\">");
-                res.append(getShortDescription(true));
-                res.append("</div>");
+                res.append("<div style=\"width:300px; padding:0 0 5px 5px\">")
+                   .append(getShortDescription(true))
+                   .append("</div>");
             }
             return res.toString();
         }

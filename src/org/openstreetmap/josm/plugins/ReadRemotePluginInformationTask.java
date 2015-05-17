@@ -113,8 +113,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             site = site.replaceAll("%<(.*)>", "");
             URL url = new URL(site);
             StringBuilder sb = new StringBuilder();
-            sb.append("site-");
-            sb.append(url.getHost()).append("-");
+            sb.append("site-")
+              .append(url.getHost()).append("-");
             if (url.getPort() != -1) {
                 sb.append(url.getPort()).append("-");
             }

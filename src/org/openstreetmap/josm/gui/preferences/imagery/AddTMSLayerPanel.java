@@ -70,8 +70,7 @@ public class AddTMSLayerPanel extends AddImageryPanel {
         if (!z.isEmpty()) {
             a.append("[").append(z).append("]");
         }
-        a.append(":");
-        a.append(getImageryRawUrl());
+        a.append(":").append(getImageryRawUrl());
         return a.toString();
     }
 

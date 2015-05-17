@@ -87,11 +87,11 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<val='");
-        sb.append(value);
-        sb.append("',");
-        sb.append(priority);
-        sb.append(">");
+        sb.append("<val='")
+          .append(value)
+          .append("',")
+          .append(priority)
+          .append(">");
         return sb.toString();
     }
 

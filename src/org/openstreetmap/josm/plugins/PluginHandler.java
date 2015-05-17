@@ -268,13 +268,12 @@ public final class PluginHandler {
         // notify user about removed deprecated plugins
         //
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append(trn(
+        sb.append("<html>")
+          .append(trn(
                 "The following plugin is no longer necessary and has been deactivated:",
                 "The following plugins are no longer necessary and have been deactivated:",
-                removedPlugins.size()
-        ));
-        sb.append("<ul>");
+                removedPlugins.size()))
+          .append("<ul>");
         for (DeprecatedPlugin depr: removedPlugins) {
             sb.append("<li>").append(depr.name);
             if (depr.reason != null) {
@@ -282,8 +281,8 @@ public final class PluginHandler {
             }
             sb.append("</li>");
         }
-        sb.append("</ul>");
-        sb.append("</html>");
+        sb.append("</ul>")
+          .append("</html>");
         JOptionPane.showMessageDialog(
                 parent,
                 sb.toString(),
@@ -461,15 +460,14 @@ public final class PluginHandler {
      */
     private static void alertMissingRequiredPlugin(Component parent, String plugin, Set<String> missingRequiredPlugin) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append(trn("Plugin {0} requires a plugin which was not found. The missing plugin is:",
+        sb.append("<html>")
+          .append(trn("Plugin {0} requires a plugin which was not found. The missing plugin is:",
                 "Plugin {0} requires {1} plugins which were not found. The missing plugins are:",
                 missingRequiredPlugin.size(),
                 plugin,
-                missingRequiredPlugin.size()
-        ));
-        sb.append(Utils.joinAsHtmlUnorderedList(missingRequiredPlugin));
-        sb.append("</html>");
+                missingRequiredPlugin.size()))
+          .append(Utils.joinAsHtmlUnorderedList(missingRequiredPlugin))
+          .append("</html>");
         JOptionPane.showMessageDialog(
                 parent,
                 sb.toString(),
@@ -756,15 +754,15 @@ public final class PluginHandler {
 
     private static void alertMissingPluginInformation(Component parent, Collection<String> plugins) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append(trn("JOSM could not find information about the following plugin:",
+        sb.append("<html>")
+          .append(trn("JOSM could not find information about the following plugin:",
                 "JOSM could not find information about the following plugins:",
-                plugins.size()));
-        sb.append(Utils.joinAsHtmlUnorderedList(plugins));
-        sb.append(trn("The plugin is not going to be loaded.",
+                plugins.size()))
+          .append(Utils.joinAsHtmlUnorderedList(plugins))
+          .append(trn("The plugin is not going to be loaded.",
                 "The plugins are not going to be loaded.",
-                plugins.size()));
-        sb.append("</html>");
+                plugins.size()))
+          .append("</html>");
         HelpAwareOptionPane.showOptionDialog(
                 parent,
                 sb.toString(),
@@ -818,24 +816,21 @@ public final class PluginHandler {
 
     private static void alertFailedPluginUpdate(Component parent, Collection<PluginInformation> plugins) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append(trn(
+        sb.append("<html>")
+          .append(trn(
                 "Updating the following plugin has failed:",
                 "Updating the following plugins has failed:",
-                plugins.size()
-        )
-        );
-        sb.append("<ul>");
+                plugins.size()))
+          .append("<ul>");
         for (PluginInformation pi: plugins) {
             sb.append("<li>").append(pi.name).append("</li>");
         }
-        sb.append("</ul>");
-        sb.append(trn(
+        sb.append("</ul>")
+          .append(trn(
                 "Please open the Preference Dialog after JOSM has started and try to update it manually.",
                 "Please open the Preference Dialog after JOSM has started and try to update them manually.",
-                plugins.size()
-        ));
-        sb.append("</html>");
+                plugins.size()))
+          .append("</html>");
         HelpAwareOptionPane.showOptionDialog(
                 parent,
                 sb.toString(),
@@ -1197,15 +1192,15 @@ public final class PluginHandler {
         };
 
         final StringBuilder msg = new StringBuilder();
-        msg.append("<html>");
-        msg.append(tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.getPluginInformation().name));
-        msg.append("<br>");
+        msg.append("<html>")
+           .append(tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.getPluginInformation().name))
+           .append("<br>");
         if (plugin.getPluginInformation().author != null) {
-            msg.append(tr("According to the information within the plugin, the author is {0}.", plugin.getPluginInformation().author));
-            msg.append("<br>");
+            msg.append(tr("According to the information within the plugin, the author is {0}.", plugin.getPluginInformation().author))
+               .append("<br>");
         }
-        msg.append(tr("Try updating to the newest version of this plugin before reporting a bug."));
-        msg.append("</html>");
+        msg.append(tr("Try updating to the newest version of this plugin before reporting a bug."))
+           .append("</html>");
 
         try {
             FutureTask<Integer> task = new FutureTask<>(new Callable<Integer>() {
