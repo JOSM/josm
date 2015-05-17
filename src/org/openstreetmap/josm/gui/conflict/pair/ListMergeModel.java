@@ -594,8 +594,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         @Override
         public int getRowCount() {
             int count = Math.max(getMyEntries().size(), getMergedEntries().size());
-            count = Math.max(count, getTheirEntries().size());
-            return count;
+            return Math.max(count, getTheirEntries().size());
         }
 
         @Override

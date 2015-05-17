@@ -73,8 +73,7 @@ public class OsmServerWriter {
         if (seconds_left < 10) {
             time_left_str += "0";
         }
-        time_left_str += Integer.toString(seconds_left);
-        return time_left_str;
+        return time_left_str + Integer.toString(seconds_left);
     }
 
     /**
