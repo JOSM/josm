@@ -60,8 +60,7 @@ public class XmlParsingException extends SAXException {
         if (msg == null) {
             msg = getClass().getName();
         }
-        msg = msg + " " + tr("(at line {0}, column {1})", lineNumber, columnNumber);
-        return msg;
+        return msg + " " + tr("(at line {0}, column {1})", lineNumber, columnNumber);
     }
 
     /**
