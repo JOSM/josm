@@ -243,7 +243,6 @@ public final class HelpAwareOptionPane {
                 defaultButton
         );
 
-        pane.getValue();
         final JDialog dialog = new JDialog(
                 JOptionPane.getFrameForComponent(parentComponent),
                 title,

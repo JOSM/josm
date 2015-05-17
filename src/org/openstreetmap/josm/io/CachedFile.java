@@ -467,13 +467,9 @@ public class CachedFile {
 
         checkOfflineAccess(downloadString);
 
-        HttpURLConnection con = null;
         int numRedirects = 0;
         while(true) {
-            con = Utils.openHttpConnection(downloadUrl);
-            if (con == null) {
-                throw new IOException("Cannot open http connection to "+downloadString);
-            }
+            HttpURLConnection con = Utils.openHttpConnection(downloadUrl);
             if (ifModifiedSince != null) {
                 con.setIfModifiedSince(ifModifiedSince);
             }

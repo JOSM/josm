@@ -87,7 +87,7 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
      */
     @Override
     public int compareTo(AutoCompletionItemPriority other) {
-        int ui = -Integer.compare(userInput, other.userInput);
+        int ui = Integer.compare(other.userInput, userInput);
         if (ui != 0) return ui;
 
         int sel = Boolean.valueOf(selected).compareTo(other.selected);

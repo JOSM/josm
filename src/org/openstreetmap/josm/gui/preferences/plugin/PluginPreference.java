@@ -123,7 +123,6 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
      * @since 6797
      */
     public static void notifyDownloadResults(final Component parent, PluginDownloadTask task, boolean restartRequired) {
-        final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
         final Collection<PluginInformation> failed = task.getFailedPlugins();
         final StringBuilder sb = new StringBuilder();
         sb.append("<html>")
