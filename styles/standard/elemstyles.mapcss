@@ -1631,7 +1631,7 @@ node[leisure=dog_park] {
     text: auto;
 }
 node[leisure=ice_rink] {
-    icon-image: "sport/hockey.png";
+    icon-image: "sport/ice_hockey.png";
     set icon_z17;
     text: auto;
 }
@@ -3660,7 +3660,8 @@ area[sport=dog_racing],
 area[sport=equestrian],
 area[sport=golf],
 area[sport=gymnastics],
-area[sport=hockey],
+area[sport=field_hockey],
+area[sport=ice_hockey],
 area[sport=horse_racing],
 area[sport=karting][highway!=raceway],
 area[sport=karting][highway=raceway][area=yes],
@@ -3697,8 +3698,13 @@ node[sport=gymnastics] {
     set icon_z17;
     text: auto;
 }
-node[sport=hockey] {
-    icon-image: "sport/hockey.png";
+node[sport=field_hockey] {
+    icon-image: "sport/field_hockey.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=ice_hockey] {
+    icon-image: "sport/ice_hockey.png";
     set icon_z17;
     text: auto;
 }

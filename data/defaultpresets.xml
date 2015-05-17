@@ -5038,13 +5038,20 @@
             <key key="sport" value="croquet" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Croquet -->
-        <item name="Hockey" icon="presets/Hockey.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=hockey" />
+        <item name="Field Hockey" icon="presets/field_hockey.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=field_hockey" />
             <space />
-            <key key="sport" value="hockey" />
+            <key key="sport" value="field_hockey" />
+            <text key="name" text="Name" />
+            <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
+        </item> <!-- Field Hockey -->
+        <item name="Ice Hockey" icon="presets/ice_hockey.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=ice_hockey" />
+            <space />
+            <key key="sport" value="ice_hockey" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="ice_rink,pitch,sports_centre,stadium" />
-        </item> <!-- Hockey -->
+        </item> <!-- Ice Hockey -->
         <item name="Pelota" icon="presets/pelota.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=pelota"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=pelota" />
