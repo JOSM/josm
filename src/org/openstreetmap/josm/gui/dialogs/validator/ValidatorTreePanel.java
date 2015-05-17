@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -172,8 +173,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             }
         }
 
-        Map<Severity, MultiMap<String, TestError>> errorTree = new HashMap<>();
-        Map<Severity, HashMap<String, MultiMap<String, TestError>>> errorTreeDeep = new HashMap<>();
+        Map<Severity, MultiMap<String, TestError>> errorTree = new EnumMap<>(Severity.class);
+        Map<Severity, HashMap<String, MultiMap<String, TestError>>> errorTreeDeep = new EnumMap<>(Severity.class);
         for (Severity s : Severity.values()) {
             errorTree.put(s, new MultiMap<String, TestError>(20));
             errorTreeDeep.put(s, new HashMap<String, MultiMap<String, TestError>>());

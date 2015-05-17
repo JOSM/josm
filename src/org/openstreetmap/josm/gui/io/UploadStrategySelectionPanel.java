@@ -17,7 +17,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -73,9 +73,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
         ButtonGroup bgStrategies = new ButtonGroup();
-        rbStrategy = new HashMap<>();
-        lblStrategies = new HashMap<>();
-        lblNumRequests = new HashMap<>();
+        rbStrategy = new EnumMap<>(UploadStrategy.class);
+        lblStrategies = new EnumMap<>(UploadStrategy.class);
+        lblNumRequests = new EnumMap<>(UploadStrategy.class);
         for (UploadStrategy strategy: UploadStrategy.values()) {
             rbStrategy.put(strategy, new JRadioButton());
             lblNumRequests.put(strategy, new JLabel());

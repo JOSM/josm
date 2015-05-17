@@ -3,7 +3,7 @@ package org.openstreetmap.josm.io.auth;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
@@ -32,7 +32,7 @@ public final class DefaultAuthenticator extends Authenticator {
         instance = new DefaultAuthenticator();
     }
 
-    private final Map<RequestorType, Boolean> credentialsTried = new HashMap<>();
+    private final Map<RequestorType, Boolean> credentialsTried = new EnumMap<>(RequestorType.class);
     private boolean enabled = true;
 
     private DefaultAuthenticator() {
