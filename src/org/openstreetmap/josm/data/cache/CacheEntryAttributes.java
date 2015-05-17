@@ -19,6 +19,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     private static final String ETAG = "Etag";
     private static final String LAST_MODIFICATION = "lastModification";
     private static final String EXPIRATION_TIME = "expirationTime";
+    private static final String HTTP_RESPONSE_CODE = "httpResponceCode";
 
     /**
      * Constructs a new {@code CacheEntryAttributes}.
@@ -29,6 +30,7 @@ public class CacheEntryAttributes extends ElementAttributes {
         attrs.put(ETAG, null);
         attrs.put(LAST_MODIFICATION, "0");
         attrs.put(EXPIRATION_TIME, "0");
+        attrs.put(HTTP_RESPONSE_CODE, "200");
     }
 
     public boolean isNoTileAtZoom() {
@@ -45,8 +47,13 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     private long getLongAttr(String key) {
+        String val = attrs.get(key);
+        if (val == null) {
+            attrs.put(key,  "0");
+            return 0;
+        }
         try {
-            return Long.parseLong(attrs.get(key));
+            return Long.parseLong(val);
         } catch (NumberFormatException e) {
             attrs.put(key, "0");
             return 0;
@@ -64,6 +71,14 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
     public void setExpirationTime(long expirationTime) {
         attrs.put(EXPIRATION_TIME, Long.toString(expirationTime));
+    }
+
+    public void setResponseCode(int responseCode) {
+        attrs.put(HTTP_RESPONSE_CODE, Integer.toString(responseCode));
+    }
+
+    public int getResponseCode() {
+        return (int) getLongAttr(HTTP_RESPONSE_CODE);
     }
 
 }

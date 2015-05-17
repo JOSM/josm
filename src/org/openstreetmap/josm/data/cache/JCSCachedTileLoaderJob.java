@@ -363,10 +363,14 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     Thread.sleep(5000+(new Random()).nextInt(5000));
                     continue;
                 }
+
+                attributes.setResponseCode(urlConn.getResponseCode());
                 byte[] raw = read(urlConn);
 
                 if (!cacheAsEmpty(urlConn.getHeaderFields(), urlConn.getResponseCode(), raw) &&
                         raw != null && raw.length > 0) {
+                    // we need to check cacheEmpty, so for cases, when data is returned, but we want to store
+                    // as empty (eg. empty tile images) to save some space
                     cacheData = createCacheEntry(raw);
                     cache.put(getCacheKey(), cacheData, attributes);
                     log.log(Level.FINE, "JCS - downloaded key: {0}, length: {1}, url: {2}",
