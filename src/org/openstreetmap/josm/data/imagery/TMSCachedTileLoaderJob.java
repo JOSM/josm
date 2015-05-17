@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -272,6 +274,10 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                             tile.loadImage(new ByteArrayInputStream(content));
                         }
                     }
+                    int httpStatusCode = attributes.getResponseCode();
+                    if (!isNoTileAtZoom() && httpStatusCode >= 400) {
+                        tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
+                    }
                     // no break intentional here
                 case REJECTED:
                     // do nothing
@@ -311,6 +317,9 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 if (isNoTileAtZoom()) {
                     handleNoTileAtZoom();
                     tile.finishLoading();
+                }
+                if (attributes.getResponseCode() >= 400) {
+                    tile.setError(tr("HTTP error {0} when loading tiles", attributes.getResponseCode()));
                 }
                 return tile;
             } catch (IOException e) {
