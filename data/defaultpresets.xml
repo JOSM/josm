@@ -4596,7 +4596,7 @@
             <space />
             <key key="amenity" value="bench" />
             <check key="backrest" text="Backrest" />
-            <combo key="material" text="Material" values="stone,metal,wood,plastic" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             <combo key="seats" text="Amount of Seats" values="2,3,4,5,6,7,8,9,10" />
         </item> <!-- Bench -->
@@ -5187,7 +5187,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,barn,farm_auxiliary,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,storage_tank,cowshed,construction" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,barn,farm_auxiliary,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,storage_tank,gasometer,cowshed,construction" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <text key="height" text="Height (meters)" />
@@ -5306,24 +5306,32 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=gasometer" />
             <space />
             <key key="man_made" value="gasometer" />
-            <text key="name" text="Name" />
+            <optional>
+                <reference ref="name_operator" />
+                <combo key="building" text="Building" values="gasometer" values_context="building" />
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
         </item> <!-- Gasometer -->
         <item name="Storage Tank" icon="presets/storage_tank.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=storage_tank"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=storage_tank"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=storage_tank" />
             <key key="man_made" value="storage_tank" />
-            <combo key="building" text="Building" values="storage_tank" values_context="building" />
-            <combo key="content"  text="Content" values="fuel,manure,oil,sewage,silage,slurry,water,wine" values_context="content" />
-            <text key="operator" text="Operator" />
-            <text key="height" text="Height (meters)" length="7" />
+            <optional>
+                <reference ref="name_operator" />
+                <combo key="building" text="Building" values="storage_tank" values_context="building" />
+                <combo key="content"  text="Content" values="fuel,manure,oil,sewage,silage,slurry,water,wine" values_context="content" />
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
         </item> <!-- Storage Tank -->
         <item name="Bunker Silo" icon="styles/standard/bunker_silo.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=bunker_silo"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=bunker_silo" />
             <space />
             <key key="man_made" value="bunker_silo" />
-            <text key="name" text="Name" />
+            <optional>
+                <reference ref="name_operator" />
+            </optional>
         </item> <!-- Bunker Silo -->
         <item name="Pipeline" icon="presets/path.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline"
@@ -5398,7 +5406,10 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=water_tower" />
             <space />
             <key key="man_made" value="water_tower" />
-            <text key="name" text="Name" />
+             <optional>
+                <reference ref="name_operator" />
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
         </item> <!-- Water Tower -->
         <item name="Water Works" icon="presets/water_works.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=water_works"
