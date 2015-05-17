@@ -101,7 +101,7 @@ public class ListListEditor extends ExtendedDialog {
 
         tableModel = new ListTableModel();
         table = new JTable(tableModel);
-        table.putClientProperty("terminateEditOnFocusLost", true);
+        table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         table.setTableHeader(null);
 
         DefaultCellEditor editor = new DefaultCellEditor(new JosmTextField());

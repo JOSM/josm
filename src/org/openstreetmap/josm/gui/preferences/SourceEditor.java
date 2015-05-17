@@ -326,7 +326,7 @@ public abstract class SourceEditor extends JPanel {
         tblIconPaths.setTableHeader(null);
         tblIconPaths.getColumnModel().getColumn(0).setCellEditor(new FileOrUrlCellEditor(false));
         tblIconPaths.setRowHeight(20);
-        tblIconPaths.putClientProperty("terminateEditOnFocusLost", true);
+        tblIconPaths.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         iconPathsModel.setIconPaths(getInitialIconPathsList());
 
         EditIconPathAction editIconPathAction = new EditIconPathAction();

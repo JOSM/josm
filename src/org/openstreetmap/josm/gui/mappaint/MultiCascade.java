@@ -63,7 +63,7 @@ public class MultiCascade implements StyleKeys {
         if (c == null) {
             c = new Cascade();
             if (!"default".equals(layer) && !"*".equals(layer)) {
-                c.put(MODIFIER, true);
+                c.put(MODIFIER, Boolean.TRUE);
             }
         }
         return c;

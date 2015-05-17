@@ -368,7 +368,7 @@ public class ElemStyles {
     private boolean isDefaultNodes() {
         if (defaultNodesIdx == cacheIdx)
             return defaultNodes;
-        defaultNodes = fromCanvas("default-points", true, Boolean.class);
+        defaultNodes = fromCanvas("default-points", Boolean.TRUE, Boolean.class);
         defaultNodesIdx = cacheIdx;
         return defaultNodes;
     }
@@ -379,7 +379,7 @@ public class ElemStyles {
     private boolean isDefaultLines() {
         if (defaultLinesIdx == cacheIdx)
             return defaultLines;
-        defaultLines = fromCanvas("default-lines", true, Boolean.class);
+        defaultLines = fromCanvas("default-lines", Boolean.TRUE, Boolean.class);
         defaultLinesIdx = cacheIdx;
         return defaultLines;
     }

@@ -968,10 +968,10 @@ public final class ExpressionFactory {
             for (Expression arg : args) {
                 Boolean b = Cascade.convertTo(arg.evaluate(env), boolean.class);
                 if (b == null || !b) {
-                    return false;
+                    return Boolean.FALSE;
                 }
             }
-            return true;
+            return Boolean.TRUE;
         }
     }
 
@@ -995,10 +995,10 @@ public final class ExpressionFactory {
             for (Expression arg : args) {
                 Boolean b = Cascade.convertTo(arg.evaluate(env), boolean.class);
                 if (b != null && b) {
-                    return true;
+                    return Boolean.TRUE;
                 }
             }
-            return false;
+            return Boolean.FALSE;
         }
     }
 

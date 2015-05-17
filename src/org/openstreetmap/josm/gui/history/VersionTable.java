@@ -54,7 +54,7 @@ public class VersionTable extends JTable implements Observer{
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         setBackground(UIManager.getColor("Button.background"));
         setIntercellSpacing(new Dimension(6, 0));
-        putClientProperty("terminateEditOnFocusLost", true);
+        putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         popupMenu = new VersionTablePopupMenu();
         addMouseListener(new MouseListener());
         addKeyListener(new KeyAdapter() {

@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Asynchronous task to send a changeset query to the OSM API.
- *
+ * @since 2689
  */
 public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetDownloadTask{
 
@@ -56,7 +56,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
      * @throws IllegalArgumentException if query is null.
      */
     public ChangesetQueryTask(ChangesetQuery query) {
-        super(tr("Querying and downloading changesets",false /* don't ignore exceptions */));
+        super(tr("Querying and downloading changesets"), false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(query, "query");
         this.query = query;
     }

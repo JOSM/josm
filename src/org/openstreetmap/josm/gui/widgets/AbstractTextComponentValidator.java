@@ -45,12 +45,11 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
 
     protected void feedbackInvalid(String msg) {
         if (valid == null || valid || !Objects.equals(msg, this.msg)) {
-            // only provide feedback if the validity has changed. This avoids
-            // unnecessary UI updates.
+            // only provide feedback if the validity has changed. This avoids unnecessary UI updates.
             tc.setBorder(ERROR_BORDER);
             tc.setBackground(ERROR_BACKGROUND);
             tc.setToolTipText(msg);
-            valid = false;
+            valid = Boolean.FALSE;
             this.msg = msg;
         }
     }
@@ -61,12 +60,11 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
 
     protected void feedbackValid(String msg) {
         if (valid == null || !valid || !Objects.equals(msg, this.msg)) {
-            // only provide feedback if the validity has changed. This avoids
-            // unnecessary UI updates.
+            // only provide feedback if the validity has changed. This avoids unnecessary UI updates.
             tc.setBorder(UIManager.getBorder("TextField.border"));
             tc.setBackground(UIManager.getColor("TextField.background"));
             tc.setToolTipText(msg == null ? "" : msg);
-            valid = true;
+            valid = Boolean.TRUE;
             this.msg = msg;
         }
     }

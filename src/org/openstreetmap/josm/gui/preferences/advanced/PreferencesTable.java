@@ -52,7 +52,7 @@ public class PreferencesTable extends JTable {
         this.displayData = displayData;
         model = new AllSettingsTableModel();
         setModel(model);
-        putClientProperty("terminateEditOnFocusLost", true);
+        putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         getColumnModel().getColumn(1).setCellRenderer(new SettingCellRenderer());
         getColumnModel().getColumn(1).setCellEditor(new SettingCellEditor());
 

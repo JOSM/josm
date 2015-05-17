@@ -773,7 +773,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
     }
 
-    public static interface FreezeActionProperties {
+    private static interface FreezeActionProperties {
         String PROP_SELECTED = FreezeActionProperties.class.getName() + ".selected";
     }
 
@@ -781,12 +781,12 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
      * Action for freezing the current state of the list merger
      *
      */
-    class FreezeAction extends AbstractAction implements ItemListener, FreezeActionProperties  {
+    private class FreezeAction extends AbstractAction implements ItemListener, FreezeActionProperties  {
 
-        public FreezeAction() {
+        private FreezeAction() {
             putValue(Action.NAME, tr("Freeze"));
             putValue(Action.SHORT_DESCRIPTION, tr("Freeze the current list of merged elements."));
-            putValue(PROP_SELECTED, false);
+            putValue(PROP_SELECTED, Boolean.FALSE);
             setEnabled(true);
         }
 

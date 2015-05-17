@@ -119,7 +119,7 @@ public class MapListEditor extends ExtendedDialog {
 
         tableModel = new MapTableModel();
         table = new JTable(tableModel);
-        table.putClientProperty("terminateEditOnFocusLost", true);
+        table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         table.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(tr("Key"));
         table.getTableHeader().getColumnModel().getColumn(1).setHeaderValue(tr("Value"));
         DefaultCellEditor editor = new DefaultCellEditor(new JosmTextField());

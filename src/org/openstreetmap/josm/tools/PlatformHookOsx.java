@@ -79,7 +79,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             // http://stackoverflow.com/a/8693890/2257172
             Class<?> eawtFullScreenUtilities = Class.forName("com.apple.eawt.FullScreenUtilities");
             eawtFullScreenUtilities.getDeclaredMethod("setWindowCanFullScreen",
-                    new Class[]{Window.class, boolean.class}).invoke(eawtFullScreenUtilities, window, true);
+                    new Class[]{Window.class, boolean.class}).invoke(eawtFullScreenUtilities, window, Boolean.TRUE);
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException e) {
             Main.warn("Failed to register with OSX: " + e);
         }

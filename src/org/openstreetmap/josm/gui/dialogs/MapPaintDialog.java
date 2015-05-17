@@ -139,7 +139,7 @@ public class MapPaintDialog extends ToggleDialog {
         tblStyles = new StylesTable(model);
         tblStyles.setSelectionModel(selectionModel= new DefaultListSelectionModel());
         tblStyles.addMouseListener(new PopupMenuHandler());
-        tblStyles.putClientProperty("terminateEditOnFocusLost", true);
+        tblStyles.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tblStyles.setBackground(UIManager.getColor("Panel.background"));
         tblStyles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tblStyles.setTableHeader(null);

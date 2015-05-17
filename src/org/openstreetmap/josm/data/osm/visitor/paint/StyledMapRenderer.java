@@ -953,19 +953,19 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             Way viaWay = (Way) via;
             Node firstNode = viaWay.firstNode();
             Node lastNode = viaWay.lastNode();
-            Boolean onewayvia = false;
+            Boolean onewayvia = Boolean.FALSE;
 
             String onewayviastr = viaWay.get("oneway");
             if(onewayviastr != null) {
                 if("-1".equals(onewayviastr)) {
-                    onewayvia = true;
+                    onewayvia = Boolean.TRUE;
                     Node tmp = firstNode;
                     firstNode = lastNode;
                     lastNode = tmp;
                 } else {
                     onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
                     if (onewayvia == null) {
-                        onewayvia = false;
+                        onewayvia = Boolean.FALSE;
                     }
                 }
             }
