@@ -285,10 +285,8 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     }
 
     protected int getChunkSize() {
-        int chunkSize;
         try {
-            chunkSize = Integer.parseInt(tfChunkSize.getText().trim());
-            return chunkSize;
+            return Integer.parseInt(tfChunkSize.getText().trim());
         } catch(NumberFormatException e) {
             return UploadStrategySpecification.UNSPECIFIED_CHUNK_SIZE;
         }

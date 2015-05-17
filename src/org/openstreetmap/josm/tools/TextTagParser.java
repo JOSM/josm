@@ -226,9 +226,7 @@ public final class TextTagParser {
 
         // Free format
         // a 1 "b" 2 c=3 d 4 e "5"
-        TextAnalyzer parser = new TextAnalyzer(buf);
-        tags = parser.getFreeParsedTags();
-        return tags;
+        return new TextAnalyzer(buf).getFreeParsedTags();
     }
 
     /**

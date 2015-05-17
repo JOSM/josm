@@ -170,13 +170,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         }
 
         boolean __add_content(T o) {
-            boolean ret = false;
             // The split_lock will keep two concurrent calls from overwriting content
             if (content == null) {
                 content = new ArrayList<>();
             }
-            ret = content.add(o);
-            return ret;
+            return content.add(o);
         }
 
         boolean matches(final T o, final BBox search_bbox) {
@@ -228,9 +226,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         QBLevel<T> nextSibling() {
             QBLevel<T> next = this;
             QBLevel<T> sibling = next.next_sibling();
-            // Walk back up the tree to find the
-            // next sibling node.  It may be either
-            // a leaf or branch.
+            // Walk back up the tree to find the next sibling node.
+            // It may be either a leaf or branch.
             while (sibling == null) {
                 next = next.parent;
                 if (next == null) {
@@ -238,8 +235,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 }
                 sibling = next.next_sibling();
             }
-            next = sibling;
-            return next;
+            return sibling;
         }
 
         QBLevel<T> firstChild() {

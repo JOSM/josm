@@ -151,8 +151,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             result += "("+sc.getKeyText()+")";
             result += "</font>";
         }
-        result += "&nbsp;</html>";
-        return result;
+        return result + "&nbsp;</html>";
     }
 
     @Override
