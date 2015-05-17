@@ -212,7 +212,7 @@ public final class StyleCache {
         if (data.isEmpty()) throw new AssertionError(data);
         if (bd.size() != data.size() + 1) throw new AssertionError();
         if (bd.get(0) != 0) throw new AssertionError();
-        if (!Utils.equalsEpsilon(bd.get(bd.size() - 1), Double.POSITIVE_INFINITY)) throw new AssertionError();
+        if (bd.get(bd.size() - 1) != Double.POSITIVE_INFINITY) throw new AssertionError();
         for (int i=0; i<data.size() - 1; ++i) {
             if (bd.get(i) >= bd.get(i + 1)) throw new AssertionError();
         }
