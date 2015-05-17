@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Objects of this class represent a gpx file with tracks, waypoints and routes.
@@ -210,12 +211,13 @@ public class GpxData extends WithAttributes implements Data {
      * @return minimum and maximum dates in array of 2 elements
     */
     public Date[] getMinMaxTimeForAllTracks() {
-        double min=1e100, max=-1e100, t;
+        double min=1e100;
+        double max=-1e100;
         double now = System.currentTimeMillis()/1000.0;
         for (GpxTrack trk: tracks) {
             for (GpxTrackSegment seg : trk.getSegments()) {
                 for (WayPoint pnt : seg.getWayPoints()) {
-                    t = pnt.time;
+                    double t = pnt.time;
                     if (t>0 && t<=now) {
                         if (t>max) max=t;
                         if (t<min) min=t;
@@ -223,8 +225,8 @@ public class GpxData extends WithAttributes implements Data {
                 }
             }
         }
-        if (min==1e100 || max==-1e100) return null;
-        return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000)), };
+        if (Utils.equalsEpsilon(min,1e100) || Utils.equalsEpsilon(max,-1e100)) return new Date[0];
+        return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000))};
     }
 
      /**
@@ -292,7 +294,7 @@ public class GpxData extends WithAttributes implements Data {
                         double B = rx - sx;
                         double C = -A * rx - B * ry;
                         double RSsq = A * A + B * B;
-                        if (RSsq == 0.0) {
+                        if (Double.doubleToRawLongBits(RSsq) == 0) {
                             continue;
                         }
                         double PNsq = A * px + B * py + C;

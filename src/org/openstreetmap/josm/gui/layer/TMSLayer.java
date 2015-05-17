@@ -418,7 +418,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         int screenPixels = mv.getWidth()*mv.getHeight();
         double tilePixels = Math.abs((y2-y1)*(x2-x1)*tileSource.getTileSize()*tileSource.getTileSize());
-        if (screenPixels == 0 || tilePixels == 0) return 1;
+        if (screenPixels == 0 || Double.doubleToRawLongBits(tilePixels) == 0) return 1;
         return screenPixels/tilePixels;
     }
 
@@ -1260,7 +1260,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         EastNorth topLeft = mv.getEastNorth(0, 0);
         EastNorth botRight = mv.getEastNorth(mv.getWidth(), mv.getHeight());
 
-        if (botRight.east() == 0.0 || botRight.north() == 0) {
+        if (Double.doubleToRawLongBits(botRight.east()) == 0 || Double.doubleToRawLongBits(botRight.north()) == 0) {
             /*Main.debug("still initializing??");*/
             // probably still initializing
             return;

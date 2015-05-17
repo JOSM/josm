@@ -60,7 +60,9 @@ public class SelectByInternalPointAction extends JosmAction {
                     EastNorth en1 = Main.map.mapView.getProjection().latlon2eastNorth(bBox.getTopLeft());
                     EastNorth en2 = Main.map.mapView.getProjection().latlon2eastNorth(bBox.getBottomRight());
                     double s = Math.abs((en1.east() - en2.east()) * (en1.north() - en2.north()));
-                    if (s == 0) s = 1e8;
+                    if (Double.doubleToRawLongBits(s) == 0) {
+                        s = 1e8;
+                    }
                     found.put(s, r);
                 }
             }

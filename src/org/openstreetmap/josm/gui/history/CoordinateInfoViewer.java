@@ -268,12 +268,10 @@ public class CoordinateInfoViewer extends JPanel {
             if (!prepareRefresh()) return;
 
             // display the coordinates
-            //
             lblLat.setText(coord != null ? coord.latToString(CoordinateFormat.DECIMAL_DEGREES) : tr("(none)"));
             lblLon.setText(coord != null ? coord.lonToString(CoordinateFormat.DECIMAL_DEGREES) : tr("(none)"));
 
             // update background color to reflect differences in the coordinates
-            //
             if (coord == oppositeCoord ||
                     (coord != null && oppositeCoord != null && coord.lat() == oppositeCoord.lat())) {
                 lblLat.setBackground(Color.WHITE);

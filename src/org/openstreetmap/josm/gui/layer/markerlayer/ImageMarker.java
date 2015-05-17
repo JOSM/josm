@@ -78,10 +78,10 @@ public class ImageMarker extends ButtonMarker {
         int w = img.getWidth(null);
         int h = img.getHeight(null);
         if (w>h) {
-            h = Math.round(maxSize*((float)h/w));
+            h = (int) Math.round(maxSize*((double)h/w));
             w = maxSize;
         } else {
-            w = Math.round(maxSize*((float)w/h));
+            w = (int) Math.round(maxSize*((double)w/h));
             h = maxSize;
         }
         return new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH));

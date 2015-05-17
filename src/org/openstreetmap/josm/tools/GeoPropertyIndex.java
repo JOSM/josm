@@ -163,9 +163,11 @@ public class GeoPropertyIndex<T> {
          */
         boolean isInside(LatLon ll) {
             return bbox.getTopLeftLon() <= ll.lon() &&
-                    (ll.lon() < bbox.getBottomRightLon() || (ll.lon() == 180.0 && bbox.getBottomRightLon() == 180.0)) &&
+                    (ll.lon() < bbox.getBottomRightLon() ||
+                            (Utils.equalsEpsilon(ll.lon(), 180.0) && Utils.equalsEpsilon(bbox.getBottomRightLon(), 180.0))) &&
                     bbox.getBottomRightLat() <= ll.lat() &&
-                    (ll.lat() < bbox.getTopLeftLat() || (ll.lat() == 90.0 && bbox.getTopLeftLat() == 90.0));
+                    (ll.lat() < bbox.getTopLeftLat() ||
+                            (Utils.equalsEpsilon(ll.lat(), 90.0) && Utils.equalsEpsilon(bbox.getTopLeftLat(), 90.0)));
         }
 
     }
