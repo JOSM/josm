@@ -81,15 +81,15 @@ public final class Shortcut {
         return assignedModifier;
     }
 
-    public boolean getAssignedDefault() {
+    public boolean isAssignedDefault() {
         return assignedDefault;
     }
 
-    public boolean getAssignedUser() {
+    public boolean isAssignedUser() {
         return assignedUser;
     }
 
-    public boolean getAutomatic() {
+    public boolean isAutomatic() {
         return automatic;
     }
 
@@ -97,7 +97,7 @@ public final class Shortcut {
         return !automatic && !"core:none".equals(shortText);
     }
 
-    private boolean getReset() {
+    private boolean isReset() {
         return reset;
     }
 
@@ -166,7 +166,7 @@ public final class Shortcut {
 
     // get a string that can be put into the preferences
     private boolean save() {
-        if (getAutomatic() || getReset() || !getAssignedUser()) {
+        if (isAutomatic() || isReset() || !isAssignedUser()) {
             return Main.pref.putCollection("shortcut.entry."+shortText, null);
         } else {
             return Main.pref.putCollection("shortcut.entry."+shortText, Arrays.asList(new String[]{longText,
@@ -315,21 +315,21 @@ public final class Shortcut {
         }
 
         for(Shortcut sc : newshortcuts) {
-            if (sc.getAssignedUser()
+            if (sc.isAssignedUser()
             && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
                 shortcuts.put(sc.getShortText(), sc);
             }
         }
         // Shortcuts at their default values
         for(Shortcut sc : newshortcuts) {
-            if (!sc.getAssignedUser() && sc.getAssignedDefault()
+            if (!sc.isAssignedUser() && sc.isAssignedDefault()
             && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
                 shortcuts.put(sc.getShortText(), sc);
             }
         }
         // Shortcuts that were automatically moved
         for(Shortcut sc : newshortcuts) {
-            if (!sc.getAssignedUser() && !sc.getAssignedDefault()
+            if (!sc.isAssignedUser() && !sc.isAssignedDefault()
             && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
                 shortcuts.put(sc.getShortText(), sc);
             }

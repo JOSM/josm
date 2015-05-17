@@ -1120,7 +1120,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             Main.registerActionShortcut(act, sc);
 
             // add shortcut info to the tooltip if needed
-            if (sc.getAssignedUser()) {
+            if (sc.isAssignedUser()) {
                 if (tt.startsWith("<html>") && tt.endsWith("</html>")) {
                     tt = tt.substring(6,tt.length()-6);
                 }
