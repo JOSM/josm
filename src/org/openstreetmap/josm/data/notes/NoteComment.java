@@ -60,12 +60,12 @@ public class NoteComment {
         return action;
     }
 
-    public void setIsNew(boolean isNew) {
+    public void setNew(boolean isNew) {
         this.isNew = isNew;
     }
 
     /** @return true if this is a new comment/action and needs to be uploaded to the API */
-    public boolean getIsNew() {
+    public boolean isNew() {
         return isNew;
     }
 }

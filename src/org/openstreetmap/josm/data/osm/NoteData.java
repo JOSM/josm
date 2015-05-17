@@ -148,7 +148,7 @@ public class NoteData {
                 return true;
             }
             for (NoteComment comment : note.getComments()) {
-                if (comment.getIsNew()) {
+                if (comment.isNew()) {
                     return true;
                 }
             }
@@ -169,7 +169,7 @@ public class NoteData {
                 final boolean isDirty = Utils.exists(existingNote.getComments(), new Predicate<NoteComment>() {
                     @Override
                     public boolean evaluate(NoteComment object) {
-                        return object.getIsNew();
+                        return object.isNew();
                     }
                 });
                 if (!isDirty) {

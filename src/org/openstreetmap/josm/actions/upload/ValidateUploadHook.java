@@ -91,7 +91,7 @@ public class ValidateUploadHook implements UploadHook {
                         error.setIgnored(true);
                     }
                 }
-                if (!error.getIgnored()) {
+                if (!error.isIgnored()) {
                     ++nume;
                 }
             }

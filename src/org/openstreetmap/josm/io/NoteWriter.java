@@ -76,7 +76,7 @@ public class NoteWriter extends XmlWriter {
             out.print("uid=\"" + comment.getUser().getId() + "\" ");
             out.print("user=\"" + encode(comment.getUser().getName()) + "\" ");
         }
-        out.print("is_new=\"" + comment.getIsNew() + "\" ");
+        out.print("is_new=\"" + comment.isNew() + "\" ");
         out.print(">");
         out.print(encode(comment.getText(), false));
         out.println("</comment>");

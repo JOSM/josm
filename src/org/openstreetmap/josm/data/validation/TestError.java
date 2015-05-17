@@ -207,7 +207,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         ignored = state;
     }
 
-    public boolean getIgnored() {
+    public boolean isIgnored() {
         return ignored;
     }
 

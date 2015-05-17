@@ -111,7 +111,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
 
     @Override
     public void visit(TestError error) {
-        if (error != null && !error.getIgnored()) {
+        if (error != null && !error.isIgnored()) {
             color = error.getSeverity().getColor();
             selected = error.isSelected();
             error.visitHighlighted(this);
