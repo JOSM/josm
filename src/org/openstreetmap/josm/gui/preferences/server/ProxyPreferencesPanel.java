@@ -14,7 +14,7 @@ import java.awt.event.ItemListener;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 import java.net.ProxySelector;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -236,7 +236,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         GridBagConstraints gc = new GridBagConstraints();
 
         ButtonGroup bgProxyPolicy = new ButtonGroup();
-        rbProxyPolicy = new HashMap<>();
+        rbProxyPolicy = new EnumMap<>(ProxyPolicy.class);
         ProxyPolicyChangeListener policyChangeListener = new ProxyPolicyChangeListener();
         for (ProxyPolicy pp: ProxyPolicy.values()) {
             rbProxyPolicy.put(pp, new JRadioButton());

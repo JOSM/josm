@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -156,7 +157,7 @@ public class DeleteCommand extends Command {
     }
 
     private Set<OsmPrimitiveType> getTypesToDelete() {
-        Set<OsmPrimitiveType> typesToDelete = new HashSet<>();
+        Set<OsmPrimitiveType> typesToDelete = EnumSet.noneOf(OsmPrimitiveType.class);
         for (OsmPrimitive osm : toDelete) {
             typesToDelete.add(OsmPrimitiveType.from(osm));
         }

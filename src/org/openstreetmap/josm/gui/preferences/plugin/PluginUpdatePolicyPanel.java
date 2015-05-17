@@ -7,7 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import javax.swing.ButtonGroup;
@@ -67,7 +67,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         gc.weightx  =1.0;
 
         ButtonGroup bgVersionBasedUpdatePolicy = new ButtonGroup();
-        rbVersionBasedUpatePolicy = new HashMap<>();
+        rbVersionBasedUpatePolicy = new EnumMap<>(Policy.class);
         JRadioButton btn = new JRadioButton(tr("Ask before updating"));
         rbVersionBasedUpatePolicy.put(Policy.ASK, btn);
         bgVersionBasedUpdatePolicy.add(btn);
@@ -108,7 +108,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         TimeBasedPolicyChangeListener changeListener = new TimeBasedPolicyChangeListener();
 
         ButtonGroup bgTimeBasedUpdatePolicy = new ButtonGroup();
-        rbTimeBasedUpatePolicy = new HashMap<>();
+        rbTimeBasedUpatePolicy = new EnumMap<>(Policy.class);
         JRadioButton btn = new JRadioButton(tr("Ask before updating"));
         btn.addChangeListener(changeListener);
         rbTimeBasedUpatePolicy.put(Policy.ASK, btn);

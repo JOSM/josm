@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -19,9 +19,8 @@ import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * The {@link TableCellRenderer} for a list of relation members in {@link HistoryBrowser}
- *
- *
+ * The {@link TableCellRenderer} for a list of relation members in {@link HistoryBrowser}.
+ * @since 1709
  */
 public class RelationMemberListTableCellRenderer extends JLabel implements TableCellRenderer {
 
@@ -37,7 +36,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
      */
     public RelationMemberListTableCellRenderer() {
         setOpaque(true);
-        icons = new HashMap<>();
+        icons = new EnumMap<>(OsmPrimitiveType.class);
         icons.put(OsmPrimitiveType.NODE, ImageProvider.get("data", "node"));
         icons.put(OsmPrimitiveType.WAY, ImageProvider.get("data", "way"));
         icons.put(OsmPrimitiveType.RELATION, ImageProvider.get("data", "relation"));

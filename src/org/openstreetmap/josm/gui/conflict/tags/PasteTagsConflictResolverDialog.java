@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class PasteTagsConflictResolverDialog extends JDialog  implements PropertyChangeListener {
     private static final Map<OsmPrimitiveType, String> PANE_TITLES;
     static {
-        PANE_TITLES = new HashMap<>();
+        PANE_TITLES = new EnumMap<>(OsmPrimitiveType.class);
         PANE_TITLES.put(OsmPrimitiveType.NODE, tr("Tags from nodes"));
         PANE_TITLES.put(OsmPrimitiveType.WAY, tr("Tags from ways"));
         PANE_TITLES.put(OsmPrimitiveType.RELATION, tr("Tags from relations"));
@@ -81,7 +82,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     protected final void build() {
         setTitle(tr("Conflicts in pasted tags"));
         allPrimitivesResolver = new TagConflictResolver();
-        resolvers = new HashMap<>();
+        resolvers = new EnumMap<>(OsmPrimitiveType.class);
         for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
             resolvers.put(type, new TagConflictResolver());
             resolvers.get(type).getModel().addPropertyChangeListener(this);

@@ -4,7 +4,7 @@ package org.openstreetmap.josm.io.auth;
 import java.awt.GraphicsEnvironment;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.openstreetmap.josm.gui.io.CredentialDialog;
@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public abstract class AbstractCredentialsAgent implements CredentialsAgent {
 
-    protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<>();
+    protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new EnumMap<>(RequestorType.class);
 
     @Override
     public CredentialsAgentResponse getCredentials(final RequestorType requestorType, final String host, boolean noSuccessWithLastResponse)
