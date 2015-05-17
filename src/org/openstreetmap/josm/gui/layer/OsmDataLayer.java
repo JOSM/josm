@@ -1,4 +1,4 @@
-// License: GPL. See LICENSE file for details.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;

@@ -1,4 +1,4 @@
-//License: GPL. For details, see LICENSE file.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.map;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -25,11 +25,11 @@ public final class MapPreference extends DefaultTabPreferenceSetting {
             return new MapPreference();
         }
     }
-    
+
     private MapPreference() {
         super(/* ICON(preferences/) */ "map", tr("Map Settings"), tr("Settings for the map projection and data interpretation."), false, new JTabbedPane());
     }
-    
+
     @Override
     public boolean ok() {
         return false;

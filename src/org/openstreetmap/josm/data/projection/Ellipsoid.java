@@ -4,7 +4,6 @@
  * License: GPL. For details, see LICENSE file.
  * Copyright (C) 2002 Johan Montagnat (johan@creatis.insa-lyon.fr)
  */
-
 package org.openstreetmap.josm.data.projection;
 
 import org.openstreetmap.josm.data.coor.LatLon;

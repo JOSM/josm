@@ -1,4 +1,4 @@
-// License: GPL. See LICENSE file for details.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
