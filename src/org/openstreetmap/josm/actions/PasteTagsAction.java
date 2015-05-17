@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -118,7 +118,7 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         protected Map<OsmPrimitiveType, Integer> getSourceStatistics() {
-            Map<OsmPrimitiveType, Integer> ret = new HashMap<>();
+            Map<OsmPrimitiveType, Integer> ret = new EnumMap<>(OsmPrimitiveType.class);
             for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
                 if (!getSourceTagsByType(type).isEmpty()) {
                     ret.put(type, getSourcePrimitivesByType(type).size());
@@ -128,7 +128,7 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         protected Map<OsmPrimitiveType, Integer> getTargetStatistics() {
-            Map<OsmPrimitiveType, Integer> ret = new HashMap<>();
+            Map<OsmPrimitiveType, Integer> ret = new EnumMap<>(OsmPrimitiveType.class);
             for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
                 int count = OsmPrimitive.getFilteredList(target, type.getOsmClass()).size();
                 if (count > 0) {
