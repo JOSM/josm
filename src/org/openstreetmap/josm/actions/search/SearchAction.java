@@ -504,16 +504,16 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             for (OsmPrimitive osm : all) {
                 if (s.mode == SearchMode.replace) {
                     if (matcher.match(osm)) {
-                        p.set(osm, true);
+                        p.set(osm, Boolean.TRUE);
                     } else {
-                        p.set(osm, false);
+                        p.set(osm, Boolean.FALSE);
                     }
                 } else if (s.mode == SearchMode.add && !p.get(osm) && matcher.match(osm)) {
-                    p.set(osm, true);
+                    p.set(osm, Boolean.TRUE);
                 } else if (s.mode == SearchMode.remove && p.get(osm) && matcher.match(osm)) {
-                    p.set(osm, false);
+                    p.set(osm, Boolean.FALSE);
                 } else if (s.mode == SearchMode.in_selection && p.get(osm) && !matcher.match(osm)) {
-                    p.set(osm, false);
+                    p.set(osm, Boolean.FALSE);
                 }
             }
         } catch (SearchCompiler.ParseError e) {
@@ -522,7 +522,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     e.getMessage(),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
-
             );
         }
     }

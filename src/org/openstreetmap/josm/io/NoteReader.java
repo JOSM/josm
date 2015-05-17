@@ -54,7 +54,7 @@ public class NoteReader {
         private String commentUsername;
         private Action noteAction;
         private Date commentCreateDate;
-        private Boolean commentIsNew;
+        private boolean commentIsNew;
         private List<Note> notes;
         private String commentText;
 
@@ -118,7 +118,7 @@ public class NoteReader {
                 if(isNew == null) {
                     commentIsNew = false;
                 } else {
-                    commentIsNew = Boolean.valueOf(isNew);
+                    commentIsNew = Boolean.parseBoolean(isNew);
                 }
                 break;
             }
@@ -144,7 +144,7 @@ public class NoteReader {
                 commentUid = 0;
                 commentUsername = null;
                 commentCreateDate = null;
-                commentIsNew = null;
+                commentIsNew = false;
                 commentText = null;
             }
             if(parseMode == NoteParseMode.DUMP) {

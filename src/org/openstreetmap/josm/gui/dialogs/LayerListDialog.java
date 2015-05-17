@@ -172,8 +172,8 @@ public class LayerListDialog extends ToggleDialog {
         layerList.setSelectionModel(selectionModel);
         layerList.addMouseListener(new PopupMenuHandler());
         layerList.setBackground(UIManager.getColor("Button.background"));
-        layerList.putClientProperty("terminateEditOnFocusLost", true);
-        layerList.putClientProperty("JTable.autoStartsEdit", false);
+        layerList.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        layerList.putClientProperty("JTable.autoStartsEdit", Boolean.FALSE);
         layerList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         layerList.setTableHeader(null);
         layerList.setShowGrid(false);

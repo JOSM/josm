@@ -89,7 +89,7 @@ public class SourceEntry {
      * @see #title
      * @see #active
      */
-    public SourceEntry(String url, String name, String title, Boolean active) {
+    public SourceEntry(String url, String name, String title, boolean active) {
         this(url, false, null, name, title, active);
     }
 

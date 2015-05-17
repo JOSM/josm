@@ -35,7 +35,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
         super(name, "mapmode/"+iconName, tooltip, shortcut, false);
         this.cursor = cursor;
-        putValue("active", false);
+        putValue("active", Boolean.FALSE);
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * Makes this map mode active.
      */
     public void enterMode() {
-        putValue("active", true);
+        putValue("active", Boolean.TRUE);
         Main.map.mapView.setNewCursor(cursor, this);
         updateStatusLine();
     }
@@ -61,7 +61,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * Makes this map mode inactive.
      */
     public void exitMode() {
-        putValue("active", false);
+        putValue("active", Boolean.FALSE);
         Main.map.mapView.resetCursor(this);
     }
 

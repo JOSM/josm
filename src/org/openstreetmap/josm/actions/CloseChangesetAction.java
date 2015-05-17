@@ -83,8 +83,8 @@ public class CloseChangesetAction extends JosmAction {
         private Exception lastException;
         private UserInfo userInfo;
 
-        public DownloadOpenChangesetsTask() {
-            super(tr("Downloading open changesets ...", false /* don't ignore exceptions */));
+        private DownloadOpenChangesetsTask() {
+            super(tr("Downloading open changesets ..."), false /* don't ignore exceptions */);
         }
 
         @Override

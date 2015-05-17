@@ -58,7 +58,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
                 {
                     putValue(NAME, file);
                     putValue("help", ht("/Action/OpenRecent"));
-                    putValue("toolbar", false);
+                    putValue("toolbar", Boolean.FALSE);
                 }
                 @Override
                 public void actionPerformed(ActionEvent e) {

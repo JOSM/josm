@@ -301,7 +301,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     return activeModel.getValueAt(rowAtPoint(p), columnAtPoint(p)).toString();
                 }
             };
-            activeTable.putClientProperty("terminateEditOnFocusLost", true);
+            activeTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
             defaultModel = new ImageryDefaultLayerTableModel();
             defaultTable = new JTable(defaultModel);

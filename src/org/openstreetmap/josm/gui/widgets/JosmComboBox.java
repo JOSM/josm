@@ -183,7 +183,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if ("editable".equals(evt.getPropertyName())) {
-                if (evt.getNewValue().equals(true)) {
+                if (evt.getNewValue().equals(Boolean.TRUE)) {
                     enableMenu();
                 } else {
                     disableMenu();
