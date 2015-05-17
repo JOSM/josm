@@ -1,10 +1,10 @@
-// License: GPL. See LICENSE file for details.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation;
+
+import java.util.Collection;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-
-import java.util.Collection;
 
 /**
  * Validation error easily fixable right at its detection. The fix can be given when constructing the error.

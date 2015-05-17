@@ -1,4 +1,4 @@
-// License: GPL. See LICENSE file for details.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.validation.TestError;
  * @since 6192
  */
 public class BarriersEntrances extends Test {
-    
+
     protected static final int BARRIER_ENTRANCE_WITHOUT_BARRIER = 2801;
 
     /**
