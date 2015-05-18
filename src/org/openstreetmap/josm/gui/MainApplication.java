@@ -320,9 +320,6 @@ public class MainApplication extends Main {
             }
 
             @Override
-            public void refresh() { }
-
-            @Override
             public PermissionCollection getPermissions(CodeSource codesource) {
                 return pc;
             }

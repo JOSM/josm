@@ -642,7 +642,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
              * Constructs a new {@code ImageryLayerTableModel}.
              */
             public ImageryLayerTableModel() {
-                setColumnIdentifiers(new String[] { tr("Menu Name"), tr("Imagery URL")});
+                setColumnIdentifiers(new String[] {tr("Menu Name"), tr("Imagery URL")});
             }
 
             /**
@@ -704,11 +704,6 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 default:
                     throw new ArrayIndexOutOfBoundsException();
                 }
-            }
-
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return true;
             }
         }
 

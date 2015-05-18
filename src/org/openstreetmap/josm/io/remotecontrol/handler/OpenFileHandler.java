@@ -26,11 +26,6 @@ public class OpenFileHandler extends RequestHandler {
     }
 
     @Override
-    public String[] getOptionalParams() {
-        return null;
-    }
-
-    @Override
     public String getUsage() {
         return "opens a local file in JOSM";
     }

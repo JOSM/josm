@@ -563,11 +563,6 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             return keys.get(row);
         }
 
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-
         public boolean hasTag(String key) {
             HistoryOsmPrimitive primitive = getPointInTime(pointInTimeType);
             if (primitive == null)

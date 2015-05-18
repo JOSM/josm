@@ -117,7 +117,7 @@ public class PrefJPanel extends JPanel {
     }
 
     private static class ScListModel extends AbstractTableModel {
-        private String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
+        private final String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
         private transient List<Shortcut> data;
 
         public ScListModel() {
@@ -138,10 +138,6 @@ public class PrefJPanel extends JPanel {
         @Override
         public Object getValueAt(int row, int col) {
             return (col==0)?  data.get(row).getLongText() : data.get(row);
-        }
-        @Override
-        public boolean isCellEditable(int row, int col) {
-            return false;
         }
     }
 
