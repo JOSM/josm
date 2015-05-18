@@ -12,6 +12,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.DefaultListSelectionModel;
 
@@ -654,13 +655,13 @@ public class NodeListMergeModelTest {
 
         model.addPropertyChangeListener(listener);
 
-        List<PropertyChangeListener> listeners = field("listeners")
-        .ofType(List.class)
+        Set<PropertyChangeListener> listeners = field("listeners")
+        .ofType(Set.class)
         .in(model)
         .get();
 
         assertEquals(1, listeners.size());
-        assertEquals(listener, listeners.get(0));
+        assertEquals(listener, listeners.iterator().next());
     }
 
     @SuppressWarnings("unchecked")
@@ -677,8 +678,8 @@ public class NodeListMergeModelTest {
         model.addPropertyChangeListener(listener);
         model.removePropertyChangeListener(listener);
 
-        List<PropertyChangeListener> listeners = field("listeners")
-        .ofType(List.class)
+        Set<PropertyChangeListener> listeners = field("listeners")
+        .ofType(Set.class)
         .in(model)
         .get();
 
