@@ -53,8 +53,16 @@ public class DownloadFileTask extends PleaseWaitRunnable{
     }
 
     private static class DownloadException extends Exception {
-        public DownloadException(String msg) {
-            super(msg);
+        /**
+         * Constructs a new {@code DownloadException}.
+         * @param message the detail message. The detail message is saved for
+         *          later retrieval by the {@link #getMessage()} method.
+         * @param  cause the cause (which is saved for later retrieval by the
+         *         {@link #getCause()} method).  (A <tt>null</tt> value is
+         *         permitted, and indicates that the cause is nonexistent or unknown.)
+         */
+        public DownloadException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 
@@ -132,11 +140,11 @@ public class DownloadFileTask extends PleaseWaitRunnable{
         } catch(MalformedURLException e) {
             String msg = tr("Cannot download file ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.", file.getName(), address);
             Main.warn(msg);
-            throw new DownloadException(msg);
+            throw new DownloadException(msg, e);
         } catch (IOException e) {
             if (canceled)
                 return;
-            throw new DownloadException(e.getMessage());
+            throw new DownloadException(e.getMessage(), e);
         } finally {
             closeConnectionIfNeeded();
         }

@@ -779,7 +779,7 @@ public final class TaggingPresetItems {
             if (!"false".equals(use_last_as_default) || auto_increment != null) {
                 LAST_VALUES.put(key, v);
             }
-            if (v.equals(originalValue) || (originalValue == null && v.length() == 0))
+            if (v.equals(originalValue) || (originalValue == null && v.isEmpty()))
                 return;
 
             changedTags.add(new Tag(key, v));
@@ -1155,7 +1155,7 @@ public final class TaggingPresetItems {
 
             // no change if same as before
             if (originalValue == null) {
-                if (value.length() == 0)
+                if (value.isEmpty())
                     return;
             } else if (value.equals(originalValue.toString()))
                 return;

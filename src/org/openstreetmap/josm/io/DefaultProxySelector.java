@@ -110,7 +110,7 @@ public class DefaultProxySelector extends ProxySelector {
      */
     public final void initFromPreferences() {
         String value = Main.pref.get(ProxyPreferencesPanel.PROXY_POLICY);
-        if (value.length() == 0) {
+        if (value.isEmpty()) {
             proxyPolicy = ProxyPolicy.NO_PROXY;
         } else {
             proxyPolicy = ProxyPolicy.fromName(value);

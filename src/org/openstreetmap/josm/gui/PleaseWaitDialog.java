@@ -110,7 +110,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      */
     @Override
     public void setCustomText(String text) {
-        if(text == null || text.trim().length() == 0) {
+        if(text == null || text.trim().isEmpty()) {
             customText.setVisible(false);
             adjustLayout();
             return;

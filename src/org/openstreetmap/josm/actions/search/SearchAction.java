@@ -624,7 +624,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
 
         public static SearchSetting readFromString(String s) {
-            if (s.length() == 0)
+            if (s.isEmpty())
                 return null;
 
             SearchSetting result = new SearchSetting();
@@ -663,7 +663,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
 
         public String writeToString() {
-            if (text == null || text.length() == 0)
+            if (text == null || text.isEmpty())
                 return "";
 
             StringBuilder result = new StringBuilder();

@@ -360,7 +360,7 @@ public class OsmApi extends OsmConnection {
             osm.setOsmId(Long.parseLong(ret.trim()), 1);
             osm.setChangesetId(getChangeset().getId());
         } catch(NumberFormatException e){
-            throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret));
+            throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret), e);
         }
     }
 
@@ -383,7 +383,7 @@ public class OsmApi extends OsmConnection {
             osm.setVisible(true);
         } catch(NumberFormatException e) {
             throw new OsmTransferException(tr("Unexpected format of new version of modified primitive ''{0}''. Got ''{1}''.",
-                    osm.getId(), ret));
+                    osm.getId(), ret), e);
         }
     }
 
@@ -426,7 +426,7 @@ public class OsmApi extends OsmConnection {
                 changeset.setId(Integer.parseInt(ret.trim()));
                 changeset.setOpen(true);
             } catch(NumberFormatException e){
-                throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret));
+                throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret), e);
             }
             progressMonitor.setCustomText(tr("Successfully opened changeset {0}",changeset.getId()));
         } finally {
