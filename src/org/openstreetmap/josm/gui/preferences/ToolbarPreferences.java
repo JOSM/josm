@@ -769,10 +769,6 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
 
                 @Override
-                protected void exportDone(JComponent source, Transferable data, int action) {
-                }
-
-                @Override
                 protected Transferable createTransferable(JComponent c) {
                     TreePath[] paths = actionsTree.getSelectionPaths();
                     List<ActionDefinition> dragActions = new ArrayList<>();

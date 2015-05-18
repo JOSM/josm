@@ -139,10 +139,6 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     }
 
     @Override
-    public void destroy() {
-    }
-
-    @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
     }
 

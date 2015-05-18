@@ -169,13 +169,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     }
 
     @Override
-    public void showNotify() { }
-
-    @Override
-    public void hideNotify() { }
-
-    @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) { }
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        // Do nothing
+    }
 
     @Override
     public void layerAdded(Layer newLayer) {
