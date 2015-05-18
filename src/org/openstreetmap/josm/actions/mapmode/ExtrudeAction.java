@@ -1143,8 +1143,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * @param mv
      * @param seg the reference segment
      */
-    private void drawReferenceSegment(Graphics2D g2, MapView mv, ReferenceSegment seg)
-    {
+    private void drawReferenceSegment(Graphics2D g2, MapView mv, ReferenceSegment seg) {
         Point p1 = mv.getPoint(seg.p1);
         Point p2 = mv.getPoint(seg.p2);
         GeneralPath b = new GeneralPath();

@@ -48,8 +48,7 @@ public final class User {
      * @return a new local user with the given name
      */
     public static synchronized User createLocalUser(String name) {
-        for(long i = -1; i >= uidCounter; --i)
-        {
+        for(long i = -1; i >= uidCounter; --i) {
             User olduser = getById(i);
             if(olduser != null && olduser.hasName(name))
                 return olduser;

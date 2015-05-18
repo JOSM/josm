@@ -749,8 +749,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         g.drawImage(img.getImage(disabled), p.x - w/2 + img.offsetX, p.y - h/2 + img.offsetY, nc);
         g.rotate(-theta, p.x, p.y);
         g.setPaintMode();
-        if (selected || member)
-        {
+        if (selected || member) {
             Color color;
             if (disabled) {
                 color = inactiveColor;

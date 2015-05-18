@@ -42,15 +42,13 @@ public class AddNodeHandler extends RequestHandler {
     }
 
     @Override
-    public String[] getMandatoryParams()
-    {
-        return new String[] { "lat", "lon" };
+    public String[] getMandatoryParams() {
+        return new String[] {"lat", "lon"};
     }
 
     @Override
-    public String[] getOptionalParams()
-    {
-        return new String[] { "addtags" };
+    public String[] getOptionalParams() {
+        return new String[] {"addtags"};
     }
 
     @Override

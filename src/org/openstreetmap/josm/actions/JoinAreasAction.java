@@ -1327,8 +1327,7 @@ public class JoinAreasAction extends JosmAction {
                 return null;
             }
 
-            for (Way way :innerWays)
-            {
+            for (Way way :innerWays) {
                 if (processedOuterWays.contains(way)) {
                     new Notification(
                             tr("Sorry. Cannot handle way that is both inner and outer in multipolygon relations."))

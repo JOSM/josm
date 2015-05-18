@@ -790,8 +790,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     .showDialog()
                     .getValue();
 
-            if(result == 2)
-            {
+            if (result == 2) {
                 data.remove(currentPhoto);
                 if (currentPhoto >= data.size()) {
                     currentPhoto = data.size() - 1;

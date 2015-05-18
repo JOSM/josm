@@ -999,8 +999,7 @@ public abstract class Main {
                     break;
                 }
             }
-            if(!fileList.isEmpty())
-            {
+            if(!fileList.isEmpty()) {
                 OpenFileAction.openFiles(fileList, true);
             }
         }

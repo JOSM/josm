@@ -799,24 +799,23 @@ public class SelectionListDialog extends ToggleDialog  {
                 }
             }
             StringBuilder text = new StringBuilder();
-            if(ways != 0) {
+            if (ways != 0) {
                 text.append(text.length() > 0 ? ", " : "")
                 .append(trn("{0} way", "{0} ways", ways, ways));
             }
-            if(nodes != 0) {
+            if (nodes != 0) {
                 text.append(text.length() > 0 ? ", " : "")
                 .append(trn("{0} node", "{0} nodes", nodes, nodes));
             }
-            if(relations != 0) {
+            if (relations != 0) {
                 text.append(text.length() > 0 ? ", " : "")
                 .append(trn("{0} relation", "{0} relations", relations, relations));
             }
-            if(ways + nodes + relations == 0) {
+            if (ways + nodes + relations == 0) {
                 text.append(tr("Unselectable now"));
                 this.sel=new ArrayList<>(); // empty selection
             }
-            if(ways + nodes + relations == 1)
-            {
+            if (ways + nodes + relations == 1) {
                 text.append(": ");
                 for(OsmPrimitive o : sel) {
                     text.append(o.getDisplayName(df));

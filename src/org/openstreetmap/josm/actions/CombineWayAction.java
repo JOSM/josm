@@ -221,8 +221,7 @@ public class CombineWayAction extends JosmAction {
             return;
         final Way selectedWay = combineResult.a;
         Main.main.undoRedo.add(combineResult.b);
-        if(selectedWay != null)
-        {
+        if(selectedWay != null) {
             Runnable guiTask = new Runnable() {
                 @Override
                 public void run() {

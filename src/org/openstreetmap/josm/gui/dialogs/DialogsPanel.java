@@ -276,8 +276,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         /**
          * Hide the Panel, if there is nothing to show
          */
-        if (numPanels == 1 && panels.get(N-1).getComponents().length == 0)
-        {
+        if (numPanels == 1 && panels.get(N-1).getComponents().length == 0) {
             parent.setDividerSize(0);
             this.setVisible(false);
         } else {

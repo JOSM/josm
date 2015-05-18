@@ -206,8 +206,7 @@ public class LayerListDialog extends ToggleDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0),
                 KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0),
                 KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0),
-        })
-        {
+        }) {
             layerList.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ks, new Object());
         }
 

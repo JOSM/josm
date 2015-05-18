@@ -692,8 +692,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
             for (Node n : ds.searchNodes(getBBox(p, PROP_SNAP_DISTANCE.get()))) {
                 if (predicate.evaluate(n)
-                        && (dist = getPoint2D(n).distanceSq(p)) < snapDistanceSq)
-                {
+                        && (dist = getPoint2D(n).distanceSq(p)) < snapDistanceSq) {
                     List<Node> nlist;
                     if (nearestMap.containsKey(dist)) {
                         nlist = nearestMap.get(dist);

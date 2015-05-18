@@ -248,8 +248,7 @@ public abstract class RequestHandler {
      *
      * @param command The command.
      */
-    public void setCommand(String command)
-    {
+    public void setCommand(String command) {
         if (command.charAt(0) == '/') {
             command = command.substring(1);
         }

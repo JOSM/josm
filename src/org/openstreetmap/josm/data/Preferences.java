@@ -1727,8 +1727,7 @@ public class Preferences {
                 if (data != null) {
                     List<Map<String, String>> newlist = new ArrayList<Map<String, String>>();
                     boolean modified = false;
-                    for(Map<String, String> map : data)
-                    {
+                    for(Map<String, String> map : data) {
                          Map<String, String> newmap = new LinkedHashMap<String, String>();
                          for (Entry<String, String> entry : map.entrySet()) {
                              String val = entry.getValue();
