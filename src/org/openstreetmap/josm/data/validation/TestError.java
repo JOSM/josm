@@ -186,7 +186,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
             strings.add(type + "_" + o.getId());
         }
         for (String o : strings) {
-            ignorestring.append(":").append(o);
+            ignorestring.append(':').append(o);
         }
         return ignorestring.toString();
     }

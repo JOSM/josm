@@ -13,9 +13,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -84,7 +86,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     protected EntriesSelectionModel theirEntriesSelectionModel;
     protected EntriesSelectionModel mergedEntriesSelectionModel;
 
-    private final List<PropertyChangeListener> listeners;
+    private final Set<PropertyChangeListener> listeners;
     private boolean isFrozen = false;
     private final ComparePairListModel comparePairListModel;
 
@@ -198,7 +200,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         theirEntriesSelectionModel = new EntriesSelectionModel(entries.get(THEIR_ENTRIES));
         mergedEntriesSelectionModel =  new EntriesSelectionModel(entries.get(MERGED_ENTRIES));
 
-        listeners = new ArrayList<>();
+        listeners = new HashSet<>();
         comparePairListModel = new ComparePairListModel();
 
         setFrozen(true);
@@ -206,7 +208,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         synchronized(listeners) {
-            if (listener != null && ! listeners.contains(listener)) {
+            if (listener != null && !listeners.contains(listener)) {
                 listeners.add(listener);
             }
         }

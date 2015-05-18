@@ -176,7 +176,7 @@ public class PushbackTokenizer {
                 return nextToken();
             // try parsing number
             try {
-                currentNumber = Long.parseLong(currentText);
+                currentNumber = Long.valueOf(currentText);
             } catch (NumberFormatException e) {
                 currentNumber = null;
             }
@@ -185,12 +185,12 @@ public class PushbackTokenizer {
             isRange = pos > 0;
             if (isRange) {
                 try {
-                    currentNumber = Long.parseLong(currentText.substring(0, pos));
+                    currentNumber = Long.valueOf(currentText.substring(0, pos));
                 } catch (NumberFormatException e) {
                     currentNumber = null;
                 }
                 try {
-                    currentRange = Long.parseLong(currentText.substring(pos + 1));
+                    currentRange = Long.valueOf(currentText.substring(pos + 1));
                 } catch (NumberFormatException e) {
                     currentRange = null;
                     }

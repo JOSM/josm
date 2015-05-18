@@ -59,7 +59,7 @@ public final class TigerUtils {
         StringBuilder combined = new StringBuilder();
         for (Object part : resultSet) {
             if (combined.length() > 0) {
-                combined.append(":");
+                combined.append(':');
             }
             combined.append(part);
         }

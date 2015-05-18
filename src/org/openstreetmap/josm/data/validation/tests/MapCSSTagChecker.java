@@ -245,7 +245,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         private static final String POSSIBLE_THROWS = possibleThrows();
 
         static final String possibleThrows() {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             for (Severity s : Severity.values()) {
                 if (sb.length() > 0) {
                     sb.append('/');

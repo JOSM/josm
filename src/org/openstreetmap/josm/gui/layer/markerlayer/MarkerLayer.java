@@ -119,7 +119,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
             if (exts != null && exts.containsKey("offset")) {
                 try {
-                    offset = Double.parseDouble(exts.get("offset"));
+                    offset = Double.valueOf(exts.get("offset"));
                 } catch (NumberFormatException nfe) {
                     Main.warn(nfe);
                 }

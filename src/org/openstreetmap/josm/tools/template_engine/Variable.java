@@ -34,7 +34,7 @@ public class Variable implements TemplateEntry {
                 } else {
                     first = false;
                 }
-                result.append(key).append("=").append(dataProvider.getTemplateValue(key, false));
+                result.append(key).append('=').append(dataProvider.getTemplateValue(key, false));
             }
         } else {
             Object value = dataProvider.getTemplateValue(variableName, special);

@@ -74,7 +74,7 @@ public final class CustomConfigurator {
 
     public static void log(String s) {
         summary.append(s);
-        summary.append("\n");
+        summary.append('\n');
     }
 
     public static String getLog() {

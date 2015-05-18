@@ -185,13 +185,12 @@ public class OsmOAuthAuthorizationClient {
      * @return  the authorise URL for this request
      */
     public String getAuthoriseUrl(OAuthToken requestToken) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(32);
 
         // OSM is an OAuth 1.0 provider and JOSM isn't a web app. We just add the oauth request token to
         // the authorisation request, no callback parameter.
         //
-        sb.append(oauthProviderParameters.getAuthoriseUrl()).append("?")
-        .append(OAuth.OAUTH_TOKEN).append("=").append(requestToken.getKey());
+        sb.append(oauthProviderParameters.getAuthoriseUrl()).append('?'+OAuth.OAUTH_TOKEN+'=').append(requestToken.getKey());
         return sb.toString();
     }
 
@@ -248,15 +247,15 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected String buildPostRequest(Map<String,String> parameters) throws OsmOAuthAuthorizationException {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(32);
 
         for(Iterator<Entry<String,String>> it = parameters.entrySet().iterator(); it.hasNext();) {
             Entry<String,String> entry = it.next();
             String value = entry.getValue();
             value = (value == null) ? "" : value;
-            sb.append(entry.getKey()).append("=").append(Utils.encodeUrl(value));
+            sb.append(entry.getKey()).append('=').append(Utils.encodeUrl(value));
             if (it.hasNext()) {
-                sb.append("&");
+                sb.append('&');
             }
         }
         return sb.toString();

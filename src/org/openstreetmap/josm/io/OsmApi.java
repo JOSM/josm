@@ -323,10 +323,9 @@ public class OsmApi extends OsmConnection {
     private static String getBaseUrl(String serverUrl, String version) {
         StringBuilder rv = new StringBuilder(serverUrl);
         if (version != null) {
-            rv.append("/");
-            rv.append(version);
+            rv.append('/').append(version);
         }
-        rv.append("/");
+        rv.append('/');
         // this works around a ruby (or lighttpd) bug where two consecutive slashes in
         // an URL will cause a "404 not found" response.
         int p;
@@ -682,7 +681,7 @@ public class OsmApi extends OsmConnection {
                     try (BufferedReader in = new BufferedReader(new InputStreamReader(i, StandardCharsets.UTF_8))) {
                         while((s = in.readLine()) != null) {
                             responseBody.append(s);
-                            responseBody.append("\n");
+                            responseBody.append('\n');
                         }
                     }
                 }

@@ -68,9 +68,9 @@ public class AddTMSLayerPanel extends AddImageryPanel {
         StringBuilder a = new StringBuilder("tms");
         String z = sanitize(tmsZoom.getText());
         if (!z.isEmpty()) {
-            a.append("[").append(z).append("]");
+            a.append('[').append(z).append(']');
         }
-        a.append(":").append(getImageryRawUrl());
+        a.append(':').append(getImageryRawUrl());
         return a.toString();
     }
 

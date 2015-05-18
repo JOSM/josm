@@ -523,14 +523,14 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                     ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), new String[]{tr("OK")});
                     ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
                     StringBuilder content = new StringBuilder();
-                    content.append("Tile name: ").append(clickedTile.getKey()).append("\n");
+                    content.append("Tile name: ").append(clickedTile.getKey()).append('\n');
                     try {
-                        content.append("Tile url: ").append(clickedTile.getUrl()).append("\n");
+                        content.append("Tile url: ").append(clickedTile.getUrl()).append('\n');
                     } catch (IOException e) {
                     }
-                    content.append("Tile size: ").append(clickedTile.getTileSource().getTileSize()).append("x").append(clickedTile.getTileSource().getTileSize()).append("\n");
+                    content.append("Tile size: ").append(clickedTile.getTileSource().getTileSize()).append('x').append(clickedTile.getTileSource().getTileSize()).append('\n');
                     Rectangle displaySize = tileToRect(clickedTile);
-                    content.append("Tile display size: ").append(displaySize.width).append("x").append(displaySize.height).append("\n");
+                    content.append("Tile display size: ").append(displaySize.width).append('x').append(displaySize.height).append('\n');
                     ed.setContent(content.toString());
                     ed.showDialog();
                 }

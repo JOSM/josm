@@ -12,12 +12,16 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
  * Dummy importer that adds the "All Formats"-Filter when opening files
  */
 public class AllFormatsImporter extends FileImporter {
+    /**
+     * Constructs a new {@code AllFormatsImporter}.
+     */
     public AllFormatsImporter() {
         super(new ExtensionFileFilter(getAllExtensions(), "", tr("All Formats")
                 + " (*.gpx *.osm *.nmea *.jpg ...)"));
     }
 
-    @Override public boolean acceptFile(File pathname) {
+    @Override
+    public boolean acceptFile(File pathname) {
         return false;
     }
 
@@ -33,8 +37,7 @@ public class AllFormatsImporter extends FileImporter {
             if(fi instanceof AllFormatsImporter) {
                 continue;
             }
-            ext.append(fi.filter.getExtensions());
-            ext.append(",");
+            ext.append(fi.filter.getExtensions()).append(',');
         }
         // remove last comma
         return ext.substring(0, ext.length()-1).toString();

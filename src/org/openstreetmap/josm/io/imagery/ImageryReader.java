@@ -262,7 +262,7 @@ public class ImageryReader {
                 case "max-zoom":
                     Integer val = null;
                     try {
-                        val = Integer.parseInt(accumulator.toString());
+                        val = Integer.valueOf(accumulator.toString());
                     } catch(NumberFormatException e) {
                         val = null;
                     }
@@ -303,7 +303,7 @@ public class ImageryReader {
                 case "tile-size":
                     Integer tileSize = null;
                     try {
-                        tileSize  = Integer.parseInt(accumulator.toString());
+                        tileSize = Integer.valueOf(accumulator.toString());
                     } catch(NumberFormatException e) {
                         tileSize = null;
                     }

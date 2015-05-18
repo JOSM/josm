@@ -14,7 +14,9 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -85,7 +87,7 @@ public class ExtendedDialog extends JDialog {
     private final String[] bTexts;
     private String[] bToolTipTexts;
     private transient Icon[] bIcons;
-    private transient List<Integer> cancelButtonIdx = Collections.emptyList();
+    private transient Set<Integer> cancelButtonIdx = Collections.emptySet();
     private int defaultButtonIdx = 1;
     protected JButton defaultButton = null;
     private transient Icon icon;
@@ -560,7 +562,7 @@ public class ExtendedDialog extends JDialog {
      * @return {@code this}
      */
     public ExtendedDialog setCancelButton(Integer... cancelButtonIdx) {
-        this.cancelButtonIdx = Arrays.<Integer>asList(cancelButtonIdx);
+        this.cancelButtonIdx = new HashSet<>(Arrays.<Integer>asList(cancelButtonIdx));
         return this;
     }
 

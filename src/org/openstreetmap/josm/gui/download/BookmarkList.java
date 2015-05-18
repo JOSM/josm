@@ -213,15 +213,13 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
 
         protected String buildToolTipText(Bookmark b) {
             Bounds area = b.getArea();
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(128);
             sb.append("<html>min[latitude,longitude]=<strong>[")
-            .append(area.getMinLat()).append(",").append(area.getMinLon()).append("]</strong>")
-            .append("<br>")
-            .append("max[latitude,longitude]=<strong>[")
-            .append(area.getMaxLat()).append(",").append(area.getMaxLon()).append("]</strong>")
-            .append("</html>");
+              .append(area.getMinLat()).append(',').append(area.getMinLon()).append("]</strong>")
+              .append("<br>max[latitude,longitude]=<strong>[")
+              .append(area.getMaxLat()).append(',').append(area.getMaxLon()).append("]</strong>")
+              .append("</html>");
             return sb.toString();
-
         }
 
         @Override

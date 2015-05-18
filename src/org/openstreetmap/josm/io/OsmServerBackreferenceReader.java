@@ -124,7 +124,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
         try {
             progressMonitor.subTask(tr("Contacting OSM Server..."));
             StringBuilder sb = new StringBuilder();
-            sb.append(primitiveType.getAPIName()).append("/").append(id).append(type);
+            sb.append(primitiveType.getAPIName()).append('/').append(id).append(type);
 
             try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
                 if (in == null)

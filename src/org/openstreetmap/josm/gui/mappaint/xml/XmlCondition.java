@@ -45,6 +45,6 @@ public class XmlCondition {
         else
             sb.append(",v=").append(value);
 
-        sb.append("]");
+        sb.append(']');
     }
 }

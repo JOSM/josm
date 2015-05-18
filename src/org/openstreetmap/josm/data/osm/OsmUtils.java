@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -13,20 +13,20 @@ import org.openstreetmap.josm.tools.TextTagParser;
 
 public final class OsmUtils {
 
-    private OsmUtils() {
-        // Hide default constructor for utils classes
-    }
-
-    private static final List<String> TRUE_VALUES = new ArrayList<>(Arrays
-            .asList(new String[] { "true", "yes", "1", "on" }));
-    private static final List<String> FALSE_VALUES = new ArrayList<>(Arrays
-            .asList(new String[] { "false", "no", "0", "off" }));
-    private static final List<String> REVERSE_VALUES = new ArrayList<>(Arrays
-            .asList(new String[] { "reverse", "-1" }));
+    private static final Set<String> TRUE_VALUES = new HashSet<>(Arrays
+            .asList("true", "yes", "1", "on"));
+    private static final Set<String> FALSE_VALUES = new HashSet<>(Arrays
+            .asList("false", "no", "0", "off"));
+    private static final Set<String> REVERSE_VALUES = new HashSet<>(Arrays
+            .asList("reverse", "-1"));
 
     public static final String trueval = "yes";
     public static final String falseval = "no";
     public static final String reverseval = "-1";
+
+    private OsmUtils() {
+        // Hide default constructor for utils classes
+    }
 
     public static Boolean getOsmBoolean(String value) {
         if(value == null) return null;

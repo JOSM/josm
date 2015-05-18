@@ -115,7 +115,7 @@ public class RestartAction extends JosmAction {
                 // look for a .jar in all chunks to support paths with spaces (fix #9077)
                 StringBuilder sb = new StringBuilder(mainCommand[0]);
                 for (int i = 1; i < mainCommand.length && !mainCommand[i-1].endsWith(".jar"); i++) {
-                    sb.append(" ").append(mainCommand[i]);
+                    sb.append(' ').append(mainCommand[i]);
                 }
                 String jarPath = sb.toString();
                 // program main is a jar

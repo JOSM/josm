@@ -289,11 +289,11 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         if (coord == null)
             return tr("(none)");
         StringBuilder sb = new StringBuilder();
-        sb.append("(")
+        sb.append('(')
         .append(COORD_FORMATTER.format(coord.lat()))
-        .append(",")
+        .append(',')
         .append(COORD_FORMATTER.format(coord.lon()))
-        .append(")");
+        .append(')');
         return sb.toString();
     }
 
