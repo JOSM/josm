@@ -351,7 +351,7 @@ public final class Geometry {
 
         // Solve the equations
         double det = a1 * b2 - a2 * b1;
-        if (Double.doubleToRawLongBits(det) == 0)
+        if (det == 0)
             return null; // Lines are parallel
 
         return new EastNorth(b1 * c2 / det + p1.getX(),  - a1 * c2 / det + p1.getY());
@@ -387,7 +387,7 @@ public final class Geometry {
         double ldy = p2.getY() - p1.getY();
 
         //segment zero length
-        if (Double.doubleToRawLongBits(ldx) == 0 && Double.doubleToRawLongBits(ldy) == 0)
+        if (ldx == 0 && ldy == 0)
             return p1;
 
         double pdx = point.getX() - p1.getX();
@@ -827,7 +827,7 @@ public final class Geometry {
             a[i] = pt1.east() - pt2.east();
             b[i] = pt1.north() - pt2.north();
             double d = Math.sqrt(a[i]*a[i] + b[i]*b[i]);
-            if (Double.doubleToRawLongBits(d) == 0) return null;
+            if(d == 0) return null;
             a[i] /= d;
             b[i] /= d;
             double xC = (pt1.east() + pt2.east()) / 2;

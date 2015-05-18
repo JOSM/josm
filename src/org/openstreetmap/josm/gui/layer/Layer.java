@@ -269,7 +269,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     public void setVisible(boolean visible) {
         boolean oldValue = isVisible();
         this.visible  = visible;
-        if (visible && Double.doubleToRawLongBits(opacity) == 0) {
+        if (visible && opacity == 0) {
             setOpacity(1);
         } else if (oldValue != isVisible()) {
             fireVisibleChanged(oldValue, isVisible());
@@ -281,7 +281,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      * @return  true if this layer is visible. False, otherwise.
      */
     public boolean isVisible() {
-        return visible && Double.doubleToRawLongBits(opacity) != 0;
+        return visible && opacity != 0;
     }
 
     public double getOpacity() {

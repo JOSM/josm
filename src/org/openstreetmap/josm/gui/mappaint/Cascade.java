@@ -148,7 +148,7 @@ public final class Cascade implements Cloneable {
         if (s != null)
             return !(s.isEmpty() || "false".equals(s) || "no".equals(s) || "0".equals(s) || "0.0".equals(s));
         if (o instanceof Number)
-            return Float.floatToRawIntBits(((Number) o).floatValue()) != 0;
+            return ((Number) o).floatValue() != 0;
         if (o instanceof List)
             return !((List) o).isEmpty();
         if (o instanceof float[])

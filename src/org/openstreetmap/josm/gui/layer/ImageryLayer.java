@@ -143,7 +143,7 @@ public abstract class ImageryLayer extends Layer {
                 panel.add(new JLabel(tr("URL: ")), GBC.std().insets(0, 5, 2, 0));
                 panel.add(new UrlLabel(url), GBC.eol().insets(2, 5, 10, 0));
             }
-            if (Double.doubleToRawLongBits(dx) != 0 || Double.doubleToRawLongBits(dy) != 0) {
+            if (dx != 0 || dy != 0) {
                 panel.add(new JLabel(tr("Offset: ") + dx + ";" + dy), GBC.eol().insets(0, 5, 10, 0));
             }
         }

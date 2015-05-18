@@ -6,7 +6,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
 
@@ -69,9 +68,9 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
             return false;
         final RepeatImageElemStyle other = (RepeatImageElemStyle) obj;
         if (!this.pattern.equals(other.pattern)) return false;
-        if (!Utils.equalsEpsilon(this.offset, other.offset)) return false;
-        if (!Utils.equalsEpsilon(this.spacing, other.spacing)) return false;
-        if (!Utils.equalsEpsilon(this.phase, other.phase)) return false;
+        if (this.offset != other.offset) return false;
+        if (this.spacing != other.spacing) return false;
+        if (this.phase != other.phase) return false;
         if (this.align != other.align) return false;
         return true;
     }

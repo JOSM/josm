@@ -141,7 +141,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             int dyNext = next.y - current.y;
             double lenNext = Math.sqrt(dxNext*dxNext + dyNext*dyNext);
 
-            if (Double.doubleToRawLongBits(lenNext) == 0) {
+            if (lenNext == 0) {
                 lenNext = 1; // value does not matter, because dy_next and dx_next is 0
             }
 
@@ -997,7 +997,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         double dy = pFrom.y >= pVia.y ? pFrom.y - pVia.y : pVia.y - pFrom.y;
 
         double fromAngle;
-        if (Double.doubleToRawLongBits(dx) == 0) {
+        if (dx == 0) {
             fromAngle = Math.PI/2;
         } else {
             fromAngle = Math.atan(dy / dx);
@@ -1314,7 +1314,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     /* draw arrow */
                     if (showHeadArrowOnly ? !it.hasNext() : showOrientation) {
                         final double segmentLength = p1.distance(p2);
-                        if (Double.doubleToRawLongBits(segmentLength) != 0) {
+                        if (segmentLength != 0) {
                             final double l =  (10. + line.getLineWidth()) / segmentLength;
 
                             final double sx = l * (p1.x - p2.x);
@@ -1327,7 +1327,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     }
                     if (showOneway) {
                         final double segmentLength = p1.distance(p2);
-                        if (Double.doubleToRawLongBits(segmentLength) != 0) {
+                        if (segmentLength != 0) {
                             final double nx = (p2.x - p1.x) / segmentLength;
                             final double ny = (p2.y - p1.y) / segmentLength;
 

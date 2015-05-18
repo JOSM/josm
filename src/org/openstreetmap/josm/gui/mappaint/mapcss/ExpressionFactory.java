@@ -176,7 +176,7 @@ public final class ExpressionFactory {
             }
             float res = args[0];
             for (int i = 1; i < args.length; ++i) {
-                if (Float.floatToRawIntBits(args[i]) == 0) {
+                if (args[i] == 0) {
                     return null;
                 }
                 res /= args[i];

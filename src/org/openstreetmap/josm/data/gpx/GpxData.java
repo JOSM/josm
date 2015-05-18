@@ -294,7 +294,7 @@ public class GpxData extends WithAttributes implements Data {
                         double B = rx - sx;
                         double C = -A * rx - B * ry;
                         double RSsq = A * A + B * B;
-                        if (Double.doubleToRawLongBits(RSsq) == 0) {
+                        if (RSsq == 0) {
                             continue;
                         }
                         double PNsq = A * px + B * py + C;

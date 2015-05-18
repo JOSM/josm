@@ -231,7 +231,7 @@ public final class AlignInCircleAction extends JosmAction {
         // Now calculate the average distance to each node from the
         // center. This method is ok as long as distances are short
         // relative to the distance from the N or S poles.
-        if (Double.doubleToRawLongBits(radius) == 0) {
+        if (radius == 0) {
             for (Node n : nodes) {
                 radius += distance(center, n.getEastNorth());
             }
