@@ -295,8 +295,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
      */
     @Override
     public void setBoundingBox(Bounds bbox) {
-        if (bbox == null || (Double.doubleToRawLongBits(bbox.getMinLat()) == 0 && Double.doubleToRawLongBits(bbox.getMinLon()) == 0
-                && Double.doubleToRawLongBits(bbox.getMaxLat()) == 0 && Double.doubleToRawLongBits(bbox.getMaxLon()) == 0)) {
+        if (bbox == null || (bbox.getMinLat() == 0 && bbox.getMinLon() == 0
+                && bbox.getMaxLat() == 0 && bbox.getMaxLon() == 0)) {
             this.bbox = null;
             iSelectionRectStart = null;
             iSelectionRectEnd = null;

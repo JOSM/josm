@@ -334,8 +334,8 @@ public class LineElemStyle extends ElemStyle {
             Objects.equals(color, other.color) &&
             Objects.equals(dashesLine, other.dashesLine) &&
             Objects.equals(dashesBackground, other.dashesBackground) &&
-            Utils.equalsEpsilon(offset, other.offset) &&
-            Utils.equalsEpsilon(realWidth, other.realWidth);
+            offset == other.offset &&
+            realWidth == other.realWidth;
     }
 
     @Override
@@ -355,11 +355,11 @@ public class LineElemStyle extends ElemStyle {
         return "LineElemStyle{" + super.toString() + "width=" + line.getLineWidth() +
             " realWidth=" + realWidth + " color=" + Utils.toString(color) +
             " dashed=" + Arrays.toString(line.getDashArray()) +
-            (Float.floatToRawIntBits(line.getDashPhase()) == 0 ? "" : " dashesOffses=" + line.getDashPhase()) +
+            (line.getDashPhase() == 0 ? "" : " dashesOffses=" + line.getDashPhase()) +
             " dashedColor=" + Utils.toString(dashesBackground) +
             " linejoin=" + linejoinToString(line.getLineJoin()) +
             " linecap=" + linecapToString(line.getEndCap()) +
-            (Float.floatToRawIntBits(offset) == 0 ? "" : " offset=" + offset) +
+            (offset == 0 ? "" : " offset=" + offset) +
             '}';
     }
 
