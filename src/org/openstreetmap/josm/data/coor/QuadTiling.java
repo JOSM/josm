@@ -52,8 +52,7 @@ public final class QuadTiling {
     static long xy2tile(long x, long y) {
         long tile = 0;
         int i;
-        for (i = NR_LEVELS-1; i >= 0; i--)
-        {
+        for (i = NR_LEVELS-1; i >= 0; i--) {
             long xbit = (x >> i) & 1;
             long ybit = (y >> i) & 1;
             tile <<= 2;

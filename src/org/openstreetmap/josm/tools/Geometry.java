@@ -600,8 +600,7 @@ public final class Geometry {
             //test if the line is crossed and if so invert the inside flag.
             if ((newPoint.getEastNorth().getY() < point.getEastNorth().getY()) == (point.getEastNorth().getY() <= oldPoint.getEastNorth().getY())
                     && (point.getEastNorth().getX() - p1.getEastNorth().getX()) * (p2.getEastNorth().getY() - p1.getEastNorth().getY())
-                    < (p2.getEastNorth().getX() - p1.getEastNorth().getX()) * (point.getEastNorth().getY() - p1.getEastNorth().getY()))
-            {
+                    < (p2.getEastNorth().getX() - p1.getEastNorth().getX()) * (point.getEastNorth().getY() - p1.getEastNorth().getY())) {
                 inside = !inside;
             }
 
@@ -637,7 +636,7 @@ public final class Geometry {
         return Math.abs(area/2);
     }
 
-    protected static double calcX(Node p1){
+    protected static double calcX(Node p1) {
         double lat1, lon1, lat2, lon2;
         double dlon, dlat;
 

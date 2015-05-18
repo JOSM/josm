@@ -48,25 +48,22 @@ public class BoundingXYVisitor extends AbstractVisitor {
     }
 
     public void visit(Bounds b) {
-        if(b != null)
-        {
+        if (b != null) {
             visit(b.getMin());
             visit(b.getMax());
         }
     }
 
     public void visit(ProjectionBounds b) {
-        if(b != null)
-        {
+        if (b != null) {
             visit(b.getMin());
             visit(b.getMax());
         }
     }
 
     public void visit(LatLon latlon) {
-        if(latlon != null)
-        {
-            if(latlon instanceof CachedLatLon) {
+        if (latlon != null) {
+            if (latlon instanceof CachedLatLon) {
                 visit(((CachedLatLon)latlon).getEastNorth());
             } else {
                 visit(Main.getProjection().latlon2eastNorth(latlon));

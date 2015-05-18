@@ -654,14 +654,14 @@ public final class CustomConfigurator {
 
         private void processIfElement(Element elem) {
             String realValue = evalVars(elem.getAttribute("test"));
-            boolean v=false;
-            if ("true".equals(realValue)) v=true; else
-            if ("fales".equals(realValue)) v=true; else
-            {
+            boolean v = false;
+            if ("true".equals(realValue) || "false".equals(realValue)) {
+                processXmlFragment(elem);
+                v = true;
+            } else {
                 log("Error: Illegal test expression in if: %s=%s\n", elem.getAttribute("test"), realValue);
             }
 
-            if (v) processXmlFragment(elem);
             lastV = v;
         }
 

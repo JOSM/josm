@@ -211,11 +211,9 @@ public abstract class AbstractMapRenderer implements Rendering {
         Iterator<Node> it = w.getNodes().iterator();
         if (it.hasNext()) {
             Point lastP = nc.getPoint(it.next());
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 Point p = nc.getPoint(it.next());
-                if (isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace))
-                {
+                if (isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace)) {
                     int x = (p.x+lastP.x)/2;
                     int y = (p.y+lastP.y)/2;
                     path.moveTo(x-virtualNodeSize, y);

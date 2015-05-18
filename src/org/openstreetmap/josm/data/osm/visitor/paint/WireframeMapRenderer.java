@@ -199,8 +199,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         displaySegments();
 
         for (final OsmPrimitive osm: data.searchNodes(bbox)) {
-            if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden())
-            {
+            if (osm.isDrawable() && !ds.isSelected(osm) && !osm.isDisabledAndHidden()) {
                 osm.accept(this);
             }
         }

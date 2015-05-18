@@ -297,8 +297,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /* This should not be called from outside. Fixing the UI to add relevant
        get/set functions calling this implicitely is preferred, so we can have
        transparent cache handling in the future. */
-    public void clearCachedStyle()
-    {
+    public void clearCachedStyle() {
         mappaintStyle = null;
     }
     /* end of mappaint data */

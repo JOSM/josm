@@ -322,9 +322,9 @@ public class PreferencesTable extends JTable {
             if (isSelected) {
                 label.setForeground(foregroundColor);
             }
-            if(pe.isChanged()) {
+            if (pe.isChanged()) {
                 label.setBackground(changedColor);
-            } else if(!pe.isDefault()) {
+            } else if (!pe.isDefault()) {
                 label.setBackground(nonDefaultColor);
             }
 
@@ -332,9 +332,8 @@ public class PreferencesTable extends JTable {
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             }
             val = pe.getDefaultValue().getValue();
-            if(val != null)
-            {
-                if(pe.isDefault()) {
+            if (val != null) {
+                if (pe.isDefault()) {
                     label.setToolTipText(tr("Current value is default."));
                 } else {
                     label.setToolTipText(tr("Default value is ''{0}''.", val));

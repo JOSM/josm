@@ -651,26 +651,22 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         path.moveTo(p.x, p.y);
         double max = b.getMax().lat();
-        for(; lat <= max; lat += 1.0)
-        {
+        for(; lat <= max; lat += 1.0) {
             p = getPoint(new LatLon(lat >= max ? max : lat, lon));
             path.lineTo(p.x, p.y);
         }
         lat = max; max = b.getMax().lon();
-        for(; lon <= max; lon += 1.0)
-        {
+        for(; lon <= max; lon += 1.0) {
             p = getPoint(new LatLon(lat, lon >= max ? max : lon));
             path.lineTo(p.x, p.y);
         }
         lon = max; max = b.getMinLat();
-        for(; lat >= max; lat -= 1.0)
-        {
+        for(; lat >= max; lat -= 1.0) {
             p = getPoint(new LatLon(lat <= max ? max : lat, lon));
             path.lineTo(p.x, p.y);
         }
         lat = max; max = b.getMinLon();
-        for(; lon >= max; lon -= 1.0)
-        {
+        for(; lon >= max; lon -= 1.0) {
             p = getPoint(new LatLon(lat, lon <= max ? max : lon));
             path.lineTo(p.x, p.y);
         }

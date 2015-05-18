@@ -336,8 +336,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            if(currentAction.getAction() instanceof AdaptableAction)
-            {
+            if(currentAction.getAction() instanceof AdaptableAction) {
                 if (rowIndex < 2) {
                     switch (columnIndex) {
                     case 0:
@@ -349,7 +348,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     }
                 } else {
                     rowIndex -= 2;
-            }
+                }
             }
             ActionParameter<Object> param = getParam(rowIndex);
             switch (columnIndex) {
@@ -369,8 +368,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            if(currentAction.getAction() instanceof AdaptableAction)
-            {
+            if(currentAction.getAction() instanceof AdaptableAction) {
                 if (rowIndex == 0) {
                      currentAction.setName((String)aValue);
                      return;
@@ -379,7 +377,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                      return;
                 } else {
                     rowIndex -= 2;
-            }
+                }
             }
             ActionParameter<Object> param = getParam(rowIndex);
             currentAction.getParameters().put(param.getName(), param.readFromString((String)aValue));
@@ -943,9 +941,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     private void loadActions() {
         rootActionsNode.removeAllChildren();
         loadAction(rootActionsNode, Main.main.menu);
-        for(Map.Entry<String, Action> a : regactions.entrySet())
-        {
-            if(actions.get(a.getKey()) == null) {
+        for (Map.Entry<String, Action> a : regactions.entrySet()) {
+            if (actions.get(a.getKey()) == null) {
                 rootActionsNode.add(new DefaultMutableTreeNode(a.getValue()));
             }
         }

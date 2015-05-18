@@ -435,24 +435,22 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     private static void playAdjacentMarker(Marker startMarker, boolean next) {
-        Marker m = null;
         if (!Main.isDisplayingMapView())
             return;
+        Marker m = null;
         Layer l = Main.map.mapView.getActiveLayer();
-        if(l != null) {
+        if (l != null) {
             m = getAdjacentMarker(startMarker, next, l);
         }
-        if(m == null)
-        {
-            for (Layer layer : Main.map.mapView.getAllLayers())
-            {
+        if (m == null) {
+            for (Layer layer : Main.map.mapView.getAllLayers()) {
                 m = getAdjacentMarker(startMarker, next, layer);
-                if(m != null) {
+                if (m != null) {
                     break;
                 }
             }
         }
-        if(m != null) {
+        if (m != null) {
             ((AudioMarker)m).play();
         }
     }
