@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,12 +36,12 @@ public class TagMergeModelTest {
         };
         model.addPropertyChangeListener(listener);
 
-        List<?> list = field("listeners").ofType(List.class)
+        Set<?> list = field("listeners").ofType(Set.class)
         .in(model)
         .get();
 
         assertEquals(1, list.size());
-        assertEquals(listener, list.get(0));
+        assertEquals(listener, list.iterator().next());
     }
 
     @Test
@@ -54,8 +55,8 @@ public class TagMergeModelTest {
         model.addPropertyChangeListener(listener);
         model.removePropertyChangeListener(listener);
 
-        List<?> list = field("listeners")
-        .ofType(List.class)
+        Set<?> list = field("listeners")
+        .ofType(Set.class)
         .in(model)
         .get();
 
