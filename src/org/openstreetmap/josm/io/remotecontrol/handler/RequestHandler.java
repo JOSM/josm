@@ -222,7 +222,7 @@ public abstract class RequestHandler {
         boolean error = false;
         if(mandatory != null) for (String key : mandatory) {
             String value = args.get(key);
-            if ((value == null) || (value.length() == 0)) {
+            if (value == null || value.isEmpty()) {
                 error = true;
                 Main.warn("'" + myCommand + "' remote control request must have '" + key + "' parameter");
                 missingKeys.add(key);

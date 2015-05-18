@@ -34,12 +34,13 @@ public class OsmChangeImporter extends FileImporter {
         super(filter);
     }
 
-    @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
+    @Override
+    public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         try {
             importData(Compression.getUncompressedFileInputStream(file), file, progressMonitor);
         } catch (FileNotFoundException e) {
             Main.error(e);
-            throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));
+            throw new IOException(tr("File ''{0}'' does not exist.", file.getName()), e);
         }
     }
 

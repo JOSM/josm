@@ -768,7 +768,7 @@ public class Preferences {
      * @return true, if something has changed (i.e. value is different than before)
      */
     public boolean put(final String key, String value) {
-        if(value != null && value.length() == 0) {
+        if(value != null && value.isEmpty()) {
             value = null;
         }
         return putSetting(key, value == null ? null : new StringSetting(value));

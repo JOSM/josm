@@ -136,9 +136,10 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
                 }
             }
         } catch (MalformedURLException e) {
-            String msg = tr("Cannot download plugin ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.", pi.name, pi.downloadlink);
+            String msg = tr("Cannot download plugin ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.",
+                    pi.name, pi.downloadlink);
             Main.warn(msg);
-            throw new PluginDownloadException(msg);
+            throw new PluginDownloadException(msg, e);
         } catch (IOException e) {
             if (canceled)
                 return;

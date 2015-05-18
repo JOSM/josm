@@ -71,7 +71,7 @@ public class Shape {
             if (!LatLon.isValidLat(lat))
                 throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", lat));
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", sLat));
+            throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", sLat), e);
         }
 
         try {
@@ -79,7 +79,7 @@ public class Shape {
             if (!LatLon.isValidLon(lon))
                 throw new IllegalArgumentException(tr("Illegal longitude value ''{0}''", lon));
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", sLon));
+            throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", sLon), e);
         }
 
         coords.add(new Coordinate(LatLon.roundToOsmPrecision(lat), LatLon.roundToOsmPrecision(lon)));

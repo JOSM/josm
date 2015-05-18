@@ -1012,7 +1012,7 @@ public class MainMenu extends JMenuBar {
                 return;
             }
             currentSearchText = searchTerm;
-            if (searchTerm.length() == 0) {
+            if (searchTerm.isEmpty()) {
                 // No text to search
                 hideMenu();
                 return;

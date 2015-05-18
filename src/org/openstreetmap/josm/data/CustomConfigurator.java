@@ -603,7 +603,7 @@ public final class CustomConfigurator {
             if (path.contains("..") || path.startsWith("/") || path.contains(":")) {
                 return; // some basic protection
             }
-            if (address == null || path == null || address.length() == 0 || path.length() == 0) {
+            if (address == null || path == null || address.isEmpty() || path.isEmpty()) {
                 log("Error: Please specify url=\"where to get file\" and path=\"where to place it\"");
                 return;
             }

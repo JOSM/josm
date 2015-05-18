@@ -314,6 +314,17 @@ public class ChangesetQuery {
         }
 
         /**
+         * Constructs a new {@code ChangesetQueryUrlException} with the specified cause and detail message.
+         *
+         * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+         * @param  cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+         *         (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or unknown.)
+         */
+        public ChangesetQueryUrlException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        /**
          * Constructs a new {@code ChangesetQueryUrlException} with the specified cause and a detail message of
          * <tt>(cause==null ? null : cause.toString())</tt> (which typically contains the class and detail message of <tt>cause</tt>).
          *
@@ -328,46 +339,54 @@ public class ChangesetQuery {
     public static class ChangesetQueryUrlParser {
         protected int parseUid(String value) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
+                throw new ChangesetQueryUrlException(
+                        tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
             int id;
             try {
                 id = Integer.parseInt(value);
                 if (id <= 0)
-                    throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
+                    throw new ChangesetQueryUrlException(
+                            tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
             } catch(NumberFormatException e) {
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
+                throw new ChangesetQueryUrlException(
+                        tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value), e);
             }
             return id;
         }
 
         protected boolean parseBoolean(String value, String parameter) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
+                throw new ChangesetQueryUrlException(
+                        tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             switch (value) {
             case "true":
                 return true;
             case "false":
                 return false;
             default:
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
+                throw new ChangesetQueryUrlException(
+                        tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             }
         }
 
         protected Date parseDate(String value, String parameter) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
+                throw new ChangesetQueryUrlException(
+                        tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             DateFormat formatter = DateUtils.newIsoDateTimeFormat();
             try {
                 return formatter.parse(value);
             } catch(ParseException e) {
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
+                throw new ChangesetQueryUrlException(
+                        tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value), e);
             }
         }
 
         protected Date[] parseTime(String value) throws ChangesetQueryUrlException {
             String[] dates = value.split(",");
             if (dates == null || dates.length == 0 || dates.length > 2)
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "time", value));
+                throw new ChangesetQueryUrlException(
+                        tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "time", value));
             if (dates.length == 1)
                 return new Date[]{parseDate(dates[0], "time")};
             else if (dates.length == 2)
@@ -394,12 +413,14 @@ public class ChangesetQuery {
                 switch(k) {
                 case "uid":
                     if (queryParams.containsKey("display_name"))
-                        throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
+                        throw new ChangesetQueryUrlException(
+                                tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
                     csQuery.forUser(parseUid(queryParams.get("uid")));
                     break;
                 case "display_name":
                     if (queryParams.containsKey("uid"))
-                        throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
+                        throw new ChangesetQueryUrlException(
+                                tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
                     csQuery.forUser(queryParams.get("display_name"));
                     break;
                 case "open":
@@ -434,7 +455,8 @@ public class ChangesetQuery {
                     }
                     break;
                 default:
-                    throw new ChangesetQueryUrlException(tr("Unsupported parameter ''{0}'' in changeset query string", k));
+                    throw new ChangesetQueryUrlException(
+                            tr("Unsupported parameter ''{0}'' in changeset query string", k));
                 }
             }
             return csQuery;

@@ -223,7 +223,7 @@ public final class MapPaintStyles {
             }
 
             /* non-prefixed path is generic path, always take it */
-            if(a[0].length() == 0 || source.getPrefName().equals(a[0])) {
+            if(a[0].isEmpty() || source.getPrefName().equals(a[0])) {
                 dirs.add(a[1]);
             }
         }

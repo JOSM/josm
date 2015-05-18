@@ -273,7 +273,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     }
                 }
                 if(n == null && way.get("building") != null) n = tr("building");
-                if(n == null || n.length() == 0) {
+                if(n == null || n.isEmpty()) {
                     n = String.valueOf(way.getId());
                 }
 

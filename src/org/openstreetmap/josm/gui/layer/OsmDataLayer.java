@@ -810,7 +810,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         @Override
         public void actionPerformed(ActionEvent e) {
             String result = DatasetConsistencyTest.runTests(data);
-            if (result.length() == 0) {
+            if (result.isEmpty()) {
                 JOptionPane.showMessageDialog(Main.parent, tr("No problems found"));
             } else {
                 JPanel p = new JPanel(new GridBagLayout());

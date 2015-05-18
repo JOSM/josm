@@ -136,7 +136,7 @@ public final class ShowStatusReportAction extends JosmAction {
             DataSet dataset = Main.main.getCurrentDataSet();
             if (dataset != null) {
                 String result = DatasetConsistencyTest.runTests(dataset);
-                if (result.length() == 0) {
+                if (result.isEmpty()) {
                     text.append("Dataset consistency test: No problems found\n");
                 } else {
                     text.append("\nDataset consistency test:\n").append(result).append('\n');

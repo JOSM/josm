@@ -119,7 +119,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
                 if (commentText != null && commentText.trim().length() > 0) {
                     sb.append("<hr/>");
                     String userName = XmlWriter.encode(comment.getUser().getName());
-                    if (userName == null || userName.trim().length() == 0) {
+                    if (userName == null || userName.trim().isEmpty()) {
                         userName = "&lt;Anonymous&gt;";
                     }
                     sb.append(userName);

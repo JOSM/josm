@@ -983,7 +983,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         @Override
         public void validate() {
             String value  = getComponent().getText();
-            if (value == null || value.trim().length() == 0) {
+            if (value == null || value.trim().isEmpty()) {
                 feedbackInvalid("");
                 return;
             }
@@ -1002,7 +1002,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         public int getUid() {
             String value  = getComponent().getText();
-            if (value == null || value.trim().length() == 0) return 0;
+            if (value == null || value.trim().isEmpty()) return 0;
             try {
                 int uid = Integer.parseInt(value.trim());
                 if (uid > 0) return uid;
@@ -1030,7 +1030,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         @Override
         public void validate() {
             String value  = getComponent().getText();
-            if (value.trim().length() == 0) {
+            if (value.trim().isEmpty()) {
                 feedbackInvalid(tr("<html>The  current value is not a valid user name.<br>Please enter an non-empty user name.</html>"));
                 return;
             }
@@ -1119,7 +1119,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         @Override
         public boolean isValid() {
-            if (getComponent().getText().trim().length() == 0) return true;
+            if (getComponent().getText().trim().isEmpty()) return true;
             return getDate() != null;
         }
 
@@ -1156,7 +1156,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         public Date getDate() {
-            if (getComponent().getText().trim().length() == 0)
+            if (getComponent().getText().trim().isEmpty())
                 return null;
 
             for (int style : new int[]{DateFormat.SHORT, DateFormat.MEDIUM, DateFormat.LONG, DateFormat.FULL}) {

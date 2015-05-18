@@ -295,7 +295,7 @@ public class PlaceSelection implements DownloadSelection {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!isEnabled() || cbSearchExpression.getText().trim().length() == 0)
+            if (!isEnabled() || cbSearchExpression.getText().trim().isEmpty())
                 return;
             cbSearchExpression.addCurrentItemToHistory();
             Main.pref.putCollection(HISTORY_KEY, cbSearchExpression.getHistory());
