@@ -934,8 +934,7 @@ public class ImageProvider {
                         }
                         return svg == null ? null : new ImageResource(svg);
                     case OTHER:
-                        while(size > 0)
-                        {
+                        while(size > 0) {
                             int l = is.read(buf, offs, size);
                             offs += l;
                             size -= l;

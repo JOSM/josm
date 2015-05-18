@@ -260,8 +260,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         left.add(remove, GBC.eol());
         left.add(in_selection, GBC.eop());
         left.add(caseSensitive, GBC.eol());
-        if(Main.pref.getBoolean("expert", false))
-        {
+        if(Main.pref.getBoolean("expert", false)) {
             left.add(allElements, GBC.eol());
             left.add(regexSearch, GBC.eol());
             left.add(addOnToolbar, GBC.eol());

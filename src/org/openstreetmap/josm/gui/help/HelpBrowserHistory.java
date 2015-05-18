@@ -63,8 +63,7 @@ public class HelpBrowserHistory extends Observable {
         } else {
             history = new ArrayList<>();
         }
-        if(add)
-        {
+        if (add) {
             history.add(url);
             historyPos = history.size()-1;
         }

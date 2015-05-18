@@ -234,8 +234,7 @@ public class NmeaReader {
             // if there is no * or other meanities it will throw
             // and result in a malformed packet.
             String[] chkstrings = s.split("\\*");
-            if(chkstrings.length > 1)
-            {
+            if (chkstrings.length > 1) {
                 byte[] chb = chkstrings[0].getBytes(StandardCharsets.UTF_8);
                 int chk=0;
                 for (int i = 1; i < chb.length; i++) {

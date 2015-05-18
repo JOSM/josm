@@ -164,8 +164,7 @@ public class ElemStyles {
     private Pair<StyleList, Range> getImpl(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         if (osm instanceof Node)
             return generateStyles(osm, scale, false);
-        else if (osm instanceof Way)
-        {
+        else if (osm instanceof Way) {
             Pair<StyleList, Range> p = generateStyles(osm, scale, false);
 
             boolean isOuterWayOfSomeMP = false;

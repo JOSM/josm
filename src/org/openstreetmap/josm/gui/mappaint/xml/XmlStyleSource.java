@@ -170,8 +170,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             }
         }
         for (IconPrototype s : iconsList) {
-            if (s.check(primitive))
-            {
+            if (s.check(primitive)) {
                 icon = update(icon, s, scale, mc);
             }
         }

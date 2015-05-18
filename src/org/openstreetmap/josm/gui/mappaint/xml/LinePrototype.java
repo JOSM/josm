@@ -31,8 +31,7 @@ public class LinePrototype extends Prototype {
 
     public LinePrototype() { init(); }
 
-    public void init()
-    {
+    public void init() {
         priority = 0;
         range = Range.ZERO_TO_INFINITY;
         width = -1;

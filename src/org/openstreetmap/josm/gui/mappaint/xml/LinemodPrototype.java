@@ -28,13 +28,12 @@ public class LinemodPrototype extends LinePrototype implements Comparable<Linemo
     /** get width for overlays */
     public float getWidth(float ref) {
         float res;
-        if(widthMode == WidthMode.ABSOLUTE) {
+        if (widthMode == WidthMode.ABSOLUTE) {
             res = width;
-        } else if(widthMode == WidthMode.OFFSET) {
+        } else if (widthMode == WidthMode.OFFSET) {
             res = ref + width;
-        } else
-        {
-            if(width < 0) {
+        } else {
+            if (width < 0) {
                 res = 0;
             } else {
                 res = ref*width/100;

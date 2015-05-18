@@ -508,10 +508,9 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         if ((mode == Mode.MOVE) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay))
             return;
 
-        if (mode != Mode.ROTATE && mode != Mode.SCALE) // button is pressed in rotate mode
-        {
-            if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
-                return;
+        if (mode != Mode.ROTATE && mode != Mode.SCALE && (e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0) {
+            // button is pressed in rotate mode
+            return;
         }
 
         if (mode == Mode.MOVE) {

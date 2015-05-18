@@ -154,8 +154,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 } else {
                     n = node.getName();
                 }
-                if(n == null)
-                {
+                if (n == null) {
                     String s;
                     if((s = node.get("addr:housename")) != null) {
                         /* I18n: name of house as parameter */
@@ -431,8 +430,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             String building  = relation.get("building");
             if (OsmUtils.isTrue(building)) {
                 name = tr("building");
-            } else if(building != null)
-            {
+            } else if (building != null) {
                 name = tr(building); // translate tag!
             }
         }

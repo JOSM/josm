@@ -276,8 +276,7 @@ public final class AudioPlayer extends Thread {
                             speed = command.speed();
                             if (playingUrl != command.url() ||
                                     stateChange != State.PAUSED ||
-                                    offset != 0)
-                            {
+                                    offset != 0) {
                                 if (audioInputStream != null) {
                                     Utils.close(audioInputStream);
                                     audioInputStream = null;

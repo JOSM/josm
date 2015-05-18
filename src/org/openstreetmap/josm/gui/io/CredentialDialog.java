@@ -342,8 +342,7 @@ public class CredentialDialog extends JDialog {
         protected JTextField currentTF;
         protected JTextField nextTF;
 
-        public TFKeyListener (CredentialDialog owner, JTextField currentTF, JTextField nextTF)
-        {
+        public TFKeyListener (CredentialDialog owner, JTextField currentTF, JTextField nextTF) {
             this.owner = owner;
             this.currentTF = currentTF;
             this.nextTF = nextTF;
@@ -367,7 +366,7 @@ public class CredentialDialog extends JDialog {
         }
 
         @Override
-        public void keyReleased ( KeyEvent e ){
+        public void keyReleased(KeyEvent e) {
         }
 
         @Override
