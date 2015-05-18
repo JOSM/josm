@@ -80,7 +80,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
             if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", true)) {
                 try {
                     Long.parseLong(str);
-                    if (currentText.length() == 0) {
+                    if (currentText.isEmpty()) {
                         // we don't autocomplete on numbers
                         super.insertString(offs, str, a);
                         return;

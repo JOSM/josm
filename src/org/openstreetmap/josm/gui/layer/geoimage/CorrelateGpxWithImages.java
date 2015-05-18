@@ -316,7 +316,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             String tzId = Main.pref.get("geoimage.timezoneid", "");
             TimeZone defaultTz;
-            if (tzId.length() == 0) {
+            if (tzId.isEmpty()) {
                 defaultTz = TimeZone.getDefault();
             } else {
                 defaultTz = TimeZone.getTimeZone(tzId);
@@ -1307,10 +1307,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
     private double parseTimezone(String timezone) throws ParseException {
 
-        String error = tr("Error while parsing timezone.\nExpected format: {0}", "+H:MM");
-
-        if (timezone.length() == 0)
+        if (timezone.isEmpty())
             return 0;
+
+        String error = tr("Error while parsing timezone.\nExpected format: {0}", "+H:MM");
 
         char sgnTimezone = '+';
         StringBuilder hTimezone = new StringBuilder();
@@ -1321,7 +1321,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             switch (c) {
             case ' ' :
                 if (state != 2 || hTimezone.length() != 0)
-                    throw new ParseException(error,0);
+                    throw new ParseException(error, i);
                 break;
             case '+' :
             case '-' :
@@ -1329,14 +1329,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     sgnTimezone = c;
                     state = 2;
                 } else
-                    throw new ParseException(error,0);
+                    throw new ParseException(error, i);
                 break;
             case ':' :
             case '.' :
                 if (state == 2) {
                     state = 3;
                 } else
-                    throw new ParseException(error,0);
+                    throw new ParseException(error, i);
                 break;
             case '0' : case '1' : case '2' : case '3' : case '4' :
             case '5' : case '6' : case '7' : case '8' : case '9' :
@@ -1350,11 +1350,11 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     mTimezone.append(c);
                     break;
                 default :
-                    throw new ParseException(error,0);
+                    throw new ParseException(error, i);
                 }
                 break;
             default :
-                throw new ParseException(error,0);
+                throw new ParseException(error, i);
             }
         }
 
@@ -1367,11 +1367,11 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
         } catch (NumberFormatException nfe) {
             // Invalid timezone
-            throw new ParseException(error,0);
+            throw new ParseException(error, 0);
         }
 
-        if (h > 12 || m > 59 )
-            throw new ParseException(error,0);
+        if (h > 12 || m > 59)
+            throw new ParseException(error, 0);
         else
             return (h + m / 60.0) * (sgnTimezone == '-' ? -1 : 1);
     }
@@ -1379,7 +1379,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private long parseOffset(String offset) throws ParseException {
         String error = tr("Error while parsing offset.\nExpected format: {0}", "number");
 
-        if (offset.length() > 0) {
+        if (!offset.isEmpty()) {
             try {
                 if(offset.startsWith("+")) {
                     offset = offset.substring(1);

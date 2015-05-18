@@ -353,7 +353,7 @@ public class TagChecker extends Test.TagTest {
                         tr(s, key), MessageFormat.format(s, key), LONG_KEY, p) );
                 withErrors.put(p, "LK");
             }
-            if (checkValues && (value==null || value.trim().length() == 0) && !withErrors.contains(p, "EV")) {
+            if (checkValues && (value==null || value.trim().isEmpty()) && !withErrors.contains(p, "EV")) {
                 errors.add( new TestError(this, Severity.WARNING, tr("Tags with empty values"),
                         tr(s, key), MessageFormat.format(s, key), EMPTY_VALUES, p) );
                 withErrors.put(p, "EV");
@@ -562,7 +562,7 @@ public class TagChecker extends Test.TagTest {
             for (Entry<String, String> prop: tags.entrySet()) {
                 String key = prop.getKey();
                 String value = prop.getValue();
-                if (value == null || value.trim().length() == 0) {
+                if (value == null || value.trim().isEmpty()) {
                     commands.add(new ChangePropertyCommand(p, key, null));
                 } else if (value.startsWith(" ") || value.endsWith(" ")) {
                     commands.add(new ChangePropertyCommand(p, key, Tag.removeWhiteSpaces(value)));
@@ -678,7 +678,7 @@ public class TagChecker extends Test.TagTest {
             String trimmed = m.replaceFirst("").trim();
             try {
                 description = m.group(1);
-                if (description != null && description.length() == 0) {
+                if (description != null && description.isEmpty()) {
                     description = null;
                 }
             } catch (IllegalStateException e) {

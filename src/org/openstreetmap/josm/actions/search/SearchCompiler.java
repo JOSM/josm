@@ -618,9 +618,9 @@ public class SearchCompiler {
                 try {
                     keyPattern = Pattern.compile(key, regexFlags(false));
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
                 }
             } else {
                 keyPattern = null;
@@ -629,9 +629,9 @@ public class SearchCompiler {
                 try {
                     valuePattern = Pattern.compile(this.value, regexFlags(false));
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
                 }
             } else {
                 valuePattern = null;

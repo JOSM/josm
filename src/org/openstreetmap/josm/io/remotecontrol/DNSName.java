@@ -70,7 +70,7 @@ public class DNSName implements GeneralNameInterface {
      * @throws IOException if the name is not a valid DNSName subjectAltName
      */
     public DNSName(String name) throws IOException {
-        if (name == null || name.length() == 0)
+        if (name == null || name.isEmpty())
             throw new IOException("DNS name must not be null");
         if (name.indexOf(' ') != -1)
             throw new IOException("DNS names or NameConstraints with blank components are not permitted");

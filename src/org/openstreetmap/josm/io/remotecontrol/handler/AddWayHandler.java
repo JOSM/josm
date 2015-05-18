@@ -103,7 +103,7 @@ public class AddWayHandler extends RequestHandler {
                 double lon = Double.parseDouble(coordinates[1]);
                 allCoordinates.add(new LatLon(lat, lon));
             } catch (NumberFormatException e) {
-                throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+")");
+                throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+")", e);
             }
         }
         if (allCoordinates.isEmpty()) {

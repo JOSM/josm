@@ -177,7 +177,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
                 return next;
             } catch (IndexOutOfBoundsException e) {
                 checkForComodification();
-                throw new NoSuchElementException();
+                throw new NoSuchElementException(e.getMessage());
             }
         }
 
@@ -195,7 +195,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
                 lastRet = -1;
                 expectedModCount = modCount;
             } catch (IndexOutOfBoundsException e) {
-                throw new ConcurrentModificationException();
+                throw new ConcurrentModificationException(e);
             }
         }
 

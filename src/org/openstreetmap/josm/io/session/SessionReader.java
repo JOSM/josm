@@ -178,7 +178,7 @@ public class SessionReader {
                 try {
                     return new BufferedInputStream(new FileInputStream(file));
                 } catch (FileNotFoundException e) {
-                    throw new IOException(tr("File ''{0}'' does not exist.", file.getPath()));
+                    throw new IOException(tr("File ''{0}'' does not exist.", file.getPath()), e);
                 }
             } else if (inZipPath != null) {
                 ZipEntry entry = zipFile.getEntry(inZipPath);

@@ -38,13 +38,11 @@ public abstract class RotationAngle {
      * Parses the rotation angle from the specified {@code string}.
      */
     public static RotationAngle buildStaticRotation(final String string) {
-        final double value;
         try {
-            value = parseCardinalRotation(string);
-        } catch (IllegalArgumentException ignore) {
-            throw new IllegalArgumentException("Invalid string: " + string);
+            return buildStaticRotation(parseCardinalRotation(string));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid string: " + string, e);
         }
-        return buildStaticRotation(value);
     }
 
     /**
