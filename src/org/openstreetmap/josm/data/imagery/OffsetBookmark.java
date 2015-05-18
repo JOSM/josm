@@ -70,7 +70,7 @@ public class OffsetBookmark {
         res.add(name);
         res.add(String.valueOf(dx));
         res.add(String.valueOf(dy));
-        if (Double.doubleToRawLongBits(centerX) != 0 || Double.doubleToRawLongBits(centerY) != 0) {
+        if (centerX != 0 || centerY != 0) {
             res.add(String.valueOf(centerX));
             res.add(String.valueOf(centerY));
         }

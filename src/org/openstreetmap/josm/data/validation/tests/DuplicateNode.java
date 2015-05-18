@@ -58,14 +58,14 @@ public class DuplicateNode extends Test {
                 LatLon coor = ((Node) o).getCoor();
                 if (coor == null)
                     return null;
-                if (Double.doubleToRawLongBits(precision) == 0)
+                if (precision == 0)
                     return coor.getRoundedToOsmPrecision();
                 return roundCoord(coor);
             } else if (o instanceof List<?>) {
                 LatLon coor = ((List<Node>) o).get(0).getCoor();
                 if (coor == null)
                     return null;
-                if (Double.doubleToRawLongBits(precision) == 0)
+                if (precision == 0)
                     return coor.getRoundedToOsmPrecision();
                 return roundCoord(coor);
             } else

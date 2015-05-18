@@ -273,8 +273,8 @@ public class BBox {
     public boolean equals(Object o) {
         if (o instanceof BBox) {
             BBox b = (BBox)o;
-            return Utils.equalsEpsilon(b.xmax, xmax) && Utils.equalsEpsilon(b.ymax, ymax)
-                    && Utils.equalsEpsilon(b.xmin, xmin) && Utils.equalsEpsilon(b.ymin, ymin);
+            return b.xmax == xmax && b.ymax == ymax
+                    && b.xmin == xmin && b.ymin == ymin;
         } else
             return false;
     }

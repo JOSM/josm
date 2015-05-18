@@ -947,7 +947,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
     public String getToolbarName() {
         String res = name;
-        if (Double.doubleToRawLongBits(pixelPerDegree) != 0) {
+        if (pixelPerDegree != 0) {
             res += "#PPD="+pixelPerDegree;
         }
         return res;
@@ -955,7 +955,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
     public String getMenuName() {
         String res = name;
-        if (Double.doubleToRawLongBits(pixelPerDegree) != 0) {
+        if (pixelPerDegree != 0) {
             res += " ("+pixelPerDegree+")";
         }
         return res;
