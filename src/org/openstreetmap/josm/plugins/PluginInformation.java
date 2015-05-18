@@ -303,7 +303,7 @@ public class PluginInformation {
      * @return the description as HTML document
      */
     public String getDescriptionAsHtml() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         sb.append("<html><body>")
           .append(description == null ? tr("no description available") : description);
         if (link != null) {
@@ -314,7 +314,7 @@ public class PluginInformation {
                 && !downloadlink.startsWith("https://svn.openstreetmap.org/applications/editors/josm/dist/")
                 && !downloadlink.startsWith("http://trac.openstreetmap.org/browser/applications/editors/josm/dist/")
                 && !downloadlink.startsWith("https://github.com/JOSM/")) {
-            sb.append("<p>&nbsp;</p><p>"+tr("<b>Plugin provided by an external source:</b> {0}", downloadlink)+"</p>");
+            sb.append("<p>&nbsp;</p><p>").append(tr("<b>Plugin provided by an external source:</b> {0}", downloadlink)).append("</p>");
         }
         sb.append("</body></html>");
         return sb.toString();

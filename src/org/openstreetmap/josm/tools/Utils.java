@@ -930,7 +930,7 @@ public final class Utils {
                 if (all == null) {
                     all = new StringBuilder(line);
                 } else {
-                    all.append("\n");
+                    all.append('\n');
                     all.append(line);
                 }
             }
@@ -1006,16 +1006,16 @@ public final class Utils {
             if (cur == last + 1) {
                 ++cnt;
             } else if (cnt == 0) {
-                sb.append(",").append(cur);
+                sb.append(',').append(cur);
             } else {
-                sb.append("-").append(last);
-                sb.append(",").append(cur);
+                sb.append('-').append(last);
+                sb.append(',').append(cur);
                 cnt = 0;
             }
             last = cur;
         }
         if (cnt >= 1) {
-            sb.append("-").append(last);
+            sb.append('-').append(last);
         }
         return sb.toString();
     }

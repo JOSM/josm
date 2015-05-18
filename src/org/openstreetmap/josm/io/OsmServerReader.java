@@ -183,7 +183,7 @@ public abstract class OsmServerReader extends OsmConnection {
                             String s;
                             while((s = in.readLine()) != null) {
                                 errorBody.append(s);
-                                errorBody.append("\n");
+                                errorBody.append('\n');
                             }
                         }
                     } catch(Exception e) {

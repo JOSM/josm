@@ -338,8 +338,7 @@ public class CachedFile {
     private static String getPrefKey(URL url, String destDir) {
         StringBuilder prefKey = new StringBuilder("mirror.");
         if (destDir != null) {
-            prefKey.append(destDir);
-            prefKey.append(".");
+            prefKey.append(destDir).append('.');
         }
         prefKey.append(url.toString());
         return prefKey.toString().replaceAll("=","_");
@@ -374,7 +373,7 @@ public class CachedFile {
                     return localFile;
                 }
                 if (cachingStrategy == CachingStrategy.IfModifiedSince) {
-                    ifModifiedSince = Long.parseLong(localPathEntry.get(0));
+                    ifModifiedSince = Long.valueOf(localPathEntry.get(0));
                 }
             }
         }

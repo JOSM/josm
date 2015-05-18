@@ -69,27 +69,24 @@ public final class ShowStatusReportAction extends JosmAction {
     public static String getReportHeader() {
         StringBuilder text = new StringBuilder();
         text.append(Version.getInstance().getReleaseAttributes())
-            .append("\n")
-            .append("Identification: ").append(Version.getInstance().getAgentString())
-            .append("\n")
-            .append("Memory Usage: ")
+            .append("\nIdentification: ").append(Version.getInstance().getAgentString())
+            .append("\nMemory Usage: ")
             .append(Runtime.getRuntime().totalMemory()/1024/1024)
             .append(" MB / ")
             .append(Runtime.getRuntime().maxMemory()/1024/1024)
             .append(" MB (")
             .append(Runtime.getRuntime().freeMemory()/1024/1024)
-            .append(" MB allocated, but free)")
-            .append("\n")
-            .append("Java version: ").append(System.getProperty("java.version")).append(", ")
-            .append(System.getProperty("java.vendor")).append(", ").append(System.getProperty("java.vm.name"))
-            .append("\n");
+            .append(" MB allocated, but free)\nJava version: ")
+            .append(System.getProperty("java.version")).append(", ")
+            .append(System.getProperty("java.vendor")).append(", ")
+            .append(System.getProperty("java.vm.name")).append('\n');
         if (Main.platform.getClass() == PlatformHookUnixoid.class) {
             // Add Java package details
             String packageDetails = ((PlatformHookUnixoid) Main.platform).getJavaPackageDetails();
             if (packageDetails != null) {
                 text.append("Java package: ")
                     .append(packageDetails)
-                    .append("\n");
+                    .append('\n');
             }
             // Add WebStart package details if run from JNLP
             if (Package.getPackage("javax.jnlp") != null) {
@@ -97,7 +94,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 if (webStartDetails != null) {
                     text.append("WebStart package: ")
                         .append(webStartDetails)
-                        .append("\n");
+                        .append('\n');
                 }
             }
         }
@@ -126,16 +123,14 @@ public final class ShowStatusReportAction extends JosmAction {
                 }
             }
             if (!vmArguments.isEmpty()) {
-                text.append("VM arguments: "+ vmArguments.toString().replace("\\\\", "\\"));
-                text.append("\n");
+                text.append("VM arguments: ").append(vmArguments.toString().replace("\\\\", "\\")).append('\n');
             }
         } catch (SecurityException e) {
             // Ignore exception
         }
         List<String> commandLineArgs = Main.getCommandLineArgs();
         if (!commandLineArgs.isEmpty()) {
-            text.append("Program arguments: "+ Arrays.toString(commandLineArgs.toArray()));
-            text.append("\n");
+            text.append("Program arguments: ").append(Arrays.toString(commandLineArgs.toArray())).append('\n');
         }
         if (Main.main != null) {
             DataSet dataset = Main.main.getCurrentDataSet();
@@ -144,21 +139,19 @@ public final class ShowStatusReportAction extends JosmAction {
                 if (result.length() == 0) {
                     text.append("Dataset consistency test: No problems found\n");
                 } else {
-                    text.append("\nDataset consistency test:\n"+result+"\n");
+                    text.append("\nDataset consistency test:\n").append(result).append('\n');
                 }
             }
         }
-        text.append("\n")
-            .append(PluginHandler.getBugReportText())
-            .append("\n");
+        text.append('\n').append(PluginHandler.getBugReportText()).append('\n');
 
         Collection<String> errorsWarnings = Main.getLastErrorAndWarnings();
         if (!errorsWarnings.isEmpty()) {
             text.append("Last errors/warnings:\n");
             for (String s : errorsWarnings) {
-                text.append("- ").append(s).append("\n");
+                text.append("- ").append(s).append('\n');
             }
-            text.append("\n");
+            text.append('\n');
         }
 
         return text.toString();
@@ -179,7 +172,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 }
             }
             for (Entry<String, Setting<?>> entry : settings.entrySet()) {
-                text.append(entry.getKey()).append("=").append(entry.getValue().getValue()).append("\n");
+                text.append(entry.getKey()).append('=').append(entry.getValue().getValue()).append('\n');
             }
         } catch (Exception x) {
             Main.error(x);

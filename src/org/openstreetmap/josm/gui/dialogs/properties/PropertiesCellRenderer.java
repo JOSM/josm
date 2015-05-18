@@ -78,7 +78,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                         /* I18n: properties display partial string joined with comma */
                         sb.append(trn(", {0} unset", ", {0} unset", blankCount, blankCount));
                     }
-                    sb.append(">");
+                    sb.append('>');
                     str = sb.toString();
                     c.setFont(c.getFont().deriveFont(Font.ITALIC));
 

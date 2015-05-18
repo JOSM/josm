@@ -91,7 +91,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
           .append(value)
           .append("',")
           .append(priority)
-          .append(">");
+          .append('>');
         return sb.toString();
     }
 

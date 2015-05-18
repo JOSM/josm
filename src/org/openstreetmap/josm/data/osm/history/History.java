@@ -340,10 +340,10 @@ public class History {
         if (versions != null) {
             result.append(", versions=\n");
             for (HistoryOsmPrimitive v : versions) {
-                result.append("\t").append(v).append(",\n");
+                result.append('\t').append(v).append(",\n");
             }
         }
-        result.append("]");
+        result.append(']');
         return result.toString();
     }
 }

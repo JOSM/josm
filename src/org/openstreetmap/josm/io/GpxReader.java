@@ -396,7 +396,7 @@ public class GpxReader implements GpxConstants {
                 case "vdop":
                 case "pdop":
                     try {
-                        currentWayPoint.put(localName, Float.parseFloat(accumulator.toString()));
+                        currentWayPoint.put(localName, Float.valueOf(accumulator.toString()));
                     } catch(Exception e) {
                         currentWayPoint.put(localName, new Float(0));
                     }

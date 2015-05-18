@@ -132,7 +132,7 @@ public class UploadNotesTask {
                 StringBuilder sb = new StringBuilder();
                 for (Map.Entry<Note, Exception> entry : failedNotes.entrySet()) {
                     sb.append(tr("Note {0} failed: {1}", entry.getKey().getId(), entry.getValue().getMessage()));
-                    sb.append("\n");
+                    sb.append('\n');
                 }
                 Main.error("Notes failed to upload: " + sb.toString());
                 JOptionPane.showMessageDialog(Main.map, sb.toString(), tr("Notes failed to upload"), JOptionPane.ERROR_MESSAGE);

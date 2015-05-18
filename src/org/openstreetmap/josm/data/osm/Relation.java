@@ -273,18 +273,17 @@ public final class Relation extends OsmPrimitive implements IRelation {
               .append(getUniqueId())
               .append(" version=")
               .append(getVersion())
-              .append(" ")
+              .append(' ')
               .append(getFlagsAsString())
               .append(" [");
         for (RelationMember rm:getMembers()) {
             result.append(OsmPrimitiveType.from(rm.getMember()))
-                  .append(" ")
+                  .append(' ')
                   .append(rm.getMember().getUniqueId())
                   .append(", ");
         }
         result.delete(result.length()-2, result.length())
-              .append("]")
-              .append("}");
+              .append("]}");
         return result.toString();
     }
 

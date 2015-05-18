@@ -87,7 +87,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
         Collection<PluginInformation> failed = task.getFailedPlugins();
         StringBuilder sb = new StringBuilder();
-        if (! downloaded.isEmpty()) {
+        if (!downloaded.isEmpty()) {
             sb.append(trn(
                     "The following plugin has been downloaded <strong>successfully</strong>:",
                     "The following {0} plugins have been downloaded <strong>successfully</strong>:",
@@ -96,11 +96,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     ));
             sb.append("<ul>");
             for(PluginInformation pi: downloaded) {
-                sb.append("<li>").append(pi.name).append(" (").append(pi.version).append(")").append("</li>");
+                sb.append("<li>").append(pi.name).append(" (").append(pi.version).append(")</li>");
             }
             sb.append("</ul>");
         }
-        if (! failed.isEmpty()) {
+        if (!failed.isEmpty()) {
             sb.append(trn(
                     "Downloading the following plugin has <strong>failed</strong>:",
                     "Downloading the following {0} plugins has <strong>failed</strong>:",

@@ -66,8 +66,7 @@ public final class CopyAction extends JosmAction {
     public static String getCopyString(Collection<? extends OsmPrimitive> primitives) {
         StringBuilder idsBuilder = new StringBuilder();
         for (OsmPrimitive p : primitives) {
-            idsBuilder.append(OsmPrimitiveType.from(p).getAPIName()).append(" ");
-            idsBuilder.append(p.getId()).append(",");
+            idsBuilder.append(OsmPrimitiveType.from(p).getAPIName()).append(' ').append(p.getId()).append(',');
         }
         return idsBuilder.substring(0, idsBuilder.length() - 1);
     }

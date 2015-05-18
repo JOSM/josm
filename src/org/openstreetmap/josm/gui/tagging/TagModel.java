@@ -116,7 +116,7 @@ public class TagModel {
             for (int i =0; i < values.size(); i++) {
                 sb.append(values.get(i));
                 if (i + 1 < values.size()) {
-                    sb.append(";");
+                    sb.append(';');
                 }
             }
             return sb.toString();

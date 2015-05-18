@@ -368,7 +368,7 @@ public class RequestProcessor extends Thread {
     public static String getHandlersInfoAsJSON() {
         StringBuilder r = new StringBuilder();
         boolean first = true;
-        r.append("[");
+        r.append('[');
 
         for (Entry<String, Class<? extends RequestHandler>> p : handlers.entrySet()) {
             if (first) {
@@ -378,7 +378,7 @@ public class RequestProcessor extends Thread {
             }
             r.append(getHandlerInfoAsJSON(p.getKey()));
         }
-        r.append("]");
+        r.append(']');
 
         return r.toString();
     }
@@ -453,8 +453,9 @@ public class RequestProcessor extends Thread {
     /**
      * Reports HTML message with the description of all available commands
      * @return HTML message with the description of all available commands
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @throws IllegalAccessException if one handler class or its nullary constructor is not accessible.
+     * @throws InstantiationException if one handler class represents an abstract class, an interface, an array class,
+     * a primitive type, or void; or if the class has no nullary constructor; or if the instantiation fails for some other reason.
      */
     public static String getUsageAsHtml() throws IllegalAccessException, InstantiationException {
         StringBuilder usage = new StringBuilder(1024);
@@ -463,8 +464,8 @@ public class RequestProcessor extends Thread {
             String[] mandatory = sample.getMandatoryParams();
             String[] optional = sample.getOptionalParams();
             String[] examples = sample.getUsageExamples(handler.getKey().substring(1));
-            usage.append("<li>");
-            usage.append(handler.getKey());
+            usage.append("<li>")
+                 .append(handler.getKey());
             if (sample.getUsage() != null && !sample.getUsage().isEmpty()) {
                 usage.append(" &mdash; <i>").append(sample.getUsage()).append("</i>");
             }
@@ -477,7 +478,7 @@ public class RequestProcessor extends Thread {
             if (examples != null) {
                 usage.append("<br/>examples: ");
                 for (String ex: examples) {
-                    usage.append("<br/> <a href=\"http://localhost:8111"+ex+"\">"+ex+"</a>");
+                    usage.append("<br/> <a href=\"http://localhost:8111").append(ex).append("\">").append(ex).append("</a>");
                 }
             }
             usage.append("</li>");

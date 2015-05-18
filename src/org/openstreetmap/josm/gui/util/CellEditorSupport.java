@@ -2,8 +2,9 @@
 package org.openstreetmap.josm.gui.util;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.CellEditor;
 import javax.swing.event.CellEditorListener;
@@ -16,7 +17,7 @@ import javax.swing.event.ChangeEvent;
  */
 public class CellEditorSupport {
     private final CellEditor editor;
-    private final List<CellEditorListener> listeners;
+    private final Set<CellEditorListener> listeners;
 
     /**
      * Constructs a new {@code CellEditorSupport}.
@@ -24,7 +25,7 @@ public class CellEditorSupport {
      */
     public CellEditorSupport(CellEditor editor) {
         this.editor = editor;
-        this.listeners = new LinkedList<>();
+        this.listeners = new LinkedHashSet<>();
     }
 
     protected List<CellEditorListener> getListeners() {
@@ -39,7 +40,7 @@ public class CellEditorSupport {
      */
     public final void addCellEditorListener(CellEditorListener l) {
         synchronized (this) {
-            if (l != null && ! listeners.contains(l)) {
+            if (l != null && !listeners.contains(l)) {
                 listeners.add(l);
             }
         }
@@ -51,7 +52,7 @@ public class CellEditorSupport {
      */
     public final void removeCellEditorListener(CellEditorListener l) {
         synchronized (this) {
-            if (l != null &&listeners.contains(l)) {
+            if (l != null && listeners.contains(l)) {
                 listeners.remove(l);
             }
         }

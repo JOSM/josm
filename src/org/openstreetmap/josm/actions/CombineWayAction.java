@@ -325,11 +325,11 @@ public class CombineWayAction extends JosmAction {
         @Override
         public String toString() {
             return new StringBuilder()
-            .append("[")
+            .append('[')
             .append(a.getId())
-            .append(",")
+            .append(',')
             .append(b.getId())
-            .append("]")
+            .append(']')
             .toString();
         }
 

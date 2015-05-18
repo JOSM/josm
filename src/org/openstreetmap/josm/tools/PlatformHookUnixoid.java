@@ -525,7 +525,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                     }
                     w.append(key + "=" + value + "\n");
                 }
-                w.append("\n");
+                w.append('\n');
                 for (FontEntry entry: extras) {
                     if ("".equals(entry.name) || "".equals(entry.file)) {
                         continue;
@@ -538,7 +538,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                     }
                     w.append(key + "=" + value + "\n");
                 }
-                w.append("\n");
+                w.append('\n');
                 String fallback = props.getProperty("sequence.fallback");
                 if (fallback != null) {
                     w.append("sequence.fallback=" + fallback + "," + Utils.join(",", allCharSubsets) + "\n");

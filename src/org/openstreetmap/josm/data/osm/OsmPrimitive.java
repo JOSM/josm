@@ -1284,19 +1284,19 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
         if (isDisabled()) {
             if (isDisabledAndHidden()) {
-                builder.append("h");
+                builder.append('h');
             } else {
-                builder.append("d");
+                builder.append('d');
             }
         }
         if (isTagged()) {
-            builder.append("T");
+            builder.append('T');
         }
         if (hasDirectionKeys()) {
             if (reversedDirection()) {
-                builder.append("<");
+                builder.append('<');
             } else {
-                builder.append(">");
+                builder.append('>');
             }
         }
         return builder.toString();

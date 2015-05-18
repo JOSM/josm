@@ -251,9 +251,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             rv = new StringBuilder(tr("Drag a way segment to make a rectangle. Ctrl-drag to move a segment along its normal, " +
                 "Alt-drag to create a new rectangle, double click to add a new node."));
             if (dualAlignEnabled) {
-                rv.append(" ").append(tr("Dual alignment active."));
+                rv.append(' ').append(tr("Dual alignment active."));
                 if (dualAlignSegmentCollapsed)
-                    rv.append(" ").append(tr("Segment collapsed due to its direction reversing."));
+                    rv.append(' ').append(tr("Segment collapsed due to its direction reversing."));
             }
         } else {
             if (mode == Mode.translate)
@@ -269,9 +269,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 rv = new StringBuilder();
             }
             if (dualAlignActive) {
-                rv.append(" ").append(tr("Dual alignment active."));
+                rv.append(' ').append(tr("Dual alignment active."));
                 if (dualAlignSegmentCollapsed) {
-                    rv.append(" ").append(tr("Segment collapsed due to its direction reversing."));
+                    rv.append(' ').append(tr("Segment collapsed due to its direction reversing."));
                 }
             }
         }

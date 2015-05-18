@@ -1332,7 +1332,7 @@ public abstract class SourceEditor extends JPanel {
                                 last.description = value;
                             } else if ("min-josm-version".equals(key)) {
                                 try {
-                                    last.minJosmVersion = Integer.parseInt(value);
+                                    last.minJosmVersion = Integer.valueOf(value);
                                 } catch (NumberFormatException e) {
                                     // ignore
                                 }

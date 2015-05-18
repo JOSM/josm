@@ -46,11 +46,9 @@ public class Condition implements TemplateEntry {
             if (entry instanceof SearchExpressionCondition) {
                 sb.append(entry);
             } else {
-                sb.append("'");
-                sb.append(entry);
-                sb.append("'");
+                sb.append('\'').append(entry).append('\'');
             }
-            sb.append("|");
+            sb.append('|');
         }
         return sb.toString();
     }

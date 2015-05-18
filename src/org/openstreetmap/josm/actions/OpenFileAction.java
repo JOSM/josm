@@ -164,7 +164,7 @@ public class OpenFileAction extends DiskAccessAction {
                             files.size(),
                             importer.filter.getDescription()
                     )
-            ).append("<br>").append("<ul>");
+            ).append("<br><ul>");
             for (File f: files) {
                 msg.append("<li>").append(f.getAbsolutePath()).append("</li>");
             }
@@ -188,7 +188,7 @@ public class OpenFileAction extends DiskAccessAction {
                             files.size(),
                             files.size()
                     )
-            ).append("<br>").append("<ul>");
+            ).append("<br><ul>");
             for (File f: files) {
                 msg.append("<li>").append(f.getAbsolutePath()).append(" (<i>")
                    .append(f.exists() ? tr("no importer") : tr("does not exist"))

@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
-import org.openstreetmap.josm.Main;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.RequestProcessor;
 
@@ -24,7 +24,7 @@ public class FeaturesHandler extends RequestHandler {
         StringBuilder buf = new StringBuilder();
         String q=args.get("q");
         if (q!=null) {
-            buf.append("[");
+            buf.append('[');
             boolean first = true;
             for (String s: q.split("[,\\s]+")) {
                if (first) {
@@ -39,11 +39,11 @@ public class FeaturesHandler extends RequestHandler {
                    Main.warn("Unknown handler {0} passed to /features request", s);
                }
             }
-            buf.append("]");
+            buf.append(']');
         } else {
             buf.append(RequestProcessor.getHandlersInfoAsJSON());
         }
-            
+
         content = buf.toString();
         contentType = "application/json";
         if (args.containsKey("jsonp")) {
@@ -65,7 +65,7 @@ public class FeaturesHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return null;
     }
-    
+
     @Override
     public String[] getOptionalParams() {
         return new String[]{"jsonp", "q"};
@@ -83,6 +83,6 @@ public class FeaturesHandler extends RequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        return new String[] {"/features", "/features?q=import,add_node"}; 
+        return new String[] {"/features", "/features?q=import,add_node"};
     }
 }

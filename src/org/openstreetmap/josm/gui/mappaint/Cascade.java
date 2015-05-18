@@ -126,9 +126,11 @@ public final class Cascade implements Cloneable {
             return ((Number) o).floatValue();
         if (o instanceof String && !((String) o).isEmpty()) {
             try {
-                return Float.parseFloat((String) o);
+                return Float.valueOf((String) o);
             } catch (NumberFormatException e) {
-                Main.debug("'"+o+"' cannot be converted to float");
+                if (Main.isDebugEnabled()) {
+                    Main.debug("'"+o+"' cannot be converted to float");
+                }
             }
         }
         return null;
@@ -216,7 +218,7 @@ public final class Cascade implements Cloneable {
             }
             res.append("; ");
         }
-        return res.append("}").toString();
+        return res.append('}').toString();
     }
 
     public boolean containsKey(String key) {

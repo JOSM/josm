@@ -61,7 +61,7 @@ public abstract class AbstractParser extends DefaultHandler {
             return null;
         Long l = 0L;
         try {
-            l = Long.parseLong(v);
+            l = Long.valueOf(v);
         } catch(NumberFormatException e) {
             throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long. Got ''{1}''.", name, v), e);
         }

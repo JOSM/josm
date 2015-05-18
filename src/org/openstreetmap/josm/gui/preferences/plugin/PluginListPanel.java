@@ -62,7 +62,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
         } else {
             sb.append(pi.version);
             if (pi.oldmode) {
-                sb.append("*");
+                sb.append('*');
             }
         }
         return sb.toString();

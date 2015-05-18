@@ -124,9 +124,9 @@ public class XmlObjectParser implements Iterable<Object> {
             if (klass == Boolean.TYPE)
                 return parseBoolean(value);
             else if (klass == Integer.TYPE || klass == Long.TYPE)
-                return Long.parseLong(value);
+                return Long.valueOf(value);
             else if (klass == Float.TYPE || klass == Double.TYPE)
-                return Double.parseDouble(value);
+                return Double.valueOf(value);
             return value;
         }
 

@@ -40,7 +40,7 @@ public class Version {
             StringBuilder sb = new StringBuilder();
             try (BufferedReader in = Utils.openURLReader(resource)) {
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
-                    sb.append(line).append("\n");
+                    sb.append(line).append('\n');
                 }
             }
             s = sb.toString();
@@ -143,7 +143,7 @@ public class Version {
         //
         StringBuilder sb = new StringBuilder();
         for(Entry<String,String> property: properties.entrySet()) {
-            sb.append(property.getKey()).append(":").append(property.getValue()).append("\n");
+            sb.append(property.getKey()).append(':').append(property.getValue()).append('\n');
         }
         releaseDescription = sb.toString();
     }

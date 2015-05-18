@@ -100,7 +100,7 @@ public class Capabilities {
     public Double getDouble(String element, String attribute) throws NumberFormatException {
         String s = get(element, attribute);
         if (s == null) return null;
-        return Double.parseDouble(s);
+        return Double.valueOf(s);
     }
 
     /**
@@ -114,7 +114,7 @@ public class Capabilities {
     public Long getLong(String element, String attribute) {
         String s = get(element, attribute);
         if (s == null) return null;
-        return Long.parseLong(s);
+        return Long.valueOf(s);
     }
 
     /**
@@ -196,7 +196,7 @@ public class Capabilities {
         String v = get("waynodes", "maximum");
         if (v != null) {
             try {
-                Long n = Long.parseLong(v);
+                long n = Long.parseLong(v);
                 if (n <= 0) {
                     warnIllegalValue("waynodes", "maximum", n);
                 } else {

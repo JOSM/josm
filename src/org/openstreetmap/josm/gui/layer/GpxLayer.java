@@ -119,7 +119,7 @@ public class GpxLayer extends Layer {
 
     @Override
     public Object getInfoComponent() {
-        StringBuilder info = new StringBuilder();
+        StringBuilder info = new StringBuilder(48);
 
         if (data.attr.containsKey("name")) {
             info.append(tr("Name: {0}", data.get(GpxConstants.META_NAME))).append("<br>");
@@ -130,12 +130,12 @@ public class GpxLayer extends Layer {
         }
 
         if (!data.tracks.isEmpty()) {
-            info.append("<table><thead align='center'><tr><td colspan='5'>"
-                    + trn("{0} track", "{0} tracks", data.tracks.size(), data.tracks.size())
-                    + "</td></tr><tr align='center'><td>" + tr("Name") + "</td><td>"
-                    + tr("Description") + "</td><td>" + tr("Timespan")
-                    + "</td><td>" + tr("Length") + "</td><td>" + tr("URL")
-                    + "</td></tr></thead>");
+            info.append("<table><thead align='center'><tr><td colspan='5'>")
+                .append(trn("{0} track", "{0} tracks", data.tracks.size(), data.tracks.size()))
+                .append("</td></tr><tr align='center'><td>").append(tr("Name")).append("</td><td>")
+                .append(tr("Description")).append("</td><td>").append(tr("Timespan"))
+                .append("</td><td>").append(tr("Length")).append("</td><td>").append(tr("URL"))
+                .append("</td></tr></thead>");
 
             for (GpxTrack trk : data.tracks) {
                 info.append("<tr><td>");
@@ -144,7 +144,7 @@ public class GpxLayer extends Layer {
                 }
                 info.append("</td><td>");
                 if (trk.getAttributes().containsKey(GpxConstants.GPX_DESC)) {
-                    info.append(" ").append(trk.get(GpxConstants.GPX_DESC));
+                    info.append(' ').append(trk.get(GpxConstants.GPX_DESC));
                 }
                 info.append("</td><td>");
                 info.append(getTimespanForTrack(trk));
@@ -208,7 +208,7 @@ public class GpxLayer extends Layer {
 
     @Override
     public String getToolTipText() {
-        StringBuilder info = new StringBuilder().append("<html>");
+        StringBuilder info = new StringBuilder(48).append("<html>");
 
         if (data.attr.containsKey(GpxConstants.META_NAME)) {
             info.append(tr("Name: {0}", data.get(GpxConstants.META_NAME))).append("<br>");
@@ -222,8 +222,7 @@ public class GpxLayer extends Layer {
             .append(trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size()))
             .append(trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>")
             .append(tr("Length: {0}", NavigatableComponent.getSystemOfMeasurement().getDistText(data.length())))
-            .append("<br>")
-            .append("</html>");
+            .append("<br></html>");
         return info.toString();
     }
 
