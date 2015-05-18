@@ -35,7 +35,7 @@ public class TagMergeModel extends DefaultTableModel {
     private final transient List<TagMergeItem> tagMergeItems;
 
     /** the property change listeners */
-    private final transient List<PropertyChangeListener> listeners;
+    private final transient Set<PropertyChangeListener> listeners;
 
     private int numUndecidedTags = 0;
 
@@ -44,7 +44,7 @@ public class TagMergeModel extends DefaultTableModel {
      */
     public TagMergeModel() {
         tagMergeItems = new ArrayList<>();
-        listeners = new ArrayList<>();
+        listeners = new HashSet<>();
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

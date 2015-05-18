@@ -538,9 +538,9 @@ public class PlaceSelection implements DownloadSelection {
                 if (line.length() == 0) {
                     line.append(t);
                 } else if (line.length() < 80) {
-                    line.append(" ").append(t);
+                    line.append(' ').append(t);
                 } else {
-                    line.append(" ").append(t).append("<br>");
+                    line.append(' ').append(t).append("<br>");
                     ret.append(line);
                     line = new StringBuilder();
                 }

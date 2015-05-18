@@ -334,7 +334,7 @@ public class CustomProjection extends AbstractProjection {
         List<Double> towgs84Param = new ArrayList<>();
         for (String str : numStr) {
             try {
-                towgs84Param.add(Double.parseDouble(str));
+                towgs84Param.add(Double.valueOf(str));
             } catch (NumberFormatException e) {
                 throw new ProjectionConfigurationException(tr("Unable to parse value of parameter ''towgs84'' (''{0}'')", str), e);
             }
@@ -495,7 +495,7 @@ public class CustomProjection extends AbstractProjection {
     public Integer getEpsgCode() {
         if (code != null && code.startsWith("EPSG:")) {
             try {
-                return Integer.parseInt(code.substring(5));
+                return Integer.valueOf(code.substring(5));
             } catch (NumberFormatException e) {
                 Main.warn(e);
             }

@@ -434,16 +434,16 @@ public abstract class AbstractPrimitive implements IPrimitive {
         StringBuilder builder = new StringBuilder();
 
         if (isIncomplete()) {
-            builder.append("I");
+            builder.append('I');
         }
         if (isModified()) {
-            builder.append("M");
+            builder.append('M');
         }
         if (isVisible()) {
-            builder.append("V");
+            builder.append('V');
         }
         if (isDeleted()) {
-            builder.append("D");
+            builder.append('D');
         }
         return builder.toString();
     }

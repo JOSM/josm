@@ -80,7 +80,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
             switch (atts.getQName(count)) {
             case "width":
                 String val = atts.getValue(count);
-                if (! (val.startsWith("+") || val.startsWith("-") || val.endsWith("%"))) {
+                if (!(val.startsWith("+") || val.startsWith("-") || val.endsWith("%"))) {
                     line.setWidth(Integer.parseInt(val));
                 }
                 break;
@@ -88,7 +88,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
                 line.color = convertColor(atts.getValue(count));
                 break;
             case "realwidth":
-                line.realWidth = Integer.parseInt(atts.getValue(count));
+                line.realWidth = Integer.valueOf(atts.getValue(count));
                 break;
             case "dashed":
                 Float[] dashed;
@@ -223,7 +223,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
                         rule.icon.icon = icon;
                         break;
                     case "annotate":
-                        rule.icon.annotate = Boolean.parseBoolean (atts.getValue(count));
+                        rule.icon.annotate = Boolean.valueOf(atts.getValue(count));
                         break;
                     case "priority":
                         rule.icon.priority = Integer.parseInt(atts.getValue(count));

@@ -361,7 +361,7 @@ public class SessionReader {
                     }
                     Integer idx = null;
                     try {
-                        idx = Integer.parseInt(e.getAttribute("index"));
+                        idx = Integer.valueOf(e.getAttribute("index"));
                     } catch (NumberFormatException ex) {
                         Main.warn(ex);
                     }
@@ -379,7 +379,7 @@ public class SessionReader {
                         for (String sd : depStr.split(",")) {
                             Integer d = null;
                             try {
-                                d = Integer.parseInt(sd);
+                                d = Integer.valueOf(sd);
                             } catch (NumberFormatException ex) {
                                 Main.warn(ex);
                             }

@@ -31,7 +31,7 @@ public class CopyCoordinatesAction extends JosmAction {
             s.append(n.getCoor().lat());
             s.append(", ");
             s.append(n.getCoor().lon());
-            s.append("\n");
+            s.append('\n');
         }
         Utils.copyToClipboard(s.toString().trim());
     }

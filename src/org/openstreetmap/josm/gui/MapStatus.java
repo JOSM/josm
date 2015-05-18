@@ -571,7 +571,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          * @return labels for info popup
          */
         private JLabel popupBuildPrimitiveLabels(final OsmPrimitive osm) {
-            final StringBuilder text = new StringBuilder();
+            final StringBuilder text = new StringBuilder(32);
             String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
             if (osm.isNewOrUndeleted() || osm.isModified()) {
                 name = "<i><b>"+ name + "*</b></i>";
@@ -582,25 +582,26 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             // fix #7557 - do not show ID twice
 
             if (!osm.isNew() && !idShown) {
-                text.append(" [id="+osm.getId()+"]");
+                text.append(" [id=").append(osm.getId()).append(']');
             }
 
             if(osm.getUser() != null) {
-                text.append(" [" + tr("User:") + " " + osm.getUser().getName() + "]");
+                text.append(" [").append(tr("User:")).append(' ').append(osm.getUser().getName()).append(']');
             }
 
             for (String key : osm.keySet()) {
-                text.append("<br>" + key + "=" + osm.get(key));
+                text.append("<br>").append(key).append('=').append(osm.get(key));
             }
 
             final JLabel l = new JLabel(
-                    "<html>" +text.toString() + "</html>",
+                    "<html>" + text.toString() + "</html>",
                     ImageProvider.get(osm.getDisplayType()),
                     JLabel.HORIZONTAL
                     ) {
                 // This is necessary so the label updates its colors when the
                 // selection is changed from the outside
-                @Override public void validate() {
+                @Override
+                public void validate() {
                     super.validate();
                     popupSetLabelColors(this, osm);
                 }
@@ -612,14 +613,17 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             l.setHorizontalAlignment(JLabel.LEFT);
             l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             l.addMouseListener(new MouseAdapter(){
-                @Override public void mouseEntered(MouseEvent e) {
+                @Override
+                public void mouseEntered(MouseEvent e) {
                     l.setBackground(SystemColor.info);
                     l.setForeground(SystemColor.infoText);
                 }
-                @Override public void mouseExited(MouseEvent e) {
+                @Override
+                public void mouseExited(MouseEvent e) {
                     popupSetLabelColors(l, osm);
                 }
-                @Override public void mouseClicked(MouseEvent e) {
+                @Override
+                public void mouseClicked(MouseEvent e) {
                     DataSet ds = Main.main.getCurrentDataSet();
                     // Let the user toggle the selection
                     ds.toggleSelected(osm);

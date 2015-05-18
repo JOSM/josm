@@ -135,7 +135,7 @@ public class OsmApiException extends OsmTransferException {
             if (!eh.isEmpty()) {
                 sb.append(", Error Header=<")
                 .append(eh)
-                .append(">");
+                .append('>');
             }
         } catch (Exception e) {
             // Ignored
@@ -145,7 +145,7 @@ public class OsmApiException extends OsmTransferException {
             if (!eb.isEmpty() && !eb.equals(eh)) {
                 sb.append(", Error Body=<")
                 .append(eb)
-                .append(">");
+                .append('>');
             }
         } catch (Exception e) {
             // Ignored

@@ -252,45 +252,45 @@ public class ChangesetQuery {
     public String getQueryString() {
         StringBuilder sb = new StringBuilder();
         if (uid != null) {
-            sb.append("user").append("=").append(uid);
+            sb.append("user=").append(uid);
         } else if (userName != null) {
-            sb.append("display_name").append("=").append(Utils.encodeUrl(userName));
+            sb.append("display_name=").append(Utils.encodeUrl(userName));
         }
         if (bounds != null) {
             if (sb.length() > 0) {
-                sb.append("&");
+                sb.append('&');
             }
             sb.append("bbox=").append(bounds.encodeAsString(","));
         }
         if (closedAfter != null && createdBefore != null) {
             if (sb.length() > 0) {
-                sb.append("&");
+                sb.append('&');
             }
             DateFormat df = DateUtils.newIsoDateTimeFormat();
-            sb.append("time").append("=").append(df.format(closedAfter));
-            sb.append(",").append(df.format(createdBefore));
+            sb.append("time=").append(df.format(closedAfter));
+            sb.append(',').append(df.format(createdBefore));
         } else if (closedAfter != null) {
             if (sb.length() > 0) {
-                sb.append("&");
+                sb.append('&');
             }
             DateFormat df = DateUtils.newIsoDateTimeFormat();
-            sb.append("time").append("=").append(df.format(closedAfter));
+            sb.append("time=").append(df.format(closedAfter));
         }
 
         if (open != null) {
             if (sb.length() > 0) {
-                sb.append("&");
+                sb.append('&');
             }
             sb.append("open=").append(Boolean.toString(open));
         } else if (closed != null) {
             if (sb.length() > 0) {
-                sb.append("&");
+                sb.append('&');
             }
             sb.append("closed=").append(Boolean.toString(closed));
         } else if (changesetIds != null) {
             // since 2013-12-05, see https://github.com/openstreetmap/openstreetmap-website/commit/1d1f194d598e54a5d6fb4f38fb569d4138af0dc8
             if (sb.length() > 0) {
-                sb.append("&");
+                sb.append('&');
             }
             sb.append("changesets=").append(Utils.join(",", changesetIds));
         }

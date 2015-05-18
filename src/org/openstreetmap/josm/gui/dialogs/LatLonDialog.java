@@ -45,7 +45,7 @@ public class LatLonDialog extends ExtendedDialog {
     private LatLon latLonCoordinates;
     private EastNorth eastNorthCoordinates;
 
-    private static final double ZERO = 0.0;
+    private static final Double ZERO = 0.0;
     private static final String DEG = "\u00B0";
     private static final String MIN = "\u2032";
     private static final String SEC = "\u2033";
@@ -348,8 +348,8 @@ public class LatLonDialog extends ExtendedDialog {
         final Matcher mXml = P_XML.matcher(coord);
         if (mXml.matches()) {
             setLatLonObj(latLon,
-                    Double.parseDouble(mXml.group(1).replace(',', '.')), ZERO, ZERO, "N",
-                    Double.parseDouble(mXml.group(2).replace(',', '.')), ZERO, ZERO, "E");
+                    Double.valueOf(mXml.group(1).replace(',', '.')), ZERO, ZERO, "N",
+                    Double.valueOf(mXml.group(2).replace(',', '.')), ZERO, ZERO, "E");
         } else {
             final Matcher m = P.matcher(coord);
 
@@ -359,10 +359,10 @@ public class LatLonDialog extends ExtendedDialog {
             while (m.find()) {
                 if (m.group(1) != null) {
                     sb.append('R');     // floating point number
-                    list.add(Double.parseDouble(m.group(1).replace(',', '.')));
+                    list.add(Double.valueOf(m.group(1).replace(',', '.')));
                 } else if (m.group(2) != null) {
                     sb.append('Z');     // integer number
-                    list.add(Double.parseDouble(m.group(2)));
+                    list.add(Double.valueOf(m.group(2)));
                 } else if (m.group(3) != null) {
                     sb.append('o');     // degree sign
                 } else if (m.group(4) != null) {
@@ -372,7 +372,7 @@ public class LatLonDialog extends ExtendedDialog {
                 } else if (m.group(6) != null) {
                     sb.append(',');     // separator
                 } else if (m.group(7) != null) {
-                    sb.append("x");     // cardinal direction
+                    sb.append('x');     // cardinal direction
                     String c = m.group(7).toUpperCase();
                     if ("N".equals(c) || "S".equals(c) || "E".equals(c) || "W".equals(c)) {
                         list.add(c);

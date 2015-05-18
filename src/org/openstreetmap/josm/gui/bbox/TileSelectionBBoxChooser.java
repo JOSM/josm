@@ -650,10 +650,10 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("min=").append(min.x).append(",").append(min.y).append(",")
-              .append("max=").append(max.x).append(",").append(max.y).append(",")
-              .append("zoom=").append(zoomLevel);
+            StringBuilder sb = new StringBuilder(24);
+            sb.append("min=").append(min.x).append(',').append(min.y)
+              .append(",max=").append(max.x).append(',').append(max.y)
+              .append(",zoom=").append(zoomLevel);
             return sb.toString();
         }
     }

@@ -39,11 +39,11 @@ public class ChangesetListCellRenderer extends JLabel implements ListCellRendere
             sb.append(tr("{0} [incomplete]", cs.getId()));
         } else {
             String comment = cs.get("comment");
-            sb.append(cs.getId());
-            sb.append(" - ");
-            sb.append(cs.isOpen() ? tr("open") : tr("closed"));
+            sb.append(cs.getId())
+              .append(" - ")
+              .append(cs.isOpen() ? tr("open") : tr("closed"));
             if (comment != null) {
-                sb.append(" - ").append("'").append(comment).append("'");
+                sb.append(" - '").append(comment).append('\'');
             }
         }
         setText(sb.toString());

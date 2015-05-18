@@ -31,7 +31,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     private transient ConfigurationParameterRequestHandler configHandler;
 
     protected String buildChangesetSummary() {
-        StringBuilder msg = new StringBuilder();
+        StringBuilder msg = new StringBuilder(96);
         if (selectedChangeset == null || selectedChangeset.isNew()) {
             msg.append(tr("Objects are uploaded to a <strong>new changeset</strong>."));
         } else {
@@ -42,13 +42,13 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
                     uploadComment
             ));
         }
-        msg.append(" ");
+        msg.append(' ');
         if (closeChangesetAfterNextUpload) {
             msg.append(tr("The changeset is going to be <strong>closed</strong> after this upload"));
         } else {
             msg.append(tr("The changeset is <strong>left open</strong> after this upload"));
         }
-        msg.append(" (<a href=\"urn:changeset-configuration\">" + tr("configure changeset") + "</a>)");
+        msg.append(" (<a href=\"urn:changeset-configuration\">").append(tr("configure changeset")).append("</a>)");
         return msg.toString();
     }
 

@@ -114,9 +114,9 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             URL url = new URL(site);
             StringBuilder sb = new StringBuilder();
             sb.append("site-")
-              .append(url.getHost()).append("-");
+              .append(url.getHost()).append('-');
             if (url.getPort() != -1) {
-                sb.append(url.getPort()).append("-");
+                sb.append(url.getPort()).append('-');
             }
             String path = url.getPath();
             for (int i =0;i<path.length(); i++) {
@@ -124,7 +124,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 if (Character.isLetterOrDigit(c)) {
                     sb.append(c);
                 } else {
-                    sb.append("_");
+                    sb.append('_');
                 }
             }
             sb.append(".txt");
@@ -166,7 +166,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = in.readLine()) != null) {
-                    sb.append(line).append("\n");
+                    sb.append(line).append('\n');
                 }
                 return sb.toString();
             }
@@ -197,7 +197,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 try (BufferedReader err = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = err.readLine()) != null) {
-                        sb.append(line).append("\n");
+                        sb.append(line).append('\n');
                     }
                 } catch (Exception ex) {
                     Main.error(e);
@@ -227,7 +227,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 panel.add(new JLabel(firstMessage), GBC.eol().insets(0, 0, 0, 10));
                 StringBuilder b = new StringBuilder();
                 for (String part : msg.split("(?<=\\G.{200})")) {
-                    b.append(part).append("\n");
+                    b.append(part).append('\n');
                 }
                 panel.add(new JLabel("<html><body width=\"500\"><b>"+b.toString().trim()+"</b></body></html>"), GBC.eol().insets(0, 0, 0, 10));
                 if (!details.isEmpty()) {

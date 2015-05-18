@@ -109,7 +109,7 @@ public class WikiReader {
         StringBuilder b = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (!line.contains("[[TranslatedPages]]")) {
-                b.append(line.replaceAll(" />", ">")).append("\n");
+                b.append(line.replaceAll(" />", ">")).append('\n');
             }
         }
         return html ? "<html>" + b + "</html>" : b.toString();

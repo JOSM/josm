@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.ButtonModel;
 import javax.swing.JCheckBox;
@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public abstract class ToggleAction extends JosmAction {
 
-    private final transient List<ButtonModel> buttonModels = new ArrayList<>();
+    private final transient Set<ButtonModel> buttonModels = new HashSet<>();
 
     /**
      * Constructs a {@code ToggleAction}.

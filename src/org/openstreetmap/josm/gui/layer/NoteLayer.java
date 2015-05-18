@@ -112,7 +112,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
         if (noteData.getSelectedNote() != null) {
             StringBuilder sb = new StringBuilder("<html>");
             sb.append(tr("Note"))
-              .append(" ").append(noteData.getSelectedNote().getId());
+              .append(' ').append(noteData.getSelectedNote().getId());
             for (NoteComment comment : noteData.getSelectedNote().getComments()) {
                 String commentText = comment.getText();
                 //closing a note creates an empty comment that we don't want to show
@@ -195,13 +195,13 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
     public Object getInfoComponent() {
         StringBuilder sb = new StringBuilder();
         sb.append(tr("Notes layer"))
-          .append("\n")
+          .append('\n')
           .append(tr("Total notes:"))
-          .append(" ")
+          .append(' ')
           .append(noteData.getNotes().size())
-          .append("\n")
+          .append('\n')
           .append(tr("Changes need uploading?"))
-          .append(" ")
+          .append(' ')
           .append(isModified());
         return sb.toString();
     }

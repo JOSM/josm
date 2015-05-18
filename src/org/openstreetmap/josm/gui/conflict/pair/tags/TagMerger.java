@@ -12,8 +12,8 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -330,10 +330,10 @@ public class TagMerger extends JPanel implements IConflictResolver {
      *
      */
     static class AdjustmentSynchronizer implements AdjustmentListener {
-        private final List<Adjustable> synchronizedAdjustables;
+        private final Set<Adjustable> synchronizedAdjustables;
 
         public AdjustmentSynchronizer() {
-            synchronizedAdjustables = new ArrayList<>();
+            synchronizedAdjustables = new HashSet<>();
         }
 
         public void synchronizeAdjustment(Adjustable adjustable) {

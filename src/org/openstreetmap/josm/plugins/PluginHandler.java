@@ -277,12 +277,11 @@ public final class PluginHandler {
         for (DeprecatedPlugin depr: removedPlugins) {
             sb.append("<li>").append(depr.name);
             if (depr.reason != null) {
-                sb.append(" (").append(depr.reason).append(")");
+                sb.append(" (").append(depr.reason).append(')');
             }
             sb.append("</li>");
         }
-        sb.append("</ul>")
-          .append("</html>");
+        sb.append("</ul></html>");
         JOptionPane.showMessageDialog(
                 parent,
                 sb.toString(),
@@ -1325,7 +1324,7 @@ public final class PluginHandler {
             text.append("Plugins:\n");
         }
         for (String s : pl) {
-            text.append("- ").append(s).append("\n");
+            text.append("- ").append(s).append('\n');
         }
         return text.toString();
     }
@@ -1350,7 +1349,7 @@ public final class PluginHandler {
                         b.append(e.getKey());
                         b.append(": ");
                         b.append(e.getValue());
-                        b.append("\n");
+                        b.append('\n');
                     }
                     JosmTextArea a = new JosmTextArea(10, 40);
                     a.setEditable(false);

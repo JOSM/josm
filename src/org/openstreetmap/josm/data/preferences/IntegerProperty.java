@@ -5,6 +5,7 @@ import org.openstreetmap.josm.Main;
 
 /**
  * A property containing an {@code Integer} value.
+ * @since 3246
  */
 public class IntegerProperty extends AbstractProperty<Integer> {
 
@@ -34,12 +35,10 @@ public class IntegerProperty extends AbstractProperty<Integer> {
      *         false - parsing failed or preference value has not changed
      */
     public boolean parseAndPut(String value) {
-        Integer intVal;
         try {
-            intVal = Integer.parseInt(value);
+            return put(Integer.valueOf(value));
         } catch (NumberFormatException ex) {
             return false;
         }
-        return put(intVal);
     }
 }

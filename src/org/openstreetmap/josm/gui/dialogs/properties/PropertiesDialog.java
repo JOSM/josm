@@ -1281,7 +1281,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 } else if (p instanceof Relation) {
                     t = "type:relation ";
                 }
-                s.append(sep).append("(").append(t).append("\"").append(
+                s.append(sep).append('(').append(t).append('"').append(
                         org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(key)).append("\"=\"").append(
                         org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(val)).append("\")");
                 sep = " OR ";

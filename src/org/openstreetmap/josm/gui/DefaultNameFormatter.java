@@ -182,7 +182,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 preset.nameTemplate.appendText(name, node);
             }
             if (node.getCoor() != null) {
-                name.append(" \u200E(").append(node.getCoor().latToString(CoordinateFormat.getDefaultFormat())).append(", ").append(node.getCoor().lonToString(CoordinateFormat.getDefaultFormat())).append(")");
+                name.append(" \u200E(").append(node.getCoor().latToString(CoordinateFormat.getDefaultFormat())).append(", ")
+                    .append(node.getCoor().lonToString(CoordinateFormat.getDefaultFormat())).append(')');
             }
         }
         decorateNameWithId(name, node);
@@ -286,7 +287,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                nevertheless, who knows what future brings */
             /* I18n: count of nodes as parameter */
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
-            name.append(mark).append(" (").append(nodes).append(")");
+            name.append(mark).append(" (").append(nodes).append(')');
         }
         decorateNameWithId(name, way);
 
@@ -336,7 +337,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 name.append(", ").append(tr("incomplete"));
             }
 
-            name.append(")");
+            name.append(')');
         }
         decorateNameWithId(name, relation);
 
@@ -362,7 +363,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             result.append(" (").append(relationName).append(", ");
         } else {
             preset.nameTemplate.appendText(result, relation);
-            result.append("(");
+            result.append('(');
         }
     }
 
@@ -511,10 +512,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     private String buildDefaultToolTip(long id, Map<String, String> tags) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>")
-        .append("<strong>id</strong>=")
-        .append(id)
-        .append("<br>");
+        sb.append("<html><strong>id</strong>=")
+          .append(id)
+          .append("<br>");
         List<String> keyList = new ArrayList<>(tags.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
@@ -523,9 +523,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             }
             String key = keyList.get(i);
             sb.append("<strong>")
-            .append(key)
-            .append("</strong>")
-            .append("=");
+              .append(key)
+              .append("</strong>=");
             String value = tags.get(key);
             while(value.length() != 0) {
                 sb.append(value.substring(0,Math.min(50, value.length())));
@@ -582,7 +581,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             .append(coord.latToString(CoordinateFormat.getDefaultFormat()))
             .append(", ")
             .append(coord.lonToString(CoordinateFormat.getDefaultFormat()))
-            .append(")");
+            .append(')');
         }
         decorateNameWithId(sb, node);
         return sb.toString();
@@ -670,7 +669,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
 
         int mbno = relation.getNumMembers();
-        sb.append(trn("{0} member", "{0} members", mbno, mbno)).append(")");
+        sb.append(trn("{0} member", "{0} members", mbno, mbno)).append(')');
 
         decorateNameWithId(sb, relation);
         return sb.toString();

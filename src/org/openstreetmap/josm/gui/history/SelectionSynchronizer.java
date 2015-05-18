@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
@@ -11,13 +11,13 @@ import javax.swing.event.ListSelectionListener;
 
 public class SelectionSynchronizer implements ListSelectionListener {
 
-    private List<ListSelectionModel> participants;
+    private final Set<ListSelectionModel> participants;
 
     /**
      * Constructs a new {@code SelectionSynchronizer}.
      */
     public SelectionSynchronizer() {
-        participants = new ArrayList<>();
+        participants = new HashSet<>();
     }
 
     public void participateInSynchronizedSelection(ListSelectionModel model) {

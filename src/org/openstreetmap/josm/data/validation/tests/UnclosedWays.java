@@ -8,7 +8,6 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -46,7 +45,7 @@ public class UnclosedWays extends Test {
         /** The English message */
         private final String engMessage;
         /** The special values, to be ignored if ignore is set to true; to be considered only if ignore is set to false */
-        private final List<String> specialValues;
+        private final Set<String> specialValues;
         /** The boolean indicating if special values must be ignored or considered only */
         private final boolean ignore;
 
@@ -57,7 +56,7 @@ public class UnclosedWays extends Test {
          * @param engMessage The English message
          */
         public UnclosedWaysCheck(int code, String key, String engMessage) {
-            this(code, key, engMessage, Collections.<String>emptyList());
+            this(code, key, engMessage, Collections.<String>emptySet());
         }
 
         /**
@@ -67,7 +66,7 @@ public class UnclosedWays extends Test {
          * @param engMessage The English message
          * @param ignoredValues The ignored values.
          */
-        public UnclosedWaysCheck(int code, String key, String engMessage, List<String> ignoredValues) {
+        public UnclosedWaysCheck(int code, String key, String engMessage, Set<String> ignoredValues) {
             this(code, key, engMessage, ignoredValues, true);
         }
 
@@ -79,7 +78,7 @@ public class UnclosedWays extends Test {
          * @param specialValues The special values, to be ignored if ignore is set to true; to be considered only if ignore is set to false
          * @param ignore indicates if special values must be ignored or considered only
          */
-        public UnclosedWaysCheck(int code, String key, String engMessage, List<String> specialValues, boolean ignore) {
+        public UnclosedWaysCheck(int code, String key, String engMessage, Set<String> specialValues, boolean ignore) {
             this.code = code;
             this.key = key;
             this.engMessage = engMessage;
@@ -136,14 +135,19 @@ public class UnclosedWays extends Test {
     }
 
     private final UnclosedWaysCheck[] checks = {
-        new UnclosedWaysCheck(1101, "natural",   marktr("natural type {0}"), Arrays.asList("coastline", "cliff", "tree_row", "ridge", "arete", "gorge")),
+        new UnclosedWaysCheck(1101, "natural",   marktr("natural type {0}"),
+                new HashSet<>(Arrays.asList("coastline", "cliff", "tree_row", "ridge", "arete", "gorge"))),
         new UnclosedWaysCheck(1102, "landuse",   marktr("landuse type {0}")),
         new UnclosedWaysCheck(1103, "amenities", marktr("amenities type {0}")),
-        new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"), Arrays.asList("water_slide", "climbing")),
-        new UnclosedWaysCheck(1105, "tourism",   marktr("tourism type {0}"), Arrays.asList("attraction", "artwork")),
+        new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"),
+                new HashSet<>(Arrays.asList("water_slide", "climbing"))),
+        new UnclosedWaysCheck(1105, "tourism",   marktr("tourism type {0}"),
+                new HashSet<>(Arrays.asList("attraction", "artwork"))),
         new UnclosedWaysCheck(1106, "shop",      marktr("shop type {0}")),
-        new UnclosedWaysCheck(1107, "leisure",   marktr("leisure type {0}"), Arrays.asList("track", "slipway")),
-        new UnclosedWaysCheck(1108, "waterway",  marktr("waterway type {0}"), Arrays.asList("riverbank"), false),
+        new UnclosedWaysCheck(1107, "leisure",   marktr("leisure type {0}"),
+                new HashSet<>(Arrays.asList("track", "slipway"))),
+        new UnclosedWaysCheck(1108, "waterway",  marktr("waterway type {0}"),
+                new HashSet<>(Arrays.asList("riverbank")), false),
         new UnclosedWaysCheck(1109, "boundary", marktr("boundary type {0}")),
         new UnclosedWaysBooleanCheck(1120, "building", marktr("building")),
         new UnclosedWaysBooleanCheck(1130, "area",     marktr("area")),

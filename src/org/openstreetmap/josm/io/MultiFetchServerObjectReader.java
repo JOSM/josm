@@ -255,8 +255,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * builds the Multi Get request string for a set of ids and a given
-     * {@link OsmPrimitiveType}.
+     * builds the Multi Get request string for a set of ids and a given {@link OsmPrimitiveType}.
      *
      * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
      * @param idPackage  the package of ids
@@ -271,15 +270,14 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         for (int i=0; i<idPackage.size(); i++) {
             sb.append(it.next());
             if (i < idPackage.size()-1) {
-                sb.append(",");
+                sb.append(',');
             }
         }
         return sb.toString();
     }
 
     /**
-     * builds the Multi Get request string for a single id and a given
-     * {@link OsmPrimitiveType}.
+     * builds the Multi Get request string for a single id and a given {@link OsmPrimitiveType}.
      *
      * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
      * @param id the id

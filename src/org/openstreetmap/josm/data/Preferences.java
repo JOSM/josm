@@ -1369,16 +1369,16 @@ public class Preferences {
             }
             f.setAccessible(true);
             if (f.getType() == Boolean.class || f.getType() == boolean.class) {
-                value = Boolean.parseBoolean(key_value.getValue());
+                value = Boolean.valueOf(key_value.getValue());
             } else if (f.getType() == Integer.class || f.getType() == int.class) {
                 try {
-                    value = Integer.parseInt(key_value.getValue());
+                    value = Integer.valueOf(key_value.getValue());
                 } catch (NumberFormatException nfe) {
                     continue;
                 }
             } else if (f.getType() == Double.class || f.getType() == double.class) {
                 try {
-                    value = Double.parseDouble(key_value.getValue());
+                    value = Double.valueOf(key_value.getValue());
                 } catch (NumberFormatException nfe) {
                     continue;
                 }
@@ -1700,9 +1700,9 @@ public class Preferences {
 
     public String toXML(boolean nopass) {
         StringBuilder b = new StringBuilder(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<preferences xmlns=\""+Main.getXMLBase()+"/preferences-1.0\" version=\""+
-                Version.getInstance().getVersion() + "\">\n");
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<preferences xmlns=\"")
+                .append(Main.getXMLBase()).append("/preferences-1.0\" version=\"")
+                .append(Version.getInstance().getVersion()).append("\">\n");
         SettingToXml toXml = new SettingToXml(b, nopass);
         for (Entry<String, Setting<?>> e : settingsMap.entrySet()) {
             toXml.setKey(e.getKey());

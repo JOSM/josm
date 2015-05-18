@@ -1549,7 +1549,7 @@ public final class TaggingPresetItems {
         if (str == null || str.isEmpty())
             return null;
         try {
-            return Integer.parseInt(str);
+            return Integer.valueOf(str);
         } catch (Exception e) {
             if (Main.isTraceEnabled()) {
                 Main.trace(e.getMessage());

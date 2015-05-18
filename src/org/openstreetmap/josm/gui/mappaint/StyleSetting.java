@@ -3,10 +3,12 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
+
 import org.openstreetmap.josm.Main;
 
 /**
@@ -90,8 +92,7 @@ public interface StyleSetting {
         public Object getValue() {
             String val = Main.pref.get(prefKey, null);
             if (val == null) return def;
-            return Boolean.parseBoolean(val);
+            return Boolean.valueOf(val);
         }
-
     }
 }

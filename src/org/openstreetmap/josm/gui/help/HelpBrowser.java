@@ -143,7 +143,7 @@ public class HelpBrowser extends JDialog {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 css.append(line);
-                css.append("\n");
+                css.append('\n');
             }
         } catch (Exception e) {
             Main.error(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));

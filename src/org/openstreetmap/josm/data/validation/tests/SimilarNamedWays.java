@@ -260,7 +260,7 @@ public class SimilarNamedWays extends Test {
                     maxLength = words[i].length();
                 }
                 if (expression.length() > 0) {
-                    expression.append("|");
+                    expression.append('|');
                 }
                 expression.append(Pattern.quote(words[i]));
             }

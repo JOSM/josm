@@ -68,10 +68,10 @@ public class PluginListParser {
                 if (line.startsWith("\t")) {
                     line = line.substring(1);
                     while (line.length() > 70) {
-                        manifest.append(line.substring(0, 70)).append("\n");
+                        manifest.append(line.substring(0, 70)).append('\n');
                         line = " " + line.substring(70);
                     }
-                    manifest.append(line).append("\n");
+                    manifest.append(line).append('\n');
                     continue;
                 }
                 addPluginInformation(ret, name, url, manifest.toString());

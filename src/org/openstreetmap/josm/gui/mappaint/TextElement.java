@@ -176,19 +176,19 @@ public class TextElement implements StyleKeys {
     }
 
     protected String toStringImpl() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("labelCompositionStrategy=" + labelCompositionStrategy)
-          .append(" font=" + font);
+        StringBuilder sb = new StringBuilder(96);
+        sb.append("labelCompositionStrategy=").append(labelCompositionStrategy)
+          .append(" font=").append(font);
         if (xOffset != 0) {
-            sb.append(" xOffset=" + xOffset);
+            sb.append(" xOffset=").append(xOffset);
         }
         if (yOffset != 0) {
-            sb.append(" yOffset=" + yOffset);
+            sb.append(" yOffset=").append(yOffset);
         }
-        sb.append(" color=" + Utils.toString(color));
+        sb.append(" color=").append(Utils.toString(color));
         if (haloRadius != null) {
-            sb.append(" haloRadius=" + haloRadius)
-              .append(" haloColor=" + haloColor);
+            sb.append(" haloRadius=").append(haloRadius)
+              .append(" haloColor=").append(haloColor);
         }
         return sb.toString();
     }
