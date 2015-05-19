@@ -113,10 +113,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     private final JToolBar toolBarActions = new JToolBar(JToolBar.VERTICAL);
     private final JToolBar toolBarToggle = new JToolBar(JToolBar.VERTICAL);
 
-    private final transient List<ToggleDialog> allDialogs = new ArrayList<>();
-    private final transient List<MapMode> mapModes = new ArrayList<>();
-    private final transient List<IconToggleButton> allDialogButtons = new ArrayList<>();
-    public final transient List<IconToggleButton> allMapModeButtons = new ArrayList<>();
+    private final List<ToggleDialog> allDialogs = new ArrayList<>();
+    private final List<MapMode> mapModes = new ArrayList<>();
+    private final List<IconToggleButton> allDialogButtons = new ArrayList<>();
+    public final List<IconToggleButton> allMapModeButtons = new ArrayList<>();
 
     private final ListAllButtonsAction listAllDialogsAction = new ListAllButtonsAction(allDialogButtons);
     private final ListAllButtonsAction listAllMapModesAction = new ListAllButtonsAction(allMapModeButtons);

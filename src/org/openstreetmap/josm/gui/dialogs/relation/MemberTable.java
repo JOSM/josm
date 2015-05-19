@@ -281,7 +281,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             return getMemberTableModel().getWayConnection(getSelectedRows()[0]);
         }
 
-        private final transient Collection<Direction> connectionTypesOfInterest = Arrays.asList(
+        private final Collection<Direction> connectionTypesOfInterest = Arrays.asList(
                 WayConnectionType.Direction.FORWARD, WayConnectionType.Direction.BACKWARD);
 
         private boolean hasGap() {

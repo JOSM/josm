@@ -87,7 +87,7 @@ public class ExtendedDialog extends JDialog {
     private final String[] bTexts;
     private String[] bToolTipTexts;
     private transient Icon[] bIcons;
-    private transient Set<Integer> cancelButtonIdx = Collections.emptySet();
+    private Set<Integer> cancelButtonIdx = Collections.emptySet();
     private int defaultButtonIdx = 1;
     protected JButton defaultButton = null;
     private transient Icon icon;
@@ -107,7 +107,7 @@ public class ExtendedDialog extends JDialog {
 
     // For easy access when inherited
     protected transient Insets contentInsets = new Insets(10,5,0,5);
-    protected transient List<JButton> buttons = new ArrayList<>();
+    protected List<JButton> buttons = new ArrayList<>();
 
     /**
      * This method sets up the most basic options for the dialog. Add more

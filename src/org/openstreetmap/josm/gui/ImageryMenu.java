@@ -255,7 +255,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
      * (and possibly recreated) when refreshImageryMenu() is called.
      * @since 5803
      */
-    private transient List <Object> dynamicItems = new ArrayList<>(20);
+    private List<Object> dynamicItems = new ArrayList<>(20);
 
     /**
      * Remove all the items in @field dynamicItems collection
