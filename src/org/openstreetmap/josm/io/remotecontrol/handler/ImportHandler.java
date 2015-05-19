@@ -10,7 +10,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -40,7 +39,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
                 new DownloadOsmTask().loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
             } else if (Main.pref.getBoolean("remotecontrol.import.interactive", true)) {
                 // OpenLocationAction queries the user if more than one task is suitable
-                new OpenLocationAction().openUrl(isLoadInNewLayer(), url.toExternalForm());
+                Main.main.menu.openLocation.openUrl(isLoadInNewLayer(), url.toExternalForm());
             } else {
                 // Otherwise perform all tasks
                 for (DownloadTask task : suitableDownloadTasks) {
@@ -58,7 +57,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"url"};
     }
-    
+
     @Override
     public String[] getOptionalParams() {
         return new String[] {"new_layer"};
@@ -73,7 +72,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
     public String[] getUsageExamples() {
         return new String[] { "/import?url="+Main.getJOSMWebsite()+"/browser/josm/trunk/data_nodist/direction-arrows.osm" };
     }
-    
+
     @Override
     public String getPermissionMessage() {
         // URL can be any suitable URL giving back OSM data, including OSM API calls, even if calls to the main API
