@@ -14,8 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -98,35 +96,10 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private static Map<String, Semaphore> HOST_LIMITS = new ConcurrentHashMap<>();
 
     /**
-     * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for TMS
-     */
-    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobs", 25);
-
-    /**
-     * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS
-     * and for TMS imagery
-     */
-    private static ThreadPoolExecutor DOWNLOAD_JOB_DISPATCHER = getThreadPoolExecutor();
-
-    private static ThreadPoolExecutor getThreadPoolExecutor() {
-        return new ThreadPoolExecutor(
-                THREAD_LIMIT.get().intValue(), // keep the thread number constant
-                THREAD_LIMIT.get().intValue(), // do not this number of threads
-                30, // keepalive for thread
-                TimeUnit.SECONDS,
-                // make queue of LIFO type - so recently requested tiles will be loaded first (assuming that these are which user is waiting to see)
-                new LIFOQueue(5)
-                    /* keep the queue size fairly small, we do not want to
-                     download a lot of tiles, that user is not seeing anyway */
-                );
-    }
-
-    /**
      * Reconfigures download dispatcher using current values of THREAD_LIMIT and HOST_LIMIT
      */
     public static final void reconfigureDownloadDispatcher() {
         HOST_LIMITS = new ConcurrentHashMap<>();
-        DOWNLOAD_JOB_DISPATCHER = getThreadPoolExecutor();
     }
 
     /**
@@ -138,9 +111,11 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
      * @param readTimeout when connecting to remote resource
      * @param headers to be sent together with request
      */
-    public TMSCachedTileLoaderJob(TileLoaderListener listener, Tile tile, ICacheAccess<String, BufferedImageCacheEntry> cache, int connectTimeout, int readTimeout,
-            Map<String, String> headers) {
-        super(cache, connectTimeout, readTimeout, headers);
+    public TMSCachedTileLoaderJob(TileLoaderListener listener, Tile tile,
+            ICacheAccess<String, BufferedImageCacheEntry> cache,
+            int connectTimeout, int readTimeout, Map<String, String> headers,
+            Executor downloadExecutor) {
+        super(cache, connectTimeout, readTimeout, headers, downloadExecutor);
         this.tile = tile;
         if (listener != null) {
             String deduplicationKey = getCacheKey();
@@ -229,11 +204,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected Executor getDownloadExecutor() {
-        return DOWNLOAD_JOB_DISPATCHER;
     }
 
     @Override
