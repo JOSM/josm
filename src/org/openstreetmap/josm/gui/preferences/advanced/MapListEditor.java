@@ -48,8 +48,8 @@ public class MapListEditor extends ExtendedDialog {
     private JTable table;
     private MapTableModel tableModel;
 
-    private transient List<List<String>> dataKeys;
-    private transient List<List<String>> dataValues;
+    private List<List<String>> dataKeys;
+    private List<List<String>> dataValues;
     private Integer entryIdx;
 
     public MapListEditor(JComponent gui, PrefEntry entry, MapListSetting setting) {

@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class ListEditor extends ExtendedDialog {
 
-    private transient List<String> data;
+    private List<String> data;
     private transient PrefEntry entry;
 
     /**

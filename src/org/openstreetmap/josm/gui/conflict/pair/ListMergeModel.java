@@ -826,7 +826,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     public class ComparePairListModel extends AbstractListModel<ComparePairType> implements ComboBoxModel<ComparePairType> {
 
         private int selectedIdx;
-        private final transient List<ComparePairType> compareModes;
+        private final List<ComparePairType> compareModes;
 
         /**
          * Constructs a new {@code ComparePairListModel}.

@@ -22,8 +22,8 @@ public class TagConflictResolverModel extends DefaultTableModel {
     public static final String NUM_CONFLICTS_PROP = TagConflictResolverModel.class.getName() + ".numConflicts";
 
     private transient TagCollection tags;
-    private transient List<String> displayedKeys;
-    private transient Set<String> keysWithConflicts;
+    private List<String> displayedKeys;
+    private Set<String> keysWithConflicts;
     private transient Map<String, MultiValueResolutionDecision> decisions;
     private int numConflicts;
     private PropertyChangeSupport support;

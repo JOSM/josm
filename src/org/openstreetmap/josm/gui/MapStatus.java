@@ -731,7 +731,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         private final JMenuItem jumpButton = add(Main.main.menu.jumpToAct);
 
-        private final transient Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
+        private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
 
         private final JSeparator separator = new JSeparator();
 
