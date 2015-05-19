@@ -62,6 +62,10 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("cache.jcs.max_threads", 10);
 
     public static class LIFOQueue extends LinkedBlockingDeque<Runnable> {
+        public LIFOQueue() {
+            super();
+        }
+
         public LIFOQueue(int capacity) {
             super(capacity);
         }
@@ -90,7 +94,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * the response, so later it could be used). We could actually cancel what is in LIFOQueue, but this is a tradeoff between simplicity
      * and performance (we do want to have something to offer to worker threads before tasks will be resubmitted by class consumer)
      */
-    private static Executor DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
+    private static Executor DEFAULT_DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
             2, // we have a small queue, so threads will be quickly started (threads are started only, when queue is full)
             THREAD_LIMIT.get().intValue(), // do not this number of threads
             30, // keepalive for thread
@@ -113,6 +117,27 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     private int connectTimeout;
     private int readTimeout;
     private Map<String, String> headers;
+    private Executor downloadJobExecutor;
+
+    /**
+     * @param cache cache instance that we will work on
+     * @param headers
+     * @param readTimeout
+     * @param connectTimeout
+     * @param downloadJobExecutor
+     */
+    public JCSCachedTileLoaderJob(ICacheAccess<K,V> cache,
+            int connectTimeout, int readTimeout,
+            Map<String, String> headers,
+            Executor downloadJobExecutor) {
+
+        this.cache = cache;
+        this.now = System.currentTimeMillis();
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
+        this.headers = headers;
+        this.downloadJobExecutor = downloadJobExecutor;
+    }
 
     /**
      * @param cache cache instance that we will work on
@@ -120,15 +145,11 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * @param readTimeout
      * @param connectTimeout
      */
-    public JCSCachedTileLoaderJob(ICacheAccess<K,V> cache,
+    public JCSCachedTileLoaderJob(ICacheAccess<K, V> cache,
             int connectTimeout, int readTimeout,
             Map<String, String> headers) {
-
-        this.cache = cache;
-        this.now = System.currentTimeMillis();
-        this.connectTimeout = connectTimeout;
-        this.readTimeout = readTimeout;
-        this.headers = headers;
+        this(cache, connectTimeout, readTimeout,
+                headers, DEFAULT_DOWNLOAD_JOB_DISPATCHER);
     }
 
     private void ensureCacheElement() {
@@ -239,9 +260,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * this needs to be non-static, so it can be overridden by subclasses
      */
     protected Executor getDownloadExecutor() {
-        return DOWNLOAD_JOB_DISPATCHER;
+        return downloadJobExecutor;
     }
-
 
     public void run() {
         final Thread currentThread = Thread.currentThread();
@@ -329,6 +349,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 log.log(Level.FINE, "JCS - cache entry verified using HEAD request: {0}", getUrl());
                 return true;
             }
+
             HttpURLConnection urlConn = getURLConnection();
 
             if (isObjectLoadable()  &&
