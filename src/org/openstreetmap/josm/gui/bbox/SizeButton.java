@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.bbox;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -26,12 +28,12 @@ public class SizeButton extends JComponent {
     private final SlippyMapBBoxChooser slippyMapBBoxChooser;
 
     public SizeButton(SlippyMapBBoxChooser slippyMapBBoxChooser){
-        super();
         this.slippyMapBBoxChooser = slippyMapBBoxChooser;
         enlargeImage = ImageProvider.get("view-fullscreen");
         shrinkImage = ImageProvider.get("view-fullscreen-revert");
         setPreferredSize(new Dimension(enlargeImage.getIconWidth(), enlargeImage.getIconHeight()));
         addMouseListener(mouseListener);
+        setToolTipText(tr("Enlarge"));
     }
 
     private final transient MouseAdapter mouseListener = new MouseAdapter() {
@@ -43,7 +45,6 @@ public class SizeButton extends JComponent {
             }
         }
     };
-
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -58,6 +59,7 @@ public class SizeButton extends JComponent {
 
     public void toggle() {
         isEnlarged = !isEnlarged;
+        setToolTipText(isEnlarged ? tr("Shrink") : tr("Enlarge"));
     }
 
     public boolean isEnlarged() {
