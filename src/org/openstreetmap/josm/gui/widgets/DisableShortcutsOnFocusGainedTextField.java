@@ -96,7 +96,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
     }
 
     private final transient List<Pair<Action,Shortcut>> unregisteredActionShortcuts = new ArrayList<>();
-    private final transient Set<JosmAction> disabledMenuActions = new HashSet<>();
+    private final Set<JosmAction> disabledMenuActions = new HashSet<>();
 
     @Override
     public void focusGained(FocusEvent e) {

@@ -18,14 +18,14 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Destroyable;
 
 public class DialogsPanel extends JPanel implements Destroyable {
-    protected transient List<ToggleDialog> allDialogs = new ArrayList<>();
+    protected List<ToggleDialog> allDialogs = new ArrayList<>();
     protected MultiSplitPane mSpltPane = new MultiSplitPane();
     protected static final int DIVIDER_SIZE = 5;
 
     /**
      * Panels that are added to the multisplitpane.
      */
-    private transient List<JPanel> panels = new ArrayList<>();
+    private List<JPanel> panels = new ArrayList<>();
 
     private final JSplitPane parent;
     public DialogsPanel(JSplitPane parent) {

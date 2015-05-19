@@ -65,7 +65,7 @@ public class ScrollViewport extends JPanel {
     private JViewport vp = new JViewport();
     private JComponent component = null;
 
-    private transient List<JButton> buttons = new ArrayList<>();
+    private List<JButton> buttons = new ArrayList<>();
 
     private Timer timer = new Timer(100, new ActionListener() {
         @Override

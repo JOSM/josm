@@ -531,7 +531,7 @@ class TagEditHelper {
     }
 
     class AddTagsDialog extends AbstractTagsDialog {
-        private transient List<JosmAction> recentTagsActions = new ArrayList<>();
+        private List<JosmAction> recentTagsActions = new ArrayList<>();
 
         // Counter of added commands for possible undo
         private int commandCount;

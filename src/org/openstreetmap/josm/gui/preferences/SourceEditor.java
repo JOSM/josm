@@ -1052,7 +1052,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     protected static class IconPathTableModel extends AbstractTableModel {
-        private transient List<String> data;
+        private List<String> data;
         private DefaultListSelectionModel selectionModel;
 
         public IconPathTableModel(DefaultListSelectionModel selectionModel) {
