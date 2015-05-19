@@ -1706,8 +1706,8 @@
         </item> <!-- Avalanche Protector -->
     </group> <!-- Passageways -->
   </group> <!-- Highways -->
-  <group name="Water" icon="presets/waterway.png">
-    <group name="Water" icon="presets/waterway.png">
+  <group name="Water" name_context="main group" icon="presets/waterway.png">
+    <group name="Water" name_context="sub group" icon="presets/waterway.png">
         <item name="Drain" icon="presets/waterway.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=drain"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=drain"
@@ -1903,7 +1903,7 @@
             <text key="name" text="Name" />
         </item> <!-- Covered Reservoir -->
         <separator/>
-        <item name="Water" icon="presets/water.png" type="closedway,relation" preset_name_label="true">
+        <item name="Water" name_context="natural" icon="presets/water.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=water"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=water"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=water"
