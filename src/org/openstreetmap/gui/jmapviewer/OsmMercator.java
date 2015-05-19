@@ -131,7 +131,7 @@ public class OsmMercator {
     public double LonToX(double aLongitude, int aZoomlevel) {
         int mp = getMaxPixels(aZoomlevel);
         double x = (mp * (aLongitude + 180l)) / 360l;
-        return Math.min(x, mp - 1);
+        return Math.min(x, mp);
     }
 
     /**
