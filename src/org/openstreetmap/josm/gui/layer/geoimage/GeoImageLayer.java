@@ -67,6 +67,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -208,7 +209,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                         loadedDirectories.add(canonical);
                     }
 
-                    File[] children = f.listFiles(JpegFileFilter.getInstance());
+                    File[] children = f.listFiles(JpgImporter.FILE_FILTER_WITH_FOLDERS);
                     if (children != null) {
                         progressMonitor.subTask(tr("Scanning directory {0}", f.getPath()));
                         addRecursiveFiles(files, Arrays.asList(children));
