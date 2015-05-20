@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -249,7 +250,7 @@ public class SimilarNamedWays extends Test {
         private final String replacement;
 
         public SynonymRule(String replacement, String[] words) {
-            this.replacement = replacement.toLowerCase();
+            this.replacement = replacement.toLowerCase(Locale.ENGLISH);
             this.words = words;
 
             // build regular expression for other words (for fast match)

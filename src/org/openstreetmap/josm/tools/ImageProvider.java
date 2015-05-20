@@ -692,7 +692,7 @@ public class ImageProvider {
                 return ir;
             }
 
-            ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
+            ImageType type = Utils.hasExtension(name, "svg") ? ImageType.SVG : ImageType.OTHER;
 
             if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(HTTPS_PROTOCOL)) {
                 String url = name;

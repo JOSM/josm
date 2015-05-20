@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 
+import org.openstreetmap.josm.tools.Utils;
+
 class JpegFileFilter extends javax.swing.filechooser.FileFilter implements java.io.FileFilter {
 
     private static final JpegFileFilter instance = new JpegFileFilter();
@@ -17,8 +19,7 @@ class JpegFileFilter extends javax.swing.filechooser.FileFilter implements java.
         if (f.isDirectory()) {
             return true;
         } else {
-            String name = f.getName().toLowerCase();
-            return name.endsWith(".jpg") || name.endsWith(".jpeg");
+            return Utils.hasExtension(f, "jpg", "jpeg");
         }
     }
 

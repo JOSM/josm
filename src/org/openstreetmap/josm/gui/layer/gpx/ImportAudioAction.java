@@ -70,7 +70,7 @@ public class ImportAudioAction extends AbstractAction {
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File f) {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(".wav");
+                return f.isDirectory() || Utils.hasExtension(f, "wav");
             }
 
             @Override

@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -48,6 +49,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Advanced preferences, allowing to set preference entries directly.
@@ -190,7 +192,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File f) {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(".xml");
+                return f.isDirectory() || Utils.hasExtension(f, "xml");
             }
             @Override
             public String getDescription() {
@@ -434,10 +436,10 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             boolean canHas = true;
 
             // Make 'wmsplugin cache' search for e.g. 'cache.wmsplugin'
-            final String prefKeyLower = prefKey.toLowerCase();
-            final String prefValueLower = prefValue.toLowerCase();
+            final String prefKeyLower = prefKey.toLowerCase(Locale.ENGLISH);
+            final String prefValueLower = prefValue.toLowerCase(Locale.ENGLISH);
             for (String bit : input) {
-                bit = bit.toLowerCase();
+                bit = bit.toLowerCase(Locale.ENGLISH);
                 if (!prefKeyLower.contains(bit) && !prefValueLower.contains(bit)) {
                     canHas = false;
                     break;

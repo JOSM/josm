@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.openstreetmap.josm.tools.I18n.trc;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -54,10 +52,10 @@ public final class LanguageInfo {
         } else if(type == LocaleType.DEFAULTNOTENGLISH && "en".equals(code)) {
             return null;
         } else if(code.matches(".+@.+")) {
-          return code.substring(0,1).toUpperCase() + code.substring(1,2)
-          + "-" + code.substring(3,4).toUpperCase() + code.substring(4) + ":";
+          return code.substring(0,1).toUpperCase(Locale.ENGLISH) + code.substring(1,2)
+          + "-" + code.substring(3,4).toUpperCase(Locale.ENGLISH) + code.substring(4) + ":";
         }
-        return code.substring(0,1).toUpperCase() + code.substring(1) + ":";
+        return code.substring(0,1).toUpperCase(Locale.ENGLISH) + code.substring(1) + ":";
     }
 
     /**
@@ -87,7 +85,7 @@ public final class LanguageInfo {
      * In most cases JOSM uses the 2-character ISO 639 language code ({@link Locale#getLanguage()}
      * to identify the locale of a localized resource, but in some cases it may use the
      * programmatic name for locales, as replied by {@link Locale#toString()}.
-     * 
+     *
      * For unknown country codes and variants this function already does fallback to
      * internally known translations.
      *
@@ -190,7 +188,7 @@ public final class LanguageInfo {
         String want = getJOSMLocaleCode();
         return want.equals(newLanguage) || (!want.equals(oldLanguage) && newLanguage.startsWith("en"));
     }
-    
+
     /**
      * Replies the language prefix for use in XML elements (with a dot appended).
      *

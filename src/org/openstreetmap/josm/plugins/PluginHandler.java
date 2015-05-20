@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -379,7 +380,7 @@ public final class PluginHandler {
 
         // check whether automatic update at startup was disabled
         //
-        String policy = Main.pref.get(togglePreferenceKey, "ask").trim().toLowerCase();
+        String policy = Main.pref.get(togglePreferenceKey, "ask").trim().toLowerCase(Locale.ENGLISH);
         switch(policy) {
         case "never":
             if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
@@ -1407,7 +1408,7 @@ public final class PluginHandler {
 
         public void initDontShowAgain(String preferencesKey) {
             String policy = Main.pref.get(preferencesKey, "ask");
-            policy = policy.trim().toLowerCase();
+            policy = policy.trim().toLowerCase(Locale.ENGLISH);
             cbDontShowAgain.setSelected(!"ask".equals(policy));
         }
 

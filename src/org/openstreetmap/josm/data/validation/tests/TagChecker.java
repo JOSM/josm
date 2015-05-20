@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -423,9 +424,9 @@ public class TagChecker extends Test.TagTest {
                 }
             }
             if (checkFixmes && key != null && value != null && value.length() > 0) {
-                if ((value.toLowerCase().contains("fixme")
+                if ((value.toLowerCase(Locale.ENGLISH).contains("fixme")
                         || value.contains("check and delete")
-                        || key.contains("todo") || key.toLowerCase().contains("fixme"))
+                        || key.contains("todo") || key.toLowerCase(Locale.ENGLISH).contains("fixme"))
                         && !withErrors.contains(p, "FIXME")) {
                     errors.add(new TestError(this, Severity.OTHER,
                             tr("FIXMES"), FIXME, p));

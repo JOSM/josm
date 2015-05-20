@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
@@ -319,7 +320,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
             for (Path p : ds) {
                 Path filename = p.getFileName();
                 if (filename != null) {
-                    fontsAvail.add(filename.toString().toUpperCase());
+                    fontsAvail.add(filename.toString().toUpperCase(Locale.ENGLISH));
                 }
             }
             fontsAvail.add(""); // for devanagari

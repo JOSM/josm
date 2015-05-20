@@ -40,6 +40,7 @@ import org.openstreetmap.josm.io.session.SessionLayerExporter;
 import org.openstreetmap.josm.io.session.SessionWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -105,7 +106,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         } else if (jos.equals(ff)) {
             zip = false;
         } else {
-            if (fn.toLowerCase().endsWith(".joz")) {
+            if (Utils.hasExtension(fn, "joz")) {
                 zip = true;
             } else {
                 zip = false;

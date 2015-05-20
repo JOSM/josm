@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
@@ -154,8 +155,8 @@ public class PluginPreferencesModel extends Observable {
                 new Comparator<PluginInformation>() {
                     @Override
                     public int compare(PluginInformation o1, PluginInformation o2) {
-                        String n1 = o1.getName() == null ? "" : o1.getName().toLowerCase();
-                        String n2 = o2.getName() == null ? "" : o2.getName().toLowerCase();
+                        String n1 = o1.getName() == null ? "" : o1.getName().toLowerCase(Locale.ENGLISH);
+                        String n2 = o2.getName() == null ? "" : o2.getName().toLowerCase(Locale.ENGLISH);
                         return n1.compareTo(n2);
                     }
                 }

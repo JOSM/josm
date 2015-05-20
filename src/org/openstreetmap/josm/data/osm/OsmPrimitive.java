@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -1341,7 +1342,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     @Override
     public Object getTemplateValue(String name, boolean special) {
         if (special) {
-            String lc = name.toLowerCase();
+            String lc = name.toLowerCase(Locale.ENGLISH);
             if (SPECIAL_VALUE_ID.equals(lc))
                 return getId();
             else if (SPECIAL_VALUE_LOCAL_NAME.equals(lc))

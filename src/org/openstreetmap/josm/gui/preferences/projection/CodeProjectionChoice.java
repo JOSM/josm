@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -163,9 +164,9 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
 
         private void updateFilter() {
             filteredData.clear();
-            String filterTxt = filter.getText().trim().toLowerCase();
+            String filterTxt = filter.getText().trim().toLowerCase(Locale.ENGLISH);
             for (String code : data) {
-                if (code.toLowerCase().contains(filterTxt)) {
+                if (code.toLowerCase(Locale.ENGLISH).contains(filterTxt)) {
                     filteredData.add(code);
                 }
             }

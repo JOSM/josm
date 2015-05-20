@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -541,7 +542,7 @@ public abstract class Main {
      */
     public Main() {
         main = this;
-        isOpenjdk = System.getProperty("java.vm.name").toUpperCase().indexOf("OPENJDK") != -1;
+        isOpenjdk = System.getProperty("java.vm.name").toUpperCase(Locale.ENGLISH).indexOf("OPENJDK") != -1;
 
         if (initListener != null) {
             initListener.updateStatus(tr("Executing platform startup hook"));
@@ -1187,13 +1188,13 @@ public abstract class Main {
         if (os == null) {
             warn("Your operating system has no name, so I'm guessing its some kind of *nix.");
             platform = new PlatformHookUnixoid();
-        } else if (os.toLowerCase().startsWith("windows")) {
+        } else if (os.toLowerCase(Locale.ENGLISH).startsWith("windows")) {
             platform = new PlatformHookWindows();
         } else if ("Linux".equals(os) || "Solaris".equals(os) ||
                 "SunOS".equals(os) || "AIX".equals(os) ||
                 "FreeBSD".equals(os) || "NetBSD".equals(os) || "OpenBSD".equals(os)) {
             platform = new PlatformHookUnixoid();
-        } else if (os.toLowerCase().startsWith("mac os x")) {
+        } else if (os.toLowerCase(Locale.ENGLISH).startsWith("mac os x")) {
             platform = new PlatformHookOsx();
         } else {
             warn("I don't know your operating system '"+os+"', so I'm guessing its some kind of *nix.");
