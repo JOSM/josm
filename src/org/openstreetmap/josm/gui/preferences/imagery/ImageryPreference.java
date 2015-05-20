@@ -882,7 +882,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 switch (column) {
                 case 0:
                     if (info.projectionCode == null) return "";
-                    return info.projectionCode.toString();
+                    return info.projectionCode;
                 case 1:
                     return info.layerName;
                 case 2:

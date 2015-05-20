@@ -304,7 +304,7 @@ public class RelationChecker extends Test {
                     String s = marktr("Role {0} unknown in templates {1}");
 
                     errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                            tr(s, key, templates.toString()), MessageFormat.format(s, key), ROLE_UNKNOWN, n));
+                            tr(s, key, templates), MessageFormat.format(s, key), ROLE_UNKNOWN, n));
                 } else {
                     String s = marktr("Empty role type found when expecting one of {0}");
                     errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,

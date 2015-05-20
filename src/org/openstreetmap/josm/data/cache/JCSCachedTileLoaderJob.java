@@ -62,10 +62,19 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("cache.jcs.max_threads", 10);
 
     public static class LIFOQueue extends LinkedBlockingDeque<Runnable> {
+
+        /**
+         * Constructs a new {@code LIFOQueue} with a capacity of {@link Integer#MAX_VALUE}.
+         */
         public LIFOQueue() {
             super();
         }
 
+        /**
+         * Constructs a new {@code LIFOQueue} with the given (fixed) capacity.
+         * @param capacity the capacity of this deque
+         * @throws IllegalArgumentException if {@code capacity} is less than 1
+         */
         public LIFOQueue(int capacity) {
             super(capacity);
         }
@@ -82,7 +91,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
 
-    /*
+    /**
      * ThreadPoolExecutor starts new threads, until THREAD_LIMIT is reached. Then it puts tasks into LIFOQueue, which is fairly
      * small, but we do not want a lot of outstanding tasks queued, but rather prefer the class consumer to resubmit the task, which are
      * important right now.
