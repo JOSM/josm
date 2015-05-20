@@ -27,6 +27,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -116,7 +117,7 @@ public class RemoteControlHttpsServer extends Thread {
      */
     private static GeneralName createGeneralName(String t, String v) throws IOException {
         GeneralNameInterface gn;
-        switch (t.toLowerCase()) {
+        switch (t.toLowerCase(Locale.ENGLISH)) {
             case "uri": gn = new URIName(v); break;
             case "dns": gn = new DNSName(v); break;
             case "ip": gn = new IPAddressName(v); break;

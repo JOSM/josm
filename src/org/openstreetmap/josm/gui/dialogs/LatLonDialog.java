@@ -373,7 +373,7 @@ public class LatLonDialog extends ExtendedDialog {
                     sb.append(',');     // separator
                 } else if (m.group(7) != null) {
                     sb.append('x');     // cardinal direction
-                    String c = m.group(7).toUpperCase();
+                    String c = m.group(7).toUpperCase(Locale.ENGLISH);
                     if ("N".equals(c) || "S".equals(c) || "E".equals(c) || "W".equals(c)) {
                         list.add(c);
                     } else {

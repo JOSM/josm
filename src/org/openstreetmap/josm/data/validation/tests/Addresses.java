@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -150,7 +151,7 @@ public class Addresses extends Test {
                     houses.add(p);
                     String number = p.get(ADDR_HOUSE_NUMBER);
                     if (number != null) {
-                        number = number.trim().toUpperCase();
+                        number = number.trim().toUpperCase(Locale.ENGLISH);
                         List<OsmPrimitive> list = map.get(number);
                         if (list == null) {
                             map.put(number, list = new ArrayList<>());

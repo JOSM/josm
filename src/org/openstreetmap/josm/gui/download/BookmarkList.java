@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -72,7 +73,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
 
         @Override
         public int compareTo(Bookmark b) {
-            return name.toLowerCase().compareTo(b.name.toLowerCase());
+            return name.toLowerCase(Locale.ENGLISH).compareTo(b.name.toLowerCase(Locale.ENGLISH));
         }
 
         @Override

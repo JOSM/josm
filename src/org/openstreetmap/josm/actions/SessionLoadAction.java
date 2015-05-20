@@ -52,7 +52,7 @@ public class SessionLoadAction extends DiskAccessAction {
                 SessionImporter.FILE_FILTER, JFileChooser.FILES_ONLY, "lastDirectory");
         if (fc == null) return;
         File file = fc.getSelectedFile();
-        boolean zip = file.getName().toLowerCase().endsWith(".joz");
+        boolean zip = Utils.hasExtension(file, "joz");
         Main.worker.submit(new Loader(file, zip));
     }
 

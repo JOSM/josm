@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
+import java.util.Locale;
+
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -54,7 +56,7 @@ public abstract class RotationAngle {
      * @return the angle in radians
      */
     public static double parseCardinalRotation(final String cardinal) {
-        switch (cardinal.toLowerCase()) {
+        switch (cardinal.toLowerCase(Locale.ENGLISH)) {
             case "n":
             case "north":
                 return Math.toRadians(0);

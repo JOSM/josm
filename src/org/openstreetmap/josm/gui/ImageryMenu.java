@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -53,7 +54,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     public static final Comparator<ImageryInfo> alphabeticImageryComparator = new Comparator<ImageryInfo>() {
         @Override
         public int compare(ImageryInfo ii1, ImageryInfo ii2) {
-            return ii1.getName().toLowerCase().compareTo(ii2.getName().toLowerCase());
+            return ii1.getName().toLowerCase(Locale.ENGLISH).compareTo(ii2.getName().toLowerCase(Locale.ENGLISH));
         }
     };
 

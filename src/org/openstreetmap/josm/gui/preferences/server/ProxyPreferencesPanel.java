@@ -15,6 +15,7 @@ import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 import java.net.ProxySelector;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -73,7 +74,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
          */
         public static ProxyPolicy fromName(String policyName) {
             if (policyName == null) return null;
-            policyName = policyName.trim().toLowerCase();
+            policyName = policyName.trim().toLowerCase(Locale.ENGLISH);
             for(ProxyPolicy pp: values()) {
                 if (pp.getName().equals(policyName))
                     return pp;

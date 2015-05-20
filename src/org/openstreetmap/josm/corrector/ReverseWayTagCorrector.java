@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,7 +75,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             Matcher m = pattern.matcher(text);
 
             if (m.lookingAt()) {
-                String leftRight = m.group(2).toLowerCase();
+                String leftRight = m.group(2).toLowerCase(Locale.ENGLISH);
 
                 StringBuilder result = new StringBuilder();
                 result.append(text.substring(0, m.start(2)))

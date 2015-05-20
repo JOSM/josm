@@ -581,7 +581,7 @@ public class SessionReader {
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
-            if (entry.getName().toLowerCase().endsWith(".jos")) {
+            if (Utils.hasExtension(entry.getName(), "jos")) {
                 josEntry = entry;
                 break;
             }

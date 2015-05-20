@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Locale;
+
 import org.openstreetmap.josm.Main;
 
 public enum UploadStrategy {
@@ -27,7 +29,7 @@ public enum UploadStrategy {
 
     public static UploadStrategy fromPreference(String preferenceValue) {
         if (preferenceValue == null) return null;
-        preferenceValue = preferenceValue.trim().toLowerCase();
+        preferenceValue = preferenceValue.trim().toLowerCase(Locale.ENGLISH);
         for (UploadStrategy strategy: values()) {
             if (strategy.getPreferenceValue().equals(preferenceValue))
                 return strategy;
@@ -75,7 +77,7 @@ public enum UploadStrategy {
             } else {
                 v = "";
             }
-            v = v.trim().toLowerCase();
+            v = v.trim().toLowerCase(Locale.ENGLISH);
             if ("true".equals(v))
                 return SINGLE_REQUEST_STRATEGY;
             else if ("false".equals(v))

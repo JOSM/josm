@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -110,7 +111,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 if (value.contains("=")) {
                     String[] param = value.split("=");
                     // Hide some parameters for privacy concerns
-                    if (param[0].toLowerCase().startsWith("-dproxy")) {
+                    if (param[0].toLowerCase(Locale.ENGLISH).startsWith("-dproxy")) {
                         it.set(param[0]+"=xxx");
                     // Shorten some parameters for readability concerns
                     } else {

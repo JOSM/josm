@@ -208,9 +208,9 @@ public class WMSGrabber implements Runnable {
         //          For most other EPSG code there seems to be no difference.
         // [1] https://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::4326&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:4326
         boolean switchLatLon = false;
-        if (baseURL.toLowerCase().contains("crs=epsg:4326")) {
+        if (baseURL.toLowerCase(Locale.ENGLISH).contains("crs=epsg:4326")) {
             switchLatLon = true;
-        } else if (baseURL.toLowerCase().contains("crs=") && "EPSG:4326".equals(myProj)) {
+        } else if (baseURL.toLowerCase(Locale.ENGLISH).contains("crs=") && "EPSG:4326".equals(myProj)) {
             switchLatLon = true;
         }
         String bbox;

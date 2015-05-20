@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.ButtonGroup;
@@ -45,7 +46,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
 
         static Policy fromPreferenceValue(String preferenceValue) {
             if (preferenceValue == null) return null;
-            preferenceValue = preferenceValue.trim().toLowerCase();
+            preferenceValue = preferenceValue.trim().toLowerCase(Locale.ENGLISH);
             for (Policy p: Policy.values()) {
                 if (p.getPreferencesValue().equals(preferenceValue))
                     return p;

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.jar.Attributes;
@@ -457,7 +458,7 @@ public class PluginInformation {
     protected boolean matches(String filter, String value) {
         if (filter == null) return true;
         if (value == null) return false;
-        return value.toLowerCase().contains(filter.toLowerCase());
+        return value.toLowerCase(Locale.ENGLISH).contains(filter.toLowerCase(Locale.ENGLISH));
     }
 
     /**

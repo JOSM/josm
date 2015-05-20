@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.io.FileImporter;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A file filter that filters after the extension. Also includes a list of file
@@ -281,11 +282,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 1169
      */
     public boolean acceptName(String filename) {
-        String name = filename.toLowerCase();
-        for (String ext : extensions.split(","))
-            if (name.endsWith("."+ext))
-                return true;
-        return false;
+        return Utils.hasExtension(filename, extensions.split(","));
     }
 
     @Override

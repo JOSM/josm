@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -252,7 +253,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
                 sb.append("throw")
                 .append(s.name().charAt(0))
-                .append(s.name().substring(1).toLowerCase());
+                .append(s.name().substring(1).toLowerCase(Locale.ENGLISH));
             }
             return sb.toString();
         }
@@ -275,7 +276,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                             : null;
                     if (ai.key.startsWith("throw")) {
                         try {
-                            final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase());
+                            final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase(Locale.ENGLISH));
                             check.errors.put(ai, severity);
                         } catch (IllegalArgumentException e) {
                             Main.warn("Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS);

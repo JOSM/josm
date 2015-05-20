@@ -15,6 +15,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.Action;
@@ -856,15 +857,16 @@ public class MainMenu extends JMenuBar {
      * @return not null list of found menu items.
      */
     private List<JMenuItem> findMenuItems(String textToFind) {
-        textToFind = textToFind.toLowerCase();
+        // Explicitely use default locale in this case, because we're looking for translated strings
+        textToFind = textToFind.toLowerCase(Locale.getDefault());
         List<JMenuItem> result = new ArrayList<>();
 
         // Iterate over main menus
         for (MenuElement menuElement : getSubElements()) {
-            if( !(menuElement instanceof JMenu)) continue;
+            if (!(menuElement instanceof JMenu)) continue;
 
             JMenu mainMenuItem = (JMenu) menuElement;
-            if(mainMenuItem.getAction()!=null && mainMenuItem.getText().toLowerCase().contains(textToFind)) {
+            if (mainMenuItem.getAction() != null && mainMenuItem.getText().toLowerCase(Locale.getDefault()).contains(textToFind)) {
                 result.add(mainMenuItem);
             }
 
@@ -886,7 +888,8 @@ public class MainMenu extends JMenuBar {
             JMenuItem menuItem = menu.getItem(i);
             if (menuItem == null) continue;
 
-            if (menuItem.getAction()!=null && menuItem.getText().toLowerCase().contains(textToFind)) {
+            // Explicitely use default locale in this case, because we're looking for translated strings
+            if (menuItem.getAction() != null && menuItem.getText().toLowerCase(Locale.getDefault()).contains(textToFind)) {
                 result.add(menuItem);
             }
 
@@ -1006,7 +1009,8 @@ public class MainMenu extends JMenuBar {
 
         //TODO: perform some delay (maybe 200 ms) before actual searching.
         void doSearch(String searchTerm) {
-            searchTerm = searchTerm.trim().toLowerCase();
+            // Explicitely use default locale in this case, because we're looking for translated strings
+            searchTerm = searchTerm.trim().toLowerCase(Locale.getDefault());
 
             if (searchTerm.equals(currentSearchText)) {
                 return;

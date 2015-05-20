@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -1063,7 +1064,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     @Override
     public boolean isProjectionSupported(Projection proj) {
         List<String> serverProjections = info.getServerProjections();
-        return serverProjections.contains(proj.toCode().toUpperCase())
+        return serverProjections.contains(proj.toCode().toUpperCase(Locale.ENGLISH))
                 || ("EPSG:3857".equals(proj.toCode()) && (serverProjections.contains("EPSG:4326") || serverProjections.contains("CRS:84")))
                 || ("EPSG:4326".equals(proj.toCode()) && serverProjections.contains("CRS:84"));
     }

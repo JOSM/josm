@@ -17,6 +17,7 @@
 package org.openstreetmap.josm.data.validation.routines;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * <p><b>Domain name</b> validation routines.</p>
@@ -169,7 +170,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is an infrastructure TLD
      */
     public boolean isValidInfrastructureTld(String iTld) {
-        return Arrays.binarySearch(INFRASTRUCTURE_TLDS, chompLeadingDot(iTld.toLowerCase())) >= 0;
+        return Arrays.binarySearch(INFRASTRUCTURE_TLDS, chompLeadingDot(iTld.toLowerCase(Locale.ENGLISH))) >= 0;
     }
 
     /**
@@ -180,7 +181,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is a generic TLD
      */
     public boolean isValidGenericTld(String gTld) {
-        return Arrays.binarySearch(GENERIC_TLDS, chompLeadingDot(gTld.toLowerCase())) >= 0;
+        return Arrays.binarySearch(GENERIC_TLDS, chompLeadingDot(gTld.toLowerCase(Locale.ENGLISH))) >= 0;
     }
 
     /**
@@ -191,7 +192,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is an IDN TLD
      */
     public boolean isValidIdnTld(String iTld) {
-        return Arrays.binarySearch(IDN_TLDS, chompLeadingDot(iTld.toUpperCase())) >= 0;
+        return Arrays.binarySearch(IDN_TLDS, chompLeadingDot(iTld.toUpperCase(Locale.ENGLISH))) >= 0;
     }
 
     /**
@@ -202,7 +203,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is a country code TLD
      */
     public boolean isValidCountryCodeTld(String ccTld) {
-        return Arrays.binarySearch(COUNTRY_CODE_TLDS, chompLeadingDot(ccTld.toLowerCase())) >= 0;
+        return Arrays.binarySearch(COUNTRY_CODE_TLDS, chompLeadingDot(ccTld.toLowerCase(Locale.ENGLISH))) >= 0;
     }
 
     /**
@@ -213,7 +214,7 @@ public class DomainValidator extends AbstractValidator {
      * @return true if the parameter is an local TLD
      */
     public boolean isValidLocalTld(String iTld) {
-        return Arrays.binarySearch(LOCAL_TLDS, chompLeadingDot(iTld.toLowerCase())) >= 0;
+        return Arrays.binarySearch(LOCAL_TLDS, chompLeadingDot(iTld.toLowerCase(Locale.ENGLISH))) >= 0;
     }
 
     private String chompLeadingDot(String str) {

@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 public class ImportImagesAction extends AbstractAction {
     private final transient GpxLayer layer;
@@ -40,7 +41,7 @@ public class ImportImagesAction extends AbstractAction {
         for (File f : sel) {
             if (f.isDirectory()) {
                 addRecursiveFiles(files, f.listFiles());
-            } else if (f.getName().toLowerCase().endsWith(".jpg")) {
+            } else if (Utils.hasExtension(f, "jpg")) {
                 files.add(f);
             }
         }
