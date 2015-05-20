@@ -2064,6 +2064,33 @@
             <text key="name" text="Name" />
             <combo key="sanitary_dump_station" text="Dump Station" values="yes,public,customers,no" />
         </item> <!-- Marina -->
+        <item name="Marine Fuel" icon="styles/standard/nautical/nautical/marine_fuel.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=fuel"/>
+            <space />
+            <key key="waterway" value="fuel" />
+            <optional>
+                <combo key="brand" text="Brand" values="Agip,Aral,Avia,BP,Chevron,Citgo,Eni,Esso,Exxon,Gulf,Mobil,OMV,Petro-Canada,Pioneer,Q8,Repsol,Shell,Socar,Statoil,Sunoco,Tamoil,Texaco,Total,Independent" values_searchable="true" />
+                <reference ref="name_operator" />
+                <reference ref="oh" />
+                <space />
+                <label text="Fuel types:" />
+                <checkgroup columns="2">
+                    <check key="fuel:diesel" text="Diesel" />
+                    <check key="fuel:biodiesel" text="Bio Diesel" />
+                    <check key="fuel:octane_80" text="Octane 80" />
+                    <check key="fuel:octane_91" text="Octane 91" />
+                    <check key="fuel:octane_92" text="Octane 92" />
+                    <check key="fuel:octane_95" text="Octane 95" />
+                    <check key="fuel:octane_98" text="Octane 98" />
+                    <check key="fuel:octane_100" text="Octane 100" />
+                    <check key="fuel:e10" text="E10 (10% Ethanol mix)" />
+                    <check key="fuel:e85" text="E85 (85% Ethanol mix)" />
+                    <check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" />
+                    <check key="fuel:cng" text="CNG (Compressed Natural Gas)" />
+                </checkgroup>
+            </optional>
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Marine Fuel -->
         <item name="Pier" icon="presets/pier.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pier"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pier"

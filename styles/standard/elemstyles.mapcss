@@ -4131,6 +4131,15 @@ node[mooring] {
     set icon_z17;
     text: auto;
 }
+area[waterway=fuel] {
+    fill-color: amenity_traffic#f7efb7;
+}
+node[waterway=fuel] {
+    icon-image: "nautical/marine_fuel.png";
+    icon-width: 16;
+    set icon_z17;
+    text: auto;
+}
 way[waterway=weir] {
     width: 2;
     color: manmade#d8d8d8;
