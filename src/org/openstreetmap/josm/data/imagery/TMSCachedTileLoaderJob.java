@@ -12,8 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,13 +23,11 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntryAttributes;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener;
 import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
-import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
 /**
  * @author Wiktor Niesiobędzki
@@ -48,61 +45,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private static final ConcurrentMap<String,Set<TileLoaderListener>> inProgress = new ConcurrentHashMap<>();
 
     /**
-     * Limit definition for per host concurrent connections
-     */
-    public static final IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
-
-     /*
-     * Host limit guards the area - between submission to the queue up to loading is finished. It uses executionGuard method
-     * from JCSCachedTileLoaderJob to acquire the semaphore, and releases it - when loadingFinished is called (but not when
-     * LoadResult.GUARD_REJECTED is set)
-     *
-     */
-
-    private Semaphore getSemaphore() {
-        String host = getUrl().getHost();
-        Semaphore limit = HOST_LIMITS.get(host);
-        if (limit == null) {
-            synchronized(HOST_LIMITS) {
-                limit = HOST_LIMITS.get(host);
-                if (limit == null) {
-                    limit = new Semaphore(HOST_LIMIT.get().intValue());
-                    HOST_LIMITS.put(host, limit);
-                }
-            }
-        }
-        return limit;
-    }
-
-    private boolean acquireSemaphore() {
-        boolean ret = true;
-        Semaphore limit = getSemaphore();
-        if (limit != null) {
-            ret = limit.tryAcquire();
-            if (!ret) {
-                Main.debug("rejecting job because of per host limit");
-            }
-        }
-        return ret;
-    }
-
-    private void releaseSemaphore() {
-        Semaphore limit = getSemaphore();
-        if (limit != null) {
-            limit.release();
-        }
-    }
-
-    private static Map<String, Semaphore> HOST_LIMITS = new ConcurrentHashMap<>();
-
-    /**
-     * Reconfigures download dispatcher using current values of THREAD_LIMIT and HOST_LIMIT
-     */
-    public static final void reconfigureDownloadDispatcher() {
-        HOST_LIMITS = new ConcurrentHashMap<>();
-    }
-
-    /**
      * Constructor for creating a job, to get a specific tile from cache
      * @param listener
      * @param tile to be fetched from cache
@@ -110,11 +52,12 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
      * @param connectTimeout when connecting to remote resource
      * @param readTimeout when connecting to remote resource
      * @param headers to be sent together with request
+     * @param downloadExecutor that will be executing the jobs
      */
     public TMSCachedTileLoaderJob(TileLoaderListener listener, Tile tile,
             ICacheAccess<String, BufferedImageCacheEntry> cache,
             int connectTimeout, int readTimeout, Map<String, String> headers,
-            Executor downloadExecutor) {
+            ThreadPoolExecutor downloadExecutor) {
         super(cache, connectTimeout, readTimeout, headers, downloadExecutor);
         this.tile = tile;
         if (listener != null) {
@@ -206,16 +149,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         return false;
     }
 
-    @Override
-    protected boolean executionGuard() {
-        return acquireSemaphore();
-    }
-
-    @Override
-    protected void executionFinished() {
-        releaseSemaphore();
-    }
-
     public void submit() {
         tile.initLoading();
         super.submit(this);
@@ -233,9 +166,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             if(!tile.isLoaded()) { //if someone else already loaded tile, skip all the handling
                 tile.finishLoading(); // whatever happened set that loading has finished
                 switch(result){
-                case FAILURE:
-                    tile.setError("Problem loading tile");
-                    // no break intentional here
                 case SUCCESS:
                     handleNoTileAtZoom();
                     if (object != null) {
@@ -248,8 +178,11 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                     if (!isNoTileAtZoom() && httpStatusCode >= 400) {
                         tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
                     }
+                    break;
+                case FAILURE:
+                    tile.setError("Problem loading tile");
                     // no break intentional here
-                case REJECTED:
+                case CANCELED:
                     // do nothing
                 }
             }
