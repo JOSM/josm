@@ -15,8 +15,9 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
+import org.openstreetmap.josm.data.cache.HostLimitQueue;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
-import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob.LIFOQueue;
+import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
 /**
@@ -33,13 +34,21 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
     private Map<String, String> headers;
     private TileLoaderListener listener;
     private static final String PREFERENCE_PREFIX   = "imagery.tms.cache.";
-    // average tile size is about 20kb
+    /**
+     * how many object on disk should be stored for TMS region. Average tile size is about 20kb
+     */
     public static final IntegerProperty MAX_OBJECTS_ON_DISK = new IntegerProperty(PREFERENCE_PREFIX + "max_objects_disk", 25000); // 25000 is around 500MB under this assumptions
 
     /**
      * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for TMS
      */
     public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobs", 25);
+
+    /**
+     * Limit definition for per host concurrent connections
+     */
+    public static final IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
+
 
     /**
      * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS
@@ -53,10 +62,8 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
                 THREAD_LIMIT.get().intValue(), // do not this number of threads
                 30, // keepalive for thread
                 TimeUnit.SECONDS,
-                // make queue of LIFO type - so recently requested tiles will be loaded first (assuming that these are which user is waiting to see)
-                new LIFOQueue()
-                    /* keep the queue size fairly small, we do not want to
-                     download a lot of tiles, that user is not seeing anyway */
+                new HostLimitQueue(HOST_LIMIT.get().intValue()),
+                JCSCachedTileLoaderJob.getNamedThreadFactory("TMS downloader")
                 );
     }
 
@@ -122,36 +129,14 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
     }
 
     /**
-     * Sets the download executor for this tile loader factory. Enables to use different queuing method
-     * for this factory.
-     * @param downloadExecutor
-     */
-    public void setDownloadExecutor(ThreadPoolExecutor downloadExecutor) {
-        this.downloadExecutor = downloadExecutor;
-    }
-
-    /**
-     * @return Executor that handles the jobs for this tile loader
-     */
-    public ThreadPoolExecutor getDownloadExecutor() {
-        return downloadExecutor;
-    }
-
-    /**
      * cancels all outstanding tasks in the queue. This rollbacks the state of the tiles in the queue
      * to loading = false / loaded = false
      */
     public void cancelOutstandingTasks() {
-        for(Runnable elem: downloadExecutor.getQueue()) {
-            if (elem instanceof TMSCachedTileLoaderJob) {
-                TMSCachedTileLoaderJob loaderJob = (TMSCachedTileLoaderJob) elem;
-                if (downloadExecutor.remove(loaderJob)) {
-                    Tile t = loaderJob.getTile();
-                    t.finishLoading();
-                    t.setLoaded(false);
-                }
+        for(Runnable r: downloadExecutor.getQueue()) {
+            if (downloadExecutor.remove(r) && r instanceof TMSCachedTileLoaderJob) {
+                ((TMSCachedTileLoaderJob)r).handleJobCancellation();
             }
         }
     }
-
 }
