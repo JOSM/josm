@@ -10,7 +10,7 @@ public interface ICachedLoaderListener {
     enum LoadResult {
         SUCCESS,
         FAILURE,
-        REJECTED
+        CANCELED
     }
     /**
      * Will be called when K object processed. The result might be:

@@ -15,9 +15,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  * @author Wiktor Niesiobędzki
  *
  * @param <K> cache entry key type
+ * @param <V> cache value type
  *
  * Generic loader for HTTP based tiles. Uses custom attribute, to check, if entry has expired
  * according to HTTP headers sent with tile. If so, it tries to verify using Etags
@@ -61,56 +62,35 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      */
     public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("cache.jcs.max_threads", 10);
 
-    public static class LIFOQueue extends LinkedBlockingDeque<Runnable> {
-
-        /**
-         * Constructs a new {@code LIFOQueue} with a capacity of {@link Integer#MAX_VALUE}.
-         */
-        public LIFOQueue() {
-            super();
-        }
-
-        /**
-         * Constructs a new {@code LIFOQueue} with the given (fixed) capacity.
-         * @param capacity the capacity of this deque
-         * @throws IllegalArgumentException if {@code capacity} is less than 1
-         */
-        public LIFOQueue(int capacity) {
-            super(capacity);
-        }
-
-        @Override
-        public boolean offer(Runnable t) {
-            return super.offerFirst(t);
-        }
-
-        @Override
-        public Runnable remove() {
-            return super.removeFirst();
-        }
-    }
-
-
-    /**
-     * ThreadPoolExecutor starts new threads, until THREAD_LIMIT is reached. Then it puts tasks into LIFOQueue, which is fairly
-     * small, but we do not want a lot of outstanding tasks queued, but rather prefer the class consumer to resubmit the task, which are
-     * important right now.
+    /*
+     * ThreadPoolExecutor starts new threads, until THREAD_LIMIT is reached. Then it puts tasks into LinkedBlockingDeque.
      *
-     * This way, if some task gets outdated (for example - user paned the map, and we do not want to download this tile any more),
-     * the task will not be resubmitted, and thus - never queued.
+     * The queue works FIFO, so one needs to take care about ordering of the entries submitted
      *
      * There is no point in canceling tasks, that are already taken by worker threads (if we made so much effort, we can at least cache
      * the response, so later it could be used). We could actually cancel what is in LIFOQueue, but this is a tradeoff between simplicity
      * and performance (we do want to have something to offer to worker threads before tasks will be resubmitted by class consumer)
      */
-    private static Executor DEFAULT_DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
+
+    private static ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
             2, // we have a small queue, so threads will be quickly started (threads are started only, when queue is full)
             THREAD_LIMIT.get().intValue(), // do not this number of threads
             30, // keepalive for thread
             TimeUnit.SECONDS,
             // make queue of LIFO type - so recently requested tiles will be loaded first (assuming that these are which user is waiting to see)
-            new LIFOQueue(5)
+            new LinkedBlockingDeque<Runnable>(),
+            getNamedThreadFactory("JCS downloader")
             );
+
+    public static ThreadFactory getNamedThreadFactory(final String name) {
+        return new ThreadFactory(){
+            public Thread newThread(Runnable r) {
+                Thread t = Executors.defaultThreadFactory().newThread(r);
+                t.setName(name);
+                return t;
+                }
+        };
+    }
 
     private static ConcurrentMap<String,Set<ICachedLoaderListener>> inProgress = new ConcurrentHashMap<>();
     private static ConcurrentMap<String, Boolean> useHead = new ConcurrentHashMap<>();
@@ -126,7 +106,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     private int connectTimeout;
     private int readTimeout;
     private Map<String, String> headers;
-    private Executor downloadJobExecutor;
+    private ThreadPoolExecutor downloadJobExecutor;
+    private Runnable finishTask;
 
     /**
      * @param cache cache instance that we will work on
@@ -138,7 +119,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     public JCSCachedTileLoaderJob(ICacheAccess<K,V> cache,
             int connectTimeout, int readTimeout,
             Map<String, String> headers,
-            Executor downloadJobExecutor) {
+            ThreadPoolExecutor downloadJobExecutor) {
 
         this.cache = cache;
         this.now = System.currentTimeMillis();
@@ -208,37 +189,17 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return;
             }
             // object not in cache, so submit work to separate thread
-            try {
-                if (executionGuard()) {
-                    // use getter method, so subclasses may override executors, to get separate thread pool
-                    getDownloadExecutor().execute(this);
-                } else {
-                    log.log(Level.FINE, "JCS - guard rejected job for: {0}", getCacheKey());
-                    finishLoading(LoadResult.REJECTED);
-                }
-            } catch (RejectedExecutionException e) {
-                // queue was full, try again later
-                log.log(Level.FINE, "JCS - rejected job for: {0}", getCacheKey());
-                finishLoading(LoadResult.REJECTED);
-            }
+            getDownloadExecutor().execute(this);
         }
-    }
-
-    /**
-     * Guard method for execution. If guard returns true, the execution of download task will commence
-     * otherwise, execution will finish with result LoadResult.REJECTED
-     *
-     * It is responsibility of the overriding class, to handle properly situation in finishLoading class
-     * @return
-     */
-    protected boolean executionGuard() {
-        return true;
     }
 
     /**
      * This method is run when job has finished
      */
     protected void executionFinished() {
+        if (finishTask != null) {
+            finishTask.run();
+        }
     }
 
     /**
@@ -268,7 +229,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     /**
      * this needs to be non-static, so it can be overridden by subclasses
      */
-    protected Executor getDownloadExecutor() {
+    protected ThreadPoolExecutor getDownloadExecutor() {
         return downloadJobExecutor;
     }
 
@@ -496,5 +457,36 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         } finally {
             input.close();
         }
+    }
+
+    /**
+     * TODO: move to JobFactory
+     * cancels all outstanding tasks in the queue.
+     */
+    public void cancelOutstandingTasks() {
+        ThreadPoolExecutor downloadExecutor = getDownloadExecutor();
+        for(Runnable r: downloadExecutor.getQueue()) {
+            if (downloadExecutor.remove(r)) {
+                if (r instanceof JCSCachedTileLoaderJob) {
+                    ((JCSCachedTileLoaderJob<?, ?>) r).handleJobCancellation();
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets a job, that will be run, when job will finish execution
+     * @param runnable that will be executed
+     */
+    public void setFinishedTask(Runnable runnable) {
+        this.finishTask = runnable;
+
+    }
+
+    /**
+     * Marks this job as canceled
+     */
+    public void handleJobCancellation() {
+        finishLoading(LoadResult.CANCELED);
     }
 }

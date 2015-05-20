@@ -44,7 +44,7 @@ public class TMSSettingsPanel extends JPanel {
         maxZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.DEFAULT_MAX_ZOOM, TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
         maxElementsOnDisk = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.get().intValue(), 0, Integer.MAX_VALUE, 1));
         maxConcurrentDownloads = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoaderJob.THREAD_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
-        maxDownloadsPerHost = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoaderJob.HOST_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
+        maxDownloadsPerHost = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoader.HOST_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
 
         add(new JLabel(tr("Auto zoom by default: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
@@ -97,7 +97,7 @@ public class TMSSettingsPanel extends JPanel {
         this.tilecacheDir.setText(TMSLayer.PROP_TILECACHE_DIR.get());
         this.maxElementsOnDisk.setValue(TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.get());
         this.maxConcurrentDownloads.setValue(TMSCachedTileLoaderJob.THREAD_LIMIT.get());
-        this.maxDownloadsPerHost.setValue(TMSCachedTileLoaderJob.HOST_LIMIT.get());
+        this.maxDownloadsPerHost.setValue(TMSCachedTileLoader.HOST_LIMIT.get());
     }
 
     /**
@@ -116,11 +116,20 @@ public class TMSSettingsPanel extends JPanel {
         TMSLayer.setMaxZoomLvl((Integer)this.maxZoomLvl.getValue());
         TMSLayer.setMinZoomLvl((Integer)this.minZoomLvl.getValue());
 
-        TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.put((Integer) this.maxElementsOnDisk.getValue());
+        if (!TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.get().equals(this.maxElementsOnDisk.getValue())) {
+            TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.put((Integer) this.maxElementsOnDisk.getValue());
+            restartRequired = true;
+        }
 
-        TMSCachedTileLoaderJob.THREAD_LIMIT.put((Integer) this.maxConcurrentDownloads.getValue());
-        TMSCachedTileLoaderJob.HOST_LIMIT.put((Integer) this.maxDownloadsPerHost.getValue());
-        TMSCachedTileLoaderJob.reconfigureDownloadDispatcher();
+        if(!TMSCachedTileLoader.THREAD_LIMIT.get().equals(this.maxConcurrentDownloads.getValue())) {
+            TMSCachedTileLoader.THREAD_LIMIT.put((Integer) this.maxConcurrentDownloads.getValue());
+            restartRequired = true;
+        }
+
+        if(!TMSCachedTileLoader.HOST_LIMIT.get().equals(this.maxDownloadsPerHost.getValue())) {
+            TMSCachedTileLoader.HOST_LIMIT.put((Integer) this.maxDownloadsPerHost.getValue());
+            restartRequired = true;
+        }
 
         if (!TMSLayer.PROP_TILECACHE_DIR.get().equals(this.tilecacheDir.getText())) {
             restartRequired = true;

@@ -21,6 +21,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -1193,10 +1194,28 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             return ret;
         }
 
+        private Comparator<Tile> getTileDistanceComparator() {
+            final int centerX = (int) Math.ceil((x0 + x1) / 2);
+            final int centerY = (int) Math.ceil((y0 + y1) / 2);
+            return new Comparator<Tile>() {
+                private int getDistance(Tile t) {
+                    return Math.abs(t.getXtile() - centerX) + Math.abs(t.getYtile() - centerY);
+                }
+                @Override
+                public int compare(Tile o1, Tile o2) {
+                    int distance1 = getDistance(o1);
+                    int distance2 = getDistance(o2);
+                    return Integer.compare(distance1, distance2);
+                }
+            };
+        }
+
         private void loadAllTiles(boolean force) {
             if (!autoLoad && !force)
                 return;
-            for (Tile t : this.allTilesCreate()) {
+            List<Tile> allTiles = allTilesCreate();
+            Collections.sort(allTiles, getTileDistanceComparator());
+            for (Tile t : allTiles) { //, getTileDistanceComparator())) {
                 loadTile(t, false);
             }
         }
