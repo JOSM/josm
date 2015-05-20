@@ -63,8 +63,8 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     private Mode mode;
     private boolean canceled = false;
 
-    private ImageIcon iconResolved;
-    private ImageIcon iconUnresolved;
+    private final ImageIcon iconResolved;
+    private final ImageIcon iconUnresolved;
     private StatisticsTableModel statisticsModel;
     private JPanel pnlTagResolver;
 
@@ -305,8 +305,8 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 setEnabled(allPrimitivesResolver.getModel().isResolvedCompletely());
             } else {
                 boolean enabled = true;
-                for (OsmPrimitiveType type: resolvers.keySet()) {
-                    enabled &= resolvers.get(type).getModel().isResolvedCompletely();
+                for (TagConflictResolver val: resolvers.values()) {
+                    enabled &= val.getModel().isResolvedCompletely();
                 }
                 setEnabled(enabled);
             }

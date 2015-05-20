@@ -76,9 +76,9 @@ public class CachedFile {
      * @param name can be:<ul>
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
-     *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li>
      *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
-     *  <li>{@code josmdir://SOME/FILE} file inside josm user data directory (since r7058)</li></ul>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm user data directory (since r7058)</li>
      *  <li>{@code josmplugindir://SOME/FILE} file inside josm plugin directory (since r7834)</li></ul>
      */
     public CachedFile(String name) {
@@ -90,9 +90,9 @@ public class CachedFile {
      * @param name can be:<ul>
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
-     *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li>
      *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
-     *  <li>{@code josmdir://SOME/FILE} file inside josm user data directory (since r7058)</li></ul>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm user data directory (since r7058)</li>
      *  <li>{@code josmplugindir://SOME/FILE} file inside josm plugin directory (since r7834)</li></ul>
      * @return this object
      */

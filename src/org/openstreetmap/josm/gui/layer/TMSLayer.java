@@ -553,6 +553,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         tileOptionMenu.add(new JMenuItem(new AbstractAction(
                 tr("Request Update")) {
+            @Override
             public void actionPerformed(ActionEvent ae) {
                 if (clickedTile != null) {
                     clickedTile.setLoaded(false);
@@ -1079,7 +1080,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     private final TileSet nullTileSet = new TileSet((LatLon)null, (LatLon)null, 0);
-    private class TileSet {
+    private final class TileSet {
         private int x0, x1, y0, y1;
         private int zoom;
         private int tileMax = -1;
