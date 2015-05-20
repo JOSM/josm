@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -500,7 +501,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 List<String> allCharSubsets = new ArrayList<>();
                 for (FontEntry entry: extrasPref) {
                     Collection<String> fontsAvail = getInstalledFonts();
-                    if (fontsAvail != null && fontsAvail.contains(entry.file.toUpperCase())) {
+                    if (fontsAvail != null && fontsAvail.contains(entry.file.toUpperCase(Locale.ENGLISH))) {
                         if (!allCharSubsets.contains(entry.charset)) {
                             allCharSubsets.add(entry.charset);
                             extras.add(entry);

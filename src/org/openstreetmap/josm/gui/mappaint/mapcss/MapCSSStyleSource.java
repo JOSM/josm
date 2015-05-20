@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -101,7 +102,7 @@ public class MapCSSStyleSource extends StyleSource {
         for (Field f : declaredFields) {
             try {
                 SUPPORTED_KEYS.add((String) f.get(null));
-                if (!f.getName().toLowerCase().replace("_", "-").equals(f.get(null))) {
+                if (!f.getName().toLowerCase(Locale.ENGLISH).replace("_", "-").equals(f.get(null))) {
                     throw new RuntimeException(f.getName());
                 }
             } catch (IllegalArgumentException | IllegalAccessException ex) {

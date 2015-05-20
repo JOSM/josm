@@ -10,6 +10,7 @@ import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -476,7 +477,7 @@ public class SearchCompiler {
                 this.keyPattern = null;
                 this.valuePattern = null;
             } else {
-                this.key = key.toLowerCase();
+                this.key = key.toLowerCase(Locale.ENGLISH);
                 this.value = value;
                 this.keyPattern = null;
                 this.valuePattern = null;
@@ -522,8 +523,8 @@ public class SearchCompiler {
                 if (mv == null)
                     return false;
 
-                String v1 = caseSensitive ? mv : mv.toLowerCase();
-                String v2 = caseSensitive ? value : value.toLowerCase();
+                String v1 = caseSensitive ? mv : mv.toLowerCase(Locale.ENGLISH);
+                String v2 = caseSensitive ? value : value.toLowerCase(Locale.ENGLISH);
 
                 v1 = Normalizer.normalize(v1, Normalizer.Form.NFC);
                 v2 = Normalizer.normalize(v2, Normalizer.Form.NFC);
@@ -532,7 +533,10 @@ public class SearchCompiler {
 
             return false;
         }
-        @Override public String toString() {return key+"="+value;}
+        @Override
+        public String toString() {
+            return key + "=" + value;
+        }
     }
 
     public static class ValueComparison extends Match {
@@ -718,7 +722,7 @@ public class SearchCompiler {
                 this.search = s;
                 this.searchRegex = null;
             } else {
-                this.search = s.toLowerCase();
+                this.search = s.toLowerCase(Locale.ENGLISH);
                 this.searchRegex = null;
             }
         }
@@ -743,8 +747,8 @@ public class SearchCompiler {
                         return true;
                 } else {
                     if (!caseSensitive) {
-                        key = key.toLowerCase();
-                        value = value.toLowerCase();
+                        key = key.toLowerCase(Locale.ENGLISH);
+                        value = value.toLowerCase(Locale.ENGLISH);
                     }
 
                     value = Normalizer.normalize(value, Normalizer.Form.NFC);

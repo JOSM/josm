@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -544,7 +545,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     public int compareTo(ImageryInfo in) {
         int i = countryCode.compareTo(in.countryCode);
         if (i == 0) {
-            i = name.toLowerCase().compareTo(in.name.toLowerCase());
+            i = name.toLowerCase(Locale.ENGLISH).compareTo(in.name.toLowerCase(Locale.ENGLISH));
         }
         if (i == 0) {
             i = url.compareTo(in.url);
@@ -689,7 +690,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         if (serverProjections == null || serverProjections.isEmpty()) {
             try {
                 serverProjections = new ArrayList<>();
-                Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase());
+                Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase(Locale.ENGLISH));
                 if(m.matches()) {
                     for(String p : m.group(1).split(","))
                         serverProjections.add(p);

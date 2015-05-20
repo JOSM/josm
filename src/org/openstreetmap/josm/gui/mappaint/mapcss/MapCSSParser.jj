@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
@@ -387,7 +388,7 @@ boolean pp_media_query():
 {
     ( <PP_NOT> { invert = true; } pp_w() )?
     (
-            t=<IDENT> { mediatype = t.image.toLowerCase(); } pp_w()
+            t=<IDENT> { mediatype = t.image.toLowerCase(Locale.ENGLISH); } pp_w()
             ( <PP_AND> pp_w() e=pp_media_expression() { pass = pass && e; } pp_w() )*
         |
             e=pp_media_expression() { pass = pass && e; } pp_w()

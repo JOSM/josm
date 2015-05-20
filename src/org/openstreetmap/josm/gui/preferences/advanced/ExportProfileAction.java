@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -20,6 +21,7 @@ import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.Setting;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action that exports some fragment of settings to custom configuration file
@@ -64,7 +66,7 @@ public class ExportProfileAction extends AbstractAction {
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File f) {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(".xml") && f.getName().toLowerCase().startsWith(schemaKey);
+                return f.isDirectory() || Utils.hasExtension(f, "xml") && f.getName().toLowerCase(Locale.ENGLISH).startsWith(schemaKey);
             }
             @Override
             public String getDescription() {

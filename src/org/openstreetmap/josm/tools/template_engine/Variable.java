@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools.template_engine;
 
 import java.util.Collection;
+import java.util.Locale;
 
 public class Variable implements TemplateEntry {
 
@@ -13,10 +14,10 @@ public class Variable implements TemplateEntry {
     private final boolean special;
 
     public Variable(String variableName) {
-        if (variableName.toLowerCase().startsWith(SPECIAL_VARIABLE_PREFIX)) {
+        if (variableName.toLowerCase(Locale.ENGLISH).startsWith(SPECIAL_VARIABLE_PREFIX)) {
             this.variableName = variableName.substring(SPECIAL_VARIABLE_PREFIX.length());
             // special:special:key means that real key named special:key is needed, not special variable
-            this.special = !this.variableName.toLowerCase().startsWith(SPECIAL_VARIABLE_PREFIX);
+            this.special = !this.variableName.toLowerCase(Locale.ENGLISH).startsWith(SPECIAL_VARIABLE_PREFIX);
         } else {
             this.variableName = variableName;
             this.special = false;

@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.UIManager;
@@ -1187,7 +1188,7 @@ public class MultiSplitLayout implements LayoutManager {
                 if ((token = st.nextToken()) != StreamTokenizer.TT_WORD) {
                     throwParseException(st, "invalid node type");
                 }
-                String nodeType = st.sval.toUpperCase();
+                String nodeType = st.sval.toUpperCase(Locale.ENGLISH);
                 if ("LEAF".equals(nodeType)) {
                     parseLeaf(st, parent);
                 } else if ("ROW".equals(nodeType) || "COLUMN".equals(nodeType)) {

@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -132,7 +133,7 @@ public final class Projections {
      * Null, if the id isn't supported.
      */
     public static String getInit(String id) {
-        Pair<String, String> r = inits.get(id.toUpperCase());
+        Pair<String, String> r = inits.get(id.toUpperCase(Locale.ENGLISH));
         if (r == null) return null;
         return r.b;
     }

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.preferences;
 
 import java.awt.Color;
+import java.util.Locale;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.ColorKey;
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.data.Preferences.ColorKey;
 public class ColorProperty extends AbstractProperty<Color> implements ColorKey {
 
     private final String name;
-    
+
     /**
      * Constructs a new {@code ColorProperty}.
      * @param colName The color name
@@ -23,7 +24,7 @@ public class ColorProperty extends AbstractProperty<Color> implements ColorKey {
         super(getColorKey(colName), defaultValue);
         this.name = colName;
     }
-    
+
     @Override
     public Color get() {
         return Main.pref.getColor(this);
@@ -33,14 +34,14 @@ public class ColorProperty extends AbstractProperty<Color> implements ColorKey {
     public boolean put(Color value) {
         return Main.pref.putColor(getColorKey(name), value);
     }
-    
+
     /**
      * Replies the color key used in JOSM preferences for this property.
      * @param colName The color name
      * @return The color key for this property
      */
     public static String getColorKey(String colName) {
-        return colName == null ? null : colName.toLowerCase().replaceAll("[^a-z0-9]+",".");
+        return colName == null ? null : colName.toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9]+",".");
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -134,10 +135,10 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             this.preset = preset;
             TaggingPreset group = preset.group;
             while (group != null) {
-                Collections.addAll(groups, group.getLocaleName().toLowerCase().split("\\s"));
+                Collections.addAll(groups, group.getLocaleName().toLowerCase(Locale.ENGLISH).split("\\s"));
                 group = group.group;
             }
-            Collections.addAll(names, preset.getLocaleName().toLowerCase().split("\\s"));
+            Collections.addAll(names, preset.getLocaleName().toLowerCase(Locale.ENGLISH).split("\\s"));
             for (TaggingPresetItem item: preset.data) {
                 if (item instanceof KeyedItem) {
                     tags.add(((KeyedItem) item).key);
@@ -164,7 +165,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
                 boolean found = false;
                 boolean foundFirst = false;
                 for (String value: values) {
-                    int index = value.toLowerCase().indexOf(word);
+                    int index = value.toLowerCase(Locale.ENGLISH).indexOf(word);
                     if (index == 0) {
                         foundFirst = true;
                         break;
@@ -328,7 +329,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
      */
     private synchronized void filterPresets() {
         //TODO Save favorites to file
-        String text = edSearchText.getText().toLowerCase();
+        String text = edSearchText.getText().toLowerCase(Locale.ENGLISH);
         boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 

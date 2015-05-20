@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -1205,7 +1206,7 @@ public final class Utils {
     public static String updateSystemProperty(String key, String value) {
         if (value != null) {
             String old = System.setProperty(key, value);
-            if (!key.toLowerCase().contains("password")) {
+            if (!key.toLowerCase(Locale.ENGLISH).contains("password")) {
                 Main.debug("System property '"+key+"' set to '"+value+"'. Old value was '"+old+"'");
             } else {
                 Main.debug("System property '"+key+"' changed.");
@@ -1249,5 +1250,33 @@ public final class Utils {
         if (Main.isDebugEnabled()) {
             Main.debug("SAX parsing done in " + getDurationString(System.currentTimeMillis()-start));
         }
+    }
+
+    /**
+     * Determines if the filename has one of the given extensions, in a robust manner.
+     * The comparison is case and locale insensitive.
+     * @param filename The file name
+     * @param extensions The list of extensions to look for (without dot)
+     * @return {@code true} if the filename has one of the given extensions
+     * @since 8404
+     */
+    public static boolean hasExtension(String filename, String ... extensions) {
+        String name = filename.toLowerCase(Locale.ENGLISH);
+        for (String ext : extensions)
+            if (name.endsWith("."+ext.toLowerCase(Locale.ENGLISH)))
+                return true;
+        return false;
+    }
+
+    /**
+     * Determines if the file's name has one of the given extensions, in a robust manner.
+     * The comparison is case and locale insensitive.
+     * @param file The file
+     * @param extensions The list of extensions to look for (without dot)
+     * @return {@code true} if the file's name has one of the given extensions
+     * @since 8404
+     */
+    public static boolean hasExtension(File file, String ... extensions) {
+        return hasExtension(file.getName(), extensions);
     }
 }

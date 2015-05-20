@@ -160,7 +160,7 @@ public class DNSName implements GeneralNameInterface {
      */
     @Override
     public int hashCode() {
-        return name.toUpperCase().hashCode();
+        return name.toUpperCase(Locale.ENGLISH).hashCode();
     }
 
     /**

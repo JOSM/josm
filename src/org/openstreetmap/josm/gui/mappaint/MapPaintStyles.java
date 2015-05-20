@@ -286,9 +286,9 @@ public final class MapPaintStyles {
             zipEntryPath = cf.findZipEntryPath("xml", "style");
             if (zipEntryPath != null)
                 return new XmlStyleSource(entry);
-            if (entry.url.toLowerCase().endsWith(".mapcss"))
+            if (Utils.hasExtension(entry.url, "mapcss"))
                 return new MapCSSStyleSource(entry);
-            if (entry.url.toLowerCase().endsWith(".xml"))
+            if (Utils.hasExtension(entry.url, "xml"))
                 return new XmlStyleSource(entry);
             else {
                 try (InputStreamReader reader = new InputStreamReader(cf.getInputStream(), StandardCharsets.UTF_8)) {

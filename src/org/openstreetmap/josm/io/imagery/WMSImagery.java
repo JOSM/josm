@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -262,7 +263,7 @@ public class WMSImagery {
         for (Element child : crsChildren) {
             String crs = (String) getContent(child);
             if (!crs.isEmpty()) {
-                String upperCase = crs.trim().toUpperCase();
+                String upperCase = crs.trim().toUpperCase(Locale.ENGLISH);
                 crsList.add(upperCase);
             }
         }
