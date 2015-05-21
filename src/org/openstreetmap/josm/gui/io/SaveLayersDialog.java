@@ -433,9 +433,9 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
      */
     protected class SaveAndUploadTask implements Runnable {
 
-        private SaveLayersModel model;
-        private ProgressMonitor monitor;
-        private ExecutorService worker;
+        private final SaveLayersModel model;
+        private final ProgressMonitor monitor;
+        private final ExecutorService worker;
         private boolean canceled;
         private Future<?> currentFuture;
         private AbstractIOTask currentTask;
@@ -591,12 +591,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     }
                 }
             });
+            worker.shutdownNow();
         }
 
         public void cancel() {
             if (currentTask != null) {
                 currentTask.cancel();
             }
+            worker.shutdown();
             canceled = true;
         }
     }

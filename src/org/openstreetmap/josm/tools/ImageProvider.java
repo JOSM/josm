@@ -1611,9 +1611,9 @@ public class ImageProvider {
      * @param color The transparent color
      * @return The same image as {@code bi} where all pixels of the given color are transparent.
      * This resulting image has also the special property {@link #PROP_TRANSPARENCY_FORCED} set to {@code color}
-     * @since 7132
      * @see BufferedImage#getProperty
      * @see #isTransparencyForced
+     * @since 7132
      */
     public static BufferedImage makeImageTransparent(BufferedImage bi, Color color) {
         // the color we are looking for. Alpha bits are set to opaque
@@ -1652,8 +1652,8 @@ public class ImageProvider {
      * Determines if the transparency of the given {@code BufferedImage} has been enforced by a previous call to {@link #makeImageTransparent}.
      * @param bi The {@code BufferedImage} to test
      * @return {@code true} if the transparency of {@code bi} has been enforced by a previous call to {@code makeImageTransparent}.
-     * @since 7132
      * @see #makeImageTransparent
+     * @since 7132
      */
     public static boolean isTransparencyForced(BufferedImage bi) {
         return bi != null && !bi.getProperty(PROP_TRANSPARENCY_FORCED).equals(Image.UndefinedProperty);
@@ -1663,10 +1663,24 @@ public class ImageProvider {
      * Determines if the given {@code BufferedImage} has a transparent color determiend by a previous call to {@link #read}.
      * @param bi The {@code BufferedImage} to test
      * @return {@code true} if {@code bi} has a transparent color determined by a previous call to {@code read}.
-     * @since 7132
      * @see #read
+     * @since 7132
      */
     public static boolean hasTransparentColor(BufferedImage bi) {
         return bi != null && !bi.getProperty(PROP_TRANSPARENCY_COLOR).equals(Image.UndefinedProperty);
+    }
+
+    /**
+     * Shutdown background image fetcher.
+     * @param now if {@code true}, attempts to stop all actively executing tasks, halts the processing of waiting tasks.
+     * if {@code false}, initiates an orderly shutdown in which previously submitted tasks are executed, but no new tasks will be accepted
+     * @since 8412
+     */
+    public static void shutdown(boolean now) {
+        if (now) {
+            IMAGE_FETCHER.shutdownNow();
+        } else {
+            IMAGE_FETCHER.shutdown();
+        }
     }
 }
