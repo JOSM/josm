@@ -432,7 +432,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {
-                            pnlPluginPreferences.refreshView();                        }
+                            pnlPluginPreferences.refreshView();
+                        }
                     });
                 }
             };

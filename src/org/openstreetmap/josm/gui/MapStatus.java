@@ -515,11 +515,11 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         private void popupShowPopup(Popup newPopup, List<JLabel> lbls) {
             final Popup staticPopup = newPopup;
             if(this.popup != null) {
-                // If an old popup exists, remove it when the new popup has been
-                // drawn to keep flickering to a minimum
+                // If an old popup exists, remove it when the new popup has been drawn to keep flickering to a minimum
                 final Popup staticOldPopup = this.popup;
                 EventQueue.invokeLater(new Runnable(){
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         staticPopup.show();
                         staticOldPopup.hide();
                     }
@@ -527,7 +527,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             } else {
                 // There is no old popup
                 EventQueue.invokeLater(new Runnable(){
-                     @Override public void run() { staticPopup.show(); }});
+                     @Override
+                     public void run() {
+                         staticPopup.show();
+                     }});
             }
             this.popupLabels = lbls;
             this.popup = newPopup;

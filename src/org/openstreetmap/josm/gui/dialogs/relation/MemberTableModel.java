@@ -101,17 +101,20 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /* --------------------------------------------------------------------------- */
     @Override
     public void dataChanged(DataChangedEvent event) {
-        // just trigger a repaint - the display name of the relation members may
-        // have changed
+        // just trigger a repaint - the display name of the relation members may have changed
         Collection<RelationMember> sel = getSelectedMembers();
         fireTableDataChanged();
         setSelectedMembers(sel);
     }
 
     @Override
-    public void nodeMoved(NodeMovedEvent event) {/* ignore */}
+    public void nodeMoved(NodeMovedEvent event) {
+        // ignore
+    }
     @Override
-    public void primitivesAdded(PrimitivesAddedEvent event) {/* ignore */}
+    public void primitivesAdded(PrimitivesAddedEvent event) {
+        // ignore
+    }
 
     @Override
     public void primitivesRemoved(PrimitivesRemovedEvent event) {
@@ -141,10 +144,15 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     @Override
-    public void wayNodesChanged(WayNodesChangedEvent event) {/* ignore */}
+    public void wayNodesChanged(WayNodesChangedEvent event) {
+        // ignore
+    }
 
     @Override
-    public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignore */}
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        // ignore
+    }
+
     /* --------------------------------------------------------------------------- */
 
     public void addMemberModelListener(IMemberModelListener listener) {
@@ -166,8 +174,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     public void populate(Relation relation) {
         members.clear();
         if (relation != null) {
-            // make sure we work with clones of the relation members
-            // in the model.
+            // make sure we work with clones of the relation members in the model.
             members.addAll(new Relation(relation).getMembers());
         }
         fireTableDataChanged();
@@ -709,7 +716,6 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         fireTableDataChanged();
         setSelectedMembers(sortedMembers);
     }
-
 
     WayConnectionType getWayConnection(int i) {
         if (connectionType == null) {

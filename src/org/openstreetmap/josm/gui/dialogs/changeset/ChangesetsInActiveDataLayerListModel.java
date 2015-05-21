@@ -34,25 +34,39 @@ public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel imp
     }
 
     @Override
-    public void primitivesAdded(PrimitivesAddedEvent event) {/* ignored */}
+    public void primitivesAdded(PrimitivesAddedEvent event) {
+        // ignored
+    }
 
     @Override
-    public void primitivesRemoved(PrimitivesRemovedEvent event) {/* ignored */}
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {
+        // ignored
+    }
 
     @Override
-    public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignored */}
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        // ignored
+    }
 
     @Override
-    public void nodeMoved(NodeMovedEvent event) {/* ignored */}
+    public void nodeMoved(NodeMovedEvent event) {
+        // ignored
+    }
 
     @Override
-    public void relationMembersChanged(RelationMembersChangedEvent event) {/* ignored */}
+    public void relationMembersChanged(RelationMembersChangedEvent event) {
+        // ignored
+    }
 
     @Override
-    public void tagsChanged(TagsChangedEvent event) {/* ignored */}
+    public void tagsChanged(TagsChangedEvent event) {
+        // ignored
+    }
 
     @Override
-    public void wayNodesChanged(WayNodesChangedEvent event) {/* ignored */}
+    public void wayNodesChanged(WayNodesChangedEvent event) {
+        // ignored
+    }
 
     /* ------------------------------------------------------------------------------ */
     /* interface EditLayerListener                                                    */
@@ -60,8 +74,7 @@ public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel imp
     @Override
     public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
         // just init the model content. Don't register as DataSetListener. The mode
-        // is already registered to receive DataChangedEvents from the current
-        // edit layer
+        // is already registered to receive DataChangedEvents from the current edit layer
         if (newLayer != null) {
             initFromDataSet(newLayer.data);
         } else {

@@ -68,7 +68,9 @@ public final class AudioPlayer extends Thread {
         private void send() throws Exception {
             result = Result.WAITING;
             interrupt();
-            while (result == Result.WAITING) { sleep(10); /* yield(); */ }
+            while (result == Result.WAITING) {
+                sleep(10); /* yield(); */
+            }
             if (result == Result.FAILED)
                 throw exception;
         }
@@ -216,7 +218,9 @@ public final class AudioPlayer extends Thread {
         leadIn = Main.pref.getDouble("audio.leadin", 1.0 /* default, seconds */);
         calibration = Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
         start();
-        while (state == State.INITIALIZING) { yield(); }
+        while (state == State.INITIALIZING) {
+            yield();
+        }
     }
 
     /**
@@ -250,7 +254,9 @@ public final class AudioPlayer extends Thread {
                             nBytesRead = audioInputStream.read(abData, 0, abData.length);
                             position += nBytesRead / bytesPerSecond;
                             command.possiblyInterrupt();
-                            if (nBytesRead < 0) { break; }
+                            if (nBytesRead < 0) {
+                                break;
+                            }
                             audioOutputLine.write(abData, 0, nBytesRead); // => int nBytesWritten
                             command.possiblyInterrupt();
                         }

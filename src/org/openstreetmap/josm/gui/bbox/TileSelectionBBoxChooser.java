@@ -413,7 +413,9 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             }
 
             @Override
-            public void focusGained(FocusEvent e) {/* irrelevant */}
+            public void focusGained(FocusEvent e) {
+                /* irrelevant */
+            }
 
             @Override
             public void focusLost(FocusEvent e) {
