@@ -2362,9 +2362,15 @@ node[amenity=shower] {
     text: auto; 
 }
 node[amenity=recycling] {
-    icon-image: "service/recycling.png";
+    icon-image: "service/recycling/recycling.svg";
     set icon_z17;
     text: auto;
+}
+node[amenity=recycling][recycling_type=container] {
+    icon-image: "service/recycling/recycling_container.svg";
+}
+node[amenity=recycling][recycling_type=centre] {
+    icon-image: "service/recycling/recycling_centre.svg";
 }
 node[amenity=waste_basket] {
     icon-image: "service/recycling/trash-bin.png";
