@@ -15,17 +15,18 @@ import org.openstreetmap.josm.data.osm.TigerUtils;
  */
 public final class TagConflictResolutionUtil {
 
-    /** no constructor, just static utility methods */
-    private TagConflictResolutionUtil() {}
+    private TagConflictResolutionUtil() {
+        // no constructor, just static utility methods
+    }
 
     /**
      * Normalizes the tags in the tag collection <code>tc</code> before resolving tag conflicts.
      *
-     *  Removes irrelevant tags like "created_by".
+     * Removes irrelevant tags like "created_by".
      *
-     *  For tags which are not present on at least one of the merged nodes, the empty value ""
-     *  is added to the list of values for this tag, but only if there are at least two
-     *  primitives with tags, and at least one tagged primitive do not have this tag.
+     * For tags which are not present on at least one of the merged nodes, the empty value ""
+     * is added to the list of values for this tag, but only if there are at least two
+     * primitives with tags, and at least one tagged primitive do not have this tag.
      *
      * @param tc the tag collection
      * @param merged the collection of merged primitives

@@ -1599,7 +1599,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         private void nextSnapMode() {
             if (snapOn) {
                 // turn off snapping if we are in fixed mode or no actile snapping line exist
-                if (fixed || !active) { snapOn=false; unsetFixedMode(); } else {
+                if (fixed || !active) {
+                    snapOn = false;
+                    unsetFixedMode();
+                } else {
                     setFixedMode();
                 }
             } else {

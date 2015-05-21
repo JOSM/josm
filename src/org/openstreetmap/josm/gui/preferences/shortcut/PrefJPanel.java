@@ -353,7 +353,9 @@ public class PrefJPanel extends JPanel {
     class FilterFieldAdapter implements DocumentListener {
         public void filter() {
             String expr = filterField.getText().trim();
-            if (expr.isEmpty()) { expr=null; }
+            if (expr.isEmpty()) {
+                expr = null;
+            }
             try {
                 final TableRowSorter<? extends TableModel> sorter =
                     (TableRowSorter<? extends TableModel> )shortcutTable.getRowSorter();
@@ -375,10 +377,16 @@ public class PrefJPanel extends JPanel {
         }
 
         @Override
-        public void changedUpdate(DocumentEvent arg0) { filter(); }
+        public void changedUpdate(DocumentEvent e) {
+            filter();
+        }
         @Override
-        public void insertUpdate(DocumentEvent arg0) {  filter(); }
+        public void insertUpdate(DocumentEvent e) {
+            filter();
+        }
         @Override
-        public void removeUpdate(DocumentEvent arg0) { filter(); }
+        public void removeUpdate(DocumentEvent e) {
+            filter();
+        }
     }
 }

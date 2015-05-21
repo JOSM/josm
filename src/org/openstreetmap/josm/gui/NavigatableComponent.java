@@ -431,11 +431,21 @@ public class NavigatableComponent extends JComponent implements Helpful {
         boolean changed = false;
         double lat = cl.lat();
         double lon = cl.lon();
-        if(lat < b.getMinLat()) {changed = true; lat = b.getMinLat();
-        } else if(lat > b.getMaxLat()) {changed = true; lat = b.getMaxLat(); }
-        if(lon < b.getMinLon()) {changed = true; lon = b.getMinLon();
-        } else if(lon > b.getMaxLon()) {changed = true; lon = b.getMaxLon(); }
-        if(changed) {
+        if (lat < b.getMinLat()) {
+            changed = true;
+            lat = b.getMinLat();
+        } else if (lat > b.getMaxLat()) {
+            changed = true;
+            lat = b.getMaxLat();
+        }
+        if (lon < b.getMinLon()) {
+            changed = true;
+            lon = b.getMinLon();
+        } else if (lon > b.getMaxLon()) {
+            changed = true;
+            lon = b.getMaxLon();
+        }
+        if (changed) {
             newCenter = Projections.project(new LatLon(lat,lon));
         }
         int width = getWidth()/2;

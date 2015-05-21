@@ -392,7 +392,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {}
+    public void layerAdded(Layer newLayer) {
+        // Do nothing
+    }
 
     @Override
     public void layerRemoved(Layer oldLayer) {
