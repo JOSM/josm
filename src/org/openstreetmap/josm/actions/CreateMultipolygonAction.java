@@ -200,7 +200,7 @@ public class CreateMultipolygonAction extends JosmAction {
         if (polygon == null) {
             return null; //could not make multipolygon.
         } else {
-            return Pair.create(selectedMultipolygonRelation, createRelation(polygon, new Relation(selectedMultipolygonRelation)));
+            return Pair.create(selectedMultipolygonRelation, createRelation(polygon, selectedMultipolygonRelation));
         }
     }
 
@@ -213,7 +213,7 @@ public class CreateMultipolygonAction extends JosmAction {
         if (polygon == null) {
             return null; //could not make multipolygon.
         } else {
-            return Pair.create(null, createRelation(polygon, new Relation()));
+            return Pair.create(null, createRelation(polygon, null));
         }
     }
 
@@ -301,8 +301,9 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param pol data storage class containing polygon information
      * @return multipolygon relation
      */
-    private static Relation createRelation(MultipolygonBuilder pol, final Relation rel) {
+    private static Relation createRelation(MultipolygonBuilder pol, Relation clone) {
         // Create new relation
+        Relation rel = clone != null ? new Relation(clone) : new Relation();
         rel.put("type", "multipolygon");
         // Add ways to it
         for (JoinedPolygon jway:pol.outerWays) {
