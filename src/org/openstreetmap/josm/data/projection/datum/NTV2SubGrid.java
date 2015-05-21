@@ -222,14 +222,13 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * Geomatics Department of the University of Melbourne</a>
      * <p>This method is thread safe for both memory based and file based node data.
      * @param gs GridShift object containing the coordinate to shift and the shift values
-     * @return the GridShift object supplied, with values updated.
      */
-    public NTV2GridShift interpolateGridShift(NTV2GridShift gs) {
+    public void interpolateGridShift(NTV2GridShift gs) {
         int lonIndex = (int)((gs.getLonPositiveWestSeconds() - minLon) / lonInterval);
         int latIndex = (int)((gs.getLatSeconds() - minLat) / latInterval);
 
-        double X = (gs.getLonPositiveWestSeconds() - (minLon + (lonInterval * lonIndex))) / lonInterval;
-        double Y = (gs.getLatSeconds() - (minLat + (latInterval * latIndex))) / latInterval;
+        double x = (gs.getLonPositiveWestSeconds() - (minLon + (lonInterval * lonIndex))) / lonInterval;
+        double y = (gs.getLatSeconds() - (minLat + (latInterval * latIndex))) / latInterval;
 
         // Find the nodes at the four corners of the cell
 
@@ -239,17 +238,17 @@ public class NTV2SubGrid implements Cloneable, Serializable {
         int indexD = indexC + 1;
 
         gs.setLonShiftPositiveWestSeconds(interpolate(
-                lonShift[indexA], lonShift[indexB], lonShift[indexC], lonShift[indexD], X, Y));
+                lonShift[indexA], lonShift[indexB], lonShift[indexC], lonShift[indexD], x, y));
 
         gs.setLatShiftSeconds(interpolate(
-                latShift[indexA], latShift[indexB], latShift[indexC], latShift[indexD], X, Y));
+                latShift[indexA], latShift[indexB], latShift[indexC], latShift[indexD], x, y));
 
         if (lonAccuracy == null) {
             gs.setLonAccuracyAvailable(false);
         } else {
             gs.setLonAccuracyAvailable(true);
             gs.setLonAccuracySeconds(interpolate(
-                    lonAccuracy[indexA], lonAccuracy[indexB], lonAccuracy[indexC], lonAccuracy[indexD], X, Y));
+                    lonAccuracy[indexA], lonAccuracy[indexB], lonAccuracy[indexC], lonAccuracy[indexD], x, y));
         }
 
         if (latAccuracy == null) {
@@ -257,9 +256,8 @@ public class NTV2SubGrid implements Cloneable, Serializable {
         } else {
             gs.setLatAccuracyAvailable(true);
             gs.setLatAccuracySeconds(interpolate(
-                    latAccuracy[indexA], latAccuracy[indexB], latAccuracy[indexC], latAccuracy[indexD], X, Y));
+                    latAccuracy[indexA], latAccuracy[indexB], latAccuracy[indexC], latAccuracy[indexD], x, y));
         }
-        return gs;
     }
 
     public String getParentSubGridName() {

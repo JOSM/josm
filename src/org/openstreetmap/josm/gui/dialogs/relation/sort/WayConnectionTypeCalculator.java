@@ -66,7 +66,7 @@ public class WayConnectionTypeCalculator {
 
             if (wct.linkPrev) {
                 if (lastBackwardWay != UNCONNECTED && lastForwardWay != UNCONNECTED) {
-                    wct = determineOnewayConnectionType(con, m, i, wct);
+                    determineOnewayConnectionType(con, m, i, wct);
                     if (!wct.linkPrev) {
                         firstGroupIdx = i;
                     }
@@ -138,7 +138,8 @@ public class WayConnectionTypeCalculator {
     private int lastForwardWay;
     private int lastBackwardWay;
     private boolean onewayBeginning;
-    private WayConnectionType determineOnewayConnectionType(final List<WayConnectionType> con,
+
+    private void determineOnewayConnectionType(final List<WayConnectionType> con,
             RelationMember m, int i, final WayConnectionType wct) {
         Direction dirFW = determineDirection(lastForwardWay, con.get(lastForwardWay).direction, i);
         Direction dirBW = NONE;
@@ -200,7 +201,6 @@ public class WayConnectionTypeCalculator {
                 wct.linkPrev = false;
             }
         }
-        return wct;
     }
 
     private static Direction reverse(final Direction dir){
