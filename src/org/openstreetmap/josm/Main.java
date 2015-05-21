@@ -1080,15 +1080,18 @@ public abstract class Main {
     }
 
     /**
-     * Closes JOSM and optionally terminates the Java Virtual Machine (JVM). If there are some unsaved data layers, asks first for user confirmation.
+     * Closes JOSM and optionally terminates the Java Virtual Machine (JVM).
+     * If there are some unsaved data layers, asks first for user confirmation.
      * @param exit If {@code true}, the JVM is terminated by running {@link System#exit} with a given return code.
      * @param exitCode The return code
      * @return {@code true} if JOSM has been closed, {@code false} if the user has cancelled the operation.
      * @since 3378
      */
     public static boolean exitJosm(boolean exit, int exitCode) {
-        JCSCacheManager.shutdown();
         if (Main.saveUnsavedModifications()) {
+            worker.shutdown();
+            ImageProvider.shutdown(false);
+            JCSCacheManager.shutdown();
             geometry.remember("gui.geometry");
             if (map != null) {
                 map.rememberToggleDialogWidth();
@@ -1101,6 +1104,9 @@ public abstract class Main {
                     Main.main.removeLayer(l);
                 }
             }
+            worker.shutdownNow();
+            ImageProvider.shutdown(true);
+
             if (exit) {
                 System.exit(exitCode);
             }
