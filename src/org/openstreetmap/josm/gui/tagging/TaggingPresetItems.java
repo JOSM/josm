@@ -932,7 +932,9 @@ public final class TaggingPresetItems {
         }
 
         @Override
-        boolean requestFocusInWindow() {return check.requestFocusInWindow();}
+        boolean requestFocusInWindow() {
+            return check.requestFocusInWindow();
+        }
 
         @Override
         public MatchType getDefaultMatch() {

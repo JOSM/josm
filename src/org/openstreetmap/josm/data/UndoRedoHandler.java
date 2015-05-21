@@ -174,9 +174,14 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {}
+    public void layerAdded(Layer newLayer) {
+        // Do nothing
+    }
+
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {}
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        // Do nothing
+    }
 
     /**
      * Removes a command queue listener.

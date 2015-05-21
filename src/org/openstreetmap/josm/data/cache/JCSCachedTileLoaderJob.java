@@ -409,7 +409,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                         }
                     }
                 }
-            } catch (NumberFormatException e) {} //ignore malformed Cache-Control headers
+            } catch (NumberFormatException e) {
+                // ignore malformed Cache-Control headers
+            }
         }
 
         ret.setExpirationTime(lng);

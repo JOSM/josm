@@ -203,18 +203,24 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     public abstract Action[] getMenuEntries();
 
     /**
-     * Called, when the layer is removed from the mapview and is going to be
-     * destroyed.
+     * Called, when the layer is removed from the mapview and is going to be destroyed.
      *
      * This is because the Layer constructor can not add itself safely as listener
      * to the layerlist dialog, because there may be no such dialog yet (loaded
      * via command line parameter).
      */
     @Override
-    public void destroy() {}
+    public void destroy() {
+        // Override in subclasses if needed
+    }
 
-    public File getAssociatedFile() { return associatedFile; }
-    public void setAssociatedFile(File file) { associatedFile = file; }
+    public File getAssociatedFile() {
+        return associatedFile;
+    }
+
+    public void setAssociatedFile(File file) {
+        associatedFile = file;
+    }
 
     /**
      * Replies the name of the layer

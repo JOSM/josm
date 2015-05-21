@@ -639,10 +639,14 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     /* ---------------------------------------------------------------------------------- */
 
     @Override
-    public void nodeMoved(NodeMovedEvent event) {/* irrelevant in this context */}
+    public void nodeMoved(NodeMovedEvent event) {
+        /* irrelevant in this context */
+    }
 
     @Override
-    public void wayNodesChanged(WayNodesChangedEvent event) {/* irrelevant in this context */}
+    public void wayNodesChanged(WayNodesChangedEvent event) {
+        /* irrelevant in this context */
+    }
 
     @Override
     public void primitivesAdded(final PrimitivesAddedEvent event) {
