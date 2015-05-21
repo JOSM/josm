@@ -137,6 +137,11 @@ way[junction                   ][!highway][junction!=yes],
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
 }
 
+/* {0.tag} without {1.tag} or {2.tag} */
+*[amenity=recycling][recycling_type!=container][recycling_type!=centre] {
+  throwWarning: tr("{0} without {1} or {2}", "{0.tag}", "{1.tag}", "{2.tag}");
+}
+
 /* {0.key} without {1.key}, {2.tag} or {3.tag} */
 *[intermittent                 ][!waterway][natural!~/^(water|spring)$/][ford!=yes] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.tag}", "{3.tag}");
