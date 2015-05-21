@@ -4548,7 +4548,7 @@
                 <check key="hygrometer" text="Shows humidity" />
             </optional>
         </item> <!-- Clock -->
-        <item name="Recycling" icon="presets/recycling.png" type="node,closedway" preset_name_label="true">
+        <item name="Recycling Container" icon="styles/standard/service/recycling/recycling_container.svg" type="node,closedway" preset_name_label="true">
            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=recycling"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=recycling"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=recycling"
@@ -4562,14 +4562,65 @@
                   sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=recycling" />
             <space />
             <key key="amenity" value="recycling" />
-            <check key="recycling:batteries" text="Batteries" />
-            <check key="recycling:cans" text="Cans" />
-            <check key="recycling:clothes" text="Clothes" />
-            <check key="recycling:glass" text="Glass" />
-            <check key="recycling:paper" text="Paper" />
-            <check key="recycling:scrap_metal" text="Scrap Metal" />
-            <combo key="recycling_type" text="Type" values="container,centre" />
-        </item> <!-- Recycling -->
+            <key key="recycling_type" value="container" />
+            <reference ref="oh_wheelchair" />
+            <space />
+            <checkgroup columns="4">
+                <check key="recycling:batteries" text="Batteries" />
+                <check key="recycling:cans" text="Cans" />
+                <check key="recycling:cardboard" text="Cardboard" />
+                <check key="recycling:clothes" text="Clothes" />
+                <check key="recycling:electrical_appliances" text="Electrical Appliances" />
+                <check key="recycling:glass" text="Glass" />
+                <check key="recycling:glass_bottles" text="Glass Bottles" />
+                <check key="recycling:green_waste" text="Green Waste" />
+                <check key="recycling:paper" text="Paper" />
+                <check key="recycling:plastic" text="Plastic" />
+                <check key="recycling:plastic_bottles" text="Plastic Bottles" />
+                <check key="recycling:plastic_packaging" text="Plastic Packaging" />
+                <check key="recycling:scrap_metal" text="Scrap Metal" />
+                <check key="recycling:shoes" text="Shoes" />
+                <check key="recycling:small_appliances" text="Small Appliances" />
+                <check key="recycling:waste" text="Waste" />
+            </checkgroup>
+        </item> <!-- Recycling Container-->
+        <item name="Recycling Centre" icon="styles/standard/service/recycling/recycling_centre.svg" type="node,closedway" preset_name_label="true">
+           <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=recycling"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=recycling"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=recycling"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=recycling"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=recycling"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=recycling"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=recycling"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=recycling"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=recycling"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=recycling"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=recycling" />
+            <space />
+            <key key="amenity" value="recycling" />
+            <key key="recycling_type" value="centre" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <space />
+            <checkgroup columns="4">
+                <check key="recycling:batteries" text="Batteries" />
+                <check key="recycling:cans" text="Cans" />
+                <check key="recycling:cardboard" text="Cardboard" />
+                <check key="recycling:clothes" text="Clothes" />
+                <check key="recycling:electrical_appliances" text="Electrical Appliances" />
+                <check key="recycling:glass" text="Glass" />
+                <check key="recycling:glass_bottles" text="Glass Bottles" />
+                <check key="recycling:green_waste" text="Green Waste" />
+                <check key="recycling:paper" text="Paper" />
+                <check key="recycling:plastic" text="Plastic" />
+                <check key="recycling:plastic_bottles" text="Plastic Bottles" />
+                <check key="recycling:plastic_packaging" text="Plastic Packaging" />
+                <check key="recycling:scrap_metal" text="Scrap Metal" />
+                <check key="recycling:shoes" text="Shoes" />
+                <check key="recycling:small_appliances" text="Small Appliances" />
+                <check key="recycling:waste" text="Waste" />
+            </checkgroup>
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Recycling Centre-->
         <item name="Waste Basket/Trash Can" icon="styles/standard/service/recycling/trash-bin.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=waste_basket"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=waste_basket"
