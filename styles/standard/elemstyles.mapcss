@@ -374,6 +374,11 @@ way[barrier=kerb] {
     width: 2;
     color: barrier#F0F050;
 }
+way[barrier=retaining_wall],
+way[barrier=kerb] {
+    repeat-image: "misc/cliff-pattern.png";
+    repeat-image-align: top;
+}
 node[barrier=hedge],
 node[barrier=wall],
 node[barrier=guard_rail],
