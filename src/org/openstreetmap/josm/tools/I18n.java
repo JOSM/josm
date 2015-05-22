@@ -402,6 +402,7 @@ public final class I18n {
         //languages.put("ar", PluralMode.MODE_AR);
         languages.put("ast", PluralMode.MODE_NOTONE);
         languages.put("bg", PluralMode.MODE_NOTONE);
+        languages.put("be", PluralMode.MODE_RU);
         languages.put("ca", PluralMode.MODE_NOTONE);
         languages.put("ca@valencia", PluralMode.MODE_NOTONE);
         languages.put("cs", PluralMode.MODE_CS);
