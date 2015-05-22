@@ -18,7 +18,7 @@ public class NodeData extends PrimitiveData implements INode {
      * Constructs a new {@code NodeData}.
      */
     public NodeData() {
-
+        // contents can be set later with setters
     }
 
     /**

@@ -119,6 +119,7 @@ public class CustomProjection extends AbstractProjection {
      * Constructs a new empty {@code CustomProjection}.
      */
     public CustomProjection() {
+        // contents can be set later with update()
     }
 
     /**

@@ -140,7 +140,7 @@ public final class TaggingPresetItems {
         }
 
         /**
-         * Construxts a new {@code PresetListEntry}, uninitialized.
+         * Constructs a new {@code PresetListEntry}, uninitialized.
          */
         public PresetListEntry() {
         }

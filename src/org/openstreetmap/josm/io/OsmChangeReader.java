@@ -29,6 +29,7 @@ public class OsmChangeReader extends OsmReader {
      * @see #parseDataSet(InputStream, ProgressMonitor)
      */
     protected OsmChangeReader() {
+        // Restricts visibility
     }
 
     @Override

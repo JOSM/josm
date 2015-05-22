@@ -1050,15 +1050,14 @@ public class MultiSplitLayout implements LayoutManager {
         private String name = "";
 
         /**
-         * Create a Leaf node.  The default value of name is "".
+         * Create a Leaf node. The default value of name is "".
          */
         public Leaf() {
-
+            // Name can be set later with setName()
         }
 
         /**
-         * Create a Leaf node with the specified name.  Name can not
-         * be null.
+         * Create a Leaf node with the specified name. Name can not be null.
          *
          * @param name value of the Leaf's name property
          * @throws IllegalArgumentException if name is null
@@ -1094,8 +1093,7 @@ public class MultiSplitLayout implements LayoutManager {
             StringBuilder sb = new StringBuilder("MultiSplitLayout.Leaf");
             sb.append(" \"")
               .append(getName())
-              .append('\"')
-              .append(" weight=")
+              .append("\" weight=")
               .append(getWeight())
               .append(' ')
               .append(getBounds());

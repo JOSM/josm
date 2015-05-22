@@ -26,19 +26,23 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * A TagCollection can be created:
  * <ul>
- *  <li>from the tags managed by a specific {@link org.openstreetmap.josm.data.osm.OsmPrimitive} with {@link #from(org.openstreetmap.josm.data.osm.Tagged)}</li>
- *  <li>from the union of all tags managed by a collection of {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s with {@link #unionOfAllPrimitives(java.util.Collection)}</li>
- *  <li>from the union of all tags managed by a {@link org.openstreetmap.josm.data.osm.DataSet} with {@link #unionOfAllPrimitives(org.openstreetmap.josm.data.osm.DataSet)}</li>
- *  <li>from the intersection of all tags managed by a collection of primitives with {@link #commonToAllPrimitives(java.util.Collection)}</li>
+ *  <li>from the tags managed by a specific {@link org.openstreetmap.josm.data.osm.OsmPrimitive}
+ *  with {@link #from(org.openstreetmap.josm.data.osm.Tagged)}</li>
+ *  <li>from the union of all tags managed by a collection of {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s
+ *  with {@link #unionOfAllPrimitives(java.util.Collection)}</li>
+ *  <li>from the union of all tags managed by a {@link org.openstreetmap.josm.data.osm.DataSet}
+ *  with {@link #unionOfAllPrimitives(org.openstreetmap.josm.data.osm.DataSet)}</li>
+ *  <li>from the intersection of all tags managed by a collection of primitives
+ *  with {@link #commonToAllPrimitives(java.util.Collection)}</li>
  * </ul>
  *
  * It  provides methods to query the collection, like {@link #size()}, {@link #hasTagsFor(String)}, etc.
  *
  * Basic set operations allow to create the union, the intersection and  the difference
- * of tag collections, see {@link #union(org.openstreetmap.josm.data.osm.TagCollection)}, {@link #intersect(org.openstreetmap.josm.data.osm.TagCollection)},
- * and {@link #minus(org.openstreetmap.josm.data.osm.TagCollection)}.
+ * of tag collections, see {@link #union(org.openstreetmap.josm.data.osm.TagCollection)},
+ * {@link #intersect(org.openstreetmap.josm.data.osm.TagCollection)}, and {@link #minus(org.openstreetmap.josm.data.osm.TagCollection)}.
  *
- *
+ * @since 2008
  */
 public class TagCollection implements Iterable<Tag> {
 
@@ -144,9 +148,10 @@ public class TagCollection implements Iterable<Tag> {
     private final Set<Tag> tags = new HashSet<>();
 
     /**
-     * Creates an empty tag collection
+     * Creates an empty tag collection.
      */
     public TagCollection() {
+        // contents can be set later with add()
     }
 
     /**

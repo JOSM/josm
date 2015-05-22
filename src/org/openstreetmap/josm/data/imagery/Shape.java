@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.Geometry;
  */
 public class Shape {
 
-    private List<Coordinate> coords = new ArrayList<>();
+    private final List<Coordinate> coords = new ArrayList<>();
 
     public Shape(String asString, String separator) {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
@@ -32,7 +32,11 @@ public class Shape {
         }
     }
 
+    /**
+     * Constructs a new empty {@code Shape}.
+     */
     public Shape() {
+        // shape contents can be set later with addPoint()
     }
 
     public String encodeAsString(String separator) {
@@ -106,6 +110,4 @@ public class Shape {
         }
         return true;
     }
-
-
 }

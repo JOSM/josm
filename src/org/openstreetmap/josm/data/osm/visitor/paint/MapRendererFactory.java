@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * factory.activate(MyMapRenderer.class);
  *
  * </pre>
- *
+ * @since 4087
  */
 public final class MapRendererFactory {
 
@@ -44,8 +44,6 @@ public final class MapRendererFactory {
     public static final String PREF_KEY_RENDERER_CLASS_NAME = "mappaint.renderer-class-name";
 
     public static class MapRendererFactoryException extends RuntimeException {
-        public MapRendererFactoryException() {
-        }
 
         public MapRendererFactoryException(String message, Throwable cause) {
             super(message, cause);

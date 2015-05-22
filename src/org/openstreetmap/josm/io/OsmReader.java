@@ -77,6 +77,7 @@ public class OsmReader extends AbstractReader {
      * @see #parseDataSet(InputStream, ProgressMonitor)
      */
     protected OsmReader() {
+        // Restricts visibility
     }
 
     protected void setParser(XMLStreamReader parser) {
