@@ -16,7 +16,7 @@ import org.openstreetmap.josm.io.CachedFile;
  * a common rendering on different platforms.
  * @since 7383
  */
-public class FontsManager {
+public final class FontsManager {
 
     /**
      * List of fonts embedded into JOSM jar.

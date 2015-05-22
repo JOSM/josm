@@ -224,8 +224,8 @@ public final class LanguageInfo {
      * </ul>
      *
      * @param locale the locale to use, <code>null</code> for default locale
-     * @since 8283
      * @return list of codes
+     * @since 8283
      */
     public static Collection<String> getLanguageCodes(Locale l) {
         Collection<String> list = new LinkedList<String>();

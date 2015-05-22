@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
  * Utility class that helps to work with color scale for coloring GPX tracks etc.
  * @since 7319
  */
-public class ColorScale {
+public final class ColorScale {
     private double min, max;
     private Color noDataColor;
     private Color belowMinColor;

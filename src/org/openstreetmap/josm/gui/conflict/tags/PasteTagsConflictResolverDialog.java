@@ -268,7 +268,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         return this.canceled;
     }
 
-    class CancelAction extends AbstractAction {
+    final class CancelAction extends AbstractAction {
 
         private CancelAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel conflict resolution"));
@@ -284,7 +284,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    class ApplyAction extends AbstractAction implements PropertyChangeListener {
+    final class ApplyAction extends AbstractAction implements PropertyChangeListener {
 
         private ApplyAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Apply resolved conflicts"));
@@ -358,7 +358,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    private static class StatisticsInfo {
+    private static final class StatisticsInfo {
         public int numTags;
         public Map<OsmPrimitiveType, Integer> sourceInfo;
         public Map<OsmPrimitiveType, Integer> targetInfo;
@@ -369,7 +369,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    private static class StatisticsTableColumnModel extends DefaultTableColumnModel {
+    private static final class StatisticsTableColumnModel extends DefaultTableColumnModel {
         private StatisticsTableColumnModel() {
             TableCellRenderer renderer = new StatisticsInfoRenderer();
             TableColumn col = null;
@@ -397,7 +397,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    private static class StatisticsTableModel extends DefaultTableModel {
+    private static final class StatisticsTableModel extends DefaultTableModel {
         private static final String[] HEADERS = new String[] {tr("Paste ..."), tr("From ..."), tr("To ...") };
         private transient List<StatisticsInfo> data;
 
@@ -507,7 +507,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    private static class StatisticsInfoTable extends JPanel {
+    private static final class StatisticsInfoTable extends JPanel {
 
         private JTable infoTable;
 

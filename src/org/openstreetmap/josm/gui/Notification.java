@@ -81,8 +81,8 @@ public class Notification {
      *
      * @param content any Component to be shown
      *
-     * @see #setContent(java.lang.String)
      * @return the current Object, for convenience
+     * @see #setContent(java.lang.String)
      */
     public Notification setContent(Component content) {
         this.content = content;
@@ -95,8 +95,8 @@ public class Notification {
      * @param msg the message String. Will be wrapped in &lt;html&gt;, so
      * you can use &lt;br&gt; and other markup directly.
      *
-     * @see #Notification(java.lang.String)
      * @return the current Object, for convenience
+     * @see #Notification(java.lang.String)
      */
     public Notification setContent(String msg) {
         JMultilineLabel lbl = new JMultilineLabel(msg);

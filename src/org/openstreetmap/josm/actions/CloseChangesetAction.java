@@ -75,7 +75,7 @@ public class CloseChangesetAction extends JosmAction {
         Main.worker.submit(closeChangesetTask);
     }
 
-    private class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
+    private final class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
 
         private boolean canceled;
         private OsmServerChangesetReader reader;

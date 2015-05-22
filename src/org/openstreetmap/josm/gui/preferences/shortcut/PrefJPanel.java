@@ -275,7 +275,7 @@ public class PrefJPanel extends JPanel {
     // more expirience with GUI coding than I have.
     private class CbAction extends AbstractAction implements ListSelectionListener {
         private PrefJPanel panel;
-        public CbAction (PrefJPanel panel) {
+        public CbAction(PrefJPanel panel) {
             this.panel = panel;
         }
         @Override
@@ -358,7 +358,7 @@ public class PrefJPanel extends JPanel {
             }
             try {
                 final TableRowSorter<? extends TableModel> sorter =
-                    (TableRowSorter<? extends TableModel> )shortcutTable.getRowSorter();
+                    (TableRowSorter<? extends TableModel>)shortcutTable.getRowSorter();
                 if (expr == null) {
                     sorter.setRowFilter(null);
                 } else {

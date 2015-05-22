@@ -71,8 +71,8 @@ public abstract class AbstractFileChooser {
      * either typing the filename into the UI or selecting the
      * file from a list in the UI.
      *
-     * @see #setSelectedFile
      * @return the selected file
+     * @see #setSelectedFile
      */
     public abstract File getSelectedFile();
 
@@ -174,9 +174,8 @@ public abstract class AbstractFileChooser {
      * not the current directory, changes the current directory
      * to be the file's parent directory.
      *
-     * @see #getSelectedFile
-     *
      * @param file the selected file
+     * @see #getSelectedFile
      */
     public abstract void setSelectedFile(File file);
 

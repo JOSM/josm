@@ -4,8 +4,8 @@ package org.openstreetmap.josm.data.osm.event;
 /**
  * A listener listening for all DataSet changes.
  *
- * @see DataSetListenerAdapter
  * @author nenik
+ * @see DataSetListenerAdapter
  */
 public interface DataSetListener {
     /**

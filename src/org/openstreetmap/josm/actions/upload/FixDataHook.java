@@ -34,7 +34,7 @@ public class FixDataHook implements UploadHook {
     /**
      * Constructor for data initialization
      */
-    public FixDataHook () {
+    public FixDataHook() {
         deprecated.add(new FixDataSpace());
         deprecated.add(new FixDataKey("color",            "colour"));
         deprecated.add(new FixDataTag("highway", "ford",  "ford",    "yes"));

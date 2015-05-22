@@ -375,8 +375,8 @@ public final class GuiHelper {
     /**
      * Sets a global font for all UI, replacing default font of current look and feel.
      * @param name Font name. It is up to the caller to make sure the font exists
-     * @since 7896
      * @throws IllegalArgumentException if name is null
+     * @since 7896
      */
     public static void setUIFont(String name) {
         CheckParameterUtil.ensureParameterNotNull(name, "name");

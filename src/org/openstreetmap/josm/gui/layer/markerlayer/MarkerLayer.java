@@ -253,7 +253,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         components.add(SeparatorLayerAction.INSTANCE);
         components.add(new SynchronizeAudio());
         if (Main.pref.getBoolean("marker.traceaudio", true)) {
-            components.add (new MoveAudio());
+            components.add(new MoveAudio());
         }
         components.add(new JumpToNextMarker(this));
         components.add(new JumpToPreviousMarker(this));

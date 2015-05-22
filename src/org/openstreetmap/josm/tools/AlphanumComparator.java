@@ -39,7 +39,7 @@ import java.util.Locale;
  * Bogus, and David Koelle and others.
  *
  */
-public class AlphanumComparator implements Comparator<String>, Serializable {
+public final class AlphanumComparator implements Comparator<String>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

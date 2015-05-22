@@ -119,7 +119,7 @@ public class VersionTable extends JTable implements Observer{
         repaint();
     }
 
-    class MouseListener extends PopupMenuLauncher {
+    final class MouseListener extends PopupMenuLauncher {
         private MouseListener() {
             super(popupMenu);
         }

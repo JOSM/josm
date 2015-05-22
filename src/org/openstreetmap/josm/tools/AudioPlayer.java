@@ -78,12 +78,12 @@ public final class AudioPlayer extends Thread {
             if (interrupted() || result == Result.WAITING)
                 throw new InterruptedException();
         }
-        protected void failed (Exception e) {
+        protected void failed(Exception e) {
             exception = e;
             result = Result.FAILED;
             state = State.NOTPLAYING;
         }
-        protected void ok (State newState) {
+        protected void ok(State newState) {
             result = Result.OK;
             state = newState;
         }

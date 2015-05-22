@@ -76,7 +76,7 @@ public class CredentialsManager implements CredentialsAgent {
      * Returns type of credentials agent backing this credentials manager.
      * @return The type of credentials agent
      */
-    public final Class<? extends CredentialsAgent> getCredentialsAgentClass () {
+    public final Class<? extends CredentialsAgent> getCredentialsAgentClass() {
         return delegate.getClass();
     }
 

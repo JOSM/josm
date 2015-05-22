@@ -106,7 +106,7 @@ public class LayerListPopup extends JPopupMenu {
         }
         for (Action a : actions) {
             if (a instanceof LayerAction) {
-                add (((LayerAction) a).createMenuComponent());
+                add(((LayerAction) a).createMenuComponent());
             } else {
                 add(new JMenuItem(a));
             }

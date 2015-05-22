@@ -90,7 +90,7 @@ public abstract class AbstractReader {
                 Node n = (Node)externalIdMap.get(new SimplePrimitiveId(id, OsmPrimitiveType.NODE));
                 if (n == null) {
                     if (id <= 0)
-                        throw new IllegalDataException (
+                        throw new IllegalDataException(
                                 tr("Way with external ID ''{0}'' includes missing node with external ID ''{1}''.",
                                         externalWayId,
                                         id));
