@@ -46,7 +46,17 @@ public class Environment {
     /**
      * Creates a new uninitialized environment.
      */
-    public Environment() {}
+    public Environment() {
+        // environment can be initialized later through with* methods
+    }
+
+    /**
+     * Creates a new environment.
+     * @since 8415
+     */
+    public Environment(OsmPrimitive osm) {
+        this.osm = osm;
+    }
 
     /**
      * Creates a new environment.

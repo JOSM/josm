@@ -142,7 +142,7 @@ public abstract class OsmServerReader extends OsmConnection {
                 addAuth(activeConnection);
             }
             if (cancel)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException("Operation canceled");
             if (Main.pref.getBoolean("osm-server.use-compression", true)) {
                 activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
             }
@@ -170,7 +170,7 @@ public abstract class OsmServerReader extends OsmConnection {
                     throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,null,null);
 
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_PROXY_AUTH)
-                    throw new OsmTransferCanceledException();
+                    throw new OsmTransferCanceledException("Proxy Authentication Required");
 
                 String encoding = activeConnection.getContentEncoding();
                 if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {

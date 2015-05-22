@@ -11,21 +11,15 @@ import javax.swing.text.html.StyleSheet;
  */
 public class JosmHTMLEditorKit extends HTMLEditorKit {
 
-    /**
-     * Constructs a new {@code JosmHTMLEditorKit}
-     */
-    public JosmHTMLEditorKit() {
-    }
-    
     protected StyleSheet ss = super.getStyleSheet();
 
     /**
      * Set the set of styles to be used to render the various HTML elements.
-     * These styles are specified in terms of CSS specifications. 
+     * These styles are specified in terms of CSS specifications.
      * Each document produced by the kit will have a copy of the sheet which
-     * it can add the document specific styles to. 
-     * 
-     * Unlike the base implementation, the StyleSheet specified is NOT shared 
+     * it can add the document specific styles to.
+     *
+     * Unlike the base implementation, the StyleSheet specified is NOT shared
      * by all HTMLEditorKit instances, to provide a finer granularity.
 
      * @see #getStyleSheet
@@ -37,10 +31,10 @@ public class JosmHTMLEditorKit extends HTMLEditorKit {
 
     /**
      * Get the set of styles currently being used to render the HTML elements.
-     *  
-     * Unlike the base implementation, the StyleSheet specified is NOT shared 
+     *
+     * Unlike the base implementation, the StyleSheet specified is NOT shared
      * by all HTMLEditorKit instances, to provide a finer granularity.
-     * 
+     *
      * @see #setStyleSheet
      */
     @Override

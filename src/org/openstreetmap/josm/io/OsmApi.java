@@ -561,7 +561,7 @@ public class OsmApi extends OsmConnection {
                 monitor.setCustomText(tr("Starting retry {0} of {1} in {2} seconds ...", getMaxRetries() - retry,getMaxRetries(), 10-i));
             }
             if (cancel)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException("Operation canceled" + (i > 0 ? " in retry #"+i : ""));
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {

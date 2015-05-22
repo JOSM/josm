@@ -139,7 +139,7 @@ class ChildOrParentSelectorTest {
         r.addMember(new RelationMember("my_role", w2))
         r.addMember(new RelationMember("another role", w3))
 
-        Environment e = new Environment().withPrimitive(r)
+        Environment e = new Environment(r)
         assert selector.matches(e)
     }
 
@@ -164,13 +164,13 @@ class ChildOrParentSelectorTest {
         r.addMember(new RelationMember("my_role", w2))
         r.addMember(new RelationMember("another role", w3))
 
-        Environment e = new Environment().withPrimitive(w1)
+        Environment e = new Environment(w1)
         assert !selector.matches(e)
 
-        e = new Environment().withPrimitive(w2)
+        e = new Environment(w2)
         assert !selector.matches(e)
 
-        e = new Environment().withPrimitive(w3)
+        e = new Environment(w3)
         assert selector.matches(e)
     }
 }

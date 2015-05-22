@@ -178,8 +178,7 @@ public class UploadSelectionDialog extends JDialog {
         }
 
         public OsmPrimitiveList() {
-            super(new OsmPrimitiveListModel());
-            init();
+            this(new OsmPrimitiveListModel());
         }
 
         public OsmPrimitiveList(OsmPrimitiveListModel model) {
@@ -194,9 +193,6 @@ public class UploadSelectionDialog extends JDialog {
 
     static class OsmPrimitiveListModel extends AbstractListModel<OsmPrimitive> {
         private transient List<OsmPrimitive> data;
-
-        public OsmPrimitiveListModel() {
-        }
 
         protected void sort() {
             if (data == null)
@@ -213,10 +209,6 @@ public class UploadSelectionDialog extends JDialog {
                         }
                     }
             );
-        }
-
-        public OsmPrimitiveListModel(List<OsmPrimitive> data) {
-            setPrimitives(data);
         }
 
         public void setPrimitives(List<OsmPrimitive> data) {

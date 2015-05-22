@@ -76,10 +76,13 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public class MainApplication extends Main {
+
     /**
-     * Allow subclassing (see JOSM.java)
+     * Constructs a new {@code MainApplication}.
      */
-    public MainApplication() {}
+    public MainApplication() {
+       // Allow subclassing (see JOSM.java)
+    }
 
     /**
      * Constructs a main frame, ready sized and operating. Does not display the frame.
@@ -199,8 +202,7 @@ public class MainApplication extends Main {
         /** --offline=&lt;osm_api|josm_website|all&gt; Disable access to the given resource(s), delimited by comma */
         OFFLINE(true),
         /** --skip-plugins */
-        SKIP_PLUGINS(false),
-        ;
+        SKIP_PLUGINS(false);
 
         private final String name;
         private final boolean requiresArg;
@@ -224,17 +226,6 @@ public class MainApplication extends Main {
          */
         public boolean requiresArgument() {
             return requiresArg;
-        }
-
-        public static Map<Option, Collection<String>> fromStringMap(Map<String, Collection<String>> opts) {
-            Map<Option, Collection<String>> res = new EnumMap<>(Option.class);
-            for (Map.Entry<String, Collection<String>> e : opts.entrySet()) {
-                Option o = Option.valueOf(e.getKey().toUpperCase(Locale.ENGLISH).replace("-", "_"));
-                if (o != null) {
-                    res.put(o, e.getValue());
-                }
-            }
-            return res;
         }
     }
 
