@@ -29,9 +29,10 @@ import org.openstreetmap.josm.Main;
  */
 
 public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
+    private static final long serialVersionUID = 1L;
 
-    private Map<String, Semaphore> hostSemaphores = new ConcurrentHashMap<>();
-    private int hostLimit;
+    private final Map<String, Semaphore> hostSemaphores = new ConcurrentHashMap<>();
+    private final int hostLimit;
 
     /**
      * Creates an unbounded queue
@@ -90,7 +91,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
     }
 
     private  Semaphore getSemaphore(JCSCachedTileLoaderJob<?, ?> job) {
-        String host = ((JCSCachedTileLoaderJob<?, ?>)job).getUrl().getHost();
+        String host = job.getUrl().getHost();
         Semaphore limit = hostSemaphores.get(host);
         if (limit == null) {
             synchronized(hostSemaphores) {
@@ -111,6 +112,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
             if (limit != null) {
                 limit.acquire();
                 jcsJob.setFinishedTask(new Runnable() {
+                    @Override
                     public void run() {
                         releaseSemaphore(jcsJob);
                     }
@@ -127,6 +129,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
             ret = limit.tryAcquire();
             if (ret) {
                 job.setFinishedTask(new Runnable() {
+                    @Override
                     public void run() {
                         releaseSemaphore(job);
                     }

@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -132,6 +133,9 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     @Override
     protected boolean cacheAsEmpty(Map<String, List<String>> headers, int statusCode, byte[] content) {
+        // cacheAsEmpty is called for every successful download, so we can put
+        // metadata handling here
+        attributes.setMetadata(tile.getTileSource().getMetadata(headers));
         if (tile.getTileSource().isNoTileAtZoom(headers, statusCode, content)) {
             attributes.setNoTileAtZoom(true);
             return true;
@@ -165,6 +169,13 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         try {
             if(!tile.isLoaded()) { //if someone else already loaded tile, skip all the handling
                 tile.finishLoading(); // whatever happened set that loading has finished
+                // set tile metadata
+                if (this.attributes != null) {
+                    for (Entry<String, String> e: this.attributes.getMetadata().entrySet()) {
+                        tile.putValue(e.getKey(), e.getValue());
+                    }
+                }
+
                 switch(result){
                 case SUCCESS:
                     handleNoTileAtZoom();
@@ -213,6 +224,13 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         BufferedImageCacheEntry data = get();
         if (isObjectLoadable()) {
             try {
+                // set tile metadata
+                if (this.attributes != null) {
+                    for (Entry<String, String> e: this.attributes.getMetadata().entrySet()) {
+                        tile.putValue(e.getKey(), e.getValue());
+                    }
+                }
+
                 if (data != null && data.getImage() != null) {
                     tile.setImage(data.getImage());
                     tile.finishLoading();

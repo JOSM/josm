@@ -41,6 +41,7 @@ public class ImageryReader {
         BOUNDS,
         SHAPE,
         NO_TILE,
+        METADATA,
         UNKNOWN,            // element is not recognized in the current context
     }
 
@@ -87,6 +88,7 @@ public class ImageryReader {
         private String lang;
         private List<String> projections;
         private Map<String, String> noTileHeaders;
+        private Map<String, String> metadataHeaders;
 
         @Override
         public void startDocument() {
@@ -116,6 +118,8 @@ public class ImageryReader {
                     entry = new ImageryInfo();
                     skipEntry = false;
                     newState = State.ENTRY;
+                    noTileHeaders = new HashMap<>();
+                    metadataHeaders = new HashMap<>();
                 }
                 break;
             case ENTRY:
@@ -156,9 +160,11 @@ public class ImageryReader {
                     projections = new ArrayList<>();
                     newState = State.PROJECTIONS;
                 } else if ("no-tile-header".equals(qName)) {
-                    noTileHeaders = new HashMap<>();
                     noTileHeaders.put(atts.getValue("name"), atts.getValue("value"));
                     newState = State.NO_TILE;
+                } else if ("metadata-header".equals(qName)) {
+                    metadataHeaders.put(atts.getValue("header-name"), atts.getValue("metadata-key"));
+                    newState = State.METADATA;
                 }
                 break;
             case BOUNDS:
@@ -195,7 +201,6 @@ public class ImageryReader {
             if (newState == State.UNKNOWN && "true".equals(atts.getValue("mandatory"))) {
                 skipEntry = true;
             }
-            return;
         }
 
         @Override
@@ -210,6 +215,11 @@ public class ImageryReader {
                 throw new RuntimeException("parsing error: more closing than opening elements");
             case ENTRY:
                 if ("entry".equals(qName)) {
+                    entry.setNoTileHeaders(noTileHeaders);
+                    noTileHeaders = null;
+                    entry.setMetadataHeaders(metadataHeaders);
+                    metadataHeaders = null;
+
                     if (!skipEntry) {
                         entries.add(entry);
                     }
@@ -331,8 +341,6 @@ public class ImageryReader {
                 projections = null;
                 break;
             case NO_TILE:
-                entry.setNoTileHeaders(noTileHeaders);
-                noTileHeaders = null;
                 break;
 
             }
