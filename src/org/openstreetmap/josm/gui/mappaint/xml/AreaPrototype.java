@@ -9,7 +9,7 @@ public class AreaPrototype extends Prototype {
     public Color color;
     public boolean closed; // if true, it does not apply to unclosed ways
 
-    public AreaPrototype (AreaPrototype a, Range range) {
+    public AreaPrototype(AreaPrototype a, Range range) {
         super(range);
         this.color = a.color;
         this.closed = a.closed;

@@ -318,7 +318,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     /**
      * Loads preferences to UI controls
      */
-    public final void loadPreferences () {
+    public final void loadPreferences() {
         makeAutoMarkers.setSelected(Main.pref.getBoolean("marker.makeautomarkers", true));
         if(layerName!=null && Main.pref.get("draw.rawgps.lines."+layerName).isEmpty()
                 && Main.pref.get("draw.rawgps.lines.local."+layerName).isEmpty()){

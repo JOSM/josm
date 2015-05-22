@@ -1004,7 +1004,7 @@ public final class CustomConfigurator {
         @SuppressWarnings("unchecked")
         Map<String, String> stringMap =  (Map<String, String>) engine.get("stringMap");
         @SuppressWarnings("unchecked")
-        Map<String, List<String>> listMap = (SortedMap<String, List<String>> ) engine.get("listMap");
+        Map<String, List<String>> listMap = (SortedMap<String, List<String>>) engine.get("listMap");
         @SuppressWarnings("unchecked")
         Map<String, List<Collection<String>>> listlistMap = (SortedMap<String, List<Collection<String>>>) engine.get("listlistMap");
         @SuppressWarnings("unchecked")

@@ -44,11 +44,11 @@ import org.openstreetmap.josm.tools.Shortcut;
  *     to achieve the desired number of nodes (`createcircle.nodecount`).
  * BTW: Someone might want to implement projection corrections for this...
  *
- * @since 996
- *
  * @author Henry Loenwind
  * @author Sebastian Masch
  * @author Alain Delplanque
+ *
+ * @since 996
  */
 public final class CreateCircleAction extends JosmAction {
 

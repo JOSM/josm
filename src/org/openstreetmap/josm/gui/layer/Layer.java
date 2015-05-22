@@ -477,8 +477,8 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      * Creates a new "Save" dialog for this layer and makes it visible.<br>
      * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
      * @return The output {@code File}
-     * @since 5459
      * @see SaveActionBase#createAndOpenSaveFileChooser
+     * @since 5459
      */
     public File createAndOpenSaveFileChooser() {
         return SaveActionBase.createAndOpenSaveFileChooser(tr("Save Layer"), "lay");

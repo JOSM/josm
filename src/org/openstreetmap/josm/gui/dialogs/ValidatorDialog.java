@@ -568,7 +568,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         public FixTask(Collection<TestError> testErrors) {
             super(tr("Fixing errors ..."), false /* don't ignore exceptions */);
-            this.testErrors = testErrors == null ? new ArrayList<TestError> (): testErrors;
+            this.testErrors = testErrors == null ? new ArrayList<TestError>(): testErrors;
         }
 
         @Override

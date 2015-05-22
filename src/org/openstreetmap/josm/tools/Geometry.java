@@ -423,8 +423,8 @@ public final class Geometry {
      * @param lineP2 Second point determining line
      * @param point Point for which a closest point is searched on line (P1,P2)
      * @return The closest point found on line. It may be outside the segment [P1,P2].
-     * @since 4134
      * @see #closestPointToSegment
+     * @since 4134
      */
     public static EastNorth closestPointToLine(EastNorth lineP1, EastNorth lineP2, EastNorth point) {
         return closestPointTo(lineP1, lineP2, point, false);
@@ -689,10 +689,10 @@ public final class Geometry {
 
     /**
      * Determines whether path from nodes list is oriented clockwise.
-     * @see #isClockwise(Way)
      * @param nodes Nodes list to be checked.
      * @return true if and only if way is oriented clockwise.
      * @throws IllegalArgumentException if way is not closed (see {@link Way#isClosed}).
+     * @see #isClockwise(Way)
      */
     public static boolean isClockwise(List<Node> nodes) {
         double area2 = 0.;

@@ -207,7 +207,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
     private void updateModeLocalPreferences() {
         // @formatter:off
-        snapThreshold        = Main.pref.getDouble (prefKey("snap-threshold-percent"), 0.70);
+        snapThreshold        = Main.pref.getDouble(prefKey("snap-threshold-percent"), 0.70);
         snapDefault          = Main.pref.getBoolean(prefKey("snap-default"),      true);
         copyTagsDefault      = Main.pref.getBoolean(prefKey("copy-tags-default"), true);
         initialMoveDelay     = Main.pref.getInteger(prefKey("initial-move-delay"), 200);

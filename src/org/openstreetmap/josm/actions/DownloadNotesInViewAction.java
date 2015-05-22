@@ -17,7 +17,7 @@ import org.openstreetmap.josm.io.OnlineResource;
  *
  * No interaction is required.
  */
-public class DownloadNotesInViewAction extends JosmAction {
+public final class DownloadNotesInViewAction extends JosmAction {
 
     private DownloadNotesInViewAction(String iconName) {
         super(tr("Download notes in current view"), iconName, tr("Download notes in current view"), null, false);

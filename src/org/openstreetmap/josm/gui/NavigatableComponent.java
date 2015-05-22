@@ -723,13 +723,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * neither does the result *order*.
      * It solely depends on the distance to point p.
      *
-     * @return All nodes nearest to point p that are in a belt from
-     *      dist(nearest) to dist(nearest)+4px around p and
-     *      that are not in ignore.
-     *
      * @param p the point for which to search the nearest segment.
      * @param ignore a collection of nodes which are not to be returned.
      * @param predicate the returned objects have to fulfill certain properties.
+     *
+     * @return All nodes nearest to point p that are in a belt from
+     *      dist(nearest) to dist(nearest)+4px around p and
+     *      that are not in ignore.
      */
     public final List<Node> getNearestNodes(Point p,
             Collection<Node> ignore, Predicate<OsmPrimitive> predicate) {
@@ -770,12 +770,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * neither does the result *order*.
      * It solely depends on the distance to point p.
      *
+     * @param p the point for which to search the nearest segment.
+     * @param predicate the returned objects have to fulfill certain properties.
+     *
      * @return All nodes nearest to point p that are in a belt from
      *      dist(nearest) to dist(nearest)+4px around p.
      * @see #getNearestNodes(Point, Collection, Predicate)
-     *
-     * @param p the point for which to search the nearest segment.
-     * @param predicate the returned objects have to fulfill certain properties.
      */
     public final List<Node> getNearestNodes(Point p, Predicate<OsmPrimitive> predicate) {
         return getNearestNodes(p, null, predicate);
@@ -795,12 +795,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * Finally, if a node is not found at all, null is returned.
      *
-     * @return A node within snap-distance to point p,
-     *      that is chosen by the algorithm described.
-     *
      * @param p the screen point
      * @param predicate this parameter imposes a condition on the returned object, e.g.
      *        give the nearest node that is tagged.
+     *
+     * @return A node within snap-distance to point p,
+     *      that is chosen by the algorithm described.
      */
     public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate, boolean useSelected) {
         return getNearestNode(p, predicate, useSelected, null);
@@ -964,12 +964,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Segments within 10px of p are searched and sorted by their distance to @param p,
      * then, within groups of equally distant segments, prefer those that are selected.
      *
-     * @return all segments within 10px of p that are not in ignore,
-     *          sorted by their perpendicular distance.
-     *
      * @param p the point for which to search the nearest segments.
      * @param ignore a collection of segments which are not to be returned.
      * @param predicate the returned objects have to fulfill certain properties.
+     *
+     * @return all segments within 10px of p that are not in ignore,
+     *          sorted by their perpendicular distance.
      */
     public final List<WaySegment> getNearestWaySegments(Point p,
             Collection<WaySegment> ignore, Predicate<OsmPrimitive> predicate) {
@@ -995,11 +995,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * The result *order* depends on the current map selection state.
      *
-     * @return all segments within 10px of p, sorted by their perpendicular distance.
-     * @see #getNearestWaySegments(Point, Collection, Predicate)
-     *
      * @param p the point for which to search the nearest segments.
      * @param predicate the returned objects have to fulfill certain properties.
+     *
+     * @return all segments within 10px of p, sorted by their perpendicular distance.
+     * @see #getNearestWaySegments(Point, Collection, Predicate)
      */
     public final List<WaySegment> getNearestWaySegments(Point p, Predicate<OsmPrimitive> predicate) {
         return getNearestWaySegments(p, null, predicate);
@@ -1105,12 +1105,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * neither does the result *order*.
      * It solely depends on the perpendicular distance to point p.
      *
-     * @return all nearest ways to the screen point given that are not in ignore.
-     * @see #getNearestWaySegments(Point, Collection, Predicate)
-     *
      * @param p the point for which to search the nearest ways.
      * @param ignore a collection of ways which are not to be returned.
      * @param predicate the returned object has to fulfill certain properties.
+     *
+     * @return all nearest ways to the screen point given that are not in ignore.
+     * @see #getNearestWaySegments(Point, Collection, Predicate)
      */
     public final List<Way> getNearestWays(Point p,
             Collection<Way> ignore, Predicate<OsmPrimitive> predicate) {
@@ -1136,11 +1136,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * neither does the result *order*.
      * It solely depends on the perpendicular distance to point p.
      *
-     * @return all nearest ways to the screen point given.
-     * @see #getNearestWays(Point, Collection, Predicate)
-     *
      * @param p the point for which to search the nearest ways.
      * @param predicate the returned object has to fulfill certain properties.
+     *
+     * @return all nearest ways to the screen point given.
+     * @see #getNearestWays(Point, Collection, Predicate)
      */
     public final List<Way> getNearestWays(Point p, Predicate<OsmPrimitive> predicate) {
         return getNearestWays(p, null, predicate);
@@ -1174,13 +1174,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * If nothing is found, return an empty collection.
      *
-     * @return Primitives nearest to the given screen point that are not in ignore.
-     * @see #getNearestNodes(Point, Collection, Predicate)
-     * @see #getNearestWays(Point, Collection, Predicate)
-     *
      * @param p The point on screen.
      * @param ignore a collection of ways which are not to be returned.
      * @param predicate the returned object has to fulfill certain properties.
+     *
+     * @return Primitives nearest to the given screen point that are not in ignore.
+     * @see #getNearestNodes(Point, Collection, Predicate)
+     * @see #getNearestWays(Point, Collection, Predicate)
      */
     public final List<OsmPrimitive> getNearestNodesOrWays(Point p,
             Collection<OsmPrimitive> ignore, Predicate<OsmPrimitive> predicate) {
@@ -1206,11 +1206,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * neither does the result *order*.
      * It solely depends on the distance to point p.
      *
-     * @return Primitives nearest to the given screen point.
-     * @see #getNearestNodesOrWays(Point, Collection, Predicate)
-     *
      * @param p The point on screen.
      * @param predicate the returned object has to fulfill certain properties.
+     * @return Primitives nearest to the given screen point.
+     * @see #getNearestNodesOrWays(Point, Collection, Predicate)
      */
     public final List<OsmPrimitive> getNearestNodesOrWays(Point p, Predicate<OsmPrimitive> predicate) {
         return getNearestNodesOrWays(p, null, predicate);
@@ -1220,11 +1219,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * This is used as a helper routine to {@link #getNearestNodeOrWay(Point, Predicate, boolean)}
      * It decides, whether to yield the node to be tested or look for further (way) candidates.
      *
-     * @return true, if the node fulfills the properties of the function body
-     *
      * @param osm node to check
      * @param p point clicked
      * @param use_selected whether to prefer selected nodes
+     * @return true, if the node fulfills the properties of the function body
      */
     private boolean isPrecedenceNode(Node osm, Point p, boolean use_selected) {
         if (osm != null) {
@@ -1451,8 +1449,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Sets the current system of measurement.
      * @param somKey The system of measurement key. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
-     * @since 6056
      * @throws IllegalArgumentException if {@code somKey} is not known
+     * @since 6056
      */
     public static void setSystemOfMeasurement(String somKey) {
         if (!SystemOfMeasurement.ALL_SYSTEMS.containsKey(somKey)) {

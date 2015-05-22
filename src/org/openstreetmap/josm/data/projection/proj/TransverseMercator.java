@@ -94,7 +94,7 @@ public class TransverseMercator implements Proj {
                 + (N_a / 120.0 * pow(cos(phi), 5.0) * l5coef * pow(l, 5.0))
                 + (N_a / 5040.0 * pow(cos(phi), 7.0) * l7coef * pow(l, 7.0)),
                 /* Calculate northing (y) */
-                ArcLengthOfMeridian (phi) / a
+                ArcLengthOfMeridian(phi) / a
                 + (t / 2.0 * N_a * pow(cos(phi), 2.0) * pow(l, 2.0))
                 + (t / 24.0 * N_a * pow(cos(phi), 4.0) * l4coef * pow(l, 4.0))
                 + (t / 720.0 * N_a * pow(cos(phi), 6.0) * l6coef * pow(l, 6.0))

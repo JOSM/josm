@@ -18,9 +18,9 @@ import org.openstreetmap.josm.Main;
  * A subclass of {@link JPasswordField} to implement a workaround to
  * <a href="https://bugs.openjdk.java.net/browse/JDK-6322854">JDK bug 6322854</a>.
  *
- * @since 5752
  * @see <a href="https://josm.openstreetmap.de/ticket/8404">https://josm.openstreetmap.de/ticket/8404</a>
  * @see <a href="https://hg.netbeans.org/main/rev/33cb2e81b640">https://hg.netbeans.org/main/rev/33cb2e81b640</a>
+ * @since 5752
  */
 public class JosmPasswordField extends JPasswordField implements FocusListener {
 

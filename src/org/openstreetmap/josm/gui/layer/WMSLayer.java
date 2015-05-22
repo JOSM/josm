@@ -319,7 +319,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             return tr("WMS layer ({0}), downloading in zoom {1}", getName(), resolutionText);
     }
 
-    private int modulo (int a, int b) {
+    private int modulo(int a, int b) {
         return a % b >= 0 ? a%b : a%b+b;
     }
 

@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class LogShowDialog extends ExtendedDialog {
 
 
-    public LogShowDialog (String title, String msg, String log) {
+    public LogShowDialog(String title, String msg, String log) {
         super(Main.parent, title, new String[] {tr("OK")});
         setButtonIcons(new String[] {"ok.png"});
         setContent(build(msg, log));
@@ -31,21 +31,21 @@ public class LogShowDialog extends ExtendedDialog {
     protected final JPanel build(String msg, String log) {
         JPanel p = new JPanel(new GridBagLayout());
         JLabel lbl = new JLabel(msg);
-        
+
         lbl.setFont(lbl.getFont().deriveFont(0, 14));
-        
+
         p.add(lbl, GBC.eol().insets(5,0,5,0));
         JosmEditorPane txt = new JosmEditorPane();
         txt.setContentType("text/html");
         txt.setText(log);
         txt.setEditable(false);
         txt.setOpaque(false);
-        
+
         JScrollPane sp = new JScrollPane(txt);
         sp.setOpaque(false);
         sp.setPreferredSize(new Dimension(600,300));
-        
-        
+
+
         p.add(sp, GBC.eop().insets(5,15,0,0).fill(GBC.HORIZONTAL));
 
         return p;

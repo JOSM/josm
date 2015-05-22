@@ -64,8 +64,8 @@ public class LineClip {
         boolean accept = false;
         boolean done = false;
 
-        outcode0 = computeOutCode (x1, y1, xmin, ymin, xmax, ymax);
-        outcode1 = computeOutCode (x2, y2, xmin, ymin, xmax, ymax);
+        outcode0 = computeOutCode(x1, y1, xmin, ymin, xmax, ymax);
+        outcode1 = computeOutCode(x2, y2, xmin, ymin, xmax, ymax);
 
         do {
             if ((outcode0 | outcode1) == 0 ) {
@@ -114,7 +114,7 @@ public class LineClip {
      * The outcode of the point.
      * We cannot use Rectangle.outcode since it does not work with long ints.
      */
-    private static int computeOutCode (long x, long y, long xmin, long ymin, long xmax, long ymax) {
+    private static int computeOutCode(long x, long y, long xmin, long ymin, long xmax, long ymax) {
         int code = 0;
         if (y > ymax) {
             code |= OUT_TOP;

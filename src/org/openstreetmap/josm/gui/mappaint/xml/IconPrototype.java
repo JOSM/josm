@@ -9,7 +9,7 @@ public class IconPrototype extends Prototype {
     public IconReference icon;
     public Boolean annotate;
 
-    public IconPrototype (IconPrototype i, Range range) {
+    public IconPrototype(IconPrototype i, Range range) {
         super(range);
         this.icon = i.icon;
         this.annotate = i.annotate;
