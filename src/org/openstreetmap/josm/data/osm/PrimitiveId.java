@@ -18,10 +18,10 @@ public interface PrimitiveId {
     /**
      * Gets the type of object represented by this object.
      *
+     * @return the object type
      * @see Node
      * @see Way
      * @see Relation
-     * @return the object type
      */
     OsmPrimitiveType getType();
 

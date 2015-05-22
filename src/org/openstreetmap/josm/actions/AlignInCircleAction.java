@@ -31,12 +31,12 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Aligns all selected nodes within a circle. (Useful for roundabouts)
  *
- * @since 146
- *
  * @author Matthew Newton
  * @author Petr Dlouhý
  * @author Teemu Koskinen
  * @author Alain Delplanque
+ *
+ * @since 146
  */
 public final class AlignInCircleAction extends JosmAction {
 

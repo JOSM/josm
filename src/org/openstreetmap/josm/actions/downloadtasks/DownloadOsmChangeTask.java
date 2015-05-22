@@ -124,7 +124,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
     /**
      * Loads history and updates incomplete primitives.
      */
-    private static class HistoryLoaderAndListener extends HistoryLoadTask implements HistoryDataSetListener {
+    private static final class HistoryLoaderAndListener extends HistoryLoadTask implements HistoryDataSetListener {
 
         private final Map<OsmPrimitive, Date> toLoad;
 

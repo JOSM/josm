@@ -108,8 +108,8 @@ public final class MapPaintStyles {
      * @param ref reference to the requested icon
      * @param test if <code>true</code> than the icon is request is tested
      * @return image provider for icon (can be <code>null</code> when <code>test</code> is <code>true</code>).
-     * @since 8097
      * @see #getIcon(IconReference, int,int)
+     * @since 8097
      */
     public static ImageProvider getIconProvider(IconReference ref, boolean test) {
         final String namespace = ref.source.getPrefName();

@@ -166,11 +166,11 @@ public class FileDrop {
                         Transferable tr = evt.getTransferable();
 
                         // Is it a file list?
-                        if (tr.isDataFlavorSupported (DataFlavor.javaFileListFlavor)) {
+                        if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 
                             // Say we'll take it.
-                            evt.acceptDrop ( DnDConstants.ACTION_COPY );
-                            Main.trace("FileDrop: file list accepted." );
+                            evt.acceptDrop(DnDConstants.ACTION_COPY);
+                            Main.trace("FileDrop: file list accepted.");
 
                             // Get a useful list
                             List<?> fileList = (List<?>)tr.getTransferData(DataFlavor.javaFileListFlavor);
@@ -180,12 +180,12 @@ public class FileDrop {
 
                             // Alert listener to drop.
                             if( listener != null ) {
-                                listener.filesDropped( files );
+                                listener.filesDropped(files);
                             }
 
                             // Mark that drop is completed.
                             evt.getDropTargetContext().dropComplete(true);
-                            Main.trace("FileDrop: drop complete." );
+                            Main.trace("FileDrop: drop complete.");
                         } else {
                             // this section will check for a reader flavor.
                             // Thanks, Nathan!
@@ -553,9 +553,9 @@ public class FileDrop {
          * and the MIME type
          * <tt>application/x-net.iharder.dnd.TransferableObject</tt>.
          *
-         * @see Fetcher
          * @param dataClass The {@link java.lang.Class} to use in the custom data flavor
          * @param fetcher The {@link Fetcher} that will return the data object
+         * @see Fetcher
          */
         public TransferableObject(Class<?> dataClass, Fetcher fetcher ) {
             this.fetcher = fetcher;

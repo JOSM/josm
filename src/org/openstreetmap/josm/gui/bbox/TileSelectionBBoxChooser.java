@@ -633,7 +633,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     /**
      * Represents a rectangular area of tiles at a given zoom level.
      */
-    private static class TileBounds {
+    private static final class TileBounds {
         private Point min;
         private Point max;
         private int zoomLevel;
@@ -663,7 +663,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     /**
      * The map view used in this bounding box chooser
      */
-    private static class TileBoundsMapView extends JMapViewer {
+    private static final class TileBoundsMapView extends JMapViewer {
         private Point min;
         private Point max;
 

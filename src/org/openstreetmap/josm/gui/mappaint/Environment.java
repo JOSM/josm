@@ -116,9 +116,9 @@ public class Environment {
      * @param index index of node in parent way or member in parent relation
      * @param count count of nodes in parent way or members in parent relation
      * @return A clone of this environment, with the specified parent, index, and context set to {@link Context#LINK}
-     * @since 6175
      * @see #parent
      * @see #index
+     * @since 6175
      */
     public Environment withParentAndIndexAndLinkContext(OsmPrimitive parent, int index, int count) {
         Environment e = new Environment(this);

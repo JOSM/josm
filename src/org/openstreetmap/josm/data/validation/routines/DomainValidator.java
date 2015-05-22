@@ -61,7 +61,7 @@ import java.util.Locale;
  * @version $Revision: 1640271 $ $Date: 2014-11-18 02:32:15 2014 UTC (Tue, 18 Nov 2014) $
  * @since Validator 1.4
  */
-public class DomainValidator extends AbstractValidator {
+public final class DomainValidator extends AbstractValidator {
 
     // Regular expression strings for hostnames (derived from RFC2396 and RFC 1123)
     private static final String DOMAIN_LABEL_REGEX = "\\p{Alnum}(?>[\\p{Alnum}-]*\\p{Alnum})*";

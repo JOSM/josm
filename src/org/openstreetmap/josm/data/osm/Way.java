@@ -111,10 +111,10 @@ public final class Way extends OsmPrimitive implements IWay {
      * Replies the real number of nodes in this way (full number of nodes minus one if this way is closed)
      *
      * @return the real number of nodes in this way.
-     * @since 5847
      *
      * @see #getNodesCount()
      * @see #isClosed()
+     * @since 5847
      */
     public int getRealNodesCount() {
         int count = getNodesCount();

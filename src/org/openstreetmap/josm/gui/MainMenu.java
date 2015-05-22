@@ -440,8 +440,8 @@ public class MainMenu extends JMenuBar {
     };
 
     /**
-     * @since 6088
      * @return the default position of tnew top-level menus
+     * @since 6088
      */
     public int getDefaultMenuPos() {
          return defaultMenuPos;

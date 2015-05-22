@@ -151,7 +151,7 @@ public class Diff {
      the worst this can do is cause suboptimal diff output.
      It cannot cause incorrect diff output.  */
 
-    private int diag (int xoff, int xlim, int yoff, int ylim) {
+    private int diag(int xoff, int xlim, int yoff, int ylim) {
         final int[] fd = fdiag; // Give the compiler a chance.
         final int[] bd = bdiag; // Additional help for the compiler.
         final int[] xv = xvec;      // Still more help for the compiler.
@@ -322,7 +322,7 @@ public class Diff {
      Note that XLIM, YLIM are exclusive bounds.
      All line numbers are origin-0 and discarded lines are not counted.  */
 
-    private void compareseq (int xoff, int xlim, int yoff, int ylim) {
+    private void compareseq(int xoff, int xlim, int yoff, int ylim) {
         /* Slide down the bottom initial diagonal. */
         while (xoff < xlim && yoff < ylim && xvec[xoff] == yvec[yoff]) {
             ++xoff; ++yoff;
@@ -344,7 +344,7 @@ public class Diff {
         } else {
             /* Find a point of correspondence in the middle of the files.  */
 
-            int d = diag (xoff, xlim, yoff, ylim);
+            int d = diag(xoff, xlim, yoff, ylim);
             int c = cost;
             int b = bdiag[bdiagoff + d];
 
@@ -356,12 +356,12 @@ public class Diff {
                 throw new IllegalArgumentException("Empty subsequence");
             else {
                 /* Use that point to split this problem into two subproblems.  */
-                compareseq (xoff, b, yoff, b - d);
+                compareseq(xoff, b, yoff, b - d);
                 /* This used to use f instead of b,
                    but that is incorrect!
                    It is not necessarily the case that diagonal d
                    has a snake from b to f.  */
-                compareseq (b, xlim, b - d, ylim);
+                compareseq(b, xlim, b - d, ylim);
             }
         }
     }
@@ -493,7 +493,7 @@ public class Diff {
        because they don't match anything.  Detect them now,
        and avoid even thinking about them in the main comparison algorithm.  */
 
-        discard_confusing_lines ();
+        discard_confusing_lines();
 
         /* Now do the main comparison algorithm, considering just the
        undiscarded lines.  */
@@ -508,7 +508,7 @@ public class Diff {
         bdiag = new int[diags];
         bdiagoff = filevec[1].nondiscardedLines + 1;
 
-        compareseq (0, filevec[0].nondiscardedLines,
+        compareseq(0, filevec[0].nondiscardedLines,
                 0, filevec[1].nondiscardedLines);
         fdiag = null;
         bdiag = null;
@@ -516,7 +516,7 @@ public class Diff {
         /* Modify the results slightly to make them prettier
        in cases where that can validly be done.  */
 
-        shift_boundaries ();
+        shift_boundaries();
 
         /* Get the results of comparison in the form of a chain
        of `struct change's -- an edit script.  */
@@ -630,10 +630,9 @@ public class Diff {
         /**
          * Mark to be discarded each line that matches no line of another file.
          * If a line matches many lines, mark it as provisionally discardable.
-         * @see #equivCount()
          * @param counts The count of each equivalence number for the other file.
-         * @return 0=nondiscardable, 1=discardable or 2=provisionally discardable
-         *  for each line
+         * @return 0=nondiscardable, 1=discardable or 2=provisionally discardable for each line
+         * @see #equivCount()
          */
         private byte[] discardable(final int[] counts) {
             final int end = bufferedLines;

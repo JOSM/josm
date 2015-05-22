@@ -133,8 +133,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @param title The dialog title
      * @param filter The dialog file filter
      * @return The output {@code File}
-     * @since 5456
      * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, FileFilter, int, String)
+     * @since 5456
      */
     public static File createAndOpenSaveFileChooser(String title, ExtensionFileFilter filter) {
         AbstractFileChooser fc = createAndOpenFileChooser(false, false, title, filter, JFileChooser.FILES_ONLY, null);

@@ -440,7 +440,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /* FLAGS
     /* ------*/
 
-    private void updateFlagsNoLock (int flag, boolean value) {
+    private void updateFlagsNoLock(int flag, boolean value) {
         super.updateFlags(flag, value);
     }
 

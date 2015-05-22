@@ -1319,9 +1319,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                             final double sx = l * (p1.x - p2.x);
                             final double sy = l * (p1.y - p2.y);
 
-                            orientationArrows.moveTo (p2.x + cosPHI * sx - sinPHI * sy, p2.y + sinPHI * sx + cosPHI * sy);
+                            orientationArrows.moveTo(p2.x + cosPHI * sx - sinPHI * sy, p2.y + sinPHI * sx + cosPHI * sy);
                             orientationArrows.lineTo(p2.x, p2.y);
-                            orientationArrows.lineTo (p2.x + cosPHI * sx + sinPHI * sy, p2.y - sinPHI * sx + cosPHI * sy);
+                            orientationArrows.lineTo(p2.x + cosPHI * sx + sinPHI * sy, p2.y - sinPHI * sx + cosPHI * sy);
                         }
                     }
                     if (showOneway) {
@@ -1350,8 +1350,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                                     final double y = p1.y + ny * (dist + (onewayReversed ? -1 : 1) * (onewaySize / sinPHI));
 
                                     onewayPath.moveTo(x, y);
-                                    onewayPath.lineTo (x + cosPHI * sx - sinPHI * sy, y + sinPHI * sx + cosPHI * sy);
-                                    onewayPath.lineTo (x + cosPHI * sx + sinPHI * sy, y - sinPHI * sx + cosPHI * sy);
+                                    onewayPath.lineTo(x + cosPHI * sx - sinPHI * sy, y + sinPHI * sx + cosPHI * sy);
+                                    onewayPath.lineTo(x + cosPHI * sx + sinPHI * sy, y - sinPHI * sx + cosPHI * sy);
                                     onewayPath.lineTo(x, y);
                                 }
                                 dist += interval;

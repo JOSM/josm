@@ -68,8 +68,8 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      * Replies the color used to paint conflicts.
      *
      * @return the color used to paint conflicts
-     * @since 1221
      * @see #paintConflicts
+     * @since 1221
      */
     public static Color getColor() {
         return Main.pref.getColor(marktr("conflict"), Color.gray);
@@ -441,7 +441,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         }
     }
 
-    class SelectAction extends AbstractSelectAction implements ListSelectionListener {
+    final class SelectAction extends AbstractSelectAction implements ListSelectionListener {
         private SelectAction() {
             putValue("help", ht("/Dialog/ConflictList#SelectAction"));
         }

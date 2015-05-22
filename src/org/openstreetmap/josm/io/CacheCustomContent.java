@@ -13,11 +13,10 @@ import org.openstreetmap.josm.Main;
 
 /**
  * Use this class if you want to cache and store a single file that gets updated regularly.
- * Unless you flush() it will be kept in memory. If you want to cache a lot of data and/or files,
- * use CacheFiles
+ * Unless you flush() it will be kept in memory. If you want to cache a lot of data and/or files, use CacheFiles.
+ * @author xeen
  * @param <T> a {@link Throwable} that may be thrown during {@link #updateData()},
  * use {@link RuntimeException} if no exception must be handled.
- * @author xeen
  * @since 1450
  */
 public abstract class CacheCustomContent<T extends Throwable> {

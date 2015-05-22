@@ -101,9 +101,9 @@ public class Tag {
 
     /**
      * This constructs a {@link Tag} by splitting {@code s} on the first equality sign.
-     * @see org.openstreetmap.josm.tools.TextTagParser
      * @param s the string to convert
      * @return the constructed tag
+     * @see org.openstreetmap.josm.tools.TextTagParser
      */
     public static Tag ofString(String s) {
         CheckParameterUtil.ensureParameterNotNull(s, "s");

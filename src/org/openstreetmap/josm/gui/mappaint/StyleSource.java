@@ -113,8 +113,8 @@ public abstract class StyleSource extends SourceEntry {
     /**
      * Closes the source input stream previously returned by {@link #getSourceInputStream()} and other linked resources, if applicable.
      * @param is The source input stream that must be closed
-     * @since 6289
      * @see #getSourceInputStream()
+     * @since 6289
      */
     public void closeSourceInputStream(InputStream is) {
         Utils.close(is);
@@ -141,8 +141,8 @@ public abstract class StyleSource extends SourceEntry {
      * Image provider for default icon.
      *
      * @return image provider for default styles icon
-     * @since 8097
      * @see #getIconProvider()
+     * @since 8097
      */
     private static synchronized ImageProvider getDefaultIconProvider() {
         if (defaultIconProvider == null) {
@@ -155,8 +155,8 @@ public abstract class StyleSource extends SourceEntry {
      * Image provider for source icon. Uses default icon, when not else available.
      *
      * @return image provider for styles icon
-     * @since 8097
      * @see #getIconProvider()
+     * @since 8097
      */
     protected ImageProvider getSourceIconProvider() {
         if (imageIconProvider == null) {
