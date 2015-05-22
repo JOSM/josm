@@ -18,7 +18,7 @@ public class TileSourceInfo {
     protected String name;
 
     /** headers meaning, that there is no tile at this zoom level */
-    protected Map<String, String> notileHeaders;
+    protected Map<String, String> noTileHeaders;
 
     /** minimum zoom level supported by the tile source */
     protected int minZoom;
@@ -31,6 +31,9 @@ public class TileSourceInfo {
 
     /** tile size of the displayed tiles */
     private int tileSize = OsmMercator.DEFAUL_TILE_SIZE;
+
+    /** mapping <header key, metadata key> */
+    protected Map<String, String> metadataHeaders;
 
     /**
      * Create a TileSourceInfo class
@@ -81,7 +84,7 @@ public class TileSourceInfo {
      * @return map of headers, that when set, means that this is "no tile at this zoom level" situation
      */
     public Map<String, String> getNoTileHeaders() {
-        return notileHeaders;
+        return noTileHeaders;
     }
 
     /**
@@ -125,5 +128,9 @@ public class TileSourceInfo {
             throw new AssertionError("Invalid tile size: " + tileSize);
         }
         this.tileSize = tileSize;
+    }
+
+    public Map<String, String> getMetadataHeaders() {
+        return metadataHeaders;
     }
 }

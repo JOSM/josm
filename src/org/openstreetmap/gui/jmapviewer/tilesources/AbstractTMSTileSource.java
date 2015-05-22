@@ -2,6 +2,7 @@
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,6 +15,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     protected String baseUrl;
     protected String id;
     private Map<String, String> noTileHeaders;
+    private Map<String, String> metadataHeaders;
     protected int tileSize;
     protected OsmMercator osmMercator;
 
@@ -25,6 +27,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         }
         this.id = info.getUrl();
         this.noTileHeaders = info.getNoTileHeaders();
+        this.metadataHeaders = info.getMetadataHeaders();
         this.tileSize = info.getTileSize();
         osmMercator = new OsmMercator(this.tileSize);
     }
@@ -147,5 +150,21 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
             }
         }
         return super.isNoTileAtZoom(headers, statusCode, content);
+    }
+
+    @Override
+    public Map<String, String> getMetadata(Map<String, List<String>> headers) {
+        Map<String, String> ret = new HashMap<>();
+        if (metadataHeaders != null && headers != null) {
+            for (Entry<String, String> searchEntry: metadataHeaders.entrySet()) {
+                List<String> headerVals = headers.get(searchEntry.getKey());
+                if (headerVals != null) {
+                    for (String headerValue: headerVals) {
+                        ret.put(searchEntry.getValue(), headerValue);
+                    }
+                }
+            }
+        }
+        return ret;
     }
 }

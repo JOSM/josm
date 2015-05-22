@@ -335,6 +335,9 @@ public class Tile {
     }
 
     public Map<String,String> getMetadata() {
+        if (metadata == null) {
+            metadata = new HashMap<>();
+        }
         return metadata;
     }
 

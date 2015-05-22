@@ -72,10 +72,10 @@ public interface TileSource extends Attributed {
 
     /**
      * A unique id for this tile source.
-     * 
+     *
      * Unlike the name it has to be unique and has to consist only of characters
      * valid for filenames.
-     * 
+     *
      * @return the id
      */
     String getId();
@@ -168,4 +168,12 @@ public interface TileSource extends Attributed {
      * @return true, if "no tile at this zoom level" situation detected
      */
     public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content);
+
+    /**
+     * Extracts metadata about the tile based on HTTP headers
+     *
+     * @param headers HTTP headers from Tile Source server
+     * @return tile metadata
+     */
+    public Map<String, String> getMetadata(Map<String, List<String>> headers);
 }
