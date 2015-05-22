@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -19,13 +20,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -33,10 +37,14 @@ import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 
 import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
@@ -79,6 +87,7 @@ import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -532,21 +541,55 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         tileOptionMenu.add(new JMenuItem(new AbstractAction(
                 tr("Show Tile Info")) {
+            private String getSizeString(int size) {
+                StringBuilder ret = new StringBuilder();
+                return ret.append(size).append("x").append(size).toString();
+            }
+
+            private JTextField createTextField(String text) {
+                JTextField ret = new JTextField(text);
+                ret.setEditable(false);
+                ret.setBorder(BorderFactory.createEmptyBorder());
+                return ret;
+            }
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (clickedTile != null) {
                     ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), new String[]{tr("OK")});
-                    ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
-                    StringBuilder content = new StringBuilder();
-                    content.append("Tile name: ").append(clickedTile.getKey()).append('\n');
-                    try {
-                        content.append("Tile url: ").append(clickedTile.getUrl()).append('\n');
-                    } catch (IOException e) {
-                    }
-                    content.append("Tile size: ").append(clickedTile.getTileSource().getTileSize()).append('x').append(clickedTile.getTileSource().getTileSize()).append('\n');
+                    JPanel panel = new JPanel(new GridBagLayout());
                     Rectangle displaySize = tileToRect(clickedTile);
-                    content.append("Tile display size: ").append(displaySize.width).append('x').append(displaySize.height).append('\n');
-                    ed.setContent(content.toString());
+                    String url = "";
+                    try {
+                        url = clickedTile.getUrl();
+                    } catch (IOException e) {
+                        // silence exceptions
+                    }
+
+                    String[][] content = {
+                            {"Tile name", clickedTile.getKey()},
+                            {"Tile url", url},
+                            {"Tile size", getSizeString(clickedTile.getTileSource().getTileSize()) },
+                            {"Tile display size", new StringBuilder().append(displaySize.width).append("x").append(displaySize.height).toString()},
+                    };
+
+                    for (String[] entry: content) {
+                        panel.add(new JLabel(tr(entry[0]) + ":"), GBC.std());
+                        panel.add(GBC.glue(5,0), GBC.std());
+                        panel.add(createTextField(entry[1]), GBC.eol().fill(GBC.HORIZONTAL));
+                    }
+
+                    for (Entry<String, String> e: clickedTile.getMetadata().entrySet()) {
+                        panel.add(new JLabel(tr("Metadata ") + tr(e.getKey()) + ":"), GBC.std());
+                        panel.add(GBC.glue(5,0), GBC.std());
+                        String value = e.getValue();
+                        if ("lastModification".equals(e.getKey()) || "expirationTime".equals(e.getKey())) {
+                            value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(value)));
+                        }
+                        panel.add(createTextField(value), GBC.eol().fill(GBC.HORIZONTAL));
+
+                    }
+                    ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
+                    ed.setContent(panel);
                     ed.showDialog();
                 }
             }
