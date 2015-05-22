@@ -680,6 +680,13 @@
 							</xs:element>
 							<!-- tile size provided by imagery source. Default - 256 -->
 							<xs:element name="tile-size" minOccurs="0" maxOccurs="1" type="xs:positiveInteger" />
+							<!--  HTTP headers that contain valuable informatin and that will be shown on "Shown Tile Info" dialog -->
+							<xs:element name="metadata-header" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="header-name" type="xs:string" />
+									<xs:attribute name="metadata-key" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
 						</xs:choice>
 					</xs:sequence>
 					<xs:attribute name="last-check" type="xs:date" use="optional" />
