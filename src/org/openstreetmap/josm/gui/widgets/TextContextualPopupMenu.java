@@ -73,6 +73,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
      * Creates a new {@link TextContextualPopupMenu}.
      */
     protected TextContextualPopupMenu() {
+        // Restricts visibility
     }
 
     /**

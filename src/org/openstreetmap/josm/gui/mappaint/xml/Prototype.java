@@ -19,7 +19,11 @@ public abstract class Prototype {
         this.range = range;
     }
 
+    /**
+     * Constructs a new {@code Prototype}.
+     */
     public Prototype() {
+        // Allows subclassing
     }
 
     public String getCode() {

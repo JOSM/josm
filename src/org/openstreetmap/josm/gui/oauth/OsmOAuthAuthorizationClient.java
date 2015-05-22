@@ -518,25 +518,25 @@ public class OsmOAuthAuthorizationClient {
             SessionId sessionId = fetchOsmWebsiteSessionId();
             sessionId.userName = osmUserName;
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException("Authorization canceled");
             monitor.worked(1);
 
             monitor.indeterminateSubTask(tr("Authenticating the session for user ''{0}''...", osmUserName));
             authenticateOsmSession(sessionId, osmUserName, osmPassword);
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException("Authorization canceled");
             monitor.worked(1);
 
             monitor.indeterminateSubTask(tr("Authorizing request token ''{0}''...", requestToken.getKey()));
             sendAuthorisationRequest(sessionId, requestToken, privileges);
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException("Authorization canceled");
             monitor.worked(1);
 
             monitor.indeterminateSubTask(tr("Logging out session ''{0}''...", sessionId));
             logoutOsmSession(sessionId);
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException("Authorization canceled");
             monitor.worked(1);
         } catch(OsmOAuthAuthorizationException e) {
             if (canceled)

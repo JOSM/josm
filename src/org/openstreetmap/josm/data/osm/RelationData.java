@@ -10,10 +10,17 @@ public class RelationData extends PrimitiveData implements IRelation {
 
     private List<RelationMemberData> members = new ArrayList<>();
 
+    /**
+     * Constructs a new {@code RelationData}.
+     */
     public RelationData() {
-
+        // contents can be set later with setters
     }
 
+    /**
+     * Constructs a new {@code RelationData}.
+     * @param data relation data to copy
+     */
     public RelationData(RelationData data) {
         super(data);
         members.addAll(data.members);

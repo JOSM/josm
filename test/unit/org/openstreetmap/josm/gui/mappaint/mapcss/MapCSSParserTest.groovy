@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.ColorHelper
 class MapCSSParserTest {
 
     protected static Environment getEnvironment(String key, String value) {
-        return new Environment().withPrimitive(OsmUtils.createPrimitive("way " + key + "=" + value))
+        return new Environment(OsmUtils.createPrimitive("way " + key + "=" + value))
     }
 
     protected static MapCSSParser getParser(String stringToParse) {
@@ -191,12 +191,12 @@ class MapCSSParserTest {
     @Test
     public void testNRegexKeyConditionSelector() throws Exception {
         def s1 = getParser("*[sport][tourism != hotel]").selector()
-        assert s1.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar")))
-        assert !s1.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar tourism=hotel")))
+        assert s1.matches(new Environment(OsmUtils.createPrimitive("node sport=foobar")))
+        assert !s1.matches(new Environment(OsmUtils.createPrimitive("node sport=foobar tourism=hotel")))
         def s2 = getParser("*[sport][tourism != hotel][leisure !~ /^(sports_centre|stadium|)\$/]").selector()
-        assert s2.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar")))
-        assert !s2.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar tourism=hotel")))
-        assert !s2.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar leisure=stadium")))
+        assert s2.matches(new Environment(OsmUtils.createPrimitive("node sport=foobar")))
+        assert !s2.matches(new Environment(OsmUtils.createPrimitive("node sport=foobar tourism=hotel")))
+        assert !s2.matches(new Environment(OsmUtils.createPrimitive("node sport=foobar leisure=stadium")))
     }
 
     @Test
@@ -205,17 +205,17 @@ class MapCSSParserTest {
         def w1 = new Way()
         w1.put("foo", "123")
         w1.put("bar", "456")
-        assert !c1.applies(new Environment().withPrimitive(w1))
+        assert !c1.applies(new Environment(w1))
         w1.put("bar", "123")
-        assert c1.applies(new Environment().withPrimitive(w1))
+        assert c1.applies(new Environment(w1))
         def c2 = (Condition.KeyValueCondition) getParser("[foo =~ */bar/]").condition(Condition.Context.PRIMITIVE)
         def w2 = new Way(w1)
         w2.put("bar", "[0-9]{3}")
-        assert c2.applies(new Environment().withPrimitive(w2))
+        assert c2.applies(new Environment(w2))
         w2.put("bar", "[0-9]")
-        assert c2.applies(new Environment().withPrimitive(w2))
+        assert c2.applies(new Environment(w2))
         w2.put("bar", "^[0-9]\$")
-        assert !c2.applies(new Environment().withPrimitive(w2))
+        assert !c2.applies(new Environment(w2))
     }
 
     @Test
@@ -300,13 +300,13 @@ class MapCSSParserTest {
         w.addNode(n1)
         w.addNode(n2)
 
-        def e = new Environment().withPrimitive(n2)
+        def e = new Environment(n2)
         assert s1.matches(e)
         assert e.osm == n2
         assert e.child == n1
         assert e.parent == w
-        assert !s1.matches(new Environment().withPrimitive(n1))
-        assert !s1.matches(new Environment().withPrimitive(w))
+        assert !s1.matches(new Environment(n1))
+        assert !s1.matches(new Environment(w))
     }
 
     @Test
@@ -331,12 +331,12 @@ class MapCSSParserTest {
         w.addNode(n2)
         w.addNode(n3)
 
-        assert s1.right.matches(new Environment().withPrimitive(n3))
-        assert s1.left.matches(new Environment().withPrimitive(n2).withChild(n3).withParent(w))
-        assert s1.matches(new Environment().withPrimitive(n3))
-        assert !s1.matches(new Environment().withPrimitive(n1))
-        assert !s1.matches(new Environment().withPrimitive(n2))
-        assert !s1.matches(new Environment().withPrimitive(w))
+        assert s1.right.matches(new Environment(n3))
+        assert s1.left.matches(new Environment(n2).withChild(n3).withParent(w))
+        assert s1.matches(new Environment(n3))
+        assert !s1.matches(new Environment(n1))
+        assert !s1.matches(new Environment(n2))
+        assert !s1.matches(new Environment(w))
     }
 
     @Test

@@ -54,8 +54,13 @@ public class NTV2GridShift implements Serializable {
      * Constructs a new {@code NTV2GridShift}.
      */
     public NTV2GridShift() {
+        // contents can be set later with setters
     }
 
+    /**
+     * Constructs a new {@code NTV2GridShift} from a {@code LatLon}.
+     * @param p lat/lon
+     */
     public NTV2GridShift(LatLon p) {
         setLatDegrees(p.lat());
         setLonPositiveEastDegrees(p.lon());

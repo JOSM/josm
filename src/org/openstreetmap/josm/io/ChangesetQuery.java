@@ -51,13 +51,6 @@ public class ChangesetQuery {
     private Collection<Long> changesetIds = null;
 
     /**
-     * Constructs a new {@code ChangesetQuery}.
-     */
-    public ChangesetQuery() {
-
-    }
-
-    /**
      * Restricts the query to changesets owned by the user with id <code>uid</code>.
      *
      * @param uid the uid of the user. &gt; 0 expected.

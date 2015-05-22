@@ -275,16 +275,29 @@ public abstract class RequestHandler {
 
     public static class RequestHandlerException extends Exception {
 
+        /**
+         * Constructs a new {@code RequestHandlerException}.
+         * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+         */
         public RequestHandlerException(String message) {
             super(message);
         }
+
+        /**
+         * Constructs a new {@code RequestHandlerException}.
+         * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+         * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+         */
         public RequestHandlerException(String message, Throwable cause) {
             super(message, cause);
         }
+
+        /**
+         * Constructs a new {@code RequestHandlerException}.
+         * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+         */
         public RequestHandlerException(Throwable cause) {
             super(cause);
-        }
-        public RequestHandlerException() {
         }
     }
 

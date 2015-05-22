@@ -62,7 +62,7 @@ class KeyValueConditionTest {
         Node n = node(1)
         r.addMember(new RelationMember("my_role", n))
 
-        Environment e = new Environment().withPrimitive(n).withParent(r).withLinkContext().withIndex(0, r.membersCount)
+        Environment e = new Environment(n).withParent(r).withLinkContext().withIndex(0, r.membersCount)
 
         Condition cond = new Condition.RoleCondition("my_role", Op.EQ)
         assert cond.applies(e)
@@ -77,7 +77,7 @@ class KeyValueConditionTest {
         Node n = node(1)
         r.addMember(new RelationMember("my_role", n))
 
-        Environment e = new Environment().withPrimitive(n).withParent(r).withIndex(0, r.membersCount).withLinkContext()
+        Environment e = new Environment(n).withParent(r).withIndex(0, r.membersCount).withLinkContext()
 
         Condition cond = Condition.createKeyValueCondition("role", "my_role", Op.NEQ, Context.LINK, false)
         assert !cond.applies(e)

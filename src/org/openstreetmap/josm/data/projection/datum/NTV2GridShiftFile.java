@@ -82,12 +82,6 @@ public class NTV2GridShiftFile implements Serializable {
     private NTV2SubGrid[] topLevelSubGrid;
     private NTV2SubGrid lastSubGrid;
 
-    /**
-     * Constructs a new {@code NTV2GridShiftFile}.
-     */
-    public NTV2GridShiftFile() {
-    }
-
     private void readBytes(InputStream in, byte[] b) throws IOException {
         if (in.read(b) < b.length) {
             Main.error("Failed to read expected amount of bytes ("+ b.length +") from stream");

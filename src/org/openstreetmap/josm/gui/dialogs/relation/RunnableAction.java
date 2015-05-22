@@ -7,9 +7,6 @@ import javax.swing.AbstractAction;
 
 public abstract class RunnableAction extends AbstractAction implements Runnable {
 
-    public RunnableAction() {
-    }
-
     @Override
     public abstract void run();
 

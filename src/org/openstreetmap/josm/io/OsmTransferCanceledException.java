@@ -7,10 +7,12 @@ package org.openstreetmap.josm.io;
 public class OsmTransferCanceledException extends OsmTransferException {
 
     /**
-     * Constructs a new {@code OsmTransferCanceledException}, without root cause.
+     * Constructs a new {@code OsmTransferCanceledException}, without message.
+     * @param message The detail message (which is saved for later retrieval by the {@link #getMessage} method)
+     * @since 8415
      */
-    public OsmTransferCanceledException() {
-
+    public OsmTransferCanceledException(String message) {
+        super(message);
     }
 
     /**

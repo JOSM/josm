@@ -162,7 +162,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         private static String evaluateObject(final Object obj, final OsmPrimitive p, final Selector matchingSelector) {
             final String s;
             if (obj instanceof Expression) {
-                s = (String) ((Expression) obj).evaluate(new Environment().withPrimitive(p));
+                s = (String) ((Expression) obj).evaluate(new Environment(p));
             } else if (obj instanceof String) {
                 s = (String) obj;
             } else {
@@ -370,7 +370,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         Selector whichSelectorMatchesPrimitive(OsmPrimitive primitive) {
-            return whichSelectorMatchesEnvironment(new Environment().withPrimitive(primitive));
+            return whichSelectorMatchesEnvironment(new Environment(primitive));
         }
 
         Selector whichSelectorMatchesEnvironment(Environment env) {
@@ -474,7 +474,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final Object val = errors.keySet().iterator().next().val;
                 return String.valueOf(
                         val instanceof Expression
-                                ? ((Expression) val).evaluate(new Environment().withPrimitive(p))
+                                ? ((Expression) val).evaluate(new Environment(p))
                                 : val
                 );
             }
@@ -521,7 +521,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @return an instance of {@link TestError}, or returns null if the primitive does not give rise to an error.
          */
         TestError getErrorForPrimitive(OsmPrimitive p) {
-            final Environment env = new Environment().withPrimitive(p);
+            final Environment env = new Environment(p);
             return getErrorForPrimitive(p, whichSelectorMatchesEnvironment(env), env);
         }
 

@@ -28,17 +28,16 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
 
     /**
-     * Constructs a new <code>TextField</code>.  A default model is created,
-     * the initial string is <code>null</code>,
-     * and the number of columns is set to 0.
+     * Constructs a new <code>TextField</code>. A default model is created,
+     * the initial string is <code>null</code>, and the number of columns is set to 0.
      */
     public DisableShortcutsOnFocusGainedTextField() {
+        // Contents can be set with parent methods
     }
 
     /**
      * Constructs a new <code>TextField</code> initialized with the
-     * specified text. A default model is created and the number of
-     * columns is 0.
+     * specified text. A default model is created and the number of columns is 0.
      *
      * @param text the text to be displayed, or <code>null</code>
      */
@@ -47,15 +46,12 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
     }
 
     /**
-     * Constructs a new empty <code>TextField</code> with the specified
-     * number of columns.
-     * A default model is created and the initial string is set to
-     * <code>null</code>.
+     * Constructs a new empty <code>TextField</code> with the specified number of columns.
+     * A default model is created and the initial string is set to <code>null</code>.
      *
      * @param columns  the number of columns to use to calculate
      *   the preferred width; if columns is set to zero, the
-     *   preferred width will be whatever naturally results from
-     *   the component implementation
+     *   preferred width will be whatever naturally results from the component implementation
      */
     public DisableShortcutsOnFocusGainedTextField(int columns) {
         super(columns);
@@ -68,8 +64,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
      * @param text the text to be displayed, or <code>null</code>
      * @param columns  the number of columns to use to calculate
      *   the preferred width; if columns is set to zero, the
-     *   preferred width will be whatever naturally results from
-     *   the component implementation
+     *   preferred width will be whatever naturally results from the component implementation
      */
     public DisableShortcutsOnFocusGainedTextField(String text, int columns) {
         super(text, columns);

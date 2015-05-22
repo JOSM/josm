@@ -112,6 +112,7 @@ public class OAuthParameters {
      * @see #createFromPreferences
      */
     public OAuthParameters() {
+        // contents can be set later with setters
     }
 
     /**

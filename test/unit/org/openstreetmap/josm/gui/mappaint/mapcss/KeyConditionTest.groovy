@@ -76,7 +76,7 @@ class KeyConditionTest {
         Node n = node(1)
         r.addMember(new RelationMember("my_role", n))
 
-        Environment e = new Environment().withPrimitive(n).withParent(r).withIndex(0, r.membersCount).withLinkContext()
+        Environment e = new Environment(n).withParent(r).withIndex(0, r.membersCount).withLinkContext()
 
         Condition cond = Condition.createKeyCondition("my_role", false, null, Context.LINK)
         assert cond.applies(e)
@@ -91,7 +91,7 @@ class KeyConditionTest {
         Node n = node(1)
         r.addMember(new RelationMember("my_role", n))
 
-        Environment e = new Environment().withPrimitive(n).withParent(r).withIndex(0, r.membersCount).withLinkContext()
+        Environment e = new Environment(n).withParent(r).withIndex(0, r.membersCount).withLinkContext()
 
         Condition cond = Condition.createKeyCondition("another_role", false, null, Context.LINK)
         assert !cond.applies(e)
