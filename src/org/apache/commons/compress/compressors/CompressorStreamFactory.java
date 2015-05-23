@@ -237,6 +237,10 @@ public class CompressorStreamFactory {
                 return new ZCompressorInputStream(in);
             }
 
+            if (DeflateCompressorInputStream.matches(signature, signatureLength)) {
+                return new DeflateCompressorInputStream(in);
+            }
+
             if (XZUtils.matches(signature, signatureLength) &&
                 XZUtils.isXZCompressionAvailable()) {
                 return new XZCompressorInputStream(in, decompressConcatenated);
