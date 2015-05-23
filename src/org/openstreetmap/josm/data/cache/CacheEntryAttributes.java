@@ -13,7 +13,7 @@ import org.apache.commons.jcs.engine.ElementAttributes;
 import org.openstreetmap.josm.Main;
 
 /**
- * Class that contains attirubtes for JCS cache entries. Parameters are used to properly handle HTTP caching,
+ * Class that contains attributes for JCS cache entries. Parameters are used to properly handle HTTP caching,
  * and metadata structures, that should be stored together with the cache entry
  *
  * @author Wiktor Niesiobędzki
