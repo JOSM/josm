@@ -329,11 +329,21 @@ public class Tile {
         metadata.put(key, value);
     }
 
+    /**
+     * returns the metadata of the Tile
+     *
+     * @param key metadata key that should be returned
+     * @return null if no such metadata exists, or the value of the metadata
+     */
     public String getValue(String key) {
         if (metadata == null) return null;
         return metadata.get(key);
     }
 
+    /**
+     *
+     * @return metadata of the tile
+     */
     public Map<String,String> getMetadata() {
         if (metadata == null) {
             metadata = new HashMap<>();
@@ -341,12 +351,18 @@ public class Tile {
         return metadata;
     }
 
+    /**
+     * indicate that loading process for this tile has started
+     */
     public void initLoading() {
         loaded = false;
         error = false;
         loading = true;
     }
 
+    /**
+     * indicate that loading process for this tile has ended
+     */
     public void finishLoading() {
         loading = false;
         loaded = true;

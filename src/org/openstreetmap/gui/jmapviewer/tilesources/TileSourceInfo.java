@@ -7,6 +7,8 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
 
 /**
  * Data class that keeps basic information about a tile source.
+ *
+ * @since 31122
  */
 public class TileSourceInfo {
     /** id for this imagery entry, optional at the moment */
@@ -130,6 +132,11 @@ public class TileSourceInfo {
         this.tileSize = tileSize;
     }
 
+    /**
+     *
+     * @return mapping <HTTP header name, Metadata key name> for copying HTTP headers to Tile metadata
+     * @since 31125
+     */
     public Map<String, String> getMetadataHeaders() {
         return metadataHeaders;
     }
