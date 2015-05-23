@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -82,7 +82,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private String name = "";
         private String icon = "";
         private ImageIcon ico = null;
-        private final Map<String, Object> parameters = new HashMap<>();
+        private final Map<String, Object> parameters = new ConcurrentHashMap<>();
 
         public ActionDefinition(Action action) {
             this.action = action;
@@ -208,7 +208,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 skip('(');
 
                 ParameterizedAction parametrizedAction = (ParameterizedAction)action;
-                Map<String, ActionParameter<?>> actionParams = new HashMap<>();
+                Map<String, ActionParameter<?>> actionParams = new ConcurrentHashMap<>();
                 for (ActionParameter<?> param: parametrizedAction.getActionParameters()) {
                     actionParams.put(param.getName(), param);
                 }
@@ -217,7 +217,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     String paramName = readTillChar('=', '=');
                     skip('=');
                     String paramValue = readTillChar(',',')');
-                    if (paramName.length() > 0) {
+                    if (paramName.length() > 0 && paramValue.length() > 0) {
                         ActionParameter<?> actionParam = actionParams.get(paramName);
                         if (actionParam != null) {
                             result.getParameters().put(paramName, actionParam.readFromString(paramValue));
@@ -368,19 +368,25 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            String val = (String) aValue;
+            int paramIndex = rowIndex;
+
             if(currentAction.getAction() instanceof AdaptableAction) {
                 if (rowIndex == 0) {
-                     currentAction.setName((String)aValue);
+                     currentAction.setName(val);
                      return;
                 } else if (rowIndex == 1) {
-                     currentAction.setIcon((String)aValue);
+                     currentAction.setIcon(val);
                      return;
                 } else {
-                    rowIndex -= 2;
+                    paramIndex -= 2;
                 }
             }
-            ActionParameter<Object> param = getParam(rowIndex);
-            currentAction.getParameters().put(param.getName(), param.readFromString((String)aValue));
+            ActionParameter<Object> param = getParam(paramIndex);
+
+            if (param != null && val.length() > 0) {
+                currentAction.getParameters().put(param.getName(), param.readFromString((String)aValue));
+            }
         }
 
         public void setCurrentAction(ActionDefinition currentAction) {
@@ -469,13 +475,13 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
      * Key: Registered name (property "toolbar" of action).
      * Value: The action to execute.
      */
-    private final Map<String, Action> actions = new HashMap<>();
-    private final Map<String, Action> regactions = new HashMap<>();
+    private final Map<String, Action> actions = new ConcurrentHashMap<>();
+    private final Map<String, Action> regactions = new ConcurrentHashMap<>();
 
     private final DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode(tr("Actions"));
 
     public JToolBar control = new JToolBar();
-    private final Map<Object, ActionDefinition> buttonActions = new HashMap<>(30);
+    private final Map<Object, ActionDefinition> buttonActions = new ConcurrentHashMap<>(30);
 
     @Override
     public PreferenceSetting createPreferenceSetting() {
@@ -970,7 +976,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     private Collection<ActionDefinition> getDefinedActions() {
         loadActions();
 
-        Map<String, Action> allActions = new HashMap<>(regactions);
+        Map<String, Action> allActions = new ConcurrentHashMap<>(regactions);
         allActions.putAll(actions);
         ActionParser actionParser = new ActionParser(allActions);
 
