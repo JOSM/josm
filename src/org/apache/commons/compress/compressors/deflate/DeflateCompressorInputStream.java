@@ -106,7 +106,7 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
      * @return true, if this stream is zlib / deflate compressed with a header
      * stream, false otherwise
      * 
-     * @since 1.9
+     * @since 1.10
      */
     public static boolean matches(byte[] signature, int length) {
         return length > 3 && signature[0] == MAGIC_1 && (
