@@ -13,8 +13,8 @@ import javax.swing.Action;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openstreetmap.josm.actions.ActionParameter;
-import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ActionParameter.StringActionParameter;
+import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionDefinition;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 
@@ -60,8 +60,8 @@ public class ToolbarPreferencesTest {
         checkAction(parser.loadAction("action(param1=value1,param2=2\\(\\=\\,\\\\)"), "param1", "value1", "param2", "2(=,\\");
         checkAction(parser.loadAction("action(param1=value1,"), "param1", "value1");
         checkAction(parser.loadAction("action(param1=value1"), "param1", "value1");
-        checkAction(parser.loadAction("action(param1="), "param1", "");
-        checkAction(parser.loadAction("action(param1"), "param1", "");
+        checkAction(parser.loadAction("action(param1="));
+        checkAction(parser.loadAction("action(param1"));
         checkAction(parser.loadAction("action("));
         checkAction(parser.loadAction("action"));
         checkAction(parser.loadAction("action(uknownParam=aa)"));

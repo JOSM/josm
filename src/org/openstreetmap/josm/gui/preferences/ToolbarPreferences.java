@@ -1013,7 +1013,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 toolbar, r.getClass().getName(), action.getClass().getName()));
             }
         }
-        regactions.put(toolbar, action);
+        if (toolbar != null) {
+            regactions.put(toolbar, action);
+        }
         return action;
     }
 
