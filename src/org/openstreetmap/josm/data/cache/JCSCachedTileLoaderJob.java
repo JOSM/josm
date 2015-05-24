@@ -108,6 +108,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     private Map<String, String> headers;
     private ThreadPoolExecutor downloadJobExecutor;
     private Runnable finishTask;
+    private boolean force = false;
 
     /**
      * @param cache cache instance that we will work on
@@ -158,7 +159,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     @Override
-    public void submit(ICachedLoaderListener listener) {
+    public void submit(ICachedLoaderListener listener, boolean force) {
+        this.force = force;
         boolean first = false;
         URL url = getUrl();
         String deduplicationKey = null;
@@ -180,9 +182,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             newListeners.add(listener);
         }
 
-        if (first) {
+        if (first || force) {
             ensureCacheElement();
-            if (cacheElement != null && isCacheElementValid() && (isObjectLoadable())) {
+            if (!force && cacheElement != null && isCacheElementValid() && (isObjectLoadable())) {
                 // we got something in cache, and it's valid, so lets return it
                 log.log(Level.FINE, "JCS - Returning object from cache: {0}", getCacheKey());
                 finishLoading(LoadResult.SUCCESS);
@@ -233,6 +235,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         return downloadJobExecutor;
     }
 
+    @Override
     public void run() {
         final Thread currentThread = Thread.currentThread();
         final String oldName = currentThread.getName();
@@ -427,6 +430,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         urlConn.setConnectTimeout(connectTimeout);
         for(Map.Entry<String, String> e: headers.entrySet()) {
             urlConn.setRequestProperty(e.getKey(), e.getValue());
+        }
+        if (force) {
+            urlConn.setUseCaches(false);
         }
         return urlConn;
     }
