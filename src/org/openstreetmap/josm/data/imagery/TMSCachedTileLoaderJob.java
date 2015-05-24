@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,12 @@ import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
  * @since 8168
  */
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener  {
-    private static final Logger log = FeatureAdapter.getLogger(TMSCachedTileLoaderJob.class.getCanonicalName());
+    private static final Logger LOG = FeatureAdapter.getLogger(TMSCachedTileLoaderJob.class.getCanonicalName());
+    private static final long MAXIMUM_EXPIRES = 30 /*days*/ * 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/;
+    private static final long MINIMUM_EXPIRES = 1 /*hour*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/;
     private Tile tile;
     private volatile URL url;
+
 
     // we need another deduplication of Tile Loader listeners, as for each submit, new TMSCachedTileLoaderJob was created
     // that way, we reduce calls to tileLoadingFinished, and general CPU load due to surplus Map repaints
@@ -104,8 +108,8 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                         url = new URL(tile.getUrl());
                 }
             } catch (IOException e) {
-                log.log(Level.WARNING, "JCS TMS Cache - error creating URL for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
-                log.log(Level.INFO, "Exception: ", e);
+                LOG.log(Level.WARNING, "JCS TMS Cache - error creating URL for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
+                LOG.log(Level.INFO, "Exception: ", e);
             }
         }
         return url;
@@ -118,7 +122,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             try {
                 return content != null  || cacheData.getImage() != null || isNoTileAtZoom();
             } catch (IOException e) {
-                log.log(Level.WARNING, "JCS TMS - error loading from cache for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
+                LOG.log(Level.WARNING, "JCS TMS - error loading from cache for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
             }
         }
         return false;
@@ -126,7 +130,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     private boolean isNoTileAtZoom() {
         if (attributes == null) {
-            log.warning("Cache attributes are null");
+            LOG.warning("Cache attributes are null");
         }
         return attributes != null && attributes.isNoTileAtZoom();
     }
@@ -145,7 +149,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     private boolean handleNoTileAtZoom() {
         if (isNoTileAtZoom()) {
-            log.log(Level.FINE, "JCS TMS - Tile valid, but no file, as no tiles at this level {0}", tile);
+            LOG.log(Level.FINE, "JCS TMS - Tile valid, but no file, as no tiles at this level {0}", tile);
             tile.setError("No tile at this zoom level");
             tile.putValue("tile-info", "no-tile");
             return true;
@@ -206,7 +210,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 }
             }
         } catch (IOException e) {
-            log.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
+            LOG.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
             tile.setError(e.getMessage());
             tile.setLoaded(false);
             if (listeners != null) { // listeners might be null, if some other thread notified already about success
@@ -245,7 +249,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 }
                 return tile;
             } catch (IOException e) {
-                log.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
+                LOG.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
                 return null;
             }
 
@@ -286,5 +290,19 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     @Override
     public void submit() {
         submit(false);
+    }
+
+    @Override
+    protected CacheEntryAttributes parseHeaders(URLConnection urlConn) {
+        CacheEntryAttributes ret = super.parseHeaders(urlConn);
+        // keep the expiration time between MINIMUM_EXPIRES and MAXIMUM_EXPIRES, so we will cache the tiles
+        // at least for some short period of time, but not too long
+        if (ret.getExpirationTime() < MINIMUM_EXPIRES) {
+            ret.setExpirationTime(now + MINIMUM_EXPIRES);
+        }
+        if (ret.getExpirationTime() > MAXIMUM_EXPIRES) {
+            ret.setExpirationTime(now + MAXIMUM_EXPIRES);
+        }
+        return ret;
     }
 }
