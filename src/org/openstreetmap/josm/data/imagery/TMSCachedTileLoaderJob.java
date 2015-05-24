@@ -153,9 +153,10 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         return false;
     }
 
-    public void submit() {
+    @Override
+    public void submit(boolean force) {
         tile.initLoading();
-        super.submit(this);
+        super.submit(this, force);
     }
 
     @Override
@@ -280,5 +281,10 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     @Override
     protected BufferedImageCacheEntry createCacheEntry(byte[] content) {
         return new BufferedImageCacheEntry(content);
+    }
+
+    @Override
+    public void submit() {
+        submit(false);
     }
 }

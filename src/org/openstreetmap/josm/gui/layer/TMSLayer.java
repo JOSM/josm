@@ -601,7 +601,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             public void actionPerformed(ActionEvent ae) {
                 if (clickedTile != null) {
                     clickedTile.setLoaded(false);
-                    tileLoader.createTileLoaderJob(clickedTile).submit();
+                    tileLoader.createTileLoaderJob(clickedTile).submit(true);
                 }
             }
         }));
@@ -846,7 +846,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             return false;
         if (tile.isLoading())
             return false;
-        tileLoader.createTileLoaderJob(tile).submit();
+        tileLoader.createTileLoaderJob(tile).submit(force);
         return true;
     }
 
@@ -1258,8 +1258,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 return;
             List<Tile> allTiles = allTilesCreate();
             Collections.sort(allTiles, getTileDistanceComparator());
-            for (Tile t : allTiles) { //, getTileDistanceComparator())) {
-                loadTile(t, false);
+            for (Tile t : allTiles) {
+                loadTile(t, force);
             }
         }
 
