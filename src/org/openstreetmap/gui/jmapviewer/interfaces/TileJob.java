@@ -22,4 +22,11 @@ public interface TileJob extends Runnable {
      * submits download job to backend.
      */
     void submit();
+
+    /**
+     * submits download job to backend.
+     * @param true if the load should skip all the caches (local & remote)
+     */
+    void submit(boolean force);
+
 }

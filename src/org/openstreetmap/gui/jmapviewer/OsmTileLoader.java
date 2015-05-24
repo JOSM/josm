@@ -40,6 +40,7 @@ public class OsmTileLoader implements TileLoader {
         return new TileJob() {
 
             InputStream input = null;
+            boolean force = false;
 
             public void run() {
                 synchronized (tile) {
@@ -51,6 +52,9 @@ public class OsmTileLoader implements TileLoader {
                 }
                 try {
                     URLConnection conn = loadTileFromOsm(tile);
+                    if (force) {
+                        conn.setUseCaches(false);
+                    }
                     loadTileMetadata(tile, conn);
                     if ("no-tile".equals(tile.getValue("tile-info"))) {
                         tile.setError("No tile at this zoom level");
@@ -88,9 +92,16 @@ public class OsmTileLoader implements TileLoader {
 
             @Override
             public void submit() {
-                run();
+                submit(false);
 
             }
+
+            @Override
+            public void submit(boolean force) {
+                this.force = force;
+                run();
+            }
+
         };
     }
 
@@ -101,7 +112,6 @@ public class OsmTileLoader implements TileLoader {
         if (urlConn instanceof HttpURLConnection) {
             prepareHttpUrlConnection((HttpURLConnection)urlConn);
         }
-        urlConn.setReadTimeout(30000); // 30 seconds read timeout
         return urlConn;
     }
 
