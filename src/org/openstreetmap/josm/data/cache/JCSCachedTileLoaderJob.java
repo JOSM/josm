@@ -95,7 +95,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     private static ConcurrentMap<String,Set<ICachedLoaderListener>> inProgress = new ConcurrentHashMap<>();
     private static ConcurrentMap<String, Boolean> useHead = new ConcurrentHashMap<>();
 
-    private long now; // when the job started
+    protected long now; // when the job started
 
     private ICacheAccess<K, V> cache;
     private ICacheElement<K, V> cacheElement;
@@ -397,7 +397,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     protected abstract V createCacheEntry(byte[] content);
 
-    private CacheEntryAttributes parseHeaders(URLConnection urlConn) {
+    protected CacheEntryAttributes parseHeaders(URLConnection urlConn) {
         CacheEntryAttributes ret = new CacheEntryAttributes();
 
         Long lng = urlConn.getExpiration();
