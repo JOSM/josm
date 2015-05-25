@@ -40,13 +40,15 @@ public class NoteInputDialog extends ExtendedDialog {
      * @param icon Icon to display in the action button
      */
     public void showNoteDialog(String message, Icon icon) {
-        JLabel label = new JLabel(message);
         textArea.setRows(6);
         textArea.setColumns(30);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT); //without this the label gets pushed to the right
+
+        JLabel label = new JLabel(message);
+        label.setLabelFor(textArea);
 
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));

@@ -44,8 +44,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * A UI component for resolving conflicts in two lists of entries of type T.
  *
- * @param <T>  the type of the entries
+ * @param <T> the type of the entries
  * @see ListMergeModel
+ * @since 1631
  */
 public abstract class ListMerger<T extends PrimitiveId> extends JPanel implements PropertyChangeListener, Observer {
     protected OsmPrimitivesTable myEntriesTable;
@@ -73,11 +74,11 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
     private transient AdjustmentSynchronizer adjustmentSynchronizer;
 
-    private  JLabel lblMyVersion;
-    private  JLabel lblMergedVersion;
-    private  JLabel lblTheirVersion;
+    private JLabel lblMyVersion;
+    private JLabel lblMergedVersion;
+    private JLabel lblTheirVersion;
 
-    private  JLabel lblFrozenState;
+    private JLabel lblFrozenState;
 
     protected abstract JScrollPane buildMyElementsTable();
     protected abstract JScrollPane buildMergedElementsTable();
@@ -123,8 +124,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     }
 
     protected JPanel buildLeftButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.gridx = 0;
@@ -166,8 +166,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     }
 
     protected JPanel buildRightButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.gridx = 0;
@@ -199,8 +198,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     }
 
     protected JPanel buildMergedListControlButtons() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.gridx = 0;
@@ -228,16 +226,14 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     }
 
     protected JPanel buildAdjustmentLockControlPanel(JCheckBox cb) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panel.add(new JLabel(tr("lock scrolling")));
         panel.add(cb);
         return panel;
     }
 
     protected JPanel buildComparePairSelectionPanel() {
-        JPanel p = new JPanel();
-        p.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
         p.add(new JLabel(tr("Compare ")));
         JosmComboBox<ComparePairType> cbComparePair = new JosmComboBox<>(model.getComparePairListModel());
         cbComparePair.setRenderer(new ComparePairListCellRenderer());
@@ -246,8 +242,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     }
 
     protected JPanel buildFrozeStateControlPanel() {
-        JPanel p = new JPanel();
-        p.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
         lblFrozenState = new JLabel();
         p.add(lblFrozenState);
         freezeAction = new FreezeAction();
@@ -326,6 +321,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         gc.weighty = 1.0;
         gc.insets = new Insets(0,0,0,0);
         JScrollPane pane = buildMyElementsTable();
+        lblMyVersion.setLabelFor(pane);
         adjustmentSynchronizer.adapt(cbLockMyScrolling, pane.getVerticalScrollBar());
         add(pane, gc);
 
@@ -344,6 +340,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         gc.weightx = 0.33;
         gc.weighty = 0.0;
         pane = buildMergedElementsTable();
+        lblMergedVersion.setLabelFor(pane);
         adjustmentSynchronizer.adapt(cbLockMergedScrolling, pane.getVerticalScrollBar());
         add(pane, gc);
 
@@ -362,6 +359,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         gc.weightx = 0.33;
         gc.weighty = 0.0;
         pane = buildTheirElementsTable();
+        lblTheirVersion.setLabelFor(pane);
         adjustmentSynchronizer.adapt(cbLockTheirScrolling, pane.getVerticalScrollBar());
         add(pane, gc);
 

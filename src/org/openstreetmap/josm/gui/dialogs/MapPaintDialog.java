@@ -98,6 +98,9 @@ public class MapPaintDialog extends ToggleDialog {
     protected MoveUpDownAction downAction;
     protected JCheckBox cbWireframe;
 
+    /**
+     * Action that opens the map paint preferences.
+     */
     public static final JosmAction PREFERENCE_ACTION = PreferencesAction.forPreferenceSubTab(
             tr("Map paint preferences"), null, MapPaintPreference.class, /* ICON */ "dialogs/mappaintpreference");
 
@@ -117,6 +120,7 @@ public class MapPaintDialog extends ToggleDialog {
         cbWireframe = new JCheckBox();
         JLabel wfLabel = new JLabel(tr("Wireframe View"), ImageProvider.get("dialogs/mappaint", "wireframe_small"), JLabel.HORIZONTAL);
         wfLabel.setFont(wfLabel.getFont().deriveFont(Font.PLAIN));
+        wfLabel.setLabelFor(cbWireframe);
 
         cbWireframe.setModel(new DefaultButtonModel() {
             @Override
@@ -207,8 +211,13 @@ public class MapPaintDialog extends ToggleDialog {
 
     protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
 
+        private final Class<?>[] columnClasses = {Boolean.class, StyleSource.class};
+
         private transient List<StyleSource> data = new ArrayList<>();
 
+        /**
+         * Constructs a new {@code StylesModel}.
+         */
         public StylesModel() {
             data = new ArrayList<>(MapPaintStyles.getStyles().getStyleSources());
         }
@@ -239,8 +248,6 @@ public class MapPaintDialog extends ToggleDialog {
         public boolean isCellEditable(int row, int column) {
             return column == 0;
         }
-
-        private Class<?>[] columnClasses = {Boolean.class, StyleSource.class};
 
         @Override
         public Class<?> getColumnClass(int column) {
@@ -285,6 +292,9 @@ public class MapPaintDialog extends ToggleDialog {
 
     private class MyCheckBoxRenderer extends JCheckBox implements TableCellRenderer {
 
+        /**
+         * Constructs a new {@code MyCheckBoxRenderer}.
+         */
         public MyCheckBoxRenderer() {
             setHorizontalAlignment(SwingConstants.CENTER);
             setVerticalAlignment(SwingConstants.CENTER);
@@ -317,6 +327,9 @@ public class MapPaintDialog extends ToggleDialog {
     }
 
     protected class OnOffAction extends AbstractAction implements ListSelectionListener {
+        /**
+         * Constructs a new {@code OnOffAction}.
+         */
         public OnOffAction() {
             putValue(NAME, tr("On/Off"));
             putValue(SHORT_DESCRIPTION, tr("Turn selected styles on or off"));
@@ -351,6 +364,10 @@ public class MapPaintDialog extends ToggleDialog {
 
         private final int increment;
 
+        /**
+         * Constructs a new {@code MoveUpDownAction}.
+         * @param isDown {@code true} to move the entry down, {@code false} to move it up
+         */
         public MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
             putValue(NAME, isDown?tr("Down"):tr("Up"));
@@ -383,6 +400,9 @@ public class MapPaintDialog extends ToggleDialog {
     }
 
     protected class ReloadAction extends AbstractAction implements ListSelectionListener {
+        /**
+         * Constructs a new {@code ReloadAction}.
+         */
         public ReloadAction() {
             putValue(NAME, tr("Reload from file"));
             putValue(SHORT_DESCRIPTION, tr("reload selected styles from file"));
@@ -424,7 +444,6 @@ public class MapPaintDialog extends ToggleDialog {
                             }
                         }
                     });
-
                 }
             });
         }
@@ -432,6 +451,9 @@ public class MapPaintDialog extends ToggleDialog {
 
     protected class SaveAsAction extends AbstractAction {
 
+        /**
+         * Constructs a new {@code SaveAsAction}.
+         */
         public SaveAsAction() {
             putValue(NAME, tr("Save as..."));
             putValue(SHORT_DESCRIPTION, tr("Save a copy of this Style to file and add it to the list"));
@@ -522,11 +544,17 @@ public class MapPaintDialog extends ToggleDialog {
         }
     }
 
+    /**
+     * Displays information about selected paint style in a new dialog.
+     */
     protected class InfoAction extends AbstractAction {
 
         private boolean errorsTabLoaded;
         private boolean sourceTabLoaded;
 
+        /**
+         * Constructs a new {@code InfoAction}.
+         */
         public InfoAction() {
             putValue(NAME, tr("Info"));
             putValue(SHORT_DESCRIPTION, tr("view meta information, error log and source definition"));

@@ -59,6 +59,7 @@ public class BackupPreference implements SubPreferenceSetting {
         panel.add(autosave, GBC.eol());
 
         final JLabel autosaveIntervalLabel = new JLabel(tr("Auto save interval (seconds)"));
+        autosaveIntervalLabel.setLabelFor(autosaveInterval);
         panel.add(autosaveIntervalLabel, GBC.std().insets(60,0,0,0));
         autosaveInterval.setText(Integer.toString(AutosaveTask.PROP_INTERVAL.get()));
         autosaveInterval.setToolTipText(tr("Default value: {0}", AutosaveTask.PROP_INTERVAL.getDefaultValue()));
@@ -66,6 +67,7 @@ public class BackupPreference implements SubPreferenceSetting {
         panel.add(autosaveInterval, GBC.eol().insets(5,0,0,5));
 
         final JLabel backupPerLayerLabel = new JLabel(tr("Auto saved files per layer"));
+        backupPerLayerLabel.setLabelFor(backupPerLayer);
         panel.add(backupPerLayerLabel, GBC.std().insets(60,0,0,0));
         backupPerLayer.setText(Integer.toString(AutosaveTask.PROP_FILES_PER_LAYER.get()));
         backupPerLayer.setToolTipText(tr("Default value: {0}", AutosaveTask.PROP_FILES_PER_LAYER.getDefaultValue()));

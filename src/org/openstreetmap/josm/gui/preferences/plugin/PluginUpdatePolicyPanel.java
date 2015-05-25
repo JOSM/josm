@@ -95,6 +95,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pnl.add(lblUpdateInterval = new JLabel(tr("Update interval (in days):")));
         pnl.add(tfUpdateInterval = new JosmTextField(5));
+        lblUpdateInterval.setLabelFor(tfUpdateInterval);
         SelectAllOnFocusGainedDecorator.decorate(tfUpdateInterval);
         return pnl;
     }
@@ -125,7 +126,8 @@ public class PluginUpdatePolicyPanel extends JPanel {
         rbTimeBasedUpatePolicy.put(Policy.NEVER, btn);
         bgTimeBasedUpdatePolicy.add(btn);
 
-        JMultilineLabel lbl = new JMultilineLabel(tr("Please decide whether JOSM shall automatically update active plugins after a certain period of time."));
+        JMultilineLabel lbl = new JMultilineLabel(
+                tr("Please decide whether JOSM shall automatically update active plugins after a certain period of time."));
         gc.gridy=0;
         pnl.add(lbl, gc);
         for (Policy p: Policy.values()) {

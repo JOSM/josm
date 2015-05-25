@@ -330,8 +330,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                                     }
 
                                     // Popup Information
-                                    // display them if the middle mouse button is pressed and
-                                    // keep them until the mouse is moved
+                                    // display them if the middle mouse button is pressed and keep them until the mouse is moved
                                     if (middleMouseDown || isAtOldPosition) {
                                         Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos, OsmPrimitive.isUsablePredicate);
 
@@ -345,20 +344,15 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                                         lbl.setHorizontalAlignment(JLabel.LEFT);
                                         c.add(lbl, GBC.eol().insets(2, 0, 2, 0));
 
-                                        // Only cycle if the mouse has not been moved and the
-                                        // middle mouse button has been pressed at least twice
-                                        // (the reason for this is the popup != null check for
-                                        // isAtOldPosition, see above. This is a nice side
-                                        // effect though, because it does not change selection
-                                        // of the first middle click)
-                                        if(isAtOldPosition && middleMouseDown) {
-                                            // Hand down mouse modifiers so the SHIFT mod can be
-                                            // handled correctly (see funcion)
+                                        // Only cycle if the mouse has not been moved and the middle mouse button has been pressed at least
+                                        // twice (the reason for this is the popup != null check for isAtOldPosition, see above.
+                                        // This is a nice side effect though, because it does not change selection of the first middle click)
+                                        if (isAtOldPosition && middleMouseDown) {
+                                            // Hand down mouse modifiers so the SHIFT mod can be handled correctly (see function)
                                             popupCycleSelection(osms, ms.modifiers);
                                         }
 
-                                        // These labels may need to be updated from the outside
-                                        // so collect them
+                                        // These labels may need to be updated from the outside so collect them
                                         List<JLabel> lbls = new ArrayList<>(osms.size());
                                         for (final OsmPrimitive osm : osms) {
                                             JLabel l = popupBuildPrimitiveLabels(osm);

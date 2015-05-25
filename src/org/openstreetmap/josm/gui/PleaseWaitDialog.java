@@ -37,7 +37,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
     private JButton btnCancel;
     private JButton btnInBackground;
     /** the text area and the scroll pane for the log */
-    private JosmTextArea taLog = new JosmTextArea(5,50);
+    private final JosmTextArea taLog = new JosmTextArea(5,50);
     private  JScrollPane spLog;
 
     private void initDialog() {
@@ -135,7 +135,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      */
     @Override
     public void appendLogMessage(String message) {
-        if (message == null || message.trim().length() ==0 )
+        if (message == null || message.trim().isEmpty())
             return;
         if (!spLog.isVisible()) {
             spLog.setVisible(true);
@@ -199,5 +199,4 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         this.progress.setValue(progress);
         this.progressBar.repaint();
     }
-
 }

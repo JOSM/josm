@@ -109,11 +109,17 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     }
 
     /**
-     * This is the panel displayed in the first step of the semi-automatic authorisation
-     * process.
+     * This is the panel displayed in the first step of the semi-automatic authorisation process.
      */
     private class RetrieveRequestTokenPanel extends JPanel {
         private JCheckBox cbShowAdvancedParameters;
+
+        /**
+         * Constructs a new {@code RetrieveRequestTokenPanel}.
+         */
+        public RetrieveRequestTokenPanel() {
+            build();
+        }
 
         protected JPanel buildAdvancedParametersPanel() {
             JPanel pnl = new JPanel(new GridBagLayout());
@@ -194,20 +200,21 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             add(buildAdvancedParametersPanel(), BorderLayout.CENTER);
             add(buildCommandPanel(), BorderLayout.SOUTH);
         }
-
-        public RetrieveRequestTokenPanel() {
-            build();
-        }
     }
 
-
     /**
-     * This is the panel displayed in the second step of the semi-automatic authorization
-     * process.
+     * This is the panel displayed in the second step of the semi-automatic authorization process.
      */
     private class RetrieveAccessTokenPanel extends JPanel {
 
         private JosmTextField tfAuthoriseUrl;
+
+        /**
+         * Constructs a new {@code RetrieveAccessTokenPanel}.
+         */
+        public RetrieveAccessTokenPanel() {
+            build();
+        }
 
         protected JPanel buildTitlePanel() {
             JPanel pnl = new JPanel(new BorderLayout());
@@ -267,10 +274,6 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             add(buildActionPanel(), BorderLayout.SOUTH);
         }
 
-        public RetrieveAccessTokenPanel() {
-            build();
-        }
-
         public void setAuthoriseUrl(String url) {
             tfAuthoriseUrl.setText(url);
         }
@@ -296,6 +299,13 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      * Displays the retrieved Access Token in step 3.
      */
     class ShowAccessTokenPanel extends JPanel {
+
+        /**
+         * Constructs a new {@code ShowAccessTokenPanel}.
+         */
+        public ShowAccessTokenPanel() {
+            build();
+        }
 
         protected JPanel buildTitlePanel() {
             JPanel pnl = new JPanel(new BorderLayout());
@@ -344,10 +354,6 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             add(buildTitlePanel(), BorderLayout.NORTH);
             add(buildContentPanel(), BorderLayout.CENTER);
             add(buildActionPanel(), BorderLayout.SOUTH);
-        }
-
-        public ShowAccessTokenPanel() {
-            build();
         }
 
         /**

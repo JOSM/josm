@@ -19,9 +19,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 
 /**
- * This panel displays a summary of the objects to upload. It is displayed in
- * the upper part of the {@link UploadDialog}.
- *
+ * This panel displays a summary of the objects to upload. It is displayed in the upper part of the {@link UploadDialog}.
+ * @since 2599
  */
 public class UploadedObjectsSummaryPanel extends JPanel {
     public static final String NUM_OBJECTS_TO_UPLOAD_PROP = UploadedObjectsSummaryPanel.class.getName() + ".numObjectsToUpload";
@@ -39,29 +38,38 @@ public class UploadedObjectsSummaryPanel extends JPanel {
     private JLabel lblDelete;
     private JScrollPane spDelete;
 
+    /**
+     * Constructs a new {@code UploadedObjectsSummaryPanel}.
+     */
+    public UploadedObjectsSummaryPanel() {
+        build();
+    }
+
     protected void build() {
         setLayout(new GridBagLayout());
         OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
-        // initialize the three lists for uploaded primitives, but don't add
-        // them to the dialog yet,  see setUploadedPrimitives()
+        // initialize the three lists for uploaded primitives, but don't add them to the dialog yet, see setUploadedPrimitives()
         //
         lstAdd = new PrimitiveList();
         lstAdd.setCellRenderer(renderer);
         lstAdd.setVisibleRowCount(Math.min(lstAdd.getModel().getSize(), 10));
         spAdd = new JScrollPane(lstAdd);
         lblAdd = new JLabel(tr("Objects to add:"));
+        lblAdd.setLabelFor(lstAdd);
 
         lstUpdate = new PrimitiveList();
         lstUpdate.setCellRenderer(renderer);
         lstUpdate.setVisibleRowCount(Math.min(lstUpdate.getModel().getSize(), 10));
         spUpdate = new JScrollPane(lstUpdate);
         lblUpdate = new JLabel(tr("Objects to modify:"));
+        lblUpdate.setLabelFor(lstUpdate);
 
         lstDelete = new PrimitiveList();
         lstDelete.setCellRenderer(renderer);
         lstDelete.setVisibleRowCount(Math.min(lstDelete.getModel().getSize(), 10));
         spDelete = new JScrollPane(lstDelete);
         lblDelete = new JLabel(tr("Objects to delete:"));
+        lblDelete.setLabelFor(lstDelete);
     }
 
     /**
@@ -120,10 +128,6 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         firePropertyChange(NUM_OBJECTS_TO_UPLOAD_PROP,0, getNumObjectsToUpload());
     }
 
-    public UploadedObjectsSummaryPanel() {
-        build();
-    }
-
     /**
      * Replies the number of objects to upload
      *
@@ -137,9 +141,11 @@ public class UploadedObjectsSummaryPanel extends JPanel {
 
     /**
      * A simple list of OSM primitives.
-     *
      */
     static class PrimitiveList extends JList<OsmPrimitive> {
+        /**
+         * Constructs a new {@code PrimitiveList}.
+         */
         public PrimitiveList() {
             super(new PrimitiveListModel());
         }
@@ -151,11 +157,13 @@ public class UploadedObjectsSummaryPanel extends JPanel {
 
     /**
      * A list model for a list of OSM primitives.
-     *
      */
     static class PrimitiveListModel extends AbstractListModel<OsmPrimitive> {
         private transient List<OsmPrimitive> primitives;
 
+        /**
+         * Constructs a new {@code PrimitiveListModel}.
+         */
         public PrimitiveListModel() {
             primitives = new ArrayList<>();
         }

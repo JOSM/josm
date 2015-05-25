@@ -55,9 +55,9 @@ public class VersionInfoPanel extends JPanel implements Observer{
     private JPanel pnlChangesetImageryUsed;
     private JLabel lblSource;
     private JLabel lblImageryUsed;
-    private JTextArea lblChangesetComment;
-    private JTextArea lblChangesetSource;
-    private JTextArea lblChangesetImageryUsed;
+    private JTextArea texChangesetComment;
+    private JTextArea texChangesetSource;
+    private JTextArea texChangesetImageryUsed;
 
     protected static JTextArea buildTextArea(String tooltip) {
         JTextArea lbl = new JTextArea();
@@ -75,6 +75,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         JLabel lbl = new JLabel("<html><p style='margin-top:"+textArea.getMargin().top+"'>"+text+"</html>");
         lbl.setFont(textArea.getFont());
         lbl.setToolTipText(tooltip);
+        lbl.setLabelFor(textArea);
         return lbl;
     }
 
@@ -99,14 +100,14 @@ public class VersionInfoPanel extends JPanel implements Observer{
         lblChangeset = new UrlLabel("", 2);
         pnlUserAndChangeset.add(lblChangeset);
 
-        lblChangesetComment = buildTextArea(tr("Changeset comment"));
-        lblChangesetSource = buildTextArea(tr("Changeset source"));
-        lblChangesetImageryUsed = buildTextArea(tr("Imagery used"));
+        texChangesetComment = buildTextArea(tr("Changeset comment"));
+        texChangesetSource = buildTextArea(tr("Changeset source"));
+        texChangesetImageryUsed = buildTextArea(tr("Imagery used"));
 
-        lblSource = buildLabel(tr("<b>Source</b>:"), tr("Changeset source"), lblChangesetSource);
-        lblImageryUsed = buildLabel(tr("<b>Imagery</b>:"), tr("Imagery used"), lblChangesetImageryUsed);
-        pnlChangesetSource = buildTextPanel(lblSource, lblChangesetSource);
-        pnlChangesetImageryUsed = buildTextPanel(lblImageryUsed, lblChangesetImageryUsed);
+        lblSource = buildLabel(tr("<b>Source</b>:"), tr("Changeset source"), texChangesetSource);
+        lblImageryUsed = buildLabel(tr("<b>Imagery</b>:"), tr("Imagery used"), texChangesetImageryUsed);
+        pnlChangesetSource = buildTextPanel(lblSource, texChangesetSource);
+        pnlChangesetImageryUsed = buildTextPanel(lblImageryUsed, texChangesetImageryUsed);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
@@ -119,7 +120,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         gc.weighty = 0.0;
         add(pnlUserAndChangeset, gc);
         gc.gridy = 2;
-        add(lblChangesetComment, gc);
+        add(texChangesetComment, gc);
         gc.gridy = 3;
         add(pnlChangesetSource, gc);
         gc.gridy = 4;
@@ -227,9 +228,9 @@ public class VersionInfoPanel extends JPanel implements Observer{
         }
 
         final Changeset oppCs = model.getPointInTime(pointInTimeType.opposite()).getChangeset();
-        updateText(cs, "comment", lblChangesetComment, null, oppCs, lblChangesetComment);
-        updateText(cs, "source", lblChangesetSource, lblSource, oppCs, pnlChangesetSource);
-        updateText(cs, "imagery_used", lblChangesetImageryUsed, lblImageryUsed, oppCs, pnlChangesetImageryUsed);
+        updateText(cs, "comment", texChangesetComment, null, oppCs, texChangesetComment);
+        updateText(cs, "source", texChangesetSource, lblSource, oppCs, pnlChangesetSource);
+        updateText(cs, "imagery_used", texChangesetImageryUsed, lblImageryUsed, oppCs, pnlChangesetImageryUsed);
     }
 
     protected static void updateText(Changeset cs, String attr, JTextArea textArea, JLabel label, Changeset oppCs, JComponent container) {
