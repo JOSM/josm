@@ -31,9 +31,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
+
 /**
  * UI component for resolving conflicts in the tag sets of two {@link OsmPrimitive}s.
- *
+ * @since 1622
  */
 public class TagMerger extends JPanel implements IConflictResolver {
 
@@ -42,6 +43,14 @@ public class TagMerger extends JPanel implements IConflictResolver {
     private JTable theirTable;
     private final TagMergeModel model;
     private transient AdjustmentSynchronizer adjustmentSynchronizer;
+
+    /**
+     * Constructs a new {@code TagMerger}.
+     */
+    public TagMerger() {
+        model = new TagMergeModel();
+        build();
+    }
 
     /**
      * embeds table in a new {@link JScrollPane} and returns th scroll pane
@@ -61,7 +70,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      * @return the table (embedded in a scroll pane)
      */
     protected JScrollPane buildMineTagTable() {
-        mineTable  = new JTable(
+        mineTable = new JTable(
                 model,
                 new TagMergeColumnModel(
                         new MineTableCellRenderer()
@@ -77,7 +86,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      * @return the table (embedded in a scroll pane)
      */
     protected JScrollPane buildTheirTable() {
-        theirTable  = new JTable(
+        theirTable = new JTable(
                 model,
                 new TagMergeColumnModel(
                         new TheirTableCellRenderer()
@@ -94,7 +103,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      */
 
     protected JScrollPane buildMergedTable() {
-        mergedTable  = new JTable(
+        mergedTable = new JTable(
                 model,
                 new TagMergeColumnModel(
                         new MergedTableCellRenderer()
@@ -122,8 +131,8 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.insets = new Insets(10,0,10,0);
-        JLabel lbl = new JLabel(tr("My version (local dataset)"));
-        add(lbl, gc);
+        JLabel lblMy = new JLabel(tr("My version (local dataset)"));
+        add(lblMy, gc);
 
         gc.gridx = 2;
         gc.gridy = 0;
@@ -133,8 +142,8 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        lbl = new JLabel(tr("Merged version"));
-        add(lbl, gc);
+        JLabel lblMerge = new JLabel(tr("Merged version"));
+        add(lblMerge, gc);
 
         gc.gridx = 4;
         gc.gridy = 0;
@@ -145,8 +154,8 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.insets = new Insets(0,0,0,0);
-        lbl = new JLabel(tr("Their version (server dataset)"));
-        add(lbl, gc);
+        JLabel lblTheir = new JLabel(tr("Their version (server dataset)"));
+        add(lblTheir, gc);
 
         gc.gridx = 0;
         gc.gridy = 1;
@@ -156,7 +165,9 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 0.3;
         gc.weighty = 1.0;
-        add(buildMineTagTable(), gc);
+        JScrollPane tabMy = buildMineTagTable();
+        lblMy.setLabelFor(tabMy);
+        add(tabMy, gc);
 
         gc.gridx = 1;
         gc.gridy = 1;
@@ -180,7 +191,9 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 0.3;
         gc.weighty = 1.0;
-        add(buildMergedTable(), gc);
+        JScrollPane tabMerge = buildMergedTable();
+        lblMerge.setLabelFor(tabMerge);
+        add(tabMerge, gc);
 
         gc.gridx = 3;
         gc.gridy = 1;
@@ -203,7 +216,9 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 0.3;
         gc.weighty = 1.0;
-        add(buildTheirTable(), gc);
+        JScrollPane tabTheir = buildTheirTable();
+        lblTheir.setLabelFor(tabTheir);
+        add(tabTheir, gc);
         theirTable.getSelectionModel().addListSelectionListener(keepTheirAction);
 
         DoubleClickAdapter dblClickAdapter = new DoubleClickAdapter();
@@ -223,15 +238,6 @@ public class TagMerger extends JPanel implements IConflictResolver {
         JButton btnUndecide = new JButton(undecidedAction);
         btnUndecide.setName("button.undecide");
         add(btnUndecide, gc);
-
-    }
-
-    /**
-     * Constructs a new {@code TagMerger}.
-     */
-    public TagMerger() {
-        model = new TagMergeModel();
-        build();
     }
 
     /**

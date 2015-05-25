@@ -94,24 +94,34 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
         JCheckBox author = new JCheckBox(tr("Add author information"), Main.pref.getBoolean("lastAddAuthor", true));
         p.add(author, GBC.eol());
+
         JLabel nameLabel = new JLabel(tr("Real name"));
         p.add(nameLabel, GBC.std().insets(10, 0, 5, 0));
         JosmTextField authorName = new JosmTextField();
         p.add(authorName, GBC.eol().fill(GBC.HORIZONTAL));
+        nameLabel.setLabelFor(authorName);
+
         JLabel emailLabel = new JLabel(tr("E-Mail"));
         p.add(emailLabel, GBC.std().insets(10, 0, 5, 0));
         JosmTextField email = new JosmTextField();
         p.add(email, GBC.eol().fill(GBC.HORIZONTAL));
+        emailLabel.setLabelFor(email);
+
         JLabel copyrightLabel = new JLabel(tr("Copyright (URL)"));
         p.add(copyrightLabel, GBC.std().insets(10, 0, 5, 0));
         JosmTextField copyright = new JosmTextField();
         p.add(copyright, GBC.std().fill(GBC.HORIZONTAL));
+        copyrightLabel.setLabelFor(copyright);
+
         JButton predefined = new JButton(tr("Predefined"));
         p.add(predefined, GBC.eol().insets(5, 0, 0, 0));
+
         JLabel copyrightYearLabel = new JLabel(tr("Copyright year"));
         p.add(copyrightYearLabel, GBC.std().insets(10, 0, 5, 5));
         JosmTextField copyrightYear = new JosmTextField("");
         p.add(copyrightYear, GBC.eol().fill(GBC.HORIZONTAL));
+        copyrightYearLabel.setLabelFor(copyrightYear);
+
         JLabel warning = new JLabel("<html><font size='-2'>&nbsp;</html");
         p.add(warning, GBC.eol().fill(GBC.HORIZONTAL).insets(15, 0, 0, 0));
         addDependencies(gpxData, author, authorName, email, copyright, predefined, copyrightYear, nameLabel, emailLabel,

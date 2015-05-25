@@ -30,6 +30,14 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     private boolean closeChangesetAfterNextUpload;
     private transient ConfigurationParameterRequestHandler configHandler;
 
+    /**
+     * Constructs a new {@code UploadParameterSummaryPanel}.
+     */
+    public UploadParameterSummaryPanel() {
+        build();
+        updateSummary();
+    }
+
     protected String buildChangesetSummary() {
         StringBuilder msg = new StringBuilder(96);
         if (selectedChangeset == null || selectedChangeset.isNew()) {
@@ -55,8 +63,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     protected String buildStrategySummary() {
         if (spec == null)
             return "";
-        // check whether we can use one changeset only or whether we have to use
-        // multiple changesets
+        // check whether we can use one changeset only or whether we have to use multiple changesets
         //
         boolean useOneChangeset = true;
         int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
@@ -112,14 +119,6 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         add(pnl, BorderLayout.WEST);
     }
 
-    /**
-     * Constructs a new {@code UploadParameterSummaryPanel}.
-     */
-    public UploadParameterSummaryPanel() {
-        build();
-        updateSummary();
-    }
-
     public void setConfigurationParameterRequestListener(ConfigurationParameterRequestHandler handler) {
         this.configHandler = handler;
     }
@@ -140,7 +139,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     }
 
     protected void updateSummary() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(32);
         sb.append("<html>")
           .append(buildStrategySummary())
           .append("<br><br>")

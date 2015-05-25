@@ -31,11 +31,10 @@ public class AlignImageryPanel extends JPanel {
     private static final String PREF = "imagery.offsetnagging";
 
     public AlignImageryPanel(boolean oneLine) {
-        super();
-
         Font font = getFont().deriveFont(Font.PLAIN, 14.0f);
         JLabel nagLabel = new JLabel(tr("Aerial imagery might be misaligned. Please check its offset using GPS tracks!"));
         UrlLabel detailsList = new UrlLabel(tr("http://wiki.openstreetmap.org/wiki/Using_Imagery"), tr("Details..."));
+        nagLabel.setLabelFor(detailsList);
         nagLabel.setFont(font);
         detailsList.setFont(font);
 
@@ -46,7 +45,7 @@ public class AlignImageryPanel extends JPanel {
         closeButton.setToolTipText(tr("Hide this message and never show it again"));
         closeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed( ActionEvent e ) {
+            public void actionPerformed(ActionEvent e) {
                 if (Main.isDisplayingMapView()) {
                     Main.map.removeTopPanel(AlignImageryPanel.class);
                     Main.pref.put(PREF, false);
@@ -69,10 +68,10 @@ public class AlignImageryPanel extends JPanel {
     }
 
     public static void addNagPanelIfNeeded() {
-        if (Main.isDisplayingMapView() && !Main.pref.getBoolean("expert") && Main.pref.getBoolean(PREF, true) ) {
+        if (Main.isDisplayingMapView() && !Main.pref.getBoolean("expert") && Main.pref.getBoolean(PREF, true)) {
             if (Main.map.getTopPanel(AlignImageryPanel.class) == null) {
                 double w = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-                AlignImageryPanel p = new AlignImageryPanel(w>1300);
+                AlignImageryPanel p = new AlignImageryPanel(w > 1300);
                 Main.map.addTopPanel(p);
             }
         }

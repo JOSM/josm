@@ -87,6 +87,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         gc.gridx = 1;
         gc.weightx = 1.0;
         add(tfOsmServerUrl = new JosmTextField(), gc);
+        lblApiUrl.setLabelFor(tfOsmServerUrl);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmServerUrl);
         valOsmServerUrl = new ApiUrlValidator(tfOsmServerUrl);
         valOsmServerUrl.validate();

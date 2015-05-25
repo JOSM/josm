@@ -328,6 +328,9 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projPanel.add(bounds, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
         projPanel.add(projSubPrefPanelWrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(20,5,5,5));
 
+        projectionCodeLabel.setLabelFor(projectionCode);
+        projectionNameLabel.setLabelFor(projectionName);
+
         projPanel.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,10));
         projPanel.add(new JLabel(tr("Display coordinates as")), GBC.std().insets(5,5,0,5));
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));

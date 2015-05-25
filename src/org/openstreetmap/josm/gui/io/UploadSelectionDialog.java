@@ -46,7 +46,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * This dialog can be used to select individual object for uploading.
  *
- *
+ * @since 2250
  */
 public class UploadSelectionDialog extends JDialog {
 
@@ -56,13 +56,23 @@ public class UploadSelectionDialog extends JDialog {
     private boolean canceled;
     private SideButton btnContinue;
 
+    /**
+     * Constructs a new {@code UploadSelectionDialog}.
+     */
+    public UploadSelectionDialog() {
+        super(JOptionPane.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
+        build();
+    }
+
     protected JPanel buildSelectedPrimitivesPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
-        JLabel lbl = new JLabel(tr("<html>Mark modified objects <strong>from the current selection</strong> to be uploaded to the server.</html>"));
+        JLabel lbl = new JLabel(
+                tr("<html>Mark modified objects <strong>from the current selection</strong> to be uploaded to the server.</html>"));
         lbl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         pnl.add(lbl, BorderLayout.NORTH);
         pnl.add(new JScrollPane(lstSelectedPrimitives = new OsmPrimitiveList()), BorderLayout.CENTER);
+        lbl.setLabelFor(lstSelectedPrimitives);
         return pnl;
     }
 
@@ -73,6 +83,7 @@ public class UploadSelectionDialog extends JDialog {
         lbl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         pnl.add(lbl, BorderLayout.NORTH);
         pnl.add(new JScrollPane(lstDeletedPrimitives = new OsmPrimitiveList()), BorderLayout.CENTER);
+        lbl.setLabelFor(lstDeletedPrimitives);
         return pnl;
     }
 
@@ -113,11 +124,6 @@ public class UploadSelectionDialog extends JDialog {
         );
         setTitle(tr("Select objects to upload"));
         HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/UploadSelection"));
-    }
-
-    public UploadSelectionDialog() {
-        super(JOptionPane.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
-        build();
     }
 
     public void populate(Collection<OsmPrimitive> selected, Collection<OsmPrimitive> deleted) {

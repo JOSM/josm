@@ -48,7 +48,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
     private final boolean downloadReferrers;
 
     /** Temporary layer where downloaded primitives are put */
-    private OsmDataLayer tmpLayer;
+    private final OsmDataLayer tmpLayer;
     /** Reference to the task that download requested primitives */
     private DownloadPrimitivesTask mainTask;
     /** Flag indicated that user ask for cancel this task */
@@ -208,12 +208,13 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
             String title, String text, String listLabel, int msgType) {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new HtmlPanel(text), GBC.eop());
+        JosmTextArea txt = new JosmTextArea();
         if (listLabel != null) {
             JLabel missing = new JLabel(listLabel);
             missing.setFont(missing.getFont().deriveFont(Font.PLAIN));
+            missing.setLabelFor(txt);
             p.add(missing, GBC.eol());
         }
-        JosmTextArea txt = new JosmTextArea();
         txt.setFont(GuiHelper.getMonospacedFont(txt));
         txt.setEditable(false);
         txt.setBackground(p.getBackground());
@@ -226,8 +227,8 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         return new ExtendedDialog(
                 Main.parent,
                 title,
-                new String[] { tr("Ok") })
-        .setButtonIcons(new String[] { "ok" })
+                new String[] {tr("Ok")})
+        .setButtonIcons(new String[] {"ok"})
         .setIcon(msgType)
         .setContent(p, false);
     }

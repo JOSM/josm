@@ -238,6 +238,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             include.setEnabled(false);
             JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
             lbl.setToolTipText(tr("No exporter for this layer"));
+            lbl.setLabelFor(include);
             lbl.setEnabled(false);
             p.add(include, GBC.std());
             p.add(lbl, GBC.std());

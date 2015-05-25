@@ -130,6 +130,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         gc.weightx = 1.0;
         pnl.add(cbAuthorisationProcedure = new AuthorizationProcedureComboBox(),gc);
         cbAuthorisationProcedure.addItemListener(new AuthorisationProcedureChangeListener());
+        lbl.setLabelFor(cbAuthorisationProcedure);
         return pnl;
     }
 

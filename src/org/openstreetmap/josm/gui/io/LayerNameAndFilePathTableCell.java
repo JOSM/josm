@@ -53,6 +53,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
         lblFilename.setPreferredSize(new Dimension(lblFilename.getPreferredSize().width, 19));
         lblFilename.setOpaque(true);
+        lblFilename.setLabelFor(btnFileChooser);
 
         tfFilename.setToolTipText(tr("Either edit the path manually in the text field or click the \"...\" button to open a file chooser."));
         tfFilename.setPreferredSize(new Dimension(tfFilename.getPreferredSize().width, 19));

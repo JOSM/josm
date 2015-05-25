@@ -68,6 +68,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Imagery preferences, including imagery providers, settings and offsets.
+ * @since 3715
  */
 public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
@@ -82,7 +83,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     private ImageryPreference() {
-        super(/* ICON(preferences/) */ "imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"), false, new JTabbedPane());
+        super(/* ICON(preferences/) */ "imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"),
+                false, new JTabbedPane());
     }
 
     private ImageryProvidersPanel imageryProviders;
@@ -99,6 +101,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     private void addSettingsSection(final JPanel p, String name, JPanel section, GBC gbc) {
         final JLabel lbl = new JLabel(name);
         lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
+        lbl.setLabelFor(section);
         p.add(lbl,GBC.std());
         p.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 0));
         p.add(section, gbc.insets(20,5,0,10));

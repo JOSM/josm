@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -114,10 +114,12 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                         JLabel.LEFT
                 );
                 p.add(primitiveLabel, GBC.eol());
+                rolesLabel.setLabelFor(primitiveLabel);
 
                 final RoleCorrectionTable table = new RoleCorrectionTable(roleCorrections);
                 final JScrollPane scrollPane = new JScrollPane(table);
                 p.add(scrollPane, GBC.eop().fill(GBC.HORIZONTAL));
+                primitiveLabel.setLabelFor(table);
 
                 roleTableMap.put(primitive, table);
             }

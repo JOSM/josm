@@ -12,9 +12,13 @@ import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
 
 /**
  * A UI component for resolving conflicts in the node lists of two {@link Way}s.
- *
+ * @since 1622
  */
 public class NodeListMerger extends ListMerger<Node> implements IConflictResolver {
+
+    /**
+     * Constructs a new {@code NodeListMerger}.
+     */
     public NodeListMerger() {
         super(new NodeListMergeModel());
     }

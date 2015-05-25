@@ -20,6 +20,15 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
     private JLabel lblCustomText;
     private JProgressBar progressBar;
 
+    /**
+     * Constructs a new {@code UploadAndSaveProgressRenderer}.
+     */
+    public UploadAndSaveProgressRenderer() {
+        build();
+        // initially not visible
+        setVisible(false);
+    }
+
     protected void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
@@ -46,12 +55,6 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
         gc.weighty = 0.0;
         gc.insets = new Insets(5,0,0,5);
         add(progressBar = new JProgressBar(JProgressBar.HORIZONTAL), gc);
-    }
-
-    public UploadAndSaveProgressRenderer() {
-        build();
-        // initially not visible
-        setVisible(false);
     }
 
     @Override

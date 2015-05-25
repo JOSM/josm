@@ -31,7 +31,8 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * An imagery panel used to add WMS imagery sources
+ * An imagery panel used to add WMS imagery sources.
+ * @since 2599
  */
 public class AddWMSLayerPanel extends AddImageryPanel {
 
@@ -65,6 +66,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         add(formats, GBC.eol().fill());
 
         add(wmsInstruction = new JLabel(tr("4. Verify generated WMS URL")), GBC.eol());
+        wmsInstruction.setLabelFor(wmsUrl);
         add(wmsUrl, GBC.eop().fill());
         wmsUrl.setLineWrap(true);
 

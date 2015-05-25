@@ -70,10 +70,12 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
         layout.setAutoCreateContainerGaps(true);
 
         JLabel lbl1 = new JLabel(tr("Object type:"));
+        lbl1.setLabelFor(cbType);
 
         cbType.addItem(trc("osm object types", "mixed"));
         cbType.setToolTipText(tr("Choose the OSM object type"));
         JLabel lbl2 = new JLabel(tr("Object ID:"));
+        lbl2.setLabelFor(cbId);
 
         cbId.setEditor(new BasicComboBoxEditor() {
             @Override
