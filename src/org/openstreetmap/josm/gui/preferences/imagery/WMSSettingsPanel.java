@@ -59,6 +59,7 @@ public class WMSSettingsPanel extends JPanel {
         add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
         JLabel labelSimConn = new JLabel(tr("Simultaneous connections:"));
         spinSimConn = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.get().intValue(), 1, 30, 1));
+        labelSimConn.setLabelFor(spinSimConn);
         add(labelSimConn, GBC.std());
         add(GBC.glue(5, 0), GBC.std());
         add(spinSimConn, GBC.eol());
@@ -71,6 +72,8 @@ public class WMSSettingsPanel extends JPanel {
         JLabel labelNorth = new JLabel(tr("% of north:"));
         spinEast = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_OVERLAP_EAST.get().intValue(), 1, 50, 1));
         spinNorth = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_OVERLAP_NORTH.get().intValue(), 1, 50, 1));
+        labelEast.setLabelFor(spinEast);
+        labelNorth.setLabelFor(spinNorth);
 
         JPanel overlapPanel = new JPanel(new FlowLayout());
         overlapPanel.add(overlapCheckBox);
@@ -81,7 +84,7 @@ public class WMSSettingsPanel extends JPanel {
 
         add(overlapPanel, GBC.eop());
     }
-    
+
     /**
      * Loads the WMS settings.
      */
@@ -93,7 +96,7 @@ public class WMSSettingsPanel extends JPanel {
         this.spinNorth.setValue(WMSLayer.PROP_OVERLAP_NORTH.get());
         this.spinSimConn.setValue(WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.get());
     }
-    
+
     /**
      * Saves the WMS settings.
      * @return true when restart is required
@@ -106,7 +109,7 @@ public class WMSSettingsPanel extends JPanel {
         WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.put((Integer) spinSimConn.getModel().getValue());
 
         HTMLGrabber.PROP_BROWSER.put(browser.getEditor().getItem().toString());
-        
+
         return false;
     }
 }

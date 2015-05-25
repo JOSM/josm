@@ -63,7 +63,7 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
         export.setSelected(true);
         final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
         lbl.setToolTipText(layer.getToolTipText());
-
+        lbl.setLabelFor(export);
         JLabel lblData = new JLabel(tr("Data:"));
         /* I18n: Refer to a OSM data file in session file */ link = new JRadioButton(tr("local file"));
         link.putClientProperty("actionname", "link");

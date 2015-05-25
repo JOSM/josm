@@ -49,8 +49,9 @@ public class FeaturesPanel extends JPanel {
                 updateEnabledState();
             }
         });
-        
+
         intervalLabel = new JLabel(tr("Check interval (minutes):"));
+        intervalLabel.setLabelFor(notifierInterval);
         add(intervalLabel, GBC.std().insets(25, 0, 0, 0));
 
         notifierInterval.setToolTipText(tr("Default value: {0}", MessageNotifier.PROP_INTERVAL.getDefaultValue()));
@@ -58,14 +59,14 @@ public class FeaturesPanel extends JPanel {
         add(notifierInterval, GBC.eol().insets(5,0,0,0));
 
         final JLabel notesDaysClosedLabel = new JLabel(tr("Max age for closed notes (days):"));
+        notesDaysClosedLabel.setLabelFor(notesDaysClosed);
         notesDaysClosedLabel.setToolTipText(tr("Specifies the number of days a note needs to be closed to no longer be downloaded"));
         add(notesDaysClosedLabel, GBC.std().insets(0, 20, 0, 0));
         notesDaysClosed.setToolTipText(tr("Default value: {0}", DownloadNotesTask.DAYS_CLOSED.getDefaultValue()));
         notesDaysClosed.setMinimumSize(notesDaysClosed.getPreferredSize());
         add(notesDaysClosed, GBC.eol().insets(5, 20, 0, 0));
-
     }
-    
+
     private void updateEnabledState() {
         boolean enabled = notifier.isSelected();
         intervalLabel.setEnabled(enabled);
@@ -99,7 +100,7 @@ public class FeaturesPanel extends JPanel {
             }
         // Even if they have not changed,
         } else {
-            // notifier should be stopped if user is no more identified enough 
+            // notifier should be stopped if user is no more identified enough
             if (!MessageNotifier.isUserEnoughIdentified()) {
                 MessageNotifier.stop();
             // or restarted if user is again identified and notifier was enabled in preferences

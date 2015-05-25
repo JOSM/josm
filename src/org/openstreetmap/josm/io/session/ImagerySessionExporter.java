@@ -56,6 +56,7 @@ public class ImagerySessionExporter implements SessionLayerExporter {
         export.setSelected(true);
         final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
         lbl.setToolTipText(layer.getToolTipText());
+        lbl.setLabelFor(export);
         p.add(export, GBC.std());
         p.add(lbl, GBC.std());
         p.add(GBC.glue(1,0), GBC.std().fill(GBC.HORIZONTAL));

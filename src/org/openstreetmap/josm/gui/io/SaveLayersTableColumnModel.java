@@ -24,6 +24,9 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
         private final JLabel needsSave = new JLabel(tr("should be saved"));
         private static final GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
+        /**
+         * Constructs a new {@code RecommendedActionsTableCell}.
+         */
         public RecommendedActionsTableCell() {
             pnlEmpty.setPreferredSize(new Dimension(1, 19));
             needsUpload.setPreferredSize(new Dimension(needsUpload.getPreferredSize().width, 19));
@@ -35,7 +38,7 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
                 boolean hasFocus, int row, int column) {
             JPanel panel = new JPanel(new GridBagLayout());
             SaveLayerInfo info = (SaveLayerInfo)value;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(24);
             sb.append("<html>");
             if (info.getLayer().requiresUploadToServer() && !info.getLayer().isUploadDiscouraged()) {
                 panel.add(needsUpload, defaultCellStyle);
@@ -53,7 +56,8 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
 
             if (info.getLayer().requiresSaveToFile()) {
                 panel.add(needsSave, defaultCellStyle);
-                sb.append(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.", info.getName(), info.getFile().toString()));
+                sb.append(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.",
+                        info.getName(), info.getFile().toString()));
             } else {
                 panel.add(pnlEmpty, defaultCellStyle);
                 sb.append(tr("Layer ''{0}'' has no modifications to be saved.", info.getName()));
@@ -62,6 +66,13 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
             panel.setToolTipText(sb.toString());
             return panel;
         }
+    }
+
+    /**
+     * Constructs a new {@code SaveLayersTableColumnModel}.
+     */
+    public SaveLayersTableColumnModel() {
+        build();
     }
 
     protected void build() {
@@ -95,9 +106,5 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
         col.setPreferredWidth(100);
 
         addColumn(col);
-    }
-
-    public SaveLayersTableColumnModel() {
-        build();
     }
 }

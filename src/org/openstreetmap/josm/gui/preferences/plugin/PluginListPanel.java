@@ -255,6 +255,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
                     }
                 }
             });
+            lblPlugin.setLabelFor(description);
 
             gbc.gridx = 1;
             gbc.gridy = ++row;

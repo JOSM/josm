@@ -18,10 +18,16 @@ import org.openstreetmap.josm.tools.GBC;
 /**
  * Generic dialog with message and scrolling area
  * @author Alexei
+ * @since 5114
  */
 public class LogShowDialog extends ExtendedDialog {
 
-
+    /**
+     * Constructs a new {@code LogShowDialog}.
+     * @param title The text that will be shown in the window titlebar
+     * @param msg Single-line Label
+     * @param log Multi-line log
+     */
     public LogShowDialog(String title, String msg, String log) {
         super(Main.parent, title, new String[] {tr("OK")});
         setButtonIcons(new String[] {"ok.png"});
@@ -41,10 +47,11 @@ public class LogShowDialog extends ExtendedDialog {
         txt.setEditable(false);
         txt.setOpaque(false);
 
+        lbl.setLabelFor(txt);
+
         JScrollPane sp = new JScrollPane(txt);
         sp.setOpaque(false);
         sp.setPreferredSize(new Dimension(600,300));
-
 
         p.add(sp, GBC.eop().insets(5,15,0,0).fill(GBC.HORIZONTAL));
 

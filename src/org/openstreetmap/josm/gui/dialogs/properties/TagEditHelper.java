@@ -634,19 +634,23 @@ class TagEditHelper {
             popupMenu.add(rememberLastTags);
         }
 
+        private String code(String text) {
+            return "<code>" + text + "</code> ";
+        }
+
         @Override
         public void setContentPane(Container contentPane) {
             final int commandDownMask = GuiHelper.getMenuShortcutKeyMaskEx();
-            ArrayList<String> lines = new ArrayList<>();
+            List<String> lines = new ArrayList<>();
             Shortcut sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask);
             if (sc != null) {
-                lines.add("<code>"+sc.getKeyText()+"</code> "+tr("to apply first suggestion"));
+                lines.add(code(sc.getKeyText()) + tr("to apply first suggestion"));
             }
-            lines.add("<code>"+KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+"+"+KeyEvent.getKeyText(KeyEvent.VK_ENTER)+"</code> "
+            lines.add(code(KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+"+"+KeyEvent.getKeyText(KeyEvent.VK_ENTER))
                     +tr("to add without closing the dialog"));
             sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask|KeyEvent.SHIFT_DOWN_MASK);
             if (sc != null) {
-                lines.add("<code>"+sc.getKeyText()+"</code> "+tr("to add first suggestion without closing the dialog"));
+                lines.add(code(sc.getKeyText()) + tr("to add first suggestion without closing the dialog"));
             }
             final JLabel helpLabel = new JLabel("<html>" + Utils.join("<br>", lines) + "</html>");
             helpLabel.setFont(helpLabel.getFont().deriveFont(Font.PLAIN));

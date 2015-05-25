@@ -654,11 +654,11 @@ public class CorrelateGpxWithImages extends AbstractAction {
         syncDialog = new ExtendedDialog(
                 Main.parent,
                 tr("Correlate images with GPX track"),
-                new String[] { tr("Correlate"), tr("Cancel") },
+                new String[] {tr("Correlate"), tr("Cancel")},
                 false
         );
         syncDialog.setContent(panelTf, false);
-        syncDialog.setButtonIcons(new String[] { "ok", "cancel" });
+        syncDialog.setButtonIcons(new String[] {"ok", "cancel"});
         syncDialog.setupDialog();
         outerPanel.add(syncDialog.getContentPane(), BorderLayout.PAGE_START);
         syncDialog.setContentPane(outerPanel);

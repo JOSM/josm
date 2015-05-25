@@ -223,17 +223,17 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
         // -- prepare the combo box with the search expressions
         //
-        JLabel label = new JLabel( initialValues instanceof Filter ? tr("Filter string:") : tr("Search string:"));
+        JLabel label = new JLabel(initialValues instanceof Filter ? tr("Filter string:") : tr("Search string:"));
         final HistoryComboBox hcbSearchString = new HistoryComboBox();
         hcbSearchString.setText(initialValues.text);
         hcbSearchString.setToolTipText(tr("Enter the search expression"));
-        // we have to reverse the history, because ComboBoxHistory will reverse it again
-        // in addElement()
+        // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         //
         List<String> searchExpressionHistory = getSearchExpressionHistory();
         Collections.reverse(searchExpressionHistory);
         hcbSearchString.setPossibleItems(searchExpressionHistory);
         hcbSearchString.setPreferredSize(new Dimension(40, hcbSearchString.getPreferredSize().height));
+        label.setLabelFor(hcbSearchString);
 
         JRadioButton replace = new JRadioButton(tr("replace selection"), initialValues.mode == SearchMode.replace);
         JRadioButton add = new JRadioButton(tr("add to selection"), initialValues.mode == SearchMode.add);

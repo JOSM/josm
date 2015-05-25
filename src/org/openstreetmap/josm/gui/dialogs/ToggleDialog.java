@@ -72,7 +72,7 @@ import org.openstreetmap.josm.tools.WindowGeometry.WindowGeometryException;
 
 /**
  * This class is a toggle dialog that can be turned on and off.
- *
+ * @since 8
  */
 public class ToggleDialog extends JPanel implements ShowHideButtonListener, Helpful, AWTEventListener, Destroyable, PreferenceChangedListener {
 
