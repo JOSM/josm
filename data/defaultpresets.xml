@@ -3190,6 +3190,8 @@
             <key key="tourism" value="hotel" />
             <reference ref="name_operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
+            <text key="rooms" text="Rooms" />
+            <text key="beds" text="Beds" />
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3208,6 +3210,8 @@
             <key key="tourism" value="motel" />
             <reference ref="name_operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
+            <text key="rooms" text="Rooms" />
+            <text key="beds" text="Beds" />
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3225,6 +3229,8 @@
             <key key="tourism" value="guest_house" />
             <reference ref="name_operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
+            <text key="rooms" text="Rooms" />
+            <text key="beds" text="Beds" />
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3243,6 +3249,8 @@
             <key key="tourism" value="chalet" />
             <reference ref="name_operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
+            <text key="rooms" text="Rooms" />
+            <text key="beds" text="Beds" />
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3261,6 +3269,8 @@
             <key key="tourism" value="hostel" />
             <reference ref="name_operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
+            <text key="rooms" text="Rooms" />
+            <text key="beds" text="Beds" />
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3278,6 +3288,8 @@
             <key key="tourism" value="alpine_hut" />
             <reference ref="name_operator" />
             <text key="ele" text="Elevation" />
+            <text key="rooms" text="Rooms" />
+            <text key="beds" text="Beds" />
             <space />
             <reference ref="internet_smoking" />
             <space />
