@@ -5087,6 +5087,13 @@
             <reference ref="name_operator" />
             <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" />
         </item> <!-- Beach Volleyball -->
+            <item name="Billiards" icon="styles/standard/sport/billiards.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=billiards" />
+            <space />
+            <key key="sport" value="billiards" />
+            <reference ref="name_operator" />
+            <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" />
+        </item> <!-- Billiards -->
         <item name="Golf" icon="styles/standard/sport/golf.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=golf"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=golf"

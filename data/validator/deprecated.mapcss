@@ -476,3 +476,12 @@ relation[/^..$/][!to] {
   suggestAlternative: "sport=field_hockey";
   suggestAlternative: "sport=ice_hockey";
 }
+
+/* see #11471 */
+*[sport=billard],
+*[sport=billards],
+*[sport=billiard] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "sport=billiards";
+  fixAdd: "sport=billiards";
+}

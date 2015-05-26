@@ -3803,6 +3803,7 @@ area[sport=squash],
 area[sport=shooting],
 area[sport=volleyball],
 area[sport=beachvolleyball],
+area[sport=billiards],
 area[sport=bowling],
 area[sport=handball],
 area[sport=rowing],
@@ -3829,6 +3830,11 @@ node[sport=volleyball] {
 }
 node[sport=beachvolleyball] {
     icon-image: "sport/beachvolleyball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=billiards] {
+    icon-image: "sport/billiards.svg";
     set icon_z17;
     text: auto;
 }
