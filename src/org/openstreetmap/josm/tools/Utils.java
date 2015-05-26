@@ -498,9 +498,9 @@ public final class Utils {
     public static boolean copyToClipboard(String s) {
         try {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), new ClipboardOwner() {
-
                 @Override
                 public void lostOwnership(Clipboard clpbrd, Transferable t) {
+                    // Do nothing
                 }
             });
             return true;
@@ -511,24 +511,38 @@ public final class Utils {
     }
 
     /**
-     * Extracts clipboard content as string.
-     * @return string clipboard contents if available, {@code null} otherwise.
+     * Extracts clipboard content as {@code Transferable} object.
+     * @param clipboard clipboard from which contents are retrieved
+     * @return clipboard contents if available, {@code null} otherwise.
+     * @since 8429
      */
-    public static String getClipboardContent() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    public static Transferable getTransferableContent(Clipboard clipboard) {
         Transferable t = null;
         for (int tries = 0; t == null && tries < 10; tries++) {
             try {
                 t = clipboard.getContents(null);
             } catch (IllegalStateException e) {
-                // Clipboard currently unavailable. On some platforms, the system clipboard is unavailable while it is accessed by another application.
+                // Clipboard currently unavailable.
+                // On some platforms, the system clipboard is unavailable while it is accessed by another application.
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {
                     Main.warn("InterruptedException in "+Utils.class.getSimpleName()+" while getting clipboard content");
                 }
+            } catch (NullPointerException e) {
+                // JDK-6322854: On Linux/X11, NPE can happen for unknown reasons, on all versions of Java
+                Main.error(e);
             }
         }
+        return t;
+    }
+
+    /**
+     * Extracts clipboard content as string.
+     * @return string clipboard contents if available, {@code null} otherwise.
+     */
+    public static String getClipboardContent() {
+        Transferable t = getTransferableContent(Toolkit.getDefaultToolkit().getSystemClipboard());
         try {
             if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 return (String) t.getTransferData(DataFlavor.stringFlavor);
@@ -546,13 +560,13 @@ public final class Utils {
      * @return MD5 hash of data, string of length 32 with characters in range [0-9a-f]
      */
     public static String md5Hex(String data) {
-        byte[] byteData = data.getBytes(StandardCharsets.UTF_8);
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+        byte[] byteData = data.getBytes(StandardCharsets.UTF_8);
         byte[] byteDigest = md.digest(byteData);
         return toHexString(byteDigest);
     }
