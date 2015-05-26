@@ -467,8 +467,8 @@ class TagEditHelper {
         private void selectACComboBoxSavingUnixBuffer(AutoCompletingComboBox cb) {
             // select combobox with saving unix system selection (middle mouse paste)
             Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
-            if(sysSel != null) {
-                Transferable old = sysSel.getContents(null);
+            if (sysSel != null) {
+                Transferable old = Utils.getTransferableContent(sysSel);
                 cb.requestFocusInWindow();
                 cb.getEditor().selectAll();
                 sysSel.setContents(old, null);
