@@ -74,7 +74,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class ExtendedDialog extends JDialog {
     private final boolean disposeOnClose;
-    private int result = 0;
+    private volatile int result = 0;
     public static final int DialogClosedOtherwise = 0;
     private boolean toggleable = false;
     private String rememberSizePref = "";
