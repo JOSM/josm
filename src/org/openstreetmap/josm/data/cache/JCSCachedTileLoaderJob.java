@@ -84,6 +84,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     public static ThreadFactory getNamedThreadFactory(final String name) {
         return new ThreadFactory(){
+            @Override
             public Thread newThread(Runnable r) {
                 Thread t = Executors.defaultThreadFactory().newThread(r);
                 t.setName(name);
@@ -184,7 +185,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
         if (first || force) {
             ensureCacheElement();
-            if (!force && cacheElement != null && isCacheElementValid() && (isObjectLoadable())) {
+            if (!force && cacheElement != null && isCacheElementValid() && isObjectLoadable()) {
                 // we got something in cache, and it's valid, so lets return it
                 log.log(Level.FINE, "JCS - Returning object from cache: {0}", getCacheKey());
                 finishLoading(LoadResult.SUCCESS);
@@ -214,11 +215,13 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     /**
+     * Simple implementation. All errors should be cached as empty. Though some JDK (JDK8 on Windows for example)
+     * doesn't return 4xx error codes, instead they do throw an FileNotFoundException or IOException
      *
-     * @return cache object as empty, regardless of what remote resource has returned (ex. based on headers)
+     * @return true if we should put empty object into cache, regardless of what remote resource has returned
      */
-    protected boolean cacheAsEmpty(Map<String, List<String>> headers, int statusCode, byte[] content) {
-        return false;
+    protected boolean cacheAsEmpty() {
+        return attributes.getResponseCode() < 500;
     }
 
     /**
@@ -261,7 +264,6 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         }
     }
 
-
     private void finishLoading(LoadResult result) {
         Set<ICachedLoaderListener> listeners = null;
         synchronized (inProgress) {
@@ -271,19 +273,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             log.log(Level.WARNING, "Listener not found for URL: {0}. Listener not notified!", getUrl());
             return;
         }
-        try {
-            for (ICachedLoaderListener l: listeners) {
-                l.loadingFinished(cacheData, attributes, result);
-            }
-        } catch (Exception e) {
-            log.log(Level.WARNING, "JCS - Error while loading object from cache: {0}; {1}", new Object[]{e.getMessage(), getUrl()});
-            Main.warn(e);
-            for (ICachedLoaderListener l: listeners) {
-                l.loadingFinished(cacheData, attributes, LoadResult.FAILURE);
-            }
-
+        for (ICachedLoaderListener l: listeners) {
+            l.loadingFinished(cacheData, attributes, result);
         }
-
     }
 
     private boolean isCacheElementValid() {
@@ -361,8 +353,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 attributes.setResponseCode(urlConn.getResponseCode());
                 byte[] raw = read(urlConn);
 
-                if (!cacheAsEmpty(urlConn.getHeaderFields(), urlConn.getResponseCode(), raw) &&
-                        raw != null && raw.length > 0) {
+                if (isResponseLoadable(urlConn.getHeaderFields(), urlConn.getResponseCode(), raw)) {
                     // we need to check cacheEmpty, so for cases, when data is returned, but we want to store
                     // as empty (eg. empty tile images) to save some space
                     cacheData = createCacheEntry(raw);
@@ -370,17 +361,34 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     log.log(Level.FINE, "JCS - downloaded key: {0}, length: {1}, url: {2}",
                             new Object[] {getCacheKey(), raw.length, getUrl()});
                     return true;
-                } else  {
+                } else if (cacheAsEmpty()) {
                     cacheData = createCacheEntry(new byte[]{});
                     cache.put(getCacheKey(), cacheData, attributes);
                     log.log(Level.FINE, "JCS - Caching empty object {0}", getUrl());
                     return true;
+                } else {
+                    log.log(Level.FINE, "JCS - failure during load - reponse is not loadable nor cached as empty");
+                    return false;
                 }
             }
         } catch (FileNotFoundException e) {
             log.log(Level.FINE, "JCS - Caching empty object as server returned 404 for: {0}", getUrl());
-            cache.put(getCacheKey(), createCacheEntry(new byte[]{}), attributes);
-            return handleNotFound();
+            attributes.setResponseCode(404);
+            boolean doCache = isResponseLoadable(null, 404, null) || cacheAsEmpty();
+            if (doCache) {
+                cacheData = createCacheEntry(new byte[]{});
+                cache.put(getCacheKey(), cacheData, attributes);
+            }
+            return doCache;
+        } catch (IOException e) {
+            log.log(Level.FINE, "JCS - IOExecption during communication with server for: {0}", getUrl());
+            attributes.setResponseCode(499); // set dummy error code
+            boolean doCache = isResponseLoadable(null, 499, null) || cacheAsEmpty(); //generic 499 error code returned
+            if (doCache) {
+                cacheData = createCacheEntry(new byte[]{});
+                cache.put(getCacheKey(), createCacheEntry(new byte[]{}), attributes);
+            }
+            return doCache;
         } catch (Exception e) {
             log.log(Level.WARNING, "JCS - Exception during download {0}",  getUrl());
             Main.warn(e);
@@ -391,9 +399,22 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     /**
-     *  @return if we should treat this object as properly loaded
+     * Check if the object is loadable. This means, if the data will be parsed, and if this response
+     * will finish as successful retrieve.
+     *
+     * This simple implementation doesn't load empty response, nor client (4xx) and server (5xx) errors
+     *
+     * @param headerFields headers sent by server
+     * @param responseCode http status code
+     * @param raw data read from server
+     * @return true if object should be cached and returned to listener
      */
-    protected abstract boolean handleNotFound();
+    protected boolean isResponseLoadable(Map<String, List<String>> headerFields, int responseCode, byte[] raw) {
+        if (raw == null || raw.length == 0 || responseCode >= 400) {
+            return false;
+        }
+        return true;
+    }
 
     protected abstract V createCacheEntry(byte[] content);
 

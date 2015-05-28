@@ -136,15 +136,18 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     }
 
     @Override
-    protected boolean cacheAsEmpty(Map<String, List<String>> headers, int statusCode, byte[] content) {
-        // cacheAsEmpty is called for every successful download, so we can put
-        // metadata handling here
+    protected boolean isResponseLoadable(Map<String, List<String>> headers, int statusCode, byte[] content) {
         attributes.setMetadata(tile.getTileSource().getMetadata(headers));
         if (tile.getTileSource().isNoTileAtZoom(headers, statusCode, content)) {
             attributes.setNoTileAtZoom(true);
-            return true;
+            return false; // do no try to load data from no-tile at zoom, cache empty object instead
         }
-        return false;
+        return super.isResponseLoadable(headers, statusCode, content);
+    }
+
+    @Override
+    protected boolean cacheAsEmpty() {
+        return isNoTileAtZoom() || super.cacheAsEmpty();
     }
 
     private boolean handleNoTileAtZoom() {
@@ -170,6 +173,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         synchronized (inProgress) {
             listeners = inProgress.remove(getCacheKey());
         }
+        boolean status = result.equals(LoadResult.SUCCESS);
 
         try {
             if(!tile.isLoaded()) { //if someone else already loaded tile, skip all the handling
@@ -193,6 +197,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                     int httpStatusCode = attributes.getResponseCode();
                     if (!isNoTileAtZoom() && httpStatusCode >= 400) {
                         tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
+                        status = false;
                     }
                     break;
                 case FAILURE:
@@ -206,7 +211,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             // always check, if there is some listener interested in fact, that tile has finished loading
             if (listeners != null) { // listeners might be null, if some other thread notified already about success
                 for(TileLoaderListener l: listeners) {
-                    l.tileLoadingFinished(tile, result.equals(LoadResult.SUCCESS));
+                    l.tileLoadingFinished(tile, status);
                 }
             }
         } catch (IOException e) {
@@ -256,16 +261,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         } else {
             return tile;
         }
-    }
-
-    @Override
-    protected boolean handleNotFound() {
-        if (tile.getSource().isNoTileAtZoom(null, 404, null)) {
-            tile.setError("No tile at this zoom level");
-            tile.putValue("tile-info", "no-tile");
-            return true;
-        }
-        return false;
     }
 
     /**
