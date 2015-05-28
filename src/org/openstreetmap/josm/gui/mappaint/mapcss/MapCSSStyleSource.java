@@ -282,7 +282,7 @@ public class MapCSSStyleSource extends StyleSource {
                     }
                 } else if (c instanceof KeyValueCondition) {
                     KeyValueCondition keyValueCondition = (KeyValueCondition) c;
-                    if (!Op.NEGATED_OPS.contains(keyValueCondition)) {
+                    if (!Op.NEGATED_OPS.contains(keyValueCondition.op)) {
                         key = keyValueCondition.k;
                     }
                 }
