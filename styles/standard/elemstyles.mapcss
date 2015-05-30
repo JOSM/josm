@@ -2195,7 +2195,11 @@ node[amenity=cafe] {
     set icon_z17;
     text: auto;
 }
-node[amenity=restaurant],
+node[amenity=restaurant] {
+    icon-image: "food/restaurant.svg";
+    set icon_z17;
+    text: auto;
+}
 node[amenity=food_court] {
     icon-image: "food/restaurant.png";
     set icon_z17;
