@@ -3339,8 +3339,8 @@
             <reference ref="link_contact_address_payment" />
         </item> <!-- Camping Site -->
     </group> <!-- Accommodation -->
-    <group name="Food+Drinks" icon="presets/restaurant.png">
-        <item name="Restaurant" icon="presets/restaurant.png" type="node,closedway" preset_name_label="true">
+    <group name="Food+Drinks" icon="styles/standard/food/restaurant.svg">
+        <item name="Restaurant" icon="styles/standard/food/restaurant.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=restaurant"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=restaurant"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=restaurant"
