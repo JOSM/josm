@@ -122,7 +122,11 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
                                 return false;
                             }
                         } catch (IllegalArgumentException ex2) {
-                            return false;
+                            try {
+                                ids.addAll(SimplePrimitiveId.fuzzyParse(s));
+                            } catch (IllegalArgumentException ex3) {
+                                return false;
+                            }
                         }
                     }
                 }
