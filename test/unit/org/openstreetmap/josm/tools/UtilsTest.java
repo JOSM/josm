@@ -59,6 +59,10 @@ public class UtilsTest {
         Assert.assertEquals("a", Utils.strip(someWhite+"a"+someWhite));
         Assert.assertEquals("ab", Utils.strip(someWhite+"ab"+someWhite));
         Assert.assertEquals("abc", Utils.strip(someWhite+"abc"+someWhite));
+
+        // extended skip
+        Assert.assertEquals("a", Utils.strip("a", "b"));
+        Assert.assertEquals("b", Utils.strip("acbcac", "ac"));
     }
 
     /**

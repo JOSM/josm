@@ -39,9 +39,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -898,26 +900,48 @@ public final class Utils {
      * @see <a href="https://bugs.openjdk.java.net/browse/JDK-4080617">JDK bug 4080617</a>
      * @since 5772
      */
-    public static String strip(String str) {
+    public static String strip(final String str) {
+        return strip(str, null);
+    }
+
+    /**
+     * An alternative to {@link String#trim()} to effectively remove all leading and trailing white characters, including Unicode ones.
+     * @param str The string to strip
+     * @param skipChars additional characters to skip
+     * @return <code>str</code>, without leading and trailing characters, according to
+     *         {@link Character#isWhitespace(char)}, {@link Character#isSpaceChar(char)} and skipChars.
+     * @since 8435
+     */
+    public static String strip(final String str, final String skipChars) {
         if (str == null || str.isEmpty()) {
             return str;
         }
-        int start = 0, end = str.length();
-        boolean leadingWhite = true;
-        while (leadingWhite && start < end) {
+        // create set with chars to skip
+        Set<Character> skipSet = new HashSet<>();
+        // '\u200B' (ZERO WIDTH SPACE character) needs to be handled manually because of change in Unicode 6.0 (Java 7, see #8918)
+        skipSet.add('\u200B');
+        // same for '\uFEFF' (ZERO WIDTH NO-BREAK SPACE)
+        skipSet.add('\uFEFF');
+        if (skipChars != null) {
+            for (char c : skipChars.toCharArray()) {
+                skipSet.add(c);
+            }
+        }
+        int start = 0;
+        int end = str.length();
+        boolean leadingSkipChar = true;
+        while (leadingSkipChar && start < end) {
             char c = str.charAt(start);
-            // '\u200B' (ZERO WIDTH SPACE character) needs to be handled manually because of change in Unicode 6.0 (Java 7, see #8918)
-            // same for '\uFEFF' (ZERO WIDTH NO-BREAK SPACE)
-            leadingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c) || c == '\u200B' || c == '\uFEFF');
-            if (leadingWhite) {
+            leadingSkipChar = Character.isWhitespace(c) || Character.isSpaceChar(c) || skipSet.contains(c);
+            if (leadingSkipChar) {
                 start++;
             }
         }
-        boolean trailingWhite = true;
-        while (trailingWhite && end > start+1) {
+        boolean trailingSkipChar = true;
+        while (trailingSkipChar && end > start+1) {
             char c = str.charAt(end-1);
-            trailingWhite = (Character.isWhitespace(c) || Character.isSpaceChar(c) || c == '\u200B' || c == '\uFEFF');
-            if (trailingWhite) {
+            trailingSkipChar = Character.isWhitespace(c) || Character.isSpaceChar(c) || skipSet.contains(c);
+            if (trailingSkipChar) {
                 end--;
             }
         }
