@@ -420,9 +420,11 @@ public class TagChecker extends TagTest {
                     } else if (!tagInPresets) {
                         // try to fix common typos and check again if value is still unknown
                         String fixedValue = prettifyValue(prop.getValue());
-                        if (values != null && values.contains(fixedValue)) {
+                        Map<String, String> possibleValues = getPossibleValues(values);
+                        if (possibleValues.containsKey(fixedValue)) {
+                            fixedValue = possibleValues.get(fixedValue);
                             // misspelled preset value
-                            String i = marktr("Value ''{0}'' for key ''{1}'' looks like ''{2}}.");
+                            String i = marktr("Value ''{0}'' for key ''{1}'' looks like ''{2}''.");
                             errors.add(new FixableTestError(this, Severity.WARNING, tr("Misspelled property value"),
                                     tr(i, prop.getValue(), key, fixedValue), MessageFormat.format(i, prop.getValue(), fixedValue),
                                     MISSPELLED_VALUE, p, new ChangePropertyCommand(p, key, fixedValue)));
@@ -448,6 +450,20 @@ public class TagChecker extends TagTest {
                 }
             }
         }
+    }
+
+    private Map<String, String> getPossibleValues(Set<String> values) {
+        // generate a map with common typos
+        Map<String, String> map = new HashMap<>();
+        if (values != null) {
+            for (String value : values) {
+                map.put(value, value);
+                if (value.contains("_")) {
+                    map.put(value.replace("_", ""), value);
+                }
+            }
+        }
+        return map;
     }
 
     private static String prettifyValue(String value) {
