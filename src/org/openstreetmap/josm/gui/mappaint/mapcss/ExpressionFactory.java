@@ -208,7 +208,6 @@ public final class ExpressionFactory {
          * The name originates from <a href="http://wiki.openstreetmap.org/wiki/MapCSS/0.2/eval">MapCSS standard</a>.
          * @param args arguments
          * @return the first non-null object
-         * @see #coalesce(Object...)
          * @see Utils#firstNonNull(Object[])
          */
         @NullableArguments

@@ -420,8 +420,8 @@ public class CombineWayAction extends JosmAction {
         }
 
         /**
-         * Create an undirected graph from the given ways.
-         * @param ways Ways to build the graph from
+         * Create an undirected graph from the given node pairs.
+         * @param pairs Node pairs to build the graph from
          * @return node graph structure
          */
         public static NodeGraph createUndirectedGraphFromNodeList(List<NodePair> pairs) {

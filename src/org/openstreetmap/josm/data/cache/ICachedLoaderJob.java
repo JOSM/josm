@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.cache;
 
 import java.net.URL;
 
-
 /**
  *
  * @author Wiktor Niesiobędzki
@@ -14,7 +13,6 @@ public interface ICachedLoaderJob<K> {
     /**
      * returns cache entry key
      *
-     * @param tile
      * @return cache key for tile
      */
     public K getCacheKey();

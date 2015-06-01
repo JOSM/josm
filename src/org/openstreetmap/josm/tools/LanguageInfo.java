@@ -112,7 +112,7 @@ public final class LanguageInfo {
      *
      * In most cases JOSM and Java uses the same codes, but for some exceptions this is needed.
      *
-     * @param locale the locale. Replies "en" if null.
+     * @param localeName the locale. Replies "en" if null.
      * @return the Java code for the given locale
      * @since 8232
      */
@@ -223,7 +223,7 @@ public final class LanguageInfo {
      *   <li>lang of the current locale</li>
      * </ul>
      *
-     * @param locale the locale to use, <code>null</code> for default locale
+     * @param l the locale to use, <code>null</code> for default locale
      * @return list of codes
      * @since 8283
      */

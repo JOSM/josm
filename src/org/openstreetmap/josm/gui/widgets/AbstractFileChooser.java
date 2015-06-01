@@ -161,10 +161,6 @@ public abstract class AbstractFileChooser {
      * Sets the file chooser to allow multiple file selections.
      *
      * @param multiple true if multiple files may be selected
-     * @beaninfo
-     *       bound: true
-     * description: Sets multiple file selection mode.
-     *
      * @see #isMultiSelectionEnabled
      */
     public abstract void setMultiSelectionEnabled(boolean multiple);
