@@ -157,9 +157,9 @@ way[junction                   ][!highway][junction!=yes],
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.tag}");
 }
 
-/* {0.key} together with {1.key}, see #10837 */
+/* {0.tag} together with {1.key}, see #10837 */
 *[noname?][name] {
-  throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.key}");
 }
 
 /* {0.tag} together with {1.key}, see #9389 */
