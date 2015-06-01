@@ -267,8 +267,8 @@ node[ford?]!.ford_on_waterway, node[ford?]!.ford_on_highway {
     throwWarning: tr("{0} should be on the node where {1} and {2} intersect", "ford", "highway", "waterway");
 }
 
-/* any other *_name tag (except old_name, loc_name and uic_name) but not a name , see #10837 */
-*[/_name$/][!name][!old_name][!loc_name][!uic_name] {
+/* any other *_name tag (except old_name, loc_name and uic_name) but not a name , see #10837 #11297 */
+*[/_name$/][!name][!old_name][!loc_name][!uic_name][!artist_name][noname!=yes] {
   throwWarning: tr("alternative name without {0}", "{1.key}");
 }
 
