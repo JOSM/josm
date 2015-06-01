@@ -7,14 +7,15 @@
  * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t mappaint
  * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t presets
  */
+import groovy.json.JsonBuilder
+
 import java.awt.image.BufferedImage
-import java.nio.file.Files
 import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.nio.file.Path
 
 import javax.imageio.ImageIO
 
-import groovy.json.JsonBuilder
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Version
 import org.openstreetmap.josm.data.coor.LatLon
@@ -356,7 +357,13 @@ class taginfoextract {
         }
         f = new File("${base_dir}/images/${path}")
         if (f.exists()) {
-            return "https://josm.openstreetmap.de/export/${josm_svn_revision}/josm/trunk/images/${path}"
+            if (path.startsWith("images/styles/standard/")) {
+                path = path.substring("images/styles/standard/".length())
+                def rev = osm_svn_revision()
+                return "https://trac.openstreetmap.org/export/${rev}/subversion/applications/share/map-icons/classic.small/${path}"
+            } else {
+                return "https://josm.openstreetmap.de/export/${josm_svn_revision}/josm/trunk/images/${path}"
+            }
         }
         assert false, "Cannot find image url for ${path}"
     }
