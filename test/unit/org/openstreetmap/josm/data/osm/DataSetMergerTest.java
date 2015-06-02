@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.osm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.StringWriter;
@@ -90,14 +92,14 @@ public class DataSetMergerTest {
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertTrue(visitor.getConflicts().isEmpty());
-        assertTrue(n1 != n2); // make sure we have a clone
+        assertNotSame(n1, n2); // make sure we have a clone
         assertEquals(1, n2.getId());
         assertEquals(1, n2.getVersion());
-        assertEquals(false, n2.isModified());
+        assertFalse(n2.isModified());
         assertEquals("value1", n2.get("key1"));
 
         // merge target not modified after merging
-        assertTrue(!n2.isModified());
+        assertFalse(n2.isModified());
     }
 
     /**
@@ -126,16 +128,16 @@ public class DataSetMergerTest {
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertTrue(visitor.getConflicts().isEmpty());
-        assertTrue(n == n2); // make sure the merged node is still the original node
-        assertTrue(n2.getDataSet() == my);
+        assertSame(n, n2); // make sure the merged node is still the original node
+        assertSame(n2.getDataSet(), my);
         assertEquals(1, n2.getId());
         assertEquals(2, n2.getVersion());
-        assertEquals(false, n2.isModified());
+        assertFalse(n2.isModified());
         assertEquals("value1-new", n2.get("key1"));
         assertEquals("value2", n2.get("key2"));
 
         // the merge target should not be modified
-        assertTrue(!n2.isModified());
+        assertFalse(n2.isModified());
     }
 
     /**
@@ -167,9 +169,9 @@ public class DataSetMergerTest {
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertEquals(1,visitor.getConflicts().size());
-        assertTrue(n == n2);
-        assertTrue(n1 != n2);
-        assertTrue(n1.getDataSet() == their);
+        assertSame(n, n2);
+        assertNotSame(n1, n2);
+        assertSame(n1.getDataSet(), their);
     }
 
     /**
@@ -200,9 +202,9 @@ public class DataSetMergerTest {
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertEquals(1,visitor.getConflicts().size());
-        assertTrue(n == n2);
-        assertTrue(n1 != n2);
-        assertTrue(n1.getDataSet() == their);
+        assertSame(n, n2);
+        assertNotSame(n1, n2);
+        assertSame(n1.getDataSet(), their);
     }
 
     /**
@@ -227,10 +229,10 @@ public class DataSetMergerTest {
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals(true, n2.isVisible());
-        assertTrue(n == n2);
-        assertTrue(n.getDataSet() == my);
-        assertTrue(n1.getDataSet() == their);
+        assertTrue(n2.isVisible());
+        assertSame(n, n2);
+        assertSame(n.getDataSet(), my);
+        assertSame(n1.getDataSet(), their);
     }
 
     /**
@@ -252,8 +254,8 @@ public class DataSetMergerTest {
         visitor.merge();
 
         assertEquals(0, visitor.getConflicts().size());
-        assertTrue(n.getDataSet() == my);
-        assertTrue(n1.getDataSet() == their);
+        assertSame(n.getDataSet(), my);
+        assertSame(n1.getDataSet(), their);
     }
 
     /**
@@ -278,7 +280,7 @@ public class DataSetMergerTest {
 
         assertEquals(0,visitor.getConflicts().size());
         Node n2 = (Node)my.getNodes().toArray()[0];
-        assertTrue(n2 == n);
+        assertSame(n2, n);
         assertTrue(n2.isDeleted());
     }
 
@@ -321,11 +323,11 @@ public class DataSetMergerTest {
         Node n2 = my.getNodes().iterator().next();
         assertEquals(0,visitor.getConflicts().size());
         assertEquals("value1",n2.get("key1"));
-        assertEquals(true, n1.getTimestamp().equals(n2.getTimestamp()));
+        assertTrue(n1.getTimestamp().equals(n2.getTimestamp()));
         assertEquals(theirUser,n2.getUser());
-        assertTrue(n2 == n);
-        assertTrue(n2 != n1);
-        assertTrue(n2.getDataSet() == my);
+        assertSame(n2, n);
+        assertNotSame(n2, n1);
+        assertSame(n2.getDataSet(), my);
     }
 
     /**
@@ -355,9 +357,9 @@ public class DataSetMergerTest {
         Node n2 = my.getNodes().iterator().next();
         assertEquals(0,visitor.getConflicts().size());
         assertEquals("value1",n2.get("key1"));
-        assertEquals(true, n1.getTimestamp().equals(n2.getTimestamp()));
-        assertEquals(false, n2.isIncomplete());
-        assertTrue(n2 == n);
+        assertTrue(n1.getTimestamp().equals(n2.getTimestamp()));
+        assertFalse(n2.isIncomplete());
+        assertSame(n2, n);
     }
 
     /**
@@ -422,15 +424,15 @@ public class DataSetMergerTest {
         assertEquals(2,merged.getNodesCount());
         assertEquals(1,merged.getNode(0).getId());
         assertEquals(2,merged.getNode(1).getId());
-        assertTrue(merged == myWay);
-        assertTrue(merged.getDataSet() == my);
+        assertSame(merged, myWay);
+        assertSame(merged.getDataSet(), my);
 
         Node mergedNode = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
-        assertTrue(mergedNode == n1);
+        assertSame(mergedNode, n1);
         mergedNode = (Node)my.getPrimitiveById(2, OsmPrimitiveType.NODE);
-        assertTrue(mergedNode == n2);
+        assertSame(mergedNode, n2);
 
-        assertTrue(!merged.isModified());
+        assertFalse(merged.isModified());
     }
 
     /**
@@ -497,12 +499,11 @@ public class DataSetMergerTest {
         assertEquals(2,merged.getNode(2).getId());
         assertEquals("value1",merged.getNode(2).get("key1"));
 
-        assertTrue(merged.getNode(0) == n1);
-        assertTrue(merged.getNode(1) != n5); // must be clone of the original node in their
-        assertTrue(merged.getNode(2) == n2);
+        assertSame(merged.getNode(0), n1);
+        assertNotSame(merged.getNode(1), n5); // must be clone of the original node in their
+        assertSame(merged.getNode(2), n2);
 
-        assertTrue(!merged.isModified());  // the target wasn't modified before merging, it
-        // mustn't be after merging
+        assertFalse(merged.isModified());  // the target wasn't modified before merging, it mustn't be after merging
     }
 
     /**
@@ -612,8 +613,8 @@ public class DataSetMergerTest {
 
         Way merged = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertEquals(1,visitor.getConflicts().size());
-        assertEquals(true, visitor.getConflicts().hasConflictForMy(myWay));
-        assertEquals(true, visitor.getConflicts().hasConflictForTheir(theirWay));
+        assertTrue(visitor.getConflicts().hasConflictForMy(myWay));
+        assertTrue(visitor.getConflicts().hasConflictForTheir(theirWay));
         assertEquals(myWay,merged);
     }
 
@@ -668,11 +669,11 @@ public class DataSetMergerTest {
         assertEquals("their", merged.getUser().getName());
         assertEquals(1111, merged.getUser().getId());
         assertEquals(theirWay.getTimestamp(), merged.getTimestamp());
-        assertTrue(merged == myWay);
-        assertTrue(merged.getNode(0) == n1);
-        assertTrue(merged.getNode(1) == n2);
+        assertSame(merged, myWay);
+        assertSame(merged.getNode(0), n1);
+        assertSame(merged.getNode(1), n2);
 
-        assertTrue(!merged.isModified());
+        assertFalse(merged.isModified());
     }
 
     /**
@@ -722,11 +723,11 @@ public class DataSetMergerTest {
         assertEquals("their", merged.getUser().getName());
         assertEquals(1111, merged.getUser().getId());
         assertEquals(theirWay.getTimestamp(), merged.getTimestamp());
-        assertTrue(merged == myWay);
-        assertTrue(merged.getNode(0) == n1);
-        assertTrue(merged.getNode(1) == n2);
+        assertSame(merged, myWay);
+        assertSame(merged.getNode(0), n1);
+        assertSame(merged.getNode(1), n2);
 
-        assertTrue(!merged.isModified());
+        assertFalse(merged.isModified());
     }
 
 
@@ -829,7 +830,7 @@ public class DataSetMergerTest {
         visitor.merge();
 
         Node n = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
-        assertTrue(n != null);
+        assertNotNull(n);
 
         assertEquals(1, visitor.getConflicts().size());
         assertTrue(visitor.getConflicts().hasConflictForMy(n));
@@ -925,20 +926,20 @@ public class DataSetMergerTest {
 
         OsmPrimitive p= my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertNotNull(p);
-        assertTrue(!p.isIncomplete());
+        assertFalse(p.isIncomplete());
         p= my.getPrimitiveById(2, OsmPrimitiveType.NODE);
         assertNotNull(p);
-        assertTrue(!p.isIncomplete());
+        assertFalse(p.isIncomplete());
         p= my.getPrimitiveById(3,OsmPrimitiveType.WAY);
         assertNotNull(p);
-        assertTrue(!p.isIncomplete());
+        assertFalse(p.isIncomplete());
 
         Way w = (Way)my.getPrimitiveById(3,OsmPrimitiveType.WAY);
         assertNotNull(w);
-        assertTrue(!p.isIncomplete());
+        assertFalse(p.isIncomplete());
         assertEquals(2, w.getNodesCount());
-        assertTrue(!w.getNode(0).isIncomplete());
-        assertTrue(!w.getNode(1).isIncomplete());
+        assertFalse(w.getNode(0).isIncomplete());
+        assertFalse(w.getNode(1).isIncomplete());
     }
 
     /**

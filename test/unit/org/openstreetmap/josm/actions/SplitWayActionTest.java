@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -79,18 +80,17 @@ public final class SplitWayActionTest {
         }
 
         // Ensures 3 ways.
-        assertTrue(String.format("Found %d ways after split action instead of 3.",
-                                 dataSet.getWays().size()),
-                   dataSet.getWays().size() == 3);
+        assertSame(String.format("Found %d ways after split action instead of 3.", dataSet.getWays().size()),
+                   dataSet.getWays().size(), 3);
 
         // Ensures way w1 is unchanged.
         assertTrue("Unselected ways disappear during split action.",
                    dataSet.getWays().contains(w1));
-        assertTrue("Unselected way seems to have change during split action.",
-                   w1.getNodesCount() == 3);
+        assertSame("Unselected way seems to have change during split action.",
+                   w1.getNodesCount(), 3);
         for(int i = 0; i < 3; i++) {
-            assertTrue("Node change in unselected way during split action.",
-                       w1.getNode(i) == w1NodesArray[i]);
+            assertSame("Node change in unselected way during split action.",
+                       w1.getNode(i), w1NodesArray[i]);
         }
     }
 }

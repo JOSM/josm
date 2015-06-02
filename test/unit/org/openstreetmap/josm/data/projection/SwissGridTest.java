@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
@@ -59,7 +60,7 @@ public class SwissGridTest {
                 errs.append(String.format("%s should be: %s but is: %s%n", pd.name, pd.en, en2));
             }
         }
-        assertTrue(errs.toString(), errs.length() == 0);
+        assertSame(errs.toString(), errs.length(), 0);
     }
 
     @Test

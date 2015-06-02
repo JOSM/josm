@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm.history;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
@@ -27,7 +28,7 @@ public class HistoryNodeTest {
 
         assertEquals(1, node.getId());
         assertEquals(2, node.getVersion());
-        assertEquals(true, node.isVisible());
+        assertTrue(node.isVisible());
         assertEquals("testuser", node.getUser().getName());
         assertEquals(3, node.getUser().getId());
         assertEquals(4, node.getChangesetId());

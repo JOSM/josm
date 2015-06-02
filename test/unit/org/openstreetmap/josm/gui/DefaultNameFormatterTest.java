@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.gui;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -66,13 +66,13 @@ public class DefaultNameFormatterTest {
             System.out.println("p2: "+DefaultNameFormatter.getInstance().format(p2)+" - "+p2); // TMC ("A 6 Kaiserslautern - Mannheim [negative]", 123 members)
             System.out.println("p3: "+DefaultNameFormatter.getInstance().format(p3)+" - "+p3); // route(lcn Sal  Salier-Radweg(412 members)
 
-            assertTrue(comparator.compare(p1, p2) == -1); // p1 < p2
-            assertTrue(comparator.compare(p2, p1) ==  1); // p2 > p1
+            assertSame(comparator.compare(p1, p2), -1); // p1 < p2
+            assertSame(comparator.compare(p2, p1),  1); // p2 > p1
 
-            assertTrue(comparator.compare(p1, p3) == -1); // p1 < p3
-            assertTrue(comparator.compare(p3, p1) ==  1); // p3 > p1
-            assertTrue(comparator.compare(p2, p3) ==  1); // p2 > p3
-            assertTrue(comparator.compare(p3, p2) == -1); // p3 < p2
+            assertSame(comparator.compare(p1, p3), -1); // p1 < p3
+            assertSame(comparator.compare(p3, p1),  1); // p3 > p1
+            assertSame(comparator.compare(p2, p3),  1); // p2 > p3
+            assertSame(comparator.compare(p3, p2), -1); // p3 < p2
 
             Relation[] relations = new ArrayList<>(ds.getRelations()).toArray(new Relation[0]);
 

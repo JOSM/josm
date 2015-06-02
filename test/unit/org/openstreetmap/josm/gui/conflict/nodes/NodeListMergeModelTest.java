@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.conflict.nodes;
 import static org.fest.reflect.core.Reflection.field;
 import static org.fest.reflect.core.Reflection.method;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -696,7 +697,7 @@ public class NodeListMergeModelTest {
         assertTrue(model.isFrozen());
 
         model.setFrozen(false);
-        assertTrue(!model.isFrozen());
+        assertFalse(model.isFrozen());
     }
 
     @Test

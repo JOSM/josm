@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 
@@ -31,7 +31,7 @@ public final class UnJoinNodeWayActionTest {
         @Override
         public void notify(String msg, int messageType) {
             return;
-        };
+        }
     }
 
     /**
@@ -81,7 +81,6 @@ public final class UnJoinNodeWayActionTest {
         }
 
         // Ensures node n2 remove from w
-        assertTrue("Node n2 wasn't removed from way w.",
-                   !w.containsNode(n2));
+        assertFalse("Node n2 wasn't removed from way w.", w.containsNode(n2));
     }
 }

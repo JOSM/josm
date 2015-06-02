@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class PresetClassificationsTest {
         w.addNode(n1);
         w.addNode(new Node());
         w.addNode(new Node());
-        assertTrue("unclosed way should not match building preset", !getMatchingPresetNames("building", w).contains("Building"));
+        assertFalse("unclosed way should not match building preset", getMatchingPresetNames("building", w).contains("Building"));
         w.addNode(n1);
         assertTrue("closed way should match building preset", getMatchingPresetNames("building", w).contains("Building"));
     }
@@ -63,6 +64,6 @@ public class PresetClassificationsTest {
         final OsmPrimitive tram = OsmUtils.createPrimitive("way railway=tram");
         assertTrue("railway=tram should match 'Railway Route' for relation creation", getMatchingPresetNames("route", tram).contains("Railway Route"));
         assertTrue("railway=tram should match 'Public Transport Route' for relation creation", getMatchingPresetNames("route", tram).contains("Public Transport Route"));
-        assertTrue("railway=tram should not match 'Bus route'", !getMatchingPresetNames("route", tram).contains("Bus route"));
+        assertFalse("railway=tram should not match 'Bus route'", getMatchingPresetNames("route", tram).contains("Bus route"));
     }
 }

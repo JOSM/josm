@@ -1,7 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.mapmode;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.awt.Cursor;
 import java.awt.event.InputEvent;
@@ -42,17 +45,24 @@ public class SelectActionTest {
             this.layer = layer;
             this.currentDataSet = dataSet;
         };
+        @Override
         public EastNorth getEastNorth(int x, int y) {
             return new EastNorth(x, y);
         }
+        @Override
         public void addMouseListener(MouseListener ml) {}
+        @Override
         public void removeMouseListener(MouseListener ml) {}
         public void addMouseMotionListener(MouseListener ml) {}
         public void removeMouseMotionListener(MouseListener ml) {}
         public void mvRepaint() {}
+        @Override
         public void setVirtualNodesEnabled(boolean enabled) {}
+        @Override
         public void setNewCursor(Cursor cursor, Object reference) {}
+        @Override
         public void setNewCursor(int cursor, Object reference) {}
+        @Override
         public boolean isActiveLayerVisible() {
             return true;
         }
@@ -63,14 +73,19 @@ public class SelectActionTest {
                     return true;
                 }
             };
+        @Override
         public void requestClearRect() {}
+        @Override
         public Point2D getPoint2D(EastNorth p) {
             return new Point2D.Double(p.getX(), p.getY());
         }
+        @Override
         public void setActiveLayer(Layer layer) {}
+        @Override
         public Layer getActiveLayer() {
             return layer;
         }
+        @Override
         protected DataSet getCurrentDataSet() {
             return currentDataSet;
         }
@@ -80,6 +95,7 @@ public class SelectActionTest {
      * Override some configuration variables without change in preferences.xml
      */
     class PreferencesMock extends Preferences {
+        @Override
         public synchronized int getInteger(String key, int def) {
             if (key == "edit.initial-move-delay") {
                 return 0;
@@ -100,14 +116,14 @@ public class SelectActionTest {
                 mv.set(this, new MapViewMock(dataSet, layer));
             } catch (Exception e) {
                 e.printStackTrace();
-                assertTrue("Can't setup testing environnement", false);
+                fail("Can't setup testing environnement");
             }
         }
+        @Override
         public void mergeNodes(OsmDataLayer layer, Collection<Node> nodes,
                                Node targetLocationNode) {
-            assertTrue(String.format("Should merge two nodes, %d found",
-                                     nodes.size()),
-                       nodes.size() == 2);
+            assertSame(String.format("Should merge two nodes, %d found", nodes.size()),
+                       nodes.size(), 2);
             nodesMerged = true;
         }
     }
@@ -181,15 +197,12 @@ public class SelectActionTest {
 
         // As result of test, we must find a 2 nodes way, from EN(0, 0) to EN(100, 0)
         assertTrue("Nodes are not merged", nodesMerged);
-        assertTrue(String.format("Expect exactly one way, found %d\n",
-                                 dataSet.getWays().size()),
-                   dataSet.getWays().size() == 1);
+        assertSame(String.format("Expect exactly one way, found %d\n", dataSet.getWays().size()),
+                   dataSet.getWays().size(), 1);
         Way rw = dataSet.getWays().iterator().next();
-        assertTrue("Way shouldn't be deleted\n",
-                   !rw.isDeleted());
-        assertTrue(String.format("Way shouldn't have 2 nodes, %d found\n",
-                                 w.getNodesCount()),
-                   rw.getNodesCount() == 2);
+        assertFalse("Way shouldn't be deleted\n", rw.isDeleted());
+        assertSame(String.format("Way shouldn't have 2 nodes, %d found\n", w.getNodesCount()),
+                   rw.getNodesCount(), 2);
         Node r1 = rw.firstNode();
         Node r2 = rw.lastNode();
         if (r1.getEastNorth().east() > r2.getEastNorth().east()) {
@@ -197,11 +210,9 @@ public class SelectActionTest {
             r1 = r2;
             r2 = tmp;
         }
-        assertTrue(String.format("East should be 0, found %f\n",
-                                 r1.getEastNorth().east()),
-                   Double.compare(r1.getEastNorth().east(), 0) == 0);
-        assertTrue(String.format("East should be 100, found %f\n",
-                                 r2.getEastNorth().east()),
-                   Double.compare(r2.getEastNorth().east(), 100) == 0);
+        assertSame(String.format("East should be 0, found %f\n", r1.getEastNorth().east()),
+                   Double.compare(r1.getEastNorth().east(), 0), 0);
+        assertSame(String.format("East should be 100, found %f\n", r2.getEastNorth().east()),
+                   Double.compare(r2.getEastNorth().east(), 100), 0);
     }
 }

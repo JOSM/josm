@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
@@ -57,7 +58,7 @@ public class FilterTest {
         FilterWorker.executeFilters(all, filterMatcher);
 
         assertTrue(n2.isDisabledAndHidden());
-        assertTrue(!n1.isDisabled());
+        assertFalse(n1.isDisabled());
     }
 
     @Test

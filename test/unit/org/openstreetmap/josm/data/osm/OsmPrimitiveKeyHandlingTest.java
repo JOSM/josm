@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
@@ -26,9 +29,9 @@ public class OsmPrimitiveKeyHandlingTest {
     @Test
     public void emptyNode() {
         Node n = new Node();
-        assertTrue(n.getKeys().size() == 0);
-        assertTrue(!n.hasKeys());
-        assertTrue(!n.hasKey("nosuchkey"));
+        assertSame(n.getKeys().size(), 0);
+        assertFalse(n.hasKeys());
+        assertFalse(n.hasKey("nosuchkey"));
         assertTrue(n.keySet().isEmpty());
 
         n.remove("nosuchkey"); // should work
@@ -42,9 +45,9 @@ public class OsmPrimitiveKeyHandlingTest {
         Node n = new Node();
         n.put("akey", "avalue");
         assertTrue(n.get("akey").equals("avalue"));
-        assertTrue(n.getKeys().size() == 1);
+        assertSame(n.getKeys().size(), 1);
 
-        assertTrue(n.keySet().size() == 1);
+        assertSame(n.keySet().size(), 1);
         assertTrue(n.keySet().contains("akey"));
     }
 
@@ -58,11 +61,11 @@ public class OsmPrimitiveKeyHandlingTest {
         n.put("key.2", "value.2");
         assertTrue(n.get("key.1").equals("value.1"));
         assertTrue(n.get("key.2").equals("value.2"));
-        assertTrue(n.getKeys().size() == 2);
+        assertSame(n.getKeys().size(), 2);
         assertTrue(n.hasKeys());
         assertTrue(n.hasKey("key.1"));
         assertTrue(n.hasKey("key.2"));
-        assertTrue(!n.hasKey("nosuchkey"));
+        assertFalse(n.hasKey("nosuchkey"));
     }
 
     /**
@@ -74,22 +77,22 @@ public class OsmPrimitiveKeyHandlingTest {
         n.put("key.1", "value.1");
         n.put("key.2", "value.2");
 
-        n.remove("nosuchkey");               // should work
-        assertTrue(n.getKeys().size() == 2); // still 2 tags ?
+        n.remove("nosuchkey");             // should work
+        assertSame(n.getKeys().size(), 2); // still 2 tags ?
 
         n.remove("key.1");
-        assertTrue(n.getKeys().size() == 1);
-        assertTrue(!n.hasKey("key.1"));
-        assertTrue(n.get("key.1") == null);
+        assertSame(n.getKeys().size(), 1);
+        assertFalse(n.hasKey("key.1"));
+        assertNull(n.get("key.1"));
         assertTrue(n.hasKey("key.2"));
         assertTrue(n.get("key.2").equals("value.2"));
 
         n.remove("key.2");
-        assertTrue(n.getKeys().size() == 0);
-        assertTrue(!n.hasKey("key.1"));
-        assertTrue(n.get("key.1") == null);
-        assertTrue(!n.hasKey("key.2"));
-        assertTrue(n.get("key.2") == null);
+        assertSame(n.getKeys().size(), 0);
+        assertFalse(n.hasKey("key.1"));
+        assertNull(n.get("key.1"));
+        assertFalse(n.hasKey("key.2"));
+        assertNull(n.get("key.2"));
     }
 
     /**
@@ -103,7 +106,7 @@ public class OsmPrimitiveKeyHandlingTest {
         n.put("key.2", "value.2");
 
         n.removeAll();
-        assertTrue(n.getKeys().size() == 0);
+        assertSame(n.getKeys().size(), 0);
     }
 
     /**
@@ -140,6 +143,6 @@ public class OsmPrimitiveKeyHandlingTest {
         n2.put("key.1", "value.1");
         n2.put("key.2", "value.4");
 
-        assertTrue(!n1.hasEqualSemanticAttributes(n2));
+        assertFalse(n1.hasEqualSemanticAttributes(n2));
     }
 }
