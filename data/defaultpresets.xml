@@ -4371,7 +4371,7 @@
             <text key="capacity" text="Capacity" />
             <reference ref="link_contact_address" />
         </item> <!-- Retirement Home -->
-        <item name="Pharmacy" icon="presets/pharmacy.png" type="node,closedway" preset_name_label="true">
+        <item name="Pharmacy" icon="styles/standard/health/pharmacy.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pharmacy"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=pharmacy"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=pharmacy"
