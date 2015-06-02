@@ -439,7 +439,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         public void addRelations(Collection<? extends OsmPrimitive> addedPrimitives) {
             boolean added = false;
             for (OsmPrimitive p: addedPrimitives) {
-                if (! (p instanceof Relation)) {
+                if (!(p instanceof Relation)) {
                     continue;
                 }
 
@@ -473,7 +473,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             //
             Set<Relation> removedRelations = new HashSet<>();
             for (OsmPrimitive p: removedPrimitives) {
-                if (! (p instanceof Relation)) {
+                if (!(p instanceof Relation)) {
                     continue;
                 }
                 removedRelations.add((Relation)p);

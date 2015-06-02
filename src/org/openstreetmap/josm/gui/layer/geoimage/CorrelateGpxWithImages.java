@@ -419,7 +419,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             panel.add(panelLst, BorderLayout.LINE_START);
 
             boolean isOk = false;
-            while (! isOk) {
+            while (!isOk) {
                 int answer = JOptionPane.showConfirmDialog(
                         Main.parent, panel,
                         tr("Synchronize time from a photo of the GPS receiver"),
@@ -437,7 +437,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 } catch(ParseException e) {
                     JOptionPane.showMessageDialog(Main.parent, tr("Error while parsing the date.\n"
                             + "Please use the requested format"),
-                            tr("Invalid date"), JOptionPane.ERROR_MESSAGE );
+                            tr("Invalid date"), JOptionPane.ERROR_MESSAGE);
                     continue;
                 }
 
@@ -696,9 +696,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 if (lastNumMatched == 0 && new ExtendedDialog(
                             Main.parent,
                             tr("Correlate images with GPX track"),
-                            new String[] { tr("OK"), tr("Try Again") }).
+                            new String[] {tr("OK"), tr("Try Again")}).
                             setContent(tr("No images could be matched!")).
-                            setButtonIcons(new String[] { "ok", "dialogs/refresh"}).
+                            setButtonIcons(new String[] {"ok", "dialogs/refresh"}).
                             showDialog().getValue() == 2)
                     return AGAIN;
                 return DONE;
@@ -742,7 +742,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                             }
                         }
                     }
-                    if (! boundingBoxedLayerFound) {
+                    if (!boundingBoxedLayerFound) {
                         BoundingXYVisitor bbox = new BoundingXYVisitor();
                         yLayer.visitBoundingBox(bbox);
                         Main.map.mapView.zoomTo(bbox);
@@ -980,7 +980,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // Settings are only saved temporarily to the layer.
             new ExtendedDialog(Main.parent,
                     tr("Adjust timezone and offset"),
-                    new String[] { tr("Close")}).
+                    new String[] {tr("Close")}).
                     setContent(p).setButtonIcons(new String[] {"ok"}).showDialog();
         }
     }
@@ -1113,7 +1113,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         if (item == null || ((GpxDataWrapper) item).file == null) {
             if (complain) {
                 JOptionPane.showMessageDialog(Main.parent, tr("You should select a GPX track"),
-                        tr("No selected GPX track"), JOptionPane.ERROR_MESSAGE );
+                        tr("No selected GPX track"), JOptionPane.ERROR_MESSAGE);
             }
             return null;
         }

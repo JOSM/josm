@@ -118,7 +118,7 @@ public class HighlightHelper {
     public void findAllHighlighted() {
         DataSet ds = Main.main.getCurrentDataSet();
         if (ds!=null) {
-            highlightedPrimitives.addAll( ds.allNonDeletedPrimitives() );
+            highlightedPrimitives.addAll(ds.allNonDeletedPrimitives());
         }
     }
 

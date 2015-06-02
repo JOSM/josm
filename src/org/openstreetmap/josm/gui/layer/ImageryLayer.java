@@ -233,9 +233,9 @@ public abstract class ImageryLayer extends Layer {
         tmp.getGraphics().drawImage(img, 0, 0, null);
         Kernel kernel;
         if (sharpenLevel == 1) {
-            kernel = new Kernel(3, 3, new float[] { -0.25f, -0.5f, -0.25f, -0.5f, 4, -0.5f, -0.25f, -0.5f, -0.25f});
+            kernel = new Kernel(3, 3, new float[] {-0.25f, -0.5f, -0.25f, -0.5f, 4, -0.5f, -0.25f, -0.5f, -0.25f});
         } else {
-            kernel = new Kernel(3, 3, new float[] { -0.5f, -1, -0.5f, -1, 7, -1, -0.5f, -1, -0.5f});
+            kernel = new Kernel(3, 3, new float[] {-0.5f, -1, -0.5f, -1, 7, -1, -0.5f, -1, -0.5f});
         }
         BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
         return op.filter(tmp, null);

@@ -33,11 +33,11 @@ public class ApiPreconditionCheckerHook implements UploadHook {
             api.initialize(NullProgressMonitor.INSTANCE);
             long maxNodes = api.getCapabilities().getMaxWayNodes();
             if (maxNodes > 0) {
-                if( !checkMaxNodes(apiData.getPrimitivesToAdd(), maxNodes))
+                if (!checkMaxNodes(apiData.getPrimitivesToAdd(), maxNodes))
                     return false;
-                if( !checkMaxNodes(apiData.getPrimitivesToUpdate(), maxNodes))
+                if (!checkMaxNodes(apiData.getPrimitivesToUpdate(), maxNodes))
                     return false;
-                if( !checkMaxNodes(apiData.getPrimitivesToDelete(), maxNodes))
+                if (!checkMaxNodes(apiData.getPrimitivesToDelete(), maxNodes))
                     return false;
             }
         } catch (OsmTransferCanceledException e) {

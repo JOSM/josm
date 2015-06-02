@@ -530,7 +530,7 @@ public class SessionReader {
                         ExtendedDialog dlg = new ExtendedDialog(
                                 Main.parent,
                                 title,
-                                new String[] { tr("Cancel"), tr("Skip layer and continue") }
+                                new String[] {tr("Cancel"), tr("Skip layer and continue")}
                                 );
                         dlg.setButtonIcons(new String[] {"cancel", "dialogs/next"});
                         dlg.setIcon(icon);

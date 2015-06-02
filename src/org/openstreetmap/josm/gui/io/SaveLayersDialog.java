@@ -409,7 +409,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (! confirmSaveLayerInfosOK())
+            if (!confirmSaveLayerInfosOK())
                 return;
             launchSafeAndUploadTask();
         }

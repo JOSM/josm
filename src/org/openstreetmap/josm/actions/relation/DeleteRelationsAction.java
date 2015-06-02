@@ -29,7 +29,7 @@ public class DeleteRelationsAction extends AbstractRelationAction {
         if (toDelete == null)
             return;
         org.openstreetmap.josm.actions.mapmode.DeleteAction
-                .deleteRelation( Main.main.getEditLayer(), toDelete );
+                .deleteRelation(Main.main.getEditLayer(), toDelete);
         // clear selection after deletion
         if (Main.map.relationListDialog!=null)
                 Main.map.relationListDialog.selectRelations(null);

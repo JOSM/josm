@@ -444,7 +444,7 @@ public class TagTable extends JTable  {
     @Override
     public Dimension getPreferredSize(){
         Container c = getParent();
-        while(c != null && ! (c instanceof JViewport)) {
+        while(c != null && !(c instanceof JViewport)) {
             c = c.getParent();
         }
         if (c != null) {
@@ -536,13 +536,13 @@ public class TagTable extends JTable  {
         Component c = getEditorComponent();
         if (c!=null) {
             c.requestFocusInWindow();
-            if ( c instanceof JTextComponent ) {
-                 ( (JTextComponent)c ).selectAll();
+            if (c instanceof JTextComponent) {
+                 ((JTextComponent)c).selectAll();
             }
         }
         // there was a bug here - on older 1.6 Java versions Tab was not working
         // after such activation. In 1.7 it works OK,
-        // previous solution of usint awt.Robot was resetting mouse speed on Windows
+        // previous solution of using awt.Robot was resetting mouse speed on Windows
     }
 
     public void addComponentNotStoppingCellEditing(Component component) {
@@ -556,7 +556,7 @@ public class TagTable extends JTable  {
     }
 
     @Override
-    public boolean editCellAt(int row, int column, EventObject e){
+    public boolean editCellAt(int row, int column, EventObject e) {
 
         // a snipped copied from the Java 1.5 implementation of JTable
         //

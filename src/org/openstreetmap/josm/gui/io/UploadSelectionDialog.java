@@ -241,7 +241,7 @@ public class UploadSelectionDialog extends JDialog {
             return data.size();
         }
 
-        public List<OsmPrimitive> getPrimitives(int [] indices) {
+        public List<OsmPrimitive> getPrimitives(int[] indices) {
             if (indices == null || indices.length == 0)
                 return Collections.emptyList();
             List<OsmPrimitive> ret = new ArrayList<>(indices.length);

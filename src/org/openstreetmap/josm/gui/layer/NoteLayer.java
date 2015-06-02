@@ -231,7 +231,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             //move the note point to the center of the icon where users are most likely to click when selecting
             notePoint.setLocation(notePoint.getX(), notePoint.getY() - NotesDialog.ICON_SMALL_SIZE / 2);
             double dist = clickPoint.distanceSq(notePoint);
-            if (minDistance > dist && clickPoint.distance(notePoint) < snapDistance ) {
+            if (minDistance > dist && clickPoint.distance(notePoint) < snapDistance) {
                 minDistance = dist;
                 closestNote = note;
             }

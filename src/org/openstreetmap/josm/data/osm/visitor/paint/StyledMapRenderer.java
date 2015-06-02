@@ -590,7 +590,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if (bs.hAlign == HorizontalTextAlignment.CENTER) {
                 x -= textWidth / 2;
             } else if (bs.hAlign == HorizontalTextAlignment.LEFT) {
-                x -= - box.x + 4 + textWidth;
+                x -= -box.x + 4 + textWidth;
             } else throw new AssertionError();
         }
 
@@ -642,7 +642,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 dy2 = imgHeight;
                 break;
             case CENTER:
-                dy1 = - imgHeight / 2;
+                dy1 = -imgHeight / 2;
                 dy2 = imgHeight + dy1;
                 break;
             case BOTTOM:
@@ -1340,7 +1340,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                                     GeneralPath onewayPath = i == 0 ? onewayArrowsCasing : onewayArrows;
 
                                     // scale such that border is 1 px
-                                    final double fac = - (onewayReversed ? -1 : 1) * onewaySize * (1 + sinPHI) / (sinPHI * cosPHI);
+                                    final double fac = -(onewayReversed ? -1 : 1) * onewaySize * (1 + sinPHI) / (sinPHI * cosPHI);
                                     final double sx = nx * fac;
                                     final double sy = ny * fac;
 

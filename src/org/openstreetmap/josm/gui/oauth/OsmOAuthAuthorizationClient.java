@@ -227,7 +227,7 @@ public class OsmOAuthAuthorizationClient {
             }
             for (String kvPair : kvPairs) {
                 kvPair = kvPair.trim();
-                String [] kv = kvPair.split("=");
+                String[] kv = kvPair.split("=");
                 if (kv == null || kv.length != 2) {
                     continue;
                 }

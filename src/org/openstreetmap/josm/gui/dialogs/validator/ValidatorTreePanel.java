@@ -228,7 +228,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             rootNode.add(severityNode);
 
             if (oldSelectedRows.contains(s)) {
-                expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode }));
+                expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode}));
             }
 
             for (Entry<String, Set<TestError>> msgErrors : severityErrors.entrySet()) {
@@ -239,7 +239,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                 severityNode.add(messageNode);
 
                 if (oldSelectedRows.contains(msgErrors.getKey())) {
-                    expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode, messageNode }));
+                    expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, messageNode}));
                 }
 
                 for (TestError error : errs) {
@@ -256,7 +256,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                     groupNode = new GroupTreeNode(bag.getKey());
                     severityNode.add(groupNode);
                     if (oldSelectedRows.contains(bag.getKey())) {
-                        expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode, groupNode }));
+                        expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, groupNode}));
                     }
                 }
 
@@ -278,10 +278,9 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
 
                     if (oldSelectedRows.contains(msgErrors.getKey())) {
                         if (groupNode != null) {
-                            expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode, groupNode,
-                                    messageNode }));
+                            expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, groupNode, messageNode}));
                         } else {
-                            expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode, messageNode }));
+                            expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, messageNode}));
                         }
                     }
 

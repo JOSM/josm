@@ -112,7 +112,7 @@ public class TagMergeModel extends DefaultTableModel {
         for(String key : keys) {
             String myValue = my.get(key);
             String theirValue = their.get(key);
-            if (myValue == null || theirValue == null || ! myValue.equals(theirValue)) {
+            if (myValue == null || theirValue == null || !myValue.equals(theirValue)) {
                 tagMergeItems.add(
                         new TagMergeItem(key, my, their)
                 );
@@ -160,7 +160,7 @@ public class TagMergeModel extends DefaultTableModel {
      * @param rows the array of row indices
      * @param decision the decision
      */
-    public void decide(int [] rows, MergeDecisionType decision) {
+    public void decide(int[] rows, MergeDecisionType decision) {
         if (rows == null || rows.length == 0)
             return;
         for (int row : rows) {

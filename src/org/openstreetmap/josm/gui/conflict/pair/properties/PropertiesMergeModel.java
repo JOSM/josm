@@ -69,6 +69,9 @@ public class PropertiesMergeModel extends Observable {
         support.firePropertyChange(RESOLVED_COMPLETELY_PROP, oldValue, resolvedCompletely);
     }
 
+    /**
+     * Constructs a new {@code PropertiesMergeModel}.
+     */
     public PropertiesMergeModel() {
         coordMergeDecision = UNDECIDED;
         deletedMergeDecision = UNDECIDED;
@@ -77,25 +80,22 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * replies true if there is a coordinate conflict and if this conflict is
-     * resolved
+     * replies true if there is a coordinate conflict and if this conflict is resolved
      *
-     * @return true if there is a coordinate conflict and if this conflict is
-     * resolved; false, otherwise
+     * @return true if there is a coordinate conflict and if this conflict is resolved; false, otherwise
      */
     public boolean isDecidedCoord() {
-        return ! coordMergeDecision.equals(UNDECIDED);
+        return !coordMergeDecision.equals(UNDECIDED);
     }
 
     /**
-     * replies true if there is a  conflict in the deleted state and if this conflict is
-     * resolved
+     * replies true if there is a  conflict in the deleted state and if this conflict is resolved
      *
      * @return true if there is a conflict in the deleted state and if this conflict is
      * resolved; false, otherwise
      */
     public boolean isDecidedDeletedState() {
-        return ! deletedMergeDecision.equals(UNDECIDED);
+        return !deletedMergeDecision.equals(UNDECIDED);
     }
 
     /**
@@ -310,10 +310,10 @@ public class PropertiesMergeModel extends Observable {
     public boolean isResolvedCompletely() {
         boolean ret = true;
         if (hasCoordConflict()) {
-            ret = ret && ! coordMergeDecision.equals(UNDECIDED);
+            ret = ret && !coordMergeDecision.equals(UNDECIDED);
         }
         if (hasDeletedStateConflict()) {
-            ret = ret && ! deletedMergeDecision.equals(UNDECIDED);
+            ret = ret && !deletedMergeDecision.equals(UNDECIDED);
         }
         return ret;
     }

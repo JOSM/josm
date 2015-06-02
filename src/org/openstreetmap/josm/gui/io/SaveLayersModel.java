@@ -203,9 +203,9 @@ public class SaveLayersModel extends DefaultTableModel {
 
     public boolean hasUnsavedData() {
         for (SaveLayerInfo info: layerInfo) {
-            if (info.isDoUploadToServer() && ! UploadOrSaveState.OK.equals(info.getUploadState()))
+            if (info.isDoUploadToServer() && !UploadOrSaveState.OK.equals(info.getUploadState()))
                 return true;
-            if (info.isDoSaveToFile() && ! UploadOrSaveState.OK.equals(info.getSaveState()))
+            if (info.isDoSaveToFile() && !UploadOrSaveState.OK.equals(info.getSaveState()))
                 return true;
         }
         return false;

@@ -251,18 +251,18 @@ public class FilterTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        String[] names = { /* translators notes must be in front */
+        String[] names = {/* translators notes must be in front */
                 /* column header: enable filter */trc("filter", "E"),
                 /* column header: hide filter */trc("filter", "H"),
                 /* column header: filter text */trc("filter", "Text"),
                 /* column header: inverted filter */trc("filter", "I"),
-                /* column header: filter mode */trc("filter", "M") };
+                /* column header: filter mode */trc("filter", "M")};
         return names[column];
     }
 
     @Override
     public Class<?> getColumnClass(int column) {
-        Class<?>[] classes = { Boolean.class, Boolean.class, String.class, Boolean.class, String.class };
+        Class<?>[] classes = {Boolean.class, Boolean.class, String.class, Boolean.class, String.class};
         return classes[column];
     }
 

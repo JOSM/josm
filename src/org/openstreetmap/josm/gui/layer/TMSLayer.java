@@ -745,7 +745,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public boolean zoomIncreaseAllowed() {
         boolean zia = currentZoomLevel < this.getMaxZoomLvl();
         if (Main.isDebugEnabled()) {
-            Main.debug("zoomIncreaseAllowed(): " + zia + " " + currentZoomLevel + " vs. " + this.getMaxZoomLvl() );
+            Main.debug("zoomIncreaseAllowed(): " + zia + " " + currentZoomLevel + " vs. " + this.getMaxZoomLvl());
         }
         return zia;
     }
@@ -1418,7 +1418,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         g.setColor(Color.DARK_GRAY);
 
         List<Tile> missedTiles = this.paintTileImages(g, ts, displayZoomLevel, null);
-        int[] otherZooms = { -1, 1, -2, 2, -3, -4, -5};
+        int[] otherZooms = {-1, 1, -2, 2, -3, -4, -5};
         for (int zoomOffset : otherZooms) {
             if (!autoZoom) {
                 break;

@@ -320,7 +320,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         lblMyCoordinates.setText(coordToString(model.getMyCoords()));
         lblMergedCoordinates.setText(coordToString(model.getMergedCoords()));
         lblTheirCoordinates.setText(coordToString(model.getTheirCoords()));
-        if (! model.hasCoordConflict()) {
+        if (!model.hasCoordConflict()) {
             lblMyCoordinates.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
             lblMergedCoordinates.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
             lblTheirCoordinates.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
@@ -348,7 +348,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         lblMergedDeletedState.setText(deletedStateToString(model.getMergedDeletedState()));
         lblTheirDeletedState.setText(deletedStateToString(model.getTheirDeletedState()));
 
-        if (! model.hasDeletedStateConflict()) {
+        if (!model.hasDeletedStateConflict()) {
             lblMyDeletedState.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
             lblMergedDeletedState.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
             lblTheirDeletedState.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
@@ -402,7 +402,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
         @Override
         public void update(Observable o, Object arg) {
-            setEnabled(model.hasCoordConflict() && ! model.isDecidedCoord());
+            setEnabled(model.hasCoordConflict() && !model.isDecidedCoord());
         }
     }
 
@@ -419,7 +419,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
         @Override
         public void update(Observable o, Object arg) {
-            setEnabled(model.hasCoordConflict() && ! model.isDecidedCoord());
+            setEnabled(model.hasCoordConflict() && !model.isDecidedCoord());
         }
     }
 
@@ -453,7 +453,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
         @Override
         public void update(Observable o, Object arg) {
-            setEnabled(model.hasDeletedStateConflict() && ! model.isDecidedDeletedState());
+            setEnabled(model.hasDeletedStateConflict() && !model.isDecidedDeletedState());
         }
     }
 
@@ -470,7 +470,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
         @Override
         public void update(Observable o, Object arg) {
-            setEnabled(model.hasDeletedStateConflict() && ! model.isDecidedDeletedState());
+            setEnabled(model.hasDeletedStateConflict() && !model.isDecidedDeletedState());
         }
     }
 

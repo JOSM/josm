@@ -366,7 +366,7 @@ public class DownloadDialog extends JDialog  {
         cbDownloadGpxData.setSelected(Main.pref.getBoolean("download.gps", false));
         cbDownloadNotes.setSelected(Main.pref.getBoolean("download.notes", false));
         cbNewLayer.setSelected(Main.pref.getBoolean("download.newlayer", false));
-        cbStartup.setSelected( isAutorunEnabled() );
+        cbStartup.setSelected(isAutorunEnabled());
         int idx = Main.pref.getInteger("download.tab", 0);
         if (idx < 0 || idx > tpDownloadAreaSelectors.getTabCount()) {
             idx = 0;

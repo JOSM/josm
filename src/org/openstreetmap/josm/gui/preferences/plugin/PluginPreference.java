@@ -280,7 +280,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public boolean ok() {
-        if (! pluginPreferencesActivated)
+        if (!pluginPreferencesActivated)
             return false;
         pnlPluginUpdatePolicy.rememberInPreferences();
         if (model.isActivePluginsChanged()) {

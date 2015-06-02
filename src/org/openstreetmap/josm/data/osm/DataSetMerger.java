@@ -78,7 +78,7 @@ public class DataSetMerger {
      * @param candidates a set of possible candidates for a new primitive
      */
     protected void mergePrimitive(OsmPrimitive source, Collection<? extends OsmPrimitive> candidates) {
-        if (!source.isNew() ) {
+        if (!source.isNew()) {
             // try to merge onto a matching primitive with the same defined id
             //
             if (mergeById(source))
@@ -318,7 +318,7 @@ public class DataSetMerger {
             // We shouldn't merge that datasets.
             throw new DataIntegrityProblemException(tr("Conflict in ''visible'' attribute for object of type {0} with id {1}",
                     target.getType(), target.getId()));
-        else if (target.isDeleted() && ! source.isDeleted() && target.getVersion() == source.getVersion()) {
+        else if (target.isDeleted() && !source.isDeleted() && target.getVersion() == source.getVersion()) {
             // same version, but target is deleted. Assume target takes precedence
             // otherwise too many conflicts when refreshing from the server
             // but, if source has a referrer that is not in the target dataset there is a conflict
@@ -330,27 +330,27 @@ public class DataSetMerger {
                     break;
                 }
             }
-        } else if (! target.isModified() && source.isDeleted()) {
+        } else if (!target.isModified() && source.isDeleted()) {
             // target not modified. We can assume that source is the most recent version,
             // so mark it to be deleted.
             //
             objectsToDelete.add(target);
-        } else if (! target.isModified() && source.isModified()) {
+        } else if (!target.isModified() && source.isModified()) {
             // target not modified. We can assume that source is the most recent version.
             // clone it into target.
             target.mergeFrom(source);
             objectsWithChildrenToMerge.add(source.getPrimitiveId());
-        } else if (! target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
+        } else if (!target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
             // both not modified. Merge nevertheless.
             // This helps when updating "empty" relations, see #4295
             target.mergeFrom(source);
             objectsWithChildrenToMerge.add(source.getPrimitiveId());
-        } else if (! target.isModified() && !source.isModified() && target.getVersion() < source.getVersion()) {
+        } else if (!target.isModified() && !source.isModified() && target.getVersion() < source.getVersion()) {
             // my not modified but other is newer. clone other onto mine.
             //
             target.mergeFrom(source);
             objectsWithChildrenToMerge.add(source.getPrimitiveId());
-        } else if (target.isModified() && ! source.isModified() && target.getVersion() == source.getVersion()) {
+        } else if (target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
             // target is same as source but target is modified
             // => keep target and reset modified flag if target and source are semantically equal
             if (target.hasEqualSemanticAttributes(source)) {
@@ -361,7 +361,7 @@ public class DataSetMerger {
             // this have to be resolved manually.
             //
             addConflict(target,source);
-        } else if (! target.hasEqualSemanticAttributes(source)) {
+        } else if (!target.hasEqualSemanticAttributes(source)) {
             // target is modified and is not semantically equal with source. Can't automatically
             // resolve the differences
             // =>  create a conflict

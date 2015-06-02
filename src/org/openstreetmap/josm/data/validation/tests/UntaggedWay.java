@@ -43,23 +43,23 @@ public class UntaggedWay extends Test {
     /** Ways that must have a name */
     public static final Set<String> NAMED_WAYS = new HashSet<>();
     static {
-        NAMED_WAYS.add( "motorway" );
-        NAMED_WAYS.add( "trunk" );
-        NAMED_WAYS.add( "primary" );
-        NAMED_WAYS.add( "secondary" );
-        NAMED_WAYS.add( "tertiary" );
-        NAMED_WAYS.add( "residential" );
-        NAMED_WAYS.add( "pedestrian" );
+        NAMED_WAYS.add("motorway");
+        NAMED_WAYS.add("trunk");
+        NAMED_WAYS.add("primary");
+        NAMED_WAYS.add("secondary");
+        NAMED_WAYS.add("tertiary");
+        NAMED_WAYS.add("residential");
+        NAMED_WAYS.add("pedestrian");
     }
 
     /** Whitelist of roles allowed to reference an untagged way */
     public static final Set<String> WHITELIST = new HashSet<>();
     static {
-        WHITELIST.add( "outer" );
-        WHITELIST.add( "inner" );
-        WHITELIST.add( "perimeter" );
-        WHITELIST.add( "edge" );
-        WHITELIST.add( "outline" );
+        WHITELIST.add("outer");
+        WHITELIST.add("inner");
+        WHITELIST.add("perimeter");
+        WHITELIST.add("edge");
+        WHITELIST.add("outline");
     }
 
     /**

@@ -340,7 +340,7 @@ public class TagCollection implements Iterable<Tag> {
             if (key == null) {
                 continue;
             }
-            if (! containsKey(key)) return false;
+            if (!containsKey(key)) return false;
         }
         return true;
     }
@@ -398,7 +398,7 @@ public class TagCollection implements Iterable<Tag> {
     public boolean hasUniqueNonEmptyValue(String key) {
         if (key == null) return false;
         Set<String> values = getTagsFor(key).getValues();
-        return values.size() == 1 && ! values.contains("");
+        return values.size() == 1 && !values.contains("");
     }
 
     /**
@@ -606,7 +606,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     public void applyTo(Tagged primitive) {
         if (primitive == null) return;
-        if (! isApplicableToPrimitive())
+        if (!isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
         for (Tag tag: tags) {
             if (tag.getValue() == null || tag.getValue().isEmpty()) {
@@ -627,7 +627,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     public void applyTo(Collection<? extends Tagged> primitives) {
         if (primitives == null) return;
-        if (! isApplicableToPrimitive())
+        if (!isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
         for (Tagged primitive: primitives) {
             applyTo(primitive);
@@ -644,7 +644,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     public void replaceTagsOf(Tagged primitive) {
         if (primitive == null) return;
-        if (! isApplicableToPrimitive())
+        if (!isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
         primitive.removeAll();
         for (Tag tag: tags) {
@@ -662,7 +662,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     public void replaceTagsOf(Collection<? extends Tagged> primitives) {
         if (primitives == null) return;
-        if (! isApplicableToPrimitive())
+        if (!isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
         for (Tagged primitive: primitives) {
             replaceTagsOf(primitive);

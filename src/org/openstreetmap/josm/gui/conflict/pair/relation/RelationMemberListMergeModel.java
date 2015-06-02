@@ -108,7 +108,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
     public RelationMemberConflictResolverCommand buildResolveCommand(Relation my, Relation their) {
         CheckParameterUtil.ensureParameterNotNull(my, "my");
         CheckParameterUtil.ensureParameterNotNull(their, "their");
-        if (! isFrozen())
+        if (!isFrozen())
             throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Cannot build resolution command"));
         List<RelationMember> entries = getMergedEntries();
         return new RelationMemberConflictResolverCommand(my, their, entries);

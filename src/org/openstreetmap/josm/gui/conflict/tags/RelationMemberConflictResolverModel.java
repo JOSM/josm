@@ -245,7 +245,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 case KEEP:
                     final RelationMember newMember = new RelationMember(decision.getRole(),newPrimitive);
                     modifiedRelation.addMember(newMember);
-                    isChanged |= ! member.equals(newMember);
+                    isChanged |= !member.equals(newMember);
                     break;
                 case REMOVE:
                     isChanged = true;

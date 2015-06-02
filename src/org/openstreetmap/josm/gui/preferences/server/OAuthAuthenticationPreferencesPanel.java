@@ -29,11 +29,11 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.oauth.AdvancedOAuthPropertiesPanel;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * The preferences panel for the OAuth preferences. This just a summary panel
@@ -359,6 +359,9 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      * Runs a test whether we can access the OSM server with the current Access Token
      */
     private class TestAuthorisationAction extends AbstractAction {
+        /**
+         * Constructs a new {@code TestAuthorisationAction}.
+         */
         public TestAuthorisationAction() {
             putValue(NAME, tr("Test Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click test access to the OSM server with the current access token"));
@@ -382,7 +385,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (! evt.getPropertyName().equals(OsmApiUrlInputPanel.API_URL_PROP))
+        if (!evt.getPropertyName().equals(OsmApiUrlInputPanel.API_URL_PROP))
             return;
         setApiUrl((String)evt.getNewValue());
     }

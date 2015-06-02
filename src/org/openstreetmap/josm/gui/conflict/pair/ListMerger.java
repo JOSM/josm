@@ -482,10 +482,10 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int [] mergedRows = mergedEntriesTable.getSelectedRows();
+            int[] mergedRows = mergedEntriesTable.getSelectedRows();
             if (mergedRows == null || mergedRows.length == 0)
                 return;
-            int [] myRows = myEntriesTable.getSelectedRows();
+            int[] myRows = myEntriesTable.getSelectedRows();
             int current = mergedRows[0];
             model.copyMyBeforeCurrent(myRows, current);
         }
@@ -512,10 +512,10 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int [] mergedRows = mergedEntriesTable.getSelectedRows();
+            int[] mergedRows = mergedEntriesTable.getSelectedRows();
             if (mergedRows == null || mergedRows.length == 0)
                 return;
-            int [] myRows = myEntriesTable.getSelectedRows();
+            int[] myRows = myEntriesTable.getSelectedRows();
             int current = mergedRows[0];
             model.copyMyAfterCurrent(myRows, current);
         }
@@ -574,10 +574,10 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int [] mergedRows = mergedEntriesTable.getSelectedRows();
+            int[] mergedRows = mergedEntriesTable.getSelectedRows();
             if (mergedRows == null || mergedRows.length == 0)
                 return;
-            int [] myRows = theirEntriesTable.getSelectedRows();
+            int[] myRows = theirEntriesTable.getSelectedRows();
             int current = mergedRows[0];
             model.copyTheirBeforeCurrent(myRows, current);
         }
@@ -600,10 +600,10 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int [] mergedRows = mergedEntriesTable.getSelectedRows();
+            int[] mergedRows = mergedEntriesTable.getSelectedRows();
             if (mergedRows == null || mergedRows.length == 0)
                 return;
-            int [] myRows = theirEntriesTable.getSelectedRows();
+            int[] myRows = theirEntriesTable.getSelectedRows();
             int current = mergedRows[0];
             model.copyTheirAfterCurrent(myRows, current);
         }
@@ -689,13 +689,13 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            int [] rows = mergedEntriesTable.getSelectedRows();
+            int[] rows = mergedEntriesTable.getSelectedRows();
             model.moveUpMerged(rows);
         }
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            int [] rows = mergedEntriesTable.getSelectedRows();
+            int[] rows = mergedEntriesTable.getSelectedRows();
             setEnabled(
                     rows != null
                     && rows.length > 0
@@ -723,13 +723,13 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            int [] rows = mergedEntriesTable.getSelectedRows();
+            int[] rows = mergedEntriesTable.getSelectedRows();
             model.moveDownMerged(rows);
         }
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            int [] rows = mergedEntriesTable.getSelectedRows();
+            int[] rows = mergedEntriesTable.getSelectedRows();
             setEnabled(
                     rows != null
                     && rows.length > 0
@@ -757,13 +757,13 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            int [] rows = mergedEntriesTable.getSelectedRows();
+            int[] rows = mergedEntriesTable.getSelectedRows();
             model.removeMerged(rows);
         }
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            int [] rows = mergedEntriesTable.getSelectedRows();
+            int[] rows = mergedEntriesTable.getSelectedRows();
             setEnabled(
                     rows != null
                     && rows.length > 0

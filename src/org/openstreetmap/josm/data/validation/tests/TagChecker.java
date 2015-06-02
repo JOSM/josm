@@ -247,7 +247,7 @@ public class TagChecker extends TagTest {
         }
 
         if (errorSources.length() > 0)
-            throw new IOException( tr("Could not access data file(s):\n{0}", errorSources) );
+            throw new IOException(tr("Could not access data file(s):\n{0}", errorSources));
     }
 
     /**

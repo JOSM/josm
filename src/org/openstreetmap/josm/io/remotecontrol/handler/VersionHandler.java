@@ -58,6 +58,6 @@ public class VersionHandler extends RequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        return new String[] { "/version", "/version?jsonp=test"};
+        return new String[] {"/version", "/version?jsonp=test"};
     }
 }

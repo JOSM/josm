@@ -83,7 +83,7 @@ public class PreferenceDialog extends JDialog {
         this.setMinimumSize(new Dimension(600, 350));
         // set the maximum width to the current screen. If the dialog is opened on a
         // smaller screen than before, this will reset the stored preference.
-        this.setMaximumSize( Toolkit.getDefaultToolkit().getScreenSize());
+        this.setMaximumSize(Toolkit.getDefaultToolkit().getScreenSize());
     }
 
     /**

@@ -82,7 +82,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         } else if (url.matches(PATTERN_TRACKPOINTS_BBOX)) {
             String[] table = url.split("\\?|=|&");
             for (int i = 0; i<table.length; i++) {
-                if ("bbox".equals(table[i]) && i<table.length-1 )
+                if ("bbox".equals(table[i]) && i<table.length-1)
                     return download(newLayer, new Bounds(table[i+1], ",", ParseMethod.LEFT_BOTTOM_RIGHT_TOP), progressMonitor);
             }
         }

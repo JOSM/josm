@@ -537,7 +537,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             startingDraggingPos = new Point(e.getX(), e.getY());
         }
 
-        if( lastMousePos == null ) {
+        if (lastMousePos == null) {
             lastMousePos = e.getPoint();
             return;
         }

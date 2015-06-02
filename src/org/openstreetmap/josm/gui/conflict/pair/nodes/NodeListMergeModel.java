@@ -56,7 +56,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      * @throws IllegalStateException if the merge is not yet frozen
      */
     public WayNodesConflictResolverCommand buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
-        if (! isFrozen())
+        if (!isFrozen())
             throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Cannot build resolution command."));
         return new WayNodesConflictResolverCommand(conflict, getMergedEntries());
     }

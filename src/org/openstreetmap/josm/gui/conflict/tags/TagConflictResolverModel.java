@@ -70,7 +70,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
                 new Comparator<String>() {
                     @Override
                     public int compare(String key1, String key2) {
-                        if (decisions.get(key1).isDecided() && ! decisions.get(key2).isDecided())
+                        if (decisions.get(key1).isDecided() && !decisions.get(key2).isDecided())
                             return 1;
                         else if (!decisions.get(key1).isDecided() && decisions.get(key2).isDecided())
                             return -1;

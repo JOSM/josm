@@ -240,7 +240,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 Set<String> state = new HashSet<>();
                 // ask if the whole set should be ignored
                 if (asked == JOptionPane.DEFAULT_OPTION) {
-                    String[] a = new String[] { tr("Whole group"), tr("Single elements"), tr("Nothing") };
+                    String[] a = new String[] {tr("Whole group"), tr("Single elements"), tr("Nothing")};
                     asked = JOptionPane.showOptionDialog(Main.parent, tr("Ignore whole group or individual elements?"),
                             tr("Ignoring elements"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
                             a, a[1]);

@@ -326,7 +326,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             imgDisplay.setOsdText("");
             return;
         }
-        if (! isDialogShowing()) {
+        if (!isDialogShowing()) {
             setIsDocked(false);     // always open a detached window when an image is clicked and dialog is closed
             showDialog();
         } else {

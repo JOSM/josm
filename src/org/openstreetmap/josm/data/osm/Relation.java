@@ -291,7 +291,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
         if (!(other instanceof Relation))
             return false;
-        if (! super.hasEqualSemanticAttributes(other))
+        if (!super.hasEqualSemanticAttributes(other))
             return false;
         Relation r = (Relation)other;
         return Arrays.equals(members, r.members);

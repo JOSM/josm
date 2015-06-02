@@ -72,7 +72,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
         try {
             for (Changeset cs: changesets) {
                 if (canceled) return;
-                if (cs == null || cs.getId() <= 0 || ! cs.isOpen()) {
+                if (cs == null || cs.getId() <= 0 || !cs.isOpen()) {
                     continue;
                 }
                 getProgressMonitor().subTask(tr("Closing changeset {0}", cs.getId()));

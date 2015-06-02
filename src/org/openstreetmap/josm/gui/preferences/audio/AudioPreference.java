@@ -58,7 +58,7 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
         JPanel audio = new JPanel(new GridBagLayout());
 
         // audioMenuVisible
-        audioMenuVisible.setSelected(! Main.pref.getBoolean("audio.menuinvisible"));
+        audioMenuVisible.setSelected(!Main.pref.getBoolean("audio.menuinvisible"));
         audioMenuVisible.setToolTipText(tr("Show or hide the audio menu entry on the main menu bar."));
         audio.add(audioMenuVisible, GBC.eol().insets(0,0,0,0));
 
@@ -126,7 +126,7 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public boolean ok() {
-        Main.pref.put("audio.menuinvisible", ! audioMenuVisible.isSelected());
+        Main.pref.put("audio.menuinvisible", !audioMenuVisible.isSelected());
         Main.pref.put("marker.traceaudio", markerAudioTraceVisible.isSelected());
         Main.pref.put("marker.buttonlabels", markerButtonLabels.isSelected());
         Main.pref.put("marker.audiofromexplicitwaypoints", audioMarkersFromExplicitWaypoints.isSelected());

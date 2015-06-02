@@ -116,7 +116,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     protected RelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers) {
         super(Main.parent,
                 "",
-                new String[] { tr("Apply Changes"), tr("Cancel")},
+                new String[] {tr("Apply Changes"), tr("Cancel")},
                 false,
                 false
         );
@@ -199,7 +199,7 @@ public abstract class RelationEditor extends ExtendedDialog {
      * @return true if the currently edited relation has been changed elsewhere.
      */
     protected boolean isDirtyRelation() {
-        return ! relation.hasEqualSemanticAttributes(relationSnapshot);
+        return !relation.hasEqualSemanticAttributes(relationSnapshot);
     }
 
     /* ----------------------------------------------------------------------- */

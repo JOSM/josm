@@ -180,7 +180,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 return;
             }
         }
-        imageryProviders.activeModel.addRow(new String[] { server, url });
+        imageryProviders.activeModel.addRow(new String[] {server, url});
     }
 
     /**
@@ -855,7 +855,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
              * Constructs a new {@code OffsetsBookmarksModel}.
              */
             public OffsetsBookmarksModel() {
-                setColumnIdentifiers(new String[] { tr("Projection"),  tr("Layer"), tr("Name"), tr("Easting"), tr("Northing"),});
+                setColumnIdentifiers(new String[] {tr("Projection"), tr("Layer"), tr("Name"), tr("Easting"), tr("Northing")});
             }
 
             public OffsetBookmark getRow(int row) {

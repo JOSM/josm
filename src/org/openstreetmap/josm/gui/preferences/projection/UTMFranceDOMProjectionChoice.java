@@ -15,14 +15,14 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
     private static final String MartiniqueName = tr("Martinique Fort Desaix 1952");
     private static final String Reunion92Name = tr("Reunion RGR92");
     private static final String Guyane92Name = tr("Guyane RGFG95");
-    private static final String[] utmGeodesicsNames = { FortMarigotName, SainteAnneName, MartiniqueName, Reunion92Name, Guyane92Name};
+    private static final String[] utmGeodesicsNames = {FortMarigotName, SainteAnneName, MartiniqueName, Reunion92Name, Guyane92Name};
 
     private static final Integer FortMarigotEPSG = 2969;
     private static final Integer SainteAnneEPSG = 2970;
     private static final Integer MartiniqueEPSG = 2973;
     private static final Integer ReunionEPSG = 2975;
     private static final Integer GuyaneEPSG = 2972;
-    private static final Integer[] utmEPSGs = { FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG, ReunionEPSG, GuyaneEPSG };
+    private static final Integer[] utmEPSGs = {FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG, ReunionEPSG, GuyaneEPSG };
 
     /**
      * Constructs a new {@code UTMFranceDOMProjectionChoice}.
@@ -67,7 +67,7 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
 
     @Override
     public Collection<String> getPreferencesFromCode(String code) {
-        for (int i=0; i < utmEPSGs.length; i++ )
+        for (int i=0; i < utmEPSGs.length; i++)
             if (("EPSG:" + utmEPSGs[i]).equals(code))
                 return Collections.singleton(Integer.toString(i+1));
         return null;

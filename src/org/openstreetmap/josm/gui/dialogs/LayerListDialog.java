@@ -140,9 +140,9 @@ public class LayerListDialog extends ToggleDialog {
      * to toggle the visibility of the first ten layers.
      */
     private final void createVisibilityToggleShortcuts() {
-        final int[] k = { KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_3, KeyEvent.VK_4,
-                KeyEvent.VK_5, KeyEvent.VK_6, KeyEvent.VK_7, KeyEvent.VK_8,
-                KeyEvent.VK_9, KeyEvent.VK_0 };
+        final int[] k = {
+                KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_3, KeyEvent.VK_4, KeyEvent.VK_5,
+                KeyEvent.VK_6, KeyEvent.VK_7, KeyEvent.VK_8, KeyEvent.VK_9, KeyEvent.VK_0};
 
         for(int i=0; i < 10; i++) {
             visibilityToggleShortcuts[i] = Shortcut.registerShortcut("subwindow:layers:toggleLayer" + (i+1),
@@ -409,7 +409,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public void updateEnabledState() {
-            setEnabled(! getModel().getSelectedLayers().isEmpty());
+            setEnabled(!getModel().getSelectedLayers().isEmpty());
         }
 
         @Override
@@ -603,7 +603,7 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public void updateEnabledState() {
             if (layer == null) {
-                setEnabled(! getModel().getSelectedLayers().isEmpty());
+                setEnabled(!getModel().getSelectedLayers().isEmpty());
             } else {
                 setEnabled(true);
             }

@@ -31,7 +31,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         Color bgColor = UIManager.getColor("Table.background");
         Color fgColor = UIManager.getColor("Table.foreground");
         Font font = UIManager.getFont("Table.font");
-        if (! model.hasTag(key)) {
+        if (!model.hasTag(key)) {
             text = tr("not present");
             bgColor = BGCOLOR_DIFFERENCE;
             font = font.deriveFont(Font.ITALIC);
@@ -55,7 +55,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         Color bgColor = UIManager.getColor("Table.background");
         Color fgColor = UIManager.getColor("Table.foreground");
         Font font = UIManager.getFont("Table.font");
-        if (! model.hasTag(key)) {
+        if (!model.hasTag(key)) {
             text = tr("not present");
             bgColor = BGCOLOR_DIFFERENCE;
             font = font.deriveFont(Font.ITALIC);

@@ -99,9 +99,9 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> 
             super.setSelectedItem(null);
             return;
         }
-        if (! (anObject instanceof Changeset)) return;
+        if (!(anObject instanceof Changeset)) return;
         Changeset cs = (Changeset)anObject;
-        if (cs.getId() == 0 || ! cs.isOpen()) return;
+        if (cs.getId() == 0 || !cs.isOpen()) return;
         Changeset candidate = getChangesetById(cs.getId());
         if (candidate == null) return;
         this.selectedChangeset = candidate;

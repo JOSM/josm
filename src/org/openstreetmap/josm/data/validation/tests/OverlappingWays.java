@@ -68,7 +68,7 @@ public class OverlappingWays extends Test {
 
     private boolean parentMultipolygonConcernsArea(OsmPrimitive p) {
         for (Relation r : OsmPrimitive.getFilteredList(p.getReferrers(), Relation.class)) {
-            if (r.concernsArea() ) {
+            if (r.concernsArea()) {
                 return true;
             }
         }

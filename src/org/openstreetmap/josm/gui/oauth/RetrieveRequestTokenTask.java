@@ -38,7 +38,7 @@ public class RetrieveRequestTokenTask extends PleaseWaitRunnable {
      * @param parameters the OAuth parameters. Must not be null.
      * @throws IllegalArgumentException if parameters is null.
      */
-    public RetrieveRequestTokenTask(Component parent, OAuthParameters parameters ) {
+    public RetrieveRequestTokenTask(Component parent, OAuthParameters parameters) {
         super(parent, tr("Retrieving OAuth Request Token..."), false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
         this.parameters = parameters;

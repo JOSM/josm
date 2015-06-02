@@ -66,7 +66,7 @@ public class RelationTree extends JTree {
      */
     protected Dialog getParentDialog() {
         Component c = RelationTree.this;
-        while(c != null && ! (c instanceof Dialog)) {
+        while(c != null && !(c instanceof Dialog)) {
             c = c.getParent();
         }
         return (Dialog)c;
@@ -89,7 +89,7 @@ public class RelationTree extends JTree {
         public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
             TreePath path  = event.getPath();
             Relation parent = (Relation)event.getPath().getLastPathComponent();
-            if (! parent.isIncomplete() || parent.isNew())
+            if (!parent.isIncomplete() || parent.isNew())
                 // we don't load complete  or new relations
                 return;
             // launch the download task
@@ -136,7 +136,7 @@ public class RelationTree extends JTree {
             }
             DataSetMerger visitor = new DataSetMerger(Main.main.getEditLayer().data, ds);
             visitor.merge();
-            if (! visitor.getConflicts().isEmpty()) {
+            if (!visitor.getConflicts().isEmpty()) {
                 Main.main.getEditLayer().getConflicts().add(visitor.getConflicts());
             }
             final RelationTreeModel model = (RelationTreeModel)getModel();

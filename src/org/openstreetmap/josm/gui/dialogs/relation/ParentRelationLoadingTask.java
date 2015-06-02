@@ -72,7 +72,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
      * @throws IllegalArgumentException if layer is null
      * @throws IllegalArgumentException if child.getId() == 0
      */
-    public ParentRelationLoadingTask(Relation child, OsmDataLayer layer, boolean full, PleaseWaitProgressMonitor monitor ) {
+    public ParentRelationLoadingTask(Relation child, OsmDataLayer layer, boolean full, PleaseWaitProgressMonitor monitor) {
         super(tr("Download referring relations"), monitor, false /* don't ignore exception */);
         CheckParameterUtil.ensureValidPrimitiveId(child, "child");
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");

@@ -72,7 +72,7 @@ public class ImageDisplay extends JComponent {
             tracker.addImage(img, 1);
 
             // Wait for the end of loading
-            while (! tracker.checkID(1, true)) {
+            while (!tracker.checkID(1, true)) {
                 if (this.file != ImageDisplay.this.file) {
                     // The file has changed
                     tracker.removeImage(img);
@@ -289,7 +289,7 @@ public class ImageDisplay extends JComponent {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            if (! mouseIsDragging && selectedRect == null)
+            if (!mouseIsDragging && selectedRect == null)
                 return;
 
             File file;
@@ -338,7 +338,7 @@ public class ImageDisplay extends JComponent {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (! mouseIsDragging && selectedRect == null)
+            if (!mouseIsDragging && selectedRect == null)
                 return;
 
             File file;
@@ -478,7 +478,7 @@ public class ImageDisplay extends JComponent {
         } else if (image == null) {
             g.setColor(Color.black);
             String loadingStr;
-            if (! errorLoading) {
+            if (!errorLoading) {
                 loadingStr = tr("Loading {0}", file.getName());
             } else {
                 loadingStr = tr("Error on file {0}", file.getName());

@@ -541,7 +541,7 @@ public abstract class SourceEditor extends JPanel {
             if (row < 0 || row >= getRowCount() || aValue == null)
                 return;
             if (canEnable && column == 0) {
-                data.get(row).active = ! data.get(row).active;
+                data.get(row).active = !data.get(row).active;
             }
         }
 
@@ -998,7 +998,7 @@ public abstract class SourceEditor extends JPanel {
                     }
                 }
                 if (!messages.isEmpty()) {
-                    ExtendedDialog dlg = new ExtendedDialog(Main.parent, tr("Warning"), new String [] { tr("Cancel"), tr("Continue anyway") });
+                    ExtendedDialog dlg = new ExtendedDialog(Main.parent, tr("Warning"), new String[] {tr("Cancel"), tr("Continue anyway")});
                     dlg.setButtonIcons(new Icon[] {
                         ImageProvider.get("cancel"),
                         new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).addOverlay(
@@ -1299,7 +1299,7 @@ public abstract class SourceEditor extends JPanel {
                     }
                     if (line.startsWith("\t")) {
                         Matcher m = Pattern.compile("^\t([^:]+): *(.+)$").matcher(line);
-                        if (! m.matches()) {
+                        if (!m.matches()) {
                             Main.error(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
                             continue;
                         }

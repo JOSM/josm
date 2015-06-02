@@ -337,7 +337,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             return false;
         }
 
-        public void selectPrimitivesOwnedBy(int [] rows) {
+        public void selectPrimitivesOwnedBy(int[] rows) {
             Set<User> users= new HashSet<>();
             for (int index: rows) {
                 users.add(data.get(index).user);

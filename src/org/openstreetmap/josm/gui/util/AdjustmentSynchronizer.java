@@ -61,7 +61,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      */
     @Override
     public void adjustmentValueChanged(AdjustmentEvent e) {
-        if (! enabledMap.get(e.getAdjustable()))
+        if (!enabledMap.get(e.getAdjustable()))
             return;
         for (Adjustable a : synchronizedAdjustables) {
             if (a != e.getAdjustable() && isParticipatingInSynchronizedScrolling(a)) {
@@ -77,7 +77,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      */
     protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
         CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
-        if (! synchronizedAdjustables.contains(adjustable))
+        if (!synchronizedAdjustables.contains(adjustable))
             throw new IllegalStateException(tr("Adjustable {0} not registered yet. Cannot set participation in synchronized adjustment.", adjustable));
 
         enabledMap.put(adjustable, isParticipating);
@@ -92,7 +92,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      * @throws IllegalStateException if adjustable is not registered for synchronized scrolling
      */
     protected boolean isParticipatingInSynchronizedScrolling(Adjustable adjustable) {
-        if (! synchronizedAdjustables.contains(adjustable))
+        if (!synchronizedAdjustables.contains(adjustable))
             throw new IllegalStateException(tr("Adjustable {0} not registered yet.", adjustable));
 
         return enabledMap.get(adjustable);
@@ -116,7 +116,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
         CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
         CheckParameterUtil.ensureParameterNotNull(view, "view");
 
-        if (! synchronizedAdjustables.contains(adjustable)) {
+        if (!synchronizedAdjustables.contains(adjustable)) {
             participateInSynchronizedScrolling(adjustable);
         }
 

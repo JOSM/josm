@@ -291,7 +291,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        setText( value == null ? "" : value.toString());
+        setText(value == null ? "" : value.toString());
         rememberOriginalValue(getText());
         return this;
     }

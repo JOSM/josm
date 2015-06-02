@@ -116,7 +116,7 @@ public class AddTagsDialog extends ExtendedDialog {
      * Constructs a new {@code AddTagsDialog}.
      */
     public AddTagsDialog(String[][] tags, String senderName, Collection<? extends OsmPrimitive> primitives) {
-        super(Main.parent, tr("Add tags to selected objects"), new String[] { tr("Add selected tags"), tr("Add all tags"),  tr("Cancel")},
+        super(Main.parent, tr("Add tags to selected objects"), new String[] {tr("Add selected tags"), tr("Add all tags"), tr("Cancel")},
                 false,
                 true);
         setToolTipTexts(new String[]{tr("Add checked tags to selected objects"), tr("Shift+Enter: Add all tags to selected objects"), ""});
@@ -212,14 +212,14 @@ public class AddTagsDialog extends ExtendedDialog {
         tablePanel.add(propertyTable, GBC.eol().fill(GBC.BOTH));
         if (!sender.isEmpty() && !trustedSenders.contains(sender)) {
             final JCheckBox c = new JCheckBox();
-            c.setAction(new AbstractAction(tr("Accept all tags from {0} for this session", sender) ) {
+            c.setAction(new AbstractAction(tr("Accept all tags from {0} for this session", sender)) {
                 @Override public void actionPerformed(ActionEvent e) {
                     if (c.isSelected())
                         trustedSenders.add(sender);
                     else
                         trustedSenders.remove(sender);
                 }
-            } );
+            });
             tablePanel.add(c , GBC.eol().insets(20,10,0,0));
         }
         setContent(tablePanel);
@@ -273,7 +273,7 @@ public class AddTagsDialog extends ExtendedDialog {
                         int i = 0;
                         for (String tag : tagSet) {
                             // support a  =   b===c as "a"="b===c"
-                            String [] pair = tag.split("\\s*=\\s*",2);
+                            String[] pair = tag.split("\\s*=\\s*",2);
                             keyValue[i][0] = pair[0];
                             keyValue[i][1] = pair.length<2 ? "": pair[1];
                             i++;

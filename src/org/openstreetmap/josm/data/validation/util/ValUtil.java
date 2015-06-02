@@ -63,7 +63,7 @@ public final class ValUtil {
         cell = new Point2D.Double(x1, y1);
         if (!cellNodes.contains(cell)) {
             cellNodes.add(cell);
-            ways = cellWays.get( cell );
+            ways = cellWays.get(cell);
             if (ways == null) {
                 ways = new ArrayList<>();
                 cellWays.put(cell, ways);
@@ -156,7 +156,7 @@ public final class ValUtil {
 
         long maxSteps = (gridX1 - gridX0) + Math.abs(gridY1 - gridY0) + 1;
         while ((gridX0 <= gridX1 && (gridY0 - gridY1)*stepY <= 0) && maxSteps-- > 0) {
-            cells.add( new Point2D.Double(gridX0, gridY0));
+            cells.add(new Point2D.Double(gridX0, gridY0));
 
             // Is the cross between the segment and next vertical line nearer than the cross with next horizontal line?
             // Note: segment line formula: y=dy/dx(x-x1)+y1

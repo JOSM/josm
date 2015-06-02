@@ -64,9 +64,8 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
         iSlippyMapChooser.addMouseListener(this);
         iSlippyMapChooser.addMouseMotionListener(this);
 
-        String[] n = { ",", ".", "up", "right", "down", "left" };
-        int[] k = { KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD, KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN,
-                KeyEvent.VK_LEFT };
+        String[] n = {",", ".", "up", "right", "down", "left"};
+        int[] k = {KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD, KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT};
 
         if (contentPane != null) {
             for (int i = 0; i < n.length; ++i) {

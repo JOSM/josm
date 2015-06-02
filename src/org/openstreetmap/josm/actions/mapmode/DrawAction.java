@@ -690,7 +690,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private boolean isSelfContainedWay(Way selectedWay, Node currentNode, Node targetNode) {
         if(selectedWay != null) {
             int posn0 = selectedWay.getNodes().indexOf(currentNode);
-            if( posn0 != -1 && // n0 is part of way
+            if (posn0 != -1 && // n0 is part of way
                     (posn0 >= 1                             && targetNode.equals(selectedWay.getNode(posn0-1))) || // previous node
                     (posn0 < selectedWay.getNodesCount()-1) && targetNode.equals(selectedWay.getNode(posn0+1))) {  // next node
                 getCurrentDataSet().setSelected(targetNode);
@@ -1490,7 +1490,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             double hdg = Math.toDegrees(p0.heading(snapPoint));
             // heading of segment from current to calculated point, not to mouse position
 
-            if (baseHeading >=0 ) { // there is previous line segment with some heading
+            if (baseHeading >= 0) { // there is previous line segment with some heading
                 angle = hdg - baseHeading;
                 if (angle < 0) {
                     angle+=360;
@@ -1550,7 +1550,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                             pointsToProject.add(n.getEastNorth());
                         }
                     }
-                    if (customBaseHeading >=0 ) {
+                    if (customBaseHeading >= 0) {
                         pointsToProject.add(segmentPoint1);
                         pointsToProject.add(segmentPoint2);
                     }

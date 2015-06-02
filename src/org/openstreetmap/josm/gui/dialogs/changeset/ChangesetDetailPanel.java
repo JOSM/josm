@@ -258,7 +258,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     /* ---------------------------------------------------------------------------- */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (! evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
+        if (!evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
             return;
         setCurrentChangeset((Changeset)evt.getNewValue());
     }

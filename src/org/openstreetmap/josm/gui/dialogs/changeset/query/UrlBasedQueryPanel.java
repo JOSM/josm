@@ -135,7 +135,7 @@ public class UrlBasedQueryPanel extends JPanel {
         }
         String path = url.getPath();
         String query = url.getQuery();
-        if (path == null || ! path.endsWith("/changesets")) return null;
+        if (path == null || !path.endsWith("/changesets")) return null;
 
         try {
             return ChangesetQuery.buildFromUrlQuery(query);

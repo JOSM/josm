@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.conflict.ConflictColors;
 
 public abstract class TagMergeTableCellRenderer extends JLabel implements TableCellRenderer {
 
-    protected  abstract void renderKey(TagMergeItem item, boolean isSelected );
+    protected abstract void renderKey(TagMergeItem item, boolean isSelected);
 
     protected abstract void renderValue(TagMergeItem item, boolean isSelected);
 

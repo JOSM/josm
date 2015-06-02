@@ -241,7 +241,7 @@ public class ColorPreference implements SubPreferenceSetting {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JScrollPane scrollpane = new JScrollPane(colors);
-        scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
+        scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         panel.add(scrollpane, GBC.eol().fill(GBC.BOTH));
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         panel.add(buttonPanel, GBC.eol().insets(5,0,5,5).fill(GBC.HORIZONTAL));

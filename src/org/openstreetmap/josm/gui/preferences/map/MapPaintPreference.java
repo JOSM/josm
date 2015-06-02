@@ -72,7 +72,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         sources = new MapPaintSourceEditor();
 
         final JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         panel.add(enableIconDefault, GBC.eol().insets(11,2,5,0));
@@ -267,7 +267,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
             defPL2.title = tr("Potlatch 2");
             defPL2.description = tr("the main Potlatch 2 style");
 
-            return Arrays.asList(new ExtendedSourceEntry[] { defJosmMapcss, defPL2 });
+            return Arrays.asList(new ExtendedSourceEntry[] {defJosmMapcss, defPL2});
         }
 
         @Override

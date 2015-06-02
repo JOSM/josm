@@ -162,7 +162,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
          * Constructs a new {@code ParameterInfoDialog}.
          */
         public ParameterInfoDialog() {
-            super(null, tr("Parameter information"), new String[] { tr("Close") }, false);
+            super(null, tr("Parameter information"), new String[] {tr("Close")}, false);
             setContent(build());
         }
 

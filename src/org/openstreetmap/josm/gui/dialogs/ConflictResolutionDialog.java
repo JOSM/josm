@@ -202,7 +202,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            if (! resolver.isResolvedCompletely()) {
+            if (!resolver.isResolvedCompletely()) {
                 Object[] options = {
                         tr("Close anyway"),
                         tr("Continue resolving")};

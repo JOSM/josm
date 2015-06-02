@@ -35,7 +35,7 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
         Cascade c = env.mc.getCascade(env.layer);
         float offset = c.get(REPEAT_IMAGE_OFFSET, 0f, Float.class);
         float spacing = c.get(REPEAT_IMAGE_SPACING, 0f, Float.class);
-        float phase = - c.get(REPEAT_IMAGE_PHASE, 0f, Float.class);
+        float phase = -c.get(REPEAT_IMAGE_PHASE, 0f, Float.class);
 
         LineImageAlignment align = LineImageAlignment.CENTER;
         Keyword alignKW = c.get(REPEAT_IMAGE_ALIGN, Keyword.CENTER, Keyword.class);

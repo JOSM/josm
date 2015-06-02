@@ -68,9 +68,9 @@ public class LatLon extends Coordinate {
     }
 
     private static final String cDms60 = cDmsSecondFormatter.format(60.0);
-    private static final String cDms00 = cDmsSecondFormatter.format( 0.0);
+    private static final String cDms00 = cDmsSecondFormatter.format(0.0);
     private static final String cDm60 = cDmMinuteFormatter.format(60.0);
-    private static final String cDm00 = cDmMinuteFormatter.format( 0.0);
+    private static final String cDm00 = cDmMinuteFormatter.format(0.0);
 
     /**
      * Replies true if lat is in the range [-90,90]

@@ -84,8 +84,8 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
 
         GBC a = GBC.eol().insets(-5,0,0,0);
         a.anchor = GBC.EAST;
-        testPanel.add( new JLabel(tr("On demand")), GBC.std() );
-        testPanel.add( new JLabel(tr("On upload")), a );
+        testPanel.add(new JLabel(tr("On demand")), GBC.std());
+        testPanel.add(new JLabel(tr("On upload")), a);
 
         allTests = OsmValidator.getTests();
         for (Test test: allTests) {

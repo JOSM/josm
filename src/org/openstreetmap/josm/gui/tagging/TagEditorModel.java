@@ -249,7 +249,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param tagIndices a list of tag indices
      */
-    public void deleteTagNames(int [] tagIndices) {
+    public void deleteTagNames(int[] tagIndices) {
         if (tags == null)
             return;
         for (int tagIdx : tagIndices) {
@@ -267,7 +267,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param tagIndices the lit of tag indices
      */
-    public void deleteTagValues(int [] tagIndices) {
+    public void deleteTagValues(int[] tagIndices) {
         if (tags == null)
             return;
         for (int tagIdx : tagIndices) {
@@ -306,7 +306,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param tagIndices the list of tag indices
      */
-    public void deleteTags(int [] tagIndices) {
+    public void deleteTags(int[] tagIndices) {
         if (tags == null)
             return;
         List<TagModel> toDelete = new ArrayList<>();
@@ -545,7 +545,7 @@ public class TagEditorModel extends AbstractTableModel {
     public void updateTagName(TagModel tag, String newName) {
         String oldName = tag.getName();
         tag.setName(newName);
-        if (! newName.equals(oldName)) {
+        if (!newName.equals(oldName)) {
             setDirty(true);
         }
         SelectionStateMemento memento = new SelectionStateMemento();
@@ -563,7 +563,7 @@ public class TagEditorModel extends AbstractTableModel {
     public void updateTagValue(TagModel tag, String newValue) {
         String oldValue = tag.getValue();
         tag.setValue(newValue);
-        if (! newValue.equals(oldValue)) {
+        if (!newValue.equals(oldValue)) {
             setDirty(true);
         }
         SelectionStateMemento memento = new SelectionStateMemento();

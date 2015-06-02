@@ -83,10 +83,11 @@ public class GpxDrawHelper {
     private static final int ll0 = 9;
     private static final int sl4 = 5;
     private static final int sl9 = 3;
-    private static final int[][] dir = { { +sl4, +ll0, +ll0, +sl4 }, { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 },
-        { -ll0, -sl9, -ll0, +sl9 }, { -sl4, -ll0, -ll0, -sl4 }, { +sl9, -ll0, -sl9, -ll0 },
-        { +ll0, -sl4, +sl4, -ll0 }, { +ll0, +sl9, +ll0, -sl9 }, { +sl4, +ll0, +ll0, +sl4 },
-        { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 }, { -ll0, -sl9, -ll0, +sl9 } };
+    private static final int[][] dir = {
+        {+sl4, +ll0, +ll0, +sl4}, {-sl9, +ll0, +sl9, +ll0}, {-ll0, +sl4, -sl4, +ll0},
+        {-ll0, -sl9, -ll0, +sl9}, {-sl4, -ll0, -ll0, -sl4}, {+sl9, -ll0, -sl9, -ll0},
+        {+ll0, -sl4, +sl4, -ll0}, {+ll0, +sl9, +ll0, -sl9}, {+sl4, +ll0, +ll0, +sl4},
+        {-sl9, +ll0, +sl9, +ll0}, {-ll0, +sl4, -sl4, +ll0}, {-ll0, -sl9, -ll0, +sl9}};
 
     private void setupColors() {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);

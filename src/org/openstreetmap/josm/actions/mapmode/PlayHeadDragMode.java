@@ -54,7 +54,7 @@ public class PlayHeadDragMode extends MapMode {
         if (mouseStart == null || mousePos == null) return;
         if ((ev.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0) return;
         Point p = ev.getPoint();
-        if (! dragging) {
+        if (!dragging) {
             if (p.distance(mouseStart) < 3) return;
             playHeadMarker.startDrag();
             dragging = true;
@@ -67,14 +67,14 @@ public class PlayHeadDragMode extends MapMode {
     @Override public void mouseReleased(MouseEvent ev) {
         Point p = ev.getPoint();
         mouseStart = null;
-        if (ev.getButton() != MouseEvent.BUTTON1 || p == null || ! dragging)
+        if (ev.getButton() != MouseEvent.BUTTON1 || p == null || !dragging)
             return;
 
         requestFocusInMapView();
         updateKeyModifiers(ev);
 
         EastNorth en = Main.map.mapView.getEastNorth(ev.getX(), ev.getY());
-        if (! shift) {
+        if (!shift) {
             playHeadMarker.reposition(en);
         } else {
             playHeadMarker.synchronize(en);

@@ -164,8 +164,8 @@ public class LatLonDialog extends ExtendedDialog {
     }
 
     public LatLonDialog(Component parent, String title, String help) {
-        super(parent, title, new String[] { tr("Ok"), tr("Cancel") });
-        setButtonIcons(new String[] { "ok", "cancel" });
+        super(parent, title, new String[] {tr("Ok"), tr("Cancel")});
+        setButtonIcons(new String[] {"ok", "cancel"});
         configureContextsensitiveHelp(help, true);
 
         build();

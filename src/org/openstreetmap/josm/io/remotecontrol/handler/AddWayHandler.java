@@ -52,7 +52,7 @@ public class AddWayHandler extends RequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] { "addtags" };
+        return new String[] {"addtags"};
     }
 
     @Override

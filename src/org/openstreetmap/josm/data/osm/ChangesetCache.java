@@ -133,7 +133,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
     public void remove(int id) {
         DefaultChangesetCacheEvent e = new DefaultChangesetCacheEvent(this);
         remove(id, e);
-        if (! e.isEmpty()) {
+        if (!e.isEmpty()) {
             fireChangesetCacheEvent(e);
         }
     }
@@ -159,7 +159,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
             }
             remove(cs.getId(), evt);
         }
-        if (! evt.isEmpty()) {
+        if (!evt.isEmpty()) {
             fireChangesetCacheEvent(evt);
         }
     }

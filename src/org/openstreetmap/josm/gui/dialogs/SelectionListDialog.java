@@ -789,7 +789,7 @@ public class SelectionListDialog extends ToggleDialog  {
             int nodes = 0;
             int relations = 0;
             for (OsmPrimitive o : sel) {
-                if (! o.isSelectable()) continue; // skip unselectable primitives
+                if (!o.isSelectable()) continue; // skip unselectable primitives
                 if (o instanceof Way) {
                     ways++;
                 } else if (o instanceof Node) {

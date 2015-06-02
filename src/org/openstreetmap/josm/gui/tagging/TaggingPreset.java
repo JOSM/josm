@@ -275,7 +275,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         if (roles != null && osm != null) {
             for (Role i : roles.roles) {
                 if (i.memberExpression != null && i.memberExpression.match(osm)
-                        && (i.types == null || i.types.isEmpty() || i.types.contains(TaggingPresetType.forPrimitive(osm)) )) {
+                        && (i.types == null || i.types.isEmpty() || i.types.contains(TaggingPresetType.forPrimitive(osm)))) {
                     return i.key;
                 }
             }
@@ -333,8 +333,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public PresetDialog(Component content, String title, ImageIcon icon, boolean disableApply, boolean showNewRelation) {
             super(Main.parent, title,
                     showNewRelation?
-                            new String[] { tr("Apply Preset"), tr("New relation"), tr("Cancel") }:
-                                new String[] { tr("Apply Preset"), tr("Cancel") },
+                            new String[] {tr("Apply Preset"), tr("New relation"), tr("Cancel")} :
+                                new String[] {tr("Apply Preset"), tr("Cancel")},
                                 true);
             if (icon != null)
                 setIconImage(icon.getImage());

@@ -125,11 +125,11 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     protected boolean hasCustomSettings() {
         OAuthParameters params = OAuthParameters.createDefault(apiUrl);
         return
-           ! tfConsumerKey.getText().equals(params.getConsumerKey())
-        || ! tfConsumerSecret.getText().equals(params.getConsumerSecret())
-        || ! tfRequestTokenURL.getText().equals(params.getRequestTokenUrl())
-        || ! tfAccessTokenURL.getText().equals(params.getAccessTokenUrl())
-        || ! tfAuthoriseURL.getText().equals(params.getAuthoriseUrl());
+           !tfConsumerKey.getText().equals(params.getConsumerKey())
+        || !tfConsumerSecret.getText().equals(params.getConsumerSecret())
+        || !tfRequestTokenURL.getText().equals(params.getRequestTokenUrl())
+        || !tfAccessTokenURL.getText().equals(params.getAccessTokenUrl())
+        || !tfAuthoriseURL.getText().equals(params.getAuthoriseUrl());
     }
 
     protected boolean confirmOverwriteCustomSettings() {
@@ -215,8 +215,8 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         } else {
             cbUseDefaults.setSelected(false);
             setChildComponentsEnabled(true);
-            tfConsumerKey.setText( parameters.getConsumerKey() == null ? "" : parameters.getConsumerKey());
-            tfConsumerSecret.setText( parameters.getConsumerSecret() == null ? "" : parameters.getConsumerSecret());
+            tfConsumerKey.setText(parameters.getConsumerKey() == null ? "" : parameters.getConsumerKey());
+            tfConsumerSecret.setText(parameters.getConsumerSecret() == null ? "" : parameters.getConsumerSecret());
             tfRequestTokenURL.setText(parameters.getRequestTokenUrl() == null ? "" : parameters.getRequestTokenUrl());
             tfAccessTokenURL.setText(parameters.getAccessTokenUrl() == null ? "" : parameters.getAccessTokenUrl());
             tfAuthoriseURL.setText(parameters.getAuthoriseUrl() == null ? "" : parameters.getAuthoriseUrl());

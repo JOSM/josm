@@ -90,7 +90,7 @@ public class Marker implements TemplateEngineDataProvider {
         private static final Map<String, TemplateEntryProperty> CACHE = new HashMap<>();
 
         // Legacy code - convert label from int to template engine expression
-        private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0 );
+        private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0);
         private static String getDefaultLabelPattern() {
             switch (PROP_LABEL.get()) {
             case 1:
@@ -187,7 +187,7 @@ public class Marker implements TemplateEngineDataProvider {
                 // collection of GpxLink objects...
                 Collection<GpxLink> links = wpt.<GpxLink>getCollection(GpxConstants.META_LINKS);
                 if (links != null) {
-                    for (GpxLink oneLink : links ) {
+                    for (GpxLink oneLink : links) {
                         uri = oneLink.uri;
                         break;
                     }

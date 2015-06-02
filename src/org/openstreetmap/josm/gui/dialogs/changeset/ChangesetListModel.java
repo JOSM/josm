@@ -121,7 +121,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
         }
         Set<Changeset> changesets = new HashSet<>();
         for (OsmPrimitive p: ds.allPrimitives()) {
-            if (p.getChangesetId() <=0 ) {
+            if (p.getChangesetId() <= 0) {
                 continue;
             }
             changesets.add(new Changeset(p.getChangesetId()));

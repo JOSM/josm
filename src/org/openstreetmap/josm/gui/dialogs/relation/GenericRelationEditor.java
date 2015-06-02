@@ -1259,7 +1259,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected boolean confirmClosingBecauseOfDirtyState() {
-            ButtonSpec [] options = new ButtonSpec[] {
+            ButtonSpec[] options = new ButtonSpec[] {
                     new ButtonSpec(
                             tr("Yes, create a conflict and close"),
                             ImageProvider.get("ok"),
@@ -1393,7 +1393,7 @@ public class GenericRelationEditor extends RelationEditor  {
             memberTable.stopHighlighting();
             TagEditorModel tagModel = tagEditorPanel.getModel();
             Relation snapshot = getRelationSnapshot();
-            if ( (!memberTableModel.hasSameMembersAs(snapshot) || tagModel.isDirty())
+            if ((!memberTableModel.hasSameMembersAs(snapshot) || tagModel.isDirty())
              && !(snapshot == null && tagModel.getTags().isEmpty())) {
                 //give the user a chance to save the changes
                 int ret = confirmClosingByCancel();
@@ -1424,7 +1424,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected int confirmClosingByCancel() {
-            ButtonSpec [] options = new ButtonSpec[] {
+            ButtonSpec[] options = new ButtonSpec[] {
                     new ButtonSpec(
                             tr("Yes, save the changes and close"),
                             ImageProvider.get("ok"),
@@ -1568,7 +1568,7 @@ public class GenericRelationEditor extends RelationEditor  {
                         + tr("This is equal to deleting the roles of these objects.") +
                         "<br>"
                         + tr("Do you really want to apply the new role?") + "</html>";
-            String [] options = new String[] {
+            String[] options = new String[] {
                     tr("Yes, apply it"),
                     tr("No, do not apply")
             };
@@ -1594,7 +1594,7 @@ public class GenericRelationEditor extends RelationEditor  {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (isEmptyRole()) {
-                if (! confirmSettingEmptyRole(memberTable.getSelectedRowCount()))
+                if (!confirmSettingEmptyRole(memberTable.getSelectedRowCount()))
                     return;
             }
             memberTableModel.updateRole(memberTable.getSelectedRows(), tfRole.getText());

@@ -83,7 +83,7 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
         // apply the merge decisions to OSM primitive 'my'
         //
         for (TagMergeItem item: mergeItems) {
-            if (! item.getMergeDecision().equals(MergeDecisionType.UNDECIDED)) {
+            if (!item.getMergeDecision().equals(MergeDecisionType.UNDECIDED)) {
                 item.applyToMyPrimitive(conflict.getMy());
             }
         }

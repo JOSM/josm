@@ -430,7 +430,7 @@ public class ChangesetDialog extends ToggleDialog{
             Set<Changeset> sel = getCurrentChangesetListModel().getSelectedChangesets();
             if (sel.isEmpty())
                 return;
-            if (sel.size() > 10 && ! AbstractInfoAction.confirmLaunchMultiple(sel.size()))
+            if (sel.size() > 10 && !AbstractInfoAction.confirmLaunchMultiple(sel.size()))
                 return;
             String baseUrl = Main.getBaseBrowseUrl();
             for (Changeset cs: sel) {

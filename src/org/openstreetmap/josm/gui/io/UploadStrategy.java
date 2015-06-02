@@ -87,7 +87,7 @@ public enum UploadStrategy {
         }
         UploadStrategy strategy = fromPreference(v);
         if (strategy == null) {
-            Main.warn(tr("Unexpected value for key ''{0}'' in preferences, got ''{1}''", "osm-server.upload-strategy", v ));
+            Main.warn(tr("Unexpected value for key ''{0}'' in preferences, got ''{1}''", "osm-server.upload-strategy", v));
             return DEFAULT_UPLOAD_STRATEGY;
         }
         return strategy;

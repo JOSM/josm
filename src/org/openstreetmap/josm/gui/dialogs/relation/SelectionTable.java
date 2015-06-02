@@ -34,7 +34,7 @@ public class SelectionTable extends JTable {
     class DoubleClickAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent evt) {
-            if (! (SwingUtilities.isLeftMouseButton(evt) && evt.getClickCount() > 1))
+            if (!(SwingUtilities.isLeftMouseButton(evt) && evt.getClickCount() > 1))
                 return;
             int row = rowAtPoint(evt.getPoint());
             OsmPrimitive primitive = model.getPrimitive(row);

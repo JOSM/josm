@@ -105,7 +105,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     @Override
     public Dimension getPreferredSize(){
         Container c = getParent();
-        while(c != null && ! (c instanceof JViewport)) {
+        while(c != null && !(c instanceof JViewport)) {
             c = c.getParent();
         }
         if (c != null) {

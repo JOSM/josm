@@ -10,7 +10,7 @@ import org.openstreetmap.josm.Main;
 
 public class GaussKruegerProjectionChoice extends ListProjectionChoice {
 
-    private static String[] zones = { "2", "3", "4", "5" };
+    private static String[] zones = {"2", "3", "4", "5"};
 
     /**
      * Constructs a new {@code GaussKruegerProjectionChoice}.

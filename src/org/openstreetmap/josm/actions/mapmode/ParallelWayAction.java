@@ -155,7 +155,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         mv.addMouseMotionListener(this);
         mv.addTemporaryLayer(this);
 
-        helpLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.hepler-line", "1" ));
+        helpLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.hepler-line", "1"));
         refLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.ref-line", "1 2 2"));
         mainColor = Main.pref.getColor(marktr("make parallel helper line"), null);
         if (mainColor == null) mainColor = PaintColors.SELECTED.get();

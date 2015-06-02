@@ -67,7 +67,7 @@ public class LoadAndZoomHandler extends RequestHandler {
 
     @Override
     public String[] getMandatoryParams() {
-        return new String[] { "bottom", "top", "left", "right" };
+        return new String[] {"bottom", "top", "left", "right"};
     }
 
     @Override

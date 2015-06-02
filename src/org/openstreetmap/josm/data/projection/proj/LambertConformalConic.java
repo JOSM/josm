@@ -152,12 +152,12 @@ public class LambertConformalConic implements Proj {
     @Override
     public double[] project(double phi, double lambda) {
         double sinphi = sin(phi);
-        double L = (0.5*log((1+sinphi)/(1-sinphi))) - e/2*log((1+e*sinphi)/(1-e*sinphi));
-        double r = f*exp(-n*L);
+        double l = (0.5*log((1+sinphi)/(1-sinphi))) - e/2*log((1+e*sinphi)/(1-e*sinphi));
+        double r = f*exp(-n*l);
         double gamma = n*lambda;
-        double X = r*sin(gamma);
-        double Y = r0 - r*cos(gamma);
-        return new double[] { X, Y };
+        double x = r*sin(gamma);
+        double y = r0 - r*cos(gamma);
+        return new double[] {x, y};
     }
 
     @Override
@@ -167,7 +167,7 @@ public class LambertConformalConic implements Proj {
         double lambda = gamma/n;
         double latIso = (-1/n) * log(abs(r/f));
         double phi = ellps.latitude(latIso, e, epsilon);
-        return new double[] { phi, lambda };
+        return new double[] {phi, lambda};
     }
 
     public final Parameters getParameters() {

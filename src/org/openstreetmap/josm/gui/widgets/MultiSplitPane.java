@@ -387,7 +387,7 @@ public class MultiSplitPane extends JPanel {
 
     @Override
     public AccessibleContext getAccessibleContext() {
-        if( accessibleContext == null ) {
+        if (accessibleContext == null) {
             accessibleContext = new AccessibleMultiSplitPane();
         }
         return accessibleContext;

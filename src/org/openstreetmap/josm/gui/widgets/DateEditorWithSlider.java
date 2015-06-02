@@ -42,7 +42,7 @@ public class DateEditorWithSlider extends JPanel {
      */
     public DateEditorWithSlider(String labelText) {
         super(new GridBagLayout());
-        spinner = new JSpinner( new SpinnerDateModel() );
+        spinner = new JSpinner(new SpinnerDateModel());
         String pattern = ((SimpleDateFormat)DateUtils.getDateFormat(DateFormat.DEFAULT)).toPattern();
         JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spinner,pattern);
         spinner.setEditor(timeEditor);

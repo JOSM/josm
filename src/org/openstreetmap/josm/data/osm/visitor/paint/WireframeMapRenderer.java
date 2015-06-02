@@ -432,7 +432,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                 final double sy = l * (p1.y - p2.y);
 
                 path.lineTo(p2.x + (int) Math.round(cosPHI * sx - sinPHI * sy), p2.y + (int) Math.round(sinPHI * sx + cosPHI * sy));
-                path.moveTo(p2.x + (int) Math.round(cosPHI * sx + sinPHI * sy), p2.y + (int) Math.round(- sinPHI * sx + cosPHI * sy));
+                path.moveTo(p2.x + (int) Math.round(cosPHI * sx + sinPHI * sy), p2.y + (int) Math.round(-sinPHI * sx + cosPHI * sy));
                 path.lineTo(p2.x, p2.y);
             }
         }

@@ -174,7 +174,7 @@ public final class Cascade implements Cloneable {
         }
         Float f = toFloat(o);
         if (f != null)
-            return new float[] { f };
+            return new float[] {f};
         return null;
     }
 

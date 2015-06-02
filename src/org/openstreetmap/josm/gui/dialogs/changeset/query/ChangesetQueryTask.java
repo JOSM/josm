@@ -165,10 +165,9 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
             JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
             if (query.isRestrictedToPartiallyIdentifiedUser() && im.isCurrentUser(query.getUserName())) {
                 // if we query changesets for the current user, make sure we query against
-                // its user id, not its user name. If necessary, determine the user id
-                // first.
+                // its user id, not its user name. If necessary, determine the user id first.
                 //
-                if (im.isPartiallyIdentified() ) {
+                if (im.isPartiallyIdentified()) {
                     fullyIdentifyCurrentUser();
                 }
                 query = query.forUser(JosmUserIdentityManager.getInstance().getUserId());

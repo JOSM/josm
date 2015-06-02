@@ -413,7 +413,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                                 // get text definition of current action
                 String res = parser.saveAction(act);
                                 // remove the button from toolbar preferences
-                                t.remove( res );
+                                t.remove(res);
                                 Main.pref.putCollection("toolbar", t);
                                 Main.toolbar.refreshToolbarControl();
                             }
@@ -534,7 +534,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         private class ActionTransferable implements Transferable {
 
-            private final DataFlavor[] flavors = new DataFlavor[] { ACTION_FLAVOR };
+            private final DataFlavor[] flavors = new DataFlavor[] {ACTION_FLAVOR};
 
             private final List<ActionDefinition> actions;
 
@@ -768,7 +768,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public int getSourceActions( JComponent c ){
+                public int getSourceActions(JComponent c) {
                     return TransferHandler.MOVE;
                 }
 

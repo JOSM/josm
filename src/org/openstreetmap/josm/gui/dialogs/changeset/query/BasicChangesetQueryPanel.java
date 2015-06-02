@@ -252,7 +252,7 @@ public class BasicChangesetQueryPanel extends JPanel {
                 cbMyChangesetsOnly.setSelected(true);
                 cbMyChangesetsOnly.setEnabled(false);
             } else {
-                if (! cbMyChangesetsOnly.isEnabled()) {
+                if (!cbMyChangesetsOnly.isEnabled()) {
                     cbMyChangesetsOnly.setEnabled(true);
                 }
             }

@@ -73,7 +73,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
     @Override
     public void undoCommand() {
         OsmDataLayer layer = getLayer();
-        if (! Main.map.mapView.hasLayer(layer)) {
+        if (!Main.map.mapView.hasLayer(layer)) {
             Main.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     layer.toString()

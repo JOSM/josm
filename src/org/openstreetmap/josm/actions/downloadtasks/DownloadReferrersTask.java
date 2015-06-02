@@ -63,7 +63,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         this.children = new HashMap<>();
         if (children != null) {
             for (OsmPrimitive p: children) {
-                if (! p.isNew()) {
+                if (!p.isNew()) {
                     this.children.put(p.getId(), OsmPrimitiveType.from(p));
                 }
             }

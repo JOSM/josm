@@ -80,7 +80,7 @@ public class SwissObliqueMercator implements Proj {
         double y = kR * lb;
         double x = kR / 2 * log((1 + sin(bb)) / (1 - sin(bb)));
 
-        return new double[] { y, x };
+        return new double[] {y, x};
     }
 
     @Override
@@ -106,6 +106,6 @@ public class SwissObliqueMercator implements Proj {
             * log(tan(PI / 4 + asin(ellps.e * sin(phi)) / 2));
             phi = 2 * atan(exp(s)) - PI / 2;
         }
-        return new double[] { phi, lambda };
+        return new double[] {phi, lambda};
     }
 }

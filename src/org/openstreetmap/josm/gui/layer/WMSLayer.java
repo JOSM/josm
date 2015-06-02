@@ -104,8 +104,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     // these values correspond to the zoom levels used throughout OSM and are in meters/pixel from zoom level 0 to 18.
     // taken from http://wiki.openstreetmap.org/wiki/Zoom_levels
-    private static final Double[] snapLevels = { 156412.0, 78206.0, 39103.0, 19551.0, 9776.0, 4888.0,
-        2444.0, 1222.0, 610.984, 305.492, 152.746, 76.373, 38.187, 19.093, 9.547, 4.773, 2.387, 1.193, 0.596 };
+    private static final Double[] snapLevels = {156412.0, 78206.0, 39103.0, 19551.0, 9776.0, 4888.0,
+        2444.0, 1222.0, 610.984, 305.492, 152.746, 76.373, 38.187, 19.093, 9.547, 4.773, 2.387, 1.193, 0.596};
 
     public static final BooleanProperty PROP_ALPHA_CHANNEL = new BooleanProperty("imagery.wms.alpha_channel", true);
     public static final IntegerProperty PROP_SIMULTANEOUS_CONNECTIONS = new IntegerProperty("imagery.wms.simultaneousConnections", 3);
@@ -368,11 +368,11 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public int getImageXIndex(double coord) {
-        return (int)Math.floor( ((coord - dx) * info.getPixelPerDegree()) / imageSize);
+        return (int)Math.floor(((coord - dx) * info.getPixelPerDegree()) / imageSize);
     }
 
     public int getImageYIndex(double coord) {
-        return (int)Math.floor( ((coord - dy) * info.getPixelPerDegree()) / imageSize);
+        return (int)Math.floor(((coord - dy) * info.getPixelPerDegree()) / imageSize);
     }
 
     public int getImageX(int imageIndex) {
@@ -572,7 +572,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 priority = Integer.MAX_VALUE; // Only interested in tiles that can be loaded from file immediately
             }
 
-            if (       priority == -1
+            if (priority == -1
                     || finishedRequests.contains(item)
                     || processingRequests.contains(item)) {
                 it.remove();

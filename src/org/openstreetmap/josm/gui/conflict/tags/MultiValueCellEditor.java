@@ -98,7 +98,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
                     } else {
                         fireGotoNextDecision();
                     }
-                } else if ( e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_DELETE  || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                } else if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                     if (editorModel.getIndexOf(MultiValueDecisionType.KEEP_NONE) > 0) {
                         editorModel.setSelectedItem(MultiValueDecisionType.KEEP_NONE);
                         fireGotoNextDecision();

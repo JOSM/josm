@@ -37,7 +37,7 @@ public class HTMLGrabber extends WMSGrabber {
             cmdParams.add(st.nextToken());
         }
 
-        ProcessBuilder builder = new ProcessBuilder( cmdParams);
+        ProcessBuilder builder = new ProcessBuilder(cmdParams);
 
         Process browser;
         try {

@@ -965,7 +965,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
             referrers = referrer;
         } else if (referrers instanceof OsmPrimitive) {
             if (referrers != referrer) {
-                referrers = new OsmPrimitive[] { (OsmPrimitive)referrers, referrer };
+                referrers = new OsmPrimitive[] {(OsmPrimitive)referrers, referrer};
             }
         } else {
             for (OsmPrimitive primitive:(OsmPrimitive[])referrers) {
@@ -1143,7 +1143,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
             CheckParameterUtil.ensureParameterNotNull(other, "other");
             if (other.isNew() ^ isNew())
                 throw new DataIntegrityProblemException(tr("Cannot merge because either of the participating primitives is new and the other is not"));
-            if (! other.isNew() && other.getId() != id)
+            if (!other.isNew() && other.getId() != id)
                 throw new DataIntegrityProblemException(tr("Cannot merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
 
             setKeys(other.getKeys());

@@ -155,7 +155,7 @@ public class TextElement implements StyleKeys {
                     haloColor.getBlue(), Utils.color_float2int(haloAlpha));
         }
 
-        return new TextElement(strategy, font, (int) xOffset, - (int) yOffset, color, haloRadius, haloColor);
+        return new TextElement(strategy, font, (int) xOffset, -(int) yOffset, color, haloRadius, haloColor);
     }
 
     /**

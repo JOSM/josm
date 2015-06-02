@@ -176,7 +176,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
     public void displayMessageIfInvalid() {
         if (cbUserRestriction.isSelected()) {
-            if (! pnlUserRestriction.isValidChangesetQuery()) {
+            if (!pnlUserRestriction.isValidChangesetQuery()) {
                 pnlUserRestriction.displayMessageIfInvalid();
             }
         } else if (cbTimeRestrictions.isSelected()) {
@@ -199,7 +199,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     public ChangesetQuery buildChangesetQuery() {
         ChangesetQuery query = new ChangesetQuery();
         if (cbUserRestriction.isSelected()) {
-            if (! pnlUserRestriction.isValidChangesetQuery())
+            if (!pnlUserRestriction.isValidChangesetQuery())
                 return null;
             pnlUserRestriction.fillInQuery(query);
         }
@@ -534,7 +534,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
                 } else
                     throw new IllegalStateException(tr("Current value ''{0}'' for user ID is not valid", tfUid.getText()));
             } else if (rbRestrictToUserName.isSelected()) {
-                if (! valUserName.isValid())
+                if (!valUserName.isValid())
                     throw new IllegalStateException(tr("Cannot restrict the changeset query to the user name ''{0}''", tfUserName.getText()));
                 query.forUser(tfUserName.getText());
             }

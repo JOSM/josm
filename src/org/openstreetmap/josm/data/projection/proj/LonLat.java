@@ -29,11 +29,11 @@ public class LonLat implements Proj {
 
     @Override
     public double[] project(double lat_rad, double lon_rad) {
-        return new double[] { Math.toDegrees(lon_rad) / a, Math.toDegrees(lat_rad) / a };
+        return new double[] {Math.toDegrees(lon_rad) / a, Math.toDegrees(lat_rad) / a};
     }
 
     @Override
     public double[] invproject(double east, double north) {
-        return new double[] { Math.toRadians(north * a), Math.toRadians(east * a) };
+        return new double[] {Math.toRadians(north * a), Math.toRadians(east * a)};
     }
 }

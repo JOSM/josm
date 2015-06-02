@@ -309,7 +309,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         final PluginPreference preference = getPluginPreference();
         final List<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
         final PluginDownloadTask task;
-        if (toDownload != null && ! toDownload.isEmpty()) {
+        if (toDownload != null && !toDownload.isEmpty()) {
             task = new PluginDownloadTask(this, toDownload, tr("Download plugins"));
         } else {
             task = null;
@@ -348,7 +348,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 // display the message, if necessary
                 //
                 if (requiresRestart) {
-                    final ButtonSpec [] options = RestartAction.getButtonSpecs();
+                    final ButtonSpec[] options = RestartAction.getButtonSpecs();
                     if (0 == HelpAwareOptionPane.showOptionDialog(
                             Main.parent,
                             sb.toString(),

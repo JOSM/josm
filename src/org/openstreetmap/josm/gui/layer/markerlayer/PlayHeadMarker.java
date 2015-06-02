@@ -64,7 +64,7 @@ public final class PlayHeadMarker extends Marker {
                 Main.pref.get("marker.audiotracericon", "audio-tracer"),
                 null, -1.0, 0.0);
         enabled = Main.pref.getBoolean("marker.traceaudio", true);
-        if (! enabled) return;
+        if (!enabled) return;
         dropTolerance = Main.pref.getInteger("marker.playHeadDropTolerance", 50);
         Main.map.mapView.addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent ev) {
@@ -110,7 +110,7 @@ public final class PlayHeadMarker extends Marker {
      * reinstate the old map mode after switching temporarily to do a play head drag
      */
     private void endDrag(boolean reset) {
-        if (! wasPlaying || reset) {
+        if (!wasPlaying || reset) {
             try { AudioPlayer.pause();
             } catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
         }
@@ -209,7 +209,7 @@ public final class PlayHeadMarker extends Marker {
         }
 
         /* We found the closest marker: did we actually hit it? */
-        if (ca != null && ! ca.containsPoint(startPoint)) {
+        if (ca != null && !ca.containsPoint(startPoint)) {
             ca = null;
         }
 
@@ -276,7 +276,7 @@ public final class PlayHeadMarker extends Marker {
      * Animates the marker along the track.
      */
     public void animate() {
-        if (! enabled) return;
+        if (!enabled) return;
         jumpToMarker = true;
         if (timer == null) {
             animationInterval = Main.pref.getDouble("marker.audioanimationinterval", 1.0); //milliseconds

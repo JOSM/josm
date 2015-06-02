@@ -285,7 +285,7 @@ public class BoundingBoxSelection implements DownloadSelection {
                 return null;
             }
             if (!LatLon.isValidLon(minlon) || !LatLon.isValidLon(maxlon)
-                    || !LatLon.isValidLat(minlat) || ! LatLon.isValidLat(maxlat))
+                    || !LatLon.isValidLat(minlat) || !LatLon.isValidLat(maxlat))
                 return null;
             if (minlon > maxlon)
                 return null;

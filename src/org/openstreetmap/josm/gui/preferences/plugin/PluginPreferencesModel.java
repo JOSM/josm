@@ -280,7 +280,7 @@ public class PluginPreferencesModel extends Observable {
         for (Entry<PluginInformation, Boolean> entry: selectedPluginsMap.entrySet()) {
             PluginInformation pi = entry.getKey();
             boolean selected = entry.getValue();
-            if (selected && ! currentActivePlugins.contains(pi.name)) {
+            if (selected && !currentActivePlugins.contains(pi.name)) {
                 ret.add(pi);
             }
         }
@@ -299,7 +299,7 @@ public class PluginPreferencesModel extends Observable {
             if (!currentActivePlugins.contains(pi.name)) {
                 continue;
             }
-            if (selectedPluginsMap.get(pi) == null || ! selectedPluginsMap.get(pi)) {
+            if (selectedPluginsMap.get(pi) == null || !selectedPluginsMap.get(pi)) {
                 ret.add(pi);
             }
         }
@@ -339,7 +339,7 @@ public class PluginPreferencesModel extends Observable {
      */
     public boolean isActivePluginsChanged() {
         Set<String> newActivePlugins = getSelectedPluginNames();
-        return ! newActivePlugins.equals(currentActivePlugins);
+        return !newActivePlugins.equals(currentActivePlugins);
     }
 
     /**

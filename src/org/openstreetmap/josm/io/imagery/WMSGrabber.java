@@ -152,7 +152,7 @@ public class WMSGrabber implements Runnable {
     }
 
     public static int random(int min, int max) {
-        return (int)(Math.random() * ((max+1)-min) ) + min;
+        return (int)(Math.random() * ((max+1)-min)) + min;
     }
 
     public final void cancel() {
@@ -267,7 +267,7 @@ public class WMSGrabber implements Runnable {
 
         String contentType = conn.getHeaderField("Content-Type");
         if (conn.getResponseCode() != 200
-                || contentType != null && !contentType.startsWith("image") ) {
+                || contentType != null && !contentType.startsWith("image")) {
             String xml = readException(conn);
             try {
                 DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -301,7 +301,7 @@ public class WMSGrabber implements Runnable {
         InputStream in = conn.getInputStream();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
             String line = null;
-            while( (line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 // filter non-ASCII characters and control characters
                 exception.append(line.replaceAll("[^\\p{Print}]", ""));
                 exception.append('\n');

@@ -31,12 +31,11 @@ public class Mercator implements Proj {
 
     @Override
     public double[] project(double lat_rad, double lon_rad) {
-        return new double[] { lon_rad, log(tan(PI/4 + lat_rad/2)) };
+        return new double[] {lon_rad, log(tan(PI/4 + lat_rad/2))};
     }
 
     @Override
     public double[] invproject(double east, double north) {
-        return new double[] { atan(sinh(north)), east };
+        return new double[] {atan(sinh(north)), east};
     }
-
 }

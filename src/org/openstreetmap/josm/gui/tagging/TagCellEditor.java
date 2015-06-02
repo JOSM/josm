@@ -58,7 +58,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
         // remove the keys already present in the current tag model
         //
         for (String key : model.getKeys()) {
-            if (! key.equals(currentTag.getName())) {
+            if (!key.equals(currentTag.getName())) {
                 autoCompletionList.remove(key);
             }
         }

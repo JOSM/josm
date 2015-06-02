@@ -149,7 +149,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                         }
                     }
                 }
-                if (! mousePressedInButton)
+                if (!mousePressedInButton)
                     return;
                 mousePressed  = true;
                 if (isVisible()) {
@@ -157,7 +157,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 }
             }
             @Override public void mouseReleased(MouseEvent ev) {
-                if (ev.getButton() != MouseEvent.BUTTON1 || ! mousePressed)
+                if (ev.getButton() != MouseEvent.BUTTON1 || !mousePressed)
                     return;
                 mousePressed = false;
                 if (!isVisible())
@@ -265,7 +265,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
     public boolean synchronizeAudioMarkers(final AudioMarker startMarker) {
         syncAudioMarker = startMarker;
-        if (syncAudioMarker != null && ! data.contains(syncAudioMarker)) {
+        if (syncAudioMarker != null && !data.contains(syncAudioMarker)) {
             syncAudioMarker = null;
         }
         if (syncAudioMarker == null) {
@@ -505,7 +505,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (! AudioPlayer.paused()) {
+            if (!AudioPlayer.paused()) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("You need to pause audio at the moment when you hear your synchronization cue."),
@@ -542,7 +542,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (! AudioPlayer.paused()) {
+            if (!AudioPlayer.paused()) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("You need to have paused audio at the point on the track where you want the marker."),

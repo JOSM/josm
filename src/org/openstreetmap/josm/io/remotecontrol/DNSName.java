@@ -208,13 +208,13 @@ public class DNSName implements GeneralNameInterface {
                 constraintType = NAME_MATCH;
             else if (thisName.endsWith(inName)) {
                 int inNdx = thisName.lastIndexOf(inName);
-                if (thisName.charAt(inNdx-1) == '.' )
+                if (thisName.charAt(inNdx-1) == '.')
                     constraintType = NAME_WIDENS;
                 else
                     constraintType = NAME_SAME_TYPE;
             } else if (inName.endsWith(thisName)) {
                 int ndx = inName.lastIndexOf(thisName);
-                if (inName.charAt(ndx-1) == '.' )
+                if (inName.charAt(ndx-1) == '.')
                     constraintType = NAME_NARROWS;
                 else
                     constraintType = NAME_SAME_TYPE;

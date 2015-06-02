@@ -48,7 +48,7 @@ public class SingleProjectionChoice extends AbstractProjectionChoice {
 
     @Override
     public String[] allCodes() {
-        return new String[] { code };
+        return new String[] {code};
     }
 
     @Override

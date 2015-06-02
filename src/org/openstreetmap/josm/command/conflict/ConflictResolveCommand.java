@@ -44,7 +44,7 @@ public abstract class ConflictResolveCommand extends Command {
      * @param c the remembered conflict
      */
     protected void rememberConflict(Conflict<?> c) {
-        if (! resolvedConflicts.hasConflictForMy(c.getMy())) {
+        if (!resolvedConflicts.hasConflictForMy(c.getMy())) {
             resolvedConflicts.add(c);
         }
     }
@@ -67,7 +67,7 @@ public abstract class ConflictResolveCommand extends Command {
     public void undoCommand() {
         super.undoCommand();
 
-        if (! Main.map.mapView.hasLayer(getLayer())) {
+        if (!Main.map.mapView.hasLayer(getLayer())) {
             Main.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     getLayer().toString()

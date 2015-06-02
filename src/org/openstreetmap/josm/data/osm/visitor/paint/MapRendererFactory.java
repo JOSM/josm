@@ -126,13 +126,13 @@ public final class MapRendererFactory {
             Main.error(tr("Can''t activate map renderer class ''{0}'', because the class wasn''t found.", rendererClassName));
             Main.error(tr("Activating the standard map renderer instead."));
             activateDefault();
-        } else if (! AbstractMapRenderer.class.isAssignableFrom(c)) {
+        } else if (!AbstractMapRenderer.class.isAssignableFrom(c)) {
             Main.error(tr("Can''t activate map renderer class ''{0}'', because it isn''t a subclass of ''{1}''.", rendererClassName, AbstractMapRenderer.class.getName()));
             Main.error(tr("Activating the standard map renderer instead."));
             activateDefault();
         } else {
             Class<? extends AbstractMapRenderer> renderer = c.asSubclass(AbstractMapRenderer.class);
-            if (! isRegistered(renderer)) {
+            if (!isRegistered(renderer)) {
                 Main.error(tr("Can''t activate map renderer class ''{0}'', because it isn''t registered as map renderer.", rendererClassName));
                 Main.error(tr("Activating the standard map renderer instead."));
                 activateDefault();

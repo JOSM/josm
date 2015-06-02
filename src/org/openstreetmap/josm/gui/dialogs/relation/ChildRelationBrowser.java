@@ -160,7 +160,7 @@ public class ChildRelationBrowser extends JPanel {
      */
     protected Dialog getParentDialog() {
         Component c  = this;
-        while(c != null && ! (c instanceof Dialog)) {
+        while(c != null && !(c instanceof Dialog)) {
             c = c.getParent();
         }
         return (Dialog)c;
@@ -185,7 +185,7 @@ public class ChildRelationBrowser extends JPanel {
         }
 
         public void run() {
-            TreePath [] selection = childTree.getSelectionPaths();
+            TreePath[] selection = childTree.getSelectionPaths();
             if (selection == null || selection.length == 0) return;
             // do not launch more than 10 relation editors in parallel
             //
@@ -249,12 +249,12 @@ public class ChildRelationBrowser extends JPanel {
         }
 
         protected void updateEnabledState() {
-            TreePath [] selection = childTree.getSelectionPaths();
+            TreePath[] selection = childTree.getSelectionPaths();
             setEnabled(selection != null && selection.length > 0);
         }
 
         public void run() {
-            TreePath [] selection = childTree.getSelectionPaths();
+            TreePath[] selection = childTree.getSelectionPaths();
             if (selection == null || selection.length == 0)
                 return;
             Set<Relation> relations = new HashSet<>();
@@ -397,7 +397,7 @@ public class ChildRelationBrowser extends JPanel {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                while(! relationsToDownload.isEmpty() && !canceled) {
+                while(!relationsToDownload.isEmpty() && !canceled) {
                     Relation r = relationsToDownload.pop();
                     if (r.isNew()) {
                         continue;

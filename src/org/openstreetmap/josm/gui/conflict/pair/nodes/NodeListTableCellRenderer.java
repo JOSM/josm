@@ -87,7 +87,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
      * @param row the row index
      * @param isSelected true, if the current row is selected
      */
-    protected  void renderRowId( ListMergeModel<Node>.EntriesTableModel model, int row, boolean isSelected) {
+    protected  void renderRowId(ListMergeModel<Node>.EntriesTableModel model, int row, boolean isSelected) {
         setIcon(null);
         setBorder(rowNumberBorder);
         if (model.getListMergeModel().isFrozen()) {

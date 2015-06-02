@@ -218,7 +218,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
     class AccessTokenBuilder implements DocumentListener {
 
         public void build() {
-            if (! valAccessTokenKey.isValid() || !valAccessTokenSecret.isValid()) {
+            if (!valAccessTokenKey.isValid() || !valAccessTokenSecret.isValid()) {
                 setAccessToken(null);
             } else {
                 setAccessToken(new OAuthToken(tfAccessTokenKey.getText().trim(), tfAccessTokenSecret.getText().trim()));
@@ -268,7 +268,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if (! evt.getPropertyName().equals(AbstractAuthorizationUI.ACCESS_TOKEN_PROP))
+            if (!evt.getPropertyName().equals(AbstractAuthorizationUI.ACCESS_TOKEN_PROP))
                 return;
             updateEnabledState();
         }
