@@ -70,7 +70,7 @@ public class MultipolygonBuilder {
         public List<Node> getNodes() {
             List<Node> nodes = new ArrayList<>();
 
-            for (int waypos = 0; waypos < this.ways.size(); waypos ++) {
+            for (int waypos = 0; waypos < this.ways.size(); waypos++) {
                 Way way = this.ways.get(waypos);
                 boolean reversed = this.reversed.get(waypos).booleanValue();
 

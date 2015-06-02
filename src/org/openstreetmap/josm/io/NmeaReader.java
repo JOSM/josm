@@ -123,7 +123,7 @@ public class NmeaReader {
         PRN_7(9), PRN_8(10), PRN_9(11), PRN_10(12), PRN_11(13), PRN_12(14),
         PDOP(15),   // PDOP (precision)
         HDOP(16),   // HDOP (horizontal precision)
-        VDOP(17), ; // VDOP (vertical precision)
+        VDOP(17);   // VDOP (vertical precision)
 
         public final int position;
         GPGSA(int position) {

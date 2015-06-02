@@ -700,14 +700,14 @@ public class JoinAreasAction extends JosmAction {
                     if (prevNode != node) {
                         newNodes.add(node);
                     } else {
-                        nodesRemoved ++;
+                        nodesRemoved++;
                     }
                 } else {
                     //node with same coordinates already exists, substitute with existing node
                     Node representator = nodeMap.get(node);
 
                     if (representator != node) {
-                        nodesRemoved ++;
+                        nodesRemoved++;
                     }
 
                     //avoid duplicate node
@@ -768,7 +768,7 @@ public class JoinAreasAction extends JosmAction {
         //prepare next map
         Map<Way, Way> nextWayMap = new HashMap<>();
 
-        for (int pos = 0; pos < parts.size(); pos ++) {
+        for (int pos = 0; pos < parts.size(); pos++) {
 
             if (!parts.get(pos).lastNode().equals(parts.get((pos + 1) % parts.size()).firstNode()))
                 throw new RuntimeException("Way not circular");
@@ -783,7 +783,7 @@ public class JoinAreasAction extends JosmAction {
         double minY = Double.POSITIVE_INFINITY;
 
         for (Way way : parts) {
-            for (int pos = 0; pos < way.getNodesCount(); pos ++) {
+            for (int pos = 0; pos < way.getNodesCount(); pos++) {
                 Node node = way.getNode(pos);
 
                 if (node.getEastNorth().getY() < minY) {
@@ -908,7 +908,7 @@ public class JoinAreasAction extends JosmAction {
                     boolean wayBToTheRight = Geometry.isToTheRightSideOfLine(prevNode, headNode, nextNode, wayBNode);
 
                     if (wayAToTheRight != wayBToTheRight) {
-                        intersectionCount ++;
+                        intersectionCount++;
                     }
                 }
             }
@@ -1255,7 +1255,7 @@ public class JoinAreasAction extends JosmAction {
         Pair<Way, Command> result = CombineWayAction.combineWaysWorker(actionWays);
 
         Main.main.undoRedo.add(result.b);
-        cmdsCount ++;
+        cmdsCount++;
 
         return result.a;
     }

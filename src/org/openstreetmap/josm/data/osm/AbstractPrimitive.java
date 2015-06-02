@@ -473,7 +473,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         Map<String, String> result = new HashMap<>();
         String[] keys = this.keys;
         if (keys != null) {
-            for (int i=0; i<keys.length ; i+=2) {
+            for (int i=0; i<keys.length; i+=2) {
                 result.put(keys[i], keys[i + 1]);
             }
         }

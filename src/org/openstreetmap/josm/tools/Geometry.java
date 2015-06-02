@@ -69,7 +69,7 @@ public final class Geometry {
         Set<Node> intersectionNodes = new LinkedHashSet<>();
 
         //copy node arrays for local usage.
-        for (int pos = 0; pos < n; pos ++) {
+        for (int pos = 0; pos < n; pos++) {
             newNodes[pos] = new ArrayList<>(ways.get(pos).getNodes());
             wayBounds[pos] = getNodesBounds(newNodes[pos]);
             changedWays[pos] = false;
@@ -77,8 +77,8 @@ public final class Geometry {
 
         //iterate over all way pairs and introduce the intersections
         Comparator<Node> coordsComparator = new NodePositionComparator();
-        for (int seg1Way = 0; seg1Way < n; seg1Way ++) {
-            for (int seg2Way = seg1Way; seg2Way < n; seg2Way ++) {
+        for (int seg1Way = 0; seg1Way < n; seg1Way++) {
+            for (int seg2Way = seg1Way; seg2Way < n; seg2Way++) {
 
                 //do not waste time on bounds that do not intersect
                 if (!wayBounds[seg1Way].intersects(wayBounds[seg2Way])) {
@@ -89,12 +89,12 @@ public final class Geometry {
                 List<Node> way2Nodes = newNodes[seg2Way];
 
                 //iterate over primary segmemt
-                for (int seg1Pos = 0; seg1Pos + 1 < way1Nodes.size(); seg1Pos ++) {
+                for (int seg1Pos = 0; seg1Pos + 1 < way1Nodes.size(); seg1Pos++) {
 
                     //iterate over secondary segment
                     int seg2Start = seg1Way != seg2Way ? 0: seg1Pos + 2;//skip the adjacent segment
 
-                    for (int seg2Pos = seg2Start; seg2Pos + 1< way2Nodes.size(); seg2Pos ++) {
+                    for (int seg2Pos = seg2Start; seg2Pos + 1< way2Nodes.size(); seg2Pos++) {
 
                         //need to get them again every time, because other segments may be changed
                         Node seg1Node1 = way1Nodes.get(seg1Pos);
@@ -105,7 +105,7 @@ public final class Geometry {
                         int commonCount = 0;
                         //test if we have common nodes to add.
                         if (seg1Node1 == seg2Node1 || seg1Node1 == seg2Node2) {
-                            commonCount ++;
+                            commonCount++;
 
                             if (seg1Way == seg2Way &&
                                     seg1Pos == 0 &&
@@ -117,7 +117,7 @@ public final class Geometry {
                         }
 
                         if (seg1Node2 == seg2Node1 || seg1Node2 == seg2Node2) {
-                            commonCount ++;
+                            commonCount++;
 
                             intersectionNodes.add(seg1Node2);
                         }
@@ -164,7 +164,7 @@ public final class Geometry {
 
                                     //fix seg2 position, as indexes have changed, seg2Pos is always bigger than seg1Pos on the same segment.
                                     if (seg2Way == seg1Way) {
-                                        seg2Pos ++;
+                                        seg2Pos++;
                                     }
                                 }
 
@@ -173,7 +173,7 @@ public final class Geometry {
                                     changedWays[seg2Way] = true;
 
                                     //Do not need to compare again to already split segment
-                                    seg2Pos ++;
+                                    seg2Pos++;
                                 }
 
                                 intersectionNodes.add(intNode);
@@ -190,7 +190,7 @@ public final class Geometry {
         }
 
 
-        for (int pos = 0; pos < ways.size(); pos ++) {
+        for (int pos = 0; pos < ways.size(); pos++) {
             if (!changedWays[pos]) {
                 continue;
             }
@@ -291,7 +291,7 @@ public final class Geometry {
         // Solve the equations
         double det = a1*b2 - a2*b1;
 
-        double uu = b2*c1 - b1*c2 ;
+        double uu = b2*c1 - b1*c2;
         double vv = a1*c2 - a2*c1;
         double mag = Math.abs(uu)+Math.abs(vv);
 

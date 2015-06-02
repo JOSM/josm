@@ -195,7 +195,7 @@ public final class ShowStatusReportAction extends JosmAction {
 
         switch (ed.showDialog().getValue()) {
             case 1: Utils.copyToClipboard(text.toString()); break;
-            case 2: ReportBugAction.reportBug(reportHeader) ; break;
+            case 2: ReportBugAction.reportBug(reportHeader); break;
         }
     }
 }

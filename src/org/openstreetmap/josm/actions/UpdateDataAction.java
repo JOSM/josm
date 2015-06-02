@@ -64,7 +64,7 @@ public class UpdateDataAction extends JosmAction {
             }
         }
 
-        for(int i = areas.size()-1; i > 0 ; i--) {
+        for(int i = areas.size()-1; i > 0; i--) {
             for(int j = i-1; j > 0; j--) {
                 areas.get(i).subtract(areas.get(j));
             }

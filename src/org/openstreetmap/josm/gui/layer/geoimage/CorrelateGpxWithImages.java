@@ -159,7 +159,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             try {
                 outerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-                for (int i = gpxLst.size() - 1 ; i >= 0 ; i--) {
+                for (int i = gpxLst.size() - 1; i >= 0; i--) {
                     GpxDataWrapper wrapper = gpxLst.get(i);
                     if (wrapper.file != null && sel.equals(wrapper.file)) {
                         cbGpx.setSelectedIndex(i);

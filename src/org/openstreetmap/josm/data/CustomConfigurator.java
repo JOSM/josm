@@ -261,7 +261,7 @@ public final class CustomConfigurator {
 
             NodeList childNodes = root.getChildNodes();
             int n = childNodes.getLength();
-            for (int i = 0; i < n ; i++) {
+            for (int i = 0; i < n; i++) {
                 Node item = childNodes.item(i);
                 if (item.getNodeType() == Node.ELEMENT_NODE) {
                     String currentKey = ((Element) item).getAttribute("key");

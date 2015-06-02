@@ -424,7 +424,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             GuiHelper.runInEDTAndWait(new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < data.size() ; i++) {
+                    for (int i = 0; i < data.size(); i++) {
                         if (selected.equals(data.get(i))) {
                             currentPhoto = i;
                             ImageViewerDialog.showImage(GeoImageLayer.this, data.get(i));

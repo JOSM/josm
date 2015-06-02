@@ -68,7 +68,7 @@ public class OsmServerWriter {
         double uploads_left = list_size - progress;
         long ms_left = (long)(uploads_left / uploads_per_ms);
         long minutes_left = ms_left / MSECS_PER_MINUTE;
-        long seconds_left = (ms_left / MSECS_PER_SECOND) % SECONDS_PER_MINUTE ;
+        long seconds_left = (ms_left / MSECS_PER_SECOND) % SECONDS_PER_MINUTE;
         String time_left_str = Long.toString(minutes_left) + ":";
         if (seconds_left < 10) {
             time_left_str += "0";

@@ -644,7 +644,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             Node n1New = new Node(Main.getProjection().eastNorth2latlon(newN1en));
             wnew.addNode(insertionPoint, n1New);
             wayWasModified = true;
-            insertionPoint ++;
+            insertionPoint++;
             cmds.add(new AddCommand(n1New));
             changedNodes.add(n1New);
         }
@@ -674,7 +674,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
             wnew.addNode(insertionPoint, n2New);
             wayWasModified = true;
-            insertionPoint ++;
+            insertionPoint++;
             cmds.add(new AddCommand(n2New));
             changedNodes.add(n2New);
         }
