@@ -217,7 +217,9 @@ public class MapCSSTagChecker extends Test.TagTest {
             return new FixCommand() {
                 @Override
                 Command createCommand(OsmPrimitive p, Selector matchingSelector) {
-                    return new ChangePropertyKeyCommand(p, oldKey, newKey);
+                    return new ChangePropertyKeyCommand(p,
+                            TagCheck.insertArguments(matchingSelector, oldKey, p),
+                            TagCheck.insertArguments(matchingSelector, newKey, p));
                 }
 
                 @Override
