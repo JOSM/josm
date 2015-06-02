@@ -37,9 +37,9 @@ public final class ColorScale {
     public static ColorScale createCyclicScale(int count) {
         ColorScale sc = new ColorScale();
         //                    red   yellow  green   blue    red
-        int[] h = new int[] { 0,    59,     127,    244,    360};
-        int[] s = new int[] { 100,  84,     99,     100 };
-        int[] b = new int[] { 90,   93,     74,     83 };
+        int[] h = new int[] {0,    59,     127,    244,    360};
+        int[] s = new int[] {100,  84,     99,     100};
+        int[] b = new int[] {90,   93,     74,     83};
 
         sc.colors = new Color[count];
         for (int i = 0; i < sc.colors.length; i++) {

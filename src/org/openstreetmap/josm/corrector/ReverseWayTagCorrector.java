@@ -232,7 +232,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
         Collection<OsmPrimitive> referrers = oldway.getReferrers();
         for (OsmPrimitive referrer: referrers) {
-            if (! (referrer instanceof Relation)) {
+            if (!(referrer instanceof Relation)) {
                 continue;
             }
             Relation relation = (Relation)referrer;

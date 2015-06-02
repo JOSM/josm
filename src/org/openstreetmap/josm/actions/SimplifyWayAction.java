@@ -138,7 +138,7 @@ public class SimplifyWayAction extends JosmAction {
      */
     protected boolean isRequiredNode(Way way, Node node) {
         boolean isRequired =  Collections.frequency(way.getNodes(), node) > 1;
-        if (! isRequired) {
+        if (!isRequired) {
             List<OsmPrimitive> parents = new LinkedList<>();
             parents.addAll(node.getReferrers());
             parents.remove(way);

@@ -414,14 +414,14 @@ public final class Shortcut {
             if (Main.isPlatformOsx()) {
                 // Try to reassign Meta to Ctrl
                 int newmodifier = findNewOsxModifier(requestedGroup);
-                if ( findShortcut(requestedKey, newmodifier) == null ) {
+                if (findShortcut(requestedKey, newmodifier) == null) {
                     return reassignShortcut(shortText, longText, requestedKey, conflict, requestedGroup, requestedKey, newmodifier);
                 }
             }
             for (int m : mods) {
                 for (int k : keys) {
                     int newmodifier = getGroupModifier(m);
-                    if ( findShortcut(k, newmodifier) == null ) {
+                    if (findShortcut(k, newmodifier) == null) {
                         return reassignShortcut(shortText, longText, requestedKey, conflict, m, k, newmodifier);
                     }
                 }

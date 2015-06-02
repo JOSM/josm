@@ -125,7 +125,7 @@ public class SplitWayAction extends JosmAction {
         List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
         List<Way> selectedWays = OsmPrimitive.getFilteredList(selection, Way.class);
         List<Relation> selectedRelations =
-            OsmPrimitive.getFilteredList( selection, Relation.class);
+            OsmPrimitive.getFilteredList(selection, Relation.class);
         List<Way> applicableWays = getApplicableWays(selectedWays, selectedNodes);
 
         if (applicableWays == null) {

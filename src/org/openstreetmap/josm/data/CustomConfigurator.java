@@ -411,11 +411,10 @@ public final class CustomConfigurator {
         Preferences tmp = new Preferences();
         tmp.settingsMap.putAll(pref.settingsMap);
         tmp.defaultsMap.putAll(pref.defaultsMap);
-        tmp.colornames.putAll( pref.colornames );
+        tmp.colornames.putAll(pref.colornames);
 
         return tmp;
     }
-
 
     public static class XMLCommandProcessor {
 

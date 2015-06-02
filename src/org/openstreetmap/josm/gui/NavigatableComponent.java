@@ -937,7 +937,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                      * -- zero out least significant 32 dual digits of mantissa..
                      */
                     double perDistSq = Double.longBitsToDouble(
-                            Double.doubleToLongBits( a - (a - b + c) * (a - b + c) / 4 / c )
+                            Double.doubleToLongBits(a - (a - b + c) * (a - b + c) / 4 / c)
                             >> 32 << 32); // resolution in numbers with large exponent not needed here..
 
                     if (perDistSq < snapDistanceSq && a < c + snapDistanceSq && b < c + snapDistanceSq) {
@@ -1318,7 +1318,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (pt != null && a != null && b != null) {
             double r = (
                     (pt.getX()-a.getX())*(b.getX()-a.getX()) +
-                    (pt.getY()-a.getY())*(b.getY()-a.getY()) )
+                    (pt.getY()-a.getY())*(b.getY()-a.getY()))
                     / a.distanceSq(b);
             return project(r, a, b);
         }

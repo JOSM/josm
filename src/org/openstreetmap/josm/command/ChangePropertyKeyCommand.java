@@ -81,7 +81,7 @@ public class ChangePropertyKeyCommand extends Command {
 
     @Override
     public String getDescriptionText() {
-        String text = tr( "Replace \"{0}\" by \"{1}\" for", key, newKey);
+        String text = tr("Replace \"{0}\" by \"{1}\" for", key, newKey);
         if (objects.size() == 1) {
             NameVisitor v = new NameVisitor();
             objects.iterator().next().accept(v);

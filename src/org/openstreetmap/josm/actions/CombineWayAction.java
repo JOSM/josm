@@ -510,7 +510,7 @@ public class CombineWayAction extends JosmAction {
             predecessors = new LinkedHashMap<>();
 
             for (NodePair pair: edges) {
-                if (!undirectedEdges.contains(pair) && ! undirectedEdges.contains(pair.swap())) {
+                if (!undirectedEdges.contains(pair) && !undirectedEdges.contains(pair.swap())) {
                     undirectedEdges.add(pair);
                 }
                 rememberSuccessor(pair);
@@ -615,7 +615,7 @@ public class CombineWayAction extends JosmAction {
             nextPairs.addAll(getOutboundPairs(startNode));
             while(!nextPairs.isEmpty()) {
                 NodePair cur= nextPairs.pop();
-                if (! path.contains(cur) && ! path.contains(cur.swap())) {
+                if (!path.contains(cur) && !path.contains(cur.swap())) {
                     while(!path.isEmpty() && !path.peek().isPredecessorOf(cur)) {
                         path.pop();
                     }

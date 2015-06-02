@@ -241,7 +241,7 @@ public class MainApplication extends Main {
         Map<Option, Collection<String>> argMap = new EnumMap<>(Option.class);
 
         int c;
-        while ((c = g.getopt()) != -1 ) {
+        while ((c = g.getopt()) != -1) {
             Option opt = null;
             switch (c) {
                 case 'h':

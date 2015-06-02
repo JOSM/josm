@@ -96,7 +96,7 @@ public class Diff {
      */
     public Diff(Object[] a, Object[] b) {
         Map<Object,Integer> h = new HashMap<>(a.length + b.length);
-        filevec = new FileData[] { new FileData(a,h),new FileData(b,h) };
+        filevec = new FileData[] {new FileData(a,h), new FileData(b,h)};
     }
 
     /** 1 more than the maximum equivalence value used for this or its

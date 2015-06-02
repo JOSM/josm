@@ -108,7 +108,7 @@ public final class PasteTagsAction extends JosmAction {
          * type <code>type</code>
          */
         protected <T extends OsmPrimitive> boolean hasSourceTagsByType(OsmPrimitiveType type) {
-            return ! getSourceTagsByType(type).isEmpty();
+            return !getSourceTagsByType(type).isEmpty();
         }
 
         protected void buildChangeCommand(Collection<? extends OsmPrimitive> selection, TagCollection tc) {
@@ -195,7 +195,7 @@ public final class PasteTagsAction extends JosmAction {
             for (OsmPrimitiveType type : OsmPrimitiveType.dataValues()) {
                 if (hasTargetPrimitives(type.getOsmClass())) {
                     TagCollection tc = TagCollection.unionOfAllPrimitives(getSourcePrimitivesByType(type));
-                    if (!tc.isEmpty() && ! tc.isApplicableToPrimitive())
+                    if (!tc.isEmpty() && !tc.isApplicableToPrimitive())
                         return false;
                 }
             }

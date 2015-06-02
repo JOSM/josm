@@ -100,11 +100,11 @@ public final class OrthogonalizeAction extends JosmAction {
             final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
             try {
                 for (OsmPrimitive p : sel) {
-                    if (! (p instanceof Node)) throw new InvalidUserInputException();
+                    if (!(p instanceof Node)) throw new InvalidUserInputException();
                     Node n = (Node) p;
                     if (rememberMovements.containsKey(n)) {
                         EastNorth tmp = rememberMovements.get(n);
-                        commands.add(new MoveCommand(n, - tmp.east(), - tmp.north()));
+                        commands.add(new MoveCommand(n, -tmp.east(), -tmp.north()));
                         rememberMovements.remove(n);
                     }
                 }
@@ -298,7 +298,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
         // rotate
         for (Node n: allNodes) {
-            EastNorth tmp = EN.rotateCC(pivot, n.getEastNorth(), - headingAll);
+            EastNorth tmp = EN.rotateCC(pivot, n.getEastNorth(), -headingAll);
             nX.put(n, tmp.east());
             nY.put(n, tmp.north());
         }
@@ -327,11 +327,11 @@ public final class OrthogonalizeAction extends JosmAction {
                             Node n1 = w.way.getNodes().get(i);
                             Node n2 = w.way.getNodes().get(i+1);
                             if (Arrays.asList(orientation).contains(w.segDirections[i])) {
-                                if (cs.contains(n1) && ! cs.contains(n2)) {
+                                if (cs.contains(n1) && !cs.contains(n2)) {
                                     cs.add(n2);
                                     somethingHappened = true;
                                 }
-                                if (cs.contains(n2) && ! cs.contains(n1)) {
+                                if (cs.contains(n2) && !cs.contains(n1)) {
                                     cs.add(n1);
                                     somethingHappened = true;
                                 }
@@ -467,7 +467,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 //                }
             }
             // rotate the vertical vector by 90 degrees (clockwise) and add it to the horizontal vector
-            segSum = EN.sum(h, new EastNorth(v.north(), - v.east()));
+            segSum = EN.sum(h, new EastNorth(v.north(), -v.east()));
             //            if (EN.abs(segSum) < lh) throw new AssertionError();
             this.heading = EN.polar(new EastNorth(0.,0.), segSum);
         }
@@ -504,7 +504,7 @@ public final class OrthogonalizeAction extends JosmAction {
         while (a > Math.PI) {
             a -= 2 * Math.PI;
         }
-        while (a <= - Math.PI) {
+        while (a <= -Math.PI) {
             a += 2 * Math.PI;
         }
         return a;

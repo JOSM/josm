@@ -41,7 +41,7 @@ public class DownloadAction extends JosmAction {
         DownloadDialog dialog = DownloadDialog.getInstance();
         dialog.restoreSettings();
         dialog.setVisible(true);
-        if (! dialog.isCanceled()) {
+        if (!dialog.isCanceled()) {
             dialog.rememberSettings();
             Bounds area = dialog.getSelectedDownloadArea();
             if (dialog.isDownloadOsmData()) {

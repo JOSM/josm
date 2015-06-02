@@ -119,7 +119,7 @@ public class OsmServerObjectReader extends OsmServerReader {
             sb.append(id.getType().getAPIName())
               .append('/')
               .append(id.getUniqueId());
-            if (full && ! id.getType().equals(OsmPrimitiveType.NODE)) {
+            if (full && !id.getType().equals(OsmPrimitiveType.NODE)) {
                 sb.append("/full");
             } else if (version > 0) {
                 sb.append('/').append(version);

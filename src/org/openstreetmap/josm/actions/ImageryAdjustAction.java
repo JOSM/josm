@@ -193,9 +193,9 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         public ImageryOffsetDialog() {
             super(Main.parent,
                     tr("Adjust imagery offset"),
-                    new String[] { tr("OK"),tr("Cancel") },
+                    new String[] {tr("OK"),tr("Cancel")},
                     false);
-            setButtonIcons(new String[] { "ok", "cancel" });
+            setButtonIcons(new String[] {"ok", "cancel"});
             contentInsets = new Insets(10, 15, 5, 15);
             JPanel pnl = new JPanel(new GridBagLayout());
             pnl.add(new JMultilineLabel(tr("Use arrow keys or drag the imagery layer with mouse to adjust the imagery offset.\n" +
@@ -228,7 +228,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             if (ignoreListener) return;
             String ostr = tOffset.getText();
             int semicolon = ostr.indexOf(';');
-            if( semicolon >= 0 && semicolon + 1 < ostr.length() ) {
+            if (semicolon >= 0 && semicolon + 1 < ostr.length()) {
                 try {
                     // here we assume that Double.parseDouble() needs '.' as a decimal separator
                     String easting = ostr.substring(0, semicolon).trim().replace(',', '.');

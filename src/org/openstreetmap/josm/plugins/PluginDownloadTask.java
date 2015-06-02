@@ -110,7 +110,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
                         tr("Skip Download") }
             );
             dialog.setContent(tr("JOSM version {0} required for plugin {1}.", pi.mainversion, pi.name));
-            dialog.setButtonIcons(new String[] { "download", "cancel" });
+            dialog.setButtonIcons(new String[] {"download", "cancel"});
             dialog.showDialog();
             int answer = dialog.getValue();
             if (answer != 1)

@@ -720,12 +720,12 @@ public class ImageProvider {
             }
             String[] extensions;
             if (name.indexOf('.') != -1) {
-                extensions = new String[] { "" };
+                extensions = new String[] {""};
             } else {
-                extensions = new String[] { ".png", ".svg"};
+                extensions = new String[] {".png", ".svg"};
             }
             final int ARCHIVE = 0, LOCAL = 1;
-            for (int place : new Integer[] { ARCHIVE, LOCAL }) {
+            for (int place : new Integer[] {ARCHIVE, LOCAL}) {
                 for (String ext : extensions) {
 
                     if (".svg".equals(ext)) {

@@ -142,11 +142,11 @@ public class Bounds {
         }
     }
 
-    public Bounds(double [] coords) {
+    public Bounds(double[] coords) {
         this(coords, true);
     }
 
-    public Bounds(double [] coords, boolean roundToOsmPrecision) {
+    public Bounds(double[] coords, boolean roundToOsmPrecision) {
         CheckParameterUtil.ensureParameterNotNull(coords, "coords");
         if (coords.length != 4)
             throw new IllegalArgumentException(MessageFormat.format("Expected array of length 4, got {0}", coords.length));

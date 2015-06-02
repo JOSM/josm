@@ -314,9 +314,9 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.print(" version='"+osm.getVersion()+"'");
         }
         if (this.changeset != null && this.changeset.getId() != 0) {
-            out.print(" changeset='"+this.changeset.getId()+"'" );
+            out.print(" changeset='"+this.changeset.getId()+"'");
         } else if (osm.getChangesetId() > 0 && !osm.isNew()) {
-            out.print(" changeset='"+osm.getChangesetId()+"'" );
+            out.print(" changeset='"+osm.getChangesetId()+"'");
         }
     }
 }

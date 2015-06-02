@@ -297,7 +297,7 @@ public final class Geometry {
 
         if (Math.abs(det) > 1e-12 * mag) {
             double u = uu/det, v = vv/det;
-            if (u>-1e-8 && u < 1+1e-8 && v>-1e-8 && v < 1+1e-8 ) {
+            if (u>-1e-8 && u < 1+1e-8 && v>-1e-8 && v < 1+1e-8) {
                 if (u<0) u=0;
                 if (u>1) u=1.0;
                 return new EastNorth(x1+a1*u, y1+a2*u);
@@ -354,7 +354,7 @@ public final class Geometry {
         if (det == 0)
             return null; // Lines are parallel
 
-        return new EastNorth(b1 * c2 / det + p1.getX(),  - a1 * c2 / det + p1.getY());
+        return new EastNorth(b1 * c2 / det + p1.getX(), -a1 * c2 / det + p1.getY());
     }
 
     public static boolean segmentsParallel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {

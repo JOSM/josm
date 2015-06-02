@@ -73,7 +73,7 @@ public final class ReverseWayAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (! isEnabled())
+        if (!isEnabled())
             return;
         if (getCurrentDataSet() == null)
             return;

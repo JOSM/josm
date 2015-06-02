@@ -284,10 +284,10 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     }
 
     private void addDynamic(Action a) {
-        dynamicItems.add( this.add(a) );
+        dynamicItems.add(this.add(a));
     }
 
     private void addDynamic(JMenuItem it) {
-        dynamicItems.add( this.add(it) );
+        dynamicItems.add(this.add(it));
     }
 }

@@ -125,7 +125,7 @@ public class UpdateSelectionAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (! isEnabled())
+        if (!isEnabled())
             return;
         Collection<OsmPrimitive> toUpdate = getData();
         if (toUpdate.isEmpty()) {

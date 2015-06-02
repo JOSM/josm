@@ -878,7 +878,7 @@ public class Preferences {
                 return;
             }
         } else {
-            if (! prefDir.mkdirs()) {
+            if (!prefDir.mkdirs()) {
                 Main.warn(tr("Failed to initialize preferences. Failed to create missing preference directory: {0}", prefDir.getAbsoluteFile()));
                 JOptionPane.showMessageDialog(
                         Main.parent,

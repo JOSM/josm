@@ -420,7 +420,7 @@ public final class Utils {
      *          successfully deleted; <code>false</code> otherwise
      */
     public static boolean deleteDirectory(File path) {
-        if( path.exists() ) {
+        if (path.exists()) {
             File[] files = path.listFiles();
             if (files != null) {
                 for (File file : files) {

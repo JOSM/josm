@@ -23,11 +23,11 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class ZoomToAction extends AbstractAction implements LayerChangeListener, ListSelectionListener {
 
     private final OsmPrimitivesTable table;
-    
+
     private final String descriptionNominal;
     private final String descriptionInactiveLayer;
     private final String descriptionNoSelection;
-    
+
     public ZoomToAction(OsmPrimitivesTable table, String descriptionNominal, String descriptionInactiveLayer, String descriptionNoSelection) {
         CheckParameterUtil.ensureParameterNotNull(table);
         this.table = table;
@@ -38,23 +38,23 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
         putValue(SHORT_DESCRIPTION, descriptionNominal);
         updateEnabledState();
     }
-    
+
     public ZoomToAction(MemberTable table) {
-        this(table, 
+        this(table,
                 tr("Zoom to the object the first selected member refers to"),
                 tr("Zooming disabled because layer of this relation is not active"),
                 tr("Zooming disabled because there is no selected member"));
     }
-    
+
     public ZoomToAction(RelationMemberTable table) {
-        this(table, 
+        this(table,
                 tr("Zoom to the object the first selected member refers to"),
                 tr("Zooming disabled because layer of this relation is not active"),
                 tr("Zooming disabled because there is no selected member"));
     }
-    
+
     public ZoomToAction(NodeListTable table) {
-        this(table, 
+        this(table,
                 tr("Zoom to the first selected node"),
                 tr("Zooming disabled because layer of this way is not active"),
                 tr("Zooming disabled because there is no selected node"));
@@ -62,7 +62,7 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (! isEnabled())
+        if (!isEnabled())
             return;
         int[] rows = this.table.getSelectedRows();
         if (rows == null || rows.length == 0)

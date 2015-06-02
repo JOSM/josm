@@ -69,7 +69,7 @@ public class Capabilities {
      * @return {@code true} if defined, {@code false} otherwise
      */
     public boolean isDefined(String element, String attribute) {
-        if (! capabilities.containsKey(element)) return false;
+        if (!capabilities.containsKey(element)) return false;
         Map<String, String> e = capabilities.get(element);
         if (e == null) return false;
         return e.get(attribute) != null;
@@ -83,7 +83,7 @@ public class Capabilities {
      * @return the value; {@code null}, if the respective configuration item does not exist
      */
     public String get(String element, String attribute) {
-        if (! capabilities.containsKey(element)) return null;
+        if (!capabilities.containsKey(element)) return null;
         Map<String, String> e = capabilities.get(element);
         if (e == null) return null;
         return e.get(attribute);
@@ -130,7 +130,7 @@ public class Capabilities {
                 imageryBlacklist.add(value);
             }
         } else {
-            if (! capabilities.containsKey(element))  {
+            if (!capabilities.containsKey(element))  {
                 Map<String,String> h = new HashMap<>();
                 capabilities.put(element, h);
             }

@@ -126,7 +126,7 @@ public final class AlignInLineAction extends JosmAction {
             remainNodes.remove(n);
         }
 
-        return new Node[] { nodea, nodeb };
+        return new Node[] {nodea, nodeb};
     }
 
     /**
@@ -154,7 +154,7 @@ public final class AlignInLineAction extends JosmAction {
             }
         }
 
-        return new Node[] { node1, node2 };
+        return new Node[] {node1, node2};
     }
 
     /**

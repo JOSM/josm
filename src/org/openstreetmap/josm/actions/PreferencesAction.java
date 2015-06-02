@@ -106,7 +106,7 @@ public class PreferencesAction extends JosmAction implements Runnable {
         final PreferenceDialog p = new PreferenceDialog(Main.parent);
         if (tab != null) {
             p.selectPreferencesTabByClass(tab);
-        } else if( subTab != null) {
+        } else if (subTab != null) {
             p.selectSubPreferencesTabByClass(subTab);
         }
         p.setVisible(true);

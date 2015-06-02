@@ -112,7 +112,8 @@ public final class ConditionalOptionPaneUtil {
      *
      * @return the option selected by user. {@link JOptionPane#CLOSED_OPTION} if the dialog was closed.
      */
-    public static int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, Object [] options, Object defaultOption) throws HeadlessException {
+    public static int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType,
+            int messageType, Object[] options, Object defaultOption) throws HeadlessException {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret;

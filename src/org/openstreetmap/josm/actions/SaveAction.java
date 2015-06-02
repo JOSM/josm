@@ -36,7 +36,7 @@ public final class SaveAction extends SaveActionBase {
 
     @Override public File getFile(Layer layer) {
         File f = layer.getAssociatedFile();
-        if(f != null && ! f.exists()) {
+        if (f != null && !f.exists()) {
             f=null;
         }
 

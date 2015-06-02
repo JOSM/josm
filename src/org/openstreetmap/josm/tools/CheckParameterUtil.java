@@ -110,7 +110,7 @@ public final class CheckParameterUtil {
      */
     public static void ensureValidNodeId(PrimitiveId id, String parameterName) throws IllegalArgumentException {
         ensureParameterNotNull(id, parameterName);
-        if (! id.getType().equals(OsmPrimitiveType.NODE))
+        if (!id.getType().equals(OsmPrimitiveType.NODE))
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' of type node expected, got ''{1}''", parameterName, id.getType().getAPIName()));
     }
 }

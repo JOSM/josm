@@ -118,7 +118,7 @@ public class OsmConnection {
         }
         OAuthConsumer consumer = oauthParameters.buildConsumer();
         OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
-        if (! holder.containsAccessToken())
+        if (!holder.containsAccessToken())
             throw new MissingOAuthAccessTokenException();
         consumer.setTokenWithSecret(holder.getAccessTokenKey(), holder.getAccessTokenSecret());
         try {

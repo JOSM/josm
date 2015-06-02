@@ -41,7 +41,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             XPath xpath = factory.newXPath();
             UserInfo userInfo = new UserInfo();
             Node xmlNode = (Node)xpath.compile("/osm/user[1]").evaluate(document, XPathConstants.NODE);
-            if ( xmlNode== null)
+            if (xmlNode == null)
                 throw new XmlParsingException(tr("XML tag <user> is missing."));
 
             // -- id

@@ -92,7 +92,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         // don't launch more than 10 browser instances / browser windows
         //
         int max = Math.min(10, primitivesToShow.size());
-        if (primitivesToShow.size() > max && ! confirmLaunchMultiple(primitivesToShow.size()))
+        if (primitivesToShow.size() > max && !confirmLaunchMultiple(primitivesToShow.size()))
             return;
         for(int i = 0; i < max; i++) {
             OpenBrowser.displayUrl(createInfoUrl(primitivesToShow.get(i)));

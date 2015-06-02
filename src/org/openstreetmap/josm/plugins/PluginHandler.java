@@ -207,7 +207,7 @@ public final class PluginHandler {
     /**
      * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not maintained after a few months, sadly...
      */
-    private static final String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
+    private static final String[] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
 
     /**
      * Default time-based update interval, in days (pluginmanager.time-based-update.interval)
@@ -359,7 +359,7 @@ public final class PluginHandler {
         }
         if (message == null) return false;
 
-        ButtonSpec [] options = new ButtonSpec[] {
+        ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Update plugins"),
                         ImageProvider.get("dialogs", "refresh"),
@@ -983,7 +983,7 @@ public final class PluginHandler {
 
                 // notify user if downloading a locally installed plugin failed
                 //
-                if (! pluginDownloadTask.getFailedPlugins().isEmpty()) {
+                if (!pluginDownloadTask.getFailedPlugins().isEmpty()) {
                     alertFailedPluginUpdate(parent, pluginDownloadTask.getFailedPlugins());
                     return plugins;
                 }
@@ -1009,7 +1009,7 @@ public final class PluginHandler {
      * @return true, if the plugin shall be disabled; false, otherwise
      */
     public static boolean confirmDisablePlugin(Component parent, String reason, String name) {
-        ButtonSpec [] options = new ButtonSpec[] {
+        ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Disable plugin"),
                         ImageProvider.get("dialogs", "delete"),
@@ -1074,7 +1074,7 @@ public final class PluginHandler {
      */
     public static void installDownloadedPlugins(boolean dowarn) {
         File pluginDir = Main.pref.getPluginsDirectory();
-        if (! pluginDir.exists() || ! pluginDir.isDirectory() || ! pluginDir.canWrite())
+        if (!pluginDir.exists() || !pluginDir.isDirectory() || !pluginDir.canWrite())
             return;
 
         final File[] files = pluginDir.listFiles(new FilenameFilter() {
@@ -1275,7 +1275,7 @@ public final class PluginHandler {
                 Main.pref.getCollection("plugins",Collections.<String> emptySet())
         );
         final PluginInformation pluginInfo = plugin.getPluginInformation();
-        if (! plugins.contains(pluginInfo.name))
+        if (!plugins.contains(pluginInfo.name))
             // plugin not activated ? strange in this context but anyway, don't bother
             // the user with dialogs, skip conditional deactivation
             return null;

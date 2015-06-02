@@ -192,7 +192,7 @@ public class ChangesetQuery {
      * @throws IllegalArgumentException if closedAfter is null
      * @throws IllegalArgumentException if createdBefore is null
      */
-    public ChangesetQuery closedAfterAndCreatedBefore(Date closedAfter, Date createdBefore ) {
+    public ChangesetQuery closedAfterAndCreatedBefore(Date closedAfter, Date createdBefore) {
         CheckParameterUtil.ensureParameterNotNull(closedAfter, "closedAfter");
         CheckParameterUtil.ensureParameterNotNull(createdBefore, "createdBefore");
         this.closedAfter = closedAfter;

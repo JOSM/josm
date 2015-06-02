@@ -363,7 +363,7 @@ public class CachedFile {
             if (!localFile.exists()) {
                 localFile = null;
             } else {
-                if ( maxAge == DEFAULT_MAXTIME
+                if (maxAge == DEFAULT_MAXTIME
                         || maxAge <= 0 // arbitrary value <= 0 is deprecated
                 ) {
                     lMaxAge = Main.pref.getInteger("mirror.maxtime", 7*24*60*60); // one week

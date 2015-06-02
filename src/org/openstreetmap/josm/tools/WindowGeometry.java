@@ -67,7 +67,7 @@ public class WindowGeometry {
      */
     public static WindowGeometry centerInWindow(Component reference, Dimension extent) {
         Window parentWindow = null;
-        while(reference != null && ! (reference instanceof Window) ) {
+        while (reference != null && !(reference instanceof Window)) {
             reference = reference.getParent();
         }
         if (reference == null)

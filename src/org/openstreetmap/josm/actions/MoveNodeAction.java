@@ -66,7 +66,7 @@ public final class MoveNodeAction extends JosmAction {
             setEnabled(false);
             return;
         }
-        if ((selection.size()) == 1 && (selection.toArray()[0] instanceof Node) ) {
+        if ((selection.size()) == 1 && (selection.toArray()[0] instanceof Node)) {
             setEnabled(true);
         } else {
             setEnabled(false);

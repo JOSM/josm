@@ -504,7 +504,7 @@ public abstract class Main {
 
         Main.map = map;
 
-        for (MapFrameListener listener : mapFrameListeners ) {
+        for (MapFrameListener listener : mapFrameListeners) {
             listener.mapFrameInitialized(old, map);
         }
         if (map == null && currentProgressMonitor != null) {

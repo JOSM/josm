@@ -111,7 +111,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
             } else {
                 hiddenFlag = Boolean.parseBoolean(hiddenFlagStr);
             }
-            setVisible( !hiddenFlag ); // show or hide, do what preferences say
+            setVisible(!hiddenFlag); // show or hide, do what preferences say
         }
     }
 

@@ -67,8 +67,8 @@ public abstract class AbstractMergeAction extends JosmAction {
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Select target layer"),
-                new String[] { tr("Merge"), tr("Cancel") });
-        ed.setButtonIcons(new String[] { "dialogs/mergedown", "cancel" });
+                new String[] {tr("Merge"), tr("Cancel")});
+        ed.setButtonIcons(new String[] {"dialogs/mergedown", "cancel"});
         ed.setContent(pnl);
         ed.showDialog();
         if (ed.getValue() != 1)

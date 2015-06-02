@@ -347,13 +347,13 @@ public class CreateMultipolygonAction extends JosmAction {
 
         Set<String> conflictingKeys = new TreeSet<>();
 
-        for( RelationMember m : relation.getMembers() ) {
+        for (RelationMember m : relation.getMembers()) {
 
-            if( m.hasRole() && "inner".equals(m.getRole()) && m.isWay() && m.getWay().hasKeys() ) {
+            if (m.hasRole() && "inner".equals(m.getRole()) && m.isWay() && m.getWay().hasKeys()) {
                 innerWays.add(m.getWay());
             }
 
-            if( m.hasRole() && "outer".equals(m.getRole()) && m.isWay() && m.getWay().hasKeys() ) {
+            if (m.hasRole() && "outer".equals(m.getRole()) && m.isWay() && m.getWay().hasKeys()) {
                 Way way = m.getWay();
                 outerWays.add(way);
 
@@ -402,8 +402,8 @@ public class CreateMultipolygonAction extends JosmAction {
 
             if (moveTags) {
                 // remove duplicated tags from outer ways
-                for( Way way : outerWays ) {
-                    if( way.hasKey(key) ) {
+                for (Way way : outerWays) {
+                    if (way.hasKey(key)) {
                         affectedWays.add(way);
                     }
                 }
@@ -421,7 +421,7 @@ public class CreateMultipolygonAction extends JosmAction {
             Relation r2 = new Relation(relation);
             for (Entry<String, String> entry : values.entrySet()) {
                 String key = entry.getKey();
-                if (!r2.hasKey(key) && !"area".equals(key) ) {
+                if (!r2.hasKey(key) && !"area".equals(key)) {
                     if (relation.isNew())
                         relation.put(key, entry.getValue());
                     else

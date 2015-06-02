@@ -132,7 +132,7 @@ public abstract class TransformNodesCommand extends Command {
     public EastNorth getNodesCenter() {
         EastNorth sum = new EastNorth(0,0);
 
-        for (Node n : nodes ) {
+        for (Node n : nodes) {
             EastNorth en = n.getEastNorth();
             sum = sum.add(en.east(), en.north());
         }

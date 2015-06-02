@@ -316,7 +316,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         // collect old cache files and remove if no longer in use
         List<File> siteCacheFiles = new LinkedList<>();
         for (String location : PluginInformation.getPluginLocations()) {
-            File [] f = new File(location).listFiles(
+            File[] f = new File(location).listFiles(
                     new FilenameFilter() {
                         @Override
                         public boolean accept(File dir, String name) {

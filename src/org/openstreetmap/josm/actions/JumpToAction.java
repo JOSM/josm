@@ -108,7 +108,7 @@ public class JumpToAction extends JosmAction {
         p.add(new JLabel(tr("URL")), GBC.eol());
         p.add(url, GBC.eol().fill(GBC.HORIZONTAL));
 
-        Object[] buttons = { tr("Jump there"), tr("Cancel") };
+        Object[] buttons = {tr("Jump there"), tr("Cancel")};
         LatLon ll = null;
         double zoomLvl = 100;
         while(ll == null) {

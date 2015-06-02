@@ -44,7 +44,7 @@ public class UpdateDataAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (! isEnabled())
+        if (!isEnabled())
             return;
         if (getEditLayer() == null)
             return;
