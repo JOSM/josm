@@ -65,6 +65,7 @@ public class MoveCommand extends Command {
     /**
      * Constructs a new {@code MoveCommand} to move a node.
      * @param node The node to move
+     * @param position The new location (lat/lon)
      */
     public MoveCommand(Node node, LatLon position) {
         this(Collections.singleton((OsmPrimitive) node), node.getEastNorth().sub(Projections.project(position)));
@@ -96,11 +97,23 @@ public class MoveCommand extends Command {
         }
     }
 
+    /**
+     * Constructs a new {@code MoveCommand} to move a collection of primitives.
+     * @param objects The primitives to move
+     * @param start The starting position (northern/eastern)
+     * @param end The ending position (northern/eastern)
+     */
     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
         this(objects, end.getX()-start.getX(), end.getY()-start.getY());
         startEN =  start;
     }
 
+    /**
+     * Constructs a new {@code MoveCommand} to move a primitive.
+     * @param p The primitive to move
+     * @param start The starting position (northern/eastern)
+     * @param end The ending position (northern/eastern)
+     */
     public MoveCommand(OsmPrimitive p, EastNorth start, EastNorth end) {
         this(Collections.singleton(p), end.getX()-start.getX(), end.getY()-start.getY());
         startEN =  start;
@@ -221,5 +234,59 @@ public class MoveCommand extends Command {
     @Override
     public Collection<Node> getParticipatingPrimitives() {
         return nodes;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        long temp;
+        temp = Double.doubleToLongBits(backupX);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(backupY);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ((nodes == null) ? 0 : nodes.hashCode());
+        result = prime * result + ((oldState == null) ? 0 : oldState.hashCode());
+        result = prime * result + ((startEN == null) ? 0 : startEN.hashCode());
+        temp = Double.doubleToLongBits(x);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MoveCommand other = (MoveCommand) obj;
+        if (Double.doubleToLongBits(backupX) != Double.doubleToLongBits(other.backupX))
+            return false;
+        if (Double.doubleToLongBits(backupY) != Double.doubleToLongBits(other.backupY))
+            return false;
+        if (nodes == null) {
+            if (other.nodes != null)
+                return false;
+        } else if (!nodes.equals(other.nodes))
+            return false;
+        if (oldState == null) {
+            if (other.oldState != null)
+                return false;
+        } else if (!oldState.equals(other.oldState))
+            return false;
+        if (startEN == null) {
+            if (other.startEN != null)
+                return false;
+        } else if (!startEN.equals(other.startEN))
+            return false;
+        if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
+            return false;
+        if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
+            return false;
+        return true;
     }
 }

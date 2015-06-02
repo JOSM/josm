@@ -16,11 +16,13 @@ public abstract class PseudoCommand {
 
     /**
      * Provides a description text representing this command.
+     * @return description text representing this command
      */
     public abstract String getDescriptionText();
 
     /**
      * Provides a descriptive icon of this command.
+     * @return descriptive icon of this command
      */
     public Icon getDescriptionIcon() {
         return null;
@@ -28,6 +30,7 @@ public abstract class PseudoCommand {
 
     /**
      * Return the primitives that take part in this command.
+     * @return primitives that take part in this command
      */
     public abstract Collection<? extends OsmPrimitive> getParticipatingPrimitives();
 

@@ -99,6 +99,40 @@ public abstract class Command extends PseudoCommand {
         public final boolean isModified() {
             return modified;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((eastNorth == null) ? 0 : eastNorth.hashCode());
+            result = prime * result + ((latlon == null) ? 0 : latlon.hashCode());
+            result = prime * result + (modified ? 1231 : 1237);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            OldNodeState other = (OldNodeState) obj;
+            if (eastNorth == null) {
+                if (other.eastNorth != null)
+                    return false;
+            } else if (!eastNorth.equals(other.eastNorth))
+                return false;
+            if (latlon == null) {
+                if (other.latlon != null)
+                    return false;
+            } else if (!latlon.equals(other.latlon))
+                return false;
+            if (modified != other.modified)
+                return false;
+            return true;
+        }
     }
 
     /** the map of OsmPrimitives in the original state to OsmPrimitives in cloned state */
@@ -265,4 +299,34 @@ public abstract class Command extends PseudoCommand {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((cloneMap == null) ? 0 : cloneMap.hashCode());
+        result = prime * result + ((layer == null) ? 0 : layer.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Command other = (Command) obj;
+        if (cloneMap == null) {
+            if (other.cloneMap != null)
+                return false;
+        } else if (!cloneMap.equals(other.cloneMap))
+            return false;
+        if (layer == null) {
+            if (other.layer != null)
+                return false;
+        } else if (!layer.equals(other.layer))
+            return false;
+        return true;
+    }
 }
