@@ -74,13 +74,19 @@ public final class Projections {
         registerBaseProjection("somerc", SwissObliqueMercator.class, "core");
         registerBaseProjection("tmerc", TransverseMercator.class, "core");
 
-        ellipsoids.put("clrk66", Ellipsoid.clarke1866);
-        ellipsoids.put("clarkeIGN", Ellipsoid.clarkeIGN);
-        ellipsoids.put("intl", Ellipsoid.hayford);
+        ellipsoids.put("airy", Ellipsoid.Airy);
+        ellipsoids.put("mod_airy", Ellipsoid.AiryMod);
+        ellipsoids.put("aust_SA", Ellipsoid.AustSA);
+        ellipsoids.put("bessel", Ellipsoid.Bessel1841);
+        ellipsoids.put("clrk66", Ellipsoid.Clarke1866);
+        ellipsoids.put("clarkeIGN", Ellipsoid.ClarkeIGN);
+        ellipsoids.put("intl", Ellipsoid.Hayford);
+        ellipsoids.put("helmert", Ellipsoid.Helmert);
+        ellipsoids.put("krass", Ellipsoid.Krassowsky);
         ellipsoids.put("GRS67", Ellipsoid.GRS67);
         ellipsoids.put("GRS80", Ellipsoid.GRS80);
+        ellipsoids.put("WGS72", Ellipsoid.WGS72);
         ellipsoids.put("WGS84", Ellipsoid.WGS84);
-        ellipsoids.put("bessel", Ellipsoid.Bessel1841);
 
         datums.put("WGS84", WGS84Datum.INSTANCE);
         datums.put("GRS80", GRS80Datum.INSTANCE);
