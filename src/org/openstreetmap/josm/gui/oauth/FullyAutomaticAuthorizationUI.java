@@ -334,7 +334,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     class RunAuthorisationAction extends AbstractAction implements DocumentListener{
         public RunAuthorisationAction() {
             putValue(NAME, tr("Authorize now"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
+            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
             putValue(SHORT_DESCRIPTION, tr("Click to redirect you to the authorization form on the JOSM web site"));
             updateEnabledState();
         }

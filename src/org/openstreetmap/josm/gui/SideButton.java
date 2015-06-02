@@ -82,7 +82,7 @@ public class SideButton extends JButton implements Destroyable {
     private void doStyle() {
         setLayout(new BorderLayout());
         setIconTextGap(2);
-        setMargin(new Insets(-1,0,-1,0));
+        setMargin(new Insets(0,0,0,0));
     }
 
     public void createArrow(ActionListener listener) {

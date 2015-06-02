@@ -59,7 +59,7 @@ public class SplashScreen extends JFrame {
         innerContentPane.setLayout(new GridBagLayout());
 
         // Add the logo
-        JLabel logo = new JLabel(new ImageIcon(ImageProvider.get("logo.png").getImage().getScaledInstance(128, 129, Image.SCALE_SMOOTH)));
+        JLabel logo = new JLabel(new ImageIcon(ImageProvider.get("logo.svg").getImage().getScaledInstance(128, 129, Image.SCALE_SMOOTH)));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridheight = 2;
         gbc.insets = new Insets(0, 0, 0, 70);

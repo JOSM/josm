@@ -310,7 +310,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         public AuthoriseNowAction() {
             putValue(NAME, tr("Authorize now"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
+            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
 
         }
         @Override
@@ -336,7 +336,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         public RenewAuthorisationAction() {
             putValue(NAME, tr("New Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process and generate a new Access Token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
+            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
 
         }
         @Override
@@ -362,7 +362,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         public TestAuthorisationAction() {
             putValue(NAME, tr("Test Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click test access to the OSM server with the current access token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
+            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
 
         }
 

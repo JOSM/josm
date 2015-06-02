@@ -88,7 +88,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * Builds the panel with general information in the header
      *
-     * @return panel woth information display
+     * @return panel with information display
      */
     protected JPanel buildHeaderInfoPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -100,8 +100,9 @@ public class OAuthAuthorizationWizard extends JDialog {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.gridwidth = 2;
-        JLabel lbl = new JLabel();
-        lbl.setIcon(ImageProvider.get("oauth", "oauth-logo"));
+        ImageProvider logoProv = new ImageProvider("oauth", "oauth-logo");
+        JLabel lbl = new JLabel(logoProv.get());
+        lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         lbl.setOpaque(true);
         pnl.add(lbl, gc);
 
@@ -166,6 +167,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         getContentPane().add(buildHeaderInfoPanel(), BorderLayout.NORTH);
 
         setTitle(tr("Get an Access Token for ''{0}''", apiUrl));
+        this.setMinimumSize(new Dimension(420, 400));
 
         pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI(apiUrl);
         pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI(apiUrl);

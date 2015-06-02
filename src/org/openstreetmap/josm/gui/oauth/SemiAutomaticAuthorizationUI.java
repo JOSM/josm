@@ -384,7 +384,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         public RetrieveRequestTokenAction() {
             putValue(NAME, tr("Retrieve Request Token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
+            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve a Request Token"));
         }
 
@@ -420,7 +420,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         public RetrieveAccessTokenAction() {
             putValue(NAME, tr("Retrieve Access Token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
+            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve an Access Token"));
         }
 
@@ -457,7 +457,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         public TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
+            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
             putValue(SHORT_DESCRIPTION, tr("Click to test the Access Token"));
         }
 

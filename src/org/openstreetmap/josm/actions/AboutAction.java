@@ -5,10 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,10 +31,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Nice about screen. I guess every application need one these days.. *sigh*
+ * Nice about screen.
  *
- * The REVISION resource is read and if present, it shows the revision
- * information of the jar-file.
+ * The REVISION resource is read and if present, it shows the revision information of the jar-file.
  *
  * @author imi
  */
@@ -89,7 +90,8 @@ public class AboutAction extends JosmAction {
         info.add(new UrlLabel(Main.getJOSMWebsite(),2), GBC.eol().fill(GBC.HORIZONTAL));
         info.add(GBC.glue(0,5), GBC.eol());
         info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(10,0,10,0));
-        info.add(BugReportExceptionHandler.getBugReportUrlLabel(Utils.strip(ShowStatusReportAction.getReportHeader())), GBC.eol().fill(GBC.HORIZONTAL));
+        info.add(BugReportExceptionHandler.getBugReportUrlLabel(Utils.strip(ShowStatusReportAction.getReportHeader())),
+                GBC.eol().fill(GBC.HORIZONTAL));
 
         about.addTab(tr("Info"), info);
         about.addTab(tr("Readme"), createScrollPane(readme));
@@ -104,8 +106,8 @@ public class AboutAction extends JosmAction {
         panel.add(about, GBC.std().fill());
 
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
-        JOptionPane.showMessageDialog(Main.parent, panel, tr("About JOSM..."),
-                JOptionPane.INFORMATION_MESSAGE, ImageProvider.get("logo"));
+        JOptionPane.showMessageDialog(Main.parent, panel, tr("About JOSM..."), JOptionPane.INFORMATION_MESSAGE,
+                new ImageIcon(ImageProvider.get("logo.svg").getImage().getScaledInstance(256, 258, Image.SCALE_SMOOTH)));
     }
 
     private JScrollPane createScrollPane(JosmTextArea area) {
