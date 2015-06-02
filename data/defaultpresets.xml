@@ -4296,7 +4296,7 @@
             <reference ref="link_contact_address" />
         </item> <!-- Driving School -->
     </group> <!-- Education -->
-    <group name="Health" icon="presets/pharmacy.png">
+    <group name="Health" icon="styles/standard/health/pharmacy.png">
         <item name="Hospital" icon="styles/standard/health/hospital.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=hospital"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=hospital"
