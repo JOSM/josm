@@ -455,6 +455,9 @@ public class ExtendedDialog extends JDialog {
                 // We need to set it to zero again, in case the dialog has been re-used
                 // and the result differs from its default value
                 result = ExtendedDialog.DialogClosedOtherwise;
+                if (Main.isDebugEnabled()) {
+                    Main.debug(getClass().getName()+" ESC action performed ("+actionEvent+") from "+new Exception().getStackTrace()[1]);
+                }
                 setVisible(false);
             }
         };
@@ -481,6 +484,10 @@ public class ExtendedDialog extends JDialog {
     public void setVisible(boolean visible) {
         if (visible) {
             repaint();
+        }
+
+        if (Main.isDebugEnabled()) {
+            Main.debug(getClass().getName()+".setVisible("+visible+") from "+new Exception().getStackTrace()[1]);
         }
 
         // Ensure all required variables are available
@@ -645,6 +652,9 @@ public class ExtendedDialog extends JDialog {
     }
 
     class HelpAction extends AbstractAction {
+        /**
+         * Constructs a new {@code HelpAction}.
+         */
         public HelpAction() {
             putValue(SHORT_DESCRIPTION, tr("Show help information"));
             putValue(NAME, tr("Help"));

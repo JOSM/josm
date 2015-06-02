@@ -646,6 +646,9 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     public void doKeyPressed(KeyEvent e) {
         if (!Main.isDisplayingMapView() ||
                 !repeatedKeySwitchLassoOption || !getShortcut().isEvent(e)) return;
+        if (Main.isDebugEnabled()) {
+            Main.debug(getClass().getName()+" consuming event "+e);
+        }
         e.consume();
         if (!lassoMode) {
             Main.map.selectMapMode(Main.map.mapModeSelectLasso);

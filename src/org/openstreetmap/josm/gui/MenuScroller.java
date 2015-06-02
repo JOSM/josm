@@ -506,6 +506,9 @@ public class MenuScroller {
         public void mouseWheelMoved(MouseWheelEvent mwe) {
             firstIndex += mwe.getWheelRotation();
             refreshMenu();
+            if (Main.isDebugEnabled()) {
+                Main.debug(getClass().getName()+" consuming event "+mwe);
+            }
             mwe.consume();
         }
     }

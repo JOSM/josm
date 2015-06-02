@@ -45,7 +45,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
      * Inspired by <a href="http://www.orbital-computer.de/JComboBox">Thomas Bierhance example</a>.
      */
     class AutoCompletingComboBoxDocument extends PlainDocument {
-        private JosmComboBox<AutoCompletionListItem> comboBox;
+        private final JosmComboBox<AutoCompletionListItem> comboBox;
         private boolean selecting = false;
 
         /**
@@ -87,8 +87,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
 
             // if the current offset isn't at the end of the document we don't autocomplete.
             // If a highlighted autocompleted suffix was present and we get here Swing has
-            // already removed it from the document. getLength() therefore doesn't include the
-            // autocompleted suffix.
+            // already removed it from the document. getLength() therefore doesn't include the autocompleted suffix.
             if (offs + str.length() < getLength()) {
                 return;
             }
@@ -108,8 +107,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
                         Long.parseLong(curText);
                     item = lookupItem(curText, true);
                 } catch (NumberFormatException e) {
-                    // either the new text or the current text isn't a number. We continue with
-                    // autocompletion
+                    // either the new text or the current text isn't a number. We continue with autocompletion
                     item = lookupItem(curText, false);
                 }
             } else {

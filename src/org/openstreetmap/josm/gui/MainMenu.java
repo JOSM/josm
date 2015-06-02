@@ -965,6 +965,9 @@ public class MainMenu extends JMenuBar {
                         JMenuItem selectedItem = (JMenuItem) selectedElement;
                         Action menuAction = selectedItem.getAction();
                         menuAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        if (Main.isDebugEnabled()) {
+                            Main.debug(getClass().getName()+" consuming event "+e);
+                        }
                         e.consume();
                     }
                 }

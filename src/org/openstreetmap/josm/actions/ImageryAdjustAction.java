@@ -132,6 +132,9 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             if (offsetDialog != null) {
                 offsetDialog.updateOffset();
             }
+            if (Main.isDebugEnabled()) {
+                Main.debug(getClass().getName()+" consuming event "+kev);
+            }
             kev.consume();
             Main.map.repaint();
         }
