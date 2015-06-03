@@ -42,7 +42,7 @@ public class Highways extends Test {
     /**
      * Classified highways in order of importance
      */
-    private static final Set<String> CLASSIFIED_HIGHWAYS = new HashSet<>(Arrays.asList(
+    private static final List<String> CLASSIFIED_HIGHWAYS = Arrays.asList(
             "motorway",  "motorway_link",
             "trunk",     "trunk_link",
             "primary",   "primary_link",
@@ -50,7 +50,7 @@ public class Highways extends Test {
             "tertiary",  "tertiary_link",
             "unclassified",
             "residential",
-            "living_street"));
+            "living_street");
 
     private static final Set<String> KNOWN_SOURCE_MAXSPEED_CONTEXTS = new HashSet<>(Arrays.asList(
             "urban", "rural", "zone", "zone30", "zone:30", "nsl_single", "nsl_dual", "motorway", "trunk", "living_street", "bicycle_road"));

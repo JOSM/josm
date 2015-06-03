@@ -7,9 +7,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -31,7 +31,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     public static final String RELATION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".relationSnapshot";
 
     /** the list of registered relation editor classes */
-    private static Set<Class<RelationEditor>> editors = new LinkedHashSet<>();
+    private static List<Class<RelationEditor>> editors = new ArrayList<>();
 
     /**
      * Registers a relation editor class. Depending on the type of relation to be edited
