@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -44,7 +43,7 @@ import org.openstreetmap.josm.tools.Pair;
  */
 public class ProjectionRegressionTest {
 
-    public static final String PROJECTION_DATA_FILE = "data_nodist/projection-regression-test-data.csv";
+    private static final String PROJECTION_DATA_FILE = "data_nodist/projection-regression-test-data.csv";
 
     private static class TestData {
         public String code;
