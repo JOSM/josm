@@ -313,7 +313,19 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
     public void setFixedLocale(boolean f) {
         useFixedLocale = f;
         if (useFixedLocale) {
-            privateInputContext.selectInputMethod(new Locale("en", "US"));
+            Locale oldLocale = privateInputContext.getLocale();
+            Main.info("Using English input method");
+            if (!privateInputContext.selectInputMethod(new Locale("en", "US"))) {
+                // Unable to use English keyboard layout, disable the feature
+                Main.warn("Unable to use English input method");
+                useFixedLocale = false;
+                if (oldLocale != null) {
+                    Main.info("Restoring input method to " + oldLocale);
+                    if (!privateInputContext.selectInputMethod(oldLocale)) {
+                        Main.warn("Unable to restore input method to " + oldLocale);
+                    }
+                }
+            }
         }
     }
 

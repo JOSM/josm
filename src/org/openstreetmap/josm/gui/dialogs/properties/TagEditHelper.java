@@ -519,8 +519,9 @@ class TagEditHelper {
                 new AbstractAction(tr("Use English language for tag by default")){
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
-                    PROPERTY_FIX_TAG_LOCALE.put(sel);
+                    boolean use=((JCheckBoxMenuItem) e.getSource()).getState();
+                    PROPERTY_FIX_TAG_LOCALE.put(use);
+                    keys.setFixedLocale(use);
                 }
             });
             {
