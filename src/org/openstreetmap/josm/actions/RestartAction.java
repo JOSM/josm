@@ -74,7 +74,7 @@ public class RestartAction extends JosmAction {
 
     /**
      * Restarts the current Java application
-     * @throws IOException
+     * @throws IOException in case of any error
      */
     public static void restartJOSM() throws IOException {
         if (isRestartSupported() && !Main.exitJosm(false, 0)) return;

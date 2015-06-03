@@ -1022,10 +1022,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Sets the Map of &lt;header name, header value&gt; that if any of this header
+     * Sets the map of &lt;header name, header value&gt; that if any of this header
      * will be returned, then this tile will be treated as "no tile at this zoom level"
      *
-     * @param noTileHeaders
+     * @param noTileHeaders Map of &lt;header name, header value&gt; which will be treated as "no tile at this zoom level"
      * @since 8344
      */
     public void setNoTileHeaders(Map<String, String> noTileHeaders) {
@@ -1038,10 +1038,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Returns the map &lt;header name, metadata key&gt; indicating, which HTTP headers should
+     * Returns the map of &lt;header name, metadata key&gt; indicating, which HTTP headers should
      * be moved to metadata
      *
-     * @param metadataHeaders
+     * @param metadataHeaders map of &lt;header name, metadata key&gt; indicating, which HTTP headers should be moved to metadata
      * @since 8418
      */
     public void setMetadataHeaders(Map<String, String> metadataHeaders) {

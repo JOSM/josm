@@ -410,8 +410,8 @@ public final class Geometry {
      * @param point Point for which a closest point is searched on line segment [P1,P2]
      * @return segmentP1 if it is the closest point, segmentP2 if it is the closest point,
      * a new point if closest point is between segmentP1 and segmentP2.
-     * @since 3650
      * @see #closestPointToLine
+     * @since 3650
      */
     public static EastNorth closestPointToSegment(EastNorth segmentP1, EastNorth segmentP2, EastNorth point) {
         return closestPointTo(segmentP1, segmentP2, point, true);

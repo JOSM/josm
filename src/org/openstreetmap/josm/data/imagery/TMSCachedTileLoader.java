@@ -28,16 +28,17 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  */
 public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCache {
 
-    private ICacheAccess<String, BufferedImageCacheEntry> cache;
-    private int connectTimeout;
-    private int readTimeout;
-    private Map<String, String> headers;
-    private TileLoaderListener listener;
+    private final ICacheAccess<String, BufferedImageCacheEntry> cache;
+    private final int connectTimeout;
+    private final int readTimeout;
+    private final Map<String, String> headers;
+    private final TileLoaderListener listener;
     private static final String PREFERENCE_PREFIX   = "imagery.tms.cache.";
+
     /**
-     * how many object on disk should be stored for TMS region. Average tile size is about 20kb
+     * how many object on disk should be stored for TMS region. Average tile size is about 20kb. 25000 is around 500MB under this assumption
      */
-    public static final IntegerProperty MAX_OBJECTS_ON_DISK = new IntegerProperty(PREFERENCE_PREFIX + "max_objects_disk", 25000); // 25000 is around 500MB under this assumptions
+    public static final IntegerProperty MAX_OBJECTS_ON_DISK = new IntegerProperty(PREFERENCE_PREFIX + "max_objects_disk", 25000);
 
     /**
      * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for TMS
@@ -49,12 +50,13 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
      */
     public static final IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
 
-
     /**
      * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS
      * and for TMS imagery
      */
     private static ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = getThreadPoolExecutor();
+
+    private final ThreadPoolExecutor downloadExecutor = DEFAULT_DOWNLOAD_JOB_DISPATCHER;
 
     private static ThreadPoolExecutor getThreadPoolExecutor() {
         return new ThreadPoolExecutor(
@@ -67,15 +69,13 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
                 );
     }
 
-    private ThreadPoolExecutor downloadExecutor = DEFAULT_DOWNLOAD_JOB_DISPATCHER;
-
     /**
      * Constructor
      * @param listener          called when tile loading has finished
      * @param name              of the cache
      * @param connectTimeout    to remote resource
      * @param readTimeout       to remote resource
-     * @param headers           to be sent along with request
+     * @param headers           HTTP headers to be sent along with request
      * @param cacheDir          where cache file shall reside
      * @throws IOException      when cache initialization fails
      */

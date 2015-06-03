@@ -51,12 +51,12 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     /**
      * Constructor for creating a job, to get a specific tile from cache
-     * @param listener
+     * @param listener Tile loader listener
      * @param tile to be fetched from cache
      * @param cache object
      * @param connectTimeout when connecting to remote resource
      * @param readTimeout when connecting to remote resource
-     * @param headers to be sent together with request
+     * @param headers HTTP headers to be sent together with request
      * @param downloadExecutor that will be executing the jobs
      */
     public TMSCachedTileLoaderJob(TileLoaderListener listener, Tile tile,

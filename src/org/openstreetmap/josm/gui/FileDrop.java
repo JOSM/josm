@@ -33,6 +33,7 @@ import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction;
+import org.openstreetmap.josm.gui.FileDrop.TransferableObject;
 
 /**
  * This class makes it easy to drag and drop files from the operating
@@ -537,8 +538,8 @@ public class FileDrop {
          * No custom data flavor is set other than the default
          * {@link #DATA_FLAVOR}.
          *
-         * @see Fetcher
          * @param fetcher The {@link Fetcher} that will return the data object
+         * @see Fetcher
          */
         public TransferableObject(Fetcher fetcher) {
             this.fetcher = fetcher;

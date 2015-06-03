@@ -577,8 +577,8 @@ public final class ExpressionFactory {
          * {@code e}, {@code east}, {@code se}, {@code southeast}, {@code s}, {@code south},
          * {@code sw}, {@code southwest}, {@code w}, {@code west}, {@code nw}, {@code northwest}.
          * @param cardinal the angle in cardinal directions.
-         * @see RotationAngle#parseCardinalRotation(String)
          * @return the angle in radians
+         * @see RotationAngle#parseCardinalRotation(String)
          */
         public static Double cardinal_to_radians(String cardinal) {
             try {

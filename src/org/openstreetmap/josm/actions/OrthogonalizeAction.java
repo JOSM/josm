@@ -418,7 +418,7 @@ public final class OrthogonalizeAction extends JosmAction {
          * Then sum up all horizontal / vertical segments to have a good guess for the
          * heading of the entire way.
          * @param pInitialDirection initial direction
-         * @throws InvalidUserInputException
+         * @throws InvalidUserInputException if selected ways have an angle different from 90 or 180 degrees
          */
         public void calcDirections(Direction pInitialDirection) throws InvalidUserInputException {
             final EastNorth[] en = new EastNorth[nNode]; // alias: way.getNodes().get(i).getEastNorth() ---> en[i]

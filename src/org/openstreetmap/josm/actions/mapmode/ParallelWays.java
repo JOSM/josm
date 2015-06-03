@@ -125,7 +125,7 @@ public class ParallelWays {
 
     /**
      * Offsets the way(s) d units. Positive d means to the left (relative to the reference way)
-     * @param d
+     * @param d offset
      */
     public void changeOffset(double d) {
         // This is the core algorithm:

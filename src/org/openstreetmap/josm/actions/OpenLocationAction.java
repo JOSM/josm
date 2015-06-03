@@ -79,7 +79,7 @@ public class OpenLocationAction extends JosmAction {
     /**
      * Restore the current history from the preferences
      *
-     * @param cbHistory
+     * @param cbHistory the history combo box
      */
     protected void restoreUploadAddressHistory(HistoryComboBox cbHistory) {
         List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(getClass().getName() + ".uploadAddressHistory",
@@ -92,7 +92,7 @@ public class OpenLocationAction extends JosmAction {
 
     /**
      * Remind the current history in the preferences
-     * @param cbHistory
+     * @param cbHistory the history combo box
      */
     protected void remindUploadAddressHistory(HistoryComboBox cbHistory) {
         cbHistory.addCurrentItemToHistory();

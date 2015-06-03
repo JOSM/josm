@@ -37,10 +37,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Case 3: Single node and ways selected: align this node relative to selected ways.
  * Case 4.1: Only nodes selected, part of a non-closed way: align these nodes on the line passing through the
  *   extremity nodes (most distant in the way sequence). See https://josm.openstreetmap.de/ticket/9605#comment:3
- * Case 4.2: Only nodes selected, part of a closed way: align these nodes on the line passing through the most distant
- *   nodes.
- * Case 4.3: Only nodes selected, part of multiple ways: align these nodes on the line passing through the most distant
- *   nodes.
+ * Case 4.2: Only nodes selected, part of a closed way: align these nodes on the line passing through the most distant nodes.
+ * Case 4.3: Only nodes selected, part of multiple ways: align these nodes on the line passing through the most distant nodes.
  * </pre>
  *
  * @author Matthew Newton
@@ -84,9 +82,6 @@ public final class AlignInLineAction extends JosmAction {
      * @return A array of two nodes.
      */
     private Node[] nodePairFurthestApart(List<Node> nodes) {
-        Node nodea = null;
-        Node nodeb = null;
-
         // Detect if selected nodes are on the same way.
 
         // Get ways passing though all selected nodes.
@@ -110,6 +105,9 @@ public final class AlignInLineAction extends JosmAction {
             // Align these nodes on the line passing through the most distant nodes.
             return nodeFurthestAppart(nodes);
         }
+
+        Node nodea = null;
+        Node nodeb = null;
 
         // The way is open, align nodes on the line passing through the extremity nodes (most distant in the way
         // sequence). See #9605#comment:3.
@@ -230,7 +228,7 @@ public final class AlignInLineAction extends JosmAction {
      * Align way in case of multiple way #6819
      * @param ways Collection of way to align
      * @return Command that perform action
-     * @throws InvalidSelection
+     * @throws InvalidSelection if a polygon is selected, or if a node is used by 3 or more ways
      */
     private Command alignMultiWay(Collection<Way> ways) throws InvalidSelection {
         // Collect all nodes and compute line equation
@@ -267,7 +265,7 @@ public final class AlignInLineAction extends JosmAction {
      * @param node Node to be aligned
      * @param refWays Ways where useful lines will be searched
      * @return List of useful lines
-     * @throws InvalidSelection
+     * @throws InvalidSelection if a node got more than 4 neighbours (self-crossing way)
      */
     private List<Line> getInvolvedLines(Node node, List<Way> refWays) throws InvalidSelection {
         List<Line> lines = new ArrayList<>();
@@ -313,7 +311,7 @@ public final class AlignInLineAction extends JosmAction {
                     lines.add(new Line(neighbors.get(1), neighbors.get(3)));
                 }
             } else
-                throw new InvalidSelection();
+                throw new InvalidSelection("cannot treat more than 4 neighbours, got "+neighbors.size());
         }
         return lines;
     }
@@ -323,7 +321,7 @@ public final class AlignInLineAction extends JosmAction {
      * @param node Node to be aligned
      * @param lines Lines to align node on
      * @return Command that perform action
-     * @throws InvalidSelection
+     * @throws InvalidSelection if more than 2 lines
      */
     private Command alignSingleNode(Node node, List<Line> lines) throws InvalidSelection {
         if(lines.size() == 1)
@@ -350,9 +348,9 @@ public final class AlignInLineAction extends JosmAction {
 
         /**
          * Init a line by 2 nodes.
-         * @param first On point of the line
+         * @param first One point of the line
          * @param last Other point of the line
-         * @throws InvalidSelection
+         * @throws InvalidSelection if nodes have same coordinates
          */
         public Line(Node first, Node last) throws InvalidSelection {
             xM = first.getEastNorth().getX();
@@ -363,8 +361,7 @@ public final class AlignInLineAction extends JosmAction {
             b = xM - xB;
             double norm = Math.sqrt(a*a + b*b);
             if (norm == 0)
-                // Nodes have same coordinates !
-                throw new InvalidSelection();
+                throw new InvalidSelection("Nodes have same coordinates!");
             a /= norm;
             b /= norm;
             c = -(a*xM + b*yM);
@@ -373,7 +370,7 @@ public final class AlignInLineAction extends JosmAction {
         /**
          * Init a line equation from a way.
          * @param way Use extremity of this way to compute line equation
-         * @throws InvalidSelection
+         * @throws InvalidSelection if nodes have same coordinates
          */
         public Line(Way way) throws InvalidSelection {
             this(way.firstNode(), way.lastNode());
@@ -394,7 +391,7 @@ public final class AlignInLineAction extends JosmAction {
          * @param n Node to move to the intersection
          * @param other Second line for intersection
          * @return The command that move the node
-         * @throws InvalidSelection
+         * @throws InvalidSelection if two parallels ways found
          */
         public Command intersectionCommand(Node n, Line other) throws InvalidSelection {
             double d = this.a * other.b - other.a * this.b;

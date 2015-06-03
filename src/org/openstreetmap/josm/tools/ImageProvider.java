@@ -380,8 +380,8 @@ public class ImageProvider {
     /**
      * Set image width
      * @param width final width of the image
-     * @see #setSize
      * @return the current object, for convenience
+     * @see #setSize
      */
     public ImageProvider setWidth(int width) {
         this.width = width;
@@ -391,8 +391,8 @@ public class ImageProvider {
     /**
      * Set image height
      * @param height final height of the image
-     * @see #setSize
      * @return the current object, for convenience
+     * @see #setSize
      */
     public ImageProvider setHeight(int height) {
         this.height = height;
@@ -1352,8 +1352,8 @@ public class ImageProvider {
      *
      * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
      * @throws IOException if an error occurs during reading.
-     * @since 7132
      * @see BufferedImage#getProperty
+     * @since 7132
      */
     public static BufferedImage read(File input, boolean readMetadata, boolean enforceTransparency) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(input, "input");

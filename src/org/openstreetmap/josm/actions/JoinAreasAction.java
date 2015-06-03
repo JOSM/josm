@@ -1001,8 +1001,8 @@ public class JoinAreasAction extends JosmAction {
     /**
      * Collects outer way and corresponding inner ways from all boundaries.
      * @param level depth level
-     * @param boundaryWays
-     * @return the outermostWay.
+     * @param boundaryWays list of joined boundaries to search in
+     * @return the outermost Way.
      */
     private List<PolygonLevel> findOuterWaysImpl(int level, Collection<AssembledPolygon> boundaryWays) {
 

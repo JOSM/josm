@@ -113,10 +113,10 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     /**
      * @param cache cache instance that we will work on
-     * @param headers
-     * @param readTimeout
-     * @param connectTimeout
-     * @param downloadJobExecutor
+     * @param headers HTTP headers to be sent together with request
+     * @param readTimeout when connecting to remote resource
+     * @param connectTimeout when connecting to remote resource
+     * @param downloadJobExecutor that will be executing the jobs
      */
     public JCSCachedTileLoaderJob(ICacheAccess<K,V> cache,
             int connectTimeout, int readTimeout,
@@ -133,9 +133,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     /**
      * @param cache cache instance that we will work on
-     * @param headers
-     * @param readTimeout
-     * @param connectTimeout
+     * @param headers HTTP headers to be sent together with request
+     * @param readTimeout when connecting to remote resource
+     * @param connectTimeout when connecting to remote resource
      */
     public JCSCachedTileLoaderJob(ICacheAccess<K, V> cache,
             int connectTimeout, int readTimeout,

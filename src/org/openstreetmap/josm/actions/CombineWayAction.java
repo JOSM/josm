@@ -95,9 +95,8 @@ public class CombineWayAction extends JosmAction {
     /**
      * Combine multiple ways into one.
      * @param ways the way to combine to one way
-     * @return null if ways cannot be combined. Otherwise returns the combined
-     *              ways and the commands to combine
-     * @throws UserCancelException
+     * @return null if ways cannot be combined. Otherwise returns the combined ways and the commands to combine
+     * @throws UserCancelException if the user cancelled a dialog.
      */
     public static Pair<Way, Command> combineWaysWorker(Collection<Way> ways) throws UserCancelException {
 
@@ -110,8 +109,7 @@ public class CombineWayAction extends JosmAction {
         // remove duplicates, preserving order
         ways = new LinkedHashSet<>(ways);
 
-        // try to build a new way which includes all the combined
-        // ways
+        // try to build a new way which includes all the combined ways
         //
         NodeGraph graph = NodeGraph.createNearlyUndirectedGraphFromNodeWays(ways);
         List<Node> path = graph.buildSpanningPath();
@@ -640,8 +638,7 @@ public class CombineWayAction extends JosmAction {
             // two directed edges in opposite direction) to the graph. A
             // graph built up from way segments is likely to include such
             // nodes, unless all ways are closed.
-            // In the worst case this loops over all nodes which is
-            // very slow for large ways.
+            // In the worst case this loops over all nodes which is very slow for large ways.
             //
             Set<Node> nodes = getTerminalNodes();
             nodes = nodes.isEmpty() ? getNodes() : nodes;
