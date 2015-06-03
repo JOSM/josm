@@ -177,19 +177,22 @@ public class TurnrestrictionTest extends Test {
             }
             checkIfConnected((Way) via.get(via.size() - 1), toWay,
                     tr("The last \"via\" and the \"to\" way are not connected."), TO_VIA_WAY);
-
         }
+    }
+
+    private static boolean isFullOneway(Way w) {
+        return w.isOneway() != 0 && !"no".equals(w.get("oneway:bicycle"));
     }
 
     private void checkIfConnected(Way previous, Way current, String msg, int code) {
         boolean c;
-        if (previous.isOneway() != 0 && current.isOneway() != 0) {
+        if (isFullOneway(previous) && isFullOneway(current)) {
             // both oneways: end/start node must be equal
             c = previous.lastNode(true).equals(current.firstNode(true));
-        } else if (previous.isOneway() != 0) {
+        } else if (isFullOneway(previous)) {
             // previous way is oneway: end of previous must be start/end of current
             c = current.isFirstLastNode(previous.lastNode(true));
-        } else if (current.isOneway() != 0) {
+        } else if (isFullOneway(current)) {
             // current way is oneway: start of current must be start/end of previous
             c = previous.isFirstLastNode(current.firstNode(true));
         } else {
