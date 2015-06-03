@@ -30,8 +30,6 @@ public class AddNodeHandler extends RequestHandler {
     private double lat;
     private double lon;
 
-    private Node node;
-
     @Override
     protected void handleRequest() {
         GuiHelper.runInEDTAndWait(new Runnable() {
@@ -87,7 +85,7 @@ public class AddNodeHandler extends RequestHandler {
         // Create a new node
         LatLon ll = new LatLon(lat, lon);
 
-        node = null;
+        Node node = null;
 
         if (Main.isDisplayingMapView()) {
             Point p = Main.map.mapView.getPoint(ll);

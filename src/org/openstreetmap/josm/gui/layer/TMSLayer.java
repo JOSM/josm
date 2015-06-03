@@ -232,9 +232,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     private Tile clickedTile;
     private boolean needRedraw;
     private JPopupMenu tileOptionMenu;
-    private JCheckBoxMenuItem autoZoomPopup;
-    private JCheckBoxMenuItem autoLoadPopup;
-    private JCheckBoxMenuItem showErrorsPopup;
     private Tile showMetadataTile;
     private AttributionSupport attribution = new AttributionSupport();
     private static final Font InfoFont = new Font("sansserif", Font.BOLD, 13);
@@ -497,7 +494,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         tileOptionMenu = new JPopupMenu();
 
         autoZoom = PROP_DEFAULT_AUTOZOOM.get();
-        autoZoomPopup = new JCheckBoxMenuItem();
+        JCheckBoxMenuItem autoZoomPopup = new JCheckBoxMenuItem();
         autoZoomPopup.setAction(new AbstractAction(tr("Auto Zoom")) {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -508,7 +505,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         tileOptionMenu.add(autoZoomPopup);
 
         autoLoad = PROP_DEFAULT_AUTOLOAD.get();
-        autoLoadPopup = new JCheckBoxMenuItem();
+        JCheckBoxMenuItem autoLoadPopup = new JCheckBoxMenuItem();
         autoLoadPopup.setAction(new AbstractAction(tr("Auto load tiles")) {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -519,7 +516,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         tileOptionMenu.add(autoLoadPopup);
 
         showErrors = PROP_DEFAULT_SHOWERRORS.get();
-        showErrorsPopup = new JCheckBoxMenuItem();
+        JCheckBoxMenuItem showErrorsPopup = new JCheckBoxMenuItem();
         showErrorsPopup.setAction(new AbstractAction(tr("Show Errors")) {
             @Override
             public void actionPerformed(ActionEvent ae) {

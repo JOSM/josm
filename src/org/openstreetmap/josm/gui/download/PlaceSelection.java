@@ -69,7 +69,6 @@ public class PlaceSelection implements DownloadSelection {
     private static final String HISTORY_KEY = "download.places.history";
 
     private HistoryComboBox cbSearchExpression;
-    private JButton btnSearch;
     private NamedResultTableModel model;
     private NamedResultTableColumnModel columnmodel;
     private JTable tblSearchResults;
@@ -121,7 +120,7 @@ public class PlaceSelection implements DownloadSelection {
 
         panel.add(lpanel, GBC.std().fill(GBC.HORIZONTAL).insets(5, 5, 0, 5));
         SearchAction searchAction = new SearchAction();
-        btnSearch = new JButton(searchAction);
+        JButton btnSearch = new JButton(searchAction);
         ((JTextField)cbSearchExpression.getEditor().getEditorComponent()).getDocument().addDocumentListener(searchAction);
         ((JTextField)cbSearchExpression.getEditor().getEditorComponent()).addActionListener(searchAction);
 

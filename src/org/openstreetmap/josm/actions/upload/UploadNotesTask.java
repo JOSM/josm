@@ -24,7 +24,6 @@ import org.xml.sax.SAXException;
  */
 public class UploadNotesTask {
 
-    private UploadTask uploadTask;
     private NoteData noteData;
 
     /**
@@ -34,8 +33,7 @@ public class UploadNotesTask {
      */
     public void uploadNotes(NoteData noteData, ProgressMonitor progressMonitor) {
         this.noteData = noteData;
-        uploadTask = new UploadTask(tr("Uploading modified notes"), progressMonitor);
-        Main.worker.submit(uploadTask);
+        Main.worker.submit(new UploadTask(tr("Uploading modified notes"), progressMonitor));
     }
 
     private class UploadTask extends PleaseWaitRunnable {
@@ -138,7 +136,5 @@ public class UploadNotesTask {
                 JOptionPane.showMessageDialog(Main.map, sb.toString(), tr("Notes failed to upload"), JOptionPane.ERROR_MESSAGE);
             }
         }
-
     }
-
 }
