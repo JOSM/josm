@@ -354,7 +354,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         private static void removeMetaRules(MapCSSStyleSource source) {
-            for (Iterator<MapCSSRule> it = source.rules.iterator(); it.hasNext(); ) {
+            for (Iterator<MapCSSRule> it = source.rules.iterator(); it.hasNext();) {
                 MapCSSRule x = it.next();
                 if (x.selector instanceof GeneralSelector) {
                     GeneralSelector gs = (GeneralSelector) x.selector;

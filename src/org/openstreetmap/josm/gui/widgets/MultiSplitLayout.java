@@ -531,8 +531,7 @@ public class MultiSplitLayout implements LayoutManager {
                     double newHeight = bounds.getMaxY() - y;
                     Rectangle newSplitChildBounds = boundsWithYandHeight(bounds, y, newHeight);
                     layout2(splitChild, newSplitChildBounds);
-                }
-                else if ((availableHeight > 0.0) && (splitChildWeight > 0.0)) {
+                } else if ((availableHeight > 0.0) && (splitChildWeight > 0.0)) {
                     double allocatedHeight = (splitChild.equals(lastWeightedChild))
                     ? availableHeight
                             : Math.rint(splitChildWeight * extraHeight);
@@ -540,8 +539,7 @@ public class MultiSplitLayout implements LayoutManager {
                     Rectangle newSplitChildBounds = boundsWithYandHeight(bounds, y, newHeight);
                     layout2(splitChild, newSplitChildBounds);
                     availableHeight -= allocatedHeight;
-                }
-                else {
+                } else {
                     double existingHeight = splitChildBounds.getHeight();
                     Rectangle newSplitChildBounds = boundsWithYandHeight(bounds, y, existingHeight);
                     layout2(splitChild, newSplitChildBounds);
@@ -618,12 +616,10 @@ public class MultiSplitLayout implements LayoutManager {
                     double childWidth = 0.0;
                     if (getFloatingDividers()) {
                         childWidth = preferredNodeSize(splitChild).getWidth();
-                    }
-                    else {
+                    } else {
                         if (dividerChild != null) {
                             childWidth = dividerChild.getBounds().getX() - x;
-                        }
-                        else {
+                        } else {
                             childWidth = split.getBounds().getMaxX() - x;
                         }
                     }

@@ -295,7 +295,7 @@ public class Multipolygon {
             if (!nodes.isEmpty()) {
                 DataSet ds = dataSet;
                 // Find DataSet (can be null for several nodes when undoing nodes creation, see #7162)
-                for (Iterator<Node> it = nodes.iterator(); it.hasNext() && ds == null; ) {
+                for (Iterator<Node> it = nodes.iterator(); it.hasNext() && ds == null;) {
                     ds = it.next().getDataSet();
                 }
                 nodes.clear();

@@ -175,7 +175,7 @@ public class RequestProcessor extends Thread {
 
             String command = questionPos < 0 ? url : url.substring(0, questionPos);
 
-            Map <String,String> headers = new HashMap<>();
+            Map<String,String> headers = new HashMap<>();
             int k=0, MAX_HEADERS=20;
             while (k<MAX_HEADERS) {
                 get=in.readLine();

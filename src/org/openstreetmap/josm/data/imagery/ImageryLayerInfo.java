@@ -108,7 +108,9 @@ public class ImageryLayerInfo {
                 Main.error(ex);
             }
         }
-        while (defaultLayers.remove(null));
+        while (defaultLayers.remove(null)) {
+            // Do nothing
+        }
         Collections.sort(defaultLayers);
         buildIdMap(defaultLayers, defaultLayerIds);
         updateEntriesFromDefaults();

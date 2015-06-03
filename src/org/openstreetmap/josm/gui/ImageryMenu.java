@@ -168,11 +168,11 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
             inViewLayers.removeAll(ImageryLayerInfo.instance.getLayers());
             // For layers containing complex shapes, check that center is in one
             // of its shapes (fix #7910)
-            for (Iterator<ImageryInfo> iti = inViewLayers.iterator(); iti.hasNext(); ) {
+            for (Iterator<ImageryInfo> iti = inViewLayers.iterator(); iti.hasNext();) {
                 List<Shape> shapes = iti.next().getBounds().getShapes();
                 if (shapes != null && !shapes.isEmpty()) {
                     boolean found = false;
-                    for (Iterator<Shape> its = shapes.iterator(); its.hasNext() && !found; ) {
+                    for (Iterator<Shape> its = shapes.iterator(); its.hasNext() && !found;) {
                         found = its.next().contains(pos);
                     }
                     if (!found) {

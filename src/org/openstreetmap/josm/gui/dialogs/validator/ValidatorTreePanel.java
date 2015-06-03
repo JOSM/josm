@@ -337,7 +337,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      * @return the errors of the tree
      */
     public List<TestError> getErrors() {
-        return errors != null ? errors : Collections.<TestError> emptyList();
+        return errors != null ? errors : Collections.<TestError>emptyList();
     }
 
     /**

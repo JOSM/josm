@@ -1386,8 +1386,7 @@ public class Preferences {
                 value = key_value.getValue();
             } else if (f.getType().isAssignableFrom(Map.class)) {
                 value = mapFromJson(key_value.getValue());
-            }
-            else
+            } else
                 throw new RuntimeException("unsupported preference primitive type");
 
             try {

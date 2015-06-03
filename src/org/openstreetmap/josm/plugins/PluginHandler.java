@@ -1282,7 +1282,7 @@ public final class PluginHandler {
             return null;
 
         Set<String> plugins = new HashSet<>(
-                Main.pref.getCollection("plugins",Collections.<String> emptySet())
+                Main.pref.getCollection("plugins",Collections.<String>emptySet())
         );
         final PluginInformation pluginInfo = plugin.getPluginInformation();
         if (!plugins.contains(pluginInfo.name))
@@ -1323,7 +1323,7 @@ public final class PluginHandler {
      */
     public static String getBugReportText() {
         StringBuilder text = new StringBuilder();
-        List <String> pl = new LinkedList<>(Main.pref.getCollection("plugins", new LinkedList<String>()));
+        List<String> pl = new LinkedList<>(Main.pref.getCollection("plugins", new LinkedList<String>()));
         for (final PluginProxy pp : pluginList) {
             PluginInformation pi = pp.getPluginInformation();
             pl.remove(pi.name);

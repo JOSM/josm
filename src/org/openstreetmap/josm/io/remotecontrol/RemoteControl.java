@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.io.remotecontrol;
 
 import java.io.File;
-import java.net.InetAddress;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.openstreetmap.josm.Main;
@@ -89,7 +89,7 @@ public class RemoteControl {
             if(a instanceof Inet6Address) {
                 return a;
             }
-        };
+        }
         throw new UnknownHostException();
     }
 
@@ -105,7 +105,7 @@ public class RemoteControl {
             if(a instanceof Inet4Address) {
                 return a;
             }
-        };
+        }
         throw new UnknownHostException();
     }
 }

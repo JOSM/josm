@@ -339,7 +339,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         if (mode == Mode.select) {
             Main.map.mapView.setNewCursor(ctrl ? cursorTranslate : alt ? cursorCreateNew : shift ? cursorCreateNodes : cursor, this);
         }
-    };
+    }
 
     @Override
     public void doKeyPressed(KeyEvent e) {

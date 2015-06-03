@@ -216,7 +216,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     @Override
     public void windowClosed(WindowEvent e) {
         RelationEditor editor = (RelationEditor)e.getWindow();
-        for (Iterator<Entry<DialogContext, RelationEditor>> it = openDialogs.entrySet().iterator(); it.hasNext(); ) {
+        for (Iterator<Entry<DialogContext, RelationEditor>> it = openDialogs.entrySet().iterator(); it.hasNext();) {
             if (editor.equals(it.next().getValue())) {
                 it.remove();
                 break;

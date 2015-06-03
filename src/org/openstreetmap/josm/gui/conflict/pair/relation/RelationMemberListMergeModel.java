@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * The model for merging two lists of relation members
  *
  */
-public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>{
+public class RelationMemberListMergeModel extends ListMergeModel<RelationMember> {
 
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {

@@ -23,7 +23,7 @@ public class HighlightHelper {
      * Highlight and remember given primitives
      * @param prims - primitives to highlight/unhighlight
      */
-    public boolean highlight(Collection <? extends OsmPrimitive> prims) {
+    public boolean highlight(Collection<? extends OsmPrimitive> prims) {
         return highlight(prims, false);
     }
 
@@ -32,7 +32,7 @@ public class HighlightHelper {
      * @param prims - primitives to highlight/unhighlight
      * @param only - remove previous highlighting
      */
-    public boolean highlight(Collection <? extends OsmPrimitive> prims, boolean only) {
+    public boolean highlight(Collection<? extends OsmPrimitive> prims, boolean only) {
         boolean needsRepaint = false;
         if (only) {
             Iterator<OsmPrimitive> it = highlightedPrimitives.iterator();
@@ -56,7 +56,7 @@ public class HighlightHelper {
      * Highlight and remember given primitives, forgetting previously highlighted by this instance
      * @param prims - primitives to highlight/unhighlight
      */
-    public boolean highlightOnly(Collection <? extends OsmPrimitive> prims) {
+    public boolean highlightOnly(Collection<? extends OsmPrimitive> prims) {
         return highlight(prims, true);
     }
 

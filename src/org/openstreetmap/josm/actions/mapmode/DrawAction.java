@@ -1544,7 +1544,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 Collection<Way> selectedWays = ds.getSelectedWays();
                 if (selectedWays.size()==1) {
                     Way w = selectedWays.iterator().next();
-                    Collection <EastNorth> pointsToProject = new ArrayList<>();
+                    Collection<EastNorth> pointsToProject = new ArrayList<>();
                     if (w.getNodesCount()<1000) {
                         for (Node n: w.getNodes()) {
                             pointsToProject.add(n.getEastNorth());

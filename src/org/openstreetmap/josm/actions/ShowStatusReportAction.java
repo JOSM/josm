@@ -106,7 +106,7 @@ public final class ShowStatusReportAction extends JosmAction {
             final String propJavaHomeAlt = "<java.home>";
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
             List<String> vmArguments = new ArrayList<>(ManagementFactory.getRuntimeMXBean().getInputArguments());
-            for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext(); ) {
+            for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext();) {
                 String value = it.next();
                 if (value.contains("=")) {
                     String[] param = value.split("=");

@@ -130,10 +130,10 @@ public class FileDrop {
             dropListener = new DropTargetListener() {
                 @Override
                 public void dragEnter(DropTargetDragEvent evt) {
-                    Main.trace("FileDrop: dragEnter event." );
+                    Main.trace("FileDrop: dragEnter event.");
 
                     // Is this an acceptable drag event?
-                    if (isDragOk(evt) ) {
+                    if (isDragOk(evt)) {
                         // If it's a Swing component, set its border
                         if (c instanceof JComponent) {
                            JComponent jc = (JComponent) c;
@@ -144,7 +144,7 @@ public class FileDrop {
                         }
 
                         // Acknowledge that it's okay to enter
-                        evt.acceptDrag( DnDConstants.ACTION_COPY);
+                        evt.acceptDrag(DnDConstants.ACTION_COPY);
                         Main.trace("FileDrop: event accepted.");
                     } else {
                         // Reject the drag event
@@ -253,8 +253,8 @@ public class FileDrop {
                 public void dropActionChanged(DropTargetDragEvent evt) {
                     Main.debug("FileDrop: dropActionChanged event.");
                     // Is this an acceptable drag event?
-                    if (isDragOk(evt) ) {
-                        evt.acceptDrag( DnDConstants.ACTION_COPY);
+                    if (isDragOk(evt)) {
+                        evt.acceptDrag(DnDConstants.ACTION_COPY);
                         Main.debug("FileDrop: event accepted.");
                     } else {
                         evt.rejectDrag();
@@ -368,8 +368,8 @@ public class FileDrop {
             // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
             // Is the flavor a file list?
             final DataFlavor curFlavor = flavors[i];
-            if (curFlavor.equals( DataFlavor.javaFileListFlavor ) ||
-                    curFlavor.isRepresentationClassReader()){
+            if (curFlavor.equals(DataFlavor.javaFileListFlavor) ||
+                    curFlavor.isRepresentationClassReader()) {
                 ok = true;
             }
             // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
@@ -636,7 +636,7 @@ public class FileDrop {
                 return true;
 
             // String
-            if (flavor.equals( DataFlavor.stringFlavor))
+            if (flavor.equals(DataFlavor.stringFlavor))
                 return true;
 
             // We can't do anything else

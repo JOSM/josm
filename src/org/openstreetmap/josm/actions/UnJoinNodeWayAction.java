@@ -156,7 +156,7 @@ public class UnJoinNodeWayAction extends JosmAction {
         List<Way> result = new ArrayList<>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
         for (int i=1; i<selectedNodes.size(); i++) {
             List<OsmPrimitive> ref = selectedNodes.get(i).getReferrers();
-            for (Iterator<Way> it = result.iterator(); it.hasNext(); ) {
+            for (Iterator<Way> it = result.iterator(); it.hasNext();) {
                 if (!ref.contains(it.next())) {
                     it.remove();
                 }
@@ -164,7 +164,7 @@ public class UnJoinNodeWayAction extends JosmAction {
         }
 
         // Remove broken ways
-        for (Iterator<Way> it = result.iterator(); it.hasNext(); ) {
+        for (Iterator<Way> it = result.iterator(); it.hasNext();) {
             if (it.next().getNodesCount() <= 2) {
                 it.remove();
             }
@@ -174,7 +174,7 @@ public class UnJoinNodeWayAction extends JosmAction {
             return result;
         else {
             // Return only selected ways
-            for (Iterator<Way> it = result.iterator(); it.hasNext(); ) {
+            for (Iterator<Way> it = result.iterator(); it.hasNext();) {
                 if (!selectedWays.contains(it.next())) {
                     it.remove();
                 }
