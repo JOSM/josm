@@ -194,6 +194,11 @@ public final class PluginHandler {
      */
     public static class DynamicURLClassLoader extends URLClassLoader {
 
+        /**
+         * Constructs a new {@code DynamicURLClassLoader}.
+         * @param urls the URLs from which to load classes and resources
+         * @param parent the parent class loader for delegation
+         */
         public DynamicURLClassLoader(URL[] urls, ClassLoader parent) {
             super(urls, parent);
         }
@@ -207,7 +212,13 @@ public final class PluginHandler {
     /**
      * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not maintained after a few months, sadly...
      */
-    private static final String[] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
+    private static final String[] UNMAINTAINED_PLUGINS = new String[] {
+        "gpsbabelgui",
+        "Intersect_way",
+        "CADTools",                // See #11438, #11518, https://github.com/ROTARIUANAMARIA/CADTools/issues/1
+        "ContourOverlappingMerge", // See #11202, #11518, https://github.com/bularcasergiu/ContourOverlappingMerge/issues/1
+        "LaneConnector"            // See #11468, #11518, https://github.com/TrifanAdrian/LanecConnectorPlugin/issues/1
+    };
 
     /**
      * Default time-based update interval, in days (pluginmanager.time-based-update.interval)
@@ -683,9 +694,9 @@ public final class PluginHandler {
     }
 
     /**
-     * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early}
-     * set to true.
+     * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early} set to true.
      *
+     * @param parent The parent component to be used for the displayed dialog
      * @param plugins the collection of plugins
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
@@ -700,8 +711,7 @@ public final class PluginHandler {
     }
 
     /**
-     * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early}
-     * set to false.
+     * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early} set to false.
      *
      * @param parent The parent component to be used for the displayed dialog
      * @param plugins the collection of plugins
