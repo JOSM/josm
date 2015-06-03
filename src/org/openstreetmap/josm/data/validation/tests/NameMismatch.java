@@ -50,7 +50,9 @@ public class NameMismatch extends Test.TagTest {
      */
     private void missingTranslation(OsmPrimitive p, String name) {
         errors.add(new TestError(this, Severity.OTHER,
-                tr("Missing name:*={0}. Add tag with correct language key.", name), NAME_TRANSLATION_MISSING, p));
+                tr("Missing name:* translation"),
+                tr("Missing name:*={0}. Add tag with correct language key.", name),
+                String.format("Missing name:*=%s. Add tag with correct language key.", name), NAME_TRANSLATION_MISSING, p));
     }
 
     /**

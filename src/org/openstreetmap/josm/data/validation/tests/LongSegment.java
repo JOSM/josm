@@ -36,7 +36,10 @@ public class LongSegment extends Test {
         Double length = w.getLongestSegmentLength();
         if(length > maxlength) {
             length /= 1000.0;
-            errors.add(new TestError(this, Severity.WARNING, tr("Very long segment of {0} kilometers", length.intValue()), LONG_SEGMENT, w));
+            errors.add(new TestError(this, Severity.WARNING, tr("Long segments"),
+                    tr("Very long segment of {0} kilometers", length.intValue()),
+                    String.format("Very long segment of %d kilometers", length.intValue()),
+                    LONG_SEGMENT, w));
         }
     }
 
