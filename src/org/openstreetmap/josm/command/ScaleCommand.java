@@ -77,4 +77,40 @@ public class ScaleCommand extends TransformNodesCommand {
     public String getDescriptionText() {
         return trn("Scale {0} node", "Scale {0} nodes", nodes.size(), nodes.size());
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((pivot == null) ? 0 : pivot.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(scalingFactor);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ((startEN == null) ? 0 : startEN.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ScaleCommand other = (ScaleCommand) obj;
+        if (pivot == null) {
+            if (other.pivot != null)
+                return false;
+        } else if (!pivot.equals(other.pivot))
+            return false;
+        if (Double.doubleToLongBits(scalingFactor) != Double.doubleToLongBits(other.scalingFactor))
+            return false;
+        if (startEN == null) {
+            if (other.startEN != null)
+                return false;
+        } else if (!startEN.equals(other.startEN))
+            return false;
+        return true;
+    }
 }

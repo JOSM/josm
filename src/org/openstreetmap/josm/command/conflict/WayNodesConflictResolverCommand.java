@@ -71,4 +71,35 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
             Collection<OsmPrimitive> added) {
         modified.add(conflict.getMy());
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((conflict == null) ? 0 : conflict.hashCode());
+        result = prime * result + ((mergedNodeList == null) ? 0 : mergedNodeList.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WayNodesConflictResolverCommand other = (WayNodesConflictResolverCommand) obj;
+        if (conflict == null) {
+            if (other.conflict != null)
+                return false;
+        } else if (!conflict.equals(other.conflict))
+            return false;
+        if (mergedNodeList == null) {
+            if (other.mergedNodeList != null)
+                return false;
+        } else if (!mergedNodeList.equals(other.mergedNodeList))
+            return false;
+        return true;
+    }
 }

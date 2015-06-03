@@ -122,4 +122,38 @@ public class SequenceCommand extends Command {
     protected final void setSequenceComplete(boolean sequenceComplete) {
         this.sequenceComplete = sequenceComplete;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (continueOnError ? 1231 : 1237);
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + Arrays.hashCode(sequence);
+        result = prime * result + (sequenceComplete ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SequenceCommand other = (SequenceCommand) obj;
+        if (continueOnError != other.continueOnError)
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (!Arrays.equals(sequence, other.sequence))
+            return false;
+        if (sequenceComplete != other.sequenceComplete)
+            return false;
+        return true;
+    }
 }

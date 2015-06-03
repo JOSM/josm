@@ -78,4 +78,29 @@ public abstract class ConflictResolveCommand extends Command {
         Main.map.mapView.setActiveLayer(getLayer());
         reconstituteConflicts();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((resolvedConflicts == null) ? 0 : resolvedConflicts.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ConflictResolveCommand other = (ConflictResolveCommand) obj;
+        if (resolvedConflicts == null) {
+            if (other.resolvedConflicts != null)
+                return false;
+        } else if (!resolvedConflicts.equals(other.resolvedConflicts))
+            return false;
+        return true;
+    }
 }

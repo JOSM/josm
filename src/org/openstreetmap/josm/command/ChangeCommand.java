@@ -87,4 +87,35 @@ public class ChangeCommand extends Command {
     public Icon getDescriptionIcon() {
         return ImageProvider.get(osm.getDisplayType());
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((newOsm == null) ? 0 : newOsm.hashCode());
+        result = prime * result + ((osm == null) ? 0 : osm.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ChangeCommand other = (ChangeCommand) obj;
+        if (newOsm == null) {
+            if (other.newOsm != null)
+                return false;
+        } else if (!newOsm.equals(other.newOsm))
+            return false;
+        if (osm == null) {
+            if (other.osm != null)
+                return false;
+        } else if (!osm.equals(other.osm))
+            return false;
+        return true;
+    }
 }

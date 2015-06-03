@@ -269,4 +269,53 @@ public class PurgeCommand extends Command {
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((ds == null) ? 0 : ds.hashCode());
+        result = prime * result + ((makeIncompleteData == null) ? 0 : makeIncompleteData.hashCode());
+        result = prime * result + ((makeIncompleteDataByPrimId == null) ? 0 : makeIncompleteDataByPrimId.hashCode());
+        result = prime * result + ((purgedConflicts == null) ? 0 : purgedConflicts.hashCode());
+        result = prime * result + ((toPurge == null) ? 0 : toPurge.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PurgeCommand other = (PurgeCommand) obj;
+        if (ds == null) {
+            if (other.ds != null)
+                return false;
+        } else if (!ds.equals(other.ds))
+            return false;
+        if (makeIncompleteData == null) {
+            if (other.makeIncompleteData != null)
+                return false;
+        } else if (!makeIncompleteData.equals(other.makeIncompleteData))
+            return false;
+        if (makeIncompleteDataByPrimId == null) {
+            if (other.makeIncompleteDataByPrimId != null)
+                return false;
+        } else if (!makeIncompleteDataByPrimId.equals(other.makeIncompleteDataByPrimId))
+            return false;
+        if (purgedConflicts == null) {
+            if (other.purgedConflicts != null)
+                return false;
+        } else if (!purgedConflicts.equals(other.purgedConflicts))
+            return false;
+        if (toPurge == null) {
+            if (other.toPurge != null)
+                return false;
+        } else if (!toPurge.equals(other.toPurge))
+            return false;
+        return true;
+    }
 }

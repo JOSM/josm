@@ -60,4 +60,35 @@ public class ChangeNodesCommand extends Command {
     public Icon getDescriptionIcon() {
         return ImageProvider.get(OsmPrimitiveType.WAY);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((newNodes == null) ? 0 : newNodes.hashCode());
+        result = prime * result + ((way == null) ? 0 : way.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ChangeNodesCommand other = (ChangeNodesCommand) obj;
+        if (newNodes == null) {
+            if (other.newNodes != null)
+                return false;
+        } else if (!newNodes.equals(other.newNodes))
+            return false;
+        if (way == null) {
+            if (other.way != null)
+                return false;
+        } else if (!way.equals(other.way))
+            return false;
+        return true;
+    }
 }

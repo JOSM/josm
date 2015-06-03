@@ -75,4 +75,32 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
             Collection<OsmPrimitive> added) {
         modified.add(conflict.getMy());
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((conflict == null) ? 0 : conflict.hashCode());
+        result = prime * result + ((decision == null) ? 0 : decision.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CoordinateConflictResolveCommand other = (CoordinateConflictResolveCommand) obj;
+        if (conflict == null) {
+            if (other.conflict != null)
+                return false;
+        } else if (!conflict.equals(other.conflict))
+            return false;
+        if (decision != other.decision)
+            return false;
+        return true;
+    }
 }

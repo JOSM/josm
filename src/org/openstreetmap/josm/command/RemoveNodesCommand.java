@@ -61,4 +61,35 @@ public class RemoveNodesCommand extends Command {
     public Icon getDescriptionIcon() {
         return ImageProvider.get(OsmPrimitiveType.WAY);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((rmNodes == null) ? 0 : rmNodes.hashCode());
+        result = prime * result + ((way == null) ? 0 : way.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RemoveNodesCommand other = (RemoveNodesCommand) obj;
+        if (rmNodes == null) {
+            if (other.rmNodes != null)
+                return false;
+        } else if (!rmNodes.equals(other.rmNodes))
+            return false;
+        if (way == null) {
+            if (other.way != null)
+                return false;
+        } else if (!way.equals(other.way))
+            return false;
+        return true;
+    }
 }

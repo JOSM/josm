@@ -515,4 +515,35 @@ public class DeleteCommand extends Command {
                 JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.YES_OPTION);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((clonedPrimitives == null) ? 0 : clonedPrimitives.hashCode());
+        result = prime * result + ((toDelete == null) ? 0 : toDelete.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DeleteCommand other = (DeleteCommand) obj;
+        if (clonedPrimitives == null) {
+            if (other.clonedPrimitives != null)
+                return false;
+        } else if (!clonedPrimitives.equals(other.clonedPrimitives))
+            return false;
+        if (toDelete == null) {
+            if (other.toDelete != null)
+                return false;
+        } else if (!toDelete.equals(other.toDelete))
+            return false;
+        return true;
+    }
 }

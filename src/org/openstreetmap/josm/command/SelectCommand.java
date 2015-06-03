@@ -50,4 +50,35 @@ public class SelectCommand extends Command {
         int size = newSelection != null ? newSelection.size() : 0;
         return trn("Selected {0} object", "Selected {0} objects", size, size);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((newSelection == null) ? 0 : newSelection.hashCode());
+        result = prime * result + ((oldSelection == null) ? 0 : oldSelection.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SelectCommand other = (SelectCommand) obj;
+        if (newSelection == null) {
+            if (other.newSelection != null)
+                return false;
+        } else if (!newSelection.equals(other.newSelection))
+            return false;
+        if (oldSelection == null) {
+            if (other.oldSelection != null)
+                return false;
+        } else if (!oldSelection.equals(other.oldSelection))
+            return false;
+        return true;
+    }
 }

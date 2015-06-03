@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -169,5 +170,48 @@ public class AddPrimitivesCommand extends Command {
             prims.add(osm);
         }
         return prims;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((createdPrimitives == null) ? 0 : createdPrimitives.hashCode());
+        result = prime * result + ((createdPrimitivesToSelect == null) ? 0 : createdPrimitivesToSelect.hashCode());
+        result = prime * result + ((data == null) ? 0 : data.hashCode());
+        result = prime * result + ((toSelect == null) ? 0 : toSelect.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AddPrimitivesCommand other = (AddPrimitivesCommand) obj;
+        if (createdPrimitives == null) {
+            if (other.createdPrimitives != null)
+                return false;
+        } else if (!createdPrimitives.equals(other.createdPrimitives))
+            return false;
+        if (createdPrimitivesToSelect == null) {
+            if (other.createdPrimitivesToSelect != null)
+                return false;
+        } else if (!createdPrimitivesToSelect.equals(other.createdPrimitivesToSelect))
+            return false;
+        if (data == null) {
+            if (other.data != null)
+                return false;
+        } else if (!data.equals(other.data))
+            return false;
+        if (toSelect == null) {
+            if (other.toSelect != null)
+                return false;
+        } else if (!toSelect.equals(other.toSelect))
+            return false;
+        return true;
     }
 }

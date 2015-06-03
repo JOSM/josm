@@ -80,4 +80,50 @@ public class ChangeRelationMemberRoleCommand extends Command {
     public Icon getDescriptionIcon() {
         return ImageProvider.get(relation.getDisplayType());
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((newRole == null) ? 0 : newRole.hashCode());
+        result = prime * result + ((oldModified == null) ? 0 : oldModified.hashCode());
+        result = prime * result + ((oldRole == null) ? 0 : oldRole.hashCode());
+        result = prime * result + position;
+        result = prime * result + ((relation == null) ? 0 : relation.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ChangeRelationMemberRoleCommand other = (ChangeRelationMemberRoleCommand) obj;
+        if (newRole == null) {
+            if (other.newRole != null)
+                return false;
+        } else if (!newRole.equals(other.newRole))
+            return false;
+        if (oldModified == null) {
+            if (other.oldModified != null)
+                return false;
+        } else if (!oldModified.equals(other.oldModified))
+            return false;
+        if (oldRole == null) {
+            if (other.oldRole != null)
+                return false;
+        } else if (!oldRole.equals(other.oldRole))
+            return false;
+        if (position != other.position)
+            return false;
+        if (relation == null) {
+            if (other.relation != null)
+                return false;
+        } else if (!relation.equals(other.relation))
+            return false;
+        return true;
+    }
 }

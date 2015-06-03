@@ -1022,7 +1022,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Sets the Map of <header name, header value> that if any of this header
+     * Sets the Map of &lt;header name, header value&gt; that if any of this header
      * will be returned, then this tile will be treated as "no tile at this zoom level"
      *
      * @param noTileHeaders
@@ -1038,7 +1038,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Returns the map <header name, metadata key> indicating, which HTTP headers should
+     * Returns the map &lt;header name, metadata key&gt; indicating, which HTTP headers should
      * be moved to metadata
      *
      * @param metadataHeaders
