@@ -305,6 +305,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      */
 
     private boolean loadObject() {
+        if (attributes == null) {
+            attributes = new CacheEntryAttributes();
+        }
         try {
             // if we have object in cache, and host doesn't support If-Modified-Since nor If-None-Match
             // then just use HEAD request and check returned values
