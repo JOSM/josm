@@ -1069,8 +1069,8 @@ public class JoinAreasAction extends JosmAction {
         // This seems to appear when is apply over invalid way like #9911 test-case
         // Remove all of these way to make the next work.
         List<WayInPolygon> cleanMultigonWays = new ArrayList<>();
-        for(WayInPolygon way: multigonWays)
-            if(way.way.getNodesCount() == 2 && way.way.firstNode() == way.way.lastNode())
+        for (WayInPolygon way: multigonWays)
+            if (way.way.getNodesCount() == 2 && way.way.isClosed())
                 discardedWays.add(way);
             else
                 cleanMultigonWays.add(way);

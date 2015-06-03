@@ -146,7 +146,7 @@ public final class AlignInCircleAction extends JosmAction {
             }
         }
 
-        if (ways.size() == 1 && ways.get(0).firstNode() != ways.get(0).lastNode()) {
+        if (ways.size() == 1 && !ways.get(0).isClosed()) {
             // Case 1
             Way w = ways.get(0);
             fixNodes.add(w.firstNode());
@@ -378,12 +378,12 @@ public final class AlignInCircleAction extends JosmAction {
      */
     protected static boolean checkWaysArePolygon(Collection<Way> ways) {
         // For each way, nodes strictly between first and last should't be reference by an other way
-        for(Way way: ways) {
-            for(Node node: way.getNodes()) {
-                if(node == way.firstNode() || node == way.lastNode()) continue;
-                for(Way wayOther: ways) {
-                    if(way == wayOther) continue;
-                    if(node.getReferrers().contains(wayOther)) return false;
+        for (Way way: ways) {
+            for (Node node: way.getNodes()) {
+                if (way.isFirstLastNode(node)) continue;
+                for (Way wayOther: ways) {
+                    if (way == wayOther) continue;
+                    if (node.getReferrers().contains(wayOther)) return false;
                 }
             }
         }
@@ -391,32 +391,32 @@ public final class AlignInCircleAction extends JosmAction {
         Way currentWay = null;
         Node startNode = null, endNode = null;
         int used = 0;
-        while(true) {
+        while (true) {
             Way nextWay = null;
-            for(Way w: ways) {
-                if(w.firstNode() == w.lastNode()) return ways.size() == 1;
-                if(w == currentWay) continue;
-                if(currentWay == null) {
+            for (Way w: ways) {
+                if (w.isClosed()) return ways.size() == 1;
+                if (w == currentWay) continue;
+                if (currentWay == null) {
                     nextWay = w;
                     startNode = w.firstNode();
                     endNode = w.lastNode();
                     break;
                 }
-                if(w.firstNode() == endNode) {
+                if (w.firstNode() == endNode) {
                     nextWay = w;
                     endNode = w.lastNode();
                     break;
                 }
-                if(w.lastNode() == endNode) {
+                if (w.lastNode() == endNode) {
                     nextWay = w;
                     endNode = w.firstNode();
                     break;
                 }
             }
-            if(nextWay == null) return false;
+            if (nextWay == null) return false;
             used += 1;
             currentWay = nextWay;
-            if(endNode == startNode) return used == ways.size();
+            if (endNode == startNode) return used == ways.size();
         }
     }
 }

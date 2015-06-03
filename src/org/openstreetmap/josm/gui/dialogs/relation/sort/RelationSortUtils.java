@@ -33,7 +33,7 @@ final class RelationSortUtils {
                 w.getNode(0) != null &&
                 w.getNode(1) != null &&
                 w.getNode(2) != null &&
-                w.firstNode() == w.lastNode()) {
+                w.isClosed()) {
             /** do some simple determinant / cross pruduct test on the first 3 nodes
                 to see, if the roundabout goes clock wise or ccw */
             EastNorth en1 = w.getNode(0).getEastNorth();

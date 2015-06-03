@@ -234,24 +234,24 @@ public final class AlignInLineAction extends JosmAction {
         // Collect all nodes and compute line equation
         Set<Node> nodes = new HashSet<>();
         Map<Way, Line> lines = new HashMap<>();
-        for(Way w: ways) {
-            if(w.firstNode() == w.lastNode())
+        for (Way w: ways) {
+            if (w.isClosed())
                 throw new InvalidSelection(tr("Can not align a polygon. Abort."));
             nodes.addAll(w.getNodes());
             lines.put(w, new Line(w));
         }
         Collection<Command> cmds = new ArrayList<>(nodes.size());
         List<Way> referers = new ArrayList<>(ways.size());
-        for(Node n: nodes) {
+        for (Node n: nodes) {
             referers.clear();
-            for(OsmPrimitive o: n.getReferrers())
-                if(ways.contains(o))
+            for (OsmPrimitive o: n.getReferrers())
+                if (ways.contains(o))
                     referers.add((Way) o);
-            if(referers.size() == 1) {
+            if (referers.size() == 1) {
                 Way way = referers.get(0);
-                if(n == way.firstNode() || n == way.lastNode()) continue;
+                if (way.isFirstLastNode(n)) continue;
                 cmds.add(lines.get(way).projectionCommand(n));
-            } else if(referers.size() == 2) {
+            } else if (referers.size() == 2) {
                 Command cmd = lines.get(referers.get(0)).intersectionCommand(n, lines.get(referers.get(1)));
                 cmds.add(cmd);
             } else

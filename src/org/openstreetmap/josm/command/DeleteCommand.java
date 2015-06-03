@@ -440,9 +440,8 @@ public class DeleteCommand extends Command {
         if (ws.way.getNodesCount() < 3)
             return delete(layer, Collections.singleton(ws.way), false);
 
-        if (ws.way.firstNode() == ws.way.lastNode()) {
-            // If the way is circular (first and last nodes are the same),
-            // the way shouldn't be splitted
+        if (ws.way.isClosed()) {
+            // If the way is circular (first and last nodes are the same), the way shouldn't be splitted
 
             List<Node> n = new ArrayList<>();
 
@@ -455,7 +454,8 @@ public class DeleteCommand extends Command {
             return new ChangeCommand(ws.way, wnew);
         }
 
-        List<Node> n1 = new ArrayList<>(), n2 = new ArrayList<>();
+        List<Node> n1 = new ArrayList<>();
+        List<Node> n2 = new ArrayList<>();
 
         n1.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
         n2.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount()));
