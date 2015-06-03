@@ -304,7 +304,7 @@ public class PlaceSelection implements DownloadSelection {
         }
 
         protected final void updateEnabledState() {
-            setEnabled(cbSearchExpression.getText().trim().length() > 0);
+            setEnabled(!cbSearchExpression.getText().trim().isEmpty());
         }
 
         @Override

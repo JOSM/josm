@@ -300,7 +300,7 @@ public class RelationChecker extends Test {
                     }
                 }));
 
-                if (key.length() > 0) {
+                if (!key.isEmpty()) {
                     String s = marktr("Role {0} unknown in templates {1}");
 
                     errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,

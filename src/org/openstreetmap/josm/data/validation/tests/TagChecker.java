@@ -176,7 +176,7 @@ public class TagChecker extends TagTest {
                 boolean ignorefile = false;
                 boolean isFirstLine = true;
                 String line;
-                while ((line = reader.readLine()) != null && (tagcheckerfile || line.length() != 0)) {
+                while ((line = reader.readLine()) != null && (tagcheckerfile || !line.isEmpty())) {
                     if (line.startsWith("#")) {
                         if (line.startsWith("# JOSM TagChecker")) {
                             tagcheckerfile = true;
@@ -217,7 +217,7 @@ public class TagChecker extends TagTest {
                             ignoreDataKeyPair.add(tmp);
                         }
                     } else if (tagcheckerfile) {
-                        if (line.length() > 0) {
+                        if (!line.isEmpty()) {
                             CheckerData d = new CheckerData();
                             String err = d.getData(line);
 
@@ -246,7 +246,7 @@ public class TagChecker extends TagTest {
             }
         }
 
-        if (errorSources.length() > 0)
+        if (!errorSources.isEmpty())
             throw new IOException(tr("Could not access data file(s):\n{0}", errorSources));
     }
 
@@ -381,7 +381,7 @@ public class TagChecker extends TagTest {
                         tr(s, key), MessageFormat.format(s, key), INVALID_HTML, p));
                 withErrors.put(p, "HTML");
             }
-            if (checkValues && key != null && value != null && value.length() > 0 && presetsValueData != null) {
+            if (checkValues && key != null && value != null && !value.isEmpty() && presetsValueData != null) {
                 final Set<String> values = presetsValueData.get(key);
                 final boolean keyInPresets = values != null;
                 final boolean tagInPresets = values != null && (values.isEmpty() || values.contains(prop.getValue()));
@@ -439,7 +439,7 @@ public class TagChecker extends TagTest {
                     }
                 }
             }
-            if (checkFixmes && key != null && value != null && value.length() > 0) {
+            if (checkFixmes && key != null && value != null && !value.isEmpty()) {
                 if ((value.toLowerCase(Locale.ENGLISH).contains("fixme")
                         || value.contains("check and delete")
                         || key.contains("todo") || key.toLowerCase(Locale.ENGLISH).contains("fixme"))

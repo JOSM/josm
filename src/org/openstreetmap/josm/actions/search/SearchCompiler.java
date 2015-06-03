@@ -650,7 +650,7 @@ public class SearchCompiler {
                 }
             }
 
-            if (regexp && key.length() > 0 && !"*".equals(key)) {
+            if (regexp && !key.isEmpty() && !"*".equals(key)) {
                 try {
                     keyPattern = Pattern.compile(key, regexFlags(false));
                 } catch (PatternSyntaxException e) {
@@ -661,7 +661,7 @@ public class SearchCompiler {
             } else {
                 keyPattern = null;
             }
-            if (regexp && this.value.length() > 0 && !"*".equals(this.value)) {
+            if (regexp && !this.value.isEmpty() && !"*".equals(this.value)) {
                 try {
                     valuePattern = Pattern.compile(this.value, regexFlags(false));
                 } catch (PatternSyntaxException e) {

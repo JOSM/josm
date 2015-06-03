@@ -291,7 +291,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             result += "<html>";
         }
         result += name;
-        if (sc != null && sc.getKeyText().length() != 0) {
+        if (sc != null && !sc.getKeyText().isEmpty()) {
             result += " ";
             if (canHtml) {
                 result += "<font size='-2'>";

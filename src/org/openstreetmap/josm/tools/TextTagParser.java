@@ -84,7 +84,7 @@ public final class TextTagParser {
                 } else if (c == '\\') {
                     esc = true;
                 } else if (c == '\"' && !quotesStarted) { // opening "
-                    if (s.toString().trim().length()>0) { // we had   ||some text"||
+                    if (!s.toString().trim().isEmpty()) { // we had   ||some text"||
                         s.append(c); // just add ", not open
                     } else {
                         s.delete(0, s.length()); // forget that empty characthers and start reading "....

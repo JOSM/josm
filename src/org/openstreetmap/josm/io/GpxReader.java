@@ -363,7 +363,7 @@ public class GpxReader implements GpxConstants {
                     currentLink.type = accumulator.toString();
                     break;
                 case "link":
-                    if (currentLink.uri == null && accumulator != null && accumulator.toString().length() != 0) {
+                    if (currentLink.uri == null && accumulator != null && !accumulator.toString().isEmpty()) {
                         currentLink = new GpxLink(accumulator.toString());
                     }
                     currentState = states.pop();

@@ -177,7 +177,7 @@ public final class CustomConfigurator {
      */
     public static int askForOption(String text, String opts) {
         Integer answer;
-        if (opts.length()>0) {
+        if (!opts.isEmpty()) {
             String[] options = opts.split(";");
             answer = JOptionPane.showOptionDialog(Main.parent, text, "Question", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 0);
         } else {
@@ -188,7 +188,7 @@ public final class CustomConfigurator {
 
     public static String askForText(String text) {
         String s = JOptionPane.showInputDialog(Main.parent, text, tr("Enter text"), JOptionPane.QUESTION_MESSAGE);
-        if (s!=null && (s=s.trim()).length()>0) {
+        if (s!=null && !(s=s.trim()).isEmpty()) {
             return s;
         } else {
             return "";
@@ -557,7 +557,7 @@ public final class CustomConfigurator {
             Preferences tmpPref = readPreferencesFromDOMElement(item);
             PreferencesUtils.showPrefs(tmpPref);
 
-            if (id.length()>0) {
+            if (!id.isEmpty()) {
                 try {
                     String fragmentVar = "API.fragments['"+id+"']";
                     engine.eval(fragmentVar+"={};");
@@ -620,7 +620,7 @@ public final class CustomConfigurator {
         private void processMsgBoxElement(Element elem) {
             String text = evalVars(elem.getAttribute("text"));
             String locText = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".text"));
-            if (locText!=null && locText.length()>0) text=locText;
+            if (locText!=null && !locText.isEmpty()) text=locText;
 
             String type = evalVars(elem.getAttribute("type"));
             messageBox(type, text);
@@ -629,7 +629,7 @@ public final class CustomConfigurator {
         private void processAskElement(Element elem) {
             String text = evalVars(elem.getAttribute("text"));
             String locText = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".text"));
-            if (locText.length()>0) text=locText;
+            if (!locText.isEmpty()) text=locText;
             String var = elem.getAttribute("var");
             if (var.isEmpty()) var="result";
 
@@ -639,7 +639,7 @@ public final class CustomConfigurator {
             } else {
                 String opts = evalVars(elem.getAttribute("options"));
                 String locOpts = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".options"));
-                if (locOpts.length()>0) opts=locOpts;
+                if (!locOpts.isEmpty()) opts=locOpts;
                 setVar(var, String.valueOf(askForOption(text, opts)));
             }
         }

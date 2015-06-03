@@ -81,7 +81,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
 
         @Override
         public boolean isValid() {
-            return getComponent().getText().trim().length() > 0;
+            return !getComponent().getText().trim().isEmpty();
         }
 
         @Override

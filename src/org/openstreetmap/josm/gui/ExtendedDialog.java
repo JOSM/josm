@@ -491,7 +491,7 @@ public class ExtendedDialog extends JDialog {
         }
 
         // Ensure all required variables are available
-        if(rememberSizePref.length() != 0 && defaultWindowGeometry != null) {
+        if (!rememberSizePref.isEmpty() && defaultWindowGeometry != null) {
             if(visible) {
                 initWindowGeometry().applySafe(this);
             } else if (isShowing()) { // should fix #6438, #6981, #8295

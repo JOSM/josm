@@ -249,7 +249,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
      * else do nothing.
      */
     private void simpleTag(String tag, String content) {
-        if (content != null && content.length() > 0) {
+        if (content != null && !content.isEmpty()) {
             open(tag);
             out.print(encode(content));
             out.println("</" + tag + ">");

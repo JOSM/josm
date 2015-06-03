@@ -146,7 +146,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         String result = "";
         result += "<html>";
         result += name;
-        if (sc != null && sc.getKeyText().length() != 0) {
+        if (sc != null && !sc.getKeyText().isEmpty()) {
             result += " ";
             result += "<font size='-2'>";
             result += "("+sc.getKeyText()+")";

@@ -103,7 +103,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", true)) {
                 try {
                     Long.parseLong(str);
-                    if (curText.length() != 0)
+                    if (!curText.isEmpty())
                         Long.parseLong(curText);
                     item = lookupItem(curText, true);
                 } catch (NumberFormatException e) {

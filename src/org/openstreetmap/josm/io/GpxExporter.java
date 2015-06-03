@@ -146,10 +146,10 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         setCanceled(false);
 
         Main.pref.put("lastAddAuthor", author.isSelected());
-        if (authorName.getText().length() != 0) {
+        if (!authorName.getText().isEmpty()) {
             Main.pref.put("lastAuthorName", authorName.getText());
         }
-        if (copyright.getText().length() != 0) {
+        if (!copyright.getText().isEmpty()) {
             Main.pref.put("lastCopyright", copyright.getText());
         }
 
@@ -163,28 +163,28 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
         // add author and copyright details to the gpx data
         if (author.isSelected()) {
-            if (authorName.getText().length() > 0) {
+            if (!authorName.getText().isEmpty()) {
                 gpxData.put(META_AUTHOR_NAME, authorName.getText());
                 gpxData.put(META_COPYRIGHT_AUTHOR, authorName.getText());
             }
-            if (email.getText().length() > 0) {
+            if (!email.getText().isEmpty()) {
                 gpxData.put(META_AUTHOR_EMAIL, email.getText());
             }
-            if (copyright.getText().length() > 0) {
+            if (!copyright.getText().isEmpty()) {
                 gpxData.put(META_COPYRIGHT_LICENSE, copyright.getText());
             }
-            if (copyrightYear.getText().length() > 0) {
+            if (!copyrightYear.getText().isEmpty()) {
                 gpxData.put(META_COPYRIGHT_YEAR, copyrightYear.getText());
             }
         }
 
         // add the description to the gpx data
-        if (desc.getText().length() > 0) {
+        if (!desc.getText().isEmpty()) {
             gpxData.put(META_DESC, desc.getText());
         }
 
         // add keywords to the gpx data
-        if (keywords.getText().length() > 0) {
+        if (!keywords.getText().isEmpty()) {
             gpxData.put(META_KEYWORDS, keywords.getText());
         }
 
@@ -270,15 +270,16 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                     authorName.setText("");
                     email.setText("");
                 }
-                boolean isAuthorSet = authorName.getText().length() != 0;
-                GpxExporter.enableCopyright(data, copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b && isAuthorSet);
+                boolean isAuthorSet = !authorName.getText().isEmpty();
+                GpxExporter.enableCopyright(data, copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning,
+                        b && isAuthorSet);
             }
         };
         author.addActionListener(authorActionListener);
 
         KeyAdapter authorNameListener = new KeyAdapter(){
             @Override public void keyReleased(KeyEvent e) {
-                boolean b = authorName.getText().length()!=0 && author.isSelected();
+                boolean b = !authorName.getText().isEmpty() && author.isSelected();
                 GpxExporter.enableCopyright(data, copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b);
             }
         };

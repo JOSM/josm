@@ -524,7 +524,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
               .append(key)
               .append("</strong>=");
             String value = tags.get(key);
-            while(value.length() != 0) {
+            while (!value.isEmpty()) {
                 sb.append(value.substring(0,Math.min(50, value.length())));
                 if (value.length() > 50) {
                     sb.append("<br>");

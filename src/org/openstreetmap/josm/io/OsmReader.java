@@ -435,7 +435,7 @@ public class OsmReader extends AbstractReader {
         }
 
         String time = parser.getAttributeValue(null, "timestamp");
-        if (time != null && time.length() != 0) {
+        if (time != null && !time.isEmpty()) {
             current.setTimestamp(DateUtils.fromString(time));
         }
 

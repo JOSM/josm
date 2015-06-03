@@ -19,7 +19,7 @@ public final class ColorHelper {
      * @return the color
      */
     public static Color html2color(String html) {
-        if (html.length() > 0 && html.charAt(0) == '#')
+        if (!html.isEmpty() && html.charAt(0) == '#')
             html = html.substring(1);
         if (html.length() == 3) {
             return html2color(new String(
