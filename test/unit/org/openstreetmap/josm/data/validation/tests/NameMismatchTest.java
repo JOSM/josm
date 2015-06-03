@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.validation.TestError;
 public class NameMismatchTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
 
@@ -26,36 +26,36 @@ public class NameMismatchTest {
     }
 
     @Test
-    public void test0() throws Exception {
+    public void test0() {
         final List<TestError> errors = test("node name:de=Europa");
-        assertThat(errors.size(), is(1));
-        assertThat(errors.get(0).getMessage(), is("A name is missing, even though name:* exists."));
+        assertSame(errors.size(), 1);
+        assertEquals(errors.get(0).getDescription(), "A name is missing, even though name:* exists.");
     }
 
     @Test
-    public void test1() throws Exception {
+    public void test1() {
         final List<TestError> errors = test("node name=Europe name:de=Europa");
-        assertThat(errors.size(), is(1));
-        assertThat(errors.get(0).getMessage(), is("Missing name:*=Europe. Add tag with correct language key."));
+        assertSame(errors.size(), 1);
+        assertEquals(errors.get(0).getDescription(), "Missing name:*=Europe. Add tag with correct language key.");
     }
 
     @Test
-    public void test2() throws Exception {
+    public void test2() {
         final List<TestError> errors = test("node name=Europe name:de=Europa name:en=Europe");
-        assertThat(errors.size(), is(0));
+        assertSame(errors.size(), 0);
     }
 
     @Test
-    public void test3() throws Exception {
+    public void test3() {
         List<TestError> errors;
         errors = test("node \"name\"=\"Italia - Italien - Italy\"");
-        assertThat(errors.size(), is(0));
+        assertSame(errors.size(), 0);
         errors = test("node name=\"Italia - Italien - Italy\" name:it=Italia");
-        assertThat(errors.size(), is(2));
+        assertSame(errors.size(), 2);
         errors = test("node name=\"Italia - Italien - Italy\" name:it=Italia name:de=Italien");
-        assertThat(errors.size(), is(1));
-        assertThat(errors.get(0).getMessage(), is("Missing name:*=Italy. Add tag with correct language key."));
+        assertSame(errors.size(), 1);
+        assertEquals(errors.get(0).getDescription(), "Missing name:*=Italy. Add tag with correct language key.");
         errors = test("node name=\"Italia - Italien - Italy\" name:it=Italia name:de=Italien name:en=Italy");
-        assertThat(errors.size(), is(0));
+        assertSame(errors.size(), 0);
     }
 }
