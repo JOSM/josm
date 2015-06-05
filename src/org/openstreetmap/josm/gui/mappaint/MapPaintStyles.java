@@ -453,7 +453,7 @@ public final class MapPaintStyles {
         public void mapPaintStyleEntryUpdated(int idx);
     }
 
-    protected static final CopyOnWriteArrayList<MapPaintSylesUpdateListener> listeners
+    private static final CopyOnWriteArrayList<MapPaintSylesUpdateListener> listeners
             = new CopyOnWriteArrayList<>();
 
     public static void addMapPaintSylesUpdateListener(MapPaintSylesUpdateListener listener) {

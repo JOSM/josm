@@ -509,19 +509,13 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
     private static final class StatisticsInfoTable extends JPanel {
 
-        private JTable infoTable;
-
-        protected void build(StatisticsTableModel model) {
-            infoTable = new JTable(model, new StatisticsTableColumnModel());
+        private StatisticsInfoTable(StatisticsTableModel model) {
+            JTable infoTable = new JTable(model, new StatisticsTableColumnModel());
             infoTable.setShowHorizontalLines(true);
             infoTable.setShowVerticalLines(false);
             infoTable.setEnabled(false);
             setLayout(new BorderLayout());
             add(infoTable, BorderLayout.CENTER);
-        }
-
-        private StatisticsInfoTable(StatisticsTableModel model) {
-            build(model);
         }
 
         @Override

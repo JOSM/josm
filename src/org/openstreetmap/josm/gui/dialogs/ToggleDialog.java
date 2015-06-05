@@ -604,13 +604,16 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         }
 
         public class DialogPopupMenu extends JPopupMenu {
-            private final ButtonGroup buttonHidingGroup = new ButtonGroup();
-            private final JMenu buttonHidingMenu = new JMenu(tr("Side buttons"));
 
+            /**
+             * Constructs a new {@code DialogPopupMenu}.
+             */
             public DialogPopupMenu() {
                 alwaysShown.setSelected(buttonHiding == ButtonHidingType.ALWAYS_SHOWN);
                 dynamic.setSelected(buttonHiding == ButtonHidingType.DYNAMIC);
                 alwaysHidden.setSelected(buttonHiding == ButtonHidingType.ALWAYS_HIDDEN);
+                ButtonGroup buttonHidingGroup = new ButtonGroup();
+                JMenu buttonHidingMenu = new JMenu(tr("Side buttons"));
                 for (JRadioButtonMenuItem rb : new JRadioButtonMenuItem[]{alwaysShown, dynamic, alwaysHidden}) {
                     buttonHidingGroup.add(rb);
                     buttonHidingMenu.add(rb);

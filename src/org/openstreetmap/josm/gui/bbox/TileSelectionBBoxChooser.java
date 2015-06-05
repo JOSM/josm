@@ -442,7 +442,6 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         public static final String TILE_BOUNDS_PROP = TileAddressInputPanel.class.getName() + ".tileBounds";
 
-        private JosmTextField tfTileAddress;
         private transient TileAddressValidator valTileAddress;
 
         protected JPanel buildTextPanel() {
@@ -466,7 +465,8 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
             gc.weightx = 1.0;
             gc.gridx = 1;
-            pnl.add(tfTileAddress = new JosmTextField(), gc);
+            JosmTextField tfTileAddress = new JosmTextField();
+            pnl.add(tfTileAddress, gc);
             valTileAddress = new TileAddressValidator(tfTileAddress);
             SelectAllOnFocusGainedDecorator.decorate(tfTileAddress);
 

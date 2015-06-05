@@ -35,11 +35,11 @@ public final class ConditionalOptionPaneUtil {
     public static final int DIALOG_DISABLED_OPTION = Integer.MIN_VALUE;
 
     /** (preference key =&gt; return value) mappings valid for the current operation (no, those two maps cannot be combined) */
-    protected static final Map<String, Integer> sessionChoices = new HashMap<>();
+    private static final Map<String, Integer> sessionChoices = new HashMap<>();
     /** (preference key =&gt; return value) mappings valid for the current session */
-    protected static final Map<String, Integer> immediateChoices = new HashMap<>();
+    private static final Map<String, Integer> immediateChoices = new HashMap<>();
     /** a set indication that (preference key) is or may be stored for the currently active bulk operation */
-    protected static final Set<String> immediateActive = new HashSet<>();
+    private static final Set<String> immediateActive = new HashSet<>();
 
     /**
      * this is a static utility class only
@@ -242,14 +242,12 @@ public final class ConditionalOptionPaneUtil {
     }
 
     /**
-     * This is a message panel used in dialogs which can be enabled/disabled with a preference
-     * setting.
+     * This is a message panel used in dialogs which can be enabled/disabled with a preference setting.
      * In addition to the normal message any {@link JOptionPane} would display it includes
      * a checkbox for enabling/disabling this particular dialog.
      *
      */
     static class MessagePanel extends JPanel {
-        private final ButtonGroup group = new ButtonGroup();
         private final JRadioButton cbShowPermanentDialog = new JRadioButton(NotShowAgain.PERMANENT.getLabel());
         private final JRadioButton cbShowSessionDialog = new JRadioButton(NotShowAgain.SESSION.getLabel());
         private final JRadioButton cbShowImmediateDialog = new JRadioButton(NotShowAgain.OPERATION.getLabel());
@@ -257,11 +255,13 @@ public final class ConditionalOptionPaneUtil {
 
         /**
          * Constructs a new panel.
-         * @param message the the message (null to add no message, Component instances are added directly, otherwise a JLabel with the string representation is added)
+         * @param message the the message (null to add no message, Component instances are added directly,
+         *                otherwise a JLabel with the string representation is added)
          * @param displayImmediateOption whether to provide "Do not show again (this session)"
          */
         public MessagePanel(Object message, boolean displayImmediateOption) {
             cbStandard.setSelected(true);
+            ButtonGroup group = new ButtonGroup();
             group.add(cbShowPermanentDialog);
             group.add(cbShowSessionDialog);
             group.add(cbShowImmediateDialog);

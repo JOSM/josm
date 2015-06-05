@@ -66,6 +66,11 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         }
     }
 
+    private List<PrefEntry> allData;
+    private List<PrefEntry> displayData = new ArrayList<>();
+    private JosmTextField txtFilter;
+    private PreferencesTable table;
+
     private AdvancedPreference() {
         super(/* ICON(preferences/) */ "advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
     }
@@ -74,11 +79,6 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     public boolean isExpert() {
         return true;
     }
-
-    protected List<PrefEntry> allData;
-    protected List<PrefEntry> displayData = new ArrayList<>();
-    protected JosmTextField txtFilter;
-    protected PreferencesTable table;
 
     @Override
     public void addGui(final PreferenceTabbedPane gui) {

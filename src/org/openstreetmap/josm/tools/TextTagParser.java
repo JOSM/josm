@@ -29,10 +29,10 @@ import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 public final class TextTagParser {
 
     // properties need JOSM restart to apply, modified rarely enough
-    protected static final int MAX_KEY_LENGTH = Main.pref.getInteger("tags.paste.max-key-length", 50);
-    protected static final int MAX_KEY_COUNT = Main.pref.getInteger("tags.paste.max-key-count", 30);
-    protected static final String KEY_PATTERN = Main.pref.get("tags.paste.tag-pattern", "[0-9a-zA-Z:_]*");
-    protected static final int MAX_VALUE_LENGTH = 255;
+    private static final int MAX_KEY_LENGTH = Main.pref.getInteger("tags.paste.max-key-length", 50);
+    private static final int MAX_KEY_COUNT = Main.pref.getInteger("tags.paste.max-key-count", 30);
+    private static final String KEY_PATTERN = Main.pref.get("tags.paste.tag-pattern", "[0-9a-zA-Z:_]*");
+    private static final int MAX_VALUE_LENGTH = 255;
 
     private TextTagParser() {
         // Hide default constructor for utils classes

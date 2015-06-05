@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -194,12 +193,12 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
 
     static class BookmarkCellRenderer extends JLabel implements ListCellRenderer<BookmarkList.Bookmark> {
 
-        private ImageIcon icon;
-
+        /**
+         * Constructs a new {@code BookmarkCellRenderer}.
+         */
         public BookmarkCellRenderer() {
             setOpaque(true);
-            icon = ImageProvider.get("dialogs", "bookmark");
-            setIcon(icon);
+            setIcon(ImageProvider.get("dialogs", "bookmark"));
         }
 
         protected void renderColor(boolean selected) {
@@ -216,10 +215,10 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             Bounds area = b.getArea();
             StringBuilder sb = new StringBuilder(128);
             sb.append("<html>min[latitude,longitude]=<strong>[")
-              .append(area.getMinLat()).append(',').append(area.getMinLon()).append("]</strong>")
-              .append("<br>max[latitude,longitude]=<strong>[")
-              .append(area.getMaxLat()).append(',').append(area.getMaxLon()).append("]</strong>")
-              .append("</html>");
+              .append(area.getMinLat()).append(',').append(area.getMinLon()).append("]</strong>"+
+                      "<br>max[latitude,longitude]=<strong>[")
+              .append(area.getMaxLat()).append(',').append(area.getMaxLon()).append("]</strong>"+
+                      "</html>");
             return sb.toString();
         }
 

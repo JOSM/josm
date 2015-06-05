@@ -317,6 +317,10 @@ public class OAuthAuthorizationWizard extends JDialog {
     }
 
     class CancelAction extends AbstractAction {
+
+        /**
+         * Constructs a new {@code CancelAction}.
+         */
         public CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
@@ -335,8 +339,10 @@ public class OAuthAuthorizationWizard extends JDialog {
     }
 
     class AcceptAccessTokenAction extends AbstractAction implements PropertyChangeListener {
-        private transient OAuthToken token;
 
+        /**
+         * Constructs a new {@code AcceptAccessTokenAction}.
+         */
         public AcceptAccessTokenAction() {
             putValue(NAME, tr("Accept Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("ok"));
@@ -358,14 +364,13 @@ public class OAuthAuthorizationWizard extends JDialog {
         public void propertyChange(PropertyChangeEvent evt) {
             if (!evt.getPropertyName().equals(AbstractAuthorizationUI.ACCESS_TOKEN_PROP))
                 return;
-            token = (OAuthToken)evt.getNewValue();
-            updateEnabledState(token);
+            updateEnabledState((OAuthToken)evt.getNewValue());
         }
     }
 
     class WindowEventHandler extends WindowAdapter {
         @Override
-        public void windowClosing(WindowEvent arg0) {
+        public void windowClosing(WindowEvent e) {
             new CancelAction().cancel();
         }
     }

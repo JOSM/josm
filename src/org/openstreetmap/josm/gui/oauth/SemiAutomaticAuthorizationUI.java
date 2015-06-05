@@ -112,7 +112,6 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      * This is the panel displayed in the first step of the semi-automatic authorisation process.
      */
     private class RetrieveRequestTokenPanel extends JPanel {
-        private JCheckBox cbShowAdvancedParameters;
 
         /**
          * Constructs a new {@code RetrieveRequestTokenPanel}.
@@ -129,7 +128,8 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
             gc.insets = new Insets(0,0,0,3);
-            pnl.add(cbShowAdvancedParameters = new JCheckBox(), gc);
+            JCheckBox cbShowAdvancedParameters = new JCheckBox();
+            pnl.add(cbShowAdvancedParameters, gc);
             cbShowAdvancedParameters.setSelected(false);
             cbShowAdvancedParameters.addItemListener(
                     new ItemListener() {

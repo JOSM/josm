@@ -766,6 +766,9 @@ public class SelectionListDialog extends ToggleDialog  {
             menu.show(parent, r.x, r.y + r.height);
         }
 
+        /**
+         * Constructs a new {@code SearchPopupMenu}.
+         */
         public SearchPopupMenu() {
             for (SearchSetting ss: org.openstreetmap.josm.actions.search.SearchAction.getSearchHistory()) {
                 add(new SearchMenuItem(ss));
@@ -779,11 +782,9 @@ public class SelectionListDialog extends ToggleDialog  {
      * @author Jan Peter Stotz
      */
     protected static class SelectionMenuItem extends JMenuItem implements ActionListener {
-        private final transient DefaultNameFormatter df = DefaultNameFormatter.getInstance();
         protected transient Collection<? extends OsmPrimitive> sel;
 
         public SelectionMenuItem(Collection<? extends OsmPrimitive> sel) {
-            super();
             this.sel = sel;
             int ways = 0;
             int nodes = 0;
@@ -815,6 +816,7 @@ public class SelectionListDialog extends ToggleDialog  {
                 text.append(tr("Unselectable now"));
                 this.sel=new ArrayList<>(); // empty selection
             }
+            DefaultNameFormatter df = DefaultNameFormatter.getInstance();
             if (ways + nodes + relations == 1) {
                 text.append(": ");
                 for(OsmPrimitive o : sel) {
