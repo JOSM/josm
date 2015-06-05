@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -32,7 +33,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class DistributeAction extends JosmAction {
 
-    private static final String ACTION_SHORT_NAME = "Distribute Nodes";
+    private static final String ACTION_SHORT_NAME = marktr("Distribute Nodes");
 
     /**
      * Constructs a new {@code DistributeAction}.
