@@ -300,7 +300,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
      * Replies the instance of a toggle dialog of type <code>type</code> managed by this
      * map frame
      *
-     * @param <T>
+     * @param <T> toggle dialog type
      * @param type the class of the toggle dialog, i.e. UserListDialog.class
      * @return the instance of a toggle dialog of type <code>type</code> managed by this
      * map frame; null, if no such dialog exists

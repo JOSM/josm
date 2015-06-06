@@ -77,7 +77,7 @@ public class ProgressInputStream extends InputStream {
 
     /**
      * Increase ticker (progress counter and displayed text) by the given amount.
-     * @param amount
+     * @param amount number of ticks
      */
     private void advanceTicker(int amount) {
         readSoFar += amount;

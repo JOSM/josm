@@ -181,7 +181,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /**
      * Replies the decision at position <code>row</code>
      *
-     * @param row
+     * @param row position
      * @return the decision at position <code>row</code>
      */
     public RelationMemberConflictDecision getDecision(int row) {

@@ -120,7 +120,7 @@ public final class ExifReader {
      * Returns the geolocation of the given EXIF GPS directory.
      * @param dirGps The EXIF GPS directory
      * @return The lat/lon read in the EXIF section, or {@code null} if {@code dirGps} is null
-     * @throws MetadataException
+     * @throws MetadataException if invalid metadata is given
      * @since 6209
      */
     public static LatLon readLatLon(GpsDirectory dirGps) throws MetadataException {

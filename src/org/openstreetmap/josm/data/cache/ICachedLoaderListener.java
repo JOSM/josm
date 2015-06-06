@@ -5,23 +5,22 @@ public interface ICachedLoaderListener {
 
     /**
      * Result of download
-     *
      */
     enum LoadResult {
         SUCCESS,
         FAILURE,
         CANCELED
     }
+
     /**
      * Will be called when K object processed. The result might be:
      * LoadResult.SUCCESS when object was fetched
      * LoadResult.FAILURE when there was a failure during download
      * LoadResult.REJECTED when job was rejected because of full queue
      *
-     * @param data
-     * @param attributes
-     * @param result
+     * @param data cache entry contents
+     * @param attributes cache entry attributes
+     * @param result load result (success, failure, canceled)
      */
     public void loadingFinished(CacheEntry data, CacheEntryAttributes attributes, LoadResult result);
-
 }

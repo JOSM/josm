@@ -432,9 +432,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     /**
-     *
-     * @param xIndex
-     * @param yIndex
+     * Returns east/north for a x/y couple.
+     * @param xIndex x index
+     * @param yIndex y index
      * @return Real EastNorth of given tile. dx/dy is not counted in
      */
     public EastNorth getEastNorth(int xIndex, int yIndex) {
@@ -530,8 +530,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     /**
-     *
-     * @param request
+     * Replies request priority.
+     * @param request WMS request
      * @return -1 if request is no longer needed, otherwise priority of request (lower number &lt;=&gt; more important request)
      */
     private int getRequestPriority(WMSRequest request) {
@@ -718,7 +718,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
      * Updates the given layer’s resolution settings to the current zoom level. Does
      * not update existing tiles, only new ones will be subject to the new settings.
      *
-     * @param layer
+     * @param layer WMS layer
      * @param snap  Set to true if the resolution should snap to certain values instead of
      *              matching the current zoom level perfectly
      */
@@ -738,7 +738,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
      * updates existing tiles. If round is true, tiles will be updated gradually, if
      * false they will be removed instantly (and redrawn only after the new resolution
      * image has been loaded).
-     * @param layer
+     * @param layer WMS layer
      * @param snap  Set to true if the resolution should snap to certain values instead of
      *              matching the current zoom level perfectly
      */

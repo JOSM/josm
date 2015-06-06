@@ -50,7 +50,7 @@ public class GeoPropertyIndex<T> {
     /**
      * Create new GeoPropertyIndex.
      * @param geoProp the input property that should be made faster by this index
-     * @param maxLevel
+     * @param maxLevel max level
      */
     public GeoPropertyIndex(GeoProperty<T> geoProp, int maxLevel) {
         this.geoProp = geoProp;

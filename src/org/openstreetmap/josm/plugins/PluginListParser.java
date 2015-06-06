@@ -31,7 +31,7 @@ public class PluginListParser {
      * @param url the plugin download url
      * @param manifest the plugin manifest
      * @return a plugin information object
-     * @throws PluginListParseException
+     * @throws PluginListParseException if plugin manifest cannot be parsed
      */
     protected static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException{
         try {

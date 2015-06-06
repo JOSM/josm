@@ -44,9 +44,9 @@ public abstract class ElemStyle implements StyleKeys {
 
     /**
      * draws a primitive
-     * @param primitive
-     * @param paintSettings
-     * @param painter
+     * @param primitive primitive to draw
+     * @param paintSettings paint settings
+     * @param painter painter
      * @param selected true, if primitive is selected
      * @param outermember true, if primitive is not selected and outer member of a selected multipolygon relation
      * @param member true, if primitive is not selected and member of a selected relation

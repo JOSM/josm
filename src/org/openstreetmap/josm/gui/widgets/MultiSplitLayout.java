@@ -1115,7 +1115,7 @@ public class MultiSplitLayout implements LayoutManager {
 
         /**
          * Dividers can't have a weight, they don't grow or shrink.
-         * @throws UnsupportedOperationException
+         * @throws UnsupportedOperationException always
          */
         @Override
         public void setWeight(double weight) {

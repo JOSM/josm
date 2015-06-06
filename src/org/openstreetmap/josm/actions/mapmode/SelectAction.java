@@ -665,7 +665,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * sets the mapmode according to key modifiers and if there are any
      * selectables nearby. Everything has to be pre-determined for this
      * function; its main purpose is to centralize what the modifiers do.
-     * @param hasSelectionNearby
+     * @param hasSelectionNearby {@code true} if some primitves are selectable nearby
      */
     private void determineMapMode(boolean hasSelectionNearby) {
         if (shift && ctrl) {

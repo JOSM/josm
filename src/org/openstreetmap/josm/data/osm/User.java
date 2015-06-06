@@ -147,7 +147,7 @@ public final class User {
     /**
      * Adds a user name to the list if it is not there, yet.
      *
-     * @param name
+     * @param name User name
      */
     public void addName(String name) {
         names.add(name);
@@ -156,7 +156,7 @@ public final class User {
     /**
      * Returns true if the name is in the names list
      *
-     * @param name
+     * @param name User name
      * @return <code>true</code> if the name is in the names list
      */
     public boolean hasName(String name) {

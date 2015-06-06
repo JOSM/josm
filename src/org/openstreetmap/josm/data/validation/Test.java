@@ -250,7 +250,7 @@ public class Test extends AbstractVisitor {
     /**
      * Fixes the error with the appropriate command
      *
-     * @param testError
+     * @param testError error to fix
      * @return The command to fix the error
      */
     public Command fixError(TestError testError) {

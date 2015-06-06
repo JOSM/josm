@@ -108,8 +108,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     /**
      * Replace member at position specified by index.
-     * @param index
-     * @param member
+     * @param index index (positive integer)
+     * @param member relation member to set
      * @return Member that was at the position
      */
     public RelationMember setMember(int index, RelationMember member) {
@@ -132,7 +132,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     /**
      * Removes member at specified position.
-     * @param index
+     * @param index index (positive integer)
      * @return Member that was at the position
      */
     public RelationMember removeMember(int index) {
@@ -217,8 +217,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     /**
      * Creates new relation
-     * @param id
-     * @param version
+     * @param id the id
+     * @param version version number (positive integer)
      */
     public Relation(long id, int version) {
         super(id, version, false);

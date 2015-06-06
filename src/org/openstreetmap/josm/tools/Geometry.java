@@ -226,7 +226,7 @@ public final class Geometry {
      * @param lineP1 first point in path
      * @param lineP2 second point in path
      * @param lineP3 third point in path
-     * @param testPoint
+     * @param testPoint point to test
      * @return true if to the right side, false otherwise
      */
     public static boolean isToTheRightSideOfLine(Node lineP1, Node lineP2, Node lineP3, Node testPoint) {
@@ -713,8 +713,8 @@ public final class Geometry {
     /**
      * Returns angle of a segment defined with 2 point coordinates.
      *
-     * @param p1
-     * @param p2
+     * @param p1 first point
+     * @param p2 second point
      * @return Angle in radians (-pi, pi]
      */
     public static double getSegmentAngle(EastNorth p1, EastNorth p2) {
@@ -728,9 +728,9 @@ public final class Geometry {
     /**
      * Returns angle of a corner defined with 3 point coordinates.
      *
-     * @param p1
+     * @param p1 first point
      * @param p2 Common endpoint
-     * @param p3
+     * @param p3 third point
      * @return Angle in radians (-pi, pi]
      */
     public static double getCornerAngle(EastNorth p1, EastNorth p2, EastNorth p3) {

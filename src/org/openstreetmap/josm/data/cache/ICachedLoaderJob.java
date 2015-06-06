@@ -36,10 +36,9 @@ public interface ICachedLoaderJob<K> {
     public CacheEntry get();
 
     /**
-     * Submit job for background fetch, and listener will be
-     * fed with value object
+     * Submit job for background fetch, and listener will be fed with value object
      *
-     * @param listener
+     * @param listener cache loader listener
      * @param force true if the load should skip all the caches (local & remote)
      */
     public void submit(ICachedLoaderListener listener, boolean force);

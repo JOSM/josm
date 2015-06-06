@@ -801,7 +801,7 @@ public class OsmApi extends OsmConnection {
      * @param text Comment entered by user to open the note
      * @param monitor Progress monitor
      * @return Note as it exists on the server after creation (ID assigned)
-     * @throws OsmTransferException
+     * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
     public Note createNote(LatLon latlon, String text, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
@@ -823,7 +823,7 @@ public class OsmApi extends OsmConnection {
      * @param comment Text of the comment
      * @param monitor Progress monitor
      * @return Note returned by the API after the comment was added
-     * @throws OsmTransferException
+     * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
     public Note addCommentToNote(Note note, String comment, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
@@ -841,7 +841,7 @@ public class OsmApi extends OsmConnection {
      * @param closeMessage Optional message supplied by the user when closing the note
      * @param monitor Progress monitor
      * @return Note returned by the API after the close operation
-     * @throws OsmTransferException
+     * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
     public Note closeNote(Note note, String closeMessage, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);
@@ -863,7 +863,7 @@ public class OsmApi extends OsmConnection {
      * @param reactivateMessage Optional message supplied by the user when reopening the note
      * @param monitor Progress monitor
      * @return Note returned by the API after the reopen operation
-     * @throws OsmTransferException
+     * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
     public Note reopenNote(Note note, String reactivateMessage, ProgressMonitor monitor) throws OsmTransferException {
         initialize(monitor);

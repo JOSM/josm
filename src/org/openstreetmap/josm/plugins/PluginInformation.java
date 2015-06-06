@@ -491,7 +491,7 @@ public class PluginInformation {
 
     /**
      * Sets the name
-     * @param name
+     * @param name Plugin name
      */
     public void setName(String name) {
         this.name = name;

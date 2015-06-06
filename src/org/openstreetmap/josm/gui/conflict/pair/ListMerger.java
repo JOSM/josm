@@ -400,7 +400,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
     /**
      * Constructs a new {@code ListMerger}.
-     * @param model
+     * @param model list merger model
      */
     public ListMerger(ListMergeModel<T> model) {
         this.model = model;

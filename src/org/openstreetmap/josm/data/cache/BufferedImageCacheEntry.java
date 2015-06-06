@@ -33,7 +33,7 @@ public class BufferedImageCacheEntry extends CacheEntry {
      * to reduce overhead of ImageIO
      *
      * @return BufferedImage of cache entry content
-     * @throws IOException
+     * @throws IOException if an error occurs during reading.
      */
     public BufferedImage getImage() throws IOException {
         if (img != null)

@@ -54,7 +54,7 @@ public enum Compression {
     /**
      * Returns an un-compressing {@link InputStream} for {@code in}.
      *
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     public InputStream getUncompressedInputStream(InputStream in) throws IOException {
         switch (this) {
@@ -73,7 +73,7 @@ public enum Compression {
     /**
      * Returns an un-compressing {@link InputStream} for the {@link File} {@code file}.
      *
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     @SuppressWarnings("resource")
     public static InputStream getUncompressedFileInputStream(File file) throws IOException {
@@ -83,7 +83,7 @@ public enum Compression {
     /**
      * Returns an un-compressing {@link InputStream} for the {@link URL} {@code url}.
      *
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     public static InputStream getUncompressedURLInputStream(URL url) throws IOException {
         return Utils.openURLAndDecompress(url, true);
@@ -92,7 +92,7 @@ public enum Compression {
     /**
      * Returns a compressing {@link OutputStream} for {@code out}.
      *
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     public OutputStream getCompressedOutputStream(OutputStream out) throws IOException {
         switch (this) {
@@ -111,7 +111,7 @@ public enum Compression {
     /**
      * Returns a compressing {@link OutputStream} for the {@link File} {@code file}.
      *
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     @SuppressWarnings("resource")
     public static OutputStream getCompressedFileOutputStream(File file) throws IOException {

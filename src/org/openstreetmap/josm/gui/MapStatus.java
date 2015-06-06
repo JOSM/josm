@@ -395,8 +395,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          * Creates a popup for the given content next to the cursor. Tries to
          * keep the popup on screen and shows a vertical scrollbar, if the
          * screen is too small.
-         * @param content
-         * @param ms
+         * @param content popup content
+         * @param ms mouse state
          * @return popup
          */
         private Popup popupCreatePopup(Component content, MouseState ms) {
@@ -431,7 +431,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         /**
          * Calls this to update the element that is shown in the statusbar
-         * @param ms
+         * @param ms mouse state
          */
         private void statusBarElementUpdate(MouseState ms) {
             final OsmPrimitive osmNearest = mv.getNearestNodeOrWay(ms.mousePos, OsmPrimitive.isUsablePredicate, false);

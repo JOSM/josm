@@ -187,7 +187,7 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainNestedInvocationTargetException(Exception e) {
-        InvocationTargetException ex = getNestedException(e, InvocationTargetException.class);
+        InvocationTargetException ex = ExceptionUtil.getNestedException(e, InvocationTargetException.class);
         if (ex != null) {
             // Users should be able to submit a bug report for an invocation target exception
             //
@@ -403,54 +403,32 @@ public final class ExceptionDialogUtil {
     }
 
     /**
-     * Replies the first nested exception of type <code>nestedClass</code> (including
-     * the root exception <code>e</code>) or null, if no such exception is found.
-     *
-     * @param <T>
-     * @param e the root exception
-     * @param nestedClass the type of the nested exception
-     * @return the first nested exception of type <code>nestedClass</code> (including
-     * the root exception <code>e</code>) or null, if no such exception is found.
-     */
-    protected static <T> T getNestedException(Exception e, Class<T> nestedClass) {
-        Throwable t = e;
-        while (t != null && !(nestedClass.isInstance(t))) {
-            t = t.getCause();
-        }
-        if (t == null)
-            return null;
-        else if (nestedClass.isInstance(t))
-            return nestedClass.cast(t);
-        return null;
-    }
-
-    /**
      * Explains an {@link OsmTransferException} to the user.
      *
      * @param e the {@link OsmTransferException}
      */
     public static void explainOsmTransferException(OsmTransferException e) {
-        if (getNestedException(e, SecurityException.class) != null) {
+        if (ExceptionUtil.getNestedException(e, SecurityException.class) != null) {
             explainSecurityException(e);
             return;
         }
-        if (getNestedException(e, SocketException.class) != null) {
+        if (ExceptionUtil.getNestedException(e, SocketException.class) != null) {
             explainNestedSocketException(e);
             return;
         }
-        if (getNestedException(e, UnknownHostException.class) != null) {
+        if (ExceptionUtil.getNestedException(e, UnknownHostException.class) != null) {
             explainNestedUnkonwnHostException(e);
             return;
         }
-        if (getNestedException(e, IOException.class) != null) {
+        if (ExceptionUtil.getNestedException(e, IOException.class) != null) {
             explainNestedIOException(e);
             return;
         }
-        if (getNestedException(e, IllegalDataException.class) != null) {
+        if (ExceptionUtil.getNestedException(e, IllegalDataException.class) != null) {
             explainNestedIllegalDataException(e);
             return;
         }
-        if (getNestedException(e, OfflineAccessException.class) != null) {
+        if (ExceptionUtil.getNestedException(e, OfflineAccessException.class) != null) {
             explainNestedOfflineAccessException(e);
             return;
         }
@@ -533,7 +511,7 @@ public final class ExceptionDialogUtil {
      * @param e the {@link Exception}
      */
     public static void explainException(Exception e) {
-        if (getNestedException(e, InvocationTargetException.class) != null) {
+        if (ExceptionUtil.getNestedException(e, InvocationTargetException.class) != null) {
             explainNestedInvocationTargetException(e);
             return;
         }

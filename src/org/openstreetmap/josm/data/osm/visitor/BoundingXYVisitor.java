@@ -106,7 +106,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
      *
-     * @param enlargeDegree
+     * @param enlargeDegree number of degrees to enlarge on each side
      */
     public void enlargeBoundingBox(double enlargeDegree) {
         if (bounds == null)
@@ -140,7 +140,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
      *
-     * @param maxEnlargePercent
+     * @param maxEnlargePercent maximum enlargement in percentage (100.0 for 100%)
      */
     public void enlargeBoundingBoxLogarithmically(double maxEnlargePercent) {
         if (bounds == null)

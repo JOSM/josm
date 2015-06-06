@@ -954,7 +954,7 @@ public final class CustomConfigurator {
      * @param engine - JS engine to put object
      * @param tmpPref - preferences to fill from JS
      * @param varInJS - JS variable name, where preferences are stored
-     * @throws ScriptException
+     * @throws ScriptException if the evaluation fails
      */
     public static void readPrefsFromJS(ScriptEngine engine, Preferences tmpPref, String varInJS) throws ScriptException {
         String finish =
@@ -1039,7 +1039,7 @@ public final class CustomConfigurator {
      * @param tmpPref - preferences to convert
      * @param whereToPutInJS - variable name to store preferences in JS
      * @param includeDefaults - include known default values to JS objects
-     * @throws ScriptException
+     * @throws ScriptException if the evaluation fails
      */
     public static void loadPrefsToJS(ScriptEngine engine, Preferences tmpPref, String whereToPutInJS, boolean includeDefaults) throws ScriptException {
         Map<String, String> stringMap =  new TreeMap<>();

@@ -148,7 +148,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * Reads referring ways from the API server and replies them in a {@link DataSet}
      *
      * @return the data set
-     * @throws OsmTransferException
+     * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
     protected DataSet getReferringWays(ProgressMonitor progressMonitor) throws OsmTransferException {
         return getReferringPrimitives(progressMonitor, "/ways", tr("Downloading referring ways ..."));
@@ -159,7 +159,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      *
      * @param progressMonitor the progress monitor
      * @return the data set
-     * @throws OsmTransferException
+     * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
     protected DataSet getReferringRelations(ProgressMonitor progressMonitor) throws OsmTransferException {
         return getReferringPrimitives(progressMonitor, "/relations", tr("Downloading referring relations ..."));

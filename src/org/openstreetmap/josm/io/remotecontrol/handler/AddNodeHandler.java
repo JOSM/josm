@@ -75,7 +75,7 @@ public class AddNodeHandler extends RequestHandler {
 
     /**
      * Adds a node, implements the GET /add_node?lon=...&amp;lat=... request.
-     * @param args
+     * @param args request arguments
      */
     private void addNode(Map<String, String> args){
 

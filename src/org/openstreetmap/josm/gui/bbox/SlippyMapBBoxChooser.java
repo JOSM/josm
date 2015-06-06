@@ -91,7 +91,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
 
     /**
      * Plugins that wish to add custom tile sources to slippy map choose should call this method
-     * @param tileSourceProvider
+     * @param tileSourceProvider new tile source provider
      */
     public static void addTileSourceProvider(TileSourceProvider tileSourceProvider) {
         providers.addIfAbsent(tileSourceProvider);
@@ -236,11 +236,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     }
 
     /**
-     * Callback for the OsmMapControl. (Re-)Sets the start and end point of the
-     * selection rectangle.
+     * Callback for the OsmMapControl. (Re-)Sets the start and end point of the selection rectangle.
      *
-     * @param aStart
-     * @param aEnd
+     * @param aStart selection start
+     * @param aEnd selection end
      */
     public void setSelection(Point aStart, Point aEnd) {
         if (aStart == null || aEnd == null || aStart.x == aEnd.x || aStart.y == aEnd.y)

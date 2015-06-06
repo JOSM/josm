@@ -115,17 +115,17 @@ public interface ProgressMonitor {
      * Normal subtask
      * @param title Can be {@code null}, in that case task title is not changed
      */
-
     void subTask(String title);
+
     /**
      * Shows additional text
+     * @param text custom text
      */
-
     void setCustomText(String text);
+
     /**
-     * Show extra text after normal task title. Hack for ProgressInputStream to show number of kB
-     * already downloaded
-     * @param text
+     * Show extra text after normal task title. Hack for ProgressInputStream to show number of kB already downloaded
+     * @param text extra text
      */
     void setExtraText(String text);
 

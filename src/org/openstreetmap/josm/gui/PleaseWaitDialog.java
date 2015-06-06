@@ -106,7 +106,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
 
     /**
      * Sets a custom text line below currentAction. Can be used to display additional information
-     * @param text
+     * @param text custom text
      */
     @Override
     public void setCustomText(String text) {

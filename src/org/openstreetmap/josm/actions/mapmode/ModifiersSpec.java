@@ -16,7 +16,7 @@ public class ModifiersSpec {
      *  'A' = Alt, 'S' = Shift, 'C' = Ctrl
      *  Lowercase signifies off and '?' means unknown/optional.
      *  Order is Alt, Shift, Ctrl
-     * @param str
+     * @param str 3 letters string defining modifiers
      */
     public ModifiersSpec(String str) {
         assert str.length() == 3;

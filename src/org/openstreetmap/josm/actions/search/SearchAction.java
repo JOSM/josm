@@ -409,8 +409,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     }
 
     /**
-     * Launches the dialog for specifying search criteria and runs
-     * a search
+     * Launches the dialog for specifying search criteria and runs a search
      */
     public static void search() {
         SearchSetting se = showSearchDialog(lastSearch);
@@ -423,7 +422,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * Adds the search specified by the settings in <code>s</code> to the
      * search history and performs the search.
      *
-     * @param s
+     * @param s search settings
      */
     public static void searchWithHistory(SearchSetting s) {
         saveToHistory(s);
@@ -431,6 +430,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         search(s);
     }
 
+    /**
+     * Performs the search specified by the settings in <code>s</code> without saving it to search history.
+     *
+     * @param s search settings
+     */
     public static void searchWithoutHistory(SearchSetting s) {
         lastSearch = new SearchSetting(s);
         search(s);
@@ -485,8 +489,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     }
 
     /**
-     * Version of getSelection that is customized for filter, but should
-     * also work in other context.
+     * Version of getSelection that is customized for filter, but should also work in other context.
      *
      * @param s the search settings
      * @param all the collection of all the primitives that should be considered

@@ -856,8 +856,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     /**
      * highlights a given GeneralPath using the settings from BasicStroke to match the line's
      * style. Width of the highlight is hard coded.
-     * @param path
-     * @param line
+     * @param path path to draw
+     * @param line line style
      */
     private void drawPathHighlight(GeneralPath path, BasicStroke line) {
         if(path == null)

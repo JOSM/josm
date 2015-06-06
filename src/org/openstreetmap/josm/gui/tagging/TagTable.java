@@ -473,7 +473,8 @@ public class TagTable extends JTable  {
     }
 
     /**
-     * @param autoCompletionList
+     * Sets the editor autocompletion list
+     * @param autoCompletionList autocompletion list
      */
     public void setAutoCompletionList(AutoCompletionList autoCompletionList) {
         if (autoCompletionList == null)
@@ -519,7 +520,7 @@ public class TagTable extends JTable  {
     /**
      * Inject a tag cell editor in the tag table
      *
-     * @param editor
+     * @param editor tag cell editor
      */
     public void setTagCellEditor(TagCellEditor editor) {
         if (isEditing()) {

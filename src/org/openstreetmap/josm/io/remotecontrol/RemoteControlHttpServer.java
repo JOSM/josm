@@ -112,7 +112,7 @@ public class RemoteControlHttpServer extends Thread {
     /**
      * Stops the HTTP server
      *
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     public void stopServer() throws IOException {
         Main.info(marktr("RemoteControl::Server {0}:{1} stopped."),

@@ -113,7 +113,7 @@ public class RemoteControlHttpsServer extends Thread {
      * @param t one of 4 known types
      * @param v value
      * @return which one
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     private static GeneralName createGeneralName(String t, String v) throws IOException {
         GeneralNameInterface gn;

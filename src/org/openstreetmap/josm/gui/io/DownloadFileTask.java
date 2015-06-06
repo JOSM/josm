@@ -172,9 +172,9 @@ public class DownloadFileTask extends PleaseWaitRunnable{
     /**
      * Recursive unzipping function
      * TODO: May be placed somewhere else - Tools.Utils?
-     * @param file
-     * @param dir
-     * @throws IOException
+     * @param file zip file
+     * @param dir output directory
+     * @throws IOException if any I/O error occurs
      */
     public static void unzipFileRecursively(File file, String dir) throws IOException {
         try (ZipFile zf = new ZipFile(file, StandardCharsets.UTF_8)) {

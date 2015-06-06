@@ -135,7 +135,7 @@ public class CachedFile {
 
     /**
      * Set the caching strategy. Only applies to URLs.
-     * @param cachingStrategy
+     * @param cachingStrategy caching strategy
      * @return this object
      */
     public CachedFile setCachingStrategy(CachingStrategy cachingStrategy) {

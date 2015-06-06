@@ -125,8 +125,8 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     protected abstract void setValueAt(DefaultTableModel model, Object value, int row, int col);
 
     /**
-     *
-     * @param entry
+     * Replies primitive from my dataset referenced by entry
+     * @param entry entry
      * @return Primitive from my dataset referenced by entry
      */
     public OsmPrimitive getMyPrimitive(T entry) {

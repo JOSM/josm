@@ -129,8 +129,8 @@ public class Storage<T> extends AbstractSet<T> {
     }
     /**
      * constructor
-     * @param ha
-     * @param capacity
+     * @param ha hash
+     * @param capacity capacity
      * @param safeIterator If set to false, you must not modify the Storage
      *          while iterating over it. If set to true, you can safely
      *          modify, but the read-only iteration will happen on a copy

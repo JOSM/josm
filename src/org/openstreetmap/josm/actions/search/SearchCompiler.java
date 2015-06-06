@@ -82,7 +82,7 @@ public class SearchCompiler {
 
     /**
      * Add (register) MatchFactory with SearchCompiler
-     * @param factory
+     * @param factory match factory
      */
     public static void addMatchFactory(MatchFactory factory) {
         for (String keyword : factory.getKeywords()) {
@@ -1354,7 +1354,7 @@ public class SearchCompiler {
      * Parse search string.
      *
      * @return match determined by search string
-     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError
+     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError if search expression cannot be parsed
      */
     public Match parse() throws ParseError {
         Match m = parseExpression();
@@ -1369,7 +1369,7 @@ public class SearchCompiler {
      * Parse expression. This is a recursive method.
      *
      * @return match determined by parsing expression
-     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError
+     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError if search expression cannot be parsed
      */
     private Match parseExpression() throws ParseError {
         Match factor = parseFactor();
@@ -1396,7 +1396,7 @@ public class SearchCompiler {
      *
      * @param errorMessage to display if parsing error occurs
      * @return match determined by parsing expression
-     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError
+     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError if search expression cannot be parsed
      * @see #parseExpression()
      */
     private Match parseExpression(String errorMessage) throws ParseError {
@@ -1411,7 +1411,7 @@ public class SearchCompiler {
      * Parse next factor (a search operator or search term).
      *
      * @return match determined by parsing factor string
-     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError
+     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError if search expression cannot be parsed
      */
     private Match parseFactor() throws ParseError {
         if (tokenizer.readIfEqual(Token.LEFT_PARENT)) {

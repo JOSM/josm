@@ -953,7 +953,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
 
     /**
      * Show message and stack trace in log in case primitive is not found
-     * @param primitiveId
+     * @param primitiveId primitive id to look for
      * @return Primitive by id.
      */
     private OsmPrimitive getPrimitiveByIdChecked(PrimitiveId primitiveId) {

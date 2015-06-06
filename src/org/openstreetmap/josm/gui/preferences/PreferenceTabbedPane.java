@@ -157,7 +157,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     /**
      * Add validation listener to currently open preferences dialog. Calling to removeValidationListener is not necessary, all listeners will
      * be automatically removed when dialog is closed
-     * @param validationListener
+     * @param validationListener validation listener to add
      */
     public void addValidationListener(ValidationListener validationListener) {
         validationListeners.add(validationListener);

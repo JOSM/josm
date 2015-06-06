@@ -365,9 +365,9 @@ public abstract class OsmServerReader extends OsmConnection {
     /**
      * Downloads notes from a given raw URL. The URL is assumed to be complete and no API limits are added
      *
-     * @param progressMonitor
+     * @param progressMonitor progress monitor
      * @return A list of notes parsed from the URL
-     * @throws OsmTransferException
+     * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
     public List<Note> parseRawNotes(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
@@ -375,9 +375,9 @@ public abstract class OsmServerReader extends OsmConnection {
 
     /**
      * Download notes from a URL that contains a bzip2 compressed notes dump file
-     * @param progressMonitor
+     * @param progressMonitor progress monitor
      * @return A list of notes parsed from the URL
-     * @throws OsmTransferException
+     * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
     public List<Note> parseRawNotesBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;

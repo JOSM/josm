@@ -32,8 +32,8 @@ public class BBox {
      * Constructs a new {@code BBox} defined by points <code>a</code> and <code>b</code>.
      * Result is minimal BBox containing both points.
      *
-     * @param a
-     * @param b
+     * @param a first point
+     * @param b second point
      */
     public BBox(LatLon a, LatLon b) {
         this(a.lon(), a.lat(), b.lon(), b.lat());

@@ -105,7 +105,7 @@ public class OsmServerObjectReader extends OsmServerReader {
      *
      * @param progressMonitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the downloaded data
-     * @throws OsmTransferException
+     * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {

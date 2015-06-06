@@ -44,7 +44,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     private static final String SPECIAL_VALUE_ID = "id";
     private static final String SPECIAL_VALUE_LOCAL_NAME = "localname";
 
-
     /**
      * An object can be disabled by the filter mechanism.
      * Then it will show in a shade of gray on the map or it is completely
@@ -114,12 +113,12 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      *
      * If <code>list</code> is null, replies an empty list.
      *
-     * @param <T>
+     * @param <T> type of data (must be one of the {@link OsmPrimitive} types
      * @param list  the original list
      * @param type the type to filter for
      * @return the sub-list of OSM primitives of type <code>type</code>
      */
-    public static <T extends OsmPrimitive>  List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
+    public static <T extends OsmPrimitive> List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
         if (list == null) return Collections.emptyList();
         List<T> ret = new LinkedList<>();
         for(OsmPrimitive p: list) {
@@ -248,7 +247,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * positive number.
      *
      * @param id the id
-     * @param allowNegativeId
+     * @param allowNegativeId {@code true} to allow negative id
      * @throws IllegalArgumentException if id &lt; 0 and allowNegativeId is false
      */
     protected OsmPrimitive(long id, boolean allowNegativeId) {
@@ -277,9 +276,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      *
      * If id is not &gt; 0 version is ignored and set to 0.
      *
-     * @param id
-     * @param version
-     * @param allowNegativeId
+     * @param id the id
+     * @param version the version (positive integer)
+     * @param allowNegativeId {@code true} to allow negative id
      * @throws IllegalArgumentException if id &lt; 0 and allowNegativeId is false
      */
     protected OsmPrimitive(long id, int version, boolean allowNegativeId) {
@@ -287,7 +286,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         this.version = (id > 0 ? version : 0);
         setIncomplete(id > 0 && version == 0);
     }
-
 
     /*----------
      * MAPPAINT
@@ -312,7 +310,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * This method should never ever by called from somewhere else than Dataset.addPrimitive or removePrimitive methods
-     * @param dataSet
+     * @param dataSet the parent dataset
      */
     void setDataset(DataSet dataSet) {
         if (this.dataSet != null && dataSet != null && this.dataSet != dataSet)
@@ -1174,16 +1172,14 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
-     * Replies true if this primitive and other are equal with respect to their
-     * semantic attributes.
+     * Replies true if this primitive and other are equal with respect to their semantic attributes.
      * <ol>
      *   <li>equal id</li>
      *   <li>both are complete or both are incomplete</li>
      *   <li>both have the same tags</li>
      * </ol>
-     * @param other
-     * @return true if this primitive and other are equal with respect to their
-     * semantic attributes.
+     * @param other other primitive to compare
+     * @return true if this primitive and other are equal with respect to their semantic attributes.
      */
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
         if (!isNew() &&  id != other.id)
@@ -1196,8 +1192,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
-     * Replies true if this primitive and other are equal with respect to their
-     * technical attributes. The attributes:
+     * Replies true if this primitive and other are equal with respect to their technical attributes.
+     * The attributes:
      * <ol>
      *   <li>deleted</li>
      *   <li>modified</li>
@@ -1208,14 +1204,12 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * </ol>
      * have to be equal
      * @param other the other primitive
-     * @return true if this primitive and other are equal with respect to their
-     * technical attributes
+     * @return true if this primitive and other are equal with respect to their technical attributes
      */
     public boolean hasEqualTechnicalAttributes(OsmPrimitive other) {
         if (other == null) return false;
 
-        return
-                isDeleted() == other.isDeleted()
+        return  isDeleted() == other.isDeleted()
                 && isModified() == other.isModified()
                 && timestamp == other.timestamp
                 && version == other.version

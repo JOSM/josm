@@ -503,14 +503,15 @@ public class WmsCache {
     /**
      *
      * @param img Used only when overlapping is used, when not used, used raw from imageData
-     * @param imageData
-     * @param projection
-     * @param pixelPerDegree
-     * @param east
-     * @param north
-     * @throws IOException
+     * @param imageData input stream to raw image data
+     * @param projection current projection
+     * @param pixelPerDegree number of pixels per degree
+     * @param east easting
+     * @param north northing
+     * @throws IOException if any I/O error occurs
      */
-    public synchronized void saveToCache(BufferedImage img, InputStream imageData, Projection projection, double pixelPerDegree, double east, double north) throws IOException {
+    public synchronized void saveToCache(BufferedImage img, InputStream imageData, Projection projection, double pixelPerDegree, double east, double north)
+            throws IOException {
         ProjectionEntries projectionEntries = getProjectionEntries(projection);
         CacheEntry entry = findEntry(projectionEntries, pixelPerDegree, east, north);
         File imageFile;
@@ -522,7 +523,8 @@ public class WmsCache {
             } else {
                 mimeType = URLConnection.guessContentTypeFromStream(imageData);
             }
-            entry = new CacheEntry(pixelPerDegree, east, north, tileSize,generateFileName(projectionEntries, pixelPerDegree, projection, east, north, mimeType));
+            entry = new CacheEntry(pixelPerDegree, east, north,
+                    tileSize,generateFileName(projectionEntries, pixelPerDegree, projection, east, north, mimeType));
             entry.lastUsed = System.currentTimeMillis();
             entry.lastModified = entry.lastUsed;
             projectionEntries.entries.add(entry);

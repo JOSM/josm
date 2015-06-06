@@ -533,8 +533,8 @@ public class GpxReader implements GpxConstants {
      * data in case of an error.
      * @return true if file was properly parsed, false if there was error during
      * parsing but some data were parsed anyway
-     * @throws SAXException
-     * @throws IOException
+     * @throws SAXException if any SAX parsing error occurs
+     * @throws IOException if any I/O error occurs
      */
     public boolean parse(boolean tryToFinish) throws SAXException, IOException {
         Parser parser = new Parser();

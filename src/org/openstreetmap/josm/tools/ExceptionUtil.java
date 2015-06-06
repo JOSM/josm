@@ -613,13 +613,14 @@ public final class ExceptionUtil {
      * Replies the first nested exception of type <code>nestedClass</code> (including
      * the root exception <code>e</code>) or null, if no such exception is found.
      *
-     * @param <T>
+     * @param <T> nested exception type
      * @param e the root exception
      * @param nestedClass the type of the nested exception
      * @return the first nested exception of type <code>nestedClass</code> (including
      * the root exception <code>e</code>) or null, if no such exception is found.
+     * @since 8470
      */
-    protected static <T> T getNestedException(Exception e, Class<T> nestedClass) {
+    public static <T> T getNestedException(Exception e, Class<T> nestedClass) {
         Throwable t = e;
         while (t != null && !(nestedClass.isInstance(t))) {
             t = t.getCause();

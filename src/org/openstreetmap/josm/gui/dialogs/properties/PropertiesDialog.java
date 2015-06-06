@@ -500,7 +500,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * This simply fires up an {@link RelationEditor} for the relation shown; everything else
      * is the editor's business.
      *
-     * @param row
+     * @param row position
      */
     private void editMembership(int row) {
         Relation relation = (Relation)membershipData.getValueAt(row, 0);

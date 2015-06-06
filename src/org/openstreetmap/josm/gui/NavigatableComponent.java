@@ -328,7 +328,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * @param r
+     * @param r rectangle
      * @return Minimum bounds that will cover rectangle
      */
     public Bounds getLatLonBounds(Rectangle r) {

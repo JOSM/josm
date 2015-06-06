@@ -194,10 +194,9 @@ public final class TextTagParser {
 
     /**
      * Apply different methods to extract tag-value pairs from arbitrary text
-     * @param buf
+     * @param buf buffer
      * @return null if no format is suitable
      */
-
     public static Map<String,String> readTagsFromText(String buf) {
         Map<String,String> tags;
 

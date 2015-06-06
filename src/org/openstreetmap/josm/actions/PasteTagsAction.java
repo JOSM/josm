@@ -77,11 +77,10 @@ public final class PasteTagsAction extends JosmAction {
         /**
          * Replies all primitives of type <code>type</code> in the current selection.
          *
-         * @param <T>
          * @param type  the type
          * @return all primitives of type <code>type</code> in the current selection.
          */
-        protected <T extends PrimitiveData> Collection<? extends PrimitiveData> getSourcePrimitivesByType(OsmPrimitiveType type) {
+        protected Collection<? extends PrimitiveData> getSourcePrimitivesByType(OsmPrimitiveType type) {
             return PrimitiveData.getFilteredList(source, type);
         }
 
@@ -89,12 +88,11 @@ public final class PasteTagsAction extends JosmAction {
          * Replies the collection of tags for all primitives of type <code>type</code> in the current
          * selection
          *
-         * @param <T>
          * @param type  the type
          * @return the collection of tags for all primitives of type <code>type</code> in the current
          * selection
          */
-        protected <T extends OsmPrimitive> TagCollection getSourceTagsByType(OsmPrimitiveType type) {
+        protected TagCollection getSourceTagsByType(OsmPrimitiveType type) {
             return TagCollection.unionOfAllPrimitives(getSourcePrimitivesByType(type));
         }
 
@@ -102,12 +100,11 @@ public final class PasteTagsAction extends JosmAction {
          * Replies true if there is at least one tag in the current selection for primitives of
          * type <code>type</code>
          *
-         * @param <T>
          * @param type the type
          * @return true if there is at least one tag in the current selection for primitives of
          * type <code>type</code>
          */
-        protected <T extends OsmPrimitive> boolean hasSourceTagsByType(OsmPrimitiveType type) {
+        protected boolean hasSourceTagsByType(OsmPrimitiveType type) {
             return !getSourceTagsByType(type).isEmpty();
         }
 
@@ -176,12 +173,11 @@ public final class PasteTagsAction extends JosmAction {
          * Replies true if there is at least one primitive of type <code>type</code>
          * is in the target collection
          *
-         * @param <T>
          * @param type  the type to look for
          * @return true if there is at least one primitive of type <code>type</code> in the collection
          * <code>selection</code>
          */
-        protected <T extends OsmPrimitive> boolean hasTargetPrimitives(Class<T> type) {
+        protected boolean hasTargetPrimitives(Class<? extends OsmPrimitive> type) {
             return !OsmPrimitive.getFilteredList(target, type).isEmpty();
         }
 
@@ -300,7 +296,7 @@ public final class PasteTagsAction extends JosmAction {
 
     /**
      * Create and execute SequenceCommand with descriptive title
-     * @param commands
+     * @param commands the commands to perform in a sequential command
      */
     private static void commitCommands(Collection<OsmPrimitive> selection, List<Command> commands) {
         if (!commands.isEmpty()) {

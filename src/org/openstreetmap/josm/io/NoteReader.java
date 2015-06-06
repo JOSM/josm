@@ -196,7 +196,7 @@ public class NoteReader {
     /**
      * Initializes the reader with a given InputStream
      * @param source - InputStream containing Notes XML
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     public NoteReader(InputStream source) throws IOException {
         this.inputSource = new InputSource(source);
@@ -205,7 +205,7 @@ public class NoteReader {
     /**
      * Initializes the reader with a string as a source
      * @param source UTF-8 string containing Notes XML to parse
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     public NoteReader(String source) throws IOException {
         this.inputSource = new InputSource(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
@@ -215,8 +215,8 @@ public class NoteReader {
      * Parses the InputStream given to the constructor and returns
      * the resulting Note objects
      * @return List of Notes parsed from the input data
-     * @throws SAXException
-     * @throws IOException
+     * @throws SAXException if any SAX parsing error occurs
+     * @throws IOException if any I/O error occurs
      */
     public List<Note> parse() throws SAXException, IOException {
         DefaultHandler parser = new Parser();

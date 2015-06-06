@@ -280,8 +280,8 @@ public class DownloadDialog extends JDialog  {
     }
 
     /**
-     * Invoked by
-     * @param b
+     * Starts download for the given bounding box
+     * @param b bounding box to download
      */
     public void startDownload(Bounds b) {
         this.currentBounds = b;

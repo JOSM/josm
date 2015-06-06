@@ -352,9 +352,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * Currently supported ImageryType are {@link ImageryType#TMS},
      * {@link ImageryType#BING}, {@link ImageryType#SCANEX}.
      *
-     * @param info
+     * @param info imagery info
      * @return a new TileSource instance or null if no TileSource for the ImageryInfo/ImageryType could be found.
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
     public static TileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.TMS) {

@@ -60,7 +60,7 @@ public class RelationNodeMap {
      */
     private final List<Integer> notSortable = new ArrayList<>();
 
-    public static Node firstOnewayNode(RelationMember m){
+    public static Node firstOnewayNode(RelationMember m) {
         if(!m.isWay()) return null;
         if("backward".equals(m.getRole())) {
             return m.getWay().lastNode();
@@ -68,7 +68,7 @@ public class RelationNodeMap {
         return m.getWay().firstNode();
     }
 
-    public static Node lastOnewayNode(RelationMember m){
+    public static Node lastOnewayNode(RelationMember m) {
         if(!m.isWay()) return null;
         if("backward".equals(m.getRole())) {
             return m.getWay().firstNode();
@@ -266,11 +266,11 @@ public class RelationNodeMap {
 
     /**
      * find next node in nw NodeWays structure, if the node is found delete and return it
-     * @param nw
-     * @param n
+     * @param nw nodes and ways
+     * @param n node
      * @return node next to n
      */
-    private Integer deleteAndGetAdjacentNode(NodesWays nw, Node n){
+    private Integer deleteAndGetAdjacentNode(NodesWays nw, Node n) {
         Integer j = findAdjacentWay(nw, n);
         if(j == null) return null;
         deleteWayNode(nw, j, n);
@@ -283,7 +283,7 @@ public class RelationNodeMap {
         return adj.iterator().next();
     }
 
-    private void deleteWayNode(NodesWays nw, Integer way, Node n){
+    private void deleteWayNode(NodesWays nw, Integer way, Node n) {
         if(nw.oneWay) {
             doneOneway(way);
         } else {

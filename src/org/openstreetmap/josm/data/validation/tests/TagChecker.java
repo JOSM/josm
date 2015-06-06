@@ -8,7 +8,6 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -153,8 +152,7 @@ public class TagChecker extends TagTest {
      * the word is valid, but if it starts with -, the word should be replaced
      * by the nearest + word before this.
      *
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     private static void initializeData() throws IOException {
         checkerData.clear();

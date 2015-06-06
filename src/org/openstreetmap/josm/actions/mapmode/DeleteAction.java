@@ -34,8 +34,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * A map mode that enables the user to delete nodes and other objects.
  *
  * The user can click on an object, which gets deleted if possible. When Ctrl is
- * pressed when releasing the button, the objects and all its references are
- * deleted.
+ * pressed when releasing the button, the objects and all its references are deleted.
  *
  * If the user did not press Ctrl and the object has any references, the user
  * is informed and nothing is deleted.
@@ -46,8 +45,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class DeleteAction extends MapMode implements ModifierListener {
-    // Cache previous mouse event (needed when only the modifier keys are
-    // pressed but the mouse isn't moved)
+    // Cache previous mouse event (needed when only the modifier keys are pressed but the mouse isn't moved)
     private MouseEvent oldEvent = null;
 
     /**
@@ -180,10 +178,9 @@ public class DeleteAction extends MapMode implements ModifierListener {
 
     /**
      * handles everything related to highlighting primitives and way
-     * segments for the given pointer position (via MouseEvent) and
-     * modifiers.
-     * @param e
-     * @param modifiers
+     * segments for the given pointer position (via MouseEvent) and modifiers.
+     * @param e current mouse event
+     * @param modifiers mouse modifiers, not necessarly taken from the given mouse event
      */
     private void addHighlighting(MouseEvent e, int modifiers) {
         if(!drawTargetHighlight)
@@ -201,8 +198,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
             // silent operation and SplitWayAction will show dialogs. A lot.
             Command delCmd = buildDeleteCommands(e, modifiers, true);
             if(delCmd != null) {
-                // all other cases delete OsmPrimitives directly, so we can
-                // safely do the following
+                // all other cases delete OsmPrimitives directly, so we can safely do the following
                 for(OsmPrimitive osm : delCmd.getParticipatingPrimitives()) {
                     newHighlights.add(osm);
                 }
@@ -235,11 +231,10 @@ public class DeleteAction extends MapMode implements ModifierListener {
     }
 
     /**
-     * This function handles all work related to updating the cursor and
-     * highlights
+     * This function handles all work related to updating the cursor and highlights
      *
-     * @param e
-     * @param modifiers
+     * @param e current mouse event
+     * @param modifiers mouse modifiers, not necessarly taken from the given mouse event
      */
     private void updateCursor(MouseEvent e, int modifiers) {
         if (!Main.isDisplayingMapView())
@@ -259,8 +254,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * Normally the mouse event also contains the modifiers. However, when the
      * mouse is not moved and only modifier keys are pressed, no mouse event
      * occurs. We can use AWTEvent to catch those but still lack a proper
-     * mouseevent. Instead we copy the previous event and only update the
-     * modifiers.
+     * mouseevent. Instead we copy the previous event and only update the modifiers.
      */
     private void giveUserFeedback(MouseEvent e, int modifiers) {
         updateCursor(e, modifiers);
@@ -278,7 +272,6 @@ public class DeleteAction extends MapMode implements ModifierListener {
 
     /**
      * If user clicked with the left button, delete the nearest object.
-     * position.
      */
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -371,8 +364,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * that should be deleted but does not actually delete them.
      * @param e MouseEvent from which modifiers and position are taken
      * @param modifiers For explanation, see {@link #updateCursor}
-     * @param silent Set to true if the user should not be bugged with additional
-     *        dialogs
+     * @param silent Set to true if the user should not be bugged with additional dialogs
      * @return delete command
      */
     private Command buildDeleteCommands(MouseEvent e, int modifiers, boolean silent) {

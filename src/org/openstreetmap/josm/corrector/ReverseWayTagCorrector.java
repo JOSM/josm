@@ -168,7 +168,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     /**
      * Tests whether way can be reversed without semantic change, i.e., whether tags have to be changed.
      * Looks for keys like oneway, oneway:bicycle, cycleway:right:oneway, left/right.
-     * @param way
+     * @param way way to test
      * @return false if tags should be changed to keep semantic, true otherwise.
      */
     public static boolean isReversible(Way way) {

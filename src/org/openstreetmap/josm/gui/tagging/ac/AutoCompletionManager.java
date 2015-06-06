@@ -270,7 +270,7 @@ public class AutoCompletionManager implements DataSetListener {
      * replies the auto completion values allowed for a specific key. Replies
      * an empty list if key is null or if key is not in {@link #getKeys()}.
      *
-     * @param key
+     * @param key OSM key
      * @return the list of auto completion values
      */
     protected List<String> getDataValues(String key) {

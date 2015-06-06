@@ -368,7 +368,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * If the left mouse button is pressed over a segment or a node, switches
      * to appropriate {@link #mode}, depending on Ctrl/Alt/Shift modifiers and
      * {@link #dualAlignEnabled}.
-     * @param e
+     * @param e current mouse event
      */
     @Override
     public void mousePressed(MouseEvent e) {
@@ -447,7 +447,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     /**
      * Performs action depending on what {@link #mode} we're in.
-     * @param e
+     * @param e current mouse event
      */
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -509,7 +509,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     /**
      * Does anything that needs to be done, then switches back to select mode.
-     * @param e
+     * @param e current mouse event
      */
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -710,8 +710,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     /**
      * This method tests if {@code node} has other ways apart from the given one.
-     * @param node
-     * @param myWay
+     * @param node node to test
+     * @param myWay way known to contain this node
      * @return {@code true} if {@code node} belongs only to {@code myWay}, false if there are more ways.
      */
     private static boolean hasNodeOtherWays(Node node, Way myWay) {
@@ -1140,7 +1140,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /**
      * Draws given reference segment.
      * @param g2 the Graphics2D object used to draw on
-     * @param mv
+     * @param mv map view
      * @param seg the reference segment
      */
     private void drawReferenceSegment(Graphics2D g2, MapView mv, ReferenceSegment seg) {

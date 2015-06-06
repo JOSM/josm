@@ -68,7 +68,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @param in GridShiftFile InputStream
      * @param bigEndian is the file bigEndian?
      * @param loadAccuracy is the node Accuracy data to be loaded?
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     public NTV2SubGrid(InputStream in, boolean bigEndian, boolean loadAccuracy) throws IOException {
         byte[] b8 = new byte[8];
@@ -282,7 +282,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
 
     /**
      * Set an array of Sub Grids of this sub grid
-     * @param subGrid
+     * @param subGrid subgrids
      */
     public void setSubGridArray(NTV2SubGrid[] subGrid) {
         this.subGrid = Utils.copyArray(subGrid);

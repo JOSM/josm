@@ -56,9 +56,9 @@ public abstract class RequestHandler {
     /**
      * Check permission and parameters and handle request.
      *
-     * @throws RequestHandlerForbiddenException
-     * @throws RequestHandlerBadRequestException
-     * @throws RequestHandlerErrorException
+     * @throws RequestHandlerForbiddenException if request is forbidden by preferences
+     * @throws RequestHandlerBadRequestException if request is invalid
+     * @throws RequestHandlerErrorException if an error occurs while processing request
      */
     public final void handle() throws RequestHandlerForbiddenException, RequestHandlerBadRequestException, RequestHandlerErrorException {
         checkMandatoryParams();
@@ -69,7 +69,7 @@ public abstract class RequestHandler {
 
     /**
      * Validates the request before attempting to perform it.
-     * @throws RequestHandlerBadRequestException
+     * @throws RequestHandlerBadRequestException if request is invalid
      * @since 5678
      */
     protected abstract void validateRequest() throws RequestHandlerBadRequestException;
@@ -79,8 +79,8 @@ public abstract class RequestHandler {
      *
      * This method of the subclass will do the real work.
      *
-     * @throws RequestHandlerErrorException
-     * @throws RequestHandlerBadRequestException
+     * @throws RequestHandlerErrorException if an error occurs while processing request
+     * @throws RequestHandlerBadRequestException if request is invalid
      */
     protected abstract void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException;
 
@@ -132,10 +132,9 @@ public abstract class RequestHandler {
     }
 
     /**
-     * Check permissions in preferences and display error message
-     * or ask for permission.
+     * Check permissions in preferences and display error message or ask for permission.
      *
-     * @throws RequestHandlerForbiddenException
+     * @throws RequestHandlerForbiddenException if request is forbidden by preferences
      */
     public final void checkPermission() throws RequestHandlerForbiddenException {
         /*
