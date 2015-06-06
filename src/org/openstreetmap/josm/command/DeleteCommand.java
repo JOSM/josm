@@ -35,7 +35,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.actionsupport.DeleteFromRelationConfirmationDialog;
+import org.openstreetmap.josm.gui.dialogs.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;

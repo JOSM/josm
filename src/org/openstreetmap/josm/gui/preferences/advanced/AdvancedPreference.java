@@ -40,7 +40,7 @@ import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.Setting;
-import org.openstreetmap.josm.gui.actionsupport.LogShowDialog;
+import org.openstreetmap.josm.gui.dialogs.LogShowDialog;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;

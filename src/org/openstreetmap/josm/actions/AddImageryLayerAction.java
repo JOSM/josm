@@ -19,7 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.actionsupport.AlignImageryPanel;
+import org.openstreetmap.josm.gui.layer.AlignImageryPanel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.preferences.imagery.WMSLayerTree;
 import org.openstreetmap.josm.gui.util.GuiHelper;
