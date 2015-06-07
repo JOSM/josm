@@ -40,7 +40,7 @@ sub handle_start
       {
         $datan{"de"} = "/wiki/Proposed_features/De:Hausnummern";
       }
-      while($main =~ /<span lang="([a-z_A-Z-]+)"(?: style="unicode-bidi:embed")?><a href="(\/wiki\/.*?)"/g)
+      while($main =~ /<bdi lang="([a-z_A-Z-]+)"(?: style="unicode-bidi:embed;unicode-bidi:-webkit-isolate;unicode-bidi:isolate")?><a href="(\/wiki\/.*?)"/g)
       {
         my $lang = lc($1);
         my $val = uri_unescape($2);
