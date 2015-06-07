@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -63,8 +64,7 @@ public class PostDownloadHandler implements Runnable {
 
     @Override
     public void run() {
-        // wait for all downloads task to finish (by waiting for the futures
-        // to return a value)
+        // wait for all downloads task to finish (by waiting for the futures to return a value)
         //
         for (Future<?> future: futures) {
             try {
@@ -91,6 +91,8 @@ public class PostDownloadHandler implements Runnable {
                 public void run() {
                     if (error instanceof Exception) {
                         ExceptionDialogUtil.explainException((Exception)error);
+                    } else if (tr("No data found in this area.").equals(error)) {
+                        new Notification(error.toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                     } else {
                         JOptionPane.showMessageDialog(
                                 Main.parent,
