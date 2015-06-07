@@ -161,8 +161,12 @@ public class VersionTable extends JTable implements Observer{
 
         @Override
         protected String createInfoUrl(Object infoObject) {
-            HistoryOsmPrimitive primitive = (HistoryOsmPrimitive) infoObject;
-            return Main.getBaseBrowseUrl() + "/changeset/" + primitive.getChangesetId();
+            if (infoObject instanceof HistoryOsmPrimitive) {
+                HistoryOsmPrimitive prim = (HistoryOsmPrimitive) infoObject;
+                return Main.getBaseBrowseUrl() + "/changeset/" + prim.getChangesetId();
+            } else {
+                return null;
+            }
         }
 
         @Override
@@ -194,8 +198,12 @@ public class VersionTable extends JTable implements Observer{
 
         @Override
         protected String createInfoUrl(Object infoObject) {
-            HistoryOsmPrimitive hp = (HistoryOsmPrimitive) infoObject;
-            return hp.getUser() == null ? null : Main.getBaseUserUrl() + "/" + hp.getUser().getName();
+            if (infoObject instanceof HistoryOsmPrimitive) {
+                HistoryOsmPrimitive hp = (HistoryOsmPrimitive) infoObject;
+                return hp.getUser() == null ? null : Main.getBaseUserUrl() + "/" + hp.getUser().getName();
+            } else {
+                return null;
+            }
         }
 
         @Override

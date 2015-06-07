@@ -219,8 +219,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         @Override
         protected String createInfoUrl(Object infoObject) {
-            User user = (User)infoObject;
-            return Main.getBaseUserUrl() + "/" + Utils.encodeUrl(user.getName()).replaceAll("\\+", "%20");
+            if (infoObject instanceof User) {
+                User user = (User)infoObject;
+                return Main.getBaseUserUrl() + "/" + Utils.encodeUrl(user.getName()).replaceAll("\\+", "%20");
+            } else {
+                return null;
+            }
         }
 
         @Override

@@ -215,6 +215,17 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             displayList.setSelectedValue(noteData.getSelectedNote(), true);
         }
         updateButtonStates();
+        // TODO make a proper listener mechanism to handle change of note selection
+        Main.main.menu.infoweb.noteSelectionChanged();
+    }
+
+    /**
+     * Returns the currently selected note, if any.
+     * @return currently selected note, or null
+     * @since 8475
+     */
+    public Note getSelectedNote() {
+        return noteData != null ? noteData.getSelectedNote() : null;
     }
 
     private static class NoteRenderer implements ListCellRenderer<Note> {
@@ -253,6 +264,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     class NoteTableModel extends AbstractListModel<Note> {
         private transient List<Note> data;
 
+        /**
+         * Constructs a new {@code NoteTableModel}.
+         */
         public NoteTableModel() {
             data = new ArrayList<>();
         }
@@ -285,6 +299,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     class AddCommentAction extends AbstractAction {
 
+        /**
+         * Constructs a new {@code AddCommentAction}.
+         */
         public AddCommentAction() {
             putValue(SHORT_DESCRIPTION,tr("Add comment"));
             putValue(NAME, tr("Comment"));
@@ -314,8 +331,11 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     class CloseAction extends AbstractAction {
 
+        /**
+         * Constructs a new {@code CloseAction}.
+         */
         public CloseAction() {
-            putValue(SHORT_DESCRIPTION,tr("Close note"));
+            putValue(SHORT_DESCRIPTION, tr("Close note"));
             putValue(NAME, tr("Close"));
             putValue(SMALL_ICON, ICON_CLOSED);
         }
@@ -336,8 +356,11 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     class NewAction extends AbstractAction {
 
+        /**
+         * Constructs a new {@code NewAction}.
+         */
         public NewAction() {
-            putValue(SHORT_DESCRIPTION,tr("Create a new note"));
+            putValue(SHORT_DESCRIPTION, tr("Create a new note"));
             putValue(NAME, tr("Create"));
             putValue(SMALL_ICON, ICON_NEW);
         }
@@ -353,8 +376,11 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     class ReopenAction extends AbstractAction {
 
+        /**
+         * Constructs a new {@code ReopenAction}.
+         */
         public ReopenAction() {
-            putValue(SHORT_DESCRIPTION,tr("Reopen note"));
+            putValue(SHORT_DESCRIPTION, tr("Reopen note"));
             putValue(NAME, tr("Reopen"));
             putValue(SMALL_ICON, ICON_OPEN);
         }
@@ -376,6 +402,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     class SortAction extends AbstractAction {
 
+        /**
+         * Constructs a new {@code SortAction}.
+         */
         public SortAction() {
             putValue(SHORT_DESCRIPTION, tr("Sort notes"));
             putValue(NAME, tr("Sort"));
