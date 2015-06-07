@@ -272,8 +272,10 @@ public class NoteData {
     }
 
     private void dataUpdated() {
-        Main.map.noteDialog.setNotes(getSortedNotes());
-        Main.map.mapView.repaint();
+        if (Main.isDisplayingMapView()) {
+            Main.map.noteDialog.setNotes(getSortedNotes());
+            Main.map.mapView.repaint();
+        }
     }
 
     private User getCurrentUser() {

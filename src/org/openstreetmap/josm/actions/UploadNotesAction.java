@@ -52,7 +52,6 @@ public class UploadNotesAction extends JosmAction {
             }
             return;
         }
-        UploadNotesTask uploadTask = new UploadNotesTask();
-        uploadTask.uploadNotes(noteData, new PleaseWaitProgressMonitor(tr("Uploading notes to server")));
+        new UploadNotesTask().uploadNotes(noteData, new PleaseWaitProgressMonitor(tr("Uploading notes to server")));
     }
 }

@@ -32,13 +32,17 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.dialogs.NotesDialog;
+import org.openstreetmap.josm.gui.io.AbstractIOTask;
+import org.openstreetmap.josm.gui.io.UploadNoteLayerTask;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.NoteExporter;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
- * A layer to hold Note objects
+ * A layer to hold Note objects.
+ * @since 7522
  */
 public class NoteLayer extends AbstractModifiableLayer implements MouseListener {
 
@@ -245,14 +249,27 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
     }
 
     @Override
-    public void mousePressed(MouseEvent e) { }
+    public AbstractIOTask createUploadTask(ProgressMonitor monitor) {
+        return new UploadNoteLayerTask(this, monitor);
+    }
 
     @Override
-    public void mouseReleased(MouseEvent e) { }
+    public void mousePressed(MouseEvent e) {
+        // Do nothing
+    }
 
     @Override
-    public void mouseEntered(MouseEvent e) { }
+    public void mouseReleased(MouseEvent e) {
+        // Do nothing
+    }
 
     @Override
-    public void mouseExited(MouseEvent e) { }
+    public void mouseEntered(MouseEvent e) {
+        // Do nothing
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // Do nothing
+    }
 }
