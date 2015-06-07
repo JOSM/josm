@@ -290,7 +290,14 @@ public class NoteData {
         for (Map.Entry<Note, Note> entry : updatedNotes.entrySet()) {
             Note oldNote = entry.getKey();
             Note newNote = entry.getValue();
+            boolean reindex = oldNote.hashCode() != newNote.hashCode();
+            if (reindex) {
+                noteList.removeElem(oldNote);
+            }
             oldNote.updateWith(newNote);
+            if (reindex) {
+                noteList.add(oldNote);
+            }
         }
         dataUpdated();
     }

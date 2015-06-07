@@ -88,7 +88,6 @@ public class UploadNotesTask {
                         Main.debug("opening new note");
                     }
                     newNote = api.createNote(note.getLatLon(), comment.getText(), monitor);
-                    note.setId(newNote.getId());
                     break;
                 case closed:
                     if (Main.isDebugEnabled()) {
