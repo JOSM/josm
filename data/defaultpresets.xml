@@ -6956,7 +6956,7 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Tattoo -->
-        <item name="Optician" icon="styles/standard/shop/optician.png" type="node,closedway" preset_name_label="true">
+        <item name="Optician" icon="styles/standard/shop/optician.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=optician"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=optician"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=optician"

@@ -1976,7 +1976,7 @@ node[shop=newsagent] {
     text: auto;
 }
 node[shop=optician] {
-    icon-image: "shop/optician.png";
+    icon-image: "shop/optician.svg";
     set icon_z17;
     text: auto;
 }
