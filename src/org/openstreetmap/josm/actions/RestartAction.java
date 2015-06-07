@@ -20,7 +20,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Restarts JOSM as it was launched. Comes from "restart" plugin, originally written by Upliner.
  * <br><br>
- * Mechanisms have been improved based on #8561 discussions and <a href="http://lewisleo.blogspot.jp/2012/08/programmatically-restart-java.html">this article</a>.
+ * Mechanisms have been improved based on #8561 discussions and
+ * <a href="http://lewisleo.blogspot.jp/2012/08/programmatically-restart-java.html">this article</a>.
  * @since 5857
  */
 public class RestartAction extends JosmAction {

@@ -61,6 +61,8 @@ import javax.xml.validation.Validator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.OfflineAccessException;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -1448,9 +1450,28 @@ public class Preferences {
     /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded.
      * @return the collection of plugin site URLs
+     * @see #getOnlinePluginSites
      */
     public Collection<String> getPluginSites() {
         return getCollection("pluginmanager.sites", Collections.singleton(Main.getJOSMWebsite()+"/pluginicons%<?plugins=>"));
+    }
+
+    /**
+     * Returns the list of plugin sites available according to offline mode settings.
+     * @return the list of available plugin sites
+     * @since 8471
+     */
+    public Collection<String> getOnlinePluginSites() {
+        Collection<String> pluginSites = new ArrayList<>(getPluginSites());
+        for (Iterator<String> it = pluginSites.iterator(); it.hasNext();) {
+            try {
+                OnlineResource.JOSM_WEBSITE.checkOfflineAccess(it.next(), Main.getJOSMWebsite());
+            } catch (OfflineAccessException ex) {
+                Main.warn(ex, false);
+                it.remove();
+            }
+        }
+        return pluginSites;
     }
 
     /**

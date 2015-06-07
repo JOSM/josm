@@ -52,6 +52,7 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -463,14 +464,14 @@ public final class PluginHandler {
     }
 
     /**
-     * Alerts the user if a plugin required by another plugin is missing
+     * Alerts the user if a plugin required by another plugin is missing, and offer to download them & restart JOSM
      *
      * @param parent The parent Component used to display error popup
      * @param plugin the plugin
      * @param missingRequiredPlugin the missing required plugin
      */
     private static void alertMissingRequiredPlugin(Component parent, String plugin, Set<String> missingRequiredPlugin) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(48);
         sb.append("<html>")
           .append(trn("Plugin {0} requires a plugin which was not found. The missing plugin is:",
                 "Plugin {0} requires {1} plugins which were not found. The missing plugins are:",
@@ -479,12 +480,83 @@ public final class PluginHandler {
                 missingRequiredPlugin.size()))
           .append(Utils.joinAsHtmlUnorderedList(missingRequiredPlugin))
           .append("</html>");
-        JOptionPane.showMessageDialog(
+        ButtonSpec[] specs = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Download and restart"),
+                        ImageProvider.get("restart"),
+                        trn("Click to download missing plugin and restart JOSM",
+                            "Click to download missing plugins and restart JOSM",
+                            missingRequiredPlugin.size()),
+                        null /* no specific help text */
+                ),
+                new ButtonSpec(
+                        tr("Continue"),
+                        ImageProvider.get("ok"),
+                        trn("Click to continue without this plugin",
+                            "Click to continue without these plugins",
+                            missingRequiredPlugin.size()),
+                        null /* no specific help text */
+                )
+        };
+        if (0 == HelpAwareOptionPane.showOptionDialog(
                 parent,
                 sb.toString(),
                 tr("Error"),
-                JOptionPane.ERROR_MESSAGE
-        );
+                JOptionPane.ERROR_MESSAGE,
+                null, /* no special icon */
+                specs,
+                specs[0],
+                HelpUtil.ht("/Plugin/Loading#MissingRequiredPlugin"))) {
+            downloadRequiredPluginsAndRestart(parent, missingRequiredPlugin);
+        }
+    }
+
+    private static void downloadRequiredPluginsAndRestart(final Component parent, final Set<String> missingRequiredPlugin) {
+        // Update plugin list
+        final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(
+                Main.pref.getOnlinePluginSites());
+        Main.worker.submit(pluginInfoDownloadTask);
+
+        // Continuation
+        Main.worker.submit(new Runnable() {
+            @Override
+            public void run() {
+                // Build list of plugins to download
+                Set<PluginInformation> toDownload = new HashSet<>(pluginInfoDownloadTask.getAvailablePlugins());
+                for (Iterator<PluginInformation> it = toDownload.iterator(); it.hasNext();) {
+                    PluginInformation info = it.next();
+                    if (!missingRequiredPlugin.contains(info.getName())) {
+                        it.remove();
+                    }
+                }
+                // Check if something has still to be downloaded
+                if (!toDownload.isEmpty()) {
+                    // download plugins
+                    final PluginDownloadTask task = new PluginDownloadTask(parent, toDownload, tr("Download plugins"));
+                    Main.worker.submit(task);
+                    Main.worker.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            // restart if some plugins have been downloaded
+                            if (!task.getDownloadedPlugins().isEmpty()) {
+                                // update plugin list in preferences
+                                Set<String> plugins = new HashSet<>(Main.pref.getCollection("plugins"));
+                                for (PluginInformation plugin : task.getDownloadedPlugins()) {
+                                    plugins.add(plugin.name);
+                                }
+                                Main.pref.putCollection("plugins", plugins);
+                                // restart
+                                new RestartAction().actionPerformed(null);
+                            } else {
+                                Main.warn("No plugin downloaded, restart canceled");
+                            }
+                        }
+                    });
+                } else {
+                    Main.warn("No plugin to download, operation canceled");
+                }
+            }
+        });
     }
 
     private static void alertJOSMUpdateRequired(Component parent, String plugin, int requiredVersion) {
@@ -644,8 +716,7 @@ public final class PluginHandler {
     }
 
     /**
-     * Loads the plugin in <code>plugins</code> from locally available jar files into
-     * memory.
+     * Loads the plugin in <code>plugins</code> from locally available jar files into memory.
      *
      * @param parent The parent component to be used for the displayed dialog
      * @param plugins the list of plugins
@@ -904,7 +975,7 @@ public final class PluginHandler {
             //
             ReadRemotePluginInformationTask task1 = new ReadRemotePluginInformationTask(
                     monitor.createSubTaskMonitor(1, false),
-                    Main.pref.getPluginSites(), displayErrMsg
+                    Main.pref.getOnlinePluginSites(), displayErrMsg
             );
             Future<?> future = service.submit(task1);
             List<PluginInformation> allPlugins = null;
@@ -1245,8 +1316,7 @@ public final class PluginHandler {
     private static PluginProxy getPluginCausingException(Throwable ex) {
         PluginProxy err = null;
         StackTraceElement[] stack = ex.getStackTrace();
-        /* remember the error position, as multiple plugins may be involved,
-           we search the topmost one */
+        // remember the error position, as multiple plugins may be involved, we search the topmost one
         int pos = stack.length;
         for (PluginProxy p : pluginList) {
             String baseClass = p.getPluginInformation().className;
