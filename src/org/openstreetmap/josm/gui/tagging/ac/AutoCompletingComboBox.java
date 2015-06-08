@@ -329,7 +329,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
         }
     }
 
-    private static InputContext privateInputContext = InputContext.getInstance();
+    private final InputContext privateInputContext = InputContext.getInstance();
 
     @Override
     public InputContext getInputContext() {
