@@ -230,12 +230,12 @@
     <chunk id="leaf">
         <combo key="leaf_type" text="Type" values="broadleaved,needleleaved,mixed,leafless" values_searchable="true" />
         <combo key="leaf_cycle" text="Cycle" values_searchable="true" >
-		    <list_entry value="deciduous" short_description="Plants that are leafless for a certain period during the year." />
-			<list_entry value="evergreen" short_description="Plants that are never entirely without green foliage." />
-			<list_entry value="semi_deciduous" short_description="Plants that lose their foliage for a very short period, when old leaves fall off and new foliage growth is starting." />
-			<list_entry value="semi_evergreen" short_description="Plants that lose most, but not all, of their foliage for a fraction of the year." />
-			<list_entry value="mixed" short_description="Habitat with evergreen and deciduous vegetation." />
-		</combo>
+            <list_entry value="deciduous" short_description="Plants that are leafless for a certain period during the year." />
+            <list_entry value="evergreen" short_description="Plants that are never entirely without green foliage." />
+            <list_entry value="semi_deciduous" short_description="Plants that lose their foliage for a very short period, when old leaves fall off and new foliage growth is starting." />
+            <list_entry value="semi_evergreen" short_description="Plants that lose most, but not all, of their foliage for a fraction of the year." />
+            <list_entry value="mixed" short_description="Habitat with evergreen and deciduous vegetation." />
+        </combo>
     </chunk>
     <chunk id="religious">
         <text key="name" text="Name" />
@@ -1416,7 +1416,7 @@
                 <text key="genus" text="Genus" />
                 <text key="species" text="Species" />
                 <text key="taxon" text="Taxon" />
-				<reference ref="leaf" />
+                <reference ref="leaf" />
             </optional>
         </item> <!-- Hedge -->
         <item name="Fence" icon="presets/fence.png" type="way,closedway" preset_name_label="true">
