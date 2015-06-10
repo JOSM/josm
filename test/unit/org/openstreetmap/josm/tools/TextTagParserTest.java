@@ -94,4 +94,12 @@ public class TextTagParserTest {
         Assert.assertEquals(Collections.EMPTY_MAP, tags);
 
     }
+
+    @Test
+    public void testTab() throws Exception {
+        Assert.assertEquals(TextTagParser.readTagsFromText("shop\tjewelry"), Collections.singletonMap("shop", "jewelry"));
+        Assert.assertEquals(TextTagParser.readTagsFromText("!shop\tjewelry"), Collections.singletonMap("shop", "jewelry"));
+        Assert.assertEquals(TextTagParser.readTagsFromText("!!!shop\tjewelry"), Collections.singletonMap("shop", "jewelry"));
+        Assert.assertEquals(TextTagParser.readTagsFromText("shop\t\t\tjewelry"), Collections.singletonMap("shop", "jewelry"));
+    }
 }
