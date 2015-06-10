@@ -599,7 +599,7 @@ public class JoinAreasAction extends JosmAction {
             Multipolygon resultPol = joinPolygon(pol);
 
             //create multipolygon relation, if necessary.
-            RelationRole ownMultipolygonRelation = addOwnMultigonRelation(resultPol.innerWays, resultPol.outerWay);
+            RelationRole ownMultipolygonRelation = addOwnMultipolygonRelation(resultPol.innerWays);
 
             //add back the original relations, merged with our new multipolygon relation
             fixRelations(relations, resultPol.outerWay, ownMultipolygonRelation, relationsToDelete);
@@ -1369,10 +1369,9 @@ public class JoinAreasAction extends JosmAction {
     /**
      * Will add own multipolygon relation to the "previously existing" relations. Fixup is done by fixRelations
      * @param inner List of already closed inner ways
-     * @param outer The outer way
      * @return The list of relation with roles to add own relation to
      */
-    private RelationRole addOwnMultigonRelation(Collection<Way> inner, Way outer) {
+    private RelationRole addOwnMultipolygonRelation(Collection<Way> inner) {
         if (inner.isEmpty()) return null;
         // Create new multipolygon relation and add all inner ways to it
         Relation newRel = new Relation();

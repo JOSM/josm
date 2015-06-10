@@ -307,7 +307,7 @@ public class MultiSplitPane extends JPanel {
         dragUnderway = false;
     }
 
-    private void finishDrag(int x, int y) {
+    private void finishDrag() {
         if (dragUnderway) {
             clearDragState();
             if (!isContinuousLayout()) {
@@ -367,7 +367,7 @@ public class MultiSplitPane extends JPanel {
         }
         @Override
         public void mouseReleased(MouseEvent e) {
-            finishDrag(e.getX(), e.getY());
+            finishDrag();
         }
         @Override
         public void mouseDragged(MouseEvent e) {
