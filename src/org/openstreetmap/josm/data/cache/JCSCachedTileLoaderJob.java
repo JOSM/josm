@@ -89,7 +89,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 Thread t = Executors.defaultThreadFactory().newThread(r);
                 t.setName(name);
                 return t;
-                }
+            }
         };
     }
 
@@ -318,7 +318,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return true;
             }
 
-            HttpURLConnection urlConn = getURLConnection();
+            URLConnection urlConn = getURLConnection();
 
             if (isObjectLoadable()  &&
                     (now - attributes.getLastModification()) <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
@@ -327,7 +327,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             if (isObjectLoadable() && attributes.getEtag() != null) {
                 urlConn.addRequestProperty("If-None-Match", attributes.getEtag());
             }
-            if (urlConn.getResponseCode() == 304) {
+            if (responseCode(urlConn) == 304) {
                 // If isModifiedSince or If-None-Match has been set
                 // and the server answers with a HTTP 304 = "Not Modified"
                 log.log(Level.FINE, "JCS - IfModifiedSince/Etag test: local version is up to date: {0}", getUrl());
@@ -348,15 +348,15 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             attributes = parseHeaders(urlConn);
 
             for (int i = 0; i < 5; ++i) {
-                if (urlConn.getResponseCode() == 503) {
+                if (responseCode(urlConn) == 503) {
                     Thread.sleep(5000+(new Random()).nextInt(5000));
                     continue;
                 }
 
-                attributes.setResponseCode(urlConn.getResponseCode());
+                attributes.setResponseCode(responseCode(urlConn));
                 byte[] raw = read(urlConn);
 
-                if (isResponseLoadable(urlConn.getHeaderFields(), urlConn.getResponseCode(), raw)) {
+                if (isResponseLoadable(urlConn.getHeaderFields(), responseCode(urlConn), raw)) {
                     // we need to check cacheEmpty, so for cases, when data is returned, but we want to store
                     // as empty (eg. empty tile images) to save some space
                     cacheData = createCacheEntry(raw);
@@ -385,6 +385,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             return doCache;
         } catch (IOException e) {
             log.log(Level.FINE, "JCS - IOExecption during communication with server for: {0}", getUrl());
+
             attributes.setResponseCode(499); // set dummy error code
             boolean doCache = isResponseLoadable(null, 499, null) || cacheAsEmpty(); //generic 499 error code returned
             if (doCache) {
@@ -447,8 +448,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         return ret;
     }
 
-    private HttpURLConnection getURLConnection() throws IOException {
-        HttpURLConnection urlConn = (HttpURLConnection) getUrl().openConnection();
+    private URLConnection getURLConnection() throws IOException {
+        URLConnection urlConn = getUrl().openConnection();
         urlConn.setRequestProperty("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         urlConn.setReadTimeout(readTimeout); // 30 seconds read timeout
         urlConn.setConnectTimeout(connectTimeout);
@@ -462,11 +463,15 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     private boolean isCacheValidUsingHead() throws IOException {
-        HttpURLConnection urlConn = (HttpURLConnection) getUrl().openConnection();
-        urlConn.setRequestMethod("HEAD");
-        long lastModified = urlConn.getLastModified();
-        return (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getRequestProperty("ETag"))) ||
-               (lastModified != 0 && lastModified <= attributes.getLastModification());
+        URLConnection urlConn = getUrl().openConnection();
+        if(urlConn instanceof HttpURLConnection) {
+            ((HttpURLConnection)urlConn).setRequestMethod("HEAD");
+            long lastModified = urlConn.getLastModified();
+            return (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getRequestProperty("ETag"))) ||
+                    (lastModified != 0 && lastModified <= attributes.getLastModification());
+        }
+        // for other URL connections, do not use HEAD requests for cache validation
+        return false;
     }
 
     private static byte[] read(URLConnection urlConn) throws IOException {
@@ -520,5 +525,16 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      */
     public void handleJobCancellation() {
         finishLoading(LoadResult.CANCELED);
+    }
+
+    /*
+     * Temporary fix for file URLs. Returns response code for HttpURLConnections or 200 for all other
+     */
+    private int responseCode(URLConnection urlConn) throws IOException {
+        if (urlConn instanceof HttpURLConnection) {
+            return ((HttpURLConnection) urlConn).getResponseCode();
+        } else {
+            return 200;
+        }
     }
 }
