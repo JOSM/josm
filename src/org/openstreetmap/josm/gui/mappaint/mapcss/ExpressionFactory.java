@@ -100,16 +100,18 @@ public final class ExpressionFactory {
      * List of functions that can be used in MapCSS expressions.
      *
      * First parameter can be of type {@link Environment} (if needed). This is
-     * automatically filled in by JOSM and the user only sees the remaining
-     * arguments.
+     * automatically filled in by JOSM and the user only sees the remaining arguments.
      * When one of the user supplied arguments cannot be converted the
      * expected type or is null, the function is not called and it returns null
-     * immediately. Add the annotation {@link NullableArguments} to allow
-     * null arguments.
+     * immediately. Add the annotation {@link NullableArguments} to allow null arguments.
      * Every method must be static.
      */
     @SuppressWarnings("UnusedDeclaration")
     public static class Functions {
+
+        private Functions() {
+            // Hide implicit public constructor for utility classes
+        }
 
         /**
          * Identity function for compatibility with MapCSS specification.

@@ -47,6 +47,10 @@ public class JCSCacheManager {
      */
     public static final IntegerProperty DEFAULT_MAX_OBJECTS_IN_MEMORY  = new IntegerProperty(PREFERENCE_PREFIX + ".max_objects_in_memory", 1000);
 
+    private JCSCacheManager() {
+        // Hide implicit public constructor for utility classes
+    }
+
     @SuppressWarnings("resource")
     private static void initialize() throws IOException {
         File cacheDir = new File(Main.pref.getCacheDirectory(), "jcs");
