@@ -19,6 +19,9 @@ public class BufferedImageCacheEntry extends CacheEntry {
     // transient to avoid serialization, volatile to avoid synchronization of whole getImage() method
     private transient volatile BufferedImage img = null;
     private transient volatile boolean writtenToDisk = false;
+    // we need to have separate control variable, to know, if we already tried to load the image, as img might be null
+    // after we loaded image, as for example, when image file is malformed (eg. HTML file)
+    private transient volatile boolean imageLoaded = false;
 
     /**
      *
@@ -36,14 +39,15 @@ public class BufferedImageCacheEntry extends CacheEntry {
      * @throws IOException if an error occurs during reading.
      */
     public BufferedImage getImage() throws IOException {
-        if (img != null)
+        if (imageLoaded)
             return img;
         synchronized(this) {
-            if (img != null)
+            if (imageLoaded)
                 return img;
             byte[] content = getContent();
             if (content != null && content.length > 0) {
                 img = ImageIO.read(new ByteArrayInputStream(content));
+                imageLoaded = true;
 
                 if (writtenToDisk)
                     content = null;

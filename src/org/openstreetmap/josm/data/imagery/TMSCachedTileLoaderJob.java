@@ -192,6 +192,10 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                         byte[] content = object.getContent();
                         if (content != null && content.length > 0) {
                             tile.loadImage(new ByteArrayInputStream(content));
+                            if (tile.getImage() == null) {
+                                tile.setError(tr("Could not load image from tile server"));
+                                status = false;
+                            }
                         }
                     }
                     int httpStatusCode = attributes.getResponseCode();
@@ -241,9 +245,14 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                     }
                 }
 
-                if (data != null && data.getImage() != null) {
-                    tile.setImage(data.getImage());
-                    tile.finishLoading();
+                if (data != null) {
+                    if (data.getImage() != null) {
+                        tile.setImage(data.getImage());
+                        tile.finishLoading();
+                    } else {
+                        // we had some data, but we didn't get any image. Malformed image?
+                        tile.setError(tr("Could not load image from tile server"));
+                    }
                 }
                 if (isNoTileAtZoom()) {
                     handleNoTileAtZoom();
