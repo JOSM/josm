@@ -182,7 +182,8 @@ public class Test extends AbstractVisitor {
         progressMonitor.finishTask();
         progressMonitor = null;
         if (startTime > 0) {
-            long elapsedTime = System.currentTimeMillis() - startTime;
+            // fix #11567 where elapsedTime is < 0
+            long elapsedTime = Math.max(0, System.currentTimeMillis() - startTime);
             Main.debug(tr("Test ''{0}'' completed in {1}", getName(), Utils.getDurationString(elapsedTime)));
         }
     }
