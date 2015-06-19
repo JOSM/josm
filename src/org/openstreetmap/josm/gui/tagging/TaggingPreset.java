@@ -123,9 +123,16 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return locale_name;
     }
 
+    /**
+     * Returns the translated name of this preset, prefixed with the group names it belongs to.
+     */
     public String getName() {
         return group != null ? group.getName() + "/" + getLocaleName() : getLocaleName();
     }
+
+    /**
+     * Returns the non translated name of this preset, prefixed with the (non translated) group names it belongs to.
+     */
     public String getRawName() {
         return group != null ? group.getRawName() + "/" + name : name;
     }

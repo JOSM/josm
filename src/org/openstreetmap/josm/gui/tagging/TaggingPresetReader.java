@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
@@ -96,6 +99,23 @@ public final class TaggingPresetReader {
         return parser;
     }
 
+    static class HashSetWithLast<E> extends LinkedHashSet<E> {
+        protected E last = null;
+
+        @Override
+        public boolean add(E e) {
+            last = e;
+            return super.add(e);
+        }
+
+        /**
+         * Returns the last inserted element.
+         */
+        public E getLast() {
+            return last;
+        }
+    }
+
     /**
      * Reads all tagging presets from the input reader.
      * @param in The input reader
@@ -104,10 +124,24 @@ public final class TaggingPresetReader {
      * @throws SAXException if any XML error occurs
      */
     public static Collection<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
+        return readAll(in, validate, new HashSetWithLast<TaggingPreset>());
+    }
+
+    /**
+     * Reads all tagging presets from the input reader.
+     * @param in The input reader
+     * @param validate if {@code true}, XML validation will be performed
+     * @param all the accumulator for parsed tagging presets
+     * @return the accumulator
+     * @throws SAXException if any XML error occurs
+     */
+    static Collection<TaggingPreset> readAll(Reader in, boolean validate, HashSetWithLast<TaggingPreset> all) throws SAXException {
         XmlObjectParser parser = buildParser();
 
-        Deque<TaggingPreset> all = new LinkedList<>();
+        /** to detect end of {@code <group>} */
         TaggingPresetMenu lastmenu = null;
+        /** to detect end of reused {@code <group>} */
+        TaggingPresetMenu lastmenuOriginal = null;
         TaggingPresetItems.Roles lastrole = null;
         final List<TaggingPresetItems.Check> checks = new LinkedList<>();
         List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<>();
@@ -172,13 +206,20 @@ public final class TaggingPresetReader {
             }
             if (o instanceof TaggingPresetMenu) {
                 TaggingPresetMenu tp = (TaggingPresetMenu) o;
-                if (tp == lastmenu) {
+                if (tp == lastmenu || tp == lastmenuOriginal) {
                     lastmenu = tp.group;
                 } else {
                     tp.group = lastmenu;
-                    tp.setDisplayName();
+                    if (all.contains(tp)) {
+                        lastmenuOriginal = tp;
+                        tp = (TaggingPresetMenu) Utils.filter(all, Predicates.<TaggingPreset>equalTo(tp)).iterator().next();
+                        lastmenuOriginal.group = null;
+                    } else {
+                        tp.setDisplayName();
+                        all.add(tp);
+                        lastmenuOriginal = null;
+                    }
                     lastmenu = tp;
-                    all.add(tp);
                 }
                 lastrole = null;
             } else if (o instanceof TaggingPresetSeparator) {
@@ -252,6 +293,19 @@ public final class TaggingPresetReader {
      * @throws IOException if any I/O error occurs
      */
     public static Collection<TaggingPreset> readAll(String source, boolean validate) throws SAXException, IOException {
+        return readAll(source, validate, new HashSetWithLast<TaggingPreset>());
+    }
+
+    /**
+     * Reads all tagging presets from the given source.
+     * @param source a given filename, URL or internal resource
+     * @param validate if {@code true}, XML validation will be performed
+     * @param all the accumulator for parsed tagging presets
+     * @return the accumulator
+     * @throws SAXException if any XML error occurs
+     * @throws IOException if any I/O error occurs
+     */
+    static Collection<TaggingPreset> readAll(String source, boolean validate, HashSetWithLast<TaggingPreset> all) throws SAXException, IOException {
         Collection<TaggingPreset> tp;
         CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
         try (
@@ -262,7 +316,7 @@ public final class TaggingPresetReader {
                 zipIcons = cf.getFile();
             }
             try (InputStreamReader r = UTFInputStreamReader.create(zip == null ? cf.getInputStream() : zip)) {
-                tp = readAll(new BufferedReader(r), validate);
+                tp = readAll(new BufferedReader(r), validate, all);
             }
         }
         return tp;
@@ -286,10 +340,10 @@ public final class TaggingPresetReader {
      * @return Collection of all presets successfully read
      */
     public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate, boolean displayErrMsg) {
-        List<TaggingPreset> allPresets = new LinkedList<>();
+        HashSetWithLast<TaggingPreset> allPresets = new HashSetWithLast<>();
         for(String source : sources)  {
             try {
-                allPresets.addAll(readAll(source, validate));
+                readAll(source, validate, allPresets);
             } catch (IOException e) {
                 Main.error(e, false);
                 Main.error(source);

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
@@ -35,6 +36,22 @@ public class TaggingPresetMenu extends TaggingPreset {
             else
                 return AlphanumComparator.getInstance().compare(o1.getText(), o2.getText());
         }
+    }
+
+    /**
+     * {@code TaggingPresetMenu} are considered equivalent if (and only if) their {@link #getRawName()} match.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TaggingPresetMenu that = (TaggingPresetMenu) o;
+        return Objects.equals(getRawName(), that.getRawName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRawName());
     }
 
     @Override
