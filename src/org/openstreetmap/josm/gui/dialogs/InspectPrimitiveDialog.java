@@ -6,11 +6,15 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -61,8 +65,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected transient List<OsmPrimitive> primitives;
     protected transient OsmDataLayer layer;
-    private JosmTextArea txtMappaint;
     private boolean mappaintTabLoaded;
+    private boolean editcountTabLoaded;
 
     public InspectPrimitiveDialog(Collection<OsmPrimitive> primitives, OsmDataLayer layer) {
         super(Main.parent, tr("Advanced object info"), new String[] {tr("Close")});
@@ -73,8 +77,9 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
         setButtonIcons(new String[]{"ok.png"});
         final JTabbedPane tabs = new JTabbedPane();
-        JPanel pData = buildDataPanel();
-        tabs.addTab(tr("data"), pData);
+
+        tabs.addTab(tr("data"), genericMonospacePanel(new JPanel(), buildDataText()));
+
         final JPanel pMapPaint = new JPanel();
         tabs.addTab(tr("map style"), pMapPaint);
         tabs.getModel().addChangeListener(new ChangeListener() {
@@ -83,26 +88,34 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             public void stateChanged(ChangeEvent e) {
                 if (!mappaintTabLoaded && ((SingleSelectionModel) e.getSource()).getSelectedIndex() == 1) {
                     mappaintTabLoaded = true;
-                    buildMapPaintPanel(pMapPaint);
-                    createMapPaintText();
+                    genericMonospacePanel(pMapPaint, buildMapPaintText());
                 }
             }
         });
+
+        final JPanel pEditCounts = new JPanel();
+        tabs.addTab(tr("edit counts"), pEditCounts);
+        tabs.getModel().addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (!editcountTabLoaded && ((SingleSelectionModel) e.getSource()).getSelectedIndex() == 2) {
+                    editcountTabLoaded = true;
+                    genericMonospacePanel(pEditCounts, buildListOfEditorsText());
+                }
+            }
+        });
+
         setContent(tabs, false);
     }
 
-    protected JPanel buildDataPanel() {
-        JPanel p = new JPanel(new GridBagLayout());
-        JosmTextArea txtData = new JosmTextArea();
-        txtData.setFont(GuiHelper.getMonospacedFont(txtData));
-        txtData.setEditable(false);
-        txtData.setText(buildDataText());
-        txtData.setSelectionStart(0);
-        txtData.setSelectionEnd(0);
-
-        JScrollPane scroll = new JScrollPane(txtData);
-
-        p.add(scroll, GBC.std().fill());
+    protected JPanel genericMonospacePanel(JPanel p, String s) {
+        p.setLayout(new GridBagLayout());
+        JosmTextArea jte = new JosmTextArea();
+        jte.setFont(GuiHelper.getMonospacedFont(jte));
+        jte.setEditable(false);
+        jte.append(s);
+        p.add(new JScrollPane(jte), GBC.std().fill());
         return p;
     }
 
@@ -321,21 +334,13 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
     }
 
-    protected void buildMapPaintPanel(JPanel p) {
-        p.setLayout(new GridBagLayout());
-        txtMappaint = new JosmTextArea();
-        txtMappaint.setFont(GuiHelper.getMonospacedFont(txtMappaint));
-        txtMappaint.setEditable(false);
-
-        p.add(new JScrollPane(txtMappaint), GBC.std().fill());
-    }
-
-    protected void createMapPaintText() {
+    protected String buildMapPaintText() {
         final Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getAllSelected();
         ElemStyles elemstyles = MapPaintStyles.getStyles();
         NavigatableComponent nc = Main.map.mapView;
         double scale = nc.getDist100Pixel();
 
+        final StringBuilder txtMappaint = new StringBuilder();
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
             for (OsmPrimitive osm : sel) {
@@ -349,7 +354,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                         s.apply(mc, osm, scale, false);
                         txtMappaint.append(tr("\nRange:{0}", mc.range));
                         for (Entry<String, Cascade> e : mc.getLayers()) {
-                            txtMappaint.append("\n " + e.getKey() + ": \n" + e.getValue());
+                            txtMappaint.append("\n ").append(e.getKey()).append(": \n").append(e.getValue());
                         }
                     } else {
                         txtMappaint.append(tr("\n\n> skipping \"{0}\" (not active)", s.getDisplayString()));
@@ -358,7 +363,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 txtMappaint.append(tr("\n\nList of generated Styles:\n"));
                 StyleList sl = elemstyles.get(osm, scale, nc);
                 for (ElemStyle s : sl) {
-                    txtMappaint.append(" * " + s + "\n");
+                    txtMappaint.append(" * ").append(s).append("\n");
                 }
                 txtMappaint.append("\n\n");
             }
@@ -379,6 +384,41 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 txtMappaint.append(tr("Warning: The 2 selected objects have equal, but not identical style caches."));
             }
         }
+        return txtMappaint.toString();
+    }
+
+    /*  Future Ideas:
+        Calculate the most recent edit date from o.getTimestamp().
+        Sort by the count for presentation, so the most active editors are on top.
+        Count only tagged nodes (so empty way nodes don't inflate counts).
+    */
+    protected String buildListOfEditorsText() {
+        final StringBuilder s = new StringBuilder();
+        final Map<String, Integer> editCountByUser = new TreeMap<>(Collator.getInstance(Locale.getDefault()));
+
+        // Count who edited each selected object
+        for (OsmPrimitive o : primitives) {
+            if (o.getUser() != null) {
+                String username = o.getUser().getName();
+                Integer oldCount = editCountByUser.get(username);
+                if (oldCount == null) {
+                    editCountByUser.put(username, 1);
+                } else {
+                    editCountByUser.put(username, oldCount + 1);
+                }
+            }
+        }
+
+        // Print the count in sorted order
+        s.append(trn("{0} user last edited the selection:", "{0} users last edited the selection:",
+                editCountByUser.size(), editCountByUser.size()));
+        s.append("\n\n");
+        for (Map.Entry<String, Integer> entry : editCountByUser.entrySet()) {
+            final String username = entry.getKey();
+            final Integer editCount = entry.getValue();
+            s.append(String.format("%6d  %s\n", editCount, username));
+        }
+        return s.toString();
     }
 
     private String getSort(StyleSource s) {
