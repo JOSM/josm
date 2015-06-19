@@ -118,7 +118,6 @@ public class SplashScreen extends JFrame implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent ignore) {
         progressRenderer.setTasks(progressMonitor.toString());
-        pack();
     }
 
     /**
