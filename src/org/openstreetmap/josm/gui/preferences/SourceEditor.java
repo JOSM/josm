@@ -17,6 +17,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +50,7 @@ import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -133,7 +136,8 @@ public abstract class SourceEditor extends JPanel {
         this.availableSourcesModel = new AvailableSourcesListModel(selectionModel);
         this.lstAvailableSources = new JList<>(availableSourcesModel);
         this.lstAvailableSources.setSelectionModel(selectionModel);
-        this.lstAvailableSources.setCellRenderer(new SourceEntryListCellRenderer());
+        final SourceEntryListCellRenderer listCellRenderer = new SourceEntryListCellRenderer();
+        this.lstAvailableSources.setCellRenderer(listCellRenderer);
         this.availableSourcesUrl = availableSourcesUrl;
         this.sourceProviders = sourceProviders;
 
@@ -163,6 +167,20 @@ public abstract class SourceEditor extends JPanel {
             tblActiveSources.getColumnModel().getColumn(0).setCellRenderer(sourceEntryRenderer);
         }
 
+        activeSourcesModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                listCellRenderer.updateSources(activeSourcesModel.getSources());
+                lstAvailableSources.repaint();
+            }
+        });
+        tblActiveSources.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                listCellRenderer.updateSources(activeSourcesModel.getSources());
+                lstAvailableSources.repaint();
+            }
+        });
         activeSourcesModel.addTableModelListener(new TableModelListener() {
             // Force swing to show horizontal scrollbars for the JTable
             // Yes, this is a little ugly, but should work
@@ -1214,6 +1232,11 @@ public abstract class SourceEditor extends JPanel {
     }
 
     static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer<ExtendedSourceEntry> {
+
+        private final ImageIcon GREEN_CHECK = ImageProvider.getIfAvailable("misc", "green_check");
+        private final ImageIcon GRAY_CHECK = ImageProvider.getIfAvailable("misc", "gray_check");
+        private final Map<String, SourceEntry> entryByUrl = new HashMap<>();
+
         @Override
         public Component getListCellRendererComponent(JList<? extends ExtendedSourceEntry> list, ExtendedSourceEntry value,
                 int index, boolean isSelected, boolean cellHasFocus) {
@@ -1231,7 +1254,18 @@ public abstract class SourceEditor extends JPanel {
             setFont(getFont().deriveFont(Font.PLAIN));
             setOpaque(true);
             setToolTipText(value.getTooltip());
+            final SourceEntry sourceEntry = entryByUrl.get(value.url);
+            setIcon(sourceEntry == null ? null : sourceEntry.active ? GREEN_CHECK : GRAY_CHECK);
             return this;
+        }
+
+        public void updateSources(List<SourceEntry> sources) {
+            synchronized (entryByUrl) {
+                entryByUrl.clear();
+                for (SourceEntry i : sources) {
+                    entryByUrl.put(i.url, i);
+                }
+            }
         }
     }
 
