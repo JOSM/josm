@@ -1758,6 +1758,16 @@ public abstract class Main {
     }
 
     /**
+     * Sets the given online resource to online state.
+     * @param r the online resource
+     * @return {@code true} if {@code r} was offline
+     * @since 8506
+     */
+    public static boolean setOnline(OnlineResource r) {
+        return OFFLINE_RESOURCES.remove(r);
+    }
+
+    /**
      * Replies the set of online resources currently offline.
      * @return the set of online resources currently offline
      * @since 7434

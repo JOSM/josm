@@ -25,10 +25,11 @@ public final class CheckParameterUtil {
      * @param parameterName The parameter name
      * @throws IllegalArgumentException if the primitive ID is not valid (negative or zero)
      */
-    public static void ensureValidPrimitiveId(PrimitiveId id, String parameterName) throws IllegalArgumentException {
+    public static void ensureValidPrimitiveId(PrimitiveId id, String parameterName) {
         ensureParameterNotNull(id, parameterName);
         if (id.getUniqueId() <= 0)
-            throw new IllegalArgumentException(MessageFormat.format("Expected unique id > 0 for primitive ''{1}'', got {0}", id.getUniqueId(), parameterName));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Expected unique id > 0 for primitive ''{1}'', got {0}", id.getUniqueId(), parameterName));
     }
 
     /**
@@ -38,10 +39,11 @@ public final class CheckParameterUtil {
      * @throws IllegalArgumentException if the lat/lon are {@code null} or not valid
      * @since 5980
      */
-    public static void ensureValidCoordinates(LatLon latlon, String parameterName) throws IllegalArgumentException {
+    public static void ensureValidCoordinates(LatLon latlon, String parameterName) {
         ensureParameterNotNull(latlon, parameterName);
         if (!latlon.isValid())
-            throw new IllegalArgumentException(MessageFormat.format("Expected valid lat/lon for parameter ''{0}'', got {1}", parameterName, latlon));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Expected valid lat/lon for parameter ''{0}'', got {1}", parameterName, latlon));
     }
 
     /**
@@ -51,10 +53,11 @@ public final class CheckParameterUtil {
      * @throws IllegalArgumentException if the east/north are {@code null} or not valid
      * @since 5980
      */
-    public static void ensureValidCoordinates(EastNorth eastnorth, String parameterName) throws IllegalArgumentException {
+    public static void ensureValidCoordinates(EastNorth eastnorth, String parameterName) {
         ensureParameterNotNull(eastnorth, parameterName);
         if (!eastnorth.isValid())
-            throw new IllegalArgumentException(MessageFormat.format("Expected valid east/north for parameter ''{0}'', got {1}", parameterName, eastnorth));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Expected valid east/north for parameter ''{0}'', got {1}", parameterName, eastnorth));
     }
 
     /**
@@ -63,9 +66,10 @@ public final class CheckParameterUtil {
      * @param parameterName The parameter name
      * @throws IllegalArgumentException if the version is not valid (negative)
      */
-    public static void ensureValidVersion(long version, String parameterName) throws IllegalArgumentException {
+    public static void ensureValidVersion(long version, String parameterName) {
         if (version < 0)
-            throw new IllegalArgumentException(MessageFormat.format("Expected value of type long > 0 for parameter ''{0}'', got {1}", parameterName, version));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Expected value of type long > 0 for parameter ''{0}'', got {1}", parameterName, version));
     }
 
     /**
@@ -74,7 +78,7 @@ public final class CheckParameterUtil {
      * @param parameterName The parameter name
      * @throws IllegalArgumentException if the parameter is {@code null}
      */
-    public static void ensureParameterNotNull(Object value, String parameterName) throws IllegalArgumentException {
+    public static void ensureParameterNotNull(Object value, String parameterName) {
         if (value == null)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' must not be null", parameterName));
     }
@@ -85,7 +89,7 @@ public final class CheckParameterUtil {
      * @throws IllegalArgumentException if the parameter is {@code null}
      * @since 3871
      */
-    public static void ensureParameterNotNull(Object value) throws IllegalArgumentException {
+    public static void ensureParameterNotNull(Object value) {
         if (value == null)
             throw new IllegalArgumentException("Parameter must not be null");
     }
@@ -95,7 +99,7 @@ public final class CheckParameterUtil {
      * @param condition The condition to check
      * @throws IllegalArgumentException if the condition does not hold
      */
-    public static void ensureThat(boolean condition, String message) throws IllegalArgumentException {
+    public static void ensureThat(boolean condition, String message) {
         if (!condition)
             throw new IllegalArgumentException(message);
     }
@@ -103,14 +107,15 @@ public final class CheckParameterUtil {
     /**
      * Ensures that <code>id</code> is non-null primitive id of type {@link OsmPrimitiveType#NODE}
      *
-     * @param id  the primitive  id
+     * @param id the primitive  id
      * @param parameterName the name of the parameter to be checked
      * @throws IllegalArgumentException if id is null
      * @throws IllegalArgumentException if id.getType() != NODE
      */
-    public static void ensureValidNodeId(PrimitiveId id, String parameterName) throws IllegalArgumentException {
+    public static void ensureValidNodeId(PrimitiveId id, String parameterName) {
         ensureParameterNotNull(id, parameterName);
         if (!id.getType().equals(OsmPrimitiveType.NODE))
-            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' of type node expected, got ''{1}''", parameterName, id.getType().getAPIName()));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Parameter ''{0}'' of type node expected, got ''{1}''", parameterName, id.getType().getAPIName()));
     }
 }

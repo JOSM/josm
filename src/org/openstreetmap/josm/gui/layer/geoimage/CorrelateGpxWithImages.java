@@ -20,7 +20,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -212,7 +211,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
         }
 
-        private InputStream createInputStream(File sel) throws IOException, FileNotFoundException {
+        private InputStream createInputStream(File sel) throws IOException {
             if (Utils.hasExtension(sel, "gpx.gz")) {
                 return new GZIPInputStream(new FileInputStream(sel));
             } else {

@@ -435,8 +435,7 @@ public class GpxData extends WithAttributes implements Data {
                             return itTrackSegments.next().getWayPoints();
                         }
                     }
-                    // if we get here, all the Tracks are finished; Continue with
-                    // Routes
+                    // if we get here, all the Tracks are finished; Continue with Routes
                     itTracks = null;
                 }
             }

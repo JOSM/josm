@@ -102,8 +102,11 @@ public abstract class Plugin implements MapFrameListener {
 
     /**
      * Copies the resource 'from' to the file in the plugin directory named 'to'.
+     * @throws FileNotFoundException if the file exists but is a directory rather than a regular file,
+     * does not exist but cannot be created, or cannot be opened for any other reason
+     * @throws IOException if any other I/O error occurs
      */
-    public void copy(String from, String to) throws FileNotFoundException, IOException {
+    public void copy(String from, String to) throws IOException {
         String pluginDirName = getPluginDir();
         File pluginDir = new File(pluginDirName);
         if (!pluginDir.exists()) {
