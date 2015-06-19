@@ -52,7 +52,6 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.MessageNotifier;
@@ -403,14 +402,22 @@ public class MainApplication extends Main {
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
 
         final SplashScreen splash = new SplashScreen();
-        final ProgressMonitor monitor = splash.getProgressMonitor();
+        final SplashScreen.SplashProgressMonitor monitor = splash.getProgressMonitor();
         monitor.beginTask(tr("Initializing"));
         splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true));
         Main.setInitStatusListener(new InitStatusListener() {
 
             @Override
-            public void updateStatus(String event) {
-                monitor.indeterminateSubTask(event);
+            public Object updateStatus(String event) {
+                monitor.beginTask(event);
+                return event;
+            }
+
+            @Override
+            public void finish(Object status) {
+                if (status instanceof String) {
+                    monitor.finishTask((String) status);
+                }
             }
         });
 

@@ -530,10 +530,12 @@ public abstract class Main {
 
     public static interface InitStatusListener {
 
-        void updateStatus(String event);
+        Object updateStatus(String event);
+        void finish(Object status);
     }
 
     public static void setInitStatusListener(InitStatusListener listener) {
+        CheckParameterUtil.ensureParameterNotNull(listener);
         initListener = listener;
     }
 
@@ -544,17 +546,22 @@ public abstract class Main {
         main = this;
         isOpenjdk = System.getProperty("java.vm.name").toUpperCase(Locale.ENGLISH).indexOf("OPENJDK") != -1;
 
-        if (initListener != null) {
-            initListener.updateStatus(tr("Executing platform startup hook"));
-        }
-        platform.startupHook();
+        new InitializationTask(tr("Executing platform startup hook")) {
+            @Override
+            public void initialize() {
+                platform.startupHook();
+            }
+        }.call();
 
-        if (initListener != null) {
-            initListener.updateStatus(tr("Building main menu"));
-        }
-        contentPanePrivate.add(panel, BorderLayout.CENTER);
-        panel.add(gettingStarted, BorderLayout.CENTER);
-        menu = new MainMenu();
+        new InitializationTask(tr("Building main menu")) {
+
+            @Override
+            public void initialize() {
+                contentPanePrivate.add(panel, BorderLayout.CENTER);
+                panel.add(gettingStarted, BorderLayout.CENTER);
+                menu = new MainMenu();
+            }
+        }.call();
 
         undoRedo.addCommandQueueListener(redoUndoListener);
 
@@ -570,7 +577,7 @@ public abstract class Main {
         tasks.add(new InitializationTask(tr("Initializing OSM API")) {
 
             @Override
-            public void initialize() throws Exception {
+            public void initialize() {
                 // We try to establish an API connection early, so that any API
                 // capabilities are already known to the editor instance. However
                 // if it goes wrong that's not critical at this stage.
@@ -585,7 +592,7 @@ public abstract class Main {
         tasks.add(new InitializationTask(tr("Initializing validator")) {
 
             @Override
-            public void initialize() throws Exception {
+            public void initialize() {
                 validator = new OsmValidator();
                 MapView.addLayerChangeListener(validator);
             }
@@ -594,7 +601,7 @@ public abstract class Main {
         tasks.add(new InitializationTask(tr("Initializing presets")) {
 
             @Override
-            public void initialize() throws Exception {
+            public void initialize() {
                 TaggingPresets.initialize();
             }
         });
@@ -602,7 +609,7 @@ public abstract class Main {
         tasks.add(new InitializationTask(tr("Initializing map styles")) {
 
             @Override
-            public void initialize() throws Exception {
+            public void initialize() {
                 MapPaintPreference.initialize();
             }
         });
@@ -610,7 +617,7 @@ public abstract class Main {
         tasks.add(new InitializationTask(tr("Loading imagery preferences")) {
 
             @Override
-            public void initialize() throws Exception {
+            public void initialize() {
                 ImageryPreference.initialize();
             }
         });
@@ -669,14 +676,15 @@ public abstract class Main {
             }
         });
 
-        if (initListener != null) {
-            initListener.updateStatus(tr("Updating user interface"));
-        }
+        new InitializationTask(tr("Updating user interface")) {
 
-        toolbar.refreshToolbarControl();
-
-        toolbar.control.updateUI();
-        contentPanePrivate.updateUI();
+            @Override
+            public void initialize() {
+                toolbar.refreshToolbarControl();
+                toolbar.control.updateUI();
+                contentPanePrivate.updateUI();
+            }
+        }.call();
     }
 
     private abstract class InitializationTask implements Callable<Void> {
@@ -687,18 +695,17 @@ public abstract class Main {
             this.name = name;
         }
 
-        public abstract void initialize() throws Exception;
+        public abstract void initialize();
 
         @Override
-        public Void call() throws Exception {
+        public Void call() {
+            Object status = null;
             if (initListener != null) {
-                initListener.updateStatus(name);
+                status = initListener.updateStatus(name);
             }
-            final long startTime = System.currentTimeMillis();
             initialize();
-            if (isDebugEnabled()) {
-                final long elapsedTime = System.currentTimeMillis() - startTime;
-                Main.debug(tr("{0} completed in {1}", name, Utils.getDurationString(elapsedTime)));
+            if (initListener != null) {
+                initListener.finish(status);
             }
             return null;
         }
