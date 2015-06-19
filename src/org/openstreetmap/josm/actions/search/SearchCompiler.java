@@ -1301,7 +1301,7 @@ public class SearchCompiler {
     /**
      * Matches objects within source area ("downloaded area").
      */
-    private static class InDataSourceArea extends InArea {
+    public static class InDataSourceArea extends InArea {
 
         public InDataSourceArea(boolean all) {
             super(all);
@@ -1309,7 +1309,8 @@ public class SearchCompiler {
 
         @Override
         protected Bounds getBounds() {
-            return new Bounds(Main.main.getCurrentDataSet().getDataSourceArea().getBounds2D());
+            return Main.main.getCurrentDataSet() == null || Main.main.getCurrentDataSet().getDataSourceArea() == null
+                    ? null : new Bounds(Main.main.getCurrentDataSet().getDataSourceArea().getBounds2D());
         }
     }
 

@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -466,6 +467,17 @@ public abstract class Condition {
                     !e.osm.isIncomplete() && !((Relation) e.osm).hasIncompleteMembers() &&
                     !MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) e.osm).getOpenEnds().isEmpty();
         }
+
+        private static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new SearchCompiler.InDataSourceArea(false);
+
+        /**
+         * {@code in-downloaded-area} tests whether the object is within source area ("downloaded area").
+         * @see SearchCompiler.InDataSourceArea
+         */
+        static boolean inDownloadedArea(Environment e) {
+            return IN_DOWNLOADED_AREA.evaluate(e.osm);
+        }
+
     }
 
     public static class PseudoClassCondition extends Condition {

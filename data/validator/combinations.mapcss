@@ -263,7 +263,7 @@ way[highway][natural],
 /* see #10471 */
 way[waterway] > node[ford?] { set ford_on_waterway; }
 way[highway] > node[ford?] { set ford_on_highway; }
-node[ford?]!.ford_on_waterway, node[ford?]!.ford_on_highway {
+node[ford?]:in-downloaded-area!.ford_on_waterway, node[ford?]:in-downloaded-area!.ford_on_highway {
     throwWarning: tr("{0} should be on the node where {1} and {2} intersect", "ford", "highway", "waterway");
 }
 
