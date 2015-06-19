@@ -717,6 +717,18 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         setSelectedMembers(sortedMembers);
     }
 
+    /**
+     * Sort the selected relation members and all members below by the way they are linked.
+     */
+    void sortBelow() {
+        final List<RelationMember> subList = members.subList(getSelectionModel().getMinSelectionIndex(), members.size());
+        final List<RelationMember> sorted = relationSorter.sortMembers(subList);
+        subList.clear();
+        subList.addAll(sorted);
+        fireTableDataChanged();
+        setSelectedMembers(sorted);
+    }
+
     WayConnectionType getWayConnection(int i) {
         if (connectionType == null) {
             connectionType = wayConnectionTypeCalculator.updateLinks(members);

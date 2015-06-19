@@ -32,6 +32,7 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -55,6 +56,7 @@ import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.CopyAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -113,6 +115,10 @@ public class GenericRelationEditor extends RelationEditor  {
      * hide on dialog close.
      */
     private JMenuItem windowMenuItem;
+    /**
+     * Button for performing the {@link org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.SortBelowAction}.
+     */
+    private JButton sortBelowButton;
 
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
@@ -507,6 +513,10 @@ public class GenericRelationEditor extends RelationEditor  {
         SortAction sortAction = new SortAction();
         memberTableModel.addTableModelListener(sortAction);
         tb.add(sortAction);
+        final SortBelowAction sortBelowAction = new SortBelowAction();
+        memberTableModel.addTableModelListener(sortBelowAction);
+        memberTableModel.getSelectionModel().addListSelectionListener(sortBelowAction);
+        sortBelowButton = tb.add(sortBelowAction);
 
         // -- reverse action
         ReverseAction reverseAction = new ReverseAction();
@@ -602,6 +612,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
         super.setVisible(visible);
         if (visible) {
+            sortBelowButton.setVisible(ExpertToggleAction.isExpert());
             RelationDialogManager.getRelationDialogManager().positionOnScreen(this);
             if(windowMenuItem == null) {
                 addToWindowMenu();
@@ -1054,6 +1065,34 @@ public class GenericRelationEditor extends RelationEditor  {
 
         @Override
         public void tableChanged(TableModelEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    class SortBelowAction extends AbstractAction implements TableModelListener, ListSelectionListener {
+        public SortBelowAction() {
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort_below"));
+            putValue(NAME, tr("Sort below"));
+            putValue(SHORT_DESCRIPTION, tr("Sort the selected relation members and all members below"));
+            updateEnabledState();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.sortBelow();
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(memberTableModel.getRowCount() > 0 && !memberTableModel.getSelectionModel().isSelectionEmpty());
+        }
+
+        @Override
+        public void tableChanged(TableModelEvent e) {
+            updateEnabledState();
+        }
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
     }
