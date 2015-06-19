@@ -3763,6 +3763,19 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Horse Riding -->
+        <item name="Casino" icon="styles/standard/leisure/casino.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=casino"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=casino"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=casino"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=casino" />
+            <space />
+            <key key="amenity" value="casino" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <space />
+            <reference ref="internet_smoking" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Casino -->
         <item name="Brothel" de.name="Bordell" icon="styles/standard/leisure/stripclub.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=brothel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=brothel"
