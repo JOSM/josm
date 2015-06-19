@@ -52,6 +52,17 @@ class MapCSSParserTest {
         assert conditions.get(0).applies(getEnvironment("name", "X"))
         assert conditions.get(1) instanceof Condition.ClassCondition
         assert conditions.get(2) instanceof Condition.PseudoClassCondition
+        assert !conditions.get(2).applies(getEnvironment("name", "X"))
+    }
+
+    @Test
+    public void testPseudoClassCondition() throws Exception {
+        def c1 = ((Selector.GeneralSelector) getParser("way!:area-style").selector()).conds.get(0)
+        def c2 = ((Selector.GeneralSelector) getParser("way!:areaStyle").selector()).conds.get(0)
+        def c3 = ((Selector.GeneralSelector) getParser("way!:area_style").selector()).conds.get(0)
+        assert c1.toString() == "!:areaStyle"
+        assert c2.toString() == "!:areaStyle"
+        assert c3.toString() == "!:areaStyle"
     }
 
     @Test

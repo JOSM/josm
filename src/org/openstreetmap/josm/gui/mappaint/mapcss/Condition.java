@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,7 +70,7 @@ public abstract class Condition {
     }
 
     public static PseudoClassCondition createPseudoClassCondition(String id, boolean not, Context context) {
-        return new PseudoClassCondition(id, not, context);
+        return PseudoClassCondition.createPseudoClassCondition(id, not, context);
     }
 
     public static ClassCondition createClassCondition(String id, boolean not, Context context) {
@@ -375,61 +377,155 @@ public abstract class Condition {
         }
     }
 
+    /**
+     * Like <a href="http://www.w3.org/TR/css3-selectors/#pseudo-classes">CSS pseudo classes</a>, MapCSS pseudo classes
+     * are written in lower case with dashes between words.
+     */
+    static class PseudoClasses {
+
+        /**
+         * {@code closed} tests whether the way is closed or the relation is a closed multipolygon
+         */
+        static boolean closed(Environment e) {
+            if (e.osm instanceof Way && ((Way) e.osm).isClosed())
+                return true;
+            if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
+                return true;
+            return false;
+        }
+
+        /**
+         * {@code :modified} tests whether the object has been modified.
+         * @see OsmPrimitive#isModified() ()
+         */
+        static boolean modified(Environment e) {
+            return e.osm.isModified() || e.osm.isNewOrUndeleted();
+        }
+
+        /**
+         * {@code ;new} tests whether the object is new.
+         * @see OsmPrimitive#isNew()
+         */
+        static boolean _new(Environment e) {
+            return e.osm.isNew();
+        }
+
+        /**
+         * {@code :connection} tests whether the object is a connection node.
+         * @see Node#isConnectionNode()
+         */
+        static boolean connection(Environment e) {
+            return e.osm instanceof Node && ((Node) e.osm).isConnectionNode();
+        }
+
+        /**
+         * {@code :tagged} tests whether the object is tagged.
+         * @see OsmPrimitive#isTagged()
+         */
+        static boolean tagged(Environment e) {
+            return e.osm.isTagged();
+        }
+
+        /**
+         * {@code :same-tags} tests whether the object has the same tags as its child/parent.
+         * @see OsmPrimitive#hasSameInterestingTags(OsmPrimitive)
+         */
+        static boolean sameTags(Environment e) {
+            return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
+        }
+
+        /**
+         * {@code :area-style} tests whether the object has an area style. This is useful for validators.
+         * @see ElemStyles#hasAreaElemStyle(OsmPrimitive, boolean)
+         */
+        static boolean areaStyle(Environment e) {
+            // only for validator
+            return ElemStyles.hasAreaElemStyle(e.osm, false);
+        }
+
+        /**
+         * {@code unconnected}: tests whether the object is a unconnected node.
+         */
+        static boolean unconnected(Environment e) {
+            return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
+        }
+
+        /**
+         * {@code righthandtraffic} checks if there is right-hand traffic at the current location.
+         * @see ExpressionFactory.Functions#is_right_hand_traffic(Environment)
+         */
+        static boolean righthandtraffic(Environment e) {
+            return ExpressionFactory.Functions.is_right_hand_traffic(e);
+        }
+
+        /**
+         * {@code unclosed-multipolygon} tests whether the object is an unclosed multipolygon.
+         */
+        static boolean unclosed_multipolygon(Environment e) {
+            return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() &&
+                    !e.osm.isIncomplete() && !((Relation) e.osm).hasIncompleteMembers() &&
+                    !MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) e.osm).getOpenEnds().isEmpty();
+        }
+    }
+
     public static class PseudoClassCondition extends Condition {
 
-        public final String id;
+        public final Method method;
         public final boolean not;
 
-        public PseudoClassCondition(String id, boolean not, Context context) {
-            this.id = id;
+        private PseudoClassCondition(Method method, boolean not) {
+            this.method = method;
             this.not = not;
+        }
+
+        public static PseudoClassCondition createPseudoClassCondition(String id, boolean not, Context context) {
             CheckParameterUtil.ensureThat(!"sameTags".equals(id) || Context.LINK.equals(context), "sameTags only supported in LINK context");
+            if ("open_end".equals(id)) {
+                return new OpenEndPseudoClassCondition(not);
+            }
+            final Method method = getMethod(id);
+            if (method != null) {
+                return new PseudoClassCondition(method, not);
+            }
+            throw new IllegalArgumentException("Invalid pseudo class specified: " + id);
+
+        }
+
+        protected static Method getMethod(String id) {
+            id = id.replaceAll("-|_", "");
+            for (Method method : PseudoClasses.class.getDeclaredMethods()) {
+                // for backwards compatibility, consider :sameTags == :same-tags == :same_tags (#11150)
+                final String methodName = method.getName().replaceAll("-|_", "");
+                if (methodName.equalsIgnoreCase(id)) {
+                    return method;
+                }
+            }
+            return null;
         }
 
         @Override
         public boolean applies(Environment e) {
-            return not ^ appliesImpl(e);
-        }
-
-        public boolean appliesImpl(Environment e) {
-            switch(id) {
-            case "closed":
-                if (e.osm instanceof Way && ((Way) e.osm).isClosed())
-                    return true;
-                if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
-                    return true;
-                break;
-            case "modified":
-                return e.osm.isModified() || e.osm.isNewOrUndeleted();
-            case "new":
-                return e.osm.isNew();
-            case "connection":
-                return e.osm instanceof Node && ((Node) e.osm).isConnectionNode();
-            case "tagged":
-                return e.osm.isTagged();
-            case "sameTags":
-                return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
-            case "areaStyle":
-                // only for validator
-                return ElemStyles.hasAreaElemStyle(e.osm, false);
-            case "unconnected":
-                return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
-            case "righthandtraffic":
-                return ExpressionFactory.Functions.is_right_hand_traffic(e);
-            case "unclosed_multipolygon":
-                return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() &&
-                        !e.osm.isIncomplete() && !((Relation) e.osm).hasIncompleteMembers() &&
-                        !MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) e.osm).getOpenEnds().isEmpty();
-            case "open_end":
-                // handling at org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector.MultipolygonOpenEndFinder
-                return true;
+            try {
+                return not ^ (Boolean) method.invoke(null, e);
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                throw new RuntimeException(ex);
             }
-            return false;
         }
 
         @Override
         public String toString() {
-            return ":" + (not ? "!" : "") + id;
+            return (not ? "!" : "") + ":" + method.getName();
+        }
+    }
+
+    public static class OpenEndPseudoClassCondition extends PseudoClassCondition {
+        public OpenEndPseudoClassCondition(boolean not) {
+            super(null, not);
+        }
+
+        @Override
+        public boolean applies(Environment e) {
+            return true;
         }
     }
 

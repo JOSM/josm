@@ -368,8 +368,7 @@ public interface Selector {
                 }
             } else if (ChildOrParentSelectorType.CHILD.equals(type)
                     && link.conds != null && !link.conds.isEmpty()
-                    && link.conds.get(0) instanceof Condition.PseudoClassCondition
-                    && "open_end".equals(((Condition.PseudoClassCondition) link.conds.get(0)).id)) {
+                    && link.conds.get(0) instanceof Condition.OpenEndPseudoClassCondition) {
                 if (e.osm instanceof Node) {
                     e.osm.visitReferrers(new MultipolygonOpenEndFinder(e));
                     return e.parent != null;
