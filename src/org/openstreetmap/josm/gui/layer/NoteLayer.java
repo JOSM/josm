@@ -19,6 +19,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JToolTip;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveActionBase;
@@ -36,8 +37,10 @@ import org.openstreetmap.josm.gui.io.AbstractIOTask;
 import org.openstreetmap.josm.gui.io.UploadNoteLayerTask;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.NoteExporter;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -223,7 +226,11 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getButton() != MouseEvent.BUTTON1) {
+        if (SwingUtilities.isRightMouseButton(e) && noteData.getSelectedNote() != null) {
+            final String url = OsmApi.getOsmApi().getBaseUrl() + "notes/" + noteData.getSelectedNote().getId();
+            Utils.copyToClipboard(url);
+            return;
+        } else if (!SwingUtilities.isLeftMouseButton(e)) {
             return;
         }
         Point clickPoint = e.getPoint();
