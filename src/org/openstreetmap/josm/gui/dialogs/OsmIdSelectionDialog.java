@@ -90,15 +90,17 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
         tfId.getKeymap().removeKeyStrokeBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false));
         tfId.setPreferredSize(new Dimension(400, tfId.getPreferredSize().height));
 
-        HtmlPanel help = new HtmlPanel(/* I18n: {0} and {1} contains example strings not meant for translation. {2}=n, {3}=w, {4}=r. */
-                tr("Object IDs can be separated by comma or space.<br/>"
-                        + "Examples: {0}<br/>"
-                        + "In mixed mode, specify objects like this: {1}<br/>"
-                        + "({2} stands for <i>node</i>, {3} for <i>way</i>, and {4} for <i>relation</i>)",
-                        "<b>" + Utils.joinAsHtmlUnorderedList(Arrays.asList("1 2 5", "1,2,5")) + "</b>",
-                        "<b>w123, n110, w12, r15</b>",
-                        "<b>n</b>", "<b>w</b>", "<b>r</b>"
-                ));
+        final String help1 = /* I18n: {0} and contains example strings not meant for translation. */
+                tr("Object IDs can be separated by comma or space, for instance: {0}",
+                        "<b>" + Utils.joinAsHtmlUnorderedList(Arrays.asList("1 2 5", "1,2,5")) + "</b>");
+        final String help2 = /* I18n: {0} and contains example strings not meant for translation. {1}=n, {2}=w, {3}=r. */
+                tr("In mixed mode, specify objects like this: {0}<br/>"
+                                + "({1} stands for <i>node</i>, {2} for <i>way</i>, and {3} for <i>relation</i>)",
+                        "<b>w123, n110, w12, r15</b>", "<b>n</b>", "<b>w</b>", "<b>r</b>");
+        final String help3 = /* I18n: {0} and contains example strings not meant for translation. */
+                tr("Ranges of object IDs are specified with a hyphen, for instance: {0}",
+                        "<b>" + Utils.joinAsHtmlUnorderedList(Arrays.asList("w1-5", "n30-37", "r501-5")) + "</b>");
+        HtmlPanel help = new HtmlPanel(help1 + "<br/>" + help2 + "<br/><br/>" + help3);
         help.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
         cbType.addItemListener(new ItemListener() {

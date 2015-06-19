@@ -106,7 +106,7 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
                     continue;
                 } else {
                     try {
-                        ids.add(SimplePrimitiveId.fromString(s));
+                        ids.addAll(SimplePrimitiveId.multipleFromString(s));
                     } catch (IllegalArgumentException ex) {
                         try {
                             long id = Long.parseLong(s);
