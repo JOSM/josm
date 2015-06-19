@@ -117,10 +117,8 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
     @Override
     public void stateChanged(ChangeEvent ignore) {
-        progressRenderer.setTasks("<html>"
-                + "<style>ul {margin-top: 0; margin-bottom: 0; padding: 0;} li {margin: 0; padding: 0;}</style>"
-                + "<body height='320'>"
-                + progressMonitor.toString());
+        progressRenderer.setTasks(progressMonitor.toString());
+        pack();
     }
 
     /**
@@ -329,6 +327,9 @@ public class SplashScreen extends JFrame implements ChangeListener {
     private static class SplashScreenProgressRenderer extends JPanel {
         private JLabel lblTaskTitle;
         private JProgressBar progressBar;
+        private static final String labelHtml = "<html>"
+                + "<style>ul {margin-top: 0; margin-bottom: 0; padding: 0;} li {margin: 0; padding: 0;}</style>"
+                + "<body height='320'>";
 
         protected void build() {
             setLayout(new GridBagLayout());
@@ -339,7 +340,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
             gc.weightx = 1.0;
             gc.weighty = 0.0;
             gc.insets = new Insets(5,0,0,0);
-            add(lblTaskTitle = new JLabel(" "), gc);
+            add(lblTaskTitle = new JLabel(labelHtml), gc);
 
             gc.gridy = 1;
             gc.insets = new Insets(15,0,0,0);
@@ -361,7 +362,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
         }
 
         public void setTasks(String tasks) {
-            lblTaskTitle.setText(tasks);
+            lblTaskTitle.setText(labelHtml + tasks);
             repaint();
         }
     }
