@@ -4007,8 +4007,11 @@ area[natural=water] {
     fill-color: water#0000ff;
 }
 way[natural=coastline] {
-    width: 1;
+    width: 2;
     color: water#0000ff;
+    right-casing-color: water#0000ff;
+    right-casing-width: 5;
+    right-casing-opacity: 0.30; 
 }
 area[natural=mud] {
     fill-color: mud#cba762;
