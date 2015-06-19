@@ -3742,7 +3742,7 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Water Park -->
-        <item name="Sauna" de.name="Sauna" icon="presets/sauna.png" type="node,closedway" preset_name_label="true">
+        <item name="Sauna" icon="presets/sauna.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=sauna"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=sauna"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=sauna"
@@ -3776,7 +3776,7 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Casino -->
-        <item name="Brothel" de.name="Bordell" icon="styles/standard/leisure/stripclub.png" type="node,closedway" preset_name_label="true">
+        <item name="Brothel" icon="styles/standard/leisure/stripclub.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=brothel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=brothel"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=brothel"
