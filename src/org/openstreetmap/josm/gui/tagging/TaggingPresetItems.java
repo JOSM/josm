@@ -64,6 +64,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.QuadStateCheckBox;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Predicate;
@@ -92,7 +93,7 @@ public final class TaggingPresetItems {
      */
     private static final Map<String,String> LAST_VALUES = new HashMap<>();
 
-    public static class PresetListEntry {
+    public static class PresetListEntry implements Comparable<PresetListEntry> {
         public String value;
         /** The context used for translating {@link #value} */
         public String value_context;
@@ -167,6 +168,11 @@ public final class TaggingPresetItems {
             if (value.equals(DIFFERENT))
                 return DIFFERENT;
             return getDisplayValue(true).replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
+        }
+
+        @Override
+        public int compareTo(PresetListEntry o) {
+            return AlphanumComparator.getInstance().compare(this.getDisplayValue(true), o.getDisplayValue(true));
         }
     }
 
@@ -1063,7 +1069,7 @@ public final class TaggingPresetItems {
             initialized = true;
         }
 
-        private String[] initListEntriesFromAttributes() {
+        private void initListEntriesFromAttributes() {
             char delChar = getDelChar();
 
             String[] value_array = null;
@@ -1109,21 +1115,29 @@ public final class TaggingPresetItems {
                 short_descriptions_array = null;
             }
 
+            final List<PresetListEntry> entries = new ArrayList<>(value_array.length);
             for (int i = 0; i < value_array.length; i++) {
                 final PresetListEntry e = new PresetListEntry(value_array[i]);
                 e.locale_display_value = locale_display_values != null
                         ? display_array[i]
-                                : trc(values_context, fixPresetString(display_array[i]));
-                        if (short_descriptions_array != null) {
-                            e.locale_short_description = locale_short_descriptions != null
-                                    ? short_descriptions_array[i]
-                                            : tr(fixPresetString(short_descriptions_array[i]));
-                        }
-                        lhm.put(value_array[i], e);
-                        display_array[i] = e.getDisplayValue(true);
+                        : trc(values_context, fixPresetString(display_array[i]));
+                if (short_descriptions_array != null) {
+                    e.locale_short_description = locale_short_descriptions != null
+                            ? short_descriptions_array[i]
+                            : tr(fixPresetString(short_descriptions_array[i]));
+                }
+
+                entries.add(e);
             }
 
-            return display_array;
+            if (Main.pref.getBoolean("taggingpreset.sortvalues", true)) {
+                Collections.sort(entries);
+            }
+
+            for (PresetListEntry i : entries) {
+                lhm.put(i.value, i);
+            }
+
         }
 
         protected String getDisplayIfNull() {
