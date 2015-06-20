@@ -6,6 +6,5 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public interface OsmServerReadPostprocessor {
 
-    public void postprocessDataSet(DataSet ds, ProgressMonitor progress);
-
+    void postprocessDataSet(DataSet ds, ProgressMonitor progress);
 }

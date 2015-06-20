@@ -17,5 +17,5 @@ public interface OsmPrimitiveAction extends Action {
      * Specifies the working set of primitives.
      * @param primitives The new working set of primitives. Can be null or empty
      */
-    public abstract void setPrimitives(Collection<? extends OsmPrimitive> primitives);
+    void setPrimitives(Collection<? extends OsmPrimitive> primitives);
 }

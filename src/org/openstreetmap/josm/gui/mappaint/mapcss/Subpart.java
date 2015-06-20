@@ -10,14 +10,14 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 public interface Subpart {
     String getId(Environment env);
 
-    public static Subpart DEFAULT_SUBPART = new StringSubpart("default");
+    Subpart DEFAULT_SUBPART = new StringSubpart("default");
 
     /**
      * Simple static subpart identifier.
      *
      * E.g. ::layer_1
      */
-    public static class StringSubpart implements Subpart {
+    class StringSubpart implements Subpart {
         private final String id;
 
         public StringSubpart(String id) {
@@ -35,7 +35,7 @@ public interface Subpart {
      *
      * E.g. ::(concat("layer_", prop("i", "default")))
      */
-    public static class ExpressionSubpart implements Subpart {
+    class ExpressionSubpart implements Subpart {
         private final Expression id;
 
         public ExpressionSubpart(Expression id) {

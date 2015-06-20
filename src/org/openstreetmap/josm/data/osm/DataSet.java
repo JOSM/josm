@@ -219,7 +219,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return {@code true} if upload is being discouraged, {@code false} otherwise
      * @see #setUploadDiscouraged
      */
-    public final boolean isUploadDiscouraged() {
+    public boolean isUploadDiscouraged() {
         return uploadDiscouraged;
     }
 
@@ -228,7 +228,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @param uploadDiscouraged {@code true} if this dataset contains private data which should not be uploaded
      * @see #isUploadDiscouraged
      */
-    public final void setUploadDiscouraged(boolean uploadDiscouraged) {
+    public void setUploadDiscouraged(boolean uploadDiscouraged) {
         this.uploadDiscouraged = uploadDiscouraged;
     }
 

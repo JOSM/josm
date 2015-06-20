@@ -528,7 +528,7 @@ public abstract class Main {
 
     private static volatile InitStatusListener initListener = null;
 
-    public static interface InitStatusListener {
+    public interface InitStatusListener {
 
         Object updateStatus(String event);
 
@@ -1418,7 +1418,7 @@ public abstract class Main {
      * or comes back to JOSM. Window switches from one JOSM window to another
      * are not reported.
      */
-    public static interface WindowSwitchListener {
+    public interface WindowSwitchListener {
         /**
          * Called when the user activates a window of another application.
          */

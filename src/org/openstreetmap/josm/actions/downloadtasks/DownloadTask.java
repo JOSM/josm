@@ -118,7 +118,7 @@ public interface DownloadTask {
      * Cancels the asynchronous download task.
      *
      */
-    public void cancel();
+    void cancel();
 
     /**
      * Replies the HTML-formatted confirmation message to be shown to user when the given URL needs to be confirmed before loading.
@@ -126,5 +126,5 @@ public interface DownloadTask {
      * @return The HTML-formatted confirmation message to be shown to user
      * @since
      */
-    public String getConfirmationMessage(URL url);
+    String getConfirmationMessage(URL url);
 }

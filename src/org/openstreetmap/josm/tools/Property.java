@@ -13,12 +13,12 @@ public interface Property<O, P> {
      * @param obj the object, from that the property is derived
      * @return the value of the property for the object obj
      */
-    public P get(O obj);
+    P get(O obj);
 
     /**
      * Set the value of the property for the object.
      * @param obj the object for that the property should be set
      * @param value the value the property is set to
      */
-    public void set(O obj, P value);
+    void set(O obj, P value);
 }

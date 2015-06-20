@@ -199,7 +199,7 @@ public class PowerLines extends Test {
      * @param values List of possible values
      * @return {@code true} if power key is set and equal to possible values
      */
-    private static final boolean isPowerIn(OsmPrimitive p, Collection<String> values) {
+    private static boolean isPowerIn(OsmPrimitive p, Collection<String> values) {
         String v = p.get("power");
         return v != null && values != null && values.contains(v);
     }

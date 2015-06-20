@@ -11,10 +11,11 @@ public interface KeyPressReleaseListener {
      * This is called when key press event is actually pressed
      * (no fake events while holding key)
      */
-    public void doKeyPressed(KeyEvent e);
+    void doKeyPressed(KeyEvent e);
+
     /**
      * This is called when key press event is actually released
      * (no fake events while holding key)
      */
-    public void doKeyReleased(KeyEvent e);
+    void doKeyReleased(KeyEvent e);
 }

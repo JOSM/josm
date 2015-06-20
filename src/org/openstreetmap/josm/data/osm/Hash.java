@@ -20,7 +20,7 @@ public interface Hash<K, T> {
      * @param k the object to compute hashcode for
      * @return computed hashcode
      */
-    public int getHashCode(K k);
+    int getHashCode(K k);
 
     /**
      * Compare two instances for semantic or lookup equality. For use cases
@@ -31,5 +31,5 @@ public interface Hash<K, T> {
      * @return true if the objects are semantically equivalent, or if k
      * uniquely identifies t in given class.
      */
-    public boolean equals(K k, T t);
+    boolean equals(K k, T t);
 }

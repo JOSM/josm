@@ -14,5 +14,5 @@ public interface Predicate<T> {
      * @param object The object to evaluate
      * @return {@code true} if the object passes the test, {@code false} otherwise
      */
-    public boolean evaluate(T object);
+    boolean evaluate(T object);
 }

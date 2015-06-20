@@ -175,7 +175,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      * Launches a conflict resolution dialog for the first selected conflict
      *
      */
-    private final void resolve() {
+    private void resolve() {
         if (conflicts == null || model.getSize() == 0) return;
 
         int index = lstConflicts.getSelectedIndex();
@@ -196,7 +196,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     /**
      * refreshes the view of this dialog
      */
-    public final void refreshView() {
+    public void refreshView() {
         OsmDataLayer editLayer =  Main.main.getEditLayer();
         conflicts = (editLayer == null ? new ConflictCollection() : editLayer.getConflicts());
         GuiHelper.runInEDT(new Runnable() {

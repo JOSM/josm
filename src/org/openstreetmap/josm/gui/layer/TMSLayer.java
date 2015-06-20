@@ -498,7 +498,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return screenPixels/tilePixels;
     }
 
-    private final int getBestZoom() {
+    private int getBestZoom() {
         double factor = getScaleFactor(1); // check the ratio between area of tilesize at zoom 1 to current view
         double result = Math.log(factor)/Math.log(2)/2+1;
         /*

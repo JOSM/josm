@@ -647,7 +647,7 @@ public final class Utils {
      * @param <A> class of input objects
      * @param <B> class of transformed objects
      */
-    public static interface Function<A, B> {
+    public interface Function<A, B> {
 
         /**
          * Applies the function on {@code x}.

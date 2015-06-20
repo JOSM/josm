@@ -86,7 +86,7 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
      * @param listener the listener
      * @since 6523
      */
-    public final void addApiUrlChangeListener(PropertyChangeListener listener) {
+    public void addApiUrlChangeListener(PropertyChangeListener listener) {
         pnlApiUrlPreferences.addPropertyChangeListener(listener);
     }
 

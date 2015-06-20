@@ -39,17 +39,17 @@ public final class Node extends OsmPrimitive implements INode {
      * @return {@code true} if this node has valid coordinates
      * @since 7828
      */
-    public final boolean isLatLonKnown() {
+    public boolean isLatLonKnown() {
         return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
     @Override
-    public final void setCoor(LatLon coor) {
+    public void setCoor(LatLon coor) {
         updateCoor(coor, null);
     }
 
     @Override
-    public final void setEastNorth(EastNorth eastNorth) {
+    public void setEastNorth(EastNorth eastNorth) {
         updateCoor(null, eastNorth);
     }
 
@@ -67,7 +67,7 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     @Override
-    public final LatLon getCoor() {
+    public LatLon getCoor() {
         if (!isLatLonKnown()) return null;
         return new LatLon(lat, lon);
     }
@@ -88,7 +88,7 @@ public final class Node extends OsmPrimitive implements INode {
      *
      */
     @Override
-    public final EastNorth getEastNorth() {
+    public EastNorth getEastNorth() {
         if (!isLatLonKnown()) return null;
 
         if (getDataSet() == null)

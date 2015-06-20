@@ -7,7 +7,7 @@ package org.openstreetmap.josm.gui;
  * is used, setting the listener should be implemented by @class HideableButton
  */
 public interface ShowHideButtonListener {
-    public void buttonShown();
+    void buttonShown();
 
-    public void buttonHidden();
+    void buttonHidden();
 }

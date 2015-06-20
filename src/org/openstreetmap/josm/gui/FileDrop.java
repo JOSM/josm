@@ -453,14 +453,14 @@ public class FileDrop {
      *      ...
      * </code>
      */
-    public static interface Listener {
+    public interface Listener {
 
         /**
          * This method is called when files have been successfully dropped.
          *
          * @param files An array of <tt>File</tt>s that were dropped.
          */
-        public abstract void filesDropped(File[] files);
+        void filesDropped(File[] files);
     }
 
     /* ********  I N N E R   C L A S S  ******** */
@@ -667,14 +667,14 @@ public class FileDrop {
          *
          * @author Robert Harder
          */
-        public static interface Fetcher {
+        public interface Fetcher {
             /**
              * Return the object being encapsulated in the
              * {@link TransferableObject}.
              *
              * @return The dropped object
              */
-            public abstract Object getObject();
+            Object getObject();
         }
     }
 }

@@ -774,7 +774,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
     }
 
-    private static interface FreezeActionProperties {
+    private interface FreezeActionProperties {
         String PROP_SELECTED = FreezeActionProperties.class.getName() + ".selected";
     }
 

@@ -59,18 +59,20 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
          * @param e The mouse event.
          * @see InputEvent#getModifiersEx()
          */
-        public void selectionEnded(Rectangle r, MouseEvent e);
+        void selectionEnded(Rectangle r, MouseEvent e);
+
         /**
          * Called to register the selection manager for "active" property.
          * @param listener The listener to register
          */
-        public void addPropertyChangeListener(PropertyChangeListener listener);
+        void addPropertyChangeListener(PropertyChangeListener listener);
+
         /**
          * Called to remove the selection manager from the listener list
          * for "active" property.
          * @param listener The listener to register
          */
-        public void removePropertyChangeListener(PropertyChangeListener listener);
+        void removePropertyChangeListener(PropertyChangeListener listener);
     }
     /**
      * The listener that receives the events after left mouse button is released.

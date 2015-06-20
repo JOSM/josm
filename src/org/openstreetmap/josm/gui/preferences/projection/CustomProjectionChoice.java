@@ -57,7 +57,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             build(initialText, listener);
         }
 
-        private final void build(String initialText, final ActionListener listener) {
+        private void build(String initialText, final ActionListener listener) {
             input = new JosmTextField(30);
             cbInput = new HistoryComboBox();
             cbInput.setPrototypeDisplayValue(new AutoCompletionListItem("xxxx"));

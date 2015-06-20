@@ -22,15 +22,15 @@ public interface PlatformHook {
       * Reason: On OSX we need to inform the Swing libraries
       * that we want to be integrated with the OS before we setup our GUI.
       */
-    public void preStartupHook();
-    
+    void preStartupHook();
+
     /**
       * The afterPrefStartupHook will be called early, but after
       * the preferences have been loaded and basic processing of
-      * command line arguments is finished. 
+      * command line arguments is finished.
       * It is guaranteed to be called before the GUI setup has started.
       */
-    public void afterPrefStartupHook();
+    void afterPrefStartupHook();
 
     /**
       * The startupHook will be called early, but after the GUI
@@ -39,7 +39,7 @@ public interface PlatformHook {
       * Reason: On OSX we need to register some callbacks with the
       * OS, so we'll receive events from the system menu.
       */
-    public void startupHook();
+    void startupHook();
 
     /**
       * The openURL hook will be used to open an URL in the
@@ -47,7 +47,7 @@ public interface PlatformHook {
      * @param url The URL to open
      * @throws IOException if any I/O error occurs
       */
-    public void openUrl(String url) throws IOException;
+    void openUrl(String url) throws IOException;
 
     /**
       * The initSystemShortcuts hook will be called by the
@@ -69,7 +69,7 @@ public interface PlatformHook {
       * on them to prevent the keyboard preferences from allowing the
       * user to change them.
       */
-    public void initSystemShortcuts();
+    void initSystemShortcuts();
 
     /**
       * The makeTooltip hook will be called whenever a tooltip for
@@ -85,19 +85,19 @@ public interface PlatformHook {
      * @param sc Shortcut associated (to display accelerator between parenthesis)
      * @return Full tooltip text (name + accelerator)
       */
-    public String makeTooltip(String name, Shortcut sc);
+    String makeTooltip(String name, Shortcut sc);
 
     /**
      * Returns the default LAF to be used on this platform to look almost as a native application.
      * @return The default native LAF for this platform
      */
-    public String getDefaultStyle();
+    String getDefaultStyle();
 
     /**
      * Determines if the platform allows full-screen.
      * @return {@code true} if full screen is allowed, {@code false} otherwise
      */
-    public boolean canFullscreen();
+    boolean canFullscreen();
 
     /**
      * Renames a file.
@@ -105,14 +105,14 @@ public interface PlatformHook {
      * @param to Target file
      * @return {@code true} if the file has been renamed, {@code false} otherwise
      */
-    public boolean rename(File from, File to);
+    boolean rename(File from, File to);
 
     /**
      * Returns a detailed OS description (at least family + version).
      * @return A detailed OS description.
      * @since 5850
      */
-    public String getOSDescription();
+    String getOSDescription();
 
     /**
      * Setup system keystore to add JOSM HTTPS certificate (for remote control).
@@ -125,7 +125,7 @@ public interface PlatformHook {
      * @throws NoSuchAlgorithmException in case of error
      * @since 7343
      */
-    public boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
+    boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 
     /**
@@ -133,19 +133,19 @@ public interface PlatformHook {
      * @return the platform-dependent default cache directory
      * @since 7829
      */
-    public File getDefaultCacheDirectory();
+    File getDefaultCacheDirectory();
 
     /**
      * Returns the platform-dependent default preferences directory.
      * @return the platform-dependent default preferences directory
      * @since 7831
      */
-    public File getDefaultPrefDirectory();
+    File getDefaultPrefDirectory();
 
     /**
      * Returns the platform-dependent default user data directory.
      * @return the platform-dependent default user data directory
      * @since 7834
      */
-    public File getDefaultUserDataDirectory();
+    File getDefaultUserDataDirectory();
 }

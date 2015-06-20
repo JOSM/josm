@@ -450,9 +450,9 @@ public final class MapPaintStyles {
      */
 
     public interface MapPaintSylesUpdateListener {
-        public void mapPaintStylesUpdated();
+        void mapPaintStylesUpdated();
 
-        public void mapPaintStyleEntryUpdated(int idx);
+        void mapPaintStyleEntryUpdated(int idx);
     }
 
     private static final CopyOnWriteArrayList<MapPaintSylesUpdateListener> listeners

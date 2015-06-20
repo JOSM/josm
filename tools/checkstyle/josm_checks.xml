@@ -73,6 +73,7 @@ JOSM Checkstyle rules
       <property name="allowMultipleEmptyLines" value="false"/>
     </module>
     <module name="ModifierOrder"/>
+    <module name="RedundantModifier"/>
   </module>
   <module name="Header">
     <property name="header" value="// License: GPL. For details, see LICENSE file."/>

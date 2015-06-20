@@ -39,7 +39,7 @@ public abstract class AddImageryPanel extends JPanel {
          * Called when the validation status of this panel changed
          * @param isValid true if the conditions required to close this panel are met
          */
-        public void contentChanged(boolean isValid);
+        void contentChanged(boolean isValid);
     }
 
     protected AddImageryPanel() {
@@ -102,7 +102,7 @@ public abstract class AddImageryPanel extends JPanel {
         }
     }
 
-    private final void notifyListeners() {
+    private void notifyListeners() {
         for (ContentValidationListener l : listeners) {
             l.contentChanged(isImageryValid());
         }

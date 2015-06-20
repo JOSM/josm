@@ -202,19 +202,19 @@ public class SearchCompiler {
      * Classes implementing this interface can provide Match operators.
      */
     private interface MatchFactory {
-        public Collection<String> getKeywords();
+        Collection<String> getKeywords();
     }
 
     public interface SimpleMatchFactory extends MatchFactory {
-        public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError;
+        Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError;
     }
 
     public interface UnaryMatchFactory extends MatchFactory {
-        public UnaryMatch get(String keyword, Match matchOperand, PushbackTokenizer tokenizer) throws ParseError;
+        UnaryMatch get(String keyword, Match matchOperand, PushbackTokenizer tokenizer) throws ParseError;
     }
 
     public interface BinaryMatchFactory extends MatchFactory {
-        public BinaryMatch get(String keyword, Match lhs, Match rhs, PushbackTokenizer tokenizer) throws ParseError;
+        BinaryMatch get(String keyword, Match lhs, Match rhs, PushbackTokenizer tokenizer) throws ParseError;
     }
 
     /**

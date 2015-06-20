@@ -685,7 +685,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * thresholds have been exceeded) and is still in progress (i.e. mouse button
      * still pressed)
      */
-    private final boolean dragInProgress() {
+    private boolean dragInProgress() {
         return didMouseDrag && startingDraggingPos != null;
     }
 
@@ -850,7 +850,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * key is pressed. If there is no such node, no action will be done and no error will be
      * reported. If there is, it will execute the merge and add it to the undo buffer.
      */
-    private final void mergePrims(Point p) {
+    private void mergePrims(Point p) {
         Collection<Node> selNodes = getCurrentDataSet().getSelectedNodes();
         if (selNodes.isEmpty())
             return;
@@ -898,7 +898,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * Tries to find a node to merge to when in move-merge mode for the current mouse
      * position. Either returns the node or null, if no suitable one is nearby.
      */
-    private final Node findNodeToMergeTo(Point p) {
+    private Node findNodeToMergeTo(Point p) {
         Collection<Node> target = mv.getNearestNodes(p,
                 getCurrentDataSet().getSelectedNodes(),
                 mv.isSelectablePredicate);

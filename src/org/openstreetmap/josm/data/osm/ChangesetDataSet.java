@@ -22,10 +22,10 @@ public class ChangesetDataSet {
         DELETED
     }
 
-    public static interface ChangesetDataSetEntry {
-        public ChangesetModificationType getModificationType();
+    public interface ChangesetDataSetEntry {
+        ChangesetModificationType getModificationType();
 
-        public HistoryOsmPrimitive getPrimitive();
+        HistoryOsmPrimitive getPrimitive();
     }
 
     private final Map<PrimitiveId, HistoryOsmPrimitive> primitives = new HashMap<>();

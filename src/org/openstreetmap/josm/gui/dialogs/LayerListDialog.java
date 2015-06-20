@@ -141,7 +141,7 @@ public class LayerListDialog extends ToggleDialog {
      * registers (shortcut to toggle right hand side toggle dialogs)+(number keys) shortcuts
      * to toggle the visibility of the first ten layers.
      */
-    private final void createVisibilityToggleShortcuts() {
+    private void createVisibilityToggleShortcuts() {
         final int[] k = {
                 KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_3, KeyEvent.VK_4, KeyEvent.VK_5,
                 KeyEvent.VK_6, KeyEvent.VK_7, KeyEvent.VK_8, KeyEvent.VK_9, KeyEvent.VK_0};
@@ -1127,13 +1127,13 @@ public class LayerListDialog extends ToggleDialog {
          * @param index the layer index
          * @param layer the layer
          */
-        public void makeVisible(int index, Layer layer);
+        void makeVisible(int index, Layer layer);
 
 
         /**
          * Fired when something has changed in the layer list model.
          */
-        public void refresh();
+        void refresh();
     }
 
     /**

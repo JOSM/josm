@@ -15,13 +15,13 @@ public interface Data {
      * Returns the collection of data sources.
      * @return the collection of data sources.
      */
-    public Collection<DataSource> getDataSources();
+    Collection<DataSource> getDataSources();
 
     /**
      * Returns the total area of downloaded data (the "yellow rectangles").
      * @return Area object encompassing downloaded data.
      */
-    public Area getDataSourceArea();
+    Area getDataSourceArea();
 
     /**
      * <p>Replies the list of data source bounds.</p>
@@ -35,5 +35,5 @@ public interface Data {
      * @return the list of data source bounds. An empty list, if no non-null data source
      * bounds are defined.
      */
-    public List<Bounds> getDataSourceBounds();
+    List<Bounds> getDataSourceBounds();
 }

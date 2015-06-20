@@ -4,5 +4,5 @@ package org.openstreetmap.josm.gui.widgets;
 import java.util.List;
 
 public interface HistoryChangedListener {
-    public void historyChanged(List<String> history);
+    void historyChanged(List<String> history);
 }

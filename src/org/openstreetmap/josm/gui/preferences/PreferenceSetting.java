@@ -22,5 +22,5 @@ public interface PreferenceSetting {
      * Called to know if the preferences tab has only to be displayed in expert mode.
      * @return true if the tab has only to be displayed in expert mode, false otherwise.
      */
-    public boolean isExpert();
+    boolean isExpert();
 }

@@ -591,7 +591,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
     }
 
-    private final void setupPopupMenuHandler() {
+    private void setupPopupMenuHandler() {
 
         // -- select action
         popupMenuHandler.addAction(selectRelationAction);

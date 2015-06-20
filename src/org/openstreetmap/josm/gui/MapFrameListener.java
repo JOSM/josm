@@ -14,5 +14,5 @@ public interface MapFrameListener {
      * @param oldFrame The old MapFrame
      * @param newFrame The new MapFrame
      */
-    public abstract void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame);
+    void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame);
 }

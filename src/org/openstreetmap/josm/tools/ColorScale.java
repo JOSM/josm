@@ -86,7 +86,7 @@ public final class ColorScale {
         belowMinColor = colors[0];
     }
 
-    public final Color getColor(double value) {
+    public Color getColor(double value) {
         if (value < min) return belowMinColor;
         if (value > max) return aboveMaxColor;
         if (Double.isNaN(value)) return noDataColor;
@@ -99,7 +99,7 @@ public final class ColorScale {
         }
     }
 
-    public final Color getColor(Number value) {
+    public Color getColor(Number value) {
         return (value == null) ? noDataColor : getColor(value.doubleValue());
     }
 

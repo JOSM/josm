@@ -60,7 +60,7 @@ public class WebMarker extends ButtonMarker {
         return wpt;
     }
 
-    private final void updateErroneous() {
+    private void updateErroneous() {
         if ("file".equals(webUrl.getProtocol())) {
             String path = webUrl.getPath();
             try {

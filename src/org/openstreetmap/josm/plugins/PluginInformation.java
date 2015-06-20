@@ -197,7 +197,7 @@ public class PluginInformation {
         this.stage = other.stage;
     }
 
-    private final void scanManifest(Manifest manifest, boolean oldcheck) {
+    private void scanManifest(Manifest manifest, boolean oldcheck) {
         String lang = LanguageInfo.getLanguageCodeManifest();
         Attributes attr = manifest.getMainAttributes();
         className = attr.getValue("Plugin-Class");

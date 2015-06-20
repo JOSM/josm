@@ -10,5 +10,5 @@ public interface TaggingPresetListener {
     /**
      * Called after list of tagging presets has been modified.
      */
-    public void taggingPresetsModified();
+    void taggingPresetsModified();
 }

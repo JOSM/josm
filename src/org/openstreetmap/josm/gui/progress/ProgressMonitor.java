@@ -36,13 +36,13 @@ public interface ProgressMonitor {
     }
 
     /** Ticks count used, when no other value is supplied */
-    public final int DEFAULT_TICKS = 10000;
+    int DEFAULT_TICKS = 10000;
 
     /**
      * Can be used with {@link #worked(int)} and {@link #createSubTaskMonitor(int, boolean)} to
      * express that the task should use all remaining ticks
      */
-    public final int ALL_TICKS = -1;
+    int ALL_TICKS = -1;
 
     /**
      * Starts this progress monitor. Must be called exactly once

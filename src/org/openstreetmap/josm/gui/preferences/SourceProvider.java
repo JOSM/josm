@@ -5,5 +5,5 @@ import java.util.Collection;
 
 public interface SourceProvider {
 
-    public Collection<SourceEntry> getSources();
+    Collection<SourceEntry> getSources();
 }

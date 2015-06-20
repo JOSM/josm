@@ -22,5 +22,5 @@ public interface ICachedLoaderListener {
      * @param attributes cache entry attributes
      * @param result load result (success, failure, canceled)
      */
-    public void loadingFinished(CacheEntry data, CacheEntryAttributes attributes, LoadResult result);
+    void loadingFinished(CacheEntry data, CacheEntryAttributes attributes, LoadResult result);
 }

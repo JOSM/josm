@@ -918,7 +918,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
      * @return {@code true} if the map mode is supported,
      *         {@code false} otherwise
      */
-    private static final boolean isSupportedMapMode(MapMode mapMode) {
+    private static boolean isSupportedMapMode(MapMode mapMode) {
         if (mapMode instanceof SelectAction || mapMode instanceof LassoModeAction) {
             return true;
         }
@@ -938,7 +938,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     @Override
     public void hookUpMapView() {
         mouseAdapter = new MouseAdapter() {
-            private final boolean isMapModeOk() {
+            private boolean isMapModeOk() {
                 return Main.map.mapMode == null || isSupportedMapMode(Main.map.mapMode);
             }
 

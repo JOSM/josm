@@ -773,7 +773,7 @@ public final class Way extends OsmPrimitive implements IWay {
         clearCachedNodeStyles();
     }
 
-    public final void clearCachedNodeStyles() {
+    public void clearCachedNodeStyles() {
         for (final Node n : nodes) {
             n.clearCachedStyle();
         }

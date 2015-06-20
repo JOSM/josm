@@ -22,7 +22,7 @@ public interface BBoxChooser {
      *
      * @param bbox the bounding box
      */
-    public void setBoundingBox(Bounds bbox);
+    void setBoundingBox(Bounds bbox);
 
     /**
      * Replies the currently selected bounding box in this BBoxChooser.
@@ -31,5 +31,5 @@ public interface BBoxChooser {
      *
      * @return the currently selected bounding box
      */
-    public Bounds getBoundingBox();
+    Bounds getBoundingBox();
 }

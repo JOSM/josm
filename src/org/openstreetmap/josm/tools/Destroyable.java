@@ -13,5 +13,5 @@ public interface Destroyable {
     /**
      * Called when the object has been destroyed.
      */
-    public void destroy();
+    void destroy();
 }

@@ -17,10 +17,10 @@ import org.openstreetmap.josm.tools.AlphanumComparator;
 
 public class RelationSorter {
 
-    private static interface AdditionalSorter {
-        public boolean acceptsMember(RelationMember m);
+    private interface AdditionalSorter {
+        boolean acceptsMember(RelationMember m);
 
-        public List<RelationMember> sortMembers(List<RelationMember> list);
+        List<RelationMember> sortMembers(List<RelationMember> list);
     }
 
     private static final Collection<AdditionalSorter> additionalSorters = new ArrayList<>();

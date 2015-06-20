@@ -216,7 +216,7 @@ public class DataSetMerger {
         }
     }
 
-    private final void resetPrimitive(OsmPrimitive osm) {
+    private void resetPrimitive(OsmPrimitive osm) {
         if (osm instanceof Way) {
             ((Way) osm).setNodes(null);
         } else if (osm instanceof Relation) {

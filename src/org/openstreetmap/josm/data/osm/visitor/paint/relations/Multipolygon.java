@@ -369,7 +369,7 @@ public class Multipolygon {
         load(r);
     }
 
-    private final void load(Relation r) {
+    private void load(Relation r) {
         MultipolygonRoleMatcher matcher = getMultipolygonRoleMatcher();
 
         // Fill inner and outer list with valid ways
@@ -555,7 +555,7 @@ public class Multipolygon {
         return result;
     }
 
-    private final void addInnerToOuters(List<PolyData> innerPolygons, List<PolyData> outerPolygons)  {
+    private void addInnerToOuters(List<PolyData> innerPolygons, List<PolyData> outerPolygons)  {
 
         if (innerPolygons.isEmpty()) {
             combinedPolygons.addAll(outerPolygons);

@@ -66,7 +66,7 @@ public class FixDataHook implements UploadHook {
          * @param osm the object for type validation, don't use keys of it!
          * @return <code>true</code> if keys have been modified
          */
-        public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm);
+        boolean fixKeys(Map<String, String> keys, OsmPrimitive osm);
     }
 
     /**

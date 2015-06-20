@@ -20,7 +20,7 @@ public class BoxTextElemStyle extends ElemStyle {
 
     public enum VerticalTextAlignment { ABOVE, TOP, CENTER, BOTTOM, BELOW }
 
-    public static interface BoxProvider {
+    public interface BoxProvider {
         BoxProviderResult get();
     }
 

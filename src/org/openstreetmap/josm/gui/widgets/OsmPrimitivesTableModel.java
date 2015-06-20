@@ -6,6 +6,6 @@ import javax.swing.table.TableModel;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 public interface OsmPrimitivesTableModel extends TableModel {
-    
-    public abstract OsmPrimitive getReferredPrimitive(int idx);
+
+    OsmPrimitive getReferredPrimitive(int idx);
 }

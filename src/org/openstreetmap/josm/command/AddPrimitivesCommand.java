@@ -60,7 +60,7 @@ public class AddPrimitivesCommand extends Command {
         init(data, toSelect);
     }
 
-    private final void init(List<PrimitiveData> data, List<PrimitiveData> toSelect) {
+    private void init(List<PrimitiveData> data, List<PrimitiveData> toSelect) {
         CheckParameterUtil.ensureParameterNotNull(data, "data");
         this.data.addAll(data);
         if (toSelect != null) {

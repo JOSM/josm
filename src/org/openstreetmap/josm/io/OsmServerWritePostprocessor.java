@@ -8,6 +8,5 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public interface OsmServerWritePostprocessor {
 
-    public void postprocessUploadedPrimitives(Collection<OsmPrimitive> p, ProgressMonitor progress);
-
+    void postprocessUploadedPrimitives(Collection<OsmPrimitive> p, ProgressMonitor progress);
 }

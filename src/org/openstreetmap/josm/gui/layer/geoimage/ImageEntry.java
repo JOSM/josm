@@ -81,7 +81,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @return {@code true} if this entry has a GPS time
      * @since 6450
      */
-    public final boolean hasGpsTime() {
+    public boolean hasGpsTime() {
         return (tmp != null && tmp.gpsTime != null) || gpsTime != null;
     }
 
@@ -105,7 +105,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @return {@code true} if this entry has a EXIF time
      * @since 6450
      */
-    public final boolean hasExifTime() {
+    public boolean hasExifTime() {
         return exifTime != null;
     }
 
@@ -114,7 +114,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @return the EXIF GPS time
      * @since 6392
      */
-    public final Date getExifGpsTime() {
+    public Date getExifGpsTime() {
         return getDefensiveDate(exifGpsTime);
     }
 
@@ -123,7 +123,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @return {@code true} if this entry has a EXIF GPS time
      * @since 6450
      */
-    public final boolean hasExifGpsTime() {
+    public boolean hasExifGpsTime() {
         return exifGpsTime != null;
     }
 
@@ -181,7 +181,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @param exifGpsTime the EXIF GPS time
      * @since 6392
      */
-    public final void setExifGpsTime(Date exifGpsTime) {
+    public void setExifGpsTime(Date exifGpsTime) {
         this.exifGpsTime = getDefensiveDate(exifGpsTime);
     }
 

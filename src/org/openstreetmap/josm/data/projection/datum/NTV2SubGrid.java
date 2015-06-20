@@ -208,7 +208,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @param y Latitude factor
      * @return interpolated value
      */
-    private final double interpolate(float a, float b, float c, float d, double x, double y) {
+    private double interpolate(float a, float b, float c, float d, double x, double y) {
         return a + (((double) b - (double) a) * x) + (((double) c - (double) a) * y) +
         (((double) a + (double) d - b - c) * x * y);
     }

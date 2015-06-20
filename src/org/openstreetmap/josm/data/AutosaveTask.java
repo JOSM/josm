@@ -289,7 +289,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         changedDatasets.add(event.getDataset());
     }
 
-    private final File getPidFile(File osmFile) {
+    private File getPidFile(File osmFile) {
         return new File(autosaveDir, osmFile.getName().replaceFirst("[.][^.]+$", ".pid"));
     }
 

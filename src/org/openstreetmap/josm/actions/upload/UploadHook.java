@@ -8,5 +8,5 @@ public interface UploadHook {
      * Checks the upload.
      * @param apiDataSet the data to upload
      */
-    public boolean checkUpload(APIDataSet apiDataSet);
+    boolean checkUpload(APIDataSet apiDataSet);
 }

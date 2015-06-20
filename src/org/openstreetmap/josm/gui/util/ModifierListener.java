@@ -6,5 +6,5 @@ package org.openstreetmap.josm.gui.util;
  * @since 7217
  */
 public interface ModifierListener {
-    public void modifiersChanged(int modifiers);
+    void modifiersChanged(int modifiers);
 }

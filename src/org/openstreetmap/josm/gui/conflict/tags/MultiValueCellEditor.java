@@ -40,7 +40,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
     /**
      * Defines the interface for an object implementing navigation between rows
      */
-    public static interface NavigationListener {
+    public interface NavigationListener {
         /** Call when need to go to next row */
         void gotoNextDecision();
         /** Call when need to go to previous row */

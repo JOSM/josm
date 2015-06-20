@@ -10,5 +10,5 @@ public interface ProxyPreferenceListener {
     /**
      * Method called when proxy settings are updated.
      */
-    public void proxyPreferenceChanged();
+    void proxyPreferenceChanged();
 }

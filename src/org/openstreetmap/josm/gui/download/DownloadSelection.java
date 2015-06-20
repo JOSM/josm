@@ -16,5 +16,5 @@ public interface DownloadSelection  {
      *
      * @param area the current download area
      */
-    public void setDownloadArea(Bounds area);
+    void setDownloadArea(Bounds area);
 }

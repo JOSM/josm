@@ -150,7 +150,7 @@ public class MultiSplitPane extends JPanel {
          * @param g the Graphics object to paint with
          * @param divider the Divider to paint
          */
-        public abstract void paint(Graphics g, Divider divider);
+        void paint(Graphics g, Divider divider);
     }
 
     private class DefaultDividerPainter implements DividerPainter {

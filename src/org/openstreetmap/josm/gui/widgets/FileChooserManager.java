@@ -157,7 +157,7 @@ public class FileChooserManager {
         return doCreateFileChooser(multiple, title, null, null, extension, selectionMode, allTypes);
     }
 
-    private final FileChooserManager doCreateFileChooser(boolean multiple, String title, Collection<? extends FileFilter> filters,
+    private FileChooserManager doCreateFileChooser(boolean multiple, String title, Collection<? extends FileFilter> filters,
             FileFilter defaultFilter, String extension, int selectionMode, boolean allTypes) {
         File file = new File(curDir);
         // Use native dialog is preference is set, unless an unsupported selection mode is specifically wanted
