@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<fileset-config file-format-version="1.2.0" simple-config="true" sync-formatter="false">
+  <fileset name="all" enabled="true" check-config-name="JOSM" local="false">
+    <file-match-pattern match-pattern="." include-pattern="true"/>
+  </fileset>
+  <filter name="DerivedFiles" enabled="true"/>
+  <filter name="FilesFromPackage" enabled="true">
+    <filter-data value="src/com"/>
+    <filter-data value="src/gnu"/>
+    <filter-data value="src/javax"/>
+    <filter-data value="src/oauth"/>
+    <filter-data value="src/org/apache"/>
+    <filter-data value="src/org/glassfish"/>
+    <filter-data value="src/org/jdesktop"/>
+    <filter-data value="src/org/openstreetmap/gui"/>
+    <filter-data value="src/org/w3"/>
+    <filter-data value="data"/>
+    <filter-data value="images"/>
+    <filter-data value="styles"/>
+    <filter-data value="resources"/>
+    <filter-data value="scripts"/>
+  </filter>
+</fileset-config>

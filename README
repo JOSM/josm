@@ -117,6 +117,8 @@ This is an overview of the files and directories in the JOSM code repository:
     - animal-sniffer-ant-tasks-1.14.jar
                             used to build and check code signatures to ensure plugins binary compatibility 
     - appbundler-1.0ea.jar  used to build Mac OS X package for Oracle Java 7
+    - checkstyle/           libs and config files for checkstyle (automatically detects code style
+                            problems in source code); can be launched as an ant target in build.xml
     - findbugs/             libs and config files for findbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
     - groovy-all-2.4.3.jar  used for some unit tests and various scripts
