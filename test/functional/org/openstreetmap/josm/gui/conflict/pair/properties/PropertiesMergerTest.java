@@ -44,7 +44,7 @@ public class PropertiesMergerTest extends JFrame{
         populate();
     }
 
-    static public void main(String args[]) {
+    public static void main(String args[]) {
         PropertiesMergerTest app = new PropertiesMergerTest();
         app.setSize(600, 400);
         app.setVisible(true);

@@ -21,7 +21,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 public class HistoryBrowserTest extends JFrame {
 
     @BeforeClass
-    static public void init() {
+    public static void init() {
         JOSMFixture.createFunctionalTestFixture().init();
     }
 
@@ -58,7 +58,7 @@ public class HistoryBrowserTest extends JFrame {
 
     }
 
-    static public void main(String args[]) {
+    public static void main(String args[]) {
         HistoryBrowserTest.init();
         new HistoryBrowserTest().setVisible(true);
     }

@@ -123,7 +123,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
     /**
      * A task (of a {@link ProgressMonitor}).
      */
-    private static abstract class Task {
+    private abstract static class Task {
 
         /**
          * Returns a HTML representation for this task.

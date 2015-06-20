@@ -22,7 +22,7 @@ public class JOSMFixture {
      * Returns a new test fixture initialized to "unit" home.
      * @return A new test fixture for unit tests
      */
-    static public JOSMFixture createUnitTestFixture() {
+    public static JOSMFixture createUnitTestFixture() {
         return new JOSMFixture("test/config/unit-josm.home");
     }
 
@@ -30,7 +30,7 @@ public class JOSMFixture {
      * Returns a new test fixture initialized to "functional" home.
      * @return A new test fixture for functional tests
      */
-    static public JOSMFixture createFunctionalTestFixture() {
+    public static JOSMFixture createFunctionalTestFixture() {
         return new JOSMFixture("test/config/functional-josm.home");
     }
 
@@ -38,7 +38,7 @@ public class JOSMFixture {
      * Returns a new test fixture initialized to "performance" home.
      * @return A new test fixture for performance tests
      */
-    static public JOSMFixture createPerformanceTestFixture() {
+    public static JOSMFixture createPerformanceTestFixture() {
         return new JOSMFixture("test/config/performance-josm.home");
     }
 

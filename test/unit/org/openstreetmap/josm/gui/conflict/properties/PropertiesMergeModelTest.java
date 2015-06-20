@@ -24,7 +24,7 @@ import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMergeModel;
 
 public class PropertiesMergeModelTest {
 
-    public static abstract class TestObserver implements Observer {
+    public abstract static class TestObserver implements Observer {
         public int numInvocations;
 
         public void update(Observable o, Object arg) {

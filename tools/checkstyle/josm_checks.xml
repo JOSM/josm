@@ -72,6 +72,7 @@ JOSM Checkstyle rules
       <property name="allowNoEmptyLineBetweenFields" value="true"/>
       <property name="allowMultipleEmptyLines" value="false"/>
     </module>
+    <module name="ModifierOrder"/>
   </module>
   <module name="Header">
     <property name="header" value="// License: GPL. For details, see LICENSE file."/>

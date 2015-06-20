@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
 
 public class PresetClassificationsTest {
 
-    final static TaggingPresetSelector.PresetClassifications classifications = new TaggingPresetSelector.PresetClassifications();
+    static final TaggingPresetSelector.PresetClassifications classifications = new TaggingPresetSelector.PresetClassifications();
 
     /**
      * Setup test.

@@ -45,7 +45,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
  * @since 1806
  */
 public class OsmServerBackreferenceReaderTest {
-    static private final Logger logger = Logger.getLogger(OsmServerBackreferenceReader.class.getName());
+    private static final Logger logger = Logger.getLogger(OsmServerBackreferenceReader.class.getName());
 
     protected static Node lookupNode(DataSet ds, int i) {
         for (Node n : ds.getNodes()) {
@@ -130,7 +130,7 @@ public class OsmServerBackreferenceReaderTest {
      * @param ds the data set
      * @throws OsmTransferException if something goes wrong
      */
-    static public void createDataSetOnServer(APIDataSet ds) throws OsmTransferException, CyclicUploadDependencyException {
+    public static void createDataSetOnServer(APIDataSet ds) throws OsmTransferException, CyclicUploadDependencyException {
         logger.info("creating data set on the server ...");
         ds.adjustRelationUploadOrder();
         OsmServerWriter writer = new OsmServerWriter();
