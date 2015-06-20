@@ -53,7 +53,7 @@ public class ChangeCommand extends Command {
     private void sanityChecks() {
         CheckParameterUtil.ensureParameterNotNull(osm, "osm");
         CheckParameterUtil.ensureParameterNotNull(newOsm, "newOsm");
-        if (newOsm instanceof Way && ((Way)newOsm).getNodesCount() == 0) {
+        if (newOsm instanceof Way && ((Way) newOsm).getNodesCount() == 0) {
             // Do not allow to create empty ways (see #7465)
             throw new IllegalArgumentException(tr("New way {0} has 0 nodes", newOsm));
         }

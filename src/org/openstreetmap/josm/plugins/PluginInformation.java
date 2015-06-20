@@ -96,7 +96,7 @@ public class PluginInformation {
      * @param file the plugin jar file
      * @throws PluginException if reading the manifest fails
      */
-    public PluginInformation(File file) throws PluginException{
+    public PluginInformation(File file) throws PluginException {
         this(file, file.getName().substring(0, file.getName().length()-4));
     }
 
@@ -142,7 +142,7 @@ public class PluginInformation {
         try {
             Manifest manifest = new Manifest();
             manifest.read(manifestStream);
-            if(url != null) {
+            if (url != null) {
                 downloadlink = url;
             }
             scanManifest(manifest, url != null);
@@ -237,7 +237,7 @@ public class PluginInformation {
         if (s != null) {
             try {
                 mainversion = Integer.parseInt(s);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 Main.warn(tr("Invalid plugin main version ''{0}'' in plugin {1}", s, name));
             }
         } else {
@@ -258,21 +258,21 @@ public class PluginInformation {
             int myv = Version.getInstance().getVersion();
             for (Map.Entry<Object, Object> entry : attr.entrySet()) {
                 try {
-                    String key = ((Attributes.Name)entry.getKey()).toString();
+                    String key = ((Attributes.Name) entry.getKey()).toString();
                     if (key.endsWith("_Plugin-Url")) {
-                        int mv = Integer.parseInt(key.substring(0,key.length()-11));
+                        int mv = Integer.parseInt(key.substring(0, key.length()-11));
                         if (mv <= myv && (mv > mainversion || mainversion > myv)) {
-                            String v = (String)entry.getValue();
+                            String v = (String) entry.getValue();
                             int i = v.indexOf(';');
                             if (i > 0) {
                                 downloadlink = v.substring(i+1);
                                 mainversion = mv;
-                                version = v.substring(0,i);
+                                version = v.substring(0, i);
                                 oldmode = true;
                             }
                         }
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     Main.error(e);
                 }
             }
@@ -332,7 +332,7 @@ public class PluginInformation {
             Constructor<?> c = klass.getConstructor(PluginInformation.class);
             Object plugin = c.newInstance(this);
             return new PluginProxy(plugin, this);
-        } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new PluginException(name, e);
         }
     }
@@ -435,7 +435,7 @@ public class PluginInformation {
      */
     public boolean isUpdateRequired(String referenceVersion) {
         if (this.downloadlink == null) return false;
-        if (this.version == null && referenceVersion!= null)
+        if (this.version == null && referenceVersion != null)
             return true;
         if (this.version != null && !this.version.equals(referenceVersion))
             return true;

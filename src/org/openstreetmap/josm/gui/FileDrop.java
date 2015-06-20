@@ -96,7 +96,7 @@ public class FileDrop {
                 true, // Recursive
                 new FileDrop.Listener() {
                     @Override
-                    public void filesDropped(File[] files){
+                    public void filesDropped(File[] files) {
                         // start asynchronous loading of files
                         OpenFileAction.OpenFileTask task = new OpenFileAction.OpenFileTask(Arrays.asList(files), null);
                         task.setRecordHistory(true);
@@ -141,7 +141,7 @@ public class FileDrop {
             try {
                 Class.forName("java.awt.dnd.DnDConstants");
                 support = true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 support = false;
             }
             supportsDnD = support;
@@ -150,7 +150,8 @@ public class FileDrop {
     }
 
     // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
-    private static final String ZERO_CHAR_STRING = "" + (char)0;
+    private static final String ZERO_CHAR_STRING = "" + (char) 0;
+
     private static File[] createFileArray(BufferedReader bReader) {
         try {
             List<File> list = new ArrayList<>();
@@ -182,7 +183,7 @@ public class FileDrop {
         final DropTarget dt = new DropTarget();
         try {
             dt.addDropTargetListener(dropListener);
-        } catch(TooManyListenersException e) {
+        } catch (TooManyListenersException e) {
             Main.error(e);
             Main.warn("FileDrop: Drop will not work due to previous error. Do you have another listener attached?");
         }
@@ -229,7 +230,7 @@ public class FileDrop {
 
         // See if any of the flavors are a file list
         int i = 0;
-        while(!ok && i < flavors.length) {
+        while (!ok && i < flavors.length) {
             // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
             // Is the flavor a file list?
             final DataFlavor curFlavor = flavors[i];
@@ -349,7 +350,7 @@ public class FileDrop {
                     Main.trace("FileDrop: file list accepted.");
 
                     // Get a useful list
-                    List<?> fileList = (List<?>)tr.getTransferData(DataFlavor.javaFileListFlavor);
+                    List<?> fileList = (List<?>) tr.getTransferData(DataFlavor.javaFileListFlavor);
 
                     // Convert list to array
                     final File[] files = fileList.toArray(new File[fileList.size()]);
@@ -485,7 +486,7 @@ public class FileDrop {
      *      final MyCoolClass myObj = new MyCoolClass();
      *
      *      TransferableObject.Fetcher fetcher = new TransferableObject.Fetcher()
-     *      {   public Object getObject(){ return myObj; }
+     *      {   public Object getObject() { return myObj; }
      *      }; // end fetcher
      *
      *      Transferable xfer = new TransferableObject( fetcher );

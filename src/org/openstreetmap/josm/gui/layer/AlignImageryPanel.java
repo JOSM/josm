@@ -57,11 +57,11 @@ public class AlignImageryPanel extends JPanel {
         if (!oneLine) { // tune for small screens
             add(nagLabel, GBC.std(1, 1).fill());
             add(detailsList, GBC.std(1, 2).fill());
-            add(closeButton, GBC.std(2, 1).span(1,2).anchor(GBC.EAST));
+            add(closeButton, GBC.std(2, 1).span(1, 2).anchor(GBC.EAST));
         } else {
-            add(nagLabel, GBC.std(1,1).fill());
-            add(detailsList, GBC.std(2,1).fill());
-            add(closeButton, GBC.std(3,1).anchor(GBC.EAST));
+            add(nagLabel, GBC.std(1, 1).fill());
+            add(detailsList, GBC.std(2, 1).fill());
+            add(closeButton, GBC.std(3, 1).anchor(GBC.EAST));
         }
         setBorder(new CompoundBorder(new EtchedBorder(EtchedBorder.LOWERED), new EmptyBorder(12, 12, 12, 12)));
         setBackground(new Color(224, 236, 249));

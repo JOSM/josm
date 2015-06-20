@@ -7,6 +7,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 public interface IConflictResolver {
 
     void deletePrimitive(boolean deleted);
-    void populate(Conflict<? extends OsmPrimitive> conflict);
 
+    void populate(Conflict<? extends OsmPrimitive> conflict);
 }

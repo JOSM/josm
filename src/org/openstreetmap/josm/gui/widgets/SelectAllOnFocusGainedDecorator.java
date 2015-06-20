@@ -18,7 +18,7 @@ public class SelectAllOnFocusGainedDecorator extends FocusAdapter{
     public void focusGained(FocusEvent e) {
         Component c = e.getComponent();
         if (c instanceof JTextComponent) {
-            JTextComponent tc = (JTextComponent)c;
+            JTextComponent tc = (JTextComponent) c;
             tc.selectAll();
         }
     }

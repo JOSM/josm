@@ -26,9 +26,8 @@ public class UploadStrategySelectionPanelTest extends JFrame {
         uploadStrategySelectionPanel = new UploadStrategySelectionPanel();
         getContentPane().add(uploadStrategySelectionPanel, BorderLayout.CENTER);
         getContentPane().add(buildControlPanel(), BorderLayout.SOUTH);
-        setSize(400,400);
+        setSize(400, 400);
     }
-
 
     protected JPanel buildControlPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -41,7 +40,7 @@ public class UploadStrategySelectionPanelTest extends JFrame {
                         int n = 0;
                         try {
                             n = Integer.parseInt(tf.getText());
-                        } catch(NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                             Main.error(e);
                             return;
                         }
@@ -60,7 +59,7 @@ public class UploadStrategySelectionPanelTest extends JFrame {
         uploadStrategySelectionPanel.setNumUploadedObjects(51000);
     }
 
-    public static void main(String args[]) throws OsmApiInitializationException, OsmTransferCanceledException{
+    public static void main(String args[]) throws OsmApiInitializationException, OsmTransferCanceledException {
         OsmApi.getOsmApi().initialize(NullProgressMonitor.INSTANCE);
         new UploadStrategySelectionPanelTest().setVisible(true);
     }

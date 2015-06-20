@@ -254,9 +254,9 @@ public class GpxLayer extends Layer {
         for (GpxTrack trk : data.tracks) {
             Date[] t = GpxData.getMinMaxTimeForTrack(trk);
 
-            if (t==null) continue;
+            if (t == null) continue;
             long tm = t[1].getTime();
-            trackVisibility[i]= (tm==0 && showWithoutDate) || (from <= tm && tm <= to);
+            trackVisibility[i] = (tm == 0 && showWithoutDate) || (from <= tm && tm <= to);
             i++;
         }
     }

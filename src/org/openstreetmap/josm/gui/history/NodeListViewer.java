@@ -117,11 +117,11 @@ public class NodeListViewer extends JPanel {
         gc.gridheight = 1;
         gc.weightx = 0.5;
         gc.weighty = 0.0;
-        gc.insets = new Insets(5,5,5,0);
+        gc.insets = new Insets(5, 5, 5, 0);
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         referenceInfoPanel = new VersionInfoPanel(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
-        add(referenceInfoPanel,gc);
+        add(referenceInfoPanel, gc);
 
         gc.gridx = 1;
         gc.gridy = 0;
@@ -132,7 +132,7 @@ public class NodeListViewer extends JPanel {
         gc.weighty = 0.0;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         currentInfoPanel = new VersionInfoPanel(model, PointInTimeType.CURRENT_POINT_IN_TIME);
-        add(currentInfoPanel,gc);
+        add(currentInfoPanel, gc);
 
         adjustmentSynchronizer = new AdjustmentSynchronizer();
         selectionSynchronizer = new SelectionSynchronizer();
@@ -148,7 +148,7 @@ public class NodeListViewer extends JPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embeddInScrollPane(buildReferenceNodeListTable()),gc);
+        add(embeddInScrollPane(buildReferenceNodeListTable()), gc);
 
         gc.gridx = 1;
         gc.gridy = 1;
@@ -158,7 +158,7 @@ public class NodeListViewer extends JPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embeddInScrollPane(buildCurrentNodeListTable()),gc);
+        add(embeddInScrollPane(buildCurrentNodeListTable()), gc);
     }
 
     public NodeListViewer(HistoryBrowserModel model) {
@@ -174,6 +174,7 @@ public class NodeListViewer extends JPanel {
             model.deleteObserver(referenceInfoPanel);
         }
     }
+
     protected void registerAsObserver(HistoryBrowserModel model) {
         if (currentInfoPanel != null) {
             model.addObserver(currentInfoPanel);
@@ -204,7 +205,7 @@ public class NodeListViewer extends JPanel {
             add(showHistoryAction);
         }
 
-        public void prepare(PrimitiveId pid){
+        public void prepare(PrimitiveId pid) {
             zoomToNodeAction.setPrimitiveId(pid);
             zoomToNodeAction.updateEnabledState();
 
@@ -309,8 +310,8 @@ public class NodeListViewer extends JPanel {
 
     private static PrimitiveId primitiveIdAtRow(TableModel model, int row) {
         DiffTableModel castedModel = (DiffTableModel) model;
-        Long id = (Long)castedModel.getValueAt(row, 0).value;
-        if(id == null) return null;
+        Long id = (Long) castedModel.getValueAt(row, 0).value;
+        if (id == null) return null;
         return new SimplePrimitiveId(id, OsmPrimitiveType.NODE);
     }
 
@@ -339,7 +340,7 @@ public class NodeListViewer extends JPanel {
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() < 2) return;
             int row = table.rowAtPoint(e.getPoint());
-            if(row <= 0) return;
+            if (row <= 0) return;
             PrimitiveId pid = primitiveIdAtRow(table.getModel(), row);
             if (pid == null || pid.isNew())
                 return;

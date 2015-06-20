@@ -49,13 +49,13 @@ public class MergeSelectionAction extends AbstractMergeAction {
         if (targetLayer == null)
             return;
         if (getEditLayer().isUploadDiscouraged() && targetLayer instanceof OsmDataLayer
-                && !((OsmDataLayer)targetLayer).isUploadDiscouraged()
+                && !((OsmDataLayer) targetLayer).isUploadDiscouraged()
                 && getEditLayer().data.getAllSelected().size() > 1
                 && warnMergingUploadDiscouragedObjects(targetLayer)) {
             return;
         }
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(getEditLayer().data);
-        ((OsmDataLayer)targetLayer).mergeFrom(builder.build());
+        ((OsmDataLayer) targetLayer).mergeFrom(builder.build());
     }
 
     @Override

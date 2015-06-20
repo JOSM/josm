@@ -74,7 +74,7 @@ public class CacheEntryAttributes extends ElementAttributes {
      * @param etag Etag header
      */
     public void setEtag(String etag) {
-        if(etag != null) {
+        if (etag != null) {
             attrs.put(ETAG, etag);
         }
     }

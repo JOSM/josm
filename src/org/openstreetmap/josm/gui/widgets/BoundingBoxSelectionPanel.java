@@ -32,9 +32,9 @@ public class BoundingBoxSelectionPanel extends JPanel {
 
     protected void buildInputFields() {
         tfLatLon = new JosmTextField[4];
-        for(int i=0; i< 4; i++) {
+        for (int i = 0; i < 4; i++) {
             tfLatLon[i] = new JosmTextField(11);
-            tfLatLon[i].setMinimumSize(new Dimension(100,new JosmTextField().getMinimumSize().height));
+            tfLatLon[i].setMinimumSize(new Dimension(100, new JosmTextField().getMinimumSize().height));
             SelectAllOnFocusGainedDecorator.decorate(tfLatLon[i]);
         }
         LatitudeValidator.decorate(tfLatLon[0]);
@@ -45,7 +45,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
 
     protected final void build() {
         buildInputFields();
-        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         setLayout(new GridBagLayout());
         tfOsmUrl.getDocument().addDocumentListener(new OsmUrlRefresher());
 
@@ -54,13 +54,13 @@ public class BoundingBoxSelectionPanel extends JPanel {
         // side effects that will cancel out the newly made selection otherwise.
         tfOsmUrl.addFocusListener(new SelectAllOnFocusGainedDecorator());
 
-        add(new JLabel(tr("Min. latitude")), GBC.std().insets(0,0,3,5));
-        add(tfLatLon[0], GBC.std().insets(0,0,3,5));
-        add(new JLabel(tr("Min. longitude")), GBC.std().insets(0,0,3,5));
+        add(new JLabel(tr("Min. latitude")), GBC.std().insets(0, 0, 3, 5));
+        add(tfLatLon[0], GBC.std().insets(0, 0, 3, 5));
+        add(new JLabel(tr("Min. longitude")), GBC.std().insets(0, 0, 3, 5));
         add(tfLatLon[1], GBC.eol());
-        add(new JLabel(tr("Max. latitude")), GBC.std().insets(0,0,3,5));
-        add(tfLatLon[2], GBC.std().insets(0,0,3,5));
-        add(new JLabel(tr("Max. longitude")), GBC.std().insets(0,0,3,5));
+        add(new JLabel(tr("Max. latitude")), GBC.std().insets(0, 0, 3, 5));
+        add(tfLatLon[2], GBC.std().insets(0, 0, 3, 5));
+        add(new JLabel(tr("Max. longitude")), GBC.std().insets(0, 0, 3, 5));
         add(tfLatLon[3], GBC.eol());
 
         GridBagConstraints gc = new GridBagConstraints();
@@ -69,14 +69,17 @@ public class BoundingBoxSelectionPanel extends JPanel {
         gc.gridwidth = 4;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
-        gc.insets = new Insets(10,0,0,3);
+        gc.insets = new Insets(10, 0, 0, 3);
         add(new JMultilineLabel(tr("URL from www.openstreetmap.org (you can paste a download URL here to specify a bounding box)")), gc);
 
         gc.gridy = 3;
-        gc.insets = new Insets(3,0,0,3);
+        gc.insets = new Insets(3, 0, 0, 3);
         add(tfOsmUrl, gc);
     }
 
+    /**
+     * Constructs a new {@code BoundingBoxSelectionPanel}.
+     */
     public BoundingBoxSelectionPanel() {
         build();
     }
@@ -86,13 +89,13 @@ public class BoundingBoxSelectionPanel extends JPanel {
     }
 
     public Bounds getBoundingBox() {
-        double minlon, minlat, maxlon,maxlat;
+        double minlon, minlat, maxlon, maxlat;
         try {
             minlat = Double.parseDouble(tfLatLon[0].getText().trim());
             minlon = Double.parseDouble(tfLatLon[1].getText().trim());
             maxlat = Double.parseDouble(tfLatLon[2].getText().trim());
             maxlon = Double.parseDouble(tfLatLon[3].getText().trim());
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return null;
         }
         if (!LatLon.isValidLon(minlon) || !LatLon.isValidLon(maxlon)
@@ -102,12 +105,12 @@ public class BoundingBoxSelectionPanel extends JPanel {
             return null;
         if (minlat > maxlat)
             return null;
-        return new Bounds(minlon,minlat,maxlon,maxlat);
+        return new Bounds(minlon, minlat, maxlon, maxlat);
     }
 
     private boolean parseURL() {
         Bounds b = OsmUrlToBounds.parse(tfOsmUrl.getText());
-        if(b == null) return false;
+        if (b == null) return false;
         updateBboxFields(b);
         return true;
     }
@@ -135,7 +138,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
             double value = 0;
             try {
                 value = Double.parseDouble(getComponent().getText());
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 feedbackInvalid(tr("The string ''{0}'' is not a valid double value.", getComponent().getText()));
                 return;
             }
@@ -151,7 +154,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
             double value = 0;
             try {
                 value = Double.parseDouble(getComponent().getText());
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 return false;
             }
             if (!LatLon.isValidLat(value))
@@ -175,7 +178,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
             double value = 0;
             try {
                 value = Double.parseDouble(getComponent().getText());
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 feedbackInvalid(tr("The string ''{0}'' is not a valid double value.", getComponent().getText()));
                 return;
             }
@@ -191,7 +194,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
             double value = 0;
             try {
                 value = Double.parseDouble(getComponent().getText());
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 return false;
             }
             if (!LatLon.isValidLon(value))
@@ -203,8 +206,10 @@ public class BoundingBoxSelectionPanel extends JPanel {
     class OsmUrlRefresher implements DocumentListener {
         @Override
         public void changedUpdate(DocumentEvent e) { parseURL(); }
+
         @Override
         public void insertUpdate(DocumentEvent e) { parseURL(); }
+
         @Override
         public void removeUpdate(DocumentEvent e) { parseURL(); }
     }

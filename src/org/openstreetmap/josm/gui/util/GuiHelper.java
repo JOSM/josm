@@ -67,7 +67,7 @@ public final class GuiHelper {
         root.setEnabled(enabled);
         Component[] children = root.getComponents();
         for (Component child : children) {
-            if(child instanceof Container) {
+            if (child instanceof Container) {
                 setEnabledRec((Container) child, enabled);
             } else {
                 child.setEnabled(enabled);
@@ -159,7 +159,7 @@ public final class GuiHelper {
         dlg.setButtonIcons(new Icon[] {
                     new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get(),
                     new ImageProvider("upload").setMaxSize(ImageSizes.LARGEICON).addOverlay(
-                            new ImageOverlay(new ImageProvider("warning-small"), 0.5,0.5,1.0,1.0)).get()});
+                            new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get()});
         dlg.setToolTipTexts(new String[] {
                 tr("Cancel"),
                 continueToolTip});
@@ -227,7 +227,7 @@ public final class GuiHelper {
                 public void hierarchyChanged(HierarchyEvent e) {
                     Window window = SwingUtilities.getWindowAncestor(pane);
                     if (window instanceof Dialog) {
-                        Dialog dialog = (Dialog)window;
+                        Dialog dialog = (Dialog) window;
                         if (!dialog.isResizable()) {
                             dialog.setResizable(true);
                             if (minDimension != null) {
@@ -264,18 +264,18 @@ public final class GuiHelper {
     public static Stroke getCustomizedStroke(String code) {
         String[] s = code.trim().split("[^\\.0-9]+");
 
-        if (s.length==0) return new BasicStroke();
+        if (s.length == 0) return new BasicStroke();
         float w;
         try {
             w = Float.parseFloat(s[0]);
         } catch (NumberFormatException ex) {
             w = 1.0f;
         }
-        if (s.length>1) {
-            float[] dash= new float[s.length-1];
+        if (s.length > 1) {
+            float[] dash = new float[s.length-1];
             float sumAbs = 0;
             try {
-                for (int i=0; i<s.length-1; i++) {
+                for (int i = 0; i < s.length-1; i++) {
                    dash[i] = Float.parseFloat(s[i+1]);
                    sumAbs += Math.abs(dash[i]);
                 }
@@ -291,7 +291,7 @@ public final class GuiHelper {
             return new BasicStroke(w, BasicStroke.CAP_BUTT,
                     BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
         } else {
-            if (w>1) {
+            if (w > 1) {
                 // thick stroke
                 return new BasicStroke(w, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
             } else {
@@ -386,7 +386,7 @@ public final class GuiHelper {
             Object key = keys.nextElement();
             Object value = UIManager.get(key);
             if (value != null && value instanceof FontUIResource) {
-                FontUIResource fui = (FontUIResource)value;
+                FontUIResource fui = (FontUIResource) value;
                 UIManager.put(key, new FontUIResource(name, fui.getStyle(), fui.getSize()));
             }
         }

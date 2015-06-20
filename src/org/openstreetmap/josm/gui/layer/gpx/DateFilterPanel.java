@@ -47,7 +47,7 @@ public class DateFilterPanel extends JPanel {
 
         final Date startTime, endTime;
         Date[] bounds = layer.data.getMinMaxTimeForAllTracks();
-        startTime = (bounds.length == 0) ? new GregorianCalendar(2000, 1, 1).getTime():bounds[0];
+        startTime = (bounds.length == 0) ? new GregorianCalendar(2000, 1, 1).getTime() : bounds[0];
         endTime = (bounds.length == 0) ? new Date() : bounds[1];
 
         dateFrom.setDate(startTime);
@@ -55,9 +55,9 @@ public class DateFilterPanel extends JPanel {
         dateFrom.setRange(startTime, endTime);
         dateTo.setRange(startTime, endTime);
 
-        add(noTimestampCb, GBC.std().grid(1,1).insets(0, 0, 5, 0));
-        add(dateFrom, GBC.std().grid(2,1).fill(GBC.HORIZONTAL));
-        add(dateTo, GBC.eol().grid(3,1).fill(GBC.HORIZONTAL));
+        add(noTimestampCb, GBC.std().grid(1, 1).insets(0, 0, 5, 0));
+        add(dateFrom, GBC.std().grid(2, 1).fill(GBC.HORIZONTAL));
+        add(dateTo, GBC.eol().grid(3, 1).fill(GBC.HORIZONTAL));
 
         setEnabled(enabled);
 
@@ -92,7 +92,7 @@ public class DateFilterPanel extends JPanel {
     public void applyFilter() {
         t.stop();
         filterTracksByDate();
-        if (filterAppliedListener!=null)
+        if (filterAppliedListener != null)
            filterAppliedListener.actionPerformed(null);
     }
 
@@ -110,10 +110,10 @@ public class DateFilterPanel extends JPanel {
      * Called by other components when it is needed.
      */
     public void loadFromPrefs() {
-        long t1 =Main.pref.getLong(prefDateMin, 0);
-        if (t1!=0) dateFrom.setDate(new Date(t1));
-        long t2 =Main.pref.getLong(prefDateMax, 0);
-        if (t2!=0) dateTo.setDate(new Date(t2));
+        long t1 = Main.pref.getLong(prefDateMin, 0);
+        if (t1 != 0) dateFrom.setDate(new Date(t1));
+        long t2 = Main.pref.getLong(prefDateMax, 0);
+        if (t2 != 0) dateTo.setDate(new Date(t2));
         noTimestampCb.setSelected(Main.pref.getBoolean(prefDate0, false));
     }
 

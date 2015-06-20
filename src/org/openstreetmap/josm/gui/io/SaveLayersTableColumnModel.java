@@ -37,7 +37,7 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
             JPanel panel = new JPanel(new GridBagLayout());
-            SaveLayerInfo info = (SaveLayerInfo)value;
+            SaveLayerInfo info = (SaveLayerInfo) value;
             StringBuilder sb = new StringBuilder(24);
             sb.append("<html>");
             if (info.getLayer().requiresUploadToServer() && !info.getLayer().isUploadDiscouraged()) {

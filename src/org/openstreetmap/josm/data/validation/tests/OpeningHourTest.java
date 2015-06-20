@@ -62,7 +62,7 @@ public class OpeningHourTest extends Test.TagTest {
                         "    var r= new opening_hours(value, nominatimJSON, mode);" +
                         "    r.getErrors = function() {return [];};" +
                         "    return r;" +
-                        "  } catch(err) {" +
+                        "  } catch (err) {" +
                         "    return {" +
                         "      getWarnings: function() {return [];}," +
                         "      getErrors: function() {return [err.toString()]}" +

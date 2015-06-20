@@ -49,7 +49,7 @@ public class SequenceCommand extends Command {
     }
 
     @Override public boolean executeCommand() {
-        for (int i=0; i < sequence.length; i++) {
+        for (int i = 0; i < sequence.length; i++) {
             boolean result = sequence[i].executeCommand();
             if (!result && !continueOnError) {
                 undoCommands(i-1);

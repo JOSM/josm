@@ -65,8 +65,8 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
      * @throws IllegalArgumentException if changeset is null
      */
     public UploadPrimitivesTask(UploadStrategySpecification strategy, OsmDataLayer layer, APIDataSet toUpload, Changeset changeset) {
-        super(tr("Uploading data for layer ''{0}''", layer.getName()),false /* don't ignore exceptions */);
-        ensureParameterNotNull(layer,"layer");
+        super(tr("Uploading data for layer ''{0}''", layer.getName()), false /* don't ignore exceptions */);
+        ensureParameterNotNull(layer, "layer");
         ensureParameterNotNull(strategy, "strategy");
         ensureParameterNotNull(changeset, "changeset");
         this.toUpload = toUpload;
@@ -185,7 +185,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
      * @param monitor a progress monitor
      * @throws OsmTransferException if we can't recover from the exception
      */
-    protected void recoverFromGoneOnServer(OsmApiPrimitiveGoneException e, ProgressMonitor monitor) throws OsmTransferException{
+    protected void recoverFromGoneOnServer(OsmApiPrimitiveGoneException e, ProgressMonitor monitor) throws OsmTransferException {
         if (!e.isKnownPrimitive()) throw e;
         OsmPrimitive p = layer.data.getPrimitiveById(e.getPrimitiveId(), e.getPrimitiveType());
         if (p == null) throw e;
@@ -230,19 +230,19 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
 
         try {
             SwingUtilities.invokeAndWait(r);
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             lastException = e;
-        } catch(InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             lastException = new OsmTransferException(e.getCause());
         }
     }
 
     @Override protected void realRun() {
         try {
-            uploadloop:while(true) {
+            uploadloop: while (true) {
                 try {
                     getProgressMonitor().subTask(trn("Uploading {0} object...", "Uploading {0} objects...", toUpload.getSize(), toUpload.getSize()));
-                    synchronized(this) {
+                    synchronized (this) {
                         writer = new OsmServerWriter();
                     }
                     writer.uploadOsm(strategy, toUpload.getPrimitives(), changeset, getProgressMonitor().createSubTaskMonitor(1, false));
@@ -250,15 +250,15 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                     // if we get here we've successfully uploaded the data. Exit the loop.
                     //
                     break;
-                } catch(OsmTransferCanceledException e) {
+                } catch (OsmTransferCanceledException e) {
                     Main.error(e);
                     uploadCanceled = true;
                     break uploadloop;
-                } catch(OsmApiPrimitiveGoneException e) {
+                } catch (OsmApiPrimitiveGoneException e) {
                     // try to recover from  410 Gone
                     //
                     recoverFromGoneOnServer(e, getProgressMonitor());
-                } catch(ChangesetClosedException e) {
+                } catch (ChangesetClosedException e) {
                     processedPrimitives.addAll(writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
                     changeset.setOpen(false);
                     switch(e.getSource()) {
@@ -286,7 +286,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                     if (writer != null) {
                         processedPrimitives.addAll(writer.getProcessedPrimitives());
                     }
-                    synchronized(this) {
+                    synchronized (this) {
                         writer = null;
                     }
                 }
@@ -335,7 +335,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                     return;
                 }
                 if (lastException instanceof ChangesetClosedException) {
-                    ChangesetClosedException e = (ChangesetClosedException)lastException;
+                    ChangesetClosedException e = (ChangesetClosedException) lastException;
                     if (e.getSource().equals(ChangesetClosedException.Source.UPDATE_CHANGESET)) {
                         handleFailedUpload(lastException);
                         return;
@@ -369,7 +369,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
 
     @Override protected void cancel() {
         uploadCanceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (writer != null) {
                 writer.cancel();
             }

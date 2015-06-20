@@ -68,6 +68,7 @@ public final class UTFInputStreamReader extends InputStreamReader {
     private UTFInputStreamReader(InputStream in) {
         super(in);
     }
+
     private UTFInputStreamReader(InputStream in, String cs) throws UnsupportedEncodingException {
         super(in, cs);
     }

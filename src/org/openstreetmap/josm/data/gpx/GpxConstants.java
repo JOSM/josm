@@ -101,5 +101,5 @@ public interface GpxConstants {
     /**
      * Possible fix values.
      */
-    public static Collection<String> FIX_VALUES = Arrays.asList("none","2d","3d","dgps","pps");
+    public static Collection<String> FIX_VALUES = Arrays.asList("none", "2d", "3d", "dgps", "pps");
 }

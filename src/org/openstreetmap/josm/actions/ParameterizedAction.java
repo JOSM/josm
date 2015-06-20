@@ -8,6 +8,6 @@ import java.util.Map;
 public interface ParameterizedAction extends AdaptableAction {
 
     List<ActionParameter<?>> getActionParameters();
-    void actionPerformed(ActionEvent e, Map<String, Object> parameters);
 
+    void actionPerformed(ActionEvent e, Map<String, Object> parameters);
 }

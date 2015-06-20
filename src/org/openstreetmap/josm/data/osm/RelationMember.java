@@ -93,7 +93,7 @@ public class RelationMember implements PrimitiveId {
      * @since 1937
      */
     public Relation getRelation() {
-        return (Relation)member;
+        return (Relation) member;
     }
 
     /**
@@ -102,7 +102,7 @@ public class RelationMember implements PrimitiveId {
      * @since 1937
      */
     public Way getWay() {
-        return (Way)member;
+        return (Way) member;
     }
 
     /**
@@ -111,7 +111,7 @@ public class RelationMember implements PrimitiveId {
      * @since 1937
      */
     public Node getNode() {
-        return (Node)member;
+        return (Node) member;
     }
 
     /**

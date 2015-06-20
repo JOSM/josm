@@ -92,7 +92,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
         super(tr("Delete Mode"),
                 "delete",
                 tr("Delete nodes or ways."),
-                Shortcut.registerShortcut("mapmode:delete", tr("Mode: {0}",tr("Delete")),
+                Shortcut.registerShortcut("mapmode:delete", tr("Mode: {0}", tr("Delete")),
                 KeyEvent.VK_DELETE, Shortcut.CTRL),
                 mapFrame,
                 ImageProvider.getCursor("normal", "delete"));
@@ -134,13 +134,13 @@ public class DeleteAction extends MapMode implements ModifierListener {
         if (!Main.map.mapView.isActiveLayerDrawable())
             return;
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
+        boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0;
 
         Command c;
         if (ctrl) {
-            c = DeleteCommand.deleteWithReferences(getEditLayer(),getCurrentDataSet().getSelected());
+            c = DeleteCommand.deleteWithReferences(getEditLayer(), getCurrentDataSet().getSelected());
         } else {
-            c = DeleteCommand.delete(getEditLayer(),getCurrentDataSet().getSelected(), !alt /* also delete nodes in way */);
+            c = DeleteCommand.delete(getEditLayer(), getCurrentDataSet().getSelected(), !alt /* also delete nodes in way */);
         }
         // if c is null, an error occurred or the user aborted. Don't do anything in that case.
         if (c != null) {
@@ -171,7 +171,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
     private void removeHighlighting() {
         highlightHelper.clear();
         DataSet ds = getCurrentDataSet();
-        if(ds != null) {
+        if (ds != null) {
             ds.clearHighlightedWaySegments();
         }
     }
@@ -183,13 +183,13 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * @param modifiers mouse modifiers, not necessarly taken from the given mouse event
      */
     private void addHighlighting(MouseEvent e, int modifiers) {
-        if(!drawTargetHighlight)
+        if (!drawTargetHighlight)
             return;
 
         Set<OsmPrimitive> newHighlights = new HashSet<>();
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
 
-        if(parameters.mode == DeleteMode.segment) {
+        if (parameters.mode == DeleteMode.segment) {
             // deleting segments is the only action not working on OsmPrimitives
             // so we have to handle them separately.
             repaintIfRequired(newHighlights, parameters.nearestSegment);
@@ -197,9 +197,9 @@ public class DeleteAction extends MapMode implements ModifierListener {
             // don't call buildDeleteCommands for DeleteMode.segment because it doesn't support
             // silent operation and SplitWayAction will show dialogs. A lot.
             Command delCmd = buildDeleteCommands(e, modifiers, true);
-            if(delCmd != null) {
+            if (delCmd != null) {
                 // all other cases delete OsmPrimitives directly, so we can safely do the following
-                for(OsmPrimitive osm : delCmd.getParticipatingPrimitives()) {
+                for (OsmPrimitive osm : delCmd.getParticipatingPrimitives()) {
                     newHighlights.add(osm);
                 }
             }
@@ -211,21 +211,21 @@ public class DeleteAction extends MapMode implements ModifierListener {
         boolean needsRepaint = false;
         DataSet ds = getCurrentDataSet();
 
-        if(newHighlightedWaySegment == null && oldHighlightedWaySegment != null) {
-            if(ds != null) {
+        if (newHighlightedWaySegment == null && oldHighlightedWaySegment != null) {
+            if (ds != null) {
                 ds.clearHighlightedWaySegments();
                 needsRepaint = true;
             }
             oldHighlightedWaySegment = null;
-        } else if(newHighlightedWaySegment != null && !newHighlightedWaySegment.equals(oldHighlightedWaySegment)) {
-            if(ds != null) {
+        } else if (newHighlightedWaySegment != null && !newHighlightedWaySegment.equals(oldHighlightedWaySegment)) {
+            if (ds != null) {
                 ds.setHighlightedWaySegments(Collections.singleton(newHighlightedWaySegment));
                 needsRepaint = true;
             }
             oldHighlightedWaySegment = newHighlightedWaySegment;
         }
         needsRepaint |= highlightHelper.highlightOnly(newHighlights);
-        if(needsRepaint) {
+        if (needsRepaint) {
             Main.map.mapView.repaint();
         }
     }
@@ -239,7 +239,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
     private void updateCursor(MouseEvent e, int modifiers) {
         if (!Main.isDisplayingMapView())
             return;
-        if(!Main.map.mapView.isActiveLayerVisible() || e == null)
+        if (!Main.map.mapView.isActiveLayerVisible() || e == null)
             return;
 
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
@@ -277,7 +277,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
-        if(!Main.map.mapView.isActiveLayerVisible())
+        if (!Main.map.mapView.isActiveLayerVisible())
             return;
 
         // request focus in order to enable the expected keyboard shortcuts
@@ -345,7 +345,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
                 } else if (ctrl) {
                     result.mode = DeleteMode.way_with_references;
                 } else {
-                    result.mode = alt?DeleteMode.way:DeleteMode.way_with_nodes;
+                    result.mode = alt ? DeleteMode.way : DeleteMode.way_with_nodes;
                 }
             } else {
                 result.mode = DeleteMode.none;
@@ -371,9 +371,9 @@ public class DeleteAction extends MapMode implements ModifierListener {
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
         switch (parameters.mode) {
         case node:
-            return DeleteCommand.delete(getEditLayer(),Collections.singleton(parameters.nearestNode), false, silent);
+            return DeleteCommand.delete(getEditLayer(), Collections.singleton(parameters.nearestNode), false, silent);
         case node_with_references:
-            return DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton(parameters.nearestNode), silent);
+            return DeleteCommand.deleteWithReferences(getEditLayer(), Collections.singleton(parameters.nearestNode), silent);
         case segment:
             return DeleteCommand.deleteWaySegment(getEditLayer(), parameters.nearestSegment);
         case way:

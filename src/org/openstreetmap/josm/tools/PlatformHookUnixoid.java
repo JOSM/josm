@@ -130,7 +130,7 @@ public class PlatformHookUnixoid implements PlatformHook {
     @Override
     public void initSystemShortcuts() {
         // TODO: Insert system shortcuts here. See Windows and especially OSX to see how to.
-        for(int i = KeyEvent.VK_F1; i <= KeyEvent.VK_F12; ++i)
+        for (int i = KeyEvent.VK_F1; i <= KeyEvent.VK_F12; ++i)
             Shortcut.registerSystemShortcut("screen:toogle"+i, tr("reserved"),
                     i, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
         Shortcut.registerSystemShortcut("system:reset", tr("reserved"),
@@ -264,11 +264,11 @@ public class PlatformHookUnixoid implements PlatformHook {
                 try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
                     String line = Utils.strip(input.readLine());
                     if (line != null && !line.isEmpty()) {
-                        line = line.replaceAll("\"+","");
-                        line = line.replaceAll("NAME=",""); // strange code for some Gentoo's
-                        if(line.startsWith("Linux ")) // e.g. Linux Mint
+                        line = line.replaceAll("\"+", "");
+                        line = line.replaceAll("NAME=", ""); // strange code for some Gentoo's
+                        if (line.startsWith("Linux ")) // e.g. Linux Mint
                             return line;
-                        else if(!line.isEmpty())
+                        else if (!line.isEmpty())
                             return "Linux " + line;
                     }
                 }
@@ -380,8 +380,8 @@ public class PlatformHookUnixoid implements PlatformHook {
             if (result != null && !result.isEmpty() && prefix != null && !prefix.isEmpty()) {
                 result = prefix + result;
             }
-            if(result != null)
-                result = result.replaceAll("\"+","");
+            if (result != null)
+                result = result.replaceAll("\"+", "");
             return result;
         }
     }

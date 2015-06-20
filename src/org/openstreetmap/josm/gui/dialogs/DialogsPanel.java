@@ -28,6 +28,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
     private List<JPanel> panels = new ArrayList<>();
 
     private final JSplitPane parent;
+
     public DialogsPanel(JSplitPane parent) {
         this.parent = parent;
     }
@@ -125,7 +126,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
          */
         JPanel p = panels.get(N-1); // current Panel (start with last one)
         int k = -1;                 // indicates that the current Panel index is N-1, but no default-view-Dialog has been added to this Panel yet.
-        for (int i=N-1; i >= 0; --i) {
+        for (int i = N-1; i >= 0; --i) {
             final ToggleDialog dlg = allDialogs.get(i);
             if (dlg.isDialogInDefaultView()) {
                 if (k == -1) {
@@ -151,7 +152,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
          * Determine the panel geometry
          */
         if (action == Action.ELEMENT_SHRINKS) {
-            for (int i=0; i<N; ++i) {
+            for (int i = 0; i < N; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
                 if (dlg.isDialogInDefaultView()) {
                     final int ph = dlg.getPreferredHeight();
@@ -208,7 +209,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
              */
             int D_m = 0;        // additional space needed by the small dialogs
             int D_p = 0;        // available space from the large dialogs
-            for (int i=0; i<N; ++i) {
+            for (int i = 0; i < N; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
                 if (dlg.isDialogInDefaultView() && dlg != triggeredBy) {
                     final int ha = dlg.getSize().height;                              // current
@@ -223,7 +224,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
                 }
             }
             /** adjust, without changing the sum */
-            for (int i=0; i<N; ++i) {
+            for (int i = 0; i < N; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
                 if (dlg.isDialogInDefaultView() && dlg != triggeredBy) {
                     final int ha = dlg.getHeight();

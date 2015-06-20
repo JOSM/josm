@@ -116,10 +116,10 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         RelationMemberConflictDecision d = decisions.get(row);
         switch(column) {
         case 2: /* role */
-            d.setRole((String)value);
+            d.setRole((String) value);
             break;
         case 4: /* decision */
-            d.decide((RelationMemberConflictDecisionType)value);
+            d.decide((RelationMemberConflictDecisionType) value);
             refresh();
             break;
         }
@@ -134,7 +134,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * @param primitive the child primitive
      */
     protected void populate(Relation relation, OsmPrimitive primitive) {
-        for (int i =0; i<relation.getMembersCount();i++) {
+        for (int i = 0; i < relation.getMembersCount(); i++) {
             if (relation.getMember(i).refersTo(primitive)) {
                 decisions.add(new RelationMemberConflictDecision(relation, i));
             }
@@ -154,7 +154,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         memberPrimitives = memberPrimitives == null ? new LinkedList<OsmPrimitive>() : memberPrimitives;
         for (Relation r : relations) {
             for (OsmPrimitive p: memberPrimitives) {
-                populate(r,p);
+                populate(r, p);
             }
         }
         this.relations = relations;
@@ -225,7 +225,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     }
 
     protected RelationMemberConflictDecision getDecision(Relation relation, int pos) {
-        for(RelationMemberConflictDecision decision: decisions) {
+        for (RelationMemberConflictDecision decision: decisions) {
             if (decision.matches(relation, pos)) return decision;
         }
         return null;
@@ -235,7 +235,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         final Relation modifiedRelation = new Relation(relation);
         modifiedRelation.setMembers(null);
         boolean isChanged = false;
-        for (int i=0; i < relation.getMembersCount(); i++) {
+        for (int i = 0; i < relation.getMembersCount(); i++) {
             final RelationMember member = relation.getMember(i);
             RelationMemberConflictDecision decision = getDecision(relation, i);
             if (decision == null) {
@@ -243,7 +243,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
             } else {
                 switch(decision.getDecision()) {
                 case KEEP:
-                    final RelationMember newMember = new RelationMember(decision.getRole(),newPrimitive);
+                    final RelationMember newMember = new RelationMember(decision.getRole(), newPrimitive);
                     modifiedRelation.addMember(newMember);
                     isChanged |= !member.equals(newMember);
                     break;
@@ -280,7 +280,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     }
 
     protected boolean isChanged(Relation relation, OsmPrimitive newPrimitive) {
-        for (int i=0; i < relation.getMembersCount(); i++) {
+        for (int i = 0; i < relation.getMembersCount(); i++) {
             RelationMemberConflictDecision decision = getDecision(relation, i);
             if (decision == null) {
                 continue;

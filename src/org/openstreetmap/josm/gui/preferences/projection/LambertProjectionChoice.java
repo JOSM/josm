@@ -17,9 +17,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class LambertProjectionChoice extends ListProjectionChoice {
 
     private static final String[] lambert4zones = {
-        tr("{0} ({1} to {2} degrees)", 1,"51.30","48.15"),
-        tr("{0} ({1} to {2} degrees)", 2,"48.15","45.45"),
-        tr("{0} ({1} to {2} degrees)", 3,"45.45","42.76"),
+        tr("{0} ({1} to {2} degrees)", 1, "51.30", "48.15"),
+        tr("{0} ({1} to {2} degrees)", 2, "48.15", "45.45"),
+        tr("{0} ({1} to {2} degrees)", 3, "45.45", "42.76"),
         tr("{0} (Corsica)", 4)
     };
 
@@ -68,9 +68,9 @@ public class LambertProjectionChoice extends ListProjectionChoice {
             try {
                 String zonestring = code.substring(9);
                 int zoneval = Integer.parseInt(zonestring);
-                if(zoneval >= 1 && zoneval <= 4)
+                if (zoneval >= 1 && zoneval <= 4)
                     return Collections.singleton(zonestring);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 Main.warn(e);
             }
         }
@@ -86,7 +86,7 @@ public class LambertProjectionChoice extends ListProjectionChoice {
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 1;
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             Main.warn(e);
         }
         return defaultIndex;

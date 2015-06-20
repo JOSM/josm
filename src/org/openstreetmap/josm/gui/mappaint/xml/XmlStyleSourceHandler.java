@@ -43,29 +43,31 @@ public class XmlStyleSourceHandler extends DefaultHandler {
 
     public XmlStyleSourceHandler(XmlStyleSource style) {
         this.style = style;
-        inDoc=inRule=inCondition=inLine=inIcon=inArea=false;
+        inDoc = inRule = inCondition = inLine = inIcon = inArea = false;
         rule.init();
     }
 
-    Color convertColor(String colString) {
+    private Color convertColor(String colString) {
         int i = colString.indexOf('#');
         Color ret;
         if (i < 0) {
             ret = Main.pref.getColor("mappaint."+style.getPrefName()+"."+colString, Color.red);
-        } else if(i == 0) {
+        } else if (i == 0) {
             ret = ColorHelper.html2color(colString);
         } else {
-            ret = Main.pref.getColor("mappaint."+style.getPrefName()+"."+colString.substring(0,i),
+            ret = Main.pref.getColor("mappaint."+style.getPrefName()+"."+colString.substring(0, i),
                     ColorHelper.html2color(colString.substring(i)));
         }
         return ret;
     }
 
-    @Override public void startDocument() {
+    @Override
+    public void startDocument() {
         inDoc = true;
     }
 
-    @Override public void endDocument() {
+    @Override
+    public void endDocument() {
         inDoc = false;
     }
 
@@ -76,7 +78,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
     }
 
     private void startElementLine(String qName, Attributes atts, LinePrototype line) {
-        for (int count=0; count<atts.getLength(); count++) {
+        for (int count = 0; count < atts.getLength(); count++) {
             switch (atts.getQName(count)) {
             case "width":
                 String val = atts.getValue(count);
@@ -100,7 +102,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
                     }
                 } catch (NumberFormatException nfe) {
                     boolean isDashed = Boolean.parseBoolean(atts.getValue(count));
-                    if(isDashed) {
+                    if (isDashed) {
                         dashed = new Float[]{9f};
                     } else {
                         dashed = null;
@@ -125,17 +127,17 @@ public class XmlStyleSourceHandler extends DefaultHandler {
 
     private void startElementLinemod(String qName, Attributes atts, LinemodPrototype line) {
         startElementLine(qName, atts, line);
-        for (int count=0; count<atts.getLength(); count++) {
+        for (int count = 0; count < atts.getLength(); count++) {
             switch (atts.getQName(count)) {
             case "width":
                 String val = atts.getValue(count);
                 if (val.startsWith("+")) {
                     line.setWidth(Integer.parseInt(val.substring(1)));
                     line.widthMode = LinemodPrototype.WidthMode.OFFSET;
-                } else if(val.startsWith("-")) {
+                } else if (val.startsWith("-")) {
                     line.setWidth(Integer.parseInt(val));
                     line.widthMode = LinemodPrototype.WidthMode.OFFSET;
-                } else if(val.endsWith("%")) {
+                } else if (val.endsWith("%")) {
                     line.setWidth(Integer.parseInt(val.substring(0, val.length()-1)));
                     line.widthMode = LinemodPrototype.WidthMode.PERCENT;
                 } else {
@@ -150,7 +152,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
     }
 
     @Override
-    public void startElement(String uri,String name, String qName, Attributes atts) {
+    public void startElement(String uri, String name, String qName, Attributes atts) {
         if (inDoc) {
             switch(qName) {
             case "rule":
@@ -178,14 +180,14 @@ public class XmlStyleSourceHandler extends DefaultHandler {
                     inCondition = true;
                     XmlCondition c = rule.cond;
                     if (c.key != null) {
-                        if(rule.conditions == null) {
+                        if (rule.conditions == null) {
                             rule.conditions = new LinkedList<>();
                         }
                         rule.conditions.add(new XmlCondition(rule.cond));
                         c = new XmlCondition();
                         rule.conditions.add(c);
                     }
-                    for (int count=0; count<atts.getLength(); count++) {
+                    for (int count = 0; count < atts.getLength(); count++) {
                         switch (atts.getQName(count)) {
                         case "k":
                             c.key = atts.getValue(count);
@@ -200,7 +202,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
                             error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
                         }
                     }
-                    if(c.key == null) {
+                    if (c.key == null) {
                         error("The condition has no key!");
                     }
                 }
@@ -215,7 +217,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
                 break;
             case "icon":
                 inIcon = true;
-                for (int count=0; count<atts.getLength(); count++) {
+                for (int count = 0; count < atts.getLength(); count++) {
                     switch (atts.getQName(count)) {
                     case "src":
                         IconReference icon = new IconReference(atts.getValue(count), style);
@@ -235,13 +237,13 @@ public class XmlStyleSourceHandler extends DefaultHandler {
                 break;
             case "area":
                 hadArea = inArea = true;
-                for (int count=0; count<atts.getLength(); count++) {
+                for (int count = 0; count < atts.getLength(); count++) {
                     switch (atts.getQName(count)) {
                     case "colour":
-                        rule.area.color=convertColor(atts.getValue(count));
+                        rule.area.color = convertColor(atts.getValue(count));
                         break;
                     case "closed":
-                        rule.area.closed=Boolean.parseBoolean(atts.getValue(count));
+                        rule.area.closed = Boolean.parseBoolean(atts.getValue(count));
                         break;
                     case "priority":
                         rule.area.priority = Integer.parseInt(atts.getValue(count));
@@ -258,7 +260,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
     }
 
     @Override
-    public void endElement(String uri,String name, String qName) {
+    public void endElement(String uri, String name, String qName) {
         if (inRule && "rule".equals(qName)) {
             if (hadLine) {
                 style.add(rule.cond, rule.conditions,

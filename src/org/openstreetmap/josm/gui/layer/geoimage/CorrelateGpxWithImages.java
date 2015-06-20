@@ -115,7 +115,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 // nothing happened: JOSM was minimized or similar
                 return NOTHING;
             int answer = syncDialog.getValue();
-            if(answer != 1)
+            if (answer != 1)
                 return CANCEL;
 
             // Parse values again, to display an error if the format is not recognized
@@ -241,11 +241,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            FileFilter filter = new FileFilter(){
-                @Override public boolean accept(File f) {
+            FileFilter filter = new FileFilter() {
+                @Override
+                public boolean accept(File f) {
                     return f.isDirectory() || Utils.hasExtension(f, "gpx", "gpx.gz");
                 }
-                @Override public String getDescription() {
+
+                @Override
+                public String getDescription() {
                     return tr("GPX Files (*.gpx *.gpx.gz)");
                 }
             };
@@ -283,7 +286,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     Main.error(x);
                     JOptionPane.showMessageDialog(
                             Main.parent,
-                            tr("Error while parsing {0}",sel.getName())+": "+x.getMessage(),
+                            tr("Error while parsing {0}", sel.getName())+": "+x.getMessage(),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
                     );
@@ -292,7 +295,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     Main.error(x);
                     JOptionPane.showMessageDialog(
                             Main.parent,
-                            tr("Could not read \"{0}\"",sel.getName())+"\n"+x.getMessage(),
+                            tr("Could not read \"{0}\"", sel.getName())+"\n"+x.getMessage(),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
                     );
@@ -532,7 +535,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 try {
                     delta = dateFormat.parse(lbExifTime.getText()).getTime()
                     - dateFormat.parse(tfGpsTime.getText()).getTime();
-                } catch(ParseException e) {
+                } catch (ParseException e) {
                     JOptionPane.showMessageDialog(Main.parent, tr("Error while parsing the date.\n"
                             + "Please use the requested format"),
                             tr("Invalid date"), JOptionPane.ERROR_MESSAGE);
@@ -652,13 +655,13 @@ public class CorrelateGpxWithImages extends AbstractAction {
         cbShowThumbs = new JCheckBox(tr("Show Thumbnail images on the map"), ticked);
         cbShowThumbs.setEnabled(!yLayer.thumbsLoaded);
 
-        int y=0;
+        int y = 0;
         GBC gbc = GBC.eol();
         gbc.gridx = 0;
         gbc.gridy = y++;
         panelTf.add(panelCb, gbc);
 
-        gbc = GBC.eol().fill(GBC.HORIZONTAL).insets(0,0,0,12);
+        gbc = GBC.eol().fill(GBC.HORIZONTAL).insets(0, 0, 0, 12);
         gbc.gridx = 0;
         gbc.gridy = y++;
         panelTf.add(new JSeparator(SwingConstants.HORIZONTAL), gbc);
@@ -685,7 +688,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         gbc.weightx = 1.;
         panelTf.add(tfOffset, gbc);
 
-        gbc = GBC.std().insets(5,5,5,5);
+        gbc = GBC.std().insets(5, 5, 5, 5);
         gbc.gridx = 2;
         gbc.gridy = y-2;
         gbc.gridheight = 2;
@@ -694,7 +697,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         gbc.weightx = 0.5;
         panelTf.add(buttonViewGpsPhoto, gbc);
 
-        gbc = GBC.std().fill(GBC.BOTH).insets(5,5,5,5);
+        gbc = GBC.std().fill(GBC.BOTH).insets(5, 5, 5, 5);
         gbc.gridx = 2;
         gbc.gridy = y++;
         gbc.weightx = 0.5;
@@ -703,7 +706,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         gbc.gridx = 3;
         panelTf.add(buttonAdjust, gbc);
 
-        gbc = GBC.eol().fill(GBC.HORIZONTAL).insets(0,12,0,0);
+        gbc = GBC.eol().fill(GBC.HORIZONTAL).insets(0, 12, 0, 0);
         gbc.gridx = 0;
         gbc.gridy = y++;
         panelTf.add(new JSeparator(SwingConstants.HORIZONTAL), gbc);
@@ -779,17 +782,21 @@ public class CorrelateGpxWithImages extends AbstractAction {
         public void insertUpdate(DocumentEvent ev) {
             updateStatusBar();
         }
+
         @Override
         public void removeUpdate(DocumentEvent ev) {
             updateStatusBar();
         }
+
         @Override
         public void changedUpdate(DocumentEvent ev) {
         }
+
         @Override
         public void itemStateChanged(ItemEvent e) {
             updateStatusBar();
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             updateStatusBar();
@@ -837,6 +844,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private transient RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
+
     private class RepaintTheMapListener implements FocusListener {
         @Override
         public void focusGained(FocusEvent e) { // do nothing
@@ -858,35 +866,36 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             long diff = delta + Math.round(timezone*60*60);
 
-            double diffInH = (double)diff/(60*60);    // hours
+            double diffInH = (double) diff/(60*60);    // hours
 
             // Find day difference
-            final int dayOffset = (int)Math.round(diffInH / 24); // days
+            final int dayOffset = (int) Math.round(diffInH / 24); // days
             double tmz = diff - dayOffset*24*60*60L;  // seconds
 
             // In hours, rounded to two decimal places
-            tmz = (double)Math.round(tmz*100/(60*60)) / 100;
+            tmz = (double) Math.round(tmz*100/(60*60)) / 100;
 
             // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
             // -2 minutes offset. This determines the real timezone and finds offset.
-            double fixTimezone = (double)Math.round(tmz * 2)/2; // hours, rounded to one decimal place
-            int offset = (int)Math.round(diff - fixTimezone*60*60) - dayOffset*24*60*60; // seconds
+            double fixTimezone = (double) Math.round(tmz * 2)/2; // hours, rounded to one decimal place
+            int offset = (int) Math.round(diff - fixTimezone*60*60) - dayOffset*24*60*60; // seconds
 
             // Info Labels
             final JLabel lblMatches = new JLabel();
 
             // Timezone Slider
-            // The slider allows to switch timezon from -12:00 to 12:00 in 30 minutes
-            // steps. Therefore the range is -24 to 24.
+            // The slider allows to switch timezon from -12:00 to 12:00 in 30 minutes steps. Therefore the range is -24 to 24.
             final JLabel lblTimezone = new JLabel();
             final JSlider sldTimezone = new JSlider(-24, 24, 0);
             sldTimezone.setPaintLabels(true);
-            Dictionary<Integer,JLabel> labelTable = new Hashtable<>();
+            Dictionary<Integer, JLabel> labelTable = new Hashtable<>();
+            // CHECKSTYLE.OFF: ParenPad
             labelTable.put(-24, new JLabel("-12:00"));
             labelTable.put(-12, new JLabel( "-6:00"));
             labelTable.put(  0, new JLabel(  "0:00"));
             labelTable.put( 12, new JLabel(  "6:00"));
             labelTable.put( 24, new JLabel( "12:00"));
+            // CHECKSTYLE.ON: ParenPad
             sldTimezone.setLabelTable(labelTable);
 
             // Minutes Slider
@@ -909,9 +918,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     // parse slider position into real timezone
                     double tz = Math.abs(sldTimezone.getValue());
                     String zone = tz % 2 == 0
-                    ? (int)Math.floor(tz/2) + ":00"
-                            : (int)Math.floor(tz/2) + ":30";
-                    if(sldTimezone.getValue() < 0) {
+                    ? (int) Math.floor(tz/2) + ":00"
+                            : (int) Math.floor(tz/2) + ":30";
+                    if (sldTimezone.getValue() < 0) {
                         zone = "-" + zone;
                     }
 
@@ -958,10 +967,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // will be off range for the sliders. Catch this error
             // and inform the user about it.
             try {
-                sldTimezone.setValue((int)(fixTimezone*2));
-                sldMinutes.setValue(offset/60);
-                sldSeconds.setValue(offset%60);
-            } catch(Exception e) {
+                sldTimezone.setValue((int) (fixTimezone*2));
+                sldMinutes.setValue(offset / 60);
+                sldSeconds.setValue(offset % 60);
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("An error occurred while trying to match the photos to the GPX track."
                                 +" You can adjust the sliders to manually match the photos."),
@@ -1000,7 +1009,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             PrimaryDateParser dateParser = new PrimaryDateParser();
 
             // no images found, exit
-            if(imgs.isEmpty()) {
+            if (imgs.isEmpty()) {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected photos do not contain time information."),
                         tr("Photos do not contain time information"), JOptionPane.WARNING_MESSAGE);
@@ -1023,7 +1032,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         try {
                             firstGPXDate = dateParser.parse(curDateWpStr).getTime()/1000;
                             break outer;
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             Main.warn(e);
                         }
                     }
@@ -1031,7 +1040,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
 
             // No GPX timestamps found, exit
-            if(firstGPXDate < 0) {
+            if (firstGPXDate < 0) {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected GPX track does not contain timestamps. Please select another one."),
                         tr("GPX Track has no time information"), JOptionPane.WARNING_MESSAGE);
@@ -1041,18 +1050,18 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // seconds
             long diff = firstExifDate - firstGPXDate;
 
-            double diffInH = (double)diff/(60*60);    // hours
+            double diffInH = (double) diff/(60*60);    // hours
 
             // Find day difference
-            int dayOffset = (int)Math.round(diffInH / 24); // days
+            int dayOffset = (int) Math.round(diffInH / 24); // days
             double tz = diff - dayOffset*24*60*60L;  // seconds
 
             // In hours, rounded to two decimal places
-            tz = (double)Math.round(tz*100/(60*60)) / 100;
+            tz = (double) Math.round(tz*100/(60*60)) / 100;
 
             // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
             // -2 minutes offset. This determines the real timezone and finds offset.
-            timezone = (double)Math.round(tz * 2)/2; // hours, rounded to one decimal place
+            timezone = (double) Math.round(tz * 2)/2; // hours, rounded to one decimal place
             delta = Math.round(diff - timezone*60*60); // seconds
 
             tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
@@ -1149,7 +1158,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                             prevWp = curWp;
                             prevWpTime = curWpTime;
 
-                        } catch(ParseException e) {
+                        } catch (ParseException e) {
                             Main.error("Error while parsing date \"" + curWpTimeStr + '"');
                             Main.error(e);
                             prevWp = null;
@@ -1238,7 +1247,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             if (curImg.tmp.getPos() == null && prevWp != null) {
                 // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless variable
-                double timeDiff = (double)(imgTime - prevWpTime) / interval;
+                double timeDiff = (double) (imgTime - prevWpTime) / interval;
                 curImg.tmp.setPos(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));
                 curImg.tmp.setSpeed(speed);
                 if (curElevation != null && prevElevation != null) {
@@ -1255,10 +1264,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private int getLastIndexOfListBefore(List<ImageEntry> images, long searchedTime) {
-        int lstSize= images.size();
+        int lstSize = images.size();
 
         // No photos or the first photo taken is later than the search period
-        if(lstSize == 0 || searchedTime < images.get(0).getExifTime().getTime())
+        if (lstSize == 0 || searchedTime < images.get(0).getExifTime().getTime())
             return -1;
 
         // The search period is later than the last photo
@@ -1266,15 +1275,15 @@ public class CorrelateGpxWithImages extends AbstractAction {
             return lstSize-1;
 
         // The searched index is somewhere in the middle, do a binary search from the beginning
-        int curIndex= 0;
-        int startIndex= 0;
-        int endIndex= lstSize-1;
+        int curIndex = 0;
+        int startIndex = 0;
+        int endIndex = lstSize-1;
         while (endIndex - startIndex > 1) {
-            curIndex= (endIndex + startIndex) / 2;
+            curIndex = (endIndex + startIndex) / 2;
             if (searchedTime > images.get(curIndex).getExifTime().getTime()) {
-                startIndex= curIndex;
+                startIndex = curIndex;
             } else {
-                endIndex= curIndex;
+                endIndex = curIndex;
             }
         }
         if (searchedTime < images.get(endIndex).getExifTime().getTime())
@@ -1383,14 +1392,15 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         if (!offset.isEmpty()) {
             try {
-                if(offset.startsWith("+")) {
+                if (offset.startsWith("+")) {
                     offset = offset.substring(1);
                 }
                 return Long.parseLong(offset);
-            } catch(NumberFormatException nfe) {
-                throw new ParseException(error,0);
+            } catch (NumberFormatException nfe) {
+                throw new ParseException(error, 0);
             }
-        } else
+        } else {
             return 0;
+        }
     }
 }

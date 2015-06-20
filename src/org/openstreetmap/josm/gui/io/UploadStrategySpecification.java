@@ -90,7 +90,7 @@ public class UploadStrategySpecification  {
     }
 
     public int getNumRequests(int numObjects) {
-        if (numObjects <=0) return 0;
+        if (numObjects <= 0) return 0;
         switch(strategy) {
         case INDIVIDUAL_OBJECTS_STRATEGY: return numObjects;
         case SINGLE_REQUEST_STRATEGY: return 1;
@@ -98,7 +98,7 @@ public class UploadStrategySpecification  {
             if (chunkSize == UNSPECIFIED_CHUNK_SIZE)
                 return 0;
             else
-                return (int)Math.ceil((double)numObjects / (double)chunkSize);
+                return (int) Math.ceil((double) numObjects / (double) chunkSize);
         }
         // should not happen
         return 0;

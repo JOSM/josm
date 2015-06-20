@@ -31,7 +31,7 @@ public class APIDataSetTest {
         apiDataSet.init(ds);
         try {
             apiDataSet.adjustRelationUploadOrder();
-        } catch(CyclicUploadDependencyException e) {
+        } catch (CyclicUploadDependencyException e) {
             fail("unexpected exception:" + e);
         }
         List<OsmPrimitive> toAdd = apiDataSet.getPrimitivesToAdd();
@@ -57,7 +57,7 @@ public class APIDataSetTest {
         apiDataSet.init(ds);
         try {
             apiDataSet.adjustRelationUploadOrder();
-        } catch(CyclicUploadDependencyException e) {
+        } catch (CyclicUploadDependencyException e) {
             fail("unexpected exception:" + e);
         }
         List<OsmPrimitive> toAdd = apiDataSet.getPrimitivesToAdd();
@@ -95,7 +95,7 @@ public class APIDataSetTest {
         apiDataSet.init(ds);
         try {
             apiDataSet.adjustRelationUploadOrder();
-        } catch(CyclicUploadDependencyException e) {
+        } catch (CyclicUploadDependencyException e) {
             fail("unexpected exception:" + e);
         }
         List<OsmPrimitive> toAdd = apiDataSet.getPrimitivesToAdd();
@@ -133,7 +133,7 @@ public class APIDataSetTest {
         apiDataSet.init(ds);
         try {
             apiDataSet.adjustRelationUploadOrder();
-        } catch(CyclicUploadDependencyException e) {
+        } catch (CyclicUploadDependencyException e) {
             fail("unexpected exception:" + e);
         }
         List<OsmPrimitive> toAdd = apiDataSet.getPrimitivesToAdd();
@@ -180,7 +180,7 @@ public class APIDataSetTest {
         apiDataSet.getPrimitivesToDelete().add(r4);
         try {
             apiDataSet.adjustRelationUploadOrder();
-        } catch(CyclicUploadDependencyException e) {
+        } catch (CyclicUploadDependencyException e) {
             fail("unexpected exception:" + e);
         }
         List<OsmPrimitive> toDelete = apiDataSet.getPrimitivesToDelete();
@@ -255,7 +255,7 @@ public class APIDataSetTest {
         try {
             apiDataSet.adjustRelationUploadOrder();
             fail("expected cyclic upload dependency exception not thrown");
-        } catch(CyclicUploadDependencyException e) {
+        } catch (CyclicUploadDependencyException e) {
             System.out.println(e);
         }
     }

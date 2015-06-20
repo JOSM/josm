@@ -126,7 +126,7 @@ public class UntaggedWay extends Test {
                     if (r.isMultipolygon() || WHITELIST.contains(m.getRole())) {
                         OsmPrimitive member = m.getMember();
                         if (member instanceof Way && member.isUsable() && !member.isTagged()) {
-                            waysUsedInRelations.add((Way)member);
+                            waysUsedInRelations.add((Way) member);
                         }
                     }
                 }

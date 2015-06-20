@@ -39,7 +39,7 @@ public class ModifiedConflictResolveCommand extends ConflictResolveCommand {
         case WAY: msg = marktr("Set the ''modified'' flag for way {0}"); break;
         case RELATION: msg = marktr("Set the ''modified'' flag for relation {0}"); break;
         }
-        return tr(msg,conflict.getMy().getId());
+        return tr(msg, conflict.getMy().getId());
     }
 
     @Override

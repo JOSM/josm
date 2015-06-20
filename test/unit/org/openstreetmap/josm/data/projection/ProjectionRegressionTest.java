@@ -64,7 +64,7 @@ public class ProjectionRegressionTest {
         if (new File(PROJECTION_DATA_FILE).exists()) {
             prevData = readData();
         }
-        Map<String,TestData> prevCodesMap = new HashMap<>();
+        Map<String, TestData> prevCodesMap = new HashMap<>();
         for (TestData data : prevData) {
             prevCodesMap.put(data.code, data);
         }
@@ -115,9 +115,9 @@ public class ProjectionRegressionTest {
                 }
                 TestData next = new TestData();
 
-                Pair<Double,Double> ll = readLine("ll", in.readLine());
-                Pair<Double,Double> en = readLine("en", in.readLine());
-                Pair<Double,Double> ll2 = readLine("ll2", in.readLine());
+                Pair<Double, Double> ll = readLine("ll", in.readLine());
+                Pair<Double, Double> en = readLine("en", in.readLine());
+                Pair<Double, Double> ll2 = readLine("ll2", in.readLine());
 
                 next.code = line;
                 next.ll = new LatLon(ll.a, ll.b);
@@ -130,7 +130,7 @@ public class ProjectionRegressionTest {
         }
     }
 
-    private static Pair<Double,Double> readLine(String expectedName, String input) {
+    private static Pair<Double, Double> readLine(String expectedName, String input) {
         String[] fields = input.trim().split("[ ]+");
         if (fields.length != 3) throw new AssertionError();
         if (!fields[0].equals(expectedName)) throw new AssertionError();

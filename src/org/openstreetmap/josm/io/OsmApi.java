@@ -94,7 +94,7 @@ public class OsmApi extends OsmConnection {
         OsmApi api = instances.get(serverUrl);
         if (api == null) {
             api = new OsmApi(serverUrl);
-            instances.put(serverUrl,api);
+            instances.put(serverUrl, api);
         }
         return api;
     }
@@ -356,10 +356,10 @@ public class OsmApi extends OsmConnection {
         try {
             ensureValidChangeset();
             initialize(monitor);
-            ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/create", toXml(osm, true),monitor);
+            ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/create", toXml(osm, true), monitor);
             osm.setOsmId(Long.parseLong(ret.trim()), 1);
             osm.setChangesetId(getChangeset().getId());
-        } catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret), e);
         }
     }
@@ -381,7 +381,7 @@ public class OsmApi extends OsmConnection {
             osm.setOsmId(osm.getId(), Integer.parseInt(ret.trim()));
             osm.setChangesetId(getChangeset().getId());
             osm.setVisible(true);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new OsmTransferException(tr("Unexpected format of new version of modified primitive ''{0}''. Got ''{1}''.",
                     osm.getId(), ret), e);
         }
@@ -422,13 +422,13 @@ public class OsmApi extends OsmConnection {
             initialize(progressMonitor);
             String ret = "";
             try {
-                ret = sendRequest("PUT", "changeset/create", toXml(changeset),progressMonitor);
+                ret = sendRequest("PUT", "changeset/create", toXml(changeset), progressMonitor);
                 changeset.setId(Integer.parseInt(ret.trim()));
                 changeset.setOpen(true);
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret), e);
             }
-            progressMonitor.setCustomText(tr("Successfully opened changeset {0}",changeset.getId()));
+            progressMonitor.setCustomText(tr("Successfully opened changeset {0}", changeset.getId()));
         } finally {
             progressMonitor.finishTask();
         }
@@ -463,10 +463,10 @@ public class OsmApi extends OsmConnection {
                     toXml(changeset),
                     monitor
             );
-        } catch(ChangesetClosedException e) {
+        } catch (ChangesetClosedException e) {
             e.setSource(ChangesetClosedException.Source.UPDATE_CHANGESET);
             throw e;
-        } catch(OsmApiException e) {
+        } catch (OsmApiException e) {
             String errorHeader = e.getErrorHeader();
             if (e.getResponseCode() == HttpURLConnection.HTTP_CONFLICT && ChangesetClosedException.errorHeaderMatchesPattern(errorHeader))
                 throw new ChangesetClosedException(errorHeader, ChangesetClosedException.Source.UPDATE_CHANGESET);
@@ -535,7 +535,7 @@ public class OsmApi extends OsmConnection {
             //
             monitor.indeterminateSubTask(
                     trn("Uploading {0} object...", "Uploading {0} objects...", list.size(), list.size()));
-            String diffUploadResponse = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diffUploadRequest,monitor);
+            String diffUploadResponse = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diffUploadRequest, monitor);
 
             // Process the response from the server
             //
@@ -545,9 +545,9 @@ public class OsmApi extends OsmConnection {
                     getChangeset(),
                     monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)
             );
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             throw e;
-        } catch(XmlParsingException e) {
+        } catch (XmlParsingException e) {
             throw new OsmTransferException(e);
         } finally {
             monitor.finishTask();
@@ -556,9 +556,9 @@ public class OsmApi extends OsmConnection {
 
     private void sleepAndListen(int retry, ProgressMonitor monitor) throws OsmTransferCanceledException {
         Main.info(tr("Waiting 10 seconds ... "));
-        for (int i=0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             if (monitor != null) {
-                monitor.setCustomText(tr("Starting retry {0} of {1} in {2} seconds ...", getMaxRetries() - retry,getMaxRetries(), 10-i));
+                monitor.setCustomText(tr("Starting retry {0} of {1} in {2} seconds ...", getMaxRetries() - retry, getMaxRetries(), 10-i));
             }
             if (cancel)
                 throw new OsmTransferCanceledException("Operation canceled" + (i > 0 ? " in retry #"+i : ""));
@@ -578,7 +578,7 @@ public class OsmApi extends OsmConnection {
      */
     protected int getMaxRetries() {
         int ret = Main.pref.getInteger("osm-server.max-num-retries", DEFAULT_MAX_NUM_RETRIES);
-        return Math.max(ret,0);
+        return Math.max(ret, 0);
     }
 
     /**
@@ -590,7 +590,7 @@ public class OsmApi extends OsmConnection {
         return "oauth".equals(Main.pref.get("osm-server.auth-method", "basic"));
     }
 
-    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor)
+    protected final String sendRequest(String requestMethod, String urlSuffix, String requestBody, ProgressMonitor monitor)
             throws OsmTransferException {
         return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true, false);
     }
@@ -614,19 +614,19 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if the HTTP return code was not 200 (and retries have
      *    been exhausted), or rewrapping a Java exception.
      */
-    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor,
+    protected final String sendRequest(String requestMethod, String urlSuffix, String requestBody, ProgressMonitor monitor,
             boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
         StringBuilder responseBody = new StringBuilder();
         int retries = fastFail ? 0 : getMaxRetries();
 
-        while(true) { // the retry loop
+        while (true) { // the retry loop
             try {
                 url = new URL(new URL(getBaseUrl()), urlSuffix);
                 Main.info(requestMethod + " " + url + "... ");
                 Main.debug(requestBody);
                 // fix #5369, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
                 activeConnection = Utils.openHttpConnection(url, false);
-                activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect",15)*1000);
+                activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect", 15)*1000);
                 if (fastFail) {
                     activeConnection.setReadTimeout(1000);
                 }
@@ -661,7 +661,7 @@ public class OsmApi extends OsmConnection {
                 if (retCode >= 500) {
                     if (retries-- > 0) {
                         sleepAndListen(retries, monitor);
-                        Main.info(tr("Starting retry {0} of {1}.", getMaxRetries() - retries,getMaxRetries()));
+                        Main.info(tr("Starting retry {0} of {1}.", getMaxRetries() - retries, getMaxRetries()));
                         continue;
                     }
                 }
@@ -669,17 +669,14 @@ public class OsmApi extends OsmConnection {
                 // populate return fields.
                 responseBody.setLength(0);
 
-                // If the API returned an error code like 403 forbidden, getInputStream
-                // will fail with an IOException.
+                // If the API returned an error code like 403 forbidden, getInputStream will fail with an IOException.
                 InputStream i = getConnectionStream();
                 if (i != null) {
                     // the input stream can be null if both the input and the error stream
-                    // are null. Seems to be the case if the OSM server replies a 401
-                    // Unauthorized, see #3887.
-                    //
+                    // are null. Seems to be the case if the OSM server replies a 401 Unauthorized, see #3887.
                     String s;
                     try (BufferedReader in = new BufferedReader(new InputStreamReader(i, StandardCharsets.UTF_8))) {
-                        while((s = in.readLine()) != null) {
+                        while ((s = in.readLine()) != null) {
                             responseBody.append(s);
                             responseBody.append('\n');
                         }
@@ -690,7 +687,7 @@ public class OsmApi extends OsmConnection {
                 if (activeConnection.getHeaderField("Error") != null) {
                     errorHeader = activeConnection.getHeaderField("Error");
                     Main.error("Error header: " + errorHeader);
-                } else if (retCode != HttpURLConnection.HTTP_OK && responseBody.length()>0) {
+                } else if (retCode != HttpURLConnection.HTTP_OK && responseBody.length() > 0) {
                     Main.error("Error body: " + responseBody);
                 }
                 activeConnection.disconnect();
@@ -699,8 +696,8 @@ public class OsmApi extends OsmConnection {
                     Main.debug("RESPONSE: "+ activeConnection.getHeaderFields());
                 }
 
-                errorHeader = errorHeader == null? null : errorHeader.trim();
-                String errorBody = responseBody.length() == 0? null : responseBody.toString().trim();
+                errorHeader = errorHeader == null ? null : errorHeader.trim();
+                String errorBody = responseBody.length() == 0 ? null : responseBody.toString().trim();
                 switch(retCode) {
                 case HttpURLConnection.HTTP_OK:
                     return responseBody.toString();
@@ -723,9 +720,9 @@ public class OsmApi extends OsmConnection {
                     continue;
                 }
                 throw new OsmTransferException(e);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 throw new OsmTransferException(e);
-            } catch(OsmTransferException e) {
+            } catch (OsmTransferException e) {
                 throw e;
             }
         }
@@ -883,12 +880,12 @@ public class OsmApi extends OsmConnection {
     private Note parseSingleNote(String xml) throws OsmTransferException {
         try {
             List<Note> newNotes = new NoteReader(xml).parse();
-            if(newNotes.size() == 1) {
+            if (newNotes.size() == 1) {
                 return newNotes.get(0);
             }
             //Shouldn't ever execute. Server will either respond with an error (caught elsewhere) or one note
             throw new OsmTransferException(tr("Note upload failed"));
-        } catch (SAXException|IOException e) {
+        } catch (SAXException | IOException e) {
             Main.error(e, true);
             throw new OsmTransferException(tr("Error parsing note response from server"), e);
         }

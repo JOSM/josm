@@ -176,13 +176,13 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
         } else {
             try {
                 SwingUtilities.invokeAndWait(r);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 Main.warn("InterruptedException in "+getClass().getSimpleName()+" while updating changeset cache");
-            } catch(InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 Throwable t = e.getTargetException();
                 if (t instanceof RuntimeException) {
                     BugReportExceptionHandler.handleException(t);
-                } else if (t instanceof Exception){
+                } else if (t instanceof Exception) {
                     ExceptionUtil.explainException(e);
                 } else {
                     BugReportExceptionHandler.handleException(t);
@@ -200,7 +200,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
             downloadedChangesets = new HashSet<>();
             downloadedChangesets.addAll(reader.readChangesets(idsToDownload, includeDiscussion,
                     getProgressMonitor().createSubTaskMonitor(0, false)));
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             if (canceled)
                 // ignore exception if canceled
                 return;

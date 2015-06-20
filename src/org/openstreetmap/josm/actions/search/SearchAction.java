@@ -98,7 +98,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     }
 
     public static void saveToHistory(SearchSetting s) {
-        if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
+        if (searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
             searchHistory.addFirst(new SearchSetting(s));
         } else if (searchHistory.contains(s)) {
             // move existing entry to front, fixes #8032 - search history loses entries when re-using queries
@@ -260,7 +260,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         left.add(remove, GBC.eol());
         left.add(in_selection, GBC.eop());
         left.add(caseSensitive, GBC.eol());
-        if(Main.pref.getBoolean("expert", false)) {
+        if (Main.pref.getBoolean("expert", false)) {
             left.add(allElements, GBC.eol());
             left.add(regexSearch, GBC.eol());
             left.add(addOnToolbar, GBC.eol());
@@ -305,7 +305,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         dialog.showDialog();
         int result = dialog.getValue();
 
-        if(result != 1) return null;
+        if (result != 1) return null;
 
         // User pressed OK - let's perform the search
         SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace
@@ -341,7 +341,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 , GBC.eol());
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("basics"))
-                .addKeyword("<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' anywhere in ''key''"), "name:str matches name=Bakerstreet")
+                .addKeyword("<i>key</i>:<i>valuefragment</i>", null,
+                        tr("''valuefragment'' anywhere in ''key''"), "name:str matches name=Bakerstreet")
                 .addKeyword("-<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' nowhere in ''key''"))
                 .addKeyword("<i>key</i>=<i>value</i>", null, tr("''key'' with exactly ''value''"))
                 .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))
@@ -349,7 +350,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("<i>key</i>=", null, tr("matches if ''key'' exists"))
                 .addKeyword("<i>key</i>><i>value</i>", null, tr("matches if ''key'' is greater than ''value'' (analogously, less than)"))
                 .addKeyword("\"key\"=\"value\"", "\"\"=\"\"",
-                        tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."),
+                        tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped " +
+                           "by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."),
                         "\"addr:street\"")
                 , GBC.eol());
         right.add(new SearchKeywordRow(hcbSearchString)
@@ -419,7 +421,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      */
     public static void search() {
         SearchSetting se = showSearchDialog(lastSearch);
-        if(se != null) {
+        if (se != null) {
             searchWithHistory(se);
         }
     }
@@ -459,7 +461,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
 
             Collection<OsmPrimitive> all;
-            if(s.allElements) {
+            if (s.allElements) {
                 all = Main.main.getCurrentDataSet().allPrimitives();
             } else {
                 all = Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives();
@@ -504,7 +506,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     public static void getSelection(SearchSetting s, Collection<OsmPrimitive> all, Property<OsmPrimitive, Boolean> p) {
         try {
             String searchText = s.text;
-            if (s instanceof Filter && ((Filter)s).inverted) {
+            if (s instanceof Filter && ((Filter) s).inverted) {
                 searchText = String.format("-(%s)", searchText);
             }
             SearchCompiler.Match matcher = SearchCompiler.compile(searchText, s.caseSensitive, s.regexSearch);
@@ -542,9 +544,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         final DataSet ds = Main.main.getCurrentDataSet();
         Collection<OsmPrimitive> sel = new HashSet<>(ds.getAllSelected());
-        int foundMatches = getSelection(s, sel, new Predicate<OsmPrimitive>(){
+        int foundMatches = getSelection(s, sel, new Predicate<OsmPrimitive>() {
             @Override
-            public boolean evaluate(OsmPrimitive o){
+            public boolean evaluate(OsmPrimitive o) {
                 return ds.isSelected(o);
             }
         });
@@ -616,7 +618,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         @Override
         public boolean equals(Object other) {
-            if(!(other instanceof SearchSetting))
+            if (!(other instanceof SearchSetting))
                 return false;
             SearchSetting o = (SearchSetting) other;
             return o.caseSensitive == this.caseSensitive

@@ -48,7 +48,7 @@ public class TileSelection implements DownloadSelection, PropertyChangeListener 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(BBoxChooser.BBOX_PROP)) {
-            Bounds bbox = (Bounds)evt.getNewValue();
+            Bounds bbox = (Bounds) evt.getNewValue();
             parent.boundingBoxChanged(bbox, this);
         }
     }

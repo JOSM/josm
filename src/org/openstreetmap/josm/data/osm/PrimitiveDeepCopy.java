@@ -63,6 +63,7 @@ public class PrimitiveDeepCopy {
                     return;
                 (firstIteration ? directlyAdded : referenced).add(n.save());
             }
+
             @Override
             public void visit(Way w) {
                 if (!visitedWayIds.add(w.getUniqueId()))
@@ -73,6 +74,7 @@ public class PrimitiveDeepCopy {
                     visit(n);
                 }
             }
+
             @Override
             public void visit(Relation r) {
                 if (!visitedRelationIds.add(r.getUniqueId()))

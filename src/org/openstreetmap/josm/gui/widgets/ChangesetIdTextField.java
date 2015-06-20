@@ -79,7 +79,7 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
                         id = changesetId;
                         return true;
                     }
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     // Ignored
                 }
             }

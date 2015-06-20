@@ -22,11 +22,11 @@ public interface MultikeyShortcutAction extends Action {
 
         public char getShortcut() {
             if (index < 9)
-                return (char)('1' + index);
+                return (char) ('1' + index);
             else if (index == 9)
                 return '0';
             else
-                return (char)('A' +  index - 10);
+                return (char) ('A' +  index - 10);
         }
 
         public String getDescription() {
@@ -37,7 +37,9 @@ public interface MultikeyShortcutAction extends Action {
     public Shortcut getMultikeyShortcut();
 
     void executeMultikeyAction(int index, boolean repeatLastAction);
+
     List<MultikeyInfo> getMultikeyCombinations();
+
     MultikeyInfo getLastMultikeyAction();
 
 }

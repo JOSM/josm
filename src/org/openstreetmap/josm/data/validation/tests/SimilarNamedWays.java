@@ -36,7 +36,7 @@ public class SimilarNamedWays extends Test {
     protected static final int SIMILAR_NAMED = 701;
 
     /** All ways, grouped by cells */
-    private Map<Point2D,List<Way>> cellWays;
+    private Map<Point2D, List<Way>> cellWays;
     /** The already detected errors */
     private MultiMap<Way, Way> errorWays;
 
@@ -129,7 +129,7 @@ public class SimilarNamedWays extends Test {
             return m;
         if (m == 0)
             return n;
-        d = new int[n + 1][m + 1];
+        d = new int[n+1][m+1];
 
         // Step 2
         for (i = 0; i <= n; i++) {
@@ -197,7 +197,7 @@ public class SimilarNamedWays extends Test {
     public boolean similaryName(String name, String name2) {
         // check plain strings
         int distance = getLevenshteinDistance(name, name2);
-        boolean similar = distance>0 && distance<=2;
+        boolean similar = distance > 0 && distance <= 2;
 
         // try all rules
         for (NormalizeRule rule : rules) {

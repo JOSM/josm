@@ -52,7 +52,7 @@ public class XmlWriter implements Closeable {
             }
             if (encS != null) {
                 if (buffer == null) {
-                    buffer = new StringBuilder(unencoded.substring(0,i));
+                    buffer = new StringBuilder(unencoded.substring(0, i));
                 }
                 buffer.append(encS);
             } else if (buffer != null) {

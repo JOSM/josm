@@ -46,7 +46,7 @@ public class FixDataHook implements UploadHook {
         deprecated.add(new FixData() {
             @Override
             public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
-                if(osm instanceof Relation && "multipolygon".equals(keys.get("type")) && "administrative".equals(keys.get("boundary"))) {
+                if (osm instanceof Relation && "multipolygon".equals(keys.get("type")) && "administrative".equals(keys.get("boundary"))) {
                     keys.put("type", "boundary");
                     return true;
                 }
@@ -80,13 +80,13 @@ public class FixDataHook implements UploadHook {
                 String v = Tag.removeWhiteSpaces(e.getValue());
                 String k = Tag.removeWhiteSpaces(e.getKey());
                 boolean drop = k.isEmpty() || v.isEmpty();
-                if(!e.getKey().equals(k)) {
-                    if(drop || !keys.containsKey(k)) {
+                if (!e.getKey().equals(k)) {
+                    if (drop || !keys.containsKey(k)) {
                         newKeys.put(e.getKey(), null);
-                        if(!drop)
+                        if (!drop)
                             newKeys.put(k, v);
                     }
-                } else if(!e.getValue().equals(v)) {
+                } else if (!e.getValue().equals(v)) {
                     newKeys.put(k, v.isEmpty() ? null : v);
                 } else if (drop) {
                     newKeys.put(e.getKey(), null);
@@ -123,11 +123,11 @@ public class FixDataHook implements UploadHook {
 
         @Override
         public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
-            if(keys.containsKey(oldKey) && !keys.containsKey(newKey)) {
+            if (keys.containsKey(oldKey) && !keys.containsKey(newKey)) {
                 keys.put(newKey, keys.get(oldKey));
                 keys.put(oldKey, null);
                 return true;
-            } else if(keys.containsKey(oldKey) && keys.containsKey(newKey) && keys.get(oldKey).equals(keys.get(newKey))) {
+            } else if (keys.containsKey(oldKey) && keys.containsKey(newKey) && keys.get(oldKey).equals(keys.get(newKey))) {
                 keys.put(oldKey, null);
                 return true;
             }
@@ -165,10 +165,10 @@ public class FixDataHook implements UploadHook {
 
         @Override
         public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
-            if(oldValue.equals(keys.get(oldKey)) && (newKey.equals(oldKey)
+            if (oldValue.equals(keys.get(oldKey)) && (newKey.equals(oldKey)
             || !keys.containsKey(newKey) || keys.get(newKey).equals(newValue))) {
                 keys.put(newKey, newValue);
-                if(!newKey.equals(oldKey))
+                if (!newKey.equals(oldKey))
                     keys.put(oldKey, null);
                 return true;
             }
@@ -182,7 +182,7 @@ public class FixDataHook implements UploadHook {
      */
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
-        if(!Main.pref.getBoolean("fix.data.on.upload", true))
+        if (!Main.pref.getBoolean("fix.data.on.upload", true))
             return true;
 
         List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
@@ -190,18 +190,18 @@ public class FixDataHook implements UploadHook {
 
         for (OsmPrimitive osm : objectsToUpload) {
             Map<String, String> keys = new HashMap<>(osm.getKeys());
-            if(!keys.isEmpty()) {
+            if (!keys.isEmpty()) {
                 boolean modified = false;
                 for (FixData fix : deprecated) {
-                    if(fix.fixKeys(keys, osm))
+                    if (fix.fixKeys(keys, osm))
                         modified = true;
                 }
-                if(modified)
+                if (modified)
                     cmds.add(new ChangePropertyCommand(Collections.singleton(osm), keys));
             }
         }
 
-        if(!cmds.isEmpty())
+        if (!cmds.isEmpty())
             Main.main.undoRedo.add(new SequenceCommand(tr("Fix deprecated tags"), cmds));
         return true;
     }

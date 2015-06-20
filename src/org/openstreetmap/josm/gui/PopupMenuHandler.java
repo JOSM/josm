@@ -25,10 +25,10 @@ public class PopupMenuHandler {
     private final Set<OsmPrimitiveAction> primitiveActions = new HashSet<>();
     // Managed menu
     private final JPopupMenu menu;
-    
+
     /**
      * Constructs a new {@code RelationActionMenuHandler} for the specified popup menu.
-     * 
+     *
      * @param menu The menu to be managed
      */
     public PopupMenuHandler(JPopupMenu menu) {
@@ -45,7 +45,7 @@ public class PopupMenuHandler {
 
     /**
      * Appends a new menu item to the end of the menu which dispatches the specified <code>Action</code> object.
-     * 
+     *
      * @param a the <code>Action</code> to add to the menu
      * @return the new menu item
      * @see JPopupMenu#add(Action)
@@ -62,7 +62,7 @@ public class PopupMenuHandler {
 
     /**
      * Removes the menu item which dispatches the specified <code>Action</code> object.
-     * 
+     *
      * @param a the <code>Action</code> to remove from the menu
      * @see JPopupMenu#remove(int)
      */
@@ -72,7 +72,7 @@ public class PopupMenuHandler {
                 primitiveActions.remove(a);
             }
             MenuElement[] elements = menu.getSubElements();
-            for (int i=0; i<elements.length; i++) {
+            for (int i = 0; i < elements.length; i++) {
                 if (elements[i] instanceof JMenuItem) {
                     if (((JMenuItem) elements[i]).getAction() == a) {
                         menu.remove(i);
@@ -102,7 +102,7 @@ public class PopupMenuHandler {
     public void removeListener(PopupMenuListener l) {
         menu.removePopupMenuListener(l);
     }
-    
+
     /**
      * Returns all enabled primitive actions.
      * @return All primitive actions that have been added.
@@ -111,7 +111,7 @@ public class PopupMenuHandler {
     public Collection<OsmPrimitiveAction> getPrimitiveActions() {
         return Collections.unmodifiableCollection(primitiveActions);
     }
-    
+
     /**
      * Specifies the working set of primitives for all primitive actions.
      * @param primitives The new working set of primitives. Can be null or empty

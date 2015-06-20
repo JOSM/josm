@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *     try {
  *        // wait for the task to complete
  *        taskFuture.get();
- *     } catch(Exception e) {
+ *     } catch (Exception e) {
  *        e.printStackTracek();
  *     }
  * </pre>
@@ -55,7 +55,7 @@ public class SaveLayerTask extends AbstractIOTask {
             if (!isCanceled()) {
                 layerInfo.getLayer().onPostSaveToFile();
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             Main.error(e);
             setLastException(e);
         }

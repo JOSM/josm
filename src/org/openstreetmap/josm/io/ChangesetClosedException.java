@@ -76,7 +76,7 @@ public class ChangesetClosedException extends OsmTransferException {
             changesetId = Long.parseLong(m.group(1));
             try {
                 closedOn = DateUtils.newOsmApiDateTimeFormat().parse(m.group(2));
-            } catch(ParseException ex) {
+            } catch (ParseException ex) {
                 Main.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
                 Main.error(ex);
             }

@@ -55,7 +55,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
         setUndecorated(true);
 
         // Add a nice border to the main splash screen
-        JPanel contentPane = (JPanel)this.getContentPane();
+        JPanel contentPane = (JPanel) this.getContentPane();
         Border margin = new EtchedBorder(1, Color.white, Color.gray);
         contentPane.setBorder(margin);
 
@@ -341,11 +341,11 @@ public class SplashScreen extends JFrame implements ChangeListener {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.weighty = 0.0;
-            gc.insets = new Insets(5,0,0,0);
+            gc.insets = new Insets(5, 0, 0, 0);
             add(lblTaskTitle = new JLabel(labelHtml), gc);
 
             gc.gridy = 1;
-            gc.insets = new Insets(15,0,0,0);
+            gc.insets = new Insets(15, 0, 0, 0);
             add(progressBar = new JProgressBar(JProgressBar.HORIZONTAL), gc);
             progressBar.setIndeterminate(true);
         }

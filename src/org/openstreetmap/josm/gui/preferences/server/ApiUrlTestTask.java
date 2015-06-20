@@ -46,7 +46,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
      */
     public ApiUrlTestTask(Component parent, String url) {
         super(parent, tr("Testing OSM API URL ''{0}''", url), false /* don't ignore exceptions */);
-        CheckParameterUtil.ensureParameterNotNull(url,"url");
+        CheckParameterUtil.ensureParameterNotNull(url, "url");
         this.parent = parent;
         this.url = url;
     }
@@ -134,7 +134,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (connection != null) {
                 connection.disconnect();
             }
@@ -151,7 +151,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
      */
     protected String getNormalizedApiUrl() {
         String apiUrl = url.trim();
-        while(apiUrl.endsWith("/")) {
+        while (apiUrl.endsWith("/")) {
             apiUrl = apiUrl.substring(0, apiUrl.lastIndexOf('/'));
         }
         return apiUrl;
@@ -162,7 +162,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
         try {
             try {
                 new URL(getNormalizedApiUrl());
-            } catch(MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 alertInvalidUrl(getNormalizedApiUrl());
                 return;
             }
@@ -170,12 +170,12 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             String getCapabilitiesUrl = getNormalizedApiUrl() + "/0.6/capabilities";
             try {
                 capabilitiesUrl = new URL(getCapabilitiesUrl);
-            } catch(MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 alertInvalidCapabilitiesUrl(getCapabilitiesUrl);
                 return;
             }
 
-            synchronized(this) {
+            synchronized (this) {
                 connection = Utils.openHttpConnection(capabilitiesUrl);
             }
             connection.setDoInput(true);
@@ -196,7 +196,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                 return;
             }
             success = true;
-        } catch(IOException e) {
+        } catch (IOException e) {
             if (canceled)
                 // ignore exceptions
                 return;

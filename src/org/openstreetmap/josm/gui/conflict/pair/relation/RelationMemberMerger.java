@@ -59,9 +59,9 @@ public class RelationMemberMerger extends ListMerger<RelationMember> implements 
 
     @Override
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
-        Relation myRel = (Relation)conflict.getMy();
-        Relation theirRel = (Relation)conflict.getTheir();
-        ((RelationMemberListMergeModel)model).populate(myRel, theirRel, conflict.getMergedMap());
+        Relation myRel = (Relation) conflict.getMy();
+        Relation theirRel = (Relation) conflict.getTheir();
+        ((RelationMemberListMergeModel) model).populate(myRel, theirRel, conflict.getMergedMap());
         myEntriesTable.setLayer(findLayerFor(myRel));
         theirEntriesTable.setLayer(findLayerFor(theirRel));
     }

@@ -192,6 +192,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
     private static interface PreferenceTab {
         public TabPreferenceSetting getTabPreferenceSetting();
+
         public Component getComponent();
     }
 
@@ -206,12 +207,12 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         }
 
         protected void buildPanel() {
-            setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-            add(new JLabel(preferenceSetting.getTitle()), GBC.eol().insets(0,5,0,10).anchor(GBC.NORTHWEST));
+            setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            add(new JLabel(preferenceSetting.getTitle()), GBC.eol().insets(0, 5, 0, 10).anchor(GBC.NORTHWEST));
 
             JLabel descLabel = new JLabel("<html>"+preferenceSetting.getDescription()+"</html>");
             descLabel.setFont(descLabel.getFont().deriveFont(Font.ITALIC));
-            add(descLabel, GBC.eol().insets(5,0,5,20).fill(GBC.HORIZONTAL));
+            add(descLabel, GBC.eol().insets(5, 0, 5, 20).fill(GBC.HORIZONTAL));
         }
 
         @Override
@@ -302,7 +303,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     private void selectTabBy(TabIdentifier method, Object param) {
-        for (int i=0; i<getTabCount(); i++) {
+        for (int i = 0; i < getTabCount(); i++) {
             Component c = getComponentAt(i);
             if (c instanceof PreferenceTab) {
                 PreferenceTab tab = (PreferenceTab) c;
@@ -315,7 +316,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     public void selectTabByName(String name) {
-        selectTabBy(new TabIdentifier(){
+        selectTabBy(new TabIdentifier() {
             @Override
             public boolean identify(TabPreferenceSetting tps, Object name) {
                 return name != null && tps != null && tps.getIconName() != null && name.equals(tps.getIconName());
@@ -323,7 +324,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     public void selectTabByPref(Class<? extends TabPreferenceSetting> clazz) {
-        selectTabBy(new TabIdentifier(){
+        selectTabBy(new TabIdentifier() {
             @Override
             public boolean identify(TabPreferenceSetting tps, Object clazz) {
                 return tps.getClass().isAssignableFrom((Class<?>) clazz);
@@ -335,7 +336,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             if (clazz.isInstance(setting)) {
                 final SubPreferenceSetting sub = (SubPreferenceSetting) setting;
                 final TabPreferenceSetting tab = sub.getTabPreferenceSetting(PreferenceTabbedPane.this);
-                selectTabBy(new TabIdentifier(){
+                selectTabBy(new TabIdentifier() {
                     @Override
                     public boolean identify(TabPreferenceSetting tps, Object unused) {
                         return tps.equals(tab);
@@ -538,7 +539,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     public <T>  T getSetting(Class<? extends T> clazz) {
         for (PreferenceSetting setting:settings) {
             if (clazz.isAssignableFrom(setting.getClass()))
-                return (T)setting;
+                return (T) setting;
         }
         return null;
     }
@@ -576,7 +577,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     @Override
     public void mouseWheelMoved(MouseWheelEvent wev) {
         // Ensure the cursor is over the tab strip
-        if(super.indexAtLocation(wev.getPoint().x, wev.getPoint().y) < 0)
+        if (super.indexAtLocation(wev.getPoint().x, wev.getPoint().y) < 0)
             return;
 
         // Get currently selected tab

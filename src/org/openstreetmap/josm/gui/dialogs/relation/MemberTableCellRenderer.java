@@ -18,10 +18,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  */
 public abstract class MemberTableCellRenderer extends JLabel implements TableCellRenderer {
     public static final Color BGCOLOR_EMPTY_ROW = new Color(234, 234, 234);
-    public static final Color BGCOLOR_IN_JOSM_SELECTION = new Color(235,255,177);
+    public static final Color BGCOLOR_IN_JOSM_SELECTION = new Color(235, 255, 177);
 
     public static final Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255, 197, 197);
-    public static final Color BGCOLOR_DOUBLE_ENTRY = new Color(254,226,214);
+    public static final Color BGCOLOR_DOUBLE_ENTRY = new Color(254, 226, 214);
 
     /**
      * constructor

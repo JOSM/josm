@@ -76,7 +76,7 @@ public class ListListEditor extends ExtendedDialog {
 
     protected final JPanel build() {
         JPanel p = new JPanel(new GridBagLayout());
-        p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.std(0,0).span(2).weight(1, 0).insets(0,0,5,10));
+        p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.std(0, 0).span(2).weight(1, 0).insets(0, 0, 5, 10));
 
         JPanel left = new JPanel(new GridBagLayout());
 
@@ -97,7 +97,7 @@ public class ListListEditor extends ExtendedDialog {
 
         left.setPreferredSize(new Dimension(80, 0));
 
-        p.add(left, GBC.std(0,1).fill().weight(0.3, 1.0));
+        p.add(left, GBC.std(0, 1).fill().weight(0.3, 1.0));
 
         tableModel = new ListTableModel();
         table = new JTable(tableModel);
@@ -110,7 +110,7 @@ public class ListListEditor extends ExtendedDialog {
 
         JScrollPane pane = new JScrollPane(table);
         pane.setPreferredSize(new Dimension(140, 0));
-        p.add(pane, GBC.std(1,1).insets(5,0,0,0).fill().weight(0.7, 1.0));
+        p.add(pane, GBC.std(1, 1).insets(5, 0, 0, 0).fill().weight(0.7, 1.0));
         return p;
     }
 
@@ -215,7 +215,7 @@ public class ListListEditor extends ExtendedDialog {
 
         @Override
         public void setValueAt(Object o, int row, int column) {
-            String s = (String)o;
+            String s = (String) o;
             if (row == data().size()) {
                 data().add(s);
                 fireTableRowsInserted(row+1, row+1);

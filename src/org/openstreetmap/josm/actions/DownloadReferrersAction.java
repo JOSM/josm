@@ -89,7 +89,7 @@ public class DownloadReferrersAction extends JosmAction {
         if (layer == null)
             return;
         Collection<OsmPrimitive> primitives = layer.data.getSelected();
-        downloadReferrers(layer,primitives);
+        downloadReferrers(layer, primitives);
     }
 
     @Override

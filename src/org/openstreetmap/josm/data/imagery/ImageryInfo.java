@@ -352,7 +352,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this(name);
         setExtendedUrl(url);
         ImageryType t = ImageryType.fromString(type);
-        this.cookies=cookies;
+        this.cookies = cookies;
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
         if (t != null) {
             this.imageryType = t;
@@ -663,8 +663,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             try {
                 serverProjections = new ArrayList<>();
                 Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase(Locale.ENGLISH));
-                if(m.matches()) {
-                    for(String p : m.group(1).split(","))
+                if (m.matches()) {
+                    for (String p : m.group(1).split(","))
                         serverProjections.add(p);
                 }
             } catch (Exception e) {
@@ -707,11 +707,11 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void setName(String language, String name) {
         boolean isdefault = LanguageInfo.getJOSMLocaleCode(null).equals(language);
-        if(LanguageInfo.isBetterLanguage(langName, language)) {
+        if (LanguageInfo.isBetterLanguage(langName, language)) {
             this.name = isdefault ? tr(name) : name;
             this.langName = language;
         }
-        if(origName == null || isdefault) {
+        if (origName == null || isdefault) {
             this.origName = name;
         }
     }
@@ -826,7 +826,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void setDescription(String language, String description) {
         boolean isdefault = LanguageInfo.getJOSMLocaleCode(null).equals(language);
-        if(LanguageInfo.isBetterLanguage(langDescription, language)) {
+        if (LanguageInfo.isBetterLanguage(langDescription, language)) {
             this.description = isdefault ? tr(description) : description;
             this.langDescription = language;
         }
@@ -915,7 +915,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public String getExtendedUrl() {
         return imageryType.getTypeString() + (defaultMaxZoom != 0
-            ? "["+(defaultMinZoom != 0 ? defaultMinZoom+",":"")+defaultMaxZoom+"]" : "") + ":" + url;
+            ? "["+(defaultMinZoom != 0 ? defaultMinZoom+"," : "")+defaultMaxZoom+"]" : "") + ":" + url;
     }
 
     public String getToolbarName() {

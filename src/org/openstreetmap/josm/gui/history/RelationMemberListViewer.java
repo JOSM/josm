@@ -29,7 +29,7 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
 
         @Override
         public void tableChanged(TableModelEvent e) {
-            Rectangle rect = table.getCellRect(((DiffTableModel)e.getSource()).getFirstChange(), 0, true);
+            Rectangle rect = table.getCellRect(((DiffTableModel) e.getSource()).getFirstChange(), 0, true);
             table.scrollRectToVisible(rect);
         }
     }

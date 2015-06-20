@@ -52,7 +52,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (objectReader != null) {
                 objectReader.cancel();
             }
@@ -72,7 +72,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             final DataSet allDownloads = new DataSet();
-            int i=0;
+            int i = 0;
             getProgressMonitor().setTicksCount(relations.size());
             for (Relation relation: relations) {
                 i++;

@@ -149,7 +149,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         super.showDialog();
         Layer layer = Main.main.getActiveLayer();
         if (layer instanceof OsmDataLayer) {
-            refresh(((OsmDataLayer)layer).data.getAllSelected());
+            refresh(((OsmDataLayer) layer).data.getAllSelected());
         }
 
     }
@@ -207,7 +207,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             }
             int num = Math.min(10, users.size());
             Iterator<User> it = users.iterator();
-            while(it.hasNext() && num > 0) {
+            while (it.hasNext() && num > 0) {
                 String url = createInfoUrl(it.next());
                 if (url == null) {
                     break;
@@ -220,7 +220,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         @Override
         protected String createInfoUrl(Object infoObject) {
             if (infoObject instanceof User) {
-                User user = (User)infoObject;
+                User user = (User) infoObject;
                 return Main.getBaseUserUrl() + "/" + Utils.encodeUrl(user.getName()).replaceAll("\\+", "%20");
             } else {
                 return null;
@@ -241,31 +241,32 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     class DoubleClickAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount()==2) {
+            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
                 selectionUsersPrimitivesAction.select();
             }
         }
     }
 
     /**
-     * Action for selecting the primitives contributed by the currently selected
-     * users.
+     * Action for selecting the primitives contributed by the currently selected users.
      *
      */
     private static class UserInfo implements Comparable<UserInfo> {
         public User user;
         public int count;
         public double percent;
+
         UserInfo(User user, int count, double percent) {
-            this.user=user;
-            this.count=count;
+            this.user = user;
+            this.count = count;
             this.percent = percent;
         }
+
         @Override
         public int compareTo(UserInfo o) {
             if (count < o.count) return 1;
             if (count > o.count) return -1;
-            if (user== null || user.getName() == null) return 1;
+            if (user == null || user.getName() == null) return 1;
             if (o.user == null || o.user.getName() == null) return -1;
             return user.getName().compareTo(o.user.getName());
         }
@@ -285,7 +286,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         private transient List<UserInfo> data;
 
         public UserTableModel() {
-            setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%"});
+            setColumnIdentifiers(new String[]{tr("Author"), tr("# Objects"), "%"});
             data = new ArrayList<>();
         }
 
@@ -303,11 +304,11 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         public void populate(Collection<? extends OsmPrimitive> primitives) {
-            Map<User,Integer> statistics = computeStatistics(primitives);
+            Map<User, Integer> statistics = computeStatistics(primitives);
             data.clear();
             if (primitives != null) {
                 for (Map.Entry<User, Integer> entry: statistics.entrySet()) {
-                    data.add(new UserInfo(entry.getKey(), entry.getValue(), (double)entry.getValue() /  (double)primitives.size()));
+                    data.add(new UserInfo(entry.getKey(), entry.getValue(), (double) entry.getValue() /  (double) primitives.size()));
                 }
             }
             Collections.sort(data);
@@ -342,7 +343,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         public void selectPrimitivesOwnedBy(int[] rows) {
-            Set<User> users= new HashSet<>();
+            Set<User> users = new HashSet<>();
             for (int index: rows) {
                 users.add(data.get(index).user);
             }

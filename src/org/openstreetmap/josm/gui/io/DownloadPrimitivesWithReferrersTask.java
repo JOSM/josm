@@ -84,9 +84,9 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
      */
     @Override
     protected void cancel() {
-        synchronized(this) {
+        synchronized (this) {
             canceled = true;
-            if(currentTask != null)
+            if (currentTask != null)
                 currentTask.operationCanceled();
         }
     }
@@ -96,19 +96,19 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         getProgressMonitor().setTicksCount(ids.size()+1);
         // First, download primitives
         mainTask = new DownloadPrimitivesTask(tmpLayer, ids, full, getProgressMonitor().createSubTaskMonitor(1, false));
-        synchronized(this) {
+        synchronized (this) {
             currentTask = mainTask;
-            if(canceled) {
+            if (canceled) {
                 currentTask = null;
                 return;
             }
         }
         currentTask.run();
         // Then, download referrers for each primitive
-        if(downloadReferrers)
-            for(PrimitiveId id : ids) {
-                synchronized(this) {
-                    if(canceled) {
+        if (downloadReferrers)
+            for (PrimitiveId id : ids) {
+                synchronized (this) {
+                    if (canceled) {
                         currentTask = null;
                         return;
                     }
@@ -122,14 +122,14 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
 
     @Override
     protected void finish() {
-        synchronized(this) {
-            if(canceled)
+        synchronized (this) {
+            if (canceled)
                 return;
         }
 
         // Append downloaded data to JOSM
         OsmDataLayer layer = Main.main.getEditLayer();
-        if(layer == null || this.newLayer)
+        if (layer == null || this.newLayer)
             Main.main.addLayer(tmpLayer);
         else
             layer.mergeFrom(tmpLayer);
@@ -186,8 +186,8 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
      * @return List of primitives id or null if no primitives was downloaded
      */
     public List<PrimitiveId> getDownloadedId() {
-        synchronized(this) {
-            if(canceled)
+        synchronized (this) {
+            if (canceled)
                 return null;
         }
         List<PrimitiveId> downloaded = new ArrayList<>(ids);

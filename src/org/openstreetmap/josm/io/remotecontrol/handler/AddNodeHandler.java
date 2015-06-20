@@ -77,7 +77,7 @@ public class AddNodeHandler extends RequestHandler {
      * Adds a node, implements the GET /add_node?lon=...&amp;lat=... request.
      * @param args request arguments
      */
-    private void addNode(Map<String, String> args){
+    private void addNode(Map<String, String> args) {
 
         // Parse the arguments
         Main.info("Adding node at (" + lat + ", " + lon + ")");
@@ -90,12 +90,12 @@ public class AddNodeHandler extends RequestHandler {
         if (Main.isDisplayingMapView()) {
             Point p = Main.map.mapView.getPoint(ll);
             node = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
-            if (node!=null && node.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
+            if (node != null && node.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
                 node = null; // node is too far
             }
         }
 
-        if (node==null) {
+        if (node == null) {
             node = new Node(ll);
             // Now execute the commands to add this node.
             Main.main.undoRedo.add(new AddCommand(node));

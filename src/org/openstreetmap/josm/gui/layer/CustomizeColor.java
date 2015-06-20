@@ -42,8 +42,8 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
 
     @Override
     public boolean supportLayers(List<Layer> layers) {
-        for(Layer layer: layers) {
-            if(layer.getColor(false) == null)
+        for (Layer layer: layers) {
+            if (layer.getColor(false) == null)
                 return false;
         }
         return true;
@@ -61,7 +61,8 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Color cl=layers.get(0).getColor(false); if (cl==null) cl=Color.gray;
+        Color cl = layers.get(0).getColor(false);
+        if (cl == null) cl = Color.gray;
         JColorChooser c = new JColorChooser(cl);
         Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
         int answer = JOptionPane.showOptionDialog(
@@ -76,13 +77,13 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
         );
         switch (answer) {
         case 0:
-            for(Layer layer : layers)
+            for (Layer layer : layers)
                 Main.pref.putColor("layer "+layer.getName(), c.getColor());
             break;
         case 1:
             return;
         case 2:
-            for(Layer layer : layers)
+            for (Layer layer : layers)
                 Main.pref.putColor("layer "+layer.getName(), null);
             break;
         }

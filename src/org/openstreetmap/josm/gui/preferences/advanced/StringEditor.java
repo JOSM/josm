@@ -43,11 +43,11 @@ public class StringEditor extends ExtendedDialog {
 
     protected final JPanel build(String orig) {
         JPanel p = new JPanel(new GridBagLayout());
-        p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0,0,5,0));
+        p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0, 0, 5, 0));
 
         p.add(new JLabel(tr("Value: ")), GBC.std());
         tvalue = new JosmTextField(orig, 50);
-        p.add(tvalue, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
+        p.add(tvalue, GBC.eop().insets(5, 0, 0, 0).fill(GBC.HORIZONTAL));
 
         return p;
     }

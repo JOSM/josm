@@ -51,8 +51,11 @@ public class PopupMenuLauncher extends MouseAdapter {
         this.checkEnabled = checkEnabled;
     }
 
-    @Override public void mousePressed(MouseEvent e) { processEvent(e); }
-    @Override public void mouseReleased(MouseEvent e) { processEvent(e); }
+    @Override
+    public void mousePressed(MouseEvent e) { processEvent(e); }
+
+    @Override
+    public void mouseReleased(MouseEvent e) { processEvent(e); }
 
     private void processEvent(MouseEvent e) {
         if (e.isPopupTrigger() && (!checkEnabled || e.getComponent().isEnabled())) {
@@ -88,8 +91,11 @@ public class PopupMenuLauncher extends MouseAdapter {
     protected void checkFocusAndShowMenu(final Component component, final MouseEvent evt) {
         if (component != null && component.isFocusable() && !component.hasFocus() && component.requestFocusInWindow()) {
             component.addFocusListener(new FocusListener() {
-                @Override public void focusLost(FocusEvent e) {}
-                @Override public void focusGained(FocusEvent e) {
+                @Override
+                public void focusLost(FocusEvent e) {}
+
+                @Override
+                public void focusGained(FocusEvent e) {
                     showMenu(evt);
                     component.removeFocusListener(this);
                 }

@@ -164,26 +164,26 @@ public final class AlignInCircleAction extends JosmAction {
             List<Node> inside = new ArrayList<>();
             List<Node> outside = new ArrayList<>();
 
-            for(Node n: nodes) {
+            for (Node n: nodes) {
                 boolean isInside = false;
-                for(Way w: ways) {
-                    if(w.getNodes().contains(n)) {
+                for (Way w: ways) {
+                    if (w.getNodes().contains(n)) {
                         isInside = true;
                         break;
                     }
                 }
-                if(isInside)
+                if (isInside)
                     inside.add(n);
                 else
                     outside.add(n);
             }
 
-            if(outside.size() == 1 && inside.isEmpty()) {
+            if (outside.size() == 1 && inside.isEmpty()) {
                 center = outside.get(0).getEastNorth();
-            } else if(outside.size() == 1 && inside.size() == 1) {
+            } else if (outside.size() == 1 && inside.size() == 1) {
                 center = outside.get(0).getEastNorth();
                 radius = distance(center, inside.get(0).getEastNorth());
-            } else if(inside.size() == 2 && outside.isEmpty()) {
+            } else if (inside.size() == 2 && outside.isEmpty()) {
                 // 2 nodes inside, define diameter
                 EastNorth en0 = inside.get(0).getEastNorth();
                 EastNorth en1 = inside.get(1).getEastNorth();
@@ -238,7 +238,7 @@ public final class AlignInCircleAction extends JosmAction {
             radius = radius / nodes.size();
         }
 
-        if(!actionAllowed(nodes)) return;
+        if (!actionAllowed(nodes)) return;
 
         Collection<Command> cmds = new LinkedList<>();
 
@@ -247,29 +247,29 @@ public final class AlignInCircleAction extends JosmAction {
         int nodeCount = nodes.size();
         // Search first fixed node
         int startPosition = 0;
-        for(startPosition = 0; startPosition < nodeCount; startPosition++)
-            if(fixNodes.contains(nodes.get(startPosition % nodeCount))) break;
+        for (startPosition = 0; startPosition < nodeCount; startPosition++)
+            if (fixNodes.contains(nodes.get(startPosition % nodeCount))) break;
         int i = startPosition; // Start position for current arc
         int j; // End position for current arc
-        while(i < startPosition + nodeCount) {
-            for(j = i + 1; j < startPosition + nodeCount; j++)
-                if(fixNodes.contains(nodes.get(j % nodeCount))) break;
+        while (i < startPosition + nodeCount) {
+            for (j = i + 1; j < startPosition + nodeCount; j++)
+                if (fixNodes.contains(nodes.get(j % nodeCount))) break;
             Node first = nodes.get(i % nodeCount);
             PolarCoor pcFirst = new PolarCoor(first.getEastNorth(), center, 0);
             pcFirst.radius = radius;
             cmds.add(pcFirst.createMoveCommand(first));
-            if(j > i + 1) {
+            if (j > i + 1) {
                 double delta;
-                if(j == i + nodeCount) {
+                if (j == i + nodeCount) {
                     delta = 2 * Math.PI / nodeCount;
                 } else {
                     PolarCoor pcLast = new PolarCoor(nodes.get(j % nodeCount).getEastNorth(), center, 0);
                     delta = pcLast.angle - pcFirst.angle;
-                    if(delta < 0) // Assume each PolarCoor.angle is in range ]-pi; pi]
+                    if (delta < 0) // Assume each PolarCoor.angle is in range ]-pi; pi]
                         delta +=  2*Math.PI;
                     delta /= j - i;
                 }
-                for(int k = i+1; k < j; k++) {
+                for (int k = i+1; k < j; k++) {
                     PolarCoor p = new PolarCoor(radius, pcFirst.angle + (k-i)*delta, center, 0);
                     cmds.add(p.createMoveCommand(nodes.get(k % nodeCount)));
                 }
@@ -288,9 +288,9 @@ public final class AlignInCircleAction extends JosmAction {
      */
     private List<Node> collectNodesWithExternReferers(List<Way> ways) {
         List<Node> withReferrers = new ArrayList<>();
-        for(Way w: ways)
-            for(Node n: w.getNodes())
-                if(n.getReferrers().size() > 1)
+        for (Way w: ways)
+            for (Node n: w.getNodes())
+                if (n.getReferrers().size() > 1)
                     withReferrers.add(n);
         return withReferrers;
     }
@@ -305,21 +305,21 @@ public final class AlignInCircleAction extends JosmAction {
         Node firstNode = ways.get(0).firstNode();
         Node lastNode = null;
         Way lastWay = null;
-        while(firstNode != lastNode) {
-            if(lastNode == null) lastNode = firstNode;
-            for(Way way: ways) {
-                if(way == lastWay) continue;
-                if(way.firstNode() == lastNode) {
+        while (firstNode != lastNode) {
+            if (lastNode == null) lastNode = firstNode;
+            for (Way way: ways) {
+                if (way == lastWay) continue;
+                if (way.firstNode() == lastNode) {
                     List<Node> wayNodes = way.getNodes();
-                    for(int i = 0; i < wayNodes.size() - 1; i++)
+                    for (int i = 0; i < wayNodes.size() - 1; i++)
                         nodes.add(wayNodes.get(i));
                     lastNode = way.lastNode();
                     lastWay = way;
                     break;
                 }
-                if(way.lastNode() == lastNode) {
+                if (way.lastNode() == lastNode) {
                     List<Node> wayNodes = way.getNodes();
-                    for(int i = wayNodes.size() - 1; i > 0; i--)
+                    for (int i = wayNodes.size() - 1; i > 0; i--)
                         nodes.add(wayNodes.get(i));
                     lastNode = way.firstNode();
                     lastWay = way;
@@ -330,12 +330,12 @@ public final class AlignInCircleAction extends JosmAction {
         // Check if nodes are in anticlockwise order
         int nc = nodes.size();
         double area = 0;
-        for(int i = 0; i < nc; i++) {
+        for (int i = 0; i < nc; i++) {
             EastNorth p1 = nodes.get(i).getEastNorth();
             EastNorth p2 = nodes.get((i+1) % nc).getEastNorth();
             area += p1.east()*p2.north() - p2.east()*p1.north();
         }
-        if(area < 0)
+        if (area < 0)
             Collections.reverse(nodes);
         return nodes;
     }
@@ -347,12 +347,12 @@ public final class AlignInCircleAction extends JosmAction {
      */
     private boolean actionAllowed(Collection<Node> nodes) {
         boolean outside = false;
-        for(Node n: nodes)
-            if(n.isOutsideDownloadArea()) {
+        for (Node n: nodes)
+            if (n.isOutsideDownloadArea()) {
                 outside = true;
                 break;
             }
-        if(outside)
+        if (outside)
             new Notification(
                     tr("One or more nodes involved in this action is outside of the downloaded area."))
                     .setIcon(JOptionPane.WARNING_MESSAGE)

@@ -13,7 +13,7 @@ public final class QuadTiling {
     public static final double WORLD_PARTS = 1 << NR_LEVELS;
 
     public static final int TILES_PER_LEVEL_SHIFT = 2; // Has to be 2. Other parts of QuadBuckets code rely on it
-    public static final int TILES_PER_LEVEL = 1<<TILES_PER_LEVEL_SHIFT;
+    public static final int TILES_PER_LEVEL = 1 << TILES_PER_LEVEL_SHIFT;
     public static final int X_PARTS = 360;
     public static final int X_BIAS = -180;
 
@@ -57,7 +57,7 @@ public final class QuadTiling {
             long ybit = (y >> i) & 1;
             tile <<= 2;
             // Note that x is the MSB
-            tile |= (xbit<<1) | ybit;
+            tile |= (xbit << 1) | ybit;
         }
         return tile;
     }
@@ -67,7 +67,7 @@ public final class QuadTiling {
     }
 
     static long lon2x(double lon) {
-        long ret = (long)((lon + 180.0) * WORLD_PARTS / 360.0);
+        long ret = (long) ((lon + 180.0) * WORLD_PARTS / 360.0);
         if (Utils.equalsEpsilon(ret, WORLD_PARTS)) {
             ret--;
         }
@@ -75,7 +75,7 @@ public final class QuadTiling {
     }
 
     static long lat2y(double lat) {
-        long ret = (long)((lat + 90.0) * WORLD_PARTS / 180.0);
+        long ret = (long) ((lat + 90.0) * WORLD_PARTS / 180.0);
         if (Utils.equalsEpsilon(ret, WORLD_PARTS)) {
             ret--;
         }
@@ -89,7 +89,7 @@ public final class QuadTiling {
     public static int index(int level, long quad) {
         long mask = 0x00000003;
         int total_shift = TILES_PER_LEVEL_SHIFT*(NR_LEVELS-level-1);
-        return (int)(mask & (quad >> total_shift));
+        return (int) (mask & (quad >> total_shift));
     }
 
     /**
@@ -124,6 +124,6 @@ public final class QuadTiling {
         long x = lon2x(lon);
         long y = lat2y(lat);
         int shift = NR_LEVELS-level-1;
-        return (int)((x >> shift & 1) * 2 + (y >> shift & 1));
+        return (int) ((x >> shift & 1) * 2 + (y >> shift & 1));
     }
 }

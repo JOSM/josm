@@ -77,7 +77,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      */
     protected void synchronizeDataSet() {
         UpdateDataAction act = new UpdateDataAction();
-        act.actionPerformed(new ActionEvent(this,0,""));
+        act.actionPerformed(new ActionEvent(this, 0, ""));
     }
 
     /**
@@ -255,7 +255,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
             Pattern p = Pattern.compile("Version mismatch: Provided (\\d+), server had: (\\d+) of (\\S+) (\\d+)");
             Matcher m = p.matcher(errorHeader);
             if (m.matches()) {
-                handleUploadConflictForKnownConflict(OsmPrimitiveType.from(m.group(3)), Long.parseLong(m.group(4)), m.group(2),m.group(1));
+                handleUploadConflictForKnownConflict(OsmPrimitiveType.from(m.group(3)), Long.parseLong(m.group(4)), m.group(2), m.group(1));
                 return;
             }
             p = Pattern.compile("The changeset (\\d+) was closed at (.*)");
@@ -295,7 +295,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      */
     protected void handleGone(OsmApiPrimitiveGoneException e) {
         if (e.isKnownPrimitive()) {
-            UpdateSelectionAction.handlePrimitiveGoneException(e.getPrimitiveId(),e.getPrimitiveType());
+            UpdateSelectionAction.handlePrimitiveGoneException(e.getPrimitiveId(), e.getPrimitiveType());
         } else {
             ExceptionDialogUtil.explainGoneForUnknownPrimitive(e);
         }
@@ -310,17 +310,17 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         // API initialization failed. Notify the user and return.
         //
         if (e instanceof OsmApiInitializationException) {
-            ExceptionDialogUtil.explainOsmApiInitializationException((OsmApiInitializationException)e);
+            ExceptionDialogUtil.explainOsmApiInitializationException((OsmApiInitializationException) e);
             return;
         }
 
         if (e instanceof OsmApiPrimitiveGoneException) {
-            handleGone((OsmApiPrimitiveGoneException)e);
+            handleGone((OsmApiPrimitiveGoneException) e);
             return;
         }
         if (e instanceof OsmApiException) {
-            OsmApiException ex = (OsmApiException)e;
-            if(ex.getResponseCode() == HttpURLConnection.HTTP_CONFLICT) {
+            OsmApiException ex = (OsmApiException) e;
+            if (ex.getResponseCode() == HttpURLConnection.HTTP_CONFLICT) {
                 // There was an upload conflict. Let the user decide whether and how to resolve it
                 handleUploadConflict(ex);
                 return;

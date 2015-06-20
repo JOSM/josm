@@ -191,7 +191,7 @@ public final class ConditionalOptionPaneUtil {
      * @see JOptionPane#WARNING_MESSAGE
      * @see JOptionPane#ERROR_MESSAGE
      */
-    public static void showMessageDialog(String preferenceKey, Component parent, Object message, String title,int messageType) {
+    public static void showMessageDialog(String preferenceKey, Component parent, Object message, String title, int messageType) {
         if (getDialogReturnValue(preferenceKey) == Integer.MAX_VALUE)
             return;
         MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));

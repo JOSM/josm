@@ -28,12 +28,12 @@ public final class Ellipsoid {
      * same as GRS67 Modified
      */
     public static final Ellipsoid AustSA = Ellipsoid.create_a_rf(6378160.0, 298.25);
-    
+
     /**
      * Bessel 1841 ellipsoid
      */
     public static final Ellipsoid Bessel1841 = Ellipsoid.create_a_rf(6377397.155, 299.1528128);
-    
+
     /**
      * Clarke 1866 ellipsoid
      */
@@ -250,7 +250,7 @@ public final class Ellipsoid {
     public double latitudeIsometric(double phi, double e) {
         double v1 = 1-e*Math.sin(phi);
         double v2 = 1+e*Math.sin(phi);
-        return Math.log(Math.tan(Math.PI/4+phi/2)*Math.pow(v1/v2,e/2));
+        return Math.log(Math.tan(Math.PI/4+phi/2)*Math.pow(v1/v2, e/2));
     }
 
     /**
@@ -261,7 +261,7 @@ public final class Ellipsoid {
     public double latitudeIsometric(double phi) {
         double v1 = 1-e*Math.sin(phi);
         double v2 = 1+e*Math.sin(phi);
-        return Math.log(Math.tan(Math.PI/4+phi/2)*Math.pow(v1/v2,e/2));
+        return Math.log(Math.tan(Math.PI/4+phi/2)*Math.pow(v1/v2, e/2));
     }
 
     /**
@@ -274,11 +274,11 @@ public final class Ellipsoid {
         double lat0 = 2*Math.atan(Math.exp(latIso))-Math.PI/2;
         double lati = lat0;
         double lati1 = 1.0; // random value to start the iterative processus
-        while(Math.abs(lati1-lati)>=epsilon) {
+        while (Math.abs(lati1-lati) >= epsilon) {
             lati = lati1;
             double v1 = 1+e*Math.sin(lati);
             double v2 = 1-e*Math.sin(lati);
-            lati1 = 2*Math.atan(Math.pow(v1/v2,e/2)*Math.exp(latIso))-Math.PI/2;
+            lati1 = 2*Math.atan(Math.pow(v1/v2, e/2)*Math.exp(latIso))-Math.PI/2;
         }
         return lati1;
     }

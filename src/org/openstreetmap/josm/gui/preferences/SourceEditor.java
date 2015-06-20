@@ -210,7 +210,7 @@ public abstract class SourceEditor extends JPanel {
 
         RemoveActiveSourcesAction removeActiveSourcesAction = new RemoveActiveSourcesAction();
         tblActiveSources.getSelectionModel().addListSelectionListener(removeActiveSourcesAction);
-        tblActiveSources.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
+        tblActiveSources.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
         tblActiveSources.getActionMap().put("delete", removeActiveSourcesAction);
 
         MoveUpDownAction moveUp = null;
@@ -326,10 +326,7 @@ public abstract class SourceEditor extends JPanel {
         bottomRightTB.add(new JButton(new ResetAction()));
         add(bottomRightTB, gbc);
 
-        /***
-         * Icon configuration
-         **/
-
+        // Icon configuration
         if (handleIcons) {
             buildIcons(gbc);
         }
@@ -352,7 +349,7 @@ public abstract class SourceEditor extends JPanel {
 
         RemoveIconPathAction removeIconPathAction = new RemoveIconPathAction();
         tblIconPaths.getSelectionModel().addListSelectionListener(removeIconPathAction);
-        tblIconPaths.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
+        tblIconPaths.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
         tblIconPaths.getActionMap().put("delete", removeIconPathAction);
 
         gbc.gridx = 0;
@@ -493,8 +490,8 @@ public abstract class SourceEditor extends JPanel {
 
         public void deleteSelected() {
             Iterator<ExtendedSourceEntry> it = data.iterator();
-            int i=0;
-            while(it.hasNext()) {
+            int i = 0;
+            while (it.hasNext()) {
                 it.next();
                 if (selectionModel.isSelectedIndex(i)) {
                     it.remove();
@@ -506,7 +503,7 @@ public abstract class SourceEditor extends JPanel {
 
         public List<ExtendedSourceEntry> getSelected() {
             List<ExtendedSourceEntry> ret = new ArrayList<>();
-            for(int i=0; i<data.size();i++) {
+            for (int i = 0; i < data.size(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     ret.add(data.get(i));
                 }
@@ -585,8 +582,8 @@ public abstract class SourceEditor extends JPanel {
 
         public void removeSelected() {
             Iterator<SourceEntry> it = data.iterator();
-            int i=0;
-            while(it.hasNext()) {
+            int i = 0;
+            while (it.hasNext()) {
                 it.next();
                 if (selectionModel.isSelectedIndex(i)) {
                     it.remove();
@@ -598,7 +595,7 @@ public abstract class SourceEditor extends JPanel {
 
         public void removeIdxs(Collection<Integer> idxs) {
             List<SourceEntry> newData = new ArrayList<>();
-            for (int i=0; i<data.size(); ++i) {
+            for (int i = 0; i < data.size(); ++i) {
                 if (!idxs.contains(i)) {
                     newData.add(data.get(i));
                 }
@@ -616,7 +613,7 @@ public abstract class SourceEditor extends JPanel {
             selectionModel.clearSelection();
             for (ExtendedSourceEntry info: sources) {
                 int pos = data.indexOf(info);
-                if (pos >=0) {
+                if (pos >= 0) {
                     selectionModel.addSelectionInterval(pos, pos);
                 }
             }
@@ -724,7 +721,7 @@ public abstract class SourceEditor extends JPanel {
         URL sourceUrl = null;
         try {
             sourceUrl = new URL(url);
-        } catch(MalformedURLException e) {
+        } catch (MalformedURLException e) {
             File f = new File(url);
             if (f.isFile()) {
                 f = f.getParentFile();
@@ -787,10 +784,12 @@ public abstract class SourceEditor extends JPanel {
                 public void insertUpdate(DocumentEvent e) {
                     updateOkButtonState();
                 }
+
                 @Override
                 public void removeUpdate(DocumentEvent e) {
                     updateOkButtonState();
                 }
+
                 @Override
                 public void changedUpdate(DocumentEvent e) {
                     updateOkButtonState();
@@ -957,6 +956,7 @@ public abstract class SourceEditor extends JPanel {
      */
     class MoveUpDownAction extends AbstractAction implements ListSelectionListener, TableModelListener {
         private final int increment;
+
         public MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
             putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));
@@ -1053,6 +1053,7 @@ public abstract class SourceEditor extends JPanel {
     class ReloadSourcesAction extends AbstractAction {
         private final String url;
         private final transient List<SourceProvider> sourceProviders;
+
         public ReloadSourcesAction(String url, List<SourceProvider> sourceProviders) {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr(getStr(I18nString.RELOAD_ALL_AVAILABLE), url));
@@ -1100,12 +1101,12 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            updatePath(rowIndex, (String)aValue);
+            updatePath(rowIndex, (String) aValue);
         }
 
         public void setIconPaths(Collection<String> paths) {
             data.clear();
-            if (paths !=null) {
+            if (paths != null) {
                 data.addAll(paths);
             }
             sort();
@@ -1137,8 +1138,8 @@ public abstract class SourceEditor extends JPanel {
 
         public void removeSelected() {
             Iterator<String> it = data.iterator();
-            int i=0;
-            while(it.hasNext()) {
+            int i = 0;
+            while (it.hasNext()) {
                 it.next();
                 if (selectionModel.isSelectedIndex(i)) {
                     it.remove();
@@ -1180,7 +1181,7 @@ public abstract class SourceEditor extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             iconPathsModel.addPath("");
-            tblIconPaths.editCellAt(iconPathsModel.getRowCount() -1,0);
+            tblIconPaths.editCellAt(iconPathsModel.getRowCount() -1, 0);
         }
     }
 
@@ -1499,7 +1500,7 @@ public abstract class SourceEditor extends JPanel {
         @Override
         public boolean isCellEditable(EventObject anEvent) {
             if (anEvent instanceof MouseEvent)
-                return ((MouseEvent)anEvent).getClickCount() >= 2;
+                return ((MouseEvent) anEvent).getClickCount() >= 2;
                 return true;
         }
 
@@ -1531,7 +1532,7 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            setInitialValue((String)value);
+            setInitialValue((String) value);
             tfFileName.selectAll();
             return this;
         }

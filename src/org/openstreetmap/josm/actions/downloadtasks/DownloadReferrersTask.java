@@ -156,7 +156,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (reader != null) {
                 reader.cancel();
             }
@@ -179,7 +179,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                     @Override
                     public void run() {
                         targetLayer.onPostDownloadFromServer();
-                        if(Main.map != null)
+                        if (Main.map != null)
                             Main.map.mapView.repaint();
                     }
                 }
@@ -201,10 +201,10 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         Main.map.repaint();
     }
 
-    protected void downloadParents(long id, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException{
+    protected void downloadParents(long id, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException {
         reader = new OsmServerBackreferenceReader(id, type);
         DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
-        synchronized(this) { // avoid race condition in cancel()
+        synchronized (this) { // avoid race condition in cancel()
             reader = null;
         }
         Collection<Way> ways = ds.getWays();
@@ -220,9 +220,9 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             nodes.removeAll(targetLayer.data.getNodes());
             if (!nodes.isEmpty()) {
                 reader = new MultiFetchServerObjectReader();
-                ((MultiFetchServerObjectReader)reader).append(nodes);
+                ((MultiFetchServerObjectReader) reader).append(nodes);
                 DataSet wayNodes = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
-                synchronized(this) { // avoid race condition in cancel()
+                synchronized (this) { // avoid race condition in cancel()
                     reader = null;
                 }
                 merger = new DataSetMerger(ds, wayNodes);
@@ -237,21 +237,21 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             progressMonitor.setTicksCount(children.size());
-            int i=1;
+            int i = 1;
             for (Entry<Long, OsmPrimitiveType> entry: children.entrySet()) {
                 if (canceled)
                     return;
                 String msg = "";
                 switch(entry.getValue()) {
-                case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i+1,children.size(), entry.getKey()); break;
-                case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i+1,children.size(), entry.getKey()); break;
-                case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i+1,children.size(), entry.getKey()); break;
+                case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i+1, children.size(), entry.getKey()); break;
+                case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i+1, children.size(), entry.getKey()); break;
+                case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i+1, children.size(), entry.getKey()); break;
                 }
                 progressMonitor.subTask(msg);
                 downloadParents(entry.getKey(), entry.getValue(), progressMonitor);
                 i++;
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (canceled)
                 return;
             lastException = e;

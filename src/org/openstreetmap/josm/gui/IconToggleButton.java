@@ -50,7 +50,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
         action.addPropertyChangeListener(this);
 
-        addMouseListener(new MouseAdapter(){
+        addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent e) {
                 groupbutton = e.getX() > getWidth()/2 && e.getY() > getHeight()/2;
             }
@@ -62,10 +62,10 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if ("active".equals(evt.getPropertyName())) {
-            setSelected((Boolean)evt.getNewValue());
+            setSelected((Boolean) evt.getNewValue());
             requestFocusInWindow();
         } else if ("selected".equals(evt.getPropertyName())) {
-            setSelected((Boolean)evt.getNewValue());
+            setSelected((Boolean) evt.getNewValue());
         }
     }
 
@@ -83,7 +83,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
     String getPreferenceKey() {
         String s = (String) getSafeActionValue("toolbar");
         if (s == null) {
-            if (getAction()!=null) {
+            if (getAction() != null) {
                 s = getAction().getClass().getName();
             }
         }
@@ -118,7 +118,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
     @Override
     public void setButtonHidden(boolean b) {
         setVisible(!b);
-        if (listener!=null) { // if someone wants to know about changes of visibility
+        if (listener != null) { // if someone wants to know about changes of visibility
             if (!b) listener.buttonShown(); else listener.buttonHidden();
         }
         if ((b && isExpert && !ExpertToggleAction.isExpert()) ||

@@ -34,7 +34,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem
         // so that it looks like a move to the top
         for (int i = 0; i < getSize(); i++) {
             String oldEntry = getElementAt(i).getValue();
-            if(oldEntry.equals(newEntry)) {
+            if (oldEntry.equals(newEntry)) {
                 removeElementAt(i);
             }
         }
@@ -43,7 +43,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem
         insertElementAt(o, 0);
 
         // remove an element, if the history gets too large
-        if(getSize()> maxSize) {
+        if (getSize() > maxSize) {
             removeElementAt(getSize()-1);
         }
 
@@ -66,7 +66,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem
 
             @Override
             public boolean hasNext() {
-                if(position < getSize()-1 && getSize()>0)
+                if (position < getSize()-1 && getSize() > 0)
                     return true;
                 return false;
             }
@@ -81,7 +81,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem
 
     public void setItemsAsString(List<String> items) {
         removeAllElements();
-        for (int i = items.size()-1; i>=0; i--) {
+        for (int i = items.size()-1; i >= 0; i--) {
             addElement(new AutoCompletionListItem(items.get(i)));
         }
     }

@@ -31,7 +31,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
 
     public Set<Changeset> getSelectedChangesets() {
         Set<Changeset> ret = new HashSet<>();
-        for (int i=0; i < getSize(); i++) {
+        for (int i = 0; i < getSize(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
                 ret.add(data.get(i));
             }
@@ -41,7 +41,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
 
     public Set<Integer> getSelectedChangesetIds() {
         Set<Integer> ret = new HashSet<>();
-        for (int i=0; i < getSize(); i++) {
+        for (int i = 0; i < getSize(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
                 ret.add(data.get(i).getId());
             }
@@ -57,7 +57,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
             if (idx < 0) {
                 continue;
             }
-            selectionModel.addSelectionInterval(idx,idx);
+            selectionModel.addSelectionInterval(idx, idx);
         }
     }
 
@@ -169,7 +169,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      */
     public List<Changeset> getSelectedOpenChangesets() {
         List<Changeset> ret = new ArrayList<>();
-        for (int i=0; i< getSize(); i++) {
+        for (int i = 0; i < getSize(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
                 Changeset cs = data.get(i);
                 if (cs.isOpen()) {
@@ -186,19 +186,19 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
     @Override
     public void changesetCacheUpdated(ChangesetCacheEvent event) {
         Set<Changeset> sel = getSelectedChangesets();
-        for(Changeset cs: event.getAddedChangesets()) {
+        for (Changeset cs: event.getAddedChangesets()) {
             int idx = data.indexOf(cs);
             if (idx >= 0 && data.get(idx) != cs) {
                 data.get(idx).mergeFrom(cs);
             }
         }
-        for(Changeset cs: event.getUpdatedChangesets()) {
+        for (Changeset cs: event.getUpdatedChangesets()) {
             int idx = data.indexOf(cs);
             if (idx >= 0 && data.get(idx) != cs) {
                 data.get(idx).mergeFrom(cs);
             }
         }
-        for(Changeset cs: event.getRemovedChangesets()) {
+        for (Changeset cs: event.getRemovedChangesets()) {
             int idx = data.indexOf(cs);
             if (idx >= 0) {
                 // replace with an incomplete changeset

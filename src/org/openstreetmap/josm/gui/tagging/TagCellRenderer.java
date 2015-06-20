@@ -22,11 +22,14 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
     private Font fontStandard = null;
     private Font fontItalic = null;
 
+    /**
+     * Constructs a new {@code TagCellRenderer}.
+     */
     public TagCellRenderer() {
         fontStandard = UIManager.getFont("Table.font");
         fontItalic = fontStandard.deriveFont(Font.ITALIC);
         setOpaque(true);
-        setBorder(new EmptyBorder(5,5,5,5));
+        setBorder(new EmptyBorder(5, 5, 5, 5));
     }
 
     /**
@@ -66,7 +69,7 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
     }
 
     protected TagEditorModel getModel(JTable table) {
-        return (TagEditorModel)table.getModel();
+        return (TagEditorModel) table.getModel();
     }
 
     /**
@@ -90,7 +93,7 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
 
         // set background color
         //
-        if (isSelected){
+        if (isSelected) {
             setBackground(UIManager.getColor("Table.selectionBackground"));
             setForeground(UIManager.getColor("Table.selectionForeground"));
         } else {
@@ -99,8 +102,8 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
         }
 
         switch(vColIndex) {
-        case 0: renderTagName((TagModel)value); break;
-        case 1: renderTagValue((TagModel)value); break;
+        case 0: renderTagName((TagModel) value); break;
+        case 1: renderTagValue((TagModel) value); break;
 
         default: throw new RuntimeException("unexpected index in switch statement");
         }

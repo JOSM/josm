@@ -71,8 +71,8 @@ public class WindowGeometry {
             reference = reference.getParent();
         }
         if (reference == null)
-            return new WindowGeometry(new Point(0,0), extent);
-        parentWindow = (Window)reference;
+            return new WindowGeometry(new Point(0, 0), extent);
+        parentWindow = (Window) reference;
         Point topLeft = new Point(
                 Math.max(0, (parentWindow.getSize().width - extent.width) /2),
                 Math.max(0, (parentWindow.getSize().height - extent.height) /2)
@@ -138,10 +138,10 @@ public class WindowGeometry {
     public void fixScreen(Window window)  {
         Rectangle oldScreen = getScreenInfo(getRectangle());
         Rectangle newScreen = getScreenInfo(new Rectangle(window.getLocationOnScreen(), window.getSize()));
-        if(oldScreen.x != newScreen.x) {
+        if (oldScreen.x != newScreen.x) {
             this.topLeft.x += newScreen.x - oldScreen.x;
         }
-        if(oldScreen.y != newScreen.y) {
+        if (oldScreen.y != newScreen.y) {
             this.topLeft.y += newScreen.y - oldScreen.y;
         }
     }
@@ -149,7 +149,7 @@ public class WindowGeometry {
     protected int parseField(String preferenceKey, String preferenceValue, String field) throws WindowGeometryException {
         String v = "";
         try {
-            Pattern p = Pattern.compile(field + "=(-?\\d+)",Pattern.CASE_INSENSITIVE);
+            Pattern p = Pattern.compile(field + "=(-?\\d+)", Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(preferenceValue);
             if (!m.find())
                 throw new WindowGeometryException(
@@ -157,15 +157,17 @@ public class WindowGeometry {
                                 preferenceKey, field));
             v = m.group(1);
             return Integer.parseInt(v);
-        } catch(WindowGeometryException e) {
+        } catch (WindowGeometryException e) {
             throw e;
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new WindowGeometryException(
-                    tr("Preference with key ''{0}'' does not provide an int value for ''{1}''. Got {2}. Cannot restore window geometry from preferences.",
+                    tr("Preference with key ''{0}'' does not provide an int value for ''{1}''. Got {2}. " +
+                       "Cannot restore window geometry from preferences.",
                             preferenceKey, field, v), e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new WindowGeometryException(
-                    tr("Failed to parse field ''{1}'' in preference with key ''{0}''. Exception was: {2}. Cannot restore window geometry from preferences.",
+                    tr("Failed to parse field ''{1}'' in preference with key ''{0}''. Exception was: {2}. " +
+                       "Cannot restore window geometry from preferences.",
                             preferenceKey, field, e.toString()), e);
         }
     }
@@ -206,13 +208,13 @@ public class WindowGeometry {
                         y = screenDimension.y + screenDimension.height - y - h;
                     }
                 }
-                return new WindowGeometry(new Point(x,y), new Dimension(w,h));
+                return new WindowGeometry(new Point(x, y), new Dimension(w, h));
             } else {
                 Main.warn(tr("Ignoring malformed geometry: {0}", arg));
             }
         }
         WindowGeometry def;
-        if(maximize) {
+        if (maximize) {
             def = new WindowGeometry(screenDimension);
         } else {
             Point p = screenDimension.getLocation();
@@ -247,7 +249,7 @@ public class WindowGeometry {
     public WindowGeometry(String preferenceKey, WindowGeometry defaultGeometry) {
         try {
             initFromPreferences(preferenceKey);
-        } catch(WindowGeometryException e) {
+        } catch (WindowGeometryException e) {
             initFromWindowGeometry(defaultGeometry);
         }
     }
@@ -412,7 +414,7 @@ public class WindowGeometry {
     public static Rectangle getScreenInfo(String preferenceKey) {
         Rectangle g = new WindowGeometry(preferenceKey,
             /* default: something on screen 1 */
-            new WindowGeometry(new Point(0,0), new Dimension(10,10))).getRectangle();
+            new WindowGeometry(new Point(0, 0), new Dimension(10, 10))).getRectangle();
         return getScreenInfo(g);
     }
 
@@ -466,7 +468,7 @@ public class WindowGeometry {
      * @return size of the full virtual screen
      */
     public static Rectangle getFullScreenInfo() {
-        return new Rectangle(new Point(0,0), Toolkit.getDefaultToolkit().getScreenSize());
+        return new Rectangle(new Point(0, 0), Toolkit.getDefaultToolkit().getScreenSize());
     }
 
     @Override

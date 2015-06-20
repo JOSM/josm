@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.io;
 
 
-public class MissingOAuthAccessTokenException extends OsmTransferException{
+public class MissingOAuthAccessTokenException extends OsmTransferException {
     public MissingOAuthAccessTokenException() {
         super();
     }

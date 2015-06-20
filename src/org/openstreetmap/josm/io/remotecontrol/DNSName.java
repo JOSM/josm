@@ -79,7 +79,7 @@ public class DNSName implements GeneralNameInterface {
         //Name will consist of label components separated by "."
         //startIndex is the index of the first character of a component
         //endIndex is the index of the last character of a component plus 1
-        for (int endIndex,startIndex=0; startIndex < name.length(); startIndex = endIndex+1) {
+        for (int endIndex, startIndex = 0; startIndex < name.length(); startIndex = endIndex+1) {
             endIndex = name.indexOf('.', startIndex);
             if (endIndex < 0) {
                 endIndex = name.length();
@@ -88,7 +88,7 @@ public class DNSName implements GeneralNameInterface {
                 throw new IOException("DNSName SubjectAltNames with empty components are not permitted");
 
             //nonStartIndex: index for characters in the component beyond the first one
-            for (int nonStartIndex=startIndex+1; nonStartIndex < endIndex; nonStartIndex++) {
+            for (int nonStartIndex = startIndex+1; nonStartIndex < endIndex; nonStartIndex++) {
                 char x = name.charAt(nonStartIndex);
                 if ((alphaDigitsAndHyphen).indexOf(x) < 0)
                     throw new IOException("DNSName components must consist of letters, digits, and hyphens");
@@ -146,7 +146,7 @@ public class DNSName implements GeneralNameInterface {
         if (!(obj instanceof DNSName))
             return false;
 
-        DNSName other = (DNSName)obj;
+        DNSName other = (DNSName) obj;
 
         // RFC2459 mandates that these names are
         // not case-sensitive
@@ -202,7 +202,7 @@ public class DNSName implements GeneralNameInterface {
             constraintType = NAME_DIFF_TYPE;
         else {
             String inName =
-                (((DNSName)inputName).getName()).toLowerCase(Locale.ENGLISH);
+                (((DNSName) inputName).getName()).toLowerCase(Locale.ENGLISH);
             String thisName = name.toLowerCase(Locale.ENGLISH);
             if (inName.equals(thisName))
                 constraintType = NAME_MATCH;
@@ -235,12 +235,12 @@ public class DNSName implements GeneralNameInterface {
      */
     @Override
     public int subtreeDepth() {
-        String subtree=name;
-        int i=1;
+        String subtree = name;
+        int i = 1;
 
         /* count dots */
         for (; subtree.lastIndexOf('.') >= 0; i++) {
-            subtree=subtree.substring(0,subtree.lastIndexOf('.'));
+            subtree = subtree.substring(0, subtree.lastIndexOf('.'));
         }
 
         return i;

@@ -23,7 +23,7 @@ public class ChangesetTagsPanel extends JPanel implements PropertyChangeListener
 
     protected void build() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         model = new TagEditorModel();
         TagTable tblTags = new TagTable(model);
         tblTags.setEnabled(false);
@@ -52,7 +52,7 @@ public class ChangesetTagsPanel extends JPanel implements PropertyChangeListener
     public void propertyChange(PropertyChangeEvent evt) {
         if (!evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
             return;
-        Changeset cs = (Changeset)evt.getNewValue();
+        Changeset cs = (Changeset) evt.getNewValue();
         if (cs == null) {
             model.clear();
         } else {

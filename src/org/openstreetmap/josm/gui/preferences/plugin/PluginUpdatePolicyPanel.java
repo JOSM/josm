@@ -65,7 +65,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx  =1.0;
+        gc.weightx = 1.0;
 
         ButtonGroup bgVersionBasedUpdatePolicy = new ButtonGroup();
         rbVersionBasedUpatePolicy = new EnumMap<>(Policy.class);
@@ -83,7 +83,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
 
         JMultilineLabel lbl = new JMultilineLabel(
                 tr("Please decide whether JOSM shall automatically update active plugins at startup after an update of JOSM itself."));
-        gc.gridy=0;
+        gc.gridy = 0;
         pnl.add(lbl, gc);
         for (Policy p: Policy.values()) {
             gc.gridy++;
@@ -106,7 +106,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx  =1.0;
+        gc.weightx = 1.0;
 
         TimeBasedPolicyChangeListener changeListener = new TimeBasedPolicyChangeListener();
 
@@ -129,7 +129,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
 
         JMultilineLabel lbl = new JMultilineLabel(
                 tr("Please decide whether JOSM shall automatically update active plugins after a certain period of time."));
-        gc.gridy=0;
+        gc.gridy = 0;
         pnl.add(lbl, gc);
         for (Policy p: Policy.values()) {
             gc.gridy++;
@@ -145,8 +145,8 @@ public class PluginUpdatePolicyPanel extends JPanel {
         GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx  =1.0;
-        gc.insets = new Insets(5,5,10,5);
+        gc.weightx = 1.0;
+        gc.insets = new Insets(5, 5, 10, 5);
 
         add(buildVersionBasedUpdatePolicyPanel(), gc);
         gc.gridy = 1;
@@ -193,7 +193,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
             pref = pref.trim();
             try {
                 days = Integer.parseInt(pref);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 // ignore - load from preference pluginmanager.time-based-update.interval
             }
             if (days <= 0) {
@@ -237,7 +237,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
             if (days <= 0) {
                 days = PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL;
             }
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             days = PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL;
         }
         Main.pref.putInteger("pluginmanager.time-based-update.interval", days);

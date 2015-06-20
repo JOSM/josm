@@ -28,14 +28,14 @@ public class TagMergerTest extends JFrame {
         tagMerger.getModel().addItem(new TagMergeItem("key", null, "theirvalue"));
         tagMerger.getModel().addItem(new TagMergeItem("a very long key asdfasdf asdfasdf", "a very long value asdfasdf",
                 "a very long value asdfasdf"));
-        for (int i=0; i< 50; i++) {
+        for (int i = 0; i < 50; i++) {
           tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", "theirvalue"));
         }
     }
 
     public static void main(String args[]) {
         TagMergerTest test  = new TagMergerTest();
-        test.setSize(600,600);
+        test.setSize(600, 600);
         test.setVisible(true);
     }
 }

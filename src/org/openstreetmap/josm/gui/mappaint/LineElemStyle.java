@@ -29,6 +29,7 @@ public class LineElemStyle extends ElemStyle {
         }
         return createLine(new Environment(null, mc, "default", null));
     }
+
     public static final LineElemStyle UNTAGGED_WAY = createSimpleLineStyle(null, false);
 
     private BasicStroke line;
@@ -138,7 +139,7 @@ public class LineElemStyle extends ElemStyle {
             if (widthTag != null) {
                 try {
                     realWidth = Float.valueOf(widthTag);
-                } catch(NumberFormatException nfe) {
+                } catch (NumberFormatException nfe) {
                     Main.warn(nfe);
                 }
             }
@@ -264,7 +265,7 @@ public class LineElemStyle extends ElemStyle {
     @Override
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member) {
-        Way w = (Way)primitive;
+        Way w = (Way) primitive;
         /* show direction arrows, if draw.segment.relevant_directions_only is not set,
         the way is tagged with a direction key
         (even if the tag is negated as in oneway=false) or the way is selected */
@@ -298,7 +299,7 @@ public class LineElemStyle extends ElemStyle {
             myColor = paintSettings.getSelectedColor(color.getAlpha());
         } else if (member || outermember) {
             myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
-        } else if(w.isDisabled()) {
+        } else if (w.isDisabled()) {
             myColor = paintSettings.getInactiveColor();
             myDashedColor = paintSettings.getInactiveColor();
         }
@@ -306,11 +307,11 @@ public class LineElemStyle extends ElemStyle {
         painter.drawWay(w, myColor, myLine, myDashLine, myDashedColor, offset, showOrientation,
                 showOnlyHeadArrowOnly, showOneway, onewayReversed);
 
-        if(paintSettings.isShowOrderNumber() && !painter.isInactiveMode()) {
+        if (paintSettings.isShowOrderNumber() && !painter.isInactiveMode()) {
             int orderNumber = 0;
             lastN = null;
-            for(Node n : w.getNodes()) {
-                if(lastN != null) {
+            for (Node n : w.getNodes()) {
+                if (lastN != null) {
                     orderNumber++;
                     painter.drawOrderNumber(lastN, n, orderNumber, myColor);
                 }

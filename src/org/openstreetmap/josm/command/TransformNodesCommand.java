@@ -129,7 +129,7 @@ public abstract class TransformNodesCommand extends Command {
      * @see org.openstreetmap.josm.tools.Geometry#getCentroid(java.util.List)
      */
     public EastNorth getNodesCenter() {
-        EastNorth sum = new EastNorth(0,0);
+        EastNorth sum = new EastNorth(0, 0);
 
         for (Node n : nodes) {
             EastNorth en = n.getEastNorth();

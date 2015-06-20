@@ -29,7 +29,7 @@ public final class OsmUtils {
     }
 
     public static Boolean getOsmBoolean(String value) {
-        if(value == null) return null;
+        if (value == null) return null;
         String lowerValue = value.toLowerCase(Locale.ENGLISH);
         if (TRUE_VALUES.contains(lowerValue)) return Boolean.TRUE;
         if (FALSE_VALUES.contains(lowerValue)) return Boolean.FALSE;

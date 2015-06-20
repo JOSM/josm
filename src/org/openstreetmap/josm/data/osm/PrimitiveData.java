@@ -55,9 +55,9 @@ public abstract class PrimitiveData extends AbstractPrimitive {
     @SuppressWarnings("unchecked")
     public static <T extends PrimitiveData> List<T> getFilteredList(Collection<T> list, OsmPrimitiveType type) {
         List<T> ret = new ArrayList<>();
-        for(PrimitiveData p: list) {
+        for (PrimitiveData p: list) {
             if (type.getDataClass().isInstance(p)) {
-                ret.add((T)p);
+                ret.add((T) p);
             }
         }
         return ret;

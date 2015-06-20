@@ -59,12 +59,12 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      */
     protected JPanel buildAdvancedPropertiesPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        GridBagConstraints gc= new GridBagConstraints();
+        GridBagConstraints gc = new GridBagConstraints();
 
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,0,3);
+        gc.insets = new Insets(0, 0, 0, 3);
         pnl.add(cbShowAdvancedParameters = new JCheckBox(), gc);
         cbShowAdvancedParameters.setSelected(false);
         cbShowAdvancedParameters.addItemListener(
@@ -84,7 +84,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         gc.gridy = 1;
         gc.gridx = 1;
-        gc.insets = new Insets(3,0,3,0);
+        gc.insets = new Insets(3, 0, 3, 0);
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
@@ -93,7 +93,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         pnlAdvancedProperties.setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(Color.GRAY, 1),
-                        BorderFactory.createEmptyBorder(3,3,3,3)
+                        BorderFactory.createEmptyBorder(3, 3, 3, 3)
                 )
         );
         pnlAdvancedProperties.setVisible(false);
@@ -105,7 +105,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      */
     protected final void build() {
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         GridBagConstraints gc = new GridBagConstraints();
 
         // the panel for the OAuth parameters. pnlAuthorisationMessage is an
@@ -115,7 +115,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weighty = 1.0;
         gc.weightx = 1.0;
-        gc.insets = new Insets(10,0,0,0);
+        gc.insets = new Insets(10, 0, 0, 0);
         add(pnlAuthorisationMessage = new JPanel(), gc);
         pnlAuthorisationMessage.setLayout(new BorderLayout());
 
@@ -192,7 +192,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
             // A message explaining that the user isn't authorised yet
             gc.anchor = GridBagConstraints.NORTHWEST;
-            gc.insets = new Insets(0,0,3,0);
+            gc.insets = new Insets(0, 0, 3, 0);
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             JMultilineLabel lbl;
@@ -227,7 +227,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
             gc.anchor = GridBagConstraints.NORTHWEST;
-            gc.insets = new Insets(0,0,3,3);
+            gc.insets = new Insets(0, 0, 3, 3);
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.gridwidth = 2;
@@ -295,12 +295,15 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         public final void refreshView() {
             String v = OAuthAccessTokenHolder.getInstance().getAccessTokenKey();
-            tfAccessTokenKey.setText(v == null? "" : v);
+            tfAccessTokenKey.setText(v == null ? "" : v);
             v = OAuthAccessTokenHolder.getInstance().getAccessTokenSecret();
-            tfAccessTokenSecret.setText(v == null? "" : v);
+            tfAccessTokenSecret.setText(v == null ? "" : v);
             cbSaveToPreferences.setSelected(OAuthAccessTokenHolder.getInstance().isSaveToPreferences());
         }
 
+        /**
+         * Constructs a new {@code AlreadyAuthorisedPanel}.
+         */
         public AlreadyAuthorisedPanel() {
             build();
             refreshView();
@@ -315,8 +318,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             putValue(NAME, tr("Authorize now"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
-
         }
+
         @Override
         public void actionPerformed(ActionEvent arg0) {
             OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
@@ -337,12 +340,16 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      * Launches the OAuthAuthorisationWizard to generate a new Access Token
      */
     private class RenewAuthorisationAction extends AbstractAction {
+        /**
+         * Constructs a new {@code RenewAuthorisationAction}.
+         */
         public RenewAuthorisationAction() {
             putValue(NAME, tr("New Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process and generate a new Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
 
         }
+
         @Override
         public void actionPerformed(ActionEvent arg0) {
             OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
@@ -391,6 +398,6 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     public void propertyChange(PropertyChangeEvent evt) {
         if (!evt.getPropertyName().equals(OsmApiUrlInputPanel.API_URL_PROP))
             return;
-        setApiUrl((String)evt.getNewValue());
+        setApiUrl((String) evt.getNewValue());
     }
 }

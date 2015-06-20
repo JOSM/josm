@@ -32,7 +32,7 @@ public final class ValUtil {
      * @param cellWays The map with all cells
      * @return A list with all the cells the way starts or ends
      */
-    public static List<List<Way>> getWaysInCell(Way w, Map<Point2D,List<Way>> cellWays) {
+    public static List<List<Way>> getWaysInCell(Way w, Map<Point2D, List<Way>> cellWays) {
         if (w.getNodesCount() == 0)
             return Collections.emptyList();
 

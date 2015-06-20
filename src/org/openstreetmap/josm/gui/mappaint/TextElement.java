@@ -77,7 +77,7 @@ public class TextElement implements StyleKeys {
      * @param c the style properties
      * @return the label composition strategy
      */
-    protected static LabelCompositionStrategy buildLabelCompositionStrategy(Cascade c, boolean defaultAnnotate){
+    protected static LabelCompositionStrategy buildLabelCompositionStrategy(Cascade c, boolean defaultAnnotate) {
         /*
          * If the cascade includes a TagKeyReference we will lookup the rendered label
          * from a tag value.

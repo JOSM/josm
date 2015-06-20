@@ -216,7 +216,7 @@ public class APIDataSet {
      *
      * @throws CyclicUploadDependencyException if a cyclic dependency is detected
      */
-    public void adjustRelationUploadOrder() throws CyclicUploadDependencyException{
+    public void adjustRelationUploadOrder() throws CyclicUploadDependencyException {
         List<OsmPrimitive> newToAdd = new LinkedList<>();
         newToAdd.addAll(Utils.filteredCollection(toAdd, Node.class));
         newToAdd.addAll(Utils.filteredCollection(toAdd, Way.class));
@@ -282,14 +282,14 @@ public class APIDataSet {
 
         public final void build(Collection<Relation> relations) {
             this.relations = new HashSet<>();
-            for(Relation relation: relations) {
+            for (Relation relation: relations) {
                 if (newOrUndeleted ? !relation.isNewOrUndeleted() : !relation.isDeleted()) {
                     continue;
                 }
                 this.relations.add(relation);
                 for (RelationMember m: relation.getMembers()) {
                     if (m.isRelation() && (newOrUndeleted ? m.getMember().isNewOrUndeleted() : m.getMember().isDeleted())) {
-                        addDependency(relation, (Relation)m.getMember());
+                        addDependency(relation, (Relation) m.getMember());
                     }
                 }
             }
@@ -308,7 +308,7 @@ public class APIDataSet {
             getChildren(relation).add(child);
         }
 
-        protected void visit(Stack<Relation> path, Relation current) throws CyclicUploadDependencyException{
+        protected void visit(Stack<Relation> path, Relation current) throws CyclicUploadDependencyException {
             if (path.contains(current)) {
                 path.push(current);
                 throw new CyclicUploadDependencyException(path);
@@ -317,7 +317,7 @@ public class APIDataSet {
                 path.push(current);
                 visited.add(current);
                 for (Relation dependent : getChildren(current)) {
-                    visit(path,dependent);
+                    visit(path, dependent);
                 }
                 uploadOrder.add(current);
                 path.pop();

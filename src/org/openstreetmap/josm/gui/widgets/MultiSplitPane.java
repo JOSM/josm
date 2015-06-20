@@ -64,15 +64,14 @@ public class MultiSplitPane extends JPanel {
     }
 
     /**
-     * A convenience method that returns the layout manager cast
-     * to MutliSplitLayout.
+     * A convenience method that returns the layout manager cast to MultiSplitLayout.
      *
      * @return this MultiSplitPane's layout manager
      * @see java.awt.Container#getLayout
      * @see #setModel
      */
     public final MultiSplitLayout getMultiSplitLayout() {
-        return (MultiSplitLayout)getLayout();
+        return (MultiSplitLayout) getLayout();
     }
 
     /**
@@ -158,7 +157,7 @@ public class MultiSplitPane extends JPanel {
         @Override
         public void paint(Graphics g, Divider divider) {
             if ((divider == activeDivider()) && !isContinuousLayout()) {
-                Graphics2D g2d = (Graphics2D)g;
+                Graphics2D g2d = (Graphics2D) g;
                 g2d.setColor(Color.black);
                 g2d.fill(divider.getBounds());
             }
@@ -210,7 +209,7 @@ public class MultiSplitPane extends JPanel {
             Graphics dpg = g.create();
             try {
                 MultiSplitLayout msl = getMultiSplitLayout();
-                for(Divider divider : msl.dividersThatOverlap(clipR)) {
+                for (Divider divider : msl.dividersThatOverlap(clipR)) {
                     dp.paint(dpg, divider);
                 }
             } finally {
@@ -365,22 +364,27 @@ public class MultiSplitPane extends JPanel {
         public void mousePressed(MouseEvent e) {
             startDrag(e.getX(), e.getY());
         }
+
         @Override
         public void mouseReleased(MouseEvent e) {
             finishDrag();
         }
+
         @Override
         public void mouseDragged(MouseEvent e) {
             updateDrag(e.getX(), e.getY());
         }
+
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 cancelDrag();
             }
         }
+
         @Override
         public void keyReleased(KeyEvent e) { }
+
         @Override
         public void keyTyped(KeyEvent e) { }
     }

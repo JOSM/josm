@@ -57,7 +57,8 @@ import org.xml.sax.SAXException;
  */
 public class SessionReader {
 
-    private static Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<>();
+    private static final Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<>();
+
     static {
         registerSessionLayerImporter("osm-data", OsmDataSessionImporter.class);
         registerSessionLayerImporter("imagery", ImagerySessionImporter.class);
@@ -351,7 +352,7 @@ public class SessionReader {
 
         NodeList nodes = layersEl.getChildNodes();
 
-        for (int i=0; i<nodes.getLength(); ++i) {
+        for (int i = 0; i < nodes.getLength(); ++i) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element e = (Element) node;

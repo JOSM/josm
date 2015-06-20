@@ -35,7 +35,7 @@ public class Tokenizer {
 
         @Override
         public String toString() {
-            return type + (text != null?" " + text:"");
+            return type + (text != null ? " " + text : "");
         }
     }
 
@@ -84,14 +84,14 @@ public class Tokenizer {
                 getChar();
                 return new Token(TokenType.CONDITION_START, position);
             } else
-                throw ParseError.unexpectedChar('{', (char)c, position);
+                throw ParseError.unexpectedChar('{', (char) c, position);
         case '!':
             getChar();
             if (c == '{') {
                 getChar();
                 return new Token(TokenType.CONTEXT_SWITCH_START, position);
             } else
-                throw ParseError.unexpectedChar('{', (char)c, position);
+                throw ParseError.unexpectedChar('{', (char) c, position);
         case '}':
             getChar();
             return new Token(TokenType.END, position);
@@ -102,14 +102,14 @@ public class Tokenizer {
             getChar();
             return new Token(TokenType.APOSTROPHE, position);
         default:
-            while (c != -1 && !specialCharaters.contains((char)c)) {
+            while (c != -1 && !specialCharaters.contains((char) c)) {
                 if (c == '\\') {
                     getChar();
                     if (c == 'n') {
                         c = '\n';
                     }
                 }
-                text.append((char)c);
+                text.append((char) c);
                 getChar();
             }
             return new Token(TokenType.TEXT, position, text.toString());
@@ -131,10 +131,9 @@ public class Tokenizer {
             if (c == '\\') {
                 getChar();
             }
-            result.append((char)c);
+            result.append((char) c);
             getChar();
         }
         return new Token(TokenType.TEXT, position, result.toString());
     }
-
 }

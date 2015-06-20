@@ -178,10 +178,10 @@ public class Bounds {
             throw new IllegalArgumentException(
                     MessageFormat.format("Exactly four doubles expected in string, got {0}: {1}", components.length, asString));
         double[] values = new double[4];
-        for (int i=0; i<4; i++) {
+        for (int i = 0; i < 4; i++) {
             try {
                 values[i] = Double.parseDouble(components[i]);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", components[i]), e);
             }
         }
@@ -280,7 +280,7 @@ public class Bounds {
         if (crosses180thMeridian()) {
             double lat = (minLat + maxLat) / 2;
             double lon = (minLon + maxLon - 360.0) / 2;
-            if (lon < -180.0){
+            if (lon < -180.0) {
                 lon += 360.0;
             }
             return new LatLon(lat, lon);

@@ -51,7 +51,7 @@ public final class TaggingPresets {
             Main.main.menu.presetsMenu.setVisible(false);
         } else {
             AutoCompletionManager.cachePresets(taggingPresets);
-            Map<TaggingPresetMenu,JMenu> submenus = new HashMap<>();
+            Map<TaggingPresetMenu, JMenu> submenus = new HashMap<>();
             for (final TaggingPreset p : taggingPresets) {
                 JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
                 if (p instanceof TaggingPresetSeparator) {
@@ -59,8 +59,8 @@ public final class TaggingPresets {
                 } else if (p instanceof TaggingPresetMenu) {
                     JMenu submenu = new JMenu(p);
                     submenu.setText(p.getLocaleName());
-                    ((TaggingPresetMenu)p).menu = submenu;
-                    submenus.put((TaggingPresetMenu)p, submenu);
+                    ((TaggingPresetMenu) p).menu = submenu;
+                    submenus.put((TaggingPresetMenu) p, submenu);
                     m.add(submenu);
                 } else {
                     JMenuItem mi = new JMenuItem(p);

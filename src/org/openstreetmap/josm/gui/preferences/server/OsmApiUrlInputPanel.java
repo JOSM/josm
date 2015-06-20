@@ -71,7 +71,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 1.0;
-        gc.insets = new Insets(0,0,0,0);
+        gc.insets = new Insets(0, 0, 0, 0);
         gc.gridwidth  = 4;
         add(buildDefaultServerUrlPanel(), gc);
 
@@ -81,7 +81,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         gc.gridy = 1;
         gc.gridwidth = 1;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,0,3);
+        gc.insets = new Insets(0, 0, 0, 3);
         add(lblApiUrl = new JLabel(tr("OSM Server URL:")), gc);
 
         gc.gridx = 1;
@@ -254,7 +254,7 @@ public class OsmApiUrlInputPanel extends JPanel {
             try {
                 new URL(getComponent().getText().trim());
                 return true;
-            } catch(MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 return false;
             }
         }

@@ -41,7 +41,7 @@ public class TextTagParserTest {
         String txt = "   a  \t  1   \n\n\n  b\t2 \n c \t the value with \"quotes\"";
         Map<String, String> correctTags = new HashMap<String, String>() { {
             put("a", "1"); put("b", "2"); put("c", "the value with \"quotes\"");
-        }};
+        } };
         Map<String, String> tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
     }
@@ -52,7 +52,7 @@ public class TextTagParserTest {
         Map<String, String> correctTags = new HashMap<String, String>() { {
             put("key1", "value"); put("key2", "long value");
             put("tag3", "hotel \"Quote\"");
-        }};
+        } };
         Map<String, String> tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
     }
@@ -62,17 +62,17 @@ public class TextTagParserTest {
         String txt;
         Map<String, String> tags, correctTags;
         txt = "{ \"a\":\"1\", \"b\":\"2 3 4\" }";
-        correctTags= new HashMap<String, String>() { {  put("a", "1"); put("b", "2 3 4"); }};
+        correctTags = new HashMap<String, String>() { { put("a", "1"); put("b", "2 3 4"); } };
         tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
 
         txt = "\"a\"  :     \"1 1 1\", \"b2\"  :\"2 \\\"3 qwe\\\" 4\"";
-        correctTags= new HashMap<String, String>() { { put("a", "1 1 1"); put("b2", "2 \"3 qwe\" 4");}};
+        correctTags = new HashMap<String, String>() { { put("a", "1 1 1"); put("b2", "2 \"3 qwe\" 4"); } };
         tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
 
         txt = " \"aыыы\"   :    \"val\\\"\\\"\\\"ue1\"";
-        correctTags= new HashMap<String, String>() { { put("aыыы", "val\"\"\"ue1");} };
+        correctTags = new HashMap<String, String>() { { put("aыыы", "val\"\"\"ue1"); } };
         tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
     }
@@ -82,7 +82,7 @@ public class TextTagParserTest {
         String txt = "a 1 b=2 c=\"hello === \\\"\\\"world\"";
         Map<String, String> correctTags = new HashMap<String, String>() { {
             put("a", "1"); put("b", "2"); put("c", "hello === \"\"world");
-        }};
+        } };
         Map<String, String> tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
     }

@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public class SaveLayersModel extends DefaultTableModel {
     public static final String MODE_PROP = SaveLayerInfo.class.getName() + ".mode";
+
     public enum Mode {
         EDITING_DATA,
         UPLOADING_AND_SAVING
@@ -103,7 +104,7 @@ public class SaveLayersModel extends DefaultTableModel {
     public void setValueAt(Object value, int row, int column) {
         switch(column) {
         case columnFilename:
-            this.layerInfo.get(row).setFile((File)value);
+            this.layerInfo.get(row).setFile((File) value);
             this.layerInfo.get(row).setDoSaveToFile(true);
             break;
         case columnActions:
@@ -130,7 +131,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersWithIllegalFilesAndSaveRequest() {
-        List<SaveLayerInfo> ret =new ArrayList<>();
+        List<SaveLayerInfo> ret = new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
             if (info.isDoSaveToFile() && info.getFile() != null && info.getFile().exists() && !info.getFile().canWrite()) {
                 ret.add(info);
@@ -143,7 +144,7 @@ public class SaveLayersModel extends DefaultTableModel {
         List<SaveLayerInfo> ret = new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
             AbstractModifiableLayer l = info.getLayer();
-            if (info.isDoUploadToServer() && l instanceof OsmDataLayer && !((OsmDataLayer)l).getConflicts().isEmpty()) {
+            if (info.isDoUploadToServer() && l instanceof OsmDataLayer && !((OsmDataLayer) l).getConflicts().isEmpty()) {
                 ret.add(info);
             }
         }

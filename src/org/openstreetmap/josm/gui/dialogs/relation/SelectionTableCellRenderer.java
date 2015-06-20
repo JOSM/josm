@@ -18,8 +18,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class SelectionTableCellRenderer extends JLabel implements TableCellRenderer {
-    public static final Color BGCOLOR_DOUBLE_ENTRY = new Color(254,226,214);
-    public static final Color BGCOLOR_SINGLE_ENTRY = new Color(235,255,177);
+    public static final Color BGCOLOR_DOUBLE_ENTRY = new Color(254, 226, 214);
+    public static final Color BGCOLOR_SINGLE_ENTRY = new Color(235, 255, 177);
 
     /**
      * reference to the member table model; required, in order to check whether a
@@ -71,8 +71,8 @@ public class SelectionTableCellRenderer extends JLabel implements TableCellRende
         if (value == null)
             return this;
 
-        renderBackground((OsmPrimitive)value, isSelected);
-        renderPrimitive((OsmPrimitive)value);
+        renderBackground((OsmPrimitive) value, isSelected);
+        renderPrimitive((OsmPrimitive) value);
         return this;
     }
 

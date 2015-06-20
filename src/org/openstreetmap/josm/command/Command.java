@@ -44,10 +44,12 @@ public abstract class Command extends PseudoCommand {
         public void visit(Node n) {
             orig.put(n, n.save());
         }
+
         @Override
         public void visit(Way w) {
             orig.put(w, w.save());
         }
+
         @Override
         public void visit(Relation e) {
             orig.put(e, e.save());
@@ -67,7 +69,7 @@ public abstract class Command extends PseudoCommand {
          * Constructs a new {@code OldNodeState} for the given node.
          * @param node The node whose state has to be remembered
          */
-        public OldNodeState(Node node){
+        public OldNodeState(Node node) {
             latlon = node.getCoor();
             eastNorth = node.getEastNorth();
             modified = node.isModified();
@@ -279,7 +281,7 @@ public abstract class Command extends PseudoCommand {
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     JOptionPane.YES_OPTION);
-            if(!answer)
+            if (!answer)
                 return false;
         }
         if (incomplete) {
@@ -293,7 +295,7 @@ public abstract class Command extends PseudoCommand {
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     JOptionPane.YES_OPTION);
-            if(!answer)
+            if (!answer)
                 return false;
         }
         return true;

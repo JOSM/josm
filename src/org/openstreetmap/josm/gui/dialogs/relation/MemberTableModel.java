@@ -112,6 +112,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     public void nodeMoved(NodeMovedEvent event) {
         // ignore
     }
+
     @Override
     public void primitivesAdded(PrimitivesAddedEvent event) {
         // ignore
@@ -136,7 +137,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         // just refresh the respective table cells
         //
         Collection<RelationMember> sel = getSelectedMembers();
-        for (int i=0; i < members.size();i++) {
+        for (int i = 0; i < members.size(); i++) {
             if (members.get(i).getMember() == event.getPrimitive()) {
                 fireTableCellUpdated(i, 1 /* the column with the primitive name */);
             }
@@ -648,10 +649,10 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         if (primitives == null) return;
         getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
-        for (int i=0; i< members.size();i++) {
+        for (int i = 0; i < members.size(); i++) {
             RelationMember m = members.get(i);
             if (primitives.contains(m.getMember())) {
-                this.getSelectionModel().addSelectionInterval(i,i);
+                this.getSelectionModel().addSelectionInterval(i, i);
             }
         }
         getSelectionModel().setValueIsAdjusting(false);
@@ -699,7 +700,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
             List<Integer> selectedIndices = getSelectedIndices();
             newMembers = new ArrayList<>();
             boolean inserted = false;
-            for (int i=0; i < members.size(); i++) {
+            for (int i = 0; i < members.size(); i++) {
                 if (selectedIndices.contains(i)) {
                     if (!inserted) {
                         newMembers.addAll(sortedMembers);
@@ -759,7 +760,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
 
             List<RelationMember> newMembers = new ArrayList<>(members);
 
-            for (int i=0; i < selectedIndices.size(); i++) {
+            for (int i = 0; i < selectedIndices.size(); i++) {
                 newMembers.set(selectedIndices.get(i), members.get(selectedIndicesReversed.get(i)));
             }
 

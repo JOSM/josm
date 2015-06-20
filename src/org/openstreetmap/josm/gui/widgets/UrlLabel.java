@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -10,8 +12,6 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Label that contains a clickable link.
@@ -66,7 +66,7 @@ public class UrlLabel extends JLabel implements MouseListener {
         this();
         setUrl(url);
         setDescription(description);
-        if (fontPlus!=0) {
+        if (fontPlus != 0) {
             setFont(getFont().deriveFont(0, getFont().getSize()+fontPlus));
         }
         refresh();
@@ -101,7 +101,7 @@ public class UrlLabel extends JLabel implements MouseListener {
      * @param description the description
      */
     public final void setDescription(String description) {
-        this.description = description == null? "" : description;
+        this.description = description == null ? "" : description;
         this.description = this.description.replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;");
         refresh();
     }

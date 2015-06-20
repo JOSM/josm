@@ -148,7 +148,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         moveNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.move-node", "1 6"));
         addNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.add-node", "1"));
         deleteNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.delete-node", "1"));
-        dotSize = Main.pref.getInteger("improvewayaccuracy.dot-size",6);
+        dotSize = Main.pref.getInteger("improvewayaccuracy.dot-size", 6);
     }
 
     @Override

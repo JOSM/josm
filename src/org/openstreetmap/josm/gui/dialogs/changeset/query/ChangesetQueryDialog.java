@@ -144,7 +144,7 @@ public class ChangesetQueryDialog extends JDialog {
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             getParent(),
-                            new Dimension(400,400)
+                            new Dimension(400, 400)
                     )
             ).applySafe(this);
             setCanceled(false);

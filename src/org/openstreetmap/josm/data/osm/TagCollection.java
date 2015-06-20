@@ -72,13 +72,13 @@ public class TagCollection implements Iterable<Tag> {
      * @param tags  the key/value-pairs
      * @return the tag collection
      */
-    public static TagCollection from(Map<String,String> tags) {
+    public static TagCollection from(Map<String, String> tags) {
         TagCollection ret = new TagCollection();
         if (tags == null) return ret;
-        for (Entry<String,String> entry: tags.entrySet()) {
-            String key = entry.getKey() == null? "" : entry.getKey();
+        for (Entry<String, String> entry: tags.entrySet()) {
+            String key = entry.getKey() == null ? "" : entry.getKey();
             String value = entry.getValue() == null ? "" : entry.getValue();
-            ret.add(new Tag(key,value));
+            ret.add(new Tag(key, value));
         }
         return ret;
     }
@@ -198,7 +198,7 @@ public class TagCollection implements Iterable<Tag> {
      *
      * @param tag the tag to add
      */
-    public final void add(Tag tag){
+    public final void add(Tag tag) {
         if (tag == null) return;
         if (tags.contains(tag)) return;
         tags.add(tag);
@@ -212,7 +212,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     public final void add(Collection<Tag> tags) {
         if (tags == null) return;
-        for (Tag tag: tags){
+        for (Tag tag: tags) {
             add(tag);
         }
     }
@@ -268,9 +268,9 @@ public class TagCollection implements Iterable<Tag> {
      * @param key the key to be removed
      */
     public void removeByKey(String key) {
-        if (key  == null) return;
+        if (key == null) return;
         Iterator<Tag> it = tags.iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             if (it.next().matchesKey(key)) {
                 it.remove();
             }
@@ -460,7 +460,7 @@ public class TagCollection implements Iterable<Tag> {
         TagCollection ret = new TagCollection();
         if (keys == null)
             return ret;
-        for(String key : keys) {
+        for (String key : keys) {
             if (key != null) {
                 ret.add(getTagsFor(key));
             }
@@ -519,7 +519,7 @@ public class TagCollection implements Iterable<Tag> {
         Map<String, Integer> counters = new HashMap<>();
         for (Tag tag: tags) {
             Integer v = counters.get(tag.getKey());
-            counters.put(tag.getKey(),(v==null) ? 1 : v+1);
+            counters.put(tag.getKey(), (v == null) ? 1 : v+1);
         }
         Set<String> ret = new HashSet<>();
         for (Entry<String, Integer> e : counters.entrySet()) {
@@ -717,7 +717,7 @@ public class TagCollection implements Iterable<Tag> {
 
     public TagCollection emptyTagsForKeysMissingIn(TagCollection other) {
         TagCollection ret = new TagCollection();
-        for(String key: this.minus(other).getKeys()) {
+        for (String key: this.minus(other).getKeys()) {
             ret.add(new Tag(key));
         }
         return ret;
@@ -776,7 +776,6 @@ public class TagCollection implements Iterable<Tag> {
         }
         return Integer.toString(result);
     }
-
 
     @Override
     public String toString() {

@@ -40,7 +40,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
 
     public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer, Dialog dialog) {
         super(tr("Download relation members"), new PleaseWaitProgressMonitor(dialog), false /* don't ignore exception */);
-        if(parent != null)
+        if (parent != null)
             this.parents.add(parent);
         this.children = children;
         this.curLayer = curLayer;
@@ -48,7 +48,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
 
     public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer) {
         super(tr("Download relation members"), false /* don't ignore exception */);
-        if(parent != null)
+        if (parent != null)
             this.parents.add(parent);
         this.children = children;
         this.curLayer = curLayer;
@@ -72,7 +72,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (objectReader != null) {
                 objectReader.cancel();
             }

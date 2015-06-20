@@ -90,7 +90,7 @@ public class ScrollViewport extends JPanel {
         if ((direction & UP_DIRECTION) > 0) {
             button = new JButton();
             button.addMouseListener(new ScrollViewPortMouseListener(UP_DIRECTION));
-            button.setPreferredSize(new Dimension(10,10));
+            button.setPreferredSize(new Dimension(10, 10));
             button.setIcon(ImageProvider.get("svpUp"));
             add(button, BorderLayout.NORTH);
             buttons.add(button);
@@ -100,7 +100,7 @@ public class ScrollViewport extends JPanel {
         if ((direction & DOWN_DIRECTION) > 0) {
             button = new JButton();
             button.addMouseListener(new ScrollViewPortMouseListener(DOWN_DIRECTION));
-            button.setPreferredSize(new Dimension(10,10));
+            button.setPreferredSize(new Dimension(10, 10));
             button.setIcon(ImageProvider.get("svpDown"));
             add(button, BorderLayout.SOUTH);
             buttons.add(button);
@@ -110,7 +110,7 @@ public class ScrollViewport extends JPanel {
         if ((direction & LEFT_DIRECTION) > 0) {
             button = new JButton();
             button.addMouseListener(new ScrollViewPortMouseListener(LEFT_DIRECTION));
-            button.setPreferredSize(new Dimension(10,10));
+            button.setPreferredSize(new Dimension(10, 10));
             button.setIcon(ImageProvider.get("svpLeft"));
             add(button, BorderLayout.WEST);
             buttons.add(button);
@@ -120,7 +120,7 @@ public class ScrollViewport extends JPanel {
         if ((direction & RIGHT_DIRECTION) > 0) {
             button = new JButton();
             button.addMouseListener(new ScrollViewPortMouseListener(RIGHT_DIRECTION));
-            button.setPreferredSize(new Dimension(10,10));
+            button.setPreferredSize(new Dimension(10, 10));
             button.setIcon(ImageProvider.get("svpRight"));
             add(button, BorderLayout.EAST);
             buttons.add(button);
@@ -168,6 +168,7 @@ public class ScrollViewport extends JPanel {
 
         scroll(deltaX, deltaY);
     }
+
     public synchronized void scroll(int deltaX, int deltaY) {
         if (component == null)
             return;

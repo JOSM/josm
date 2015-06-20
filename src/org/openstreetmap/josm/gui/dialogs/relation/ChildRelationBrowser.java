@@ -93,11 +93,11 @@ public class ChildRelationBrowser extends JPanel {
         pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         // ---
-        DownloadAllChildRelationsAction downloadAction= new DownloadAllChildRelationsAction();
+        DownloadAllChildRelationsAction downloadAction = new DownloadAllChildRelationsAction();
         pnl.add(new JButton(downloadAction));
 
         // ---
-        DownloadSelectedAction downloadSelectedAction= new DownloadSelectedAction();
+        DownloadSelectedAction downloadSelectedAction = new DownloadSelectedAction();
         childTree.addTreeSelectionListener(downloadSelectedAction);
         pnl.add(new JButton(downloadSelectedAction));
 
@@ -160,10 +160,10 @@ public class ChildRelationBrowser extends JPanel {
      */
     protected Dialog getParentDialog() {
         Component c  = this;
-        while(c != null && !(c instanceof Dialog)) {
+        while (c != null && !(c instanceof Dialog)) {
             c = c.getParent();
         }
-        return (Dialog)c;
+        return (Dialog) c;
     }
 
     /**
@@ -189,8 +189,8 @@ public class ChildRelationBrowser extends JPanel {
             if (selection == null || selection.length == 0) return;
             // do not launch more than 10 relation editors in parallel
             //
-            for (int i=0; i < Math.min(selection.length,10);i++) {
-                Relation r = (Relation)selection[i].getLastPathComponent();
+            for (int i = 0; i < Math.min(selection.length, 10); i++) {
+                Relation r = (Relation) selection[i].getLastPathComponent();
                 if (r.isIncomplete()) {
                     continue;
                 }
@@ -224,7 +224,7 @@ public class ChildRelationBrowser extends JPanel {
         }
 
         public void run() {
-            Main.worker.submit(new DownloadAllChildrenTask(getParentDialog(), (Relation)model.getRoot()));
+            Main.worker.submit(new DownloadAllChildrenTask(getParentDialog(), (Relation) model.getRoot()));
         }
 
         @Override
@@ -261,7 +261,7 @@ public class ChildRelationBrowser extends JPanel {
             for (TreePath aSelection : selection) {
                 relations.add((Relation) aSelection.getLastPathComponent());
             }
-            Main.worker.submit(new DownloadRelationSetTask(getParentDialog(),relations));
+            Main.worker.submit(new DownloadRelationSetTask(getParentDialog(), relations));
         }
 
         @Override
@@ -292,9 +292,9 @@ public class ChildRelationBrowser extends JPanel {
             OsmApi.getOsmApi().cancel();
         }
 
-        protected void refreshView(Relation relation){
-            for (int i=0; i < childTree.getRowCount(); i++) {
-                Relation reference = (Relation)childTree.getPathForRow(i).getLastPathComponent();
+        protected void refreshView(Relation relation) {
+            for (int i = 0; i < childTree.getRowCount(); i++) {
+                Relation reference = (Relation) childTree.getPathForRow(i).getLastPathComponent();
                 if (reference == relation) {
                     model.refreshNode(childTree.getPathForRow(i));
                 }
@@ -397,7 +397,7 @@ public class ChildRelationBrowser extends JPanel {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                while(!relationsToDownload.isEmpty() && !canceled) {
+                while (!relationsToDownload.isEmpty() && !canceled) {
                     Relation r = relationsToDownload.pop();
                     if (r.isNew()) {
                         continue;
@@ -410,7 +410,7 @@ public class ChildRelationBrowser extends JPanel {
                     try {
                         dataSet = reader.parseOsm(progressMonitor
                                 .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                    } catch(OsmApiException e) {
+                    } catch (OsmApiException e) {
                         if (e.getResponseCode() == HttpURLConnection.HTTP_GONE) {
                             warnBecauseOfDeletedRelation(r);
                             continue;
@@ -462,7 +462,7 @@ public class ChildRelationBrowser extends JPanel {
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 Iterator<Relation> it = relations.iterator();
-                while(it.hasNext() && !canceled) {
+                while (it.hasNext() && !canceled) {
                     Relation r = it.next();
                     if (r.isNew()) {
                         continue;

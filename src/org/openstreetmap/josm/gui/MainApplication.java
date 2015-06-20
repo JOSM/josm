@@ -101,7 +101,7 @@ public class MainApplication extends Main {
         l.add(ImageProvider.get("logo_48x48x8").getImage());
         l.add(ImageProvider.get("logo").getImage());
         mainFrame.setIconImages(l);
-        mainFrame.addWindowListener(new WindowAdapter(){
+        mainFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(final WindowEvent arg0) {
                 Main.exitJosm(true, 0);
@@ -531,7 +531,7 @@ public class MainApplication extends Main {
      * disabling or enabling IPV6 may only be done with next start.
      */
     private static void checkIPv6() {
-        if("auto".equals(Main.pref.get("prefer.ipv6", "auto"))) {
+        if ("auto".equals(Main.pref.get("prefer.ipv6", "auto"))) {
              new Thread(new Runnable() { /* this may take some time (DNS, Connect) */
                 public void run() {
                     boolean hasv6 = false;
@@ -539,14 +539,14 @@ public class MainApplication extends Main {
                     try {
                         /* Use the check result from last run of the software, as after the test, value
                            changes have no effect anymore */
-                        if(wasv6) {
+                        if (wasv6) {
                             Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
                         }
-                        for(InetAddress a : InetAddress.getAllByName("josm.openstreetmap.de")) {
-                            if(a instanceof Inet6Address) {
-                                if(a.isReachable(1000)) {
+                        for (InetAddress a : InetAddress.getAllByName("josm.openstreetmap.de")) {
+                            if (a instanceof Inet6Address) {
+                                if (a.isReachable(1000)) {
                                     Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
-                                    if(!wasv6) {
+                                    if (!wasv6) {
                                         Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4 after next restart."));
                                     } else {
                                         Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4."));
@@ -561,7 +561,7 @@ public class MainApplication extends Main {
                             Main.debug("Exception while checking IPv6 connectivity: "+e);
                         }
                     }
-                    if(wasv6 && !hasv6) {
+                    if (wasv6 && !hasv6) {
                         Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
                     }
                     Main.pref.put("validated.ipv6", hasv6);

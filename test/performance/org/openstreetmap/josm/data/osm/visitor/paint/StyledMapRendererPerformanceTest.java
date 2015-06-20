@@ -34,7 +34,7 @@ public class StyledMapRendererPerformanceTest {
     public static void load() throws Exception {
         JOSMFixture.createPerformanceTestFixture().init();
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
-        g = (Graphics2D)img.getGraphics();
+        g = (Graphics2D) img.getGraphics();
         nc = new NavigatableComponent();
         nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
 
@@ -53,9 +53,9 @@ public class StyledMapRendererPerformanceTest {
     }
 
     private static void test(int iterations, DataSet ds, Bounds bounds) throws Exception {
-        Rendering visitor = new StyledMapRenderer(g,nc,false);
+        Rendering visitor = new StyledMapRenderer(g, nc, false);
         nc.zoomTo(bounds);
-        for (int i=0; i<iterations; i++) {
+        for (int i = 0; i < iterations; i++) {
             visitor.render(ds, true, bounds);
         }
     }

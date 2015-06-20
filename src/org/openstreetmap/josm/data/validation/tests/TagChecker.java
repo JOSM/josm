@@ -264,7 +264,7 @@ public class TagChecker extends TagTest {
                 presetsValueData.putVoid(a);
             }
             // TODO directionKeys are no longer in OsmPrimitive (search pattern is used instead)
-            /*  for(String a : OsmPrimitive.getDirectionKeys())
+            /*  for (String a : OsmPrimitive.getDirectionKeys())
                 presetsValueData.add(a);
              */
             for (String a : Main.pref.getCollection(ValidatorPreference.PREFIX + ".knownkeys",
@@ -344,17 +344,17 @@ public class TagChecker extends TagTest {
                         tr(s, key), MessageFormat.format(s, key), LOW_CHAR_KEY, p));
                 withErrors.put(p, "ICK");
             }
-            if (checkValues && (value!=null && value.length() > 255) && !withErrors.contains(p, "LV")) {
+            if (checkValues && (value != null && value.length() > 255) && !withErrors.contains(p, "LV")) {
                 errors.add(new TestError(this, Severity.ERROR, tr("Tag value longer than allowed"),
                         tr(s, key), MessageFormat.format(s, key), LONG_VALUE, p));
                 withErrors.put(p, "LV");
             }
-            if (checkKeys && (key!=null && key.length() > 255) && !withErrors.contains(p, "LK")) {
+            if (checkKeys && (key != null && key.length() > 255) && !withErrors.contains(p, "LK")) {
                 errors.add(new TestError(this, Severity.ERROR, tr("Tag key longer than allowed"),
                         tr(s, key), MessageFormat.format(s, key), LONG_KEY, p));
                 withErrors.put(p, "LK");
             }
-            if (checkValues && (value==null || value.trim().isEmpty()) && !withErrors.contains(p, "EV")) {
+            if (checkValues && (value == null || value.trim().isEmpty()) && !withErrors.contains(p, "EV")) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Tags with empty values"),
                         tr(s, key), MessageFormat.format(s, key), EMPTY_VALUES, p));
                 withErrors.put(p, "EV");
@@ -391,12 +391,12 @@ public class TagChecker extends TagTest {
                     }
                 }
                 for (String a : ignoreDataEquals) {
-                    if(key.equals(a)) {
+                    if (key.equals(a)) {
                         ignore = true;
                     }
                 }
                 for (String a : ignoreDataEndsWith) {
-                    if(key.endsWith(a)) {
+                    if (key.endsWith(a)) {
                         ignore = true;
                     }
                 }
@@ -507,11 +507,11 @@ public class TagChecker extends TagTest {
         GBC a = GBC.eol();
         a.anchor = GridBagConstraints.EAST;
 
-        testPanel.add(new JLabel(name+" :"), GBC.eol().insets(3,0,0,0));
+        testPanel.add(new JLabel(name+" :"), GBC.eol().insets(3, 0, 0, 0));
 
         prefCheckKeys = new JCheckBox(tr("Check property keys."), Main.pref.getBoolean(PREF_CHECK_KEYS, true));
         prefCheckKeys.setToolTipText(tr("Validate that property keys are valid checking against list of words."));
-        testPanel.add(prefCheckKeys, GBC.std().insets(20,0,0,0));
+        testPanel.add(prefCheckKeys, GBC.std().insets(20, 0, 0, 0));
 
         prefCheckKeysBeforeUpload = new JCheckBox();
         prefCheckKeysBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, true));
@@ -519,7 +519,7 @@ public class TagChecker extends TagTest {
 
         prefCheckComplex = new JCheckBox(tr("Use complex property checker."), Main.pref.getBoolean(PREF_CHECK_COMPLEX, true));
         prefCheckComplex.setToolTipText(tr("Validate property values and tags using complex rules."));
-        testPanel.add(prefCheckComplex, GBC.std().insets(20,0,0,0));
+        testPanel.add(prefCheckComplex, GBC.std().insets(20, 0, 0, 0));
 
         prefCheckComplexBeforeUpload = new JCheckBox();
         prefCheckComplexBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true));
@@ -546,7 +546,7 @@ public class TagChecker extends TagTest {
 
         prefCheckValues = new JCheckBox(tr("Check property values."), Main.pref.getBoolean(PREF_CHECK_VALUES, true));
         prefCheckValues.setToolTipText(tr("Validate that property values are valid checking against presets."));
-        testPanel.add(prefCheckValues, GBC.std().insets(20,0,0,0));
+        testPanel.add(prefCheckValues, GBC.std().insets(20, 0, 0, 0));
 
         prefCheckValuesBeforeUpload = new JCheckBox();
         prefCheckValuesBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, true));
@@ -554,7 +554,7 @@ public class TagChecker extends TagTest {
 
         prefCheckFixmes = new JCheckBox(tr("Check for FIXMES."), Main.pref.getBoolean(PREF_CHECK_FIXMES, true));
         prefCheckFixmes.setToolTipText(tr("Looks for nodes or ways with FIXME in any property value."));
-        testPanel.add(prefCheckFixmes, GBC.std().insets(20,0,0,0));
+        testPanel.add(prefCheckFixmes, GBC.std().insets(20, 0, 0, 0));
 
         prefCheckFixmesBeforeUpload = new JCheckBox();
         prefCheckFixmesBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, true));
@@ -666,12 +666,13 @@ public class TagChecker extends TagTest {
 
             private Pattern getPattern(String str) throws PatternSyntaxException {
                 if (str.endsWith("/i"))
-                    return Pattern.compile(str.substring(1,str.length()-2), Pattern.CASE_INSENSITIVE);
+                    return Pattern.compile(str.substring(1, str.length()-2), Pattern.CASE_INSENSITIVE);
                 if (str.endsWith("/"))
-                    return Pattern.compile(str.substring(1,str.length()-1));
+                    return Pattern.compile(str.substring(1, str.length()-1));
 
                 throw new IllegalStateException();
             }
+
             public CheckerElement(String exp) throws PatternSyntaxException {
                 Matcher m = Pattern.compile("(.+)([!=]=)(.+)").matcher(exp);
                 m.matches();

@@ -48,7 +48,7 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        synchronized(listeners) {
+        synchronized (listeners) {
             if (listener == null) return;
             if (listeners.contains(listener)) return;
             listeners.add(listener);
@@ -56,7 +56,7 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     public void removePropertyChangeListener(PropertyChangeListener listener) {
-        synchronized(listeners) {
+        synchronized (listeners) {
             if (listener == null) return;
             if (!listeners.contains(listener)) return;
             listeners.remove(listener);
@@ -70,9 +70,9 @@ public class TagMergeModel extends DefaultTableModel {
      * @param newValue the new value
      */
     protected void fireNumUndecidedTagsChanged(int oldValue, int newValue) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(this,PROP_NUM_UNDECIDED_TAGS,oldValue, newValue);
-        synchronized(listeners) {
-            for(PropertyChangeListener l : listeners) {
+        PropertyChangeEvent evt = new PropertyChangeEvent(this, PROP_NUM_UNDECIDED_TAGS, oldValue, newValue);
+        synchronized (listeners) {
+            for (PropertyChangeListener l : listeners) {
                 l.propertyChange(evt);
             }
         }
@@ -84,8 +84,8 @@ public class TagMergeModel extends DefaultTableModel {
      *
      */
     protected void refreshNumUndecidedTags() {
-        int newValue=0;
-        for(TagMergeItem item: tagMergeItems) {
+        int newValue = 0;
+        for (TagMergeItem item: tagMergeItems) {
             if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
                 newValue++;
             }
@@ -109,7 +109,7 @@ public class TagMergeModel extends DefaultTableModel {
         Set<String> keys = new HashSet<>();
         keys.addAll(my.keySet());
         keys.addAll(their.keySet());
-        for(String key : keys) {
+        for (String key : keys) {
             String myValue = my.get(key);
             String theirValue = their.get(key);
             if (myValue == null || theirValue == null || !myValue.equals(theirValue)) {
@@ -213,7 +213,7 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     public int getFirstUndecided(int startIndex) {
-        for (int i=startIndex; i<tagMergeItems.size(); i++) {
+        for (int i = startIndex; i < tagMergeItems.size(); i++) {
             if (tagMergeItems.get(i).getMergeDecision() == MergeDecisionType.UNDECIDED)
                 return i;
         }

@@ -68,7 +68,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
     protected void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
         GuiHelper.runInEDT(new Runnable() {
             @Override public void run() {
-                for(ChangesetCacheListener l: listeners) {
+                for (ChangesetCacheListener l: listeners) {
                     l.changesetCacheUpdated(e);
                 }
             }
@@ -104,7 +104,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
     }
 
     public boolean contains(int id) {
-        if (id <=0) return false;
+        if (id <= 0) return false;
         return cache.get(id) != null;
     }
 

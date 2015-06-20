@@ -63,7 +63,7 @@ public class FilterTest {
 
     @Test
     public void filter_test() throws ParseError, IllegalDataException, IOException {
-        for (int i : new int [] {1,2,3, 11,12,13,14, 15}) {
+        for (int i : new int[] {1, 2, 3, 11, 12, 13, 14, 15}) {
             DataSet ds;
             try (InputStream is = new FileInputStream("data_nodist/filterTests.osm")) {
                 ds = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);

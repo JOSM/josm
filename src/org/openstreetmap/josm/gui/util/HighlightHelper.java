@@ -117,7 +117,7 @@ public class HighlightHelper {
      */
     public void findAllHighlighted() {
         DataSet ds = Main.main.getCurrentDataSet();
-        if (ds!=null) {
+        if (ds != null) {
             highlightedPrimitives.addAll(ds.allNonDeletedPrimitives());
         }
     }
@@ -127,7 +127,7 @@ public class HighlightHelper {
      */
     public static void clearAllHighlighted() {
         DataSet ds = Main.main.getCurrentDataSet();
-        if (ds!=null) {
+        if (ds != null) {
             for (OsmPrimitive p: ds.allNonDeletedPrimitives()) {
                 p.setHighlighted(false);
             }

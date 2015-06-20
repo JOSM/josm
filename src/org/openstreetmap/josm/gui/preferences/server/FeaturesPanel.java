@@ -39,7 +39,7 @@ public class FeaturesPanel extends JPanel {
 
     private void build() {
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         notifier = new JCheckBox(tr("Periodically check for new messages"));
         add(notifier, GBC.eol());
@@ -56,7 +56,7 @@ public class FeaturesPanel extends JPanel {
 
         notifierInterval.setToolTipText(tr("Default value: {0}", MessageNotifier.PROP_INTERVAL.getDefaultValue()));
         notifierInterval.setMinimumSize(notifierInterval.getPreferredSize());
-        add(notifierInterval, GBC.eol().insets(5,0,0,0));
+        add(notifierInterval, GBC.eol().insets(5, 0, 0, 0));
 
         final JLabel notesDaysClosedLabel = new JLabel(tr("Max age for closed notes (days):"));
         notesDaysClosedLabel.setLabelFor(notesDaysClosed);

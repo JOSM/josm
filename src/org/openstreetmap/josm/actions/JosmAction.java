@@ -75,7 +75,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     public JosmAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar,
             String toolbarId, boolean installAdapters) {
         super(name);
-        if(icon != null)
+        if (icon != null)
             icon.getResource().getImageIcon(this);
         setHelpId();
         sc = shortcut;
@@ -281,6 +281,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
                 }
             });
         }
+
         @Override
         public void activeLayerChange(Layer oldLayer, Layer newLayer) {
             updateEnabledStateInEDT();

@@ -145,8 +145,8 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
      * @param tc the tags belonging to this type of primitives
      * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
      */
-    protected void initResolver(OsmPrimitiveType type, TagCollection tc, Map<OsmPrimitiveType,Integer> targetStatistics) {
-        resolvers.get(type).getModel().populate(tc,tc.getKeysWithMultipleValues());
+    protected void initResolver(OsmPrimitiveType type, TagCollection tc, Map<OsmPrimitiveType, Integer> targetStatistics) {
+        resolvers.get(type).getModel().populate(tc, tc.getKeysWithMultipleValues());
         resolvers.get(type).getModel().prepareDefaultTagDecisions();
         if (!tc.isEmpty() && targetStatistics.get(type) != null && targetStatistics.get(type) > 0) {
             tpResolvers.add(PANE_TITLES.get(type), resolvers.get(type));
@@ -161,15 +161,15 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
      * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
      */
     public void populate(TagCollection tagsForAllPrimitives, Map<OsmPrimitiveType, Integer> sourceStatistics,
-            Map<OsmPrimitiveType,Integer> targetStatistics) {
+            Map<OsmPrimitiveType, Integer> targetStatistics) {
         mode = Mode.RESOLVING_ONE_TAGCOLLECTION_ONLY;
-        tagsForAllPrimitives = tagsForAllPrimitives == null? new TagCollection() : tagsForAllPrimitives;
-        sourceStatistics = sourceStatistics == null ? new HashMap<OsmPrimitiveType, Integer>() :sourceStatistics;
+        tagsForAllPrimitives = tagsForAllPrimitives == null ? new TagCollection() : tagsForAllPrimitives;
+        sourceStatistics = sourceStatistics == null ? new HashMap<OsmPrimitiveType, Integer>() : sourceStatistics;
         targetStatistics = targetStatistics == null ? new HashMap<OsmPrimitiveType, Integer>() : targetStatistics;
 
         // init the resolver
         //
-        allPrimitivesResolver.getModel().populate(tagsForAllPrimitives,tagsForAllPrimitives.getKeysWithMultipleValues());
+        allPrimitivesResolver.getModel().populate(tagsForAllPrimitives, tagsForAllPrimitives.getKeysWithMultipleValues());
         allPrimitivesResolver.getModel().prepareDefaultTagDecisions();
 
         // prepare the dialog with one tag resolver
@@ -191,7 +191,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     }
 
     protected TagConflictResolver getResolver(int idx) {
-        return (TagConflictResolver)tpResolvers.getComponentAt(idx);
+        return (TagConflictResolver) tpResolvers.getComponentAt(idx);
     }
 
     /**
@@ -204,18 +204,18 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
      * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
      */
     public void populate(TagCollection tagsForNodes, TagCollection tagsForWays, TagCollection tagsForRelations,
-            Map<OsmPrimitiveType,Integer> sourceStatistics, Map<OsmPrimitiveType, Integer> targetStatistics) {
+            Map<OsmPrimitiveType, Integer> sourceStatistics, Map<OsmPrimitiveType, Integer> targetStatistics) {
         tagsForNodes = (tagsForNodes == null) ? new TagCollection() : tagsForNodes;
         tagsForWays = (tagsForWays == null) ? new TagCollection() : tagsForWays;
         tagsForRelations = (tagsForRelations == null) ? new TagCollection() : tagsForRelations;
         if (tagsForNodes.isEmpty() && tagsForWays.isEmpty() && tagsForRelations.isEmpty()) {
-            populate(null,null,null);
+            populate(null, null, null);
             return;
         }
         tpResolvers.removeAll();
-        initResolver(OsmPrimitiveType.NODE,tagsForNodes, targetStatistics);
-        initResolver(OsmPrimitiveType.WAY,tagsForWays, targetStatistics);
-        initResolver(OsmPrimitiveType.RELATION,tagsForRelations, targetStatistics);
+        initResolver(OsmPrimitiveType.NODE, tagsForNodes, targetStatistics);
+        initResolver(OsmPrimitiveType.WAY, tagsForWays, targetStatistics);
+        initResolver(OsmPrimitiveType.RELATION, tagsForRelations, targetStatistics);
 
         pnlTagResolver.setLayout(new BorderLayout());
         pnlTagResolver.removeAll();
@@ -254,7 +254,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             }
         }
 
-        for (int i =0; i < getNumResolverTabs(); i++) {
+        for (int i = 0; i < getNumResolverTabs(); i++) {
             if (!getResolver(i).getModel().isResolvedCompletely()) {
                 tpResolvers.setSelectedIndex(i);
                 break;
@@ -327,7 +327,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         if (visible) {
             new WindowGeometry(
                     getClass().getName() + ".geometry",
-                    WindowGeometry.centerOnScreen(new Dimension(400,300))
+                    WindowGeometry.centerOnScreen(new Dimension(400, 300))
             ).applySafe(this);
         } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
@@ -347,12 +347,12 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(TagConflictResolverModel.NUM_CONFLICTS_PROP)) {
-            TagConflictResolverModel model = (TagConflictResolverModel)evt.getSource();
-            for (int i=0; i < tpResolvers.getTabCount();i++) {
-                TagConflictResolver resolver = (TagConflictResolver)tpResolvers.getComponentAt(i);
+            TagConflictResolverModel model = (TagConflictResolverModel) evt.getSource();
+            for (int i = 0; i < tpResolvers.getTabCount(); i++) {
+                TagConflictResolver resolver = (TagConflictResolver) tpResolvers.getComponentAt(i);
                 if (model == resolver.getModel()) {
                     tpResolvers.setIconAt(i,
-                            (Boolean)evt.getNewValue() ? iconResolved : iconUnresolved
+                            (Boolean) evt.getNewValue() ? iconResolved : iconUnresolved
 
                     );
                 }
@@ -444,6 +444,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             setText("");
             setFont(UIManager.getFont("Table.font"));
         }
+
         protected void renderNumTags(StatisticsInfo info) {
             if (info == null) return;
             setText(trn("{0} tag", "{0} tags", info.numTags, info.numTags));
@@ -466,7 +467,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 }
                 String msg = "";
                 switch(type) {
-                case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives,numPrimitives); break;
+                case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives, numPrimitives); break;
                 case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
                 case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
                 }
@@ -495,7 +496,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
             if (row == 0) {
                 setFont(getFont().deriveFont(Font.BOLD));
-                setText((String)value);
+                setText((String) value);
             } else {
                 StatisticsInfo info = (StatisticsInfo) value;
 

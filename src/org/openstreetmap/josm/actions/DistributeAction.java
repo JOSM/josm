@@ -65,10 +65,10 @@ public final class DistributeAction extends JosmAction {
         Collection<OsmPrimitive> selected = getCurrentDataSet().getSelected();
         Collection<Way> ways = new LinkedList<>();
         Collection<Node> nodes = new HashSet<>();
-        for(OsmPrimitive osm : selected) {
-            if(osm instanceof Node) {
+        for (OsmPrimitive osm : selected) {
+            if (osm instanceof Node) {
                 nodes.add((Node) osm);
-            } else if(osm instanceof Way) {
+            } else if (osm instanceof Way) {
                 ways.add((Way) osm);
             }
         }
@@ -81,9 +81,9 @@ public final class DistributeAction extends JosmAction {
 
         // Switch between algorithms
         Collection<Command> cmds;
-        if(checkDistributeWay(ways, nodes)) {
+        if (checkDistributeWay(ways, nodes)) {
             cmds = distributeWay(ways, nodes);
-        } else if(checkDistributeNodes(ways, nodes)) {
+        } else if (checkDistributeNodes(ways, nodes)) {
             cmds = distributeNodes(nodes);
         } else {
             new Notification(
@@ -96,7 +96,7 @@ public final class DistributeAction extends JosmAction {
             return;
         }
 
-        if(cmds.isEmpty()) {
+        if (cmds.isEmpty()) {
             return;
         }
 
@@ -112,15 +112,15 @@ public final class DistributeAction extends JosmAction {
      * @return true in this case
      */
     private boolean checkDistributeWay(Collection<Way> ways, Collection<Node> nodes) {
-        if(ways.size() == 1 && nodes.size() <= 2) {
+        if (ways.size() == 1 && nodes.size() <= 2) {
             Way w = ways.iterator().next();
             Set<Node> unduplicated = new HashSet<>(w.getNodes());
-            if(unduplicated.size() != w.getNodesCount()) {
+            if (unduplicated.size() != w.getNodesCount()) {
                 // No self crossing way
                 return false;
             }
-            for(Node node: nodes) {
-                if(!w.containsNode(node)) {
+            for (Node node: nodes) {
+                if (!w.containsNode(node)) {
                     return false;
                 }
             }
@@ -141,14 +141,14 @@ public final class DistributeAction extends JosmAction {
         Way w = ways.iterator().next();
         Collection<Command> cmds = new LinkedList<>();
 
-        if(w.getNodesCount() == nodes.size() || w.getNodesCount() <= 2) {
+        if (w.getNodesCount() == nodes.size() || w.getNodesCount() <= 2) {
             // Nothing to do
             return cmds;
         }
 
         double xa, ya; // Start point
         double dx, dy; // Segment increment
-        if(nodes.isEmpty()) {
+        if (nodes.isEmpty()) {
             Node na = w.firstNode();
             nodes.add(na);
             Node nb = w.lastNode();
@@ -157,7 +157,7 @@ public final class DistributeAction extends JosmAction {
             ya = na.getEastNorth().north();
             dx = (nb.getEastNorth().east() - xa) / (w.getNodesCount() - 1);
             dy = (nb.getEastNorth().north() - ya) / (w.getNodesCount() - 1);
-        } else if(nodes.size() == 1) {
+        } else if (nodes.size() == 1) {
             Node n = nodes.iterator().next();
             int nIdx = w.getNodes().indexOf(n);
             Node na = w.firstNode();
@@ -181,7 +181,7 @@ public final class DistributeAction extends JosmAction {
             ya = na.getEastNorth().north() - dy * naIdx;
         }
 
-        for(int i = 0; i < w.getNodesCount(); i++) {
+        for (int i = 0; i < w.getNodesCount(); i++) {
             Node n = w.getNode(i);
             if (!n.isLatLonKnown() || nodes.contains(n)) {
                 continue;

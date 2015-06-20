@@ -94,19 +94,19 @@ public class Multipolygon {
             if (Main.pref == null) return;
             Collection<String> literals;
             literals = Main.pref.getCollection(PREF_KEY_OUTER_ROLES);
-            if (literals != null && !literals.isEmpty()){
+            if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, outerExactRoles);
             }
             literals = Main.pref.getCollection(PREF_KEY_OUTER_ROLE_PREFIXES);
-            if (literals != null && !literals.isEmpty()){
+            if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, outerRolePrefixes);
             }
             literals = Main.pref.getCollection(PREF_KEY_INNER_ROLES);
-            if (literals != null && !literals.isEmpty()){
+            if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, innerExactRoles);
             }
             literals = Main.pref.getCollection(PREF_KEY_INNER_ROLE_PREFIXES);
-            if (literals != null && !literals.isEmpty()){
+            if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, innerRolePrefixes);
             }
         }
@@ -116,7 +116,7 @@ public class Multipolygon {
             if (PREF_KEY_INNER_ROLE_PREFIXES.equals(evt.getKey()) ||
                     PREF_KEY_INNER_ROLES.equals(evt.getKey()) ||
                     PREF_KEY_OUTER_ROLE_PREFIXES.equals(evt.getKey()) ||
-                    PREF_KEY_OUTER_ROLES.equals(evt.getKey())){
+                    PREF_KEY_OUTER_ROLES.equals(evt.getKey())) {
                 initFromPreferences();
             }
         }
@@ -148,10 +148,11 @@ public class Multipolygon {
      * Init a private global matcher object which will listen to preference changes.
      */
     private static MultipolygonRoleMatcher roleMatcher;
+
     private static synchronized MultipolygonRoleMatcher getMultipolygonRoleMatcher() {
         if (roleMatcher == null) {
             roleMatcher = new MultipolygonRoleMatcher();
-            if (Main.pref != null){
+            if (Main.pref != null) {
                 roleMatcher.initFromPreferences();
                 Main.pref.addPreferenceChangeListener(roleMatcher);
             }
@@ -301,7 +302,8 @@ public class Multipolygon {
                 nodes.clear();
                 if (ds == null) {
                     // DataSet still not found. This should not happen, but a warning does no harm
-                    Main.warn("DataSet not found while resetting nodes in Multipolygon. This should not happen, you may report it to JOSM developers.");
+                    Main.warn("DataSet not found while resetting nodes in Multipolygon. " +
+                            "This should not happen, you may report it to JOSM developers.");
                 } else if (wayIds.size() == 1) {
                     Way w = (Way) ds.getPrimitiveById(wayIds.iterator().next(), OsmPrimitiveType.WAY);
                     nodes.addAll(w.getNodes());

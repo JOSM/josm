@@ -17,6 +17,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class BoxTextElemStyle extends ElemStyle {
 
     public enum HorizontalTextAlignment { LEFT, CENTER, RIGHT }
+
     public enum VerticalTextAlignment { ABOVE, TOP, CENTER, BOTTOM, BELOW }
 
     public static interface BoxProvider {
@@ -171,6 +172,7 @@ public class BoxTextElemStyle extends ElemStyle {
         SIMPLE_NODE_TEXT_ELEMSTYLE = create(new Environment(n, mc, "default", null), NodeElemStyle.SIMPLE_NODE_ELEMSTYLE.getBoxProvider());
         if (SIMPLE_NODE_TEXT_ELEMSTYLE == null) throw new AssertionError();
     }
+
     /*
      * Caches the default text color from the preferences.
      *
@@ -178,6 +180,7 @@ public class BoxTextElemStyle extends ElemStyle {
      * session. There should be preference listener updating this cache.
      */
     private static volatile Color DEFAULT_TEXT_COLOR = null;
+
     private static void initDefaultParameters() {
         if (DEFAULT_TEXT_COLOR != null) return;
         DEFAULT_TEXT_COLOR = PaintColors.TEXT.get();

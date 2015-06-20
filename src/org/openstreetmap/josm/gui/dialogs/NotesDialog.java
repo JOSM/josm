@@ -146,7 +146,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             closeAction.setEnabled(false);
             addCommentAction.setEnabled(false);
             reopenAction.setEnabled(false);
-        } else if (noteData.getSelectedNote().getState() == State.open){
+        } else if (noteData.getSelectedNote().getState() == State.open) {
             closeAction.setEnabled(true);
             addCommentAction.setEnabled(true);
             reopenAction.setEnabled(false);
@@ -155,7 +155,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             addCommentAction.setEnabled(false);
             reopenAction.setEnabled(true);
         }
-        if(noteData == null || !noteData.isModified()) {
+        if (noteData == null || !noteData.isModified()) {
             uploadAction.setEnabled(false);
         } else {
             uploadAction.setEnabled(true);
@@ -176,7 +176,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     @Override
     public void layerAdded(Layer newLayer) {
         if (newLayer instanceof NoteLayer) {
-            noteData = ((NoteLayer)newLayer).getNoteData();
+            noteData = ((NoteLayer) newLayer).getNoteData();
             model.setData(noteData.getNotes());
             setNotes(noteData.getSortedNotes());
         }
@@ -244,7 +244,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                     userName = "<Anonymous>";
                 }
                 String toolTipText = userName + " @ " + dateFormat.format(note.getCreatedAt());
-                JLabel jlabel = (JLabel)comp;
+                JLabel jlabel = (JLabel) comp;
                 jlabel.setText(note.getId() + ": " +text);
                 ImageIcon icon;
                 if (note.getId() < 0) {
@@ -303,7 +303,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
          * Constructs a new {@code AddCommentAction}.
          */
         public AddCommentAction() {
-            putValue(SHORT_DESCRIPTION,tr("Add comment"));
+            putValue(SHORT_DESCRIPTION, tr("Add comment"));
             putValue(NAME, tr("Comment"));
             putValue(SMALL_ICON, ICON_COMMENT);
         }

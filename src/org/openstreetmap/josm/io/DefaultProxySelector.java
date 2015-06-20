@@ -137,7 +137,7 @@ public class DefaultProxySelector extends ProxySelector {
         socksProxySocketAddress = null;
         if (proxyPolicy.equals(ProxyPolicy.USE_SOCKS_PROXY)) {
             if (host != null && !host.trim().isEmpty() && port > 0) {
-                socksProxySocketAddress = new InetSocketAddress(host,port);
+                socksProxySocketAddress = new InetSocketAddress(host, port);
             } else {
                 Main.warn(tr("Unexpected parameters for SOCKS proxy. Got host ''{0}'' and port ''{1}''.", host, port));
                 Main.warn(tr("The proxy will not be used."));
@@ -202,7 +202,8 @@ public class DefaultProxySelector extends ProxySelector {
         switch(proxyPolicy) {
         case USE_SYSTEM_SETTINGS:
             if (!JVM_WILL_USE_SYSTEM_PROXIES) {
-                Main.warn(tr("The JVM is not configured to lookup proxies from the system settings. The property ''java.net.useSystemProxies'' was missing at startup time.  Will not use a proxy."));
+                Main.warn(tr("The JVM is not configured to lookup proxies from the system settings. "+
+                        "The property ''java.net.useSystemProxies'' was missing at startup time.  Will not use a proxy."));
                 return NO_PROXY_LIST;
             }
             // delegate to the former proxy selector

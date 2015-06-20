@@ -29,10 +29,10 @@ public final class ColorHelper {
             return null;
         try {
             return new Color(
-                    Integer.parseInt(html.substring(0,2),16),
-                    Integer.parseInt(html.substring(2,4),16),
-                    Integer.parseInt(html.substring(4,6),16),
-                    html.length() == 8 ? Integer.parseInt(html.substring(6,8),16) : 255);
+                    Integer.parseInt(html.substring(0, 2), 16),
+                    Integer.parseInt(html.substring(2, 4), 16),
+                    Integer.parseInt(html.substring(4, 6), 16),
+                    html.length() == 8 ? Integer.parseInt(html.substring(6, 8), 16) : 255);
         } catch (NumberFormatException e) {
             return null;
         }

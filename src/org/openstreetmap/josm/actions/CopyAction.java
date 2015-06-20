@@ -42,7 +42,7 @@ public final class CopyAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(isEmptySelection()) return;
+        if (isEmptySelection()) return;
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
         copy(getEditLayer(), selection);

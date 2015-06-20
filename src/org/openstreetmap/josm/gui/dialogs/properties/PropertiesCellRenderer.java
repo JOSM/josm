@@ -59,7 +59,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                         blankCount = 0;
                         otherCount = v.size();
                     } else {
-                        blankCount = (Integer)v.get("");
+                        blankCount = (Integer) v.get("");
                         otherCount = v.size()-1;
                     }
                     StringBuilder sb = new StringBuilder("<");
@@ -74,7 +74,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                         /* I18n: properties display partial string joined with comma */
                         sb.append(trn("{0} different", "{0} different", otherCount, otherCount));
                     }
-                    if(blankCount > 0) {
+                    if (blankCount > 0) {
                         /* I18n: properties display partial string joined with comma */
                         sb.append(trn(", {0} unset", ", {0} unset", blankCount, blankCount));
                     }
@@ -87,8 +87,8 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                     str = (String) entry.getKey();
                 }
             }
-            ((JLabel)c).putClientProperty("html.disable", Boolean.TRUE); // Fix #8730
-            ((JLabel)c).setText(str);
+            ((JLabel) c).putClientProperty("html.disable", Boolean.TRUE); // Fix #8730
+            ((JLabel) c).setText(str);
             if (Main.pref.getBoolean("display.discardable-keys", false)) {
                 String key = null;
                 if (column == 0) {

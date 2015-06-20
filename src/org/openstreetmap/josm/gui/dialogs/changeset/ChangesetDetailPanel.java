@@ -51,7 +51,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener {
 
     private final JosmTextField tfID        = new JosmTextField(10);
-    private final JosmTextArea  taComment   = new JosmTextArea(5,40);
+    private final JosmTextArea  taComment   = new JosmTextArea(5, 40);
     private final JosmTextField tfOpen      = new JosmTextField(10);
     private final JosmTextField tfUser      = new JosmTextField("");
     private final JosmTextField tfCreatedOn = new JosmTextField(20);
@@ -110,7 +110,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.insets = new Insets(0,0,2,3);
+        gc.insets = new Insets(0, 0, 2, 3);
 
         //-- id
         gc.fill = GridBagConstraints.HORIZONTAL;
@@ -192,7 +192,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
     protected final void build() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
+        setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         add(buildDetailViewPanel(), BorderLayout.CENTER);
         add(buildActionButtonPanel(), BorderLayout.WEST);
     }
@@ -260,7 +260,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     public void propertyChange(PropertyChangeEvent evt) {
         if (!evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
             return;
-        setCurrentChangeset((Changeset)evt.getNewValue());
+        setCurrentChangeset((Changeset) evt.getNewValue());
     }
 
     /**

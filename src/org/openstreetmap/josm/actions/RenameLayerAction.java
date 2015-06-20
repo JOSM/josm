@@ -53,7 +53,7 @@ public class RenameLayerAction extends AbstractAction {
             filerename.setSelected(Main.pref.getBoolean("layer.rename-file", true));
         }
 
-        final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
+        final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
             @Override public void selectInitialValue() {
                 name.requestFocusInWindow();
                 name.selectAll();
@@ -65,7 +65,7 @@ public class RenameLayerAction extends AbstractAction {
 
         Object answer = optionPane.getValue();
         if (answer == null || answer == JOptionPane.UNINITIALIZED_VALUE ||
-                (answer instanceof Integer && (Integer)answer != JOptionPane.OK_OPTION))
+                (answer instanceof Integer && (Integer) answer != JOptionPane.OK_OPTION))
             return;
 
         String nameText = name.getText();

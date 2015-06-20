@@ -8,8 +8,12 @@ package org.openstreetmap.josm.gui.progress;
  */
 public interface ProgressRenderer {
     void setTaskTitle(String taskTitle);
+
     void setCustomText(String message);
+
     void setIndeterminate(boolean indeterminate);
+
     void setMaximum(int maximum);
+
     void setValue(int value);
 }

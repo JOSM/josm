@@ -59,7 +59,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (multiObjectReader != null) {
                 multiObjectReader.cancel();
             }
@@ -92,7 +92,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
             if (primitive instanceof Node && !primitive.isNew()) {
                 reader.append(primitive);
             } else if (primitive instanceof Way) {
-                Way way = (Way)primitive;
+                Way way = (Way) primitive;
                 for (Node node: way.getNodes()) {
                     if (!node.isNew()) {
                         reader.append(node);
@@ -125,7 +125,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
         this.ds = new DataSet();
         DataSet theirDataSet;
         try {
-            synchronized(this) {
+            synchronized (this) {
                 if (canceled) return;
                 multiObjectReader = new MultiFetchServerObjectReader();
             }
@@ -133,7 +133,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
             initMultiFetchReaderWithWays(multiObjectReader);
             initMultiFetchReaderWithRelations(multiObjectReader);
             theirDataSet = multiObjectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-            synchronized(this) {
+            synchronized (this) {
                 multiObjectReader = null;
             }
             DataSetMerger merger = new DataSetMerger(ds, theirDataSet);
@@ -145,7 +145,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
             for (Way w : ds.getWays()) {
                 if (canceled) return;
                 if (w.hasIncompleteNodes()) {
-                    synchronized(this) {
+                    synchronized (this) {
                         if (canceled) return;
                         objectReader = new OsmServerObjectReader(w.getId(), OsmPrimitiveType.WAY, true /* full */);
                     }
@@ -157,7 +157,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
                     merger.merge();
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (canceled)
                 return;
             lastException = e;

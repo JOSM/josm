@@ -83,6 +83,7 @@ public class JoinAreasAction extends JosmAction {
     private static class RelationRole {
         public final Relation rel;
         public final String role;
+
         public RelationRole(Relation rel, String role) {
             this.rel = rel;
             this.role = role;
@@ -100,7 +101,6 @@ public class JoinAreasAction extends JosmAction {
             return otherMember.role.equals(role) && otherMember.rel.equals(rel);
         }
     }
-
 
     /**
      * HelperClass - saves a way and the "inside" side.
@@ -164,7 +164,7 @@ public class JoinAreasAction extends JosmAction {
          * Inverse inside and outside
          */
         public void reverse() {
-            for(WayInPolygon way: ways)
+            for (WayInPolygon way: ways)
                 way.insideToTheRight = !way.insideToTheRight;
             Collections.reverse(ways);
         }
@@ -265,9 +265,9 @@ public class JoinAreasAction extends JosmAction {
             EastNorth en3 = N3.getEastNorth();
             double angle = Math.atan2(en3.getY() - en1.getY(), en3.getX() - en1.getX()) -
                     Math.atan2(en2.getY() - en1.getY(), en2.getX() - en1.getX());
-            while(angle >= 2*Math.PI)
+            while (angle >= 2*Math.PI)
                 angle -= 2*Math.PI;
-            while(angle < 0)
+            while (angle < 0)
                 angle += 2*Math.PI;
             return angle;
         }
@@ -300,7 +300,7 @@ public class JoinAreasAction extends JosmAction {
                     continue;
                 }
 
-                if(nextNode == prevNode) {
+                if (nextNode == prevNode) {
                     // go back
                     lastWay = way;
                     lastWayReverse = !way.insideToTheRight;
@@ -309,9 +309,9 @@ public class JoinAreasAction extends JosmAction {
 
                 double angle = Math.atan2(nextNode.getEastNorth().east() - headNode.getEastNorth().east(),
                         nextNode.getEastNorth().north() - headNode.getEastNorth().north()) - headAngle;
-                if(angle > Math.PI)
+                if (angle > Math.PI)
                     angle -= 2*Math.PI;
-                if(angle <= -Math.PI)
+                if (angle <= -Math.PI)
                     angle += 2*Math.PI;
 
                 // Now we have a valid candidate way, is it better than the previous one ?
@@ -344,20 +344,20 @@ public class JoinAreasAction extends JosmAction {
                 boolean candidateComingToHead;
                 Node candidatePrevNode;
 
-                if(candidateWay.way.firstNode().equals(headNode)) {
+                if (candidateWay.way.firstNode().equals(headNode)) {
                     candidateComingToHead = !candidateWay.insideToTheRight;
                     candidatePrevNode = candidateWay.way.getNode(1);
-                } else if(candidateWay.way.lastNode().equals(headNode)) {
+                } else if (candidateWay.way.lastNode().equals(headNode)) {
                      candidateComingToHead = candidateWay.insideToTheRight;
                      candidatePrevNode = candidateWay.way.getNode(candidateWay.way.getNodesCount() - 2);
                 } else
                     continue;
-                if(candidateWay.equals(lastWay) && candidateComingToHead)
+                if (candidateWay.equals(lastWay) && candidateComingToHead)
                     continue;
 
                 double candidateAngle = getAngle(headNode, candidatePrevNode, prevNode);
 
-                if(mostLeft == null || candidateAngle < angle || (Utils.equalsEpsilon(candidateAngle, angle) && !candidateComingToHead)) {
+                if (mostLeft == null || candidateAngle < angle || (Utils.equalsEpsilon(candidateAngle, angle) && !candidateComingToHead)) {
                     // Candidate is most left
                     mostLeft = candidateWay;
                     comingToHead = candidateComingToHead;
@@ -440,7 +440,7 @@ public class JoinAreasAction extends JosmAction {
                     + tr("Please abort if you are not sure"),
                 tr("The selected area is incomplete. Continue?"),
                 allNodes, null);
-        if(!ok) return;
+        if (!ok) return;
 
         //analyze multipolygon relations and collect all areas
         List<Multipolygon> areas = collectMultipolygons(ways);
@@ -613,7 +613,7 @@ public class JoinAreasAction extends JosmAction {
 
         commitCommands(marktr("Assemble new polygons"));
 
-        for(Relation rel: relationsToDelete) {
+        for (Relation rel: relationsToDelete) {
             cmds.add(new DeleteCommand(rel));
         }
 
@@ -724,7 +724,7 @@ public class JoinAreasAction extends JosmAction {
                     newNodes.add(newNodes.get(0));
                 }
 
-                Way newWay=new Way(way);
+                Way newWay = new Way(way);
                 newWay.setNodes(newNodes);
                 cmds.add(new ChangeCommand(way, newWay));
                 totalNodesRemoved += nodesRemoved;
@@ -1079,14 +1079,14 @@ public class JoinAreasAction extends JosmAction {
         List<AssembledPolygon> result = new ArrayList<>();
 
         WayInPolygon startWay;
-        while((startWay = traverser.startNewWay()) != null) {
+        while ((startWay = traverser.startNewWay()) != null) {
             List<WayInPolygon> path = new ArrayList<>();
             List<WayInPolygon> startWays = new ArrayList<>();
             path.add(startWay);
-            while(true) {
+            while (true) {
                 WayInPolygon leftComing;
-                while((leftComing = traverser.leftComingWay()) != null) {
-                    if(startWays.contains(leftComing))
+                while ((leftComing = traverser.leftComingWay()) != null) {
+                    if (startWays.contains(leftComing))
                         break;
                     // Need restart traverser walk
                     path.clear();
@@ -1096,15 +1096,15 @@ public class JoinAreasAction extends JosmAction {
                     break;
                 }
                 WayInPolygon nextWay = traverser.walk();
-                if(nextWay == null)
+                if (nextWay == null)
                     throw new RuntimeException("Join areas internal error.");
-                if(path.get(0) == nextWay) {
+                if (path.get(0) == nextWay) {
                     // path is closed -> stop here
                     AssembledPolygon ring = new AssembledPolygon(path);
-                    if(ring.getNodes().size() <= 2) {
+                    if (ring.getNodes().size() <= 2) {
                         // Invalid ring (2 nodes) -> remove
                         traverser.removeWays(path);
-                        for(WayInPolygon way: path)
+                        for (WayInPolygon way: path)
                             discardedResult.add(way.way);
                     } else {
                         // Close ring -> add
@@ -1113,10 +1113,10 @@ public class JoinAreasAction extends JosmAction {
                     }
                     break;
                 }
-                if(path.contains(nextWay)) {
+                if (path.contains(nextWay)) {
                     // Inner loop -> remove
                     int index = path.indexOf(nextWay);
-                    while(path.size() > index) {
+                    while (path.size() > index) {
                         WayInPolygon currentWay = path.get(index);
                         discardedResult.add(currentWay.way);
                         traverser.removeWay(currentWay);
@@ -1144,12 +1144,12 @@ public class JoinAreasAction extends JosmAction {
             WayTraverser traverser = new WayTraverser(ring.ways);
             WayInPolygon startWay;
 
-            while((startWay = traverser.startNewWay()) != null) {
+            while ((startWay = traverser.startNewWay()) != null) {
                 List<WayInPolygon> simpleRingWays = new ArrayList<>();
                 simpleRingWays.add(startWay);
                 WayInPolygon nextWay;
-                while((nextWay = traverser.walk()) != startWay) {
-                    if(nextWay == null)
+                while ((nextWay = traverser.walk()) != startWay) {
+                    if (nextWay == null)
                         throw new RuntimeException("Join areas internal error.");
                     simpleRingWays.add(nextWay);
                 }
@@ -1232,7 +1232,7 @@ public class JoinAreasAction extends JosmAction {
      * @param ways The list of ways to join and reverse
      * @return The newly created way
      */
-    private Way joinOrientedWays(List<WayInPolygon> ways) throws UserCancelException{
+    private Way joinOrientedWays(List<WayInPolygon> ways) throws UserCancelException {
         if (ways.size() < 2)
             return ways.get(0).way;
 

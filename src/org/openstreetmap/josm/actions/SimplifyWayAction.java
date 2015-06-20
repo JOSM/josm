@@ -173,8 +173,8 @@ public class SimplifyWayAction extends JosmAction {
         int lower = 0;
         int i = 0;
         List<Node> newNodes = new ArrayList<>(w.getNodesCount());
-        while(i < w.getNodesCount()){
-            if (isRequiredNode(w,w.getNode(i))) {
+        while (i < w.getNodesCount()) {
+            if (isRequiredNode(w, w.getNode(i))) {
                 // copy a required node to the list of new nodes. Simplify not possible
                 newNodes.add(w.getNode(i));
                 i++;
@@ -183,12 +183,12 @@ public class SimplifyWayAction extends JosmAction {
             }
             i++;
             // find the longest sequence of not required nodes ...
-            while(i<w.getNodesCount() && !isRequiredNode(w,w.getNode(i))) {
+            while (i < w.getNodesCount() && !isRequiredNode(w, w.getNode(i))) {
                 i++;
             }
             // ... and simplify them
             buildSimplifiedNodeList(w.getNodes(), lower, Math.min(w.getNodesCount()-1, i), threshold, newNodes);
-            lower=i;
+            lower = i;
             i++;
         }
 
@@ -238,8 +238,8 @@ public class SimplifyWayAction extends JosmAction {
 
         if (imax != -1 && xtemax >= threshold) {
             // Segment cannot be simplified - try shorter segments
-            buildSimplifiedNodeList(wnew, from, imax,threshold,simplifiedNodes);
-            buildSimplifiedNodeList(wnew, imax, to, threshold,simplifiedNodes);
+            buildSimplifiedNodeList(wnew, from, imax, threshold, simplifiedNodes);
+            buildSimplifiedNodeList(wnew, imax, to, threshold, simplifiedNodes);
         } else {
             // Simplify segment
             if (simplifiedNodes.isEmpty() || simplifiedNodes.get(simplifiedNodes.size()-1) != fromN) {

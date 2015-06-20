@@ -105,7 +105,7 @@ public class RequestProcessor extends Thread {
      */
     private static void addRequestHandlerClass(String command,
                 Class<? extends RequestHandler> handler, boolean silent) {
-        if(command.charAt(0) == '/') {
+        if (command.charAt(0) == '/') {
             command = command.substring(1);
         }
         String commandWithSlash = "/" + command;
@@ -175,14 +175,14 @@ public class RequestProcessor extends Thread {
 
             String command = questionPos < 0 ? url : url.substring(0, questionPos);
 
-            Map<String,String> headers = new HashMap<>();
-            int k=0, MAX_HEADERS=20;
-            while (k<MAX_HEADERS) {
-                get=in.readLine();
-                if (get==null) break;
+            Map<String, String> headers = new HashMap<>();
+            int k = 0, MAX_HEADERS = 20;
+            while (k < MAX_HEADERS) {
+                get = in.readLine();
+                if (get == null) break;
                 k++;
                 String[] h = get.split(": ", 2);
-                if (h.length==2) {
+                if (h.length == 2) {
                     headers.put(h[0], h[1]);
                 } else break;
             }
@@ -197,7 +197,7 @@ public class RequestProcessor extends Thread {
             } else {
                 String ref = headers.get("Referer");
                 Pattern r = Pattern.compile("(https?://)?([^/]*)");
-                if (ref!=null) {
+                if (ref != null) {
                     Matcher m = r.matcher(ref);
                     if (m.find()) {
                         sender = m.group(2);
@@ -389,7 +389,7 @@ public class RequestProcessor extends Thread {
             RequestHandler handler = null;
             try {
                 Class<?> c = handlers.get(cmd);
-                if (c==null) return null;
+                if (c == null) return null;
                 handler = handlers.get(cmd).newInstance();
             } catch (InstantiationException | IllegalAccessException ex) {
                 Main.error(ex);

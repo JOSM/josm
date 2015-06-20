@@ -62,14 +62,14 @@ public class DownloadAlongPanel extends JPanel {
 
         cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), Main.pref.getBoolean(prefOsm, true));
         cbDownloadOsmData.setToolTipText(tr("Select to download OSM data."));
-        add(cbDownloadOsmData, GBC.std().insets(1,5,1,5));
+        add(cbDownloadOsmData, GBC.std().insets(1, 5, 1, 5));
         cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"), Main.pref.getBoolean(prefGps, false));
         cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces."));
-        add(cbDownloadGpxData, GBC.eol().insets(5,5,1,5));
+        add(cbDownloadGpxData, GBC.eol().insets(5, 5, 1, 5));
 
         add(new JLabel(tr("Download everything within:")), GBC.std());
         buffer = new JSpinner(new SpinnerNumberModel(50.0, 10.0, 5000.0, 1.0));
-        add(buffer, GBC.std().insets(5,5,5,5));
+        add(buffer, GBC.std().insets(5, 5, 5, 5));
         add(new JLabel(tr("meters")), GBC.eol());
 
         add(new JLabel(tr("Maximum area per request:")), GBC.std());
@@ -79,7 +79,7 @@ public class DownloadAlongPanel extends JPanel {
                 return buffer.getPreferredSize();
             }
         };
-        add(maxRect, GBC.std().insets(5,5,5,5));
+        add(maxRect, GBC.std().insets(5, 5, 5, 5));
         add(new JLabel(tr("sq km")), GBC.eol());
 
         if (prefNear != null) {

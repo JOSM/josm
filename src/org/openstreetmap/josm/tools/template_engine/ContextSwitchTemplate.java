@@ -41,6 +41,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
     private abstract class ContextProvider extends Match {
         protected Match condition;
+
         abstract List<OsmPrimitive> getPrimitives(OsmPrimitive root);
     }
 
@@ -50,10 +51,12 @@ public class ContextSwitchTemplate implements TemplateEntry {
         ParentSet(Match child) {
             this.childCondition = child;
         }
+
         @Override
         public boolean match(OsmPrimitive osm) {
             throw new UnsupportedOperationException();
         }
+
         @Override
         List<OsmPrimitive> getPrimitives(OsmPrimitive root) {
             List<OsmPrimitive> children;
@@ -193,7 +196,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
             Match rhs = transform(((And) m).getRhs(), searchExpressionPosition);
 
             if (lhs instanceof ContextProvider && rhs instanceof ContextProvider)
-                return new AndSet((ContextProvider)lhs, (ContextProvider)rhs);
+                return new AndSet((ContextProvider) lhs, (ContextProvider) rhs);
             else if (lhs instanceof ContextProvider) {
                 ContextProvider cp = (ContextProvider) lhs;
                 if (cp.condition == null) {
@@ -217,7 +220,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
             Match rhs = transform(((Or) m).getRhs(), searchExpressionPosition);
 
             if (lhs instanceof ContextProvider && rhs instanceof ContextProvider)
-                return new OrSet((ContextProvider)lhs, (ContextProvider)rhs);
+                return new OrSet((ContextProvider) lhs, (ContextProvider) rhs);
             else if (lhs instanceof ContextProvider)
                 throw new ParseError(
                         tr("Error in search expression on position {0} - right side of or(|) expression must return set of primitives",

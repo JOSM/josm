@@ -5,10 +5,10 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 
 public class LinemodPrototype extends LinePrototype implements Comparable<LinemodPrototype> {
 
-    public boolean over;
-
     public enum WidthMode { ABSOLUTE, PERCENT, OFFSET }
+
     public WidthMode widthMode;
+    public boolean over;
 
     public LinemodPrototype(LinemodPrototype s, Range range) {
         super(s, range);
@@ -49,9 +49,9 @@ public class LinemodPrototype extends LinePrototype implements Comparable<Linemo
 
     @Override
     public int compareTo(LinemodPrototype s) {
-        if(s.priority != priority)
+        if (s.priority != priority)
             return s.priority > priority ? 1 : -1;
-            if(!over && s.over)
+            if (!over && s.over)
                 return -1;
             // we have no idea how to order other objects :-)
             return 0;

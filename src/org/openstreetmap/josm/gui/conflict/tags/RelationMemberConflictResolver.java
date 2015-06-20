@@ -56,13 +56,13 @@ public class RelationMemberConflictResolver extends JPanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weighty = 0.0;
         gc.weightx = 1.0;
-        gc.insets = new Insets(5,5,5,5);
+        gc.insets = new Insets(5, 5, 5, 5);
         add(pnl, gc);
 
         gc.gridy = 1;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
-        gc.insets = new Insets(0,0,0,0);
+        gc.insets = new Insets(0, 0, 0, 0);
         add(new JScrollPane(tblResolver = new RelationMemberConflictResolverTable(model)), gc);
         pnl = new JPanel();
         pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
@@ -71,7 +71,7 @@ public class RelationMemberConflictResolver extends JPanel {
         gc.gridy = 2;
         gc.weighty = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        add(pnl,gc);
+        add(pnl, gc);
     }
 
     protected JPanel buildRoleEditingPanel() {

@@ -74,17 +74,17 @@ public class TagEditorPanel extends JPanel {
         //
         JButton btn;
         pnl.add(btn = new JButton(tagTable.getAddAction()));
-        btn.setMargin(new Insets(0,0,0,0));
+        btn.setMargin(new Insets(0, 0, 0, 0));
         tagTable.addComponentNotStoppingCellEditing(btn);
 
         // delete action
         pnl.add(btn = new JButton(tagTable.getDeleteAction()));
-        btn.setMargin(new Insets(0,0,0,0));
+        btn.setMargin(new Insets(0, 0, 0, 0));
         tagTable.addComponentNotStoppingCellEditing(btn);
 
         // paste action
         pnl.add(btn = new JButton(tagTable.getPasteAction()));
-        btn.setMargin(new Insets(0,0,0,0));
+        btn.setMargin(new Insets(0, 0, 0, 0));
         tagTable.addComponentNotStoppingCellEditing(btn);
         return pnl;
     }
@@ -109,7 +109,7 @@ public class TagEditorPanel extends JPanel {
         gc.weightx = 0.0;
         gc.weighty = 1.0;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(buttonPanel,gc);
+        add(buttonPanel, gc);
 
         // -- the panel with the editor table
         //
@@ -118,7 +118,7 @@ public class TagEditorPanel extends JPanel {
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         gc.anchor = GridBagConstraints.CENTER;
-        add(tablePanel,gc);
+        add(tablePanel, gc);
 
         if (presetHandler != null) {
             model.addTableModelListener(new TableModelListener() {

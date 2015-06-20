@@ -438,12 +438,12 @@ public final class ExceptionDialogUtil {
         }
 
         if (e instanceof ChangesetClosedException) {
-            explainChangesetClosedException((ChangesetClosedException)e);
+            explainChangesetClosedException((ChangesetClosedException) e);
             return;
         }
 
         if (e instanceof MissingOAuthAccessTokenException) {
-            explainMissingOAuthAccessTokenException((MissingOAuthAccessTokenException)e);
+            explainMissingOAuthAccessTokenException((MissingOAuthAccessTokenException) e);
             return;
         }
 

@@ -31,13 +31,13 @@ public class SelectionSynchronizer implements ListSelectionListener {
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        DefaultListSelectionModel referenceModel = (DefaultListSelectionModel)e.getSource();
+        DefaultListSelectionModel referenceModel = (DefaultListSelectionModel) e.getSource();
         int i = referenceModel.getMinSelectionIndex();
         for (ListSelectionModel model : participants) {
             if (model == e.getSource()) {
                 continue;
             }
-            model.setSelectionInterval(i,i);
+            model.setSelectionInterval(i, i);
         }
     }
 }

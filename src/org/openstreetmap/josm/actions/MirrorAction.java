@@ -49,9 +49,9 @@ public final class MirrorAction extends JosmAction {
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Node) {
-                nodes.add((Node)osm);
+                nodes.add((Node) osm);
             } else if (osm instanceof Way) {
-                nodes.addAll(((Way)osm).getNodes());
+                nodes.addAll(((Way) osm).getNodes());
             }
         }
 

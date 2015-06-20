@@ -77,20 +77,20 @@ public class ImageOverlay {
             width = (int) (h*(offsetBottom-offsetTop));
         }
         ImageIcon overlay;
-        if(width != -1 || height != -1) {
+        if (width != -1 || height != -1) {
             image = new ImageProvider(image).resetMaxSize(new Dimension(width, height));
         }
         overlay = image.get();
         int x, y;
         if (width == -1 && offsetLeft < 0) {
-            x = (int)(w*offsetRight) - overlay.getIconWidth();
+            x = (int) (w*offsetRight) - overlay.getIconWidth();
         } else {
-            x = (int)(w*offsetLeft);
+            x = (int) (w*offsetLeft);
         }
         if (height == -1 && offsetTop < 0) {
-            y = (int)(h*offsetBottom) - overlay.getIconHeight();
+            y = (int) (h*offsetBottom) - overlay.getIconHeight();
         } else {
-            y = (int)(h*offsetTop);
+            y = (int) (h*offsetTop);
         }
         overlay.paintIcon(null, ground.getGraphics(), x, y);
         return ground;

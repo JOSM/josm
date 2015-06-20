@@ -198,13 +198,13 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             e.printStackTrace(new PrintWriter(stack));
 
             String text = ShowStatusReportAction.getReportHeader() + stack.getBuffer().toString();
-            String urltext = text.replaceAll("\r","");
+            String urltext = text.replaceAll("\r", "");
             if (urltext.length() > maxlen) {
-                urltext = urltext.substring(0,maxlen);
+                urltext = urltext.substring(0, maxlen);
                 int idx = urltext.lastIndexOf('\n');
                 // cut whole line when not loosing too much
                 if (maxlen-idx < 200) {
-                    urltext = urltext.substring(0,idx+1);
+                    urltext = urltext.substring(0, idx+1);
                 }
                 urltext += "...<snip>...\n";
             }
@@ -214,12 +214,12 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     tr("You have encountered an error in JOSM. Before you file a bug report " +
                             "make sure you have updated to the latest version of JOSM here:")),
                             GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-            p.add(new UrlLabel(Main.getJOSMWebsite(),2), GBC.eop().insets(8,0,0,0));
+            p.add(new UrlLabel(Main.getJOSMWebsite(), 2), GBC.eop().insets(8, 0, 0, 0));
             p.add(new JMultilineLabel(
                     tr("You should also update your plugins. If neither of those help please " +
                             "file a bug report in our bugtracker using this link:")),
                             GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-            p.add(getBugReportUrlLabel(urltext), GBC.eop().insets(8,0,0,0));
+            p.add(getBugReportUrlLabel(urltext), GBC.eop().insets(8, 0, 0, 0));
             p.add(new JMultilineLabel(
                     tr("There the error information provided below should already be " +
                             "filled in for you. Please include information on how to reproduce " +
@@ -228,7 +228,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             p.add(new JMultilineLabel(
                     tr("Alternatively, if that does not work you can manually fill in the information " +
                             "below at this URL:")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-            p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket",2), GBC.eop().insets(8,0,0,0));
+            p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
 
             // Wiki formatting for manual copy-paste
             text = "{{{\n"+text+"}}}";
@@ -245,7 +245,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
             for (Component c: p.getComponents()) {
                 if (c instanceof JMultilineLabel) {
-                    ((JMultilineLabel)c).setMaxWidth(400);
+                    ((JMultilineLabel) c).setMaxWidth(400);
                 }
             }
 

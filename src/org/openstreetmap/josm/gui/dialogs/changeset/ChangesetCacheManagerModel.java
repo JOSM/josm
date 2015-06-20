@@ -76,7 +76,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      */
     public List<Changeset> getSelectedChangesets() {
         List<Changeset> ret = new ArrayList<>();
-        for (int i =0; i< data.size();i++) {
+        for (int i = 0; i < data.size(); i++) {
             Changeset cs = data.get(i);
             if (selectionModel.isSelectedIndex(i)) {
                 ret.add(cs);
@@ -116,7 +116,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
             if (idx >= 0) {
                 GuiHelper.runInEDTAndWait(new Runnable() {
                     @Override public void run() {
-                        selectionModel.addSelectionInterval(idx,idx);
+                        selectionModel.addSelectionInterval(idx, idx);
                     }
                 });
             }

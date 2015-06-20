@@ -122,7 +122,7 @@ public class JCSCacheManager {
      * @return cache access object
      * @throws IOException if directory is not found
      */
-    public static <K,V> CacheAccess<K, V> getCache(String cacheName) throws IOException {
+    public static <K, V> CacheAccess<K, V> getCache(String cacheName) throws IOException {
         return getCache(cacheName, DEFAULT_MAX_OBJECTS_IN_MEMORY.get().intValue(), 0, null);
     }
 
@@ -135,7 +135,8 @@ public class JCSCacheManager {
      * @return cache access object
      * @throws IOException if directory is not found
      */
-    public static <K,V> CacheAccess<K, V> getCache(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) throws IOException {
+    public static <K, V> CacheAccess<K, V> getCache(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath)
+            throws IOException {
         if (cacheManager != null)
             return getCacheInner(cacheName, maxMemoryObjects, maxDiskObjects, cachePath);
 
@@ -146,9 +147,8 @@ public class JCSCacheManager {
         }
     }
 
-
     @SuppressWarnings("unchecked")
-    private static <K,V> CacheAccess<K, V> getCacheInner(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
+    private static <K, V> CacheAccess<K, V> getCacheInner(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
         CompositeCache<K, V> cc = cacheManager.getCache(cacheName, getCacheAttributes(maxMemoryObjects));
 
         if (cachePath != null && cacheDirLock != null) {

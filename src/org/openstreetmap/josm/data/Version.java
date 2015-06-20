@@ -108,7 +108,7 @@ public class Version {
             value = value.trim();
             try {
                 version = Integer.parseInt(value);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 version = 0;
                 Main.warn(tr("Unexpected JOSM version number in revision file, value is ''{0}''", value));
             }
@@ -142,7 +142,7 @@ public class Version {
         // the revision info
         //
         StringBuilder sb = new StringBuilder();
-        for(Entry<String,String> property: properties.entrySet()) {
+        for (Entry<String, String> property: properties.entrySet()) {
             sb.append(property.getKey()).append(':').append(property.getValue()).append('\n');
         }
         releaseDescription = sb.toString();

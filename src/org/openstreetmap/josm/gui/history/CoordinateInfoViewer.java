@@ -28,7 +28,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class CoordinateInfoViewer extends JPanel {
 
     /** background color used when the coordinates are different */
-    public static final Color BGCOLOR_DIFFERENCE = new Color(255,197,197);
+    public static final Color BGCOLOR_DIFFERENCE = new Color(255, 197, 197);
 
     /** the model */
     private transient HistoryBrowserModel model;
@@ -54,11 +54,11 @@ public class CoordinateInfoViewer extends JPanel {
         gc.gridheight = 1;
         gc.weightx = 0.5;
         gc.weighty = 0.0;
-        gc.insets = new Insets(5,5,5,0);
+        gc.insets = new Insets(5, 5, 5, 0);
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         referenceInfoPanel = new VersionInfoPanel(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
-        add(referenceInfoPanel,gc);
+        add(referenceInfoPanel, gc);
 
         gc.gridx = 1;
         gc.gridy = 0;
@@ -67,7 +67,7 @@ public class CoordinateInfoViewer extends JPanel {
         gc.weighty = 0.0;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         currentInfoPanel = new VersionInfoPanel(model, PointInTimeType.CURRENT_POINT_IN_TIME);
-        add(currentInfoPanel,gc);
+        add(currentInfoPanel, gc);
 
         // ---------------------------
         // the two coordinate panels
@@ -198,7 +198,7 @@ public class CoordinateInfoViewer extends JPanel {
             gc.gridy = 0;
             gc.fill = GridBagConstraints.NONE;
             gc.weightx = 0.0;
-            gc.insets = new Insets(5,5,5,5);
+            gc.insets = new Insets(5, 5, 5, 5);
             gc.anchor = GridBagConstraints.NORTHWEST;
             add(new JLabel(tr("Latitude: ")), gc);
 
@@ -210,7 +210,7 @@ public class CoordinateInfoViewer extends JPanel {
             add(lblLat = new JLabel(), gc);
             lblLat.setBackground(Color.WHITE);
             lblLat.setOpaque(true);
-            lblLat.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+            lblLat.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
             // --------
             gc.gridx = 0;
@@ -228,7 +228,7 @@ public class CoordinateInfoViewer extends JPanel {
             add(lblLon = new JLabel(), gc);
             lblLon.setBackground(Color.WHITE);
             lblLon.setOpaque(true);
-            lblLon.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+            lblLon.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
             // fill the remaining space
             gc.gridx = 0;
@@ -256,7 +256,7 @@ public class CoordinateInfoViewer extends JPanel {
             HistoryOsmPrimitive  opposite = getOppositePrimitive();
             if (!(p instanceof HistoryNode)) return false;
             if (!(opposite instanceof HistoryNode)) return false;
-            HistoryNode node = (HistoryNode)p;
+            HistoryNode node = (HistoryNode) p;
             HistoryNode oppositeNode = (HistoryNode) opposite;
 
             coord = node.getCoords();
@@ -311,7 +311,7 @@ public class CoordinateInfoViewer extends JPanel {
             gc.gridy = 0;
             gc.fill = GridBagConstraints.NONE;
             gc.weightx = 0.0;
-            gc.insets = new Insets(5,5,5,5);
+            gc.insets = new Insets(5, 5, 5, 5);
             gc.anchor = GridBagConstraints.NORTHWEST;
             add(new JLabel(tr("Distance: ")), gc);
 
@@ -323,7 +323,7 @@ public class CoordinateInfoViewer extends JPanel {
             add(lblDistance = new JLabel(), gc);
             lblDistance.setBackground(Color.WHITE);
             lblDistance.setOpaque(true);
-            lblDistance.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+            lblDistance.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         }
 
         @Override

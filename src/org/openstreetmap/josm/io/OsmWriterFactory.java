@@ -26,6 +26,7 @@ public class OsmWriterFactory {
         }
         return theFactory.createOsmWriterImpl(out, osmConform, version);
     }
+
     protected OsmWriter createOsmWriterImpl(PrintWriter out, boolean osmConform, String version) {
         return new OsmWriter(out, osmConform, version);
     }

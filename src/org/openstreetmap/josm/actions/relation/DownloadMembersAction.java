@@ -41,7 +41,7 @@ public class DownloadMembersAction extends AbstractRelationAction {
     @Override
     public void setPrimitives(Collection<? extends OsmPrimitive> primitives) {
         // selected non-new relations
-        this.relations = Utils.filter(getRelations(primitives), new Predicate<Relation>(){
+        this.relations = Utils.filter(getRelations(primitives), new Predicate<Relation>() {
             @Override public boolean evaluate(Relation r) {
                 return !r.isNew();
             }});

@@ -51,7 +51,7 @@ public class DownloadAction extends JosmAction {
             }
             if (dialog.isDownloadGpxData()) {
                 DownloadGpsTask task = new DownloadGpsTask();
-                Future<?> future = task.download(dialog.isNewLayerRequired(),area, null);
+                Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }
             if (dialog.isDownloadNotes()) {

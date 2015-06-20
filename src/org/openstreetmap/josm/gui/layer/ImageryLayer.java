@@ -62,7 +62,7 @@ public abstract class ImageryLayer extends Layer {
 
     public static Color getFadeColorWithAlpha() {
         Color c = PROP_FADE_COLOR.get();
-        return new Color(c.getRed(),c.getGreen(),c.getBlue(),PROP_FADE_AMOUNT.get()*255/100);
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), PROP_FADE_AMOUNT.get()*255/100);
     }
 
     protected final ImageryInfo info;
@@ -160,6 +160,7 @@ public abstract class ImageryLayer extends Layer {
 
     class ApplyOffsetAction extends AbstractAction {
         private transient OffsetBookmark b;
+
         ApplyOffsetAction(OffsetBookmark b) {
             super(b.name);
             this.b = b;
@@ -192,7 +193,7 @@ public abstract class ImageryLayer extends Layer {
     public JMenuItem getOffsetMenuItem() {
         JMenu subMenu = new JMenu(trc("layer", "Offset"));
         subMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
-        return (JMenuItem)getOffsetMenuItem(subMenu);
+        return (JMenuItem) getOffsetMenuItem(subMenu);
     }
 
     public JComponent getOffsetMenuItem(JComponent subMenu) {
@@ -219,7 +220,7 @@ public abstract class ImageryLayer extends Layer {
             if (subMenu instanceof JMenu) {
                 MenuScroller.setScrollerFor((JMenu) subMenu);
             } else if (subMenu instanceof JPopupMenu) {
-                MenuScroller.setScrollerFor((JPopupMenu)subMenu);
+                MenuScroller.setScrollerFor((JPopupMenu) subMenu);
             }
         }
         return hasBookmarks ? subMenu : adjustMenuItem;
@@ -259,7 +260,7 @@ public abstract class ImageryLayer extends Layer {
             float drawPosY = 2.5f*g.getFontMetrics().getHeight()+10;
             if (!message.contains(" ")) {
                 g.setFont(g.getFont().deriveFont(Font.PLAIN).deriveFont(18.0f));
-                g.drawString(message, 5, (int)drawPosY);
+                g.drawString(message, 5, (int) drawPosY);
             } else {
                 // Draw message on several lines
                 Map<TextAttribute, Object> map = new Hashtable<TextAttribute, Object>();

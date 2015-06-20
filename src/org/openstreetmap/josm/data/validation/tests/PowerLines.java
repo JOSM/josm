@@ -121,7 +121,7 @@ public class PowerLines extends Test {
         for (OsmPrimitive station : powerStations) {
             List<List<Node>> nodesLists = new ArrayList<>();
             if (station instanceof Way) {
-                nodesLists.add(((Way)station).getNodes());
+                nodesLists.add(((Way) station).getNodes());
             } else if (station instanceof Relation) {
                 Multipolygon polygon = MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) station);
                 if (polygon != null) {
@@ -146,7 +146,7 @@ public class PowerLines extends Test {
             Iterator<? extends OsmPrimitive> it = testError.getPrimitives().iterator();
             if (it.hasNext()) {
                 return new ChangePropertyCommand(it.next(),
-                        "power", towerPoleTagMap.get(((PowerLineError)testError).line));
+                        "power", towerPoleTagMap.get(((PowerLineError) testError).line));
             }
         }
         return null;
@@ -154,7 +154,7 @@ public class PowerLines extends Test {
 
     @Override
     public boolean isFixable(TestError testError) {
-        return testError instanceof PowerLineError && towerPoleTagMap.containsKey(((PowerLineError)testError).line);
+        return testError instanceof PowerLineError && towerPoleTagMap.containsKey(((PowerLineError) testError).line);
     }
 
     /**
@@ -206,11 +206,13 @@ public class PowerLines extends Test {
 
     protected class PowerLineError extends TestError {
         private final Way line;
+
         public PowerLineError(Node n, Way line) {
             super(PowerLines.this, Severity.WARNING,
                     tr("Missing power tower/pole within power line"), POWER_LINES, n);
             this.line = line;
         }
+
         public final Node getNode() {
             // primitives list can be empty if all primitives have been purged
             Iterator<? extends OsmPrimitive> it = getPrimitives().iterator();

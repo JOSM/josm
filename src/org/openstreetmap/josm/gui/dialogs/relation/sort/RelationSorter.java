@@ -19,11 +19,11 @@ public class RelationSorter {
 
     private static interface AdditionalSorter {
         public boolean acceptsMember(RelationMember m);
+
         public List<RelationMember> sortMembers(List<RelationMember> list);
     }
 
     private static final Collection<AdditionalSorter> additionalSorters = new ArrayList<>();
-
     static {
         // first adequate sorter is used, so order matters
         additionalSorters.add(new AssociatedStreetRoleStreetSorter());

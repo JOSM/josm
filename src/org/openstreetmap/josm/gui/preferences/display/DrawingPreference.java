@@ -65,15 +65,15 @@ public class DrawingPreference implements SubPreferenceSetting {
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         gui.getDisplayPreference().addSubTab(this, tr("GPS Points"), scrollpane);
         panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // directionHint
-        directionHint.addActionListener(new ActionListener(){
+        directionHint.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (directionHint.isSelected()){
+                if (directionHint.isSelected()) {
                     headArrow.setSelected(Main.pref.getBoolean("draw.segment.head_only", false));
-                }else{
+                } else {
                     headArrow.setSelected(false);
                 }
                 headArrow.setEnabled(directionHint.isSelected());
@@ -133,28 +133,28 @@ public class DrawingPreference implements SubPreferenceSetting {
         JLabel performanceLabel = new JLabel(tr("Options that affect drawing performance"));
 
         panel.add(new JLabel(tr("Segment drawing options")),
-                GBC.eop().insets(5,10,0,0));
-        panel.add(directionHint, GBC.eop().insets(20,0,0,0));
+                GBC.eop().insets(5, 10, 0, 0));
+        panel.add(directionHint, GBC.eop().insets(20, 0, 0, 0));
         panel.add(headArrow, GBC.eop().insets(40, 0, 0, 0));
-        panel.add(onewayArrow, GBC.eop().insets(20,0,0,0));
-        panel.add(segmentOrderNumber, GBC.eop().insets(20,0,0,0));
+        panel.add(onewayArrow, GBC.eop().insets(20, 0, 0, 0));
+        panel.add(segmentOrderNumber, GBC.eop().insets(20, 0, 0, 0));
 
         panel.add(new JLabel(tr("Select and draw mode options")),
-                GBC.eop().insets(5,10,0,0));
-        panel.add(virtualNodes, GBC.eop().insets(20,0,0,0));
+                GBC.eop().insets(5, 10, 0, 0));
+        panel.add(virtualNodes, GBC.eop().insets(20, 0, 0, 0));
         panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
 
-        panel.add(performanceLabel, GBC.eop().insets(5,10,0,0));
-        panel.add(useAntialiasing, GBC.eop().insets(20,0,0,0));
+        panel.add(performanceLabel, GBC.eop().insets(5, 10, 0, 0));
+        panel.add(useAntialiasing, GBC.eop().insets(20, 0, 0, 0));
         panel.add(useWireframeAntialiasing, GBC.eop().insets(20, 0, 0, 0));
-        panel.add(useHighlighting, GBC.eop().insets(20,0,0,0));
-        panel.add(outlineOnly, GBC.eol().insets(20,0,0,0));
+        panel.add(useHighlighting, GBC.eop().insets(20, 0, 0, 0));
+        panel.add(outlineOnly, GBC.eol().insets(20, 0, 0, 0));
 
         panel.add(new JLabel(tr("Other options")),
-                GBC.eop().insets(5,10,0,0));
-        panel.add(sourceBounds, GBC.eop().insets(20,0,0,0));
-        panel.add(inactive, GBC.eop().insets(20,0,0,0));
-        panel.add(discardableKeys, GBC.eop().insets(20,0,0,0));
+                GBC.eop().insets(5, 10, 0, 0));
+        panel.add(sourceBounds, GBC.eop().insets(20, 0, 0, 0));
+        panel.add(inactive, GBC.eop().insets(20, 0, 0, 0));
+        panel.add(discardableKeys, GBC.eop().insets(20, 0, 0, 0));
 
         ExpertToggleAction.addVisibilitySwitcher(performanceLabel);
         ExpertToggleAction.addVisibilitySwitcher(useAntialiasing);

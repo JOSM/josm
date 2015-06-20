@@ -66,6 +66,7 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
             prefs.put(p, cb);
         }
     }
+
     private final Map<PermissionPrefWithDefault, JCheckBox> prefs = new LinkedHashMap<>();
     private JCheckBox enableRemoteControl;
     private JCheckBox enableHttpsSupport;

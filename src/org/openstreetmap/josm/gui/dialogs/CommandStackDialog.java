@@ -125,7 +125,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         UndoRedoAction redoAction = new UndoRedoAction(UndoRedoType.REDO);
         wireUpdateEnabledStateUpdater(redoAction, redoTree);
 
-        scrollPane = (JScrollPane)createLayout(treesPanel, true, Arrays.asList(new SideButton[] {
+        scrollPane = (JScrollPane) createLayout(treesPanel, true, Arrays.asList(new SideButton[] {
             new SideButton(selectAction),
             new SideButton(undoAction),
             new SideButton(redoAction)
@@ -140,9 +140,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row,
                 boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-            DefaultMutableTreeNode v = (DefaultMutableTreeNode)value;
+            DefaultMutableTreeNode v = (DefaultMutableTreeNode) value;
             if (v.getUserObject() instanceof JLabel) {
-                JLabel l = (JLabel)v.getUserObject();
+                JLabel l = (JLabel) v.getUserObject();
                 setIcon(l.getIcon());
                 setText(l.getText());
             }
@@ -270,14 +270,14 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
         List<Command> undoCommands = Main.main.undoRedo.commands;
         DefaultMutableTreeNode undoRoot = new DefaultMutableTreeNode();
-        for (int i=0; i<undoCommands.size(); ++i) {
+        for (int i = 0; i < undoCommands.size(); ++i) {
             undoRoot.add(getNodeForCommand(undoCommands.get(i), i));
         }
         undoTreeModel.setRoot(undoRoot);
 
         List<Command> redoCommands = Main.main.undoRedo.redoCommands;
         DefaultMutableTreeNode redoRoot = new DefaultMutableTreeNode();
-        for (int i=0; i<redoCommands.size(); ++i) {
+        for (int i = 0; i < redoCommands.size(); ++i) {
             redoRoot.add(getNodeForCommand(redoCommands.get(i), i));
         }
         redoTreeModel.setRoot(redoRoot);
@@ -325,7 +325,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         CommandListMutableTreeNode node = new CommandListMutableTreeNode(c, idx);
         if (c.getChildren() != null) {
             List<PseudoCommand> children = new ArrayList<>(c.getChildren());
-            for (int i=0; i<children.size(); ++i) {
+            for (int i = 0; i < children.size(); ++i) {
                 node.add(getNodeForCommand(children.get(i), i));
             }
         }
@@ -342,7 +342,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         final OsmDataLayer currentLayer = Main.main.getEditLayer();
         return new FilteredCollection<>(
                 c.getParticipatingPrimitives(),
-                new Predicate<OsmPrimitive>(){
+                new Predicate<OsmPrimitive>() {
                     @Override
                     public boolean evaluate(OsmPrimitive o) {
                         OsmPrimitive p = currentLayer.data.getPrimitiveById(o);
@@ -368,9 +368,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
          * Constructs a new {@code SelectAction}.
          */
         public SelectAction() {
-            putValue(NAME,tr("Select"));
+            putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION, tr("Selects the objects that take part in this command (unless currently deleted)"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
         }
 
         @Override
@@ -402,9 +402,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
          * Constructs a new {@code SelectAndZoomAction}.
          */
         public SelectAndZoomAction() {
-            putValue(NAME,tr("Select and zoom"));
+            putValue(NAME, tr("Select and zoom"));
             putValue(SHORT_DESCRIPTION, tr("Selects the objects that take part in this command (unless currently deleted), then and zooms to it"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale","selection"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
         }
 
         @Override
@@ -437,13 +437,13 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             switch (type) {
             case UNDO:
                 tree = undoTree;
-                putValue(NAME,tr("Undo"));
+                putValue(NAME, tr("Undo"));
                 putValue(SHORT_DESCRIPTION, tr("Undo the selected and all later commands"));
                 putValue(SMALL_ICON, ImageProvider.get("undo"));
                 break;
             case REDO:
                 tree = redoTree;
-                putValue(NAME,tr("Redo"));
+                putValue(NAME, tr("Redo"));
                 putValue(SHORT_DESCRIPTION, tr("Redo the selected and all earlier commands"));
                 putValue(SMALL_ICON, ImageProvider.get("redo"));
                 break;
@@ -478,7 +478,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         @Override
         public void updateEnabledState() {
             // do not allow execution if nothing is selected or a sub command was selected
-            setEnabled(!tree.isSelectionEmpty() && tree.getSelectionPath().getPathCount()==2);
+            setEnabled(!tree.isSelectionEmpty() && tree.getSelectionPath().getPathCount() == 2);
         }
     }
 
@@ -497,7 +497,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     }
 
     private class CommandStackPopup extends JPopupMenu {
-        public CommandStackPopup(){
+        public CommandStackPopup() {
             add(selectAction);
             add(selectAndZoomAction);
         }

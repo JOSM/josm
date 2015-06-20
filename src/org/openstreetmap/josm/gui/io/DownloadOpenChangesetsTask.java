@@ -47,7 +47,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         this.canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (reader != null) {
                 reader.cancel();
             }
@@ -69,7 +69,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             );
             return;
         }
-        if (canceled)return;
+        if (canceled) return;
         if (lastException != null) {
             ExceptionDialogUtil.explainException(lastException);
             return;
@@ -97,13 +97,13 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
      * the users id yet.
      *
      */
-    protected void refreshUserIdentity(){
+    protected void refreshUserIdentity() {
         JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
         try {
             OsmServerUserInfoReader infoReader = new OsmServerUserInfoReader();
             UserInfo info = infoReader.fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1, false));
             im.setFullyIdentified(info.getDisplayName(), info);
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             // retrieving the user info can fail if the current user is not authorised to
             // retrieve it, i.e. if he is working with an OAuth Access Token which doesn't
             // have the respective privileges or if he didn't or he can't authenticate with
@@ -126,13 +126,13 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
             if (im.isAnonymous()) {
                 refreshUserIdentity();
-            } else if (im.isFullyIdentified()){
+            } else if (im.isFullyIdentified()) {
                 // do nothing
             } else if (im.isPartiallyIdentified()) {
                 refreshUserIdentity();
             }
-            if (canceled)return;
-            synchronized(this) {
+            if (canceled) return;
+            synchronized (this) {
                 reader = new OsmServerChangesetReader();
             }
             ChangesetQuery query = new ChangesetQuery().beingOpen(true);
@@ -152,7 +152,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
                     query,
                     getProgressMonitor().createSubTaskMonitor(1, false /* not internal */)
             );
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (canceled)
                 return;
             lastException = e;

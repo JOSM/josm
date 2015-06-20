@@ -34,7 +34,7 @@ public abstract class RequestHandler {
     public static final boolean loadInNewLayerDefault = false;
 
     /** The GET request arguments */
-    protected Map<String,String> args;
+    protected Map<String, String> args;
 
     /** The request URL without "GET". */
     protected String request;
@@ -219,7 +219,7 @@ public abstract class RequestHandler {
         String[] optional = getOptionalParams();
         List<String> missingKeys = new LinkedList<>();
         boolean error = false;
-        if(mandatory != null) for (String key : mandatory) {
+        if (mandatory != null) for (String key : mandatory) {
             String value = args.get(key);
             if (value == null || value.isEmpty()) {
                 error = true;
@@ -311,6 +311,7 @@ public abstract class RequestHandler {
         public RequestHandlerBadRequestException(String message) {
             super(message);
         }
+
         public RequestHandlerBadRequestException(String message, Throwable cause) {
             super(message, cause);
         }

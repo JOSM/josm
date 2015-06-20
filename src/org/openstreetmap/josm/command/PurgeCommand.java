@@ -83,7 +83,7 @@ public class PurgeCommand extends Command {
             /**
              * Loop from back to front to keep referential integrity.
              */
-            for (int i=toPurge.size()-1; i>=0; --i) {
+            for (int i = toPurge.size()-1; i >= 0; --i) {
                 OsmPrimitive osm = toPurge.get(i);
                 if (makeIncompleteDataByPrimId.containsKey(osm)) {
                     // we could simply set the incomplete flag
@@ -213,7 +213,7 @@ public class PurgeCommand extends Command {
                     throw new AssertionError();
                 Integer i = numChilds.get(parent);
                 if (i != null) {
-                    numChilds.put((Relation)parent, i+1);
+                    numChilds.put((Relation) parent, i+1);
                 }
             }
         }

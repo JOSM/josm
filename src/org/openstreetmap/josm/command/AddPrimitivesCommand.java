@@ -68,7 +68,8 @@ public class AddPrimitivesCommand extends Command {
         }
     }
 
-    @Override public boolean executeCommand() {
+    @Override
+    public boolean executeCommand() {
         Collection<OsmPrimitive> primitivesToSelect;
         if (createdPrimitives == null) { // first time execution
             List<OsmPrimitive> newPrimitives = new ArrayList<>(data.size());
@@ -93,7 +94,7 @@ public class AddPrimitivesCommand extends Command {
             }
 
             // Then load ways and relations
-            for (int i=0; i<newPrimitives.size(); i++) {
+            for (int i = 0; i < newPrimitives.size(); i++) {
                 if (!(newPrimitives.get(i) instanceof Node)) {
                     newPrimitives.get(i).load(data.get(i));
                 }

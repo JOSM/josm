@@ -92,9 +92,9 @@ public final class Geometry {
                 for (int seg1Pos = 0; seg1Pos + 1 < way1Nodes.size(); seg1Pos++) {
 
                     //iterate over secondary segment
-                    int seg2Start = seg1Way != seg2Way ? 0: seg1Pos + 2;//skip the adjacent segment
+                    int seg2Start = seg1Way != seg2Way ? 0 : seg1Pos + 2; //skip the adjacent segment
 
-                    for (int seg2Pos = seg2Start; seg2Pos + 1< way2Nodes.size(); seg2Pos++) {
+                    for (int seg2Pos = seg2Start; seg2Pos + 1 < way2Nodes.size(); seg2Pos++) {
 
                         //need to get them again every time, because other segments may be changed
                         Node seg1Node1 = way1Nodes.get(seg1Pos);
@@ -297,9 +297,9 @@ public final class Geometry {
 
         if (Math.abs(det) > 1e-12 * mag) {
             double u = uu/det, v = vv/det;
-            if (u>-1e-8 && u < 1+1e-8 && v>-1e-8 && v < 1+1e-8) {
-                if (u<0) u=0;
-                if (u>1) u=1.0;
+            if (u > -1e-8 && u < 1+1e-8 && v > -1e-8 && v < 1+1e-8) {
+                if (u < 0) u = 0;
+                if (u > 1) u = 1.0;
                 return new EastNorth(x1+a1*u, y1+a2*u);
             } else {
                 return null;
@@ -653,7 +653,7 @@ public final class Geometry {
         return 6367000 * c;
     }
 
-    protected static double calcY(Node p1){
+    protected static double calcY(Node p1) {
         double lat1, lon1, lat2, lon2;
         double dlon, dlat;
 
@@ -812,7 +812,7 @@ public final class Geometry {
      */
     public static EastNorth getCenter(List<Node> nodes) {
         int nc = nodes.size();
-        if(nc < 3) return null;
+        if (nc < 3) return null;
         /**
          * Equation of each bisector ax + by + c = 0
          */
@@ -820,13 +820,13 @@ public final class Geometry {
         double[] b = new double[nc];
         double[] c = new double[nc];
         // Compute equation of bisector
-        for(int i = 0; i < nc; i++) {
+        for (int i = 0; i < nc; i++) {
             EastNorth pt1 = nodes.get(i).getEastNorth();
             EastNorth pt2 = nodes.get((i+1) % nc).getEastNorth();
             a[i] = pt1.east() - pt2.east();
             b[i] = pt1.north() - pt2.north();
             double d = Math.sqrt(a[i]*a[i] + b[i]*b[i]);
-            if(d == 0) return null;
+            if (d == 0) return null;
             a[i] /= d;
             b[i] /= d;
             double xC = (pt1.east() + pt2.east()) / 2;
@@ -837,7 +837,7 @@ public final class Geometry {
         double a11 = 0, a12 = 0, a22 = 0;
         // At.Y = [bi]
         double b1 = 0, b2 = 0;
-        for(int i = 0; i < nc; i++) {
+        for (int i = 0; i < nc; i++) {
             a11 += a[i]*a[i];
             a12 += a[i]*b[i];
             a22 += b[i]*b[i];
@@ -846,7 +846,7 @@ public final class Geometry {
         }
         // (At.A)^-1 = [invij]
         double det = a11*a22 - a12*a12;
-        if(Math.abs(det) < 1e-5) return null;
+        if (Math.abs(det) < 1e-5) return null;
         double inv11 = a22/det;
         double inv12 = -a12/det;
         double inv22 = a11/det;

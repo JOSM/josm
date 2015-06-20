@@ -213,7 +213,7 @@ public final class Utils {
     public static void ensure(boolean condition, String message, Object...data) {
         if (!condition)
             throw new AssertionError(
-                    MessageFormat.format(message,data)
+                    MessageFormat.format(message, data)
             );
     }
 
@@ -573,7 +573,7 @@ public final class Utils {
         return toHexString(byteDigest);
     }
 
-    private static final char[] HEX_ARRAY = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+    private static final char[] HEX_ARRAY = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     /**
      * Converts a byte array to a string of hexadecimal characters.
@@ -610,8 +610,8 @@ public final class Utils {
      * There must not be cyclic dependencies.
      * @return the list of sorted objects
      */
-    public static <T> List<T> topologicalSort(final MultiMap<T,T> dependencies) {
-        MultiMap<T,T> deps = new MultiMap<>();
+    public static <T> List<T> topologicalSort(final MultiMap<T, T> dependencies) {
+        MultiMap<T, T> deps = new MultiMap<>();
         for (T key : dependencies.keySet()) {
             deps.putVoid(key);
             for (T val : dependencies.get(key)) {
@@ -622,7 +622,7 @@ public final class Utils {
 
         int size = deps.size();
         List<T> sorted = new ArrayList<>();
-        for (int i=0; i<size; ++i) {
+        for (int i = 0; i < size; ++i) {
             T parentless = null;
             for (T key : deps.keySet()) {
                 if (deps.get(key).isEmpty()) {
@@ -838,8 +838,8 @@ public final class Utils {
     public static URLConnection setupURLConnection(URLConnection connection) {
         if (connection != null) {
             connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
-            connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
-            connection.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
+            connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
+            connection.setReadTimeout(Main.pref.getInteger("socket.timeout.read", 30)*1000);
         }
         return connection;
     }
@@ -1157,7 +1157,7 @@ public final class Utils {
 
         StringBuilder sb = new StringBuilder(url.substring(0, url.indexOf('?') + 1));
 
-        for (int i=0; i<query.length(); i++) {
+        for (int i = 0; i < query.length(); i++) {
             String c = query.substring(i, i+1);
             if (URL_CHARS.contains(c)) {
                 sb.append(c);

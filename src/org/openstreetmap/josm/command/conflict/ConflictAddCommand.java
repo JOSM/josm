@@ -51,7 +51,7 @@ public class ConflictAddCommand extends Command {
     public boolean executeCommand() {
         try {
             getLayer().getConflicts().add(conflict);
-        } catch(IllegalStateException e) {
+        } catch (IllegalStateException e) {
             Main.error(e);
             warnBecauseOfDoubleConflict();
         }

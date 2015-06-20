@@ -26,14 +26,14 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel{
     protected final void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // checkbox for "allow to upload map data"
         //
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
-        gc.insets = new Insets(0,0,3,3);
+        gc.insets = new Insets(0, 0, 3, 3);
         add(cbWriteApi = new JCheckBox(), gc);
         cbWriteApi.setText(tr("Allow to upload map data"));
         cbWriteApi.setToolTipText(tr("Select to grant JOSM the right to upload map data on your behalf"));

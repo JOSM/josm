@@ -106,7 +106,7 @@ public final class StyleCache {
     public StyleList get(double scale) {
         if (scale <= 0)
             throw new IllegalArgumentException("scale must be <= 0 but is "+scale);
-        for (int i=0; i<data.size(); ++i) {
+        for (int i = 0; i < data.size(); ++i) {
             if (bd.get(i) < scale && scale <= bd.get(i+1)) {
                 return data.get(i);
             }
@@ -121,7 +121,7 @@ public final class StyleCache {
     public Pair<StyleList, Range> getWithRange(double scale) {
         if (scale <= 0)
             throw new IllegalArgumentException("scale must be <= 0 but is "+scale);
-        for (int i=0; i<data.size(); ++i) {
+        for (int i = 0; i < data.size(); ++i) {
             if (bd.get(i) < scale && scale <= bd.get(i+1)) {
                 return new Pair<>(data.get(i), new Range(bd.get(i), bd.get(i+1)));
             }
@@ -160,7 +160,7 @@ public final class StyleCache {
      *       lower     upper
      */
     private void putImpl(StyleList sl, double lower, double upper) {
-        int i=0;
+        int i = 0;
         while (bd.get(i) < lower) {
             ++i;
         }
@@ -213,7 +213,7 @@ public final class StyleCache {
         if (bd.size() != data.size() + 1) throw new AssertionError();
         if (bd.get(0) != 0) throw new AssertionError();
         if (bd.get(bd.size() - 1) != Double.POSITIVE_INFINITY) throw new AssertionError();
-        for (int i=0; i<data.size() - 1; ++i) {
+        for (int i = 0; i < data.size() - 1; ++i) {
             if (bd.get(i) >= bd.get(i + 1)) throw new AssertionError();
         }
     }

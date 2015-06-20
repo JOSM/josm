@@ -19,6 +19,7 @@ public final class JumpToMarkerActions {
 
     public interface JumpToMarkerLayer {
         void jumpToNextMarker();
+
         void jumpToPreviousMarker();
     }
 
@@ -109,7 +110,7 @@ public final class JumpToMarkerActions {
 
         @Override
         protected void execute(Layer l) {
-            ((JumpToMarkerLayer)l).jumpToNextMarker();
+            ((JumpToMarkerLayer) l).jumpToNextMarker();
             setLastLayer(l);
         }
     }

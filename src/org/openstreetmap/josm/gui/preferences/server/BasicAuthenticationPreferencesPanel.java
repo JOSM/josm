@@ -42,14 +42,14 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
      */
     protected final void build() {
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
+        setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         GridBagConstraints gc = new GridBagConstraints();
 
         // -- OSM user name
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,3,3);
+        gc.insets = new Insets(0, 0, 3, 3);
         add(new JLabel(tr("OSM username:")), gc);
 
         gc.gridx = 1;
@@ -77,7 +77,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
         gc.gridwidth = 2;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        gc.insets = new Insets(5,0,0,0);
+        gc.insets = new Insets(5, 0, 0, 0);
         gc.fill = GridBagConstraints.BOTH;
         decorationPanel = new JPanel(new BorderLayout());
         add(decorationPanel, gc);
@@ -103,10 +103,10 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
                 tfOsmUserName.setText("");
                 tfOsmPassword.setText("");
             } else {
-                tfOsmUserName.setText(pa.getUserName() == null? "" : pa.getUserName());
+                tfOsmUserName.setText(pa.getUserName() == null ? "" : pa.getUserName());
                 tfOsmPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
-        } catch(CredentialsAgentException e) {
+        } catch (CredentialsAgentException e) {
             Main.error(e);
             Main.warn(tr("Failed to retrieve OSM credentials from credential manager."));
             Main.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));

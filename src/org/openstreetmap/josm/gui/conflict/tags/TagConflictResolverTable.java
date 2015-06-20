@@ -39,9 +39,9 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
         getActionMap().put("selectNextColumnCell", selectNextColumnCellAction);
         getActionMap().put("selectPreviousColumnCell", selectPreviousColumnCellAction);
 
-        ((MultiValueCellEditor)getColumnModel().getColumn(2).getCellEditor()).addNavigationListener(this);
+        ((MultiValueCellEditor) getColumnModel().getColumn(2).getCellEditor()).addNavigationListener(this);
 
-        setRowHeight((int)new JosmComboBox<String>().getPreferredSize().getHeight());
+        setRowHeight((int) new JosmComboBox<String>().getPreferredSize().getHeight());
     }
 
     /**

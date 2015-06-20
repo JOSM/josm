@@ -50,7 +50,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class Capabilities {
 
-    private final Map<String, Map<String,String>> capabilities;
+    private final Map<String, Map<String, String>> capabilities;
     private final List<String> imageryBlacklist;
 
     /**
@@ -131,7 +131,7 @@ public class Capabilities {
             }
         } else {
             if (!capabilities.containsKey(element))  {
-                Map<String,String> h = new HashMap<>();
+                Map<String, String> h = new HashMap<>();
                 capabilities.put(element, h);
             }
             Map<String, String> e = capabilities.get(element);
@@ -247,7 +247,7 @@ public class Capabilities {
 
         @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-            for (int i=0; i< atts.getLength(); i++) {
+            for (int i = 0; i < atts.getLength(); i++) {
                 capabilities.put(qName, atts.getQName(i), atts.getValue(i));
             }
         }

@@ -351,7 +351,7 @@ public class CustomProjection extends AbstractProjection {
         if (isCentric)
             return new CentricDatum(null, null, ellps);
         boolean is3Param = true;
-        for (int i = 3; i<towgs84Param.size(); i++) {
+        for (int i = 3; i < towgs84Param.size(); i++) {
             if (towgs84Param.get(i) != 0) {
                 is3Param = false;
                 break;

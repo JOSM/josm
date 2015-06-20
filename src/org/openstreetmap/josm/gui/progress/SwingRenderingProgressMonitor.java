@@ -47,7 +47,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     protected void updateProgress(double progressValue) {
-        final int newValue = (int)(progressValue * PROGRESS_BAR_MAX);
+        final int newValue = (int) (progressValue * PROGRESS_BAR_MAX);
         if (newValue != currentProgressValue) {
             currentProgressValue = newValue;
             GuiHelper.runInEDT(new Runnable() {

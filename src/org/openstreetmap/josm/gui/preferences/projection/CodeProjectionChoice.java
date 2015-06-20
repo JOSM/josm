@@ -71,6 +71,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         private static class CodeComparator implements Comparator<String>, Serializable {
             private static final long serialVersionUID = 1L;
             private final Pattern codePattern = Pattern.compile("([a-zA-Z]+):(\\d+)");
+
             @Override
             public int compare(String c1, String c2) {
                 Matcher matcher1 = codePattern.matcher(c1);
@@ -188,7 +189,6 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
     public Projection getProjection() {
         return Projections.getProjectionByCode(code);
     }
-
 
     @Override
     public String getCurrentCode() {

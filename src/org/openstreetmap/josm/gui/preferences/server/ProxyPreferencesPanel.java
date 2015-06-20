@@ -75,7 +75,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         public static ProxyPolicy fromName(String policyName) {
             if (policyName == null) return null;
             policyName = policyName.trim().toLowerCase(Locale.ENGLISH);
-            for(ProxyPolicy pp: values()) {
+            for (ProxyPolicy pp: values()) {
                 if (pp.getName().equals(policyName))
                     return pp;
             }
@@ -126,14 +126,14 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(5,5,0,0);
+        gc.insets = new Insets(5, 5, 0, 0);
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
         pnl.add(new JLabel(tr("Host:")), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpHost = new JosmTextField(),gc);
+        pnl.add(tfProxyHttpHost = new JosmTextField(), gc);
 
         gc.gridy = 1;
         gc.gridx = 0;
@@ -143,7 +143,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpPort = new JosmTextField(5),gc);
+        pnl.add(tfProxyHttpPort = new JosmTextField(5), gc);
         tfProxyHttpPort.setMinimumSize(tfProxyHttpPort.getPreferredSize());
 
         gc.gridy = 2;
@@ -163,7 +163,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.gridy = 3;
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpUser = new JosmTextField(20),gc);
+        pnl.add(tfProxyHttpUser = new JosmTextField(20), gc);
         tfProxyHttpUser.setMinimumSize(tfProxyHttpUser.getPreferredSize());
 
         gc.gridy = 4;
@@ -173,7 +173,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpPassword = new JosmPasswordField(20),gc);
+        pnl.add(tfProxyHttpPassword = new JosmPasswordField(20), gc);
         tfProxyHttpPassword.setMinimumSize(tfProxyHttpPassword.getPreferredSize());
 
         // add an extra spacer, otherwise the layout is broken
@@ -201,14 +201,14 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         };
         GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(5,5,0,0);
+        gc.insets = new Insets(5, 5, 0, 0);
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
         pnl.add(new JLabel(tr("Host:")), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxySocksHost = new JosmTextField(20),gc);
+        pnl.add(tfProxySocksHost = new JosmTextField(20), gc);
 
         gc.gridy = 1;
         gc.gridx = 0;
@@ -251,7 +251,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 0.0;
-        pnl.add(rbProxyPolicy.get(ProxyPolicy.NO_PROXY),gc);
+        pnl.add(rbProxyPolicy.get(ProxyPolicy.NO_PROXY), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
@@ -261,7 +261,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.gridx = 0;
         gc.gridy = 1;
         gc.weightx = 0.0;
-        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_SYSTEM_SETTINGS),gc);
+        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_SYSTEM_SETTINGS), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
@@ -277,11 +277,11 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.gridx = 0;
         gc.gridy = 2;
         gc.weightx = 0.0;
-        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_HTTP_PROXY),gc);
+        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_HTTP_PROXY), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(new JLabel(tr("Manually configure a HTTP proxy")),gc);
+        pnl.add(new JLabel(tr("Manually configure a HTTP proxy")), gc);
 
         // the panel with the http proxy configuration parameters
         gc.gridx = 1;
@@ -289,17 +289,17 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        pnl.add(pnlHttpProxyConfigurationPanel = buildHttpProxyConfigurationPanel(),gc);
+        pnl.add(pnlHttpProxyConfigurationPanel = buildHttpProxyConfigurationPanel(), gc);
 
         // radio button SOCKS proxy
         gc.gridx = 0;
         gc.gridy = 4;
         gc.weightx = 0.0;
-        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_SOCKS_PROXY),gc);
+        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_SOCKS_PROXY), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(new JLabel(tr("Use a SOCKS proxy")),gc);
+        pnl.add(new JLabel(tr("Use a SOCKS proxy")), gc);
 
         // the panel with the SOCKS configuration parameters
         gc.gridx = 1;
@@ -308,7 +308,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.anchor = GridBagConstraints.WEST;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        pnl.add(pnlSocksProxyConfigurationPanel = buildSocksProxyConfigurationPanel(),gc);
+        pnl.add(pnlSocksProxyConfigurationPanel = buildSocksProxyConfigurationPanel(), gc);
 
         return pnl;
     }
@@ -343,7 +343,8 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         tfProxySocksPort.setText(Main.pref.get(PROXY_SOCKS_PORT, ""));
 
         if (pp.equals(ProxyPolicy.USE_SYSTEM_SETTINGS) && !DefaultProxySelector.willJvmRetrieveSystemProxies()) {
-            Main.warn(tr("JOSM is configured to use proxies from the system setting, but the JVM is not configured to retrieve them. Resetting preferences to ''No proxy''"));
+            Main.warn(tr("JOSM is configured to use proxies from the system setting, but the JVM is not configured to retrieve them. " +
+                         "Resetting preferences to ''No proxy''"));
             pp = ProxyPolicy.NO_PROXY;
             rbProxyPolicy.get(pp).setSelected(true);
         }
@@ -360,7 +361,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
                 tfProxyHttpUser.setText(pa.getUserName() == null ? "" : pa.getUserName());
                 tfProxyHttpPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
-        } catch(CredentialsAgentException e) {
+        } catch (CredentialsAgentException e) {
             Main.error(e);
             tfProxyHttpUser.setText("");
             tfProxyHttpPassword.setText("");
@@ -393,7 +394,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      */
     public ProxyPreferencesPanel() {
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         add(buildProxySettingsPanel(), GBC.eop().anchor(GridBagConstraints.NORTHWEST).fill(GridBagConstraints.BOTH));
 
         initFromPreferences();
@@ -425,7 +426,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         // update the proxy selector
         ProxySelector selector = ProxySelector.getDefault();
         if (selector instanceof DefaultProxySelector) {
-            ((DefaultProxySelector)selector).initFromPreferences();
+            ((DefaultProxySelector) selector).initFromPreferences();
         }
 
         CredentialsAgent cm = CredentialsManager.getInstance();
@@ -435,7 +436,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
                     tfProxyHttpPassword.getPassword()
             );
             cm.store(RequestorType.PROXY, tfProxyHttpHost.getText(), pa);
-        } catch(CredentialsAgentException e) {
+        } catch (CredentialsAgentException e) {
             Main.error(e);
         }
     }

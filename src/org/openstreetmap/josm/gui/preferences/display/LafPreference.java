@@ -70,10 +70,10 @@ public class LafPreference implements SubPreferenceSetting {
         if (Main.isPlatformOsx()) {
             try {
                 Class<?> Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-                Object Oquaqua = Cquaqua.getConstructor((Class[])null).newInstance((Object[])null);
+                Object Oquaqua = Cquaqua.getConstructor((Class[]) null).newInstance((Object[]) null);
                 // no exception? Then Go!
                 lafCombo.addItem(
-                        new UIManager.LookAndFeelInfo(((LookAndFeel)Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
+                        new UIManager.LookAndFeelInfo(((LookAndFeel) Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
                 );
             } catch (Exception ex) {
                 // just debug, Quaqua may not even be installed...
@@ -89,7 +89,7 @@ public class LafPreference implements SubPreferenceSetting {
             }
         }
 
-        lafCombo.setRenderer(new ListCellRenderer<LookAndFeelInfo>(){
+        lafCombo.setRenderer(new ListCellRenderer<LookAndFeelInfo>() {
             private final DefaultListCellRenderer def = new DefaultListCellRenderer();
             @Override
             public Component getListCellRendererComponent(JList<? extends LookAndFeelInfo> list, LookAndFeelInfo value,
@@ -99,7 +99,7 @@ public class LafPreference implements SubPreferenceSetting {
         });
 
         panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // Show splash screen on startup
         showSplashScreen.setToolTipText(tr("Show splash screen at startup"));
@@ -143,7 +143,7 @@ public class LafPreference implements SubPreferenceSetting {
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
         panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
-        panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+        panel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         panel.add(lafCombo, GBC.eol().fill(GBC.HORIZONTAL));
 
         JScrollPane scrollpane = new JScrollPane(panel);
@@ -161,7 +161,7 @@ public class LafPreference implements SubPreferenceSetting {
         Main.pref.put(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
         Main.pref.put(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
         Main.pref.put(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());
-        mod |= Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
+        mod |= Main.pref.put("laf", ((LookAndFeelInfo) lafCombo.getSelectedItem()).getClassName());
         return mod;
     }
 

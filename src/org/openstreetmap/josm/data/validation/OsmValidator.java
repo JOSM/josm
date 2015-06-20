@@ -167,7 +167,7 @@ public class OsmValidator implements LayerChangeListener {
             if (!pathDir.exists()) {
                 pathDir.mkdirs();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Main.error(e);
         }
     }
@@ -241,7 +241,7 @@ public class OsmValidator implements LayerChangeListener {
     }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
-        for(String testName : Main.pref.getCollection(beforeUpload
+        for (String testName : Main.pref.getCollection(beforeUpload
         ? ValidatorPreference.PREF_SKIP_TESTS_BEFORE_UPLOAD : ValidatorPreference.PREF_SKIP_TESTS)) {
             Test test = tests.get(testName);
             if (test != null) {

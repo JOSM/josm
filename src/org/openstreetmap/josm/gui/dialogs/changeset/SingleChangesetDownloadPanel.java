@@ -31,11 +31,11 @@ public class SingleChangesetDownloadPanel extends JPanel {
     private ChangesetIdTextField tfChangesetId;
 
     protected void build() {
-        setLayout(new FlowLayout(FlowLayout.LEFT,0,0));
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(Color.GRAY),
-                        BorderFactory.createEmptyBorder(0,3,0,3)
+                        BorderFactory.createEmptyBorder(0, 3, 0, 3)
                 )
         );
 

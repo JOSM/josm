@@ -138,10 +138,10 @@ public class MapPaintDialog extends ToggleDialog {
                 Main.main.menu.wireFrameToggleAction.actionPerformed(null);
             }
         });
-        cbWireframe.setBorder(new EmptyBorder(new Insets(1,1,1,1)));
+        cbWireframe.setBorder(new EmptyBorder(new Insets(1, 1, 1, 1)));
 
         tblStyles = new StylesTable(model);
-        tblStyles.setSelectionModel(selectionModel= new DefaultListSelectionModel());
+        tblStyles.setSelectionModel(selectionModel = new DefaultListSelectionModel());
         tblStyles.addMouseListener(new PopupMenuHandler());
         tblStyles.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tblStyles.setBackground(UIManager.getColor("Panel.background"));
@@ -301,7 +301,7 @@ public class MapPaintDialog extends ToggleDialog {
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null)
                 return this;
             boolean b = (Boolean) value;
@@ -317,7 +317,7 @@ public class MapPaintDialog extends ToggleDialog {
             if (value == null)
                 return this;
             StyleSource s = (StyleSource) value;
-            JLabel label = (JLabel)super.getTableCellRendererComponent(table,
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table,
                     s.getDisplayString(), isSelected, hasFocus, row, column);
             label.setIcon(s.getIcon());
             label.setToolTipText(s.getToolTipText());
@@ -370,7 +370,7 @@ public class MapPaintDialog extends ToggleDialog {
          */
         public MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
-            putValue(NAME, isDown?tr("Down"):tr("Up"));
+            putValue(NAME, isDown ? tr("Down") : tr("Up"));
             putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));
             putValue(SHORT_DESCRIPTION, isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."));
             updateEnabledState();

@@ -232,7 +232,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     private JCheckBoxMenuItem addDualAlignMenuItem() {
         int n = Main.main.menu.editMenu.getItemCount();
-        for (int i = n-1; i>0; i--) {
+        for (int i = n-1; i > 0; i--) {
             JMenuItem item = Main.main.menu.editMenu.getItem(i);
             if (item != null && item.getAction() != null && item.getAction() instanceof DualAlignChangeAction) {
                 Main.main.menu.editMenu.remove(i);
@@ -296,7 +296,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     }
 
     private void readPreferences() {
-        initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
+        initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
         initialMoveThreshold = Main.pref.getInteger("extrude.initial-move-threshold", 1);
         mainColor = Main.pref.getColor(marktr("Extrude: main line"), null);
         if (mainColor == null) mainColor = PaintColors.SELECTED.get();
@@ -373,9 +373,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        if(!Main.map.mapView.isActiveLayerVisible())
+        if (!Main.map.mapView.isActiveLayerVisible())
             return;
-        if (!(Boolean)this.getValue("active"))
+        if (!(Boolean) this.getValue("active"))
             return;
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
@@ -452,7 +452,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        if(!Main.map.mapView.isActiveLayerVisible())
+        if (!Main.map.mapView.isActiveLayerVisible())
             return;
 
         // do not count anything as a drag if it lasts less than 100 milliseconds.
@@ -515,7 +515,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     @Override
     public void mouseReleased(MouseEvent e) {
 
-        if(!Main.map.mapView.isActiveLayerVisible())
+        if (!Main.map.mapView.isActiveLayerVisible())
             return;
 
         if (mode == Mode.select) {
@@ -702,7 +702,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         Node targetNode = MergeNodesAction.selectTargetNode(changedNodes);
         Node locNode = MergeNodesAction.selectTargetLocationNode(changedNodes);
         Command mergeCmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), changedNodes, targetNode, locNode);
-        if (mergeCmd!=null) {
+        if (mergeCmd != null) {
             Main.main.undoRedo.add(mergeCmd);
         } else {
             // undo extruding command itself
@@ -771,7 +771,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     private static EastNorth calculateSegmentOffset(EastNorth segmentP1, EastNorth segmentP2, EastNorth moveDirection,
             EastNorth targetPos) {
         EastNorth intersectionPoint;
-        if (segmentP1.distanceSq(segmentP2)>1e-7) {
+        if (segmentP1.distanceSq(segmentP2) > 1e-7) {
             intersectionPoint = Geometry.getLineLineIntersection(segmentP1, segmentP2, targetPos, targetPos.add(moveDirection));
         } else {
             intersectionPoint = Geometry.closestPointToLine(targetPos, targetPos.add(moveDirection), segmentP1);
@@ -857,8 +857,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
         EastNorth n1en = selectedSegment.getFirstNode().getEastNorth();
         EastNorth n2en = selectedSegment.getSecondNode().getEastNorth();
-        if (n1en.distance(prevNode.getEastNorth())<1e-4 ||
-            n2en.distance(nextNode.getEastNorth())<1e-4) {
+        if (n1en.distance(prevNode.getEastNorth()) < 1e-4 ||
+            n2en.distance(nextNode.getEastNorth()) < 1e-4) {
             return false;
         }
 
@@ -1052,8 +1052,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                     g2.setColor(mainColor);
                     if (p1.distance(p2) < 3) {
                         g2.setStroke(mainStroke);
-                        g2.drawOval((int)(p1.x-symbolSize/2), (int)(p1.y-symbolSize/2),
-                                (int)(symbolSize), (int)(symbolSize));
+                        g2.drawOval((int) (p1.x-symbolSize/2), (int) (p1.y-symbolSize/2),
+                                (int) (symbolSize), (int) (symbolSize));
                     } else {
                         Line2D oldline = new Line2D.Double(p1, p2);
                         g2.setStroke(oldLineStroke);
@@ -1133,9 +1133,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         Point2D ra2 = new Point2D.Double(ra1.getX() - raoffsety*k, ra1.getY() + raoffsetx*k);
 
         GeneralPath ra = new GeneralPath();
-        ra.moveTo((float)ra1.getX(), (float)ra1.getY());
-        ra.lineTo((float)ra2.getX(), (float)ra2.getY());
-        ra.lineTo((float)ra3.getX(), (float)ra3.getY());
+        ra.moveTo((float) ra1.getX(), (float) ra1.getY());
+        ra.lineTo((float) ra2.getX(), (float) ra2.getY());
+        ra.lineTo((float) ra3.getX(), (float) ra3.getY());
         g2.setStroke(helperStrokeRA);
         g2.draw(ra);
     }
@@ -1168,8 +1168,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         Rectangle bounds = g.getDeviceConfiguration().getBounds();
         try {
             AffineTransform invtrans = g.getTransform().createInverse();
-            Point2D widthpoint = invtrans.deltaTransform(new Point2D.Double(bounds.width,0), null);
-            Point2D heightpoint = invtrans.deltaTransform(new Point2D.Double(0,bounds.height), null);
+            Point2D widthpoint = invtrans.deltaTransform(new Point2D.Double(bounds.width, 0), null);
+            Point2D heightpoint = invtrans.deltaTransform(new Point2D.Double(0, bounds.height), null);
 
             // Here we should end up with a gross overestimate of the maximum viewport diagonal in what
             // Graphics2D calls 'user space'. Essentially a manhattan distance of manhattan distances.

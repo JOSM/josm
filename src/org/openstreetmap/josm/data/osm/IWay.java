@@ -4,7 +4,8 @@ package org.openstreetmap.josm.data.osm;
 public interface IWay extends IPrimitive {
 
     int getNodesCount();
-    long getNodeId(int idx);
-    boolean isClosed();
 
+    long getNodeId(int idx);
+
+    boolean isClosed();
 }

@@ -68,7 +68,7 @@ public class OsmServerHistoryReader extends OsmServerReader {
                 OsmHistoryReader reader = new OsmHistoryReader(in);
                 return reader.parse(progressMonitor.createSubTaskMonitor(1, true));
             }
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             throw e;
         } catch (Exception e) {
             if (cancel)

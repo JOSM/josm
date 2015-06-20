@@ -70,7 +70,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
      * @throws IllegalArgumentException if toUpdate is null
      */
     public PluginDownloadTask(ProgressMonitor monitor, Collection<PluginInformation> toUpdate, String title) {
-        super(title, monitor == null? NullProgressMonitor.INSTANCE: monitor, false /* don't ignore exceptions */);
+        super(title, monitor == null ? NullProgressMonitor.INSTANCE : monitor, false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(toUpdate, "toUpdate");
         this.toUpdate.addAll(toUpdate);
     }
@@ -90,7 +90,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     @Override
     protected void cancel() {
         this.canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (downloadConnection != null) {
                 downloadConnection.disconnect();
             }
@@ -100,7 +100,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     @Override
     protected void finish() {}
 
-    protected void download(PluginInformation pi, File file) throws PluginDownloadException{
+    protected void download(PluginInformation pi, File file) throws PluginDownloadException {
         if (pi.mainversion > Version.getInstance().getVersion()) {
             ExtendedDialog dialog = new ExtendedDialog(
                     progressMonitor.getWindowParent(),
@@ -123,7 +123,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
                 throw new PluginDownloadException(msg);
             }
             URL url = new URL(pi.downloadlink);
-            synchronized(this) {
+            synchronized (this) {
                 downloadConnection = CachedFile.connectFollowingRedirect(url, PLUGIN_MIME_TYPES, null);
             }
             try (
@@ -145,7 +145,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
                 return;
             throw new PluginDownloadException(e);
         } finally {
-            synchronized(this) {
+            synchronized (this) {
                 downloadConnection = null;
             }
         }
@@ -167,7 +167,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             File pluginFile = new File(pluginDir, d.name + ".jar.new");
             try {
                 download(d, pluginFile);
-            } catch(PluginDownloadException e) {
+            } catch (PluginDownloadException e) {
                 Main.error(e);
                 failed.add(d);
                 continue;

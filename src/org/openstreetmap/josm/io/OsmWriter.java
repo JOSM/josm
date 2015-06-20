@@ -64,6 +64,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     public void setChangeset(Changeset cs) {
         this.changeset = cs;
     }
+
     public void setVersion(String v) {
         this.version = v;
     }
@@ -89,7 +90,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
 
     protected static final Comparator<OsmPrimitive> byIdComparator = new Comparator<OsmPrimitive>() {
         @Override public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-            return o1.getUniqueId()<o2.getUniqueId() ? -1 : (o1.getUniqueId()==o2.getUniqueId() ? 0 : 1);
+            return o1.getUniqueId() < o2.getUniqueId() ? -1 : (o1.getUniqueId() == o2.getUniqueId() ? 0 : 1);
         }
     };
 
@@ -197,7 +198,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.println("/>");
         } else {
             out.println(">");
-            for (int i=0; i<w.getNodesCount(); ++i) {
+            for (int i = 0; i < w.getNodesCount(); ++i) {
                 out.println("    <nd ref='"+w.getNodeId(i) +"' />");
             }
             addTags(w, "way", false);
@@ -212,7 +213,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.println("/>");
         } else {
             out.println(">");
-            for (int i=0; i<e.getMembersCount(); ++i) {
+            for (int i = 0; i < e.getMembersCount(); ++i) {
                 out.print("    <member type='");
                 out.print(e.getMemberType(i).getAPIName());
                 out.println("' ref='"+e.getMemberId(i)+"' role='" +
@@ -248,8 +249,9 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         addTags(cs, "changeset", false); // also writes closing </changeset>
     }
 
-    protected static final Comparator<Entry<String, String>> byKeyComparator = new Comparator<Entry<String,String>>() {
-        @Override public int compare(Entry<String, String> o1, Entry<String, String> o2) {
+    protected static final Comparator<Entry<String, String>> byKeyComparator = new Comparator<Entry<String, String>>() {
+        @Override
+        public int compare(Entry<String, String> o1, Entry<String, String> o2) {
             return o1.getKey().compareTo(o2.getKey());
         }
     };
@@ -300,7 +302,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             }
             // user and visible added with 0.4 API
             if (osm.getUser() != null) {
-                if(osm.getUser().isLocalUser()) {
+                if (osm.getUser().isLocalUser()) {
                     out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+"'");
                 } else if (osm.getUser().isOsmUser()) {
                     // uid added with 0.6

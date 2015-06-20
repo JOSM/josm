@@ -74,30 +74,32 @@ public class PlaceSelection implements DownloadSelection {
     private JTable tblSearchResults;
     private DownloadDialog parent;
     private static final Server[] SERVERS = new Server[] {
-        new Server("Nominatim","https://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds"))
+        new Server("Nominatim", "https://nominatim.openstreetmap.org/search?format=xml&q=", tr("Class Type"), tr("Bounds"))
     };
     private final JosmComboBox<Server> server = new JosmComboBox<>(SERVERS);
 
     private static class Server {
-        public String name;
-        public String url;
-        public String thirdcol;
-        public String fourthcol;
-        @Override
-        public String toString() {
-            return name;
-        }
+        public final String name;
+        public final String url;
+        public final String thirdcol;
+        public final String fourthcol;
+
         public Server(String n, String u, String t, String f) {
             name = n;
             url = u;
             thirdcol = t;
             fourthcol = f;
         }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     protected JPanel buildSearchPanel() {
         JPanel lpanel = new JPanel();
-        lpanel.setLayout(new GridLayout(2,2));
+        lpanel.setLayout(new GridLayout(2, 2));
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
 
@@ -121,8 +123,8 @@ public class PlaceSelection implements DownloadSelection {
         panel.add(lpanel, GBC.std().fill(GBC.HORIZONTAL).insets(5, 5, 0, 5));
         SearchAction searchAction = new SearchAction();
         JButton btnSearch = new JButton(searchAction);
-        ((JTextField)cbSearchExpression.getEditor().getEditorComponent()).getDocument().addDocumentListener(searchAction);
-        ((JTextField)cbSearchExpression.getEditor().getEditorComponent()).addActionListener(searchAction);
+        ((JTextField) cbSearchExpression.getEditor().getEditorComponent()).getDocument().addDocumentListener(searchAction);
+        ((JTextField) cbSearchExpression.getEditor().getEditorComponent()).addActionListener(searchAction);
 
         panel.add(btnSearch, GBC.eol().insets(5, 5, 0, 5));
 
@@ -146,7 +148,7 @@ public class PlaceSelection implements DownloadSelection {
         tblSearchResults = new JTable(model, columnmodel);
         tblSearchResults.setSelectionModel(selectionModel);
         JScrollPane scrollPane = new JScrollPane(tblSearchResults);
-        scrollPane.setPreferredSize(new Dimension(200,200));
+        scrollPane.setPreferredSize(new Dimension(200, 200));
         panel.add(scrollPane, BorderLayout.CENTER);
 
         gui.addDownloadAreaSelector(panel, tr("Areas around places"));
@@ -215,7 +217,7 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult = new PlaceSelection.SearchResult();
                     currentResult.name = atts.getValue("name");
                     currentResult.info = atts.getValue("info");
-                    if(currentResult.info != null) {
+                    if (currentResult.info != null) {
                         currentResult.info = tr(currentResult.info);
                     }
                     currentResult.lat = Double.parseDouble(atts.getValue("lat"));
@@ -287,7 +289,7 @@ public class PlaceSelection implements DownloadSelection {
 
         public SearchAction() {
             putValue(NAME, tr("Search ..."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs","search"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
             putValue(SHORT_DESCRIPTION, tr("Click to start searching for places"));
             updateEnabledState();
         }
@@ -332,9 +334,9 @@ public class PlaceSelection implements DownloadSelection {
         private Exception lastException;
 
         public NameQueryTask(String searchExpression) {
-            super(tr("Querying name server"),false /* don't ignore exceptions */);
+            super(tr("Querying name server"), false /* don't ignore exceptions */);
             this.searchExpression = searchExpression;
-            useserver = (Server)server.getSelectedItem();
+            useserver = (Server) server.getSelectedItem();
             Main.pref.put("namefinder.server", useserver.name);
         }
 
@@ -367,10 +369,10 @@ public class PlaceSelection implements DownloadSelection {
             try {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));
                 URL url = new URL(urlString);
-                synchronized(this) {
+                synchronized (this) {
                     connection = Utils.openHttpConnection(url);
                 }
-                connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+                connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
                 try (
                     InputStream inputStream = connection.getInputStream();
                     Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
@@ -414,6 +416,7 @@ public class PlaceSelection implements DownloadSelection {
             data = new ArrayList<>();
             this.selectionModel = selectionModel;
         }
+
         @Override
         public int getRowCount() {
             if (data == null) return 0;
@@ -434,6 +437,7 @@ public class PlaceSelection implements DownloadSelection {
             }
             fireTableDataChanged();
         }
+
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
@@ -485,6 +489,7 @@ public class PlaceSelection implements DownloadSelection {
             col4.setCellRenderer(renderer);
             addColumn(col4);
         }
+
         public void setHeadlines(String third, String fourth) {
             col3.setHeaderValue(third);
             col4.setHeaderValue(fourth);
@@ -508,9 +513,12 @@ public class PlaceSelection implements DownloadSelection {
 
     static class NamedResultCellRenderer extends JLabel implements TableCellRenderer {
 
+        /**
+         * Constructs a new {@code NamedResultCellRenderer}.
+         */
         public NamedResultCellRenderer() {
             setOpaque(true);
-            setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+            setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         }
 
         protected void reset() {
@@ -532,7 +540,7 @@ public class PlaceSelection implements DownloadSelection {
             StringBuilder ret = new StringBuilder();
             StringBuilder line = new StringBuilder();
             StringTokenizer tok = new StringTokenizer(description, " ");
-            while(tok.hasMoreElements()) {
+            while (tok.hasMoreElements()) {
                 String t = tok.nextToken();
                 if (line.length() == 0) {
                     line.append(t);
@@ -569,7 +577,7 @@ public class PlaceSelection implements DownloadSelection {
                 setText(sr.nearestPlace);
                 break;
             case 3:
-                if(sr.bounds != null) {
+                if (sr.bounds != null) {
                     setText(sr.bounds.toShortString(new DecimalFormat("0.000")));
                 } else {
                     setText(sr.zoom != 0 ? Integer.toString(sr.zoom) : tr("unknown"));

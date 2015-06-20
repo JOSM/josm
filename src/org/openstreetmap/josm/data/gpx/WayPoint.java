@@ -66,7 +66,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     }
 
     public final LatLon getCoor() {
-        return new LatLon(lat,lon);
+        return new LatLon(lat, lon);
     }
 
     /**
@@ -94,7 +94,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
 
     @Override
     public String toString() {
-        return "WayPoint (" + (attr.containsKey(GPX_NAME) ? get(GPX_NAME) + ", " :"") + getCoor() + ", " + attr + ")";
+        return "WayPoint (" + (attr.containsKey(GPX_NAME) ? get(GPX_NAME) + ", " : "") + getCoor() + ", " + attr + ")";
     }
 
     /**
@@ -104,7 +104,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         if (attr.containsKey(PT_TIME)) {
             try {
                 time = dateParser.get().parse(get(PT_TIME).toString()).getTime() / 1000.; /* ms => seconds */
-            } catch(Exception e) {
+            } catch (Exception e) {
                 time = 0;
             }
         }

@@ -133,11 +133,11 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
      * @throws OsmTransferException if something went wrong
      */
     protected void downloadChangeset(int changesetId) throws OsmTransferException {
-        synchronized(this) {
+        synchronized (this) {
             reader = new OsmServerChangesetReader();
         }
         Changeset cs = reader.readChangeset(changesetId, false, getProgressMonitor().createSubTaskMonitor(0, false));
-        synchronized(this) {
+        synchronized (this) {
             reader = null;
         }
         ChangesetCache.getInstance().update(cs);
@@ -165,7 +165,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             getProgressMonitor().setTicksCount(toDownload.size());
-            int i=0;
+            int i = 0;
             for (int id: toDownload) {
                 i++;
                 if (!isAvailableLocally(id)) {
@@ -173,12 +173,12 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
                     downloadChangeset(id);
                 }
                 if (canceled) return;
-                synchronized(this) {
+                synchronized (this) {
                     reader = new OsmServerChangesetReader();
                 }
                 getProgressMonitor().setCustomText(tr("({0}/{1}) Downloading content for changeset {2}...", i, toDownload.size(), id));
                 ChangesetDataSet ds = reader.downloadChangeset(id, getProgressMonitor().createSubTaskMonitor(0, false));
-                synchronized(this) {
+                synchronized (this) {
                     reader = null;
                 }
                 Changeset cs = ChangesetCache.getInstance().get(id);
@@ -187,13 +187,13 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
                 downloadedChangesets.add(cs);
                 getProgressMonitor().worked(1);
             }
-        } catch(OsmTransferCanceledException e) {
+        } catch (OsmTransferCanceledException e) {
             // the download was canceled by the user. This exception is caught if the
             // user canceled the authentication dialog.
             //
             canceled = true;
             return;
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             if (canceled)
                 return;
             lastException = e;

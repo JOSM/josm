@@ -189,7 +189,6 @@ public class GpxDrawHelper {
         largesize += lineWidth;
     }
 
-
     public void drawAll(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
 
         checkCache();
@@ -206,7 +205,7 @@ public class GpxDrawHelper {
                     RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
         if (lineWidth != 0) {
-            g.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+            g.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         }
         fixColors(visibleSegments);
         drawLines(g, mv, visibleSegments);
@@ -225,7 +224,7 @@ public class GpxDrawHelper {
         if (colorModeDynamic) {
             if (colored == ColorMode.VELOCITY) {
                 for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
-                    if(!forceLines) {
+                    if (!forceLines) {
                         oldWp = null;
                     }
                     for (WayPoint trkPnt : segment) {
@@ -236,10 +235,10 @@ public class GpxDrawHelper {
                         if (oldWp != null && trkPnt.time > oldWp.time) {
                             double vel = c.greatCircleDistance(oldWp.getCoor())
                                     / (trkPnt.time - oldWp.time);
-                            if(vel > maxval) {
+                            if (vel > maxval) {
                                 maxval = vel;
                             }
-                            if(vel < minval) {
+                            if (vel < minval) {
                                 minval = vel;
                             }
                         }
@@ -257,10 +256,10 @@ public class GpxDrawHelper {
                         Object val = trkPnt.get(GpxConstants.PT_HDOP);
                         if (val != null) {
                             double hdop = ((Float) val).doubleValue();
-                            if(hdop > maxval) {
+                            if (hdop > maxval) {
                                 maxval = hdop;
                             }
-                            if(hdop < minval) {
+                            if (hdop < minval) {
                                 minval = hdop;
                             }
                         }
@@ -311,11 +310,11 @@ public class GpxDrawHelper {
                 }
                 if (oldWp != null) { // other coloring modes need segment for calcuation
                     double dist = c.greatCircleDistance(oldWp.getCoor());
-                    boolean noDraw=false;
+                    boolean noDraw = false;
                     switch (colored) {
                     case VELOCITY:
                         double dtime = trkPnt.time - oldWp.time;
-                        if(dtime > 0) {
+                        if (dtime > 0) {
                             color = velocityScale.getColor(dist / dtime);
                         } else {
                             color = velocityScale.getNoDataColor();
@@ -326,7 +325,7 @@ public class GpxDrawHelper {
                         color = directionScale.getColor(dirColor);
                         break;
                     case TIME:
-                        double t=trkPnt.time;
+                        double t = trkPnt.time;
                         if (t > 0 && t <= now && maxval - minval > minTrackDurationForTimeColoring) { // skip bad timestamps and very short tracks
                             color = dateScale.getColor(t);
                         } else {
@@ -344,7 +343,7 @@ public class GpxDrawHelper {
                     trkPnt.drawLine = false;
                     color = neutralColor;
                 }
-                if (color!=null) {
+                if (color != null) {
                     trkPnt.customColoring = color;
                 }
                 oldWp = trkPnt;
@@ -450,12 +449,12 @@ public class GpxDrawHelper {
 
                 if (hdopCircle && trkPnt.get(GpxConstants.PT_HDOP) != null) {
                     // hdop value
-                    float hdop = (Float)trkPnt.get(GpxConstants.PT_HDOP);
+                    float hdop = (Float) trkPnt.get(GpxConstants.PT_HDOP);
                     if (hdop < 0) {
                         hdop = 0;
                     }
-                    Color customColoringTransparent = hdopAlpha<0 ? trkPnt.customColoring:
-                        new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | hdopAlpha<<24, true);
+                    Color customColoringTransparent = hdopAlpha < 0 ? trkPnt.customColoring :
+                        new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | hdopAlpha << 24, true);
                     g.setColor(customColoringTransparent);
                     // hdop cirles
                     int hdopp = mv.getPoint(new LatLon(
@@ -466,8 +465,8 @@ public class GpxDrawHelper {
                 if (large) {
                     // color the large GPS points like the gps lines
                     if (trkPnt.customColoring != null) {
-                        Color customColoringTransparent = largePointAlpha<0 ? trkPnt.customColoring:
-                            new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | largePointAlpha<<24, true);
+                        Color customColoringTransparent = largePointAlpha < 0 ? trkPnt.customColoring :
+                            new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | largePointAlpha << 24, true);
 
                         g.setColor(customColoringTransparent);
                     }

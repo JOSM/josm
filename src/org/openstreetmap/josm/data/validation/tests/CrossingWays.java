@@ -39,7 +39,7 @@ public abstract class CrossingWays extends Test {
     private static final String WATERWAY = "waterway";
 
     /** All way segments, grouped by cells */
-    private Map<Point2D,List<WaySegment>> cellSegments;
+    private Map<Point2D, List<WaySegment>> cellSegments;
     /** The already detected errors */
     private Set<WaySegment> errorSegments;
     /** The already detected ways in error */
@@ -180,7 +180,8 @@ public abstract class CrossingWays extends Test {
      * @since 6691
      */
     public CrossingWays(String title) {
-        super(title, tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
+        super(title, tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, " +
+                "but are not connected by a node."));
     }
 
     @Override

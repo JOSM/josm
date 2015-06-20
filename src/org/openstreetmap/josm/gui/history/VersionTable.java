@@ -123,6 +123,7 @@ public class VersionTable extends JTable implements Observer{
         private MouseListener() {
             super(popupMenu);
         }
+
         @Override
         public void mousePressed(MouseEvent e) {
             super.mousePressed(e);
@@ -135,6 +136,7 @@ public class VersionTable extends JTable implements Observer{
                 }
             }
         }
+
         @Override
         protected int checkTableSelection(JTable table, Point p) {
             HistoryBrowserModel.VersionTableModel model = getVersionTableModel();
@@ -227,15 +229,19 @@ public class VersionTable extends JTable implements Observer{
         private ChangesetInfoAction changesetInfoAction;
         private UserInfoAction userInfoAction;
 
+        /**
+         * Constructs a new {@code VersionTablePopupMenu}.
+         */
+        public VersionTablePopupMenu() {
+            super();
+            build();
+        }
+
         protected void build() {
             changesetInfoAction = new ChangesetInfoAction();
             add(changesetInfoAction);
             userInfoAction = new UserInfoAction();
             add(userInfoAction);
-        }
-        public VersionTablePopupMenu() {
-            super();
-            build();
         }
 
         public void prepare(HistoryOsmPrimitive primitive) {
@@ -250,7 +256,7 @@ public class VersionTable extends JTable implements Observer{
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
                 int row, int column) {
-            setSelected(value != null && (Boolean)value);
+            setSelected(value != null && (Boolean) value);
             setHorizontalAlignment(SwingConstants.CENTER);
             return this;
         }
@@ -313,7 +319,7 @@ public class VersionTable extends JTable implements Observer{
     private static void adjustColumnWidth(JTable tbl, int col, int cellInset) {
         int maxwidth = 0;
 
-        for (int row=0; row<tbl.getRowCount(); row++) {
+        for (int row = 0; row < tbl.getRowCount(); row++) {
             TableCellRenderer tcr = tbl.getCellRenderer(row, col);
             Object val = tbl.getValueAt(row, col);
             Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, row, col);

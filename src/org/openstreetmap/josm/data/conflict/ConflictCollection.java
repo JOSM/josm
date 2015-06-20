@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.Utils;
  * <pre>
  *    ConflictCollection conflictCollection = ....
  *
- *    for(Conflict c : conflictCollection) {
+ *    for (Conflict c : conflictCollection) {
  *      // do something
  *    }
  * </pre>
@@ -131,7 +131,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      */
     public void add(Collection<Conflict<?>> otherConflicts) {
         if (otherConflicts == null) return;
-        for(Conflict<?> c : otherConflicts) {
+        for (Conflict<?> c : otherConflicts) {
             addConflict(c);
         }
         fireConflictAdded();
@@ -166,7 +166,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      */
     public void remove(OsmPrimitive my) {
         Iterator<Conflict<?>> it = iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             if (it.next().isMatchingMy(my)) {
                 it.remove();
             }
@@ -183,7 +183,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * if no such conflict exists.
      */
     public Conflict<?> getConflictForMy(OsmPrimitive my) {
-        for(Conflict<?> c : conflicts) {
+        for (Conflict<?> c : conflicts) {
             if (c.isMatchingMy(my))
                 return c;
         }
@@ -198,7 +198,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * if no such conflict exists.
      */
     public Conflict<?> getConflictForTheir(OsmPrimitive their) {
-        for(Conflict<?> c : conflicts) {
+        for (Conflict<?> c : conflicts) {
             if (c.isMatchingTheir(their))
                 return c;
         }
@@ -242,7 +242,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      */
     public void removeForMy(OsmPrimitive my) {
         Iterator<Conflict<?>> it = iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             if (it.next().isMatchingMy(my)) {
                 it.remove();
             }
@@ -256,7 +256,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      */
     public void removeForTheir(OsmPrimitive their) {
         Iterator<Conflict<?>> it = iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             if (it.next().isMatchingTheir(their)) {
                 it.remove();
             }

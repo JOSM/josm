@@ -57,7 +57,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,0, 3);
+        gc.insets = new Insets(0, 0, 0, 3);
         add(rbBasicAuthentication = new JRadioButton(), gc);
         rbBasicAuthentication.setText(tr("Use Basic Authentication"));
         rbBasicAuthentication.setToolTipText(tr("Select to use HTTP basic authentication with your OSM username and password"));

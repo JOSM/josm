@@ -81,11 +81,11 @@ public abstract class HistoryViewerPanel extends JPanel {
         gc.gridheight = 1;
         gc.weightx = 0.5;
         gc.weighty = 0.0;
-        gc.insets = new Insets(5,5,5,0);
+        gc.insets = new Insets(5, 5, 5, 0);
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         referenceInfoPanel = new VersionInfoPanel(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
-        add(referenceInfoPanel,gc);
+        add(referenceInfoPanel, gc);
 
         gc.gridx = 1;
         gc.gridy = 0;
@@ -96,7 +96,7 @@ public abstract class HistoryViewerPanel extends JPanel {
         gc.weighty = 0.0;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         currentInfoPanel = new VersionInfoPanel(model, PointInTimeType.CURRENT_POINT_IN_TIME);
-        add(currentInfoPanel,gc);
+        add(currentInfoPanel, gc);
 
         adjustmentSynchronizer = new AdjustmentSynchronizer();
         selectionSynchronizer = new SelectionSynchronizer();
@@ -110,7 +110,7 @@ public abstract class HistoryViewerPanel extends JPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embedInScrollPane(buildReferenceTable()),gc);
+        add(embedInScrollPane(buildReferenceTable()), gc);
 
         gc.gridx = 1;
         gc.gridy = 1;
@@ -120,6 +120,6 @@ public abstract class HistoryViewerPanel extends JPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embedInScrollPane(buildCurrentTable()),gc);
+        add(embedInScrollPane(buildCurrentTable()), gc);
     }
 }

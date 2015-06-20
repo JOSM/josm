@@ -137,7 +137,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     @Override
     public void hookUpMapView() {
         Main.map.mapView.addMouseListener(new MouseAdapter() {
-            @Override public void mousePressed(MouseEvent e) {
+            @Override
+            public void mousePressed(MouseEvent e) {
                 if (e.getButton() != MouseEvent.BUTTON1)
                     return;
                 boolean mousePressedInButton = false;
@@ -156,7 +157,9 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                     Main.map.mapView.repaint();
                 }
             }
-            @Override public void mouseReleased(MouseEvent ev) {
+
+            @Override
+            public void mouseReleased(MouseEvent ev) {
                 if (ev.getButton() != MouseEvent.BUTTON1 || !mousePressed)
                     return;
                 mousePressed = false;
@@ -219,7 +222,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     @Override public void mergeFrom(Layer from) {
-        MarkerLayer layer = (MarkerLayer)from;
+        MarkerLayer layer = (MarkerLayer) from;
         data.addAll(layer.data);
         Collections.sort(data, new Comparator<Marker>() {
             @Override
@@ -310,7 +313,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         AudioMarker am = null;
         for (Marker m : data) {
             if (m.getClass() == AudioMarker.class) {
-                am = (AudioMarker)m;
+                am = (AudioMarker) m;
                 offset = time - am.time;
                 break;
             }
@@ -382,7 +385,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             currentMarker = data.get(data.size() - 1);
         } else {
             boolean foundCurrent = false;
-            for (int i=data.size() - 1; i>=0; i--) {
+            for (int i = data.size() - 1; i >= 0; i--) {
                 Marker m = data.get(i);
                 if (foundCurrent) {
                     currentMarker = m;
@@ -423,7 +426,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                         return previousMarker;
                     }
                 } else if (marker.getClass() == AudioMarker.class) {
-                    if(nextTime || startMarker == null)
+                    if (nextTime || startMarker == null)
                         return marker;
                     previousMarker = marker;
                 }
@@ -451,7 +454,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             }
         }
         if (m != null) {
-            ((AudioMarker)m).play();
+            ((AudioMarker) m).play();
         }
     }
 
@@ -460,7 +463,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
      * @return <code>true</code> if text should be shown, <code>false</code> otherwise.
      */
     private boolean isTextOrIconShown() {
-        String current = Main.pref.get("marker.show "+getName(),"show");
+        String current = Main.pref.get("marker.show "+getName(), "show");
         return "show".equalsIgnoreCase(current);
     }
 
@@ -474,13 +477,11 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             this.layer = layer;
         }
 
-
         @Override
         public void actionPerformed(ActionEvent e) {
             Main.pref.put("marker.show "+layer.getName(), layer.isTextOrIconShown() ? "hide" : "show");
             Main.map.mapView.repaint();
         }
-
 
         @Override
         public Component createMenuComponent() {
@@ -495,9 +496,11 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         }
     }
 
-
     private class SynchronizeAudio extends AbstractAction {
 
+        /**
+         * Constructs a new {@code SynchronizeAudio} action.
+         */
         public SynchronizeAudio() {
             super(tr("Synchronize Audio"), ImageProvider.get("audio-sync"));
             putValue("help", ht("/Action/SynchronizeAudio"));

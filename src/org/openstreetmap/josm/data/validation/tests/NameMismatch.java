@@ -39,7 +39,8 @@ public class NameMismatch extends Test.TagTest {
      */
     public NameMismatch() {
         super(tr("Missing name:* translation"),
-            tr("This test finds multilingual objects whose ''name'' attribute is not equal to some ''name:*'' attribute and not a composition of ''name:*'' attributes, e.g., Italia - Italien - Italy."));
+            tr("This test finds multilingual objects whose ''name'' attribute is not equal to some ''name:*'' attribute " +
+                    "and not a composition of ''name:*'' attributes, e.g., Italia - Italien - Italy."));
     }
 
     /**

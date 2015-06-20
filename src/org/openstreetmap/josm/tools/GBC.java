@@ -47,7 +47,7 @@ public final class GBC extends GridBagConstraints {
      * @return A constraint which indicates the last item on a line.
      */
     public static GBC eop() {
-        return eol().insets(0,0,0,10);
+        return eol().insets(0, 0, 0, 10);
     }
 
     /**
@@ -118,7 +118,7 @@ public final class GBC extends GridBagConstraints {
     public static Component glue(int x, int y) {
         short maxx = x > 0 ? Short.MAX_VALUE : 0;
         short maxy = y > 0 ? Short.MAX_VALUE : 0;
-        return new Box.Filler(new Dimension(x,y), new Dimension(x,y), new Dimension(maxx,maxy));
+        return new Box.Filler(new Dimension(x, y), new Dimension(x, y), new Dimension(maxx, maxy));
     }
 
     public GBC grid(int x, int y) {

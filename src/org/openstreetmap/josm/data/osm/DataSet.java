@@ -253,7 +253,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @see #getChangeSetTags
      */
     public void addChangeSetTag(String k, String v) {
-        this.changeSetTags.put(k,v);
+        this.changeSetTags.put(k, v);
     }
 
     /**
@@ -525,7 +525,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @param listener The selection listener to add
      */
     public static void addSelectionListener(SelectionChangedListener listener) {
-        ((CopyOnWriteArrayList<SelectionChangedListener>)selListeners).addIfAbsent(listener);
+        ((CopyOnWriteArrayList<SelectionChangedListener>) selListeners).addIfAbsent(listener);
     }
 
     /**
@@ -541,7 +541,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * this dataset.
      *
      */
-    public void fireSelectionChanged(){
+    public void fireSelectionChanged() {
         Collection<? extends OsmPrimitive> currentSelection = getAllSelected();
         for (SelectionChangedListener l : selListeners) {
             l.selectionChanged(currentSelection);
@@ -697,7 +697,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @param waySegments Collection of way segments
      */
     public void setHighlightedVirtualNodes(Collection<WaySegment> waySegments) {
-        if(highlightedVirtualNodes.isEmpty() && waySegments.isEmpty())
+        if (highlightedVirtualNodes.isEmpty() && waySegments.isEmpty())
             return;
 
         highlightedVirtualNodes = waySegments;
@@ -710,7 +710,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @param waySegments Collection of way segments
      */
     public void setHighlightedWaySegments(Collection<WaySegment> waySegments) {
-        if(highlightedWaySegments.isEmpty() && waySegments.isEmpty())
+        if (highlightedWaySegments.isEmpty() && waySegments.isEmpty())
             return;
 
         highlightedWaySegments = waySegments;
@@ -888,7 +888,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
                 primMap.put(w, newWay);
                 List<Node> newNodes = new ArrayList<>();
                 for (Node n: w.getNodes()) {
-                    newNodes.add((Node)primMap.get(n));
+                    newNodes.add((Node) primMap.get(n));
                 }
                 newWay.setNodes(newNodes);
                 ds.addPrimitive(newWay);
@@ -902,7 +902,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
                 ds.addPrimitive(newRelation);
             }
             for (Relation r : relations) {
-                Relation newRelation = (Relation)primMap.get(r);
+                Relation newRelation = (Relation) primMap.get(r);
                 List<RelationMember> newMembers = new ArrayList<>();
                 for (RelationMember rm: r.getMembers()) {
                     newMembers.add(new RelationMember(rm.getRole(), primMap.get(rm.getMember())));
@@ -1015,7 +1015,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
 
                 Iterator<RelationMember> it = members.iterator();
                 boolean removed = false;
-                while(it.hasNext()) {
+                while (it.hasNext()) {
                     RelationMember member = it.next();
                     if (member.getMember().equals(primitive)) {
                         it.remove();
@@ -1045,7 +1045,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
         beginUpdate();
         try {
             if (referencedPrimitive instanceof Node) {
-                result.addAll(unlinkNodeFromWays((Node)referencedPrimitive));
+                result.addAll(unlinkNodeFromWays((Node) referencedPrimitive));
             }
             result.addAll(unlinkPrimitiveFromRelations(referencedPrimitive));
         } finally {
@@ -1077,7 +1077,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
             throw new RuntimeException("Reindexing node failed to add");
         for (OsmPrimitive primitive: node.getReferrers()) {
             if (primitive instanceof Way) {
-                reindexWay((Way)primitive);
+                reindexWay((Way) primitive);
             } else {
                 reindexRelation((Relation) primitive);
             }
@@ -1093,7 +1093,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
             throw new RuntimeException("Reindexing way failed to add");
         if (!way.getBBox().equals(before)) {
             for (OsmPrimitive primitive: way.getReferrers()) {
-                reindexRelation((Relation)primitive);
+                reindexRelation((Relation) primitive);
             }
         }
     }

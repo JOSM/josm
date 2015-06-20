@@ -180,7 +180,7 @@ public class PurgeAction extends JosmAction {
              * Add higher level relations (list gets extended while looping over it)
              */
             List<Relation> relLst = new ArrayList<>(relSet);
-            for (int i=0; i<relLst.size(); ++i) {
+            for (int i = 0; i < relLst.size(); ++i) {
                 for (OsmPrimitive parent : relLst.get(i).getReferrers()) {
                     if (!(toPurgeChecked.contains(parent))
                             && hasOnlyIncompleteMembers((Relation) parent, toPurgeChecked, relLst)) {
@@ -222,7 +222,7 @@ public class PurgeAction extends JosmAction {
     private JPanel buildPanel(boolean modified) {
         JPanel pnl = new JPanel(new GridBagLayout());
 
-        pnl.add(Box.createRigidArea(new Dimension(400,0)), GBC.eol().fill(GBC.HORIZONTAL));
+        pnl.add(Box.createRigidArea(new Dimension(400, 0)), GBC.eol().fill(GBC.HORIZONTAL));
 
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnl.add(new JLabel("<html>"+
@@ -232,7 +232,7 @@ public class PurgeAction extends JosmAction {
                         ImageProvider.get("purge"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
 
         if (!toPurgeAdditionally.isEmpty()) {
-            pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
+            pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
             pnl.add(new JLabel("<html>"+
                     tr("The following dependent objects will be purged<br> " +
                             "in addition to the selected objects:")+"</html>",
@@ -267,7 +267,7 @@ public class PurgeAction extends JosmAction {
             JButton addToSelection = new JButton(new AbstractAction() {
                 {
                     putValue(SHORT_DESCRIPTION,   tr("Add to selection"));
-                    putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
+                    putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
                 }
 
                 @Override
@@ -275,12 +275,12 @@ public class PurgeAction extends JosmAction {
                     layer.data.addSelected(toPurgeAdditionally);
                 }
             });
-            addToSelection.setMargin(new Insets(0,0,0,0));
-            pnl.add(addToSelection, GBC.eol().anchor(GBC.SOUTHWEST).weight(0.0, 1.0).insets(2,0,0,3));
+            addToSelection.setMargin(new Insets(0, 0, 0, 0));
+            pnl.add(addToSelection, GBC.eol().anchor(GBC.SOUTHWEST).weight(0.0, 1.0).insets(2, 0, 0, 3));
         }
 
         if (modified) {
-            pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
+            pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
             pnl.add(new JLabel("<html>"+tr("Some of the objects are modified.<br> " +
                     "Proceed, if these changes should be discarded."+"</html>"),
                     ImageProvider.get("warning-small"), JLabel.LEFT),
@@ -290,7 +290,7 @@ public class PurgeAction extends JosmAction {
         cbClearUndoRedo = new JCheckBox(tr("Clear Undo/Redo buffer"));
         cbClearUndoRedo.setSelected(Main.pref.getBoolean("purge.clear_undo_redo", false));
 
-        pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
+        pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
         pnl.add(cbClearUndoRedo, GBC.eol());
         return pnl;
     }

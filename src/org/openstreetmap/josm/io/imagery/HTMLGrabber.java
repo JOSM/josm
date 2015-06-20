@@ -29,7 +29,7 @@ public class HTMLGrabber extends WMSGrabber {
     protected BufferedImage grab(WMSRequest request, URL url, int attempt) throws IOException {
         String urlstring = url.toExternalForm();
 
-        Main.info("Grabbing HTML " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
+        Main.info("Grabbing HTML " + (attempt > 1 ? "(attempt " + attempt + ") " : "") + url);
 
         List<String> cmdParams = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(MessageFormat.format(PROP_BROWSER.get(), urlstring));
@@ -51,7 +51,8 @@ public class HTMLGrabber extends WMSGrabber {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         BufferedImage img = layer.normalizeImage(ImageProvider.read(bais, true, WMSLayer.PROP_ALPHA_CHANNEL.get()));
         bais.reset();
-        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
+        layer.cache.saveToCache(layer.isOverlapEnabled() ? img : null,
+                bais, Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
 
         return img;
     }

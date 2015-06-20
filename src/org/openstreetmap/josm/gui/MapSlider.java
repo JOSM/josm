@@ -41,17 +41,17 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
         double n = world.maxNorth-world.minNorth;
         int zoom = 0;
 
-        while(zoom <= 150) {
+        while (zoom <= 150) {
             e /= 1.1;
             n /= 1.1;
-            if(e < cur_e && n < cur_n) {
+            if (e < cur_e && n < cur_n) {
                 break;
             }
             ++zoom;
         }
-        preventChange=true;
+        preventChange = true;
         setValue(zoom);
-        preventChange=false;
+        preventChange = false;
     }
 
     @Override

@@ -100,7 +100,7 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> 
             return;
         }
         if (!(anObject instanceof Changeset)) return;
-        Changeset cs = (Changeset)anObject;
+        Changeset cs = (Changeset) anObject;
         if (cs.getId() == 0 || !cs.isOpen()) return;
         Changeset candidate = getChangesetById(cs.getId());
         if (candidate == null) return;

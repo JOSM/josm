@@ -82,7 +82,7 @@ public class WMSGrabber implements Runnable {
         StringBuffer output = new StringBuffer();
         Matcher matcher = pattern.matcher(this.baseURL);
         while (matcher.find()) {
-            props.put(matcher.group(1),matcher.group(2));
+            props.put(matcher.group(1), matcher.group(2));
             matcher.appendReplacement(output, "");
         }
         matcher.appendTail(output);
@@ -112,7 +112,7 @@ public class WMSGrabber implements Runnable {
                 } else if (Main.isDebugEnabled()) {
                     Main.debug("Ignoring "+request+" (precache only + exact match)");
                 }
-            } else if (!loadFromCache(request)){
+            } else if (!loadFromCache(request)) {
                 attempt(request);
             } else if (Main.isDebugEnabled()) {
                 Main.debug("Ignoring "+request+" (loaded from cache)");
@@ -121,7 +121,7 @@ public class WMSGrabber implements Runnable {
         }
     }
 
-    protected void attempt(WMSRequest request){ // try to fetch the image
+    protected void attempt(WMSRequest request) { // try to fetch the image
         int maxTries = 5; // n tries for every image
         for (int i = 1; i <= maxTries; i++) {
             if (canceled)
@@ -152,7 +152,7 @@ public class WMSGrabber implements Runnable {
     }
 
     public static int random(int min, int max) {
-        return (int)(Math.random() * ((max+1)-min)) + min;
+        return (int) (Math.random() * ((max+1)-min)) + min;
     }
 
     public final void cancel() {
@@ -176,7 +176,7 @@ public class WMSGrabber implements Runnable {
 
     public static final NumberFormat latLonFormat = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
 
-    protected URL getURL(double w, double s,double e,double n,
+    protected URL getURL(double w, double s, double e, double n,
             int wi, int ht) throws MalformedURLException {
         String myProj = Main.getProjection().toCode();
         if (!info.getServerProjections().contains(myProj) && "EPSG:3857".equals(Main.getProjection().toCode())) {
@@ -246,7 +246,7 @@ public class WMSGrabber implements Runnable {
             }
         }
 
-        if (!request.isReal() && !layer.hasAutoDownload()){
+        if (!request.isReal() && !layer.hasAutoDownload()) {
             request.finish(State.NOT_IN_CACHE, null, null);
             return true;
         }
@@ -255,14 +255,14 @@ public class WMSGrabber implements Runnable {
     }
 
     protected BufferedImage grab(WMSRequest request, URL url, int attempt) throws WMSException, IOException, OsmTransferException {
-        Main.info("Grabbing WMS " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
+        Main.info("Grabbing WMS " + (attempt > 1 ? "(attempt " + attempt + ") " : "") + url);
 
         HttpURLConnection conn = Utils.openHttpConnection(url);
         conn.setUseCaches(true);
         for (Entry<String, String> e : props.entrySet()) {
             conn.setRequestProperty(e.getKey(), e.getValue());
         }
-        conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15) * 1000);
+        conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15) * 1000);
         conn.setReadTimeout(Main.pref.getInteger("socket.timeout.read", 30) * 1000);
 
         String contentType = conn.getHeaderField("Content-Type");
@@ -292,7 +292,8 @@ public class WMSGrabber implements Runnable {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         BufferedImage img = layer.normalizeImage(ImageProvider.read(bais, true, WMSLayer.PROP_ALPHA_CHANNEL.get()));
         bais.reset();
-        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
+        layer.cache.saveToCache(layer.isOverlapEnabled() ? img : null,
+                bais, Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
         return img;
     }
 

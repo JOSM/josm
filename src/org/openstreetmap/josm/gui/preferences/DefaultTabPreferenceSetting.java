@@ -19,7 +19,7 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
     private final String title;
     private final JTabbedPane tabpane;
     private final Map<SubPreferenceSetting, Component> subSettingMap;
-    
+
     /**
      * Constructs a new {@code DefaultTabPreferenceSetting}.
      */
@@ -76,17 +76,17 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
     public final JTabbedPane getTabPane() {
         return tabpane;
     }
-    
+
     protected final void createPreferenceTabWithScrollPane(PreferenceTabbedPane gui, JPanel panel) {
-        GBC a = GBC.eol().insets(-5,0,0,0);
+        GBC a = GBC.eol().insets(-5, 0, 0, 0);
         a.anchor = GBC.EAST;
-        
+
         JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.setBorder(null);
 
         JPanel tab = gui.createPreferenceTab(this);
         tab.add(scrollPane, GBC.eol().fill(GBC.BOTH));
-        tab.add(GBC.glue(0,10), a);
+        tab.add(GBC.glue(0, 10), a);
     }
 
     @Override
@@ -105,12 +105,12 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
         }
         return false;
     }
-    
+
     @Override
     public final void addSubTab(SubPreferenceSetting sub, String title, Component component) {
         addSubTab(sub, title, component, null);
     }
-    
+
     @Override
     public final void addSubTab(SubPreferenceSetting sub, String title, Component component, String tip) {
         if (tabpane != null && component != null) {
@@ -118,14 +118,14 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
             registerSubTab(sub, component);
         }
     }
-    
+
     @Override
     public final void registerSubTab(SubPreferenceSetting sub, Component component) {
         if (subSettingMap != null && sub != null && component != null) {
             subSettingMap.put(sub, component);
         }
     }
-    
+
     @Override
     public final Component getSubTab(SubPreferenceSetting sub) {
         return subSettingMap != null ? subSettingMap.get(sub) : null;

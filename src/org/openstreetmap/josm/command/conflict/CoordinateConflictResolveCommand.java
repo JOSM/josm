@@ -48,23 +48,20 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public boolean executeCommand() {
-        // remember the current state of modified primitives, i.e. of
-        // OSM primitive 'my'
-        //
+        // remember the current state of modified primitives, i.e. of OSM primitive 'my'
         super.executeCommand();
 
         if (decision.equals(MergeDecisionType.KEEP_MINE)) {
             // do nothing
         } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
-            Node my = (Node)conflict.getMy();
-            Node their = (Node)conflict.getTheir();
+            Node my = (Node) conflict.getMy();
+            Node their = (Node) conflict.getTheir();
             my.setCoor(their.getCoor());
         } else
             // should not happen
             throw new IllegalStateException(tr("Cannot resolve undecided conflict."));
 
         // remember the layer this command was applied to
-        //
         rememberConflict(conflict);
 
         return true;

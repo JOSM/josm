@@ -120,24 +120,31 @@ public class PrefJPanel extends JPanel {
         private final String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
         private transient List<Shortcut> data;
 
+        /**
+         * Constructs a new {@code ScListModel}.
+         */
         public ScListModel() {
             data = Shortcut.listAll();
         }
+
         @Override
         public int getColumnCount() {
             return columnNames.length;
         }
+
         @Override
         public int getRowCount() {
             return data.size();
         }
+
         @Override
         public String getColumnName(int col) {
             return columnNames[col];
         }
+
         @Override
         public Object getValueAt(int row, int col) {
-            return (col==0)?  data.get(row).getLongText() : data.get(row);
+            return (col == 0) ? data.get(row).getLongText() : data.get(row);
         }
     }
 
@@ -153,22 +160,22 @@ public class PrefJPanel extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean
                 isSelected, boolean hasFocus, int row, int column) {
             int row1 = shortcutTable.convertRowIndexToModel(row);
-            Shortcut sc = (Shortcut)model.getValueAt(row1, -1);
-            if (sc==null) return null;
+            Shortcut sc = (Shortcut) model.getValueAt(row1, -1);
+            if (sc == null) return null;
             JLabel label = (JLabel) super.getTableCellRendererComponent(
                 table, name ? sc.getLongText() : sc.getKeyText(), isSelected, hasFocus, row, column);
             label.setBackground(Main.pref.getUIColor("Table.background"));
             if (isSelected) {
                 label.setForeground(Main.pref.getUIColor("Table.foreground"));
             }
-            if(sc.isAssignedUser()) {
+            if (sc.isAssignedUser()) {
                 label.setBackground(Main.pref.getColor(
                         marktr("Shortcut Background: User"),
-                        new Color(200,255,200)));
-            } else if(!sc.isAssignedDefault()) {
+                        new Color(200, 255, 200)));
+            } else if (!sc.isAssignedDefault()) {
                 label.setBackground(Main.pref.getColor(
                         marktr("Shortcut Background: Modified"),
-                        new Color(255,255,200)));
+                        new Color(255, 255, 200)));
             }
             return label;
         }
@@ -237,13 +244,13 @@ public class PrefJPanel extends JPanel {
     private JPanel buildFilterPanel() {
         // copied from PluginPreference
         JPanel pnl  = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,0,5);
+        gc.insets = new Insets(0, 0, 0, 5);
         pnl.add(new JLabel(tr("Search:")), gc);
 
         gc.gridx = 1;
@@ -252,7 +259,7 @@ public class PrefJPanel extends JPanel {
         filterField.setToolTipText(tr("Enter a search expression"));
         SelectAllOnFocusGainedDecorator.decorate(filterField);
         filterField.getDocument().addDocumentListener(new FilterFieldAdapter());
-        pnl.setMaximumSize(new Dimension(300,10));
+        pnl.setMaximumSize(new Dimension(300, 10));
         return pnl;
     }
 
@@ -275,15 +282,17 @@ public class PrefJPanel extends JPanel {
     // more expirience with GUI coding than I have.
     private class CbAction extends AbstractAction implements ListSelectionListener {
         private PrefJPanel panel;
+
         public CbAction(PrefJPanel panel) {
             this.panel = panel;
         }
+
         @Override
         public void valueChanged(ListSelectionEvent e) {
             ListSelectionModel lsm = panel.shortcutTable.getSelectionModel(); // can't use e here
             if (!lsm.isSelectionEmpty()) {
                 int row = panel.shortcutTable.convertRowIndexToModel(lsm.getMinSelectionIndex());
-                Shortcut sc = (Shortcut)panel.model.getValueAt(row, -1);
+                Shortcut sc = (Shortcut) panel.model.getValueAt(row, -1);
                 panel.cbDefault.setSelected(!sc.isAssignedUser());
                 panel.cbDisable.setSelected(sc.getKeyStroke() == null);
                 panel.cbShift.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.SHIFT_DOWN_MASK) != 0);
@@ -308,13 +317,14 @@ public class PrefJPanel extends JPanel {
                 panel.tfKey.setEnabled(false);
             }
         }
+
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
             ListSelectionModel lsm = panel.shortcutTable.getSelectionModel();
             if (lsm != null && !lsm.isSelectionEmpty()) {
                 if (e != null) { // only if we've been called by a user action
                     int row = panel.shortcutTable.convertRowIndexToModel(lsm.getMinSelectionIndex());
-                    Shortcut sc = (Shortcut)panel.model.getValueAt(row, -1);
+                    Shortcut sc = (Shortcut) panel.model.getValueAt(row, -1);
                     if (panel.cbDisable.isSelected()) {
                         sc.setAssignedModifier(-1);
                     } else if (panel.tfKey.getSelectedItem() == null || "".equals(panel.tfKey.getSelectedItem())) {
@@ -358,7 +368,7 @@ public class PrefJPanel extends JPanel {
             }
             try {
                 final TableRowSorter<? extends TableModel> sorter =
-                    (TableRowSorter<? extends TableModel>)shortcutTable.getRowSorter();
+                    (TableRowSorter<? extends TableModel>) shortcutTable.getRowSorter();
                 if (expr == null) {
                     sorter.setRowFilter(null);
                 } else {
@@ -380,10 +390,12 @@ public class PrefJPanel extends JPanel {
         public void changedUpdate(DocumentEvent e) {
             filter();
         }
+
         @Override
         public void insertUpdate(DocumentEvent e) {
             filter();
         }
+
         @Override
         public void removeUpdate(DocumentEvent e) {
             filter();

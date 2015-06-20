@@ -69,11 +69,11 @@ public class UtilsTest {
      * Test of {@link Utils#toHexString} method.
      */
     @Test
-    public void testToHexString(){
+    public void testToHexString() {
         Assert.assertEquals("", Utils.toHexString(null));
         Assert.assertEquals("", Utils.toHexString(new byte[0]));
         Assert.assertEquals("01", Utils.toHexString(new byte[]{0x1}));
-        Assert.assertEquals("0102", Utils.toHexString(new byte[]{0x1,0x2}));
+        Assert.assertEquals("0102", Utils.toHexString(new byte[]{0x1, 0x2}));
         Assert.assertEquals("12", Utils.toHexString(new byte[]{0x12}));
         Assert.assertEquals("127f", Utils.toHexString(new byte[]{0x12, 0x7f}));
         Assert.assertEquals("fedc", Utils.toHexString(new byte[]{(byte) 0xfe, (byte) 0xdc}));

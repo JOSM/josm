@@ -10,7 +10,7 @@ package org.openstreetmap.josm.data.osm;
  * For use cases, see {@link Storage}.
  * @author nenik
  */
-public interface Hash<K,T> {
+public interface Hash<K, T> {
 
     /**
      * Get hashcode for given instance, based on some inner state of the

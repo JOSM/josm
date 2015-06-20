@@ -43,7 +43,7 @@ public class UpdateSelectionAction extends JosmAction {
         try {
             DataSet ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
             Main.main.getEditLayer().mergeFrom(ds);
-        } catch(Exception e) {
+        } catch (Exception e) {
             ExceptionDialogUtil.explainException(e);
         }
     }
@@ -56,7 +56,7 @@ public class UpdateSelectionAction extends JosmAction {
      *
      */
     public static void updatePrimitives(final Collection<OsmPrimitive> selection) {
-        UpdatePrimitivesTask task = new UpdatePrimitivesTask(Main.main.getEditLayer(),selection);
+        UpdatePrimitivesTask task = new UpdatePrimitivesTask(Main.main.getEditLayer(), selection);
         Main.worker.submit(task);
     }
 

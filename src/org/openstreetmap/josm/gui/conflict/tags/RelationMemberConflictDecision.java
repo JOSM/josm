@@ -26,7 +26,7 @@ public class RelationMemberConflictDecision {
         this.relation = relation;
         this.pos  = pos;
         this.originalPrimitive = member.getMember();
-        this.role = member.hasRole()? member.getRole() : "";
+        this.role = member.hasRole() ? member.getRole() : "";
         this.decision = UNDECIDED;
     }
 

@@ -81,7 +81,7 @@ public class InetAddressValidator extends AbstractValidator {
 
             try {
                 iIpSegment = Integer.parseInt(ipSegment);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 return false;
             }
 

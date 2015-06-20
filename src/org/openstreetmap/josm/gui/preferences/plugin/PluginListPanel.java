@@ -91,7 +91,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(40,0,40,0);
+        gbc.insets = new Insets(40, 0, 40, 0);
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 
@@ -110,6 +110,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
      */
     private class JPluginCheckBox extends JCheckBox {
         public final transient PluginInformation pi;
+
         public JPluginCheckBox(final PluginInformation pi, boolean selected) {
             this.pi = pi;
             setSelected(selected);
@@ -124,9 +125,11 @@ public class PluginListPanel extends VerticallyScrollablePanel {
      */
     private class PluginCbActionListener implements ActionListener {
         private final JPluginCheckBox cb;
+
         public PluginCbActionListener(JPluginCheckBox cb) {
             this.cb = cb;
         }
+
         protected void selectRequiredPlugins(PluginInformation info) {
             if (info != null && info.requires != null) {
                 for (String s : info.getRequiredPlugins()) {
@@ -137,6 +140,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
                 }
             }
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             // Select/unselect corresponding plugin in the model
@@ -236,7 +240,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
 
             gbc.gridx = 0;
             gbc.gridy = ++row;
-            gbc.insets = new Insets(5,5,0,5);
+            gbc.insets = new Insets(5, 5, 0, 5);
             gbc.weighty = 0.0;
             gbc.weightx = 0.0;
             add(cbPlugin, gbc);
@@ -250,7 +254,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
             description.getEditorPane().addHyperlinkListener(new HyperlinkListener() {
                 @Override
                 public void hyperlinkUpdate(HyperlinkEvent e) {
-                    if(e.getEventType() == EventType.ACTIVATED) {
+                    if (e.getEventType() == EventType.ACTIVATED) {
                         OpenBrowser.displayUrl(e.getURL().toString());
                     }
                 }
@@ -259,7 +263,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
 
             gbc.gridx = 1;
             gbc.gridy = ++row;
-            gbc.insets = new Insets(3,25,5,5);
+            gbc.insets = new Insets(3, 25, 5, 5);
             gbc.weighty = 1.0;
             add(description, gbc);
         }

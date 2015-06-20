@@ -75,7 +75,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
     public JosmComboBox(ComboBoxModel<E> aModel) {
         super(aModel);
         List<E> list = new ArrayList<>(aModel.getSize());
-        for (int i = 0; i<aModel.getSize(); i++) {
+        for (int i = 0; i < aModel.getSize(); i++) {
             list.add(aModel.getElementAt(i));
         }
         init(findPrototypeDisplayValue(list));
@@ -142,7 +142,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
         for (int i = 0; i < getUI().getAccessibleChildrenCount(this); i++) {
             Accessible child = getUI().getAccessibleChild(this, i);
             if (child instanceof ComboPopup) {
-                return ((ComboPopup)child).getList();
+                return ((ComboPopup) child).getList();
             }
         }
         return null;

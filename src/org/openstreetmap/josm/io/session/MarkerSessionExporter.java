@@ -54,7 +54,7 @@ public class MarkerSessionExporter implements SessionLayerExporter {
         lbl.setLabelFor(export);
         p.add(export, GBC.std());
         p.add(lbl, GBC.std());
-        p.add(GBC.glue(1,0), GBC.std().fill(GBC.HORIZONTAL));
+        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
         return p;
     }
 

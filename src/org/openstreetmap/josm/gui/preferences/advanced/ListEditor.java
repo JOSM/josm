@@ -65,7 +65,7 @@ public class ListEditor extends ExtendedDialog {
 
     protected final JPanel build() {
         JPanel p = new JPanel(new GridBagLayout());
-        p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0,0,5,0));
+        p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0, 0, 5, 0));
         ListSettingTableModel listModel = new ListSettingTableModel();
         JTable table = new JTable(listModel);
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -76,7 +76,7 @@ public class ListEditor extends ExtendedDialog {
         table.setDefaultEditor(table.getColumnClass(0), editor);
 
         JScrollPane pane = new JScrollPane(table);
-        p.add(pane, GBC.eol().insets(5,10,0,0).fill());
+        p.add(pane, GBC.eol().insets(5, 10, 0, 0).fill());
         return p;
     }
 
@@ -103,8 +103,8 @@ public class ListEditor extends ExtendedDialog {
 
         @Override
         public void setValueAt(Object o, int row, int column) {
-            String s = (String)o;
-            if(row == data.size()) {
+            String s = (String) o;
+            if (row == data.size()) {
                 data.add(s);
                 fireTableRowsInserted(row+1, row+1);
             } else {

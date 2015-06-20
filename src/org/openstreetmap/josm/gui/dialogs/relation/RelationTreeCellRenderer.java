@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class RelationTreeCellRenderer extends JLabel implements TreeCellRenderer {
-    public static final Color BGCOLOR_SELECTED = new Color(143,170,255);
+    public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
 
     /** the relation icon */
     private ImageIcon icon;
@@ -71,7 +71,7 @@ public class RelationTreeCellRenderer extends JLabel implements TreeCellRenderer
             return this;
 
         renderIcon();
-        renderValue((Relation)value);
+        renderValue((Relation) value);
         renderBackground(selected);
         return this;
     }

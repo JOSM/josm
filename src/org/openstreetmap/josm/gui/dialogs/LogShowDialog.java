@@ -40,7 +40,7 @@ public class LogShowDialog extends ExtendedDialog {
 
         lbl.setFont(lbl.getFont().deriveFont(0, 14));
 
-        p.add(lbl, GBC.eol().insets(5,0,5,0));
+        p.add(lbl, GBC.eol().insets(5, 0, 5, 0));
         JosmEditorPane txt = new JosmEditorPane();
         txt.setContentType("text/html");
         txt.setText(log);
@@ -51,9 +51,9 @@ public class LogShowDialog extends ExtendedDialog {
 
         JScrollPane sp = new JScrollPane(txt);
         sp.setOpaque(false);
-        sp.setPreferredSize(new Dimension(600,300));
+        sp.setPreferredSize(new Dimension(600, 300));
 
-        p.add(sp, GBC.eop().insets(5,15,0,0).fill(GBC.HORIZONTAL));
+        p.add(sp, GBC.eop().insets(5, 15, 0, 0).fill(GBC.HORIZONTAL));
 
         return p;
     }

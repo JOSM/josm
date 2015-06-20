@@ -29,7 +29,7 @@ public class RelationMemberConflictDecisionEditor extends JosmComboBox<RelationM
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         setSelectedItem(value);
-        this.originalValue = (RelationMemberConflictDecisionType)value;
+        this.originalValue = (RelationMemberConflictDecisionType) value;
         return this;
     }
 

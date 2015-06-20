@@ -56,7 +56,7 @@ public abstract class ConflictResolveCommand extends Command {
      */
     protected void reconstituteConflicts() {
         OsmDataLayer editLayer = getLayer();
-        for(Conflict<?> c : resolvedConflicts) {
+        for (Conflict<?> c : resolvedConflicts) {
             if (!editLayer.getConflicts().hasConflictForMy(c.getMy())) {
                 editLayer.getConflicts().add(c);
             }

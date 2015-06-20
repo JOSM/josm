@@ -5,11 +5,16 @@ import java.util.Comparator;
 
 public interface NameFormatter {
     String format(Node node);
+
     String format(Way way);
+
     String format(Relation relation);
+
     String format(Changeset changeset);
 
     Comparator<Node> getNodeComparator();
+
     Comparator<Way> getWayComparator();
+
     Comparator<Relation> getRelationComparator();
 }

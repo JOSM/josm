@@ -91,7 +91,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
         // restore a conflict if necessary
         //
         if (!editLayer.getConflicts().hasConflictForMy(my)) {
-            editLayer.getConflicts().add(my,their);
+            editLayer.getConflicts().add(my, their);
         }
     }
 

@@ -152,7 +152,6 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         closeAction.run();
     }
 
-
     class CloseAction extends AbstractAction {
         public CloseAction() {
             putValue(NAME, tr("Close"));

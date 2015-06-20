@@ -91,7 +91,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         lblInfo = new JMultilineLabel("");
         pnl1.add(lblInfo, BorderLayout.CENTER);
 
-        JPanel pnlUserAndChangeset = new JPanel(new GridLayout(2,2));
+        JPanel pnlUserAndChangeset = new JPanel(new GridLayout(2, 2));
         lblUser = new UrlLabel("", 2);
         pnlUserAndChangeset.add(new JLabel(tr("User:")));
         pnlUserAndChangeset.add(lblUser);

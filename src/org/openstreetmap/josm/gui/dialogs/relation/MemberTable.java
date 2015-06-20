@@ -65,7 +65,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
      * initialize the table
      */
     protected void init() {
-        MemberRoleCellEditor ce = (MemberRoleCellEditor)getColumnModel().getColumn(0).getCellEditor();
+        MemberRoleCellEditor ce = (MemberRoleCellEditor) getColumnModel().getColumn(0).getCellEditor();
         setRowHeight(ce.getEditor().getPreferredSize().height);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -103,9 +103,9 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     }
 
     @Override
-    public Dimension getPreferredSize(){
+    public Dimension getPreferredSize() {
         Container c = getParent();
-        while(c != null && !(c instanceof JViewport)) {
+        while (c != null && !(c instanceof JViewport)) {
             c = c.getParent();
         }
         if (c != null) {

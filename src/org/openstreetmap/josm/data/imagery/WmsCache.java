@@ -134,7 +134,7 @@ public class WmsCache {
         }
 
         for (Object propKey: layersIndex.keySet()) {
-            String s = (String)propKey;
+            String s = (String) propKey;
             if (url.equals(layersIndex.getProperty(s))) {
                 cacheDirName = s;
                 break;
@@ -185,7 +185,7 @@ public class WmsCache {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             WmsCacheType cacheEntries;
             try (InputStream is = new FileInputStream(indexFile)) {
-                cacheEntries = (WmsCacheType)unmarshaller.unmarshal(is);
+                cacheEntries = (WmsCacheType) unmarshaller.unmarshal(is);
             }
             totalFileSize = cacheEntries.getTotalFileSize();
             if (cacheEntries.getTileSize() != tileSize) {
@@ -439,9 +439,9 @@ public class WmsCache {
 
             drawAtLeastOnce = true;
 
-            int xDiff = (int)((ce.east - east) * pixelPerDegree);
-            int yDiff = (int)((ce.north - north) * pixelPerDegree);
-            int size = (int)(pixelPerDegree / ce.pixelPerDegree  * tileSize);
+            int xDiff = (int) ((ce.east - east) * pixelPerDegree);
+            int yDiff = (int) ((ce.north - north) * pixelPerDegree);
+            int size = (int) (pixelPerDegree / ce.pixelPerDegree  * tileSize);
 
             int x = xDiff;
             int y = -size + tileSize - yDiff;
@@ -466,8 +466,8 @@ public class WmsCache {
 
         double deltaLat = Math.abs(ll3.lat() - ll1.lat());
         double deltaLon = Math.abs(ll3.lon() - ll1.lon());
-        int precisionLat = Math.max(0, -(int)Math.ceil(Math.log10(deltaLat)) + 1);
-        int precisionLon = Math.max(0, -(int)Math.ceil(Math.log10(deltaLon)) + 1);
+        int precisionLat = Math.max(0, -(int) Math.ceil(Math.log10(deltaLat)) + 1);
+        int precisionLon = Math.max(0, -(int) Math.ceil(Math.log10(deltaLon)) + 1);
 
         String zoom = SystemOfMeasurement.METRIC.getDistText(ll1.greatCircleDistance(ll2));
         String extension = "dat";
@@ -492,7 +492,7 @@ public class WmsCache {
         FILENAME_LOOP:
             while (true) {
                 String result = String.format("%s_%." + precisionLat + "f_%." + precisionLon +"f%s.%s",
-                        zoom, ll1.lat(), ll1.lon(), counter==0?"":"_" + counter, extension);
+                        zoom, ll1.lat(), ll1.lon(), counter == 0 ? "" : "_" + counter, extension);
                 for (CacheEntry entry: projectionEntries.entries) {
                     if (entry.filename.equals(result)) {
                         counter++;
@@ -527,7 +527,7 @@ public class WmsCache {
                 mimeType = URLConnection.guessContentTypeFromStream(imageData);
             }
             entry = new CacheEntry(pixelPerDegree, east, north,
-                    tileSize,generateFileName(projectionEntries, pixelPerDegree, projection, east, north, mimeType));
+                    tileSize, generateFileName(projectionEntries, pixelPerDegree, projection, east, north, mimeType));
             entry.lastUsed = System.currentTimeMillis();
             entry.lastModified = entry.lastUsed;
             projectionEntries.entries.add(entry);

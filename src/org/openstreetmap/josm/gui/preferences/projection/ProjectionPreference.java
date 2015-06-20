@@ -249,7 +249,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static final String[] unitsValues = (new ArrayList<>(SystemOfMeasurement.ALL_SYSTEMS.keySet())).toArray(new String[0]);
     private static final String[] unitsValuesTr = new String[unitsValues.length];
     static {
-        for (int i=0; i<unitsValues.length; ++i) {
+        for (int i = 0; i < unitsValues.length; ++i) {
             unitsValuesTr[i] = tr(unitsValues[i]);
         }
     }
@@ -314,31 +314,31 @@ public class ProjectionPreference implements SubPreferenceSetting {
 
         projPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         projPanel.setLayout(new GridBagLayout());
-        projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5,5,0,5));
-        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-        projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        projPanel.add(projectionCodeLabel = new JLabel(tr("Projection code")), GBC.std().insets(25,5,0,5));
-        projPanel.add(projectionCodeGlue = GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-        projPanel.add(projectionCode, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        projPanel.add(projectionNameLabel = new JLabel(tr("Projection name")), GBC.std().insets(25,5,0,5));
-        projPanel.add(projectionNameGlue = GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-        projPanel.add(projectionName, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        projPanel.add(new JLabel(tr("Bounds")), GBC.std().insets(25,5,0,5));
-        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-        projPanel.add(bounds, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        projPanel.add(projSubPrefPanelWrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(20,5,5,5));
+        projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5, 5, 0, 5));
+        projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
+        projPanel.add(projectionCodeLabel = new JLabel(tr("Projection code")), GBC.std().insets(25, 5, 0, 5));
+        projPanel.add(projectionCodeGlue = GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionCode, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
+        projPanel.add(projectionNameLabel = new JLabel(tr("Projection name")), GBC.std().insets(25, 5, 0, 5));
+        projPanel.add(projectionNameGlue = GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionName, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
+        projPanel.add(new JLabel(tr("Bounds")), GBC.std().insets(25, 5, 0, 5));
+        projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(bounds, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
+        projPanel.add(projSubPrefPanelWrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(20, 5, 5, 5));
 
         projectionCodeLabel.setLabelFor(projectionCode);
         projectionNameLabel.setLabelFor(projectionName);
 
-        projPanel.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,10));
-        projPanel.add(new JLabel(tr("Display coordinates as")), GBC.std().insets(5,5,0,5));
-        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-        projPanel.add(coordinatesCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        projPanel.add(new JLabel(tr("System of measurement")), GBC.std().insets(5,5,0,5));
-        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-        projPanel.add(unitsCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        projPanel.add(GBC.glue(1,1), GBC.std().fill(GBC.HORIZONTAL).weight(1.0, 1.0));
+        projPanel.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 10));
+        projPanel.add(new JLabel(tr("Display coordinates as")), GBC.std().insets(5, 5, 0, 5));
+        projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(coordinatesCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
+        projPanel.add(new JLabel(tr("System of measurement")), GBC.std().insets(5, 5, 0, 5));
+        projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(unitsCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
+        projPanel.add(GBC.glue(1, 1), GBC.std().fill(GBC.HORIZONTAL).weight(1.0, 1.0));
 
         JScrollPane scrollpane = new JScrollPane(projPanel);
         gui.getMapPreference().addSubTab(this, tr("Map Projection"), scrollpane);
@@ -377,8 +377,8 @@ public class ProjectionPreference implements SubPreferenceSetting {
 
         setProjection(id, prefs);
 
-        if(PROP_COORDINATES.put(((CoordinateFormat)coordinatesCombo.getSelectedItem()).name())) {
-            CoordinateFormat.setCoordinateFormat((CoordinateFormat)coordinatesCombo.getSelectedItem());
+        if (PROP_COORDINATES.put(((CoordinateFormat) coordinatesCombo.getSelectedItem()).name())) {
+            CoordinateFormat.setCoordinateFormat((CoordinateFormat) coordinatesCombo.getSelectedItem());
         }
 
         int i = unitsCombo.getSelectedIndex();
@@ -421,7 +421,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private void selectedProjectionChanged(final ProjectionChoice pc) {
         // Don't try to update if we're still starting up
         int size = projPanel.getComponentCount();
-        if(size < 1)
+        if (size < 1)
             return;
 
         final ActionListener listener = new ActionListener() {

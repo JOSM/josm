@@ -32,14 +32,14 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
         List<ImageEntry> entries = new ArrayList<>();
         NodeList imgNodes = elem.getChildNodes();
         boolean useThumbs = false;
-        for (int i=0; i<imgNodes.getLength(); ++i) {
+        for (int i = 0; i < imgNodes.getLength(); ++i) {
             Node imgNode = imgNodes.item(i);
             if (imgNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element imgElem = (Element) imgNode;
                 if ("geoimage".equals(imgElem.getTagName())) {
                     ImageEntry entry = new ImageEntry();
                     NodeList attrNodes = imgElem.getChildNodes();
-                    for (int j=0; j<attrNodes.getLength(); ++j) {
+                    for (int j = 0; j < attrNodes.getLength(); ++j) {
                         Node attrNode = attrNodes.item(j);
                         if (attrNode.getNodeType() == Node.ELEMENT_NODE) {
                             Element attrElem = (Element) attrNode;

@@ -21,11 +21,11 @@ public class NodeListMergerTest extends JFrame {
         Way w1 = new Way();
         Node n1;
         w1.addNode(n1 = new Node(1));
-        for (int i=0; i < 20; i++) {
+        for (int i = 0; i < 20; i++) {
             n1.put("key" + i, "value" + i);
         }
         StringBuilder note = new StringBuilder();
-        for (int i=0; i < 50; i++) {
+        for (int i = 0; i < 50; i++) {
             note.append(" A very long text ");
         }
         n1.put("note", note.toString());
@@ -48,7 +48,7 @@ public class NodeListMergerTest extends JFrame {
         }
 
         Way w2 = new Way();
-        for (int i = 1; i < 200; i+=2) {
+        for (int i = 1; i < 200; i += 2) {
             w2.addNode(new Node(i));
         }
         nodeListMerger.populate(new Conflict<OsmPrimitive>(w1, w2));
@@ -71,7 +71,7 @@ public class NodeListMergerTest extends JFrame {
 
     static public void main(String args[]) {
         NodeListMergerTest test = new NodeListMergerTest();
-        test.setSize(600,600);
+        test.setSize(600, 600);
         test.setVisible(true);
     }
 }

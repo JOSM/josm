@@ -30,6 +30,7 @@ public class LambertConformalConic implements Proj {
 
     public abstract static class Parameters {
         public final double latitudeOrigin;
+
         public Parameters(double latitudeOrigin) {
             this.latitudeOrigin = latitudeOrigin;
         }
@@ -44,6 +45,7 @@ public class LambertConformalConic implements Proj {
     public static class Parameters2SP extends Parameters {
         public final double standardParallel1;
         public final double standardParallel2;
+
         public Parameters2SP(double latitudeOrigin, double standardParallel1, double standardParallel2) {
             super(latitudeOrigin);
             this.standardParallel1 = standardParallel1;
@@ -162,7 +164,7 @@ public class LambertConformalConic implements Proj {
 
     @Override
     public double[] invproject(double east, double north) {
-        double r = sqrt(pow(east,2) + pow(north-r0, 2));
+        double r = sqrt(pow(east, 2) + pow(north-r0, 2));
         double gamma = atan(east / (r0-north));
         double lambda = gamma/n;
         double latIso = (-1/n) * log(abs(r/f));

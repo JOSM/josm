@@ -30,7 +30,7 @@ public class WMSLayerExporter extends FileExporter {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         if (layer instanceof WMSLayer) {
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
-                ((WMSLayer)layer).writeExternal(oos);
+                ((WMSLayer) layer).writeExternal(oos);
             }
         }
     }

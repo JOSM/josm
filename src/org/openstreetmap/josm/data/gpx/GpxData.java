@@ -199,7 +199,7 @@ public class GpxData extends WithAttributes implements Data {
                 }
             }
         }
-        if (earliest==null || latest==null) return null;
+        if (earliest == null || latest == null) return null;
         return new Date[]{earliest.getTime(), latest.getTime()};
     }
 
@@ -211,21 +211,21 @@ public class GpxData extends WithAttributes implements Data {
      * @return minimum and maximum dates in array of 2 elements
     */
     public Date[] getMinMaxTimeForAllTracks() {
-        double min=1e100;
-        double max=-1e100;
+        double min = 1e100;
+        double max = -1e100;
         double now = System.currentTimeMillis()/1000.0;
         for (GpxTrack trk: tracks) {
             for (GpxTrackSegment seg : trk.getSegments()) {
                 for (WayPoint pnt : seg.getWayPoints()) {
                     double t = pnt.time;
-                    if (t>0 && t<=now) {
-                        if (t>max) max=t;
-                        if (t<min) min=t;
+                    if (t > 0 && t <= now) {
+                        if (t > max) max = t;
+                        if (t < min) min = t;
                     }
                 }
             }
         }
-        if (Utils.equalsEpsilon(min,1e100) || Utils.equalsEpsilon(max,-1e100)) return new Date[0];
+        if (Utils.equalsEpsilon(min, 1e100) || Utils.equalsEpsilon(max, -1e100)) return new Date[0];
         return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000))};
     }
 
@@ -362,11 +362,11 @@ public class GpxData extends WithAttributes implements Data {
 
     public void resetEastNorthCache() {
         if (waypoints != null) {
-            for (WayPoint wp : waypoints){
+            for (WayPoint wp : waypoints) {
                 wp.invalidateEastNorthCache();
             }
         }
-        if (tracks != null){
+        if (tracks != null) {
             for (GpxTrack track: tracks) {
                 for (GpxTrackSegment segment: track.getSegments()) {
                     for (WayPoint wp: segment.getWayPoints()) {

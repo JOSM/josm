@@ -53,7 +53,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
 
     public Set<HistoryOsmPrimitive> getSelectedPrimitives() {
         Set<HistoryOsmPrimitive> ret = new HashSet<>();
-        for (int i=0;i < data.size();i++) {
+        for (int i = 0; i < data.size(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
                 ret.add(data.get(i).getPrimitive());
             }
@@ -155,6 +155,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
         public ChangesetModificationType getModificationType() {
             return modificationType;
         }
+
         @Override
         public HistoryOsmPrimitive getPrimitive() {
             return primitive;

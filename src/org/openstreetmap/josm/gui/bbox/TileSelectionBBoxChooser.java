@@ -113,7 +113,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
-        gc.insets = new Insets(2,2,2,2);
+        gc.insets = new Insets(2, 2, 2, 2);
         add(mapViewer = new TileBoundsMapView(), gc);
         mapViewer.setFocusable(false);
         mapViewer.setZoomContolsVisible(false);
@@ -201,7 +201,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (!evt.getPropertyName().equals(TileGridInputPanel.TILE_BOUNDS_PROP)) return;
-            TileBounds tb = (TileBounds)evt.getNewValue();
+            TileBounds tb = (TileBounds) evt.getNewValue();
             Bounds oldValue = TileSelectionBBoxChooser.this.bbox;
             TileSelectionBBoxChooser.this.bbox = convertTileBoundsToBoundingBox(tb);
             firePropertyChange(BBOX_PROP, oldValue, TileSelectionBBoxChooser.this.bbox);
@@ -242,7 +242,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         protected JPanel buildZoomLevelPanel() {
             JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
             pnl.add(new JLabel(tr("Zoom level:")));
-            pnl.add(spZoomLevel = new JSpinner(new SpinnerNumberModel(0,0,18,1)));
+            pnl.add(spZoomLevel = new JSpinner(new SpinnerNumberModel(0, 0, 18, 1)));
             spZoomLevel.addChangeListener(new ZomeLevelChangeHandler());
             spZoomLevel.addChangeListener(tileBoundsBuilder);
             return pnl;
@@ -250,7 +250,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         protected JPanel buildTileGridInputPanel() {
             JPanel pnl = new JPanel(new GridBagLayout());
-            pnl.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+            pnl.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
             GridBagConstraints gc = new GridBagConstraints();
             gc.anchor = GridBagConstraints.NORTHWEST;
             gc.insets = new Insets(0, 0, 2, 2);
@@ -323,13 +323,13 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         protected void build() {
             setLayout(new BorderLayout());
-            setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+            setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             add(buildTextPanel(), BorderLayout.NORTH);
             add(buildTileGridInputPanel(), BorderLayout.CENTER);
 
             Set<AWTKeyStroke> forwardKeys = new HashSet<>(getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
             forwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
-            setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,forwardKeys);
+            setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);
         }
 
         public TileGridInputPanel() {
@@ -342,12 +342,12 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             TileBounds tb = new TileBounds();
             tb.zoomLevel = (Integer) spZoomLevel.getValue();
             tb.min = new Point(
-                    Math.max(0,lonToTileX(tb.zoomLevel, bbox.getMinLon())),
-                    Math.max(0,latToTileY(tb.zoomLevel, bbox.getMaxLat() - 0.00001))
+                    Math.max(0, lonToTileX(tb.zoomLevel, bbox.getMinLon())),
+                    Math.max(0, latToTileY(tb.zoomLevel, bbox.getMaxLat() - 0.00001))
             );
             tb.max = new Point(
-                    Math.max(0,lonToTileX(tb.zoomLevel, bbox.getMaxLon())),
-                    Math.max(0,latToTileY(tb.zoomLevel, bbox.getMinLat() - 0.00001))
+                    Math.max(0, lonToTileX(tb.zoomLevel, bbox.getMaxLon())),
+                    Math.max(0, latToTileY(tb.zoomLevel, bbox.getMinLat() - 0.00001))
             );
             doFireTileBoundChanged = false;
             setTileBounds(tb);
@@ -358,12 +358,12 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             if ((zoom < 3) || (zoom > 18)) return -1;
             double l = lat / 180 * Math.PI;
             double pf = Math.log(Math.tan(l) + (1/Math.cos(l)));
-            return (int) ((1<<(zoom-1)) * (Math.PI - pf) / Math.PI);
+            return (int) ((1 << (zoom-1)) * (Math.PI - pf) / Math.PI);
         }
 
         public static int lonToTileX(int zoom, double lon) {
             if ((zoom < 3) || (zoom > 18)) return -1;
-            return (int) ((1<<(zoom-3)) * (lon + 180.0) / 45.0);
+            return (int) ((1 << (zoom-3)) * (lon + 180.0) / 45.0);
         }
 
         public void setTileBounds(TileBounds tileBounds) {
@@ -377,7 +377,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(TileAddressInputPanel.TILE_BOUNDS_PROP)) {
-                TileBounds tb = (TileBounds)evt.getNewValue();
+                TileBounds tb = (TileBounds) evt.getNewValue();
                 setTileBounds(tb);
                 fireTileBoundsChanged(tb);
             }
@@ -391,7 +391,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         class ZomeLevelChangeHandler implements ChangeListener {
             @Override
             public void stateChanged(ChangeEvent e) {
-                int zoomLevel = (Integer)spZoomLevel.getValue();
+                int zoomLevel = (Integer) spZoomLevel.getValue();
                 valMaxX.setZoomLevel(zoomLevel);
                 valMaxY.setZoomLevel(zoomLevel);
                 valMinX.setZoomLevel(zoomLevel);
@@ -407,7 +407,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 if (!valMinY.isValid()) return;
                 Point min = new Point(valMinX.getTileIndex(), valMinY.getTileIndex());
                 Point max = new Point(valMaxX.getTileIndex(), valMaxY.getTileIndex());
-                int zoomlevel = (Integer)spZoomLevel.getValue();
+                int zoomlevel = (Integer) spZoomLevel.getValue();
                 TileBounds tb = new TileBounds(min, max, zoomlevel);
                 fireTileBoundsChanged(tb);
             }
@@ -460,7 +460,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             gc.anchor = GridBagConstraints.NORTHWEST;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
-            gc.insets = new Insets(0,0,2,2);
+            gc.insets = new Insets(0, 0, 2, 2);
             pnl.add(new JLabel(tr("Tile address:")), gc);
 
             gc.weightx = 1.0;
@@ -474,7 +474,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             gc.gridx = 2;
             ApplyTileAddressAction applyTileAddressAction = new ApplyTileAddressAction();
             JButton btn = new JButton(applyTileAddressAction);
-            btn.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
+            btn.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
             pnl.add(btn, gc);
             tfTileAddress.addActionListener(applyTileAddressAction);
             return pnl;
@@ -486,7 +486,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             gc.anchor = GridBagConstraints.NORTHWEST;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
-            gc.insets = new Insets(0,0,5,0);
+            gc.insets = new Insets(0, 0, 5, 0);
             add(buildTextPanel(), gc);
 
             gc.gridy = 1;
@@ -500,11 +500,11 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         }
 
         public TileAddressInputPanel() {
-            setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+            setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             build();
         }
 
-        protected void fireTileBoundsChanged(TileBounds tb){
+        protected void fireTileBoundsChanged(TileBounds tb) {
             firePropertyChange(TILE_BOUNDS_PROP, null, tb);
         }
 
@@ -544,7 +544,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             int zoom;
             try {
                 zoom = Integer.parseInt(m.group(1));
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return false;
             }
             if (zoom < 0 || zoom > 18) return false;
@@ -552,19 +552,19 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             int x;
             try {
                 x = Integer.parseInt(m.group(2));
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return false;
             }
             if (x < 0 || x >= Math.pow(2, zoom)) return false;
             int y;
             try {
                 y = Integer.parseInt(m.group(3));
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return false;
             }
             if (y < 0 || y >= Math.pow(2, zoom)) return false;
 
-            tileBounds = new TileBounds(new Point(x,y), new Point(x,y), zoom);
+            tileBounds = new TileBounds(new Point(x, y), new Point(x, y), zoom);
             return true;
         }
 
@@ -608,7 +608,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 } else {
                     tileIndex = Integer.parseInt(value);
                 }
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 return false;
             }
             if (tileIndex < 0 || tileIndex >= Math.pow(2, zoomLevel)) return false;
@@ -640,8 +640,8 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         private TileBounds() {
             zoomLevel = 0;
-            min = new Point(0,0);
-            max = new Point(0,0);
+            min = new Point(0, 0);
+            max = new Point(0, 0);
         }
 
         private TileBounds(Point min, Point max, int zoomLevel) {
@@ -671,11 +671,11 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             TileLoader loader = tileController.getTileLoader();
             if (loader instanceof OsmTileLoader) {
-                ((OsmTileLoader)loader).headers.put("User-Agent", Version.getInstance().getFullAgentString());
+                ((OsmTileLoader) loader).headers.put("User-Agent", Version.getInstance().getFullAgentString());
             }
         }
 
-        public void setBoundingBox(Bounds bbox){
+        public void setBoundingBox(Bounds bbox) {
             if (bbox == null) {
                 min = null;
                 max = null;

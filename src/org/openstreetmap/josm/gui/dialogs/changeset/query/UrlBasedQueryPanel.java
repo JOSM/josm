@@ -39,7 +39,7 @@ public class UrlBasedQueryPanel extends JPanel {
         GridBagConstraints gc = new GridBagConstraints();
         gc.weightx = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.insets  = new Insets(0,0,0,5);
+        gc.insets  = new Insets(0, 0, 0, 5);
         pnl.add(new JLabel(tr("URL: ")), gc);
 
         gc.gridx = 1;
@@ -60,7 +60,7 @@ public class UrlBasedQueryPanel extends JPanel {
         gc.weightx = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
         pnl.add(lblValid = new JLabel(), gc);
-        lblValid.setPreferredSize(new Dimension(20,20));
+        lblValid.setPreferredSize(new Dimension(20, 20));
         return pnl;
     }
 
@@ -95,24 +95,24 @@ public class UrlBasedQueryPanel extends JPanel {
 
     protected final void build() {
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         GridBagConstraints gc = new GridBagConstraints();
         gc.weightx = 1.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.insets = new Insets(0,0,10,0);
-        add(buildHelpPanel(),gc);
+        gc.insets = new Insets(0, 0, 10, 0);
+        add(buildHelpPanel(), gc);
 
         gc.gridy = 1;
         gc.weightx = 1.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        add(buildURLPanel(),gc);
+        add(buildURLPanel(), gc);
 
         gc.gridy = 2;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
-        add(new JPanel(),gc);
+        add(new JPanel(), gc);
     }
 
     /**
@@ -130,7 +130,7 @@ public class UrlBasedQueryPanel extends JPanel {
         URL url = null;
         try {
             url = new URL(text);
-        } catch(MalformedURLException e) {
+        } catch (MalformedURLException e) {
             return null;
         }
         String path = url.getPath();
@@ -165,9 +165,10 @@ public class UrlBasedQueryPanel extends JPanel {
      */
     class ChangetQueryUrlValidator implements DocumentListener {
         protected String getCurrentFeedback() {
-            String fb = (String)lblValid.getClientProperty("valid");
+            String fb = (String) lblValid.getClientProperty("valid");
             return fb == null ? "none" : fb;
         }
+
         protected void feedbackValid() {
             if ("valid".equals(getCurrentFeedback())) return;
             lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
@@ -200,6 +201,7 @@ public class UrlBasedQueryPanel extends JPanel {
                 feedbackInvalid();
             }
         }
+
         @Override
         public void changedUpdate(DocumentEvent e) {
             validate();

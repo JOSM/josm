@@ -37,12 +37,12 @@ public final class SaveAction extends SaveActionBase {
     @Override public File getFile(Layer layer) {
         File f = layer.getAssociatedFile();
         if (f != null && !f.exists()) {
-            f=null;
+            f = null;
         }
 
         // Ask for overwrite in case of GpxLayer: GpxLayers usually are imports
         // and modifying is an error most of the time.
-        if(f != null && layer instanceof GpxLayer) {
+        if (f != null && layer instanceof GpxLayer) {
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,
                     tr("Overwrite"),

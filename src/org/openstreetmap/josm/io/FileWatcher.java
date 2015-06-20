@@ -86,7 +86,7 @@ public class FileWatcher {
         if (dir == null) {
             throw new IllegalArgumentException("Resource "+obj+" does not have a parent directory");
         }
-        synchronized(this) {
+        synchronized (this) {
             // Register directory. Can be called several times for a same directory without problem
             // (it returns the same key so it should not send events several times)
             dir.toPath().register(watcher, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE);
@@ -120,16 +120,16 @@ public class FileWatcher {
 
                 // The filename is the context of the event.
                 @SuppressWarnings("unchecked")
-                WatchEvent<Path> ev = (WatchEvent<Path>)event;
+                WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 Path filename = ev.context();
                 if (filename == null) {
                     continue;
                 }
 
                 // Only way to get full path (http://stackoverflow.com/a/7802029/2257172)
-                Path fullPath = ((Path)key.watchable()).resolve(filename);
+                Path fullPath = ((Path) key.watchable()).resolve(filename);
 
-                synchronized(this) {
+                synchronized (this) {
                     StyleSource style = styleMap.get(fullPath);
                     SourceEntry rule = ruleMap.get(fullPath);
                     if (style != null) {

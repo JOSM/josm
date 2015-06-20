@@ -98,9 +98,9 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
          */
         @Override
         public int compare(TrackLength l0, TrackLength l1) {
-            if(l0.value < l1.value)
+            if (l0.value < l1.value)
                 return -1;
-            else if(l0.value > l1.value)
+            else if (l0.value > l1.value)
                 return 1;
             return 0;
         }
@@ -183,7 +183,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         return t;
     }
 
-    private boolean noUpdates=false;
+    private boolean noUpdates = false;
 
     /** selects all rows (=tracks) in the table that are currently visible on the layer*/
     private void selectVisibleTracksInTable() {
@@ -227,7 +227,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         final JPanel msg = new JPanel(new GridBagLayout());
 
         dateFilter = new DateFilterPanel(layer, "gpx.traces", false);
-        dateFilter.setFilterAppliedListener(new ActionListener(){
+        dateFilter.setFilterAppliedListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 noUpdates = true;
                 selectVisibleTracksInTable();
@@ -249,10 +249,12 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             }
         });
         dateFilter.setEnabled(false);
-        msg.add(b, GBC.std().insets(0,0,5,0));
-        msg.add(dateFilter, GBC.eol().insets(0,0,10,0).fill(GBC.HORIZONTAL));
+        msg.add(b, GBC.std().insets(0, 0, 5, 0));
+        msg.add(dateFilter, GBC.eol().insets(0, 0, 10, 0).fill(GBC.HORIZONTAL));
 
-        msg.add(new JLabel(tr("<html>Select all tracks that you want to be displayed. You can drag select a range of tracks or use CTRL+Click to select specific ones. The map is updated live in the background. Open the URLs by double clicking them.</html>")),
+        msg.add(new JLabel(tr("<html>Select all tracks that you want to be displayed. " +
+                "You can drag select a range of tracks or use CTRL+Click to select specific ones. " +
+                "The map is updated live in the background. Open the URLs by double clicking them.</html>")),
                 GBC.eop().fill(GBC.HORIZONTAL));
         // build table
         final boolean[] trackVisibilityBackup = layer.trackVisibility.clone();

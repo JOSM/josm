@@ -209,7 +209,7 @@ public class TagMergeModelTest {
     public void decideMultiple() {
 
         TagMergeModel model = new TagMergeModel();
-        for (int i=0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             model.addItem(new TagMergeItem("key-" + i, "myvalue-" + i, "theirvalue-" +i));
         }
 
@@ -221,7 +221,7 @@ public class TagMergeModelTest {
         assertEquals(10, list.size());
 
         model.decide(new int[] {0, 3, 5}, MergeDecisionType.KEEP_MINE);
-        for (int i = 0; i< 10; i++) {
+        for (int i = 0; i < 10; i++) {
             TagMergeItem item = list.get(i);
             if (i == 0 || i == 3 || i == 5) {
                 assertEquals(MergeDecisionType.KEEP_MINE, item.getMergeDecision());

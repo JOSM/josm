@@ -86,12 +86,12 @@ public final class TaggingPresetItems {
     private static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
 
     // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
-    private static final Map<String,Set<TaggingPresetType>> TYPE_CACHE = new LinkedHashMap<>(16, 1.1f, true);
+    private static final Map<String, Set<TaggingPresetType>> TYPE_CACHE = new LinkedHashMap<>(16, 1.1f, true);
 
     /**
      * Last value of each key used in presets, used for prefilling corresponding fields
      */
-    private static final Map<String,String> LAST_VALUES = new HashMap<>();
+    private static final Map<String, String> LAST_VALUES = new HashMap<>();
 
     public static class PresetListEntry implements Comparable<PresetListEntry> {
         public String value;
@@ -195,9 +195,9 @@ public final class TaggingPresetItems {
         }
 
         public void setRequisite(String str) throws SAXException {
-            if("required".equals(str)) {
+            if ("required".equals(str)) {
                 required = true;
-            } else if(!"optional".equals(str))
+            } else if (!"optional".equals(str))
                 throw new SAXException(tr("Unknown requisite: {0}", str));
         }
 
@@ -231,9 +231,9 @@ public final class TaggingPresetItems {
             String cstring;
             if (count > 0 && !required) {
                 cstring = "0,"+count;
-            } else if(count > 0) {
+            } else if (count > 0) {
                 cstring = String.valueOf(count);
-            } else if(!required) {
+            } else if (!required) {
                 cstring = "0-...";
             } else {
                 cstring = "1-...";
@@ -241,12 +241,12 @@ public final class TaggingPresetItems {
             if (locale_text == null) {
                 locale_text = getLocaleText(text, text_context, null);
             }
-            p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
-            p.add(new JLabel(key), GBC.std().insets(0,0,10,0));
-            p.add(new JLabel(cstring), types == null ? GBC.eol() : GBC.std().insets(0,0,10,0));
+            p.add(new JLabel(locale_text+":"), GBC.std().insets(0, 0, 10, 0));
+            p.add(new JLabel(key), GBC.std().insets(0, 0, 10, 0));
+            p.add(new JLabel(cstring), types == null ? GBC.eol() : GBC.std().insets(0, 0, 10, 0));
             if (types != null) {
                 JPanel pp = new JPanel();
-                for(TaggingPresetType t : types) {
+                for (TaggingPresetType t : types) {
                     pp.add(new JLabel(ImageProvider.get(t.getIconName())));
                 }
                 p.add(pp, GBC.eol());
@@ -552,6 +552,7 @@ public final class TaggingPresetItems {
         public String match = getDefaultMatch().getValue();
 
         public abstract MatchType getDefaultMatch();
+
         public abstract Collection<String> getValues();
 
         @Override
@@ -649,7 +650,7 @@ public final class TaggingPresetItems {
             if (length != null && !length.isEmpty()) {
                 textField.setMaxChars(Integer.valueOf(length));
             }
-            if (usage.unused()){
+            if (usage.unused()) {
                 if (auto_increment_selected != 0  && auto_increment != null) {
                     try {
                         textField.setText(Integer.toString(Integer.parseInt(LAST_VALUES.get(key)) + auto_increment_selected));
@@ -680,7 +681,7 @@ public final class TaggingPresetItems {
                 comboBox.setEditable(true);
                 comboBox.setEditor(textField);
                 comboBox.getEditor().setItem(DIFFERENT);
-                value=comboBox;
+                value = comboBox;
                 originalValue = DIFFERENT;
             }
             if (locale_text == null) {
@@ -701,7 +702,7 @@ public final class TaggingPresetItems {
                 for (final String ai : auto_increment.split(",")) {
                     JToggleButton aibutton = new JToggleButton(ai);
                     aibutton.setToolTipText(tr("Select auto-increment of {0} for this field", ai));
-                    aibutton.setMargin(new java.awt.Insets(0,0,0,0));
+                    aibutton.setMargin(new java.awt.Insets(0, 0, 0, 0));
                     aibutton.setFocusable(false);
                     saveHorizontalSpace(aibutton);
                     bg.add(aibutton);
@@ -731,7 +732,7 @@ public final class TaggingPresetItems {
                 // of the X remaining selected
                 JButton releasebutton = new JButton("X");
                 releasebutton.setToolTipText(tr("Cancel auto-increment for this field"));
-                releasebutton.setMargin(new java.awt.Insets(0,0,0,0));
+                releasebutton.setMargin(new java.awt.Insets(0, 0, 0, 0));
                 releasebutton.setFocusable(false);
                 releasebutton.addActionListener(new ActionListener() {
                     @Override
@@ -744,7 +745,7 @@ public final class TaggingPresetItems {
                 pnl.add(releasebutton, GBC.eol());
                 value = pnl;
             }
-            p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
+            p.add(new JLabel(locale_text+":"), GBC.std().insets(0, 0, 10, 0));
             p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
         }
@@ -764,7 +765,7 @@ public final class TaggingPresetItems {
             } else if (comp instanceof JosmTextField) {
                 return ((JosmTextField) comp).getText();
             } else if (comp instanceof JPanel) {
-                return getValue(((JPanel)comp).getComponent(0));
+                return getValue(((JPanel) comp).getComponent(0));
             } else {
                 return null;
             }
@@ -995,6 +996,7 @@ public final class TaggingPresetItems {
         protected Object originalValue;
 
         protected abstract Object getSelectedItem();
+
         protected abstract void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches);
 
         protected char getDelChar() {
@@ -1413,6 +1415,7 @@ public final class TaggingPresetItems {
     */
     private static class ConcatenatingJList extends JList<PresetListEntry> {
         private String delimiter;
+
         public ConcatenatingJList(String del, PresetListEntry[] o) {
             super(o);
             delimiter = del;
@@ -1430,7 +1433,7 @@ public final class TaggingPresetItems {
                 for (int i = 0; i < lm.getSize(); i++) {
                     final String value = lm.getElementAt(i).value;
                     if (parts.contains(value)) {
-                        intParts[j++]=i;
+                        intParts[j++] = i;
                         parts.remove(value);
                     }
                 }
@@ -1446,8 +1449,8 @@ public final class TaggingPresetItems {
             ListModel<PresetListEntry> lm = getModel();
             int[] si = getSelectedIndices();
             StringBuilder builder = new StringBuilder();
-            for (int i=0; i<si.length; i++) {
-                if (i>0) {
+            for (int i = 0; i < si.length; i++) {
+                if (i > 0) {
                     builder.append(delimiter);
                 }
                 builder.append(lm.getElementAt(si[i]).value);
@@ -1473,7 +1476,7 @@ public final class TaggingPresetItems {
     }
 
     static String fixPresetString(String s) {
-        return s == null ? s : s.replaceAll("'","''");
+        return s == null ? s : s.replaceAll("'", "''");
     }
 
     private static String getLocaleText(String text, String text_context, String defaultText) {
@@ -1499,7 +1502,7 @@ public final class TaggingPresetItems {
         List<String> result = new ArrayList<>();
         boolean backslash = false;
         StringBuilder item = new StringBuilder();
-        for (int i=0; i<s.length(); i++) {
+        for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
             if (backslash) {
                 item.append(ch);
@@ -1529,7 +1532,7 @@ public final class TaggingPresetItems {
             } else {
                 returnValue.hadEmpty = true;
             }
-            if(s.hasKeys()) {
+            if (s.hasKeys()) {
                 returnValue.hadKeys = true;
             }
         }

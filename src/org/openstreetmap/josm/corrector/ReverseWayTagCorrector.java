@@ -235,7 +235,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             if (!(referrer instanceof Relation)) {
                 continue;
             }
-            Relation relation = (Relation)referrer;
+            Relation relation = (Relation) referrer;
             int position = 0;
             for (RelationMember member : relation.getMembers()) {
                 if (!member.getMember().hasEqualSemanticAttributes(oldway)

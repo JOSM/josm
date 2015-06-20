@@ -92,6 +92,7 @@ public final class OrthogonalizeAction extends JosmAction {
                             Shortcut.SHIFT),
                     true, "action/orthogonalize/undo", true);
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
@@ -100,7 +101,7 @@ public final class OrthogonalizeAction extends JosmAction {
             final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
             try {
                 for (OsmPrimitive p : sel) {
-                    if (!(p instanceof Node)) throw new InvalidUserInputException();
+                    if (!(p instanceof Node)) throw new InvalidUserInputException("selected object is not a node");
                     Node n = (Node) p;
                     if (rememberMovements.containsKey(n)) {
                         EastNorth tmp = rememberMovements.get(n);
@@ -111,7 +112,9 @@ public final class OrthogonalizeAction extends JosmAction {
                 if (!commands.isEmpty()) {
                     Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize / Undo"), commands));
                     Main.map.repaint();
-                } else throw new InvalidUserInputException();
+                } else {
+                    throw new InvalidUserInputException("Commands are empty");
+                }
             } catch (InvalidUserInputException ex) {
                 new Notification(
                         tr("Orthogonalize Shape / Undo<br>"+
@@ -307,7 +310,7 @@ public final class OrthogonalizeAction extends JosmAction {
         final Direction[] HORIZONTAL = {Direction.RIGHT, Direction.LEFT};
         final Direction[] VERTICAL = {Direction.UP, Direction.DOWN};
         final Direction[][] ORIENTATIONS = {HORIZONTAL, VERTICAL};
-        for (Direction[] orientation : ORIENTATIONS){
+        for (Direction[] orientation : ORIENTATIONS) {
             final Set<Node> s = new HashSet<>(allNodes);
             int s_size = s.size();
             for (int dummy = 0; dummy < s_size; ++dummy) {
@@ -323,7 +326,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 while (somethingHappened) {
                     somethingHappened = false;
                     for (WayData w : wayDataList) {
-                        for (int i=0; i < w.nSeg; ++i) {
+                        for (int i = 0; i < w.nSeg; ++i) {
                             Node n1 = w.way.getNodes().get(i);
                             Node n2 = w.way.getNodes().get(i+1);
                             if (Arrays.asList(orientation).contains(w.segDirections[i])) {
@@ -406,6 +409,7 @@ public final class OrthogonalizeAction extends JosmAction {
         public EastNorth segSum;          // (Vector-)sum of all horizontal segments plus the sum of all vertical
         // segments turned by 90 degrees
         public double heading;            // heading of segSum == approximate heading of the way
+
         public WayData(Way pWay) {
             way = pWay;
             nNode = way.getNodes().size();
@@ -422,15 +426,15 @@ public final class OrthogonalizeAction extends JosmAction {
          */
         public void calcDirections(Direction pInitialDirection) throws InvalidUserInputException {
             final EastNorth[] en = new EastNorth[nNode]; // alias: way.getNodes().get(i).getEastNorth() ---> en[i]
-            for (int i=0; i < nNode; i++) {
+            for (int i = 0; i < nNode; i++) {
                 en[i] = new EastNorth(way.getNodes().get(i).getEastNorth().east(), way.getNodes().get(i).getEastNorth().north());
             }
             segDirections = new Direction[nSeg];
             Direction direction = pInitialDirection;
             segDirections[0] = direction;
-            for (int i=0; i < nSeg - 1; i++) {
-                double h1 = EN.polar(en[i],en[i+1]);
-                double h2 = EN.polar(en[i+1],en[i+2]);
+            for (int i = 0; i < nSeg - 1; i++) {
+                double h1 = EN.polar(en[i], en[i+1]);
+                double h2 = EN.polar(en[i+1], en[i+2]);
                 try {
                     direction = direction.changeBy(angleToDirectionChange(h2 - h1, TOLERANCE1));
                 } catch (RejectedAngleException ex) {
@@ -440,18 +444,18 @@ public final class OrthogonalizeAction extends JosmAction {
             }
 
             // sum up segments
-            EastNorth h = new EastNorth(0.,0.);
-            EastNorth v = new EastNorth(0.,0.);
+            EastNorth h = new EastNorth(0., 0.);
+            EastNorth v = new EastNorth(0., 0.);
             for (int i = 0; i < nSeg; ++i) {
                 EastNorth segment = EN.diff(en[i+1], en[i]);
                 if      (segDirections[i] == Direction.RIGHT) {
-                    h = EN.sum(h,segment);
+                    h = EN.sum(h, segment);
                 } else if (segDirections[i] == Direction.UP) {
-                    v = EN.sum(v,segment);
+                    v = EN.sum(v, segment);
                 } else if (segDirections[i] == Direction.LEFT) {
-                    h = EN.diff(h,segment);
+                    h = EN.diff(h, segment);
                 } else if (segDirections[i] == Direction.DOWN) {
-                    v = EN.diff(v,segment);
+                    v = EN.diff(v, segment);
                 } else throw new IllegalStateException();
                 /**
                  * When summing up the length of the sum vector should increase.
@@ -469,7 +473,7 @@ public final class OrthogonalizeAction extends JosmAction {
             // rotate the vertical vector by 90 degrees (clockwise) and add it to the horizontal vector
             segSum = EN.sum(h, new EastNorth(v.north(), -v.east()));
             //            if (EN.abs(segSum) < lh) throw new AssertionError();
-            this.heading = EN.polar(new EastNorth(0.,0.), segSum);
+            this.heading = EN.polar(new EastNorth(0., 0.), segSum);
         }
     }
 
@@ -517,6 +521,7 @@ public final class OrthogonalizeAction extends JosmAction {
         private EN() {
             // Hide implicit public constructor for utility class
         }
+
         /**
          * Rotate counter-clock-wise.
          */
@@ -529,12 +534,15 @@ public final class OrthogonalizeAction extends JosmAction {
             double ny =  sinPhi * x + cosPhi * y + pivot.north();
             return new EastNorth(nx, ny);
         }
+
         public static EastNorth sum(EastNorth en1, EastNorth en2) {
             return new EastNorth(en1.east() + en2.east(), en1.north() + en2.north());
         }
+
         public static EastNorth diff(EastNorth en1, EastNorth en2) {
             return new EastNorth(en1.east() - en2.east(), en1.north() - en2.north());
         }
+
         public static double polar(EastNorth en1, EastNorth en2) {
             return Math.atan2(en2.north() - en1.north(), en2.east() -  en1.east());
         }
@@ -574,13 +582,12 @@ public final class OrthogonalizeAction extends JosmAction {
         InvalidUserInputException(String message) {
             super(message);
         }
+
         InvalidUserInputException(String message, Throwable cause) {
             super(message, cause);
         }
-        InvalidUserInputException() {
-            super();
-        }
     }
+
     /**
      * Exception: angle cannot be recognized as 0, 90, 180 or 270 degrees
      */

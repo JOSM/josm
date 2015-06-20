@@ -54,14 +54,14 @@ public class DuplicateRelation extends Test {
 
         @Override
         public int hashCode() {
-            return role.hashCode()+(int)relId+tags.hashCode()+type.hashCode()+coor.hashCode();
+            return role.hashCode()+(int) relId+tags.hashCode()+type.hashCode()+coor.hashCode();
         }
 
         @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof RelMember)) return false;
             RelMember rm = (RelMember) obj;
-            return rm.role.equals(role) && rm.type.equals(type) && rm.relId==relId && rm.tags.equals(tags) && rm.coor.equals(coor);
+            return rm.role.equals(role) && rm.type.equals(type) && rm.relId == relId && rm.tags.equals(tags) && rm.coor.equals(coor);
         }
 
         /** Extract and store relation information based on the relation member
@@ -232,7 +232,7 @@ public class DuplicateRelation extends Test {
 
         for (OsmPrimitive osm : sel)
             if (osm instanceof Relation && !osm.isDeleted()) {
-                relFix.add((Relation)osm);
+                relFix.add((Relation) osm);
             }
 
         if (relFix.size() < 2)
@@ -295,7 +295,7 @@ public class DuplicateRelation extends Test {
 
         for (OsmPrimitive osm : sel)
             if (osm instanceof Relation) {
-                relations.add((Relation)osm);
+                relations.add((Relation) osm);
             }
 
         if (relations.size() < 2)

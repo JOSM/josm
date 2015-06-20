@@ -170,7 +170,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(TagMergeModel.PROP_NUM_UNDECIDED_TAGS)) {
-            int newValue = (Integer)evt.getNewValue();
+            int newValue = (Integer) evt.getNewValue();
             if (newValue == 0) {
                 tabbedPane.setTitleAt(1, tr("Tags"));
                 tabbedPane.setToolTipTextAt(1, tr("No pending tag conflicts to be resolved"));
@@ -183,7 +183,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
             }
             updateResolvedCompletely();
         } else if (evt.getPropertyName().equals(ListMergeModel.FROZEN_PROP)) {
-            boolean frozen = (Boolean)evt.getNewValue();
+            boolean frozen = (Boolean) evt.getNewValue();
             if (evt.getSource() == nodeListMerger.getModel() && my instanceof Way) {
                 if (frozen) {
                     tabbedPane.setTitleAt(2, tr("Nodes(resolved)"));
@@ -191,7 +191,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
                     tabbedPane.setIconAt(2, mergeComplete);
                 } else {
                     tabbedPane.setTitleAt(2, tr("Nodes(with conflicts)"));
-                    tabbedPane.setToolTipTextAt(2,tr("Pending conflicts in the node list of this way"));
+                    tabbedPane.setToolTipTextAt(2, tr("Pending conflicts in the node list of this way"));
                     tabbedPane.setIconAt(2, mergeIncomplete);
                 }
             } else if (evt.getSource() == relationMemberMerger.getModel() && my instanceof Relation) {
@@ -207,7 +207,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
             }
             updateResolvedCompletely();
         } else if (evt.getPropertyName().equals(PropertiesMergeModel.RESOLVED_COMPLETELY_PROP)) {
-            boolean resolved = (Boolean)evt.getNewValue();
+            boolean resolved = (Boolean) evt.getNewValue();
             if (resolved) {
                 tabbedPane.setTitleAt(0, tr("Properties"));
                 tabbedPane.setToolTipTextAt(0, tr("No pending property conflicts"));
@@ -241,18 +241,18 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         tabbedPane.setEnabledAt(1, true);
 
         if (my instanceof Node) {
-            tabbedPane.setEnabledAt(2,false);
-            tabbedPane.setEnabledAt(3,false);
+            tabbedPane.setEnabledAt(2, false);
+            tabbedPane.setEnabledAt(3, false);
         } else if (my instanceof Way) {
             nodeListMerger.populate(conflict);
             tabbedPane.setEnabledAt(2, true);
             tabbedPane.setEnabledAt(3, false);
-            tabbedPane.setTitleAt(3,tr("Members"));
+            tabbedPane.setTitleAt(3, tr("Members"));
             tabbedPane.setIconAt(3, null);
         } else if (my instanceof Relation) {
             relationMemberMerger.populate(conflict);
             tabbedPane.setEnabledAt(2, false);
-            tabbedPane.setTitleAt(2,tr("Nodes"));
+            tabbedPane.setTitleAt(2, tr("Nodes"));
             tabbedPane.setIconAt(2, null);
             tabbedPane.setEnabledAt(3, true);
         }

@@ -72,8 +72,8 @@ public class GeoPropertyIndex<T> {
 
     public static int index(LatLon ll, int level) {
         long noParts = 1 << level;
-        long x = ((long)((ll.lon() + 180.0) * noParts / 360.0)) & 1;
-        long y = ((long)((ll.lat() + 90.0) * noParts / 180.0)) & 1;
+        long x = ((long) ((ll.lon() + 180.0) * noParts / 360.0)) & 1;
+        long y = ((long) ((ll.lat() + 90.0) * noParts / 180.0)) & 1;
         return (int) (2 * x + y);
     }
 
@@ -148,7 +148,7 @@ public class GeoPropertyIndex<T> {
                 }
                 if (DEBUG) System.err.println(" - new with idx "+idx);
                 LatLon center = bbox.getCenter();
-                BBox b = new BBox(lon1,lat1, center.lon(), center.lat());
+                BBox b = new BBox(lon1, lat1, center.lon(), center.lat());
                 children[idx] = new GPLevel<>(level + 1, b, this, owner);
             }
             return children[idx].getBounded(ll);

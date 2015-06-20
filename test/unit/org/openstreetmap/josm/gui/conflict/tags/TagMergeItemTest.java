@@ -67,10 +67,9 @@ public class TagMergeItemTest {
         TagMergeItem item = new TagMergeItem("key", n1, n2);
         assertEquals("key", item.getKey());
         assertNull(item.getMyTagValue());
-        assertEquals("theirvalue",item.getTheirTagValue());
+        assertEquals("theirvalue", item.getTheirTagValue());
         assertEquals(MergeDecisionType.UNDECIDED, item.getMergeDecision());
     }
-
 
     @Test
     public void test_decide() {
@@ -85,7 +84,7 @@ public class TagMergeItemTest {
         try {
             item.decide(null);
             fail("expected IllegalArgumentException not thrown");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // OK
         }
     }
@@ -103,7 +102,6 @@ public class TagMergeItemTest {
         n1 = new Node(1);
         item.applyToMyPrimitive(n1);
         assertEquals("myvalue", n1.get("key"));
-
     }
 
     @Test
@@ -132,7 +130,7 @@ public class TagMergeItemTest {
         try {
             item.applyToMyPrimitive(n1);
             fail("expected IllegalStateException");
-        } catch(IllegalStateException e) {
+        } catch (IllegalStateException e) {
             // OK
         }
     }
@@ -144,7 +142,7 @@ public class TagMergeItemTest {
         try {
             item.applyToMyPrimitive(null);
             fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // OK
         }
     }

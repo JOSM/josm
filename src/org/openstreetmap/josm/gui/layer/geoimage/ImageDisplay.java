@@ -90,7 +90,7 @@ public class ImageDisplay extends JComponent {
                 error = true;
             }
 
-            synchronized(ImageDisplay.this) {
+            synchronized (ImageDisplay.this) {
                 if (this.file != ImageDisplay.this.file) {
                     // The file has changed
                     tracker.removeImage(img);
@@ -205,7 +205,7 @@ public class ImageDisplay extends JComponent {
             // The position is also limited by the image size
             checkVisibleRectPos(image, visibleRect);
 
-            synchronized(ImageDisplay.this) {
+            synchronized (ImageDisplay.this) {
                 if (ImageDisplay.this.file == file) {
                     ImageDisplay.this.visibleRect = visibleRect;
                 }
@@ -242,7 +242,7 @@ public class ImageDisplay extends JComponent {
 
             checkVisibleRectPos(image, visibleRect);
 
-            synchronized(ImageDisplay.this) {
+            synchronized (ImageDisplay.this) {
                 if (ImageDisplay.this.file == file) {
                     ImageDisplay.this.visibleRect = visibleRect;
                 }
@@ -313,7 +313,7 @@ public class ImageDisplay extends JComponent {
                 visibleRect.x += mousePointInImg.x - p.x;
                 visibleRect.y += mousePointInImg.y - p.y;
                 checkVisibleRectPos(image, visibleRect);
-                synchronized(ImageDisplay.this) {
+                synchronized (ImageDisplay.this) {
                     if (ImageDisplay.this.file == file) {
                         ImageDisplay.this.visibleRect = visibleRect;
                     }
@@ -436,7 +436,7 @@ public class ImageDisplay extends JComponent {
     }
 
     public void setImage(File file, Integer orientation) {
-        synchronized(this) {
+        synchronized (this) {
             this.file = file;
             image = null;
             selectedRect = null;
@@ -460,7 +460,7 @@ public class ImageDisplay extends JComponent {
         Rectangle visibleRect;
         boolean errorLoading;
 
-        synchronized(this) {
+        synchronized (this) {
             image = this.image;
             file = this.file;
             visibleRect = this.visibleRect;
@@ -621,7 +621,7 @@ public class ImageDisplay extends JComponent {
             checkVisibleRectPos(image, visibleRect);
         }
 
-        synchronized(this) {
+        synchronized (this) {
             if (file == this.file) {
                 this.visibleRect = visibleRect;
             }

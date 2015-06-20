@@ -25,7 +25,9 @@ public abstract class CorrectionTableModel<C extends Correction> extends Abstrac
     public abstract int getColumnCount();
 
     protected abstract boolean isBoldCell(int row, int column);
+
     public abstract String getCorrectionColumnName(int colIndex);
+
     public abstract Object getCorrectionValueAt(int rowIndex, int colIndex);
 
     public List<C> getCorrections() {
@@ -68,7 +70,7 @@ public abstract class CorrectionTableModel<C extends Correction> extends Abstrac
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex == applyColumn && aValue instanceof Boolean)
-            apply[rowIndex] = (Boolean)aValue;
+            apply[rowIndex] = (Boolean) aValue;
     }
 
     @Override

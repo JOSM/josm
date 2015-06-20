@@ -99,7 +99,7 @@ public final class NTV2Util {
             i = getIntLE(b, 4);
             j = getIntLE(b, 0);
         }
-        long l = ((long)i << 32) |
+        long l = ((long) i << 32) |
         (j & 0x00000000FFFFFFFFL);
         return Double.longBitsToDouble(l);
     }

@@ -31,7 +31,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
      */
     public NodeListTableCellRenderer() {
         icon = ImageProvider.get("data", "node");
-        rowNumberBorder = BorderFactory.createEmptyBorder(0,4,0,0);
+        rowNumberBorder = BorderFactory.createEmptyBorder(0, 4, 0, 0);
         setOpaque(true);
     }
 
@@ -103,14 +103,14 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 
-        Node node = (Node)value;
+        Node node = (Node) value;
         reset();
         if (node == null) {
             renderEmptyRow();
         } else {
             switch(column) {
             case 0:
-                renderRowId(getModel(table),row, isSelected);
+                renderRowId(getModel(table), row, isSelected);
                 break;
             case 1:
                 renderNode(getModel(table), node, row, isSelected);
@@ -125,11 +125,11 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
 
     /**
      * replies the model
-     * @param table  the table
+     * @param table the table
      * @return the table model
      */
     @SuppressWarnings("unchecked")
     protected ListMergeModel<Node>.EntriesTableModel getModel(JTable table) {
-        return (ListMergeModel<Node>.EntriesTableModel)table.getModel();
+        return (ListMergeModel<Node>.EntriesTableModel) table.getModel();
     }
 }

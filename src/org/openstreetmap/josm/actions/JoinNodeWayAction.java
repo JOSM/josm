@@ -182,11 +182,13 @@ public class JoinNodeWayAction extends JosmAction {
         private final EastNorth refPoint;
         private EastNorth refPoint2;
         private final boolean projectToSegment;
+
         NodeDistanceToRefNodeComparator(Node referenceNode, Node referenceNode2, boolean projectFirst) {
             refPoint = referenceNode.getEastNorth();
             refPoint2 = referenceNode2.getEastNorth();
             projectToSegment = projectFirst;
         }
+
         @Override
         public int compare(Node first, Node second) {
             EastNorth firstPosition = first.getEastNorth();

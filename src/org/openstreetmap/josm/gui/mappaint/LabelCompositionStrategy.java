@@ -47,7 +47,7 @@ public abstract class LabelCompositionStrategy {
     public static class StaticLabelCompositionStrategy extends LabelCompositionStrategy {
         private String defaultLabel;
 
-        public StaticLabelCompositionStrategy(String defaultLabel){
+        public StaticLabelCompositionStrategy(String defaultLabel) {
             this.defaultLabel = defaultLabel;
         }
 
@@ -94,7 +94,8 @@ public abstract class LabelCompositionStrategy {
     public static class TagLookupCompositionStrategy extends LabelCompositionStrategy {
 
         private String defaultLabelTag;
-        public TagLookupCompositionStrategy(String defaultLabelTag){
+
+        public TagLookupCompositionStrategy(String defaultLabelTag) {
             if (defaultLabelTag != null) {
                 defaultLabelTag = defaultLabelTag.trim();
                 if (defaultLabelTag.isEmpty()) {
@@ -188,7 +189,7 @@ public abstract class LabelCompositionStrategy {
                 nameTags = Collections.emptyList();
             }
             List<String> result = new ArrayList<>();
-            for(String tag: nameTags) {
+            for (String tag: nameTags) {
                 if (tag == null) {
                     continue;
                 }
@@ -206,7 +207,7 @@ public abstract class LabelCompositionStrategy {
          *
          * @param nameTags the name tags. null values are ignored.
          */
-        public void setNameTags(List<String> nameTags){
+        public void setNameTags(List<String> nameTags) {
             this.nameTags = buildNameTags(nameTags);
         }
 
@@ -216,7 +217,7 @@ public abstract class LabelCompositionStrategy {
          * @param nameComplementTags the name complement tags. null values are ignored.
          * @since 6541
          */
-        public void setNameComplementTags(List<String> nameComplementTags){
+        public void setNameComplementTags(List<String> nameComplementTags) {
             this.nameComplementTags = buildNameTags(nameComplementTags);
         }
 
@@ -246,7 +247,7 @@ public abstract class LabelCompositionStrategy {
          * <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.
          */
         public final void initNameTagsFromPreferences() {
-            if (Main.pref == null){
+            if (Main.pref == null) {
                 this.nameTags = new ArrayList<>(Arrays.asList(DEFAULT_NAME_TAGS));
                 this.nameComplementTags = new ArrayList<>(Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS));
             } else {

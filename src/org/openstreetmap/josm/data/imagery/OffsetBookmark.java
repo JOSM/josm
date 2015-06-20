@@ -78,7 +78,7 @@ public class OffsetBookmark {
     }
 
     public static void loadBookmarks() {
-        for(Collection<String> c : Main.pref.getArray("imagery.offsets",
+        for (Collection<String> c : Main.pref.getArray("imagery.offsets",
                 Collections.<Collection<String>>emptySet())) {
             allBookmarks.add(new OffsetBookmark(c));
         }
@@ -105,12 +105,12 @@ public class OffsetBookmark {
         if (Main.isDisplayingMapView()) {
             center = Main.getProjection().eastNorth2latlon(Main.map.mapView.getCenter());
         } else {
-            center = new LatLon(0,0);
+            center = new LatLon(0, 0);
         }
         OffsetBookmark nb = new OffsetBookmark(
                 Main.getProjection().toCode(), layer.getInfo().getName(),
                 name, layer.getDx(), layer.getDy(), center.lon(), center.lat());
-        for (ListIterator<OffsetBookmark> it = allBookmarks.listIterator();it.hasNext();) {
+        for (ListIterator<OffsetBookmark> it = allBookmarks.listIterator(); it.hasNext();) {
             OffsetBookmark b = it.next();
             if (b.isUsable(layer) && name.equals(b.name)) {
                 it.set(nb);

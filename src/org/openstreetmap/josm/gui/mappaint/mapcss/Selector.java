@@ -127,7 +127,7 @@ public interface Selector {
              * Constructor
              * @param e the environment against which we match
              */
-            public MatchingReferrerFinder(Environment e){
+            public MatchingReferrerFinder(Environment e) {
                 this.e = e;
             }
 
@@ -147,7 +147,7 @@ public interface Selector {
 
                 if (!left.matches(e.withPrimitive(w)))
                     return;
-                for (int i=0; i<w.getNodesCount(); i++) {
+                for (int i = 0; i < w.getNodesCount(); i++) {
                     Node n = w.getNode(i);
                     if (n.equals(e.osm)) {
                         if (link.matches(e.withParentAndIndexAndLinkContext(w, i, w.getNodesCount()))) {
@@ -170,7 +170,7 @@ public interface Selector {
 
                 if (!left.matches(e.withPrimitive(r)))
                     return;
-                for (int i=0; i < r.getMembersCount(); i++) {
+                for (int i = 0; i < r.getMembersCount(); i++) {
                     RelationMember m = r.getMember(i);
                     if (m.getMember().equals(e.osm)) {
                         if (link.matches(e.withParentAndIndexAndLinkContext(r, i, r.getMembersCount()))) {
@@ -386,7 +386,7 @@ public interface Selector {
             } else if (ChildOrParentSelectorType.PARENT.equals(type)) {
                 if (e.osm instanceof Way) {
                     List<Node> wayNodes = ((Way) e.osm).getNodes();
-                    for (int i=0; i<wayNodes.size(); i++) {
+                    for (int i = 0; i < wayNodes.size(); i++) {
                         Node n = wayNodes.get(i);
                         if (left.matches(e.withPrimitive(n))) {
                             if (link.matches(e.withChildAndIndexAndLinkContext(n, i, wayNodes.size()))) {
@@ -399,7 +399,7 @@ public interface Selector {
                     }
                 } else if (e.osm instanceof Relation) {
                     List<RelationMember> members = ((Relation) e.osm).getMembers();
-                    for (int i=0; i<members.size(); i++) {
+                    for (int i = 0; i < members.size(); i++) {
                         OsmPrimitive member = members.get(i).getMember();
                         if (left.matches(e.withPrimitive(member))) {
                             if (link.matches(e.withChildAndIndexAndLinkContext(member, i, members.size()))) {

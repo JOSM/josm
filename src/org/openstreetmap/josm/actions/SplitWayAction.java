@@ -182,7 +182,7 @@ public class SplitWayAction extends JosmAction {
             List<OsmPrimitive> sel = new ArrayList<>(selectedWays.size() + selectedRelations.size());
             sel.addAll(selectedWays);
             sel.addAll(selectedRelations);
-            SplitWayResult result = splitWay(getEditLayer(),selectedWay, wayChunks, sel);
+            SplitWayResult result = splitWay(getEditLayer(), selectedWay, wayChunks, sel);
             Main.main.undoRedo.add(result.getCommand());
             getCurrentDataSet().setSelected(result.getNewSelection());
         }
@@ -225,7 +225,7 @@ public class SplitWayAction extends JosmAction {
         List<Way> result =
             new ArrayList<>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(),
                                                          Way.class));
-        for (int i=1; i<selectedNodes.size(); i++) {
+        for (int i = 1; i < selectedNodes.size(); i++) {
             List<OsmPrimitive> ref = selectedNodes.get(i).getReferrers();
             for (Iterator<Way> it = result.iterator(); it.hasNext();) {
                 if (!ref.contains(it.next())) {
@@ -267,7 +267,7 @@ public class SplitWayAction extends JosmAction {
      * @param splitPoints the nodes where the way is split. Must not be null.
      * @return the list of chunks
      */
-    public static List<List<Node>> buildSplitChunks(Way wayToSplit, List<Node> splitPoints){
+    public static List<List<Node>> buildSplitChunks(Way wayToSplit, List<Node> splitPoints) {
         CheckParameterUtil.ensureParameterNotNull(wayToSplit, "wayToSplit");
         CheckParameterUtil.ensureParameterNotNull(splitPoints, "splitPoints");
 
@@ -391,32 +391,32 @@ public class SplitWayAction extends JosmAction {
                     if ("restriction".equals(type)) {
                         /* this code assumes the restriction is correct. No real error checking done */
                         String role = rm.getRole();
-                        if("from".equals(role) || "to".equals(role)) {
+                        if ("from".equals(role) || "to".equals(role)) {
                             OsmPrimitive via = null;
                             for (RelationMember rmv : r.getMembers()) {
-                                if ("via".equals(rmv.getRole())){
+                                if ("via".equals(rmv.getRole())) {
                                     via = rmv.getMember();
                                 }
                             }
                             List<Node> nodes = new ArrayList<>();
                             if (via != null) {
                                 if (via instanceof Node) {
-                                    nodes.add((Node)via);
+                                    nodes.add((Node) via);
                                 } else if (via instanceof Way) {
-                                    nodes.add(((Way)via).lastNode());
-                                    nodes.add(((Way)via).firstNode());
+                                    nodes.add(((Way) via).lastNode());
+                                    nodes.add(((Way) via).firstNode());
                                 }
                             }
                             Way res = null;
                             for (Node n : nodes) {
-                                if(changedWay.isFirstLastNode(n)) {
+                                if (changedWay.isFirstLastNode(n)) {
                                     res = way;
                                 }
                             }
                             if (res == null) {
                                 for (Way wayToAdd : newWays) {
-                                    for(Node n : nodes) {
-                                        if(wayToAdd.isFirstLastNode(n)) {
+                                    for (Node n : nodes) {
+                                        if (wayToAdd.isFirstLastNode(n)) {
                                             res = wayToAdd;
                                         }
                                     }
@@ -432,7 +432,7 @@ public class SplitWayAction extends JosmAction {
                             } else {
                                 insert = false;
                             }
-                        } else if(!"via".equals(role)) {
+                        } else if (!"via".equals(role)) {
                             warnme = true;
                         }
                     } else if (!("route".equals(type)) && !("multipolygon".equals(type))) {
@@ -450,7 +450,7 @@ public class SplitWayAction extends JosmAction {
                         Boolean backwards = null;
                         int k = 1;
                         while (i_r - k >= 0 || i_r + k < relationMembers.size()) {
-                            if ((i_r - k >= 0) && relationMembers.get(i_r - k).isWay()){
+                            if ((i_r - k >= 0) && relationMembers.get(i_r - k).isWay()) {
                                 Way w = relationMembers.get(i_r - k).getWay();
                                 if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
                                     backwards = false;
@@ -459,7 +459,7 @@ public class SplitWayAction extends JosmAction {
                                 }
                                 break;
                             }
-                            if ((i_r + k < relationMembers.size()) && relationMembers.get(i_r + k).isWay()){
+                            if ((i_r + k < relationMembers.size()) && relationMembers.get(i_r + k).isWay()) {
                                 Way w = relationMembers.get(i_r + k).getWay();
                                 if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
                                     backwards = true;
@@ -536,7 +536,7 @@ public class SplitWayAction extends JosmAction {
     public static SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection) {
         List<List<Node>> chunks = buildSplitChunks(way, atNodes);
         if (chunks == null) return null;
-        return splitWay(layer,way, chunks, selection);
+        return splitWay(layer, way, chunks, selection);
     }
 
     @Override

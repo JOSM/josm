@@ -72,22 +72,22 @@ public final class CreateCircleAction extends JosmAction {
         int[] count = new int[angles.length];
         double[] width = new double[angles.length];
         double[] remainder = new double[angles.length];
-        for(int i = 0; i < angles.length; i++) {
+        for (int i = 0; i < angles.length; i++) {
             width[i] = angles[(i+1) % angles.length].a - angles[i].a;
-            if(width[i] < 0)
+            if (width[i] < 0)
                 width[i] += 2*Math.PI;
         }
         int assign = 0;
-        for(int i = 0; i < angles.length; i++) {
+        for (int i = 0; i < angles.length; i++) {
             double part = width[i] / 2.0 / Math.PI * nodesCount;
             count[i] = (int) Math.floor(part);
             remainder[i] = part - count[i];
             assign += count[i];
         }
-        while(assign < nodesCount) {
+        while (assign < nodesCount) {
             int imax = 0;
-            for(int i = 1; i < angles.length; i++)
-                if(remainder[i] > remainder[imax])
+            for (int i = 1; i < angles.length; i++)
+                if (remainder[i] > remainder[imax])
                     imax = i;
             count[imax]++;
             remainder[imax] = 0;
@@ -115,6 +115,7 @@ public final class CreateCircleAction extends JosmAction {
      */
     private static class PolarNodeComparator implements Comparator<PolarNode>, Serializable {
         private static final long serialVersionUID = 1L;
+
         @Override
         public int compare(PolarNode pc1, PolarNode pc2) {
             return Double.compare(pc1.a, pc2.a);
@@ -144,7 +145,7 @@ public final class CreateCircleAction extends JosmAction {
         if (nodes.isEmpty() && (ways.size() == 1)) {
             existingWay = ways.get(0);
             for (Node n : existingWay.getNodes()) {
-                if(!nodes.contains(n)) {
+                if (!nodes.contains(n)) {
                     nodes.add(n);
                 }
             }
@@ -187,12 +188,12 @@ public final class CreateCircleAction extends JosmAction {
 
         // calculate the radius (r)
         EastNorth n1 = nodes.get(0).getEastNorth();
-        double r = Math.sqrt(Math.pow(center.east()-n1.east(),2) +
-                Math.pow(center.north()-n1.north(),2));
+        double r = Math.sqrt(Math.pow(center.east()-n1.east(), 2) +
+                Math.pow(center.north()-n1.north(), 2));
 
         // Order nodes by angle
         PolarNode[] angles = new PolarNode[nodes.size()];
-        for(int i = 0; i < nodes.size(); i++) {
+        for (int i = 0; i < nodes.size(); i++) {
             angles[i] = new PolarNode(center, nodes.get(i));
         }
         Arrays.sort(angles, new PolarNodeComparator());
@@ -201,16 +202,16 @@ public final class CreateCircleAction extends JosmAction {
 
         // build a way for the circle
         List<Node> nodesToAdd = new ArrayList<>();
-        for(int i = 0; i < nodes.size(); i++) {
+        for (int i = 0; i < nodes.size(); i++) {
             nodesToAdd.add(angles[i].node);
             double delta = angles[(i+1) % nodes.size()].a - angles[i].a;
-            if(delta < 0)
+            if (delta < 0)
                 delta += 2*Math.PI;
-            for(int j = 0; j < count[i]; j++) {
+            for (int j = 0; j < count[i]; j++) {
                 double alpha = angles[i].a + (j+1)*delta/(count[i]+1);
                 double x = center.east() + r*Math.cos(alpha);
                 double y = center.north() + r*Math.sin(alpha);
-                LatLon ll = Main.getProjection().eastNorth2latlon(new EastNorth(x,y));
+                LatLon ll = Main.getProjection().eastNorth2latlon(new EastNorth(x, y));
                 if (ll.isOutSideWorld()) {
                     notifyNodesNotOnCircle();
                     return;

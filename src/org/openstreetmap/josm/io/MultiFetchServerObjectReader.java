@@ -113,7 +113,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @throws IllegalArgumentException if ds is null
      * @throws NoSuchElementException if ds does not include an {@link OsmPrimitive} with id=<code>id</code>
      */
-    protected void remember(DataSet ds, long id, OsmPrimitiveType type) throws NoSuchElementException{
+    protected void remember(DataSet ds, long id, OsmPrimitiveType type) throws NoSuchElementException {
         CheckParameterUtil.ensureParameterNotNull(ds, "ds");
         if (id <= 0) return;
         OsmPrimitive primitive = ds.getPrimitiveById(id, type);
@@ -133,14 +133,14 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @return this
      */
     public MultiFetchServerObjectReader append(DataSet ds, long id, OsmPrimitiveType type) {
-        OsmPrimitive p = ds.getPrimitiveById(id,type);
+        OsmPrimitive p = ds.getPrimitiveById(id, type);
         switch(type) {
         case NODE:
-            return appendNode((Node)p);
+            return appendNode((Node) p);
         case WAY:
-            return appendWay((Way)p);
+            return appendWay((Way) p);
         case RELATION:
-            return appendRelation((Relation)p);
+            return appendRelation((Relation) p);
         }
         return this;
     }
@@ -208,9 +208,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     public MultiFetchServerObjectReader append(OsmPrimitive primitive) {
         if (primitive != null) {
             switch (OsmPrimitiveType.from(primitive)) {
-                case NODE: return appendNode((Node)primitive);
-                case WAY: return appendWay((Way)primitive);
-                case RELATION: return appendRelation((Relation)primitive);
+                case NODE: return appendNode((Node) primitive);
+                case WAY: return appendWay((Way) primitive);
+                case RELATION: return appendRelation((Relation) primitive);
             }
         }
         return this;
@@ -245,7 +245,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             return pkg;
         if (ids.size() > MAX_IDS_PER_REQUEST) {
             Iterator<Long> it = ids.iterator();
-            for (int i=0; i<MAX_IDS_PER_REQUEST; i++) {
+            for (int i = 0; i < MAX_IDS_PER_REQUEST; i++) {
                 pkg.add(it.next());
             }
             ids.removeAll(pkg);
@@ -270,7 +270,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         .append(type.getAPIName()).append("s=");
 
         Iterator<Long> it = idPackage.iterator();
-        for (int i=0; i<idPackage.size(); i++) {
+        for (int i = 0; i < idPackage.size(); i++) {
             sb.append(it.next());
             if (i < idPackage.size()-1) {
                 sb.append(',');
@@ -313,7 +313,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @param from the other dataset
      */
     protected void merge(DataSet from) {
-        final DataSetMerger visitor = new DataSetMerger(outputDataSet,from);
+        final DataSetMerger visitor = new DataSetMerger(outputDataSet, from);
         visitor.merge();
     }
 
@@ -394,11 +394,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         try {
             missingPrimitives = new HashSet<>();
             if (isCanceled()) return null;
-            fetchPrimitives(ways,OsmPrimitiveType.WAY, progressMonitor);
+            fetchPrimitives(ways, OsmPrimitiveType.WAY, progressMonitor);
             if (isCanceled()) return null;
-            fetchPrimitives(nodes,OsmPrimitiveType.NODE, progressMonitor);
+            fetchPrimitives(nodes, OsmPrimitiveType.NODE, progressMonitor);
             if (isCanceled()) return null;
-            fetchPrimitives(relations,OsmPrimitiveType.RELATION, progressMonitor);
+            fetchPrimitives(relations, OsmPrimitiveType.RELATION, progressMonitor);
             if (outputDataSet != null) {
                 outputDataSet.deleteInvisible();
             }

@@ -41,7 +41,7 @@ public class MultipolygonTestTest {
         nodes.add(new Node(new LatLon(0, 1)));
         nodes.add(new Node(new LatLon(0, 2)));
 
-        Way w = (Way)OsmUtils.createPrimitive("way "+tags);
+        Way w = (Way) OsmUtils.createPrimitive("way "+tags);
         w.setNodes(nodes);
         return w;
     }

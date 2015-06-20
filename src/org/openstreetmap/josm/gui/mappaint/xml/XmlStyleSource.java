@@ -269,7 +269,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
     }
 
     public void add(XmlCondition c, Collection<XmlCondition> conditions, Prototype prot) {
-         if(conditions != null) {
+         if (conditions != null) {
             prot.conditions = conditions;
             if (prot instanceof IconPrototype) {
                 iconsList.add((IconPrototype) prot);
@@ -316,7 +316,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
                     }
                 }
             }
-        } else if (osm instanceof Way || (osm instanceof Relation && ((Relation)osm).isMultipolygon())) {
+        } else if (osm instanceof Way || (osm instanceof Relation && ((Relation) osm).isMultipolygon())) {
             WayPrototypesRecord p = new WayPrototypesRecord();
             get(osm, pretendWayIsClosed || !(osm instanceof Way) || ((Way) osm).isClosed(), p, useMinMaxScale ? scale : null, mc);
             if (p.line != null) {

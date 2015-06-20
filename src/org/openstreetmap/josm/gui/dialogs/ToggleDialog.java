@@ -100,6 +100,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         protected String getKey(String... params) {
             return preferencePrefix + ".buttonhiding";
         }
+
         @Override
         protected ButtonHidingType parse(String s) {
             try {
@@ -232,7 +233,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         /** Use the full width of the parent element */
         setPreferredSize(new Dimension(0, preferredHeight));
         /** Override any minimum sizes of child elements so the user can resize freely */
-        setMinimumSize(new Dimension(0,0));
+        setMinimumSize(new Dimension(0, 0));
         this.preferredHeight = preferredHeight;
         toggleAction = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut);
         String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
@@ -395,9 +396,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         if (isDialogInDefaultView()) {
             setContentVisible(false);
             setIsCollapsed(true);
-            setPreferredSize(new Dimension(0,20));
-            setMaximumSize(new Dimension(Integer.MAX_VALUE,20));
-            setMinimumSize(new Dimension(Integer.MAX_VALUE,20));
+            setPreferredSize(new Dimension(0, 20));
+            setMaximumSize(new Dimension(Integer.MAX_VALUE, 20));
+            setMinimumSize(new Dimension(Integer.MAX_VALUE, 20));
             titleBar.lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
         } else
             throw new IllegalStateException();
@@ -410,7 +411,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         if (isDialogInCollapsedView()) {
             setContentVisible(true);
             setIsCollapsed(false);
-            setPreferredSize(new Dimension(0,preferredHeight));
+            setPreferredSize(new Dimension(0, preferredHeight));
             setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
             titleBar.lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
         } else
@@ -443,7 +444,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     private void destroyComponents(Component component, boolean destroyItself) {
         if (component instanceof Container) {
-            for (Component c: ((Container)component).getComponents()) {
+            for (Component c: ((Container) component).getComponents()) {
                 destroyComponents(c, true);
             }
         }
@@ -453,8 +454,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     /**
-     * Closes the detached dialog if this toggle dialog is currently displayed
-     * in a detached dialog.
+     * Closes the detached dialog if this toggle dialog is currently displayed in a detached dialog.
      *
      */
     public void closeDetachedDialog() {
@@ -518,8 +518,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                     lblTitle.paint(g);
                 }
             };
-            lblTitleWeak.setPreferredSize(new Dimension(Integer.MAX_VALUE,20));
-            lblTitleWeak.setMinimumSize(new Dimension(0,20));
+            lblTitleWeak.setPreferredSize(new Dimension(Integer.MAX_VALUE, 20));
+            lblTitleWeak.setMinimumSize(new Dimension(0, 20));
             add(lblTitleWeak, GBC.std().fill(GBC.HORIZONTAL));
 
             buttonsHide = new JButton(ImageProvider.get("misc", buttonHiding != ButtonHidingType.ALWAYS_SHOWN
@@ -544,7 +544,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 pref.setToolTipText(tr("Open preferences for this panel"));
                 pref.setBorder(BorderFactory.createEmptyBorder());
                 pref.addActionListener(
-                        new ActionListener(){
+                        new ActionListener() {
                             @Override
                             @SuppressWarnings("unchecked")
                             public void actionPerformed(ActionEvent e) {
@@ -566,7 +566,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             sticky.setToolTipText(tr("Undock the panel"));
             sticky.setBorder(BorderFactory.createEmptyBorder());
             sticky.addActionListener(
-                    new ActionListener(){
+                    new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             detach();
@@ -581,7 +581,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             close.setToolTipText(tr("Close this panel. You can reopen it with the buttons in the left toolbar."));
             close.setBorder(BorderFactory.createEmptyBorder());
             close.addActionListener(
-                    new ActionListener(){
+                    new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             hideDialog();
@@ -632,9 +632,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         }
 
         class MouseEventHandler extends PopupMenuLauncher {
+            /**
+             * Constructs a new {@code MouseEventHandler}.
+             */
             public MouseEventHandler() {
                 super(popupMenu);
             }
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
@@ -658,7 +662,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         public DetachedDialog() {
             super(JOptionPane.getFrameForComponent(Main.parent));
             getContentPane().add(ToggleDialog.this);
-            addWindowListener(new WindowAdapter(){
+            addWindowListener(new WindowAdapter() {
                 @Override public void windowClosing(WindowEvent e) {
                     rememberGeometry();
                     getContentPane().removeAll();
@@ -676,10 +680,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 }
             });
             addComponentListener(new ComponentAdapter() {
-                @Override public void componentMoved(ComponentEvent e) {
+                @Override
+                public void componentMoved(ComponentEvent e) {
                     rememberGeometry();
                 }
-                @Override public void componentResized(ComponentEvent e) {
+
+                @Override
+                public void componentResized(ComponentEvent e) {
                     rememberGeometry();
                 }
             });
@@ -912,12 +919,12 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        if(isShowing() && !isCollapsed && isDocked && buttonHiding == ButtonHidingType.DYNAMIC) {
+        if (isShowing() && !isCollapsed && isDocked && buttonHiding == ButtonHidingType.DYNAMIC) {
             if (buttonsPanel != null) {
                 Rectangle b = this.getBounds();
                 b.setLocation(getLocationOnScreen());
-                if (b.contains(((MouseEvent)event).getLocationOnScreen())) {
-                    if(!buttonsPanel.isVisible()) {
+                if (b.contains(((MouseEvent) event).getLocationOnScreen())) {
+                    if (!buttonsPanel.isVisible()) {
                         buttonsPanel.setVisible(true);
                     }
                 } else if (buttonsPanel.isVisible()) {

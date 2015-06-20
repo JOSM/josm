@@ -65,7 +65,7 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 1.0;
-        gc.insets = new Insets(0,0,0,0);
+        gc.insets = new Insets(0, 0, 0, 0);
         pnlApiUrlPreferences = new OsmApiUrlInputPanel();
         pnl.add(pnlApiUrlPreferences, gc);
 
@@ -74,7 +74,7 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        gc.insets = new Insets(10,0,3,3);
+        gc.insets = new Insets(10, 0, 3, 3);
         pnl.add(buildTabbedServerPreferences(), gc);
 
         HelpUtil.setHelpContext(pnl, HelpUtil.ht("/Preferences/Connection"));

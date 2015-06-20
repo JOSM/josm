@@ -9,11 +9,18 @@ import javax.swing.Icon;
  */
 interface HideableButton {
     void applyButtonHiddenPreferences();
+
     void setButtonHidden(boolean b);
+
     void showButton();
+
     void hideButton();
+
     String getActionName();
+
     Icon getIcon();
+
     boolean isButtonVisible();
+
     void setShowHideButtonListener(ShowHideButtonListener l);
 }

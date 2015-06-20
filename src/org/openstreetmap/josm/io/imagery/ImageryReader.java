@@ -273,7 +273,7 @@ public class ImageryReader {
                     Integer val = null;
                     try {
                         val = Integer.valueOf(accumulator.toString());
-                    } catch(NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         val = null;
                     }
                     if (val == null) {
@@ -314,7 +314,7 @@ public class ImageryReader {
                     Integer tileSize = null;
                     try {
                         tileSize = Integer.valueOf(accumulator.toString());
-                    } catch(NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         tileSize = null;
                     }
                     if (tileSize == null) {

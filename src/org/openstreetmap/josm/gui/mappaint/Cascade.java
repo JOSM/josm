@@ -163,7 +163,7 @@ public final class Cascade implements Cloneable {
         if (o instanceof List) {
             List<?> l = (List<?>) o;
             float[] a = new float[l.size()];
-            for (int i=0; i<l.size(); ++i) {
+            for (int i = 0; i < l.size(); ++i) {
                 Float f = toFloat(l.get(i));
                 if (f == null)
                     return null;
@@ -212,7 +212,7 @@ public final class Cascade implements Cloneable {
             if (val instanceof float[]) {
                 res.append(Arrays.toString((float[]) val));
             } else if (val instanceof Color) {
-                res.append(Utils.toString((Color)val));
+                res.append(Utils.toString((Color) val));
             } else if (val != null) {
                 res.append(val);
             }

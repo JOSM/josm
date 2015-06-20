@@ -148,7 +148,7 @@ public class UnGlueAction extends JosmAction {
                 "own copy and all nodes will be selected.");
         }
 
-        if(errMsg != null) {
+        if (errMsg != null) {
             new Notification(
                     errMsg)
                     .setIcon(JOptionPane.ERROR_MESSAGE)
@@ -176,7 +176,7 @@ public class UnGlueAction extends JosmAction {
         Node n = new Node(selectedNode, true);
 
         // If this wasn't called from menu, place it where the cursor is/was
-        if(e.getSource() instanceof JPanel) {
+        if (e.getSource() instanceof JPanel) {
             MapView mv = Main.map.mapView;
             n.setCoor(mv.getLatLon(mv.lastMEvent.getX(), mv.lastMEvent.getY()));
         }

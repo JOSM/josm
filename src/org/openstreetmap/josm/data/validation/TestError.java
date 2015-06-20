@@ -316,7 +316,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
             } else if (o instanceof WaySegment) {
                 v.visit((WaySegment) o);
             } else if (o instanceof List<?>) {
-                v.visit((List<Node>)o);
+                v.visit((List<Node>) o);
             }
         }
     }
@@ -365,11 +365,17 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     }
 
     @Override public void primitivesAdded(PrimitivesAddedEvent event) {}
+
     @Override public void tagsChanged(TagsChangedEvent event) {}
+
     @Override public void nodeMoved(NodeMovedEvent event) {}
+
     @Override public void wayNodesChanged(WayNodesChangedEvent event) {}
+
     @Override public void relationMembersChanged(RelationMembersChangedEvent event) {}
+
     @Override public void otherDatasetChange(AbstractDatasetChangedEvent event) {}
+
     @Override public void dataChanged(DataChangedEvent event) {}
 
     @Override

@@ -77,17 +77,17 @@ public class CacheFiles {
         try {
             this.dir.mkdirs();
             dir_writeable = true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             // We have no access to this directory, so don't do anything
             dir_writeable = false;
         }
         this.enabled = dir_writeable;
         this.expire = Main.pref.getLong("cache." + ident + "." + "expire", EXPIRE_DAILY);
-        if(this.expire < 0) {
+        if (this.expire < 0) {
             this.expire = CacheFiles.EXPIRE_NEVER;
         }
         this.maxsize = Main.pref.getLong("cache." + ident + "." + "maxsize", 50);
-        if(this.maxsize < 0) {
+        if (this.maxsize < 0) {
             this.maxsize = -1;
         }
     }
@@ -98,19 +98,19 @@ public class CacheFiles {
      * @return stored data
      */
     public byte[] getData(String ident) {
-        if(!enabled) return null;
+        if (!enabled) return null;
         try {
             File data = getPath(ident);
-            if(!data.exists())
+            if (!data.exists())
                 return null;
 
-            if(isExpired(data)) {
+            if (isExpired(data)) {
                 data.delete();
                 return null;
             }
 
             // Update last mod time so we don't expire recently used data
-            if(updateModTime) {
+            if (updateModTime) {
                 data.setLastModified(System.currentTimeMillis());
             }
 
@@ -131,7 +131,7 @@ public class CacheFiles {
      * @param data data to store
      */
     public void saveData(String ident, byte[] data) {
-        if(!enabled) return;
+        if (!enabled) return;
         try {
             File f = getPath(ident);
             if (f.exists()) {
@@ -155,18 +155,18 @@ public class CacheFiles {
      * @return BufferedImage or null
      */
     public BufferedImage getImg(String ident) {
-        if(!enabled) return null;
+        if (!enabled) return null;
         try {
             File img = getPath(ident, "png");
-            if(!img.exists())
+            if (!img.exists())
                 return null;
 
-            if(isExpired(img)) {
+            if (isExpired(img)) {
                 img.delete();
                 return null;
             }
             // Update last mod time so we don't expire recently used images
-            if(updateModTime) {
+            if (updateModTime) {
                 img.setLastModified(System.currentTimeMillis());
             }
             return ImageProvider.read(img, false, false);
@@ -200,7 +200,7 @@ public class CacheFiles {
      */
     public void setExpire(int amount, boolean force) {
         String key = "cache." + ident + "." + "expire";
-        if(!Main.pref.get(key).isEmpty() && !force)
+        if (!Main.pref.get(key).isEmpty() && !force)
             return;
 
         this.expire = amount > 0 ? amount : EXPIRE_NEVER;
@@ -214,7 +214,7 @@ public class CacheFiles {
      */
     public void setMaxSize(int amount, boolean force) {
         String key = "cache." + ident + "." + "maxsize";
-        if(!Main.pref.get(key).isEmpty() && !force)
+        if (!Main.pref.get(key).isEmpty() && !force)
             return;
 
         this.maxsize = amount > 0 ? amount : -1;
@@ -234,7 +234,7 @@ public class CacheFiles {
      * Checks if a clean up is needed and will do so if necessary
      */
     public void checkCleanUp() {
-        if(this.writes > CLEANUP_INTERVAL) {
+        if (this.writes > CLEANUP_INTERVAL) {
             cleanUp();
         }
     }
@@ -243,15 +243,15 @@ public class CacheFiles {
      * Performs a default clean up with the set values (deletes oldest files first)
      */
     public void cleanUp() {
-        if(!this.enabled || maxsize == -1) return;
+        if (!this.enabled || maxsize == -1) return;
 
         SortedMap<Long, File> modtime = new TreeMap<>();
         long dirsize = 0;
 
         File[] files = dir.listFiles();
         if (files != null) {
-            for(File f : files) {
-                if(isExpired(f)) {
+            for (File f : files) {
+                if (isExpired(f)) {
                     f.delete();
                 } else {
                     dirsize += f.length();
@@ -260,17 +260,17 @@ public class CacheFiles {
             }
         }
 
-        if(dirsize < maxsize*1000*1000) return;
+        if (dirsize < maxsize*1000*1000) return;
 
         Set<Long> keySet = modtime.keySet();
         Iterator<Long> it = keySet.iterator();
-        int i=0;
+        int i = 0;
         while (it.hasNext()) {
             i++;
             modtime.get(it.next()).delete();
 
             // Delete a couple of files, then check again
-            if(i % CLEANUP_TRESHOLD == 0 && getDirSize() < maxsize)
+            if (i % CLEANUP_TRESHOLD == 0 && getDirSize() < maxsize)
                 return;
         }
         writes = 0;
@@ -317,12 +317,12 @@ public class CacheFiles {
      * @return long Size of directory in bytes
      */
     private long getDirSize() {
-        if(!enabled) return -1;
+        if (!enabled) return -1;
         long dirsize = 0;
 
         File[] files = dir.listFiles();
         if (files != null) {
-            for(File f : files) {
+            for (File f : files) {
                 dirsize += f.length();
             }
         }
@@ -338,7 +338,7 @@ public class CacheFiles {
             MessageDigest md = MessageDigest.getInstance("MD5");
             BigInteger number = new BigInteger(1, md.digest(ident.getBytes(StandardCharsets.UTF_8)));
             return number.toString(16);
-        } catch(Exception e) {
+        } catch (Exception e) {
             // Fall back. Remove unsuitable characters and some random ones to shrink down path length.
             // Limit it to 70 characters, that leaves about 190 for the path on Windows/NTFS
             ident = ident.replaceAll("[^a-zA-Z0-9]", "");
@@ -372,7 +372,7 @@ public class CacheFiles {
      * @return expired state
      */
     private boolean isExpired(File file) {
-        if(CacheFiles.EXPIRE_NEVER == this.expire)
+        if (CacheFiles.EXPIRE_NEVER == this.expire)
             return false;
         return file.lastModified() < (System.currentTimeMillis() - expire*1000);
     }

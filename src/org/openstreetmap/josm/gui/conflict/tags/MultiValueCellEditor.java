@@ -121,7 +121,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
                 new ItemListener() {
                     @Override
                     public void itemStateChanged(ItemEvent e) {
-                        if(e.getStateChange() == ItemEvent.SELECTED)
+                        if (e.getStateChange() == ItemEvent.SELECTED)
                             fireEditingStopped();
                     }
                 }
@@ -174,7 +174,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        MultiValueResolutionDecision decision = (MultiValueResolutionDecision)value;
+        MultiValueResolutionDecision decision = (MultiValueResolutionDecision) value;
         initEditor(decision);
         editor.requestFocus();
         return editor;

@@ -37,7 +37,7 @@ public class FullscreenToggleAction extends ToggleAction {
         super(tr("Fullscreen view"),
               null, /* no icon */
               tr("Toggle fullscreen view"),
-              Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle fullscreen view"),KeyEvent.VK_F11, Shortcut.DIRECT),
+              Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle fullscreen view"), KeyEvent.VK_F11, Shortcut.DIRECT),
               false /* register */
         );
         putValue("help", ht("/Action/FullscreenView"));

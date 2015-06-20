@@ -16,14 +16,14 @@ public interface Tagged {
      *
      * @param keys the map of key value pairs. If null, reset to the empty map.
      */
-    void setKeys(Map<String,String> keys);
+    void setKeys(Map<String, String> keys);
 
     /**
      * Replies the map of key/value pairs. Never null, but may be the empty map.
      *
      * @return the map of key/value pairs
      */
-    Map<String,String> getKeys();
+    Map<String, String> getKeys();
 
     /**
      * Sets a key/value pairs

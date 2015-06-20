@@ -152,7 +152,7 @@ class TagEditHelper {
         if (sel == null || sel.isEmpty()) return;
 
         String key = tagData.getValueAt(row, 0).toString();
-        objKey=key;
+        objKey = key;
 
         @SuppressWarnings("unchecked")
         final EditTagDialog editDialog = new EditTagDialog(key,
@@ -261,7 +261,7 @@ class TagEditHelper {
             private final DefaultListCellRenderer def = new DefaultListCellRenderer();
             @Override
             public Component getListCellRendererComponent(JList<? extends AutoCompletionListItem> list,
-                    AutoCompletionListItem value, int index, boolean isSelected,  boolean cellHasFocus){
+                    AutoCompletionListItem value, int index, boolean isSelected,  boolean cellHasFocus) {
                 Component c = def.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (c instanceof JLabel) {
                     String str = value.getValue();
@@ -279,8 +279,8 @@ class TagEditHelper {
         };
 
         private EditTagDialog(String key, Map<String, Integer> map, final boolean initialFocusOnKey) {
-            super(Main.parent, trn("Change value?", "Change values?", map.size()), new String[] {tr("OK"),tr("Cancel")});
-            setButtonIcons(new String[] {"ok","cancel"});
+            super(Main.parent, trn("Change value?", "Change values?", map.size()), new String[] {tr("OK"), tr("Cancel")});
+            setButtonIcons(new String[] {"ok", "cancel"});
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/EditValue", true /* show help button */);
             this.key = key;
@@ -306,7 +306,7 @@ class TagEditHelper {
             keys.setEditable(true);
             keys.setSelectedItem(key);
 
-            p.add(Box.createVerticalStrut(5),GBC.eol());
+            p.add(Box.createVerticalStrut(5), GBC.eol());
             p.add(new JLabel(tr("Key")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
             p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
@@ -314,7 +314,7 @@ class TagEditHelper {
             List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
             Collections.sort(valueList, usedValuesAwareComparator);
 
-            final String selection= m.size()!=1?tr("<different>"):m.entrySet().iterator().next().getKey();
+            final String selection = m.size() != 1 ? tr("<different>") : m.entrySet().iterator().next().getKey();
 
             values = new AutoCompletingComboBox(selection);
             values.setRenderer(cellRenderer);
@@ -323,7 +323,7 @@ class TagEditHelper {
             values.setPossibleACItems(valueList);
             values.setSelectedItem(selection);
             values.getEditor().setItem(selection);
-            p.add(Box.createVerticalStrut(5),GBC.eol());
+            p.add(Box.createVerticalStrut(5), GBC.eol());
             p.add(new JLabel(tr("Value")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
             p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
@@ -495,7 +495,7 @@ class TagEditHelper {
         */
         protected FocusAdapter addFocusAdapter(final AutoCompletionManager autocomplete, final Comparator<AutoCompletionListItem> comparator) {
            // get the combo box' editor component
-           JTextComponent editor = (JTextComponent)values.getEditor().getEditorComponent();
+           JTextComponent editor = (JTextComponent) values.getEditor().getEditorComponent();
            // Refresh the values model when focus is gained
            FocusAdapter focus = new FocusAdapter() {
                @Override
@@ -507,7 +507,7 @@ class TagEditHelper {
 
                    values.setPossibleACItems(valueList);
                    values.getEditor().selectAll();
-                   objKey=key;
+                   objKey = key;
                }
            };
            editor.addFocusListener(focus);
@@ -516,10 +516,10 @@ class TagEditHelper {
 
         protected JPopupMenu popupMenu = new JPopupMenu() {
             private JCheckBoxMenuItem fixTagLanguageCb = new JCheckBoxMenuItem(
-                new AbstractAction(tr("Use English language for tag by default")){
+                new AbstractAction(tr("Use English language for tag by default")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    boolean use=((JCheckBoxMenuItem) e.getSource()).getState();
+                    boolean use = ((JCheckBoxMenuItem) e.getSource()).getState();
                     PROPERTY_FIX_TAG_LOCALE.put(use);
                     keys.setFixedLocale(use);
                 }
@@ -538,8 +538,8 @@ class TagEditHelper {
         private int commandCount;
 
         public AddTagsDialog() {
-            super(Main.parent, tr("Add value?"), new String[] {tr("OK"),tr("Cancel")});
-            setButtonIcons(new String[] {"ok","cancel"});
+            super(Main.parent, tr("Add value?"), new String[] {tr("OK"), tr("Cancel")});
+            setButtonIcons(new String[] {"ok", "cancel"});
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
 
@@ -548,7 +548,7 @@ class TagEditHelper {
             values = new AutoCompletingComboBox();
 
             mainPanel.add(new JLabel("<html>"+trn("This will change up to {0} object.",
-                "This will change up to {0} objects.", sel.size(),sel.size())
+                "This will change up to {0} objects.", sel.size(), sel.size())
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
 
             AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
@@ -623,10 +623,10 @@ class TagEditHelper {
                 }
             });
             JCheckBoxMenuItem rememberLastTags = new JCheckBoxMenuItem(
-                new AbstractAction(tr("Remember last used tags after a restart")){
+                new AbstractAction(tr("Remember last used tags after a restart")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
                     PROPERTY_REMEMBER_TAGS.put(sel);
                     if (sel) saveTagsIfNeeded();
                 }
@@ -649,7 +649,7 @@ class TagEditHelper {
             }
             lines.add(code(KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+"+"+KeyEvent.getKeyText(KeyEvent.VK_ENTER))
                     +tr("to add without closing the dialog"));
-            sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask|KeyEvent.SHIFT_DOWN_MASK);
+            sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | KeyEvent.SHIFT_DOWN_MASK);
             if (sc != null) {
                 lines.add(code(sc.getKeyText()) + tr("to add first suggestion without closing the dialog"));
             }
@@ -666,7 +666,7 @@ class TagEditHelper {
             }
             try {
                 int v = Integer.parseInt(s);
-                if (v>=0 && v<=MAX_LRU_TAGS_NUMBER) {
+                if (v >= 0 && v <= MAX_LRU_TAGS_NUMBER) {
                     PROPERTY_RECENT_TAGS_NUMBER.put(v);
                     return;
                 }
@@ -761,7 +761,7 @@ class TagEditHelper {
                         public void mouseClicked(MouseEvent e) {
                             action.actionPerformed(null);
                             // add tags and close window on double-click
-                            if (e.getClickCount()>1) {
+                            if (e.getClickCount() > 1) {
                                 buttonAction(0, null); // emulate OK click and close the dialog
                             }
                             // add tags on Shift-Click

@@ -311,7 +311,7 @@ public abstract class Condition {
         public final KeyMatchType matchType;
         public Predicate<String> containsPattern;
 
-        public KeyCondition(String label, boolean negateResult, KeyMatchType matchType){
+        public KeyCondition(String label, boolean negateResult, KeyMatchType matchType) {
             this.label = label;
             this.negateResult = negateResult;
             this.matchType = matchType;

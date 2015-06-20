@@ -41,7 +41,7 @@ public final class Changeset implements Tagged {
     /** the number of comments for this changeset */
     private int commentsCount;
     /** the map of tags */
-    private Map<String,String> tags;
+    private Map<String, String> tags;
     /** indicates whether this changeset is incomplete. For an incomplete changeset we only know its id */
     private boolean incomplete;
     /** the changeset content */
@@ -158,7 +158,7 @@ public final class Changeset implements Tagged {
 
     public Bounds getBounds() {
         if (min != null && max != null)
-            return new Bounds(min,max);
+            return new Bounds(min, max);
         return null;
     }
 

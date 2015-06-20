@@ -194,7 +194,7 @@ public class AutoCompletionManager implements DataSetListener {
      *
      * @param relation the relation
      */
-    protected void cacheRelationMemberRoles(Relation relation){
+    protected void cacheRelationMemberRoles(Relation relation) {
         for (RelationMember m: relation.getMembers()) {
             if (m.hasRole()) {
                 roleCache.add(m.getRole());

@@ -247,7 +247,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             final JLabel copyrightYearLabel,
             final JLabel warning) {
 
-        ActionListener authorActionListener = new ActionListener(){
+        ActionListener authorActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean b = author.isSelected();
@@ -277,7 +277,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         };
         author.addActionListener(authorActionListener);
 
-        KeyAdapter authorNameListener = new KeyAdapter(){
+        KeyAdapter authorNameListener = new KeyAdapter() {
             @Override public void keyReleased(KeyEvent e) {
                 boolean b = !authorName.getText().isEmpty() && author.isSelected();
                 GpxExporter.enableCopyright(data, copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b);
@@ -285,7 +285,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         };
         authorName.addKeyListener(authorNameListener);
 
-        predefined.addActionListener(new ActionListener(){
+        predefined.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final String[] licenses = {

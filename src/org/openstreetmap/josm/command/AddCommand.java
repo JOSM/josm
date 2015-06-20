@@ -51,7 +51,7 @@ public class AddCommand extends Command {
     protected static final void checkNodeStyles(OsmPrimitive osm) {
         if (osm instanceof Way) {
             // Fix #10557 - node icon not updated after undoing/redoing addition of a way
-            ((Way)osm).clearCachedNodeStyles();
+            ((Way) osm).clearCachedNodeStyles();
         }
     }
 

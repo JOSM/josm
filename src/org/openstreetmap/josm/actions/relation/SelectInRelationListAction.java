@@ -25,7 +25,7 @@ public class SelectInRelationListAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty() || Main.map==null || Main.map.relationListDialog==null) return;
+        if (!isEnabled() || relations.isEmpty() || Main.map == null || Main.map.relationListDialog == null) return;
         Main.map.relationListDialog.unfurlDialog();
         Main.map.relationListDialog.selectRelations(relations);
     }

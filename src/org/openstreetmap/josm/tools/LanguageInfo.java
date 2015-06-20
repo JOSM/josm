@@ -37,25 +37,25 @@ public final class LanguageInfo {
      * @since 5915
      */
     public static String getWikiLanguagePrefix(LocaleType type) {
-        if(type == LocaleType.ENGLISH)
+        if (type == LocaleType.ENGLISH)
           return "";
 
         String code = getJOSMLocaleCode();
-        if(type == LocaleType.BASELANGUAGE) {
-            if(code.matches("[^_]+_[^_]+")) {
-                code = code.substring(0,2);
+        if (type == LocaleType.BASELANGUAGE) {
+            if (code.matches("[^_]+_[^_]+")) {
+                code = code.substring(0, 2);
                 if ("en".equals(code))
                     return null;
             } else {
                 return null;
             }
-        } else if(type == LocaleType.DEFAULTNOTENGLISH && "en".equals(code)) {
+        } else if (type == LocaleType.DEFAULTNOTENGLISH && "en".equals(code)) {
             return null;
-        } else if(code.matches(".+@.+")) {
-          return code.substring(0,1).toUpperCase(Locale.ENGLISH) + code.substring(1,2)
-          + "-" + code.substring(3,4).toUpperCase(Locale.ENGLISH) + code.substring(4) + ":";
+        } else if (code.matches(".+@.+")) {
+          return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1, 2)
+          + "-" + code.substring(3, 4).toUpperCase(Locale.ENGLISH) + code.substring(4) + ":";
         }
-        return code.substring(0,1).toUpperCase(Locale.ENGLISH) + code.substring(1) + ":";
+        return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1) + ":";
     }
 
     /**
@@ -94,7 +94,7 @@ public final class LanguageInfo {
      */
     public static String getJOSMLocaleCode(Locale locale) {
         if (locale == null) return "en";
-        for(String full : getLanguageCodes(locale)) {
+        for (String full : getLanguageCodes(locale)) {
             if ("iw_IL".equals(full))
                 return "he";
             else if ("in".equals(full))
@@ -229,19 +229,19 @@ public final class LanguageInfo {
      */
     public static Collection<String> getLanguageCodes(Locale l) {
         Collection<String> list = new LinkedList<String>();
-        if(l == null)
+        if (l == null)
             l = Locale.getDefault();
         String lang = l.getLanguage();
         String c = l.getCountry();
         String v = l.getVariant();
-        if(c.isEmpty())
+        if (c.isEmpty())
             c = null;
-        if(v != null && !v.isEmpty()) {
-            if(c != null)
+        if (v != null && !v.isEmpty()) {
+            if (c != null)
                 list.add(lang+"_"+c+"@"+v);
             list.add(lang+"@"+v);
         }
-        if(c != null)
+        if (c != null)
             list.add(lang+"_"+c);
         list.add(lang);
         return list;

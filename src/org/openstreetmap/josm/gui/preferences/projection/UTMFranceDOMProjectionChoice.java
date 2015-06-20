@@ -40,7 +40,7 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 1;
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             Main.warn(e);
         }
         return defaultIndex;
@@ -59,7 +59,7 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
     @Override
     public String[] allCodes() {
         String[] res = new String[utmEPSGs.length];
-        for (int i=0; i<utmEPSGs.length; ++i) {
+        for (int i = 0; i < utmEPSGs.length; ++i) {
             res[i] = "EPSG:" + utmEPSGs[i];
         }
         return res;
@@ -67,7 +67,7 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
 
     @Override
     public Collection<String> getPreferencesFromCode(String code) {
-        for (int i=0; i < utmEPSGs.length; i++)
+        for (int i = 0; i < utmEPSGs.length; i++)
             if (("EPSG:" + utmEPSGs[i]).equals(code))
                 return Collections.singleton(Integer.toString(i+1));
         return null;

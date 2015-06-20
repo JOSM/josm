@@ -100,7 +100,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         if (!add.isEmpty()) {
             y++;
             gcLabel.gridy = y;
-            lblAdd.setText(trn("{0} object to add:", "{0} objects to add:", add.size(),add.size()));
+            lblAdd.setText(trn("{0} object to add:", "{0} objects to add:", add.size(), add.size()));
             add(lblAdd, gcLabel);
             y++;
             gcList.gridy = y;
@@ -109,7 +109,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         if (!update.isEmpty()) {
             y++;
             gcLabel.gridy = y;
-            lblUpdate.setText(trn("{0} object to modify:", "{0} objects to modify:", update.size(),update.size()));
+            lblUpdate.setText(trn("{0} object to modify:", "{0} objects to modify:", update.size(), update.size()));
             add(lblUpdate, gcLabel);
             y++;
             gcList.gridy = y;
@@ -118,14 +118,14 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         if (!delete.isEmpty()) {
             y++;
             gcLabel.gridy = y;
-            lblDelete.setText(trn("{0} object to delete:", "{0} objects to delete:", delete.size(),delete.size()));
+            lblDelete.setText(trn("{0} object to delete:", "{0} objects to delete:", delete.size(), delete.size()));
             add(lblDelete, gcLabel);
             y++;
             gcList.gridy = y;
             add(spDelete, gcList);
         }
 
-        firePropertyChange(NUM_OBJECTS_TO_UPLOAD_PROP,0, getNumObjectsToUpload());
+        firePropertyChange(NUM_OBJECTS_TO_UPLOAD_PROP, 0, getNumObjectsToUpload());
     }
 
     /**
@@ -151,7 +151,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         }
 
         public PrimitiveListModel getPrimitiveListModel() {
-            return (PrimitiveListModel)getModel();
+            return (PrimitiveListModel) getModel();
         }
     }
 
@@ -178,7 +178,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
             } else {
                 this.primitives = primitives;
             }
-            fireContentsChanged(this,0,getSize());
+            fireContentsChanged(this, 0, getSize());
         }
 
         @Override

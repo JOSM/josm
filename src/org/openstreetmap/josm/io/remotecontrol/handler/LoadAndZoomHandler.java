@@ -89,7 +89,8 @@ public class LoadAndZoomHandler extends RequestHandler {
     public String[] getUsageExamples(String cmd) {
         if (command.equals(cmd)) {
             return new String[] {
-                    "/load_and_zoom?addtags=wikipedia:de=Wei%C3%9Fe_Gasse|maxspeed=5&select=way23071688,way23076176,way23076177,&left=13.740&right=13.741&top=51.05&bottom=51.049",
+                    "/load_and_zoom?addtags=wikipedia:de=Wei%C3%9Fe_Gasse|maxspeed=5&select=way23071688,way23076176,way23076177," +
+                            "&left=13.740&right=13.741&top=51.05&bottom=51.049",
                     "/load_and_zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&select=node413602999&new_layer=true"};
         } else {
             return new String[] {
@@ -122,7 +123,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                             present = ds.getDataSourceArea();
                         }
                         if (present != null && !present.isEmpty()) {
-                            toDownload = new Area(new Rectangle2D.Double(minlon,minlat,maxlon-minlon,maxlat-minlat));
+                            toDownload = new Area(new Rectangle2D.Double(minlon, minlat, maxlon-minlon, maxlat-minlat));
                             toDownload.subtract(present);
                             if (!toDownload.isEmpty()) {
                                 // the result might not be a rectangle (L shaped etc)
@@ -137,7 +138,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     if (toDownload != null && toDownload.isEmpty()) {
                         Main.info("RemoteControl: no download necessary");
                     } else {
-                        Future<?> future = osmTask.download(newLayer, new Bounds(minlat,minlon,maxlat,maxlon),
+                        Future<?> future = osmTask.download(newLayer, new Bounds(minlat, minlon, maxlat, maxlon),
                                 null /* let the task manage the progress monitor */);
                         Main.worker.submit(new PostDownloadHandler(osmTask, future));
                     }
@@ -157,7 +158,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                 @Override
                 public void run() {
                     DataSet ds = Main.main.getCurrentDataSet();
-                    if(ds == null) // e.g. download failed
+                    if (ds == null) // e.g. download failed
                         return;
                     ds.clearSelection();
                 }

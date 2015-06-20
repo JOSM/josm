@@ -90,7 +90,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
         super(doc, text, columns);
     }
 
-    private final transient List<Pair<Action,Shortcut>> unregisteredActionShortcuts = new ArrayList<>();
+    private final transient List<Pair<Action, Shortcut>> unregisteredActionShortcuts = new ArrayList<>();
     private final Set<JosmAction> disabledMenuActions = new HashSet<>();
 
     @Override
@@ -149,7 +149,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
                 Action action = Main.getRegisteredActionShortcut(shortcut);
                 if (action != null) {
                     Main.unregisterActionShortcut(action, shortcut);
-                    unregisteredActionShortcuts.add(new Pair<>(action,shortcut));
+                    unregisteredActionShortcuts.add(new Pair<>(action, shortcut));
                 }
             }
         }
@@ -178,7 +178,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
      * Restore all action shortcuts previously unregistered
      */
     protected void restoreActionShortcuts() {
-        for (Pair<Action,Shortcut> p : unregisteredActionShortcuts) {
+        for (Pair<Action, Shortcut> p : unregisteredActionShortcuts) {
             Main.registerActionShortcut(p.a, p.b);
         }
         unregisteredActionShortcuts.clear();

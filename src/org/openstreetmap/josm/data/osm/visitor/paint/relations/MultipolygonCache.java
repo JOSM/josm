@@ -209,7 +209,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
                     if (event instanceof NodeMovedEvent) {
                         pd.nodeMoved((NodeMovedEvent) event);
                     } else if (event instanceof WayNodesChangedEvent) {
-                        pd.wayNodesChanged((WayNodesChangedEvent)event);
+                        pd.wayNodesChanged((WayNodesChangedEvent) event);
                     }
                 }
             }

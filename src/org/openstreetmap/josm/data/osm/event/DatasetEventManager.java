@@ -121,7 +121,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof ListenerInfo && ((ListenerInfo)o).listener == listener;
+            return o instanceof ListenerInfo && ((ListenerInfo) o).listener == listener;
         }
     }
 

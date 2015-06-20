@@ -130,7 +130,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(10,0,10,0);
+        gc.insets = new Insets(10, 0, 10, 0);
         JLabel lblMy = new JLabel(tr("My version (local dataset)"));
         add(lblMy, gc);
 
@@ -153,7 +153,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(0,0,0,0);
+        gc.insets = new Insets(0, 0, 0, 0);
         JLabel lblTheir = new JLabel(tr("Their version (server dataset)"));
         add(lblTheir, gc);
 
@@ -428,8 +428,8 @@ public class TagMerger extends JPanel implements IConflictResolver {
     @Override
     public void deletePrimitive(boolean deleted) {
         // Use my entries, as it doesn't really matter
-        MergeDecisionType decision = deleted?MergeDecisionType.KEEP_MINE:MergeDecisionType.UNDECIDED;
-        for (int i=0; i<model.getRowCount(); i++) {
+        MergeDecisionType decision = deleted ? MergeDecisionType.KEEP_MINE : MergeDecisionType.UNDECIDED;
+        for (int i = 0; i < model.getRowCount(); i++) {
             model.decide(i, decision);
         }
     }

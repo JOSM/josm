@@ -54,7 +54,7 @@ public abstract class AbstractDownloadTask implements DownloadTask {
         buff.append(getTitle())
             .append(":</td><td>");
         String[] patterns = getPatterns();
-        if (patterns.length>0) {
+        if (patterns.length > 0) {
             buff.append("<ul>");
             for (String pattern: patterns) {
                 buff.append("<li>")
@@ -69,7 +69,7 @@ public abstract class AbstractDownloadTask implements DownloadTask {
 
     // Can be overridden for more complex checking logic
     public boolean acceptsUrl(String url) {
-        if (url==null) return false;
+        if (url == null) return false;
         for (String p: getPatterns()) {
             if (url.matches(p)) {
                 return true;

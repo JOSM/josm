@@ -68,7 +68,7 @@ public class RelationTreeModel implements TreeModel {
     protected int getNumRelationChildren(Relation parent) {
         if (parent == null) return 0;
         int count = 0;
-        for(RelationMember member : parent.getMembers()) {
+        for (RelationMember member : parent.getMembers()) {
             if (member.isRelation()) {
                 count++;
             }
@@ -87,7 +87,7 @@ public class RelationTreeModel implements TreeModel {
      */
     protected Relation getRelationChildByIdx(Relation parent, int idx) {
         if (parent == null) return null;
-        int count=0;
+        int count = 0;
         for (RelationMember member : parent.getMembers()) {
             if (!(member.isRelation())) {
                 continue;
@@ -190,17 +190,17 @@ public class RelationTreeModel implements TreeModel {
     /* ----------------------------------------------------------------------- */
     @Override
     public Object getChild(Object parent, int index) {
-        return getRelationChildByIdx((Relation)parent, index);
+        return getRelationChildByIdx((Relation) parent, index);
     }
 
     @Override
     public int getChildCount(Object parent) {
-        return getNumRelationChildren((Relation)parent);
+        return getNumRelationChildren((Relation) parent);
     }
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
-        return getIndexForRelationChild((Relation)parent, (Relation)child);
+        return getIndexForRelationChild((Relation) parent, (Relation) child);
     }
 
     @Override
@@ -210,7 +210,7 @@ public class RelationTreeModel implements TreeModel {
 
     @Override
     public boolean isLeaf(Object node) {
-        Relation r = (Relation)node;
+        Relation r = (Relation) node;
         if (r.isIncomplete()) return false;
         return getNumRelationChildren(r) == 0;
     }

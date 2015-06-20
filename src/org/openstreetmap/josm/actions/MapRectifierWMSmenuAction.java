@@ -128,22 +128,22 @@ public class MapRectifierWMSmenuAction extends JosmAction {
         ButtonGroup group = new ButtonGroup();
 
         JRadioButton firstBtn = null;
-        for(RectifierService s : services) {
+        for (RectifierService s : services) {
             JRadioButton serviceBtn = new JRadioButton(s.name);
-            if(firstBtn == null) {
+            if (firstBtn == null) {
                 firstBtn = serviceBtn;
             }
             // Checks clipboard contents against current service if no match has been found yet.
             // If the contents match, they will be inserted into the text field and the corresponding
             // service will be pre-selected.
-            if(!clip.isEmpty() && tfWmsUrl.getText().isEmpty()
+            if (!clip.isEmpty() && tfWmsUrl.getText().isEmpty()
                     && (s.urlRegEx.matcher(clip).find() || s.idValidator.matcher(clip).matches())) {
                 serviceBtn.setSelected(true);
                 tfWmsUrl.setText(clip);
             }
             s.btn = serviceBtn;
             group.add(serviceBtn);
-            if(!s.url.isEmpty()) {
+            if (!s.url.isEmpty()) {
                 panel.add(serviceBtn, GBC.std());
                 panel.add(new UrlLabel(s.url, tr("Visit Homepage")), GBC.eol().anchor(GridBagConstraints.EAST));
             } else {
@@ -152,7 +152,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
         }
 
         // Fallback in case no match was found
-        if(tfWmsUrl.getText().isEmpty() && firstBtn != null) {
+        if (tfWmsUrl.getText().isEmpty() && firstBtn != null) {
             firstBtn.setSelected(true);
         }
 
@@ -168,24 +168,24 @@ public class MapRectifierWMSmenuAction extends JosmAction {
 
         // This repeatedly shows the dialog in case there has been an error.
         // The loop is break;-ed if the users cancels
-        outer: while(true) {
+        outer: while (true) {
             diag.showDialog();
             int answer = diag.getValue();
             // Break loop when the user cancels
-            if(answer != 1) {
+            if (answer != 1) {
                 break;
             }
 
             String text = tfWmsUrl.getText().trim();
             // Loop all services until we find the selected one
-            for(RectifierService s : services) {
-                if(!s.isSelected()) {
+            for (RectifierService s : services) {
+                if (!s.isSelected()) {
                     continue;
                 }
 
                 // We've reached the custom WMS URL service
                 // Just set the URL and hope everything works out
-                if(s.wmsUrl.isEmpty()) {
+                if (s.wmsUrl.isEmpty()) {
                     try {
                         addWMSLayer(s.name + " (" + text + ")", text);
                         break outer;
@@ -196,7 +196,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
 
                 // First try to match if the entered string as an URL
                 Matcher m = s.urlRegEx.matcher(text);
-                if(m.find()) {
+                if (m.find()) {
                     String id = m.group(1);
                     String newURL = s.wmsUrl.replaceAll("__s__", id);
                     String title = s.name + " (" + id + ")";
@@ -204,7 +204,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                     break outer;
                 }
                 // If not, look if it's a valid ID for the selected service
-                if(s.idValidator.matcher(text).matches()) {
+                if (s.idValidator.matcher(text).matches()) {
                     String newURL = s.wmsUrl.replaceAll("__s__", text);
                     String title = s.name + " (" + text + ")";
                     addWMSLayer(title, newURL);
@@ -216,7 +216,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 break;
             }
 
-            // and display an error message. The while(true) ensures that the dialog pops up again
+            // and display an error message. The while (true) ensures that the dialog pops up again
             JOptionPane.showMessageDialog(Main.parent,
                     tr("Couldn''t match the entered link or id to the selected service. Please try again."),
                     tr("No valid WMS URL or id"),

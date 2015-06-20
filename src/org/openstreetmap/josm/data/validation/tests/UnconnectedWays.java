@@ -422,7 +422,7 @@ public abstract class UnconnectedWays extends Test {
         if (size < 2)
             return ret;
         for (int i = 1; i < size; ++i) {
-            if(i < size-1) {
+            if (i < size-1) {
                 addNode(w.getNode(i), middlenodes);
             }
             Node a = w.getNode(i-1);

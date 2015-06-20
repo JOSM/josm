@@ -142,10 +142,9 @@ public class OsmPrimitiveTest {
         Assert.assertEquals(n.getReferrers().get(0), w1);
     }
 
-    @Test(expected=DataIntegrityProblemException.class)
+    @Test(expected = DataIntegrityProblemException.class)
     public void checkMustBeInDatasate() {
         Node n = new Node();
         n.getReferrers();
     }
-
 }

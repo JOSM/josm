@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 
 public class HistoryComboBox extends AutoCompletingComboBox {
     private ComboBoxHistory model;
@@ -23,17 +23,17 @@ public class HistoryComboBox extends AutoCompletingComboBox {
     }
 
     public String getText() {
-        return ((JTextComponent)getEditor().getEditorComponent()).getText();
+        return ((JTextComponent) getEditor().getEditorComponent()).getText();
     }
 
     public void setText(String value) {
         setAutocompleteEnabled(false);
-        ((JTextComponent)getEditor().getEditorComponent()).setText(value);
+        ((JTextComponent) getEditor().getEditorComponent()).setText(value);
         setAutocompleteEnabled(true);
     }
 
     public void addCurrentItemToHistory() {
-        model.addElement((String)getEditor().getItem());
+        model.addElement((String) getEditor().getItem());
     }
 
     public void setHistory(List<String> history) {

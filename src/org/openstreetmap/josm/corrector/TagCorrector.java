@@ -143,11 +143,11 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     // create the clone
                     OsmPrimitive clone = null;
                     if (primitive instanceof Way) {
-                        clone = new Way((Way)primitive);
+                        clone = new Way((Way) primitive);
                     } else if (primitive instanceof Node) {
-                        clone = new Node((Node)primitive);
+                        clone = new Node((Node) primitive);
                     } else if (primitive instanceof Relation) {
-                        clone = new Relation((Relation)primitive);
+                        clone = new Relation((Relation) primitive);
                     } else
                         throw new AssertionError();
 

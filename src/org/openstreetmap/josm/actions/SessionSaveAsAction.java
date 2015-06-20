@@ -192,7 +192,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             }
 
             int numNoExporter = 0;
-            WHILE:while (numNoExporter != noExporter.size()) {
+            WHILE: while (numNoExporter != noExporter.size()) {
                 numNoExporter = noExporter.size();
                 for (Layer layer : layers) {
                     if (noExporter.contains(layer)) continue;
@@ -222,9 +222,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
                     exportPanel = exporter.getExportPanel();
                 }
                 wrapper.add(exportPanel, GBC.std().fill(GBC.HORIZONTAL));
-                ip.add(wrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(2,2,4,2));
+                ip.add(wrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(2, 2, 4, 2));
             }
-            ip.add(GBC.glue(0,1), GBC.eol().fill(GBC.VERTICAL));
+            ip.add(GBC.glue(0, 1), GBC.eol().fill(GBC.VERTICAL));
             JScrollPane sp = new JScrollPane(ip);
             sp.setBorder(BorderFactory.createEmptyBorder());
             p.add(sp, GBC.eol().fill());
@@ -243,7 +243,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             lbl.setEnabled(false);
             p.add(include, GBC.std());
             p.add(lbl, GBC.std());
-            p.add(GBC.glue(1,0), GBC.std().fill(GBC.HORIZONTAL));
+            p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
             return p;
         }
     }

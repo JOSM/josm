@@ -85,16 +85,17 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     protected VerticallyScrollablePanel buildUserNamePasswordPanel() {
         VerticallyScrollablePanel pnl = new VerticallyScrollablePanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.gridwidth = 2;
         HtmlPanel pnlMessage = new HtmlPanel();
-        HTMLEditorKit kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
+        HTMLEditorKit kit = (HTMLEditorKit) pnlMessage.getEditorPane().getEditorKit();
         kit.getStyleSheet().addRule(
-                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
+                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; " +
+                "border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
         kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
         pnlMessage.setText("<html><body><p class=\"warning-body\">"
                 + tr("Please enter your OSM user name and password. The password will <strong>not</strong> be saved "
@@ -110,7 +111,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,3,3);
+        gc.insets = new Insets(0, 0, 3, 3);
         pnl.add(new JLabel(tr("Username: ")), gc);
 
         gc.gridx = 1;
@@ -142,9 +143,10 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         gc.weightx = 1.0;
         gc.gridwidth = 2;
         pnlMessage = new HtmlPanel();
-        kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
+        kit = (HTMLEditorKit) pnlMessage.getEditorPane().getEditorKit();
         kit.getStyleSheet().addRule(
-                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
+                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; " +
+                "border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
         kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
         pnlMessage.setText("<html><body>"
                 + "<p class=\"warning-body\">"
@@ -196,7 +198,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 tfUserName.setText(pa.getUserName() == null ? "" : pa.getUserName());
                 tfPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
-        } catch(CredentialsAgentException e) {
+        } catch (CredentialsAgentException e) {
             Main.error(e);
             tfUserName.setText("");
             tfPassword.setText("");
@@ -211,7 +213,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     protected JPanel buildActionButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        RunAuthorisationAction runAuthorisationAction= new RunAuthorisationAction();
+        RunAuthorisationAction runAuthorisationAction = new RunAuthorisationAction();
         tfPassword.getDocument().addDocumentListener(runAuthorisationAction);
         tfUserName.getDocument().addDocumentListener(runAuthorisationAction);
         pnl.add(new SideButton(runAuthorisationAction));
@@ -226,7 +228,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     protected JPanel buildResultsPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // the message panel
         gc.anchor = GridBagConstraints.NORTHWEST;
@@ -239,12 +241,12 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 + "You have successfully retrieved an OAuth Access Token from the OSM website. "
                 + "Click on <strong>{0}</strong> to accept the token. JOSM will use it in "
                 + "subsequent requests to gain access to the OSM API."
-                + "</html>",lbl));
+                + "</html>", lbl));
         pnl.add(msg, gc);
 
         // infos about the access token
         gc.gridy = 1;
-        gc.insets = new Insets(5,0,0,0);
+        gc.insets = new Insets(5, 0, 0, 0);
         pnl.add(pnlAccessTokenInfo = new AccessTokenInfoPanel(), gc);
 
         // the actions
@@ -494,7 +496,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             String loginUrl = null;
             try {
                 loginUrl = authClient.buildOsmLoginUrl();
-            } catch(OsmOAuthAuthorizationException e1) {
+            } catch (OsmOAuthAuthorizationException e1) {
                 alertInvalidLoginUrl();
                 return;
             }
@@ -519,7 +521,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 @Override
                 public void run() {
                     if (e instanceof OsmLoginFailedException) {
-                        alertLoginFailed((OsmLoginFailedException)e);
+                        alertLoginFailed((OsmLoginFailedException) e);
                     } else {
                         alertAuthorisationFailed(e);
                     }
@@ -540,7 +542,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                         getProgressMonitor().createSubTaskMonitor(1, false)
                 );
                 getProgressMonitor().worked(1);
-                if (canceled)return;
+                if (canceled) return;
                 authClient.authorise(
                         requestToken,
                         getOsmUserName(),
@@ -549,12 +551,12 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                         getProgressMonitor().createSubTaskMonitor(1, false)
                 );
                 getProgressMonitor().worked(1);
-                if (canceled)return;
+                if (canceled) return;
                 final OAuthToken accessToken = authClient.getAccessToken(
-                        getProgressMonitor().createSubTaskMonitor(1,false)
+                        getProgressMonitor().createSubTaskMonitor(1, false)
                 );
                 getProgressMonitor().worked(1);
-                if (canceled)return;
+                if (canceled) return;
                 GuiHelper.runInEDT(new Runnable() {
                     @Override
                     public void run() {
@@ -562,7 +564,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                         setAccessToken(accessToken);
                     }
                 });
-            } catch(final OsmOAuthAuthorizationException e) {
+            } catch (final OsmOAuthAuthorizationException e) {
                 handleException(e);
             }
         }

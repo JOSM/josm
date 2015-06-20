@@ -97,7 +97,6 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     = Shortcut.registerShortcut("core_multikey:hidingFilter", tr("Multikey: {0}", tr("Hide filter")),
             KeyEvent.VK_H, Shortcut.ALT_CTRL);
 
-
     protected final String[] columnToolTips = {
             Main.platform.makeTooltip(tr("Enable filter"), ENABLE_FILTER_SHORTCUT),
             Main.platform.makeTooltip(tr("Hiding filter"), HIDING_FILTER_SHORTCUT),
@@ -107,7 +106,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     };
 
     protected void build() {
-        userTable = new JTable(filterModel){
+        userTable = new JTable(filterModel) {
             @Override
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
@@ -141,12 +140,13 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             {
                 putValue(NAME, tr("Add"));
                 putValue(SHORT_DESCRIPTION,  tr("Add filter."));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs","add"));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
             }
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                Filter filter = (Filter)SearchAction.showSearchDialog(new Filter());
-                if(filter != null){
+                Filter filter = (Filter) SearchAction.showSearchDialog(new Filter());
+                if (filter != null) {
                     filterModel.addFilter(filter);
                 }
             }});
@@ -156,13 +156,14 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 putValue(SHORT_DESCRIPTION, tr("Edit filter."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             }
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if(index < 0) return;
+                if (index < 0) return;
                 Filter f = filterModel.getFilter(index);
-                Filter filter = (Filter)SearchAction.showSearchDialog(f);
-                if(filter != null){
+                Filter filter = (Filter) SearchAction.showSearchDialog(f);
+                if (filter != null) {
                     filterModel.setFilter(index, filter);
                 }
             }
@@ -173,10 +174,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 putValue(SHORT_DESCRIPTION, tr("Delete filter."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             }
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if(index < 0) return;
+                if (index < 0) return;
                 filterModel.removeFilter(index);
             }
         });
@@ -186,10 +188,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 putValue(SHORT_DESCRIPTION, tr("Move filter up."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));
             }
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if(index < 0) return;
+                if (index < 0) return;
                 filterModel.moveUpFilter(index);
                 userTable.getSelectionModel().setSelectionInterval(index-1, index-1);
             }
@@ -201,10 +204,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 putValue(SHORT_DESCRIPTION, tr("Move filter down."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "down"));
             }
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if(index < 0) return;
+                if (index < 0) return;
                 filterModel.moveDownFilter(index);
                 userTable.getSelectionModel().setSelectionInterval(index+1, index+1);
             }
@@ -215,7 +219,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectedRow();
-                if (index<0) return;
+                if (index < 0) return;
                 Filter filter = filterModel.getFilter(index);
                 filterModel.setValueAt(!filter.enable, index, FilterTableModel.COL_ENABLED);
             }
@@ -226,7 +230,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectedRow();
-                if (index<0) return;
+                if (index < 0) return;
                 Filter filter = filterModel.getFilter(index);
                 filterModel.setValueAt(!filter.hiding, index, FilterTableModel.COL_HIDING);
             }
@@ -246,8 +250,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     static class StringRenderer extends DefaultTableCellRenderer {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
-            FilterTableModel model = (FilterTableModel)table.getModel();
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            FilterTableModel model = (FilterTableModel) table.getModel();
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             cell.setEnabled(model.isCellEnabled(row, column));
             return cell;
@@ -256,9 +260,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     static class BooleanRenderer extends JCheckBox implements TableCellRenderer {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
-            FilterTableModel model = (FilterTableModel)table.getModel();
-            setSelected(value != null && (Boolean)value);
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            FilterTableModel model = (FilterTableModel) table.getModel();
+            setSelected(value != null && (Boolean) value);
             setEnabled(model.isCellEnabled(row, column));
             setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             return this;
@@ -299,11 +303,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             result.add(p);
 
             if (p instanceof Way) {
-                for (OsmPrimitive n: ((Way)p).getNodes()) {
+                for (OsmPrimitive n: ((Way) p).getNodes()) {
                     stack.push(n);
                 }
             } else if (p instanceof Relation) {
-                for (RelationMember rm: ((Relation)p).getMembers()) {
+                for (RelationMember rm: ((Relation) p).getMembers()) {
                     stack.push(rm.getMember());
                 }
             }
@@ -361,7 +365,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
      * add a new filter.
      * @return the filtermodel
      */
-    public FilterTableModel getFilterModel(){
+    public FilterTableModel getFilterModel() {
         return filterModel;
     }
 
@@ -378,7 +382,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         public List<MultikeyInfo> getMultikeyCombinations() {
             List<MultikeyInfo> result = new ArrayList<>();
 
-            for (int i=0; i<filterModel.getRowCount(); i++) {
+            for (int i = 0; i < filterModel.getRowCount(); i++) {
                 Filter filter = filterModel.getFilter(i);
                 MultikeyInfo info = new MultikeyInfo(i, filter.text);
                 result.add(info);
@@ -398,7 +402,6 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             else
                 return null;
         }
-
     }
 
     private class EnableFilterAction extends AbstractFilterAction  {

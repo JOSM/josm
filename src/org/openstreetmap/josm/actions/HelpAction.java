@@ -37,7 +37,7 @@ public class HelpAction extends AbstractAction {
         if (e.getActionCommand() == null) {
             String topic;
             if (e.getSource() instanceof Component) {
-                Component c = SwingUtilities.getRoot((Component)e.getSource());
+                Component c = SwingUtilities.getRoot((Component) e.getSource());
                 Point mouse = c.getMousePosition();
                 if (mouse != null) {
                     c = SwingUtilities.getDeepestComponentAt(c, mouse.x, mouse.y);

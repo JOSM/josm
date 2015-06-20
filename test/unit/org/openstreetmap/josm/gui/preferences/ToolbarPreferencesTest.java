@@ -43,8 +43,8 @@ public class ToolbarPreferencesTest {
 
     private void checkAction(ActionDefinition a, Object... params) {
         Map<String, Object> expected = new HashMap<>();
-        for (int i=0; i<params.length; i+=2) {
-            expected.put((String)params[i], params[i+1]);
+        for (int i = 0; i < params.length; i += 2) {
+            expected.put((String) params[i], params[i+1]);
         }
         Assert.assertEquals(expected, a.getParameters());
     }

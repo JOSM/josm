@@ -84,7 +84,7 @@ public class FilterMatcher {
             }
 
             Match compiled = SearchCompiler.compile(filter.text, filter.caseSensitive, filter.regexSearch);
-            this.match = filter.inverted?new Not(compiled):compiled;
+            this.match = filter.inverted ? new Not(compiled) : compiled;
             this.isInverted = filter.inverted;
         }
     }

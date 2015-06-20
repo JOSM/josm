@@ -81,8 +81,8 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
         } else if (url.matches(PATTERN_TRACKPOINTS_BBOX)) {
             String[] table = url.split("\\?|=|&");
-            for (int i = 0; i<table.length; i++) {
-                if ("bbox".equals(table[i]) && i<table.length-1)
+            for (int i = 0; i < table.length; i++) {
+                if ("bbox".equals(table[i]) && i < table.length-1)
                     return download(newLayer, new Bounds(table[i+1], ",", ParseMethod.LEFT_BOTTOM_RIGHT_TOP), progressMonitor);
             }
         }
@@ -114,7 +114,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
                     return;
                 ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
                 rawData = reader.parseRawGps(subMonitor);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 if (isCanceled())
                     return;
                 if (e instanceof OsmTransferException) {
@@ -159,7 +159,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
                 return null;
             boolean merge = Main.pref.getBoolean("download.gps.mergeWithLocal", false);
             Layer active = Main.map.mapView.getActiveLayer();
-            if (active instanceof GpxLayer && (merge || ((GpxLayer)active).data.fromServer))
+            if (active instanceof GpxLayer && (merge || ((GpxLayer) active).data.fromServer))
                 return (GpxLayer) active;
             for (GpxLayer l : Main.map.mapView.getLayersOfType(GpxLayer.class)) {
                 if (merge || l.data.fromServer)

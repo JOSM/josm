@@ -221,7 +221,9 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         edSearchText = new JosmTextField();
         edSearchText.getDocument().addDocumentListener(new DocumentListener() {
             @Override public void removeUpdate(DocumentEvent e) { filterPresets(); }
+
             @Override public void insertUpdate(DocumentEvent e) { filterPresets(); }
+
             @Override public void changedUpdate(DocumentEvent e) { filterPresets(); }
         });
         edSearchText.addKeyListener(new KeyAdapter() {
@@ -256,11 +258,11 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         lsResult.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount()>1) {
-                    if (dblClickListener!=null)
+                if (e.getClickCount() > 1) {
+                    if (dblClickListener != null)
                         dblClickListener.actionPerformed(null);
                 } else {
-                    if (clickListener!=null)
+                    if (clickListener != null)
                         clickListener.actionPerformed(null);
                 }
             }
@@ -335,7 +337,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
         DataSet ds = Main.main.getCurrentDataSet();
-        Collection<OsmPrimitive> selected = (ds==null)? Collections.<OsmPrimitive>emptyList() : ds.getSelected();
+        Collection<OsmPrimitive> selected = (ds == null) ? Collections.<OsmPrimitive>emptyList() : ds.getSelected();
         final List<PresetClassification> result = classifications.getMatchingPresets(
                 text, onlyApplicable, inTags, getTypesInSelection(), selected);
 
@@ -460,7 +462,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             synchronized (typesInSelection) {
                 typesInSelectionDirty = false;
                 typesInSelection.clear();
-                if (Main.main==null || Main.main.getCurrentDataSet() == null) return typesInSelection;
+                if (Main.main == null || Main.main.getCurrentDataSet() == null) return typesInSelection;
                 for (OsmPrimitive primitive : Main.main.getCurrentDataSet().getSelected()) {
                     typesInSelection.add(TaggingPresetType.forPrimitive(primitive));
                 }

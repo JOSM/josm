@@ -88,7 +88,7 @@ public final class SplitWayActionTest {
                    dataSet.getWays().contains(w1));
         assertSame("Unselected way seems to have change during split action.",
                    w1.getNodesCount(), 3);
-        for(int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             assertSame("Node change in unselected way during split action.",
                        w1.getNode(i), w1NodesArray[i]);
         }

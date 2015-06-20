@@ -35,7 +35,7 @@ public class ImagerySessionImporter implements SessionLayerImporter {
 
         NodeList nodes = elem.getChildNodes();
 
-        for (int i=0; i<nodes.getLength(); ++i) {
+        for (int i = 0; i < nodes.getLength(); ++i) {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element e = (Element) node;

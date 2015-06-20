@@ -153,12 +153,12 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                         switch (p.getType()) {
                         case NODE:
                             data = new NodeData();
-                            ((NodeData)data).setCoor(((HistoryNode)hp).getCoords());
+                            ((NodeData) data).setCoor(((HistoryNode) hp).getCoords());
                             break;
                         case WAY:
                             data = new WayData();
-                            List<Long> nodeIds = ((HistoryWay)hp).getNodes();
-                            ((WayData)data).setNodes(nodeIds);
+                            List<Long> nodeIds = ((HistoryWay) hp).getNodes();
+                            ((WayData) data).setNodes(nodeIds);
                             // Find incomplete nodes to load at next run
                             for (Long nodeId : nodeIds) {
                                 if (p.getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE) == null) {
@@ -170,8 +170,8 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                             break;
                         case RELATION:
                             data = new RelationData();
-                            List<RelationMemberData> members = ((HistoryRelation)hp).getMembers();
-                            ((RelationData)data).setMembers(members);
+                            List<RelationMemberData> members = ((HistoryRelation) hp).getMembers();
+                            ((RelationData) data).setMembers(members);
                             break;
                         default: throw new AssertionError("Unknown primitive type");
                         }

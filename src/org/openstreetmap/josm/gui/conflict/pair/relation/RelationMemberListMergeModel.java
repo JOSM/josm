@@ -47,9 +47,9 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
     protected void setValueAt(DefaultTableModel model, Object value, int row, int col) {
         if (model == getMergedTableModel() && col == 1) {
             RelationMember memberOld = getMergedEntries().get(row);
-            RelationMember memberNew = new RelationMember((String)value,memberOld.getMember());
+            RelationMember memberNew = new RelationMember((String) value, memberOld.getMember());
             getMergedEntries().remove(row);
-            getMergedEntries().add(row,memberNew);
+            getMergedEntries().add(row, memberNew);
             fireModelDataChanged();
         }
     }

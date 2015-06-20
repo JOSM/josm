@@ -102,7 +102,7 @@ public class  Conflict<T extends OsmPrimitive> {
         Conflict<T> other = (Conflict<T>) obj;
         if (my != other.my)
             return false;
-        if(their != other.their)
+        if (their != other.their)
             return false;
         return true;
     }

@@ -198,6 +198,7 @@ public class SelectionListDialog extends ToggleDialog  {
     class MouseEventHandler extends PopupMenuLauncher {
         private final HighlightHelper helper = new HighlightHelper();
         private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
+
         public MouseEventHandler() {
             super(popupMenu);
         }
@@ -294,7 +295,7 @@ public class SelectionListDialog extends ToggleDialog  {
         public SearchAction() {
             putValue(NAME, tr("Search"));
             putValue(SHORT_DESCRIPTION,   tr("Search for objects"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs","search"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
             updateEnabledState();
         }
 
@@ -329,7 +330,7 @@ public class SelectionListDialog extends ToggleDialog  {
         @Override
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
-            if (sel.isEmpty())return;
+            if (sel.isEmpty()) return;
             OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer == null) return;
             editLayer.data.setSelected(sel);
@@ -394,7 +395,7 @@ public class SelectionListDialog extends ToggleDialog  {
     class ZoomToJOSMSelectionAction extends AbstractAction implements ListDataListener {
 
         public ZoomToJOSMSelectionAction() {
-            putValue(NAME,tr("Zoom to selection"));
+            putValue(NAME, tr("Zoom to selection"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to selection"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
             updateEnabledState();
@@ -514,8 +515,8 @@ public class SelectionListDialog extends ToggleDialog  {
          * @param selection the JOSM selection. Ignored if null or empty.
          */
         public void remember(Collection<? extends OsmPrimitive> selection) {
-            if (selection == null)return;
-            if (selection.isEmpty())return;
+            if (selection == null) return;
+            if (selection.isEmpty()) return;
             if (history == null) return;
             if (history.isEmpty()) {
                 history.add(selection);
@@ -523,8 +524,8 @@ public class SelectionListDialog extends ToggleDialog  {
             }
             if (history.getFirst().equals(selection)) return;
             history.addFirst(selection);
-            for(int i = 1; i < history.size(); ++i) {
-                if(history.get(i).equals(selection)) {
+            for (int i = 1; i < history.size(); ++i) {
+                if (history.get(i).equals(selection)) {
                     history.remove(i);
                     break;
                 }
@@ -562,7 +563,7 @@ public class SelectionListDialog extends ToggleDialog  {
          */
         public synchronized Collection<OsmPrimitive> getSelected() {
             Set<OsmPrimitive> sel = new HashSet<>();
-            for(int i=0; i< getSize();i++) {
+            for (int i = 0; i < getSize(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     sel.add(selection.get(i));
                 }
@@ -578,9 +579,9 @@ public class SelectionListDialog extends ToggleDialog  {
         public synchronized void setSelected(Collection<OsmPrimitive> sel) {
             selectionModel.clearSelection();
             if (sel == null) return;
-            for (OsmPrimitive p: sel){
+            for (OsmPrimitive p: sel) {
                 int i = selection.indexOf(p);
-                if (i >= 0){
+                if (i >= 0) {
                     selectionModel.addSelectionInterval(i, i);
                 }
             }
@@ -642,10 +643,10 @@ public class SelectionListDialog extends ToggleDialog  {
             if (toUpdate == null) return;
             if (toUpdate.isEmpty()) return;
             Collection<OsmPrimitive> sel = getSelected();
-            for (OsmPrimitive p: toUpdate){
+            for (OsmPrimitive p: toUpdate) {
                 int i = selection.indexOf(p);
                 if (i >= 0) {
-                    super.fireContentsChanged(this, i,i);
+                    super.fireContentsChanged(this, i, i);
                 }
             }
             setSelected(sel);
@@ -815,12 +816,12 @@ public class SelectionListDialog extends ToggleDialog  {
             }
             if (ways + nodes + relations == 0) {
                 text.append(tr("Unselectable now"));
-                this.sel=new ArrayList<>(); // empty selection
+                this.sel = new ArrayList<>(); // empty selection
             }
             DefaultNameFormatter df = DefaultNameFormatter.getInstance();
             if (ways + nodes + relations == 1) {
                 text.append(": ");
-                for(OsmPrimitive o : sel) {
+                for (OsmPrimitive o : sel) {
                     text.append(o.getDisplayName(df));
                 }
                 setText(text.toString());

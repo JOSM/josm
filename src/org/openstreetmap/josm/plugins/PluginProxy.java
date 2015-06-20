@@ -37,7 +37,7 @@ public class PluginProxy extends Plugin {
 
     @Override public PreferenceSetting getPreferenceSetting() {
         try {
-            return (PreferenceSetting)plugin.getClass().getMethod("getPreferenceSetting").invoke(plugin);
+            return (PreferenceSetting) plugin.getClass().getMethod("getPreferenceSetting").invoke(plugin);
         } catch (NoSuchMethodException e) {
             Main.debug("Plugin "+plugin+" does not define getPreferenceSetting");
             return null;

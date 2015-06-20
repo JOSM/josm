@@ -7,6 +7,8 @@ import org.openstreetmap.josm.data.osm.Changeset;
 
 public interface ChangesetDownloadTask extends Runnable{
     Set<Changeset> getDownloadedChangesets();
+
     boolean isCanceled();
+
     boolean isFailed();
 }

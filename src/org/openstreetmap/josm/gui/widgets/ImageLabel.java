@@ -30,8 +30,8 @@ public class ImageLabel extends JPanel {
     public ImageLabel(String img, String tooltip, int charCount, Color background) {
         setLayout(new GridBagLayout());
         setBackground(background);
-        add(new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0,1,1,0));
-        add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2,1,1,0));
+        add(new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0, 1, 1, 0));
+        add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2, 1, 1, 0));
         setToolTipText(tooltip);
         this.charCount = charCount;
     }

@@ -37,7 +37,7 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(5,0,0,5);
+        gc.insets = new Insets(5, 0, 0, 5);
         add(lblTaskTitle = new JLabel(""), gc);
 
         gc.gridx = 0;
@@ -45,7 +45,7 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(5,0,0,5);
+        gc.insets = new Insets(5, 0, 0, 5);
         add(lblCustomText = new JLabel(""), gc);
 
         gc.gridx = 0;
@@ -53,7 +53,7 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(5,0,0,5);
+        gc.insets = new Insets(5, 0, 0, 5);
         add(progressBar = new JProgressBar(JProgressBar.HORIZONTAL), gc);
     }
 
@@ -90,7 +90,7 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
-            Mode mode = (Mode)evt.getNewValue();
+            Mode mode = (Mode) evt.getNewValue();
             switch(mode) {
                 case EDITING_DATA: setVisible(false); break;
                 case UPLOADING_AND_SAVING: setVisible(true); break;

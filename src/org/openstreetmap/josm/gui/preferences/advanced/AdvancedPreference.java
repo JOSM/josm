@@ -89,16 +89,22 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         lbFilter.setLabelFor(txtFilter);
         p.add(lbFilter);
         p.add(txtFilter, GBC.eol().fill(GBC.HORIZONTAL));
-        txtFilter.getDocument().addDocumentListener(new DocumentListener(){
-            @Override public void changedUpdate(DocumentEvent e) {
+        txtFilter.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
                 action();
             }
-            @Override public void insertUpdate(DocumentEvent e) {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
                 action();
             }
-            @Override public void removeUpdate(DocumentEvent e) {
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
                 action();
             }
+
             private void action() {
                 applyFilter();
             }
@@ -109,15 +115,15 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         table = new PreferencesTable(displayData);
         JScrollPane scroll = new JScrollPane(table);
         p.add(scroll, GBC.eol().fill(GBC.BOTH));
-        scroll.setPreferredSize(new Dimension(400,200));
+        scroll.setPreferredSize(new Dimension(400, 200));
 
         JButton add = new JButton(tr("Add"));
         p.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-        p.add(add, GBC.std().insets(0,5,0,0));
-        add.addActionListener(new ActionListener(){
+        p.add(add, GBC.std().insets(0, 5, 0, 0));
+        add.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 PrefEntry pe = table.addPreference(gui);
-                if (pe!=null) {
+                if (pe != null) {
                     allData.add(pe);
                     Collections.sort(allData);
                     applyFilter();
@@ -126,8 +132,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         });
 
         JButton edit = new JButton(tr("Edit"));
-        p.add(edit, GBC.std().insets(5,5,5,0));
-        edit.addActionListener(new ActionListener(){
+        p.add(edit, GBC.std().insets(5, 5, 5, 0));
+        edit.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 boolean ok = table.editPreference(gui);
                 if (ok) applyFilter();
@@ -135,31 +141,31 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         });
 
         JButton reset = new JButton(tr("Reset"));
-        p.add(reset, GBC.std().insets(0,5,0,0));
-        reset.addActionListener(new ActionListener(){
+        p.add(reset, GBC.std().insets(0, 5, 0, 0));
+        reset.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 table.resetPreferences(gui);
             }
         });
 
         JButton read = new JButton(tr("Read from file"));
-        p.add(read, GBC.std().insets(5,5,0,0));
-        read.addActionListener(new ActionListener(){
+        p.add(read, GBC.std().insets(5, 5, 0, 0));
+        read.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 readPreferencesFromXML();
             }
         });
 
         JButton export = new JButton(tr("Export selected items"));
-        p.add(export, GBC.std().insets(5,5,0,0));
-        export.addActionListener(new ActionListener(){
+        p.add(export, GBC.std().insets(5, 5, 0, 0));
+        export.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 exportSelectedToXML();
             }
         });
 
         final JButton more = new JButton(tr("More..."));
-        p.add(more, GBC.std().insets(5,5,0,0));
+        p.add(more, GBC.std().insets(5, 5, 0, 0));
         more.addActionListener(new ActionListener() {
             private JPopupMenu menu = buildPopupMenu();
             @Override public void actionPerformed(ActionEvent ev) {
@@ -179,7 +185,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             // plugins preference keys may be changed directly later, after plugins are downloaded
             // so we do not want to show it in the table as "changed" now
             Setting<?> pluginSetting = orig.get("plugins");
-            if (pluginSetting!=null) {
+            if (pluginSetting != null) {
                 loaded.put("plugins", pluginSetting);
             }
         } else {
@@ -194,6 +200,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             public boolean accept(File f) {
                 return f.isDirectory() || Utils.hasExtension(f, "xml");
             }
+
             @Override
             public String getDescription() {
                 return tr("JOSM custom settings files (*.xml)");
@@ -203,7 +210,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                 JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
         if (fc != null) {
             File[] sel = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
-            if (sel.length==1 && !sel[0].getName().contains(".")) sel[0]=new File(sel[0].getAbsolutePath()+".xml");
+            if (sel.length == 1 && !sel[0].getName().contains(".")) sel[0] = new File(sel[0].getAbsolutePath()+".xml");
             return sel;
         }
         return new File[0];
@@ -313,7 +320,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         return data;
     }
 
-    private Map<String,String> profileTypes = new LinkedHashMap<>();
+    private Map<String, String> profileTypes = new LinkedHashMap<>();
 
     private JPopupMenu buildPopupMenu() {
         JPopupMenu menu = new JPopupMenu();
@@ -322,7 +329,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         profileTypes.put(marktr("toolbar"), "toolbar.*");
         profileTypes.put(marktr("imagery"), "imagery.*");
 
-        for (Entry<String,String> e: profileTypes.entrySet()) {
+        for (Entry<String, String> e: profileTypes.entrySet()) {
             menu.add(new ExportProfileAction(Main.pref, e.getKey(), e.getValue()));
         }
 
@@ -353,7 +360,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
 
     private JMenu getProfileMenu() {
-        final JMenu p =new JMenu(tr("Load profile"));
+        final JMenu p = new JMenu(tr("Load profile"));
         p.addMenuListener(new MenuListener() {
             @Override
             public void menuSelected(MenuEvent me) {
@@ -363,8 +370,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                     for (File f: files) {
                        String s = f.getName();
                        int idx = s.indexOf('_');
-                       if (idx>=0) {
-                            String t=s.substring(0,idx);
+                       if (idx >= 0) {
+                            String t = s.substring(0, idx);
                             if (profileTypes.containsKey(t)) {
                                 p.add(new ImportProfileAction(s, f, t));
                             }
@@ -376,8 +383,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                     for (File f: files) {
                        String s = f.getName();
                        int idx = s.indexOf('_');
-                       if (idx>=0) {
-                            String t=s.substring(0,idx);
+                       if (idx >= 0) {
+                            String t = s.substring(0, idx);
                             if (profileTypes.containsKey(t)) {
                                 p.add(new ImportProfileAction(s, f, t));
                             }
@@ -385,10 +392,12 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                     }
                 }
             }
+
             @Override
             public void menuDeselected(MenuEvent me) {
                 // Not implemented
             }
+
             @Override
             public void menuCanceled(MenuEvent me) {
                 // Not implemented
@@ -449,7 +458,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                 displayData.add(e);
             }
         }
-        if (table!=null) table.fireDataChanged();
+        if (table != null) table.fireDataChanged();
     }
 
     @Override

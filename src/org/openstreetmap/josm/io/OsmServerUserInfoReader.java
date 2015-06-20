@@ -40,7 +40,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xpath = factory.newXPath();
             UserInfo userInfo = new UserInfo();
-            Node xmlNode = (Node)xpath.compile("/osm/user[1]").evaluate(document, XPathConstants.NODE);
+            Node xmlNode = (Node) xpath.compile("/osm/user[1]").evaluate(document, XPathConstants.NODE);
             if (xmlNode == null)
                 throw new XmlParsingException(tr("XML tag <user> is missing."));
 
@@ -50,7 +50,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
                 throw new XmlParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "id", "user"));
             try {
                 userInfo.setId(Integer.parseInt(v));
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "id", "user", v), e);
             }
             // -- display name
@@ -58,16 +58,16 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             userInfo.setDisplayName(v);
             // -- account_created
             v = getAttribute(xmlNode, "account_created");
-            if (v!=null) {
+            if (v != null) {
                 userInfo.setAccountCreated(DateUtils.fromString(v));
             }
             // -- description
-            xmlNode = (Node)xpath.compile("/osm/user[1]/description[1]/text()").evaluate(document, XPathConstants.NODE);
+            xmlNode = (Node) xpath.compile("/osm/user[1]/description[1]/text()").evaluate(document, XPathConstants.NODE);
             if (xmlNode != null) {
                 userInfo.setDescription(xmlNode.getNodeValue());
             }
             // -- home
-            xmlNode = (Node)xpath.compile("/osm/user[1]/home").evaluate(document, XPathConstants.NODE);
+            xmlNode = (Node) xpath.compile("/osm/user[1]/home").evaluate(document, XPathConstants.NODE);
             if (xmlNode != null) {
                 v = getAttribute(xmlNode, "lat");
                 if (v == null)
@@ -75,7 +75,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
                 double lat;
                 try {
                     lat = Double.parseDouble(v);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.",
                             "lat", "home", v), e);
                 }
@@ -86,7 +86,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
                 double lon;
                 try {
                     lon = Double.parseDouble(v);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.",
                             "lon", "home", v), e);
                 }
@@ -97,39 +97,39 @@ public class OsmServerUserInfoReader extends OsmServerReader {
                 int zoom;
                 try {
                     zoom = Integer.parseInt(v);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.",
                             "zoom", "home", v), e);
                 }
-                userInfo.setHome(new LatLon(lat,lon));
+                userInfo.setHome(new LatLon(lat, lon));
                 userInfo.setHomeZoom(zoom);
             }
 
             // -- language list
-            NodeList xmlNodeList = (NodeList)xpath.compile("/osm/user[1]/languages[1]/lang/text()").evaluate(document, XPathConstants.NODESET);
+            NodeList xmlNodeList = (NodeList) xpath.compile("/osm/user[1]/languages[1]/lang/text()").evaluate(document, XPathConstants.NODESET);
             if (xmlNodeList != null) {
                 List<String> languages = new LinkedList<>();
-                for (int i=0; i < xmlNodeList.getLength(); i++) {
+                for (int i = 0; i < xmlNodeList.getLength(); i++) {
                     languages.add(xmlNodeList.item(i).getNodeValue());
                 }
                 userInfo.setLanguages(languages);
             }
 
             // -- messages
-            xmlNode = (Node)xpath.compile("/osm/user[1]/messages/received").evaluate(document, XPathConstants.NODE);
+            xmlNode = (Node) xpath.compile("/osm/user[1]/messages/received").evaluate(document, XPathConstants.NODE);
             if (xmlNode != null) {
                 v = getAttribute(xmlNode, "unread");
                 if (v == null)
                     throw new XmlParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "unread", "received"));
                 try {
                     userInfo.setUnreadMessages(Integer.parseInt(v));
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "unread", "received", v), e);
                 }
             }
 
             return userInfo;
-        } catch(XPathException e) {
+        } catch (XPathException e) {
             throw new XmlParsingException(e);
         }
     }
@@ -174,9 +174,9 @@ public class OsmServerUserInfoReader extends OsmServerReader {
                         DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in)
                 );
             }
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             throw e;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new OsmTransferException(e);
         } finally {
             monitor.finishTask();

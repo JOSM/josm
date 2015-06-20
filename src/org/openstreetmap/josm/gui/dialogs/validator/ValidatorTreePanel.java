@@ -186,7 +186,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                 continue;
             }
             Severity s = e.getSeverity();
-            if(!other && s == Severity.OTHER) {
+            if (!other && s == Severity.OTHER) {
                 continue;
             }
             String d = e.getDescription();

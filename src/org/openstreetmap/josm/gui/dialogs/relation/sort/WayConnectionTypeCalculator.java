@@ -26,18 +26,18 @@ public class WayConnectionTypeCalculator {
         this.members = members;
         final List<WayConnectionType> con = new ArrayList<>();
 
-        for (int i=0; i<members.size(); ++i) {
+        for (int i = 0; i < members.size(); ++i) {
             con.add(null);
         }
 
-        firstGroupIdx=0;
+        firstGroupIdx = 0;
 
         lastForwardWay = UNCONNECTED;
         lastBackwardWay = UNCONNECTED;
         onewayBeginning = false;
         WayConnectionType lastWct = null;
 
-        for (int i=0; i<members.size(); ++i) {
+        for (int i = 0; i < members.size(); ++i) {
             final RelationMember m = members.get(i);
             if (!m.isWay() || m.getWay() == null || m.getWay().isIncomplete()) {
                 if (i > 0) {
@@ -49,14 +49,14 @@ public class WayConnectionTypeCalculator {
             }
 
             WayConnectionType wct = new WayConnectionType(false);
-            wct.linkPrev = i>0 && con.get(i-1) != null && con.get(i-1).isValid();
+            wct.linkPrev = i > 0 && con.get(i-1) != null && con.get(i-1).isValid();
             wct.direction = NONE;
 
-            if (RelationSortUtils.isOneway(m)){
+            if (RelationSortUtils.isOneway(m)) {
                 if (lastWct != null && lastWct.isOnewayTail) {
                     wct.isOnewayHead = true;
                 }
-                if (lastBackwardWay == UNCONNECTED && lastForwardWay == UNCONNECTED){ //Beginning of new oneway
+                if (lastBackwardWay == UNCONNECTED && lastForwardWay == UNCONNECTED) { //Beginning of new oneway
                     wct.isOnewayHead = true;
                     lastForwardWay = i-1;
                     lastBackwardWay = i-1;
@@ -80,7 +80,7 @@ public class WayConnectionTypeCalculator {
 
             if (!wct.linkPrev) {
                 wct.direction = determineDirectionOfFirst(i, m);
-                if (RelationSortUtils.isOneway(m)){
+                if (RelationSortUtils.isOneway(m)) {
                     wct.isOnewayLoopForwardPart = true;
                     lastForwardWay = i;
                 }
@@ -114,7 +114,7 @@ public class WayConnectionTypeCalculator {
             loop = determineDirection(i, con.get(i).direction, firstGroupIdx) == con.get(firstGroupIdx).direction;
         }
         if (loop) {
-            for (int j=firstGroupIdx; j <= i; ++j) {
+            for (int j = firstGroupIdx; j <= i; ++j) {
                 con.get(j).isLoop = true;
             }
         }
@@ -125,7 +125,7 @@ public class WayConnectionTypeCalculator {
         if (result != NONE)
             return result;
 
-        if (RelationSortUtils.isOneway(m)){
+        if (RelationSortUtils.isOneway(m)) {
             if (RelationSortUtils.isBackward(m)) return BACKWARD;
             else return FORWARD;
         } else { /** guess the direction and see if it fits with the next member */
@@ -158,12 +158,12 @@ public class WayConnectionTypeCalculator {
         }
 
         if (RelationSortUtils.isOneway(m)) {
-            if (dirBW != NONE){
+            if (dirBW != NONE) {
                 wct.direction = dirBW;
                 lastBackwardWay = i;
                 wct.isOnewayLoopBackwardPart = true;
             }
-            if (dirFW != NONE){
+            if (dirFW != NONE) {
                 wct.direction = dirFW;
                 lastForwardWay = i;
                 wct.isOnewayLoopForwardPart = true;
@@ -183,7 +183,7 @@ public class WayConnectionTypeCalculator {
             }
 
             if (dirFW != NONE && dirBW != NONE) { //End of oneway loop
-                if (i+1<members.size() && determineDirection(i, dirFW, i+1) != NONE) {
+                if (i+1 < members.size() && determineDirection(i, dirFW, i+1) != NONE) {
                     wct.isOnewayLoopBackwardPart = false;
                     wct.direction = dirFW;
                 } else {
@@ -203,7 +203,7 @@ public class WayConnectionTypeCalculator {
         }
     }
 
-    private static Direction reverse(final Direction dir){
+    private static Direction reverse(final Direction dir) {
         if (dir == FORWARD) return BACKWARD;
         if (dir == BACKWARD) return FORWARD;
         return dir;
@@ -246,7 +246,7 @@ public class WayConnectionTypeCalculator {
             return NONE;
 
         /** the list of nodes the way k can dock to */
-        List<Node> refNodes= new ArrayList<>();
+        List<Node> refNodes = new ArrayList<>();
 
         switch (ref_direction) {
         case FORWARD:

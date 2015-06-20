@@ -23,6 +23,7 @@ public interface Subpart {
         public StringSubpart(String id) {
             this.id = id;
         }
+
         @Override
         public String getId(Environment env) {
             return id;
@@ -40,6 +41,7 @@ public interface Subpart {
         public ExpressionSubpart(Expression id) {
             this.id = id;
         }
+
         @Override
         public String getId(Environment env) {
             return Cascade.convertTo(id.evaluate(env), String.class);

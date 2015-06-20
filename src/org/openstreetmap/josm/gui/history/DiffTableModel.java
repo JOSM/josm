@@ -21,6 +21,7 @@ class DiffTableModel extends AbstractTableModel {
         this.reversed = reversed;
         fireTableDataChanged();
     }
+
     @Override
     public int getRowCount() {
         return rows.size();
@@ -41,7 +42,7 @@ class DiffTableModel extends AbstractTableModel {
     }
 
     public int getFirstChange() {
-        for (int i=0; i<rows.size(); i++) {
+        for (int i = 0; i < rows.size(); i++) {
             if (rows.get(i).state != DiffItemType.SAME)
                 return i;
         }

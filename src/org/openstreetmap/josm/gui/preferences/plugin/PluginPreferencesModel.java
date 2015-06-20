@@ -363,7 +363,7 @@ public class PluginPreferencesModel extends Observable {
                     continue;
                 }
                 oldinfo.updateLocalInfo(newinfo);
-            } catch(PluginException e) {
+            } catch (PluginException e) {
                 Main.error(e);
             }
         }

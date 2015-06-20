@@ -46,6 +46,9 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
         }
     };
 
+    /**
+     * Constructs a new {@code ActionFlagsTableCell}.
+     */
     public ActionFlagsTableCell() {
         checkBoxes[0] = new JCheckBox(tr("Upload"));
         checkBoxes[1] = new JCheckBox(tr("Save"));
@@ -65,13 +68,17 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
             });
         }
 
-        setToolTipText(tr("<html>Select which actions to perform for this layer, if you click the leftmost button.<br/>Check \"upload\" to upload the changes to the OSM server.<br/>Check \"Save\" to save the layer to the file specified on the left.</html>"));
+        setToolTipText(tr("<html>"+
+            "Select which actions to perform for this layer, if you click the leftmost button.<br/>"+
+            "Check \"upload\" to upload the changes to the OSM server.<br/>"+
+            "Check \"Save\" to save the layer to the file specified on the left."+
+            "</html>"));
     }
 
     protected void updateCheckboxes(Object v) {
         if (v != null && checkBoxes[0] != null && checkBoxes[1] != null) {
             boolean[] values;
-            if(v instanceof SaveLayerInfo) {
+            if (v instanceof SaveLayerInfo) {
                 values = new boolean[2];
                 values[0] = ((SaveLayerInfo) v).isDoUploadToServer();
                 values[1] = ((SaveLayerInfo) v).isDoSaveToFile();

@@ -8,5 +8,6 @@ package org.openstreetmap.josm.gui;
  */
 public interface ShowHideButtonListener {
     public void buttonShown();
+
     public void buttonHidden();
 }

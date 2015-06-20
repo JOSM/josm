@@ -35,9 +35,9 @@ public class ImmutableGpxTrackSegment implements GpxTrackSegment {
         double result = 0.0; // in meters
         WayPoint last = null;
         for (WayPoint tpt : wayPoints) {
-            if(last != null){
+            if (last != null) {
                 Double d = last.getCoor().greatCircleDistance(tpt.getCoor());
-                if(!d.isNaN() && !d.isInfinite()) {
+                if (!d.isNaN() && !d.isInfinite()) {
                     result += d;
                 }
             }

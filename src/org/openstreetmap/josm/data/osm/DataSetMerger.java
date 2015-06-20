@@ -140,7 +140,7 @@ public class DataSetMerger {
     }
 
     protected void fixIncomplete(Way other) {
-        Way myWay = (Way)getMergeTarget(other);
+        Way myWay = (Way) getMergeTarget(other);
         if (myWay == null)
             throw new RuntimeException(tr("Missing merge target for way with id {0}", other.getUniqueId()));
     }
@@ -173,7 +173,7 @@ public class DataSetMerger {
         boolean flag;
         do {
             flag = false;
-            for (Iterator<OsmPrimitive> it = objectsToDelete.iterator();it.hasNext();) {
+            for (Iterator<OsmPrimitive> it = objectsToDelete.iterator(); it.hasNext();) {
                 OsmPrimitive target = it.next();
                 OsmPrimitive source = sourceDataSet.getPrimitiveById(target.getPrimitiveId());
                 if (source == null)
@@ -233,13 +233,13 @@ public class DataSetMerger {
      *
      */
     private void mergeNodeList(Way source) {
-        Way target = (Way)getMergeTarget(source);
+        Way target = (Way) getMergeTarget(source);
         if (target == null)
             throw new IllegalStateException(tr("Missing merge target for way with id {0}", source.getUniqueId()));
 
         List<Node> newNodes = new ArrayList<>(source.getNodesCount());
         for (Node sourceNode : source.getNodes()) {
-            Node targetNode = (Node)getMergeTarget(sourceNode);
+            Node targetNode = (Node) getMergeTarget(sourceNode);
             if (targetNode != null) {
                 newNodes.add(targetNode);
                 if (targetNode.isDeleted() && !conflicts.hasConflictForMy(targetNode)) {
@@ -362,12 +362,12 @@ public class DataSetMerger {
             // target is modified and deleted state differs.
             // this have to be resolved manually.
             //
-            addConflict(target,source);
+            addConflict(target, source);
         } else if (!target.hasEqualSemanticAttributes(source)) {
             // target is modified and is not semantically equal with source. Can't automatically
             // resolve the differences
             // =>  create a conflict
-            addConflict(target,source);
+            addConflict(target, source);
         } else {
             // clone from other. mergeFrom will mainly copy
             // technical attributes like timestamp or user information. Semantic

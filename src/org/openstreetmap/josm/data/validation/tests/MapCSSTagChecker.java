@@ -423,7 +423,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          */
         static String insertArguments(Selector matchingSelector, String s, OsmPrimitive p) {
             if (s != null && matchingSelector instanceof Selector.ChildOrParentSelector) {
-                return insertArguments(((Selector.ChildOrParentSelector)matchingSelector).right, s, p);
+                return insertArguments(((Selector.ChildOrParentSelector) matchingSelector).right, s, p);
             } else if (s == null || !(matchingSelector instanceof GeneralSelector)) {
                 return s;
             }
@@ -582,7 +582,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             Set<String> result = new HashSet<>();
             for (Selector s : rule.selectors) {
                 if (s instanceof AbstractSelector) {
-                    for (Condition c : ((AbstractSelector)s).getConditions()) {
+                    for (Condition c : ((AbstractSelector) s).getConditions()) {
                         if (c instanceof ClassCondition) {
                             result.add(((ClassCondition) c).id);
                         }

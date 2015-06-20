@@ -26,7 +26,7 @@ public class SelectMembersAction extends AbstractRelationAction {
      * If <code>false</code>, the members will replace the current selection.
      */
     public SelectMembersAction(boolean add) {
-        putValue(SHORT_DESCRIPTION,add ? tr("Add the members of all selected relations to current selection")
+        putValue(SHORT_DESCRIPTION, add ? tr("Add the members of all selected relations to current selection")
                 : tr("Select the members of all selected relations"));
         putValue(SMALL_ICON, ImageProvider.get("selectall"));
         putValue(NAME, add ? tr("Select members (add)") : tr("Select members"));

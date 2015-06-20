@@ -29,7 +29,7 @@ public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
         this.bounds = calculateBounds();
     }
 
-    private double calculateLength(){
+    private double calculateLength() {
         double result = 0.0; // in meters
 
         for (GpxTrackSegment trkseg : segments) {

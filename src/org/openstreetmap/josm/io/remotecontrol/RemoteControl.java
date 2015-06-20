@@ -85,8 +85,8 @@ public class RemoteControl {
      * @since 8337
      */
     public static InetAddress getInet6Address() throws UnknownHostException {
-        for(InetAddress a : InetAddress.getAllByName(Main.pref.get("remote.control.host.ipv6", "::1"))) {
-            if(a instanceof Inet6Address) {
+        for (InetAddress a : InetAddress.getAllByName(Main.pref.get("remote.control.host.ipv6", "::1"))) {
+            if (a instanceof Inet6Address) {
                 return a;
             }
         }
@@ -101,8 +101,8 @@ public class RemoteControl {
      */
     public static InetAddress getInet4Address() throws UnknownHostException {
         // Return an address to the loopback interface by default
-        for(InetAddress a : InetAddress.getAllByName(Main.pref.get("remote.control.host.ipv4", "127.0.0.1"))) {
-            if(a instanceof Inet4Address) {
+        for (InetAddress a : InetAddress.getAllByName(Main.pref.get("remote.control.host.ipv4", "127.0.0.1"))) {
+            if (a instanceof Inet4Address) {
                 return a;
             }
         }

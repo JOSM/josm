@@ -35,7 +35,7 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
     }
 
     private void buildPresetsWithPattern() {
-        synchronized(this) {
+        synchronized (this) {
             Main.debug("Building list of presets with name template");
             presetsWithPattern.clear();
             for (TaggingPreset tp : TaggingPresets.getTaggingPresets()) {
@@ -52,7 +52,7 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
      * @return the first occurence of preset with template name matching the primitive
      */
     public TaggingPreset findPresetTemplate(OsmPrimitive primitive) {
-        synchronized(this) {
+        synchronized (this) {
             for (TaggingPreset t : presetsWithPattern) {
                 Collection<TaggingPresetType> type = Collections.singleton(TaggingPresetType.forPrimitive(primitive));
                 if (t.typeMatches(type)) {

@@ -106,7 +106,7 @@ public class ExtendedDialog extends JDialog {
     private boolean placeContentInScrollPane;
 
     // For easy access when inherited
-    protected transient Insets contentInsets = new Insets(10,5,0,5);
+    protected transient Insets contentInsets = new Insets(10, 5, 0, 5);
     protected List<JButton> buttons = new ArrayList<>();
 
     /**
@@ -173,7 +173,7 @@ public class ExtendedDialog extends JDialog {
      */
     public ExtendedDialog setButtonIcons(String[] buttonIcons) {
         bIcons = new Icon[buttonIcons.length];
-        for (int i=0; i<buttonIcons.length; ++i) {
+        for (int i = 0; i < buttonIcons.length; ++i) {
             bIcons[i] = ImageProvider.get(buttonIcons[i]);
         }
         return this;
@@ -319,10 +319,11 @@ public class ExtendedDialog extends JDialog {
         JButton button;
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
 
-        for (int i=0; i < bTexts.length; i++) {
+        for (int i = 0; i < bTexts.length; i++) {
             final int final_i = i;
             Action action = new AbstractAction(bTexts[i]) {
-                @Override public void actionPerformed(ActionEvent evt) {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
                     buttonAction(final_i, evt);
                 }
             };
@@ -331,19 +332,19 @@ public class ExtendedDialog extends JDialog {
             if (i == defaultButtonIdx-1) {
                 defaultButton = button;
             }
-            if(bIcons != null && bIcons[i] != null) {
+            if (bIcons != null && bIcons[i] != null) {
                 button.setIcon(bIcons[i]);
             }
             if (bToolTipTexts != null && i < bToolTipTexts.length && bToolTipTexts[i] != null) {
                 button.setToolTipText(bToolTipTexts[i]);
             }
 
-            buttonsPanel.add(button, GBC.std().insets(2,2,2,2));
+            buttonsPanel.add(button, GBC.std().insets(2, 2, 2, 2));
             buttons.add(button);
         }
         if (showHelpButton) {
-            buttonsPanel.add(new JButton(new HelpAction()), GBC.std().insets(2,2,2,2));
-            HelpUtil.setHelpContext(getRootPane(),helpTopic);
+            buttonsPanel.add(new JButton(new HelpAction()), GBC.std().insets(2, 2, 2, 2));
+            HelpUtil.setHelpContext(getRootPane(), helpTopic);
         }
 
         JPanel cp = new JPanel(new GridBagLayout());
@@ -357,7 +358,7 @@ public class ExtendedDialog extends JDialog {
 
         if (icon != null) {
             JLabel iconLbl = new JLabel(icon);
-            gc.insets = new Insets(10,10,10,10);
+            gc.insets = new Insets(10, 10, 10, 10);
             gc.anchor = GridBagConstraints.NORTH;
             gc.weighty = 1.0;
             cp.add(iconLbl, gc);
@@ -381,13 +382,13 @@ public class ExtendedDialog extends JDialog {
             gc.gridx = icon != null ? 1 : 0;
             gc.gridy = y++;
             gc.anchor = GridBagConstraints.LINE_START;
-            gc.insets = new Insets(5,contentInsets.left,5,contentInsets.right);
+            gc.insets = new Insets(5, contentInsets.left, 5, contentInsets.right);
             cp.add(togglePanel, gc);
         }
 
         gc.gridy = y++;
         gc.anchor = GridBagConstraints.CENTER;
-            gc.insets = new Insets(5,5,5,5);
+            gc.insets = new Insets(5, 5, 5, 5);
         cp.add(buttonsPanel, gc);
         if (placeContentInScrollPane) {
             JScrollPane pane = new JScrollPane(cp);
@@ -405,15 +406,15 @@ public class ExtendedDialog extends JDialog {
         boolean limitedInWidth = d.width > x.width;
         boolean limitedInHeight = d.height > x.height;
 
-        if(x.width  > 0 && d.width  > x.width) {
+        if (x.width  > 0 && d.width  > x.width) {
             d.width  = x.width;
         }
-        if(x.height > 0 && d.height > x.height) {
+        if (x.height > 0 && d.height > x.height) {
             d.height = x.height;
         }
 
         // We have a vertical scrollbar and enough space to prevent a horizontal one
-        if(!limitedInWidth && limitedInHeight) {
+        if (!limitedInWidth && limitedInHeight) {
             d.width += new JScrollBar().getPreferredSize().width;
         }
 
@@ -492,7 +493,7 @@ public class ExtendedDialog extends JDialog {
 
         // Ensure all required variables are available
         if (!rememberSizePref.isEmpty() && defaultWindowGeometry != null) {
-            if(visible) {
+            if (visible) {
                 initWindowGeometry().applySafe(this);
             } else if (isShowing()) { // should fix #6438, #6981, #8295
                 rememberWindowGeometry(new WindowGeometry(this));

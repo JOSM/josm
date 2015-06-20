@@ -311,7 +311,7 @@ public class NTV2GridShiftFile implements Serializable {
     public NTV2SubGrid[] getSubGridTree() {
         NTV2SubGrid[] clone = new NTV2SubGrid[topLevelSubGrid.length];
         for (int i = 0; i < topLevelSubGrid.length; i++) {
-            clone[i] = (NTV2SubGrid)topLevelSubGrid[i].clone();
+            clone[i] = (NTV2SubGrid) topLevelSubGrid[i].clone();
         }
         return clone;
     }

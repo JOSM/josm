@@ -127,12 +127,15 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     public boolean isVisible() {
         return visible;
     }
+
     public User getUser() {
         return user;
     }
+
     public long getChangesetId() {
         return changesetId;
     }
+
     public Date getTimestamp() {
         return timestamp;
     }
@@ -170,7 +173,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         return tags.get(key) != null;
     }
 
-    public Map<String,String> getTags() {
+    public Map<String, String> getTags() {
         return Collections.unmodifiableMap(tags);
     }
 
@@ -188,7 +191,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
      *
      * @param tags the tags. May be null.
      */
-    public void setTags(Map<String,String> tags) {
+    public void setTags(Map<String, String> tags) {
         if (tags == null) {
             this.tags = new HashMap<>();
         } else {

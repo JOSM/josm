@@ -17,7 +17,7 @@ public class RelationToChildReference {
         Set<Relation> parents = OsmPrimitive.getFilteredSet(child.getReferrers(), Relation.class);
         Set<RelationToChildReference> references = new HashSet<>();
         for (Relation parent: parents) {
-            for (int i=0; i < parent.getMembersCount(); i++) {
+            for (int i = 0; i < parent.getMembersCount(); i++) {
                 if (parent.getMember(i).refersTo(child)) {
                     references.add(new RelationToChildReference(parent, i, parent.getMember(i)));
                 }
@@ -86,6 +86,7 @@ public class RelationToChildReference {
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

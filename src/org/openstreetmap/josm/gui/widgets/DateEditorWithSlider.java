@@ -31,7 +31,7 @@ public class DateEditorWithSlider extends JPanel {
     private JSlider slider;
     private Date dateMin;
     private Date dateMax;
-    private static final int MAX_SLIDER=300;
+    private static final int MAX_SLIDER = 300;
     private boolean watchSlider = true;
 
     private transient List<ChangeListener> listeners = new ArrayList<>();
@@ -43,24 +43,24 @@ public class DateEditorWithSlider extends JPanel {
     public DateEditorWithSlider(String labelText) {
         super(new GridBagLayout());
         spinner = new JSpinner(new SpinnerDateModel());
-        String pattern = ((SimpleDateFormat)DateUtils.getDateFormat(DateFormat.DEFAULT)).toPattern();
-        JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spinner,pattern);
+        String pattern = ((SimpleDateFormat) DateUtils.getDateFormat(DateFormat.DEFAULT)).toPattern();
+        JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spinner, pattern);
         spinner.setEditor(timeEditor);
 
         spinner.setPreferredSize(new Dimension(spinner.getPreferredSize().width+5,
         spinner.getPreferredSize().height));
 
-        slider = new JSlider(0,MAX_SLIDER);
+        slider = new JSlider(0, MAX_SLIDER);
         spinner.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 int i = slider.getValue();
                 Date d = (Date) spinner.getValue();
                 int j = intFromDate(d);
-                if (i!=j) {
-                    watchSlider=false;
+                if (i != j) {
+                    watchSlider = false;
                     slider.setValue(j);
-                    watchSlider=true;
+                    watchSlider = true;
                 }
                 for (ChangeListener l : listeners) {
                     l.stateChanged(e);
@@ -78,9 +78,9 @@ public class DateEditorWithSlider extends JPanel {
                 }
             }
         });
-        add(new JLabel(labelText),GBC.std());
-        add(spinner,GBC.std().insets(10,0,0,0));
-        add(slider,GBC.eol().insets(10,0,0,0).fill(GBC.HORIZONTAL));
+        add(new JLabel(labelText), GBC.std());
+        add(spinner, GBC.std().insets(10, 0, 0, 0));
+        add(slider, GBC.eol().insets(10, 0, 0, 0).fill(GBC.HORIZONTAL));
 
         dateMin = new Date(0);
         dateMax = new Date();
@@ -88,11 +88,11 @@ public class DateEditorWithSlider extends JPanel {
 
     protected Date dateFromInt(int value) {
         double k = 1.0*value/MAX_SLIDER;
-        return new Date((long)(dateMax.getTime()*k+ dateMin.getTime()*(1-k)));
+        return new Date((long) (dateMax.getTime()*k+ dateMin.getTime()*(1-k)));
     }
 
     protected int intFromDate(Date date) {
-        return (int)(300.0*(date.getTime()-dateMin.getTime()) /
+        return (int) (300.0*(date.getTime()-dateMin.getTime()) /
                 (dateMax.getTime()-dateMin.getTime()));
     }
 

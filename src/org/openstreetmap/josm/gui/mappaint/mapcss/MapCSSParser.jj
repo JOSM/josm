@@ -85,7 +85,7 @@ public class MapCSSParser {
         SimpleCharStream scs;
         try {
             scs = new SimpleCharStream(in, encoding, 1, 1);
-        } catch(java.io.UnsupportedEncodingException e) {
+        } catch (java.io.UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
         return new MapCSSParserTokenManager(scs, initState.idx);

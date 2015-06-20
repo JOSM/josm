@@ -69,7 +69,7 @@ public class PostDownloadHandler implements Runnable {
         for (Future<?> future: futures) {
             try {
                 future.get();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 Main.error(e);
                 return;
             }
@@ -90,7 +90,7 @@ public class PostDownloadHandler implements Runnable {
                 @Override
                 public void run() {
                     if (error instanceof Exception) {
-                        ExceptionDialogUtil.explainException((Exception)error);
+                        ExceptionDialogUtil.explainException((Exception) error);
                     } else if (tr("No data found in this area.").equals(error)) {
                         new Notification(error.toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                     } else {
@@ -113,7 +113,7 @@ public class PostDownloadHandler implements Runnable {
                 if (error instanceof String) {
                     items.add((String) error);
                 } else if (error instanceof Exception) {
-                    items.add(ExceptionUtil.explainException((Exception)error));
+                    items.add(ExceptionUtil.explainException((Exception) error));
                 }
             }
 

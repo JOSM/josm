@@ -87,7 +87,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
                         "Uploading <strong>{0} objects</strong> to <strong>1 changeset</strong> using <strong>1 request</strong>",
                         numObjects, numObjects
                 );
-            } else if (numRequests > 1){
+            } else if (numRequests > 1) {
                 msg = tr("Uploading <strong>{0} objects</strong> to <strong>1 changeset</strong> using <strong>{1} requests</strong>",
                         numObjects, numRequests);
             }
@@ -95,9 +95,10 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         } else {
             lblWarning.setVisible(true);
             if (numRequests == 0) {
-                msg = tr("{0} objects exceed the max. allowed {1} objects in a changeset on the server ''{2}''. Please <a href=\"urn:advanced-configuration\">configure</a> how to proceed with <strong>multiple changesets</strong>",
+                msg = tr("{0} objects exceed the max. allowed {1} objects in a changeset on the server ''{2}''. " +
+                        "Please <a href=\"urn:advanced-configuration\">configure</a> how to proceed with <strong>multiple changesets</strong>",
                         numObjects, maxChunkSize, OsmApi.getOsmApi().getBaseUrl());
-            } else if (numRequests > 1){
+            } else if (numRequests > 1) {
                 msg = tr("Uploading <strong>{0} objects</strong> to <strong>multiple changesets</strong> using <strong>{1} requests</strong>",
                         numObjects, numRequests);
                 msg = msg + " (<a href=\"urn:advanced-configuration\">" + tr("advanced configuration") + "</a>)";
@@ -115,7 +116,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         lblWarning = new JLabel("");
         lblWarning.setVisible(false);
         lblWarning.setIcon(ImageProvider.get("warning-small"));
-        lblWarning.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        lblWarning.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(lblWarning, BorderLayout.NORTH);
         add(pnl, BorderLayout.WEST);
@@ -173,16 +174,16 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ChangesetManagementPanel.SELECTED_CHANGESET_PROP)) {
-            selectedChangeset = (Changeset)evt.getNewValue();
+            selectedChangeset = (Changeset) evt.getNewValue();
             updateSummary();
         } else if (evt.getPropertyName().equals(ChangesetManagementPanel.CLOSE_CHANGESET_AFTER_UPLOAD)) {
-            closeChangesetAfterNextUpload = (Boolean)evt.getNewValue();
+            closeChangesetAfterNextUpload = (Boolean) evt.getNewValue();
             updateSummary();
         } else if (evt.getPropertyName().equals(UploadedObjectsSummaryPanel.NUM_OBJECTS_TO_UPLOAD_PROP)) {
-            numObjects = (Integer)evt.getNewValue();
+            numObjects = (Integer) evt.getNewValue();
             updateSummary();
         } else if (evt.getPropertyName().equals(UploadStrategySelectionPanel.UPLOAD_STRATEGY_SPECIFICATION_PROP)) {
-            this.spec = (UploadStrategySpecification)evt.getNewValue();
+            this.spec = (UploadStrategySpecification) evt.getNewValue();
             updateSummary();
         }
     }

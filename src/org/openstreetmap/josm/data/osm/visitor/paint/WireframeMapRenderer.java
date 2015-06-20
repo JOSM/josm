@@ -169,7 +169,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         List<Way> highlightedWays = new ArrayList<>();
         List<Way> untaggedWays = new ArrayList<>();
 
-        for (final Way way : data.searchWays(bbox)){
+        for (final Way way : data.searchWays(bbox)) {
             if (way.isDrawable() && !ds.isSelected(way) && !way.isDisabledAndHidden()) {
                 if (way.isHighlighted()) {
                     highlightedWays.add(way);
@@ -185,7 +185,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         // Display highlighted ways after the other ones (fix #8276)
         List<Way> specialWays = new ArrayList<>(untaggedWays);
         specialWays.addAll(highlightedWays);
-        for (final Way way : specialWays){
+        for (final Way way : specialWays) {
             way.accept(this);
         }
         specialWays.clear();

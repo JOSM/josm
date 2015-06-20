@@ -145,7 +145,7 @@ public final class OsmUrlToBounds {
 
         final Map<Character, Integer> array = new HashMap<>();
 
-        for (int i=0; i<SHORTLINK_CHARS.length; ++i) {
+        for (int i = 0; i < SHORTLINK_CHARS.length; ++i) {
             array.put(SHORTLINK_CHARS[i], i);
         }
 
@@ -158,7 +158,7 @@ public final class OsmUrlToBounds {
         for (final char ch : shortLink.toCharArray()) {
             if (array.containsKey(ch)) {
                 int val = array.get(ch);
-                for (int i=0; i<3; ++i) {
+                for (int i = 0; i < 3; ++i) {
                     x <<= 1;
                     if ((val & 32) != 0) {
                         x |= 1;

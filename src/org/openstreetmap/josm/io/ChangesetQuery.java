@@ -30,7 +30,7 @@ public class ChangesetQuery {
      * @return the query object
      * @throws ChangesetQueryUrlException if query doesn't consist of valid query parameters
      */
-    public static ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException{
+    public static ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException {
         return new ChangesetQueryUrlParser().parse(query);
     }
 
@@ -150,7 +150,7 @@ public class ChangesetQuery {
     public ChangesetQuery inBbox(LatLon min, LatLon max) {
         CheckParameterUtil.ensureParameterNotNull(min, "min");
         CheckParameterUtil.ensureParameterNotNull(max, "max");
-        this.bounds  = new Bounds(min,max);
+        this.bounds  = new Bounds(min, max);
         return this;
     }
 
@@ -340,7 +340,7 @@ public class ChangesetQuery {
                 if (id <= 0)
                     throw new ChangesetQueryUrlException(
                             tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value), e);
             }
@@ -369,7 +369,7 @@ public class ChangesetQuery {
             DateFormat formatter = DateUtils.newIsoDateTimeFormat();
             try {
                 return formatter.parse(value);
-            } catch(ParseException e) {
+            } catch (ParseException e) {
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value), e);
             }
@@ -455,8 +455,8 @@ public class ChangesetQuery {
             return csQuery;
         }
 
-        protected Map<String,String> createMapFromQueryString(String query) {
-            Map<String,String> queryParams  = new HashMap<>();
+        protected Map<String, String> createMapFromQueryString(String query) {
+            Map<String, String> queryParams  = new HashMap<>();
             String[] keyValuePairs = query.split("&");
             for (String keyValuePair: keyValuePairs) {
                 String[] kv = keyValuePair.split("=");
@@ -487,7 +487,7 @@ public class ChangesetQuery {
             query = query.trim();
             if (query.isEmpty())
                 return new ChangesetQuery();
-            Map<String,String> queryParams = createMapFromQueryString(query);
+            Map<String, String> queryParams = createMapFromQueryString(query);
             return createFromMap(queryParams);
         }
     }

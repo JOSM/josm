@@ -47,6 +47,7 @@ public class CloseChangesetAction extends JosmAction {
         setEnabled(!Main.isOffline(OnlineResource.OSM_API));
 
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Main.worker.submit(new DownloadOpenChangesetsTask());
@@ -135,7 +136,7 @@ public class CloseChangesetAction extends JosmAction {
                         query,
                         getProgressMonitor().createSubTaskMonitor(1, false /* not internal */)
                 );
-            } catch(Exception e) {
+            } catch (Exception e) {
                 if (canceled)
                     return;
                 lastException = e;

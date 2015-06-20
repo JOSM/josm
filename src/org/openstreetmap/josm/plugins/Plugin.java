@@ -120,7 +120,7 @@ public abstract class Plugin implements MapFrameListener {
                 throw new IOException("Resource not found: "+from);
             }
             byte[] buffer = new byte[8192];
-            for(int len = in.read(buffer); len > 0; len = in.read(buffer)) {
+            for (int len = in.read(buffer); len > 0; len = in.read(buffer)) {
                 out.write(buffer, 0, len);
             }
         }

@@ -65,7 +65,7 @@ public enum OsmPrimitiveType {
 
     public static OsmPrimitiveType from(String value) {
         if (value == null) return null;
-        for (OsmPrimitiveType type: values()){
+        for (OsmPrimitiveType type: values()) {
             if (type.getAPIName().equalsIgnoreCase(value))
                 return type;
         }

@@ -117,7 +117,7 @@ public class TagTable extends JTable  {
                 getCellEditor().stopCellEditing();
             }
 
-            if (row==-1 && col==-1) {
+            if (row == -1 && col == -1) {
                 requestFocusInCell(0, 0);
                 return;
             }
@@ -125,24 +125,23 @@ public class TagTable extends JTable  {
             if (col == 0) {
                 col++;
             } else if (col == 1 && row < getRowCount()-1) {
-                col=0;
+                col = 0;
                 row++;
-            } else if (col == 1 && row == getRowCount()-1){
-                // we are at the end. Append an empty row and move the focus
-                // to its second column
-                String key = ((TagModel)model.getValueAt(row, 0)).getName();
+            } else if (col == 1 && row == getRowCount()-1) {
+                // we are at the end. Append an empty row and move the focus to its second column
+                String key = ((TagModel) model.getValueAt(row, 0)).getName();
                 if (!key.trim().isEmpty()) {
                     model.appendNewTag();
-                    col=0;
+                    col = 0;
                     row++;
                 } else {
                     clearSelection();
-                    if (nextFocusComponent!=null)
+                    if (nextFocusComponent != null)
                         nextFocusComponent.requestFocusInWindow();
                     return;
                 }
             }
-            requestFocusInCell(row,col);
+            requestFocusInCell(row, col);
         }
     }
 
@@ -169,7 +168,7 @@ public class TagTable extends JTable  {
                 col = 1;
                 row--;
             }
-            requestFocusInCell(row,col);
+            requestFocusInCell(row, col);
         }
     }
 
@@ -299,7 +298,7 @@ public class TagTable extends JTable  {
                 getCellEditor().stopCellEditing();
             }
             final int rowIdx = model.getRowCount()-1;
-            String key = ((TagModel)model.getValueAt(rowIdx, 0)).getName();
+            String key = ((TagModel) model.getValueAt(rowIdx, 0)).getName();
             if (!key.trim().isEmpty()) {
                 model.appendNewTag();
             }
@@ -321,7 +320,7 @@ public class TagTable extends JTable  {
      */
     class PasteAction extends RunnableAction implements PropertyChangeListener{
         public PasteAction() {
-            putValue(SMALL_ICON, ImageProvider.get("","pastetags"));
+            putValue(SMALL_ICON, ImageProvider.get("", "pastetags"));
             putValue(SHORT_DESCRIPTION, tr("Paste tags from buffer"));
             TagTable.this.addPropertyChangeListener(this);
             updateEnabledState();
@@ -335,20 +334,20 @@ public class TagTable extends JTable  {
             String buf = Utils.getClipboardContent();
             if (buf == null || buf.isEmpty() || buf.matches(CopyAction.CLIPBOARD_REGEXP)) {
                 List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();
-                if (directlyAdded==null || directlyAdded.isEmpty()) return;
+                if (directlyAdded == null || directlyAdded.isEmpty()) return;
                 PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded, Collections.<OsmPrimitive>singletonList(relation));
                 model.updateTags(tagPaster.execute());
             } else {
                 // Paste tags from arbitrary text
                  Map<String, String> tags = TextTagParser.readTagsFromText(buf);
-                 if (tags==null || tags.isEmpty()) {
+                 if (tags == null || tags.isEmpty()) {
                     TextTagParser.showBadBufferMessage(ht("/Action/PasteTags"));
                  } else if (TextTagParser.validateTags(tags)) {
                      List<Tag> newTags = new ArrayList<>();
                      for (Map.Entry<String, String> entry: tags.entrySet()) {
                         String k = entry.getKey();
                         String v = entry.getValue();
-                        newTags.add(new Tag(k,v));
+                        newTags.add(new Tag(k, v));
                      }
                      model.updateTags(newTags);
                  }
@@ -442,9 +441,9 @@ public class TagTable extends JTable  {
     }
 
     @Override
-    public Dimension getPreferredSize(){
+    public Dimension getPreferredSize() {
         Container c = getParent();
-        while(c != null && !(c instanceof JViewport)) {
+        while (c != null && !(c instanceof JViewport)) {
             c = c.getParent();
         }
         if (c != null) {
@@ -535,10 +534,10 @@ public class TagTable extends JTable  {
         changeSelection(row, col, false, false);
         editCellAt(row, col);
         Component c = getEditorComponent();
-        if (c!=null) {
+        if (c != null) {
             c.requestFocusInWindow();
             if (c instanceof JTextComponent) {
-                 ((JTextComponent)c).selectAll();
+                 ((JTextComponent) c).selectAll();
             }
         }
         // there was a bug here - on older 1.6 Java versions Tab was not working
@@ -580,9 +579,8 @@ public class TagTable extends JTable  {
         }
 
         // delegate to the default implementation
-        return super.editCellAt(row, column,e);
+        return super.editCellAt(row, column, e);
     }
-
 
     @Override
     public void removeEditor() {

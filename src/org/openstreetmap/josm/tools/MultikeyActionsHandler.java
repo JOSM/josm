@@ -232,7 +232,7 @@ public final class MultikeyActionsHandler {
      */
     public void removeAction(MultikeyShortcutAction action) {
         MyAction a = myActions.get(action);
-        if (a!=null) {
+        if (a != null) {
             Main.unregisterActionShortcut(a, a.shortcut);
             myActions.remove(action);
         }

@@ -33,7 +33,7 @@ public class PluginListParser {
      * @return a plugin information object
      * @throws PluginListParseException if plugin manifest cannot be parsed
      */
-    protected static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException{
+    protected static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException {
         try {
             return new PluginInformation(
                     new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8)),
@@ -56,7 +56,7 @@ public class PluginListParser {
      * @return the list of plugin information objects
      * @throws PluginListParseException if something goes wrong while parsing
      */
-    public List<PluginInformation> parse(InputStream in) throws PluginListParseException{
+    public List<PluginInformation> parse(InputStream in) throws PluginListParseException {
         List<PluginInformation> ret = new LinkedList<>();
         BufferedReader r = null;
         try {
@@ -76,7 +76,7 @@ public class PluginListParser {
                 }
                 addPluginInformation(ret, name, url, manifest.toString());
                 String[] x = line.split(";");
-                if(x.length != 2)
+                if (x.length != 2)
                     throw new IOException(tr("Illegal entry in plugin list."));
                 name = x[0];
                 url = x[1];

@@ -88,11 +88,11 @@ public class SearchCompiler {
         for (String keyword : factory.getKeywords()) {
             // TODO: check for keyword collisions
             if (factory instanceof SimpleMatchFactory) {
-                simpleMatchFactoryMap.put(keyword, (SimpleMatchFactory)factory);
+                simpleMatchFactoryMap.put(keyword, (SimpleMatchFactory) factory);
             } else if (factory instanceof UnaryMatchFactory) {
-                unaryMatchFactoryMap.put(keyword, (UnaryMatchFactory)factory);
+                unaryMatchFactoryMap.put(keyword, (UnaryMatchFactory) factory);
             } else if (factory instanceof BinaryMatchFactory) {
-                binaryMatchFactoryMap.put(keyword, (BinaryMatchFactory)factory);
+                binaryMatchFactoryMap.put(keyword, (BinaryMatchFactory) factory);
             } else
                 throw new AssertionError("Unknown match factory");
         }
@@ -325,14 +325,17 @@ public class SearchCompiler {
         public Not(Match match) {
             super(match);
         }
+
         @Override
         public boolean match(OsmPrimitive osm) {
             return !match.match(osm);
         }
+
         @Override
         public String toString() {
             return "!" + match;
         }
+
         public Match getMatch() {
             return match;
         }
@@ -349,6 +352,7 @@ public class SearchCompiler {
             this.key = key;
             this.defaultValue = defaultValue;
         }
+
         @Override
         public boolean match(OsmPrimitive osm) {
             Boolean ret = OsmUtils.getOsmBoolean(osm.get(key));
@@ -366,10 +370,12 @@ public class SearchCompiler {
         public And(Match lhs, Match rhs) {
             super(lhs, rhs);
         }
+
         @Override
         public boolean match(OsmPrimitive osm) {
             return lhs.match(osm) && rhs.match(osm);
         }
+
         @Override
         public String toString() {
             return lhs + " && " + rhs;
@@ -383,10 +389,12 @@ public class SearchCompiler {
         public Or(Match lhs, Match rhs) {
             super(lhs, rhs);
         }
+
         @Override
         public boolean match(OsmPrimitive osm) {
             return lhs.match(osm) || rhs.match(osm);
         }
+
         @Override
         public String toString() {
             return lhs + " || " + rhs;
@@ -400,10 +408,12 @@ public class SearchCompiler {
         public Xor(Match lhs, Match rhs) {
             super(lhs, rhs);
         }
+
         @Override
         public boolean match(OsmPrimitive osm) {
             return lhs.match(osm) ^ rhs.match(osm);
         }
+
         @Override
         public String toString() {
             return lhs + " ^ " + rhs;
@@ -417,13 +427,16 @@ public class SearchCompiler {
         public Id(Range range) {
             super(range);
         }
+
         public Id(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of primitive ids expected")));
         }
+
         @Override
         protected Long getNumber(OsmPrimitive osm) {
             return osm.isNew() ? 0 : osm.getUniqueId();
         }
+
         @Override
         protected String getString() {
             return "id";
@@ -437,13 +450,16 @@ public class SearchCompiler {
         public ChangesetId(Range range) {
             super(range);
         }
+
         public ChangesetId(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of changeset ids expected")));
         }
+
         @Override
         protected Long getNumber(OsmPrimitive osm) {
             return (long) osm.getChangesetId();
         }
+
         @Override
         protected String getString() {
             return "changeset";
@@ -457,13 +473,16 @@ public class SearchCompiler {
         public Version(Range range) {
             super(range);
         }
+
         public Version(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of versions expected")));
         }
+
         @Override
         protected Long getNumber(OsmPrimitive osm) {
             return (long) osm.getVersion();
         }
+
         @Override
         protected String getString() {
             return "version";
@@ -550,9 +569,9 @@ public class SearchCompiler {
                     mv = DateUtils.fromDate(osm.getTimestamp());
                 } else {
                     mv = osm.get(key);
-                    if(!caseSensitive && mv == null) {
+                    if (!caseSensitive && mv == null) {
                         for (String k: osm.keySet()) {
-                            if(key.equalsIgnoreCase(k)) {
+                            if (key.equalsIgnoreCase(k)) {
                                 mv = osm.get(k);
                                 break;
                             }
@@ -573,6 +592,7 @@ public class SearchCompiler {
 
             return false;
         }
+
         @Override
         public String toString() {
             return key + "=" + value;
@@ -627,7 +647,7 @@ public class SearchCompiler {
             if ("".equals(key))
                 throw new ParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
             this.key = key;
-            this.value = value == null?"":value;
+            this.value = value == null ? "" : value;
             if ("".equals(this.value) && "*".equals(key)) {
                 mode = Mode.NONE;
             } else if ("".equals(this.value)) {
@@ -799,6 +819,7 @@ public class SearchCompiler {
             }
             return false;
         }
+
         @Override
         public String toString() {
             return search;
@@ -807,16 +828,19 @@ public class SearchCompiler {
 
     private static class ExactType extends Match {
         private final OsmPrimitiveType type;
+
         public ExactType(String type) throws ParseError {
             this.type = OsmPrimitiveType.from(type);
             if (this.type == null)
                 throw new ParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation",
                         type));
         }
+
         @Override
         public boolean match(OsmPrimitive osm) {
             return type.equals(osm.getType());
         }
+
         @Override
         public String toString() {
             return "type=" + type;
@@ -828,6 +852,7 @@ public class SearchCompiler {
      */
     private static class UserMatch extends Match {
         private String user;
+
         public UserMatch(String user) {
             if ("anonymous".equals(user)) {
                 this.user = null;
@@ -855,6 +880,7 @@ public class SearchCompiler {
      */
     private static class RoleMatch extends Match {
         private String role;
+
         public RoleMatch(String role) {
             if (role == null) {
                 this.role = "";
@@ -870,7 +896,7 @@ public class SearchCompiler {
                     for (RelationMember m : ((Relation) ref).getMembers()) {
                         if (m.getMember() == osm) {
                             String testRole = m.getRole();
-                            if(role.equals(testRole == null ? "" : testRole))
+                            if (role.equals(testRole == null ? "" : testRole))
                                 return true;
                         }
                     }
@@ -1067,7 +1093,6 @@ public class SearchCompiler {
         protected String getString() {
             return "timestamp";
         }
-
     }
 
     /**
@@ -1078,6 +1103,7 @@ public class SearchCompiler {
         public boolean match(OsmPrimitive osm) {
             return osm.isNew();
         }
+
         @Override
         public String toString() {
             return "new";
@@ -1092,6 +1118,7 @@ public class SearchCompiler {
         public boolean match(OsmPrimitive osm) {
             return osm.isModified() || osm.isNewOrUndeleted();
         }
+
         @Override
         public String toString() {
             return "modified";
@@ -1106,6 +1133,7 @@ public class SearchCompiler {
         public boolean match(OsmPrimitive osm) {
             return Main.main.getCurrentDataSet().isSelected(osm);
         }
+
         @Override
         public String toString() {
             return "selected";
@@ -1122,6 +1150,7 @@ public class SearchCompiler {
         public boolean match(OsmPrimitive osm) {
             return osm.isIncomplete();
         }
+
         @Override
         public String toString() {
             return "incomplete";
@@ -1138,6 +1167,7 @@ public class SearchCompiler {
         public boolean match(OsmPrimitive osm) {
             return !osm.isTagged() && !osm.isIncomplete();
         }
+
         @Override
         public String toString() {
             return "untagged";
@@ -1152,6 +1182,7 @@ public class SearchCompiler {
         public boolean match(OsmPrimitive osm) {
             return osm instanceof Way && ((Way) osm).isClosed();
         }
+
         @Override
         public String toString() {
             return "closed";
@@ -1165,21 +1196,23 @@ public class SearchCompiler {
         public Parent(Match m) {
             super(m);
         }
+
         @Override
         public boolean match(OsmPrimitive osm) {
             boolean isParent = false;
 
             if (osm instanceof Way) {
-                for (Node n : ((Way)osm).getNodes()) {
+                for (Node n : ((Way) osm).getNodes()) {
                     isParent |= match.match(n);
                 }
             } else if (osm instanceof Relation) {
-                for (RelationMember member : ((Relation)osm).getMembers()) {
+                for (RelationMember member : ((Relation) osm).getMembers()) {
                     isParent |= match.match(member.getMember());
                 }
             }
             return isParent;
         }
+
         @Override
         public String toString() {
             return "parent(" + match + ")";
@@ -1203,6 +1236,7 @@ public class SearchCompiler {
             }
             return isChild;
         }
+
         @Override
         public String toString() {
             return "child(" + match + ")";
@@ -1270,7 +1304,6 @@ public class SearchCompiler {
      */
     private abstract static class InArea extends Match {
 
-        protected abstract Bounds getBounds();
         protected final boolean all;
 
         /**
@@ -1279,6 +1312,8 @@ public class SearchCompiler {
         public InArea(boolean all) {
             this.all = all;
         }
+
+        protected abstract Bounds getBounds();
 
         @Override
         public boolean match(OsmPrimitive osm) {
@@ -1336,9 +1371,11 @@ public class SearchCompiler {
         public ParseError(String msg) {
             super(msg);
         }
+
         public ParseError(String msg, Throwable cause) {
             super(msg, cause);
         }
+
         public ParseError(Token expected, Token found) {
             this(tr("Unexpected token. Expected {0}, found {1}", expected, found));
         }

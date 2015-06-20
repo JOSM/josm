@@ -66,13 +66,16 @@ public class DuplicateWay extends Test {
       */
     private static class WayPairNoTags {
         private final List<LatLon> coor;
+
         public WayPairNoTags(List<LatLon> coor) {
             this.coor = coor;
         }
+
         @Override
         public int hashCode() {
             return coor.hashCode();
         }
+
         @Override
         public boolean equals(Object obj) {
             if (!(obj instanceof WayPairNoTags)) return false;
@@ -124,18 +127,18 @@ public class DuplicateWay extends Test {
         for (Set<OsmPrimitive> sameway : waysNoTags.values()) {
             if (sameway.size() > 1) {
                 //Report error only if at least some tags are different, as otherwise the error was already reported as duplicated ways
-                Map<String, String> tags0=null;
-                boolean skip=true;
+                Map<String, String> tags0 = null;
+                boolean skip = true;
 
                 for (OsmPrimitive o : sameway) {
-                    if (tags0==null) {
-                        tags0=o.getKeys();
+                    if (tags0 == null) {
+                        tags0 = o.getKeys();
                         removeUninterestingKeys(tags0);
                     } else {
-                        Map<String, String> tagsCmp=o.getKeys();
+                        Map<String, String> tagsCmp = o.getKeys();
                         removeUninterestingKeys(tagsCmp);
                         if (!tagsCmp.equals(tags0)) {
-                            skip=false;
+                            skip = false;
                             break;
                         }
                     }
@@ -157,7 +160,7 @@ public class DuplicateWay extends Test {
      * @param wkeys The tags of the way, obtained by {@code Way#getKeys}
      */
     public void removeUninterestingKeys(Map<String, String> wkeys) {
-        for(String key : OsmPrimitive.getDiscardableKeys()) {
+        for (String key : OsmPrimitive.getDiscardableKeys()) {
             wkeys.remove(key);
         }
     }
@@ -206,16 +209,16 @@ public class DuplicateWay extends Test {
         if (w.isClosed()) {
             int lowestIndex = 0;
             long lowestNodeId = wNodes.get(0).getUniqueId();
-            for (int i=1; i<wNodes.size(); i++) {
+            for (int i = 1; i < wNodes.size(); i++) {
                 if (wNodes.get(i).getUniqueId() < lowestNodeId) {
                     lowestNodeId = wNodes.get(i).getUniqueId();
                     lowestIndex = i;
                 }
             }
-            for (int i=lowestIndex; i<wNodes.size()-1; i++) {
+            for (int i = lowestIndex; i < wNodes.size()-1; i++) {
                 wNodesToUse.add(wNodes.get(i));
             }
-            for (int i=0; i<lowestIndex; i++) {
+            for (int i = 0; i < lowestIndex; i++) {
                 wNodesToUse.add(wNodes.get(i));
             }
             wNodesToUse.add(wNodes.get(lowestIndex));
@@ -240,7 +243,7 @@ public class DuplicateWay extends Test {
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Way && !osm.isDeleted()) {
-                ways.add((Way)osm);
+                ways.add((Way) osm);
             }
         }
 
@@ -300,7 +303,7 @@ public class DuplicateWay extends Test {
             return false;
 
         //Do not automatically fix same ways with different tags
-        if (testError.getCode()!=DUPLICATE_WAY) return false;
+        if (testError.getCode() != DUPLICATE_WAY) return false;
 
         // We fix it only if there is no more than one way that is relation member.
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
@@ -308,7 +311,7 @@ public class DuplicateWay extends Test {
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Way) {
-                ways.add((Way)osm);
+                ways.add((Way) osm);
             }
         }
 

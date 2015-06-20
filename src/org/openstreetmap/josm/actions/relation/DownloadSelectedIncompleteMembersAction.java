@@ -64,7 +64,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
     @Override
     public void setPrimitives(Collection<? extends OsmPrimitive> primitives) {
         // selected relations with incomplete members
-        this.relations = Utils.filter(getRelations(primitives), new Predicate<Relation>(){
+        this.relations = Utils.filter(getRelations(primitives), new Predicate<Relation>() {
             @Override
             public boolean evaluate(Relation r) {
                 return r.hasIncompleteMembers();
@@ -75,6 +75,6 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(!relations.isEmpty() &&!incompleteMembers.isEmpty() && !Main.isOffline(OnlineResource.OSM_API));
+        setEnabled(!relations.isEmpty() && !incompleteMembers.isEmpty() && !Main.isOffline(OnlineResource.OSM_API));
     }
 }

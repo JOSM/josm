@@ -87,12 +87,12 @@ public final class ColorScale {
     }
 
     public final Color getColor(double value) {
-        if (value<min) return belowMinColor;
-        if (value>max) return aboveMaxColor;
+        if (value < min) return belowMinColor;
+        if (value > max) return aboveMaxColor;
         if (Double.isNaN(value)) return noDataColor;
         final int n = colors.length;
         int idx = (int) ((value-min)*colors.length / (max-min));
-        if (idx<colors.length) {
+        if (idx < colors.length) {
             return colors[idx];
         } else {
             return colors[n-1]; // this happens when value==max
@@ -100,7 +100,7 @@ public final class ColorScale {
     }
 
     public final Color getColor(Number value) {
-        return (value==null)? noDataColor : getColor(value.doubleValue());
+        return (value == null) ? noDataColor : getColor(value.doubleValue());
     }
 
     public Color getNoDataColor() {
@@ -131,7 +131,7 @@ public final class ColorScale {
     public ColorScale makeReversed() {
         int n = colors.length;
         Color tmp;
-        for (int i=0; i<n/2; i++) {
+        for (int i = 0; i < n/2; i++) {
             tmp = colors[i];
             colors[i] = colors[n-1-i];
             colors[n-1-i] = tmp;
@@ -143,11 +143,11 @@ public final class ColorScale {
     }
 
     public void drawColorBar(Graphics2D g, int x, int y, int w, int h, double valueScale) {
-        int n=colors.length;
+        int n = colors.length;
 
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             g.setColor(colors[i]);
-            if (w<h) {
+            if (w < h) {
                 g.fillRect(x, y+i*h/n, w, h/n+1);
             } else {
                 g.fillRect(x+i*w/n, y, w/n+1, h);
@@ -157,16 +157,17 @@ public final class ColorScale {
         int fw, fh;
         FontMetrics fm = g.getFontMetrics();
         fh = fm.getHeight()/2;
-        fw = fm.stringWidth(String.valueOf(Math.max((int)Math.abs(max*valueScale), (int)Math.abs(min*valueScale)))) + fm.stringWidth("0.123");
+        fw = fm.stringWidth(String.valueOf(Math.max((int) Math.abs(max*valueScale),
+                (int) Math.abs(min*valueScale)))) + fm.stringWidth("0.123");
         g.setColor(noDataColor);
         if (title != null) {
             g.drawString(title, x-fw-3, y-fh*3/2);
         }
-        for (int i=0; i<=intervalCount; i++) {
-            g.setColor(colors[(int)(1.0*i*n/intervalCount-1e-10)]);
+        for (int i = 0; i <= intervalCount; i++) {
+            g.setColor(colors[(int) (1.0*i*n/intervalCount-1e-10)]);
             final double val =  min+i*(max-min)/intervalCount;
             final String txt = String.format("%.3f", val*valueScale);
-            if (w<h) {
+            if (w < h) {
                 g.drawString(txt, x-fw-3, y+i*h/intervalCount+fh/2);
             } else {
                 g.drawString(txt, x+i*w/intervalCount-fw/2, y+fh-3);

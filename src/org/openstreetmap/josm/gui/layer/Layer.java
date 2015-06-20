@@ -51,6 +51,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
 
     public interface LayerAction {
         boolean supportLayers(List<Layer> layers);
+
         Component createMenuComponent();
     }
 
@@ -64,14 +65,17 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      */
     public static class SeparatorLayerAction extends AbstractAction implements LayerAction {
         public static final SeparatorLayerAction INSTANCE = new SeparatorLayerAction();
+
         @Override
         public void actionPerformed(ActionEvent e) {
             throw new UnsupportedOperationException();
         }
+
         @Override
         public Component createMenuComponent() {
             return new JSeparator();
         }
+
         @Override
         public boolean supportLayers(List<Layer> layers) {
             return false;
@@ -386,6 +390,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      */
     public static class LayerSaveAction extends AbstractAction {
         private final transient Layer layer;
+
         public LayerSaveAction(Layer layer) {
             putValue(SMALL_ICON, ImageProvider.get("save"));
             putValue(SHORT_DESCRIPTION, tr("Save the current data."));
@@ -402,6 +407,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
 
     public static class LayerSaveAsAction extends AbstractAction {
         private final transient Layer layer;
+
         public LayerSaveAsAction(Layer layer) {
             putValue(SMALL_ICON, ImageProvider.get("save_as"));
             putValue(SHORT_DESCRIPTION, tr("Save the current data to a new file."));
@@ -418,6 +424,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
 
     public static class LayerGpxExportAction extends AbstractAction {
         private final transient Layer layer;
+
         public LayerGpxExportAction(Layer layer) {
             putValue(SMALL_ICON, ImageProvider.get("exportgpx"));
             putValue(SHORT_DESCRIPTION, tr("Export the data to GPX file."));
@@ -437,7 +444,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     /* --------------------------------------------------------------------------------- */
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
-        if(!isProjectionSupported(newValue)) {
+        if (!isProjectionSupported(newValue)) {
             JOptionPane.showMessageDialog(Main.parent,
                     tr("The layer {0} does not support the new projection {1}.\n{2}\n"
                             + "Change the projection again or remove the layer.",

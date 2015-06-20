@@ -56,9 +56,9 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     protected void buildDownloadAreaInputFields() {
         latlon = new JosmTextField[4];
-        for(int i=0; i< 4; i++) {
+        for (int i = 0; i < 4; i++) {
             latlon[i] = new JosmTextField(11);
-            latlon[i].setMinimumSize(new Dimension(100,new JosmTextField().getMinimumSize().height));
+            latlon[i].setMinimumSize(new Dimension(100, new JosmTextField().getMinimumSize().height));
             latlon[i].addFocusListener(new SelectAllOnFocusHandler(latlon[i]));
         }
         LatValueChecker latChecker = new LatValueChecker(latlon[0]);
@@ -94,13 +94,13 @@ public class BoundingBoxSelection implements DownloadSelection {
         tfOsmUrl.setLineWrap(true);
         tfOsmUrl.setBorder(latlon[0].getBorder());
 
-        dlg.add(new JLabel(tr("min lat")), GBC.std().insets(10,20,5,0));
-        dlg.add(latlon[0], GBC.std().insets(0,20,0,0));
-        dlg.add(new JLabel(tr("min lon")), GBC.std().insets(10,20,5,0));
-        dlg.add(latlon[1], GBC.eol().insets(0,20,0,0));
-        dlg.add(new JLabel(tr("max lat")), GBC.std().insets(10,0,5,0));
+        dlg.add(new JLabel(tr("min lat")), GBC.std().insets(10, 20, 5, 0));
+        dlg.add(latlon[0], GBC.std().insets(0, 20, 0, 0));
+        dlg.add(new JLabel(tr("min lon")), GBC.std().insets(10, 20, 5, 0));
+        dlg.add(latlon[1], GBC.eol().insets(0, 20, 0, 0));
+        dlg.add(new JLabel(tr("max lat")), GBC.std().insets(10, 0, 5, 0));
         dlg.add(latlon[2], GBC.std());
-        dlg.add(new JLabel(tr("max lon")), GBC.std().insets(10,0,5,0));
+        dlg.add(new JLabel(tr("max lon")), GBC.std().insets(10, 0, 5, 0));
         dlg.add(latlon[3], GBC.eol());
 
         final JButton btnClear = new JButton(tr("Clear textarea"));
@@ -110,11 +110,12 @@ public class BoundingBoxSelection implements DownloadSelection {
                 tfOsmUrl.setText("");
             }
         });
-        dlg.add(btnClear, GBC.eol().insets(10,20,0,0));
+        dlg.add(btnClear, GBC.eol().insets(10, 20, 0, 0));
 
-        dlg.add(new JLabel(tr("URL from www.openstreetmap.org (you can paste an URL here to download the area)")), GBC.eol().insets(10,5,5,0));
-        dlg.add(tfOsmUrl, GBC.eop().insets(10,0,5,0).fill());
-        dlg.add(showUrl, GBC.eop().insets(10,0,5,5));
+        dlg.add(new JLabel(tr("URL from www.openstreetmap.org (you can paste an URL here to download the area)")),
+                GBC.eol().insets(10, 5, 5, 0));
+        dlg.add(tfOsmUrl, GBC.eop().insets(10, 0, 5, 0).fill());
+        dlg.add(showUrl, GBC.eop().insets(10, 0, 5, 5));
         showUrl.setEditable(false);
         showUrl.setBackground(dlg.getBackground());
         showUrl.addFocusListener(new SelectAllOnFocusHandler(showUrl));
@@ -135,10 +136,10 @@ public class BoundingBoxSelection implements DownloadSelection {
      */
     public Bounds getDownloadArea() {
         double[] values = new double[4];
-        for (int i=0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             try {
                 values[i] = Double.parseDouble(latlon[i].getText());
-            } catch(NumberFormatException x) {
+            } catch (NumberFormatException x) {
                 return null;
             }
         }
@@ -151,8 +152,8 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     private boolean parseURL(DownloadDialog gui) {
         Bounds b = OsmUrlToBounds.parse(tfOsmUrl.getText());
-        if(b == null) return false;
-        gui.boundingBoxChanged(b,BoundingBoxSelection.this);
+        if (b == null) return false;
+        gui.boundingBoxChanged(b, BoundingBoxSelection.this);
         updateBboxFields(b);
         updateUrl(b);
         return true;
@@ -197,12 +198,12 @@ public class BoundingBoxSelection implements DownloadSelection {
             double value = 0;
             try {
                 value = Double.parseDouble(tfLatValue.getText());
-            } catch(NumberFormatException ex) {
-                setErrorMessage(tfLatValue,tr("The string ''{0}'' is not a valid double value.", tfLatValue.getText()));
+            } catch (NumberFormatException ex) {
+                setErrorMessage(tfLatValue, tr("The string ''{0}'' is not a valid double value.", tfLatValue.getText()));
                 return;
             }
             if (!LatLon.isValidLat(value)) {
-                setErrorMessage(tfLatValue,tr("Value for latitude in range [-90,90] required.", tfLatValue.getText()));
+                setErrorMessage(tfLatValue, tr("Value for latitude in range [-90,90] required.", tfLatValue.getText()));
                 return;
             }
             resetErrorMessage(tfLatValue);
@@ -230,12 +231,12 @@ public class BoundingBoxSelection implements DownloadSelection {
             double value = 0;
             try {
                 value = Double.parseDouble(tfLonValue.getText());
-            } catch(NumberFormatException ex) {
-                setErrorMessage(tfLonValue,tr("The string ''{0}'' is not a valid double value.", tfLonValue.getText()));
+            } catch (NumberFormatException ex) {
+                setErrorMessage(tfLonValue, tr("The string ''{0}'' is not a valid double value.", tfLonValue.getText()));
                 return;
             }
             if (!LatLon.isValidLon(value)) {
-                setErrorMessage(tfLonValue,tr("Value for longitude in range [-180,180] required.", tfLonValue.getText()));
+                setErrorMessage(tfLonValue, tr("Value for longitude in range [-180,180] required.", tfLonValue.getText()));
                 return;
             }
             resetErrorMessage(tfLonValue);
@@ -254,6 +255,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     static class SelectAllOnFocusHandler extends FocusAdapter {
         private JTextComponent tfTarget;
+
         public SelectAllOnFocusHandler(JTextComponent tfTarget) {
             this.tfTarget = tfTarget;
         }
@@ -266,22 +268,30 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     class OsmUrlRefresher implements DocumentListener {
         @Override
-        public void changedUpdate(DocumentEvent e) { parseURL(parent); }
+        public void changedUpdate(DocumentEvent e) {
+            parseURL(parent);
+        }
+
         @Override
-        public void insertUpdate(DocumentEvent e) { parseURL(parent); }
+        public void insertUpdate(DocumentEvent e) {
+            parseURL(parent);
+        }
+
         @Override
-        public void removeUpdate(DocumentEvent e) { parseURL(parent); }
+        public void removeUpdate(DocumentEvent e) {
+            parseURL(parent);
+        }
     }
 
     class BoundingBoxBuilder extends FocusAdapter implements ActionListener {
         protected Bounds build() {
-            double minlon, minlat, maxlon,maxlat;
+            double minlon, minlat, maxlon, maxlat;
             try {
                 minlat = Double.parseDouble(latlon[0].getText().trim());
                 minlon = Double.parseDouble(latlon[1].getText().trim());
                 maxlat = Double.parseDouble(latlon[2].getText().trim());
                 maxlon = Double.parseDouble(latlon[3].getText().trim());
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 return null;
             }
             if (!LatLon.isValidLon(minlon) || !LatLon.isValidLon(maxlon)
@@ -291,7 +301,7 @@ public class BoundingBoxSelection implements DownloadSelection {
                 return null;
             if (minlat > maxlat)
                 return null;
-            return new Bounds(minlat,minlon,maxlat,maxlon);
+            return new Bounds(minlat, minlon, maxlat, maxlon);
         }
 
         protected void refreshBounds() {

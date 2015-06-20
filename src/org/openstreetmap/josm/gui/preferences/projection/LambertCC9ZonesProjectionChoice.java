@@ -17,15 +17,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
 
     private static String[] lambert9zones = {
-        tr("{0} ({1} to {2} degrees)", 1,41,43),
-        tr("{0} ({1} to {2} degrees)", 2,42,44),
-        tr("{0} ({1} to {2} degrees)", 3,43,45),
-        tr("{0} ({1} to {2} degrees)", 4,44,46),
-        tr("{0} ({1} to {2} degrees)", 5,45,47),
-        tr("{0} ({1} to {2} degrees)", 6,46,48),
-        tr("{0} ({1} to {2} degrees)", 7,47,49),
-        tr("{0} ({1} to {2} degrees)", 8,48,50),
-        tr("{0} ({1} to {2} degrees)", 9,49,51)
+        tr("{0} ({1} to {2} degrees)", 1, 41, 43),
+        tr("{0} ({1} to {2} degrees)", 2, 42, 44),
+        tr("{0} ({1} to {2} degrees)", 3, 43, 45),
+        tr("{0} ({1} to {2} degrees)", 4, 44, 46),
+        tr("{0} ({1} to {2} degrees)", 5, 45, 47),
+        tr("{0} ({1} to {2} degrees)", 6, 46, 48),
+        tr("{0} ({1} to {2} degrees)", 7, 47, 49),
+        tr("{0} ({1} to {2} degrees)", 8, 48, 50),
+        tr("{0} ({1} to {2} degrees)", 9, 49, 51)
     };
 
     /**
@@ -72,11 +72,11 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
         //zone 1=CC42=EPSG:3942 up to zone 9=CC50=EPSG:3950
         if (code.startsWith("EPSG:39") && code.length() == 9) {
             try {
-                String zonestring = code.substring(5,9);
+                String zonestring = code.substring(5, 9);
                 int zoneval = Integer.parseInt(zonestring)-3942;
-                if(zoneval >= 0 && zoneval <= 8)
+                if (zoneval >= 0 && zoneval <= 8)
                     return Collections.singleton(String.valueOf(zoneval+1));
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 Main.warn(ex);
             }
         }
@@ -92,7 +92,7 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 1;
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             Main.warn(e);
         }
         return defaultIndex;

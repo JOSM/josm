@@ -49,7 +49,7 @@ public class OsmServerLocationReader extends OsmServerReader {
         progressMonitor.beginTask(tr("Contacting Server...", 10));
         try {
             return parser.parse();
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             throw e;
         } catch (Exception e) {
             if (cancel)

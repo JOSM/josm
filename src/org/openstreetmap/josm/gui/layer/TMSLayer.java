@@ -117,7 +117,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX +
             ".add_to_slippymap_chooser", true);
     public static final StringProperty PROP_TILECACHE_DIR;
-
     static {
         String defPath = null;
         try {
@@ -166,13 +165,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
                 for (String[] entry: content) {
                     panel.add(new JLabel(tr(entry[0]) + ":"), GBC.std());
-                    panel.add(GBC.glue(5,0), GBC.std());
+                    panel.add(GBC.glue(5, 0), GBC.std());
                     panel.add(createTextField(entry[1]), GBC.eol().fill(GBC.HORIZONTAL));
                 }
 
                 for (Entry<String, String> e: clickedTile.getMetadata().entrySet()) {
                     panel.add(new JLabel(tr("Metadata ") + tr(e.getKey()) + ":"), GBC.std());
-                    panel.add(GBC.glue(5,0), GBC.std());
+                    panel.add(GBC.glue(5, 0), GBC.std());
                     String value = e.getValue();
                     if ("lastModification".equals(e.getKey()) || "expirationTime".equals(e.getKey())) {
                         value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(value)));
@@ -221,7 +220,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
             try {
                 return new TMSCachedTileLoader(listener, "TMS",
-                        Main.pref.getInteger("socket.timeout.connect",15) * 1000,
+                        Main.pref.getInteger("socket.timeout.connect", 15) * 1000,
                         Main.pref.getInteger("socket.timeout.read", 30) * 1000,
                         headers,
                         PROP_TILECACHE_DIR.get());
@@ -276,7 +275,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public void clearTileCache(ProgressMonitor monitor) {
         tileCache.clear();
         if (tileLoader instanceof CachedTileLoader) {
-            ((CachedTileLoader)tileLoader).clearCache(tileSource);
+            ((CachedTileLoader) tileLoader).clearCache(tileSource);
         }
         redraw();
     }
@@ -310,10 +309,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     protected static int checkMaxZoomLvl(int maxZoomLvl, TileSource ts) {
-        if(maxZoomLvl > MAX_ZOOM) {
+        if (maxZoomLvl > MAX_ZOOM) {
             maxZoomLvl = MAX_ZOOM;
         }
-        if(maxZoomLvl < PROP_MIN_ZOOM_LVL.get()) {
+        if (maxZoomLvl < PROP_MIN_ZOOM_LVL.get()) {
             maxZoomLvl = PROP_MIN_ZOOM_LVL.get();
         }
         if (ts != null && ts.getMaxZoom() != 0 && ts.getMaxZoom() < maxZoomLvl) {
@@ -332,11 +331,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     static int checkMinZoomLvl(int minZoomLvl, TileSource ts) {
-        if(minZoomLvl < MIN_ZOOM) {
+        if (minZoomLvl < MIN_ZOOM) {
             /*Main.debug("Min. zoom level should not be less than "+MIN_ZOOM+"! Setting to that.");*/
             minZoomLvl = MIN_ZOOM;
         }
-        if(minZoomLvl > PROP_MAX_ZOOM_LVL.get()) {
+        if (minZoomLvl > PROP_MAX_ZOOM_LVL.get()) {
             /*Main.debug("Min. zoom level should not be more than Max. zoom level! Setting to Max.");*/
             minZoomLvl = getMaxZoomLvl(ts);
         }
@@ -459,7 +458,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         Map<String, String> headers = null;
         if (tileSource instanceof TemplatedTMSTileSource) {
-            headers = (((TemplatedTMSTileSource)tileSource).getHeaders());
+            headers = (((TemplatedTMSTileSource) tileSource).getHeaders());
         }
 
         tileLoader = loaderFactory.makeTileLoader(this, headers);
@@ -512,7 +511,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
          * Remember, that result here, should correspond to TMSLayer.paint(...)
          * getScaleFactor(...) is supposed to be between 0.75 and 3
          */
-        int intResult = (int)Math.floor(result);
+        int intResult = (int) Math.floor(result);
         if (intResult > getMaxZoomLvl())
             return getMaxZoomLvl();
         if (intResult < getMinZoomLvl())
@@ -524,7 +523,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public TMSLayer(ImageryInfo info) {
         super(info);
 
-        if(!isProjectionSupported(Main.getProjection())) {
+        if (!isProjectionSupported(Main.getProjection())) {
             JOptionPane.showMessageDialog(Main.parent,
                     tr("TMS layers do not support the projection {0}.\n{1}\n"
                             + "Change the projection or remove the layer.",
@@ -567,7 +566,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         autoLoadPopup.setAction(new AbstractAction(tr("Auto load tiles")) {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                autoLoad= !autoLoad;
+                autoLoad = !autoLoad;
             }
         });
         autoLoadPopup.setSelected(autoLoad);
@@ -965,12 +964,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         int screen_y_offset = target.y - source.y;
         // And how many pixels into the image itself does that
         // correlate to?
-        int img_x_offset = (int)(screen_x_offset * imageXScaling + 0.5);
-        int img_y_offset = (int)(screen_y_offset * imageYScaling + 0.5);
+        int img_x_offset = (int) (screen_x_offset * imageXScaling + 0.5);
+        int img_y_offset = (int) (screen_y_offset * imageYScaling + 0.5);
         // Now calculate the other corner of the image that we need
         // by scaling the 'target' rectangle's dimensions.
-        int img_x_end = img_x_offset + (int)(target.getWidth() * imageXScaling + 0.5);
-        int img_y_end = img_y_offset + (int)(target.getHeight() * imageYScaling + 0.5);
+        int img_x_end = img_x_offset + (int) (target.getWidth() * imageXScaling + 0.5);
+        int img_y_end = img_y_offset + (int) (target.getHeight() * imageYScaling + 0.5);
 
         if (Main.isDebugEnabled()) {
             Main.debug("drawing image into target rect: " + target);
@@ -1032,9 +1031,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     private void myDrawString(Graphics g, String text, int x, int y) {
         Color oldColor = g.getColor();
         g.setColor(Color.black);
-        g.drawString(text,x+1,y+1);
+        g.drawString(text, x+1, y+1);
         g.setColor(oldColor);
-        g.drawString(text,x,y);
+        g.drawString(text, x, y);
     }
 
     private void paintTileText(TileSet ts, Tile tile, Graphics g, MapView mv, int zoom, Tile t) {
@@ -1121,10 +1120,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     private Coordinate getShiftedCoord(EastNorth en) {
         LatLon ll = getShiftedLatLon(en);
-        return new Coordinate(ll.lat(),ll.lon());
+        return new Coordinate(ll.lat(), ll.lon());
     }
 
-    private final TileSet nullTileSet = new TileSet((LatLon)null, (LatLon)null, 0);
+    private final TileSet nullTileSet = new TileSet((LatLon) null, (LatLon) null, 0);
+
     private final class TileSet {
         private int x0, x1, y0, y1;
         private int zoom;
@@ -1134,7 +1134,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
          * Create a TileSet by EastNorth bbox taking a layer shift in account
          */
         private TileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
-            this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight),zoom);
+            this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
         }
 
         /**
@@ -1145,10 +1145,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             if (zoom == 0)
                 return;
 
-            x0 = (int)tileSource.lonToTileX(topLeft.lon(),  zoom);
-            y0 = (int)tileSource.latToTileY(topLeft.lat(),  zoom);
-            x1 = (int)tileSource.lonToTileX(botRight.lon(), zoom);
-            y1 = (int)tileSource.latToTileY(botRight.lat(), zoom);
+            x0 = (int) tileSource.lonToTileX(topLeft.lon(),  zoom);
+            y0 = (int) tileSource.latToTileY(topLeft.lat(),  zoom);
+            x1 = (int) tileSource.lonToTileX(botRight.lon(), zoom);
+            y1 = (int) tileSource.latToTileY(botRight.lat(), zoom);
             if (x0 > x1) {
                 int tmp = x0;
                 x0 = x1;
@@ -1159,7 +1159,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 y0 = y1;
                 y1 = tmp;
             }
-            tileMax = (int)Math.pow(2.0, zoom);
+            tileMax = (int) Math.pow(2.0, zoom);
             if (x0 < 0) {
                 x0 = 0;
             }
@@ -1245,6 +1245,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 private int getDistance(Tile t) {
                     return Math.abs(t.getXtile() - centerX) + Math.abs(t.getYtile() - centerY);
                 }
+
                 @Override
                 public int compare(Tile o1, Tile o2) {
                     int distance1 = getDistance(o1);
@@ -1274,7 +1275,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
         }
     }
-
 
     private static class TileSetInfo {
         public boolean hasVisibleTiles = false;
@@ -1306,6 +1306,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         private final int minZoom, maxZoom;
         private final TileSet[] tileSets;
         private final TileSetInfo[] tileSetInfos;
+
         public DeepTileSet(EastNorth topLeft, EastNorth botRight, int minZoom, int maxZoom) {
             this.topLeft = topLeft;
             this.botRight = botRight;
@@ -1314,6 +1315,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             this.tileSets = new TileSet[maxZoom - minZoom + 1];
             this.tileSetInfos = new TileSetInfo[maxZoom - minZoom + 1];
         }
+
         public TileSet getTileSet(int zoom) {
             if (zoom < minZoom)
                 return nullTileSet;
@@ -1382,7 +1384,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 }
             }
             // Do binary search between currentZoomLevel and displayZoomLevel
-            while (zoom > displayZoomLevel && !tsi.hasVisibleTiles && tsi.hasOverzoomedTiles){
+            while (zoom > displayZoomLevel && !tsi.hasVisibleTiles && tsi.hasOverzoomedTiles) {
                 zoom = (zoom + displayZoomLevel)/2;
                 tsi = dts.getTileSetInfo(zoom);
             }
@@ -1488,13 +1490,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
             myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
             myDrawString(g, tr("Best zoom: {0}", getBestZoom()), 50, 185);
-            if(tileLoader instanceof TMSCachedTileLoader) {
-                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader)tileLoader;
+            if (tileLoader instanceof TMSCachedTileLoader) {
+                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
                 int offset = 185;
-                for(String part: cachedTileLoader.getStats().split("\n")) {
-                    myDrawString(g, tr("Cache stats: {0}", part), 50, offset+=15);
+                for (String part: cachedTileLoader.getStats().split("\n")) {
+                    myDrawString(g, tr("Cache stats: {0}", part), 50, offset += 15);
                 }
-
             }
         }
     }

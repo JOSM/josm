@@ -246,9 +246,9 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     public MapView(final JPanel contentPane, final ViewportData viewportData) {
         initialViewport = viewportData;
         Main.pref.addPreferenceChangeListener(this);
-        final boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null;
+        final boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0) != null;
 
-        addComponentListener(new ComponentAdapter(){
+        addComponentListener(new ComponentAdapter() {
             @Override public void componentResized(ComponentEvent e) {
                 removeComponentListener(this);
 
@@ -259,7 +259,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
                 MapScaler scaler = new MapScaler(MapView.this);
                 add(scaler);
-                scaler.setLocation(10,30);
+                scaler.setLocation(10, 30);
 
                 mapMover = new MapMover(MapView.this, contentPane);
             }
@@ -270,10 +270,13 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
         //store the last mouse action
         this.addMouseMotionListener(new MouseMotionListener() {
-            @Override public void mouseDragged(MouseEvent e) {
+            @Override
+            public void mouseDragged(MouseEvent e) {
                 mouseMoved(e);
             }
-            @Override public void mouseMoved(MouseEvent e) {
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
                 lastMEvent = e;
             }
         });
@@ -285,7 +288,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             }
         });
 
-        if (Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null) {
+        if (Shortcut.findShortcut(KeyEvent.VK_TAB, 0) != null) {
             setFocusTraversalKeysEnabled(false);
         }
     }
@@ -312,7 +315,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             layers.add(layer);
             return;
         }
-        for (int i=layers.size()-1; i>= 0; i--) {
+        for (int i = layers.size()-1; i >= 0; i--) {
             if (layers.get(i) instanceof OsmDataLayer) {
                 if (i == layers.size()-1) {
                     layers.add(layer);
@@ -336,7 +339,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         }
 
         if (layer instanceof GpxLayer) {
-            addGpxLayer((GpxLayer)layer);
+            addGpxLayer((GpxLayer) layer);
         } else if (layers.isEmpty()) {
             layers.add(layer);
         } else if (layer.isBackgroundLayer()) {
@@ -353,7 +356,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         fireLayerAdded(layer);
         boolean isOsmDataLayer = layer instanceof OsmDataLayer;
         if (isOsmDataLayer) {
-            ((OsmDataLayer)layer).addLayerStateChangeListener(this);
+            ((OsmDataLayer) layer).addLayerStateChangeListener(this);
         }
         boolean callSetActiveLayer = isOsmDataLayer || activeLayer == null;
         if (callSetActiveLayer) {
@@ -439,7 +442,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         }
 
         if (layer instanceof OsmDataLayer) {
-            ((OsmDataLayer)layer).removeLayerPropertyChangeListener(this);
+            ((OsmDataLayer) layer).removeLayerPropertyChangeListener(this);
         }
 
         layers.remove(layer);
@@ -454,11 +457,12 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     private boolean virtualNodesEnabled = false;
 
     public void setVirtualNodesEnabled(boolean enabled) {
-        if(virtualNodesEnabled != enabled) {
+        if (virtualNodesEnabled != enabled) {
             virtualNodesEnabled = enabled;
             repaint();
         }
     }
+
     public boolean isVirtualNodesEnabled() {
         return virtualNodesEnabled;
     }
@@ -530,7 +534,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
     private void paintLayer(Layer layer, Graphics2D g, Bounds box) {
         if (layer.getOpacity() < 1) {
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)layer.getOpacity()));
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) layer.getOpacity()));
         }
         layer.paint(g, this, box);
         g.setPaintMode();
@@ -582,7 +586,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         canUseBuffer = canUseBuffer && nonChangedLayers.size() <= nonChangedLayersCount &&
         lastViewID == getViewID() && lastClipBounds.contains(g.getClipBounds());
         if (canUseBuffer) {
-            for (int i=0; i<nonChangedLayers.size(); i++) {
+            for (int i = 0; i < nonChangedLayers.size(); i++) {
                 if (visibleLayers.get(i) != nonChangedLayers.get(i)) {
                     canUseBuffer = false;
                     break;
@@ -608,23 +612,23 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             g2.setColor(PaintColors.getBackgroundColor());
             g2.fillRect(0, 0, getWidth(), getHeight());
 
-            for (int i=0; i<nonChangedLayersCount; i++) {
-                paintLayer(visibleLayers.get(i),g2, box);
+            for (int i = 0; i < nonChangedLayersCount; i++) {
+                paintLayer(visibleLayers.get(i), g2, box);
             }
         } else {
             // Maybe there were more unchanged layers then last time - draw them to buffer
             if (nonChangedLayers.size() != nonChangedLayersCount) {
                 Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
                 g2.setClip(g.getClip());
-                for (int i=nonChangedLayers.size(); i<nonChangedLayersCount; i++) {
-                    paintLayer(visibleLayers.get(i),g2, box);
+                for (int i = nonChangedLayers.size(); i < nonChangedLayersCount; i++) {
+                    paintLayer(visibleLayers.get(i), g2, box);
                 }
             }
         }
 
         nonChangedLayers.clear();
         changedLayer = null;
-        for (int i=0; i<nonChangedLayersCount; i++) {
+        for (int i = 0; i < nonChangedLayersCount; i++) {
             nonChangedLayers.add(visibleLayers.get(i));
         }
         lastViewID = getViewID();
@@ -632,8 +636,8 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
         tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
 
-        for (int i=nonChangedLayersCount; i<visibleLayers.size(); i++) {
-            paintLayer(visibleLayers.get(i),tempG, box);
+        for (int i = nonChangedLayersCount; i < visibleLayers.size(); i++) {
+            paintLayer(visibleLayers.get(i), tempG, box);
         }
 
         for (MapViewPaintable mvp : temporaryLayers) {
@@ -652,22 +656,22 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
         path.moveTo(p.x, p.y);
         double max = b.getMax().lat();
-        for(; lat <= max; lat += 1.0) {
+        for (; lat <= max; lat += 1.0) {
             p = getPoint(new LatLon(lat >= max ? max : lat, lon));
             path.lineTo(p.x, p.y);
         }
         lat = max; max = b.getMax().lon();
-        for(; lon <= max; lon += 1.0) {
+        for (; lon <= max; lon += 1.0) {
             p = getPoint(new LatLon(lat, lon >= max ? max : lon));
             path.lineTo(p.x, p.y);
         }
         lon = max; max = b.getMinLat();
-        for(; lat >= max; lat -= 1.0) {
+        for (; lat >= max; lat -= 1.0) {
             p = getPoint(new LatLon(lat <= max ? max : lat, lon));
             path.lineTo(p.x, p.y);
         }
         lat = max; max = b.getMinLon();
-        for(; lon >= max; lon -= 1.0) {
+        for (; lon >= max; lon -= 1.0) {
             p = getPoint(new LatLon(lat, lon <= max ? max : lon));
             path.lineTo(p.x, p.y);
         }
@@ -742,7 +746,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     }
 
     private void setEditLayer(List<Layer> layersList) {
-        OsmDataLayer newEditLayer = layersList.contains(editLayer)?editLayer:null;
+        OsmDataLayer newEditLayer = layersList.contains(editLayer) ? editLayer : null;
         OsmDataLayer oldEditLayer = editLayer;
 
         // Find new edit layer
@@ -802,7 +806,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
          * that I switch layers and actions at the same time and it was annoying to mind the
          * order. This way it works as visual clue for new users */
         for (final AbstractButton b: Main.map.allMapModeButtons) {
-            MapMode mode = (MapMode)b.getAction();
+            MapMode mode = (MapMode) b.getAction();
             if (mode.layerIsSupported(layer)) {
                 Main.registerActionShortcut(mode, mode.getShortcut()); //fix #6876
                 GuiHelper.runInEDTAndWait(new Runnable() {
@@ -865,14 +869,14 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         if (evt.getPropertyName().equals(Layer.VISIBLE_PROP)) {
             repaint();
         } else if (evt.getPropertyName().equals(Layer.OPACITY_PROP)) {
-            Layer l = (Layer)evt.getSource();
+            Layer l = (Layer) evt.getSource();
             if (l.isVisible()) {
                 changedLayer = l;
                 repaint();
             }
         } else if (evt.getPropertyName().equals(OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP)
                 || evt.getPropertyName().equals(OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP)) {
-            OsmDataLayer layer = (OsmDataLayer)evt.getSource();
+            OsmDataLayer layer = (OsmDataLayer) evt.getSource();
             if (layer == getEditLayer()) {
                 refreshTitle();
             }
@@ -895,7 +899,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         }
     }
 
-    private transient SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener(){
+    private transient SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener() {
         @Override
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             repaint();

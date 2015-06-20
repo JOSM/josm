@@ -54,7 +54,7 @@ public class TagModel {
     /**
      * @return the tag name
      */
-    public String getName(){
+    public String getName() {
         return name;
     }
 
@@ -97,7 +97,7 @@ public class TagModel {
      * removes a value from the list of values. Converts value to "" if null
      * @param value the value
      */
-    public void removeValue(String value){
+    public void removeValue(String value) {
         value = (value == null) ? "" : value;
         values.remove(value);
     }
@@ -113,7 +113,7 @@ public class TagModel {
             return values.get(0);
         } else {
             StringBuilder sb = new StringBuilder();
-            for (int i =0; i < values.size(); i++) {
+            for (int i = 0; i < values.size(); i++) {
                 sb.append(values.get(i));
                 if (i + 1 < values.size()) {
                     sb.append(';');

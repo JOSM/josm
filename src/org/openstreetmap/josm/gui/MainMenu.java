@@ -145,6 +145,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class MainMenu extends JMenuBar {
 
+    public static enum WINDOW_MENU_GROUP { ALWAYS, TOGGLE_DIALOG, VOLATILE }
+
     /* File menu */
     /** File / New Layer **/
     public final NewAction newAction = new NewAction();
@@ -382,7 +384,6 @@ public class MainMenu extends JMenuBar {
      * to use WINDOW_MENU_GROUP to determine the group integer.
      */
     public final JMenu windowMenu = addMenu(marktr("Windows"), KeyEvent.VK_W, 10, ht("/Menu/Windows"));
-    public static enum WINDOW_MENU_GROUP { ALWAYS, TOGGLE_DIALOG, VOLATILE }
 
     /**
      * audioMenu contains all audio-related actions. Be careful, this menu is not guaranteed to be displayed at all
@@ -417,23 +418,25 @@ public class MainMenu extends JMenuBar {
      */
     public static final MenuListener menuSeparatorHandler = new MenuListener() {
         @Override
-        public void menuCanceled(MenuEvent arg0) {}
+        public void menuCanceled(MenuEvent e) {}
+
         @Override
-        public void menuDeselected(MenuEvent arg0) {}
+        public void menuDeselected(MenuEvent e) {}
+
         @Override
         public void menuSelected(MenuEvent a) {
-            if(!(a.getSource() instanceof JMenu))
+            if (!(a.getSource() instanceof JMenu))
                 return;
             final JPopupMenu m = ((JMenu) a.getSource()).getPopupMenu();
-            for(int i=0; i < m.getComponentCount()-1; i++) {
-                if(!(m.getComponent(i) instanceof JSeparator)) {
+            for (int i = 0; i < m.getComponentCount()-1; i++) {
+                if (!(m.getComponent(i) instanceof JSeparator)) {
                     continue;
                 }
                 // hide separator if the next menu item is one as well
                 ((JSeparator) m.getComponent(i)).setVisible(!(m.getComponent(i+1) instanceof JSeparator));
             }
             // hide separator at the end of the menu
-            if(m.getComponent(m.getComponentCount()-1) instanceof JSeparator) {
+            if (m.getComponent(m.getComponentCount()-1) instanceof JSeparator) {
                 ((JSeparator) m.getComponent(m.getComponentCount()-1)).setVisible(false);
             }
         }
@@ -573,21 +576,21 @@ public class MainMenu extends JMenuBar {
 
     /** finds the correct insertion index for a given group and adds separators if necessary */
     private static int getInsertionIndexForGroup(JMenu menu, int group) {
-        if(group < 0)
+        if (group < 0)
             return -1;
         // look for separator that *ends* the group (or stop at end of menu)
         int i;
-        for(i=0; i < menu.getItemCount() && group >= 0; i++) {
-            if(menu.getItem(i) == null) {
+        for (i = 0; i < menu.getItemCount() && group >= 0; i++) {
+            if (menu.getItem(i) == null) {
                 group--;
             }
         }
         // insert before separator that ends the group
-        if(group < 0) {
+        if (group < 0) {
             i--;
         }
         // not enough separators have been found, add them
-        while(group > 0) {
+        while (group > 0) {
             menu.addSeparator();
             group--;
             i++;
@@ -615,8 +618,6 @@ public class MainMenu extends JMenuBar {
      * Constructs a new {@code MainMenu}.
      */
     public MainMenu() {
-        JMenuItem current;
-
         moreToolsMenu.setVisible(false);
         dataMenu.setVisible(false);
         gpsMenu.setVisible(false);
@@ -670,8 +671,8 @@ public class MainMenu extends JMenuBar {
         add(editMenu, delete);
         add(editMenu, purge, true);
         editMenu.addSeparator();
-        add(editMenu,merge);
-        add(editMenu,mergeSelected);
+        add(editMenu, merge);
+        add(editMenu, mergeSelected);
         editMenu.addSeparator();
         add(editMenu, search);
         add(editMenu, presetSearchPrimitiveAction);
@@ -703,7 +704,7 @@ public class MainMenu extends JMenuBar {
         vft.setAccelerator(viewportFollowToggleAction.getShortcut().getKeyStroke());
         viewportFollowToggleAction.addButtonModel(vft.getModel());
 
-        if(Main.platform.canFullscreen()) {
+        if (Main.platform.canFullscreen()) {
             // -- fullscreen toggle action
             fullscreenToggleAction = new FullscreenToggleAction();
             final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(fullscreenToggleAction);
@@ -796,8 +797,8 @@ public class MainMenu extends JMenuBar {
         helpMenu.add(reportbug);
         helpMenu.addSeparator();
 
-        current = helpMenu.add(help); // FIXME why is help not a JosmAction?
-        current.setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
+        // FIXME why is help not a JosmAction?
+        helpMenu.add(help).setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
                 Shortcut.DIRECT).getKeyStroke());
         add(helpMenu, about);
         add(Box.createHorizontalGlue());
@@ -884,7 +885,7 @@ public class MainMenu extends JMenuBar {
      * @param result resulting list ofmenu items
      */
     private void findMenuItems(final JMenu menu, final String textToFind, final List<JMenuItem> result) {
-        for (int i=0; i<menu.getItemCount(); i++) {
+        for (int i = 0; i < menu.getItemCount(); i++) {
             JMenuItem menuItem = menu.getItem(i);
             if (menuItem == null) continue;
 
@@ -921,6 +922,7 @@ public class MainMenu extends JMenuBar {
 
     static class PresetsMenuEnabler implements MapView.LayerChangeListener {
         private JMenu presetsMenu;
+
         public PresetsMenuEnabler(JMenu presetsMenu) {
             MapView.addLayerChangeListener(this);
             this.presetsMenu = presetsMenu;
@@ -959,9 +961,9 @@ public class MainMenu extends JMenuBar {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 // On ENTER selected menu item must be triggered
                 MenuElement[] selection = MenuSelectionManager.defaultManager().getSelectedPath();
-                if(selection.length > 1) {
+                if (selection.length > 1) {
                     MenuElement selectedElement = selection[selection.length-1];
-                    if(selectedElement instanceof JMenuItem) {
+                    if (selectedElement instanceof JMenuItem) {
                         JMenuItem selectedItem = (JMenuItem) selectedElement;
                         Action menuAction = selectedItem.getAction();
                         menuAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
@@ -1026,13 +1028,13 @@ public class MainMenu extends JMenuBar {
             }
 
             List<JMenuItem> searchResult = mainMenu.findMenuItems(currentSearchText);
-            if(searchResult.isEmpty()) {
+            if (searchResult.isEmpty()) {
                 // Nothing found
                 hideMenu();
                 return;
             }
 
-            if(searchResult.size() > 20) {
+            if (searchResult.size() > 20) {
                 // Too many items found...
                 searchResult = searchResult.subList(0, 20);
             }

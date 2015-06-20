@@ -16,14 +16,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
 
-    public static final Color BGCOLOR_SELECTED = new Color(143,170,255);
+    public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
 
     private ImageIcon nodeIcon;
 
     /**
      * Constructs a new {@code NodeListTableCellRenderer}.
      */
-    public NodeListTableCellRenderer(){
+    public NodeListTableCellRenderer() {
         setOpaque(true);
         nodeIcon = ImageProvider.get("data", "node");
         setIcon(nodeIcon);
@@ -53,7 +53,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 
-        renderNode((TwoColumnDiff.Item)value, isSelected);
+        renderNode((TwoColumnDiff.Item) value, isSelected);
         return this;
     }
 }

@@ -36,7 +36,7 @@ public class GeorefImage implements Serializable {
     private int xIndex;
     private int yIndex;
 
-    private static final Color transparentColor = new Color(0,0,0,0);
+    private static final Color transparentColor = new Color(0, 0, 0, 0);
     private Color fadeColor = transparentColor;
 
     public EastNorth getMin() {
@@ -117,7 +117,7 @@ public class GeorefImage implements Serializable {
         if (getImage() == null)
             return false;
 
-        if(!(this.xIndex == xIndex && this.yIndex == yIndex))
+        if (!(this.xIndex == xIndex && this.yIndex == yIndex))
             return false;
 
         int left = layer.getImageX(xIndex);
@@ -129,7 +129,7 @@ public class GeorefImage implements Serializable {
         int y = nc.getHeight() - (bottom - bottomEdge) - height;
 
         // This happens if you zoom outside the world
-        if(width == 0 || height == 0)
+        if (width == 0 || height == 0)
             return false;
 
         // TODO: implement per-layer fade color
@@ -140,8 +140,8 @@ public class GeorefImage implements Serializable {
             newFadeColor = ImageryLayer.getFadeColorWithAlpha();
         }
 
-        BufferedImage img = reImg == null?null:reImg.get();
-        if(img != null && img.getWidth() == width && img.getHeight() == height && fadeColor.equals(newFadeColor)) {
+        BufferedImage img = reImg == null ? null : reImg.get();
+        if (img != null && img.getWidth() == width && img.getHeight() == height && fadeColor.equals(newFadeColor)) {
             g.drawImage(img, x, y, null);
             return true;
         }
@@ -151,7 +151,7 @@ public class GeorefImage implements Serializable {
         boolean alphaChannel = WMSLayer.PROP_ALPHA_CHANNEL.get() && getImage().getTransparency() != Transparency.OPAQUE;
 
         try {
-            if(img != null) {
+            if (img != null) {
                 img.flush();
             }
             long freeMem = Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory();
@@ -162,11 +162,11 @@ public class GeorefImage implements Serializable {
             // Storing images this large in memory will certainly hang up JOSM. Luckily
             // traditional rendering is as fast at these zoom levels, so it's no loss.
             // Also prevent caching if we're out of memory soon
-            if(width > 2000 || height > 2000 || width*height*multipl > freeMem) {
+            if (width > 2000 || height > 2000 || width*height*multipl > freeMem) {
                 fallbackDraw(g, getImage(), x, y, width, height, alphaChannel);
             } else {
                 // We haven't got a saved resized copy, so resize and cache it
-                img = new BufferedImage(width, height, alphaChannel?BufferedImage.TYPE_INT_ARGB:BufferedImage.TYPE_3BYTE_BGR);
+                img = new BufferedImage(width, height, alphaChannel ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_3BYTE_BGR);
                 img.getGraphics().drawImage(getImage(),
                         0, 0, width, height, // dest
                         0, 0, getImage().getWidth(null), getImage().getHeight(null), // src
@@ -178,7 +178,7 @@ public class GeorefImage implements Serializable {
                 g.drawImage(img, x, y, null);
                 reImg = new SoftReference<>(img);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             fallbackDraw(g, getImage(), x, y, width, height, alphaChannel);
         }
         return true;
@@ -215,7 +215,7 @@ public class GeorefImage implements Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeObject(state);
-        if(getImage() == null) {
+        if (getImage() == null) {
             out.writeBoolean(false);
             out.writeObject(null);
         } else {

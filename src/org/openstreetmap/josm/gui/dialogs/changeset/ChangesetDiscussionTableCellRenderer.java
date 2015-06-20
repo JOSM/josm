@@ -26,15 +26,15 @@ public class ChangesetDiscussionTableCellRenderer extends AbstractCellRenderer {
         renderColors(comp, isSelected);
         switch(column) {
         case 0:
-            renderDate((Date)value);
+            renderDate((Date) value);
             break;
         case 1:
-            renderUser((User)value);
+            renderUser((User) value);
             break;
         case 2:
             comp = new JosmTextArea((String) value);
-            ((JosmTextArea)comp).setLineWrap(true);
-            ((JosmTextArea)comp).setWrapStyleWord(true);
+            ((JosmTextArea) comp).setLineWrap(true);
+            ((JosmTextArea) comp).setWrapStyleWord(true);
             reset(comp, false);
             renderColors(comp, isSelected);
         }

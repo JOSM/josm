@@ -127,8 +127,8 @@ public class PropertiesMergeModel extends Observable {
         this.my = conflict.getMy();
         OsmPrimitive their = conflict.getTheir();
         if (my instanceof Node) {
-            myCoords = ((Node)my).getCoor();
-            theirCoords = ((Node)their).getCoor();
+            myCoords = ((Node) my).getCoor();
+            theirCoords = ((Node) their).getCoor();
         } else {
             myCoords = null;
             theirCoords = null;
@@ -137,8 +137,8 @@ public class PropertiesMergeModel extends Observable {
         myDeletedState =  conflict.isMyDeleted() || my.isDeleted();
         theirDeletedState = their.isDeleted();
 
-        myReferrers = my.getDataSet() == null?Collections.<OsmPrimitive>emptyList():my.getReferrers();
-        theirReferrers = their.getDataSet() == null?Collections.<OsmPrimitive>emptyList():their.getReferrers();
+        myReferrers = my.getDataSet() == null ? Collections.<OsmPrimitive>emptyList() : my.getReferrers();
+        theirReferrers = their.getDataSet() == null ? Collections.<OsmPrimitive>emptyList() : their.getReferrers();
 
         coordMergeDecision = UNDECIDED;
         deletedMergeDecision = UNDECIDED;

@@ -173,7 +173,7 @@ public class UnclosedWays extends Test {
             return;
 
         for (OsmPrimitive parent: w.getReferrers()) {
-            if (parent instanceof Relation && ((Relation)parent).isMultipolygon())
+            if (parent instanceof Relation && ((Relation) parent).isMultipolygon())
                 return;
         }
 

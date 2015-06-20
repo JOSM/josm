@@ -500,7 +500,7 @@ public abstract class Main {
             panel.add(gettingStarted, BorderLayout.CENTER);
         }
         panel.setVisible(true);
-        redoUndoListener.commandChanged(0,0);
+        redoUndoListener.commandChanged(0, 0);
 
         Main.map = map;
 
@@ -531,6 +531,7 @@ public abstract class Main {
     public static interface InitStatusListener {
 
         Object updateStatus(String event);
+
         void finish(Object status);
     }
 
@@ -767,7 +768,7 @@ public abstract class Main {
         MapFrame mapFrame = new MapFrame(contentPanePrivate, viewportData);
         setMapFrame(mapFrame);
         if (firstLayer != null) {
-            mapFrame.selectMapMode((MapMode)mapFrame.getDefaultButtonAction(), firstLayer);
+            mapFrame.selectMapMode((MapMode) mapFrame.getDefaultButtonAction(), firstLayer);
         }
         mapFrame.initializeDialogsPane();
         // bootstrapping problem: make sure the layer list dialog is going to
@@ -903,7 +904,7 @@ public abstract class Main {
     protected static volatile WindowGeometry geometry;
     protected static int windowState = JFrame.NORMAL;
 
-    private final CommandQueueListener redoUndoListener = new CommandQueueListener(){
+    private final CommandQueueListener redoUndoListener = new CommandQueueListener() {
         @Override
         public void commandChanged(final int queueSize, final int redoSize) {
             menu.undo.setEnabled(queueSize > 0);
@@ -997,7 +998,7 @@ public abstract class Main {
                                 JOptionPane.WARNING_MESSAGE
                                 );
                     }
-                    if (f!=null) {
+                    if (f != null) {
                         fileList.add(f);
                     }
                     break;
@@ -1007,7 +1008,7 @@ public abstract class Main {
                     break;
                 }
             }
-            if(!fileList.isEmpty()) {
+            if (!fileList.isEmpty()) {
                 OpenFileAction.openFiles(fileList, true);
             }
         }
@@ -1066,7 +1067,7 @@ public abstract class Main {
             if (!(l instanceof AbstractModifiableLayer)) {
                 continue;
             }
-            AbstractModifiableLayer odl = (AbstractModifiableLayer)l;
+            AbstractModifiableLayer odl = (AbstractModifiableLayer) l;
             if ((odl.requiresSaveToFile() || (odl.requiresUploadToServer() && !odl.isUploadDiscouraged())) && odl.isModified()) {
                 layersWithUnmodifiedChanges.add(odl);
             }
@@ -1137,10 +1138,10 @@ public abstract class Main {
      * @return The guessed parameter type
      */
     private static DownloadParamType paramType(String s) {
-        if(s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
-        if(s.startsWith("file:")) return DownloadParamType.fileUrl;
+        if (s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
+        if (s.startsWith("file:")) return DownloadParamType.fileUrl;
         String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
-        if(s.matches(coorPattern+"(,"+coorPattern+"){3}")) return DownloadParamType.bounds;
+        if (s.matches(coorPattern+"(,"+coorPattern+") {3}")) return DownloadParamType.bounds;
         // everything else must be a file name
         return DownloadParamType.fileName;
     }
@@ -1173,8 +1174,8 @@ public abstract class Main {
         final StringTokenizer st = new StringTokenizer(s, ",");
         if (st.countTokens() == 4) {
             Bounds b = new Bounds(
-                    new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())),
-                    new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()))
+                    new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())),
+                    new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()))
                     );
             downloadFromParamBounds(rawGps, b);
         }
@@ -1246,7 +1247,7 @@ public abstract class Main {
         private void handleComponentEvent(ComponentEvent e) {
             Component c = e.getComponent();
             if (c instanceof JFrame && c.isVisible()) {
-                if(Main.windowState == JFrame.NORMAL) {
+                if (Main.windowState == JFrame.NORMAL) {
                     Main.geometry = new WindowGeometry((JFrame) c);
                 } else {
                     Main.geometry.fixScreen((JFrame) c);
@@ -1257,7 +1258,7 @@ public abstract class Main {
 
     protected static void addListener() {
         parent.addComponentListener(new WindowPositionSizeListener());
-        ((JFrame)parent).addWindowStateListener(new WindowPositionSizeListener());
+        ((JFrame) parent).addWindowStateListener(new WindowPositionSizeListener());
     }
 
     /**
@@ -1355,9 +1356,9 @@ public abstract class Main {
         if (newValue == null ^ oldValue == null
                 || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
 
-            synchronized(Main.class) {
+            synchronized (Main.class) {
                 Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
-                while (it.hasNext()){
+                while (it.hasNext()) {
                     WeakReference<ProjectionChangeListener> wr = it.next();
                     ProjectionChangeListener listener = wr.get();
                     if (listener == null) {
@@ -1397,9 +1398,9 @@ public abstract class Main {
      */
     public static void removeProjectionChangeListener(ProjectionChangeListener listener) {
         if (listener == null) return;
-        synchronized(Main.class){
+        synchronized (Main.class) {
             Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
-            while (it.hasNext()){
+            while (it.hasNext()) {
                 WeakReference<ProjectionChangeListener> wr = it.next();
                 // remove the listener - and any other listener which got garbage
                 // collected in the meantime
@@ -1461,9 +1462,9 @@ public abstract class Main {
      */
     public static void removeWindowSwitchListener(WindowSwitchListener listener) {
         if (listener == null) return;
-        synchronized (Main.class){
+        synchronized (Main.class) {
             Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
-            while (it.hasNext()){
+            while (it.hasNext()) {
                 WeakReference<WindowSwitchListener> wr = it.next();
                 // remove the listener - and any other listener which got garbage
                 // collected in the meantime
@@ -1535,7 +1536,7 @@ public abstract class Main {
                 // fire WindowSwitchListeners
                 synchronized (Main.class) {
                     Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
-                    while (it.hasNext()){
+                    while (it.hasNext()) {
                         WeakReference<WindowSwitchListener> wr = it.next();
                         WindowSwitchListener listener = wr.get();
                         if (listener == null) {
@@ -1564,7 +1565,7 @@ public abstract class Main {
                 // fire WindowSwitchListeners
                 synchronized (Main.class) {
                     Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
-                    while (it.hasNext()){
+                    while (it.hasNext()) {
                         WeakReference<WindowSwitchListener> wr = it.next();
                         WindowSwitchListener listener = wr.get();
                         if (listener == null) {

@@ -50,7 +50,7 @@ public class UpdateDataAction extends JosmAction {
             return;
 
         List<Area> areas = new ArrayList<>();
-        for(DataSource ds : getEditLayer().data.dataSources) {
+        for (DataSource ds : getEditLayer().data.dataSources) {
             areas.add(new Area(ds.bounds.asRect()));
         }
 
@@ -58,27 +58,27 @@ public class UpdateDataAction extends JosmAction {
         // This prevents downloading the same data numerous times at intersections
         // and also skips smaller bounding boxes that are contained within larger ones
         // entirely.
-        for(int i = 0; i < areas.size(); i++) {
-            for(int j = i+1; j < areas.size(); j++) {
+        for (int i = 0; i < areas.size(); i++) {
+            for (int j = i+1; j < areas.size(); j++) {
                 areas.get(i).subtract(areas.get(j));
             }
         }
 
-        for(int i = areas.size()-1; i > 0; i--) {
-            for(int j = i-1; j > 0; j--) {
+        for (int i = areas.size()-1; i > 0; i--) {
+            for (int j = i-1; j > 0; j--) {
                 areas.get(i).subtract(areas.get(j));
             }
         }
 
         List<Area> areasToDownload = new ArrayList<>();
-        for(Area a : areas) {
-            if(a.isEmpty()) {
+        for (Area a : areas) {
+            if (a.isEmpty()) {
                 continue;
             }
             areasToDownload.add(a);
         }
 
-        if(areasToDownload.isEmpty()) {
+        if (areasToDownload.isEmpty()) {
             // no bounds defined in the dataset? we update all primitives in the data set
             // using a series of multi fetch requests
             //
@@ -94,7 +94,7 @@ public class UpdateDataAction extends JosmAction {
                         public void run() {
                             try {
                                 future.get();
-                            } catch(Exception e) {
+                            } catch (Exception e) {
                                 Main.error(e);
                                 return;
                             }

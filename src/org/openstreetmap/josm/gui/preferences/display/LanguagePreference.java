@@ -58,7 +58,7 @@ public class LanguagePreference implements SubPreferenceSetting {
         LafPreference lafPreference = gui.getSetting(LafPreference.class);
         final JPanel panel = lafPreference.panel;
         panel.add(new JLabel(tr("Language")), GBC.std().insets(20, 0, 0, 0));
-        panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+        panel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         panel.add(langCombo, GBC.eol().fill(GBC.HORIZONTAL));
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
 
@@ -68,18 +68,18 @@ public class LanguagePreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        if(langCombo.getSelectedItem() == null)
+        if (langCombo.getSelectedItem() == null)
             return Main.pref.put("language", null);
         else
             return Main.pref.put("language",
-                    LanguageInfo.getJOSMLocaleCode((Locale)langCombo.getSelectedItem()));
+                    LanguageInfo.getJOSMLocaleCode((Locale) langCombo.getSelectedItem()));
     }
 
     private static class LanguageComboBoxModel extends DefaultComboBoxModel<Locale> {
         private final List<Locale> data = new ArrayList<>();
 
-        public LanguageComboBoxModel(){
-            data.add(0,null);
+        public LanguageComboBoxModel() {
+            data.add(0, null);
             data.addAll(Arrays.asList(I18n.getAvailableTranslations()));
         }
 
@@ -112,9 +112,14 @@ public class LanguagePreference implements SubPreferenceSetting {
 
     private static class LanguageCellRenderer implements ListCellRenderer<Locale> {
         private final DefaultListCellRenderer dispatch;
+
+        /**
+         * Constructs a new {@code LanguageCellRenderer}.
+         */
         public LanguageCellRenderer() {
             this.dispatch = new DefaultListCellRenderer();
         }
+
         @Override
         public Component getListCellRendererComponent(JList<? extends Locale> list, Locale l,
                 int index, boolean isSelected, boolean cellHasFocus) {

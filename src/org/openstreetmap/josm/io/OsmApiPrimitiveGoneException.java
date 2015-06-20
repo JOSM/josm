@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
  * which is already deleted on the server.
  *
  */
-public class OsmApiPrimitiveGoneException extends OsmApiException{
+public class OsmApiPrimitiveGoneException extends OsmApiException {
     /**
      * The regexp pattern for the error header replied by the OSM API
      */

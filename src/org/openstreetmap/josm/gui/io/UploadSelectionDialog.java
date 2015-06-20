@@ -69,7 +69,7 @@ public class UploadSelectionDialog extends JDialog {
         pnl.setLayout(new BorderLayout());
         JLabel lbl = new JLabel(
                 tr("<html>Mark modified objects <strong>from the current selection</strong> to be uploaded to the server.</html>"));
-        lbl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnl.add(lbl, BorderLayout.NORTH);
         pnl.add(new JScrollPane(lstSelectedPrimitives = new OsmPrimitiveList()), BorderLayout.CENTER);
         lbl.setLabelFor(lstSelectedPrimitives);
@@ -80,7 +80,7 @@ public class UploadSelectionDialog extends JDialog {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
         JLabel lbl = new JLabel(tr("<html>Mark <strong>locally deleted objects</strong> to be deleted on the server.</html>"));
-        lbl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnl.add(lbl, BorderLayout.NORTH);
         pnl.add(new JScrollPane(lstDeletedPrimitives = new OsmPrimitiveList()), BorderLayout.CENTER);
         lbl.setLabelFor(lstDeletedPrimitives);
@@ -168,7 +168,7 @@ public class UploadSelectionDialog extends JDialog {
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             Main.parent,
-                            new Dimension(200,400)
+                            new Dimension(200, 400)
                     )
             ).applySafe(this);
         } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
@@ -193,7 +193,7 @@ public class UploadSelectionDialog extends JDialog {
         }
 
         public OsmPrimitiveListModel getOsmPrimitiveListModel() {
-            return (OsmPrimitiveListModel)getModel();
+            return (OsmPrimitiveListModel) getModel();
         }
     }
 
@@ -221,9 +221,9 @@ public class UploadSelectionDialog extends JDialog {
             this.data = data;
             sort();
             if (data != null) {
-                fireContentsChanged(this,0, data.size());
+                fireContentsChanged(this, 0, data.size());
             } else {
-                fireContentsChanged(this, 0,0);
+                fireContentsChanged(this, 0, 0);
             }
         }
 
@@ -288,7 +288,7 @@ public class UploadSelectionDialog extends JDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(lstSelectedPrimitives.getSelectedIndex() >=0
+            setEnabled(lstSelectedPrimitives.getSelectedIndex() >= 0
                     || lstDeletedPrimitives.getSelectedIndex() >= 0);
         }
 

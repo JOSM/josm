@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class OverlappingWays extends Test {
 
     /** Bag of all way segments */
-    private MultiMap<Pair<Node,Node>, WaySegment> nodePairs;
+    private MultiMap<Pair<Node, Node>, WaySegment> nodePairs;
 
     protected static final int OVERLAPPING_HIGHWAY = 101;
     protected static final int OVERLAPPING_RAILWAY = 102;

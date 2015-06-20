@@ -27,28 +27,28 @@ public class ProjectionTest {
             testProj(Projections.getProjectionByCode("EPSG:3301")); // Lambert EST
         }
 
-        for (int i=0; i<=3; ++i) {
+        for (int i = 0; i <= 3; ++i) {
             testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(27561+i))); // Lambert 4 Zones France
         }
 
-        for (int i=0; i<=4; ++i) {
+        for (int i = 0; i <= 4; ++i) {
             testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(2176+i))); // PUWG Poland
         }
 
         testProj(Projections.getProjectionByCode("EPSG:21781")); // Swiss grid
 
-        for (int i=0; i<=60; ++i) {
+        for (int i = 0; i <= 60; ++i) {
             testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(32601+i))); // UTM North
             testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(32701+i))); // UTM South
         }
 
         if (!"yes".equals(System.getProperty("suppressPermanentFailure"))) {
-            for (int i=0; i<=4; ++i) {
+            for (int i = 0; i <= 4; ++i) {
                 testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(2969+i))); // UTM France DOM
             }
         }
 
-        for (int i=0; i<=8; ++i) {
+        for (int i = 0; i <= 8; ++i) {
             testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(3942+i))); // Lambert CC9 Zones France
         }
 
@@ -64,14 +64,14 @@ public class ProjectionTest {
             Bounds b = p.getWorldBoundsLatLon();
 
             text += String.format("*** %s %s%n", p.toString(), p.toCode());
-            for (int num=0; num < 1000; ++num) {
+            for (int num = 0; num < 1000; ++num) {
 
                 double lat = rand.nextDouble() * (b.getMax().lat() - b.getMin().lat()) + b.getMin().lat();
                 double lon = rand.nextDouble() * (b.getMax().lon() - b.getMin().lon()) + b.getMin().lon();
 
                 LatLon ll = new LatLon(lat, lon);
 
-                for (int i=0; i<10; ++i) {
+                for (int i = 0; i < 10; ++i) {
                     EastNorth en = p.latlon2eastNorth(ll);
                     ll = p.eastNorth2latlon(en);
                 }

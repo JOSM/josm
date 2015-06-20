@@ -99,11 +99,11 @@ public final class PluginHandler {
             new DeprecatedPlugin("ywms", IN_CORE),
             new DeprecatedPlugin("tways-0.2", IN_CORE),
             new DeprecatedPlugin("geotagged", IN_CORE),
-            new DeprecatedPlugin("landsat", tr("replaced by new {0} plugin","lakewalker")),
+            new DeprecatedPlugin("landsat", tr("replaced by new {0} plugin", "lakewalker")),
             new DeprecatedPlugin("namefinder", IN_CORE),
             new DeprecatedPlugin("waypoints", IN_CORE),
             new DeprecatedPlugin("slippy_map_chooser", IN_CORE),
-            new DeprecatedPlugin("tcx-support", tr("replaced by new {0} plugin","dataimport")),
+            new DeprecatedPlugin("tcx-support", tr("replaced by new {0} plugin", "dataimport")),
             new DeprecatedPlugin("usertools", IN_CORE),
             new DeprecatedPlugin("AgPifoJ", IN_CORE),
             new DeprecatedPlugin("utilsplugin", IN_CORE),
@@ -116,9 +116,9 @@ public final class PluginHandler {
             new DeprecatedPlugin("slippymap", IN_CORE),
             new DeprecatedPlugin("wmsplugin", IN_CORE),
             new DeprecatedPlugin("ParallelWay", IN_CORE),
-            new DeprecatedPlugin("dumbutils", tr("replaced by new {0} plugin","utilsplugin2")),
+            new DeprecatedPlugin("dumbutils", tr("replaced by new {0} plugin", "utilsplugin2")),
             new DeprecatedPlugin("ImproveWayAccuracy", IN_CORE),
-            new DeprecatedPlugin("Curves", tr("replaced by new {0} plugin","utilsplugin2")),
+            new DeprecatedPlugin("Curves", tr("replaced by new {0} plugin", "utilsplugin2")),
             new DeprecatedPlugin("epsg31287", tr("replaced by new {0} plugin", "proj4j")),
             new DeprecatedPlugin("licensechange", tr("no longer required")),
             new DeprecatedPlugin("restart", IN_CORE),
@@ -240,7 +240,6 @@ public final class PluginHandler {
      * Add here all ClassLoader whose resource should be searched.
      */
     private static final List<ClassLoader> sources = new LinkedList<>();
-
     static {
         try {
             sources.add(ClassLoader.getSystemClassLoader());
@@ -320,7 +319,7 @@ public final class PluginHandler {
             String msg =  tr("<html>Loading of the plugin \"{0}\" was requested."
                     + "<br>This plugin is no longer developed and very likely will produce errors."
                     +"<br>It should be disabled.<br>Delete from preferences?</html>", unmaintained);
-            if (confirmDisablePlugin(parent, msg,unmaintained)) {
+            if (confirmDisablePlugin(parent, msg, unmaintained)) {
                 Main.pref.removeFromCollection("plugins", unmaintained);
                 plugins.remove(unmaintained);
             }
@@ -817,10 +816,10 @@ public final class PluginHandler {
             Future<?> future = service.submit(task);
             try {
                 future.get();
-            } catch(ExecutionException e) {
+            } catch (ExecutionException e) {
                 Main.error(e);
                 return null;
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while loading locally available plugin information");
                 return null;
             }
@@ -878,7 +877,7 @@ public final class PluginHandler {
             filterDeprecatedPlugins(parent, plugins);
             monitor.subTask(tr("Removing unmaintained plugins..."));
             filterUnmaintainedPlugins(parent, plugins);
-            Map<String, PluginInformation> infos = loadLocallyAvailablePluginInformation(monitor.createSubTaskMonitor(1,false));
+            Map<String, PluginInformation> infos = loadLocallyAvailablePluginInformation(monitor.createSubTaskMonitor(1, false));
             List<PluginInformation> ret = new LinkedList<>();
             for (Iterator<String> it = plugins.iterator(); it.hasNext();) {
                 String plugin = it.next();
@@ -1041,7 +1040,7 @@ public final class PluginHandler {
                 // try to update the locally installed plugins
                 //
                 pluginDownloadTask = new PluginDownloadTask(
-                        monitor.createSubTaskMonitor(1,false),
+                        monitor.createSubTaskMonitor(1, false),
                         pluginsToDownload,
                         tr("Update plugins")
                 );
@@ -1049,11 +1048,11 @@ public final class PluginHandler {
                 future = service.submit(pluginDownloadTask);
                 try {
                     future.get();
-                } catch(ExecutionException e) {
+                } catch (ExecutionException e) {
                     Main.error(e);
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
-                } catch(InterruptedException e) {
+                } catch (InterruptedException e) {
                     Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while updating plugins");
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
@@ -1173,7 +1172,8 @@ public final class PluginHandler {
             String pluginName = updatedPlugin.getName().substring(0, updatedPlugin.getName().length() - 8);
             if (plugin.exists() && !plugin.delete() && dowarn) {
                 Main.warn(tr("Failed to delete outdated plugin ''{0}''.", plugin.toString()));
-                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.",
+                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. " +
+                        "Skipping installation. JOSM is still going to load the old plugin version.",
                         pluginName));
                 continue;
             }
@@ -1191,7 +1191,8 @@ public final class PluginHandler {
             if (!updatedPlugin.renameTo(plugin) && dowarn) {
                 Main.warn(tr("Failed to install plugin ''{0}'' from temporary download file ''{1}''. Renaming failed.",
                         plugin.toString(), updatedPlugin.toString()));
-                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.",
+                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. " +
+                        "Skipping installation. JOSM is still going to load the old plugin version.",
                         pluginName));
             }
         }
@@ -1249,7 +1250,7 @@ public final class PluginHandler {
             }
             try {
                 pi.updateFromJar(new PluginInformation(downloadedPluginFile, pi.name));
-            } catch(PluginException e) {
+            } catch (PluginException e) {
                 Main.error(e);
             }
         }
@@ -1272,7 +1273,7 @@ public final class PluginHandler {
                 new ButtonSpec(
                         tr("Keep plugin"),
                         ImageProvider.get("cancel"),
-                        tr("Click to keep the plugin ''{0}''",plugin.getPluginInformation().name),
+                        tr("Click to keep the plugin ''{0}''", plugin.getPluginInformation().name),
                         null /* no specific help context */
                 )
         };
@@ -1357,7 +1358,7 @@ public final class PluginHandler {
             return null;
 
         Set<String> plugins = new HashSet<>(
-                Main.pref.getCollection("plugins",Collections.<String>emptySet())
+                Main.pref.getCollection("plugins", Collections.<String>emptySet())
         );
         final PluginInformation pluginInfo = plugin.getPluginInformation();
         if (!plugins.contains(pluginInfo.name))
@@ -1472,7 +1473,7 @@ public final class PluginHandler {
             gc.fill = GridBagConstraints.BOTH;
             gc.weightx = 1.0;
             gc.weighty = 1.0;
-            gc.insets = new Insets(5,5,5,5);
+            gc.insets = new Insets(5, 5, 5, 5);
             add(lblMessage = new JMultilineLabel(""), gc);
             lblMessage.setFont(lblMessage.getFont().deriveFont(Font.PLAIN));
 

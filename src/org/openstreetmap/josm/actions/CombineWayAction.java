@@ -219,7 +219,7 @@ public class CombineWayAction extends JosmAction {
             return;
         final Way selectedWay = combineResult.a;
         Main.main.undoRedo.add(combineResult.b);
-        if(selectedWay != null) {
+        if (selectedWay != null) {
             Runnable guiTask = new Runnable() {
                 @Override
                 public void run() {
@@ -271,7 +271,7 @@ public class CombineWayAction extends JosmAction {
          * Constructs a new {@code NodePair}.
          * @param pair An existing {@code Pair} of nodes
          */
-        public NodePair(Pair<Node,Node> pair) {
+        public NodePair(Pair<Node, Node> pair) {
             this(pair.a, pair.b);
         }
 
@@ -316,7 +316,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         public NodePair swap() {
-            return new NodePair(b,a);
+            return new NodePair(b, a);
         }
 
         @Override
@@ -374,7 +374,7 @@ public class CombineWayAction extends JosmAction {
     public static class NodeGraph {
         public static List<NodePair> buildNodePairs(Way way, boolean directed) {
             List<NodePair> pairs = new ArrayList<>();
-            for (Pair<Node,Node> pair: way.getNodePairs(false /* don't sort */)) {
+            for (Pair<Node, Node> pair: way.getNodePairs(false /* don't sort */)) {
                 pairs.add(new NodePair(pair));
                 if (!directed) {
                     pairs.add(new NodePair(pair).swap());
@@ -393,7 +393,7 @@ public class CombineWayAction extends JosmAction {
 
         public static List<NodePair> eliminateDuplicateNodePairs(List<NodePair> pairs) {
             List<NodePair> cleaned = new ArrayList<>();
-            for(NodePair p: pairs) {
+            for (NodePair p: pairs) {
                 if (!cleaned.contains(p) && !cleaned.contains(p.swap())) {
                     cleaned.add(p);
                 }
@@ -450,7 +450,7 @@ public class CombineWayAction extends JosmAction {
             boolean dir = true;
             NodeGraph graph = new NodeGraph();
             for (Way w: ways) {
-                if(!w.isNew()) {
+                if (!w.isNew()) {
                     /* let the first non-new way give the direction (see #5880) */
                     graph.add(buildNodePairs(w, dir));
                     dir = false;
@@ -539,7 +539,7 @@ public class CombineWayAction extends JosmAction {
         protected Node getStartNode() {
             Set<Node> nodes = getNodes();
             for (Node n: nodes) {
-                if (successors.get(n) != null && successors.get(n).size() ==1)
+                if (successors.get(n) != null && successors.get(n).size() == 1)
                     return n;
             }
             return null;
@@ -611,10 +611,10 @@ public class CombineWayAction extends JosmAction {
             Stack<NodePair> path = new Stack<>();
             Stack<NodePair> nextPairs  = new Stack<>();
             nextPairs.addAll(getOutboundPairs(startNode));
-            while(!nextPairs.isEmpty()) {
-                NodePair cur= nextPairs.pop();
+            while (!nextPairs.isEmpty()) {
+                NodePair cur = nextPairs.pop();
                 if (!path.contains(cur) && !path.contains(cur.swap())) {
-                    while(!path.isEmpty() && !path.peek().isPredecessorOf(cur)) {
+                    while (!path.isEmpty() && !path.peek().isPredecessorOf(cur)) {
                         path.pop();
                     }
                     path.push(cur);

@@ -41,7 +41,7 @@ public class ColorProperty extends AbstractProperty<Color> implements ColorKey {
      * @return The color key for this property
      */
     public static String getColorKey(String colName) {
-        return colName == null ? null : colName.toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9]+",".");
+        return colName == null ? null : colName.toLowerCase(Locale.ENGLISH).replaceAll("[^a-z0-9]+", ".");
     }
 
     @Override

@@ -19,7 +19,7 @@ public class RelationTest {
         JOSMFixture.createUnitTestFixture().init();
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void createNewRelation() {
         new Relation(null);
     }

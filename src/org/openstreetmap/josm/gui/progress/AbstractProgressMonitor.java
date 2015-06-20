@@ -43,9 +43,13 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
     private Request requestedState = new Request();
 
     protected abstract void doBeginTask();
+
     protected abstract void doFinishTask();
+
     protected abstract void doSetIntermediate(boolean value);
+
     protected abstract void doSetTitle(String title);
+
     protected abstract void doSetCustomText(String title);
 
     protected AbstractProgressMonitor(CancelHandler cancelHandler) {
@@ -173,12 +177,12 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
             newTitle = taskTitle;
         }
 
-        if (newTitle == null?shownTitle != null:!newTitle.equals(shownTitle)) {
+        if (newTitle == null ? shownTitle != null : !newTitle.equals(shownTitle)) {
             shownTitle = newTitle;
             doSetTitle(shownTitle);
         }
 
-        if (customText == null?shownCustomText != null:!customText.equals(shownCustomText)) {
+        if (customText == null ? shownCustomText != null : !customText.equals(shownCustomText)) {
             shownCustomText = customText;
             doSetCustomText(shownCustomText);
         }
@@ -240,7 +244,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
             childProgress = 1;
         }
         checkState(State.IN_TASK, State.IN_SUBTASK);
-        updateProgress(ticksCount == 0?0:(ticks + childProgress * childTicks) / ticksCount);
+        updateProgress(ticksCount == 0 ? 0 : (ticks + childProgress * childTicks) / ticksCount);
     }
 
     @Override

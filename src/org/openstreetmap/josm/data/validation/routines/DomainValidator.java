@@ -114,7 +114,7 @@ public final class DomainValidator extends AbstractValidator {
      * @return the singleton instance of this validator
      */
     public static DomainValidator getInstance(boolean allowLocal) {
-       if(allowLocal) {
+       if (allowLocal) {
           return DOMAIN_VALIDATOR_WITH_LOCAL;
        }
        return DOMAIN_VALIDATOR;
@@ -137,7 +137,7 @@ public final class DomainValidator extends AbstractValidator {
         String[] groups = domainRegex.match(domain);
         if (groups != null && groups.length > 0) {
             return isValidTld(groups[0]);
-        } else if(allowLocal) {
+        } else if (allowLocal) {
             if (hostnameRegex.isValid(domain)) {
                return true;
             }
@@ -153,7 +153,7 @@ public final class DomainValidator extends AbstractValidator {
      * @return true if the parameter is a TLD
      */
     public boolean isValidTld(String tld) {
-        if(allowLocal && isValidLocalTld(tld)) {
+        if (allowLocal && isValidLocalTld(tld)) {
            return true;
         }
         return isValidInfrastructureTld(tld)

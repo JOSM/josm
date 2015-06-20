@@ -74,7 +74,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public static void registerFormatHook(NameFormatterHook hook) {
         if (hook == null) return;
         if (!formatHooks.contains(hook)) {
-            formatHooks.add(0,hook);
+            formatHooks.add(0, hook);
         }
     }
 
@@ -156,13 +156,13 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 }
                 if (n == null) {
                     String s;
-                    if((s = node.get("addr:housename")) != null) {
+                    if ((s = node.get("addr:housename")) != null) {
                         /* I18n: name of house as parameter */
                         n = tr("House {0}", s);
                     }
-                    if(n == null && (s = node.get("addr:housenumber")) != null) {
+                    if (n == null && (s = node.get("addr:housenumber")) != null) {
                         String t = node.get("addr:street");
-                        if(t != null) {
+                        if (t != null) {
                             /* I18n: house number, street as parameter, number should remain
                         before street for better visibility */
                             n =  tr("House number {0} at {1}", s, t);
@@ -255,13 +255,13 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 }
                 if (n == null) {
                     String s;
-                    if((s = way.get("addr:housename")) != null) {
+                    if ((s = way.get("addr:housename")) != null) {
                         /* I18n: name of house as parameter */
                         n = tr("House {0}", s);
                     }
-                    if(n == null && (s = way.get("addr:housenumber")) != null) {
+                    if (n == null && (s = way.get("addr:housenumber")) != null) {
                         String t = way.get("addr:street");
-                        if(t != null) {
+                        if (t != null) {
                             /* I18n: house number, street as parameter, number should remain
                         before street for better visibility */
                             n =  tr("House number {0} at {1}", s, t);
@@ -271,8 +271,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                         }
                     }
                 }
-                if(n == null && way.get("building") != null) n = tr("building");
-                if(n == null || n.isEmpty()) {
+                if (n == null && way.get("building") != null) n = tr("building");
+                if (n == null || n.isEmpty()) {
                     n = String.valueOf(way.getId());
                 }
 
@@ -401,7 +401,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             }
 
             if (r1.getMembersCount() != r2.getMembersCount())
-                return (r1.getMembersCount() > r2.getMembersCount())?1:-1;
+                return (r1.getMembersCount() > r2.getMembersCount()) ? 1 : -1;
 
             int comp = Boolean.valueOf(r1.hasIncompleteMembers()).compareTo(Boolean.valueOf(r2.hasIncompleteMembers()));
             if (comp != 0)
@@ -495,7 +495,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      */
     @Override
     public String format(Changeset changeset) {
-        return tr("Changeset {0}",changeset.getId());
+        return tr("Changeset {0}", changeset.getId());
     }
 
     /**
@@ -525,7 +525,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
               .append("</strong>=");
             String value = tags.get(key);
             while (!value.isEmpty()) {
-                sb.append(value.substring(0,Math.min(50, value.length())));
+                sb.append(value.substring(0, Math.min(50, value.length())));
                 if (value.length() > 50) {
                     sb.append("<br>");
                     value = value.substring(50);

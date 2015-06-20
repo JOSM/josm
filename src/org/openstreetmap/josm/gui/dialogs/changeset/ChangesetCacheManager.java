@@ -261,12 +261,12 @@ public class ChangesetCacheManager extends JFrame {
                 model.getSelectionModel()
         );
         tblChangesets.addMouseListener(new MouseEventHandler());
-        tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "showDetails");
+        tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "showDetails");
         tblChangesets.getActionMap().put("showDetails", new ShowDetailAction());
         model.getSelectionModel().addListSelectionListener(new ChangesetDetailViewSynchronizer());
 
         // activate DEL on the table
-        tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "removeFromCache");
+        tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "removeFromCache");
         tblChangesets.getActionMap().put("removeFromCache", actRemoveFromCacheAction);
 
         pnl.add(new JScrollPane(tblChangesets), BorderLayout.CENTER);
@@ -290,7 +290,8 @@ public class ChangesetCacheManager extends JFrame {
         HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetManager"));
 
         // make the dialog respond to ESC
-        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "cancelAndClose");
+        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancelAndClose");
         getRootPane().getActionMap().put("cancelAndClose", new CancelAction());
 
         // install a window event handler
@@ -311,7 +312,7 @@ public class ChangesetCacheManager extends JFrame {
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             getParent(),
-                            new Dimension(1000,600)
+                            new Dimension(1000, 600)
                     )
             ).applySafe(this);
             needsSplitPaneAdjustment = true;
@@ -369,7 +370,7 @@ public class ChangesetCacheManager extends JFrame {
     class QueryAction extends AbstractAction {
         public QueryAction() {
             putValue(NAME, tr("Query"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs","search"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
             putValue(SHORT_DESCRIPTION, tr("Launch the dialog for querying changesets"));
             setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
@@ -479,7 +480,7 @@ public class ChangesetCacheManager extends JFrame {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             List<Changeset> selected = model.getSelectedChangesets();
-            ChangesetHeaderDownloadTask task =ChangesetHeaderDownloadTask.buildTaskForChangesets(ChangesetCacheManager.this,selected);
+            ChangesetHeaderDownloadTask task = ChangesetHeaderDownloadTask.buildTaskForChangesets(ChangesetCacheManager.this, selected);
             ChangesetCacheManager.getInstance().runDownloadTask(task);
         }
 
@@ -507,7 +508,7 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetCacheManager.this,model.getSelectedChangesetIds());
+            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetCacheManager.this, model.getSelectedChangesetIds());
             ChangesetCacheManager.getInstance().runDownloadTask(task);
         }
 

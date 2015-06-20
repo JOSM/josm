@@ -32,9 +32,9 @@ public class AllFormatsImporter extends FileImporter {
     private static String getAllExtensions() {
         Iterator<FileImporter> imp = ExtensionFileFilter.importers.iterator();
         StringBuilder ext = new StringBuilder();
-        while(imp.hasNext()) {
+        while (imp.hasNext()) {
             FileImporter fi = imp.next();
-            if(fi instanceof AllFormatsImporter) {
+            if (fi instanceof AllFormatsImporter) {
                 continue;
             }
             ext.append(fi.filter.getExtensions()).append(',');

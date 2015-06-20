@@ -186,7 +186,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
             for (File f : sel) {
 
-                if(canceled) {
+                if (canceled) {
                     break;
                 }
 
@@ -328,6 +328,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     private static List<Action> menuAdditions = new LinkedList<>();
+
     public static void registerMenuAddition(Action addition) {
         menuAdditions.add(addition);
     }
@@ -482,7 +483,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
             if (updateOffscreenBuffer) {
                 Graphics2D tempG = offscreenBuffer.createGraphics();
-                tempG.setColor(new Color(0,0,0,0));
+                tempG.setColor(new Color(0, 0, 0, 0));
                 Composite saveComp = tempG.getComposite();
                 tempG.setComposite(AlphaComposite.Clear);   // remove the old images
                 tempG.fillRect(0, 0, width, height);
@@ -783,8 +784,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     tr("Delete image file from disk"),
                     new String[] {tr("Cancel"), tr("Delete")})
             .setButtonIcons(new String[] {"cancel", "dialogs/delete"})
-            .setContent(new JLabel(tr("<html><h3>Delete the file {0} from disk?<p>The image file will be permanently lost!</h3></html>"
-                    ,toDelete.getFile().getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"),SwingConstants.LEFT))
+            .setContent(new JLabel(tr("<html><h3>Delete the file {0} from disk?<p>The image file will be permanently lost!</h3></html>",
+                    toDelete.getFile().getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"), SwingConstants.LEFT))
                     .toggleEnable("geoimage.deleteimagefromdisk")
                     .setCancelButton(1)
                     .setDefaultButton(2)
@@ -940,8 +941,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             private final boolean isMapModeOk() {
                 return Main.map.mapMode == null || isSupportedMapMode(Main.map.mapMode);
             }
-            @Override public void mousePressed(MouseEvent e) {
 
+            @Override
+            public void mousePressed(MouseEvent e) {
                 if (e.getButton() != MouseEvent.BUTTON1)
                     return;
                 if (isVisible() && isMapModeOk()) {
@@ -949,7 +951,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 }
             }
 
-            @Override public void mouseReleased(MouseEvent ev) {
+            @Override
+            public void mouseReleased(MouseEvent ev) {
                 if (ev.getButton() != MouseEvent.BUTTON1)
                     return;
                 if (data == null || !isVisible() || !isMapModeOk())

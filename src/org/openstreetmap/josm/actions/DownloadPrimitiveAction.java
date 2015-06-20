@@ -56,7 +56,7 @@ public class DownloadPrimitiveAction extends JosmAction {
             @Override
             public void run() {
                 final List<PrimitiveId> downloaded = task.getDownloadedId();
-                if(downloaded != null) {
+                if (downloaded != null) {
                     GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {

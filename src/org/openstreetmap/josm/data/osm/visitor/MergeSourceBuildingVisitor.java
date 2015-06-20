@@ -94,7 +94,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     protected void rememberRelation(Relation r) {
         RelationData clone;
         if (isAlreadyRemembered(r)) {
-            clone = (RelationData)mappedPrimitives.get(r);
+            clone = (RelationData) mappedPrimitives.get(r);
         } else {
             clone = r.save();
             mappedPrimitives.put(r, clone);

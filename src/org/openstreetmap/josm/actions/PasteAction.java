@@ -67,7 +67,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         boolean incomplete = false;
         for (PrimitiveData data : pasteBuffer.getAll()) {
             if (data instanceof NodeData) {
-                NodeData n = (NodeData)data;
+                NodeData n = (NodeData) data;
                 if (n.getEastNorth() != null) {
                     double east = n.getEastNorth().east();
                     double north = n.getEastNorth().north();
@@ -96,7 +96,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
             final Point mp = MouseInfo.getPointerInfo().getLocation();
             final Point tl = Main.map.mapView.getLocationOnScreen();
             final Point pos = new Point(mp.x-tl.x, mp.y-tl.y);
-            if(Main.map.mapView.contains(pos)) {
+            if (Main.map.mapView.contains(pos)) {
                 mPosition = Main.map.mapView.getEastNorth(pos.x, pos.y);
             }
         }
@@ -132,22 +132,22 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         // Update references in copied buffer
         for (PrimitiveData data:bufferCopy) {
             if (data instanceof NodeData) {
-                NodeData nodeData = (NodeData)data;
+                NodeData nodeData = (NodeData) data;
                 if (Main.main.getEditLayer() == source) {
                     nodeData.setEastNorth(nodeData.getEastNorth().add(offsetEast, offsetNorth));
                 }
             } else if (data instanceof WayData) {
                 List<Long> newNodes = new ArrayList<>();
-                for (Long oldNodeId: ((WayData)data).getNodes()) {
+                for (Long oldNodeId: ((WayData) data).getNodes()) {
                     Long newNodeId = newNodeIds.get(oldNodeId);
                     if (newNodeId != null) {
                         newNodes.add(newNodeId);
                     }
                 }
-                ((WayData)data).setNodes(newNodes);
+                ((WayData) data).setNodes(newNodes);
             } else if (data instanceof RelationData) {
                 List<RelationMemberData> newMembers = new ArrayList<>();
-                for (RelationMemberData member: ((RelationData)data).getMembers()) {
+                for (RelationMemberData member: ((RelationData) data).getMembers()) {
                     OsmPrimitiveType memberType = member.getMemberType();
                     Long newId = null;
                     switch (memberType) {
@@ -165,12 +165,11 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
                         newMembers.add(new RelationMemberData(member.getRole(), memberType, newId));
                     }
                 }
-                ((RelationData)data).setMembers(newMembers);
+                ((RelationData) data).setMembers(newMembers);
             }
         }
 
         /* Now execute the commands to add the duplicated contents of the paste buffer to the map */
-
         Main.main.undoRedo.add(new AddPrimitivesCommand(bufferCopy, toSelect));
         Main.map.mapView.repaint();
     }

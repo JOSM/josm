@@ -71,7 +71,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     private final HeaderPanel pnlHeader = new HeaderPanel();
 
     protected void buildModels() {
-        DefaultListSelectionModel selectionModel =new DefaultListSelectionModel();
+        DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         model = new ChangesetContentTableModel(selectionModel);
         actDownloadContentAction = new DownloadChangesetContentAction();
         actDownloadContentAction.initProperties(currentChangeset);
@@ -126,7 +126,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     }
 
     protected final void build() {
-        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         setLayout(new BorderLayout());
         buildModels();
 
@@ -166,9 +166,9 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     /* ---------------------------------------------------------------------------- */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(!evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
+        if (!evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
             return;
-        Changeset cs = (Changeset)evt.getNewValue();
+        Changeset cs = (Changeset) evt.getNewValue();
         setCurrentChangeset(cs);
     }
 
@@ -200,7 +200,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         @Override
         public void actionPerformed(ActionEvent evt) {
             if (currentChangeset == null) return;
-            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetContentPanel.this,currentChangeset.getId());
+            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetContentPanel.this, currentChangeset.getId());
             ChangesetCacheManager.getInstance().runDownloadTask(task);
         }
 

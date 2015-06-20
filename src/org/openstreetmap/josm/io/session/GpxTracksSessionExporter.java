@@ -120,12 +120,12 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
 
         topRow.add(export, GBC.std());
         topRow.add(lbl, GBC.std());
-        topRow.add(GBC.glue(1,0), GBC.std().fill(GBC.HORIZONTAL));
+        topRow.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
         p.add(topRow, GBC.eol().fill(GBC.HORIZONTAL));
-        p.add(lblData, GBC.std().insets(10,0,0,0));
+        p.add(lblData, GBC.std().insets(10, 0, 0, 0));
         p.add(link, GBC.std());
         p.add(include, GBC.eol());
-        p.add(cards, GBC.eol().insets(15,0,3,3));
+        p.add(cards, GBC.eol().insets(15, 0, 3, 3));
 
         export.addItemListener(new ItemListener() {
             @Override

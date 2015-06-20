@@ -102,6 +102,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
 
     @Override
     public void initSystemShortcuts() {
+        // CHECKSTYLE.OFF: LineLength
         //Shortcut.registerSystemCut("system:menuexit", tr("reserved"), VK_Q, CTRL_DOWN_MASK);
         Shortcut.registerSystemShortcut("system:duplicate", tr("reserved"), VK_D, CTRL_DOWN_MASK); // not really system, but to avoid odd results
 
@@ -168,6 +169,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         Shortcut.registerSystemShortcut("microsoft-reserved-51", tr("reserved"), VK_SHIFT, ALT_DOWN_MASK).setAutomatic();   // Switch the input language when multiple input languages are enabled
         Shortcut.registerSystemShortcut("microsoft-reserved-52", tr("reserved"), VK_SHIFT, CTRL_DOWN_MASK).setAutomatic();  // Switch the keyboard layout when multiple keyboard layouts are enabled
         //Shortcut.registerSystemCut("microsoft-reserved-53", tr("reserved"), ); // Change the reading direction of text in right-to-left reading languages (TODO: unclear)
+        // CHECKSTYLE.ON: LineLength
     }
 
     @Override

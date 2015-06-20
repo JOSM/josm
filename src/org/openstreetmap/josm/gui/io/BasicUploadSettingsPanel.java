@@ -98,7 +98,7 @@ public class BasicUploadSettingsPanel extends JPanel {
 
     protected void build() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
+        setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         add(buildUploadCommentPanel(), BorderLayout.NORTH);
         add(pnlUploadParameterSummary, BorderLayout.CENTER);
     }
@@ -135,6 +135,7 @@ public class BasicUploadSettingsPanel extends JPanel {
                             handler.actionPerformed(new ActionEvent(hcb, 0, "focusDown"));
                         }
                     }
+
                     @Override
                     public void keyReleased(KeyEvent e) {}
 
@@ -191,6 +192,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             destination.setComment(source.getText());
         }
+
         @Override
         public void focusLost(FocusEvent e) {
             destination.setComment(source.getText());
@@ -212,7 +214,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         @Override
         public void update(Observable o, Object arg) {
             if (!(o instanceof ChangesetCommentModel)) return;
-            String newComment = (String)arg;
+            String newComment = (String) arg;
             if (!destination.getText().equals(newComment)) {
                 destination.setText(newComment);
             }

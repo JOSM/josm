@@ -52,7 +52,7 @@ public class CloseChangesetDialog extends JDialog {
 
     protected JPanel buildTopPanel() {
         JPanel pnl = new JPanel();
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnl.setLayout(new BorderLayout());
         pnl.add(new JLabel(tr("<html>Please select the changesets you want to close</html>")), BorderLayout.CENTER);
         return pnl;
@@ -91,7 +91,7 @@ public class CloseChangesetDialog extends JDialog {
         getContentPane().add(buildCenterPanel(), BorderLayout.CENTER);
         getContentPane().add(buildSouthPanel(), BorderLayout.SOUTH);
 
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "escape");
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
         getRootPane().getActionMap().put("escape", new CancelAction());
         addWindowListener(new WindowEventHandler());
     }
@@ -101,7 +101,7 @@ public class CloseChangesetDialog extends JDialog {
         if (visible) {
             new WindowGeometry(
                     getClass().getName() + ".geometry",
-                    WindowGeometry.centerInWindow(Main.parent, new Dimension(300,300))
+                    WindowGeometry.centerInWindow(Main.parent, new Dimension(300, 300))
             ).applySafe(this);
         } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");

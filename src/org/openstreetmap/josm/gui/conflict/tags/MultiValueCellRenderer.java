@@ -148,7 +148,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
         if (value == null)
             return this;
 
-        MultiValueResolutionDecision decision = (MultiValueResolutionDecision)value;
+        MultiValueResolutionDecision decision = (MultiValueResolutionDecision) value;
         TagConflictResolverModel tagModel = (TagConflictResolverModel) table.getModel();
         boolean conflict = tagModel.getKeysWithConflicts().contains(tagModel.getKey(row));
         renderColors(decision, isSelected, conflict);

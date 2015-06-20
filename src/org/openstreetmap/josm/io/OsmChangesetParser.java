@@ -126,13 +126,13 @@ public final class OsmChangesetParser {
                 double minLon = 0;
                 try {
                     minLon = Double.parseDouble(min_lon);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "min_lon", min_lon));
                 }
                 double minLat = 0;
                 try {
                     minLat = Double.parseDouble(min_lat);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "min_lat", min_lat));
                 }
                 current.setMin(new LatLon(minLat, minLon));
@@ -142,13 +142,13 @@ public final class OsmChangesetParser {
                 double maxLon = 0;
                 try {
                     maxLon = Double.parseDouble(max_lon);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "max_lon", max_lon));
                 }
                 double maxLat = 0;
                 try {
                     maxLat = Double.parseDouble(max_lat);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "max_lat", max_lat));
                 }
                 current.setMax(new LatLon(maxLon, maxLat));
@@ -176,7 +176,7 @@ public final class OsmChangesetParser {
             int att = 0;
             try {
                 att = Integer.parseInt(value);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "id", value));
             }
             if (att < minAllowed) {
@@ -255,7 +255,7 @@ public final class OsmChangesetParser {
             try {
                 long id = Long.parseLong(uid);
                 return User.createOsmUser(id, name);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throwException(MessageFormat.format("Illegal value for attribute ''uid''. Got ''{0}''.", uid));
             }
             return null;
@@ -280,9 +280,9 @@ public final class OsmChangesetParser {
             InputSource inputSource = new InputSource(new InvalidXmlCharacterFilter(new InputStreamReader(source, StandardCharsets.UTF_8)));
             Utils.parseSafeSAX(inputSource, parser.new Parser());
             return parser.getChangesets();
-        } catch(ParserConfigurationException | SAXException e) {
+        } catch (ParserConfigurationException | SAXException e) {
             throw new IllegalDataException(e.getMessage(), e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new IllegalDataException(e);
         } finally {
             progressMonitor.finishTask();

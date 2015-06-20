@@ -37,13 +37,13 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
     private JButton btnCancel;
     private JButton btnInBackground;
     /** the text area and the scroll pane for the log */
-    private final JosmTextArea taLog = new JosmTextArea(5,50);
+    private final JosmTextArea taLog = new JosmTextArea(5, 50);
     private  JScrollPane spLog;
 
     private void initDialog() {
         setLayout(new GridBagLayout());
         JPanel pane = new JPanel(new GridBagLayout());
-        pane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        pane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         pane.add(currentAction, GBC.eol().fill(GBC.HORIZONTAL));
         pane.add(customText, GBC.eol().fill(GBC.HORIZONTAL));
         pane.add(progressBar, GBC.eop().fill(GBC.HORIZONTAL));
@@ -68,15 +68,18 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         addComponentListener(new ComponentListener() {
             @Override
             public void componentHidden(ComponentEvent e) {}
+
             @Override
             public void componentMoved(ComponentEvent e) {}
+
             @Override
             public void componentShown(ComponentEvent e) {}
+
             @Override
             public void componentResized(ComponentEvent ev) {
                 int w = getWidth();
-                if(w > 200) {
-                    Main.pref.putInteger("progressdialog.size",w);
+                if (w > 200) {
+                    Main.pref.putInteger("progressdialog.size", w);
                 }
             }
         });
@@ -110,7 +113,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      */
     @Override
     public void setCustomText(String text) {
-        if(text == null || text.trim().isEmpty()) {
+        if (text == null || text.trim().isEmpty()) {
             customText.setVisible(false);
             adjustLayout();
             return;

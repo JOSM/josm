@@ -41,6 +41,7 @@ public class BackupPreference implements SubPreferenceSetting {
             return new BackupPreference();
         }
     }
+
     private static final BooleanProperty PROP_KEEP_BACKUP = new BooleanProperty("save.keepbackup", false);
     private JCheckBox notification;
     private JCheckBox keepBackup;
@@ -52,7 +53,7 @@ public class BackupPreference implements SubPreferenceSetting {
     public void addGui(PreferenceTabbedPane gui) {
         JPanel panel = new VerticallyScrollablePanel();
         panel.setLayout(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         autosave = new JCheckBox(tr("Auto save enabled"));
         autosave.setSelected(AutosaveTask.PROP_AUTOSAVE_ENABLED.get());
@@ -60,26 +61,26 @@ public class BackupPreference implements SubPreferenceSetting {
 
         final JLabel autosaveIntervalLabel = new JLabel(tr("Auto save interval (seconds)"));
         autosaveIntervalLabel.setLabelFor(autosaveInterval);
-        panel.add(autosaveIntervalLabel, GBC.std().insets(60,0,0,0));
+        panel.add(autosaveIntervalLabel, GBC.std().insets(60, 0, 0, 0));
         autosaveInterval.setText(Integer.toString(AutosaveTask.PROP_INTERVAL.get()));
         autosaveInterval.setToolTipText(tr("Default value: {0}", AutosaveTask.PROP_INTERVAL.getDefaultValue()));
         autosaveInterval.setMinimumSize(autosaveInterval.getPreferredSize());
-        panel.add(autosaveInterval, GBC.eol().insets(5,0,0,5));
+        panel.add(autosaveInterval, GBC.eol().insets(5, 0, 0, 5));
 
         final JLabel backupPerLayerLabel = new JLabel(tr("Auto saved files per layer"));
         backupPerLayerLabel.setLabelFor(backupPerLayer);
-        panel.add(backupPerLayerLabel, GBC.std().insets(60,0,0,0));
+        panel.add(backupPerLayerLabel, GBC.std().insets(60, 0, 0, 0));
         backupPerLayer.setText(Integer.toString(AutosaveTask.PROP_FILES_PER_LAYER.get()));
         backupPerLayer.setToolTipText(tr("Default value: {0}", AutosaveTask.PROP_FILES_PER_LAYER.getDefaultValue()));
         backupPerLayer.setMinimumSize(backupPerLayer.getPreferredSize());
-        panel.add(backupPerLayer, GBC.eol().insets(5,0,0,10));
+        panel.add(backupPerLayer, GBC.eol().insets(5, 0, 0, 10));
 
         panel.add(new HtmlPanel(
             tr("<i>(Autosave stores the changed data layers in periodic intervals. " +
                 "The backups are saved in JOSM''s preference folder. " +
                 "In case of a crash, JOSM tries to recover the unsaved changes " +
                 "on next start.)</i>")),
-            GBC.eop().fill(GBC.HORIZONTAL).insets(5,0,0,10));
+            GBC.eop().fill(GBC.HORIZONTAL).insets(5, 0, 0, 10));
 
         panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
 
@@ -91,7 +92,7 @@ public class BackupPreference implements SubPreferenceSetting {
         panel.add(new HtmlPanel(
             tr("<i>(JOSM can keep a backup file when saving data layers. "+
                 "It appends ''~'' to the file name and saves it in the same folder.)</i>")),
-            GBC.eop().fill(GBC.HORIZONTAL).insets(5,0,0,0));
+            GBC.eop().fill(GBC.HORIZONTAL).insets(5, 0, 0, 0));
 
         panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
 
@@ -100,7 +101,7 @@ public class BackupPreference implements SubPreferenceSetting {
         notification.setToolTipText(tr("When saving, display a small notification"));
         panel.add(notification, GBC.eop());
 
-        ActionListener autosaveEnabled = new ActionListener(){
+        ActionListener autosaveEnabled = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean enabled = autosave.isSelected();

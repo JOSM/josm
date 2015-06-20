@@ -107,7 +107,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      */
     protected JPanel buildContentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // the panel with the list of uploaded objects
         //
@@ -157,7 +157,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     protected JPanel buildActionPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // -- upload button
         UploadAction uploadAction = new UploadAction();
@@ -170,11 +170,11 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         pnl.add(new SideButton(cancelAction));
         getRootPane().registerKeyboardAction(
                 cancelAction,
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW
         );
         pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/Upload"))));
-        HelpUtil.setHelpContext(getRootPane(),ht("/Dialog/Upload"));
+        HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/Upload"));
         return pnl;
     }
 
@@ -208,8 +208,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         // users can click on either of two links in the upload parameter
         // summary handler. This installs the handler for these two events.
-        // We simply select the appropriate tab in the tabbed pane with the
-        // configuration dialogs.
+        // We simply select the appropriate tab in the tabbed pane with the configuration dialogs.
         //
         pnlBasicUploadSettings.getUploadParameterSummaryPanel().setConfigurationParameterRequestListener(
                 new ConfigurationParameterRequestHandler() {
@@ -217,6 +216,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                     public void handleUploadStrategyConfigurationRequest() {
                         tpConfigPanels.setSelectedIndex(3);
                     }
+
                     @Override
                     public void handleChangesetConfigurationRequest() {
                         tpConfigPanels.setSelectedIndex(2);
@@ -351,7 +351,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             Main.parent,
-                            new Dimension(400,600)
+                            new Dimension(400, 600)
                     )
             ).applySafe(this);
             startUserInput();
@@ -428,7 +428,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                     new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).get(),
                     new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get(),
                     new ImageProvider("upload").setMaxSize(ImageSizes.LARGEICON).addOverlay(
-                            new ImageOverlay(new ImageProvider("warning-small"), 0.5,0.5,1.0,1.0)).get()});
+                            new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get()});
             dlg.setToolTipTexts(new String[] {
                     tr("Return to the previous dialog to enter a more descriptive comment"),
                     tr("Cancel and return to the previous dialog"),
@@ -541,7 +541,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ChangesetManagementPanel.SELECTED_CHANGESET_PROP)) {
-            Changeset cs = (Changeset)evt.getNewValue();
+            Changeset cs = (Changeset) evt.getNewValue();
             if (cs == null) {
                 tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
             } else {

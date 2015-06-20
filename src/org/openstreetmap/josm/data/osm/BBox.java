@@ -266,13 +266,13 @@ public class BBox {
 
     @Override
     public int hashCode() {
-        return (int)(ymin * xmin);
+        return (int) (ymin * xmin);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof BBox) {
-            BBox b = (BBox)o;
+            BBox b = (BBox) o;
             return b.xmax == xmax && b.ymax == ymax
                     && b.xmin == xmin && b.ymin == ymin;
         } else

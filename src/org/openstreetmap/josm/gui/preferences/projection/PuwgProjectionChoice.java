@@ -43,7 +43,6 @@ public class PuwgProjectionChoice extends ListProjectionChoice {
         return NAMES[index];
     }
 
-
     @Override
     public String[] allCodes() {
         return Utils.copyArray(CODES);
@@ -65,12 +64,11 @@ public class PuwgProjectionChoice extends ListProjectionChoice {
 
     @Override
     protected int zoneToIndex(String zone) {
-        for (int i=0; i<CODES.length; i++) {
+        for (int i = 0; i < CODES.length; i++) {
             if (zone.equals(CODES[i])) {
                 return i;
             }
         }
         return defaultIndex;
     }
-
 }

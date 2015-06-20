@@ -71,14 +71,14 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      */
     private Component renderer(Component def, OsmPrimitive value) {
         if (value != null && def instanceof JLabel) {
-            ((JLabel)def).setText(getComponentText(value));
+            ((JLabel) def).setText(getComponentText(value));
             ImageIcon icon = ImageProvider.get(value.getDisplayType());
             if (icon != null) {
-                ((JLabel)def).setIcon(icon);
+                ((JLabel) def).setIcon(icon);
             } else {
                 Main.warn("Null icon for "+value.getDisplayType());
             }
-            ((JLabel)def).setToolTipText(getComponentToolTipText(value));
+            ((JLabel) def).setToolTipText(getComponentToolTipText(value));
         }
         return def;
     }
@@ -92,9 +92,9 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      */
     private Component renderer(Component def, HistoryOsmPrimitive value) {
         if (value != null && def instanceof JLabel) {
-            ((JLabel)def).setText(value.getDisplayName(DefaultNameFormatter.getInstance()));
-            ((JLabel)def).setIcon(ImageProvider.get(value.getType()));
-            ((JLabel)def).setToolTipText(formatter.buildDefaultToolTip(value));
+            ((JLabel) def).setText(value.getDisplayName(DefaultNameFormatter.getInstance()));
+            ((JLabel) def).setIcon(ImageProvider.get(value.getType()));
+            ((JLabel) def).setToolTipText(formatter.buildDefaultToolTip(value));
         }
         return def;
     }

@@ -51,9 +51,9 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(BBoxChooser.BBOX_PROP)) {
             if (iGui != null) {
-                iGui.boundingBoxChanged((Bounds)evt.getNewValue(), this);
+                iGui.boundingBoxChanged((Bounds) evt.getNewValue(), this);
             }
-        } else if(evt.getPropertyName().equals(SlippyMapBBoxChooser.RESIZE_PROP)) {
+        } else if (evt.getPropertyName().equals(SlippyMapBBoxChooser.RESIZE_PROP)) {
             int w, h;
 
             // retrieve the size of the display

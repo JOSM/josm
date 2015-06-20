@@ -92,7 +92,7 @@ public class GeoJSONWriter {
             geomObj.add("type", "LineString");
             if (w instanceof Way) {
                 JsonArrayBuilder array = Json.createArrayBuilder();
-                for (Node n : ((Way)w).getNodes()) {
+                for (Node n : ((Way) w).getNodes()) {
                     LatLon ll = n.getCoor();
                     if (ll != null) {
                         array.add(getCoorArray(ll));

@@ -28,7 +28,7 @@ public class HistoryBrowserTest extends JFrame {
     private HistoryBrowser browser;
 
     protected void build() {
-        setSize(500,500);
+        setSize(500, 500);
         getContentPane().setLayout(new BorderLayout());
         browser = new HistoryBrowser();
         getContentPane().add(browser, BorderLayout.CENTER);
@@ -39,7 +39,7 @@ public class HistoryBrowserTest extends JFrame {
         HistoryDataSet ds = null;
         try {
             ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             Main.error(e);
             return;
         }
@@ -50,11 +50,11 @@ public class HistoryBrowserTest extends JFrame {
     /**
      * Constructs a new {@code HistoryBrowserTest}.
      */
-    public HistoryBrowserTest(){
+    public HistoryBrowserTest() {
         build();
         //populate(OsmPrimitiveType.NODE,354117);
         //populate(OsmPrimitiveType.WAY,37951);
-        populate(OsmPrimitiveType.RELATION,5055);
+        populate(OsmPrimitiveType.RELATION, 5055);
 
     }
 

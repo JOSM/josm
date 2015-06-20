@@ -176,7 +176,7 @@ public class RemoteControlHttpsServer extends Thread {
             int colonpos;
             String[] ps = san.split(",");
             GeneralNames gnames = new GeneralNames();
-            for(String item: ps) {
+            for (String item: ps) {
                 colonpos = item.indexOf(':');
                 if (colonpos < 0) {
                     throw new IllegalArgumentException("Illegal item " + item + " in " + san);
@@ -196,7 +196,7 @@ public class RemoteControlHttpsServer extends Thread {
         cert.sign(privkey, algorithm);
 
         // Update the algorithm, and resign.
-        algo = (AlgorithmId)cert.get(X509CertImpl.SIG_ALG);
+        algo = (AlgorithmId) cert.get(X509CertImpl.SIG_ALG);
         info.set(CertificateAlgorithmId.NAME + "." + CertificateAlgorithmId.ALGORITHM, algo);
         cert = new X509CertImpl(info);
         cert.sign(privkey, algorithm);
@@ -336,7 +336,7 @@ public class RemoteControlHttpsServer extends Thread {
                 instance6.start();
             } catch (Exception ex) {
                 /* only show error when we also have no IPv4 */
-                if(instance4 == null) {
+                if (instance4 == null) {
                     Main.warn(marktr("Cannot start IPv6 remotecontrol https server on port {0}: {1}"),
                         Integer.toString(port), ex.getLocalizedMessage());
                 }
@@ -391,7 +391,7 @@ public class RemoteControlHttpsServer extends Thread {
             RemoteControl.getInet6Address() : RemoteControl.getInet4Address());
 
         if (Main.isTraceEnabled()) {
-            if(server instanceof SSLServerSocket) {
+            if (server instanceof SSLServerSocket) {
                 SSLServerSocket sslServer = (SSLServerSocket) server;
                 Main.trace("SSL server - Enabled Cipher suites: "+Arrays.toString(sslServer.getEnabledCipherSuites()));
                 Main.trace("SSL server - Enabled Protocols: "+Arrays.toString(sslServer.getEnabledProtocols()));

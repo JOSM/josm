@@ -28,9 +28,12 @@ public final class AudioPlayer extends Thread {
     private static volatile AudioPlayer audioPlayer = null;
 
     private enum State { INITIALIZING, NOTPLAYING, PLAYING, PAUSED, INTERRUPTED }
-    private State state;
+
     private enum Command { PLAY, PAUSE }
+
     private enum Result { WAITING, OK, FAILED }
+
+    private State state;
     private URL playingUrl;
     private double leadIn; // seconds
     private double calibration; // ratio of purported duration of samples to true duration
@@ -61,10 +64,12 @@ public final class AudioPlayer extends Thread {
             result = Result.WAITING;
             send();
         }
+
         protected void pause() throws Exception {
             command = Command.PAUSE;
             send();
         }
+
         private void send() throws Exception {
             result = Result.WAITING;
             interrupt();
@@ -74,28 +79,35 @@ public final class AudioPlayer extends Thread {
             if (result == Result.FAILED)
                 throw exception;
         }
+
         private void possiblyInterrupt() throws InterruptedException {
             if (interrupted() || result == Result.WAITING)
                 throw new InterruptedException();
         }
+
         protected void failed(Exception e) {
             exception = e;
             result = Result.FAILED;
             state = State.NOTPLAYING;
         }
+
         protected void ok(State newState) {
             result = Result.OK;
             state = newState;
         }
+
         protected double offset() {
             return offset;
         }
+
         protected double speed() {
             return speed;
         }
+
         protected URL url() {
             return url;
         }
+
         protected Command command() {
             return command;
         }
@@ -201,10 +213,10 @@ public final class AudioPlayer extends Thread {
      * Resets the audio player.
      */
     public static void reset() {
-        if(audioPlayer != null) {
+        if (audioPlayer != null) {
             try {
                 pause();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 Main.warn(e);
             }
             audioPlayer.playingUrl = null;
@@ -234,7 +246,7 @@ public final class AudioPlayer extends Thread {
         AudioInputStream audioInputStream = null;
         SourceDataLine audioOutputLine = null;
         AudioFormat audioFormat = null;
-        byte[] abData = new byte[(int)chunk];
+        byte[] abData = new byte[(int) chunk];
 
         for (;;) {
             try {
@@ -249,7 +261,7 @@ public final class AudioPlayer extends Thread {
                         break;
                     case PLAYING:
                         command.possiblyInterrupt();
-                        for(;;) {
+                        for (;;) {
                             int nBytesRead = 0;
                             nBytesRead = audioInputStream.read(abData, 0, abData.length);
                             position += nBytesRead / bytesPerSecond;
@@ -300,11 +312,8 @@ public final class AudioPlayer extends Thread {
                                     speed = 256000 / bytesPerSecond;
                                 }
                                 if (calibratedOffset > 0.0) {
-                                    long bytesToSkip = (long)(
-                                            calibratedOffset /* seconds (double) */ * bytesPerSecond);
-                                    /* skip doesn't seem to want to skip big chunks, so
-                                     * reduce it to smaller ones
-                                     */
+                                    long bytesToSkip = (long) (calibratedOffset /* seconds (double) */ * bytesPerSecond);
+                                    // skip doesn't seem to want to skip big chunks, so reduce it to smaller ones
                                     // audioInputStream.skip(bytesToSkip);
                                     while (bytesToSkip > chunk) {
                                         nBytesRead = audioInputStream.skip(chunk);
@@ -360,7 +369,7 @@ public final class AudioPlayer extends Thread {
      */
     public static void audioMalfunction(Exception ex) {
         String msg = ex.getMessage();
-        if(msg == null)
+        if (msg == null)
             msg = tr("unspecified reason");
         else
             msg = tr(msg);

@@ -54,12 +54,15 @@ public class Addresses extends Test {
         public AddressError(int code, OsmPrimitive p, String message) {
             this(code, Collections.singleton(p), message);
         }
+
         public AddressError(int code, Collection<OsmPrimitive> collection, String message) {
             this(code, collection, message, null, null);
         }
+
         public AddressError(int code, Collection<OsmPrimitive> collection, String message, String description, String englishDescription) {
             this(code, Severity.WARNING, collection, message, description, englishDescription);
         }
+
         public AddressError(int code, Severity severity, Collection<OsmPrimitive> collection, String message, String description,
                 String englishDescription) {
             super(Addresses.this, severity, message, description, englishDescription, code, collection);
@@ -206,7 +209,7 @@ public class Addresses extends Test {
         if (house instanceof Node) {
             centroid = ((Node) house).getEastNorth();
         } else if (house instanceof Way) {
-            List<Node> nodes = ((Way)house).getNodes();
+            List<Node> nodes = ((Way) house).getNodes();
             if (house.hasKey(ADDR_INTERPOLATION)) {
                 for (Node n : nodes) {
                     if (n.hasKey(ADDR_HOUSE_NUMBER)) {

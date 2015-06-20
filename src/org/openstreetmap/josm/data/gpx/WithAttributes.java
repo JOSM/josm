@@ -43,7 +43,7 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
     @Override
     public String getString(String key) {
         Object value = attr.get(key);
-        return (value instanceof String) ? (String)value : null;
+        return (value instanceof String) ? (String) value : null;
     }
 
     /**
@@ -59,7 +59,7 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
     @Override
     public <T> Collection<T> getCollection(String key) {
         Object value = attr.get(key);
-        return (value instanceof Collection) ? (Collection<T>)value : null;
+        return (value instanceof Collection) ? (Collection<T>) value : null;
     }
 
     /**

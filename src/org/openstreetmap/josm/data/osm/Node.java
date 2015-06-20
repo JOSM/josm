@@ -69,7 +69,7 @@ public final class Node extends OsmPrimitive implements INode {
     @Override
     public final LatLon getCoor() {
         if (!isLatLonKnown()) return null;
-        return new LatLon(lat,lon);
+        return new LatLon(lat, lon);
     }
 
     /**
@@ -222,7 +222,7 @@ public final class Node extends OsmPrimitive implements INode {
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
-            setCoor(((Node)osm).getCoor());
+            setCoor(((Node) osm).getCoor());
         } finally {
             writeUnlock(locked);
         }
@@ -245,7 +245,7 @@ public final class Node extends OsmPrimitive implements INode {
         try {
             super.mergeFrom(other);
             if (!other.isIncomplete()) {
-                setCoor(((Node)other).getCoor());
+                setCoor(((Node) other).getCoor());
             }
         } finally {
             writeUnlock(locked);
@@ -256,7 +256,7 @@ public final class Node extends OsmPrimitive implements INode {
         boolean locked = writeLock();
         try {
             super.load(data);
-            setCoor(((NodeData)data).getCoor());
+            setCoor(((NodeData) data).getCoor());
         } finally {
             writeUnlock(locked);
         }
@@ -283,7 +283,7 @@ public final class Node extends OsmPrimitive implements INode {
             return false;
         if (!super.hasEqualSemanticAttributes(other))
             return false;
-        Node n = (Node)other;
+        Node n = (Node) other;
         LatLon coor = getCoor();
         LatLon otherCoor = n.getCoor();
         if (coor == null && otherCoor == null)

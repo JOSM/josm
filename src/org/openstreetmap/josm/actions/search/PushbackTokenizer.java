@@ -69,7 +69,6 @@ public class PushbackTokenizer {
         }
     }
 
-
     private void getChar() {
         try {
             c = search.read();
@@ -85,11 +84,11 @@ public class PushbackTokenizer {
         List<Character> sChars = quoted ? specialCharsQuoted : specialChars;
         StringBuilder s = new StringBuilder();
         boolean escape = false;
-        while (c != -1 && (escape || (!sChars.contains((char)c) && (quoted || !Character.isWhitespace(c))))) {
+        while (c != -1 && (escape || (!sChars.contains((char) c) && (quoted || !Character.isWhitespace(c))))) {
             if (c == '\\' && !escape) {
                 escape = true;
             } else {
-                s.append((char)c);
+                s.append((char) c);
                 escape = false;
             }
             getChar();

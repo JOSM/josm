@@ -27,11 +27,11 @@ public class SwissGridTest {
      * source: http://www.swisstopo.admin.ch/internet/swisstopo/en/home/topics/survey/sys/refsys/switzerland.parsysrelated1.37696.downloadList.97912.DownloadFile.tmp/swissprojectionen.pdf
      */
     ProjData[] data = {
-            new ProjData("Zimmerwald",      d(7,27,54.983506), d(46,52,37.540562), 947.149, 602030.680, 191775.030, 897.915),
-            new ProjData("Chrischona",      d(7,40,6.983077), d(47,34, 1.385301), 504.935,  617306.300, 268507.300, 456.064),
-            new ProjData("Pfaender",        d(9,47,3.697723), d(47,30,55.172797), 1089.372, 776668.105, 265372.681, 1042.624),
-            new ProjData("La Givrine",      d(6,6,7.326361), d(46,27,14.690021), 1258.274,  497313.292, 145625.438, 1207.434),
-            new ProjData("Monte Generoso",  d(9,1,16.389053), d(45,55,45.438020), 1685.027, 722758.810, 87649.670, 1636.600) };
+            new ProjData("Zimmerwald",      d(7, 27, 54.983506), d(46, 52, 37.540562), 947.149, 602030.680, 191775.030, 897.915),
+            new ProjData("Chrischona",      d(7, 40, 6.983077), d(47, 34, 1.385301), 504.935,  617306.300, 268507.300, 456.064),
+            new ProjData("Pfaender",        d(9, 47, 3.697723), d(47, 30, 55.172797), 1089.372, 776668.105, 265372.681, 1042.624),
+            new ProjData("La Givrine",      d(6, 6, 7.326361), d(46, 27, 14.690021), 1258.274,  497313.292, 145625.438, 1207.434),
+            new ProjData("Monte Generoso",  d(9, 1, 16.389053), d(45, 55, 45.438020), 1685.027, 722758.810, 87649.670, 1636.600) };
 
     private double d(double deg, double min, double sec) {
         return deg + min / 60. + sec / 3600.;
@@ -41,6 +41,7 @@ public class SwissGridTest {
         public String name;
         public LatLon ll;
         public EastNorth en;
+
         public ProjData(String name, double lon, double lat, double h1, double x, double y, double h2) {
             this.name = name;
             ll = new LatLon(lat, lon);
@@ -126,7 +127,6 @@ public class SwissGridTest {
             assertTrue("Ref", Math.abs(en.north() - 100000.0) < 0.1);
         }
     }
-
 
     @Test
     public void b_eastNorth2latlon_test() {

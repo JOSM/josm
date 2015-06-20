@@ -36,7 +36,7 @@ public class NodeData extends PrimitiveData implements INode {
 
     @Override
     public LatLon getCoor() {
-        return isLatLonKnown() ? new LatLon(lat,lon) : null;
+        return isLatLonKnown() ? new LatLon(lat, lon) : null;
     }
 
     @Override

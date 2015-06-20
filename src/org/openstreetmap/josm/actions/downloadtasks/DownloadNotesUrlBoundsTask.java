@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.tools.OsmUrlToBounds;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.concurrent.Future;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
 public class DownloadNotesUrlBoundsTask extends DownloadNotesTask {
 
@@ -20,6 +20,7 @@ public class DownloadNotesUrlBoundsTask extends DownloadNotesTask {
         return new String[]{
                 "https?://www\\.(osm|openstreetmap)\\.org/(.*)?#map=\\p{Digit}+/.*/.*&layers=[A-MO-Z]*N[A-MO-Z]*"};
     }
+
     @Override
     public String getTitle() {
         return tr("Download OSM Notes within Bounds");

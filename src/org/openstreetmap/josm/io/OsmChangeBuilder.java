@@ -51,7 +51,7 @@ public class OsmChangeBuilder {
     }
 
     private void switchMode(String newMode) {
-        if ((newMode != null && !newMode.equals(currentMode))||(newMode == null && currentMode != null)) {
+        if ((newMode != null && !newMode.equals(currentMode)) || (newMode == null && currentMode != null)) {
             if (currentMode != null) {
                 writer.print("</");
                 writer.print(currentMode);
@@ -77,7 +77,7 @@ public class OsmChangeBuilder {
         writer.print("<osmChange version=\"");
         writer.print(apiVersion);
         writer.println("\" generator=\"JOSM\">");
-        prologWritten=true;
+        prologWritten = true;
     }
 
     /**

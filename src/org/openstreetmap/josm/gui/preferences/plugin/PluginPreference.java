@@ -93,7 +93,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     downloaded.size()
                     ));
             sb.append("<ul>");
-            for(PluginInformation pi: downloaded) {
+            for (PluginInformation pi: downloaded) {
                 sb.append("<li>").append(pi.name).append(" (").append(pi.version).append(")</li>");
             }
             sb.append("</ul>");
@@ -106,7 +106,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     failed.size()
                     ));
             sb.append("<ul>");
-            for(PluginInformation pi: failed) {
+            for (PluginInformation pi: failed) {
                 sb.append("<li>").append(pi.name).append("</li>");
             }
             sb.append("</ul>");
@@ -158,13 +158,13 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
     protected JPanel buildSearchFieldPanel() {
         JPanel pnl  = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,0,3);
+        gc.insets = new Insets(0, 0, 0, 3);
         pnl.add(new JLabel(tr("Search:")), gc);
 
         gc.gridx = 1;
@@ -178,7 +178,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     }
 
     protected JPanel buildActionPanel() {
-        JPanel pnl = new JPanel(new GridLayout(1,3));
+        JPanel pnl = new JPanel(new GridLayout(1, 3));
 
         pnl.add(new JButton(new DownloadAvailablePluginsAction()));
         pnl.add(new JButton(new UpdateSelectedPluginsAction()));
@@ -193,11 +193,12 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         pnlPluginPreferences = new PluginListPanel(model);
         spPluginPreferences = GuiHelper.embedInVerticalScrollPane(pnlPluginPreferences);
         spPluginPreferences.getVerticalScrollBar().addComponentListener(
-                new ComponentAdapter(){
+                new ComponentAdapter() {
                     @Override
                     public void componentShown(ComponentEvent e) {
                         spPluginPreferences.setBorder(UIManager.getBorder("ScrollPane.border"));
                     }
+
                     @Override
                     public void componentHidden(ComponentEvent e) {
                         spPluginPreferences.setBorder(null);
@@ -328,7 +329,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
          * Constructs a new {@code DownloadAvailablePluginsAction}.
          */
         public DownloadAvailablePluginsAction() {
-            putValue(NAME,tr("Download list"));
+            putValue(NAME, tr("Download list"));
             putValue(SHORT_DESCRIPTION, tr("Download the list of available plugins"));
             putValue(SMALL_ICON, ImageProvider.get("download"));
         }
@@ -364,7 +365,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
      */
     class UpdateSelectedPluginsAction extends AbstractAction {
         public UpdateSelectedPluginsAction() {
-            putValue(NAME,tr("Update plugins"));
+            putValue(NAME, tr("Update plugins"));
             putValue(SHORT_DESCRIPTION, tr("Update the selected plugins"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
         }
@@ -466,7 +467,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
      */
     class ConfigureSitesAction extends AbstractAction {
         public ConfigureSitesAction() {
-            putValue(NAME,tr("Configure sites..."));
+            putValue(NAME, tr("Configure sites..."));
             putValue(SHORT_DESCRIPTION, tr("Configure the list of sites where plugins are downloaded from"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "settings"));
         }
@@ -521,7 +522,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             final JList<String> list = new JList<>(model);
             add(new JScrollPane(list), GBC.std().fill());
             JPanel buttons = new JPanel(new GridBagLayout());
-            buttons.add(new JButton(new AbstractAction(tr("Add")){
+            buttons.add(new JButton(new AbstractAction(tr("Add")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String s = JOptionPane.showInputDialog(
@@ -535,7 +536,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     }
                 }
             }), GBC.eol().fill(GBC.HORIZONTAL));
-            buttons.add(new JButton(new AbstractAction(tr("Edit")){
+            buttons.add(new JButton(new AbstractAction(tr("Edit")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (list.getSelectedValue() == null) {
@@ -547,7 +548,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                                 );
                         return;
                     }
-                    String s = (String)JOptionPane.showInputDialog(
+                    String s = (String) JOptionPane.showInputDialog(
                             Main.parent,
                             tr("Edit JOSM Plugin description URL."),
                             tr("JOSM Plugin description URL"),
@@ -561,7 +562,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     }
                 }
             }), GBC.eol().fill(GBC.HORIZONTAL));
-            buttons.add(new JButton(new AbstractAction(tr("Delete")){
+            buttons.add(new JButton(new AbstractAction(tr("Delete")) {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     if (list.getSelectedValue() == null) {
@@ -586,12 +587,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         public List<String> getUpdateSites() {
             if (model.getSize() == 0) return Collections.emptyList();
             List<String> ret = new ArrayList<>(model.getSize());
-            for (int i=0; i< model.getSize();i++){
+            for (int i = 0; i < model.getSize(); i++) {
                 ret.add(model.get(i));
             }
             return ret;
         }
     }
-
-
 }

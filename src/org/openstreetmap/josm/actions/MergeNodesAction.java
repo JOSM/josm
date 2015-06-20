@@ -235,7 +235,7 @@ public class MergeNodesAction extends JosmAction {
                     );
                     return null;
                 }
-            } else if(newNodes.size() < 2 && w.getReferrers().isEmpty()) {
+            } else if (newNodes.size() < 2 && w.getReferrers().isEmpty()) {
                 waysToDelete.add(w);
             } else {
                 cmds.add(new ChangeNodesCommand(w, newNodes));

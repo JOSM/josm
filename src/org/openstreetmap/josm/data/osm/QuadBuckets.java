@@ -178,8 +178,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         }
 
         boolean matches(final T o, final BBox search_bbox) {
-            if (o instanceof Node){
-                final LatLon latLon = ((Node)o).getCoor();
+            if (o instanceof Node) {
+                final LatLon latLon = ((Node) o).getCoor();
                 // node without coords -> bbox[0,0,0,0]
                 return search_bbox.bounds(latLon != null ? latLon : LatLon.ZERO);
             }

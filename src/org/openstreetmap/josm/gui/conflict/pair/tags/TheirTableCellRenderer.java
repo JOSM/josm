@@ -47,7 +47,7 @@ public class TheirTableCellRenderer extends TagMergeTableCellRenderer {
 
     @Override
     protected void renderValue(TagMergeItem item, boolean isSelected) {
-        setBackgroundColor(item,isSelected);
+        setBackgroundColor(item, isSelected);
         setTextColor(item);
         if (item.getTheirTagValue() == null) {
             setText(tr("<undefined>"));

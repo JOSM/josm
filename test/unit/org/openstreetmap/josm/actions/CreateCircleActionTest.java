@@ -112,13 +112,16 @@ public final class CreateCircleActionTest {
      */
     private static class ConstantTrafficHand implements GeoProperty<Boolean> {
         boolean isLeft;
+
         ConstantTrafficHand(boolean isLeft) {
             this.isLeft = isLeft;
         }
+
         @Override
         public Boolean get(LatLon ll) {
             return isLeft;
         }
+
         @Override
         public Boolean get(BBox box) {
             return isLeft;

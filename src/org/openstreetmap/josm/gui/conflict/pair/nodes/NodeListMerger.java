@@ -58,9 +58,9 @@ public class NodeListMerger extends ListMerger<Node> implements IConflictResolve
 
     @Override
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
-        Way myWay = (Way)conflict.getMy();
-        Way theirWay = (Way)conflict.getTheir();
-        ((NodeListMergeModel)model).populate(myWay, theirWay, conflict.getMergedMap());
+        Way myWay = (Way) conflict.getMy();
+        Way theirWay = (Way) conflict.getTheir();
+        ((NodeListMergeModel) model).populate(myWay, theirWay, conflict.getMergedMap());
         myEntriesTable.setLayer(findLayerFor(myWay));
         theirEntriesTable.setLayer(findLayerFor(theirWay));
     }

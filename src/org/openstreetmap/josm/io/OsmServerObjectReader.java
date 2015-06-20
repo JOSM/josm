@@ -130,7 +130,7 @@ public class OsmServerObjectReader extends OsmServerReader {
                     return null;
                 return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             }
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             if (cancel) return null;
             throw e;
         } catch (Exception e) {

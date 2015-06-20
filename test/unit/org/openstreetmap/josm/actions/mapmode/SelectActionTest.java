@@ -39,51 +39,68 @@ public class SelectActionTest {
     public class MapViewMock extends MapView {
         public OsmDataLayer layer;
         public DataSet currentDataSet;
+
+        public Predicate<OsmPrimitive> isSelectablePredicate =
+                new Predicate<OsmPrimitive>() {
+                    @Override
+                    public boolean evaluate(OsmPrimitive prim) {
+                        return true;
+                    }
+                };
+
         MapViewMock(DataSet dataSet, OsmDataLayer layer) {
             super(null, null);
             this.layer = layer;
             this.currentDataSet = dataSet;
-        };
+        }
+
         @Override
         public EastNorth getEastNorth(int x, int y) {
             return new EastNorth(x, y);
         }
+
         @Override
         public void addMouseListener(MouseListener ml) {}
+
         @Override
         public void removeMouseListener(MouseListener ml) {}
+
         public void addMouseMotionListener(MouseListener ml) {}
+
         public void removeMouseMotionListener(MouseListener ml) {}
+
         public void mvRepaint() {}
+
         @Override
         public void setVirtualNodesEnabled(boolean enabled) {}
+
         @Override
         public void setNewCursor(Cursor cursor, Object reference) {}
+
         @Override
         public void setNewCursor(int cursor, Object reference) {}
+
         @Override
         public boolean isActiveLayerVisible() {
             return true;
         }
-        public Predicate<OsmPrimitive> isSelectablePredicate =
-            new Predicate<OsmPrimitive>() {
-                @Override
-                public boolean evaluate(OsmPrimitive prim) {
-                    return true;
-                }
-            };
+
         @Override
         public void requestClearRect() {}
+
         @Override
         public Point2D getPoint2D(EastNorth p) {
             return new Point2D.Double(p.getX(), p.getY());
         }
+
         @Override
         public void setActiveLayer(Layer layer) {}
+
         @Override
         public Layer getActiveLayer() {
             return layer;
         }
+
         @Override
         protected DataSet getCurrentDataSet() {
             return currentDataSet;
@@ -118,6 +135,7 @@ public class SelectActionTest {
                 fail("Can't setup testing environnement");
             }
         }
+
         @Override
         public void mergeNodes(OsmDataLayer layer, Collection<Node> nodes,
                                Node targetLocationNode) {

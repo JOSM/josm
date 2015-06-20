@@ -30,7 +30,7 @@ public abstract class TagMergeTableCellRenderer extends JLabel implements TableC
         if (value == null)
             return this;
 
-        TagMergeItem item = (TagMergeItem)value;
+        TagMergeItem item = (TagMergeItem) value;
         switch(col) {
         case 0:
             renderKey(item, isSelected);
@@ -44,5 +44,4 @@ public abstract class TagMergeTableCellRenderer extends JLabel implements TableC
         }
         return this;
     }
-
 }

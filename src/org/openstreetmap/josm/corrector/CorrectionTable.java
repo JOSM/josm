@@ -25,7 +25,7 @@ public abstract class CorrectionTable<T extends CorrectionTableModel<?>>
             Font f = getFont();
             setFont(new Font(f.getName(), f.getStyle() | Font.BOLD, f.getSize()));
 
-            setText((String)value);
+            setText((String) value);
 
             return this;
         }
@@ -58,7 +58,6 @@ public abstract class CorrectionTable<T extends CorrectionTableModel<?>>
 
     @SuppressWarnings("unchecked")
     public T getCorrectionTableModel() {
-        return (T)getModel();
+        return (T) getModel();
     }
-
 }

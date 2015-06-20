@@ -68,6 +68,7 @@ public final class MapPaintStyles {
      */
     public static class TagKeyReference {
         public final String key;
+
         public TagKeyReference(String key) {
             this.key = key;
         }
@@ -216,14 +217,14 @@ public final class MapPaintStyles {
         Collection<String> prefIconDirs = Main.pref.getCollection("mappaint.icon.sources");
         for (String fileset : prefIconDirs) {
             String[] a;
-            if(fileset.indexOf('=') >= 0) {
+            if (fileset.indexOf('=') >= 0) {
                 a = fileset.split("=", 2);
             } else {
                 a = new String[] {"", fileset};
             }
 
             /* non-prefixed path is generic path, always take it */
-            if(a[0].isEmpty() || source.getPrefName().equals(a[0])) {
+            if (a[0].isEmpty() || source.getPrefName().equals(a[0])) {
                 dirs.add(a[1]);
             }
         }
@@ -450,6 +451,7 @@ public final class MapPaintStyles {
 
     public interface MapPaintSylesUpdateListener {
         public void mapPaintStylesUpdated();
+
         public void mapPaintStyleEntryUpdated(int idx);
     }
 

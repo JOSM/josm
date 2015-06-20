@@ -41,7 +41,7 @@ public class BufferedImageCacheEntry extends CacheEntry {
     public BufferedImage getImage() throws IOException {
         if (imageLoaded)
             return img;
-        synchronized(this) {
+        synchronized (this) {
             if (imageLoaded)
                 return img;
             byte[] content = getContent();
@@ -56,7 +56,6 @@ public class BufferedImageCacheEntry extends CacheEntry {
         }
         return img;
     }
-
 
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         /*
@@ -80,7 +79,8 @@ public class BufferedImageCacheEntry extends CacheEntry {
          */
         synchronized (this) {
             if (content == null && img != null) {
-                throw new AssertionError("Trying to serialize (save to disk?) an BufferedImageCacheEntry that was converted to BufferedImage and no raw data is present anymore");
+                throw new AssertionError("Trying to serialize (save to disk?) an BufferedImageCacheEntry " +
+                        "that was converted to BufferedImage and no raw data is present anymore");
             }
             out.writeObject(this);
             // ugly hack to wait till element will get to disk to clean the memory
@@ -89,7 +89,6 @@ public class BufferedImageCacheEntry extends CacheEntry {
             if (img != null) {
                 content = null;
             }
-
         }
     }
 }

@@ -263,10 +263,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         big.setColor(getBackgroundColor());
         Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
         big.setComposite(comp);
-        big.fillRect(0,0,15,15);
+        big.fillRect(0, 0, 15, 15);
         big.setColor(getOutsideColor());
-        big.drawLine(0,15,15,0);
-        Rectangle r = new Rectangle(0, 0, 15,15);
+        big.drawLine(0, 15, 15, 0);
+        Rectangle r = new Rectangle(0, 0, 15, 15);
         hatched = new TexturePaint(bi, r);
     }
 
@@ -334,7 +334,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 }
                 Point p1 = mv.getPoint(bounds.getMin());
                 Point p2 = mv.getPoint(bounds.getMax());
-                Rectangle r = new Rectangle(Math.min(p1.x, p2.x),Math.min(p1.y, p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));
+                Rectangle r = new Rectangle(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y), Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y));
                 a.subtract(new Area(r));
             }
 
@@ -367,10 +367,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     @Override public void mergeFrom(final Layer from) {
         final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Merging layers"));
         monitor.setCancelable(false);
-        if (from instanceof OsmDataLayer && ((OsmDataLayer)from).isUploadDiscouraged()) {
+        if (from instanceof OsmDataLayer && ((OsmDataLayer) from).isUploadDiscouraged()) {
             setUploadDiscouraged(true);
         }
-        mergeFrom(((OsmDataLayer)from).data, monitor);
+        mergeFrom(((OsmDataLayer) from).data, monitor);
         monitor.close();
     }
 
@@ -392,7 +392,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * @param progressMonitor the progress monitor, can be {@code null}
      */
     public void mergeFrom(final DataSet from, ProgressMonitor progressMonitor) {
-        final DataSetMerger visitor = new DataSetMerger(data,from);
+        final DataSetMerger visitor = new DataSetMerger(data, from);
         try {
             visitor.merge(progressMonitor);
         } catch (DataIntegrityProblemException e) {
@@ -403,7 +403,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                     JOptionPane.ERROR_MESSAGE
             );
             return;
-
         }
 
         Area a = data.getDataSourceArea();
@@ -438,12 +437,14 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
-    @Override public boolean isMergable(final Layer other) {
+    @Override
+    public boolean isMergable(final Layer other) {
         // isUploadDiscouraged commented to allow merging between normal layers and discouraged layers with a warning (see #7684)
-        return other instanceof OsmDataLayer;// && (isUploadDiscouraged() == ((OsmDataLayer)other).isUploadDiscouraged());
+        return other instanceof OsmDataLayer; // && (isUploadDiscouraged() == ((OsmDataLayer)other).isUploadDiscouraged());
     }
 
-    @Override public void visitBoundingBox(final BoundingXYVisitor v) {
+    @Override
+    public void visitBoundingBox(final BoundingXYVisitor v) {
         for (final Node n: data.getNodes()) {
             if (n.isUsable()) {
                 v.visit(n);
@@ -475,8 +476,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
-
-    @Override public Object getInfoComponent() {
+    @Override
+    public Object getInfoComponent() {
         final DataCountVisitor counter = new DataCountVisitor();
         for (final OsmPrimitive osm : data.allPrimitives()) {
             osm.accept(counter);
@@ -499,12 +500,13 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
 
         p.add(new JLabel(tr("{0} consists of:", getName())), GBC.eol());
-        p.add(new JLabel(nodeText, ImageProvider.get("data", "node"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
-        p.add(new JLabel(wayText, ImageProvider.get("data", "way"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
-        p.add(new JLabel(relationText, ImageProvider.get("data", "relation"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
-        p.add(new JLabel(tr("API version: {0}", (data.getVersion() != null) ? data.getVersion() : tr("unset"))), GBC.eop().insets(15,0,0,0));
+        p.add(new JLabel(nodeText, ImageProvider.get("data", "node"), JLabel.HORIZONTAL), GBC.eop().insets(15, 0, 0, 0));
+        p.add(new JLabel(wayText, ImageProvider.get("data", "way"), JLabel.HORIZONTAL), GBC.eop().insets(15, 0, 0, 0));
+        p.add(new JLabel(relationText, ImageProvider.get("data", "relation"), JLabel.HORIZONTAL), GBC.eop().insets(15, 0, 0, 0));
+        p.add(new JLabel(tr("API version: {0}", (data.getVersion() != null) ? data.getVersion() : tr("unset"))),
+                GBC.eop().insets(15, 0, 0, 0));
         if (isUploadDiscouraged()) {
-            p.add(new JLabel(tr("Upload is discouraged")), GBC.eop().insets(15,0,0,0));
+            p.add(new JLabel(tr("Upload is discouraged")), GBC.eop().insets(15, 0, 0, 0));
         }
 
         return p;
@@ -723,6 +725,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             super(tr("Convert to GPX layer"), ImageProvider.get("converttogpx"));
             putValue("help", ht("/Action/ConvertToGpxLayer"));
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             Main.main.addLayer(new GpxLayer(toGpxData(), tr("Converted from: {0}", getName())));

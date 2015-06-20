@@ -43,6 +43,7 @@ public class OsmServerWriter {
         }
         postprocessors.add(pp);
     }
+
     public static void unregisterPostprocessor(OsmServerWritePostprocessor pp) {
         if (postprocessors != null) {
             postprocessors.remove(pp);
@@ -64,9 +65,9 @@ public class OsmServerWriter {
         if (elapsed == 0) {
             elapsed = 1;
         }
-        double uploads_per_ms = (double)progress / elapsed;
+        double uploads_per_ms = (double) progress / elapsed;
         double uploads_left = list_size - progress;
-        long ms_left = (long)(uploads_left / uploads_per_ms);
+        long ms_left = (long) (uploads_left / uploads_per_ms);
         long minutes_left = ms_left / MSECS_PER_MINUTE;
         long seconds_left = (ms_left / MSECS_PER_SECOND) % SECONDS_PER_MINUTE;
         String time_left_str = Long.toString(minutes_left) + ":";
@@ -106,13 +107,13 @@ public class OsmServerWriter {
                                 time_left_str,
                                 osm.getName() == null ? osm.getId() : osm.getName(),
                                         osm.getId()));
-                makeApiRequest(osm,progressMonitor);
+                makeApiRequest(osm, progressMonitor);
                 processed.add(osm);
                 progressMonitor.worked(1);
             }
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             throw e;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
@@ -131,7 +132,7 @@ public class OsmServerWriter {
         try {
             progressMonitor.beginTask(tr("Starting to upload in one request ..."));
             processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             throw e;
         } finally {
             progressMonitor.finishTask();
@@ -149,20 +150,20 @@ public class OsmServerWriter {
      */
     protected void uploadChangesInChunks(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor, int chunkSize)
             throws OsmTransferException, IllegalArgumentException {
-        if (chunkSize <=0)
+        if (chunkSize <= 0)
             throw new IllegalArgumentException(tr("Value >0 expected for parameter ''{0}'', got {1}", "chunkSize", chunkSize));
         try {
             progressMonitor.beginTask(tr("Starting to upload in chunks..."));
             List<OsmPrimitive> chunk = new ArrayList<>(chunkSize);
             Iterator<? extends OsmPrimitive> it = primitives.iterator();
-            int numChunks = (int)Math.ceil((double)primitives.size() / (double)chunkSize);
-            int i= 0;
-            while(it.hasNext()) {
+            int numChunks = (int) Math.ceil((double) primitives.size() / (double) chunkSize);
+            int i = 0;
+            while (it.hasNext()) {
                 i++;
                 if (canceled) return;
                 int j = 0;
                 chunk.clear();
-                while(it.hasNext() && j < chunkSize) {
+                while (it.hasNext() && j < chunkSize) {
                     if (canceled) return;
                     j++;
                     chunk.add(it.next());
@@ -173,7 +174,7 @@ public class OsmServerWriter {
                                 chunk.size(), i, numChunks, chunk.size()));
                 processed.addAll(api.uploadDiff(chunk, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
             }
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             throw e;
         } finally {
             progressMonitor.finishTask();
@@ -191,7 +192,8 @@ public class OsmServerWriter {
      * @throws IllegalArgumentException if strategy is null
      * @throws OsmTransferException if something goes wrong
      */
-    public void uploadOsm(UploadStrategySpecification strategy, Collection<? extends OsmPrimitive> primitives, Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
+    public void uploadOsm(UploadStrategySpecification strategy, Collection<? extends OsmPrimitive> primitives,
+            Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
         processed = new LinkedList<>();
         monitor = monitor == null ? NullProgressMonitor.INSTANCE : monitor;
@@ -200,23 +202,23 @@ public class OsmServerWriter {
             api.initialize(monitor);
             // check whether we can use diff upload
             if (changeset.getId() == 0) {
-                api.openChangeset(changeset,monitor.createSubTaskMonitor(0, false));
+                api.openChangeset(changeset, monitor.createSubTaskMonitor(0, false));
             } else {
-                api.updateChangeset(changeset,monitor.createSubTaskMonitor(0, false));
+                api.updateChangeset(changeset, monitor.createSubTaskMonitor(0, false));
             }
             api.setChangeset(changeset);
             switch(strategy.getStrategy()) {
             case SINGLE_REQUEST_STRATEGY:
-                uploadChangesAsDiffUpload(primitives,monitor.createSubTaskMonitor(0,false));
+                uploadChangesAsDiffUpload(primitives, monitor.createSubTaskMonitor(0, false));
                 break;
             case INDIVIDUAL_OBJECTS_STRATEGY:
-                uploadChangesIndividually(primitives,monitor.createSubTaskMonitor(0,false));
+                uploadChangesIndividually(primitives, monitor.createSubTaskMonitor(0, false));
                 break;
             case CHUNKED_DATASET_STRATEGY:
-                uploadChangesInChunks(primitives,monitor.createSubTaskMonitor(0,false), strategy.getChunkSize());
+                uploadChangesInChunks(primitives, monitor.createSubTaskMonitor(0, false), strategy.getChunkSize());
                 break;
             }
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             throw e;
         } finally {
             executePostprocessors(monitor);

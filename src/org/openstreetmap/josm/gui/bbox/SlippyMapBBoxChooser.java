@@ -98,7 +98,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     }
 
     private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<>();
-
     static {
         addTileSourceProvider(new TileSourceProvider() {
             @Override
@@ -142,7 +141,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
 
         uncachedLoader = new OsmTileLoader(this);
         uncachedLoader.headers.putAll(headers);
-        setZoomContolsVisible(Main.pref.getBoolean("slippy_map_chooser.zoomcontrols",false));
+        setZoomContolsVisible(Main.pref.getBoolean("slippy_map_chooser.zoomcontrols", false));
         setMapMarkerVisible(false);
         setMinimumSize(new Dimension(350, 350 / 2));
         // We need to set an initial size - this prevents a wrong zoom selection

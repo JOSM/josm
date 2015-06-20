@@ -20,14 +20,14 @@ public enum PaintColors implements ColorKey {
     NODE(marktr("Node: standard"), Color.yellow),
     CONNECTION(marktr("Node: connection"), Color.yellow),
     TAGGED(marktr("Node: tagged"), new Color(204, 255, 255)), // light cyan
-    DEFAULT_WAY(marktr("way"),  new Color(0,0,128)), // dark blue
-    RELATION(marktr("relation"), new Color(0,128,128)), // teal
-    UNTAGGED_WAY(marktr("untagged way"), new Color(0,128,0)), // dark green
+    DEFAULT_WAY(marktr("way"),  new Color(0, 0, 128)), // dark blue
+    RELATION(marktr("relation"), new Color(0, 128, 128)), // teal
+    UNTAGGED_WAY(marktr("untagged way"), new Color(0, 128, 0)), // dark green
     BACKGROUND(marktr("background"), Color.BLACK),
     HIGHLIGHT(marktr("highlight"), SELECTED.get()),
     HIGHLIGHT_WIREFRAME(marktr("highlight wireframe"), Color.orange),
 
-    UNTAGGED(marktr("untagged"),Color.GRAY),
+    UNTAGGED(marktr("untagged"), Color.GRAY),
     TEXT(marktr("text"), Color.WHITE),
     AREA_TEXT(marktr("areatext"), Color.LIGHT_GRAY);
 

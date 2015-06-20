@@ -33,12 +33,12 @@ public final class InputMapUtils {
      * </ul>
      */
     public static void unassignCtrlShiftUpDown(JComponent cmp, int condition) {
-        InputMap inputMap=SwingUtilities.getUIInputMap(cmp, condition);
-        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP,InputEvent.CTRL_MASK|InputEvent.SHIFT_MASK));
-        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,InputEvent.CTRL_MASK|InputEvent.SHIFT_MASK));
-        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP,InputEvent.ALT_MASK|InputEvent.SHIFT_MASK));
-        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,InputEvent.ALT_MASK|InputEvent.SHIFT_MASK));
-        SwingUtilities.replaceUIInputMap(cmp,JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT,inputMap);
+        InputMap inputMap = SwingUtilities.getUIInputMap(cmp, condition);
+        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+        inputMap.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+        SwingUtilities.replaceUIInputMap(cmp, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, inputMap);
     }
 
     /**

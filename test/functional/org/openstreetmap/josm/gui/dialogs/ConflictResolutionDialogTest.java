@@ -15,9 +15,9 @@ public class ConflictResolutionDialogTest extends JFrame {
     private ConflictResolutionDialog dialog;
 
     protected void build() {
-        setSize(100,100);
+        setSize(100, 100);
         dialog = new ConflictResolutionDialog(this);
-        dialog.setSize(600,600);
+        dialog.setSize(600, 600);
     }
 
     protected void populate() {

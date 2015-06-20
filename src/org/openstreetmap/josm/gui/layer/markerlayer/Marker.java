@@ -91,6 +91,7 @@ public class Marker implements TemplateEngineDataProvider {
 
         // Legacy code - convert label from int to template engine expression
         private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0);
+
         private static String getDefaultLabelPattern() {
             switch (PROP_LABEL.get()) {
             case 1:
@@ -112,7 +113,7 @@ public class Marker implements TemplateEngineDataProvider {
             }
             TemplateEntryProperty result = CACHE.get(key);
             if (result == null) {
-                String defaultValue = layerName == null ? getDefaultLabelPattern():"";
+                String defaultValue = layerName == null ? getDefaultLabelPattern() : "";
                 TemplateEntryProperty parent = layerName == null ? null : forMarker(null);
                 result = new TemplateEntryProperty(key, defaultValue, parent);
                 CACHE.put(key, result);
@@ -127,7 +128,7 @@ public class Marker implements TemplateEngineDataProvider {
             }
             TemplateEntryProperty result = CACHE.get(key);
             if (result == null) {
-                String defaultValue = layerName == null?"?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }":"";
+                String defaultValue = layerName == null ? "?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }" : "";
                 TemplateEntryProperty parent = layerName == null ? null : forAudioMarker(null);
                 result = new TemplateEntryProperty(key, defaultValue, parent);
                 CACHE.put(key, result);
@@ -297,7 +298,7 @@ public class Marker implements TemplateEngineDataProvider {
         /* tell icon checking that we expect these names to exist */
         // /* ICON(markers/) */"Bridge"
         // /* ICON(markers/) */"Crossing"
-        this.symbol = iconName != null ? ImageProvider.getIfAvailable("markers",iconName) : null;
+        this.symbol = iconName != null ? ImageProvider.getIfAvailable("markers", iconName) : null;
         this.parentLayer = parentLayer;
 
         this.dataProvider = dataProvider;
@@ -460,7 +461,7 @@ public class Marker implements TemplateEngineDataProvider {
     }
 
     private String formatOffset() {
-        int wholeSeconds = (int)(offset + 0.5);
+        int wholeSeconds = (int) (offset + 0.5);
         if (wholeSeconds < 60)
             return Integer.toString(wholeSeconds);
         else if (wholeSeconds < 3600)

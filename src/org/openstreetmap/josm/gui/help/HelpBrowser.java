@@ -181,7 +181,7 @@ public class HelpBrowser extends JDialog {
 
         p.add(new JScrollPane(help), BorderLayout.CENTER);
 
-        addWindowListener(new WindowAdapter(){
+        addWindowListener(new WindowAdapter() {
             @Override public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -189,7 +189,7 @@ public class HelpBrowser extends JDialog {
 
         p.add(buildToolBar(), BorderLayout.NORTH);
         help.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "Close");
-        help.getActionMap().put("Close", new AbstractAction(){
+        help.getActionMap().put("Close", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -207,18 +207,18 @@ public class HelpBrowser extends JDialog {
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             getParent(),
-                            new Dimension(600,400)
+                            new Dimension(600, 400)
                     )
             ).applySafe(this);
         } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
         if (Main.main != null && Main.main.menu != null && Main.main.menu.windowMenu != null) {
-            if(windowMenuItem != null && !visible) {
+            if (windowMenuItem != null && !visible) {
                 Main.main.menu.windowMenu.remove(windowMenuItem);
                 windowMenuItem = null;
             }
-            if(windowMenuItem == null && visible) {
+            if (windowMenuItem == null && visible) {
                 windowMenuItem = MainMenu.add(Main.main.menu.windowMenu, focusAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
             }
         }
@@ -305,29 +305,29 @@ public class HelpBrowser extends JDialog {
         String content = null;
         try {
             content = reader.fetchHelpTopicContent(url, true);
-        } catch(MissingHelpContentException e) {
+        } catch (MissingHelpContentException e) {
             url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.BASELANGUAGE));
             try {
                 content = reader.fetchHelpTopicContent(url, true);
-            } catch(MissingHelpContentException e1) {
+            } catch (MissingHelpContentException e1) {
                 url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.ENGLISH));
                 try {
                     content = reader.fetchHelpTopicContent(url, true);
-                } catch(MissingHelpContentException e2) {
+                } catch (MissingHelpContentException e2) {
                     this.url = url;
                     handleMissingHelpContent(relativeHelpTopic);
                     return;
-                } catch(HelpContentReaderException e2) {
+                } catch (HelpContentReaderException e2) {
                     Main.error(e2);
                     handleHelpContentReaderException(relativeHelpTopic, e2);
                     return;
                 }
-            } catch(HelpContentReaderException e1) {
+            } catch (HelpContentReaderException e1) {
                 Main.error(e1);
                 handleHelpContentReaderException(relativeHelpTopic, e1);
                 return;
             }
-        } catch(HelpContentReaderException e) {
+        } catch (HelpContentReaderException e) {
             Main.error(e);
             handleHelpContentReaderException(relativeHelpTopic, e);
             return;
@@ -348,11 +348,11 @@ public class HelpBrowser extends JDialog {
         String content = null;
         try {
             content = reader.fetchHelpTopicContent(url, true);
-        } catch(MissingHelpContentException e) {
+        } catch (MissingHelpContentException e) {
             this.url = url;
             handleMissingHelpContent(absoluteHelpTopic);
             return;
-        } catch(HelpContentReaderException e) {
+        } catch (HelpContentReaderException e) {
             Main.error(e);
             handleHelpContentReaderException(absoluteHelpTopic, e);
             return;
@@ -385,7 +385,7 @@ public class HelpBrowser extends JDialog {
                 loadTopic(content);
                 history.setCurrentUrl(url);
                 this.url = url;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 Main.warn(e);
                 HelpAwareOptionPane.showOptionDialog(
                         Main.parent,
@@ -438,15 +438,18 @@ public class HelpBrowser extends JDialog {
     }
 
     class EditAction extends AbstractAction {
+        /**
+         * Constructs a new {@code EditAction}.
+         */
         public EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the current help page"));
-            putValue(SMALL_ICON,ImageProvider.get("dialogs", "edit"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             String url = getUrl();
-            if(url == null)
+            if (url == null)
                 return;
             if (!url.startsWith(HelpUtil.getWikiBaseHelpUrl())) {
                 String message = tr(
@@ -483,6 +486,7 @@ public class HelpBrowser extends JDialog {
 
     static class BackAction extends AbstractAction implements Observer {
         private transient HelpBrowserHistory history;
+
         public BackAction(HelpBrowserHistory history) {
             this.history = history;
             history.addObserver(this);
@@ -495,6 +499,7 @@ public class HelpBrowser extends JDialog {
         public void actionPerformed(ActionEvent e) {
             history.back();
         }
+
         @Override
         public void update(Observable o, Object arg) {
             setEnabled(history.canGoBack());
@@ -503,6 +508,7 @@ public class HelpBrowser extends JDialog {
 
     static class ForwardAction extends AbstractAction implements Observer {
         private transient HelpBrowserHistory history;
+
         public ForwardAction(HelpBrowserHistory history) {
             this.history = history;
             history.addObserver(this);
@@ -515,6 +521,7 @@ public class HelpBrowser extends JDialog {
         public void actionPerformed(ActionEvent e) {
             history.forward();
         }
+
         @Override
         public void update(Observable o, Object arg) {
             setEnabled(history.canGoForward());
@@ -522,6 +529,9 @@ public class HelpBrowser extends JDialog {
     }
 
     class HomeAction extends AbstractAction  {
+        /**
+         * Constructs a new {@code HomeAction}.
+         */
         public HomeAction() {
             putValue(SHORT_DESCRIPTION, tr("Go to the JOSM help home page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "home"));
@@ -577,10 +587,10 @@ public class HelpBrowser extends JDialog {
             AttributeSet set = e.getSourceElement().getAttributes();
             Object value = set.getAttribute(Tag.A);
             if (!(value instanceof SimpleAttributeSet)) return null;
-            SimpleAttributeSet atts = (SimpleAttributeSet)value;
+            SimpleAttributeSet atts = (SimpleAttributeSet) value;
             value = atts.getAttribute(javax.swing.text.html.HTML.Attribute.HREF);
             if (value == null) return null;
-            String s = (String)value;
+            String s = (String) value;
             if (s.matches("#.*"))
                 return s.substring(1);
             return null;
@@ -591,9 +601,7 @@ public class HelpBrowser extends JDialog {
             if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
                 return;
             if (e.getURL() == null || e.getURL().toString().startsWith(url+"#")) {
-                // Probably hyperlink event on a an A-element with a href consisting of
-                // a fragment only, i.e. "#ALocalFragment".
-                //
+                // Probably hyperlink event on a an A-element with a href consisting of a fragment only, i.e. "#ALocalFragment".
                 String fragment = getUrlFragment(e);
                 if (fragment != null) {
                     // first try to scroll to an element with id==fragment. This is the way

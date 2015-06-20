@@ -67,7 +67,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
             cache.clear();
         }
         if (newLayer == layer) {
-            cache.addAll(((OsmDataLayer)newLayer).data.getAllSelected());
+            cache.addAll(((OsmDataLayer) newLayer).data.getAllSelected());
         }
         fireTableDataChanged();
     }

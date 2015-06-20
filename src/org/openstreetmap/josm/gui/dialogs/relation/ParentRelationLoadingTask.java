@@ -191,7 +191,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
                                 JOptionPane.WARNING_MESSAGE
                 );
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (canceled) {
                 Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                 return;

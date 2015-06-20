@@ -31,7 +31,7 @@ public class History {
                 out.add(primitive);
             }
         }
-        return new History(history.id, history.type,out);
+        return new History(history.id, history.type, out);
     }
 
     /** the list of object snapshots */
@@ -95,7 +95,7 @@ public class History {
                     }
                 }
             );
-        return new History(id, type,copy);
+        return new History(id, type, copy);
     }
 
     /**
@@ -231,7 +231,7 @@ public class History {
      */
     public boolean contains(long version) {
         for (HistoryOsmPrimitive primitive: versions) {
-            if (primitive.matches(id,version))
+            if (primitive.matches(id, version))
                 return true;
         }
         return false;
@@ -246,7 +246,7 @@ public class History {
      */
     public HistoryOsmPrimitive getByVersion(long version) {
         for (HistoryOsmPrimitive primitive: versions) {
-            if (primitive.matches(id,version))
+            if (primitive.matches(id, version))
                 return primitive;
         }
         return null;
@@ -264,9 +264,9 @@ public class History {
 
         if (h.versions.isEmpty())
             return null;
-        if (h.get(0).getTimestamp().compareTo(date)> 0)
+        if (h.get(0).getTimestamp().compareTo(date) > 0)
             return null;
-        for (int i = 1; i < h.versions.size();i++) {
+        for (int i = 1; i < h.versions.size(); i++) {
             if (h.get(i-1).getTimestamp().compareTo(date) <= 0
                     && h.get(i).getTimestamp().compareTo(date) >= 0)
                 return h.get(i);

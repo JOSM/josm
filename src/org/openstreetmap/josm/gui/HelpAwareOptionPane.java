@@ -143,7 +143,7 @@ public final class HelpAwareOptionPane {
             for (final ButtonSpec spec: options) {
                 final JButton b = new JButton(spec.text);
                 b.setIcon(spec.icon);
-                b.setToolTipText(spec.tooltipText == null? "" : spec.tooltipText);
+                b.setToolTipText(spec.tooltipText == null ? "" : spec.tooltipText);
                 if (helpTopic != null) {
                     HelpUtil.setHelpContext(b, helpTopic);
                 }
@@ -219,7 +219,7 @@ public final class HelpAwareOptionPane {
 
         JButton defaultButton = null;
         if (options != null && defaultOption != null) {
-            for (int i=0; i< options.length; i++) {
+            for (int i = 0; i < options.length; i++) {
                 if (options[i] == defaultOption) {
                     defaultButton = buttons.get(i);
                     break;
@@ -260,7 +260,7 @@ public final class HelpAwareOptionPane {
             public void windowOpened(WindowEvent e) {
                 if (defaultOption != null && options != null && options.length > 0) {
                     int i;
-                    for (i=0; i<options.length;i++) {
+                    for (i = 0; i < options.length; i++) {
                         if (options[i] == defaultOption) {
                             break;
                         }
@@ -274,7 +274,8 @@ public final class HelpAwareOptionPane {
                 }
             }
         });
-        dialog.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "close");
+        dialog.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "close");
         dialog.getRootPane().getActionMap().put("close", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -284,16 +285,16 @@ public final class HelpAwareOptionPane {
         );
 
         if (options != null) {
-            for (int i=0; i < options.length;i++) {
+            for (int i = 0; i < options.length; i++) {
                 final DefaultAction action = new DefaultAction(dialog, pane, i);
                 buttons.get(i).addActionListener(action);
-                buttons.get(i).getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
+                buttons.get(i).getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
                 buttons.get(i).getActionMap().put("enter", action);
             }
         } else {
             final DefaultAction action = new DefaultAction(dialog, pane, 0);
             buttons.get(0).addActionListener(action);
-            buttons.get(0).getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
+            buttons.get(0).getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
             buttons.get(0).getActionMap().put("enter", action);
         }
 
@@ -303,7 +304,7 @@ public final class HelpAwareOptionPane {
             HelpUtil.setHelpContext(dialog.getRootPane(), helpTopic);
         }
         dialog.setVisible(true);
-        return (Integer)pane.getValue();
+        return (Integer) pane.getValue();
     }
 
     /**

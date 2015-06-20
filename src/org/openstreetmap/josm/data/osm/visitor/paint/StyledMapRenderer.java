@@ -148,7 +148,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             int xCurrent0 = current.x + (int) Math.round(offset * dyNext / lenNext);
             int yCurrent0 = current.y - (int) Math.round(offset * dxNext / lenNext);
 
-            if (idx==0) {
+            if (idx == 0) {
                 ++idx;
                 prev = current;
                 xPrev0 = xCurrent0;
@@ -171,8 +171,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
                 int m = dxNext*(yCurrent0 - yPrev0) - dyNext*(xCurrent0 - xPrev0);
 
-                int cx = xPrev0 + (int) Math.round((double)m * dxPrev / det);
-                int cy = yPrev0 + (int) Math.round((double)m * dyPrev / det);
+                int cx = xPrev0 + (int) Math.round((double) m * dxPrev / det);
+                int cy = yPrev0 + (int) Math.round((double) m * dyPrev / det);
                 ++idx;
                 prev = current;
                 xPrev0 = xCurrent0;
@@ -237,7 +237,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private static Map<Font,Boolean> IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = new HashMap<>();
+    private static Map<Font, Boolean> IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = new HashMap<>();
 
     /**
      * Check, if this System has the GlyphVector double translation bug.
@@ -334,7 +334,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     public StyledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         super(g, nc, isInactiveMode);
 
-        if (nc!=null) {
+        if (nc != null) {
             Component focusOwner = FocusManager.getCurrentManager().getFocusOwner();
             useWiderHighlight = !(focusOwner instanceof AbstractButton || focusOwner == nc);
         }
@@ -363,7 +363,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
         g.draw(path);
 
-        if(!isInactiveMode && useStrokes && dashes != null) {
+        if (!isInactiveMode && useStrokes && dashes != null) {
             g.setColor(dashedColor);
             g.setStroke(dashes);
             g.draw(path);
@@ -485,8 +485,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 final double w = pb.width  - nb.getWidth();
                 final double h = pb.height - nb.getHeight();
 
-                final int x2 = pb.x + (int)(w/2.0);
-                final int y2 = pb.y + (int)(h/2.0);
+                final int x2 = pb.x + (int) (w/2.0);
+                final int y2 = pb.y + (int) (h/2.0);
 
                 final int nbw = (int) nb.getWidth();
                 final int nbh = (int) nb.getHeight();
@@ -497,10 +497,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 boolean labelOK = area.contains(centeredNBounds);
                 if (!labelOK) {
                     // if center position (C) is not inside osm shape, try naively some other positions as follows:
-                    final int x1 = pb.x + (int)(  w/4.0);
-                    final int x3 = pb.x + (int)(3*w/4.0);
-                    final int y1 = pb.y + (int)(  h/4.0);
-                    final int y3 = pb.y + (int)(3*h/4.0);
+                    final int x1 = pb.x + (int)   (w/4.0);
+                    final int x3 = pb.x + (int) (3*w/4.0);
+                    final int y1 = pb.y + (int)   (h/4.0);
+                    final int y3 = pb.y + (int) (3*h/4.0);
                     // +-----------+
                     // |  5  1  6  |
                     // |  4  C  2  |
@@ -525,8 +525,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
                 if (labelOK) {
                     Font defaultFont = g.getFont();
-                    int x = (int)(centeredNBounds.getMinX() - nb.getMinX());
-                    int y = (int)(centeredNBounds.getMinY() - nb.getMinY());
+                    int x = (int) (centeredNBounds.getMinX() - nb.getMinX());
+                    int y = (int) (centeredNBounds.getMinY() - nb.getMinY());
                     displayText(null, name, x, y, osm.isDisabled(), text);
                     g.setFont(defaultFont);
                 } else if (Main.isDebugEnabled()) {
@@ -706,12 +706,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     @Override
     public void drawNode(Node n, Color color, int size, boolean fill) {
-        if(size <= 0 && !n.isHighlighted())
+        if (size <= 0 && !n.isHighlighted())
             return;
 
         Point p = nc.getPoint(n);
 
-        if(n.isHighlighted()) {
+        if (n.isHighlighted()) {
             drawPointHighlight(p, size);
         }
 
@@ -736,7 +736,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Point p = nc.getPoint(n);
 
         final int w = img.getWidth(), h = img.getHeight();
-        if(n.isHighlighted()) {
+        if (n.isHighlighted()) {
             drawPointHighlight(p, Math.max(w, h));
         }
 
@@ -767,7 +767,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Point p = nc.getPoint(n);
         int radius = s.size / 2;
 
-        if(n.isHighlighted()) {
+        if (n.isHighlighted()) {
             drawPointHighlight(p, s.size);
         }
 
@@ -860,12 +860,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param line line style
      */
     private void drawPathHighlight(GeneralPath path, BasicStroke line) {
-        if(path == null)
+        if (path == null)
             return;
         g.setColor(highlightColorTransparent);
         float w = line.getLineWidth() + highlightLineWidth;
-        if (useWiderHighlight) w+=widerHighlight;
-        while(w >= line.getLineWidth()) {
+        if (useWiderHighlight) w += widerHighlight;
+        while (w >= line.getLineWidth()) {
             g.setStroke(new BasicStroke(w, line.getEndCap(), line.getLineJoin(), line.getMiterLimit()));
             g.draw(path);
             w -= highlightStep;
@@ -878,8 +878,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private void drawPointHighlight(Point p, int size) {
         g.setColor(highlightColorTransparent);
         int s = size + highlightPointRadius;
-        if (useWiderHighlight) s+=widerHighlight;
-        while(s >= size) {
+        if (useWiderHighlight) s += widerHighlight;
+        while (s >= size) {
             int r = (int) Math.floor(s/2d);
             g.fillRoundRect(p.x-r, p.y-r, s, s, r, r);
             s -= highlightStep;
@@ -889,12 +889,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     public void drawRestriction(Image img, Point pVia, double vx, double vx2, double vy, double vy2, double angle, boolean selected) {
         // rotate image with direction last node in from to, and scale down image to 16*16 pixels
         Image smallImg = ImageProvider.createRotatedImage(img, angle, new Dimension(16, 16));
-        int w = smallImg.getWidth(null), h=smallImg.getHeight(null);
-        g.drawImage(smallImg, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2, nc);
+        int w = smallImg.getWidth(null), h = smallImg.getHeight(null);
+        g.drawImage(smallImg, (int) (pVia.x+vx+vx2)-w/2, (int) (pVia.y+vy+vy2)-h/2, nc);
 
         if (selected) {
             g.setColor(isInactiveMode ? inactiveColor : relationSelectedColor);
-            g.drawRect((int)(pVia.x+vx+vx2)-w/2-2,(int)(pVia.y+vy+vy2)-h/2-2, w+4, h+4);
+            g.drawRect((int) (pVia.x+vx+vx2)-w/2-2, (int) (pVia.y+vy+vy2)-h/2-2, w+4, h+4);
         }
     }
 
@@ -905,34 +905,34 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         /* find the "from", "via" and "to" elements */
         for (RelationMember m : r.getMembers()) {
-            if(m.getMember().isIncomplete())
+            if (m.getMember().isIncomplete())
                 return;
             else {
-                if(m.isWay()) {
+                if (m.isWay()) {
                     Way w = m.getWay();
-                    if(w.getNodesCount() < 2) {
+                    if (w.getNodesCount() < 2) {
                         continue;
                     }
 
                     switch(m.getRole()) {
                     case "from":
-                        if(fromWay == null) {
+                        if (fromWay == null) {
                             fromWay = w;
                         }
                         break;
                     case "to":
-                        if(toWay == null) {
+                        if (toWay == null) {
                             toWay = w;
                         }
                         break;
                     case "via":
-                        if(via == null) {
+                        if (via == null) {
                             via = w;
                         }
                     }
-                } else if(m.isNode()) {
+                } else if (m.isNode()) {
                     Node n = m.getNode();
-                    if("via".equals(m.getRole()) && via == null) {
+                    if ("via".equals(m.getRole()) && via == null) {
                         via = n;
                     }
                 }
@@ -943,9 +943,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             return;
 
         Node viaNode;
-        if(via instanceof Node) {
+        if (via instanceof Node) {
             viaNode = (Node) via;
-            if(!fromWay.isFirstLastNode(viaNode))
+            if (!fromWay.isFirstLastNode(viaNode))
                 return;
         } else {
             Way viaWay = (Way) via;
@@ -954,8 +954,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             Boolean onewayvia = Boolean.FALSE;
 
             String onewayviastr = viaWay.get("oneway");
-            if(onewayviastr != null) {
-                if("-1".equals(onewayviastr)) {
+            if (onewayviastr != null) {
+                if ("-1".equals(onewayviastr)) {
                     onewayvia = Boolean.TRUE;
                     Node tmp = firstNode;
                     firstNode = lastNode;
@@ -968,7 +968,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
             }
 
-            if(fromWay.isFirstLastNode(firstNode)) {
+            if (fromWay.isFirstLastNode(firstNode)) {
                 viaNode = firstNode;
             } else if (!onewayvia && fromWay.isFirstLastNode(lastNode)) {
                 viaNode = lastNode;
@@ -978,7 +978,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         /* find the "direct" nodes before the via node */
         Node fromNode;
-        if(fromWay.firstNode() == via) {
+        if (fromWay.firstNode() == via) {
             fromNode = fromWay.getNode(1);
         } else {
             fromNode = fromWay.getNode(fromWay.getNodesCount()-2);
@@ -991,7 +991,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
            (calculate the vector vx/vy with the specified length and the direction
            away from the "via" node along the first segment of the "from" way)
          */
-        double distanceFromVia=14;
+        double distanceFromVia = 14;
         double dx = pFrom.x >= pVia.x ? pFrom.x - pVia.x : pVia.x - pFrom.x;
         double dy = pFrom.y >= pVia.y ? pFrom.y - pVia.y : pVia.y - pFrom.y;
 
@@ -1006,10 +1006,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         double vx = distanceFromVia * Math.cos(fromAngle);
         double vy = distanceFromVia * Math.sin(fromAngle);
 
-        if(pFrom.x < pVia.x) {
+        if (pFrom.x < pVia.x) {
             vx = -vx;
         }
-        if(pFrom.y < pVia.y) {
+        if (pFrom.y < pVia.y) {
             vy = -vy;
         }
 
@@ -1017,13 +1017,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
            (calculate the vx2/vy2 vector with the specified length and the direction
            90degrees away from the first segment of the "from" way)
          */
-        double distanceFromWay=10;
+        double distanceFromWay = 10;
         double vx2 = 0;
         double vy2 = 0;
         double iconAngle = 0;
 
-        if(pFrom.x >= pVia.x && pFrom.y >= pVia.y) {
-            if(!leftHandTraffic) {
+        if (pFrom.x >= pVia.x && pFrom.y >= pVia.y) {
+            if (!leftHandTraffic) {
                 vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
                 vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
             } else {
@@ -1032,8 +1032,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
             iconAngle = 270+fromAngleDeg;
         }
-        if(pFrom.x < pVia.x && pFrom.y >= pVia.y) {
-            if(!leftHandTraffic) {
+        if (pFrom.x < pVia.x && pFrom.y >= pVia.y) {
+            if (!leftHandTraffic) {
                 vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
                 vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
             } else {
@@ -1042,8 +1042,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
             iconAngle = 90-fromAngleDeg;
         }
-        if(pFrom.x < pVia.x && pFrom.y < pVia.y) {
-            if(!leftHandTraffic) {
+        if (pFrom.x < pVia.x && pFrom.y < pVia.y) {
+            if (!leftHandTraffic) {
                 vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
                 vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
             } else {
@@ -1052,8 +1052,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
             iconAngle = 90+fromAngleDeg;
         }
-        if(pFrom.x >= pVia.x && pFrom.y < pVia.y) {
-            if(!leftHandTraffic) {
+        if (pFrom.x >= pVia.x && pFrom.y < pVia.y) {
+            if (!leftHandTraffic) {
                 vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
                 vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
             } else {
@@ -1095,7 +1095,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             Point p = nc.getPoint(n);
             poly.addPoint(p.x, p.y);
 
-            if(lastPoint != null) {
+            if (lastPoint != null) {
                 dx = p.x - lastPoint.x;
                 dy = p.y - lastPoint.y;
                 double segmentLength = Math.sqrt(dx*dx + dy*dy);
@@ -1148,7 +1148,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             double bestEnd = Double.NaN;
             double bestDistanceToCenter = Double.MAX_VALUE;
             double bestQuality = -1;
-            for (int i=0; i<longHalfSegmentStart.size(); i++) {
+            for (int i = 0; i < longHalfSegmentStart.size(); i++) {
                 double start = longHalfSegmentStart.get(i);
                 double end = longHalfSegmentEnd.get(i);
                 double dist = Math.abs(0.5 * (end + start) - 0.5 * pathLength);
@@ -1214,7 +1214,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         // only works for text that is completely left-to-right or completely right-to-left, not bi-directional text
         GlyphVector gv = text.font.layoutGlyphVector(frc, chars, 0, chars.length, dirFlag);
 
-        for (int i=0; i<gv.getNumGlyphs(); ++i) {
+        for (int i = 0; i < gv.getNumGlyphs(); ++i) {
             Rectangle2D rect = gv.getGlyphLogicalBounds(i).getBounds2D();
             double t = tStart + offsetSign * (rect.getX() + rect.getWidth()/2) / pathLength;
             double[] p = pointAt(t, poly, pathLength);
@@ -1270,7 +1270,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (ws.way != way || ws.lowerIndex < offset) {
                     continue;
                 }
-                if(highlightSegs == null) {
+                if (highlightSegs == null) {
                     highlightSegs = new GeneralPath();
                 }
 
@@ -1332,7 +1332,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                             double dist = interval - (wayLength % interval);
 
                             while (dist < segmentLength) {
-                                for (int i=0; i<2; ++i) {
+                                for (int i = 0; i < 2; ++i) {
                                     float onewaySize = i == 0 ? 3f : 2f;
                                     GeneralPath onewayPath = i == 0 ? onewayArrowsCasing : onewayArrows;
 
@@ -1360,7 +1360,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
             lastPoint = p;
         }
-        if(way.isHighlighted()) {
+        if (way.isHighlighted()) {
             drawPathHighlight(path, line);
         }
         displaySegments(path, orientationArrows, onewayArrows, onewayArrowsCasing, color, line, dashes, dashedColor);
@@ -1498,7 +1498,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         public List<StyleRecord> call() throws Exception {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
             try {
-                for (int i = from; i<to; i++) {
+                for (int i = from; i < to; i++) {
                     OsmPrimitive osm = input.get(i);
                     if (osm.isDrawable()) {
                         osm.accept(this);
@@ -1600,7 +1600,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             final int bucketsize = Math.max(100, prims.size()/THREAD_POOL.a/3);
             final int noBuckets = (prims.size() + bucketsize - 1) / bucketsize;
             final boolean singleThread = THREAD_POOL.a == 1 || noBuckets == 1;
-            for (int i=0; i<noBuckets; i++) {
+            for (int i = 0; i < noBuckets; i++) {
                 int from = i*bucketsize;
                 int to = Math.min((i+1)*bucketsize, prims.size());
                 List<StyleRecord> target = singleThread ? allStyleElems : new ArrayList<StyleRecord>(to - from);
@@ -1635,7 +1635,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         try {
             highlightWaySegments = data.getHighlightedWaySegments();
 
-            long timeStart=0, timePhase1=0, timeFinished;
+            long timeStart = 0, timePhase1 = 0, timeFinished;
             if (Main.isTraceEnabled()) {
                 timeStart = System.currentTimeMillis();
                 System.err.print("BENCHMARK: rendering ");

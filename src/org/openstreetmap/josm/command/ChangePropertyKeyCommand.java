@@ -87,7 +87,7 @@ public class ChangePropertyKeyCommand extends Command {
             objects.iterator().next().accept(v);
             text += " "+tr(v.className)+" "+v.name;
         } else {
-            text += " "+objects.size()+" "+trn("object","objects",objects.size());
+            text += " "+objects.size()+" "+trn("object", "objects", objects.size());
         }
         return text;
     }
@@ -111,10 +111,12 @@ public class ChangePropertyKeyCommand extends Command {
                 public String getDescriptionText() {
                     return v.name;
                 }
+
                 @Override
                 public Icon getDescriptionIcon() {
                     return v.icon;
                 }
+
                 @Override
                 public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
                     return Collections.singleton(osm);

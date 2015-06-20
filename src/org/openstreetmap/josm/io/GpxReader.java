@@ -43,12 +43,11 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class GpxReader implements GpxConstants {
 
-    private String version;
-    /**
-     * The resulting gpx data
-     */
-    private GpxData gpxData;
     private enum State { init, gpx, metadata, wpt, rte, trk, ext, author, link, trkseg, copyright}
+
+    private String version;
+    /** The resulting gpx data */
+    private GpxData gpxData;
     private InputSource inputSource;
 
     private class Parser extends DefaultHandler {
@@ -251,7 +250,7 @@ public class GpxReader implements GpxConstants {
              * certain unicode characters.
              */
             if (nokiaSportsTrackerBug) {
-                for (int i=0; i<ch.length; ++i) {
+                for (int i = 0; i < ch.length; ++i) {
                     if (ch[i] == 1) {
                         ch[i] = 32;
                     }
@@ -397,7 +396,7 @@ public class GpxReader implements GpxConstants {
                 case "pdop":
                     try {
                         currentWayPoint.put(localName, Float.valueOf(accumulator.toString()));
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         currentWayPoint.put(localName, new Float(0));
                     }
                     break;
@@ -505,7 +504,7 @@ public class GpxReader implements GpxConstants {
 
         public void tryToFinish() throws SAXException {
             List<String> remainingElements = new ArrayList<>(elements);
-            for (int i=remainingElements.size() - 1; i >= 0; i--) {
+            for (int i = remainingElements.size() - 1; i >= 0; i--) {
                 endElement(null, remainingElements.get(i), remainingElements.get(i));
             }
             endDocument();
@@ -548,7 +547,7 @@ public class GpxReader implements GpxConstants {
                     throw e;
                 String message = e.getMessage();
                 if (e instanceof SAXParseException) {
-                    SAXParseException spe = (SAXParseException)e;
+                    SAXParseException spe = (SAXParseException) e;
                     message += " " + tr("(at line {0}, column {1})", spe.getLineNumber(), spe.getColumnNumber());
                 }
                 Main.warn(message);

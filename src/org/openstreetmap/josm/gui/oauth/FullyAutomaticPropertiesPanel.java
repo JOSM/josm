@@ -29,7 +29,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,3,3);
+        gc.insets = new Insets(0, 0, 3, 3);
         pnl.add(new JLabel(tr("Username: ")), gc);
 
         gc.gridx = 1;
@@ -60,7 +60,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
     public FullyAutomaticPropertiesPanel() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
+        setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;

@@ -134,9 +134,9 @@ public class ColorPreference implements SubPreferenceSetting {
         String key;
         String value;
         Map<String, String> colorMap = new HashMap<>();
-        for(int row = 0; row < tableModel.getRowCount(); ++row) {
-            key = (String)tableModel.getValueAt(row, 0);
-            value = ColorHelper.color2html((Color)tableModel.getValueAt(row, 1));
+        for (int row = 0; row < tableModel.getRowCount(); ++row) {
+            key = (String) tableModel.getValueAt(row, 0);
+            value = ColorHelper.color2html((Color) tableModel.getValueAt(row, 1));
             colorMap.put(key, value);
         }
         return colorMap;
@@ -152,14 +152,14 @@ public class ColorPreference implements SubPreferenceSetting {
         setColorModel(Main.pref.getAllColors());
 
         colorEdit = new JButton(tr("Choose"));
-        colorEdit.addActionListener(new ActionListener(){
+        colorEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int sel = colors.getSelectedRow();
-                JColorChooser chooser = new JColorChooser((Color)colors.getValueAt(sel, 1));
+                JColorChooser chooser = new JColorChooser((Color) colors.getValueAt(sel, 1));
                 int answer = JOptionPane.showConfirmDialog(
                         gui, chooser,
-                        tr("Choose a color for {0}", getName((String)colors.getValueAt(sel, 0))),
+                        tr("Choose a color for {0}", getName((String) colors.getValueAt(sel, 0))),
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE);
                 if (answer == JOptionPane.OK_OPTION) {
@@ -168,11 +168,11 @@ public class ColorPreference implements SubPreferenceSetting {
             }
         });
         defaultSet = new JButton(tr("Set to default"));
-        defaultSet.addActionListener(new ActionListener(){
+        defaultSet.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int sel = colors.getSelectedRow();
-                String name = (String)colors.getValueAt(sel, 0);
+                String name = (String) colors.getValueAt(sel, 0);
                 Color c = Main.pref.getDefaultColor(name);
                 if (c != null) {
                     colors.setValueAt(c, sel, 1);
@@ -180,11 +180,11 @@ public class ColorPreference implements SubPreferenceSetting {
             }
         });
         JButton defaultAll = new JButton(tr("Set all to default"));
-        defaultAll.addActionListener(new ActionListener(){
+        defaultAll.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(int i = 0; i < colors.getRowCount(); ++i) {
-                    String name = (String)colors.getValueAt(i, 0);
+                for (int i = 0; i < colors.getRowCount(); ++i) {
+                    String name = (String) colors.getValueAt(i, 0);
                     Color c = Main.pref.getDefaultColor(name);
                     if (c != null) {
                         colors.setValueAt(c, i, 1);
@@ -193,11 +193,11 @@ public class ColorPreference implements SubPreferenceSetting {
             }
         });
         remove = new JButton(tr("Remove"));
-        remove.addActionListener(new ActionListener(){
+        remove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int sel = colors.getSelectedRow();
-                del.add((String)colors.getValueAt(sel, 0));
+                del.add((String) colors.getValueAt(sel, 0));
                 tableModel.removeRow(sel);
             }
         });
@@ -210,6 +210,7 @@ public class ColorPreference implements SubPreferenceSetting {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+
             @Override public void valueChanged(ListSelectionEvent e) {
                 super.valueChanged(e);
                 int sel = getSelectedRow();
@@ -220,41 +221,41 @@ public class ColorPreference implements SubPreferenceSetting {
         };
         colors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final TableCellRenderer oldColorsRenderer = colors.getDefaultRenderer(Object.class);
-        colors.setDefaultRenderer(Object.class, new TableCellRenderer(){
+        colors.setDefaultRenderer(Object.class, new TableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object o, boolean selected, boolean focus, int row, int column) {
                 if (o == null)
                     return new JLabel();
                 if (column == 1) {
-                    JLabel l = new JLabel(ColorHelper.color2html((Color)o));
-                    l.setBackground((Color)o);
+                    JLabel l = new JLabel(ColorHelper.color2html((Color) o));
+                    l.setBackground((Color) o);
                     l.setOpaque(true);
                     return l;
                 }
-                return oldColorsRenderer.getTableCellRendererComponent(t,getName(o.toString()),selected,focus,row,column);
+                return oldColorsRenderer.getTableCellRendererComponent(t, getName(o.toString()), selected, focus, row, column);
             }
         });
         colors.getColumnModel().getColumn(1).setWidth(100);
         colors.setToolTipText(tr("Colors used by different objects in JOSM."));
-        colors.setPreferredScrollableViewportSize(new Dimension(100,112));
+        colors.setPreferredScrollableViewportSize(new Dimension(100, 112));
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JScrollPane scrollpane = new JScrollPane(colors);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         panel.add(scrollpane, GBC.eol().fill(GBC.BOTH));
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        panel.add(buttonPanel, GBC.eol().insets(5,0,5,5).fill(GBC.HORIZONTAL));
+        panel.add(buttonPanel, GBC.eol().insets(5, 0, 5, 5).fill(GBC.HORIZONTAL));
         buttonPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-        buttonPanel.add(colorEdit, GBC.std().insets(0,5,0,0));
-        buttonPanel.add(defaultSet, GBC.std().insets(5,5,5,0));
-        buttonPanel.add(defaultAll, GBC.std().insets(0,5,0,0));
-        buttonPanel.add(remove, GBC.std().insets(0,5,0,0));
+        buttonPanel.add(colorEdit, GBC.std().insets(0, 5, 0, 0));
+        buttonPanel.add(defaultSet, GBC.std().insets(5, 5, 5, 0));
+        buttonPanel.add(defaultAll, GBC.std().insets(0, 5, 0, 0));
+        buttonPanel.add(remove, GBC.std().insets(0, 5, 0, 0));
         gui.getDisplayPreference().addSubTab(this, tr("Colors"), panel);
     }
 
     Boolean isRemoveColor(int row) {
-        return ((String)colors.getValueAt(row, 0)).startsWith("layer ");
+        return ((String) colors.getValueAt(row, 0)).startsWith("layer ");
     }
 
     /**
@@ -276,13 +277,13 @@ public class ColorPreference implements SubPreferenceSetting {
     @Override
     public boolean ok() {
         boolean ret = false;
-        for(String d : del) {
+        for (String d : del) {
             Main.pref.put("color."+d, null);
         }
         for (int i = 0; i < colors.getRowCount(); ++i) {
-            String key = (String)colors.getValueAt(i, 0);
-            if(Main.pref.putColor(key, (Color)colors.getValueAt(i, 1))) {
-                if(key.startsWith("mappaint.")) {
+            String key = (String) colors.getValueAt(i, 0);
+            if (Main.pref.putColor(key, (Color) colors.getValueAt(i, 1))) {
+                if (key.startsWith("mappaint.")) {
                     ret = true;
                 }
             }

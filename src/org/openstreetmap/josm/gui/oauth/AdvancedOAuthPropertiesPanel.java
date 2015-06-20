@@ -52,13 +52,13 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     protected final void build() {
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
+        setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
-        gc.insets = new Insets(0,0, 3, 3);
+        gc.insets = new Insets(0, 0, 3, 3);
         gc.gridwidth = 2;
         cbUseDefaults = new JCheckBox(tr("Use default settings"));
         add(cbUseDefaults, gc);
@@ -176,7 +176,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         setChildComponentsEnabled(false);
     }
 
-    protected void setChildComponentsEnabled(boolean enabled){
+    protected void setChildComponentsEnabled(boolean enabled) {
         for (Component c: getComponents()) {
             if (c instanceof JosmTextField || c instanceof JLabel) {
                 c.setEnabled(enabled);

@@ -255,8 +255,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public double getDist100Pixel() {
         int w = getWidth()/2;
         int h = getHeight()/2;
-        LatLon ll1 = getLatLon(w-50,h);
-        LatLon ll2 = getLatLon(w+50,h);
+        LatLon ll1 = getLatLon(w-50, h);
+        LatLon ll2 = getLatLon(w+50, h);
         return ll1.greatCircleDistance(ll2);
     }
 
@@ -324,7 +324,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public LatLon getLatLon(double x, double y) {
-        return getLatLon((int)x, (int)y);
+        return getLatLon((int) x, (int) y);
     }
 
     /**
@@ -345,7 +345,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         double deltaEast = (eastMax - eastMin) / 10;
         double deltaNorth = (northMax - northMin) / 10;
 
-        for (int i=0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMin)));
             result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMax)));
             result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMin, northMin  + i * deltaNorth)));
@@ -378,7 +378,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (latlon == null)
             return new Point();
         else if (latlon instanceof CachedLatLon)
-            return getPoint2D(((CachedLatLon)latlon).getEastNorth());
+            return getPoint2D(((CachedLatLon) latlon).getEastNorth());
         else
             return getPoint2D(getProjection().latlon2eastNorth(latlon));
     }
@@ -446,7 +446,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             lon = b.getMaxLon();
         }
         if (changed) {
-            newCenter = Projections.project(new LatLon(lat,lon));
+            newCenter = Projections.project(new LatLon(lat, lon));
         }
         int width = getWidth()/2;
         int height = getHeight()/2;
@@ -534,10 +534,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
             final double frames = milliseconds * fps / 1000;
             final EastNorth finalNewCenter = newCenter;
 
-            new Thread(){
+            new Thread() {
                 @Override
                 public void run() {
-                    for (int i=0; i<frames; i++) {
+                    for (int i = 0; i < frames; i++) {
                         // FIXME - not use zoom history here
                         zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
                         try {
@@ -1262,14 +1262,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public final OsmPrimitive getNearestNodeOrWay(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
         Collection<OsmPrimitive> sel;
         DataSet ds = getCurrentDataSet();
-        if (use_selected && ds!=null) {
+        if (use_selected && ds != null) {
             sel = ds.getSelected();
         } else {
             sel = null;
         }
         OsmPrimitive osm = getNearestNode(p, predicate, use_selected, sel);
 
-        if (isPrecedenceNode((Node)osm, p, use_selected)) return osm;
+        if (isPrecedenceNode((Node) osm, p, use_selected)) return osm;
         WaySegment ws;
         if (use_selected) {
             ws = getNearestWaySegment(p, predicate, use_selected, sel);
@@ -1291,7 +1291,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             // is wayseg shorter than maxWaySegLenSq and
             // is p closer to the middle of wayseg  than  to the nearest node?
             if (wp1.distanceSq(wp2) < maxWaySegLenSq &&
-                    p.distanceSq(project(0.5, wp1, wp2)) < p.distanceSq(getPoint2D((Node)osm))) {
+                    p.distanceSq(project(0.5, wp1, wp2)) < p.distanceSq(getPoint2D((Node) osm))) {
                 osm = ws.way;
             }
         }
@@ -1431,7 +1431,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 getWidth() + "_" + getHeight() + "_" + getProjection().toString();
         CRC32 id = new CRC32();
         id.update(x.getBytes(StandardCharsets.UTF_8));
-        return (int)id.getValue();
+        return (int) id.getValue();
     }
 
     /**
@@ -1465,6 +1465,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     private static class CursorInfo {
         private final Cursor cursor;
         private final Object object;
+
         public CursorInfo(Cursor c, Object o) {
             cursor = c;
             object = o;
@@ -1479,7 +1480,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void setNewCursor(Cursor cursor, Object reference) {
         if (!cursors.isEmpty()) {
             CursorInfo l = cursors.getLast();
-            if(l != null && l.cursor == cursor && l.object == reference)
+            if (l != null && l.cursor == cursor && l.object == reference)
                 return;
             stripCursors(reference);
         }
@@ -1512,8 +1513,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     private void stripCursors(Object reference) {
         LinkedList<CursorInfo> c = new LinkedList<>();
-        for(CursorInfo i : cursors) {
-            if(i.object != reference) {
+        for (CursorInfo i : cursors) {
+            if (i.object != reference) {
                 c.add(i);
             }
         }

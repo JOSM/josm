@@ -64,7 +64,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
     public void visit(LatLon latlon) {
         if (latlon != null) {
             if (latlon instanceof CachedLatLon) {
-                visit(((CachedLatLon)latlon).getEastNorth());
+                visit(((CachedLatLon) latlon).getEastNorth());
             } else {
                 visit(Main.getProjection().latlon2eastNorth(latlon));
             }
@@ -178,8 +178,8 @@ public class BoundingXYVisitor extends AbstractVisitor {
         visit(bounds.getMax().add(+en_size/2, +en_size/2));
     }
 
-
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "BoundingXYVisitor["+bounds+"]";
     }
 

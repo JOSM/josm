@@ -27,12 +27,12 @@ public abstract class Prototype {
     }
 
     public String getCode() {
-        if(code == null) {
+        if (code == null) {
             if (conditions == null || conditions.isEmpty()) {
                 code = "";
             } else {
                 final StringBuilder sb = new StringBuilder();
-                for(XmlCondition r: conditions) {
+                for (XmlCondition r: conditions) {
                     r.appendCode(sb);
                 }
                 code = sb.toString();
@@ -42,9 +42,9 @@ public abstract class Prototype {
     }
 
     public boolean check(OsmPrimitive primitive) {
-        if(conditions == null)
+        if (conditions == null)
             return true;
-        for(XmlCondition r : conditions) {
+        for (XmlCondition r : conditions) {
             String k = primitive.get(r.key);
 
             if (k == null || (r.value != null && !k.equals(r.value)))

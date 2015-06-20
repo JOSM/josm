@@ -80,7 +80,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     }
 
     public void initFromChangeset(Changeset cs) {
-        Map<String,String> tags = getDefaultTags();
+        Map<String, String> tags = getDefaultTags();
         if (cs != null) {
             tags.putAll(cs.getKeys());
         }
@@ -105,12 +105,12 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      *
      * @return the map with the current tags in the tag editor model.
      */
-    public Map<String,String> getTags(boolean keepEmpty) {
+    public Map<String, String> getTags(boolean keepEmpty) {
         return pnlTagEditor.getModel().getTags(keepEmpty);
     }
 
-    public Map<String,String> getDefaultTags() {
-        Map<String,String> tags = new HashMap<>();
+    public Map<String, String> getDefaultTags() {
+        Map<String, String> tags = new HashMap<>();
         tags.putAll(defaultTags);
         return tags;
     }
@@ -150,7 +150,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
         @Override
         public void update(Observable o, Object arg) {
             if (!(o instanceof ChangesetCommentModel)) return;
-            String newValue = (String)arg;
+            String newValue = (String) arg;
             String oldValue = getTagEditorValue(key);
             if (oldValue == null) {
                 oldValue = "";

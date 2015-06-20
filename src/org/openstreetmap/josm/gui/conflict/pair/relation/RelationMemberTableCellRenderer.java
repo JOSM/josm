@@ -30,7 +30,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     public RelationMemberTableCellRenderer() {
         setIcon(null);
         setOpaque(true);
-        rowNumberBorder = BorderFactory.createEmptyBorder(0,4,0,0);
+        rowNumberBorder = BorderFactory.createEmptyBorder(0, 4, 0, 0);
     }
 
     /**
@@ -115,7 +115,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 
-        RelationMember member = (RelationMember)value;
+        RelationMember member = (RelationMember) value;
         reset();
         if (member == null) {
             renderEmptyRow();
@@ -146,6 +146,6 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
      */
     @SuppressWarnings("unchecked")
     protected ListMergeModel<Node>.EntriesTableModel getModel(JTable table) {
-        return (ListMergeModel<Node>.EntriesTableModel)table.getModel();
+        return (ListMergeModel<Node>.EntriesTableModel) table.getModel();
     }
 }

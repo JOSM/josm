@@ -53,7 +53,7 @@ public final class DateUtils {
         DatatypeFactory fact = null;
         try {
             fact = DatatypeFactory.newInstance();
-        } catch(DatatypeConfigurationException ce) {
+        } catch (DatatypeConfigurationException ce) {
             Main.error(ce);
         }
         XML_DATE = fact;
@@ -76,7 +76,7 @@ public final class DateUtils {
                 parsePart(str, 5, 2)-1,
                 parsePart(str, 8, 2),
                 parsePart(str, 11, 2),
-                parsePart(str, 14,2),
+                parsePart(str, 14, 2),
                 parsePart(str, 17, 2));
 
             if (str.length() == 25) {
@@ -86,7 +86,7 @@ public final class DateUtils {
             }
 
             return calendar.getTime();
-        } else if(checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
+        } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx+xx:00") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx-xx:00")) {
@@ -95,7 +95,7 @@ public final class DateUtils {
                 parsePart(str, 5, 2)-1,
                 parsePart(str, 8, 2),
                 parsePart(str, 11, 2),
-                parsePart(str, 14,2),
+                parsePart(str, 14, 2),
                 parsePart(str, 17, 2));
             long millis = parsePart(str, 20, 3);
             if (str.length() == 29)
@@ -107,7 +107,7 @@ public final class DateUtils {
             // example date format "18-AUG-08 13:33:03"
             SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
             Date d = f.parse(str, new ParsePosition(0));
-            if(d != null)
+            if (d != null)
                 return d;
         }
 
@@ -132,11 +132,11 @@ public final class DateUtils {
 
     private static boolean checkLayout(String text, String pattern) {
         if (text.length() != pattern.length()) return false;
-        for (int i=0; i<pattern.length(); i++) {
+        for (int i = 0; i < pattern.length(); i++) {
             char pc = pattern.charAt(i);
             char tc = text.charAt(i);
-            if(pc == 'x' && tc >= '0' && tc <= '9') continue;
-            else if(pc == 'x' || pc != tc) return false;
+            if (pc == 'x' && tc >= '0' && tc <= '9') continue;
+            else if (pc == 'x' || pc != tc) return false;
         }
         return true;
     }

@@ -56,6 +56,7 @@ public class UploadAction extends JosmAction{
      */
     private static final List<UploadHook> uploadHooks = new LinkedList<>();
     private static final List<UploadHook> lateUploadHooks = new LinkedList<>();
+
     static {
         /**
          * Calls validator before upload.
@@ -101,7 +102,7 @@ public class UploadAction extends JosmAction{
      * abort the upload.
      */
     public static void registerUploadHook(UploadHook hook, boolean late) {
-        if(hook == null) return;
+        if (hook == null) return;
         if (late) {
             if (!lateUploadHooks.contains(hook)) {
                 lateUploadHooks.add(0, hook);
@@ -119,7 +120,7 @@ public class UploadAction extends JosmAction{
      * @param hook the upload hook. Ignored if null.
      */
     public static void unregisterUploadHook(UploadHook hook) {
-        if(hook == null) return;
+        if (hook == null) return;
         if (uploadHooks.contains(hook)) {
             uploadHooks.remove(hook);
         }
@@ -145,7 +146,7 @@ public class UploadAction extends JosmAction{
 
     public static boolean checkPreUploadConditions(AbstractModifiableLayer layer) {
         return checkPreUploadConditions(layer,
-                layer instanceof OsmDataLayer ? new APIDataSet(((OsmDataLayer)layer).data) : null);
+                layer instanceof OsmDataLayer ? new APIDataSet(((OsmDataLayer) layer).data) : null);
     }
 
     protected static void alertUnresolvedConflicts(OsmDataLayer layer) {

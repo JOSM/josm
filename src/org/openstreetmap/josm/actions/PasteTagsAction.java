@@ -262,7 +262,7 @@ public final class PasteTagsAction extends JosmAction {
      */
     public static boolean pasteTagsFromText(Collection<OsmPrimitive> selection, String text) {
         Map<String, String> tags = TextTagParser.readTagsFromText(text);
-        if (tags==null || tags.isEmpty()) {
+        if (tags == null || tags.isEmpty()) {
             TextTagParser.showBadBufferMessage(help);
             return false;
         }
@@ -271,7 +271,7 @@ public final class PasteTagsAction extends JosmAction {
         List<Command> commands = new ArrayList<>(tags.size());
         for (Entry<String, String> entry: tags.entrySet()) {
             String v = entry.getValue();
-            commands.add(new ChangePropertyCommand(selection, entry.getKey(), "".equals(v)?null:v));
+            commands.add(new ChangePropertyCommand(selection, entry.getKey(), "".equals(v) ? null : v));
         }
         commitCommands(selection, commands);
         return !commands.isEmpty();
@@ -283,7 +283,7 @@ public final class PasteTagsAction extends JosmAction {
      */
     public static boolean pasteTagsFromJOSMBuffer(Collection<OsmPrimitive> selection) {
         List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();
-        if (directlyAdded==null || directlyAdded.isEmpty()) return false;
+        if (directlyAdded == null || directlyAdded.isEmpty()) return false;
 
         PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded, selection);
         List<Command> commands = new ArrayList<>();
@@ -322,6 +322,6 @@ public final class PasteTagsAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection!= null && !selection.isEmpty());
+        setEnabled(selection != null && !selection.isEmpty());
     }
 }

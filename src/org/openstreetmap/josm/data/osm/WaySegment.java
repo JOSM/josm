@@ -41,7 +41,7 @@ public final class WaySegment implements Comparable<WaySegment> {
      * Returns the second (last) node of the way segment.
      * @return the second node
      */
-    public Node getSecondNode(){
+    public Node getSecondNode() {
         return way.getNode(lowerIndex + 1);
     }
 

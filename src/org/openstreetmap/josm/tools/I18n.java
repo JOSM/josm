@@ -218,7 +218,7 @@ public final class I18n {
             return tr(text);
         if (text == null)
             return null;
-        return MessageFormat.format(gettext(text, context), (Object)null);
+        return MessageFormat.format(gettext(text, context), (Object) null);
     }
 
     public static String trc_lazy(String context, String text) {
@@ -226,7 +226,7 @@ public final class I18n {
             return tr(text);
         if (text == null)
             return null;
-        return MessageFormat.format(gettext_lazy(text, context), (Object)null);
+        return MessageFormat.format(gettext_lazy(text, context), (Object) null);
     }
 
     /**
@@ -303,19 +303,19 @@ public final class I18n {
 
     private static String gettext(String text, String ctx, boolean lazy) {
         int i;
-        if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0) {
-            ctx = text.substring(2,i-1);
+        if (ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0) {
+            ctx = text.substring(2, i-1);
             text = text.substring(i+1);
         }
-        if(strings != null) {
+        if (strings != null) {
             String trans = strings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
-            if(trans != null)
+            if (trans != null)
                 return trans;
         }
-        if(pstrings != null) {
+        if (pstrings != null) {
             i = pluralEval(1);
             String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
-            if(trans != null && trans.length > i)
+            if (trans != null && trans.length > i)
                 return trans[i];
         }
         return lazy ? gettext(text, null) : text;
@@ -332,14 +332,14 @@ public final class I18n {
 
     private static String gettextn(String text, String plural, String ctx, long num) {
         int i;
-        if(ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0) {
-            ctx = text.substring(2,i-1);
+        if (ctx == null && text.startsWith("_:") && (i = text.indexOf('\n')) >= 0) {
+            ctx = text.substring(2, i-1);
             text = text.substring(i+1);
         }
-        if(pstrings != null) {
+        if (pstrings != null) {
             i = pluralEval(num);
             String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
-            if(trans != null && trans.length > i)
+            if (trans != null && trans.length > i)
                 return trans[i];
         }
 
@@ -352,7 +352,7 @@ public final class I18n {
     }
 
     private static URL getTranslationFile(String lang) {
-        return Main.class.getResource("/data/"+lang.replace("@","-")+".lang");
+        return Main.class.getResource("/data/"+lang.replace("@", "-")+".lang");
     }
 
     /**
@@ -361,9 +361,9 @@ public final class I18n {
      */
     public static Locale[] getAvailableTranslations() {
         Collection<Locale> v = new ArrayList<>(languages.size());
-        if(getTranslationFile("en") != null) {
+        if (getTranslationFile("en") != null) {
             for (String loc : languages.keySet()) {
-                if(getTranslationFile(loc) != null) {
+                if (getTranslationFile(loc) != null) {
                     v.add(LanguageInfo.getLocale(loc));
                 }
             }
@@ -443,7 +443,7 @@ public final class I18n {
         languages.put("zh_TW", PluralMode.MODE_NONE);
 
         /* try initial language settings, may be changed later again */
-        if(!load(LanguageInfo.getJOSMLocaleCode())) {
+        if (!load(LanguageInfo.getJOSMLocaleCode())) {
             Locale.setDefault(Locale.ENGLISH);
         }
     }
@@ -470,7 +470,7 @@ public final class I18n {
                     JarInputStream jarTrans = new JarInputStream(fisTrans)
                 ) {
                     found = false;
-                    while(!found && (e = jarTrans.getNextEntry()) != null) {
+                    while (!found && (e = jarTrans.getNextEntry()) != null) {
                         String name = e.getName();
                         if (name.equals(langfile))
                             found = true;
@@ -552,65 +552,65 @@ public final class I18n {
             byte[] trlen = new byte[2];
             boolean multimode = false;
             byte[] str = new byte[4096];
-            for(;;) {
-                if(multimode) {
+            for (;;) {
+                if (multimode) {
                     int ennum = ens.read();
                     int trnum = trs.read();
-                    if(trnum == 0xFE) /* marks identical string, handle equally to non-translated */
+                    if (trnum == 0xFE) /* marks identical string, handle equally to non-translated */
                         trnum = 0;
-                    if((ennum == -1 && trnum != -1) || (ennum != -1 && trnum == -1)) /* files do not match */
+                    if ((ennum == -1 && trnum != -1) || (ennum != -1 && trnum == -1)) /* files do not match */
                         return false;
-                    if(ennum == -1) {
+                    if (ennum == -1) {
                         break;
                     }
                     String[] enstrings = new String[ennum];
                     String[] trstrings = new String[trnum];
-                    for(int i = 0; i < ennum; ++i) {
+                    for (int i = 0; i < ennum; ++i) {
                         int val = ens.read(enlen);
-                        if(val != 2) /* file corrupt */
+                        if (val != 2) /* file corrupt */
                             return false;
-                        val = (enlen[0] < 0 ? 256+enlen[0]:enlen[0])*256+(enlen[1] < 0 ? 256+enlen[1]:enlen[1]);
-                        if(val > str.length) {
+                        val = (enlen[0] < 0 ? 256+enlen[0] : enlen[0])*256+(enlen[1] < 0 ? 256+enlen[1] : enlen[1]);
+                        if (val > str.length) {
                             str = new byte[val];
                         }
                         int rval = ens.read(str, 0, val);
-                        if(rval != val) /* file corrupt */
+                        if (rval != val) /* file corrupt */
                             return false;
                         enstrings[i] = new String(str, 0, val, StandardCharsets.UTF_8);
                     }
-                    for(int i = 0; i < trnum; ++i) {
+                    for (int i = 0; i < trnum; ++i) {
                         int val = trs.read(trlen);
-                        if(val != 2) /* file corrupt */
+                        if (val != 2) /* file corrupt */
                             return false;
-                        val = (trlen[0] < 0 ? 256+trlen[0]:trlen[0])*256+(trlen[1] < 0 ? 256+trlen[1]:trlen[1]);
-                        if(val > str.length) {
+                        val = (trlen[0] < 0 ? 256+trlen[0] : trlen[0])*256+(trlen[1] < 0 ? 256+trlen[1] : trlen[1]);
+                        if (val > str.length) {
                             str = new byte[val];
                         }
                         int rval = trs.read(str, 0, val);
-                        if(rval != val) /* file corrupt */
+                        if (rval != val) /* file corrupt */
                             return false;
                         trstrings[i] = new String(str, 0, val, StandardCharsets.UTF_8);
                     }
-                    if(trnum > 0 && !p.containsKey(enstrings[0])) {
+                    if (trnum > 0 && !p.containsKey(enstrings[0])) {
                         p.put(enstrings[0], trstrings);
                     }
                 } else {
                     int enval = ens.read(enlen);
                     int trval = trs.read(trlen);
-                    if(enval != trval) /* files do not match */
+                    if (enval != trval) /* files do not match */
                         return false;
-                    if(enval == -1) {
+                    if (enval == -1) {
                         break;
                     }
-                    if(enval != 2) /* files corrupt */
+                    if (enval != 2) /* files corrupt */
                         return false;
-                    enval = (enlen[0] < 0 ? 256+enlen[0]:enlen[0])*256+(enlen[1] < 0 ? 256+enlen[1]:enlen[1]);
-                    trval = (trlen[0] < 0 ? 256+trlen[0]:trlen[0])*256+(trlen[1] < 0 ? 256+trlen[1]:trlen[1]);
-                    if(trval == 0xFFFE) /* marks identical string, handle equally to non-translated */
+                    enval = (enlen[0] < 0 ? 256+enlen[0] : enlen[0])*256+(enlen[1] < 0 ? 256+enlen[1] : enlen[1]);
+                    trval = (trlen[0] < 0 ? 256+trlen[0] : trlen[0])*256+(trlen[1] < 0 ? 256+trlen[1] : trlen[1]);
+                    if (trval == 0xFFFE) /* marks identical string, handle equally to non-translated */
                         trval = 0;
-                    if(enval == 0xFFFF) {
+                    if (enval == 0xFFFF) {
                         multimode = true;
-                        if(trval != 0xFFFF) /* files do not match */
+                        if (trval != 0xFFFF) /* files do not match */
                             return false;
                     } else {
                         if (enval > str.length) {
@@ -620,15 +620,15 @@ public final class I18n {
                             str = new byte[trval];
                         }
                         int val = ens.read(str, 0, enval);
-                        if(val != enval) /* file corrupt */
+                        if (val != enval) /* file corrupt */
                             return false;
                         String enstr = new String(str, 0, enval, StandardCharsets.UTF_8);
                         if (trval != 0) {
                             val = trs.read(str, 0, trval);
-                            if(val != trval) /* file corrupt */
+                            if (val != trval) /* file corrupt */
                                 return false;
                             String trstr = new String(str, 0, trval, StandardCharsets.UTF_8);
-                            if(!s.containsKey(enstr))
+                            if (!s.containsKey(enstr))
                                 s.put(enstr, trstr);
                         }
                     }
@@ -654,7 +654,7 @@ public final class I18n {
      *
      * @param localeName the locale name. Ignored if null.
      */
-    public static void set(String localeName){
+    public static void set(String localeName) {
         if (localeName != null) {
             Locale l = LanguageInfo.getLocale(localeName);
             if (load(LanguageInfo.getJOSMLocaleCode(l))) {

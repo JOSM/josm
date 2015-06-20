@@ -34,36 +34,47 @@ public class UserInfo {
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public String getDisplayName() {
         return displayName;
     }
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
     public Date getAccountCreated() {
         return accountCreated;
     }
+
     public void setAccountCreated(Date accountCreated) {
         this.accountCreated = accountCreated;
     }
+
     public LatLon getHome() {
         return home;
     }
+
     public void setHome(LatLon home) {
         this.home = home;
     }
+
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
+
     public List<String> getLanguages() {
         return languages;
     }
+
     public void setLanguages(List<String> languages) {
         this.languages = languages;
     }

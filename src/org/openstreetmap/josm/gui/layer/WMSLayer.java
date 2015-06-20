@@ -238,7 +238,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         info.setName(name);
     }
 
-    public boolean hasAutoDownload(){
+    public boolean hasAutoDownload() {
         return autoDownloadEnabled;
     }
 
@@ -264,8 +264,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             int minY = getImageYIndex(minEn.north());
             int maxY = getImageYIndex(maxEn.north());
 
-            for (int x=minX; x<=maxX; x++) {
-                for (int y=minY; y<=maxY; y++) {
+            for (int x = minX; x <= maxX; x++) {
+                for (int y = minY; y <= maxY; y++) {
                     requestedTiles.add(new Point(x, y));
                 }
             }
@@ -299,10 +299,10 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 }
             }
         }
-        for(int x = 0; x<dax; ++x) {
-            for(int y = 0; y<day; ++y) {
+        for (int x = 0; x < dax; ++x) {
+            for (int y = 0; y < day; ++y) {
                 if (images[x][y] == null) {
-                    images[x][y]= new GeorefImage(this);
+                    images[x][y] = new GeorefImage(this);
                 }
             }
         }
@@ -313,14 +313,14 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     @Override public String getToolTipText() {
-        if(autoDownloadEnabled)
+        if (autoDownloadEnabled)
             return tr("WMS layer ({0}), automatically downloading in zoom {1}", getName(), resolutionText);
         else
             return tr("WMS layer ({0}), downloading in zoom {1}", getName(), resolutionText);
     }
 
     private int modulo(int a, int b) {
-        return a % b >= 0 ? a%b : a%b+b;
+        return a % b >= 0 ? a % b : a % b+b;
     }
 
     private boolean zoomIsTooBig() {
@@ -330,7 +330,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     @Override
     public void paint(Graphics2D g, final MapView mv, Bounds b) {
-        if(info.getUrl() == null || (usesInvalidUrl && !isInvalidUrlConfirmed)) return;
+        if (info.getUrl() == null || (usesInvalidUrl && !isInvalidUrlConfirmed)) return;
 
         if (autoResolutionEnabled && !Utils.equalsEpsilon(getBestZoom(), mv.getDist100Pixel())) {
             changeResolution(this, true);
@@ -339,17 +339,17 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         settingsChanged = false;
 
         ProjectionBounds bounds = mv.getProjectionBounds();
-        bminx= getImageXIndex(bounds.minEast);
-        bminy= getImageYIndex(bounds.minNorth);
-        bmaxx= getImageXIndex(bounds.maxEast);
-        bmaxy= getImageYIndex(bounds.maxNorth);
+        bminx = getImageXIndex(bounds.minEast);
+        bminy = getImageYIndex(bounds.minNorth);
+        bmaxx = getImageXIndex(bounds.maxEast);
+        bmaxy = getImageYIndex(bounds.maxNorth);
 
-        leftEdge = (int)(bounds.minEast * getPPD());
-        bottomEdge = (int)(bounds.minNorth * getPPD());
+        leftEdge = (int) (bounds.minEast * getPPD());
+        bottomEdge = (int) (bounds.minNorth * getPPD());
 
         if (zoomIsTooBig()) {
-            for(int x = 0; x<images.length; ++x) {
-                for(int y = 0; y<images[0].length; ++y) {
+            for (int x = 0; x < images.length; ++x) {
+                for (int y = 0; y < images[0].length; ++y) {
                     GeorefImage image = images[x][y];
                     image.paint(g, mv, image.getXIndex(), image.getYIndex(), leftEdge, bottomEdge);
                 }
@@ -368,19 +368,19 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public int getImageXIndex(double coord) {
-        return (int)Math.floor(((coord - dx) * info.getPixelPerDegree()) / imageSize);
+        return (int) Math.floor(((coord - dx) * info.getPixelPerDegree()) / imageSize);
     }
 
     public int getImageYIndex(double coord) {
-        return (int)Math.floor(((coord - dy) * info.getPixelPerDegree()) / imageSize);
+        return (int) Math.floor(((coord - dy) * info.getPixelPerDegree()) / imageSize);
     }
 
     public int getImageX(int imageIndex) {
-        return (int)(imageIndex * imageSize * (getPPD() / info.getPixelPerDegree()) + dx * getPPD());
+        return (int) (imageIndex * imageSize * (getPPD() / info.getPixelPerDegree()) + dx * getPPD());
     }
 
     public int getImageY(int imageIndex) {
-        return (int)(imageIndex * imageSize * (getPPD() / info.getPixelPerDegree()) + dy * getPPD());
+        return (int) (imageIndex * imageSize * (getPPD() / info.getPixelPerDegree()) + dy * getPPD());
     }
 
     public int getImageWidth(int xIndex) {
@@ -441,7 +441,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         return new EastNorth((xIndex * imageSize) / info.getPixelPerDegree(), (yIndex * imageSize) / info.getPixelPerDegree());
     }
 
-    protected void downloadAndPaintVisible(Graphics g, final MapView mv, boolean real){
+    protected void downloadAndPaintVisible(Graphics g, final MapView mv, boolean real) {
 
         int newDax = dax;
         int newDay = day;
@@ -460,18 +460,18 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             initializeImages();
         }
 
-        for(int x = bminx; x<=bmaxx; ++x) {
-            for(int y = bminy; y<=bmaxy; ++y){
-                images[modulo(x,dax)][modulo(y,day)].changePosition(x, y);
+        for (int x = bminx; x <= bmaxx; ++x) {
+            for (int y = bminy; y <= bmaxy; ++y) {
+                images[modulo(x, dax)][modulo(y, day)].changePosition(x, y);
             }
         }
 
         gatherFinishedRequests();
         Set<ProjectionBounds> areaToCache = new HashSet<>();
 
-        for(int x = bminx; x<=bmaxx; ++x) {
-            for(int y = bminy; y<=bmaxy; ++y){
-                GeorefImage img = images[modulo(x,dax)][modulo(y,day)];
+        for (int x = bminx; x <= bmaxx; ++x) {
+            for (int y = bminy; y <= bmaxy; ++y) {
+                GeorefImage img = images[modulo(x, dax)][modulo(y, day)];
                 if (!img.paint(g, mv, x, y, leftEdge, bottomEdge)) {
                     addRequest(new WMSRequest(x, y, info.getPixelPerDegree(), real, true));
                     areaToCache.add(new ProjectionBounds(getEastNorth(x, y), getEastNorth(x + 1, y + 1)));
@@ -486,17 +486,19 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    @Override public void visitBoundingBox(BoundingXYVisitor v) {
-        for(int x = 0; x<dax; ++x) {
-            for(int y = 0; y<day; ++y)
-                if(images[x][y].getImage() != null){
+    @Override
+    public void visitBoundingBox(BoundingXYVisitor v) {
+        for (int x = 0; x < dax; ++x) {
+            for (int y = 0; y < day; ++y)
+                if (images[x][y].getImage() != null) {
                     v.visit(images[x][y].getMin());
                     v.visit(images[x][y].getMax());
                 }
         }
     }
 
-    @Override public Action[] getMenuEntries() {
+    @Override
+    public Action[] getMenuEntries() {
         return new Action[]{
                 LayerListDialog.getInstance().createActivateLayerAction(this),
                 LayerListDialog.getInstance().createShowHideLayerAction(),
@@ -664,7 +666,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         requestQueueLock.lock();
         try {
             for (WMSRequest request: finishedRequests) {
-                GeorefImage img = images[modulo(request.getXIndex(),dax)][modulo(request.getYIndex(),day)];
+                GeorefImage img = images[modulo(request.getXIndex(), dax)][modulo(request.getYIndex(), day)];
                 if (img.equalPosition(request.getXIndex(), request.getYIndex())) {
                     WMSException we = request.getException();
                     img.changeImage(request.getState(), request.getImage(), we != null ? we.getMessage() : null);
@@ -683,6 +685,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         public DownloadAction() {
             super(tr("Download visible tiles"));
         }
+
         @Override
         public void actionPerformed(ActionEvent ev) {
             if (zoomIsTooBig()) {
@@ -707,8 +710,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         // not sure why getDist100Pixel returns values corresponding to
         // the snapLevels, which are in meters per pixel. It works, though.
         double dist = Main.map.mapView.getDist100Pixel();
-        for(int i = snapLevels.length-2; i >= 0; i--) {
-            if(snapLevels[i+1]/3 + snapLevels[i]*2/3 > dist)
+        for (int i = snapLevels.length-2; i >= 0; i--) {
+            if (snapLevels[i+1]/3 + snapLevels[i]*2/3 > dist)
                 return snapLevels[i+1];
         }
         return snapLevels[0];
@@ -723,7 +726,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
      *              matching the current zoom level perfectly
      */
     private static void updateResolutionSetting(WMSLayer layer, boolean snap) {
-        if(snap) {
+        if (snap) {
             layer.resolution = getBestZoom();
             layer.resolutionText = MapView.getDistText(layer.resolution);
         } else {
@@ -750,9 +753,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         // Don’t move tiles off screen when the resolution is rounded. This
         // prevents some flickering when zooming with auto-resolution enabled
         // and instead gradually updates each tile.
-        if(!snap) {
-            for(int x = 0; x<layer.dax; ++x) {
-                for(int y = 0; y<layer.day; ++y) {
+        if (!snap) {
+            for (int x = 0; x < layer.dax; ++x) {
+                for (int y = 0; y < layer.day; ++y) {
                     layer.images[x][y].changePosition(-1, -1);
                 }
             }
@@ -799,6 +802,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         public ReloadErrorTilesAction() {
             super(tr("Reload erroneous tiles"));
         }
+
         @Override
         public void actionPerformed(ActionEvent ev) {
             // Delete small files, because they're probably blank tiles.
@@ -807,8 +811,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
             for (int x = 0; x < dax; ++x) {
                 for (int y = 0; y < day; ++y) {
-                    GeorefImage img = images[modulo(x,dax)][modulo(y,day)];
-                    if(img.getState() == State.FAILED){
+                    GeorefImage img = images[modulo(x, dax)][modulo(y, day)];
+                    if (img.getState() == State.FAILED) {
                         addRequest(new WMSRequest(img.getXIndex(), img.getYIndex(), info.getPixelPerDegree(), true, false));
                     }
                 }
@@ -823,6 +827,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         public ToggleAlphaAction() {
             super(tr("Alpha channel"));
         }
+
         @Override
         public void actionPerformed(ActionEvent ev) {
             JCheckBoxMenuItem checkbox = (JCheckBoxMenuItem) ev.getSource();
@@ -899,6 +904,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         public BookmarkWmsAction() {
             super(tr("Set WMS Bookmark"));
         }
+
         @Override
         public void actionPerformed(ActionEvent ev) {
             ImageryLayerInfo.addLayer(new ImageryInfo(info));
@@ -929,8 +935,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             if (autoDownloadEnabled) {
                 for (int x = 0; x < dax; ++x) {
                     for (int y = 0; y < day; ++y) {
-                        GeorefImage img = images[modulo(x,dax)][modulo(y,day)];
-                        if(img.getState() == State.NOT_IN_CACHE){
+                        GeorefImage img = images[modulo(x, dax)][modulo(y, day)];
+                        if (img.getState() == State.NOT_IN_CACHE) {
                             addRequest(new WMSRequest(img.getXIndex(), img.getYIndex(), info.getPixelPerDegree(), false, true));
                         }
                     }
@@ -981,7 +987,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             canceled = false;
             grabbers.clear();
             grabberThreads.clear();
-            for (int i=0; i<threadCount; i++) {
+            for (int i = 0; i < threadCount; i++) {
                 WMSGrabber grabber = getGrabber(i == 0 && threadCount > 1);
                 grabbers.add(grabber);
                 Thread t = new Thread(grabber, "WMS " + getName() + " " + i);
@@ -1013,8 +1019,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 event.getKey().equals(PROP_OVERLAP.getKey())
                 || event.getKey().equals(PROP_OVERLAP_EAST.getKey())
                 || event.getKey().equals(PROP_OVERLAP_NORTH.getKey())) {
-            for (int i=0; i<images.length; i++) {
-                for (int k=0; k<images[i].length; k++) {
+            for (int i = 0; i < images.length; i++) {
+                for (int k = 0; k < images[i].length; k++) {
                     images[i][k] = new GeorefImage(this);
                 }
             }
@@ -1110,9 +1116,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         day = in.readInt();
         imageSize = in.readInt();
         info.setPixelPerDegree(in.readDouble());
-        doSetName((String)in.readObject());
-        info.setExtendedUrl((String)in.readObject());
-        images = (GeorefImage[][])in.readObject();
+        doSetName((String) in.readObject());
+        info.setExtendedUrl((String) in.readObject());
+        images = (GeorefImage[][]) in.readObject();
 
         for (GeorefImage[] imgs : images) {
             for (GeorefImage img : imgs) {

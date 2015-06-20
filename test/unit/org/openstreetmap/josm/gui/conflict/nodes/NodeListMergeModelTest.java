@@ -51,14 +51,14 @@ public class NodeListMergeModelTest {
 
     protected void ensureSelected(DefaultListSelectionModel model, Object... idx) {
         if (idx == null) return;
-        for (int i=0; i < idx.length; i++) {
+        for (int i = 0; i < idx.length; i++) {
             if (idx[i] instanceof Integer) {
-                int j = (Integer)idx[i];
+                int j = (Integer) idx[i];
                 assertTrue("expected row " + j + " to be selected", model.isSelectedIndex(j));
                 break;
             }
             try {
-                int rows[] = (int[])idx[i];
+                int rows[] = (int[]) idx[i];
                 if (rows.length != 2) {
                     fail("illegal selection range. Either null or not length 2: " + Arrays.toString(rows));
                 }
@@ -68,7 +68,7 @@ public class NodeListMergeModelTest {
                 for (int j = rows[0]; j <= rows[1]; j++) {
                     assertTrue("expected row " + j + " to be selected", model.isSelectedIndex(j));
                 }
-            } catch(ClassCastException e) {
+            } catch (ClassCastException e) {
                 fail("illegal selection range:" + idx[i]);
             }
         }
@@ -94,9 +94,7 @@ public class NodeListMergeModelTest {
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0);
-
     }
-
 
     @Test
     public void test_copyMyNodesToTop_2() {
@@ -122,7 +120,6 @@ public class NodeListMergeModelTest {
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0);
-
     }
 
     @Test
@@ -166,7 +163,7 @@ public class NodeListMergeModelTest {
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(1));
 
-        model.copyMyToTop(new int[]{1,2}); // copy node 3 and 4
+        model.copyMyToTop(new int[]{1, 2}); // copy node 3 and 4
 
         mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(3, mergedNodes.size());
@@ -175,9 +172,8 @@ public class NodeListMergeModelTest {
         assertEquals(1, mergedNodes.get(2).getId()); // already merged node 1 at position 2
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
-        ensureSelected(mergedSelection, 0,1); // first two rows selected
+        ensureSelected(mergedSelection, 0, 1); // first two rows selected
     }
-
 
     @Test
     public void test_copyMyNodesToEnd_1() {
@@ -268,7 +264,7 @@ public class NodeListMergeModelTest {
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(1));
 
-        model.copyMyToEnd(new int[]{1,2}); // copy node 3 and 4
+        model.copyMyToEnd(new int[]{1, 2}); // copy node 3 and 4
 
         mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(3, mergedNodes.size());
@@ -278,7 +274,7 @@ public class NodeListMergeModelTest {
 
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
-        ensureSelected(mergedSelection, 1,2); // last two rows selected
+        ensureSelected(mergedSelection, 1, 2); // last two rows selected
     }
 
     /* ----------------------------------------------------------------------------- */
@@ -312,7 +308,6 @@ public class NodeListMergeModelTest {
         ensureSelected(mergedSelection, 1); // position 1 selected
     }
 
-
     @Test
     public void test_copyMyNodesBeforeCurrent_2() {
         NodeListMergeModel model = new NodeListMergeModel();
@@ -328,7 +323,7 @@ public class NodeListMergeModelTest {
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
 
-        model.copyMyBeforeCurrent(new int[]{0,1}, 0);
+        model.copyMyBeforeCurrent(new int[]{0, 1}, 0);
 
         assertEquals(5, mergedNodes.size());
         assertEquals(1, mergedNodes.get(0).getId());  // copied node 1 at position 0
@@ -338,7 +333,7 @@ public class NodeListMergeModelTest {
         assertEquals(12, mergedNodes.get(4).getId()); // already merged node
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
-        ensureSelected(mergedSelection, 0,1); // position 0 and 1 selected
+        ensureSelected(mergedSelection, 0, 1); // position 0 and 1 selected
     }
 
     @Test
@@ -357,16 +352,16 @@ public class NodeListMergeModelTest {
         mergedNodes.add(new Node(12));
 
         try {
-            model.copyMyBeforeCurrent(new int[]{0,1}, -1);
+            model.copyMyBeforeCurrent(new int[]{0, 1}, -1);
             fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // OK
         }
 
         try {
-            model.copyMyBeforeCurrent(new int[]{0,1}, 4);
+            model.copyMyBeforeCurrent(new int[]{0, 1}, 4);
             fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // OK
         }
     }
@@ -401,7 +396,6 @@ public class NodeListMergeModelTest {
         ensureSelected(mergedSelection, 2); // position 1 selected
     }
 
-
     @Test
     public void test_copyMyNodesAfterCurrent_2() {
         NodeListMergeModel model = new NodeListMergeModel();
@@ -418,7 +412,7 @@ public class NodeListMergeModelTest {
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
 
-        model.copyMyAfterCurrent(new int[]{0,1}, 2);
+        model.copyMyAfterCurrent(new int[]{0, 1}, 2);
 
         assertEquals(5, mergedNodes.size());
         assertEquals(10, mergedNodes.get(0).getId()); // already merged node
@@ -427,9 +421,8 @@ public class NodeListMergeModelTest {
         assertEquals(1, mergedNodes.get(3).getId());  // copied node 1 at position 3
         assertEquals(2, mergedNodes.get(4).getId());  // copied node 2 at position 4
 
-
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
-        ensureSelected(mergedSelection, 3,4); // position 3,4 selected
+        ensureSelected(mergedSelection, 3, 4); // position 3,4 selected
     }
 
     @Test
@@ -448,7 +441,7 @@ public class NodeListMergeModelTest {
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
 
-        model.copyMyAfterCurrent(new int[]{0,2}, 0);
+        model.copyMyAfterCurrent(new int[]{0, 2}, 0);
 
         assertEquals(5, mergedNodes.size());
         assertEquals(10, mergedNodes.get(0).getId()); // already merged node
@@ -458,7 +451,7 @@ public class NodeListMergeModelTest {
         assertEquals(12, mergedNodes.get(4).getId()); // already merged node
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
-        ensureSelected(mergedSelection, 1,2); // position 1,2 selected
+        ensureSelected(mergedSelection, 1, 2); // position 1,2 selected
     }
 
 
@@ -508,7 +501,7 @@ public class NodeListMergeModelTest {
         mergedNodes.add(new Node(13));
         mergedNodes.add(new Node(14));
 
-        model.moveUpMerged(new int[]{1,4});
+        model.moveUpMerged(new int[]{1, 4});
 
         assertEquals(5, mergedNodes.size());
         assertEquals(11, mergedNodes.get(0).getId());
@@ -518,7 +511,7 @@ public class NodeListMergeModelTest {
         assertEquals(13, mergedNodes.get(4).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
-        ensureSelected(mergedSelection, 0,3); // position 0 and 3 selecte0
+        ensureSelected(mergedSelection, 0, 3); // position 0 and 3 selecte0
     }
 
     @Test
@@ -538,7 +531,7 @@ public class NodeListMergeModelTest {
         mergedNodes.add(new Node(13));
         mergedNodes.add(new Node(14));
 
-        model.moveUpMerged(new int[]{1,2,3,4});
+        model.moveUpMerged(new int[]{1, 2, 3, 4});
 
         assertEquals(5, mergedNodes.size());
         assertEquals(11, mergedNodes.get(0).getId());
@@ -548,7 +541,7 @@ public class NodeListMergeModelTest {
         assertEquals(10, mergedNodes.get(4).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
-        ensureSelected(mergedSelection, 0,1,2,3);
+        ensureSelected(mergedSelection, 0, 1, 2, 3);
     }
 
     /* ----------------------------------------------------------------------------- */
@@ -597,7 +590,7 @@ public class NodeListMergeModelTest {
         mergedNodes.add(new Node(13));
         mergedNodes.add(new Node(14));
 
-        model.moveDownMerged(new int[]{1,3});
+        model.moveDownMerged(new int[]{1, 3});
 
         assertEquals(5, mergedNodes.size());
         assertEquals(10, mergedNodes.get(0).getId());
@@ -607,7 +600,7 @@ public class NodeListMergeModelTest {
         assertEquals(13, mergedNodes.get(4).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
-        ensureSelected(mergedSelection, 2,4);
+        ensureSelected(mergedSelection, 2, 4);
     }
 
     @Test
@@ -627,7 +620,7 @@ public class NodeListMergeModelTest {
         mergedNodes.add(new Node(13));
         mergedNodes.add(new Node(14));
 
-        model.moveDownMerged(new int[]{1,2,3});
+        model.moveDownMerged(new int[]{1, 2, 3});
 
         assertEquals(5, mergedNodes.size());
         assertEquals(10, mergedNodes.get(0).getId());
@@ -637,7 +630,7 @@ public class NodeListMergeModelTest {
         assertEquals(13, mergedNodes.get(4).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
-        ensureSelected(mergedSelection, 2,3,4);
+        ensureSelected(mergedSelection, 2, 3, 4);
     }
 
     /* ----------------------------------------------------------------------------- */
@@ -711,6 +704,7 @@ public class NodeListMergeModelTest {
                 events.add(evt);
             }
         }
+
         MyListener listener = new MyListener();
         model.addPropertyChangeListener(listener);
         boolean oldValue = model.isFrozen();
@@ -721,5 +715,4 @@ public class NodeListMergeModelTest {
         assertEquals(oldValue, listener.events.get(0).getOldValue());
         assertEquals(!oldValue, listener.events.get(0).getNewValue());
     }
-
 }

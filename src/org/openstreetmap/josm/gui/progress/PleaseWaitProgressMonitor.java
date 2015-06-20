@@ -23,10 +23,15 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
      */
     public interface ProgressMonitorDialog {
         void setVisible(boolean visible);
+
         void updateProgress(int progress);
+
         void setCustomText(String text);
+
         void setCurrentAction(String text);
+
         void setIndeterminate(boolean newValue);
+
         // TODO Not implemented properly in background monitor, log message will get lost if progress runs in background
         void appendLogMessage(String message);
     }
@@ -51,7 +56,6 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         // which freeze current code flow until modal dialog is closed
         SwingUtilities.invokeLater(runnable);
     }
-
 
     private void setDialogVisible(boolean visible) {
         if (dialog.isVisible() != visible) {
@@ -113,7 +117,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         this.windowTitle = windowTitle;
     }
 
-    private ActionListener cancelListener = new ActionListener(){
+    private ActionListener cancelListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             cancel();
@@ -132,7 +136,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         }
     };
 
-    private WindowListener windowListener = new WindowAdapter(){
+    private WindowListener windowListener = new WindowAdapter() {
         @Override public void windowClosing(WindowEvent e) {
             cancel();
         }
@@ -178,7 +182,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     protected void updateProgress(double progressValue) {
-        final int newValue = (int)(progressValue * PROGRESS_BAR_MAX);
+        final int newValue = (int) (progressValue * PROGRESS_BAR_MAX);
         if (newValue != currentProgressValue) {
             currentProgressValue = newValue;
             doInEDT(new Runnable() {
@@ -326,7 +330,6 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     public ProgressTaskId getProgressTaskId() {
         return taskId;
     }
-
 
     @Override
     public Component getWindowParent() {

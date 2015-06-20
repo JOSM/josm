@@ -83,9 +83,9 @@ public final class Way extends OsmPrimitive implements IWay {
     private List<Node> removeDouble(List<Node> nodes) {
         Node last = null;
         int count = nodes.size();
-        for(int i = 0; i < count && count > 2;) {
+        for (int i = 0; i < count && count > 2;) {
             Node n = nodes.get(i);
-            if(last == n) {
+            if (last == n) {
                 nodes.remove(i);
                 --count;
             } else {
@@ -172,7 +172,7 @@ public final class Way extends OsmPrimitive implements IWay {
         if (node == null) return neigh;
 
         Node[] nodes = this.nodes;
-        for (int i=0; i<nodes.length; i++) {
+        for (int i = 0; i < nodes.length; i++) {
             if (nodes[i].equals(node)) {
                 if (i > 0)
                     neigh.add(nodes[i-1]);
@@ -191,8 +191,8 @@ public final class Way extends OsmPrimitive implements IWay {
      * @return The ordered list of chunks of this way.
      * @since 3348
      */
-    public List<Pair<Node,Node>> getNodePairs(boolean sort) {
-        List<Pair<Node,Node>> chunkSet = new ArrayList<>();
+    public List<Pair<Node, Node>> getNodePairs(boolean sort) {
+        List<Pair<Node, Node>> chunkSet = new ArrayList<>();
         if (isIncomplete()) return chunkSet;
         Node lastN = null;
         Node[] nodes = this.nodes;
@@ -201,7 +201,7 @@ public final class Way extends OsmPrimitive implements IWay {
                 lastN = n;
                 continue;
             }
-            Pair<Node,Node> np = new Pair<>(lastN, n);
+            Pair<Node, Node> np = new Pair<>(lastN, n);
             if (sort) {
                 Pair.sort(np);
             }
@@ -292,7 +292,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
             List<Node> newNodes = new ArrayList<>(wayData.getNodes().size());
             for (Long nodeId : wayData.getNodes()) {
-                Node node = (Node)getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
+                Node node = (Node) getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
                 if (node != null) {
                     newNodes.add(node);
                 } else {
@@ -320,7 +320,7 @@ public final class Way extends OsmPrimitive implements IWay {
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
-            Way otherWay = (Way)osm;
+            Way otherWay = (Way) osm;
             setNodes(otherWay.getNodes());
         } finally {
             writeUnlock(locked);
@@ -329,7 +329,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
     @Override
     public String toString() {
-        String nodesDesc = isIncomplete()?"(incomplete)":"nodes=" + Arrays.toString(nodes);
+        String nodesDesc = isIncomplete() ? "(incomplete)" : "nodes=" + Arrays.toString(nodes);
         return "{Way id=" + getUniqueId() + " version=" + getVersion()+ " " + getFlagsAsString()  + " " + nodesDesc + "}";
     }
 
@@ -339,9 +339,9 @@ public final class Way extends OsmPrimitive implements IWay {
             return false;
         if (!super.hasEqualSemanticAttributes(other))
             return false;
-        Way w = (Way)other;
+        Way w = (Way) other;
         if (getNodesCount() != w.getNodesCount()) return false;
-        for (int i=0; i<getNodesCount(); i++) {
+        for (int i = 0; i < getNodesCount(); i++) {
             if (!getNode(i).hasEqualSemanticAttributes(w.getNode(i)))
                 return false;
         }
@@ -425,7 +425,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 1313
      */
     public void addNode(Node n) {
-        if (n==null) return;
+        if (n == null) return;
 
         boolean locked = writeLock();
         try {
@@ -452,7 +452,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 1313
      */
     public void addNode(int offs, Node n) throws IndexOutOfBoundsException {
-        if (n==null) return;
+        if (n == null) return;
 
         boolean locked = writeLock();
         try {
@@ -509,7 +509,7 @@ public final class Way extends OsmPrimitive implements IWay {
     public boolean isArea() {
         if (this.nodes.length >= 4 && isClosed()) {
             Node distinctNode = null;
-            for (int i=1; i<nodes.length-1; i++) {
+            for (int i = 1; i < nodes.length-1; i++) {
                 if (distinctNode == null && nodes[i] != nodes[0]) {
                     distinctNode = nodes[i];
                 } else if (distinctNode != null && nodes[i] != nodes[0] && nodes[i] != distinctNode) {

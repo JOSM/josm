@@ -81,13 +81,13 @@ public abstract class AbstractReader {
      *
      * @throws IllegalDataException if a data integrity problem is detected
      */
-    protected void processWaysAfterParsing() throws IllegalDataException{
+    protected void processWaysAfterParsing() throws IllegalDataException {
         for (Entry<Long, Collection<Long>> entry : ways.entrySet()) {
             Long externalWayId = entry.getKey();
-            Way w = (Way)externalIdMap.get(new SimplePrimitiveId(externalWayId, OsmPrimitiveType.WAY));
+            Way w = (Way) externalIdMap.get(new SimplePrimitiveId(externalWayId, OsmPrimitiveType.WAY));
             List<Node> wayNodes = new ArrayList<>();
             for (long id : entry.getValue()) {
-                Node n = (Node)externalIdMap.get(new SimplePrimitiveId(id, OsmPrimitiveType.NODE));
+                Node n = (Node) externalIdMap.get(new SimplePrimitiveId(id, OsmPrimitiveType.NODE));
                 if (n == null) {
                     if (id <= 0)
                         throw new IllegalDataException(
@@ -95,8 +95,7 @@ public abstract class AbstractReader {
                                         externalWayId,
                                         id));
                     // create an incomplete node if necessary
-                    //
-                    n = (Node)ds.getPrimitiveById(id,OsmPrimitiveType.NODE);
+                    n = (Node) ds.getPrimitiveById(id, OsmPrimitiveType.NODE);
                     if (n == null) {
                         n = new Node(id);
                         ds.addPrimitive(n);

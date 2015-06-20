@@ -217,7 +217,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof StatusTextHistory && ((StatusTextHistory)obj).id == id;
+            return obj instanceof StatusTextHistory && ((StatusTextHistory) obj).id == id;
         }
 
         @Override
@@ -263,7 +263,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                     ds = mv.getCurrentDataSet();
                     if (ds != null) {
                         // This is not perfect, if current dataset was changed during execution, the lock would be useless
-                        if(isAtOldPosition && middleMouseDown) {
+                        if (isAtOldPosition && middleMouseDown) {
                             // Write lock is necessary when selecting in popupCycleSelection
                             // locks can not be upgraded -> if do read lock here and write lock later
                             // (in OsmPrimitive.updateFlags) then always occurs deadlock (#5814)
@@ -320,7 +320,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                     Main.warn(x);
                 } finally {
                     if (ds != null) {
-                        if(isAtOldPosition && middleMouseDown) {
+                        if (isAtOldPosition && middleMouseDown) {
                             ds.endUpdate();
                         } else {
                             ds.getReadLock().unlock();
@@ -376,7 +376,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                         return; // exit, if new parent.
 
                     // Do nothing, if required data is missing
-                    if(ms.mousePos == null || mv.center == null) {
+                    if (ms.mousePos == null || mv.center == null) {
                         continue;
                     }
 
@@ -418,13 +418,13 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             int xPos = p.x + ms.mousePos.x + 16;
             // Display the popup to the left of the cursor if it would be cut
             // off on its right, but only if more space is available
-            if(xPos + w > scrn.width && xPos > scrn.width/2) {
+            if (xPos + w > scrn.width && xPos > scrn.width/2) {
                 xPos = p.x + ms.mousePos.x - 4 - w;
             }
             int yPos = p.y + ms.mousePos.y + 16;
             // Move the popup up if it would be cut off at its bottom but do not
             // move it off screen on the top
-            if(yPos + h > scrn.height - 5) {
+            if (yPos + h > scrn.height - 5) {
                 yPos = Math.max(5, scrn.height - h - 5);
             }
 
@@ -458,13 +458,13 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             OsmPrimitive firstSelected = null;
             OsmPrimitive nextSelected = null;
             for (final OsmPrimitive osm : osms) {
-                if(firstItem == null) {
+                if (firstItem == null) {
                     firstItem = osm;
                 }
-                if(firstSelected != null && nextSelected == null) {
+                if (firstSelected != null && nextSelected == null) {
                     nextSelected = osm;
                 }
-                if(firstSelected == null && ds.isSelected(osm)) {
+                if (firstSelected == null && ds.isSelected(osm)) {
                     firstSelected = osm;
                 }
             }
@@ -472,14 +472,14 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             // Clear previous selection if SHIFT (add to selection) is not
             // pressed. Cannot use "setSelected()" because it will cause a
             // fireSelectionChanged event which is unnecessary at this point.
-            if((mods & MouseEvent.SHIFT_DOWN_MASK) == 0) {
+            if ((mods & MouseEvent.SHIFT_DOWN_MASK) == 0) {
                 ds.clearSelection();
             }
 
             // This will cycle through the available items.
             if (firstSelected != null) {
                 ds.clearSelection(firstSelected);
-                if(nextSelected != null) {
+                if (nextSelected != null) {
                     ds.addSelected(nextSelected);
                 }
             } else if (firstItem != null) {
@@ -492,11 +492,11 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          */
         private void popupHidePopup() {
             popupLabels = null;
-            if(popup == null)
+            if (popup == null)
                 return;
             final Popup staticPopup = popup;
             popup = null;
-            EventQueue.invokeLater(new Runnable(){
+            EventQueue.invokeLater(new Runnable() {
                @Override
                public void run() {
                     staticPopup.hide();
@@ -511,10 +511,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          */
         private void popupShowPopup(Popup newPopup, List<JLabel> lbls) {
             final Popup staticPopup = newPopup;
-            if(this.popup != null) {
+            if (this.popup != null) {
                 // If an old popup exists, remove it when the new popup has been drawn to keep flickering to a minimum
                 final Popup staticOldPopup = this.popup;
-                EventQueue.invokeLater(new Runnable(){
+                EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         staticPopup.show();
@@ -523,7 +523,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                 });
             } else {
                 // There is no old popup
-                EventQueue.invokeLater(new Runnable(){
+                EventQueue.invokeLater(new Runnable() {
                      @Override
                      public void run() {
                          staticPopup.show();
@@ -539,9 +539,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          * user clicks on the map instead of the popup.
          */
         private void popupUpdateLabels() {
-            if(this.popup == null || this.popupLabels == null)
+            if (this.popup == null || this.popupLabels == null)
                 return;
-            for(JLabel l : this.popupLabels) {
+            for (JLabel l : this.popupLabels) {
                 l.validate();
             }
         }
@@ -555,7 +555,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          */
         private void popupSetLabelColors(JLabel lbl, OsmPrimitive osm) {
             DataSet ds = Main.main.getCurrentDataSet();
-            if(ds.isSelected(osm)) {
+            if (ds.isSelected(osm)) {
                 lbl.setBackground(SystemColor.textHighlight);
                 lbl.setForeground(SystemColor.textHighlightText);
             } else {
@@ -585,7 +585,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                 text.append(" [id=").append(osm.getId()).append(']');
             }
 
-            if(osm.getUser() != null) {
+            if (osm.getUser() != null) {
                 text.append(" [").append(tr("User:")).append(' ').append(osm.getUser().getName()).append(']');
             }
 
@@ -612,16 +612,18 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             l.setVerticalTextPosition(JLabel.TOP);
             l.setHorizontalAlignment(JLabel.LEFT);
             l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            l.addMouseListener(new MouseAdapter(){
+            l.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     l.setBackground(SystemColor.info);
                     l.setForeground(SystemColor.infoText);
                 }
+
                 @Override
                 public void mouseExited(MouseEvent e) {
                     popupSetLabelColors(l, osm);
                 }
+
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     DataSet ds = Main.main.getCurrentDataSet();
@@ -631,17 +633,19 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                 }
             });
             // Sometimes the mouseEntered event is not catched, thus the label
-            // will not be highlighted, making it confusing. The MotionListener
-            // can correct this defect.
+            // will not be highlighted, making it confusing. The MotionListener can correct this defect.
             l.addMouseMotionListener(new MouseMotionListener() {
-                 @Override public void mouseMoved(MouseEvent e) {
+                 @Override
+                 public void mouseMoved(MouseEvent e) {
                     l.setBackground(SystemColor.info);
                     l.setForeground(SystemColor.infoText);
-                }
-                 @Override public void mouseDragged(MouseEvent e) {
+                 }
+
+                 @Override
+                 public void mouseDragged(MouseEvent e) {
                     l.setBackground(SystemColor.info);
                     l.setForeground(SystemColor.infoText);
-                }
+                 }
             });
             return l;
         }
@@ -664,11 +668,11 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          @Override
          public void eventDispatched(AWTEvent event) {
             if (event instanceof InputEvent &&
-                    ((InputEvent)event).getComponent() == mv) {
+                    ((InputEvent) event).getComponent() == mv) {
                 synchronized (collector) {
-                    mouseState.modifiers = ((InputEvent)event).getModifiersEx();
+                    mouseState.modifiers = ((InputEvent) event).getModifiersEx();
                     if (event instanceof MouseEvent) {
-                        mouseState.mousePos = ((MouseEvent)event).getPoint();
+                        mouseState.mousePos = ((MouseEvent) event).getPoint();
                     }
                     collector.notifyAll();
                 }
@@ -761,7 +765,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             addPopupMenuListener(new PopupMenuListener() {
                 @Override
                 public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                    Component invoker = ((JPopupMenu)e.getSource()).getInvoker();
+                    Component invoker = ((JPopupMenu) e.getSource()).getInvoker();
                     jumpButton.setVisible(latText.equals(invoker) || lonText.equals(invoker));
                     String currentSOM = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
                     for (JMenuItem item : somItems) {
@@ -771,10 +775,12 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                     separator.setVisible(distText.equals(invoker));
                     doNotHide.setSelected(Main.pref.getBoolean("statusbar.always-visible", true));
                 }
+
                 @Override
                 public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
                     // Do nothing
                 }
+
                 @Override
                 public void popupMenuCanceled(PopupMenuEvent e) {
                     // Do nothing
@@ -805,11 +811,12 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         };
 
         // Listen for mouse movements and set the position text field
-        mv.addMouseMotionListener(new MouseMotionListener(){
+        mv.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
                 mouseMoved(e);
             }
+
             @Override
             public void mouseMoved(MouseEvent e) {
                 if (mv.center == null)
@@ -817,7 +824,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                 // Do not update the view if ctrl is pressed.
                 if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
                     CoordinateFormat mCord = CoordinateFormat.getDefaultFormat();
-                    LatLon p = mv.getLatLon(e.getX(),e.getY());
+                    LatLon p = mv.getLatLon(e.getX(), e.getY());
                     latText.setText(p.latToString(mCord));
                     lonText.setText(p.lonToString(mCord));
                 }
@@ -825,7 +832,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         });
 
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(1,2,1,2));
+        setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 
         latText.setInheritsPopupMenu(true);
         lonText.setInheritsPopupMenu(true);
@@ -834,10 +841,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         nameText.setInheritsPopupMenu(true);
 
         add(latText, GBC.std());
-        add(lonText, GBC.std().insets(3,0,0,0));
-        add(headingText, GBC.std().insets(3,0,0,0));
-        add(angleText, GBC.std().insets(3,0,0,0));
-        add(distText, GBC.std().insets(3,0,0,0));
+        add(lonText, GBC.std().insets(3, 0, 0, 0));
+        add(headingText, GBC.std().insets(3, 0, 0, 0));
+        add(angleText, GBC.std().insets(3, 0, 0, 0));
+        add(distText, GBC.std().insets(3, 0, 0, 0));
 
         if (Main.pref.getBoolean("statusbar.change-system-of-measurement-on-click", true)) {
             distText.addMouseListener(new MouseAdapter() {
@@ -847,7 +854,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                 public void mouseClicked(MouseEvent e) {
                     if (!e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON1) {
                         String som = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
-                        String newsom = soms.get((soms.indexOf(som)+1)%soms.size());
+                        String newsom = soms.get((soms.indexOf(som)+1) % soms.size());
                         updateSystemOfMeasurement(newsom);
                     }
                 }
@@ -865,14 +872,14 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         lonText.addMouseListener(jumpToOnLeftClick);
 
         helpText.setEditable(false);
-        add(nameText, GBC.std().insets(3,0,0,0));
-        add(helpText, GBC.std().insets(3,0,0,0).fill(GBC.HORIZONTAL));
+        add(nameText, GBC.std().insets(3, 0, 0, 0));
+        add(helpText, GBC.std().insets(3, 0, 0, 0).fill(GBC.HORIZONTAL));
 
         progressBar.setMaximum(PleaseWaitProgressMonitor.PROGRESS_BAR_MAX);
         progressBar.setVisible(false);
         GBC gbc = GBC.eol();
         gbc.ipadx = 100;
-        add(progressBar,gbc);
+        add(progressBar, gbc);
         progressBar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

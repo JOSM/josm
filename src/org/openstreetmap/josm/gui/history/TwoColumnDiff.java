@@ -31,13 +31,17 @@ class TwoColumnDiff {
     public static class Item {
 
         public enum DiffItemType {
-            INSERTED(new Color(0xDD, 0xFF, 0xDD)), DELETED(new Color(255,197,197)), CHANGED(new Color(255,234,213)),
-            SAME(new Color(234,234,234)), EMPTY(new Color(234,234,234));
+            INSERTED(new Color(0xDD, 0xFF, 0xDD)),
+            DELETED(new Color(255, 197, 197)),
+            CHANGED(new Color(255, 234, 213)),
+            SAME(new Color(234, 234, 234)),
+            EMPTY(new Color(234, 234, 234));
 
             private final Color color;
             private DiffItemType(Color color) {
                 this.color = color;
             }
+
             public Color getColor() {
                 return color;
             }
@@ -90,10 +94,10 @@ class TwoColumnDiff {
         int ia = 0;
         int ib = 0;
 
-        while(script != null) {
+        while (script != null) {
             int deleted = script.deleted;
             int inserted = script.inserted;
-            while(ia < script.line0 && ib < script.line1){
+            while (ia < script.line0 && ib < script.line1) {
                 Item cell = new Item(DiffItemType.SAME, a[ia]);
                 referenceDiff.add(cell);
                 currentDiff.add(cell);
@@ -101,11 +105,11 @@ class TwoColumnDiff {
                 ib++;
             }
 
-            while(inserted > 0 || deleted > 0) {
-                if(inserted > 0 && deleted > 0) {
+            while (inserted > 0 || deleted > 0) {
+                if (inserted > 0 && deleted > 0) {
                     referenceDiff.add(new Item(DiffItemType.CHANGED, a[ia++]));
                     currentDiff.add(new Item(DiffItemType.CHANGED, b[ib++]));
-                } else if(inserted > 0) {
+                } else if (inserted > 0) {
                     referenceDiff.add(new Item(DiffItemType.EMPTY, null));
                     currentDiff.add(new Item(DiffItemType.INSERTED, b[ib++]));
                 } else {
@@ -117,7 +121,7 @@ class TwoColumnDiff {
             }
             script = script.link;
         }
-        while(ia < a.length && ib < b.length) {
+        while (ia < a.length && ib < b.length) {
             referenceDiff.add(new Item(DiffItemType.SAME, a[ia++]));
             currentDiff.add(new Item(DiffItemType.SAME, b[ib++]));
         }

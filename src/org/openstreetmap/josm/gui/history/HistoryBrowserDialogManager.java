@@ -153,6 +153,7 @@ public final class HistoryBrowserDialogManager implements MapView.LayerChangeLis
     /* ----------------------------------------------------------------------------- */
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {}
+
     @Override
     public void layerAdded(Layer newLayer) {}
 

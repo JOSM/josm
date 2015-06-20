@@ -72,7 +72,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
             bPanel.add(south, GBC.std().fill(GBC.HORIZONTAL));
             bPanel.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
 
-            this.add(new JLabel(tr("Hemisphere")), GBC.std().insets(5,5,0,5));
+            this.add(new JLabel(tr("Hemisphere")), GBC.std().insets(5, 5, 0, 5));
             this.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
             this.add(bPanel, GBC.eop().fill(GBC.HORIZONTAL));
             this.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
@@ -101,7 +101,6 @@ public class UTMProjectionChoice extends ListProjectionChoice {
         return tr("UTM");
     }
 
-
     @Override
     public Collection<String> getPreferences(JPanel panel) {
         if (!(panel instanceof UTMPanel)) {
@@ -109,16 +108,16 @@ public class UTMProjectionChoice extends ListProjectionChoice {
         }
         UTMPanel p = (UTMPanel) panel;
         int idx = p.prefcb.getSelectedIndex();
-        Hemisphere hem = p.south.isSelected()?Hemisphere.South:Hemisphere.North;
+        Hemisphere hem = p.south.isSelected() ? Hemisphere.South : Hemisphere.North;
         return Arrays.asList(indexToZone(idx), hem.toString());
     }
 
     @Override
     public String[] allCodes() {
         List<String> projections = new ArrayList<>(60*4);
-        for (int zone = 1;zone <= 60; zone++) {
+        for (int zone = 1; zone <= 60; zone++) {
             for (Hemisphere hem : Hemisphere.values()) {
-                projections.add("EPSG:" + (32600 + zone + (hem == Hemisphere.South?100:0)));
+                projections.add("EPSG:" + (32600 + zone + (hem == Hemisphere.South ? 100 : 0)));
             }
         }
         return projections.toArray(new String[projections.size()]);
@@ -129,12 +128,12 @@ public class UTMProjectionChoice extends ListProjectionChoice {
 
         if (code.startsWith("EPSG:326") || code.startsWith("EPSG:327")) {
             try {
-                Hemisphere hem = code.charAt(7)=='6'?Hemisphere.North:Hemisphere.South;
+                Hemisphere hem = code.charAt(7) == '6' ? Hemisphere.North : Hemisphere.South;
                 String zonestring = code.substring(8);
                 int zoneval = Integer.parseInt(zonestring);
-                if(zoneval > 0 && zoneval <= 60)
+                if (zoneval > 0 && zoneval <= 60)
                     return Arrays.asList(zonestring, hem.toString());
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 Main.warn(e);
             }
         }
@@ -165,7 +164,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 1;
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             Main.warn(e);
         }
         return defaultIndex;

@@ -64,7 +64,7 @@ public class UploadNotesTask {
             ProgressMonitor monitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
             OsmApi api = OsmApi.getOsmApi();
             for (Note note : noteData.getNotes()) {
-                if(isCanceled) {
+                if (isCanceled) {
                     Main.info("Note upload interrupted by user");
                     break;
                 }

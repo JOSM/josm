@@ -48,7 +48,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
         boolean done = false;
         GpxData result = null;
         String url = "trackpoints?bbox="+b.getMinLon()+","+b.getMinLat()+","+b.getMaxLon()+","+b.getMaxLat()+"&page=";
-        for (int i = 0;!done;++i) {
+        for (int i = 0; !done; ++i) {
             progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * 5000, (i + 1) * 5000));
             try (InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true))) {
                 if (in == null) {
@@ -62,7 +62,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                     result = currentGpx;
                 } else if (currentGpx.hasTrackPoints()) {
                     result.mergeFrom(currentGpx);
-                } else{
+                } else {
                     done = true;
                 }
             }
@@ -149,7 +149,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 }
             }
             return ds;
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             throw e;
         } catch (Exception e) {
             throw new OsmTransferException(e);
@@ -187,7 +187,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
     /**
      * Indicates that the number of fetched notes equals the specified limit. Thus there might be more notes to download.
      */
-    public static class MoreNotesException extends RuntimeException{
+    public static class MoreNotesException extends RuntimeException {
         /**
          * The downloaded notes
          */

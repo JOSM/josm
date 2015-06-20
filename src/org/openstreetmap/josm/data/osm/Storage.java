@@ -74,7 +74,7 @@ public class Storage<T> extends AbstractSet<T> {
 
         @Override
         public int getHashCode(PrimitiveId k) {
-            return (int)k.getUniqueId() ^ k.getType().hashCode();
+            return (int) k.getUniqueId() ^ k.getType().hashCode();
         }
 
         @Override
@@ -84,7 +84,7 @@ public class Storage<T> extends AbstractSet<T> {
         }
     }
 
-    private final Hash<? super T,? super T> hash;
+    private final Hash<? super T, ? super T> hash;
     private T[] data;
     private int mask;
     private int size;
@@ -108,7 +108,7 @@ public class Storage<T> extends AbstractSet<T> {
         this(Storage.<T>defaultHash(), capacity, false);
     }
 
-    public Storage(Hash<? super T,? super T> ha) {
+    public Storage(Hash<? super T, ? super T> ha) {
         this(ha, DEFAULT_CAPACITY, false);
     }
 
@@ -120,7 +120,7 @@ public class Storage<T> extends AbstractSet<T> {
         this(Storage.<T>defaultHash(), capacity, safeIterator);
     }
 
-    public Storage(Hash<? super T,? super T> ha, boolean safeIterator) {
+    public Storage(Hash<? super T, ? super T> ha, boolean safeIterator) {
         this(ha, DEFAULT_CAPACITY, safeIterator);
     }
 
@@ -139,7 +139,7 @@ public class Storage<T> extends AbstractSet<T> {
      */
     public Storage(Hash<? super T, ? super T> ha, int capacity, boolean safeIterator) {
         this.hash = ha;
-        int cap = 1 << (int)(Math.ceil(Math.log(capacity/loadFactor) / Math.log(2)));
+        int cap = 1 << (int) (Math.ceil(Math.log(capacity/loadFactor) / Math.log(2)));
         @SuppressWarnings("unchecked") T[] newData = (T[]) new Object[cap];
         data = newData;
         mask = data.length - 1;
@@ -194,7 +194,7 @@ public class Storage<T> extends AbstractSet<T> {
         copyArray();
         modCount++;
         size = 0;
-        for (int i = 0; i<data.length; i++) {
+        for (int i = 0; i < data.length; i++) {
             data[i] = null;
         }
     }
@@ -256,7 +256,7 @@ public class Storage<T> extends AbstractSet<T> {
         return bucket < 0 ? null : doRemove(bucket);
     }
 
-    public <K> Map<K,T> foreignKey(Hash<K,? super T> h) {
+    public <K> Map<K, T> foreignKey(Hash<K, ? super T> h) {
         return new FMap<>(h);
     }
 
@@ -277,7 +277,7 @@ public class Storage<T> extends AbstractSet<T> {
      * @return the bucket equivalent to the key or -(bucket) as an empty slot
      * where such an entry can be stored.
      */
-    private <K> int getBucket(Hash<K,? super T> ha, K key) {
+    private <K> int getBucket(Hash<K, ? super T> ha, K key) {
         T entry;
         int hcode = rehash(ha.getHashCode(key));
         int bucket = hcode & mask;
@@ -308,7 +308,7 @@ public class Storage<T> extends AbstractSet<T> {
             // we can't move it. The move can be proved safe otherwise,
             // because the entry safely belongs to <previous_null+1,hole>
             if ((bucket < right && (right <= hole || hole <= bucket)) ||
-                    (right <=hole && hole <= bucket)) {
+                    (right <= hole && hole <= bucket)) {
 
                 data[hole] = data[bucket];
                 hole = bucket;
@@ -347,12 +347,13 @@ public class Storage<T> extends AbstractSet<T> {
      * @return a hash implementation that just delegates to object's own
      * hashCode and equals.
      */
-    public static <O> Hash<O,O> defaultHash() {
-        return new Hash<O,O>() {
+    public static <O> Hash<O, O> defaultHash() {
+        return new Hash<O, O>() {
             @Override
             public int getHashCode(O t) {
                 return t.hashCode();
             }
+
             @Override
             public boolean equals(O t1, O t2) {
                 return t1.equals(t2);
@@ -372,10 +373,10 @@ public class Storage<T> extends AbstractSet<T> {
     }
      */
 
-    private final class FMap<K> implements Map<K,T> {
-        private Hash<K,? super T> fHash;
+    private final class FMap<K> implements Map<K, T> {
+        private Hash<K, ? super T> fHash;
 
-        private FMap(Hash<K,? super T> h) {
+        private FMap(Hash<K, ? super T> h) {
             fHash = h;
         }
 
@@ -486,7 +487,6 @@ public class Storage<T> extends AbstractSet<T> {
             }
         }
     }
-
 
     private final class Iter implements Iterator<T> {
         private final int mods;

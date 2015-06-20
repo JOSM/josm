@@ -36,7 +36,7 @@ public class SideButton extends JButton implements Destroyable {
 
     public SideButton(Action action, boolean usename) {
         super(action);
-        if(!usename) {
+        if (!usename) {
             setText(null);
             fixIcon(action);
             doStyle();
@@ -82,11 +82,11 @@ public class SideButton extends JButton implements Destroyable {
     private void doStyle() {
         setLayout(new BorderLayout());
         setIconTextGap(2);
-        setMargin(new Insets(0,0,0,0));
+        setMargin(new Insets(0, 0, 0, 0));
     }
 
     public void createArrow(ActionListener listener) {
-        setMargin(new Insets(0,0,0,0));
+        setMargin(new Insets(0, 0, 0, 0));
         BasicArrowButton arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);
         arrowButton.setBorder(BorderFactory.createEmptyBorder());
         add(arrowButton, BorderLayout.EAST);

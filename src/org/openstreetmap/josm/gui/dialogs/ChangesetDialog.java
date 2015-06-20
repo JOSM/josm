@@ -321,7 +321,7 @@ public class ChangesetDialog extends ToggleDialog{
                 return;
 
             DataSet ds = Main.main.getEditLayer().data;
-            selectObjectsByChangesetIds(ds,sel);
+            selectObjectsByChangesetIds(ds, sel);
         }
 
         protected void updateEnabledState() {
@@ -530,9 +530,9 @@ public class ChangesetDialog extends ToggleDialog{
                     if (future != null) {
                         try {
                             future.get();
-                        } catch(InterruptedException e) {
+                        } catch (InterruptedException e) {
                             Main.warn("InterruptedException in "+getClass().getSimpleName()+" while downloading changeset header");
-                        } catch(ExecutionException e) {
+                        } catch (ExecutionException e) {
                             Main.error(e);
                             BugReportExceptionHandler.handleException(e.getCause());
                             return;

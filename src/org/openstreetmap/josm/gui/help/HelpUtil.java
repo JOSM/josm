@@ -51,7 +51,7 @@ public final class HelpUtil {
      * @see #buildAbsoluteHelpTopic
      */
     public static String getHelpTopicUrl(String absoluteHelpTopic) {
-        if(absoluteHelpTopic == null)
+        if (absoluteHelpTopic == null)
             return null;
         String ret = getWikiBaseHelpUrl();
         ret = ret.replaceAll("\\/+$", "");
@@ -124,7 +124,7 @@ public final class HelpUtil {
      */
     private static String getHelpTopicPrefix(LocaleType type) {
         String ret = LanguageInfo.getWikiLanguagePrefix(type);
-        if(ret == null)
+        if (ret == null)
             return ret;
         ret = "/" + ret + Main.pref.get("help.pathhelp", "/Help").replaceAll("^\\/+", ""); // remove leading /
         return ret.replaceAll("\\/+", "\\/"); // collapse sequences of //
@@ -159,25 +159,25 @@ public final class HelpUtil {
         if (context == null)
             return null;
         if (context instanceof Helpful)
-            return ((Helpful)context).helpTopic();
+            return ((Helpful) context).helpTopic();
         if (context instanceof JMenu) {
-            JMenu b = (JMenu)context;
+            JMenu b = (JMenu) context;
             if (b.getClientProperty("help") != null)
-                return (String)b.getClientProperty("help");
+                return (String) b.getClientProperty("help");
             return null;
         }
         if (context instanceof AbstractButton) {
-            AbstractButton b = (AbstractButton)context;
+            AbstractButton b = (AbstractButton) context;
             if (b.getClientProperty("help") != null)
-                return (String)b.getClientProperty("help");
+                return (String) b.getClientProperty("help");
             return getContextSpecificHelpTopic(b.getAction());
         }
         if (context instanceof Action)
-            return (String)((Action)context).getValue("help");
-        if (context instanceof JComponent && ((JComponent)context).getClientProperty("help") != null)
-            return (String)((JComponent)context).getClientProperty("help");
+            return (String) ((Action) context).getValue("help");
+        if (context instanceof JComponent && ((JComponent) context).getClientProperty("help") != null)
+            return (String) ((JComponent) context).getClientProperty("help");
         if (context instanceof Component)
-            return getContextSpecificHelpTopic(((Component)context).getParent());
+            return getContextSpecificHelpTopic(((Component) context).getParent());
         return null;
     }
 

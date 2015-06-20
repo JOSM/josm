@@ -99,7 +99,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
 
     protected void updateKeyModifiers(int modifiers) {
         ctrl = (modifiers & ActionEvent.CTRL_MASK) != 0;
-        alt = (modifiers & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
+        alt = (modifiers & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0;
         shift = (modifiers & ActionEvent.SHIFT_MASK) != 0;
     }
 
@@ -111,17 +111,37 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {requestFocusInMapView();}
+    public void mouseReleased(MouseEvent e) {
+        requestFocusInMapView();
+    }
+
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+        // Do nothing
+    }
+
     @Override
-    public void mousePressed(MouseEvent e) {requestFocusInMapView();}
+    public void mousePressed(MouseEvent e) {
+        requestFocusInMapView();
+    }
+
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {
+        // Do nothing
+    }
+
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+        // Do nothing
+    }
+
     @Override
-    public void mouseMoved(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {
+        // Do nothing
+    }
+
     @Override
-    public void mouseDragged(MouseEvent e) {}
+    public void mouseDragged(MouseEvent e) {
+        // Do nothing
+    }
 }

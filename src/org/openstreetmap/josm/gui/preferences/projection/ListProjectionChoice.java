@@ -86,7 +86,7 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
 
             prefcb.setSelectedIndex(initialIndex);
             this.setLayout(new GridBagLayout());
-            this.add(new JLabel(label), GBC.std().insets(5,5,0,5));
+            this.add(new JLabel(label), GBC.std().insets(5, 5, 0, 5));
             this.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
             this.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
             this.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));

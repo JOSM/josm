@@ -73,7 +73,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
      * builds the GUI
      */
     protected void build() {
-        WindowGeometry geometry = WindowGeometry.centerOnScreen(new Dimension(650,300));
+        WindowGeometry geometry = WindowGeometry.centerOnScreen(new Dimension(650, 300));
         geometry.applySafe(this);
         getContentPane().setLayout(new BorderLayout());
 
@@ -191,7 +191,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.weighty = 1.0;
-            add(lstLayers,gc);
+            add(lstLayers, gc);
         }
 
         public LayerListWarningMessagePanel(String msg, List<SaveLayerInfo> infos) {
@@ -352,10 +352,11 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             setUserAction(UserAction.PROCEED);
             closeDialog();
         }
+
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
-                Mode mode = (Mode)evt.getNewValue();
+                Mode mode = (Mode) evt.getNewValue();
                 switch(mode) {
                 case EDITING_DATA: setEnabled(true); break;
                 case UPLOADING_AND_SAVING: setEnabled(false); break;
@@ -402,7 +403,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 g.drawImage(model.getLayersToSave().isEmpty()   ? saveDis : save, is*1, 0, is, is, null);
                 g.drawImage(base,                                                 is*2, 0, is, is, null);
                 putValue(SMALL_ICON, new ImageIcon(newIco));
-            } catch(Exception e) {
+            } catch (Exception e) {
                 putValue(SMALL_ICON, getValue(BASE_ICON));
             }
         }
@@ -417,7 +418,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
-                SaveLayersModel.Mode mode = (SaveLayersModel.Mode)evt.getNewValue();
+                SaveLayersModel.Mode mode = (SaveLayersModel.Mode) evt.getNewValue();
                 switch(mode) {
                 case EDITING_DATA: setEnabled(true); break;
                 case UPLOADING_AND_SAVING: setEnabled(false); break;
@@ -480,9 +481,9 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     // wait for the asynchronous task to complete
                     //
                     currentFuture.get();
-                } catch(CancellationException e) {
+                } catch (CancellationException e) {
                     model.setUploadState(layer, UploadOrSaveState.CANCELED);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     Main.error(e);
                     model.setUploadState(layer, UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
@@ -521,9 +522,9 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     // wait for the asynchronous task to complete
                     //
                     currentFuture.get();
-                } catch(CancellationException e) {
+                } catch (CancellationException e) {
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     Main.error(e);
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
@@ -607,7 +608,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     @Override
     public void tableChanged(TableModelEvent arg0) {
         boolean dis = model.getLayersToSave().isEmpty() && model.getLayersToUpload().isEmpty();
-        if(saveAndProceedActionButton != null) {
+        if (saveAndProceedActionButton != null) {
             saveAndProceedActionButton.setEnabled(!dis);
         }
         saveAndProceedAction.redrawIcon();

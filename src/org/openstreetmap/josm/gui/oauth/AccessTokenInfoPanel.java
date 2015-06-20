@@ -33,7 +33,7 @@ public class AccessTokenInfoPanel extends JPanel {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,3,3);
+        gc.insets = new Insets(0, 0, 3, 3);
         add(new JLabel(tr("Access Token Key:")), gc);
 
         gc.gridx = 1;
@@ -45,7 +45,7 @@ public class AccessTokenInfoPanel extends JPanel {
         gc.gridx = 0;
         gc.gridy = 1;
         gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,3,3);
+        gc.insets = new Insets(0, 0, 3, 3);
         add(new JLabel(tr("Access Token Secret:")), gc);
 
         gc.gridx = 1;

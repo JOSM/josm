@@ -38,7 +38,7 @@ public class AutoCompletionList extends AbstractTableModel {
     /** the filter expression */
     private String filter = null;
     /** map from value to priority */
-    private transient Map<String,AutoCompletionListItem> valutToItemMap;
+    private transient Map<String, AutoCompletionListItem> valutToItemMap;
 
     /**
      * constructor
@@ -139,7 +139,7 @@ public class AutoCompletionList extends AbstractTableModel {
             if (value == null) {
                 continue;
             }
-            AutoCompletionListItem item = new AutoCompletionListItem(value,priority);
+            AutoCompletionListItem item = new AutoCompletionListItem(value, priority);
             appendOrUpdatePriority(item);
 
         }
@@ -210,7 +210,7 @@ public class AutoCompletionList extends AbstractTableModel {
     public void remove(String key) {
         if (key == null)
             return;
-        for (int i=0;i< list.size();i++) {
+        for (int i = 0; i < list.size(); i++) {
             AutoCompletionListItem item = list.get(i);
             if (item.getValue().equals(key)) {
                 list.remove(i);

@@ -611,7 +611,7 @@ public final class ExpressionFactory {
          * @see Object#equals(Object)
          */
         public static boolean not_equal(Object a, Object b) {
-            return !equal(a,b);
+            return !equal(a, b);
         }
         /**
          * Determines whether the JOSM search with {@code searchStr} applies to the object.
@@ -740,7 +740,7 @@ public final class ExpressionFactory {
         public static String tr(String... args) {
             final String text = args[0];
             System.arraycopy(args, 1, args, 0, args.length - 1);
-            return org.openstreetmap.josm.tools.I18n.tr(text, (Object[])args);
+            return org.openstreetmap.josm.tools.I18n.tr(text, (Object[]) args);
         }
 
         /**

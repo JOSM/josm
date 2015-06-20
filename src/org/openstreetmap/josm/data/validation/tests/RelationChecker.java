@@ -84,12 +84,13 @@ public class RelationChecker extends Test {
     }
 
     private static class RolePreset {
+        private final List<Role> roles;
+        private final String name;
+
         public RolePreset(List<Role> roles, String name) {
             this.roles = roles;
             this.name = name;
         }
-        private final List<Role> roles;
-        private final String name;
     }
 
     private static class RoleInfo {
@@ -117,7 +118,7 @@ public class RelationChecker extends Test {
     }
 
     private Map<String, RoleInfo> buildRoleInfoMap(Relation n) {
-        Map<String,RoleInfo> map = new HashMap<>();
+        Map<String, RoleInfo> map = new HashMap<>();
         for (RelationMember m : n.getMembers()) {
             String role = m.getRole();
             RoleInfo ri = map.get(role);
@@ -149,7 +150,7 @@ public class RelationChecker extends Test {
                 }
             }
             if (matches && r != null) {
-                for(Role role: r.roles) {
+                for (Role role: r.roles) {
                     String key = role.key;
                     List<Role> roleGroup = null;
                     if (allroles.containsKey(key)) {
@@ -212,13 +213,13 @@ public class RelationChecker extends Test {
                 } else {
                     // verify if preset accepts such member
                     OsmPrimitive primitive = member.getMember();
-                    if(!primitive.isUsable()) {
+                    if (!primitive.isUsable()) {
                         // if member is not usable (i.e. not present in working set)
                         // we can't verify expression - so we just skip it
                         return true;
                     } else {
                         // verify expression
-                        if(r.memberExpression.match(primitive)) {
+                        if (r.memberExpression.match(primitive)) {
                             return true;
                         } else {
                             // possible match error
@@ -282,7 +283,7 @@ public class RelationChecker extends Test {
         }
 
         // verify role counts based on whole role sets
-        for(RolePreset rp: allroles.values()) {
+        for (RolePreset rp: allroles.values()) {
             for (Role r: rp.roles) {
                 String keyname = r.key;
                 if (keyname.isEmpty()) {

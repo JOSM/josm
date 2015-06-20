@@ -89,7 +89,7 @@ public class HistoryDataSet implements LayerChangeListener{
      * @return the history primitive for the primitive with id <code>id</code>,
      * type <code>type</code>, and version <code>version</code>
      */
-    public HistoryOsmPrimitive get(long id, OsmPrimitiveType type, long version){
+    public HistoryOsmPrimitive get(long id, OsmPrimitiveType type, long version) {
         if (id <= 0)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected, got {1}", "id", id));
         CheckParameterUtil.ensureParameterNotNull(type, "type");
@@ -203,10 +203,12 @@ public class HistoryDataSet implements LayerChangeListener{
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         /* irrelevant in this context */
     }
+
     @Override
     public void layerAdded(Layer newLayer) {
         /* irrelevant in this context */
     }
+
     @Override
     public void layerRemoved(Layer oldLayer) {
         if (!Main.isDisplayingMapView()) return;

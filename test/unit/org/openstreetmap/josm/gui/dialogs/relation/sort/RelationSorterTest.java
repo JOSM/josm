@@ -42,7 +42,7 @@ public class RelationSorterTest {
 
     private String[] getNames(List<RelationMember> members) {
         String[] result = new String[members.size()];
-        for (int i=0; i<result.length; i++) {
+        for (int i = 0; i < result.length; i++) {
             result[i] = members.get(i).getMember().get("name");
         }
         return result;

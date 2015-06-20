@@ -57,7 +57,7 @@ public class MenuScroller {
         int result = 15;
         if (menu != null) {
             // Compute max height of current screen
-            int maxHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame)Main.parent).getInsets().top;
+            int maxHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame) Main.parent).getInsets().top;
 
             // Remove top fixed part height
             if (topFixedCount > 0) {
@@ -86,7 +86,7 @@ public class MenuScroller {
             } else {
                 // Increase scroll count to take into account upper items that will be displayed
                 // after firstIndex is updated
-                for (int i=startIndex-1; i >= 0 && height <= maxHeight; i--, result++) {
+                for (int i = startIndex-1; i >= 0 && height <= maxHeight; i--, result++) {
                     height += menuItems[i].getPreferredSize().height;
                 }
                 if (height > maxHeight) {
@@ -350,7 +350,7 @@ public class MenuScroller {
                 allItemsHeight += item.getPreferredSize().height;
             }
 
-            int allowedHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame)Main.parent).getInsets().top;
+            int allowedHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame) Main.parent).getInsets().top;
 
             boolean mustSCroll = allItemsHeight > allowedHeight;
 

@@ -104,7 +104,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
 
     @Override
     public Tile getTile(TileSource source, int x, int y, int z) {
-        return createTileLoaderJob(new Tile(source,x, y, z)).getTile();
+        return createTileLoaderJob(new Tile(source, x, y, z)).getTile();
     }
 
     @Override
@@ -134,9 +134,9 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
      * to loading = false / loaded = false
      */
     public void cancelOutstandingTasks() {
-        for(Runnable r: downloadExecutor.getQueue()) {
+        for (Runnable r: downloadExecutor.getQueue()) {
             if (downloadExecutor.remove(r) && r instanceof TMSCachedTileLoaderJob) {
-                ((TMSCachedTileLoaderJob)r).handleJobCancellation();
+                ((TMSCachedTileLoaderJob) r).handleJobCancellation();
             }
         }
     }

@@ -27,7 +27,7 @@ public class SizeButton extends JComponent {
     private boolean isEnlarged = false;
     private final SlippyMapBBoxChooser slippyMapBBoxChooser;
 
-    public SizeButton(SlippyMapBBoxChooser slippyMapBBoxChooser){
+    public SizeButton(SlippyMapBBoxChooser slippyMapBBoxChooser) {
         this.slippyMapBBoxChooser = slippyMapBBoxChooser;
         enlargeImage = ImageProvider.get("view-fullscreen");
         shrinkImage = ImageProvider.get("view-fullscreen-revert");
@@ -48,12 +48,12 @@ public class SizeButton extends JComponent {
 
     @Override
     protected void paintComponent(Graphics g) {
-        if(isEnlarged) {
-            if(shrinkImage != null)
-                g.drawImage(shrinkImage.getImage(),x,y, null);
+        if (isEnlarged) {
+            if (shrinkImage != null)
+                g.drawImage(shrinkImage.getImage(), x, y, null);
         } else {
-            if(enlargeImage != null)
-                g.drawImage(enlargeImage.getImage(),x,y, null);
+            if (enlargeImage != null)
+                g.drawImage(enlargeImage.getImage(), x, y, null);
         }
     }
 
@@ -67,8 +67,8 @@ public class SizeButton extends JComponent {
     }
 
     public boolean hit(Point point) {
-        if(x < point.x && point.x < x + enlargeImage.getIconWidth()) {
-            if(y < point.y && point.y < y + enlargeImage.getIconHeight()) {
+        if (x < point.x && point.x < x + enlargeImage.getIconWidth()) {
+            if (y < point.y && point.y < y + enlargeImage.getIconHeight()) {
                 return true;
             }
         }

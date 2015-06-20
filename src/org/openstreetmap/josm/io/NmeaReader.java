@@ -58,7 +58,7 @@ public class NmeaReader {
 
     // GPVTG
     public static enum GPVTG {
-        COURSE(1),COURSE_REF(2), // true course
+        COURSE(1), COURSE_REF(2), // true course
         COURSE_M(3), COURSE_M_REF(4), // magnetic course
         SPEED_KN(5), SPEED_KN_UNIT(6), // speed in knots
         SPEED_KMH(7), SPEED_KMH_UNIT(8), // speed in km/h
@@ -106,7 +106,7 @@ public class NmeaReader {
         HDOP(8), // HDOP (horizontal dilution of precision)
         HEIGHT(9), HEIGHT_UNTIS(10), // height above NN (above geoid)
         HEIGHT_2(11), HEIGHT_2_UNTIS(12), // height geoid - height ellipsoid (WGS84)
-        GPS_AGE(13),// Age of differential GPS data
+        GPS_AGE(13), // Age of differential GPS data
         REF(14); // REF station
 
         public final int position;
@@ -152,15 +152,19 @@ public class NmeaReader {
     public int getParserUnknown() {
         return ps.unknown;
     }
+
     public int getParserZeroCoordinates() {
         return ps.zeroCoord;
     }
+
     public int getParserChecksumErrors() {
         return ps.checksumErrors+ps.noChecksum;
     }
+
     public int getParserMalformed() {
         return ps.malformed;
     }
+
     public int getNumberOfCoordinates() {
         return ps.success;
     }
@@ -175,27 +179,27 @@ public class NmeaReader {
             StringBuilder sb = new StringBuilder(1024);
             int loopstart_char = rd.read();
             ps = new NMEAParserState();
-            if(loopstart_char == -1)
+            if (loopstart_char == -1)
                 //TODO tell user about the problem?
                 return;
-            sb.append((char)loopstart_char);
-            ps.pDate="010100"; // TODO date problem
-            while(true) {
+            sb.append((char) loopstart_char);
+            ps.pDate = "010100"; // TODO date problem
+            while (true) {
                 // don't load unparsable files completely to memory
-                if(sb.length()>=1020) {
+                if (sb.length() >= 1020) {
                     sb.delete(0, sb.length()-1);
                 }
                 int c = rd.read();
-                if(c=='$') {
+                if (c == '$') {
                     parseNMEASentence(sb.toString(), ps);
                     sb.delete(0, sb.length());
                     sb.append('$');
-                } else if(c == -1) {
+                } else if (c == -1) {
                     // EOF: add last WayPoint if it works out
-                    parseNMEASentence(sb.toString(),ps);
+                    parseNMEASentence(sb.toString(), ps);
                     break;
                 } else {
-                    sb.append((char)c);
+                    sb.append((char) c);
                 }
             }
             currentTrack.add(ps.waypoints);
@@ -236,13 +240,13 @@ public class NmeaReader {
             String[] chkstrings = s.split("\\*");
             if (chkstrings.length > 1) {
                 byte[] chb = chkstrings[0].getBytes(StandardCharsets.UTF_8);
-                int chk=0;
+                int chk = 0;
                 for (int i = 1; i < chb.length; i++) {
                     chk ^= chb[i];
                 }
-                if (Integer.parseInt(chkstrings[1].substring(0,2),16) != chk) {
+                if (Integer.parseInt(chkstrings[1].substring(0, 2), 16) != chk) {
                     ps.checksumErrors++;
-                    ps.pWp=null;
+                    ps.pWp = null;
                     return false;
                 }
             } else {
@@ -256,7 +260,7 @@ public class NmeaReader {
             String currentDate = ps.pDate;
 
             // handle the packet content
-            if("$GPGGA".equals(e[0]) || "$GNGGA".equals(e[0])) {
+            if ("$GPGGA".equals(e[0]) || "$GNGGA".equals(e[0])) {
                 // Position
                 LatLon latLon = parseLatLon(
                         e[GPGGA.LATITUDE_NAME.position],
@@ -264,7 +268,7 @@ public class NmeaReader {
                         e[GPGGA.LATITUDE.position],
                         e[GPGGA.LONGITUDE.position]
                 );
-                if (latLon==null) {
+                if (latLon == null) {
                     throw new IllegalDataException("Malformed lat/lon");
                 }
 
@@ -277,54 +281,53 @@ public class NmeaReader {
                 accu = e[GPGGA.TIME.position];
                 Date d = readTime(currentDate+accu);
 
-                if((ps.pTime==null) || (currentwp==null) || !ps.pTime.equals(accu)) {
+                if ((ps.pTime == null) || (currentwp == null) || !ps.pTime.equals(accu)) {
                     // this node is newer than the previous, create a new waypoint.
-                    // no matter if previous WayPoint was null, we got something
-                    // better now.
-                    ps.pTime=accu;
+                    // no matter if previous WayPoint was null, we got something better now.
+                    ps.pTime = accu;
                     currentwp = new WayPoint(latLon);
                 }
-                if(!currentwp.attr.containsKey("time")) {
+                if (!currentwp.attr.containsKey("time")) {
                     // As this sentence has no complete time only use it
                     // if there is no time so far
                     currentwp.put(GpxConstants.PT_TIME, DateUtils.fromDate(d));
                 }
                 // elevation
-                accu=e[GPGGA.HEIGHT_UNTIS.position];
-                if("M".equals(accu)) {
+                accu = e[GPGGA.HEIGHT_UNTIS.position];
+                if ("M".equals(accu)) {
                     // Ignore heights that are not in meters for now
-                    accu=e[GPGGA.HEIGHT.position];
-                    if(!accu.isEmpty()) {
+                    accu = e[GPGGA.HEIGHT.position];
+                    if (!accu.isEmpty()) {
                         Double.parseDouble(accu);
                         // if it throws it's malformed; this should only happen if the
                         // device sends nonstandard data.
-                        if(!accu.isEmpty()) { // FIX ? same check
+                        if (!accu.isEmpty()) { // FIX ? same check
                             currentwp.put(GpxConstants.PT_ELE, accu);
                         }
                     }
                 }
                 // number of sattelites
-                accu=e[GPGGA.SATELLITE_COUNT.position];
+                accu = e[GPGGA.SATELLITE_COUNT.position];
                 int sat = 0;
-                if(!accu.isEmpty()) {
+                if (!accu.isEmpty()) {
                     sat = Integer.parseInt(accu);
                     currentwp.put(GpxConstants.PT_SAT, accu);
                 }
                 // h-dilution
-                accu=e[GPGGA.HDOP.position];
-                if(!accu.isEmpty()) {
+                accu = e[GPGGA.HDOP.position];
+                if (!accu.isEmpty()) {
                     currentwp.put(GpxConstants.PT_HDOP, Float.valueOf(accu));
                 }
                 // fix
-                accu=e[GPGGA.QUALITY.position];
-                if(!accu.isEmpty()) {
+                accu = e[GPGGA.QUALITY.position];
+                if (!accu.isEmpty()) {
                     int fixtype = Integer.parseInt(accu);
                     switch(fixtype) {
                     case 0:
                         currentwp.put(GpxConstants.PT_FIX, "none");
                         break;
                     case 1:
-                        if(sat < 4) {
+                        if (sat < 4) {
                             currentwp.put(GpxConstants.PT_FIX, "2d");
                         } else {
                             currentwp.put(GpxConstants.PT_FIX, "3d");
@@ -337,44 +340,44 @@ public class NmeaReader {
                         break;
                     }
                 }
-            } else if("$GPVTG".equals(e[0]) || "$GNVTG".equals(e[0])) {
+            } else if ("$GPVTG".equals(e[0]) || "$GNVTG".equals(e[0])) {
                 // COURSE
                 accu = e[GPVTG.COURSE_REF.position];
-                if("T".equals(accu)) {
+                if ("T".equals(accu)) {
                     // other values than (T)rue are ignored
                     accu = e[GPVTG.COURSE.position];
-                    if(!accu.isEmpty()) {
+                    if (!accu.isEmpty()) {
                         Double.parseDouble(accu);
                         currentwp.put("course", accu);
                     }
                 }
                 // SPEED
                 accu = e[GPVTG.SPEED_KMH_UNIT.position];
-                if(accu.startsWith("K")) {
+                if (accu.startsWith("K")) {
                     accu = e[GPVTG.SPEED_KMH.position];
-                    if(!accu.isEmpty()) {
+                    if (!accu.isEmpty()) {
                         double speed = Double.parseDouble(accu);
                         speed /= 3.6; // speed in m/s
                         currentwp.put("speed", Double.toString(speed));
                     }
                 }
-            } else if("$GPGSA".equals(e[0]) || "$GNGSA".equals(e[0])) {
+            } else if ("$GPGSA".equals(e[0]) || "$GNGSA".equals(e[0])) {
                 // vdop
-                accu=e[GPGSA.VDOP.position];
-                if(!accu.isEmpty()) {
+                accu = e[GPGSA.VDOP.position];
+                if (!accu.isEmpty()) {
                     currentwp.put(GpxConstants.PT_VDOP, Float.valueOf(accu));
                 }
                 // hdop
-                accu=e[GPGSA.HDOP.position];
-                if(!accu.isEmpty()) {
+                accu = e[GPGSA.HDOP.position];
+                if (!accu.isEmpty()) {
                     currentwp.put(GpxConstants.PT_HDOP, Float.valueOf(accu));
                 }
                 // pdop
-                accu=e[GPGSA.PDOP.position];
-                if(!accu.isEmpty()) {
+                accu = e[GPGSA.PDOP.position];
+                if (!accu.isEmpty()) {
                     currentwp.put(GpxConstants.PT_PDOP, Float.valueOf(accu));
                 }
-            } else if("$GPRMC".equals(e[0]) || "$GNRMC".equals(e[0])) {
+            } else if ("$GPRMC".equals(e[0]) || "$GNRMC".equals(e[0])) {
                 // coordinates
                 LatLon latLon = parseLatLon(
                         e[GPRMC.WIDTH_NORTH_NAME.position],
@@ -392,23 +395,23 @@ public class NmeaReader {
 
                 Date d = readTime(currentDate+time);
 
-                if(ps.pTime==null || currentwp==null || !ps.pTime.equals(time)) {
+                if (ps.pTime == null || currentwp == null || !ps.pTime.equals(time)) {
                     // this node is newer than the previous, create a new waypoint.
-                    ps.pTime=time;
+                    ps.pTime = time;
                     currentwp = new WayPoint(latLon);
                 }
                 // time: this sentence has complete time so always use it.
                 currentwp.put(GpxConstants.PT_TIME, DateUtils.fromDate(d));
                 // speed
                 accu = e[GPRMC.SPEED.position];
-                if(!accu.isEmpty() && !currentwp.attr.containsKey("speed")) {
+                if (!accu.isEmpty() && !currentwp.attr.containsKey("speed")) {
                     double speed = Double.parseDouble(accu);
                     speed *= 0.514444444; // to m/s
                     currentwp.put("speed", Double.toString(speed));
                 }
                 // course
                 accu = e[GPRMC.COURSE.position];
-                if(!accu.isEmpty() && !currentwp.attr.containsKey("course")) {
+                if (!accu.isEmpty() && !currentwp.attr.containsKey("course")) {
                     Double.parseDouble(accu);
                     currentwp.put("course", accu);
                 }
@@ -425,8 +428,8 @@ public class NmeaReader {
                 return false;
             }
             ps.pDate = currentDate;
-            if(ps.pWp != currentwp) {
-                if(ps.pWp!=null) {
+            if (ps.pWp != currentwp) {
+                if (ps.pWp != null) {
                     ps.pWp.setTime();
                 }
                 ps.pWp = currentwp;
@@ -439,7 +442,7 @@ public class NmeaReader {
         } catch (RuntimeException x) {
             // out of bounds and such
             ps.malformed++;
-            ps.pWp=null;
+            ps.pWp = null;
             return false;
         }
     }
@@ -451,7 +454,7 @@ public class NmeaReader {
 
         // return a zero latlon instead of null so it is logged as zero coordinate
         // instead of malformed sentence
-        if(widthNorth.isEmpty() && lengthEast.isEmpty()) return new LatLon(0.0,0.0);
+        if (widthNorth.isEmpty() && lengthEast.isEmpty()) return new LatLon(0.0, 0.0);
 
         // The format is xxDDLL.LLLL
         // xx optional whitespace
@@ -462,7 +465,7 @@ public class NmeaReader {
 
         int latdeg = Integer.parseInt(widthNorth.substring(0, latdegsep));
         double latmin = Double.parseDouble(widthNorth.substring(latdegsep));
-        if(latdeg < 0) {
+        if (latdeg < 0) {
             latmin *= -1.0;
         }
         double lat = latdeg + latmin / 60;
@@ -475,7 +478,7 @@ public class NmeaReader {
 
         int londeg = Integer.parseInt(lengthEast.substring(0, londegsep));
         double lonmin = Double.parseDouble(lengthEast.substring(londegsep));
-        if(londeg < 0) {
+        if (londeg < 0) {
             lonmin *= -1.0;
         }
         double lon = londeg + lonmin / 60;

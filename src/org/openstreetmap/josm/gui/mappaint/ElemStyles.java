@@ -197,7 +197,7 @@ public class ElemStyles {
 
                     if (!hasIndependentLineStyle) {
                         Pair<StyleList, Range> mpElemStyles;
-                        synchronized(r) {
+                        synchronized (r) {
                             mpElemStyles = getStyleCacheWithRange(r, scale, nc);
                         }
                         ElemStyle mpLine = null;
@@ -274,7 +274,7 @@ public class ElemStyles {
             return p;
         } else if (osm instanceof Relation) {
             Pair<StyleList, Range> p = generateStyles(osm, scale, true);
-            if (drawMultipolygon && ((Relation)osm).isMultipolygon()) {
+            if (drawMultipolygon && ((Relation) osm).isMultipolygon()) {
                 if (!Utils.exists(p.a, AreaElemStyle.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
                     // look at outer ways to find area style
                     Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
@@ -341,7 +341,7 @@ public class ElemStyles {
                     addIfNotNull(sl, BoxTextElemStyle.create(env, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER));
                 }
             } else if (osm instanceof Relation) {
-                if (((Relation)osm).isMultipolygon()) {
+                if (((Relation) osm).isMultipolygon()) {
                     addIfNotNull(sl, AreaElemStyle.create(env));
                     addIfNotNull(sl, RepeatImageElemStyle.create(env));
                     addIfNotNull(sl, LineElemStyle.createLine(env));

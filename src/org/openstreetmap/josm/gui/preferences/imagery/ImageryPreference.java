@@ -102,14 +102,14 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         final JLabel lbl = new JLabel(name);
         lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
         lbl.setLabelFor(section);
-        p.add(lbl,GBC.std());
+        p.add(lbl, GBC.std());
         p.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 0));
-        p.add(section, gbc.insets(20,5,0,10));
+        p.add(section, gbc.insets(20, 5, 0, 10));
     }
 
     private Component buildSettingsPanel() {
         final JPanel p = new JPanel(new GridBagLayout());
-        p.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         addSettingsSection(p, tr("Common Settings"), commonSettings = new CommonSettingsPanel());
         addSettingsSection(p, tr("WMS Settings"), wmsSettings = new WMSSettingsPanel(),
@@ -117,7 +117,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         addSettingsSection(p, tr("TMS Settings"), tmsSettings = new TMSSettingsPanel(),
                 GBC.eol().fill(GBC.HORIZONTAL));
 
-        p.add(new JPanel(),GBC.eol().fill(GBC.BOTH));
+        p.add(new JPanel(), GBC.eol().fill(GBC.BOTH));
         return new JScrollPane(p);
     }
 
@@ -131,7 +131,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         pane.addTab(tr("Settings"), buildSettingsPanel());
         pane.addTab(tr("Offset bookmarks"), new OffsetBookmarksPanel(gui));
         loadSettings();
-        p.add(pane,GBC.std().fill(GBC.BOTH));
+        p.add(pane, GBC.std().fill(GBC.BOTH));
     }
 
     /**
@@ -256,11 +256,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                         if (l.getExtendedUrl().equals(t)) {
                             label.setBackground(Main.pref.getColor(
                                     marktr("Imagery Background: Default"),
-                                    new Color(200,255,200)));
+                                    new Color(200, 255, 200)));
                             break;
                         }
                     }
-                    label.setToolTipText((String)value);
+                    label.setToolTipText((String) value);
                 }
                 return label;
             }
@@ -418,7 +418,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     clearMap();
                 } else if (!e.getValueIsAdjusting()) {
                     // Only process complete (final) selection events
-                    for (int i = e.getFirstIndex(); i<=e.getLastIndex(); i++) {
+                    for (int i = e.getFirstIndex(); i <= e.getLastIndex(); i++) {
                         updateBoundsAndShapes(i);
                     }
                     // If needed, adjust map to show all map rectangles and polygons
@@ -481,9 +481,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 putValue(NAME, type.toString());
                 putValue(SHORT_DESCRIPTION, tr("Add a new {0} entry by entering the URL", type.toString()));
                 String icon = /* ICON(dialogs/) */ "add";
-                if(ImageryInfo.ImageryType.WMS.equals(type))
+                if (ImageryInfo.ImageryType.WMS.equals(type))
                     icon = /* ICON(dialogs/) */ "add_wms";
-                else if(ImageryInfo.ImageryType.TMS.equals(type))
+                else if (ImageryInfo.ImageryType.TMS.equals(type))
                     icon = /* ICON(dialogs/) */ "add_tms";
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", icon));
                 this.type = type;
@@ -701,7 +701,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     info.clearId();
                     break;
                 case 1:
-                    info.setExtendedUrl((String)o);
+                    info.setExtendedUrl((String) o);
                     info.clearId();
                     break;
                 default:
@@ -768,7 +768,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                         url = new URL(eulaUrl.replaceAll("\\{lang\\}", ""));
                         htmlPane = new JosmEditorPane(url);
                     } catch (IOException e2) {
-                        JOptionPane.showMessageDialog(gui ,tr("EULA license URL not available: {0}", eulaUrl));
+                        JOptionPane.showMessageDialog(gui, tr("EULA license URL not available: {0}", eulaUrl));
                         return false;
                     }
                 }
@@ -782,7 +782,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 if (option == JOptionPane.YES_OPTION)
                     return true;
             } catch (MalformedURLException e2) {
-                JOptionPane.showMessageDialog(gui ,tr("Malformed URL for the EULA licence: {0}", eulaUrl));
+                JOptionPane.showMessageDialog(gui, tr("Malformed URL for the EULA licence: {0}", eulaUrl));
             }
             return false;
         }
@@ -822,7 +822,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             add.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    OffsetBookmark b = new OffsetBookmark(Main.getProjection().toCode(),"","",0,0);
+                    OffsetBookmark b = new OffsetBookmark(Main.getProjection().toCode(), "", "", 0, 0);
                     model.addRow(b);
                 }
             });
@@ -843,7 +843,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 }
             });
 
-            add(buttonPanel,GBC.eol());
+            add(buttonPanel, GBC.eol());
         }
 
         /**

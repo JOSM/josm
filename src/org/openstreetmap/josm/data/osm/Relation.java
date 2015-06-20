@@ -231,7 +231,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         try {
             super.cloneFrom(osm);
             // It's not necessary to clone members as RelationMember class is immutable
-            setMembers(((Relation)osm).getMembers());
+            setMembers(((Relation) osm).getMembers());
         } finally {
             writeUnlock(locked);
         }
@@ -294,7 +294,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
             return false;
         if (!super.hasEqualSemanticAttributes(other))
             return false;
-        Relation r = (Relation)other;
+        Relation r = (Relation) other;
         return Arrays.equals(members, r.members);
     }
 
@@ -459,7 +459,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         else {
             BBox result = null;
             for (RelationMember rm:members) {
-                BBox box = rm.isRelation()?rm.getRelation().calculateBBox(visitedRelations):rm.getMember().getBBox();
+                BBox box = rm.isRelation() ? rm.getRelation().calculateBBox(visitedRelations) : rm.getMember().getBBox();
                 if (box != null) {
                     if (result == null) {
                         result = box;

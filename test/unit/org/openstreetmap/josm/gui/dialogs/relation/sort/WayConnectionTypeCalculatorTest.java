@@ -43,7 +43,7 @@ public class WayConnectionTypeCalculatorTest {
 
     private String getConnections(List<WayConnectionType> connections) {
         String[] result = new String[connections.size()];
-        for (int i=0; i<result.length; i++) {
+        for (int i = 0; i < result.length; i++) {
             WayConnectionType wc = connections.get(i);
 
             if (wc.isValid()) {

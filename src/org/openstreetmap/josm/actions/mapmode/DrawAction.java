@@ -73,7 +73,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, KeyPressReleaseListener, ModifierListener {
 
-    private static final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(),Color.ORANGE.getGreen(),Color.ORANGE.getBlue(),128);
+    private static final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(), Color.ORANGE.getGreen(), Color.ORANGE.getBlue(), 128);
     private static final double PHI = Math.toRadians(90);
 
     private final Cursor cursorJoinNode;
@@ -143,10 +143,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     private JCheckBoxMenuItem addMenuItem() {
-        int n=Main.main.menu.editMenu.getItemCount();
-        for (int i=n-1;i>0;i--) {
+        int n = Main.main.menu.editMenu.getItemCount();
+        for (int i = n-1; i > 0; i--) {
             JMenuItem item = Main.main.menu.editMenu.getItem(i);
-            if (item!=null && item.getAction() !=null && item.getAction() instanceof SnapChangeAction) {
+            if (item != null && item.getAction() != null && item.getAction() instanceof SnapChangeAction) {
                 Main.main.menu.editMenu.remove(i);
             }
         }
@@ -160,17 +160,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         updateStatusLine();
         // repaint required if the helper line is active.
         boolean needsRepaint = drawHelperLine && !wayIsFinished;
-        if(drawTargetHighlight) {
+        if (drawTargetHighlight) {
             // move newHighlights to oldHighlights; only update changed primitives
-            for(OsmPrimitive x : newHighlights) {
-                if(oldHighlights.contains(x)) {
+            for (OsmPrimitive x : newHighlights) {
+                if (oldHighlights.contains(x)) {
                     continue;
                 }
                 x.setHighlighted(true);
                 needsRepaint = true;
             }
             oldHighlights.removeAll(newHighlights);
-            for(OsmPrimitive x : oldHighlights) {
+            for (OsmPrimitive x : oldHighlights) {
                 x.setHighlighted(false);
                 needsRepaint = true;
             }
@@ -194,7 +194,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         }
 
-        if(needsRepaint) {
+        if (needsRepaint) {
             Main.map.mapView.repaint();
         }
         return needsRepaint;
@@ -243,10 +243,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         rubberLineColor = Main.pref.getColor(marktr("helper line"), null);
         if (rubberLineColor == null) rubberLineColor = PaintColors.SELECTED.get();
 
-        rubberLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.stroke.helper-line","3"));
+        rubberLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.stroke.helper-line", "3"));
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
-        snapToIntersectionThreshold = Main.pref.getInteger("edit.snap-intersection-threshold",10);
+        snapToIntersectionThreshold = Main.pref.getInteger("edit.snap-intersection-threshold", 10);
     }
 
     @Override
@@ -271,7 +271,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // primitives
         //
         DataSet ds = getCurrentDataSet();
-        if(ds != null) {
+        if (ds != null) {
             ds.fireSelectionChanged();
         }
     }
@@ -315,7 +315,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        if(!Main.map.mapView.isActiveLayerDrawable())
+        if (!Main.map.mapView.isActiveLayerDrawable())
             return;
         computeHelperLine();
         addHighlighting();
@@ -371,13 +371,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
-        if(!Main.map.mapView.isActiveLayerDrawable())
+        if (!Main.map.mapView.isActiveLayerDrawable())
             return;
         // request focus in order to enable the expected keyboard shortcuts
         //
         Main.map.mapView.requestFocus();
 
-        if(e.getClickCount() > 1 && mousePos != null && mousePos.equals(oldMousePos)) {
+        if (e.getClickCount() > 1 && mousePos != null && mousePos.equals(oldMousePos)) {
             // A double click equals "user clicked last node again, finish way"
             // Change draw tool only if mouse position is nearly the same, as
             // otherwise fast clicks will count as a double click
@@ -409,7 +409,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // ctrl-click on node of selected way = reuse node despite of ctrl
                 if (!it.next().containsNode(n)) n = null;
             } else {
-                n=null; // ctrl-click + no selected way = new node
+                n = null; // ctrl-click + no selected way = new node
             }
         }
 
@@ -433,7 +433,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         } else {
             EastNorth newEN;
-            if (n!=null) {
+            if (n != null) {
                 EastNorth foundPoint = n.getEastNorth();
                 // project found node to snapping line
                 newEN = snapHelper.getSnapPoint(foundPoint);
@@ -469,15 +469,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
                         Main.map.mapView.getPoint(n), OsmPrimitive.isSelectablePredicate);
                 if (snapHelper.isActive()) {
-                    tryToMoveNodeOnIntersection(wss,n);
+                    tryToMoveNodeOnIntersection(wss, n);
                 }
                 insertNodeIntoAllNearbySegments(wss, n, newSelection, cmds, replacedWays, reuseWays);
             }
         }
         // now "n" is newly created or reused node that shoud be added to some way
 
-        // This part decides whether or not a "segment" (i.e. a connection) is made to an
-        // existing node.
+        // This part decides whether or not a "segment" (i.e. a connection) is made to an existing node.
 
         // For a connection to be made, the user must either have a node selected (connection
         // is made to that node), or he must have a way selected *and* one of the endpoints
@@ -516,16 +515,16 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // the node from which we make a connection
             Node n0 = findNodeToContinueFrom(selectedNode, selectedWay);
             // We have a selection but it isn't suitable. Try again.
-            if(n0 == null) {
+            if (n0 == null) {
                 tryAgain(e);
                 return;
             }
-            if(!wayIsFinishedTemp){
-                if(isSelfContainedWay(selectedWay, n0, n))
+            if (!wayIsFinishedTemp) {
+                if (isSelfContainedWay(selectedWay, n0, n))
                     return;
 
                 // User clicked last node again, finish way
-                if(n0 == n) {
+                if (n0 == n) {
                     finishDrawing();
                     return;
                 }
@@ -537,13 +536,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 Way wayToSelect;
 
                 // Don't allow creation of self-overlapping ways
-                if(way != null) {
-                    int nodeCount=0;
+                if (way != null) {
+                    int nodeCount = 0;
                     for (Node p : way.getNodes())
-                        if(p.equals(n0)) {
+                        if (p.equals(n0)) {
                             nodeCount++;
                         }
-                    if(nodeCount > 1) {
+                    if (nodeCount > 1) {
                         way = null;
                     }
                 }
@@ -567,7 +566,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
 
                 // Connected to a node that's already in the way
-                if(way.containsNode(n)) {
+                if (way.containsNode(n)) {
                     wayIsFinished = true;
                     selection.clear();
                 }
@@ -610,7 +609,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Command c = new SequenceCommand(title, cmds);
 
         Main.main.undoRedo.add(c);
-        if(!wayIsFinished) {
+        if (!wayIsFinished) {
             lastUsedNode = n;
         }
 
@@ -640,7 +639,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             is.add(ws.lowerIndex);
         }
 
-        Set<Pair<Node,Node>> segSet = new HashSet<>();
+        Set<Pair<Node, Node>> segSet = new HashSet<>();
 
         for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
             Way w = insertPoint.getKey();
@@ -661,7 +660,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // are already selected. This is the case when creating a self-overlapping way
             // but pressing ALT prevents this. Therefore we must de-select the way manually
             // here so /only/ the new way will be selected after this method finishes.
-            if(alt) {
+            if (alt) {
                 newSelection.add(insertPoint.getKey());
             }
 
@@ -689,7 +688,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * @return {@code true} if this would create a selfcontaining way, {@code false} otherwise.
      */
     private boolean isSelfContainedWay(Way selectedWay, Node currentNode, Node targetNode) {
-        if(selectedWay != null) {
+        if (selectedWay != null) {
             int posn0 = selectedWay.getNodes().indexOf(currentNode);
             if (posn0 != -1 && // n0 is part of way
                     (posn0 >= 1                             && targetNode.equals(selectedWay.getNode(posn0-1))) || // previous node
@@ -712,7 +711,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private Node findNodeToContinueFrom(Node selectedNode, Way selectedWay) {
         // No nodes or ways have been selected, this occurs when a relation
         // has been selected or the selection is empty
-        if(selectedNode == null && selectedWay == null)
+        if (selectedNode == null && selectedWay == null)
             return null;
 
         if (selectedNode == null) {
@@ -740,7 +739,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if(!Main.map.mapView.isActiveLayerDrawable())
+        if (!Main.map.mapView.isActiveLayerDrawable())
             return;
 
         // we copy ctrl/alt/shift from the event just in case our global
@@ -760,7 +759,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     private void tryToSetBaseSegmentForAngleSnap() {
         WaySegment seg = Main.map.mapView.getNearestWaySegment(mousePos, OsmPrimitive.isSelectablePredicate);
-        if (seg!=null) {
+        if (seg != null) {
             snapHelper.setBaseSegment(seg);
         }
     }
@@ -793,9 +792,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // We need this for highlighting and we'll only do so if we actually want to re-use
         // *and* there is no node nearby (because nodes beat ways when re-using)
-        if(!ctrl && currentMouseNode == null) {
+        if (!ctrl && currentMouseNode == null) {
             List<WaySegment> wss = mv.getNearestWaySegments(mousePos, OsmPrimitive.isSelectablePredicate);
-            for(WaySegment ws : wss) {
+            for (WaySegment ws : wss) {
                 mouseOnExistingWays.add(ws.way);
             }
         }
@@ -821,13 +820,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         double curHdg = Math.toDegrees(getCurrentBaseNode().getEastNorth()
                 .heading(currentMouseEastNorth));
-        double baseHdg=-1;
+        double baseHdg = -1;
         if (previousNode != null) {
             baseHdg =  Math.toDegrees(previousNode.getEastNorth()
                     .heading(getCurrentBaseNode().getEastNorth()));
         }
 
-        snapHelper.checkAngleSnapping(currentMouseEastNorth,baseHdg, curHdg);
+        snapHelper.checkAngleSnapping(currentMouseEastNorth, baseHdg, curHdg);
 
         // status bar was filled by snapHelper
     }
@@ -870,8 +869,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (selectedWay == null && selectedNode != null) {
             for (OsmPrimitive p: selectedNode.getReferrers()) {
                 if (p.isUsable() && p instanceof Way && ((Way) p).isFirstLastNode(selectedNode)) {
-                    if (selectedWay!=null) { // two uncontinued ways, nothing to take as reference
-                        selectedWay=null;
+                    if (selectedWay != null) { // two uncontinued ways, nothing to take as reference
+                        selectedWay = null;
                         break;
                     } else {
                         // set us ~continue this way (measure angle from it)
@@ -898,12 +897,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     private void continueWayFromNode(Way way, Node node) {
         int n = way.getNodesCount();
-        if (node == way.firstNode()){
+        if (node == way.firstNode()) {
             currentBaseNode = node;
-            if (n>1) previousNode = way.getNode(1);
+            if (n > 1) previousNode = way.getNode(1);
         } else if (node == way.lastNode()) {
             currentBaseNode = node;
-            if (n>1) previousNode = way.getNode(n-2);
+            if (n > 1) previousNode = way.getNode(n-2);
         }
     }
 
@@ -912,14 +911,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     @Override
     public void mouseExited(MouseEvent e) {
-        if(!Main.map.mapView.isActiveLayerDrawable())
+        if (!Main.map.mapView.isActiveLayerDrawable())
             return;
         mousePos = e.getPoint();
         snapHelper.noSnapNow();
         boolean repaintIssued = removeHighlighting();
         // force repaint in case snapHelper needs one. If removeHighlighting
         // caused one already, don’t do it again.
-        if(!repaintIssued) {
+        if (!repaintIssued) {
             Main.map.mapView.repaint();
         }
     }
@@ -984,23 +983,22 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * @param segs the segments to use as a reference when adjusting
      * @param n the node to adjust
      */
-    private static void adjustNode(Collection<Pair<Node,Node>> segs, Node n) {
+    private static void adjustNode(Collection<Pair<Node, Node>> segs, Node n) {
 
         switch (segs.size()) {
         case 0:
             return;
         case 2:
-            // This computes the intersection between
-            // the two segments and adjusts the node position.
-            Iterator<Pair<Node,Node>> i = segs.iterator();
-            Pair<Node,Node> seg = i.next();
+            // This computes the intersection between the two segments and adjusts the node position.
+            Iterator<Pair<Node, Node>> i = segs.iterator();
+            Pair<Node, Node> seg = i.next();
             EastNorth A = seg.a.getEastNorth();
             EastNorth B = seg.b.getEastNorth();
             seg = i.next();
             EastNorth C = seg.a.getEastNorth();
             EastNorth D = seg.b.getEastNorth();
 
-            double u=det(B.east() - A.east(), B.north() - A.north(), C.east() - D.east(), C.north() - D.north());
+            double u = det(B.east() - A.east(), B.north() - A.north(), C.east() - D.east(), C.north() - D.north());
 
             // Check for parallel segments and do nothing if they are
             // In practice this will probably only happen when a way has been duplicated
@@ -1047,12 +1045,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (wss.isEmpty())
             return;
         WaySegment ws = wss.get(0);
-        EastNorth p1=ws.getFirstNode().getEastNorth();
-        EastNorth p2=ws.getSecondNode().getEastNorth();
+        EastNorth p1 = ws.getFirstNode().getEastNorth();
+        EastNorth p2 = ws.getSecondNode().getEastNorth();
         if (snapHelper.dir2 != null && getCurrentBaseNode() != null) {
             EastNorth xPoint = Geometry.getSegmentSegmentIntersection(p1, p2, snapHelper.dir2,
                     getCurrentBaseNode().getEastNorth());
-            if (xPoint!=null) {
+            if (xPoint != null) {
                 n.setEastNorth(xPoint);
             }
         }
@@ -1123,7 +1121,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
 
         Graphics2D g2 = g;
-        snapHelper.drawIfNeeded(g2,mv);
+        snapHelper.drawIfNeeded(g2, mv);
         if (!drawHelperLine || wayIsFinished || shift)
             return;
 
@@ -1133,17 +1131,18 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         } else if (!snapHelper.drawConstructionGeometry)
             return;
         GeneralPath b = new GeneralPath();
-        Point p1=mv.getPoint(getCurrentBaseNode());
-        Point p2=mv.getPoint(currentMouseEastNorth);
+        Point p1 = mv.getPoint(getCurrentBaseNode());
+        Point p2 = mv.getPoint(currentMouseEastNorth);
 
         double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
 
-        b.moveTo(p1.x,p1.y); b.lineTo(p2.x, p2.y);
+        b.moveTo(p1.x, p1.y);
+        b.lineTo(p2.x, p2.y);
 
         // if alt key is held ("start new way"), draw a little perpendicular line
         if (alt) {
-            b.moveTo((int)(p1.x + 8*Math.cos(t+PHI)), (int)(p1.y + 8*Math.sin(t+PHI)));
-            b.lineTo((int)(p1.x + 8*Math.cos(t-PHI)), (int)(p1.y + 8*Math.sin(t-PHI)));
+            b.moveTo((int) (p1.x + 8*Math.cos(t+PHI)), (int) (p1.y + 8*Math.sin(t+PHI)));
+            b.lineTo((int) (p1.x + 8*Math.cos(t-PHI)), (int) (p1.y + 8*Math.sin(t-PHI)));
         }
 
         g2.draw(b);
@@ -1269,24 +1268,24 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         @Override
         public void actionPerformed(ActionEvent e) {
             Main.main.undoRedo.undo();
-            Node n=null;
-            Command lastCmd=Main.main.undoRedo.commands.peekLast();
-            if (lastCmd==null) return;
+            Node n = null;
+            Command lastCmd = Main.main.undoRedo.commands.peekLast();
+            if (lastCmd == null) return;
             for (OsmPrimitive p: lastCmd.getParticipatingPrimitives()) {
                 if (p instanceof Node) {
-                    if (n==null) {
-                        n=(Node) p; // found one node
-                        wayIsFinished=false;
+                    if (n == null) {
+                        n = (Node) p; // found one node
+                        wayIsFinished = false;
                     }  else {
                         // if more than 1 node were affected by previous command,
                         // we have no way to continue, so we forget about found node
-                        n=null;
+                        n = null;
                         break;
                     }
                 }
             }
             // select last added node - maybe we will continue drawing from it
-            if (n!=null) {
+            if (n != null) {
                 getCurrentDataSet().addSelected(n);
             }
         }
@@ -1299,7 +1298,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     new AbstractAction(tr("Toggle snapping by {0}", getShortcut().getKeyText())) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
                     Main.pref.put("draw.anglesnap.toggleOnRepeatedA", sel);
                     init();
                 }
@@ -1309,7 +1308,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     new AbstractAction(tr("Show helper geometry")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
                     Main.pref.put("draw.anglesnap.drawConstructionGeometry", sel);
                     Main.pref.put("draw.anglesnap.drawProjectedPoint", sel);
                     Main.pref.put("draw.anglesnap.showAngle", sel);
@@ -1322,7 +1321,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     new AbstractAction(tr("Snap to node projections")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
                     Main.pref.put("draw.anglesnap.projectionsnap", sel);
                     init();
                     enableSnapping();
@@ -1330,9 +1329,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             });
 
             private AnglePopupMenu() {
-                helperCb.setState(Main.pref.getBoolean("draw.anglesnap.drawConstructionGeometry",true));
-                projectionCb.setState(Main.pref.getBoolean("draw.anglesnap.projectionsnapgvff",true));
-                repeatedCb.setState(Main.pref.getBoolean("draw.anglesnap.toggleOnRepeatedA",true));
+                helperCb.setState(Main.pref.getBoolean("draw.anglesnap.drawConstructionGeometry", true));
+                projectionCb.setState(Main.pref.getBoolean("draw.anglesnap.projectionsnapgvff", true));
+                repeatedCb.setState(Main.pref.getBoolean("draw.anglesnap.toggleOnRepeatedA", true));
                 add(repeatedCb);
                 add(helperCb);
                 add(projectionCb);
@@ -1345,21 +1344,21 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 });
                 add(new AbstractAction(tr("0,90,...")) {
                     @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("0","90","180");
+                        saveAngles("0", "90", "180");
                         init();
                         enableSnapping();
                     }
                 });
                 add(new AbstractAction(tr("0,45,90,...")) {
                     @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("0","45","90","135","180");
+                        saveAngles("0", "45", "90", "135", "180");
                         init();
                         enableSnapping();
                     }
                 });
                 add(new AbstractAction(tr("0,30,45,60,90,...")) {
                     @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("0","30","45","60","90","120","135","150","180");
+                        saveAngles("0", "30", "45", "60", "90", "120", "135", "150", "180");
                         init();
                         enableSnapping();
                     }
@@ -1384,7 +1383,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         private String labelText;
         private double lastAngle;
 
-        private double customBaseHeading=-1; // angle of base line, if not last segment)
+        private double customBaseHeading = -1; // angle of base line, if not last segment)
         private EastNorth segmentPoint1; // remembered first point of base segment
         private EastNorth segmentPoint2; // remembered second point of base segment
         private EastNorth projectionSource; // point that we are projecting to the line
@@ -1392,10 +1391,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         private double[] snapAngles;
         private double snapAngleTolerance;
 
-        private double pe,pn; // (pe,pn) - direction of snapping line
-        private double e0,n0; // (e0,n0) - origin of snapping line
+        private double pe, pn; // (pe, pn) - direction of snapping line
+        private double e0, n0; // (e0, n0) - origin of snapping line
 
-        private final String fixFmt="%d "+tr("FIX");
+        private final String fixFmt = "%d "+tr("FIX");
         private Color snapHelperColor;
         private Color highlightColor;
 
@@ -1417,23 +1416,24 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         };
 
         public void init() {
-            snapOn=false;
+            snapOn = false;
             checkBox.setState(snapOn);
-            fixed=false; absoluteFix=false;
+            fixed = false;
+            absoluteFix = false;
 
             Collection<String> angles = Main.pref.getCollection("draw.anglesnap.angles",
-                    Arrays.asList("0","30","45","60","90","120","135","150","180"));
+                    Arrays.asList("0", "30", "45", "60", "90", "120", "135", "150", "180"));
 
             snapAngles = new double[2*angles.size()];
-            int i=0;
+            int i = 0;
             for (String s: angles) {
                 try {
                     snapAngles[i] = Double.parseDouble(s); i++;
                     snapAngles[i] = 360-Double.parseDouble(s); i++;
                 } catch (NumberFormatException e) {
                     Main.warn("Incorrect number in draw.anglesnap.angles preferences: "+s);
-                    snapAngles[i]=0;i++;
-                    snapAngles[i]=0;i++;
+                    snapAngles[i] = 0; i++;
+                    snapAngles[i] = 0; i++;
                 }
             }
             snapAngleTolerance = Main.pref.getDouble("draw.anglesnap.tolerance", 5.0);
@@ -1448,8 +1448,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             snapHelperColor = Main.pref.getColor(marktr("draw angle snap"), Color.ORANGE);
 
             highlightColor = Main.pref.getColor(marktr("draw angle snap highlight"), ORANGE_TRANSPARENT);
-            highlightStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.anglesnap.stroke.highlight","10"));
-            helperStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.anglesnap.stroke.helper","1 4"));
+            highlightStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.anglesnap.stroke.highlight", "10"));
+            helperStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.anglesnap.stroke.helper", "1 4"));
         }
 
         public void saveAngles(String ... angles) {
@@ -1463,9 +1463,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         public void drawIfNeeded(Graphics2D g2, MapView mv) {
             if (!snapOn || !active)
                 return;
-            Point p1=mv.getPoint(getCurrentBaseNode());
-            Point p2=mv.getPoint(dir2);
-            Point p3=mv.getPoint(projected);
+            Point p1 = mv.getPoint(getCurrentBaseNode());
+            Point p2 = mv.getPoint(dir2);
+            Point p3 = mv.getPoint(projected);
             GeneralPath b;
             if (drawConstructionGeometry) {
                 g2.setColor(snapHelperColor);
@@ -1473,11 +1473,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
                 b = new GeneralPath();
                 if (absoluteFix) {
-                    b.moveTo(p2.x,p2.y);
-                    b.lineTo(2*p1.x-p2.x,2*p1.y-p2.y); // bi-directional line
+                    b.moveTo(p2.x, p2.y);
+                    b.lineTo(2*p1.x-p2.x, 2*p1.y-p2.y); // bi-directional line
                 } else {
-                    b.moveTo(p2.x,p2.y);
-                    b.lineTo(p3.x,p3.y);
+                    b.moveTo(p2.x, p2.y);
+                    b.lineTo(p3.x, p3.y);
                 }
                 g2.draw(b);
             }
@@ -1485,9 +1485,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 g2.setColor(snapHelperColor);
                 g2.setStroke(helperStroke);
                 b = new GeneralPath();
-                b.moveTo(p3.x,p3.y);
-                Point pp=mv.getPoint(projectionSource);
-                b.lineTo(pp.x,pp.y);
+                b.moveTo(p3.x, p3.y);
+                Point pp = mv.getPoint(projectionSource);
+                b.lineTo(pp.x, pp.y);
                 g2.draw(b);
             }
 
@@ -1495,18 +1495,18 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 g2.setColor(highlightColor);
                 g2.setStroke(highlightStroke);
                 b = new GeneralPath();
-                Point pp1=mv.getPoint(segmentPoint1);
-                Point pp2=mv.getPoint(segmentPoint2);
-                b.moveTo(pp1.x,pp1.y);
-                b.lineTo(pp2.x,pp2.y);
+                Point pp1 = mv.getPoint(segmentPoint1);
+                Point pp2 = mv.getPoint(segmentPoint2);
+                b.moveTo(pp1.x, pp1.y);
+                b.lineTo(pp2.x, pp2.y);
                 g2.draw(b);
             }
 
             g2.setColor(rubberLineColor);
             g2.setStroke(normalStroke);
             b = new GeneralPath();
-            b.moveTo(p1.x,p1.y);
-            b.lineTo(p3.x,p3.y);
+            b.moveTo(p1.x, p1.y);
+            b.lineTo(p3.x, p3.y);
             g2.draw(b);
 
             g2.drawString(labelText, p3.x-5, p3.y+20);
@@ -1526,15 +1526,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             EastNorth snapPoint = currentEN;
             double angle = -1;
 
-            double activeBaseHeading = (customBaseHeading>=0)? customBaseHeading : baseHeading;
+            double activeBaseHeading = (customBaseHeading >= 0) ? customBaseHeading : baseHeading;
 
-            if (snapOn && (activeBaseHeading>=0)) {
+            if (snapOn && (activeBaseHeading >= 0)) {
                 angle = curHeading - activeBaseHeading;
                 if (angle < 0) {
-                    angle+=360;
+                    angle += 360;
                 }
                 if (angle > 360) {
-                    angle=0;
+                    angle = 0;
                 }
 
                 double nearestAngle;
@@ -1544,11 +1544,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 } else {
                     nearestAngle = getNearestAngle(angle);
                     if (getAngleDelta(nearestAngle, angle) < snapAngleTolerance) {
-                        active = (customBaseHeading>=0)? true : Math.abs(nearestAngle - 180) > 1e-3;
+                        active = (customBaseHeading >= 0) ? true : Math.abs(nearestAngle - 180) > 1e-3;
                         // if angle is to previous segment, exclude 180 degrees
                         lastAngle = nearestAngle;
                     } else {
-                        active=false;
+                        active = false;
                     }
                 }
 
@@ -1556,7 +1556,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     double phi;
                     e0 = p0.east();
                     n0 = p0.north();
-                    buildLabelText((nearestAngle<=180) ? nearestAngle : nearestAngle-360);
+                    buildLabelText((nearestAngle <= 180) ? nearestAngle : nearestAngle-360);
 
                     phi = (nearestAngle + activeBaseHeading) * Math.PI / 180;
                     // (pe,pn) - direction of snapping line
@@ -1579,10 +1579,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             if (baseHeading >= 0) { // there is previous line segment with some heading
                 angle = hdg - baseHeading;
                 if (angle < 0) {
-                    angle+=360;
+                    angle += 360;
                 }
                 if (angle > 360) {
-                    angle=0;
+                    angle = 0;
                 }
             }
             showStatusInfo(angle, hdg, distance, isSnapOn());
@@ -1615,23 +1615,23 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         public EastNorth getSnapPoint(EastNorth p) {
             if (!active)
                 return p;
-            double de=p.east()-e0;
-            double dn=p.north()-n0;
+            double de = p.east()-e0;
+            double dn = p.north()-n0;
             double l = de*pe+dn*pn;
             double delta = Main.map.mapView.getDist100Pixel()/20;
-            if (!absoluteFix && l<delta) {
-                active=false;
+            if (!absoluteFix && l < delta) {
+                active = false;
                 return p;
             } //  do not go backward!
 
-            projectionSource=null;
+            projectionSource = null;
             if (snapToProjections) {
                 DataSet ds = getCurrentDataSet();
                 Collection<Way> selectedWays = ds.getSelectedWays();
-                if (selectedWays.size()==1) {
+                if (selectedWays.size() == 1) {
                     Way w = selectedWays.iterator().next();
                     Collection<EastNorth> pointsToProject = new ArrayList<>();
-                    if (w.getNodesCount()<1000) {
+                    if (w.getNodesCount() < 1000) {
                         for (Node n: w.getNodes()) {
                             pointsToProject.add(n.getEastNorth());
                         }
@@ -1640,18 +1640,18 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                         pointsToProject.add(segmentPoint1);
                         pointsToProject.add(segmentPoint2);
                     }
-                    EastNorth enOpt=null;
-                    double dOpt=1e5;
+                    EastNorth enOpt = null;
+                    double dOpt = 1e5;
                     for (EastNorth en: pointsToProject) { // searching for besht projection
                         double l1 = (en.east()-e0)*pe+(en.north()-n0)*pn;
                         double d1 = Math.abs(l1-l);
                         if (d1 < delta && d1 < dOpt) {
-                            l=l1;
+                            l = l1;
                             enOpt = en;
                             dOpt = d1;
                         }
                     }
-                    if (enOpt!=null) {
+                    if (enOpt != null) {
                         projectionSource =  enOpt;
                     }
                 }
@@ -1660,25 +1660,26 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         public void noSnapNow() {
-            active=false;
-            dir2=null; projected=null;
-            labelText=null;
+            active = false;
+            dir2 = null;
+            projected = null;
+            labelText = null;
         }
 
         public void setBaseSegment(WaySegment seg) {
-            if (seg==null) return;
-            segmentPoint1=seg.getFirstNode().getEastNorth();
-            segmentPoint2=seg.getSecondNode().getEastNorth();
+            if (seg == null) return;
+            segmentPoint1 = seg.getFirstNode().getEastNorth();
+            segmentPoint2 = seg.getSecondNode().getEastNorth();
 
             double hdg = segmentPoint1.heading(segmentPoint2);
-            hdg=Math.toDegrees(hdg);
-            if (hdg<0) {
-                hdg+=360;
+            hdg = Math.toDegrees(hdg);
+            if (hdg < 0) {
+                hdg += 360;
             }
-            if (hdg>360) {
-                hdg-=360;
+            if (hdg > 360) {
+                hdg -= 360;
             }
-            customBaseHeading=hdg;
+            customBaseHeading = hdg;
         }
 
         private void nextSnapMode() {
@@ -1691,38 +1692,38 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     setFixedMode();
                 }
             } else {
-                snapOn=true;
+                snapOn = true;
                 unsetFixedMode();
             }
             checkBox.setState(snapOn);
-            customBaseHeading=-1;
+            customBaseHeading = -1;
         }
 
         private void enableSnapping() {
             snapOn = true;
             checkBox.setState(snapOn);
-            customBaseHeading=-1;
+            customBaseHeading = -1;
             unsetFixedMode();
         }
 
         private void toggleSnapping() {
             snapOn = !snapOn;
             checkBox.setState(snapOn);
-            customBaseHeading=-1;
+            customBaseHeading = -1;
             unsetFixedMode();
         }
 
         public void setFixedMode() {
             if (active) {
-                fixed=true;
+                fixed = true;
             }
         }
 
         public  void unsetFixedMode() {
-            fixed=false;
-            absoluteFix=false;
-            lastAngle=0;
-            active=false;
+            fixed = false;
+            absoluteFix = false;
+            lastAngle = 0;
+            active = false;
         }
 
         public  boolean isActive() {
@@ -1734,7 +1735,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         private double getNearestAngle(double angle) {
-            double delta,minDelta=1e5, bestAngle=0.0;
+            double delta, minDelta = 1e5, bestAngle = 0.0;
             for (double snapAngle : snapAngles) {
                 delta = getAngleDelta(angle, snapAngle);
                 if (delta < minDelta) {
@@ -1743,14 +1744,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
             }
             if (Math.abs(bestAngle-360) < 1e-3) {
-                bestAngle=0;
+                bestAngle = 0;
             }
             return bestAngle;
         }
 
         private double getAngleDelta(double a, double b) {
             double delta = Math.abs(a-b);
-            if (delta>180)
+            if (delta > 180)
                 return 360-delta;
             else
                 return delta;
@@ -1777,7 +1778,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (snapHelper!=null) {
+            if (snapHelper != null) {
                 snapHelper.toggleSnapping();
             }
         }

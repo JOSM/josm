@@ -21,7 +21,7 @@ class SaveLayersTable extends JTable implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
-            Mode mode = (Mode)evt.getNewValue();
+            Mode mode = (Mode) evt.getNewValue();
             switch(mode) {
             case EDITING_DATA: setEnabled(true);
             break;

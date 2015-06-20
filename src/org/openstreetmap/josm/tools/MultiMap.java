@@ -224,7 +224,7 @@ public class MultiMap<A, B> {
             return false;
         if (!(obj instanceof MultiMap))
             return false;
-        return map.equals(((MultiMap<?,?>) obj).map);
+        return map.equals(((MultiMap<?, ?>) obj).map);
     }
 
     @Override

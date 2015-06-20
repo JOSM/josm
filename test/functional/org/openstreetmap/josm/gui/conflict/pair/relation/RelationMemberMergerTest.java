@@ -50,7 +50,7 @@ public class RelationMemberMergerTest extends JFrame {
 
     static public void main(String args[]) {
         RelationMemberMergerTest test = new RelationMemberMergerTest();
-        test.setSize(600,600);
+        test.setSize(600, 600);
         test.setVisible(true);
     }
 }

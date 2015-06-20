@@ -13,7 +13,7 @@ import org.openstreetmap.josm.Main;
 /**
  * A system of units used to express length and area measurements.
  * @since 3406 (creation)
- * @since 6992 (extraction in this package) 
+ * @since 6992 (extraction in this package)
  */
 public class SystemOfMeasurement {
 
@@ -40,7 +40,7 @@ public class SystemOfMeasurement {
      * @since 5549
      */
     public static final SystemOfMeasurement NAUTICAL_MILE = new SystemOfMeasurement(185.2, "kbl", 1852, "NM");
-    
+
     /**
      * Known systems of measurement.
      * @since 3406
@@ -53,7 +53,7 @@ public class SystemOfMeasurement {
         ALL_SYSTEMS.put(marktr("Imperial"), IMPERIAL);
         ALL_SYSTEMS.put(marktr("Nautical Mile"), NAUTICAL_MILE);
     }
-    
+
     /** First value, in meters, used to translate unit according to above formula. */
     public final double aValue;
     /** Second value, in meters, used to translate unit according to above formula. */
@@ -172,6 +172,6 @@ public class SystemOfMeasurement {
         if (format != null) {
             return format.format(v) + " " + unit;
         }
-        return String.format(Locale.US, "%." + (v<9.999999 ? 2 : 1) + "f %s", v, unit);
+        return String.format(Locale.US, "%." + (v < 9.999999 ? 2 : 1) + "f %s", v, unit);
     }
 }

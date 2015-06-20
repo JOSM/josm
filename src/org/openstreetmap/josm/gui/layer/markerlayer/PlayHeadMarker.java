@@ -60,7 +60,7 @@ public final class PlayHeadMarker extends Marker {
     }
 
     private PlayHeadMarker() {
-        super(new LatLon(0.0,0.0), "",
+        super(new LatLon(0.0, 0.0), "",
                 Main.pref.get("marker.audiotracericon", "audio-tracer"),
                 null, -1.0, 0.0);
         enabled = Main.pref.getBoolean("marker.traceaudio", true);
@@ -84,7 +84,8 @@ public final class PlayHeadMarker extends Marker {
         });
     }
 
-    @Override public boolean containsPoint(Point p) {
+    @Override
+    public boolean containsPoint(Point p) {
         Point screen = Main.map.mapView.getPoint(getEastNorth());
         Rectangle r = new Rectangle(screen.x, screen.y, symbol.getIconWidth(),
                 symbol.getIconHeight());
@@ -101,8 +102,11 @@ public final class PlayHeadMarker extends Marker {
         }
         wasPlaying = AudioPlayer.playing();
         if (wasPlaying) {
-            try { AudioPlayer.pause();
-            } catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
+            try {
+                AudioPlayer.pause();
+            } catch (Exception ex) {
+                AudioPlayer.audioMalfunction(ex);
+            }
         }
     }
 
@@ -111,8 +115,11 @@ public final class PlayHeadMarker extends Marker {
      */
     private void endDrag(boolean reset) {
         if (!wasPlaying || reset) {
-            try { AudioPlayer.pause();
-            } catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
+            try {
+                AudioPlayer.pause();
+            } catch (Exception ex) {
+                AudioPlayer.audioMalfunction(ex);
+            }
         }
         if (reset) {
             setCoor(oldCoor);
@@ -167,7 +174,8 @@ public final class PlayHeadMarker extends Marker {
             /* Not close enough to track, or no audio marker found for some other reason */
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("You need to drag the play head near to the GPX track whose associated sound track you were playing (after the first marker)."),
+                    tr("You need to drag the play head near to the GPX track " +
+                       "whose associated sound track you were playing (after the first marker)."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE
                     );
@@ -190,7 +198,7 @@ public final class PlayHeadMarker extends Marker {
      */
     public void synchronize(EastNorth en) {
         AudioMarker recent = AudioMarker.recentlyPlayedMarker();
-        if(recent == null)
+        if (recent == null)
             return;
         /* First, see if we dropped onto an existing audio marker in the layer being played */
         Point startPoint = Main.map.mapView.getPoint(en);
@@ -233,7 +241,7 @@ public final class PlayHeadMarker extends Marker {
         }
 
         /* Actually do the synchronization */
-        if(ca == null) {
+        if (ca == null) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Unable to create new audio marker."),
@@ -280,7 +288,7 @@ public final class PlayHeadMarker extends Marker {
         jumpToMarker = true;
         if (timer == null) {
             animationInterval = Main.pref.getDouble("marker.audioanimationinterval", 1.0); //milliseconds
-            timer = new Timer((int)(animationInterval * 1000.0), new ActionListener() {
+            timer = new Timer((int) (animationInterval * 1000.0), new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     timerAction();

@@ -46,7 +46,7 @@ public abstract class AbstractParser extends DefaultHandler {
         long l = 0L;
         try {
             l = Long.parseLong(v);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long. Got ''{1}''.", name, v), e);
         }
         if (l < 0) {
@@ -62,7 +62,7 @@ public abstract class AbstractParser extends DefaultHandler {
         Long l = 0L;
         try {
             l = Long.valueOf(v);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long. Got ''{1}''.", name, v), e);
         }
         if (l < 0) {
@@ -79,7 +79,7 @@ public abstract class AbstractParser extends DefaultHandler {
         double d = 0.0;
         try {
             d = Double.parseDouble(v);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throwException(tr("Illegal value for attribute ''{0}'' of type double. Got ''{1}''.", name, v), e);
         }
         return d;
@@ -105,10 +105,10 @@ public abstract class AbstractParser extends DefaultHandler {
     }
 
     protected final HistoryOsmPrimitive createPrimitive(Attributes atts, OsmPrimitiveType type) throws SAXException {
-        long id = getMandatoryAttributeLong(atts,"id");
-        long version = getMandatoryAttributeLong(atts,"version");
-        long changesetId = getMandatoryAttributeLong(atts,"changeset");
-        boolean visible= getMandatoryAttributeBoolean(atts, "visible");
+        long id = getMandatoryAttributeLong(atts, "id");
+        long version = getMandatoryAttributeLong(atts, "version");
+        long changesetId = getMandatoryAttributeLong(atts, "changeset");
+        boolean visible = getMandatoryAttributeBoolean(atts, "visible");
 
         Long uid = getAttributeLong(atts, "uid");
         String userStr = atts.getValue("user");
@@ -129,19 +129,13 @@ public abstract class AbstractParser extends DefaultHandler {
         if (type.equals(OsmPrimitiveType.NODE)) {
             Double lat = getAttributeDouble(atts, "lat");
             Double lon = getAttributeDouble(atts, "lon");
-            LatLon coor = (lat != null && lon != null) ? new LatLon(lat,lon) : null;
-            primitive = new HistoryNode(
-                    id,version,visible,user,changesetId,timestamp,coor
-            );
+            LatLon coor = (lat != null && lon != null) ? new LatLon(lat, lon) : null;
+            primitive = new HistoryNode(id, version, visible, user, changesetId, timestamp, coor);
 
         } else if (type.equals(OsmPrimitiveType.WAY)) {
-            primitive = new HistoryWay(
-                    id,version,visible,user,changesetId,timestamp
-            );
+            primitive = new HistoryWay(id, version, visible, user, changesetId, timestamp);
         } else if (type.equals(OsmPrimitiveType.RELATION)) {
-            primitive = new HistoryRelation(
-                    id,version,visible,user,changesetId,timestamp
-            );
+            primitive = new HistoryRelation(id, version, visible, user, changesetId, timestamp);
         }
         return primitive;
     }
@@ -161,12 +155,12 @@ public abstract class AbstractParser extends DefaultHandler {
     protected final void handleTag(Attributes atts) throws SAXException {
         String key = getMandatoryAttributeString(atts, "k");
         String value = getMandatoryAttributeString(atts, "v");
-        currentPrimitive.put(key,value);
+        currentPrimitive.put(key, value);
     }
 
     protected final void handleNodeReference(Attributes atts) throws SAXException {
         long ref = getMandatoryAttributeLong(atts, "ref");
-        ((HistoryWay)currentPrimitive).addNode(ref);
+        ((HistoryWay) currentPrimitive).addNode(ref);
     }
 
     protected void handleMember(Attributes atts) throws SAXException {
@@ -175,12 +169,12 @@ public abstract class AbstractParser extends DefaultHandler {
         OsmPrimitiveType type = null;
         try {
             type = OsmPrimitiveType.fromApiTypeName(v);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throwException(tr("Illegal value for mandatory attribute ''{0}'' of type OsmPrimitiveType. Got ''{1}''.", "type", v), e);
         }
         String role = getMandatoryAttributeString(atts, "role");
-        RelationMemberData member = new RelationMemberData(role, type,ref);
-        ((HistoryRelation)currentPrimitive).addMember(member);
+        RelationMemberData member = new RelationMemberData(role, type, ref);
+        ((HistoryRelation) currentPrimitive).addMember(member);
     }
 
     protected final boolean doStartElement(String qName, Attributes atts) throws SAXException {

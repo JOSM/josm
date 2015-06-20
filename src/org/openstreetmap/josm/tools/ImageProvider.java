@@ -741,7 +741,7 @@ public class ImageProvider {
                     /* cache separately */
                     if (dirs != null && !dirs.isEmpty()) {
                         cacheName = "id:" + id + ":" + fullName;
-                        if(archive != null) {
+                        if (archive != null) {
                             cacheName += ":" + archive.getName();
                         }
                     }
@@ -894,7 +894,7 @@ public class ImageProvider {
                 }
             } else {
                 final String fn_md5 = Utils.md5Hex(fn);
-                url = b + fn_md5.substring(0,1) + "/" + fn_md5.substring(0,2) + "/" + fn;
+                url = b + fn_md5.substring(0, 1) + "/" + fn_md5.substring(0, 2) + "/" + fn;
             }
             result = getIfAvailableHttp(url, type);
             if (result != null) {
@@ -923,7 +923,7 @@ public class ImageProvider {
             String entryName = inArchiveDir + fullName;
             ZipEntry entry = zipFile.getEntry(entryName);
             if (entry != null) {
-                int size = (int)entry.getSize();
+                int size = (int) entry.getSize();
                 int offs = 0;
                 byte[] buf = new byte[size];
                 try (InputStream is = zipFile.getInputStream(entry)) {
@@ -936,7 +936,7 @@ public class ImageProvider {
                         }
                         return svg == null ? null : new ImageResource(svg);
                     case OTHER:
-                        while(size > 0) {
+                        while (size > 0) {
                             int l = is.read(buf, offs, size);
                             offs += l;
                             size -= l;
@@ -1559,12 +1559,12 @@ public class ImageProvider {
                         if ("javax_imageio_1.0".equals(f)) {
                             Node root = metadata.getAsTree(f);
                             if (root instanceof Element) {
-                                NodeList list = ((Element)root).getElementsByTagName("TransparentColor");
+                                NodeList list = ((Element) root).getElementsByTagName("TransparentColor");
                                 if (list.getLength() > 0) {
                                     Node item = list.item(0);
                                     if (item instanceof Element) {
                                         // Handle different color spaces (tested with RGB and grayscale)
-                                        String value = ((Element)item).getAttribute("value");
+                                        String value = ((Element) item).getAttribute("value");
                                         if (!value.isEmpty()) {
                                             String[] s = value.split(" ");
                                             if (s.length == 3) {
@@ -1574,7 +1574,7 @@ public class ImageProvider {
                                                 int r = model.getRed(pixel);
                                                 int g = model.getGreen(pixel);
                                                 int b = model.getBlue(pixel);
-                                                return new Color(r,g,b);
+                                                return new Color(r, g, b);
                                             } else {
                                                 Main.warn("Unable to translate TransparentColor '"+value+"' with color model "+model);
                                             }
@@ -1597,7 +1597,7 @@ public class ImageProvider {
     private static Color parseRGB(String[] s) {
         int[] rgb = new int[3];
         try {
-            for (int i = 0; i<3; i++) {
+            for (int i = 0; i < 3; i++) {
                 rgb[i] = Integer.parseInt(s[i]);
             }
             return new Color(rgb[0], rgb[1], rgb[2]);

@@ -9,7 +9,7 @@ import java.util.List;
  * @param <B> Type of second item
  * @since 429
  */
-public final class Pair<A,B> {
+public final class Pair<A, B> {
 
     /**
      * The first item
@@ -39,7 +39,7 @@ public final class Pair<A,B> {
     @Override
     public boolean equals(Object other) {
         if (other instanceof Pair<?, ?>) {
-            Pair<?, ?> o = (Pair<?, ?>)other;
+            Pair<?, ?> o = (Pair<?, ?>) other;
             return a.equals(o.a) && b.equals(o.b);
         } else
             return false;
@@ -52,7 +52,7 @@ public final class Pair<A,B> {
         return l;
     }
 
-    public static <T> Pair<T,T> sort(Pair<T,T> p) {
+    public static <T> Pair<T, T> sort(Pair<T, T> p) {
         if (p.b.hashCode() < p.a.hashCode()) {
             T tmp = p.a;
             p.a = p.b;
@@ -72,7 +72,7 @@ public final class Pair<A,B> {
      * @param v The second item
      * @return The newly created Pair(u,v)
      */
-    public static <U,V> Pair<U,V> create(U u, V v) {
-        return new Pair<>(u,v);
+    public static <U, V> Pair<U, V> create(U u, V v) {
+        return new Pair<>(u, v);
     }
 }

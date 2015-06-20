@@ -54,7 +54,7 @@ implements TableCellRenderer, ListCellRenderer<RelationMemberConflictDecisionTyp
             setBackground(UIManager.getColor("Table.selectionBackground"));
             setForeground(UIManager.getColor("Table.selectionForeground"));
         }
-        RelationMemberConflictDecisionType decision = (RelationMemberConflictDecisionType)value;
+        RelationMemberConflictDecisionType decision = (RelationMemberConflictDecisionType) value;
         cbDecisionTypes.setSelectedItem(decision);
         return cbDecisionTypes;
     }

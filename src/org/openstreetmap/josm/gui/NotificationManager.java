@@ -301,7 +301,7 @@ class NotificationManager {
         private void addMouseListenerToAllChildComponents(Component comp, MouseListener listener) {
             comp.addMouseListener(listener);
             if (comp instanceof Container) {
-                for (Component c: ((Container)comp).getComponents()) {
+                for (Component c: ((Container) comp).getComponents()) {
                     addMouseListenerToAllChildComponents(c, listener);
                 }
             }

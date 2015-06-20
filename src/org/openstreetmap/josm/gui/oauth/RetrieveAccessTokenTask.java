@@ -54,7 +54,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (client != null) {
                 client.cancel();
             }
@@ -80,18 +80,18 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
-            synchronized(this) {
+            synchronized (this) {
                 client = new OsmOAuthAuthorizationClient(parameters, requestToken);
             }
             accessToken = client.getAccessToken(getProgressMonitor().createSubTaskMonitor(0, false));
-        } catch(OsmTransferCanceledException e) {
+        } catch (OsmTransferCanceledException e) {
             return;
         } catch (OsmOAuthAuthorizationException e) {
             Main.error(e);
             alertRetrievingAccessTokenFailed(e);
             accessToken = null;
         } finally {
-            synchronized(this) {
+            synchronized (this) {
                 client = null;
             }
         }

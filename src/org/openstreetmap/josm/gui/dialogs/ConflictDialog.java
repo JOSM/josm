@@ -99,7 +99,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
         lstConflicts.addMouseListener(new MouseEventHandler());
-        addListSelectionListener(new ListSelectionListener(){
+        addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 Main.map.mapView.repaint();
@@ -241,11 +241,13 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                 Point p = nc.getPoint(n);
                 g.drawRect(p.x-1, p.y-1, 2, 2);
             }
+
             public void visit(Node n1, Node n2) {
                 Point p1 = nc.getPoint(n1);
                 Point p2 = nc.getPoint(n2);
                 g.drawLine(p1.x, p1.y, p2.x, p2.y);
             }
+
             @Override
             public void visit(Way w) {
                 Node lastN = null;
@@ -258,6 +260,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                     lastN = n;
                 }
             }
+
             @Override
             public void visit(Relation e) {
                 if (!visited.contains(e)) {
@@ -345,9 +348,13 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     }
 
     class MouseEventHandler extends PopupMenuLauncher {
+        /**
+         * Constructs a new {@code MouseEventHandler}.
+         */
         public MouseEventHandler() {
             super(popupMenu);
         }
+
         @Override public void mouseClicked(MouseEvent e) {
             if (isDoubleClick(e)) {
                 resolve();
@@ -361,8 +368,11 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      */
     class ConflictListModel implements ListModel<OsmPrimitive> {
 
-        private CopyOnWriteArrayList<ListDataListener> listeners;
+        private final CopyOnWriteArrayList<ListDataListener> listeners;
 
+        /**
+         * Constructs a new {@code ConflictListModel}.
+         */
         public ConflictListModel() {
             listeners = new CopyOnWriteArrayList<>();
         }
@@ -406,7 +416,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         public int indexOf(OsmPrimitive my) {
             if (conflicts == null) return -1;
-            for (int i=0; i < conflicts.size();i++) {
+            for (int i = 0; i < conflicts.size(); i++) {
                 if (conflicts.get(i).isMatchingMy(my))
                     return i;
             }
@@ -434,7 +444,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            ListSelectionModel model = (ListSelectionModel)e.getSource();
+            ListSelectionModel model = (ListSelectionModel) e.getSource();
             boolean enabled = model.getMinSelectionIndex() >= 0
             && model.getMaxSelectionIndex() >= model.getMinSelectionIndex();
             setEnabled(enabled);
@@ -460,7 +470,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            ListSelectionModel model = (ListSelectionModel)e.getSource();
+            ListSelectionModel model = (ListSelectionModel) e.getSource();
             boolean enabled = model.getMinSelectionIndex() >= 0
             && model.getMaxSelectionIndex() >= model.getMinSelectionIndex();
             setEnabled(enabled);

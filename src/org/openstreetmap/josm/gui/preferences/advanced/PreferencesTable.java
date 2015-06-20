@@ -152,11 +152,11 @@ public class PreferencesTable extends JTable {
      */
     public PrefEntry addPreference(final JComponent gui) {
         JPanel p = new JPanel(new GridBagLayout());
-        p.add(new JLabel(tr("Key")), GBC.std().insets(0,0,5,0));
+        p.add(new JLabel(tr("Key")), GBC.std().insets(0, 0, 5, 0));
         JosmTextField tkey = new JosmTextField("", 50);
-        p.add(tkey, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
+        p.add(tkey, GBC.eop().insets(5, 0, 0, 0).fill(GBC.HORIZONTAL));
 
-        p.add(new JLabel(tr("Select Setting Type:")), GBC.eol().insets(5,15,5,0));
+        p.add(new JLabel(tr("Select Setting Type:")), GBC.eol().insets(5, 15, 5, 0));
 
         JRadioButton rbString = new JRadioButton(tr("Simple"));
         JRadioButton rbList = new JRadioButton(tr("List"));
@@ -300,11 +300,11 @@ public class PreferencesTable extends JTable {
         private Color backgroundColor = Main.pref.getUIColor("Table.background");
         private Color changedColor = Main.pref.getColor(
                          marktr("Advanced Background: Changed"),
-                         new Color(200,255,200));
+                         new Color(200, 255, 200));
         private Color foregroundColor = Main.pref.getUIColor("Table.foreground");
         private Color nonDefaultColor = Main.pref.getColor(
                             marktr("Advanced Background: NonDefault"),
-                            new Color(255,255,200));
+                            new Color(255, 255, 200));
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -315,7 +315,7 @@ public class PreferencesTable extends JTable {
             Object val = setting.getValue();
             String display = val != null ? val.toString() : "<html><i>&lt;"+tr("unset")+"&gt;</i></html>";
 
-            JLabel label = (JLabel)super.getTableCellRendererComponent(table,
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table,
                     display, isSelected, hasFocus, row, column);
 
             label.setBackground(backgroundColor);

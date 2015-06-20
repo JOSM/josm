@@ -32,6 +32,6 @@ public class ChangesetCommentModel extends Observable {
      * @return the current changeset comment in this model.
      */
     public String getComment() {
-        return comment == null ? "": comment;
+        return comment == null ? "" : comment;
     }
 }

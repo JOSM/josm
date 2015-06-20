@@ -39,7 +39,7 @@ public class WayConnectedToArea extends Test {
         boolean hasway = false;
         List<OsmPrimitive> r = w.firstNode().getReferrers();
         for (OsmPrimitive p : r) {
-            if(p != w && p.hasKey("highway")) {
+            if (p != w && p.hasKey("highway")) {
                 hasway = true;
                 break;
             }
@@ -52,7 +52,7 @@ public class WayConnectedToArea extends Test {
         hasway = false;
         r = w.lastNode().getReferrers();
         for (OsmPrimitive p : r) {
-            if(p != w && p.hasKey("highway")) {
+            if (p != w && p.hasKey("highway")) {
                 hasway = true;
                 break;
             }

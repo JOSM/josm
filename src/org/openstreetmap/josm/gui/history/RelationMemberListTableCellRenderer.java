@@ -24,10 +24,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class RelationMemberListTableCellRenderer extends JLabel implements TableCellRenderer {
 
-    public static final Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
-    public static final Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255,197,197);
-    public static final Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
-    public static final Color BGCOLOR_SELECTED = new Color(143,170,255);
+    public static final Color BGCOLOR_EMPTY_ROW = new Color(234, 234, 234);
+    public static final Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255, 197, 197);
+    public static final Color BGCOLOR_IN_OPPOSITE = new Color(255, 234, 213);
+    public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
 
     private transient Map<OsmPrimitiveType, ImageIcon> icons;
 
@@ -54,7 +54,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         String text = "";
         Color bgColor = diffItem.state.getColor();
         RelationMemberData member = (RelationMemberData) diffItem.value;
-        text = member == null?"":member.getRole();
+        text = member == null ? "" : member.getRole();
         setText(text);
         setToolTipText(text);
         setBackground(bgColor);
@@ -82,7 +82,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 
-        Item member = (TwoColumnDiff.Item)value;
+        Item member = (TwoColumnDiff.Item) value;
         renderIcon((RelationMemberData) member.value);
         switch(column) {
         case 0:

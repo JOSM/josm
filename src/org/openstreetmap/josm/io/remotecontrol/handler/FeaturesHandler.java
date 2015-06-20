@@ -22,8 +22,8 @@ public class FeaturesHandler extends RequestHandler {
     protected void handleRequest() throws RequestHandlerErrorException,
             RequestHandlerBadRequestException {
         StringBuilder buf = new StringBuilder();
-        String q=args.get("q");
-        if (q!=null) {
+        String q = args.get("q");
+        if (q != null) {
             buf.append('[');
             boolean first = true;
             for (String s: q.split("[,\\s]+")) {
@@ -33,7 +33,7 @@ public class FeaturesHandler extends RequestHandler {
                    buf.append(", ");
                }
                String info = RequestProcessor.getHandlerInfoAsJSON("/"+s);
-               if (info!=null) {
+               if (info != null) {
                    buf.append(info);
                } else {
                    Main.warn("Unknown handler {0} passed to /features request", s);

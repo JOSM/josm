@@ -33,7 +33,7 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice {
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 2;
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             Main.warn(e);
         }
         return defaultIndex;

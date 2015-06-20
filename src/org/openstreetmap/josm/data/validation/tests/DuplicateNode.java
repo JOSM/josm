@@ -120,7 +120,6 @@ public class DuplicateNode extends Test {
         potentialDuplicates = new Storage<>(new NodeHash());
     }
 
-
     @SuppressWarnings("unchecked")
     @Override
     public void endTest() {
@@ -162,20 +161,17 @@ public class DuplicateNode extends Test {
     public List<TestError> buildTestErrors(Test parentTest, List<Node> nodes) {
         List<TestError> errors = new ArrayList<>();
 
-        MultiMap<Map<String,String>, OsmPrimitive> mm = new MultiMap<>();
+        MultiMap<Map<String, String>, OsmPrimitive> mm = new MultiMap<>();
         for (Node n: nodes) {
             mm.put(n.getKeys(), n);
         }
 
-        Map<String,Boolean> typeMap=new HashMap<>();
+        Map<String, Boolean> typeMap = new HashMap<>();
         String[] types = {"none", "highway", "railway", "waterway", "boundary", "power", "natural", "landuse", "building"};
 
-
-        // check whether we have multiple nodes at the same position with
-        // the same tag set
-        //
-        for (Iterator<Map<String,String>> it = mm.keySet().iterator(); it.hasNext();) {
-            Map<String,String> tagSet = it.next();
+        // check whether we have multiple nodes at the same position with the same tag set
+        for (Iterator<Map<String, String>> it = mm.keySet().iterator(); it.hasNext();) {
+            Map<String, String> tagSet = it.next();
             if (mm.get(tagSet).size() > 1) {
 
                 for (String type: types) {
@@ -183,18 +179,18 @@ public class DuplicateNode extends Test {
                 }
 
                 for (OsmPrimitive p : mm.get(tagSet)) {
-                    if (p.getType()==OsmPrimitiveType.NODE) {
+                    if (p.getType() == OsmPrimitiveType.NODE) {
                         Node n = (Node) p;
-                        List<OsmPrimitive> lp=n.getReferrers();
+                        List<OsmPrimitive> lp = n.getReferrers();
                         for (OsmPrimitive sp: lp) {
-                            if (sp.getType()==OsmPrimitiveType.WAY) {
+                            if (sp.getType() == OsmPrimitiveType.WAY) {
                                 boolean typed = false;
-                                Way w=(Way) sp;
+                                Way w = (Way) sp;
                                 Map<String, String> keys = w.getKeys();
                                 for (String type: typeMap.keySet()) {
                                     if (keys.containsKey(type)) {
                                         typeMap.put(type, true);
-                                        typed=true;
+                                        typed = true;
                                     }
                                 }
                                 if (!typed) {
@@ -206,14 +202,14 @@ public class DuplicateNode extends Test {
                     }
                 }
 
-                int nbType=0;
+                int nbType = 0;
                 for (Entry<String, Boolean> entry: typeMap.entrySet()) {
                     if (entry.getValue()) {
                         nbType++;
                     }
                 }
 
-                if (nbType>1) {
+                if (nbType > 1) {
                     String msg = marktr("Mixed type duplicated nodes");
                     errors.add(new TestError(
                             parentTest,
@@ -363,7 +359,7 @@ public class DuplicateNode extends Test {
                 // we have an additional node at the same position. Create an extra
                 // object to keep track of the nodes at this position.
                 //
-                Node n1 = (Node)potentialDuplicates.get(n);
+                Node n1 = (Node) potentialDuplicates.get(n);
                 List<Node> nodes = new ArrayList<>(2);
                 nodes.add(n1);
                 nodes.add(n);
@@ -371,7 +367,7 @@ public class DuplicateNode extends Test {
             } else if (potentialDuplicates.get(n) instanceof List<?>) {
                 // we have multiple nodes at the same position.
                 //
-                List<Node> nodes = (List<Node>)potentialDuplicates.get(n);
+                List<Node> nodes = (List<Node>) potentialDuplicates.get(n);
                 nodes.add(n);
             }
         }
@@ -412,7 +408,7 @@ public class DuplicateNode extends Test {
                 return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
         }
 
-        return null;// undoRedo handling done in mergeNodes
+        return null; // undoRedo handling done in mergeNodes
     }
 
     @Override

@@ -187,7 +187,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
     private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
 
-    private final transient HighlightHelper highlightHelper= new HighlightHelper();
+    private final transient HighlightHelper highlightHelper = new HighlightHelper();
 
     /**
      * The Add button (needed to be able to disable it)
@@ -224,8 +224,6 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         }
     };
 
-    // <editor-fold defaultstate="collapsed" desc="Dialog construction and helper methods">
-
     /**
      * Create a new PropertiesDialog
      */
@@ -245,17 +243,17 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         // combine both tables and wrap them in a scrollPane
         boolean top = Main.pref.getBoolean("properties.presets.top", true);
         bothTables.setLayout(new GridBagLayout());
-        if(top) {
+        if (top) {
             bothTables.add(presets, GBC.std().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2).anchor(GBC.NORTHWEST));
             double epsilon = Double.MIN_VALUE; // need to set a weight or else anchor value is ignored
-            bothTables.add(pluginHook, GBC.eol().insets(0,1,1,1).anchor(GBC.NORTHEAST).weight(epsilon, epsilon));
+            bothTables.add(pluginHook, GBC.eol().insets(0, 1, 1, 1).anchor(GBC.NORTHEAST).weight(epsilon, epsilon));
         }
         bothTables.add(selectSth, GBC.eol().fill().insets(10, 10, 10, 10));
         bothTables.add(tagTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(tagTable, GBC.eol().fill(GBC.BOTH));
         bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
-        if(!top) {
+        if (!top) {
             bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
         }
 
@@ -286,7 +284,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
     private void buildTagsTable() {
         // setting up the tags table
-        tagData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
+        tagData.setColumnIdentifiers(new String[]{tr("Key"), tr("Value")});
         tagTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tagTable.getTableHeader().setReorderingAllowed(false);
 
@@ -296,7 +294,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     }
 
     private void buildMembershipTable() {
-        membershipData.setColumnIdentifiers(new String[]{tr("Member Of"),tr("Role"),tr("Position")});
+        membershipData.setColumnIdentifiers(new String[]{tr("Member Of"), tr("Role"), tr("Position")});
         membershipTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         TableColumnModel mod = membershipTable.getColumnModel();
@@ -308,8 +306,8 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                 if (value == null)
                     return this;
                 if (c instanceof JLabel) {
-                    JLabel label = (JLabel)c;
-                    Relation r = (Relation)value;
+                    JLabel label = (JLabel) c;
+                    Relation r = (Relation) value;
                     label.setText(r.getDisplayName(DefaultNameFormatter.getInstance()));
                     if (r.isDisabledAndHidden()) {
                         label.setFont(label.getFont().deriveFont(Font.ITALIC));
@@ -325,7 +323,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                 if (value == null)
                     return this;
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                boolean isDisabledAndHidden = ((Relation)table.getValueAt(row, 0)).isDisabledAndHidden();
+                boolean isDisabledAndHidden = ((Relation) table.getValueAt(row, 0)).isDisabledAndHidden();
                 if (c instanceof JLabel) {
                     JLabel label = (JLabel) c;
                     label.setText(((MemberInfo) value).getRoleString());
@@ -341,9 +339,9 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                boolean isDisabledAndHidden = ((Relation)table.getValueAt(row, 0)).isDisabledAndHidden();
+                boolean isDisabledAndHidden = ((Relation) table.getValueAt(row, 0)).isDisabledAndHidden();
                 if (c instanceof JLabel) {
-                    JLabel label = (JLabel)c;
+                    JLabel label = (JLabel) c;
                     label.setText(((MemberInfo) table.getValueAt(row, 1)).getPositionString());
                     if (isDisabledAndHidden) {
                         label.setFont(label.getFont().deriveFont(Font.ITALIC));
@@ -415,7 +413,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                 //update highlights
                 if (Main.isDisplayingMapView()) {
                     int row = membershipTable.rowAtPoint(e.getPoint());
-                    if (row>=0) {
+                    if (row >= 0) {
                         if (highlightHelper.highlightOnly((Relation) membershipTable.getValueAt(row, 0))) {
                             Main.map.mapView.repaint();
                         }
@@ -461,15 +459,15 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         // ENTER = editAction, open "edit" dialog
         tagTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onTableEnter");
-        tagTable.getActionMap().put("onTableEnter",editAction);
+        tagTable.getActionMap().put("onTableEnter", editAction);
         membershipTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"onTableEnter");
-        membershipTable.getActionMap().put("onTableEnter",editAction);
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onTableEnter");
+        membershipTable.getActionMap().put("onTableEnter", editAction);
 
         // INSERT button = addAction, open "add tag" dialog
         tagTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0),"onTableInsert");
-        tagTable.getActionMap().put("onTableInsert",addAction);
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0), "onTableInsert");
+        tagTable.getActionMap().put("onTableInsert", addAction);
 
         // unassign some standard shortcuts for JTable to allow upload / download / image browsing
         InputMapUtils.unassignCtrlShiftUpDown(tagTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -479,15 +477,15 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         tagTable.setTransferHandler(null);
 
         tagTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),"onCopy");
-        tagTable.getActionMap().put("onCopy",copyKeyValueAction);
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK), "onCopy");
+        tagTable.getActionMap().put("onCopy", copyKeyValueAction);
 
         // allow using enter to add tags for all look&feel configurations
         InputMapUtils.enableEnter(this.btnAdd);
 
         // DEL button = deleteAction
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"delete"
+                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete"
                 );
         getActionMap().put("delete", deleteAction);
 
@@ -504,7 +502,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
      * @param row position
      */
     private void editMembership(int row) {
-        Relation relation = (Relation)membershipData.getValueAt(row, 0);
+        Relation relation = (Relation) membershipData.getValueAt(row, 0);
         Main.map.relationListDialog.selectRelation(relation);
         RelationEditor.getEditor(
                 Main.main.getEditLayer(),
@@ -514,7 +512,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     }
 
     private int findRow(TableModel model, Object value) {
-        for (int i=0; i<model.getRowCount(); i++) {
+        for (int i = 0; i < model.getRowCount(); i++) {
             if (model.getValueAt(i, 0).equals(value))
                 return i;
         }
@@ -528,10 +526,6 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         // Parameter is ignored in this class
         selectionChanged(null);
     }
-
-   // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Event listeners methods">
 
     @Override
     public void showNotify() {
@@ -595,10 +589,10 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         Relation selectedRelation = null;
         selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
         if (selectedTag == null && tagTable.getSelectedRowCount() == 1) {
-            selectedTag = (String)tagData.getValueAt(tagTable.getSelectedRow(), 0);
+            selectedTag = (String) tagData.getValueAt(tagTable.getSelectedRow(), 0);
         }
         if (membershipTable.getSelectedRowCount() == 1) {
-            selectedRelation = (Relation)membershipData.getValueAt(membershipTable.getSelectedRow(), 0);
+            selectedRelation = (Relation) membershipData.getValueAt(membershipTable.getSelectedRow(), 0);
         }
 
         // re-load tag data
@@ -647,7 +641,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                 if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
                     Relation r = (Relation) ref;
                     MemberInfo mi = roles.get(r);
-                    if(mi == null) {
+                    if (mi == null) {
                         mi = new MemberInfo(newSel);
                     }
                     roles.put(r, mi);
@@ -695,14 +689,14 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
             tagTable.changeSelection(selectedIndex, 0, false, false);
         } else if (selectedRelation != null && (selectedIndex = findRow(membershipData, selectedRelation)) != -1) {
             membershipTable.changeSelection(selectedIndex, 0, false, false);
-        } else if(hasTags) {
+        } else if (hasTags) {
             tagTable.changeSelection(0, 0, false, false);
-        } else if(hasMemberships) {
+        } else if (hasMemberships) {
             membershipTable.changeSelection(0, 0, false, false);
         }
 
-        if(tagData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
-            if(newSel.size() > 1) {
+        if (tagData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
+            if (newSel.size() > 1) {
                 setTitle(tr("Objects: {2} / Tags: {0} / Memberships: {1}",
                     tagData.getRowCount(), membershipData.getRowCount(), newSel.size()));
             } else {
@@ -732,10 +726,6 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         updateSelection();
     }
-
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Methods that are called by plugins to extend fuctionality ">
 
     /**
      * Replies the tag popup menu handler.
@@ -776,14 +766,13 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         return row > -1 ? (IRelation) membershipData.getValueAt(row, 0) : null;
     }
 
-    // </editor-fold>
-
-     /**
+    /**
      * Class that watches for mouse clicks
      * @author imi
      */
     public class MouseClickWatch extends MouseAdapter {
-        @Override public void mouseClicked(MouseEvent e) {
+        @Override
+        public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() < 2) {
                 // single click, clear selection in other table not clicked in
                 if (e.getSource() == tagTable) {
@@ -811,7 +800,9 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                 btnAdd.requestFocusInWindow();
             }
         }
-        @Override public void mousePressed(MouseEvent e) {
+
+        @Override
+        public void mousePressed(MouseEvent e) {
             if (e.getSource() == tagTable) {
                 membershipTable.clearSelection();
             } else if (e.getSource() == membershipTable) {
@@ -879,10 +870,13 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
      * Class that allows fast creation of read-only table model with String columns
      */
     public static class ReadOnlyTableModel extends DefaultTableModel {
-        @Override public boolean isCellEditable(int row, int column) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
             return false;
         }
-        @Override public Class<?> getColumnClass(int columnIndex) {
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
             return String.class;
         }
     }
@@ -901,7 +895,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
             updateEnabledState();
         }
 
-        protected void deleteTags(int[] rows){
+        protected void deleteTags(int[] rows) {
             // convert list of rows to HashMap (and find gap for nextKey)
             Map<String, String> tags = new HashMap<>(rows.length);
             int nextKeyIndex = rows[0];
@@ -924,7 +918,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                     // gap found
                     nextKeyIndex++;
                 }
-                nextKey = (String)tagData.getValueAt(nextKeyIndex, 0);
+                nextKey = (String) tagData.getValueAt(nextKeyIndex, 0);
             }
 
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
@@ -937,12 +931,12 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         }
 
         protected void deleteFromRelation(int row) {
-            Relation cur = (Relation)membershipData.getValueAt(row, 0);
+            Relation cur = (Relation) membershipData.getValueAt(row, 0);
 
             Relation nextRelation = null;
             int rowCount = membershipTable.getRowCount();
             if (rowCount > 1) {
-                nextRelation = (Relation)membershipData.getValueAt(row + 1 < rowCount ? row + 1 : row - 1, 0);
+                nextRelation = (Relation) membershipData.getValueAt(row + 1 < rowCount ? row + 1 : row - 1, 0);
             }
 
             ExtendedDialog ed = new ExtendedDialog(Main.parent,
@@ -953,7 +947,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
             ed.toggleEnable(DELETE_FROM_RELATION_PREF);
             ed.showDialog();
 
-            if(ed.getValue() != 1)
+            if (ed.getValue() != 1)
                 return;
 
             Relation rel = new Relation(cur);
@@ -977,7 +971,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                 ConditionalOptionPaneUtil.startBulkOperation(DELETE_FROM_RELATION_PREF);
                 int[] rows = membershipTable.getSelectedRows();
                 // delete from last relation to conserve row numbers in the table
-                for (int i=rows.length-1; i>=0; i--) {
+                for (int i = rows.length-1; i >= 0; i--) {
                     deleteFromRelation(rows[i]);
                 }
                 ConditionalOptionPaneUtil.endBulkOperation(DELETE_FROM_RELATION_PREF);
@@ -1082,7 +1076,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                     uris.add(new URI(String.format("%sMap_Features", base)));
                 } else if (membershipTable.getSelectedRowCount() == 1) {
                     row = membershipTable.getSelectedRow();
-                    String type = ((Relation)membershipData.getValueAt(row, 0)).get("type");
+                    String type = ((Relation) membershipData.getValueAt(row, 0)).get("type");
                     if (type != null) {
                         type = Utils.encodeUrl(type);
                     }
@@ -1100,14 +1094,14 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                     uris.add(new URI(String.format("%sMap_Features", base)));
                 }
 
-                Main.worker.execute(new Runnable(){
+                Main.worker.execute(new Runnable() {
                     @Override public void run() {
                         try {
                             // find a page that actually exists in the wiki
                             HttpURLConnection conn;
                             for (URI u : uris) {
                                 conn = Utils.openHttpConnection(u.toURL());
-                                conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+                                conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
 
                                 if (conn.getResponseCode() != 200) {
                                     Main.info("{0} does not exist", u);
@@ -1121,7 +1115,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                                                 .replace("=", "%3D") /* do not URLencode whole string! */
                                                 .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
                                                 ).toURL());
-                                        conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+                                        conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
                                     }
 
                                     /* redirect pages have different content length, but retrieving a "nonredirect"
@@ -1186,7 +1180,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                 if (sel.isEmpty())
                     return;
                 for (OsmPrimitive p : sel) {
-                    Collection<String> s = getString(p,key);
+                    Collection<String> s = getString(p, key);
                     if (s != null) {
                         values.addAll(s);
                     }
@@ -1200,6 +1194,9 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
     class CopyValueAction extends AbstractCopyAction {
 
+        /**
+         * Constructs a new {@code CopyValueAction}.
+         */
         public CopyValueAction() {
             putValue(NAME, tr("Copy Value"));
             putValue(SHORT_DESCRIPTION, tr("Copy the value of the selected tag to clipboard"));

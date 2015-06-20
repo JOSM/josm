@@ -92,13 +92,13 @@ public class OsmConnection {
             cancel = true;
             return;
         } else {
-            String username= response.getUsername() == null ? "" : response.getUsername();
+            String username = response.getUsername() == null ? "" : response.getUsername();
             String password = response.getPassword() == null ? "" : String.valueOf(response.getPassword());
             token = username + ":" + password;
             try {
                 ByteBuffer bytes = encoder.encode(CharBuffer.wrap(token));
                 con.addRequestProperty("Authorization", "Basic "+Base64.encode(bytes));
-            } catch(CharacterCodingException e) {
+            } catch (CharacterCodingException e) {
                 throw new OsmTransferException(e);
             }
         }
@@ -123,7 +123,7 @@ public class OsmConnection {
         consumer.setTokenWithSecret(holder.getAccessTokenKey(), holder.getAccessTokenSecret());
         try {
             consumer.sign(connection);
-        } catch(OAuthException e) {
+        } catch (OAuthException e) {
             throw new OsmTransferException(tr("Failed to sign a HTTP connection with an OAuth Authentication header"), e);
         }
     }

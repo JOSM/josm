@@ -32,6 +32,7 @@ public class SessionWriterTest {
         public OsmHeadlessJosExporter(OsmDataLayer layer) {
             super(layer);
         }
+
         @Override
         public boolean requiresZip() {
             return false;
@@ -42,6 +43,7 @@ public class SessionWriterTest {
         public OsmHeadlessJozExporter(OsmDataLayer layer) {
             super(layer);
         }
+
         @Override
         public boolean requiresZip() {
             return true;
@@ -92,7 +94,7 @@ public class SessionWriterTest {
             exporters.put(l, SessionWriter.getSessionLayerExporter(l));
         }
         SessionWriter sw = new SessionWriter(layers, -1, exporters, new MultiMap<Layer, Layer>(), zip);
-        File file = new File(System.getProperty("java.io.tmpdir"), getClass().getName()+(zip?".joz":".jos"));
+        File file = new File(System.getProperty("java.io.tmpdir"), getClass().getName()+(zip ? ".joz" : ".jos"));
         try {
             sw.write(file);
         } finally {

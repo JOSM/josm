@@ -147,7 +147,7 @@ public class ReferringRelationsBrowser extends JPanel {
         }
 
         protected void refreshEnabled() {
-            setEnabled(referrers.getSelectionModel().getMinSelectionIndex() >=0);
+            setEnabled(referrers.getSelectionModel().getMinSelectionIndex() >= 0);
         }
 
         @Override

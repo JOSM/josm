@@ -55,7 +55,6 @@ public final class ExceptionUtil {
                 Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
     }
 
-
     public static String explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
         Main.error(e);
         return tr(
@@ -128,7 +127,7 @@ public final class ExceptionUtil {
         if (conflict != null) {
             OsmPrimitive firstRefs = conflict.b.iterator().next();
             String objId = Long.toString(conflict.a.getId());
-            Collection<Long> refIds= Utils.transform(conflict.b, new Utils.Function<OsmPrimitive, Long>() {
+            Collection<Long> refIds = Utils.transform(conflict.b, new Utils.Function<OsmPrimitive, Long>() {
 
                 @Override
                 public Long apply(OsmPrimitive x) {
@@ -652,7 +651,7 @@ public final class ExceptionUtil {
             return explainOsmApiInitializationException((OsmApiInitializationException) e);
 
         if (e instanceof ChangesetClosedException)
-            return explainChangesetClosedException((ChangesetClosedException)e);
+            return explainChangesetClosedException((ChangesetClosedException) e);
 
         if (e instanceof OsmApiException) {
             OsmApiException oae = (OsmApiException) e;

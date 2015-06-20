@@ -53,14 +53,14 @@ public class ImageMarker extends ButtonMarker {
         JPanel p2 = new JPanel();
         p2.add(scale);
         p.add(p2, BorderLayout.SOUTH);
-        scale.addActionListener(new ActionListener(){
+        scale.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 if (scale.getModel().isSelected()) {
-                    ((JLabel)vp.getView()).setIcon(loadScaledImage(imageUrl, Math.max(vp.getWidth(), vp.getHeight())));
+                    ((JLabel) vp.getView()).setIcon(loadScaledImage(imageUrl, Math.max(vp.getWidth(), vp.getHeight())));
                 } else {
-                    ((JLabel)vp.getView()).setIcon(new ImageIcon(imageUrl));
+                    ((JLabel) vp.getView()).setIcon(new ImageIcon(imageUrl));
                 }
                 p.setCursor(Cursor.getDefaultCursor());
             }
@@ -77,11 +77,11 @@ public class ImageMarker extends ButtonMarker {
         Image img = new ImageIcon(u).getImage();
         int w = img.getWidth(null);
         int h = img.getHeight(null);
-        if (w>h) {
-            h = (int) Math.round(maxSize*((double)h/w));
+        if (w > h) {
+            h = (int) Math.round(maxSize*((double) h/w));
             w = maxSize;
         } else {
-            w = (int) Math.round(maxSize*((double)w/h));
+            w = (int) Math.round(maxSize*((double) w/h));
             h = maxSize;
         }
         return new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH));

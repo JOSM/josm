@@ -5,8 +5,10 @@ import java.util.Collection;
 
 public interface ChangesetCacheEvent {
     ChangesetCache getSource();
-    Collection<Changeset> getAddedChangesets();
-    Collection<Changeset> getRemovedChangesets();
-    Collection<Changeset> getUpdatedChangesets();
 
+    Collection<Changeset> getAddedChangesets();
+
+    Collection<Changeset> getRemovedChangesets();
+
+    Collection<Changeset> getUpdatedChangesets();
 }

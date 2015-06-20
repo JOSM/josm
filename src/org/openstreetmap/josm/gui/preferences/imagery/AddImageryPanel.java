@@ -59,9 +59,20 @@ public abstract class AddImageryPanel extends JPanel {
 
     protected final void registerValidableComponent(JTextComponent component) {
         component.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void removeUpdate(DocumentEvent e) { notifyListeners(); }
-            @Override public void insertUpdate(DocumentEvent e) { notifyListeners(); }
-            @Override public void changedUpdate(DocumentEvent e) { notifyListeners(); }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                notifyListeners();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                notifyListeners();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                notifyListeners();
+            }
         });
     }
 

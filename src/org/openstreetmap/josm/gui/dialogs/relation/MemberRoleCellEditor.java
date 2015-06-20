@@ -30,7 +30,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
         this.ds = ds;
         this.relation = relation;
         editor = new AutoCompletingTextField(0, false);
-        editor.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
+        editor.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         autoCompletionList = new AutoCompletionList();
         editor.setAutoCompletionList(autoCompletionList);
     }
@@ -39,7 +39,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
     public Component getTableCellEditorComponent(JTable table,
             Object value, boolean isSelected, int row, int column) {
 
-        String role = (String)value;
+        String role = (String) value;
         editor.setText(role);
         autoCompletionList.clear();
         ds.getAutoCompletionManager().populateWithMemberRoles(autoCompletionList, relation);

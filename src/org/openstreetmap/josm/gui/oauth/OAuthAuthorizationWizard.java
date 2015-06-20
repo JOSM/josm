@@ -70,7 +70,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      *
      * @return panel with buttons
      */
-    protected JPanel buildButtonRow(){
+    protected JPanel buildButtonRow() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         AcceptAccessTokenAction actAcceptAccessToken = new AcceptAccessTokenAction();
@@ -92,7 +92,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      */
     protected JPanel buildHeaderInfoPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         GridBagConstraints gc = new GridBagConstraints();
 
         // the oauth logo in the header
@@ -108,7 +108,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
         // OAuth in a nutshell ...
         gc.gridy  = 1;
-        gc.insets = new Insets(5,0,0,5);
+        gc.insets = new Insets(5, 0, 0, 5);
         HtmlPanel pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("With OAuth you grant JOSM the right to upload map data and GPS tracks "
@@ -124,12 +124,12 @@ public class OAuthAuthorizationWizard extends JDialog {
         gc.weightx = 0.0;
         lbl = new JLabel(tr("Please select an authorization procedure: "));
         lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
-        pnl.add(lbl,gc);
+        pnl.add(lbl, gc);
 
         gc.gridx = 1;
         gc.gridwidth = 1;
         gc.weightx = 1.0;
-        pnl.add(cbAuthorisationProcedure = new AuthorizationProcedureComboBox(),gc);
+        pnl.add(cbAuthorisationProcedure = new AuthorizationProcedureComboBox(), gc);
         cbAuthorisationProcedure.addItemListener(new AuthorisationProcedureChangeListener());
         lbl.setLabelFor(cbAuthorisationProcedure);
         return pnl;
@@ -140,7 +140,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      * currently selected
      */
     protected void refreshAuthorisationProcedurePanel() {
-        AuthorizationProcedure procedure = (AuthorizationProcedure)cbAuthorisationProcedure.getSelectedItem();
+        AuthorizationProcedure procedure = (AuthorizationProcedure) cbAuthorisationProcedure.getSelectedItem();
         switch(procedure) {
         case FULLY_AUTOMATIC:
             spAuthorisationProcedureUI.getViewport().setView(pnlFullyAutomaticAuthorisationUI);
@@ -188,6 +188,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
                     @Override
                     public void componentResized(ComponentEvent e) {}
+
                     @Override
                     public void componentMoved(ComponentEvent e) {}
                 }
@@ -238,7 +239,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     }
 
     protected AbstractAuthorizationUI getCurrentAuthorisationUI() {
-        switch((AuthorizationProcedure)cbAuthorisationProcedure.getSelectedItem()) {
+        switch((AuthorizationProcedure) cbAuthorisationProcedure.getSelectedItem()) {
         case FULLY_AUTOMATIC: return pnlFullyAutomaticAuthorisationUI;
         case MANUALLY: return pnlManualAuthorisationUI;
         case SEMI_AUTOMATIC: return pnlSemiAutomaticAuthorisationUI;
@@ -295,7 +296,7 @@ public class OAuthAuthorizationWizard extends JDialog {
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             Main.parent,
-                            new Dimension(450,540)
+                            new Dimension(450, 540)
                     )
             ).applySafe(this);
             initFromPreferences();
@@ -364,7 +365,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         public void propertyChange(PropertyChangeEvent evt) {
             if (!evt.getPropertyName().equals(AbstractAuthorizationUI.ACCESS_TOKEN_PROP))
                 return;
-            updateEnabledState((OAuthToken)evt.getNewValue());
+            updateEnabledState((OAuthToken) evt.getNewValue());
         }
     }
 

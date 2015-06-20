@@ -113,8 +113,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public String getLocaleName() {
-        if(locale_name == null) {
-            if(name_context != null) {
+        if (locale_name == null) {
+            if (name_context != null) {
                 locale_name = trc(name_context, TaggingPresetItems.fixPresetString(name));
             } else {
                 locale_name = tr(TaggingPresetItems.fixPresetString(name));
@@ -207,6 +207,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     private static class PresetPanel extends JPanel {
         private boolean hasElements = false;
+
         PresetPanel() {
             super(new GridBagLayout());
         }
@@ -218,7 +219,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         PresetPanel p = new PresetPanel();
         List<Link> l = new LinkedList<>();
         List<PresetLink> presetLink = new LinkedList<>();
-        if (types != null){
+        if (types != null) {
             JPanel pp = new JPanel();
             for (TaggingPresetType t : types) {
                 JLabel la = new JLabel(ImageProvider.get(t.getIconName()));
@@ -266,7 +267,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         // "Add toolbar button"
         JToggleButton tb = new JToggleButton(new ToolbarButtonAction());
         tb.setFocusable(false);
-        p.add(tb, GBC.std(0,0).anchor(GBC.LINE_END));
+        p.add(tb, GBC.std(0, 0).anchor(GBC.LINE_END));
         return p;
     }
 
@@ -317,7 +318,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         } else if (answer == DIALOG_ANSWER_NEW_RELATION) {
             final Relation r = new Relation();
             final Collection<RelationMember> members = new HashSet<>();
-            for(Tag t : getChangedTags()) {
+            for (Tag t : getChangedTags()) {
                 r.put(t.getKey(), t.getValue());
             }
             for (OsmPrimitive osm : ds.getSelected()) {
@@ -339,13 +340,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     private static class PresetDialog extends ExtendedDialog {
         public PresetDialog(Component content, String title, ImageIcon icon, boolean disableApply, boolean showNewRelation) {
             super(Main.parent, title,
-                    showNewRelation?
+                    showNewRelation ?
                             new String[] {tr("Apply Preset"), tr("New relation"), tr("Cancel")} :
                                 new String[] {tr("Apply Preset"), tr("Cancel")},
                                 true);
             if (icon != null)
                 setIconImage(icon.getImage());
-            contentInsets = new Insets(10,5,0,5);
+            contentInsets = new Insets(10, 5, 0, 5);
             if (showNewRelation) {
                 setButtonIcons(new String[] {"ok", "dialogs/addrelation", "cancel" });
             } else {
@@ -374,8 +375,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         int answer = 1;
         if (p.getComponentCount() != 0 && (sel.isEmpty() || p.hasElements)) {
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
-            if(sel.isEmpty()) {
-                if(originalSelectionEmpty) {
+            if (sel.isEmpty()) {
+                if (originalSelectionEmpty) {
                     title = tr("Nothing selected!");
                 } else {
                     title = tr("Selection unsuitable!");
@@ -459,7 +460,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     @Override
     public String toString() {
-        return (types == null?"":types) + " " + name;
+        return (types == null ? "" : types) + " " + name;
     }
 
     public boolean typeMatches(Collection<TaggingPresetType> t) {

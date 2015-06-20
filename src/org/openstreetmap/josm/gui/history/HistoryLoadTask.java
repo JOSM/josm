@@ -189,7 +189,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         loadedData = new HistoryDataSet();
         try {
             progressMonitor.setTicksCount(toLoad.size());
-            for(PrimitiveId pid: toLoad) {
+            for (PrimitiveId pid: toLoad) {
                 if (canceled) {
                     break;
                 }
@@ -211,14 +211,14 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
                             new ChangesetQuery().forChangesetIds(ds.getChangesetIds()), progressMonitor.createSubTaskMonitor(1, false))) {
                         ds.putChangeset(i);
                     }
-                } catch(OsmTransferException e) {
+                } catch (OsmTransferException e) {
                     if (canceled)
                         return;
                     throw e;
                 }
                 loadedData.mergeInto(ds);
             }
-        } catch(OsmTransferException e) {
+        } catch (OsmTransferException e) {
             lastException = e;
             return;
         }

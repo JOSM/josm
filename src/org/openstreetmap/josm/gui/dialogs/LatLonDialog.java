@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class LatLonDialog extends ExtendedDialog {
-    private static final Color BG_COLOR_ERROR = new Color(255,224,224);
+    private static final Color BG_COLOR_ERROR = new Color(255, 224, 224);
 
     public JTabbedPane tabs;
     private JosmTextField tfLatLon, tfEastNorth;
@@ -71,13 +71,13 @@ public class LatLonDialog extends ExtendedDialog {
 
     protected JPanel buildLatLon() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        pnl.add(new JLabel(tr("Coordinates:")), GBC.std().insets(0,10,5,0));
+        pnl.add(new JLabel(tr("Coordinates:")), GBC.std().insets(0, 10, 5, 0));
         tfLatLon = new JosmTextField(24);
-        pnl.add(tfLatLon, GBC.eol().insets(0,10,0,0).fill(GBC.HORIZONTAL).weight(1.0, 0.0));
+        pnl.add(tfLatLon, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL).weight(1.0, 0.0));
 
-        pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
+        pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
 
         pnl.add(new HtmlPanel(
                 tr("Enter the coordinates for the new node.<br/>You can separate longitude and latitude with space, comma or semicolon.<br/>" +
@@ -122,14 +122,14 @@ public class LatLonDialog extends ExtendedDialog {
 
     private JPanel buildEastNorth() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        pnl.add(new JLabel(tr("Projected coordinates:")), GBC.std().insets(0,10,5,0));
+        pnl.add(new JLabel(tr("Projected coordinates:")), GBC.std().insets(0, 10, 5, 0));
         tfEastNorth = new JosmTextField(24);
 
-        pnl.add(tfEastNorth, GBC.eol().insets(0,10,0,0).fill(GBC.HORIZONTAL).weight(1.0, 0.0));
+        pnl.add(tfEastNorth, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL).weight(1.0, 0.0));
 
-        pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
+        pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
 
         pnl.add(new HtmlPanel(
                 tr("Enter easting and northing (x and y) separated by space, comma or semicolon.")),
@@ -178,7 +178,7 @@ public class LatLonDialog extends ExtendedDialog {
 
     public void setCoordinates(LatLon ll) {
         if (ll == null) {
-            ll = new LatLon(0,0);
+            ll = new LatLon(0, 0);
         }
         this.latLonCoordinates = ll;
         tfLatLon.setText(ll.latToString(CoordinateFormat.getDefaultFormat()) + " " + ll.lonToString(CoordinateFormat.getDefaultFormat()));
@@ -226,19 +226,19 @@ public class LatLonDialog extends ExtendedDialog {
         // try to parse using the current locale
         //
         NumberFormat f = NumberFormat.getNumberInstance();
-        Number n=null;
+        Number n = null;
         ParsePosition pp = new ParsePosition(0);
-        n = f.parse(input,pp);
-        if (pp.getErrorIndex() >= 0 || pp.getIndex()<input.length()) {
+        n = f.parse(input, pp);
+        if (pp.getErrorIndex() >= 0 || pp.getIndex() < input.length()) {
             // fall back - try to parse with the english locale
             //
             pp = new ParsePosition(0);
             f = NumberFormat.getNumberInstance(Locale.ENGLISH);
             n = f.parse(input, pp);
-            if (pp.getErrorIndex() >= 0 || pp.getIndex()<input.length())
+            if (pp.getErrorIndex() >= 0 || pp.getIndex() < input.length())
                 return null;
         }
-        return n== null ? null : n.doubleValue();
+        return n == null ? null : n.doubleValue();
     }
 
     protected void parseLatLonUserInput() {
@@ -256,7 +256,7 @@ public class LatLonDialog extends ExtendedDialog {
             latLonCoordinates = null;
             setOkEnabled(false);
         } else {
-            clearErrorFeedback(tfLatLon,tr("Please enter a GPS coordinates"));
+            clearErrorFeedback(tfLatLon, tr("Please enter a GPS coordinates"));
             latLonCoordinates = latLon;
             setOkEnabled(true);
         }
@@ -274,7 +274,7 @@ public class LatLonDialog extends ExtendedDialog {
             latLonCoordinates = null;
             setOkEnabled(false);
         } else {
-            clearErrorFeedback(tfEastNorth,tr("Please enter a Easting and Northing"));
+            clearErrorFeedback(tfEastNorth, tr("Please enter a Easting and Northing"));
             eastNorthCoordinates = en;
             setOkEnabled(true);
         }
@@ -333,10 +333,11 @@ public class LatLonDialog extends ExtendedDialog {
         public void focusGained(FocusEvent e) {
             Component c = e.getComponent();
             if (c instanceof JosmTextField) {
-                JosmTextField tf = (JosmTextField)c;
+                JosmTextField tf = (JosmTextField) c;
                 tf.selectAll();
             }
         }
+
         @Override
         public void focusLost(FocusEvent e) {
             // Not used

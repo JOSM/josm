@@ -34,16 +34,28 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  * @since 1084
  */
 public final class Shortcut {
-    private String shortText;        // the unique ID of the shortcut
-    private String longText;         // a human readable description that will be shown in the preferences
-    private final int requestedKey;  // the key, the caller requested
-    private final int requestedGroup;// the group, the caller requested
-    private int assignedKey;         // the key that actually is used
-    private int assignedModifier;    // the modifiers that are used
-    private boolean assignedDefault; // true if it got assigned what was requested. (Note: modifiers will be ignored in favour of group when loading it from the preferences then.)
-    private boolean assignedUser;    // true if the user changed this shortcut
-    private boolean automatic;       // true if the user cannot change this shortcut (Note: it also will not be saved into the preferences)
-    private boolean reset;           // true if the user requested this shortcut to be set to its default value (will happen on next restart, as this shortcut will not be saved to the preferences)
+    /** the unique ID of the shortcut */
+    private final String shortText;
+    /** a human readable description that will be shown in the preferences */
+    private String longText;
+    /** the key, the caller requested */
+    private final int requestedKey;
+    /** the group, the caller requested */
+    private final int requestedGroup;
+    /** the key that actually is used */
+    private int assignedKey;
+    /** the modifiers that are used */
+    private int assignedModifier;
+    /** true if it got assigned what was requested.
+     * (Note: modifiers will be ignored in favour of group when loading it from the preferences then.) */
+    private boolean assignedDefault;
+    /** true if the user changed this shortcut */
+    private boolean assignedUser;
+    /** true if the user cannot change this shortcut (Note: it also will not be saved into the preferences) */
+    private boolean automatic;
+    /** true if the user requested this shortcut to be set to its default value
+     * (will happen on next restart, as this shortcut will not be saved to the preferences) */
+    private boolean reset;
 
     // simple constructor
     private Shortcut(String shortText, String longText, int requestedKey, int requestedGroup, int assignedKey, int assignedModifier,
@@ -217,7 +229,7 @@ public final class Shortcut {
         KeyStroke keyStroke = getKeyStroke();
         if (keyStroke == null) return "";
         String modifText = KeyEvent.getKeyModifiersText(keyStroke.getModifiers());
-        if ("".equals (modifText)) return KeyEvent.getKeyText(keyStroke.getKeyCode());
+        if ("".equals(modifText)) return KeyEvent.getKeyText(keyStroke.getKeyCode());
         return modifText + "+" + KeyEvent.getKeyText(keyStroke.getKeyCode());
     }
 
@@ -234,7 +246,7 @@ public final class Shortcut {
     private static Map<String, Shortcut> shortcuts = new LinkedHashMap<>();
 
     // and here our modifier groups
-    private static Map<Integer, Integer> groups= new HashMap<>();
+    private static Map<Integer, Integer> groups = new HashMap<>();
 
     // check if something collides with an existing shortcut
     public static Shortcut findShortcut(int requestedKey, int modifier) {
@@ -300,34 +312,34 @@ public final class Shortcut {
         groups.put(ALT, KeyEvent.ALT_DOWN_MASK);
         groups.put(SHIFT, KeyEvent.SHIFT_DOWN_MASK);
         groups.put(CTRL, commandDownMask);
-        groups.put(ALT_SHIFT, KeyEvent.ALT_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(ALT_CTRL, KeyEvent.ALT_DOWN_MASK|commandDownMask);
-        groups.put(CTRL_SHIFT, commandDownMask|KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(ALT_CTRL_SHIFT, KeyEvent.ALT_DOWN_MASK|commandDownMask|KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_SHIFT, KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_CTRL, KeyEvent.ALT_DOWN_MASK | commandDownMask);
+        groups.put(CTRL_SHIFT, commandDownMask | KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_CTRL_SHIFT, KeyEvent.ALT_DOWN_MASK | commandDownMask | KeyEvent.SHIFT_DOWN_MASK);
 
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();
         // (2) User defined shortcuts
         List<Shortcut> newshortcuts = new LinkedList<>();
-        for(String s : Main.pref.getAllPrefixCollectionKeys("shortcut.entry.")) {
+        for (String s : Main.pref.getAllPrefixCollectionKeys("shortcut.entry.")) {
             newshortcuts.add(new Shortcut(s));
         }
 
-        for(Shortcut sc : newshortcuts) {
+        for (Shortcut sc : newshortcuts) {
             if (sc.isAssignedUser()
             && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
                 shortcuts.put(sc.getShortText(), sc);
             }
         }
         // Shortcuts at their default values
-        for(Shortcut sc : newshortcuts) {
+        for (Shortcut sc : newshortcuts) {
             if (!sc.isAssignedUser() && sc.isAssignedDefault()
             && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
                 shortcuts.put(sc.getShortText(), sc);
             }
         }
         // Shortcuts that were automatically moved
-        for(Shortcut sc : newshortcuts) {
+        for (Shortcut sc : newshortcuts) {
             if (!sc.isAssignedUser() && !sc.isAssignedDefault()
             && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
                 shortcuts.put(sc.getShortText(), sc);
@@ -337,13 +349,13 @@ public final class Shortcut {
 
     private static int getGroupModifier(int group) {
         Integer m = groups.get(group);
-        if(m == null)
+        if (m == null)
             m = -1;
         return m;
     }
 
     private static int findModifier(int group, Integer modifier) {
-        if(modifier == null) {
+        if (modifier == null) {
             modifier = getGroupModifier(group);
             if (modifier == null) { // garbage in, no shortcut out
                 modifier = getGroupModifier(NONE);
@@ -439,9 +451,9 @@ public final class Shortcut {
     private static int findNewOsxModifier(int requestedGroup) {
         switch (requestedGroup) {
             case CTRL: return KeyEvent.CTRL_DOWN_MASK;
-            case ALT_CTRL: return KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK;
-            case CTRL_SHIFT: return KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK;
-            case ALT_CTRL_SHIFT: return KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK;
+            case ALT_CTRL: return KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK;
+            case CTRL_SHIFT: return KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK;
+            case ALT_CTRL_SHIFT: return KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK;
             default: return 0;
         }
     }

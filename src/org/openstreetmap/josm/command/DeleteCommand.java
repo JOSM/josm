@@ -258,7 +258,7 @@ public class DeleteCommand extends Command {
             return null;
         if (!silent && !checkAndConfirmOutlyingDelete(parents, null))
             return null;
-        return new DeleteCommand(layer,parents);
+        return new DeleteCommand(layer, parents);
     }
 
     /**
@@ -404,7 +404,7 @@ public class DeleteCommand extends Command {
         if (!silent) {
             Set<RelationToChildReference> references = RelationToChildReference.getRelationToChildReferences(primitivesToDelete);
             Iterator<RelationToChildReference> it = references.iterator();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 RelationToChildReference ref = it.next();
                 if (ref.getParent().isDeleted()) {
                     it.remove();
@@ -430,7 +430,7 @@ public class DeleteCommand extends Command {
         // build the delete command
         //
         if (!primitivesToDelete.isEmpty()) {
-            cmds.add(new DeleteCommand(layer,primitivesToDelete));
+            cmds.add(new DeleteCommand(layer, primitivesToDelete));
         }
 
         return new SequenceCommand(tr("Delete"), cmds);
@@ -472,7 +472,7 @@ public class DeleteCommand extends Command {
             List<List<Node>> chunks = new ArrayList<>(2);
             chunks.add(n1);
             chunks.add(n2);
-            return SplitWayAction.splitWay(layer,ws.way, chunks, Collections.<OsmPrimitive>emptyList()).getCommand();
+            return SplitWayAction.splitWay(layer, ws.way, chunks, Collections.<OsmPrimitive>emptyList()).getCommand();
         }
     }
 

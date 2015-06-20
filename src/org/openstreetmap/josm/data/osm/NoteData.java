@@ -192,7 +192,7 @@ public class NoteData {
      * @param text Required comment with which to open the note
      */
     public synchronized void createNote(LatLon location, String text) {
-        if(text == null || text.isEmpty()) {
+        if (text == null || text.isEmpty()) {
             throw new IllegalArgumentException("Comment can not be blank when creating a note");
         }
         Note note = new Note(location);

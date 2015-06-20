@@ -71,8 +71,10 @@ public class RemoteControlTest {
                 public X509Certificate[] getAcceptedIssuers() {
                     return null;
                 }
+
                 public void checkClientTrusted(X509Certificate[] certs, String authType) {
                 }
+
                 public void checkServerTrusted(X509Certificate[] certs, String authType) {
                 }
             }
@@ -136,7 +138,7 @@ public class RemoteControlTest {
             StringBuilder responseBody = new StringBuilder();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 String s;
-                while((s = in.readLine()) != null) {
+                while ((s = in.readLine()) != null) {
                     responseBody.append(s);
                     responseBody.append("\n");
                 }

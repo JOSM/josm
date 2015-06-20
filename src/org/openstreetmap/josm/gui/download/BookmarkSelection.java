@@ -84,7 +84,7 @@ public class BookmarkSelection implements DownloadSelection {
 
         GridBagConstraints  gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.insets = new Insets(5,5,5,5);
+        gc.insets = new Insets(5, 5, 5, 5);
         pnl.add(lblCurrentDownloadArea = new JMultilineLabel(""), gc);
 
         gc.weightx = 1.0;
@@ -98,7 +98,7 @@ public class BookmarkSelection implements DownloadSelection {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(5,5,5,5);
+        gc.insets = new Insets(5, 5, 5, 5);
         pnl.add(new JButton(actAdd = new AddAction()), gc);
         return pnl;
     }
@@ -115,7 +115,7 @@ public class BookmarkSelection implements DownloadSelection {
             public void valueChanged(ListSelectionEvent e) {
                 Bookmark b = bookmarks.getSelectedValue();
                 if (b != null) {
-                    gui.boundingBoxChanged(b.getArea(),BookmarkSelection.this);
+                    gui.boundingBoxChanged(b.getArea(), BookmarkSelection.this);
                 }
             }
         });
@@ -125,7 +125,7 @@ public class BookmarkSelection implements DownloadSelection {
         gc.weightx = 1.0;
         gc.weighty = 0.0;
         gc.gridwidth = 2;
-        dlg.add(buildDownloadAreaAddPanel(),gc);
+        dlg.add(buildDownloadAreaAddPanel(), gc);
 
         gc.gridwidth = 1;
         gc.gridx = 0;
@@ -133,7 +133,7 @@ public class BookmarkSelection implements DownloadSelection {
         gc.fill = GridBagConstraints.VERTICAL;
         gc.weightx = 0.0;
         gc.weighty = 1.0;
-        dlg.add(buildButtonPanel(),gc);
+        dlg.add(buildButtonPanel(), gc);
 
         gc.gridwidth = 1;
         gc.gridx = 1;
@@ -195,19 +195,22 @@ public class BookmarkSelection implements DownloadSelection {
             Bookmark b = new Bookmark();
             b.setName(
                     JOptionPane.showInputDialog(
-                            Main.parent,tr("Please enter a name for the bookmarked download area."),
+                            Main.parent, tr("Please enter a name for the bookmarked download area."),
                             tr("Name of location"),
                             JOptionPane.QUESTION_MESSAGE)
             );
             b.setArea(currentArea);
             if (b.getName() != null && !b.getName().isEmpty()) {
-                ((DefaultListModel<BookmarkList.Bookmark>)bookmarks.getModel()).addElement(b);
+                ((DefaultListModel<BookmarkList.Bookmark>) bookmarks.getModel()).addElement(b);
                 bookmarks.save();
             }
         }
     }
 
     class RemoveAction extends AbstractAction implements ListSelectionListener{
+        /**
+         * Constructs a new {@code RemoveAction}.
+         */
         public RemoveAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(SHORT_DESCRIPTION, tr("Remove the currently selected bookmarks"));
@@ -220,7 +223,7 @@ public class BookmarkSelection implements DownloadSelection {
             if (sels == null || sels.isEmpty())
                 return;
             for (Object sel: sels) {
-                ((DefaultListModel<Bookmark>)bookmarks.getModel()).removeElement(sel);
+                ((DefaultListModel<Bookmark>) bookmarks.getModel()).removeElement(sel);
             }
             bookmarks.save();
         }
@@ -228,13 +231,17 @@ public class BookmarkSelection implements DownloadSelection {
         protected final void updateEnabledState() {
             setEnabled(bookmarks.getSelectedIndices().length > 0);
         }
+
         @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
     }
 
-    class RenameAction extends AbstractAction implements ListSelectionListener{
+    class RenameAction extends AbstractAction implements ListSelectionListener {
+        /**
+         * Constructs a new {@code RenameAction}.
+         */
         public RenameAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             putValue(SHORT_DESCRIPTION, tr("Rename the currently selected bookmark"));
@@ -249,7 +256,7 @@ public class BookmarkSelection implements DownloadSelection {
             Bookmark b = sels.get(0);
             Object value =
                 JOptionPane.showInputDialog(
-                        Main.parent,tr("Please enter a name for the bookmarked download area."),
+                        Main.parent, tr("Please enter a name for the bookmarked download area."),
                         tr("Name of location"),
                         JOptionPane.QUESTION_MESSAGE,
                         null,

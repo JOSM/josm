@@ -103,7 +103,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
         for (String classname : exporterNames) {
             try {
-                FileExporter exporter = (FileExporter)Class.forName(classname).newInstance();
+                FileExporter exporter = (FileExporter) Class.forName(classname).newInstance();
                 exporters.add(exporter);
                 MapView.addLayerChangeListener(exporter);
             } catch (Exception e) {
@@ -147,8 +147,8 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 5131
      */
     public static void updateAllFormatsImporter() {
-        for(int i=0; i < importers.size(); i++) {
-            if(importers.get(i) instanceof AllFormatsImporter) {
+        for (int i = 0; i < importers.size(); i++) {
+            if (importers.get(i) instanceof AllFormatsImporter) {
                 importers.set(i, new AllFormatsImporter());
             }
         }

@@ -34,7 +34,7 @@ public class LongSegment extends Test {
     @Override
     public void visit(Way w) {
         Double length = w.getLongestSegmentLength();
-        if(length > maxlength) {
+        if (length > maxlength) {
             length /= 1000.0;
             errors.add(new TestError(this, Severity.WARNING, tr("Long segments"),
                     tr("Very long segment of {0} kilometers", length.intValue()),

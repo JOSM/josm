@@ -168,7 +168,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        panel.add(sortMenu, GBC.eol().insets(5,5,5,0));
+        panel.add(sortMenu, GBC.eol().insets(5, 5, 5, 0));
         sources = new TaggingPresetSourceEditor();
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         final MapPreference mapPref = gui.getMapPreference();

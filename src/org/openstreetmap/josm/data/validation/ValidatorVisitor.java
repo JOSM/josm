@@ -9,7 +9,10 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 
 public interface ValidatorVisitor {
     void visit(TestError error);
+
     void visit(OsmPrimitive p);
+
     void visit(WaySegment ws);
+
     void visit(List<Node> nodes);
 }

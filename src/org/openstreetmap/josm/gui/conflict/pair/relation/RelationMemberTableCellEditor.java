@@ -41,7 +41,7 @@ public class RelationMemberTableCellEditor extends AbstractCellEditor implements
         if (value == null)
             return null;
 
-        RelationMember member = (RelationMember)value;
+        RelationMember member = (RelationMember) value;
 
         editor.setText(member.getRole());
         editor.selectAll();

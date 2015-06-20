@@ -48,6 +48,7 @@ import org.w3c.dom.Text;
 public class SessionWriter {
 
     private static Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters = new HashMap<>();
+
     static {
         registerSessionLayerExporter(OsmDataLayer.class , OsmDataSessionExporter.class);
         registerSessionLayerExporter(TMSLayer.class , ImagerySessionExporter.class);
@@ -195,7 +196,7 @@ public class SessionWriter {
         }
         root.appendChild(layersEl);
 
-        for (int index=0; index<layers.size(); ++index) {
+        for (int index = 0; index < layers.size(); ++index) {
             Layer layer = layers.get(index);
             SessionLayerExporter exporter = exporters.get(layer);
             ExportSupport support = new ExportSupport(doc, index+1);

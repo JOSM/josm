@@ -269,14 +269,14 @@ public class AutoScaleAction extends JosmAction {
                 lastZoomTime = -1;
             }
             DataSet dataset = Main.main.getCurrentDataSet();
-            if(dataset != null) {
+            if (dataset != null) {
                 List<DataSource> dataSources = new ArrayList<>(dataset.getDataSources());
                 int s = dataSources.size();
-                if(s > 0) {
-                    if(lastZoomTime == -1 || lastZoomArea == -1 || lastZoomArea > s) {
+                if (s > 0) {
+                    if (lastZoomTime == -1 || lastZoomArea == -1 || lastZoomArea > s) {
                         lastZoomArea = s-1;
                         v.visit(dataSources.get(lastZoomArea).bounds);
-                    } else if(lastZoomArea > 0) {
+                    } else if (lastZoomArea > 0) {
                         lastZoomArea -= 1;
                         v.visit(dataSources.get(lastZoomArea).bounds);
                     } else {

@@ -219,7 +219,7 @@ public class ImageryLayerInfo {
         Main.pref.putCollection("imagery.layers.addedIds", newAddedIds);
 
         // automatically update user entries with same id as a default entry
-        for (int i=0; i<layers.size(); i++) {
+        for (int i = 0; i < layers.size(); i++) {
             ImageryInfo info = layers.get(i);
             if (info.getId() == null) {
                 continue;

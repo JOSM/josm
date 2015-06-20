@@ -30,7 +30,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
 class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
-    private static final Color colorError = new Color(255,197,197);
+    private static final Color colorError = new Color(255, 197, 197);
     private static final String separator = System.getProperty("file.separator");
     private static final String ellipsis = "…" + separator;
 
@@ -77,7 +77,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
         removeAll();
-        SaveLayerInfo info = (SaveLayerInfo)value;
+        SaveLayerInfo info = (SaveLayerInfo) value;
         StringBuilder sb = new StringBuilder();
         sb.append("<html>")
           .append(addLblLayerName(info))
@@ -92,7 +92,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         removeAll();
-        SaveLayerInfo info = (SaveLayerInfo)value;
+        SaveLayerInfo info = (SaveLayerInfo) value;
         value = info.getFile();
         tfFilename.setText(value == null ? "" : value.toString());
 
@@ -160,9 +160,9 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
      * Idea: /home/user/josm → …/user/josm → …/josm; and take the first one that fits */
     private String makePathFit(String t) {
         boolean hasEllipsis = false;
-        while(t != null && !t.isEmpty()) {
+        while (t != null && !t.isEmpty()) {
             int txtwidth = lblFilename.getFontMetrics(lblFilename.getFont()).stringWidth(t);
-            if(txtwidth < lblFilename.getWidth() || t.lastIndexOf(separator) < ellipsis.length()) {
+            if (txtwidth < lblFilename.getWidth() || t.lastIndexOf(separator) < ellipsis.length()) {
                 break;
             }
             // remove ellipsis, if present

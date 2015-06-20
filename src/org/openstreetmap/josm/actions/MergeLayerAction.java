@@ -47,7 +47,7 @@ public class MergeLayerAction extends AbstractMergeAction {
                 for (final Layer sourceLayer: sourceLayers) {
                     if (sourceLayer != null && !sourceLayer.equals(targetLayer)) {
                         if (sourceLayer instanceof OsmDataLayer && targetLayer instanceof OsmDataLayer
-                                && ((OsmDataLayer)sourceLayer).isUploadDiscouraged() != ((OsmDataLayer)targetLayer).isUploadDiscouraged()) {
+                                && ((OsmDataLayer) sourceLayer).isUploadDiscouraged() != ((OsmDataLayer) targetLayer).isUploadDiscouraged()) {
                             if (warnMergingUploadDiscouragedLayers(sourceLayer, targetLayer)) {
                                 break;
                             }

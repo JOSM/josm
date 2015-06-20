@@ -46,7 +46,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     public ReadLocalPluginInformationTask(ProgressMonitor monitor) {
-        super(tr("Reading local plugin information.."),monitor, false);
+        super(tr("Reading local plugin information.."), monitor, false);
         availablePlugins = new HashMap<>();
     }
 
@@ -58,7 +58,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     @Override
     protected void finish() {}
 
-    protected void processJarFile(File f, String pluginName) throws PluginException{
+    protected void processJarFile(File f, String pluginName) throws PluginException {
         PluginInformation info = new PluginInformation(
                 f,
                 pluginName
@@ -94,7 +94,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             monitor.setCustomText(tr("Processing file ''{0}''", fname));
             try {
                 processLocalPluginInformationFile(f);
-            } catch(PluginListParseException e) {
+            } catch (PluginListParseException e) {
                 Main.warn(tr("Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
                 Main.error(e);
             }
@@ -126,7 +126,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                     String pluginName = fname.substring(0, fname.length() - 8);
                     processJarFile(f, pluginName);
                 }
-            } catch (PluginException e){
+            } catch (PluginException e) {
                 Main.warn("PluginException: "+e.getMessage());
                 Main.warn(tr("Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
             }
@@ -146,7 +146,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
-    protected void processLocalPluginInformationFile(File file) throws PluginListParseException{
+    protected void processLocalPluginInformationFile(File file) throws PluginListParseException {
         try (FileInputStream fin = new FileInputStream(file)) {
             List<PluginInformation> pis = new PluginListParser().parse(fin);
             for (PluginInformation pi : pis) {
@@ -156,7 +156,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                 //
                 availablePlugins.put(pi.name, pi);
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new PluginListParseException(e);
         }
     }
@@ -164,7 +164,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     protected void analyseInProcessPlugins() {
         for (PluginProxy proxy : PluginHandler.pluginList) {
             PluginInformation info = proxy.getPluginInformation();
-            if (canceled)return;
+            if (canceled) return;
             if (!availablePlugins.containsKey(info.name)) {
                 availablePlugins.put(info.name, info);
             } else {
@@ -175,7 +175,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
 
     protected void filterOldPlugins() {
         for (PluginHandler.DeprecatedPlugin p : PluginHandler.DEPRECATED_PLUGINS) {
-            if (canceled)return;
+            if (canceled) return;
             if (availablePlugins.containsKey(p.name)) {
                 availablePlugins.remove(p.name);
             }
@@ -193,11 +193,11 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                     new File(location)
             );
             getProgressMonitor().worked(1);
-            if (canceled)return;
+            if (canceled) return;
         }
         analyseInProcessPlugins();
         getProgressMonitor().worked(1);
-        if (canceled)return;
+        if (canceled) return;
         filterOldPlugins();
         getProgressMonitor().worked(1);
     }

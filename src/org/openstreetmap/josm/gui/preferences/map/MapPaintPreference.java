@@ -75,7 +75,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
-        panel.add(enableIconDefault, GBC.eol().insets(11,2,5,0));
+        panel.add(enableIconDefault, GBC.eol().insets(11, 2, 5, 0));
 
         final MapPreference mapPref = gui.getMapPreference();
         mapPref.addSubTab(this, tr("Map Paint Styles"), panel);

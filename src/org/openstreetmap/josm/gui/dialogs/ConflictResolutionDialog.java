@@ -52,7 +52,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
     @Override
     public void setVisible(boolean isVisible) {
         String geom = getClass().getName() + ".geometry";
-        if (isVisible){
+        if (isVisible) {
             toFront();
             new WindowGeometry(geom, WindowGeometry.centerInWindow(Main.parent,
                 new Dimension(600, 400))).applySafe(this);
@@ -266,7 +266,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ConflictResolver.MY_PRIMITIVE_PROP)) {
-            updateTitle((OsmPrimitive)evt.getNewValue());
+            updateTitle((OsmPrimitive) evt.getNewValue());
         }
     }
 }

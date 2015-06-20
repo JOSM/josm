@@ -23,7 +23,7 @@ public class HistoryNodeTest {
                 User.createOsmUser(3, "testuser"),
                 4l,
                 d,
-                new LatLon(0,0)
+                new LatLon(0, 0)
                 );
 
         assertEquals(1, node.getId());
@@ -45,7 +45,7 @@ public class HistoryNodeTest {
                 User.createOsmUser(3, "testuser"),
                 4,
                 d,
-                new LatLon(0,0)
+                new LatLon(0, 0)
                 );
 
         assertEquals(OsmPrimitiveType.NODE, node.getType());

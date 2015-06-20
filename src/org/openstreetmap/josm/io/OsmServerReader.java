@@ -125,13 +125,13 @@ public abstract class OsmServerReader extends OsmConnection {
             URL url = null;
             try {
                 url = new URL(urlStr.replace(" ", "%20"));
-            } catch(MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 throw new OsmTransferException(e);
             }
             try {
                 // fix #7640, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
                 activeConnection = Utils.openHttpConnection(url, false);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new OsmTransferException(tr("Failed to open connection to API {0}.", url.toExternalForm()), e);
             }
             if (cancel) {
@@ -148,7 +148,7 @@ public abstract class OsmServerReader extends OsmConnection {
                 activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
             }
 
-            activeConnection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+            activeConnection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
 
             try {
                 if (reason != null && !reason.isEmpty()) {
@@ -169,7 +169,7 @@ public abstract class OsmServerReader extends OsmConnection {
                     Main.debug("RESPONSE: "+activeConnection.getHeaderFields());
                 }
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
-                    throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,null,null);
+                    throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED, null, null);
 
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_PROXY_AUTH)
                     throw new OsmTransferCanceledException("Proxy Authentication Required");
@@ -183,12 +183,12 @@ public abstract class OsmServerReader extends OsmConnection {
                         if (i != null) {
                             BufferedReader in = new BufferedReader(new InputStreamReader(i, StandardCharsets.UTF_8));
                             String s;
-                            while((s = in.readLine()) != null) {
+                            while ((s = in.readLine()) != null) {
                                 errorBody.append(s);
                                 errorBody.append('\n');
                             }
                         }
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         errorBody.append(tr("Reading error text failed."));
                     }
 

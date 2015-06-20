@@ -197,6 +197,7 @@ public class LatLon extends Coordinate {
 
     public static final String SOUTH = trc("compass", "S");
     public static final String NORTH = trc("compass", "N");
+
     public String latToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(y);
@@ -217,6 +218,7 @@ public class LatLon extends Coordinate {
 
     public static final String WEST = trc("compass", "W");
     public static final String EAST = trc("compass", "E");
+
     public String lonToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(x);

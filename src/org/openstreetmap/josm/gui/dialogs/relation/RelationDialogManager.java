@@ -59,6 +59,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
             result = prime * result + ((relation == null) ? 0 : relation.hashCode());
             return result;
         }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -98,7 +99,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     /**
      * constructor
      */
-    public RelationDialogManager(){
+    public RelationDialogManager() {
         openDialogs = new HashMap<>();
     }
     /**
@@ -189,11 +190,11 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     public void layerRemoved(Layer oldLayer) {
         if (!(oldLayer instanceof OsmDataLayer))
             return;
-        OsmDataLayer dataLayer = (OsmDataLayer)oldLayer;
+        OsmDataLayer dataLayer = (OsmDataLayer) oldLayer;
 
-        Iterator<Entry<DialogContext,RelationEditor>> it = openDialogs.entrySet().iterator();
-        while(it.hasNext()) {
-            Entry<DialogContext,RelationEditor> entry = it.next();
+        Iterator<Entry<DialogContext, RelationEditor>> it = openDialogs.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<DialogContext, RelationEditor> entry = it.next();
             if (entry.getKey().matchesLayer(dataLayer)) {
                 RelationEditor editor = entry.getValue();
                 it.remove();
@@ -215,7 +216,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
 
     @Override
     public void windowClosed(WindowEvent e) {
-        RelationEditor editor = (RelationEditor)e.getWindow();
+        RelationEditor editor = (RelationEditor) e.getWindow();
         for (Iterator<Entry<DialogContext, RelationEditor>> it = openDialogs.entrySet().iterator(); it.hasNext();) {
             if (editor.equals(it.next().getValue())) {
                 it.remove();
@@ -257,7 +258,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
         if (editor == null) return;
         if (!openDialogs.isEmpty()) {
             Point corner = editor.getLocation();
-            while(hasEditorWithCloseUpperLeftCorner(corner, editor)) {
+            while (hasEditorWithCloseUpperLeftCorner(corner, editor)) {
                 // shift a little, so that the dialogs are not exactly on top of each other
                 corner.x += 20;
                 corner.y += 20;

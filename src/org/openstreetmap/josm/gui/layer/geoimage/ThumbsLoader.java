@@ -105,7 +105,7 @@ public class ThumbsLoader implements Runnable {
         while (!g.drawImage(img, scale, null)) {
             try {
                 Thread.sleep(10);
-            } catch(InterruptedException ie) {
+            } catch (InterruptedException ie) {
                 Main.warn("InterruptedException while drawing thumb");
             }
         }

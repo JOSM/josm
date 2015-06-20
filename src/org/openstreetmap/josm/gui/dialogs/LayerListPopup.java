@@ -79,19 +79,19 @@ public class LayerListPopup extends JPopupMenu {
                 if (!separatorAdded && a instanceof SeparatorLayerAction) {
                     separatorAdded = true;
                     actions.add(a);
-                } else if (a instanceof LayerAction && ((LayerAction)a).supportLayers(selectedLayers)) {
+                } else if (a instanceof LayerAction && ((LayerAction) a).supportLayers(selectedLayers)) {
                     separatorAdded = false;
-                    if(a instanceof MultiLayerAction)
-                        a = ((MultiLayerAction)a).getMultiLayerAction(selectedLayers);
+                    if (a instanceof MultiLayerAction)
+                        a = ((MultiLayerAction) a).getMultiLayerAction(selectedLayers);
                     actions.add(a);
                 }
             }
             // This will usually add no action, because if some action support all selected layers then it was probably used also in first layer
-            for (int i=1; i<selectedLayers.size(); i++) {
+            for (int i = 1; i < selectedLayers.size(); i++) {
                 separatorAdded = false;
                 for (Action a: selectedLayers.get(i).getMenuEntries()) {
                     if (a instanceof LayerAction && !(a instanceof MultiLayerAction)
-                    && ((LayerAction)a).supportLayers(selectedLayers) && !actions.contains(a)) {
+                    && ((LayerAction) a).supportLayers(selectedLayers) && !actions.contains(a)) {
                         if (!separatorAdded) {
                             separatorAdded = true;
                             actions.add(SeparatorLayerAction.INSTANCE);

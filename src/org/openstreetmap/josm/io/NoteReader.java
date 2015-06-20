@@ -78,7 +78,7 @@ public class NoteReader {
             }
 
             if (parseMode == NoteParseMode.API) {
-                if("note".equals(qName)) {
+                if ("note".equals(qName)) {
                     double lat = Double.parseDouble(attrs.getValue("lat"));
                     double lon = Double.parseDouble(attrs.getValue("lon"));
                     LatLon noteLatLon = new LatLon(lat, lon);
@@ -96,7 +96,7 @@ public class NoteReader {
                 thisNote = new Note(noteLatLon);
                 thisNote.setId(Long.parseLong(attrs.getValue("id")));
                 String closedTimeStr = attrs.getValue("closed_at");
-                if(closedTimeStr == null) { //no closed_at means the note is still open
+                if (closedTimeStr == null) { //no closed_at means the note is still open
                     thisNote.setState(Note.State.open);
                 } else {
                     thisNote.setState(Note.State.closed);
@@ -106,7 +106,7 @@ public class NoteReader {
                 break;
             case "comment":
                 String uidStr = attrs.getValue("uid");
-                if(uidStr == null) {
+                if (uidStr == null) {
                     commentUid = 0;
                 } else {
                     commentUid = Long.parseLong(uidStr);
@@ -115,7 +115,7 @@ public class NoteReader {
                 noteAction = Action.valueOf(attrs.getValue("action"));
                 commentCreateDate = DateUtils.fromString(attrs.getValue("timestamp"));
                 String isNew = attrs.getValue("is_new");
-                if(isNew == null) {
+                if (isNew == null) {
                     commentIsNew = false;
                 } else {
                     commentIsNew = Boolean.parseBoolean(isNew);
@@ -126,18 +126,18 @@ public class NoteReader {
 
         @Override
         public void endElement(String namespaceURI, String localName, String qName) {
-            if("note".equals(qName)) {
+            if ("note".equals(qName)) {
                 notes.add(thisNote);
             }
-            if("comment".equals(qName)) {
+            if ("comment".equals(qName)) {
                 User commentUser = User.createOsmUser(commentUid, commentUsername);
                 if (commentUid == 0) {
                     commentUser = User.getAnonymous();
                 }
-                if(parseMode == NoteParseMode.API) {
+                if (parseMode == NoteParseMode.API) {
                     commentIsNew = false;
                 }
-                if(parseMode == NoteParseMode.DUMP) {
+                if (parseMode == NoteParseMode.DUMP) {
                     commentText = buffer.toString();
                 }
                 thisNote.addComment(new NoteComment(commentCreateDate, commentUser, commentText, noteAction, commentIsNew));
@@ -147,7 +147,7 @@ public class NoteReader {
                 commentIsNew = false;
                 commentText = null;
             }
-            if(parseMode == NoteParseMode.DUMP) {
+            if (parseMode == NoteParseMode.DUMP) {
                 return;
             }
 

@@ -86,10 +86,10 @@ public class TagConflictResolverModel extends DefaultTableModel {
      */
     public void rebuild() {
         if (tags == null) return;
-        for(String key: tags.getKeys()) {
+        for (String key: tags.getKeys()) {
             MultiValueResolutionDecision decision = new MultiValueResolutionDecision(tags.getTagsFor(key));
             if (decisions.get(key) == null) {
-                decisions.put(key,decision);
+                decisions.put(key, decision);
             }
         }
         displayedKeys.clear();
@@ -167,9 +167,9 @@ public class TagConflictResolverModel extends DefaultTableModel {
     public void setValueAt(Object value, int row, int column) {
         MultiValueResolutionDecision decision = getDecision(row);
         if (value instanceof String) {
-            decision.keepOne((String)value);
+            decision.keepOne((String) value);
         } else if (value instanceof MultiValueDecisionType) {
-            MultiValueDecisionType type = (MultiValueDecisionType)value;
+            MultiValueDecisionType type = (MultiValueDecisionType) value;
             switch(type) {
             case KEEP_NONE:
                 decision.keepNone();

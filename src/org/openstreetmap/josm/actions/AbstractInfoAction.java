@@ -81,7 +81,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         // filter out new primitives which are not yet uploaded to the server
         //
         Iterator<OsmPrimitive> it = primitivesToShow.iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             if (it.next().isNew()) {
                 it.remove();
             }

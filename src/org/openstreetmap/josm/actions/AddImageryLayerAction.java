@@ -42,7 +42,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      * @param info The imagery info
      */
     public AddImageryLayerAction(ImageryInfo info) {
-        super(info.getMenuName(), /* ICON */"imagery_menu", tr("Add imagery layer {0}",info.getName()), null, false, false);
+        super(info.getMenuName(), /* ICON */"imagery_menu", tr("Add imagery layer {0}", info.getName()), null, false, false);
         putValue("toolbar", "imagery_" + info.getToolbarName());
         putValue("help", ht("/Preferences/Imagery"));
         this.info = info;
@@ -104,14 +104,14 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             formats.setSelectedItem(wms.getPreferredFormats());
             formats.setToolTipText(tr("Select image format for WMS layer"));
 
-            if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) {{
+            if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) { {
                 final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
                 scrollPane.setPreferredSize(new Dimension(400, 400));
                 final JPanel panel = new JPanel(new GridBagLayout());
                 panel.add(scrollPane, GBC.eol().fill());
                 panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
                 setContent(panel);
-            }}.showDialog().getValue()) {
+            } }.showDialog().getValue()) {
                 return null;
             }
 

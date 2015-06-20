@@ -82,7 +82,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
     @Override
     protected void cancel() {
         canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (multiObjectReader != null) {
                 multiObjectReader.cancel();
             }
@@ -104,7 +104,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
             @Override
             public void run() {
                 layer.mergeFrom(ds);
-                if(Main.map != null)
+                if (Main.map != null)
                     AutoScaleAction.zoomTo(ds.allPrimitives());
                 layer.onPostDownloadFromServer();
             }
@@ -138,14 +138,14 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
         this.ds = new DataSet();
         DataSet theirDataSet;
         try {
-            synchronized(this) {
+            synchronized (this) {
                 if (canceled) return;
                 multiObjectReader = new MultiFetchServerObjectReader();
             }
             initMultiFetchReader(multiObjectReader);
             theirDataSet = multiObjectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             missingPrimitives = multiObjectReader.getMissingPrimitives();
-            synchronized(this) {
+            synchronized (this) {
                 multiObjectReader = null;
             }
             DataSetMerger merger = new DataSetMerger(ds, theirDataSet);
@@ -157,7 +157,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
                 // Relations may be incomplete in case of nested relations if child relations are accessed before their parent
                 // (it may happen because "relations" has no deterministic sort order, see #10388)
                 if (r.isIncomplete() || r.hasIncompleteMembers()) {
-                    synchronized(this) {
+                    synchronized (this) {
                         if (canceled) return;
                         objectReader = new OsmServerObjectReader(r.getId(), OsmPrimitiveType.RELATION, fullRelation);
                     }
@@ -177,7 +177,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
             for (Way w : ds.getWays()) {
                 if (canceled) return;
                 if (w.hasIncompleteNodes()) {
-                    synchronized(this) {
+                    synchronized (this) {
                         if (canceled) return;
                         objectReader = new OsmServerObjectReader(w.getId(), OsmPrimitiveType.WAY, true /* full */);
                     }
@@ -190,7 +190,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
                 }
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (canceled) return;
             lastException = e;
         }

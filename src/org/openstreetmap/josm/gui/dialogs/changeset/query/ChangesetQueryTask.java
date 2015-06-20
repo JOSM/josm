@@ -79,12 +79,12 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
     @Override
     protected void cancel() {
         canceled = true;
-        synchronized(this) {
+        synchronized (this) {
             if (userInfoReader != null) {
                 userInfoReader.cancel();
             }
         }
-        synchronized(this) {
+        synchronized (this) {
             if (changesetReader != null) {
                 changesetReader.cancel();
             }
@@ -125,13 +125,13 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
         } else {
             try {
                 SwingUtilities.invokeAndWait(r);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 Main.warn("InterruptedException in "+getClass().getSimpleName()+" while updating changeset cache");
-            } catch(InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 Throwable t = e.getTargetException();
                 if (t instanceof RuntimeException) {
                     BugReportExceptionHandler.handleException(t);
-                } else if (t instanceof Exception){
+                } else if (t instanceof Exception) {
                     ExceptionUtil.explainException(e);
                 } else {
                     BugReportExceptionHandler.handleException(t);
@@ -148,11 +148,11 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
     protected void fullyIdentifyCurrentUser() throws OsmTransferException {
         getProgressMonitor().indeterminateSubTask(tr("Determine user id for current user..."));
 
-        synchronized(this) {
+        synchronized (this) {
             userInfoReader = new OsmServerUserInfoReader();
         }
-        UserInfo info = userInfoReader.fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1,false));
-        synchronized(this) {
+        UserInfo info = userInfoReader.fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1, false));
+        synchronized (this) {
             userInfoReader = null;
         }
         JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
@@ -174,18 +174,18 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
             }
             if (canceled) return;
             getProgressMonitor().indeterminateSubTask(tr("Query and download changesets ..."));
-            synchronized(this) {
-                changesetReader= new OsmServerChangesetReader();
+            synchronized (this) {
+                changesetReader = new OsmServerChangesetReader();
             }
             downloadedChangesets = new HashSet<>();
             downloadedChangesets.addAll(changesetReader.queryChangesets(query, getProgressMonitor().createSubTaskMonitor(0, false)));
             synchronized (this) {
                 changesetReader = null;
             }
-        } catch(OsmTransferCanceledException e) {
+        } catch (OsmTransferCanceledException e) {
             // thrown if user cancel the authentication dialog
             canceled = true;
-        }  catch(OsmTransferException e) {
+        }  catch (OsmTransferException e) {
             if (canceled)
                 return;
             this.lastException = e;

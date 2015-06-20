@@ -34,7 +34,7 @@ public final class TagConflictResolutionUtil {
     public static void normalizeTagCollectionBeforeEditing(TagCollection tc, Collection<? extends OsmPrimitive> merged) {
         // remove irrelevant tags
         //
-        for(String key : OsmPrimitive.getDiscardableKeys()) {
+        for (String key : OsmPrimitive.getDiscardableKeys()) {
             tc.removeByKey(key);
         }
 
@@ -85,7 +85,7 @@ public final class TagConflictResolutionUtil {
             // make sure the empty value is in the tag set such that we can delete the tag
             // in the conflict dialog if necessary
             //
-            tc.add(new Tag(key,""));
+            tc.add(new Tag(key, ""));
         }
     }
 }

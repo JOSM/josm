@@ -48,7 +48,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Class<?> eawtAboutHandler = Class.forName("com.apple.eawt.AboutHandler");
             Class<?> eawtOpenFilesHandler = Class.forName("com.apple.eawt.OpenFilesHandler");
             Class<?> eawtPreferencesHandler = Class.forName("com.apple.eawt.PreferencesHandler");
-            Object appli = eawtApplication.getConstructor((Class[])null).newInstance((Object[])null);
+            Object appli = eawtApplication.getConstructor((Class[]) null).newInstance((Object[]) null);
             Object proxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
                 eawtQuitHandler, eawtAboutHandler, eawtOpenFilesHandler, eawtPreferencesHandler}, ivhandler);
             eawtApplication.getDeclaredMethod("setQuitHandler", eawtQuitHandler).invoke(appli, proxy);
@@ -97,7 +97,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
                 try {
                     Object oFiles = args[0].getClass().getMethod("getFiles").invoke(args[0]);
                     if (oFiles instanceof List) {
-                        Main.worker.submit(new OpenFileTask((List<File>)oFiles, null) {
+                        Main.worker.submit(new OpenFileTask((List<File>) oFiles, null) {
                             @Override
                             protected void realRun() throws SAXException, IOException, OsmTransferException {
                                 // Wait for JOSM startup is advanced enough to load a file
@@ -142,6 +142,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
 
     @Override
     public void initSystemShortcuts() {
+        // CHECKSTYLE.OFF: LineLength
         Shortcut.registerSystemShortcut("apple-reserved-01", tr("reserved"), KeyEvent.VK_SPACE, KeyEvent.META_DOWN_MASK).setAutomatic(); // Show or hide the Spotlight search field (when multiple languages are installed, may rotate through enabled script systems).
         Shortcut.registerSystemShortcut("apple-reserved-02", tr("reserved"), KeyEvent.VK_SPACE, KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK).setAutomatic(); // Apple reserved.
         Shortcut.registerSystemShortcut("apple-reserved-03", tr("reserved"), KeyEvent.VK_SPACE, KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic(); // Show the Spotlight search results window (when multiple languages are installed, may rotate through keyboard layouts and input methods within a script).
@@ -276,6 +277,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
 
         Shortcut.registerSystemShortcut("view:zoomin", tr("reserved"), KeyEvent.VK_ADD, KeyEvent.META_DOWN_MASK); // Zoom in
         Shortcut.registerSystemShortcut("view:zoomout", tr("reserved"), KeyEvent.VK_SUBTRACT, KeyEvent.META_DOWN_MASK); // Zoom out
+        // CHECKSTYLE.ON: LineLength
     }
 
     @Override

@@ -184,6 +184,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
                 }
             }
         }
+
         Main.worker.submit(new CalculateDownloadArea());
     }
 }

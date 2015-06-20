@@ -35,7 +35,7 @@ public class TagEditorModel extends AbstractTableModel {
     public static final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
     /** the list holding the tags */
-    protected final transient List<TagModel> tags =new ArrayList<>();
+    protected final transient List<TagModel> tags = new ArrayList<>();
 
     /** indicates whether the model is dirty */
     private boolean dirty =  false;
@@ -146,10 +146,10 @@ public class TagEditorModel extends AbstractTableModel {
         if (tag == null) return;
         switch(col) {
         case 0:
-            updateTagName(tag, (String)value);
+            updateTagName(tag, (String) value);
             break;
         case 1:
-            String v = (String)value;
+            String v = (String) value;
             if (tag.getValueCount() > 1 && !v.isEmpty()) {
                 updateTagValue(tag, v);
             } else if (tag.getValueCount() <= 1) {
@@ -289,7 +289,7 @@ public class TagEditorModel extends AbstractTableModel {
         if (name == null) return;
         Iterator<TagModel> it = tags.iterator();
         boolean changed = false;
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             TagModel tm = it.next();
             if (tm.getName().equals(name)) {
                 changed = true;
@@ -351,7 +351,7 @@ public class TagEditorModel extends AbstractTableModel {
         this.tags.clear();
         for (String key : primitive.keySet()) {
             String value = primitive.get(key);
-            this.tags.add(new TagModel(key,value));
+            this.tags.add(new TagModel(key, value));
         }
         TagModel tag = new TagModel();
         sort();
@@ -365,7 +365,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param tags the tags of an OSM primitive
      */
-    public void initFromTags(Map<String,String> tags) {
+    public void initFromTags(Map<String, String> tags) {
         this.tags.clear();
         for (Entry<String, String> entry : tags.entrySet()) {
             this.tags.add(new TagModel(entry.getKey(), entry.getValue()));
@@ -384,13 +384,13 @@ public class TagEditorModel extends AbstractTableModel {
      */
     public void initFromTags(TagCollection tags) {
         this.tags.clear();
-        if (tags == null){
+        if (tags == null) {
             setDirty(false);
             return;
         }
         for (String key : tags.getKeys()) {
             String value = tags.getJoinedValues(key);
-            this.tags.add(new TagModel(key,value));
+            this.tags.add(new TagModel(key, value));
         }
         sort();
         // add an empty row
@@ -406,7 +406,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      */
     public void applyToPrimitive(Tagged primitive) {
-        Map<String,String> tags = primitive.getKeys();
+        Map<String, String> tags = primitive.getKeys();
         applyToTags(tags, false);
         primitive.setKeys(tags);
     }
@@ -435,12 +435,12 @@ public class TagEditorModel extends AbstractTableModel {
         }
     }
 
-    public Map<String,String> getTags() {
+    public Map<String, String> getTags() {
         return getTags(false);
     }
 
-    public Map<String,String> getTags(boolean keepEmpty) {
-        Map<String,String> tags = new HashMap<>();
+    public Map<String, String> getTags(boolean keepEmpty) {
+        Map<String, String> tags = new HashMap<>();
         applyToTags(tags, keepEmpty);
         return tags;
     }
@@ -493,7 +493,7 @@ public class TagEditorModel extends AbstractTableModel {
             for (String oldkey : primitive.keySet()) {
                 if (!currentkeys.contains(oldkey)) {
                     ChangePropertyCommand deleteCommand =
-                        new ChangePropertyCommand(primitive,oldkey,null);
+                        new ChangePropertyCommand(primitive, oldkey, null);
                     commands.add(deleteCommand);
                 }
             }
@@ -580,7 +580,7 @@ public class TagEditorModel extends AbstractTableModel {
             return;
 
         Map<String, TagModel> modelTags = new HashMap<>();
-        for (int i=0; i<getRowCount(); i++) {
+        for (int i = 0; i < getRowCount(); i++) {
             TagModel tagModel = get(i);
             modelTags.put(tagModel.getName(), tagModel);
         }
@@ -626,10 +626,10 @@ public class TagEditorModel extends AbstractTableModel {
         public void apply() {
             rowSelectionModel.setValueIsAdjusting(true);
             colSelectionModel.setValueIsAdjusting(true);
-            if (rowMin >= 0 && rowMax >=0) {
+            if (rowMin >= 0 && rowMax >= 0) {
                 rowSelectionModel.setSelectionInterval(rowMin, rowMax);
             }
-            if (colMin >=0 && colMax >= 0) {
+            if (colMin >= 0 && colMax >= 0) {
                 colSelectionModel.setSelectionInterval(colMin, colMax);
             }
             rowSelectionModel.setValueIsAdjusting(false);

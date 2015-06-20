@@ -42,7 +42,6 @@ public class RequestHandlerTest {
         return req.args;
     }
 
-
     @Test
     public void testRequestParameter1() {
         final Map<String, String> expected = new HashMap<>();

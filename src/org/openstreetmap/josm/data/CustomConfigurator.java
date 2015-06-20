@@ -92,13 +92,13 @@ public final class CustomConfigurator {
      * @param prefs - arbitrary Preferences object to modify by script
      */
     public static void readXML(final File file, final Preferences prefs) {
-        synchronized(CustomConfigurator.class) {
-            busy=true;
+        synchronized (CustomConfigurator.class) {
+            busy = true;
         }
         new XMLCommandProcessor(prefs).openAndReadXML(file);
-        synchronized(CustomConfigurator.class) {
+        synchronized (CustomConfigurator.class) {
             CustomConfigurator.class.notifyAll();
-            busy=false;
+            busy = false;
         }
     }
 
@@ -158,7 +158,7 @@ public final class CustomConfigurator {
      * @param text - message to display, HTML allowed
      */
     public static void messageBox(String type, String text) {
-        if (type==null || type.isEmpty()) type="plain";
+        if (type == null || type.isEmpty()) type = "plain";
 
         switch (type.charAt(0)) {
             case 'i': JOptionPane.showMessageDialog(Main.parent, text, tr("Information"), JOptionPane.INFORMATION_MESSAGE); break;
@@ -185,12 +185,12 @@ public final class CustomConfigurator {
             answer = JOptionPane.showOptionDialog(Main.parent, text, "Question",
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 2);
         }
-        if (answer==null) return -1; else return answer;
+        if (answer == null) return -1; else return answer;
     }
 
     public static String askForText(String text) {
         String s = JOptionPane.showInputDialog(Main.parent, text, tr("Enter text"), JOptionPane.QUESTION_MESSAGE);
-        if (s!=null && !(s=s.trim()).isEmpty()) {
+        if (s != null && !(s = s.trim()).isEmpty()) {
             return s;
         } else {
             return "";
@@ -252,14 +252,14 @@ public final class CustomConfigurator {
         } catch (Exception ex) {
             Main.warn("Error getting preferences to save:" +ex.getMessage());
         }
-        if (root==null) return;
+        if (root == null) return;
         try {
 
             Element newRoot = exportDocument.createElement("config");
             exportDocument.appendChild(newRoot);
 
             Element prefElem = exportDocument.createElement("preferences");
-            prefElem.setAttribute("operation", append?"append":"replace");
+            prefElem.setAttribute("operation", append ? "append" : "replace");
             newRoot.appendChild(prefElem);
 
             NodeList childNodes = root.getChildNodes();
@@ -286,7 +286,7 @@ public final class CustomConfigurator {
 
     public static void deleteFile(String path, String base) {
         String dir = getDirectoryByAbbr(base);
-        if (dir==null) {
+        if (dir == null) {
             log("Error: Can not find base, use base=cache, base=prefs or base=plugins attribute.");
             return;
         }
@@ -320,7 +320,7 @@ public final class CustomConfigurator {
         }
     }
 
-    private static boolean busy=false;
+    private static boolean busy = false;
 
     public static void pluginOperation(String install, String uninstall, String delete)  {
         final List<String> installList = new ArrayList<>();
@@ -386,7 +386,7 @@ public final class CustomConfigurator {
                                 pls.remove(pi.name);
                                 new File(Main.pref.getPluginsDirectory(), pi.name+".jar").deleteOnExit();
                             }
-                            Main.pref.putCollection("plugins",pls);
+                            Main.pref.putCollection("plugins", pls);
                         }
                     });
                 }
@@ -422,7 +422,7 @@ public final class CustomConfigurator {
     public static class XMLCommandProcessor {
 
         private Preferences mainPrefs;
-        private Map<String,Element> tasksMap = new HashMap<>();
+        private Map<String, Element> tasksMap = new HashMap<>();
 
         private boolean lastV; // last If condition result
 
@@ -432,7 +432,7 @@ public final class CustomConfigurator {
             log("-- Reading custom preferences from " + file.getAbsolutePath() + " --");
             try {
                 String fileDir = file.getParentFile().getAbsolutePath();
-                if (fileDir!=null) engine.eval("scriptDir='"+normalizeDirName(fileDir) +"';");
+                if (fileDir != null) engine.eval("scriptDir='"+normalizeDirName(fileDir) +"';");
                 try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
                     openAndReadXML(is);
                 }
@@ -598,7 +598,7 @@ public final class CustomConfigurator {
 
             String base = evalVars(item.getAttribute("base"));
             String dir = getDirectoryByAbbr(base);
-            if (dir==null) {
+            if (dir == null) {
                 log("Error: Can not find directory to place file, use base=cache, base=prefs or base=plugins attribute.");
                 return;
             }
@@ -623,7 +623,7 @@ public final class CustomConfigurator {
         private void processMsgBoxElement(Element elem) {
             String text = evalVars(elem.getAttribute("text"));
             String locText = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".text"));
-            if (locText!=null && !locText.isEmpty()) text=locText;
+            if (locText != null && !locText.isEmpty()) text = locText;
 
             String type = evalVars(elem.getAttribute("type"));
             messageBox(type, text);
@@ -632,9 +632,9 @@ public final class CustomConfigurator {
         private void processAskElement(Element elem) {
             String text = evalVars(elem.getAttribute("text"));
             String locText = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".text"));
-            if (!locText.isEmpty()) text=locText;
+            if (!locText.isEmpty()) text = locText;
             String var = elem.getAttribute("var");
-            if (var.isEmpty()) var="result";
+            if (var.isEmpty()) var = "result";
 
             String input = evalVars(elem.getAttribute("input"));
             if ("true".equals(input)) {
@@ -642,7 +642,7 @@ public final class CustomConfigurator {
             } else {
                 String opts = evalVars(elem.getAttribute("options"));
                 String locOpts = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".options"));
-                if (!locOpts.isEmpty()) opts=locOpts;
+                if (!locOpts.isEmpty()) opts = locOpts;
                 setVar(var, String.valueOf(askForOption(text, opts)));
             }
         }
@@ -677,7 +677,7 @@ public final class CustomConfigurator {
         private boolean processRunTaskElement(Element elem) {
             String taskName = elem.getAttribute("name");
             Element task = tasksMap.get(taskName);
-            if (task!=null) {
+            if (task != null) {
                 log("EXECUTING TASK "+taskName);
                 processXmlFragment(task); // process task recursively
             } else {
@@ -727,7 +727,7 @@ public final class CustomConfigurator {
 
                 xformer.transform(new DOMSource(item), out);
 
-                String fragmentWithReplacedVars= evalVars(outputWriter.toString());
+                String fragmentWithReplacedVars = evalVars(outputWriter.toString());
 
                 CharArrayReader reader = new CharArrayReader(fragmentWithReplacedVars.toCharArray());
                 tmpPref.fromXML(reader);
@@ -740,7 +740,7 @@ public final class CustomConfigurator {
 
         private String normalizeDirName(String dir) {
             String s = dir.replace("\\", "/");
-            if (s.endsWith("/")) s=s.substring(0,s.length()-1);
+            if (s.endsWith("/")) s = s.substring(0, s.length()-1);
             return s;
         }
     }
@@ -937,7 +937,9 @@ public final class CustomConfigurator {
         log("Warning: Unknown default value of %s , skipped\n", key);
         JOptionPane.showMessageDialog(
                 Main.parent,
-                tr("<html>Settings file asks to append preferences to <b>{0}</b>,<br/> but its default value is unknown at this moment.<br/> Please activate corresponding function manually and retry importing.", key),
+                tr("<html>Settings file asks to append preferences to <b>{0}</b>,<br/> "+
+                        "but its default value is unknown at this moment.<br/> " +
+                        "Please activate corresponding function manually and retry importing.", key),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE);
     }
@@ -1010,7 +1012,7 @@ public final class CustomConfigurator {
         @SuppressWarnings("unchecked")
         Map<String, List<Collection<String>>> listlistMap = (SortedMap<String, List<Collection<String>>>) engine.get("listlistMap");
         @SuppressWarnings("unchecked")
-        Map<String, List<Map<String, String>>> listmapMap = (SortedMap<String, List<Map<String,String>>>) engine.get("listmapMap");
+        Map<String, List<Map<String, String>>> listmapMap = (SortedMap<String, List<Map<String, String>>>) engine.get("listmapMap");
 
         tmpPref.settingsMap.clear();
 
@@ -1024,7 +1026,7 @@ public final class CustomConfigurator {
 
         for (Entry<String, List<Collection<String>>> e : listlistMap.entrySet()) {
             @SuppressWarnings("unchecked")
-            List<List<String>> value = (List)e.getValue();
+            List<List<String>> value = (List) e.getValue();
             tmp.put(e.getKey(), new ListListSetting(value));
         }
         for (Entry<String, List<Map<String, String>>> e : listmapMap.entrySet()) {

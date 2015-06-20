@@ -33,7 +33,7 @@ public class TagConflictResolver extends JPanel {
 
     protected JPanel buildInfoPanel() {
         JPanel pnl = new JPanel();
-        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnl.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = GridBagConstraints.BOTH;

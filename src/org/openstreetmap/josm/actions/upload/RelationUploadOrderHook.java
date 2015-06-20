@@ -47,10 +47,10 @@ public class RelationUploadOrderHook implements UploadHook {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn(tr("Relation ..."));
         model.addColumn(tr("... refers to relation"));
-        for (int i=0; i<dep.size()-1;i++) {
+        for (int i = 0; i < dep.size()-1; i++) {
             Relation r1 = dep.get(i);
             Relation r2 = dep.get(i+1);
-            model.addRow(new Relation[] {r1,r2});
+            model.addRow(new Relation[] {r1, r2});
         }
         JTable tbl = new JTable(model);
         OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
@@ -69,7 +69,7 @@ public class RelationUploadOrderHook implements UploadHook {
         List<Relation> dep = e.getCyclicUploadDependency();
         Relation last = dep.get(dep.size() -1);
         Iterator<Relation> it = dep.iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             if (it.next() != last) {
                 it.remove();
             } else {
@@ -96,7 +96,7 @@ public class RelationUploadOrderHook implements UploadHook {
         try {
             apiDataSet.adjustRelationUploadOrder();
             return true;
-        } catch(CyclicUploadDependencyException e) {
+        } catch (CyclicUploadDependencyException e) {
             warnCyclicUploadDependency(e);
             return false;
         }

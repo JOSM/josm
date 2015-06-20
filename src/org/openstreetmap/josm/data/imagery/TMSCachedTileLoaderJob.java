@@ -44,10 +44,9 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private Tile tile;
     private volatile URL url;
 
-
     // we need another deduplication of Tile Loader listeners, as for each submit, new TMSCachedTileLoaderJob was created
     // that way, we reduce calls to tileLoadingFinished, and general CPU load due to surplus Map repaints
-    private static final ConcurrentMap<String,Set<TileLoaderListener>> inProgress = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Set<TileLoaderListener>> inProgress = new ConcurrentHashMap<>();
 
     /**
      * Constructor for creating a job, to get a specific tile from cache
@@ -176,7 +175,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         boolean status = result.equals(LoadResult.SUCCESS);
 
         try {
-            if(!tile.isLoaded()) { //if someone else already loaded tile, skip all the handling
+            if (!tile.isLoaded()) { //if someone else already loaded tile, skip all the handling
                 tile.finishLoading(); // whatever happened set that loading has finished
                 // set tile metadata
                 if (this.attributes != null) {
@@ -185,7 +184,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                     }
                 }
 
-                switch(result){
+                switch(result) {
                 case SUCCESS:
                     handleNoTileAtZoom();
                     if (object != null) {
@@ -214,7 +213,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
             // always check, if there is some listener interested in fact, that tile has finished loading
             if (listeners != null) { // listeners might be null, if some other thread notified already about success
-                for(TileLoaderListener l: listeners) {
+                for (TileLoaderListener l: listeners) {
                     l.tileLoadingFinished(tile, status);
                 }
             }
@@ -223,7 +222,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             tile.setError(e.getMessage());
             tile.setLoaded(false);
             if (listeners != null) { // listeners might be null, if some other thread notified already about success
-                for(TileLoaderListener l: listeners) {
+                for (TileLoaderListener l: listeners) {
                     l.tileLoadingFinished(tile, false);
                 }
             }

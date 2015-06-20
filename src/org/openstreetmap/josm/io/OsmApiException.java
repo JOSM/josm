@@ -134,7 +134,7 @@ public class OsmApiException extends OsmTransferException {
         .append(responseCode);
         String eh = "";
         try {
-            if(errorHeader != null)
+            if (errorHeader != null)
                 eh = tr(errorHeader.trim());
             if (!eh.isEmpty()) {
                 sb.append(", Error Header=<")

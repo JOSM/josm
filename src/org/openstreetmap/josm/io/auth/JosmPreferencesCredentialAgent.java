@@ -27,7 +27,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
      * @see CredentialsAgent#lookup
      */
     @Override
-    public PasswordAuthentication lookup(RequestorType requestorType, String host) throws CredentialsAgentException{
+    public PasswordAuthentication lookup(RequestorType requestorType, String host) throws CredentialsAgentException {
         if (requestorType == null)
             return null;
         String user;
@@ -37,7 +37,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             if (Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
                 user = Main.pref.get("osm-server.username", null);
                 password = Main.pref.get("osm-server.password", null);
-            } else if(host != null) {
+            } else if (host != null) {
                 user = Main.pref.get("server.username."+host, null);
                 password = Main.pref.get("server.password."+host, null);
             } else {
@@ -73,7 +73,7 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
                 } else {
                     Main.pref.put("osm-server.password", String.valueOf(credentials.getPassword()));
                 }
-            } else if(host != null) {
+            } else if (host != null) {
                 Main.pref.put("server.username."+host, credentials.getUserName());
                 if (credentials.getPassword() == null) {
                     Main.pref.put("server.password."+host, null);
@@ -129,11 +129,11 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
     @Override
     public Component getPreferencesDecorationPanel() {
         HtmlPanel pnlMessage = new HtmlPanel();
-        HTMLEditorKit kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
+        HTMLEditorKit kit = (HTMLEditorKit) pnlMessage.getEditorPane().getEditorKit();
         kit.getStyleSheet().addRule(
-                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
-        pnlMessage.setText(
-                tr(
+                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; " +
+                "border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
+        pnlMessage.setText(tr(
                         "<html><body>"
                         + "<p class=\"warning-body\">"
                         + "<strong>Warning:</strong> The password is stored in plain text in the JOSM preferences file. "

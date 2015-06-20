@@ -404,7 +404,7 @@ public class UrlValidator extends AbstractValidator {
         }
 
         String extra = authorityMatcher.group(PARSE_AUTHORITY_EXTRA);
-        if (extra != null && !extra.trim().isEmpty()){
+        if (extra != null && !extra.trim().isEmpty()) {
             return false;
         }
 

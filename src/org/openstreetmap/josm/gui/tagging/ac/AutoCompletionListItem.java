@@ -115,7 +115,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
             return obj.equals(value);
         if (getClass() != obj.getClass())
             return false;
-        final AutoCompletionListItem other = (AutoCompletionListItem)obj;
+        final AutoCompletionListItem other = (AutoCompletionListItem) obj;
         if (priority == null) {
             if (other.priority != null)
                 return false;

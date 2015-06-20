@@ -86,10 +86,10 @@ public class AboutAction extends JosmAction {
                 "<p style='font-size:50%'></p>" +
                 "</html>");
         info.add(label, GBC.eol().fill(GBC.HORIZONTAL).insets(10, 0, 0, 0));
-        info.add(new JLabel(tr("Homepage")), GBC.std().insets(10,0,10,0));
-        info.add(new UrlLabel(Main.getJOSMWebsite(),2), GBC.eol().fill(GBC.HORIZONTAL));
-        info.add(GBC.glue(0,5), GBC.eol());
-        info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(10,0,10,0));
+        info.add(new JLabel(tr("Homepage")), GBC.std().insets(10, 0, 10, 0));
+        info.add(new UrlLabel(Main.getJOSMWebsite(), 2), GBC.eol().fill(GBC.HORIZONTAL));
+        info.add(GBC.glue(0, 5), GBC.eol());
+        info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(10, 0, 10, 0));
         info.add(BugReportExceptionHandler.getBugReportUrlLabel(Utils.strip(ShowStatusReportAction.getReportHeader())),
                 GBC.eol().fill(GBC.HORIZONTAL));
 
@@ -111,7 +111,7 @@ public class AboutAction extends JosmAction {
     }
 
     private JScrollPane createScrollPane(JosmTextArea area) {
-        area.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        area.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         area.setOpaque(false);
         JScrollPane sp = new JScrollPane(area);
         sp.setBorder(null);

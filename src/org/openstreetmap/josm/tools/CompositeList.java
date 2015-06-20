@@ -12,7 +12,7 @@ import java.util.List;
  * @since 7109
  */
 public class CompositeList<T> extends AbstractList<T> {
-    private List<? extends T> a,b;
+    private List<? extends T> a, b;
 
     /**
      * Constructs a new {@code CompositeList} from two lists.

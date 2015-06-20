@@ -72,7 +72,7 @@ public class LoadObjectHandler extends RequestHandler {
                 public void run() {
                     final List<PrimitiveId> downloaded = task.getDownloadedId();
                     final DataSet ds = Main.main.getCurrentDataSet();
-                    if(downloaded != null) {
+                    if (downloaded != null) {
                         GuiHelper.runInEDT(new Runnable() {
                             @Override
                             public void run() {

@@ -48,7 +48,7 @@ public class WayConnectionType {
         invalid = false;
     }
 
-    public WayConnectionType(boolean invalid){
+    public WayConnectionType(boolean invalid) {
         this.invalid = invalid;
     }
 

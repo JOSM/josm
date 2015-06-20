@@ -131,7 +131,7 @@ public abstract class ElemStyle implements StyleKeys {
         public int style;
         public int size;
 
-        public FontDescriptor(String name, int style, int size){
+        public FontDescriptor(String name, int style, int size) {
             this.name = name;
             this.style = style;
             this.size = size;
@@ -146,6 +146,7 @@ public abstract class ElemStyle implements StyleKeys {
             result = prime * result + style;
             return result;
         }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -169,6 +170,7 @@ public abstract class ElemStyle implements StyleKeys {
     }
 
     private static final Map<FontDescriptor, Font> FONT_MAP = new HashMap<>();
+
     private static Font getCachedFont(FontDescriptor fd) {
         Font f = FONT_MAP.get(fd);
         if (f != null) return f;
@@ -177,7 +179,7 @@ public abstract class ElemStyle implements StyleKeys {
         return f;
     }
 
-    private static Font getCachedFont(String name, int style, int size){
+    private static Font getCachedFont(String name, int style, int size) {
         return getCachedFont(new FontDescriptor(name, style, size));
     }
 

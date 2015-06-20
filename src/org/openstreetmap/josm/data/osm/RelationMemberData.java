@@ -8,7 +8,7 @@ public class RelationMemberData implements PrimitiveId {
     private final OsmPrimitiveType memberType;
 
     public RelationMemberData(String role, OsmPrimitiveType type, long id) {
-        this.role = role == null?"":role;
+        this.role = role == null ? "" : role;
         this.memberType = type;
         this.memberId = id;
     }

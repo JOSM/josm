@@ -574,7 +574,8 @@ Build-Date: ${build.tstamp}
     <target name="checkstyle">
         <taskdef resource="checkstyletask.properties" classpath="tools/checkstyle/checkstyle-6.7-all.jar"/>
         <checkstyle config="tools/checkstyle/josm_checks.xml">
-            <fileset dir="${basedir}/src/org/openstreetmap/josm" includes="**/*.java"/>
+            <fileset dir="${basedir}/src/org/openstreetmap/josm" includes="**/*.java" 
+            	excludes="data/imagery/types/*.java,gui/mappaint/mapcss/parsergen/*.java"/>
             <fileset dir="${basedir}/test" includes="**/*.java"/>
             <formatter type="xml" toFile="checkstyle-josm.xml"/>
         </checkstyle>
