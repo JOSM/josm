@@ -481,7 +481,8 @@ public class MainApplication extends Main {
         if (Main.isPlatformWindows()) {
             try {
                 // Check for insecure certificates to remove.
-                // This is Windows-dependant code but it can't go to preStartupHook (need i18n) neither startupHook (need to be called before remote control)
+                // This is Windows-dependant code but it can't go to preStartupHook (need i18n)
+                // neither startupHook (need to be called before remote control)
                 PlatformHookWindows.removeInsecureCertificates();
             } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
                 error(e);
@@ -497,7 +498,8 @@ public class MainApplication extends Main {
         }
 
         if (Main.pref.getBoolean("debug.edt-checker.enable", Version.getInstance().isLocalBuild())) {
-            // Repaint manager is registered so late for a reason - there is lots of violation during startup process but they don't seem to break anything and are difficult to fix
+            // Repaint manager is registered so late for a reason - there is lots of violation during startup process
+            // but they don't seem to break anything and are difficult to fix
             info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
         }

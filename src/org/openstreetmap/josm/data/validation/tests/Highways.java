@@ -101,7 +101,8 @@ public class Highways extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (w.hasKey("highway") && CLASSIFIED_HIGHWAYS.contains(w.get("highway")) && w.hasKey("junction") && "roundabout".equals(w.get("junction"))) {
+            if (w.hasKey("highway") && CLASSIFIED_HIGHWAYS.contains(w.get("highway"))
+                    && w.hasKey("junction") && "roundabout".equals(w.get("junction"))) {
                 testWrongRoundabout(w);
             }
             if (w.hasKey("source:maxspeed")) {
@@ -247,7 +248,8 @@ public class Highways extends Test {
             // Check context
             String context = value.substring(index+1);
             if (!KNOWN_SOURCE_MAXSPEED_CONTEXTS.contains(context)) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Unknown source:maxspeed context: {0}", context), SOURCE_MAXSPEED_UNKNOWN_CONTEXT, p));
+                errors.add(new TestError(this, Severity.WARNING,
+                        tr("Unknown source:maxspeed context: {0}", context), SOURCE_MAXSPEED_UNKNOWN_CONTEXT, p));
             }
             // TODO: Check coherence of context against maxspeed
             // TODO: Check coherence of context against highway

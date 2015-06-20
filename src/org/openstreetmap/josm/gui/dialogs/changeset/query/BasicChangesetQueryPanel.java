@@ -103,7 +103,8 @@ public class BasicChangesetQueryPanel extends JPanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         pnl.add(cbMyChangesetsOnly = new JCheckBox(tr("Download my changesets only")), gc);
-        cbMyChangesetsOnly.setToolTipText(tr("<html>Select to restrict the query to your changesets only.<br>Unselect to include all changesets in the query.</html>"));
+        cbMyChangesetsOnly.setToolTipText(
+                tr("<html>Select to restrict the query to your changesets only.<br>Unselect to include all changesets in the query.</html>"));
 
         // grab remaining space
         gc.gridx = 0;
@@ -190,7 +191,8 @@ public class BasicChangesetQueryPanel extends JPanel {
             try {
                 q = BasicQuery.valueOf(BasicQuery.class, value);
             } catch(IllegalArgumentException e) {
-                Main.warn(tr("Unexpected value for preference ''{0}'', got ''{1}''. Resetting to default query.","changeset-query.basic.query", value));
+                Main.warn(tr("Unexpected value for preference ''{0}'', got ''{1}''. Resetting to default query.",
+                        "changeset-query.basic.query", value));
                 q = BasicQuery.MOST_RECENT_CHANGESETS;
             }
         }

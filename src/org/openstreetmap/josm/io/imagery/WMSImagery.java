@@ -216,7 +216,8 @@ public class WMSImagery {
 
     static boolean isImageFormatSupported(final String format) {
         return ImageIO.getImageReadersByMIMEType(format).hasNext()
-                || (format.startsWith("image/tiff") || format.startsWith("image/geotiff")) && ImageIO.getImageReadersBySuffix("tiff").hasNext() // handles image/tiff image/tiff8 image/geotiff image/geotiff8
+                // handles image/tiff image/tiff8 image/geotiff image/geotiff8
+                || (format.startsWith("image/tiff") || format.startsWith("image/geotiff")) && ImageIO.getImageReadersBySuffix("tiff").hasNext()
                 || format.startsWith("image/png") && ImageIO.getImageReadersBySuffix("png").hasNext()
                 || format.startsWith("image/svg") && ImageIO.getImageReadersBySuffix("svg").hasNext()
                 || format.startsWith("image/bmp") && ImageIO.getImageReadersBySuffix("bmp").hasNext();

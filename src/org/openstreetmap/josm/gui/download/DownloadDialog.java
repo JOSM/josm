@@ -154,7 +154,8 @@ public class DownloadDialog extends JDialog  {
                 +"Unselect to download into the currently active data layer.</html>"));
 
         cbStartup = new JCheckBox(tr("Open this dialog on startup"));
-        cbStartup.setToolTipText(tr("<html>Autostart ''Download from OSM'' dialog every time JOSM is started.<br>You can open it manually from File menu or toolbar.</html>"));
+        cbStartup.setToolTipText(
+                tr("<html>Autostart ''Download from OSM'' dialog every time JOSM is started.<br>You can open it manually from File menu or toolbar.</html>"));
         cbStartup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -167,7 +168,8 @@ public class DownloadDialog extends JDialog  {
         pnl.add(sizeCheck,  GBC.eol().anchor(GBC.EAST).insets(5,5,5,2));
 
         if (!ExpertToggleAction.isExpert()) {
-            JLabel infoLabel  = new JLabel(tr("Use left click&drag to select area, arrows or right mouse button to scroll map, wheel or +/- to zoom."));
+            JLabel infoLabel  = new JLabel(
+                    tr("Use left click&drag to select area, arrows or right mouse button to scroll map, wheel or +/- to zoom."));
             pnl.add(infoLabel,GBC.eol().anchor(GBC.SOUTH).insets(0,0,0,0));
         }
         return pnl;

@@ -104,7 +104,8 @@ public final class ExceptionUtil {
             }
             return Pair.create(n, refs);
         }
-        m = Pattern.compile(".*Way (\\d+) requires the nodes with id in " + ids + ".*").matcher(msg); // ... ", which either do not exist, or are not visible"
+        m = Pattern.compile(".*Way (\\d+) requires the nodes with id in " + ids + ".*").matcher(msg);
+        // ... ", which either do not exist, or are not visible"
         if (m.matches()) {
             OsmPrimitive n = new Way(Long.parseLong(m.group(1)));
             for (String s : m.group(2).split(",")) {

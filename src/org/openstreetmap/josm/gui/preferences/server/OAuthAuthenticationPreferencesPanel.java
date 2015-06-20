@@ -179,6 +179,13 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      *
      */
     private class NotYetAuthorisedPanel extends JPanel {
+        /**
+         * Constructs a new {@code NotYetAuthorisedPanel}.
+         */
+        public NotYetAuthorisedPanel() {
+            build();
+        }
+
         protected void build() {
             setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
@@ -189,7 +196,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             JMultilineLabel lbl;
-            add(lbl = new JMultilineLabel(tr("You do not have an Access Token yet to access the OSM server using OAuth. Please authorize first.")), gc);
+            add(lbl = new JMultilineLabel(
+                    tr("You do not have an Access Token yet to access the OSM server using OAuth. Please authorize first.")), gc);
             lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
 
             // Action for authorising now
@@ -204,10 +212,6 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.weightx = 1.0;
             gc.weighty = 1.0;
             add(new JPanel(), gc);
-        }
-
-        public NotYetAuthorisedPanel() {
-            build();
         }
     }
 

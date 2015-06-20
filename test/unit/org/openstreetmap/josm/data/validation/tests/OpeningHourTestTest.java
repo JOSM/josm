@@ -52,8 +52,10 @@ public class OpeningHourTestTest {
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "09:00-21:00"), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su-Th sunset-24:00,04:00-sunrise; Fr-Sa sunset-sunrise"), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su-Th sunset-24:00, 04:00-sunrise; Fr-Sa sunset-sunrise"), hasSize(1));
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su-Th sunset-24:00, 04:00-sunrise; Fr-Sa sunset-sunrise").get(0).getSeverity(), is(Severity.OTHER));
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su-Th sunset-24:00, 04:00-sunrise; Fr-Sa sunset-sunrise").get(0).getPrettifiedValue(), is("Su-Th sunset-24:00,04:00-sunrise; Fr-Sa sunset-sunrise"));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su-Th sunset-24:00, 04:00-sunrise; Fr-Sa sunset-sunrise")
+                .get(0).getSeverity(), is(Severity.OTHER));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su-Th sunset-24:00, 04:00-sunrise; Fr-Sa sunset-sunrise")
+                .get(0).getPrettifiedValue(), is("Su-Th sunset-24:00,04:00-sunrise; Fr-Sa sunset-sunrise"));
     }
 
     /**
@@ -66,7 +68,8 @@ public class OpeningHourTestTest {
         assertThat(errors, hasSize(2));
         assertThat(errors.get(0).getMessage(), is(key + " - Mo-Tue <--- (Please use the abbreviation \"Tu\" for \"tue\".)"));
         assertThat(errors.get(0).getSeverity(), is(Severity.WARNING));
-        assertThat(errors.get(1).getMessage(), is(key + " - Mo-Tue <--- (This rule is not very explicit because there is no time selector being used."+
+        assertThat(errors.get(1).getMessage(), is(key +
+                " - Mo-Tue <--- (This rule is not very explicit because there is no time selector being used."+
                 " Please add a time selector to this rule or use a comment to make it more explicit.)"));
         assertThat(errors.get(1).getSeverity(), is(Severity.WARNING));
     }
@@ -107,7 +110,8 @@ public class OpeningHourTestTest {
                 is(key + " - ba <--- (Unexpected token: \"b\" Invalid/unsupported syntax.)"));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "5.00 p.m-11.00 p.m"), hasSize(1));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "5.00 p.m-11.00 p.m").get(0).getMessage(),
-                is(key + " - 5.00 p <--- (hyphen (-) or open end (+) in time range expected. For working with points in time, the mode for opening_hours.js has to be altered. Maybe wrong tag?)"));
+                is(key + " - 5.00 p <--- (hyphen (-) or open end (+) in time range expected. "
+                       + "For working with points in time, the mode for opening_hours.js has to be altered. Maybe wrong tag?)"));
     }
 
     /**
@@ -138,7 +142,8 @@ public class OpeningHourTestTest {
         final String key = "opening_hours";
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getSeverity(), is(Severity.WARNING));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getMessage(),
-                is(key + " - Mo,Tu 04-17 <--- (Time range without minutes specified. Not very explicit! Please use this syntax instead \"04:00-17:00\".)"));
+                is(key + " - Mo,Tu 04-17 <--- (Time range without minutes specified. "
+                       + "Not very explicit! Please use this syntax instead \"04:00-17:00\".)"));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getPrettifiedValue(), is("Mo,Tu 04:00-17:00"));
     }
 
@@ -153,10 +158,14 @@ public class OpeningHourTestTest {
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "automatic", OpeningHourTest.CheckMode.BOTH), not(isEmpty()));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Sa 09:00-18:00", OpeningHourTest.CheckMode.BOTH), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su 09:30; We 19:30", OpeningHourTest.CheckMode.BOTH), isEmpty());
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 00:00-00:30,04:00-00:30; Sa,Su,PH 00:00-24:00", OpeningHourTest.CheckMode.BOTH), isEmpty());
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00", OpeningHourTest.CheckMode.BOTH), hasSize(1));
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00", OpeningHourTest.CheckMode.BOTH).get(0).getPrettifiedValue(), is("Mo-Fr 00:00-00:30,04:00-00:30; Sa,Su,PH 00:00-24:00"));
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00", OpeningHourTest.CheckMode.BOTH).get(0).getPrettifiedValue(), is("Mo-Fr 00:00-00:30,04:00-00:30; Sa,Su,PH 00:00-24:00"));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 00:00-00:30,04:00-00:30; Sa,Su,PH 00:00-24:00",
+                OpeningHourTest.CheckMode.BOTH), isEmpty());
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00",
+                OpeningHourTest.CheckMode.BOTH), hasSize(1));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00",
+                OpeningHourTest.CheckMode.BOTH).get(0).getPrettifiedValue(), is("Mo-Fr 00:00-00:30,04:00-00:30; Sa,Su,PH 00:00-24:00"));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00",
+                OpeningHourTest.CheckMode.BOTH).get(0).getPrettifiedValue(), is("Mo-Fr 00:00-00:30,04:00-00:30; Sa,Su,PH 00:00-24:00"));
     }
 
     /**
@@ -169,10 +178,14 @@ public class OpeningHourTestTest {
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Sa 09:00", OpeningHourTest.CheckMode.BOTH), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "fixme", OpeningHourTest.CheckMode.BOTH), not(isEmpty()));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "daily", OpeningHourTest.CheckMode.BOTH), not(isEmpty()));
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30,17:45,19:00; Sa 15:00; Su 11:00", OpeningHourTest.CheckMode.BOTH), isEmpty());
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00", OpeningHourTest.CheckMode.BOTH), hasSize(1));
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00", OpeningHourTest.CheckMode.BOTH).get(0).getSeverity(), is(Severity.OTHER));
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00", OpeningHourTest.CheckMode.BOTH).get(0).getPrettifiedValue(), is("Mo-Fr 13:30,17:45,19:00; Sa 15:00; Su 11:00"));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30,17:45,19:00; Sa 15:00; Su 11:00",
+                OpeningHourTest.CheckMode.BOTH), isEmpty());
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00",
+                OpeningHourTest.CheckMode.BOTH), hasSize(1));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00",
+                OpeningHourTest.CheckMode.BOTH).get(0).getSeverity(), is(Severity.OTHER));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00",
+                OpeningHourTest.CheckMode.BOTH).get(0).getPrettifiedValue(), is("Mo-Fr 13:30,17:45,19:00; Sa 15:00; Su 11:00"));
     }
 
     /**

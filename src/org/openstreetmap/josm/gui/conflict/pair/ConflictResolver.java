@@ -177,7 +177,8 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
                 tabbedPane.setIconAt(1, mergeComplete);
             } else {
                 tabbedPane.setTitleAt(1, trn("Tags({0} conflict)", "Tags({0} conflicts)", newValue, newValue));
-                tabbedPane.setToolTipTextAt(1, trn("{0} pending tag conflict to be resolved", "{0} pending tag conflicts to be resolved", newValue, newValue));
+                tabbedPane.setToolTipTextAt(1,
+                        trn("{0} pending tag conflict to be resolved", "{0} pending tag conflicts to be resolved", newValue, newValue));
                 tabbedPane.setIconAt(1, mergeIncomplete);
             }
             updateResolvedCompletely();

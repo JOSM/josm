@@ -116,7 +116,8 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener {
+public class PropertiesDialog extends ToggleDialog
+implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener {
 
     /**
      * hook for roadsigns plugin to display a small button in the upper right corner of this dialog

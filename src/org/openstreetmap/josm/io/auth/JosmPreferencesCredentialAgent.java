@@ -130,7 +130,8 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
     public Component getPreferencesDecorationPanel() {
         HtmlPanel pnlMessage = new HtmlPanel();
         HTMLEditorKit kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
-        kit.getStyleSheet().addRule(".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
+        kit.getStyleSheet().addRule(
+                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
         pnlMessage.setText(
                 tr(
                         "<html><body>"
@@ -149,5 +150,4 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
     public String getSaveUsernameAndPasswordCheckboxText() {
         return tr("Save user and password (unencrypted)");
     }
-
 }

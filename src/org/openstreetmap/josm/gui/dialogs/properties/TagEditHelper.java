@@ -684,8 +684,10 @@ class TagEditHelper {
 
             int count = 1;
             // We store the maximum number (9) of recent tags to allow dynamic change of number of tags shown in the preferences.
-            // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum number and not the number of tags to show.
-            // However, as Set does not allow to iterate in descending order, we need to copy its elements into a List we can access in reverse order.
+            // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum
+            // number and not the number of tags to show.
+            // However, as Set does not allow to iterate in descending order, we need to copy its elements into a List we can access
+            // in reverse order.
             List<Tag> tags = new LinkedList<>(recentTags.keySet());
             for (int i = tags.size()-1; i >= 0 && count <= tagsToShow; i--, count++) {
                 final Tag t = tags.get(i);
@@ -703,7 +705,8 @@ class TagEditHelper {
                         selectValuesCombobox();
                     }
                 };
-                Shortcut scShift = Shortcut.registerShortcut(actionShortcutShiftKey, tr("Apply recent tag {0}", count), KeyEvent.VK_0+count, Shortcut.CTRL_SHIFT);
+                Shortcut scShift = Shortcut.registerShortcut(actionShortcutShiftKey, tr("Apply recent tag {0}", count),
+                        KeyEvent.VK_0+count, Shortcut.CTRL_SHIFT);
                 final JosmAction actionShift = new JosmAction(actionShortcutShiftKey, null, tr("Use this tag again"), scShift, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {

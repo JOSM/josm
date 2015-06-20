@@ -29,7 +29,7 @@ public class ProjectionRefTest {
 
     /**
      * create a list of epsg codes and bounds to be used by the perl script
-     * @param args
+     * @param args program main arguments
      */
     public static void main(String[] args) {
         Map<String, Projection> allCodes = new HashMap<>();

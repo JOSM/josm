@@ -78,7 +78,8 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
     protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
         CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
         if (!synchronizedAdjustables.contains(adjustable))
-            throw new IllegalStateException(tr("Adjustable {0} not registered yet. Cannot set participation in synchronized adjustment.", adjustable));
+            throw new IllegalStateException(
+                    tr("Adjustable {0} not registered yet. Cannot set participation in synchronized adjustment.", adjustable));
 
         enabledMap.put(adjustable, isParticipating);
         observable.notifyObservers();

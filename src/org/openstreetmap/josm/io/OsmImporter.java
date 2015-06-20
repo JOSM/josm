@@ -122,7 +122,8 @@ public class OsmImporter extends FileImporter {
      * @param layerName name of generated layer
      * @param progressMonitor handler for progress monitoring and canceling
      */
-    public OsmImporterData loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor) throws IllegalDataException {
+    public OsmImporterData loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor)
+            throws IllegalDataException {
         final DataSet dataSet = parseDataSet(in, progressMonitor);
         if (dataSet == null) {
             throw new IllegalDataException(tr("Invalid dataset"));

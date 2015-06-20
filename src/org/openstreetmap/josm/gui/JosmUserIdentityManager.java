@@ -105,7 +105,8 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
     public void setPartiallyIdentified(String userName) {
         CheckParameterUtil.ensureParameterNotNull(userName, "userName");
         if (userName.trim().isEmpty())
-            throw new IllegalArgumentException(MessageFormat.format("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
         this.userName = userName;
         userInfo = null;
     }

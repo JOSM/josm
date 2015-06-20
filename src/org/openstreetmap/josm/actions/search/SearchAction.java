@@ -321,7 +321,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             ToolbarPreferences.ActionDefinition aDef =
                     new ToolbarPreferences.ActionDefinition(Main.main.menu.search);
             aDef.getParameters().put(SEARCH_EXPRESSION, initialValues);
-            aDef.setName(Utils.shortenString(initialValues.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY)); // Display search expression as tooltip instead of generic one
+            // Display search expression as tooltip instead of generic one
+            aDef.setName(Utils.shortenString(initialValues.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY));
             // parametrized action definition is now composed
             ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
             String res = actionParser.saveAction(aDef);
@@ -347,7 +348,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("*=<i>value</i>", null, tr("''value'' in any key"))
                 .addKeyword("<i>key</i>=", null, tr("matches if ''key'' exists"))
                 .addKeyword("<i>key</i>><i>value</i>", null, tr("matches if ''key'' is greater than ''value'' (analogously, less than)"))
-                .addKeyword("\"key\"=\"value\"", "\"\"=\"\"", tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."), "\"addr:street\"")
+                .addKeyword("\"key\"=\"value\"", "\"\"=\"\"",
+                        tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."),
+                        "\"addr:street\"")
                 , GBC.eol());
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("combinators"))
@@ -372,8 +375,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("user:", "user:", tr("objects changed by user", "user:anonymous"))
                 .addKeyword("id:", "id:", tr("objects with given ID"), "id:0 (new objects)")
                 .addKeyword("version:", "version:", tr("objects with given version"), "version:0 (objects without an assigned version)")
-                .addKeyword("changeset:", "changeset:", tr("objects with given changeset ID"), "changeset:0 (objects without an assigned changeset)")
-                .addKeyword("timestamp:", "timestamp:", tr("objects with last modification timestamp within range"), "timestamp:2012/", "timestamp:2008/2011-02-04T12")
+                .addKeyword("changeset:", "changeset:", tr("objects with given changeset ID"),
+                        "changeset:0 (objects without an assigned changeset)")
+                .addKeyword("timestamp:", "timestamp:", tr("objects with last modification timestamp within range"), "timestamp:2012/",
+                        "timestamp:2008/2011-02-04T12")
                 , GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("properties"))
@@ -403,7 +408,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("inview", "inview ", tr("objects in current view"))
                 .addKeyword("allinview", "allinview ", tr("objects (and all its way nodes / relation members) in current view"))
                 .addKeyword("indownloadedarea", "indownloadedarea ", tr("objects in downloaded area"))
-                .addKeyword("allindownloadedarea", "allindownloadedarea ", tr("objects (and all its way nodes / relation members) in downloaded area"))
+                .addKeyword("allindownloadedarea", "allindownloadedarea ",
+                        tr("objects (and all its way nodes / relation members) in downloaded area"))
                 , GBC.eol());
         }
     }

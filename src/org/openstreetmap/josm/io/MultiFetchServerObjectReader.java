@@ -108,7 +108,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      *
      * @param ds  the dataset (must not be null)
      * @param id  the primitive id
-     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
+     * {@link OsmPrimitiveType#RELATION RELATION}
      * @throws IllegalArgumentException if ds is null
      * @throws NoSuchElementException if ds does not include an {@link OsmPrimitive} with id=<code>id</code>
      */
@@ -127,7 +128,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      *
      * @param ds the {@link DataSet} to which the primitive belongs
      * @param id the primitive id
-     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
+     * {@link OsmPrimitiveType#RELATION RELATION}
      * @return this
      */
     public MultiFetchServerObjectReader append(DataSet ds, long id, OsmPrimitiveType type) {
@@ -257,7 +259,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     /**
      * builds the Multi Get request string for a set of ids and a given {@link OsmPrimitiveType}.
      *
-     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
+     * {@link OsmPrimitiveType#RELATION RELATION}
      * @param idPackage  the package of ids
      * @return the request string
      */
@@ -279,7 +282,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     /**
      * builds the Multi Get request string for a single id and a given {@link OsmPrimitiveType}.
      *
-     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
+     * {@link OsmPrimitiveType#RELATION RELATION}
      * @param id the id
      * @return the request string
      */
@@ -317,7 +321,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * fetches a set of ids of a given {@link OsmPrimitiveType} from the server
      *
      * @param ids the set of ids
-     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
+     * {@link OsmPrimitiveType#RELATION RELATION}
      * @throws OsmTransferException if an error occurs while communicating with the API server
      */
     protected void fetchPrimitives(Set<Long> ids, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException {
@@ -442,7 +447,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * The class that actually download data from OSM API. Several instances of this class are used by {@link MultiFetchServerObjectReader} (one per set of primitives to fetch).
+     * The class that actually download data from OSM API.
+     * Several instances of this class are used by {@link MultiFetchServerObjectReader} (one per set of primitives to fetch).
      * The inheritance of {@link OsmServerReader} is only explained by the need to have a distinct OSM connection by {@code Fetcher} instance.
      * @see FetchResult
      */
@@ -454,7 +460,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
 
         /**
          * Constructs a {@code Fetcher}
-         * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+         * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
+         * {@link OsmPrimitiveType#RELATION RELATION}
          * @param idsPackage The set of primitives ids to fetch
          * @param progressMonitor The progress monitor
          */
@@ -466,7 +473,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
 
         @Override
         public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
-            // This method is implemented because of the OsmServerReader inheritance, but not used, as the main target of this class is the call() method.
+            // This method is implemented because of the OsmServerReader inheritance, but not used,
+            // as the main target of this class is the call() method.
             return fetch(progressMonitor).dataSet;
         }
 
@@ -498,7 +506,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
          * invokes a Multi Get for a set of ids and a given {@link OsmPrimitiveType}.
          * The retrieved primitives are merged to {@link #outputDataSet}.
          *
-         * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+         * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
+         * {@link OsmPrimitiveType#RELATION RELATION}
          * @param pkg the package of ids
          * @return the {@link FetchResult} of this operation
          * @throws OsmTransferException if an error occurs while communicating with the API server
@@ -524,7 +533,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
          * invokes a Multi Get for a single id and a given {@link OsmPrimitiveType}.
          * The retrieved primitive is merged to {@link #outputDataSet}.
          *
-         * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+         * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
+         * {@link OsmPrimitiveType#RELATION RELATION}
          * @param id the id
          * @return the {@link DataSet} resulting of this operation
          * @throws OsmTransferException if an error occurs while communicating with the API server
@@ -554,7 +564,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
          * If the set is fetched with this method it is possible to find out which of the ids doesn't exist.
          * Unfortunately, the server does not provide an error header or an error body for a 404 reply.
          *
-         * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+         * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
+         * {@link OsmPrimitiveType#RELATION RELATION}
          * @param pkg the set of ids
          * @return the {@link FetchResult} of this operation
          * @throws OsmTransferException if an error occurs while communicating with the API server

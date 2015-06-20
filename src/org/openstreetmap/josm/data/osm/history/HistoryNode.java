@@ -49,7 +49,8 @@ public class HistoryNode extends HistoryOsmPrimitive {
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
      */
-    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords, boolean checkHistoricParams) {
+    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords,
+            boolean checkHistoricParams) {
         super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
         setCoords(coords);
     }

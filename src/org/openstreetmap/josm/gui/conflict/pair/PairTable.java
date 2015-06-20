@@ -15,7 +15,8 @@ public abstract class PairTable extends OsmPrimitivesTable {
 
     private final transient ListMergeModel<? extends PrimitiveId> model;
 
-    public PairTable(String name, ListMergeModel<? extends PrimitiveId> model, OsmPrimitivesTableModel dm, TableColumnModel cm, ListSelectionModel sm) {
+    public PairTable(String name, ListMergeModel<? extends PrimitiveId> model,
+            OsmPrimitivesTableModel dm, TableColumnModel cm, ListSelectionModel sm) {
         super(dm, cm, sm);
         this.model = model;
         setName(name);

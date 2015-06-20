@@ -145,7 +145,8 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             Point p = mv.getPoint(noteData.getSelectedNote().getLatLon());
 
             g.setColor(ColorHelper.html2color(Main.pref.get("color.selected")));
-            g.drawRect(p.x - (NotesDialog.ICON_SMALL_SIZE / 2), p.y - NotesDialog.ICON_SMALL_SIZE, NotesDialog.ICON_SMALL_SIZE - 1, NotesDialog.ICON_SMALL_SIZE - 1);
+            g.drawRect(p.x - (NotesDialog.ICON_SMALL_SIZE / 2), p.y - NotesDialog.ICON_SMALL_SIZE,
+                    NotesDialog.ICON_SMALL_SIZE - 1, NotesDialog.ICON_SMALL_SIZE - 1);
 
             int tx = p.x + (NotesDialog.ICON_SMALL_SIZE / 2) + 5;
             int ty = p.y - NotesDialog.ICON_SMALL_SIZE - 1;

@@ -50,7 +50,8 @@ public class ChangesetListCellRenderer extends JLabel implements ListCellRendere
     }
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends Changeset> list, Changeset cs, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends Changeset> list, Changeset cs, int index, boolean isSelected,
+            boolean cellHasFocus) {
         renderColors(isSelected);
         renderLabel(cs);
         return this;

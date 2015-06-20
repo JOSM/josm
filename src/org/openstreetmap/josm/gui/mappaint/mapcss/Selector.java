@@ -256,7 +256,8 @@ public interface Selector {
             @Override
             public void visit(Way w) {
                 if (e.child == null && left.matches(new Environment(w))) {
-                    if (e.osm instanceof Way && Geometry.PolygonIntersection.CROSSING.equals(Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))) {
+                    if (e.osm instanceof Way && Geometry.PolygonIntersection.CROSSING.equals(
+                            Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))) {
                         e.child = w;
                     }
                 }
@@ -273,7 +274,8 @@ public interface Selector {
             public void visit(Node n) {
                 if (e.child == null && left.matches(new Environment(n))) {
                     if (e.osm instanceof Way && Geometry.nodeInsidePolygon(n, ((Way) e.osm).getNodes())
-                            || e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() && Geometry.isNodeInsideMultiPolygon(n, (Relation) e.osm, null)) {
+                            || e.osm instanceof Relation && (
+                                    (Relation) e.osm).isMultipolygon() && Geometry.isNodeInsideMultiPolygon(n, (Relation) e.osm, null)) {
                         e.child = n;
                     }
                 }
@@ -282,8 +284,11 @@ public interface Selector {
             @Override
             public void visit(Way w) {
                 if (e.child == null && left.matches(new Environment(w))) {
-                    if (e.osm instanceof Way && Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))
-                            || e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() && Geometry.isPolygonInsideMultiPolygon(w.getNodes(), (Relation) e.osm, null)) {
+                    if (e.osm instanceof Way && Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(
+                            Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))
+                            || e.osm instanceof Relation && (
+                                    (Relation) e.osm).isMultipolygon()
+                                    && Geometry.isPolygonInsideMultiPolygon(w.getNodes(), (Relation) e.osm, null)) {
                         e.child = w;
                     }
                 }

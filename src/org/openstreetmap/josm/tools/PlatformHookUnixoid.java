@@ -131,9 +131,12 @@ public class PlatformHookUnixoid implements PlatformHook {
     public void initSystemShortcuts() {
         // TODO: Insert system shortcuts here. See Windows and especially OSX to see how to.
         for(int i = KeyEvent.VK_F1; i <= KeyEvent.VK_F12; ++i)
-            Shortcut.registerSystemShortcut("screen:toogle"+i, tr("reserved"), i, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
-        Shortcut.registerSystemShortcut("system:reset", tr("reserved"), KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
-        Shortcut.registerSystemShortcut("system:resetX", tr("reserved"), KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
+            Shortcut.registerSystemShortcut("screen:toogle"+i, tr("reserved"),
+                    i, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
+        Shortcut.registerSystemShortcut("system:reset", tr("reserved"),
+                KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
+        Shortcut.registerSystemShortcut("system:resetX", tr("reserved"),
+                KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
     }
 
     /**
@@ -406,7 +409,9 @@ public class PlatformHookUnixoid implements PlatformHook {
                         content += "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
                                 "Oracle", tr("April 2015"))+"</b><br><br>";
                     }
-                    content += "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "8")+"</b><br><br>"+
+                    content += "<b>" +
+                            tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "8")
+                            + "</b><br><br>" +
                             tr("Would you like to update now ?");
                     ed.setContent(content);
 

@@ -69,7 +69,8 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
         prefOther.setToolTipText(tr("Show the informational tests."));
         testPanel.add(prefOther, GBC.eol());
 
-        prefOtherUpload = new JCheckBox(tr("Show informational level on upload."), Main.pref.getBoolean(ValidatorPreference.PREF_OTHER_UPLOAD, false));
+        prefOtherUpload = new JCheckBox(tr("Show informational level on upload."),
+                Main.pref.getBoolean(ValidatorPreference.PREF_OTHER_UPLOAD, false));
         prefOtherUpload.setToolTipText(tr("Show the informational tests in the upload check windows."));
         testPanel.add(prefOtherUpload, GBC.eol());
 

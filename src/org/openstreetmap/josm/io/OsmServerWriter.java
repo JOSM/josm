@@ -83,7 +83,8 @@ public class OsmServerWriter {
      * @param progressMonitor the progress monitor
      * @throws OsmTransferException if an exception occurs
      */
-    protected void uploadChangesIndividually(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
+    protected void uploadChangesIndividually(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor)
+            throws OsmTransferException {
         try {
             progressMonitor.beginTask(tr("Starting to upload with one request per primitive ..."));
             progressMonitor.setTicksCount(primitives.size());
@@ -125,7 +126,8 @@ public class OsmServerWriter {
      * @param progressMonitor  the progress monitor
      * @throws OsmTransferException if an exception occurs
      */
-    protected void uploadChangesAsDiffUpload(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
+    protected void uploadChangesAsDiffUpload(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor)
+            throws OsmTransferException {
         try {
             progressMonitor.beginTask(tr("Starting to upload in one request ..."));
             processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
@@ -145,7 +147,8 @@ public class OsmServerWriter {
      * @throws IllegalArgumentException if chunkSize &lt;= 0
      * @throws OsmTransferException if an exception occurs
      */
-    protected void uploadChangesInChunks(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor, int chunkSize) throws OsmTransferException, IllegalArgumentException {
+    protected void uploadChangesInChunks(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor, int chunkSize)
+            throws OsmTransferException, IllegalArgumentException {
         if (chunkSize <=0)
             throw new IllegalArgumentException(tr("Value >0 expected for parameter ''{0}'', got {1}", "chunkSize", chunkSize));
         try {

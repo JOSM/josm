@@ -179,9 +179,11 @@ public final class CustomConfigurator {
         Integer answer;
         if (!opts.isEmpty()) {
             String[] options = opts.split(";");
-            answer = JOptionPane.showOptionDialog(Main.parent, text, "Question", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 0);
+            answer = JOptionPane.showOptionDialog(Main.parent, text, "Question",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 0);
         } else {
-            answer = JOptionPane.showOptionDialog(Main.parent, text, "Question", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 2);
+            answer = JOptionPane.showOptionDialog(Main.parent, text, "Question",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 2);
         }
         if (answer==null) return -1; else return answer;
     }
@@ -228,7 +230,8 @@ public final class CustomConfigurator {
     /**
      * Export specified preferences keys to configuration file
      * @param filename - name of file
-     * @param append - will the preferences be appended to existing ones when file is imported later. Elsewhere preferences from file will replace existing keys.
+     * @param append - will the preferences be appended to existing ones when file is imported later.
+     * Elsewhere preferences from file will replace existing keys.
      * @param keys - collection of preferences key names to save
      */
     public static void exportPreferencesKeysToFile(String filename, boolean append, Collection<String> keys) {
@@ -1041,7 +1044,8 @@ public final class CustomConfigurator {
      * @param includeDefaults - include known default values to JS objects
      * @throws ScriptException if the evaluation fails
      */
-    public static void loadPrefsToJS(ScriptEngine engine, Preferences tmpPref, String whereToPutInJS, boolean includeDefaults) throws ScriptException {
+    public static void loadPrefsToJS(ScriptEngine engine, Preferences tmpPref, String whereToPutInJS, boolean includeDefaults)
+            throws ScriptException {
         Map<String, String> stringMap =  new TreeMap<>();
         Map<String, List<String>> listMap = new TreeMap<>();
         Map<String, List<List<String>>> listlistMap = new TreeMap<>();

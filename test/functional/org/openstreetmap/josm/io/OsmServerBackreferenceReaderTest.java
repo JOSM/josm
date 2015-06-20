@@ -128,7 +128,7 @@ public class OsmServerBackreferenceReaderTest {
      * creates the dataset on the server.
      *
      * @param ds the data set
-     * @throws OsmTransferException
+     * @throws OsmTransferException if something goes wrong
      */
     static public void createDataSetOnServer(APIDataSet ds) throws OsmTransferException, CyclicUploadDependencyException {
         logger.info("creating data set on the server ...");
@@ -163,7 +163,8 @@ public class OsmServerBackreferenceReaderTest {
             return;
         }
 
-        logger.info(MessageFormat.format("property ''{0}'' not set to true, creating test dataset on the server. property is ''{1}''", "useCachedDataset", p));
+        logger.info(MessageFormat.format(
+                "property ''{0}'' not set to true, creating test dataset on the server. property is ''{1}''", "useCachedDataset", p));
 
         // build and upload the test data set
         //

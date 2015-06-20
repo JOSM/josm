@@ -99,7 +99,8 @@ public class ProjectionRegressionTest {
                 }
                 EastNorth en = proj.latlon2eastNorth(new LatLon(lat, lon));
                 LatLon ll2 = proj.eastNorth2latlon(en);
-                out.write(String.format("%s%n  ll  %s %s%n  en  %s %s%n  ll2 %s %s%n", proj.toCode(), lat, lon, en.east(), en.north(), ll2.lat(), ll2.lon()));
+                out.write(String.format(
+                        "%s%n  ll  %s %s%n  en  %s %s%n  ll2 %s %s%n", proj.toCode(), lat, lon, en.east(), en.north(), ll2.lat(), ll2.lon()));
             }
         }
     }

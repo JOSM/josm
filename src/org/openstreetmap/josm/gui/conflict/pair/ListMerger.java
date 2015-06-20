@@ -275,7 +275,8 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         gc.gridx = 2;
         gc.gridy = 0;
         lblMergedVersion = new JLabel(tr("Merged version"));
-        lblMergedVersion.setToolTipText(tr("List of merged elements. They will replace the list of my elements when the merge decisions are applied."));
+        lblMergedVersion.setToolTipText(
+                tr("List of merged elements. They will replace the list of my elements when the merge decisions are applied."));
         add(lblMergedVersion, gc);
 
         gc.gridx = 4;

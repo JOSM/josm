@@ -57,13 +57,16 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
         switch (OsmPrimitiveType.from(conflict.getMy())) {
             case NODE:
                 /* for correct i18n of plural forms - see #9110 */
-                return trn("Resolve {0} tag conflict in node {1}", "Resolve {0} tag conflicts in node {1}", getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
+                return trn("Resolve {0} tag conflict in node {1}", "Resolve {0} tag conflicts in node {1}",
+                        getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
             case WAY:
                 /* for correct i18n of plural forms - see #9110 */
-                return trn("Resolve {0} tag conflict in way {1}", "Resolve {0} tag conflicts in way {1}", getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
+                return trn("Resolve {0} tag conflict in way {1}", "Resolve {0} tag conflicts in way {1}",
+                        getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
             case RELATION:
                 /* for correct i18n of plural forms - see #9110 */
-                return trn("Resolve {0} tag conflict in relation {1}", "Resolve {0} tag conflicts in relation {1}", getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
+                return trn("Resolve {0} tag conflict in relation {1}", "Resolve {0} tag conflicts in relation {1}",
+                        getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
         }
         return "";
     }

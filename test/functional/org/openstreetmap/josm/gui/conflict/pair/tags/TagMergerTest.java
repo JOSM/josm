@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.tags;
 
-import org.junit.Ignore;
-
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
+
+import org.junit.Ignore;
 
 @Ignore
 public class TagMergerTest extends JFrame {
@@ -26,7 +26,8 @@ public class TagMergerTest extends JFrame {
         tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", "theirvalue"));
         tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", null));
         tagMerger.getModel().addItem(new TagMergeItem("key", null, "theirvalue"));
-        tagMerger.getModel().addItem(new TagMergeItem("a very long key asdfasdf asdfasdf", "a very long value asdfasdf", "a very long value asdfasdf"));
+        tagMerger.getModel().addItem(new TagMergeItem("a very long key asdfasdf asdfasdf", "a very long value asdfasdf",
+                "a very long value asdfasdf"));
         for (int i=0; i< 50; i++) {
           tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", "theirvalue"));
         }

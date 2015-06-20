@@ -1,10 +1,11 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
-
-import org.junit.Test;
-import org.openstreetmap.josm.data.coor.LatLon;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+import org.openstreetmap.josm.data.coor.LatLon;
 
 public class LatLonDialogTest {
     @Test

@@ -54,7 +54,8 @@ public class LineElemStyle extends ElemStyle {
         }
     }
 
-    protected LineElemStyle(Cascade c, float default_major_z_index, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, float offset, float realWidth) {
+    protected LineElemStyle(Cascade c, float default_major_z_index, BasicStroke line, Color color, BasicStroke dashesLine,
+            Color dashesBackground, float offset, float realWidth) {
         super(c, default_major_z_index);
         this.line = line;
         this.color = color;

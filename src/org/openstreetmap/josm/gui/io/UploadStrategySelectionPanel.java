@@ -188,11 +188,15 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 1.0;
-        pnlMultiChangesetPolicyPanel.add(lblMultiChangesetPoliciesHeader = new JMultilineLabel(tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. Which strategy do you want to use?</html>", numUploadedObjects)), gc);
+        pnlMultiChangesetPolicyPanel.add(lblMultiChangesetPoliciesHeader = new JMultilineLabel(
+                tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. Which strategy do you want to use?</html>",
+                        numUploadedObjects)), gc);
         gc.gridy = 1;
-        pnlMultiChangesetPolicyPanel.add(rbFillOneChangeset = new JRadioButton(tr("Fill up one changeset and return to the Upload Dialog")),gc);
+        pnlMultiChangesetPolicyPanel.add(rbFillOneChangeset = new JRadioButton(
+                tr("Fill up one changeset and return to the Upload Dialog")), gc);
         gc.gridy = 2;
-        pnlMultiChangesetPolicyPanel.add(rbUseMultipleChangesets = new JRadioButton(tr("Open and use as many new changesets as necessary")),gc);
+        pnlMultiChangesetPolicyPanel.add(rbUseMultipleChangesets = new JRadioButton(
+                tr("Open and use as many new changesets as necessary")), gc);
 
         ButtonGroup bgMultiChangesetPolicies = new ButtonGroup();
         bgMultiChangesetPolicies.add(rbFillOneChangeset);
@@ -328,7 +332,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             rbStrategy.get(UploadStrategy.CHUNKED_DATASET_STRATEGY).setSelected(true);
             lblNumRequests.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setVisible(false);
 
-            lblMultiChangesetPoliciesHeader.setText(tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. Which strategy do you want to use?</html>", numUploadedObjects));
+            lblMultiChangesetPoliciesHeader.setText(
+                    tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. Which strategy do you want to use?</html>",
+                            numUploadedObjects));
             if (!rbFillOneChangeset.isSelected() && !rbUseMultipleChangesets.isSelected()) {
                 rbUseMultipleChangesets.setSelected(true);
             }
@@ -409,16 +415,19 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
                 if (chunkSize <= 0) {
                     setErrorFeedback(tfChunkSize, tr("Illegal chunk size <= 0. Please enter an integer > 1"));
                 } else if (maxChunkSize > 0 && chunkSize > maxChunkSize) {
-                    setErrorFeedback(tfChunkSize, tr("Chunk size {0} exceeds max. changeset size {1} for server ''{2}''", chunkSize, maxChunkSize, OsmApi.getOsmApi().getBaseUrl()));
+                    setErrorFeedback(tfChunkSize, tr("Chunk size {0} exceeds max. changeset size {1} for server ''{2}''",
+                            chunkSize, maxChunkSize, OsmApi.getOsmApi().getBaseUrl()));
                 } else {
                     clearErrorFeedback(tfChunkSize, tr("Please enter an integer > 1"));
                 }
 
                 if (maxChunkSize > 0 && chunkSize > maxChunkSize) {
-                    setErrorFeedback(tfChunkSize, tr("Chunk size {0} exceeds max. changeset size {1} for server ''{2}''", chunkSize, maxChunkSize, OsmApi.getOsmApi().getBaseUrl()));
+                    setErrorFeedback(tfChunkSize, tr("Chunk size {0} exceeds max. changeset size {1} for server ''{2}''",
+                            chunkSize, maxChunkSize, OsmApi.getOsmApi().getBaseUrl()));
                 }
             } catch(NumberFormatException e) {
-                setErrorFeedback(tfChunkSize, tr("Value ''{0}'' is not a number. Please enter an integer > 1", tfChunkSize.getText().trim()));
+                setErrorFeedback(tfChunkSize, tr("Value ''{0}'' is not a number. Please enter an integer > 1",
+                        tfChunkSize.getText().trim()));
             } finally {
                 updateNumRequestsLabels();
             }

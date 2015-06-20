@@ -52,7 +52,8 @@ public interface CredentialsAgent {
      * @throws CredentialsAgentException if a problem occurs in a implementation of this interface
 
      */
-    CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException;
+    CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse)
+            throws CredentialsAgentException;
 
     /**
      * Lookup the current OAuth Access Token to access the OSM server. Replies null, if no

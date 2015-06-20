@@ -27,7 +27,8 @@ public class DownloadPrimitiveAction extends JosmAction {
      */
     public DownloadPrimitiveAction() {
         super(tr("Download object..."), "downloadprimitive", tr("Download OSM object by ID."),
-                Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download object...")), KeyEvent.VK_O, Shortcut.CTRL_SHIFT), true);
+                Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download object...")),
+                        KeyEvent.VK_O, Shortcut.CTRL_SHIFT), true);
         putValue("help", ht("/Action/DownloadObject"));
     }
 
@@ -43,7 +44,8 @@ public class DownloadPrimitiveAction extends JosmAction {
     /**
      * @param newLayer if the data should be downloaded into a new layer
      * @param ids List of primitive id to download
-     * @param downloadReferrers if the referrers of the object should be downloaded as well, i.e., parent relations, and for nodes, additionally, parent ways
+     * @param downloadReferrers if the referrers of the object should be downloaded as well, i.e., parent relations, and for nodes,
+     * additionally, parent ways
      * @param full if the members of a relation should be downloaded as well
      */
     public static void processItems(boolean newLayer, final List<PrimitiveId> ids, boolean downloadReferrers, boolean full) {

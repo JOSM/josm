@@ -88,7 +88,8 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     private static class ResultListCellRenderer implements ListCellRenderer<TaggingPreset> {
         private final DefaultListCellRenderer def = new DefaultListCellRenderer();
         @Override
-        public Component getListCellRendererComponent(JList<? extends TaggingPreset> list, TaggingPreset tp, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends TaggingPreset> list, TaggingPreset tp, int index,
+                boolean isSelected, boolean cellHasFocus) {
             JLabel result = (JLabel) def.getListCellRendererComponent(list, tp, index, isSelected, cellHasFocus);
             result.setText(tp.getName());
             result.setIcon((Icon) tp.getValue(Action.SMALL_ICON));

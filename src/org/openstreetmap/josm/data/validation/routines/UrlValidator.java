@@ -63,12 +63,12 @@ import java.util.regex.Pattern;
  *   prints out "url is valid"
  *  </pre>
  *
+ * @version $Revision: 1640269 $ $Date: 2014-11-18 02:28:56 UTC (Tue, 18 Nov 2014) $
  * @see
  * <a href="http://www.ietf.org/rfc/rfc2396.txt">
  *  Uniform Resource Identifiers (URI): Generic Syntax
  * </a>
  *
- * @version $Revision: 1640269 $ $Date: 2014-11-18 02:28:56 UTC (Tue, 18 Nov 2014) $
  * @since Validator 1.4
  */
 public class UrlValidator extends AbstractValidator {

@@ -123,7 +123,8 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         } else if ("oauth".equals(authMethod)) {
             rbOAuth.setSelected(true);
         } else {
-            Main.warn(tr("Unsupported value in preference ''{0}'', got ''{1}''. Using authentication method ''Basic Authentication''.", "osm-server.auth-method", authMethod));
+            Main.warn(tr("Unsupported value in preference ''{0}'', got ''{1}''. Using authentication method ''Basic Authentication''.",
+                    "osm-server.auth-method", authMethod));
             rbBasicAuthentication.setSelected(true);
         }
         pnlBasicAuthPreferences.initFromPreferences();

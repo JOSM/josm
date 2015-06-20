@@ -701,7 +701,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             MapMode newMapMode = getLastMapMode(newLayer);
             modeChanged = newMapMode != mapMode;
             if (newMapMode != null) {
-                selectMapMode(newMapMode, newLayer); // it would be nice to select first supported mode when layer is first selected, but it don't work well with for example editgpx layer
+                // it would be nice to select first supported mode when layer is first selected,
+                // but it don't work well with for example editgpx layer
+                selectMapMode(newMapMode, newLayer);
             } else if (mapMode != null) {
                 mapMode.exitMode(); // if new mode is null - simply exit from previous mode
             }
@@ -725,7 +727,6 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             }
         });
     }
-
 
     private MapMode getLastMapMode(Layer newLayer) {
         MapMode mode = lastMapMode.get(newLayer);

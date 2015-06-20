@@ -39,7 +39,8 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
      * The accepted MIME types sent in the HTTP Accept header.
      * @since 6867
      */
-    public static final String XML_STYLE_MIME_TYPES = "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
+    public static final String XML_STYLE_MIME_TYPES =
+            "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
     protected final Map<String, IconPrototype> icons = new HashMap<>();
     protected final Map<String, LinePrototype> lines = new HashMap<>();
@@ -90,7 +91,8 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             Main.error(e);
             logError(e);
         } catch (SAXParseException e) {
-            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}", url, e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
+            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}",
+                    url, e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
             Main.error(e);
             logError(e);
         } catch (SAXException e) {

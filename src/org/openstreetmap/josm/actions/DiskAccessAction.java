@@ -41,7 +41,8 @@ public abstract class DiskAccessAction extends JosmAction {
      * @param installAdapters False, if you don't want to install layer changed and selection changed adapters
      * @since 5438
      */
-    public DiskAccessAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register, String toolbarId, boolean installAdapters) {
+    public DiskAccessAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register,
+            String toolbarId, boolean installAdapters) {
         super(name, iconName, tooltip, shortcut, register, toolbarId, installAdapters);
     }
 
@@ -83,12 +84,15 @@ public abstract class DiskAccessAction extends JosmAction {
      * @param allTypes If true, all the files types known by JOSM will be proposed in the "file type" combobox.
      *                 If false, only the file filters that include {@code extension} will be proposed
      * @param lastDirProperty The name of the property used to setup the AbstractFileChooser initial directory.
-     *        This property will then be updated to the new "last directory" chosen by the user. If null, the default property "lastDirectory" will be used.
+     *        This property will then be updated to the new "last directory" chosen by the user.
+     *        If null, the default property "lastDirectory" will be used.
      * @return The {@code AbstractFileChooser}.
      * @since 5438
      */
-    public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, String extension, int selectionMode, boolean allTypes, String lastDirProperty) {
-        return new FileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, extension, allTypes, selectionMode).openFileChooser();
+    public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, String extension,
+            int selectionMode, boolean allTypes, String lastDirProperty) {
+        return new FileChooserManager(open, lastDirProperty)
+            .createFileChooser(multiple, title, extension, allTypes, selectionMode).openFileChooser();
     }
 
     /**
@@ -101,11 +105,13 @@ public abstract class DiskAccessAction extends JosmAction {
      *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li>
      *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li>
      *                      <li>select both files and directories ({@code JFileChooser.FILES_AND_DIRECTORIES})</li></ul>
-     * @param lastDirProperty The name of the property used to setup the AbstractFileChooser initial directory. This property will then be updated to the new "last directory" chosen by the user
+     * @param lastDirProperty The name of the property used to setup the AbstractFileChooser initial directory.
+     * This property will then be updated to the new "last directory" chosen by the user
      * @return The {@code AbstractFileChooser}.
      * @since 5438
      */
-    public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, FileFilter filter, int selectionMode, String lastDirProperty) {
+    public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, FileFilter filter,
+            int selectionMode, String lastDirProperty) {
         return new FileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, filter, selectionMode).openFileChooser();
     }
 
@@ -120,12 +126,14 @@ public abstract class DiskAccessAction extends JosmAction {
      *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li>
      *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li>
      *                      <li>select both files and directories ({@code JFileChooser.FILES_AND_DIRECTORIES})</li></ul>
-     * @param lastDirProperty The name of the property used to setup the JFileChooser initial directory. This property will then be updated to the new "last directory" chosen by the user
+     * @param lastDirProperty The name of the property used to setup the JFileChooser initial directory.
+     * This property will then be updated to the new "last directory" chosen by the user
      * @return The {@code AbstractFileChooser}.
      * @since 5438
      */
     public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title,
             Collection<? extends FileFilter> filters, FileFilter defaultFilter, int selectionMode, String lastDirProperty) {
-        return new FileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, filters, defaultFilter, selectionMode).openFileChooser();
+        return new FileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, filters, defaultFilter, selectionMode)
+                .openFileChooser();
     }
 }

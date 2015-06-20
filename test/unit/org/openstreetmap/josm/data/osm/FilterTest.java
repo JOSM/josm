@@ -172,7 +172,8 @@ public class FilterTest {
                 if (osm.hasKey(key)) {
                     foundAtLeastOne = true;
                     if (!osm.get(key).equals(filterCode(osm))) {
-                        failedPrimitives.append(String.format("Object %s. Expected [%s] but was [%s]%n", osm.toString(), osm.get(key), filterCode(osm)));
+                        failedPrimitives.append(String.format(
+                                "Object %s. Expected [%s] but was [%s]%n", osm.toString(), osm.get(key), filterCode(osm)));
                     }
                 }
             }

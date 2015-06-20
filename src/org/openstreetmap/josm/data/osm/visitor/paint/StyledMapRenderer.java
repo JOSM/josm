@@ -1085,8 +1085,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         double pathLength = 0;
         long dx, dy;
 
-        // find half segments that are long enough to draw text on
-        // (don't draw text over the cross hair in the center of each segment)
+        // find half segments that are long enough to draw text on (don't draw text over the cross hair in the center of each segment)
         List<Double> longHalfSegmentStart = new ArrayList<>(); // start point of half segment (as length along the way)
         List<Double> longHalfSegmentEnd = new ArrayList<>(); // end point of half segment (as length along the way)
         List<Double> longHalfsegmentQuality = new ArrayList<>(); // quality factor (off screen / partly on screen / fully on screen)
@@ -1138,8 +1137,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         if (!longHalfSegmentStart.isEmpty()) {
             if (way.getNodesCount() == 2) {
-                // For 2 node ways, the two half segments are exactly
-                // the same size and distance from the center.
+                // For 2 node ways, the two half segments are exactly the same size and distance from the center.
                 // Prefer the first one for consistency.
                 longHalfsegmentQuality.set(0, longHalfsegmentQuality.get(0) + 0.5);
             }
@@ -1213,8 +1211,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 dirFlag = Bidi.DIRECTION_RIGHT_TO_LEFT;
             }
         }
-        // only works for text that is completely left-to-right or completely
-        // right-to-left, not bi-directional text
+        // only works for text that is completely left-to-right or completely right-to-left, not bi-directional text
         GlyphVector gv = text.font.layoutGlyphVector(frc, chars, 0, chars.length, dirFlag);
 
         for (int i=0; i<gv.getNumGlyphs(); ++i) {

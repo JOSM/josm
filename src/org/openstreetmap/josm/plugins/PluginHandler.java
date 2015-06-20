@@ -613,7 +613,8 @@ public final class PluginHandler {
      * @return true, if the preconditions are met; false otherwise
      * @since 5601
      */
-    public static boolean checkRequiredPluginsPreconditions(Component parent, Collection<PluginInformation> plugins, PluginInformation plugin, boolean local) {
+    public static boolean checkRequiredPluginsPreconditions(Component parent, Collection<PluginInformation> plugins,
+            PluginInformation plugin, boolean local) {
 
         String requires = local ? plugin.localrequires : plugin.requires;
 
@@ -1172,7 +1173,8 @@ public final class PluginHandler {
             String pluginName = updatedPlugin.getName().substring(0, updatedPlugin.getName().length() - 8);
             if (plugin.exists() && !plugin.delete() && dowarn) {
                 Main.warn(tr("Failed to delete outdated plugin ''{0}''.", plugin.toString()));
-                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
+                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.",
+                        pluginName));
                 continue;
             }
             try {
@@ -1180,14 +1182,17 @@ public final class PluginHandler {
                 new JarFile(updatedPlugin).close();
             } catch (Exception e) {
                 if (dowarn) {
-                    Main.warn(tr("Failed to install plugin ''{0}'' from temporary download file ''{1}''. {2}", plugin.toString(), updatedPlugin.toString(), e.getLocalizedMessage()));
+                    Main.warn(tr("Failed to install plugin ''{0}'' from temporary download file ''{1}''. {2}",
+                            plugin.toString(), updatedPlugin.toString(), e.getLocalizedMessage()));
                 }
                 continue;
             }
             // Install plugin
             if (!updatedPlugin.renameTo(plugin) && dowarn) {
-                Main.warn(tr("Failed to install plugin ''{0}'' from temporary download file ''{1}''. Renaming failed.", plugin.toString(), updatedPlugin.toString()));
-                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
+                Main.warn(tr("Failed to install plugin ''{0}'' from temporary download file ''{1}''. Renaming failed.",
+                        plugin.toString(), updatedPlugin.toString()));
+                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.",
+                        pluginName));
             }
         }
     }

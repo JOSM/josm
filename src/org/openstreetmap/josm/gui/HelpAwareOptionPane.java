@@ -334,7 +334,8 @@ public final class HelpAwareOptionPane {
      * @param messageType the message type (see {@link JOptionPane})
      * @param helpTopic the help topic. Can be null.
      */
-    public static void showMessageDialogInEDT(final Component parentComponent, final Object msg, final String title, final int messageType, final String helpTopic)  {
+    public static void showMessageDialogInEDT(final Component parentComponent, final Object msg, final String title,
+            final int messageType, final String helpTopic)  {
         GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {

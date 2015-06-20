@@ -100,7 +100,8 @@ public class EditableList extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (sourcesList.getSelectedIndex() == -1) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."), tr("Information"), JOptionPane.QUESTION_MESSAGE);
+                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."), tr("Information"),
+                            JOptionPane.QUESTION_MESSAGE);
                 } else {
                     ((DefaultListModel<String>) sourcesList.getModel()).remove(sourcesList.getSelectedIndex());
                 }

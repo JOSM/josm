@@ -147,13 +147,14 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     abstract static class FixCommand {
         /**
-         * Creates the fixing {@link Command} for the given primitive. The {@code matchingSelector} is used to
-         * evaluate placeholders (cf. {@link org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck#insertArguments(Selector, String, OsmPrimitive)}).
+         * Creates the fixing {@link Command} for the given primitive. The {@code matchingSelector} is used to evaluate placeholders
+         * (cf. {@link org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck#insertArguments(Selector, String, OsmPrimitive)}).
          */
         abstract Command createCommand(final OsmPrimitive p, final Selector matchingSelector);
 
         private static void checkObject(final Object obj) {
-            CheckParameterUtil.ensureThat(obj instanceof Expression || obj instanceof String, "instance of Exception or String expected, but got " + obj);
+            CheckParameterUtil.ensureThat(obj instanceof Expression || obj instanceof String,
+                    "instance of Exception or String expected, but got " + obj);
         }
 
         /**

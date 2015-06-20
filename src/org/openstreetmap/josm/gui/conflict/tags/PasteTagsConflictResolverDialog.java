@@ -160,7 +160,8 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
      * @param sourceStatistics histogram of tag source, number of primitives of each type in the source
      * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
      */
-    public void populate(TagCollection tagsForAllPrimitives, Map<OsmPrimitiveType, Integer> sourceStatistics, Map<OsmPrimitiveType,Integer> targetStatistics) {
+    public void populate(TagCollection tagsForAllPrimitives, Map<OsmPrimitiveType, Integer> sourceStatistics,
+            Map<OsmPrimitiveType,Integer> targetStatistics) {
         mode = Mode.RESOLVING_ONE_TAGCOLLECTION_ONLY;
         tagsForAllPrimitives = tagsForAllPrimitives == null? new TagCollection() : tagsForAllPrimitives;
         sourceStatistics = sourceStatistics == null ? new HashMap<OsmPrimitiveType, Integer>() :sourceStatistics;
@@ -202,7 +203,8 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
      * @param sourceStatistics histogram of tag source, number of primitives of each type in the source
      * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
      */
-    public void populate(TagCollection tagsForNodes, TagCollection tagsForWays, TagCollection tagsForRelations, Map<OsmPrimitiveType,Integer> sourceStatistics, Map<OsmPrimitiveType, Integer> targetStatistics) {
+    public void populate(TagCollection tagsForNodes, TagCollection tagsForWays, TagCollection tagsForRelations,
+            Map<OsmPrimitiveType,Integer> sourceStatistics, Map<OsmPrimitiveType, Integer> targetStatistics) {
         tagsForNodes = (tagsForNodes == null) ? new TagCollection() : tagsForNodes;
         tagsForWays = (tagsForWays == null) ? new TagCollection() : tagsForWays;
         tagsForRelations = (tagsForRelations == null) ? new TagCollection() : tagsForRelations;

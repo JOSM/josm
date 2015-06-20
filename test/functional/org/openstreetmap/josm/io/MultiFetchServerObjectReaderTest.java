@@ -113,7 +113,7 @@ public class MultiFetchServerObjectReaderTest {
      * creates the dataset on the server.
      *
      * @param ds the data set
-     * @throws OsmTransferException
+     * @throws OsmTransferException if something goes wrong
      */
     public static void createDataSetOnServer(DataSet ds) throws OsmTransferException {
         logger.info("creating data set on the server ...");
@@ -124,7 +124,8 @@ public class MultiFetchServerObjectReaderTest {
 
         OsmServerWriter writer = new OsmServerWriter();
         Changeset cs = new Changeset();
-        writer.uploadOsm(new UploadStrategySpecification().setStrategy(UploadStrategy.SINGLE_REQUEST_STRATEGY), primitives,cs,NullProgressMonitor.INSTANCE);
+        writer.uploadOsm(new UploadStrategySpecification().setStrategy(UploadStrategy.SINGLE_REQUEST_STRATEGY),
+                primitives, cs, NullProgressMonitor.INSTANCE);
         OsmApi.getOsmApi().closeChangeset(cs, NullProgressMonitor.INSTANCE);
     }
 
@@ -134,10 +135,10 @@ public class MultiFetchServerObjectReaderTest {
         JOSMFixture.createFunctionalTestFixture().init();
 
         // don't use atomic upload, the test API server can't cope with large diff uploads
-        //
         Main.pref.put("osm-server.atomic-upload", false);
 
-        File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
+        File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"),
+                MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
 
         String p = System.getProperties().getProperty("useCachedDataset");
         if (p != null && Boolean.parseBoolean(p.trim().toLowerCase())) {
@@ -145,10 +146,10 @@ public class MultiFetchServerObjectReaderTest {
             return;
         }
 
-        logger.info(MessageFormat.format("property ''{0}'' not set to true, creating test dataset on the server. property is ''{1}''", "useCachedDataset", p));
+        logger.info(MessageFormat.format(
+                "property ''{0}'' not set to true, creating test dataset on the server. property is ''{1}''", "useCachedDataset", p));
 
         // build and upload the test data set
-        //
         logger.info("creating test data set ....");
         testDataSet = buildTestDataSet();
         logger.info("uploading test data set ...");

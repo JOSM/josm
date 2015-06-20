@@ -132,7 +132,8 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        final String types = Utils.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()), new Utils.Function<ImageryInfo.ImageryType, String>() {
+        final String types = Utils.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()),
+                new Utils.Function<ImageryInfo.ImageryType, String>() {
             @Override
             public String apply(ImageryInfo.ImageryType x) {
                 return x.getTypeString();

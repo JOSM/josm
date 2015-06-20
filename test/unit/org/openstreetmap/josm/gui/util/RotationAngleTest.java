@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
 import static org.hamcrest.CoreMatchers.is;

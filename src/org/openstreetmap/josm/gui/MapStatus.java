@@ -227,12 +227,109 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     }
 
     /**
-     * The collector class that waits for notification and then update
-     * the display objects.
+     * The collector class that waits for notification and then update the display objects.
      *
      * @author imi
      */
     private final class Collector implements Runnable {
+        private final class CollectorWorker implements Runnable {
+            private final MouseState ms;
+
+            private CollectorWorker(MouseState ms) {
+                this.ms = ms;
+            }
+
+            @Override
+            public void run() {
+                // Freeze display when holding down CTRL
+                if ((ms.modifiers & MouseEvent.CTRL_DOWN_MASK) != 0) {
+                    // update the information popup's labels though, because the selection might have changed from the outside
+                    popupUpdateLabels();
+                    return;
+                }
+
+                // This try/catch is a hack to stop the flooding bug reports about this.
+                // The exception needed to handle with in the first place, means that this
+                // access to the data need to be restarted, if the main thread modifies the data.
+                DataSet ds = null;
+                // The popup != null check is required because a left-click produces several events as well,
+                // which would make this variable true. Of course we only want the popup to show
+                // if the middle mouse button has been pressed in the first place
+                boolean mouseNotMoved = oldMousePos != null
+                        && oldMousePos.equals(ms.mousePos);
+                boolean isAtOldPosition = mouseNotMoved && popup != null;
+                boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
+                try {
+                    ds = mv.getCurrentDataSet();
+                    if (ds != null) {
+                        // This is not perfect, if current dataset was changed during execution, the lock would be useless
+                        if(isAtOldPosition && middleMouseDown) {
+                            // Write lock is necessary when selecting in popupCycleSelection
+                            // locks can not be upgraded -> if do read lock here and write lock later
+                            // (in OsmPrimitive.updateFlags) then always occurs deadlock (#5814)
+                            ds.beginUpdate();
+                        } else {
+                            ds.getReadLock().lock();
+                        }
+                    }
+
+                    // Set the text label in the bottom status bar
+                    // "if mouse moved only" was added to stop heap growing
+                    if (!mouseNotMoved) {
+                        statusBarElementUpdate(ms);
+                    }
+
+                    // Popup Information
+                    // display them if the middle mouse button is pressed and keep them until the mouse is moved
+                    if (middleMouseDown || isAtOldPosition) {
+                        Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos, OsmPrimitive.isUsablePredicate);
+
+                        final JPanel c = new JPanel(new GridBagLayout());
+                        final JLabel lbl = new JLabel(
+                                "<html>"+tr("Middle click again to cycle through.<br>"+
+                                        "Hold CTRL to select directly from this list with the mouse.<hr>")+"</html>",
+                                        null,
+                                        JLabel.HORIZONTAL
+                                );
+                        lbl.setHorizontalAlignment(JLabel.LEFT);
+                        c.add(lbl, GBC.eol().insets(2, 0, 2, 0));
+
+                        // Only cycle if the mouse has not been moved and the middle mouse button has been pressed at least
+                        // twice (the reason for this is the popup != null check for isAtOldPosition, see above.
+                        // This is a nice side effect though, because it does not change selection of the first middle click)
+                        if (isAtOldPosition && middleMouseDown) {
+                            // Hand down mouse modifiers so the SHIFT mod can be handled correctly (see function)
+                            popupCycleSelection(osms, ms.modifiers);
+                        }
+
+                        // These labels may need to be updated from the outside so collect them
+                        List<JLabel> lbls = new ArrayList<>(osms.size());
+                        for (final OsmPrimitive osm : osms) {
+                            JLabel l = popupBuildPrimitiveLabels(osm);
+                            lbls.add(l);
+                            c.add(l, GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 2));
+                        }
+
+                        popupShowPopup(popupCreatePopup(c, ms), lbls);
+                    } else {
+                        popupHidePopup();
+                    }
+
+                    oldMousePos = ms.mousePos;
+                } catch (ConcurrentModificationException x) {
+                    Main.warn(x);
+                } finally {
+                    if (ds != null) {
+                        if(isAtOldPosition && middleMouseDown) {
+                            ds.endUpdate();
+                        } else {
+                            ds.getReadLock().unlock();
+                        }
+                    }
+                }
+            }
+        }
+
         /**
          * the mouse position of the previous iteration. This is used to show
          * the popup until the cursor is moved.
@@ -284,101 +381,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                     }
 
                     try {
-                        EventQueue.invokeAndWait(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                // Freeze display when holding down CTRL
-                                if ((ms.modifiers & MouseEvent.CTRL_DOWN_MASK) != 0) {
-                                    // update the information popup's labels though, because
-                                    // the selection might have changed from the outside
-                                    popupUpdateLabels();
-                                    return;
-                                }
-
-                                // This try/catch is a hack to stop the flooding bug reports about this.
-                                // The exception needed to handle with in the first place, means that this
-                                // access to the data need to be restarted, if the main thread modifies
-                                // the data.
-                                DataSet ds = null;
-                                // The popup != null check is required because a left-click
-                                // produces several events as well, which would make this
-                                // variable true. Of course we only want the popup to show
-                                // if the middle mouse button has been pressed in the first place
-                                boolean mouseNotMoved = oldMousePos != null
-                                        && oldMousePos.equals(ms.mousePos);
-                                boolean isAtOldPosition = mouseNotMoved && popup != null;
-                                boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
-                                try {
-                                    ds = mv.getCurrentDataSet();
-                                    if (ds != null) {
-                                        // This is not perfect, if current dataset was changed during execution, the lock would be useless
-                                        if(isAtOldPosition && middleMouseDown) {
-                                            // Write lock is necessary when selecting in popupCycleSelection
-                                            // locks can not be upgraded -> if do read lock here and write lock later (in OsmPrimitive.updateFlags)
-                                            // then always occurs deadlock (#5814)
-                                            ds.beginUpdate();
-                                        } else {
-                                            ds.getReadLock().lock();
-                                        }
-                                    }
-
-                                    // Set the text label in the bottom status bar
-                                    // "if mouse moved only" was added to stop heap growing
-                                    if (!mouseNotMoved) {
-                                        statusBarElementUpdate(ms);
-                                    }
-
-                                    // Popup Information
-                                    // display them if the middle mouse button is pressed and keep them until the mouse is moved
-                                    if (middleMouseDown || isAtOldPosition) {
-                                        Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos, OsmPrimitive.isUsablePredicate);
-
-                                        final JPanel c = new JPanel(new GridBagLayout());
-                                        final JLabel lbl = new JLabel(
-                                                "<html>"+tr("Middle click again to cycle through.<br>"+
-                                                        "Hold CTRL to select directly from this list with the mouse.<hr>")+"</html>",
-                                                        null,
-                                                        JLabel.HORIZONTAL
-                                                );
-                                        lbl.setHorizontalAlignment(JLabel.LEFT);
-                                        c.add(lbl, GBC.eol().insets(2, 0, 2, 0));
-
-                                        // Only cycle if the mouse has not been moved and the middle mouse button has been pressed at least
-                                        // twice (the reason for this is the popup != null check for isAtOldPosition, see above.
-                                        // This is a nice side effect though, because it does not change selection of the first middle click)
-                                        if (isAtOldPosition && middleMouseDown) {
-                                            // Hand down mouse modifiers so the SHIFT mod can be handled correctly (see function)
-                                            popupCycleSelection(osms, ms.modifiers);
-                                        }
-
-                                        // These labels may need to be updated from the outside so collect them
-                                        List<JLabel> lbls = new ArrayList<>(osms.size());
-                                        for (final OsmPrimitive osm : osms) {
-                                            JLabel l = popupBuildPrimitiveLabels(osm);
-                                            lbls.add(l);
-                                            c.add(l, GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 2));
-                                        }
-
-                                        popupShowPopup(popupCreatePopup(c, ms), lbls);
-                                    } else {
-                                        popupHidePopup();
-                                    }
-
-                                    oldMousePos = ms.mousePos;
-                                } catch (ConcurrentModificationException x) {
-                                    Main.warn(x);
-                                } finally {
-                                    if (ds != null) {
-                                        if(isAtOldPosition && middleMouseDown) {
-                                            ds.endUpdate();
-                                        } else {
-                                            ds.getReadLock().unlock();
-                                        }
-                                    }
-                                }
-                            }
-                        });
+                        EventQueue.invokeAndWait(new CollectorWorker(ms));
                     } catch (InterruptedException e) {
                         // Occurs frequently during JOSM shutdown, log set to trace only
                         Main.trace("InterruptedException in "+MapStatus.class.getSimpleName());

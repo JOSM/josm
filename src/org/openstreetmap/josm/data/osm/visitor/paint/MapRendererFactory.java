@@ -127,7 +127,8 @@ public final class MapRendererFactory {
             Main.error(tr("Activating the standard map renderer instead."));
             activateDefault();
         } else if (!AbstractMapRenderer.class.isAssignableFrom(c)) {
-            Main.error(tr("Can''t activate map renderer class ''{0}'', because it isn''t a subclass of ''{1}''.", rendererClassName, AbstractMapRenderer.class.getName()));
+            Main.error(tr("Can''t activate map renderer class ''{0}'', because it isn''t a subclass of ''{1}''.",
+                    rendererClassName, AbstractMapRenderer.class.getName()));
             Main.error(tr("Activating the standard map renderer instead."));
             activateDefault();
         } else {
@@ -259,7 +260,8 @@ public final class MapRendererFactory {
      * @throws MapRendererFactoryException if creating an instance fails
      * @see AbstractMapRenderer#AbstractMapRenderer(Graphics2D, NavigatableComponent, boolean)
      */
-    public AbstractMapRenderer createActiveRenderer(Graphics2D g, NavigatableComponent viewport, boolean isInactiveMode) throws MapRendererFactoryException{
+    public AbstractMapRenderer createActiveRenderer(Graphics2D g, NavigatableComponent viewport, boolean isInactiveMode)
+            throws MapRendererFactoryException{
         try {
             Constructor<?> c = activeRenderer.getConstructor(new Class<?>[]{Graphics2D.class, NavigatableComponent.class, boolean.class});
             return AbstractMapRenderer.class.cast(c.newInstance(g, viewport, isInactiveMode));

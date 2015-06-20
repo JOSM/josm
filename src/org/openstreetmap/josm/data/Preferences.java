@@ -870,10 +870,12 @@ public class Preferences {
         File prefDir = getPreferencesDirectory();
         if (prefDir.exists()) {
             if(!prefDir.isDirectory()) {
-                Main.warn(tr("Failed to initialize preferences. Preference directory ''{0}'' is not a directory.", prefDir.getAbsoluteFile()));
+                Main.warn(tr("Failed to initialize preferences. Preference directory ''{0}'' is not a directory.",
+                        prefDir.getAbsoluteFile()));
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("<html>Failed to initialize preferences.<br>Preference directory ''{0}'' is not a directory.</html>", prefDir.getAbsoluteFile()),
+                        tr("<html>Failed to initialize preferences.<br>Preference directory ''{0}'' is not a directory.</html>",
+                                prefDir.getAbsoluteFile()),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
@@ -881,10 +883,12 @@ public class Preferences {
             }
         } else {
             if (!prefDir.mkdirs()) {
-                Main.warn(tr("Failed to initialize preferences. Failed to create missing preference directory: {0}", prefDir.getAbsoluteFile()));
+                Main.warn(tr("Failed to initialize preferences. Failed to create missing preference directory: {0}",
+                        prefDir.getAbsoluteFile()));
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("<html>Failed to initialize preferences.<br>Failed to create missing preference directory: {0}</html>",prefDir.getAbsoluteFile()),
+                        tr("<html>Failed to initialize preferences.<br>Failed to create missing preference directory: {0}</html>",
+                                prefDir.getAbsoluteFile()),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
@@ -907,7 +911,8 @@ public class Preferences {
             Main.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("<html>Failed to initialize preferences.<br>Failed to reset preference file to default: {0}</html>",getPreferenceFile().getAbsoluteFile()),
+                    tr("<html>Failed to initialize preferences.<br>Failed to reset preference file to default: {0}</html>",
+                            getPreferenceFile().getAbsoluteFile()),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
@@ -920,7 +925,8 @@ public class Preferences {
             File backupFile = new File(prefDir,"preferences.xml.bak");
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("<html>Preferences file had errors.<br> Making backup of old one to <br>{0}<br> and creating a new default preference file.</html>", backupFile.getAbsoluteFile()),
+                    tr("<html>Preferences file had errors.<br> Making backup of old one to <br>{0}<br> and creating a new default preference file.</html>",
+                            backupFile.getAbsoluteFile()),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
@@ -1645,7 +1651,8 @@ public class Preferences {
     }
 
     protected void throwException(String msg) {
-        throw new RuntimeException(msg + tr(" (at line {0}, column {1})", parser.getLocation().getLineNumber(), parser.getLocation().getColumnNumber()));
+        throw new RuntimeException(msg + tr(" (at line {0}, column {1})",
+                parser.getLocation().getLineNumber(), parser.getLocation().getColumnNumber()));
     }
 
     private class SettingToXml implements SettingVisitor {
@@ -1710,7 +1717,8 @@ public class Preferences {
             for (Map<String, String> struct : setting.getValue()) {
                 b.append("    <map>\n");
                 for (Entry<String, String> e : struct.entrySet()) {
-                    b.append("      <tag key='").append(XmlWriter.encode(e.getKey())).append("' value='").append(XmlWriter.encode(e.getValue())).append("'/>\n");
+                    b.append("      <tag key='").append(XmlWriter.encode(e.getKey()))
+                     .append("' value='").append(XmlWriter.encode(e.getValue())).append("'/>\n");
                 }
                 b.append("    </map>\n");
             }

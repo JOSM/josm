@@ -85,7 +85,8 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.gridx = 3;
         gc.gridy = 0;
         JLabel lblMergedVersion = new JLabel(tr("Merged version"));
-        lblMergedVersion.setToolTipText(tr("Properties in the merged element. They will replace properties in my elements when merge decisions are applied."));
+        lblMergedVersion.setToolTipText(
+                tr("Properties in the merged element. They will replace properties in my elements when merge decisions are applied."));
         add(lblMergedVersion, gc);
 
         gc.gridx = 5;

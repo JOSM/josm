@@ -123,7 +123,8 @@ public class PurgeCommand extends Command {
             PrimitiveData data = makeIncompleteDataByPrimId.get(osm);
             if (data != null) {
                 if (ds.getPrimitiveById(osm) != osm)
-                    throw new AssertionError(String.format("Primitive %s has been made incomplete when purging, but it cannot be found on undo.", osm));
+                    throw new AssertionError(
+                            String.format("Primitive %s has been made incomplete when purging, but it cannot be found on undo.", osm));
                 osm.load(data);
             } else {
                 if (ds.getPrimitiveById(osm) != null)

@@ -35,7 +35,8 @@ public class TemplateEngineTest {
     @Test
     public void testVariable() throws ParseError {
         TemplateParser parser = new TemplateParser("abc{var}\\{ef\\$\\{g");
-        ReflectionAssert.assertReflectionEquals(CompoundTemplateEntry.fromArray(new StaticText("abc"), new Variable("var"), new StaticText("{ef${g")), parser.parse());
+        ReflectionAssert.assertReflectionEquals(CompoundTemplateEntry.fromArray(new StaticText("abc"),
+                new Variable("var"), new StaticText("{ef${g")), parser.parse());
     }
 
     @Test

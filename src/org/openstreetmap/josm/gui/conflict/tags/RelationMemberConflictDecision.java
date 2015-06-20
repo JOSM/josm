@@ -21,7 +21,8 @@ public class RelationMemberConflictDecision {
         CheckParameterUtil.ensureParameterNotNull(relation, "relation");
         RelationMember member = relation.getMember(pos);
         if (member == null)
-            throw new IndexOutOfBoundsException(tr("Position {0} is out of range. Current number of members is {1}.", pos, relation.getMembersCount()));
+            throw new IndexOutOfBoundsException(
+                    tr("Position {0} is out of range. Current number of members is {1}.", pos, relation.getMembersCount()));
         this.relation = relation;
         this.pos  = pos;
         this.originalPrimitive = member.getMember();

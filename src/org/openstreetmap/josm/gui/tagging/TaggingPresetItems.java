@@ -1106,12 +1106,14 @@ public final class TaggingPresetItems {
             String[] short_descriptions_array = descr == null ? null : splitEscaped(delChar, descr);
 
             if (display_array.length != value_array.length) {
-                Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''", key, text));
+                Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''",
+                                key, text));
                 display_array = value_array;
             }
 
             if (short_descriptions_array != null && short_descriptions_array.length != value_array.length) {
-                Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''", key, text));
+                Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''",
+                                key, text));
                 short_descriptions_array = null;
             }
 
@@ -1199,15 +1201,11 @@ public final class TaggingPresetItems {
 
         private static final ListCellRenderer<PresetListEntry> RENDERER = new ListCellRenderer<PresetListEntry>() {
 
-            private JLabel lbl = new JLabel();
+            private final JLabel lbl = new JLabel();
 
             @Override
-            public Component getListCellRendererComponent(
-                    JList<? extends PresetListEntry> list,
-                    PresetListEntry item,
-                    int index,
-                    boolean isSelected,
-                    boolean cellHasFocus) {
+            public Component getListCellRendererComponent(JList<? extends PresetListEntry> list, PresetListEntry item, int index,
+                    boolean isSelected, boolean cellHasFocus) {
 
                 // Only return cached size, item is not shown
                 if (!list.isShowing() && item.prefferedWidth != -1 && item.prefferedHeight != -1) {
@@ -1220,7 +1218,6 @@ public final class TaggingPresetItems {
                 }
 
                 lbl.setPreferredSize(null);
-
 
                 if (isSelected) {
                     lbl.setBackground(list.getSelectionBackground());

@@ -222,7 +222,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * @param defShow if the dialog should be shown by default, if there is no preference
      * @param prefClass the preferences settings class, or null if not applicable
      */
-    public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow, Class<? extends PreferenceSetting> prefClass) {
+    public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow,
+            Class<? extends PreferenceSetting> prefClass) {
         super(new BorderLayout());
         this.preferencePrefix = iconName;
         this.name = name;
@@ -866,7 +867,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     @SafeVarargs
-    protected final Component createLayout(Component data, boolean scroll, Collection<SideButton> firstButtons, Collection<SideButton>... nextButtons) {
+    protected final Component createLayout(Component data, boolean scroll, Collection<SideButton> firstButtons,
+            Collection<SideButton>... nextButtons) {
         if (scroll) {
             data = new JScrollPane(data);
         }

@@ -39,7 +39,8 @@ public abstract class ToggleAction extends JosmAction {
      * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public ToggleAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar, String toolbarId, boolean installAdapters) {
+    public ToggleAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar,
+            String toolbarId, boolean installAdapters) {
         super(name, icon, tooltip, shortcut, registerInToolbar, toolbarId, installAdapters);
         // It is required to set the SELECTED_KEY to a non-null value in order to let Swing components update it
         setSelected(false);
@@ -114,7 +115,8 @@ public abstract class ToggleAction extends JosmAction {
 
     /**
      * Toggles the selcted action state, if needed according to the ActionEvent that trigerred the action.
-     * This method will do nothing if the action event comes from a Swing component supporting the SELECTED_KEY property because the component already set the selected state.
+     * This method will do nothing if the action event comes from a Swing component supporting the SELECTED_KEY property because
+     * the component already set the selected state.
      * This method needs to be called especially if the action is associated with a keyboard shortcut to ensure correct selected state.
      * @see <a href="https://weblogs.java.net/blog/zixle/archive/2005/11/changes_to_acti.html">Changes to Actions in 1.6</a>
      * @see <a href="http://docs.oracle.com/javase/6/docs/api/javax/swing/Action.html">Interface Action</a>

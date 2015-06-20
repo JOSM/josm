@@ -46,7 +46,8 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Ch
     }
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends Changeset> list, Changeset cs, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends Changeset> list, Changeset cs, int index, boolean isSelected,
+            boolean cellHasFocus) {
         if (isSelected) {
             setForeground(UIManager.getColor("List.selectionForeground"));
             setBackground(UIManager.getColor("List.selectionBackground"));

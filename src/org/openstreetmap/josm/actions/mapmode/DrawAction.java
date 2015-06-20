@@ -625,7 +625,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         removeHighlighting();
     }
 
-    private void insertNodeIntoAllNearbySegments(List<WaySegment> wss, Node n, Collection<OsmPrimitive> newSelection, Collection<Command> cmds, List<Way> replacedWays, List<Way> reuseWays) {
+    private void insertNodeIntoAllNearbySegments(List<WaySegment> wss, Node n, Collection<OsmPrimitive> newSelection,
+            Collection<Command> cmds, List<Way> replacedWays, List<Way> reuseWays) {
         Map<Way, List<Integer>> insertPoints = new HashMap<>();
         for (WaySegment ws : wss) {
             List<Integer> is;
@@ -1292,6 +1293,80 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     private class SnapHelper {
+        private final class AnglePopupMenu extends JPopupMenu {
+
+            private final JCheckBoxMenuItem repeatedCb = new JCheckBoxMenuItem(
+                    new AbstractAction(tr("Toggle snapping by {0}", getShortcut().getKeyText())) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    Main.pref.put("draw.anglesnap.toggleOnRepeatedA", sel);
+                    init();
+                }
+            });
+
+            private final JCheckBoxMenuItem helperCb = new JCheckBoxMenuItem(
+                    new AbstractAction(tr("Show helper geometry")) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    Main.pref.put("draw.anglesnap.drawConstructionGeometry", sel);
+                    Main.pref.put("draw.anglesnap.drawProjectedPoint", sel);
+                    Main.pref.put("draw.anglesnap.showAngle", sel);
+                    init();
+                    enableSnapping();
+                }
+            });
+
+            private final JCheckBoxMenuItem projectionCb = new JCheckBoxMenuItem(
+                    new AbstractAction(tr("Snap to node projections")) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
+                    Main.pref.put("draw.anglesnap.projectionsnap", sel);
+                    init();
+                    enableSnapping();
+                }
+            });
+
+            private AnglePopupMenu() {
+                helperCb.setState(Main.pref.getBoolean("draw.anglesnap.drawConstructionGeometry",true));
+                projectionCb.setState(Main.pref.getBoolean("draw.anglesnap.projectionsnapgvff",true));
+                repeatedCb.setState(Main.pref.getBoolean("draw.anglesnap.toggleOnRepeatedA",true));
+                add(repeatedCb);
+                add(helperCb);
+                add(projectionCb);
+                add(new AbstractAction(tr("Disable")) {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        saveAngles("180");
+                        init();
+                        enableSnapping();
+                    }
+                });
+                add(new AbstractAction(tr("0,90,...")) {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        saveAngles("0","90","180");
+                        init();
+                        enableSnapping();
+                    }
+                });
+                add(new AbstractAction(tr("0,45,90,...")) {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        saveAngles("0","45","90","135","180");
+                        init();
+                        enableSnapping();
+                    }
+                });
+                add(new AbstractAction(tr("0,30,45,60,90,...")) {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        saveAngles("0","30","45","60","90","120","135","150","180");
+                        init();
+                        enableSnapping();
+                    }
+                });
+            }
+        }
+
         private boolean snapOn; // snapping is turned on
 
         private boolean active; // snapping is active for current mouse position
@@ -1329,6 +1404,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         private Stroke highlightStroke;
 
         private JCheckBoxMenuItem checkBox;
+
+        private MouseListener anglePopupListener = new PopupMenuLauncher(new AnglePopupMenu()) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    toggleSnapping();
+                    updateStatusLine();
+                }
+            }
+        };
 
         public void init() {
             snapOn=false;
@@ -1370,11 +1456,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             Main.pref.putCollection("draw.anglesnap.angles", Arrays.asList(angles));
         }
 
-        public  void setMenuCheckBox(JCheckBoxMenuItem checkBox) {
+        public void setMenuCheckBox(JCheckBoxMenuItem checkBox) {
             this.checkBox = checkBox;
         }
 
-        public  void drawIfNeeded(Graphics2D g2, MapView mv) {
+        public void drawIfNeeded(Graphics2D g2, MapView mv) {
             if (!snapOn || !active)
                 return;
             Point p1=mv.getPoint(getCurrentBaseNode());
@@ -1526,7 +1612,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         }
 
-        public  EastNorth getSnapPoint(EastNorth p) {
+        public EastNorth getSnapPoint(EastNorth p) {
             if (!active)
                 return p;
             double de=p.east()-e0;
@@ -1572,7 +1658,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
             return projected = new EastNorth(e0+l*pe, n0+l*pn);
         }
-
 
         public void noSnapNow() {
             active=false;
@@ -1633,7 +1718,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         }
 
-
         public  void unsetFixedMode() {
             fixed=false;
             absoluteFix=false;
@@ -1679,85 +1763,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 toggleSnapping();
             }
         }
-
-        private MouseListener anglePopupListener = new PopupMenuLauncher(new JPopupMenu() {
-            private JCheckBoxMenuItem repeatedCb = new JCheckBoxMenuItem(
-                    new AbstractAction(tr("Toggle snapping by {0}", getShortcut().getKeyText())) {
-                @Override public void actionPerformed(ActionEvent e) {
-                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
-                    Main.pref.put("draw.anglesnap.toggleOnRepeatedA", sel);
-                    init();
-                }
-            });
-            private JCheckBoxMenuItem helperCb = new JCheckBoxMenuItem(
-                    new AbstractAction(tr("Show helper geometry")) {
-                @Override public void actionPerformed(ActionEvent e) {
-                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
-                    Main.pref.put("draw.anglesnap.drawConstructionGeometry", sel);
-                    Main.pref.put("draw.anglesnap.drawProjectedPoint", sel);
-                    Main.pref.put("draw.anglesnap.showAngle", sel);
-                    init();
-                    enableSnapping();
-                }
-            });
-            private JCheckBoxMenuItem projectionCb = new JCheckBoxMenuItem(
-                    new AbstractAction(tr("Snap to node projections")) {
-                @Override public void actionPerformed(ActionEvent e) {
-                    boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
-                    Main.pref.put("draw.anglesnap.projectionsnap", sel);
-                    init();
-                    enableSnapping();
-                }
-            });
-            {
-                helperCb.setState(Main.pref.getBoolean("draw.anglesnap.drawConstructionGeometry",true));
-                projectionCb.setState(Main.pref.getBoolean("draw.anglesnap.projectionsnapgvff",true));
-                repeatedCb.setState(Main.pref.getBoolean("draw.anglesnap.toggleOnRepeatedA",true));
-                add(repeatedCb);
-                add(helperCb);
-                add(projectionCb);
-                add(new AbstractAction(tr("Disable")) {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("180");
-                        init();
-                        enableSnapping();
-                    }
-                });
-                add(new AbstractAction(tr("0,90,...")) {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("0","90","180");
-                        init();
-                        enableSnapping();
-                    }
-                });
-                add(new AbstractAction(tr("0,45,90,...")) {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("0","45","90","135","180");
-                        init();
-                        enableSnapping();
-                    }
-                });
-                add(new AbstractAction(tr("0,30,45,60,90,...")) {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("0","30","45","60","90","120","135","150","180");
-                        init();
-                        enableSnapping();
-                    }
-                });
-            }
-        }) {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    toggleSnapping();
-                    updateStatusLine();
-                }
-            }
-        };
     }
 
     private class SnapChangeAction extends JosmAction {
+        /**
+         * Constructs a new {@code SnapChangeAction}.
+         */
         public SnapChangeAction() {
             super(tr("Angle snapping"), /* ICON() */ "anglesnap",
                     tr("Switch angle snapping mode while drawing"), null, false);

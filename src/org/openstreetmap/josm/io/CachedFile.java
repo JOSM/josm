@@ -460,7 +460,8 @@ public class CachedFile {
      * @throws OfflineAccessException if resource is accessed in offline mode, in any protocol
      * @since 6867
      */
-    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept, Long ifModifiedSince) throws MalformedURLException, IOException {
+    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept, Long ifModifiedSince)
+            throws MalformedURLException, IOException {
         CheckParameterUtil.ensureParameterNotNull(downloadUrl, "downloadUrl");
         String downloadString = downloadUrl.toExternalForm();
 

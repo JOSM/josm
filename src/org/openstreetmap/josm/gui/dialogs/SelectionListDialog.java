@@ -470,7 +470,8 @@ public class SelectionListDialog extends ToggleDialog  {
      * JOSM selection.
      *
      */
-    private static class SelectionListModel extends AbstractListModel<OsmPrimitive> implements EditLayerChangeListener, SelectionChangedListener, DataSetListener{
+    private static class SelectionListModel extends AbstractListModel<OsmPrimitive>
+    implements EditLayerChangeListener, SelectionChangedListener, DataSetListener {
 
         private static final int SELECTION_HISTORY_SIZE = 10;
 

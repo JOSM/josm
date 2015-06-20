@@ -239,6 +239,9 @@ public class SplashScreen extends JFrame implements ChangeListener {
             return latestSubtask;
         }
 
+        /**
+         * @deprecated Use {@link #finishTask(String)} instead.
+         */
         @Override
         @Deprecated
         public void finishTask() {

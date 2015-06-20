@@ -56,7 +56,8 @@ public class MultiValueResolutionDecision {
         if (tags.isEmpty())
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' must not be empty.", "tags"));
         if (tags.getKeys().size() != 1)
-            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' with tags for exactly one key expected. Got {1}.", "tags", tags.getKeys().size()));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' with tags for exactly one key expected. Got {1}.",
+                    "tags", tags.getKeys().size()));
         this.tags = tags;
         autoDecide();
     }

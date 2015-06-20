@@ -88,7 +88,8 @@ public class SessionSaveAsAction extends DiskAccessAction {
         if (zipRequired) {
             fc = createAndOpenFileChooser(false, false, tr("Save session"), joz, JFileChooser.FILES_ONLY, "lastDirectory");
         } else {
-            fc = createAndOpenFileChooser(false, false, tr("Save session"), Arrays.asList(new FileFilter[]{jos, joz}), jos, JFileChooser.FILES_ONLY, "lastDirectory");
+            fc = createAndOpenFileChooser(false, false, tr("Save session"), Arrays.asList(new FileFilter[]{jos, joz}), jos,
+                    JFileChooser.FILES_ONLY, "lastDirectory");
         }
 
         if (fc == null)

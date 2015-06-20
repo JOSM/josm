@@ -907,7 +907,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                             tr("Conflicts"),
                             new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
                     );
-                    dialog.setContent(tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
+                    dialog.setContent(
+                            tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
                     dialog.setButtonIcons(new String[] {"save", "cancel"});
                     return dialog.showDialog().getValue();
                 }

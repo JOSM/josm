@@ -32,7 +32,8 @@ public class SevenParameterDatum extends AbstractDatum {
      * @param rz rotational parameter in seconds of arc
      * @param s scale change in parts per million
      */
-    public SevenParameterDatum(String name, String proj4Id, Ellipsoid ellps, double dx, double dy, double dz, double rx, double ry, double rz, double s) {
+    public SevenParameterDatum(String name, String proj4Id, Ellipsoid ellps, double dx, double dy, double dz,
+            double rx, double ry, double rz, double s) {
         super(name, proj4Id, ellps);
         this.dx = dx;
         this.dy = dy;

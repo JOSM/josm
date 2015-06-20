@@ -101,11 +101,13 @@ public class SourceButton extends JComponent {
                 int radioButtonSize = 10;
 
                 g.setColor(new Color(0, 0, 139, 179));
-                g.fillRoundRect(0, 0, barWidth + shrinkImage.getIconWidth(), sources.length * LAYER_HEIGHT + TOP_PADDING + BOTTOM_PADDING, 10, 10);
+                g.fillRoundRect(0, 0, barWidth + shrinkImage.getIconWidth(),
+                        sources.length * LAYER_HEIGHT + TOP_PADDING + BOTTOM_PADDING, 10, 10);
                 for (int i=0; i<sources.length; i++) {
                     g.setColor(Color.WHITE);
                     g.fillOval(LEFT_PADDING, TOP_PADDING + i * LAYER_HEIGHT + 6, radioButtonSize, radioButtonSize);
-                    g.drawString(sources[i].getName(), LEFT_PADDING + radioButtonSize + LEFT_PADDING, TOP_PADDING + i * LAYER_HEIGHT + g.getFontMetrics().getHeight());
+                    g.drawString(sources[i].getName(), LEFT_PADDING + radioButtonSize + LEFT_PADDING,
+                            TOP_PADDING + i * LAYER_HEIGHT + g.getFontMetrics().getHeight());
                     if (currentMap == i) {
                         g.setColor(Color.BLACK);
                         g.fillOval(LEFT_PADDING + 1, TOP_PADDING + 7 + i * LAYER_HEIGHT, radioButtonSize - 2, radioButtonSize - 2);

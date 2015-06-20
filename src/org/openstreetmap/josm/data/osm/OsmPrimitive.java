@@ -344,7 +344,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     protected void writeUnlock(boolean locked) {
         if (locked) {
-            // It shouldn't be possible for dataset to become null because method calling setDataset would need write lock which is owned by this thread
+            // It shouldn't be possible for dataset to become null because
+            // method calling setDataset would need write lock which is owned by this thread
             dataSet.endUpdate();
         }
     }
@@ -1140,9 +1141,11 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         try {
             CheckParameterUtil.ensureParameterNotNull(other, "other");
             if (other.isNew() ^ isNew())
-                throw new DataIntegrityProblemException(tr("Cannot merge because either of the participating primitives is new and the other is not"));
+                throw new DataIntegrityProblemException(
+                        tr("Cannot merge because either of the participating primitives is new and the other is not"));
             if (!other.isNew() && other.getId() != id)
-                throw new DataIntegrityProblemException(tr("Cannot merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
+                throw new DataIntegrityProblemException(
+                        tr("Cannot merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
 
             setKeys(other.getKeys());
             timestamp = other.timestamp;

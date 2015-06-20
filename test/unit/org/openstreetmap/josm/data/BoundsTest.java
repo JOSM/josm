@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
 import static org.junit.Assert.assertEquals;

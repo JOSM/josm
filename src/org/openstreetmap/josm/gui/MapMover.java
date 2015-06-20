@@ -118,12 +118,14 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
             // see #10592 - Disable these alternate shortcuts on OS X because of conflict with system shortcut
             if (!Main.isPlatformOsx()) {
                 contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                    Shortcut.registerShortcut("view:zoominalternate", tr("Map: {0}", tr("Zoom in")), KeyEvent.VK_COMMA, Shortcut.CTRL).getKeyStroke(),
+                    Shortcut.registerShortcut("view:zoominalternate",
+                            tr("Map: {0}", tr("Zoom in")), KeyEvent.VK_COMMA, Shortcut.CTRL).getKeyStroke(),
                     "MapMover.Zoomer.in");
                 contentPane.getActionMap().put("MapMover.Zoomer.in", new ZoomerAction(","));
 
                 contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                    Shortcut.registerShortcut("view:zoomoutalternate", tr("Map: {0}", tr("Zoom out")), KeyEvent.VK_PERIOD, Shortcut.CTRL).getKeyStroke(),
+                    Shortcut.registerShortcut("view:zoomoutalternate",
+                            tr("Map: {0}", tr("Zoom out")), KeyEvent.VK_PERIOD, Shortcut.CTRL).getKeyStroke(),
                     "MapMover.Zoomer.out");
                 contentPane.getActionMap().put("MapMover.Zoomer.out", new ZoomerAction("."));
             }

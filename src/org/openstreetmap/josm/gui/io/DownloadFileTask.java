@@ -138,7 +138,8 @@ public class DownloadFileTask extends PleaseWaitRunnable{
                 }
             }
         } catch(MalformedURLException e) {
-            String msg = tr("Cannot download file ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.", file.getName(), address);
+            String msg = tr("Cannot download file ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.",
+                    file.getName(), address);
             Main.warn(msg);
             throw new DownloadException(msg, e);
         } catch (IOException e) {

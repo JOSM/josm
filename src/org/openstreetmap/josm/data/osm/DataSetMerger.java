@@ -267,7 +267,8 @@ public class DataSetMerger {
         for (RelationMember sourceMember : source.getMembers()) {
             OsmPrimitive targetMember = getMergeTarget(sourceMember.getMember());
             if (targetMember == null)
-                throw new IllegalStateException(tr("Missing merge target of type {0} with id {1}", sourceMember.getType(), sourceMember.getUniqueId()));
+                throw new IllegalStateException(tr("Missing merge target of type {0} with id {1}",
+                        sourceMember.getType(), sourceMember.getUniqueId()));
             RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
             newMembers.add(newMember);
             if (targetMember.isDeleted() && !conflicts.hasConflictForMy(targetMember)) {
@@ -311,7 +312,8 @@ public class DataSetMerger {
             // target and source are incomplete. Doesn't matter which one to
             // take. We take target.
             //
-        } else if (!target.isModified() && !source.isModified() && target.isVisible() != source.isVisible() && target.getVersion() == source.getVersion())
+        } else if (!target.isModified() && !source.isModified() && target.isVisible() != source.isVisible()
+                && target.getVersion() == source.getVersion())
             // Same version, but different "visible" attribute and neither of them are modified.
             // It indicates a serious problem in datasets.
             // For example, datasets can be fetched from different OSM servers or badly hand-modified.

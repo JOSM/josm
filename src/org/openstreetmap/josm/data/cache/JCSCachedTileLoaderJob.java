@@ -287,7 +287,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             // that is too large)
             expires = Math.min(expires, attributes.getCreateTime() + EXPIRE_TIME_SERVER_LIMIT);
             if (now > expires) {
-                log.log(Level.FINE, "JCS - Object {0} has expired -> valid to {1}, now is: {2}", new Object[]{getUrl(), Long.toString(expires), Long.toString(now)});
+                log.log(Level.FINE, "JCS - Object {0} has expired -> valid to {1}, now is: {2}",
+                        new Object[]{getUrl(), Long.toString(expires), Long.toString(now)});
                 return false;
             }
         } else {

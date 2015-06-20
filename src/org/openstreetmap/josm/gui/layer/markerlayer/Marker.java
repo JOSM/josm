@@ -183,8 +183,7 @@ public class Marker implements TemplateEngineDataProvider {
             @Override
             public Marker createMarker(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
                 String uri = null;
-                // cheapest way to check whether "link" object exists and is a non-empty
-                // collection of GpxLink objects...
+                // cheapest way to check whether "link" object exists and is a non-empty collection of GpxLink objects...
                 Collection<GpxLink> links = wpt.<GpxLink>getCollection(GpxConstants.META_LINKS);
                 if (links != null) {
                     for (GpxLink oneLink : links) {
@@ -205,25 +204,25 @@ public class Marker implements TemplateEngineDataProvider {
                     }
                 }
 
+                String urlString = url == null ? "" : url.toString();
                 if (url == null) {
                     String symbolName = wpt.getString("symbol");
                     if (symbolName == null) {
                         symbolName = wpt.getString(GpxConstants.PT_SYM);
                     }
                     return new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
-                } else if (url.toString().endsWith(".wav")) {
+                } else if (urlString.endsWith(".wav")) {
                     AudioMarker audioMarker = new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
                     Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
                     if (exts != null && exts.containsKey("offset")) {
                         try {
-                            double syncOffset = Double.parseDouble(exts.get("sync-offset"));
-                            audioMarker.syncOffset = syncOffset;
+                            audioMarker.syncOffset = Double.parseDouble(exts.get("sync-offset"));
                         } catch (NumberFormatException nfe) {
                             Main.warn(nfe);
                         }
                     }
                     return audioMarker;
-                } else if (url.toString().endsWith(".png") || url.toString().endsWith(".jpg") || url.toString().endsWith(".jpeg") || url.toString().endsWith(".gif")) {
+                } else if (urlString.endsWith(".png") || urlString.endsWith(".jpg") || urlString.endsWith(".jpeg") || urlString.endsWith(".gif")) {
                     return new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset);
                 } else {
                     return new WebMarker(wpt.getCoor(), url, parentLayer, time, offset);
@@ -279,7 +278,8 @@ public class Marker implements TemplateEngineDataProvider {
 
     private boolean erroneous = false;
 
-    public Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String iconName, MarkerLayer parentLayer, double time, double offset) {
+    public Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String iconName, MarkerLayer parentLayer,
+            double time, double offset) {
         this(ll, dataProvider, null, iconName, parentLayer, time, offset);
     }
 
@@ -287,7 +287,8 @@ public class Marker implements TemplateEngineDataProvider {
         this(ll, null, text, iconName, parentLayer, time, offset);
     }
 
-    private Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String text, String iconName, MarkerLayer parentLayer, double time, double offset) {
+    private Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String text, String iconName, MarkerLayer parentLayer,
+            double time, double offset) {
         timeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         setCoor(ll);
 

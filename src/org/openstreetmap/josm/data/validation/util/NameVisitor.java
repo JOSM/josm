@@ -18,7 +18,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-//TODO This class used to be in JOSM but it was removed. MultipleNameVisitor depends on it so I copied it here, but MultipleNameVisitor should be refactored instead of using this class
+//TODO This class used to be in JOSM but it was removed. MultipleNameVisitor depends on it so I copied it here,
+// but MultipleNameVisitor should be refactored instead of using this class
 public class NameVisitor extends AbstractVisitor {
 
     /**

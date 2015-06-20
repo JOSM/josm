@@ -75,7 +75,8 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public class MapView extends NavigatableComponent implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.LayerStateChangeListener {
+public class MapView extends NavigatableComponent
+implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.LayerStateChangeListener {
 
     /**
      * Interface to notify listeners of a layer change.
@@ -598,7 +599,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         Bounds box = getLatLonBounds(g.getClipBounds());
 
         if (!canUseBuffer || nonChangedLayersBuffer == null) {
-            if (null == nonChangedLayersBuffer || nonChangedLayersBuffer.getWidth() != getWidth() || nonChangedLayersBuffer.getHeight() != getHeight()) {
+            if (null == nonChangedLayersBuffer
+                    || nonChangedLayersBuffer.getWidth() != getWidth() || nonChangedLayersBuffer.getHeight() != getHeight()) {
                 nonChangedLayersBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
             }
             Graphics2D g2 = nonChangedLayersBuffer.createGraphics();

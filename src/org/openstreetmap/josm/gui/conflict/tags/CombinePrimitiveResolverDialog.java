@@ -318,7 +318,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             }
 
             final Integer keepResolutions = numberOfKeepResolutions.get(r);
-            final Collection<Relation> resolvedRelations = Utils.firstNonNull(resolvedRelationsPerPrimitive.get(p), Collections.<Relation>emptyList());
+            final Collection<Relation> resolvedRelations = Utils.firstNonNull(
+                    resolvedRelationsPerPrimitive.get(p), Collections.<Relation>emptyList());
             if (keepResolutions <= Utils.filter(resolvedRelations, Predicates.equalTo(r)).size()) {
                 // old relation contains one primitive more often than the current resolution => keep the current member
                 decision.decide(RelationMemberConflictDecisionType.KEEP);

@@ -197,7 +197,8 @@ public class MultipolygonTest extends Test {
                         /* old style multipolygon - solve: copy tags from outer way to multipolygon */
                         addError(r, new TestError(this, Severity.WARNING,
                                 trn("Multipolygon relation should be tagged with area tags and not the outer way",
-                                        "Multipolygon relation should be tagged with area tags and not the outer ways", polygon.getOuterWays().size()),
+                                        "Multipolygon relation should be tagged with area tags and not the outer ways",
+                                        polygon.getOuterWays().size()),
                            NO_STYLE_POLYGON, r));
                     }
                 }
@@ -210,7 +211,8 @@ public class MultipolygonTest extends Test {
                             List<OsmPrimitive> l = new ArrayList<>();
                             l.add(r);
                             l.add(wInner);
-                            addError(r, new TestError(this, Severity.OTHER, tr("With the currently used mappaint style the style for inner way equals the multipolygon style"),
+                            addError(r, new TestError(this, Severity.OTHER,
+                                    tr("With the currently used mappaint style the style for inner way equals the multipolygon style"),
                                     INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
                         }
                     }
@@ -262,10 +264,12 @@ public class MultipolygonTest extends Test {
                     List<List<Node>> highlights = new ArrayList<>();
                     highlights.add(pdInner.getNodes());
                     if (outside) {
-                        addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"), INNER_WAY_OUTSIDE, Collections.singletonList(r), highlights));
+                        addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"),
+                                INNER_WAY_OUTSIDE, Collections.singletonList(r), highlights));
                     } else {
                         highlights.add(outerWay.getNodes());
-                        addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"), CROSSING_WAYS, Collections.singletonList(r), highlights));
+                        addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"),
+                                CROSSING_WAYS, Collections.singletonList(r), highlights));
                     }
                 }
             }
@@ -276,7 +280,8 @@ public class MultipolygonTest extends Test {
         for (RelationMember rm : r.getMembers()) {
             if (rm.isWay()) {
                 if (!(rm.hasRole("inner", "outer") || !rm.hasRole())) {
-                    addError(r, new TestError(this, Severity.WARNING, tr("No useful role for multipolygon member"), WRONG_MEMBER_ROLE, rm.getMember()));
+                    addError(r, new TestError(this, Severity.WARNING, tr("No useful role for multipolygon member"),
+                            WRONG_MEMBER_ROLE, rm.getMember()));
                 }
             } else {
                 if (!rm.hasRole("admin_centre", "label", "subarea", "land_area")) {

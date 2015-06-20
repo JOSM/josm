@@ -368,7 +368,8 @@ public class MultipolygonBuilder {
             return result;
         }
 
-        private static List<PolygonLevel> processOuterWay(int level, List<JoinedPolygon> boundaryWays, final List<PolygonLevel> result, JoinedPolygon outerWay) {
+        private static List<PolygonLevel> processOuterWay(int level, List<JoinedPolygon> boundaryWays,
+                final List<PolygonLevel> result, JoinedPolygon outerWay) {
             Pair<Boolean, List<JoinedPolygon>> p = findInnerWaysCandidates(outerWay, boundaryWays);
             if (p == null) {
                 // ways intersect

@@ -202,7 +202,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
                 Collection<Relation> relationsToCheck  = new ArrayList<>(ds.getRelations());
                 for (Relation relation: relationsToCheck) {
                     if (!relation.isNew() && relation.hasIncompleteMembers()) {
-                        OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true /* read full */);
+                        OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true);
                         DataSet wayDs = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                         DataSetMerger visitor = new DataSetMerger(ds, wayDs);
                         visitor.merge();

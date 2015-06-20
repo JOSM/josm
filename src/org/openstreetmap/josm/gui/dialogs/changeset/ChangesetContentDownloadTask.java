@@ -68,7 +68,8 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     public ChangesetContentDownloadTask(int changesetId) {
         super(tr("Downloading changeset content"), false /* don't ignore exceptions */);
         if (changesetId <= 0)
-            throw new IllegalArgumentException(MessageFormat.format("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
         init(Collections.singleton(changesetId));
     }
 
@@ -94,7 +95,8 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     public ChangesetContentDownloadTask(Component parent, int changesetId) {
         super(parent, tr("Downloading changeset content"), false /* don't ignore exceptions */);
         if (changesetId <= 0)
-            throw new IllegalArgumentException(MessageFormat.format("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
         init(Collections.singleton(changesetId));
     }
 

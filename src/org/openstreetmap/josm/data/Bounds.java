@@ -175,7 +175,8 @@ public class Bounds {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
         String[] components = asString.split(separator);
         if (components.length != 4)
-            throw new IllegalArgumentException(MessageFormat.format("Exactly four doubles expected in string, got {0}: {1}", components.length, asString));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Exactly four doubles expected in string, got {0}: {1}", components.length, asString));
         double[] values = new double[4];
         for (int i=0; i<4; i++) {
             try {

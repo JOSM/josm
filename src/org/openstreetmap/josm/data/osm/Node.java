@@ -163,7 +163,8 @@ public final class Node extends OsmPrimitive implements INode {
     /**
      * Constructs an identical clone of the argument.
      * @param clone The node to clone
-     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}. If {@code false}, does nothing
+     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
+     * If {@code false}, does nothing
      */
     public Node(Node clone, boolean clearMetadata) {
         super(clone.getUniqueId(), true /* allow negative IDs */);

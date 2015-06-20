@@ -33,6 +33,84 @@ public final class MultikeyActionsHandler {
 
     private Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<>();
 
+    private final class ShowLayersPopupWorker implements Runnable {
+        private final MyAction action;
+
+        private ShowLayersPopupWorker(MyAction action) {
+            this.action = action;
+        }
+
+        @Override
+        public void run() {
+            JPopupMenu layers = new JPopupMenu();
+
+            JMenuItem lbTitle = new JMenuItem((String) action.action.getValue(Action.SHORT_DESCRIPTION));
+            lbTitle.setEnabled(false);
+            JPanel pnTitle = new JPanel();
+            pnTitle.add(lbTitle);
+            layers.add(pnTitle);
+
+            char repeatKey = (char) action.shortcut.getKeyStroke().getKeyCode();
+            boolean repeatKeyUsed = false;
+
+            for (final MultikeyInfo info: action.action.getMultikeyCombinations()) {
+
+                if (info.getShortcut() == repeatKey) {
+                    repeatKeyUsed = true;
+                }
+
+                JMenuItem item = new JMenuItem(formatMenuText(action.shortcut.getKeyStroke(),
+                        String.valueOf(info.getShortcut()), info.getDescription()));
+                item.setMnemonic(info.getShortcut());
+                item.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        action.action.executeMultikeyAction(info.getIndex(), false);
+                    }
+                });
+                layers.add(item);
+            }
+
+            if (!repeatKeyUsed) {
+                MultikeyInfo lastLayer = action.action.getLastMultikeyAction();
+                if (lastLayer != null) {
+                    JMenuItem repeateItem = new JMenuItem(formatMenuText(action.shortcut.getKeyStroke(),
+                            KeyEvent.getKeyText(action.shortcut.getKeyStroke().getKeyCode()),
+                            "Repeat " + lastLayer.getDescription()));
+                    repeateItem.setMnemonic(action.shortcut.getKeyStroke().getKeyCode());
+                    repeateItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            action.action.executeMultikeyAction(-1, true);
+                        }
+                    });
+                    layers.add(repeateItem);
+                }
+            }
+            layers.addPopupMenuListener(new PopupMenuListener() {
+
+                @Override
+                public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                    // Do nothing
+                }
+
+                @Override
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                    Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
+                }
+
+                @Override
+                public void popupMenuCanceled(PopupMenuEvent e) {
+                    // Do nothing
+                }
+            });
+
+            layers.show(Main.parent, Integer.MAX_VALUE, Integer.MAX_VALUE);
+            layers.setLocation(Main.parent.getX() + Main.parent.getWidth() - layers.getWidth(),
+                    Main.parent.getY() + Main.parent.getHeight() - layers.getHeight());
+        }
+    }
+
     private class MyKeyEventDispatcher implements KeyEventDispatcher {
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
@@ -101,7 +179,7 @@ public final class MultikeyActionsHandler {
         public void run() {
             if (lastTimestamp == MultikeyActionsHandler.this.lastTimestamp &&
                     lastAction == MultikeyActionsHandler.this.lastAction) {
-                showLayersPopup(lastAction);
+                SwingUtilities.invokeLater(new ShowLayersPopupWorker(lastAction));
                 MultikeyActionsHandler.this.lastAction = null;
             }
         }
@@ -111,10 +189,9 @@ public final class MultikeyActionsHandler {
     private MyAction lastAction;
     private Timer timer;
 
-
     private MultikeyActionsHandler() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new MyKeyEventDispatcher());
-        timer =new Timer();
+        timer = new Timer();
     }
 
     private static MultikeyActionsHandler instance;
@@ -131,79 +208,10 @@ public final class MultikeyActionsHandler {
     }
 
     private String formatMenuText(KeyStroke keyStroke, String index, String description) {
-        String shortcutText = KeyEvent.getKeyModifiersText(keyStroke.getModifiers()) + "+" + KeyEvent.getKeyText(keyStroke.getKeyCode()) + "," + index;
+        String shortcutText = KeyEvent.getKeyModifiersText(keyStroke.getModifiers()) + "+"
+                + KeyEvent.getKeyText(keyStroke.getKeyCode()) + "," + index;
 
         return "<html><i>" + shortcutText + "</i>&nbsp;&nbsp;&nbsp;&nbsp;" + description;
-
-    }
-
-    private void showLayersPopup(final MyAction action) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JPopupMenu layers = new JPopupMenu();
-
-                JMenuItem lbTitle = new JMenuItem((String) action.action.getValue(Action.SHORT_DESCRIPTION));
-                lbTitle.setEnabled(false);
-                JPanel pnTitle = new JPanel();
-                pnTitle.add(lbTitle);
-                layers.add(pnTitle);
-
-                char repeatKey = (char) action.shortcut.getKeyStroke().getKeyCode();
-                boolean repeatKeyUsed = false;
-
-
-                for (final MultikeyInfo info: action.action.getMultikeyCombinations()) {
-
-                    if (info.getShortcut() == repeatKey) {
-                        repeatKeyUsed = true;
-                    }
-
-                    JMenuItem item = new JMenuItem(formatMenuText(action.shortcut.getKeyStroke(), String.valueOf(info.getShortcut()), info.getDescription()));
-                    item.setMnemonic(info.getShortcut());
-                    item.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            action.action.executeMultikeyAction(info.getIndex(), false);
-                        }
-                    });
-                    layers.add(item);
-                }
-
-                if (!repeatKeyUsed) {
-                    MultikeyInfo lastLayer = action.action.getLastMultikeyAction();
-                    if (lastLayer != null) {
-                        JMenuItem repeateItem = new JMenuItem(formatMenuText(action.shortcut.getKeyStroke(),
-                                KeyEvent.getKeyText(action.shortcut.getKeyStroke().getKeyCode()),
-                                "Repeat " + lastLayer.getDescription()));
-                        repeateItem.setMnemonic(action.shortcut.getKeyStroke().getKeyCode());
-                        repeateItem.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                action.action.executeMultikeyAction(-1, true);
-                            }
-                        });
-                        layers.add(repeateItem);
-                    }
-                }
-                layers.addPopupMenuListener(new PopupMenuListener() {
-
-                    @Override
-                    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
-
-                    @Override
-                    public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                        Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
-                    }
-
-                    @Override
-                    public void popupMenuCanceled(PopupMenuEvent e) {}
-                });
-
-                layers.show(Main.parent, Integer.MAX_VALUE, Integer.MAX_VALUE);
-                layers.setLocation(Main.parent.getX() + Main.parent.getWidth() - layers.getWidth(), Main.parent.getY() + Main.parent.getHeight() - layers.getHeight());
-            }
-        });
     }
 
     /**

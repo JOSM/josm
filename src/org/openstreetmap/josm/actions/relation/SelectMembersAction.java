@@ -22,7 +22,8 @@ public class SelectMembersAction extends AbstractRelationAction {
 
     /**
      * Constructs a new <code>SelectMembersAction</code>.
-     * @param add if <code>true</code>, the members will be added to current selection. If <code>false</code>, the members will replace the current selection.
+     * @param add if <code>true</code>, the members will be added to current selection.
+     * If <code>false</code>, the members will replace the current selection.
      */
     public SelectMembersAction(boolean add) {
         putValue(SHORT_DESCRIPTION,add ? tr("Add the members of all selected relations to current selection")

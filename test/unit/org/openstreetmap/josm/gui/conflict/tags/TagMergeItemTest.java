@@ -79,7 +79,7 @@ public class TagMergeItemTest {
         assertEquals(MergeDecisionType.KEEP_MINE, item.getMergeDecision());
     }
 
-    @Test()
+    @Test
     public void test_decide_1() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         try {
@@ -90,7 +90,7 @@ public class TagMergeItemTest {
         }
     }
 
-    @Test()
+    @Test
     public void test_applyToMyPrimitive() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         item.decide(MergeDecisionType.KEEP_MINE);
@@ -106,7 +106,7 @@ public class TagMergeItemTest {
 
     }
 
-    @Test()
+    @Test
     public void test_applyToMyPrimitive_2() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         item.decide(MergeDecisionType.KEEP_THEIR);
@@ -121,7 +121,7 @@ public class TagMergeItemTest {
         assertEquals("theirvalue", n1.get("key"));
     }
 
-    @Test()
+    @Test
     public void test_applyToMyPrimitive_3() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         // item is undecided
@@ -137,7 +137,7 @@ public class TagMergeItemTest {
         }
     }
 
-    @Test()
+    @Test
     public void test_applyToMyPrimitive_4() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
 

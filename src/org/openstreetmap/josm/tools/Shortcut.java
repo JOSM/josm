@@ -46,7 +46,8 @@ public final class Shortcut {
     private boolean reset;           // true if the user requested this shortcut to be set to its default value (will happen on next restart, as this shortcut will not be saved to the preferences)
 
     // simple constructor
-    private Shortcut(String shortText, String longText, int requestedKey, int requestedGroup, int assignedKey, int assignedModifier, boolean assignedDefault, boolean assignedUser) {
+    private Shortcut(String shortText, String longText, int requestedKey, int requestedGroup, int assignedKey, int assignedModifier,
+            boolean assignedDefault, boolean assignedUser) {
         this.shortText = shortText;
         this.longText = longText;
         this.requestedKey = requestedKey;
@@ -67,8 +68,7 @@ public final class Shortcut {
         return longText;
     }
 
-    // a shortcut will be renamed when it is handed out again, because the original name
-    // may be a dummy
+    // a shortcut will be renamed when it is handed out again, because the original name may be a dummy
     private void setLongText(String longText) {
         this.longText = longText;
     }

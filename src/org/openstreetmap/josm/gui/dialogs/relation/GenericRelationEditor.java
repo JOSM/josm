@@ -996,7 +996,8 @@ public class GenericRelationEditor extends RelationEditor  {
             &&  !memberTableModel.getChildPrimitives(getLayer().data.getSelected()).isEmpty();
 
             if (enabled) {
-                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to {0} objects in the current selection",memberTableModel.getChildPrimitives(getLayer().data.getSelected()).size()));
+                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to {0} objects in the current selection",
+                        memberTableModel.getChildPrimitives(getLayer().data.getSelected()).size()));
             } else {
                 putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to objects in the current selection"));
             }
@@ -1011,7 +1012,6 @@ public class GenericRelationEditor extends RelationEditor  {
         @Override
         public void tableChanged(TableModelEvent e) {
             updateEnabledState();
-
         }
     }
 
@@ -1761,7 +1761,8 @@ public class GenericRelationEditor extends RelationEditor  {
                 }
 
                 if (hasNewInOtherLayer) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Members from paste buffer cannot be added because they are not included in current layer"));
+                    JOptionPane.showMessageDialog(Main.parent,
+                            tr("Members from paste buffer cannot be added because they are not included in current layer"));
                     return;
                 }
 

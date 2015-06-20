@@ -112,10 +112,12 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             connection.connect();
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
-                throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED, tr("Retrieving user details with Access Token Key ''{0}'' was rejected.", token.getKey()), null);
+                throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,
+                        tr("Retrieving user details with Access Token Key ''{0}'' was rejected.", token.getKey()), null);
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN)
-                throw new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, tr("Retrieving user details with Access Token Key ''{0}'' was forbidden.", token.getKey()), null);
+                throw new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN,
+                        tr("Retrieving user details with Access Token Key ''{0}'' was forbidden.", token.getKey()), null);
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
                 throw new OsmApiException(connection.getResponseCode(),connection.getHeaderField("Error"), null);

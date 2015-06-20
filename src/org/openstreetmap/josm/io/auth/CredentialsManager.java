@@ -125,7 +125,8 @@ public class CredentialsManager implements CredentialsAgent {
     }
 
     @Override
-    public CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException {
+    public CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse)
+            throws CredentialsAgentException {
         return delegate.getCredentials(requestorType, host, noSuccessWithLastResponse);
     }
 

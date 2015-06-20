@@ -34,7 +34,8 @@ public class UpdateSelectionAction extends JosmAction {
      * handle an exception thrown because a primitive was deleted on the server
      *
      * @param id the primitive id
-     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
+     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE},
+     * {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
      */
     public static void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();

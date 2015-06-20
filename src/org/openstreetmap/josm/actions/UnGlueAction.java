@@ -463,7 +463,8 @@ public class UnGlueAction extends JosmAction {
         cmds.add(new ChangeCommand(selectedWay, tmpWay)); // only one changeCommand for a way, else garbage will happen
 
         Main.main.undoRedo.add(new SequenceCommand(
-                trn("Dupe {0} node into {1} nodes", "Dupe {0} nodes into {1} nodes", selectedNodes.size(), selectedNodes.size(), selectedNodes.size()+allNewNodes.size()), cmds));
+                trn("Dupe {0} node into {1} nodes", "Dupe {0} nodes into {1} nodes",
+                        selectedNodes.size(), selectedNodes.size(), selectedNodes.size()+allNewNodes.size()), cmds));
         getCurrentDataSet().setSelected(allNewNodes);
     }
 

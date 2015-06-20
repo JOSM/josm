@@ -97,7 +97,8 @@ public class WmsCache {
     private final int tileSize; // Should be always 500
     private int totalFileSize;
     private boolean totalFileSizeDirty; // Some file was missing - size needs to be recalculated
-    // No need for hashCode/equals on CacheEntry, object identity is enough. Comparing by values can lead to error - CacheEntry for wrong projection could be found
+    // No need for hashCode/equals on CacheEntry, object identity is enough.
+    // Comparing by values can lead to error - CacheEntry for wrong projection could be found
     private Map<CacheEntry, SoftReference<BufferedImage>> memoryCache = new HashMap<>();
     private Set<ProjectionBounds> areaToCache;
 
@@ -457,7 +458,8 @@ public class WmsCache {
             return null;
     }
 
-    private String generateFileName(ProjectionEntries projectionEntries, double pixelPerDegree, Projection projection, double east, double north, String mimeType) {
+    private String generateFileName(ProjectionEntries projectionEntries, double pixelPerDegree, Projection projection,
+            double east, double north, String mimeType) {
         LatLon ll1 = projection.eastNorth2latlon(new EastNorth(east, north));
         LatLon ll2 = projection.eastNorth2latlon(new EastNorth(east + 100 / pixelPerDegree, north));
         LatLon ll3 = projection.eastNorth2latlon(new EastNorth(east + tileSize / pixelPerDegree, north + tileSize / pixelPerDegree));
@@ -489,7 +491,8 @@ public class WmsCache {
         int counter = 0;
         FILENAME_LOOP:
             while (true) {
-                String result = String.format("%s_%." + precisionLat + "f_%." + precisionLon +"f%s.%s", zoom, ll1.lat(), ll1.lon(), counter==0?"":"_" + counter, extension);
+                String result = String.format("%s_%." + precisionLat + "f_%." + precisionLon +"f%s.%s",
+                        zoom, ll1.lat(), ll1.lon(), counter==0?"":"_" + counter, extension);
                 for (CacheEntry entry: projectionEntries.entries) {
                     if (entry.filename.equals(result)) {
                         counter++;
@@ -510,8 +513,8 @@ public class WmsCache {
      * @param north northing
      * @throws IOException if any I/O error occurs
      */
-    public synchronized void saveToCache(BufferedImage img, InputStream imageData, Projection projection, double pixelPerDegree, double east, double north)
-            throws IOException {
+    public synchronized void saveToCache(BufferedImage img, InputStream imageData, Projection projection, double pixelPerDegree,
+            double east, double north) throws IOException {
         ProjectionEntries projectionEntries = getProjectionEntries(projection);
         CacheEntry entry = findEntry(projectionEntries, pixelPerDegree, east, north);
         File imageFile;

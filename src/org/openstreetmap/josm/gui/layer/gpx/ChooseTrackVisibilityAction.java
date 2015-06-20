@@ -252,7 +252,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         msg.add(b, GBC.std().insets(0,0,5,0));
         msg.add(dateFilter, GBC.eol().insets(0,0,10,0).fill(GBC.HORIZONTAL));
 
-        msg.add(new JLabel(tr("<html>Select all tracks that you want to be displayed. You can drag select a " + "range of tracks or use CTRL+Click to select specific ones. The map is updated live in the " + "background. Open the URLs by double clicking them.</html>")), GBC.eop().fill(GBC.HORIZONTAL));
+        msg.add(new JLabel(tr("<html>Select all tracks that you want to be displayed. You can drag select a range of tracks or use CTRL+Click to select specific ones. The map is updated live in the background. Open the URLs by double clicking them.</html>")),
+                GBC.eop().fill(GBC.HORIZONTAL));
         // build table
         final boolean[] trackVisibilityBackup = layer.trackVisibility.clone();
         table = buildTable(buildTableContents());

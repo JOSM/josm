@@ -32,7 +32,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * Example:
  * <pre>
  * &lt;osm version="0.6" generator="OpenStreetMap server"&gt;
- *     &lt;changeset id="143" user="guggis" uid="1" created_at="2009-09-08T20:35:39Z" closed_at="2009-09-08T21:36:12Z" open="false" min_lon="7.380925" min_lat="46.9215164" max_lon="7.3984718" max_lat="46.9226502"&gt;
+ *     &lt;changeset id="143" user="guggis" uid="1" created_at="2009-09-08T20:35:39Z" closed_at="2009-09-08T21:36:12Z" open="false"
+ *                min_lon="7.380925" min_lat="46.9215164" max_lon="7.3984718" max_lat="46.9226502"&gt;
  *         &lt;tag k="asdfasdf" v="asdfasdf"/&gt;
  *         &lt;tag k="created_by" v="JOSM/1.5 (UNKNOWN de)"/&gt;
  *         &lt;tag k="comment" v="1234"/&gt;

@@ -43,9 +43,9 @@ public class DefaultNameFormatterTest {
 
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/9632">#9632</a>.
-     * @throws IllegalDataException
-     * @throws IOException
-     * @throws SAXException
+     * @throws IllegalDataException if an error was found while parsing the data from the source
+     * @throws IOException if any I/O error occurs
+     * @throws SAXException if any XML error occurs
      */
     @Test
     public void testTicket9632() throws IllegalDataException, IOException, SAXException {
@@ -62,9 +62,12 @@ public class DefaultNameFormatterTest {
             Relation p2 = (Relation) ds.getPrimitiveById(550315, OsmPrimitiveType.RELATION);
             Relation p3 = (Relation) ds.getPrimitiveById(167042, OsmPrimitiveType.RELATION);
 
-            System.out.println("p1: "+DefaultNameFormatter.getInstance().format(p1)+" - "+p1); // route_master ("Bus 453", 6 members)
-            System.out.println("p2: "+DefaultNameFormatter.getInstance().format(p2)+" - "+p2); // TMC ("A 6 Kaiserslautern - Mannheim [negative]", 123 members)
-            System.out.println("p3: "+DefaultNameFormatter.getInstance().format(p3)+" - "+p3); // route(lcn Sal  Salier-Radweg(412 members)
+            // route_master ("Bus 453", 6 members)
+            System.out.println("p1: "+DefaultNameFormatter.getInstance().format(p1)+" - "+p1);
+            // TMC ("A 6 Kaiserslautern - Mannheim [negative]", 123 members)
+            System.out.println("p2: "+DefaultNameFormatter.getInstance().format(p2)+" - "+p2);
+            // route(lcn Sal  Salier-Radweg(412 members)
+            System.out.println("p3: "+DefaultNameFormatter.getInstance().format(p3)+" - "+p3);
 
             assertSame(comparator.compare(p1, p2), -1); // p1 < p2
             assertSame(comparator.compare(p2, p1),  1); // p2 > p1
@@ -90,8 +93,10 @@ public class DefaultNameFormatterTest {
         assertThat(getFormattedRelationName("type=route route=tram ref=123"), is("route (\"123\", 0 members)"));
         assertThat(getFormattedRelationName("type=multipolygon building=yes"), is("multipolygon (\"building\", 0 members)"));
         assertThat(getFormattedRelationName("type=multipolygon building=yes ref=123"), is("multipolygon (\"123\", 0 members)"));
-        assertThat(getFormattedRelationName("type=multipolygon building=yes addr:housenumber=123"), is("multipolygon (\"building\", 0 members)"));
-        assertThat(getFormattedRelationName("type=multipolygon building=residential addr:housenumber=123"), is("multipolygon (\"residential\", 0 members)"));
+        assertThat(getFormattedRelationName("type=multipolygon building=yes addr:housenumber=123"),
+                is("multipolygon (\"building\", 0 members)"));
+        assertThat(getFormattedRelationName("type=multipolygon building=residential addr:housenumber=123"),
+                is("multipolygon (\"residential\", 0 members)"));
     }
 
     /**
@@ -101,7 +106,8 @@ public class DefaultNameFormatterTest {
     public void testWayName() {
         assertThat(getFormattedWayName("building=yes"), is("building (0 nodes)"));
         assertThat(getFormattedWayName("building=yes addr:housenumber=123"), is("House number 123 (0 nodes)"));
-        assertThat(getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"), is("House number 123 at FooStreet (0 nodes)"));
+        assertThat(getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"),
+                is("House number 123 at FooStreet (0 nodes)"));
         assertThat(getFormattedWayName("building=yes addr:housenumber=123 addr:housename=FooName"), is("House FooName (0 nodes)"));
     }
 

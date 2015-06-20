@@ -325,7 +325,8 @@ public class OsmReader extends AbstractReader {
         try {
             type = OsmPrimitiveType.fromApiTypeName(value);
         } catch(IllegalArgumentException e) {
-            throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.", Long.toString(id), Long.toString(r.getUniqueId()), value), e);
+            throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.",
+                    Long.toString(id), Long.toString(r.getUniqueId()), value), e);
         }
         value = parser.getAttributeValue(null, "role");
         role = value;
@@ -626,7 +627,8 @@ public class OsmReader extends AbstractReader {
                 msg = m.group(1);
             }
             if (e.getLocation() != null)
-                throw new IllegalDataException(tr("Line {0} column {1}: ", e.getLocation().getLineNumber(), e.getLocation().getColumnNumber()) + msg, e);
+                throw new IllegalDataException(tr("Line {0} column {1}: ",
+                        e.getLocation().getLineNumber(), e.getLocation().getColumnNumber()) + msg, e);
             else
                 throw new IllegalDataException(msg, e);
         } catch(Exception e) {
@@ -644,7 +646,7 @@ public class OsmReader extends AbstractReader {
      * @param progressMonitor  the progress monitor. If null, {@link NullProgressMonitor#INSTANCE} is assumed
      *
      * @return the dataset with the parsed data
-     * @throws IllegalDataException if the an error was found while parsing the data from the source
+     * @throws IllegalDataException if an error was found while parsing the data from the source
      * @throws IllegalArgumentException if source is null
      */
     public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {

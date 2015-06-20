@@ -93,16 +93,15 @@ public class UploadLayerTask extends AbstractIOTask implements Runnable {
         if (p == null) throw e;
         if (p.isDeleted()) {
             // we tried to delete an already deleted primitive.
-            //
-            Main.warn(tr("Object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
+            Main.warn(tr("Object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.",
+                    p.getDisplayName(DefaultNameFormatter.getInstance())));
             processedPrimitives.addAll(writer.getProcessedPrimitives());
             processedPrimitives.add(p);
             toUpload.removeAll(processedPrimitives);
             return;
         }
-        // exception was thrown because we tried to *update* an already deleted
-        // primitive. We can't resolve this automatically. Re-throw exception,
-        // a conflict is going to be created later.
+        // exception was thrown because we tried to *update* an already deleted primitive. We can't resolve this automatically.
+        // Re-throw exception, a conflict is going to be created later.
         throw e;
     }
 

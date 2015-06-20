@@ -68,7 +68,8 @@ public class MapCSSStyleSource extends StyleSource {
      * The accepted MIME types sent in the HTTP Accept header.
      * @since 6867
      */
-    public static final String MAPCSS_STYLE_MIME_TYPES = "text/x-mapcss, text/mapcss, text/css; q=0.9, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
+    public static final String MAPCSS_STYLE_MIME_TYPES =
+            "text/x-mapcss, text/mapcss, text/css; q=0.9, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
     // all rules
     public final List<MapCSSRule> rules = new ArrayList<>();
@@ -520,7 +521,8 @@ public class MapCSSStyleSource extends StyleSource {
         if (backgroundColorOverride == null) {
             backgroundColorOverride = c.get("background-color", null, Color.class);
             if (backgroundColorOverride != null) {
-                Main.warn(tr("Detected deprecated ''{0}'' in ''{1}'' which will be removed shortly. Use ''{2}'' instead.", "canvas{background-color}", url, "fill-color"));
+                Main.warn(tr("Detected deprecated ''{0}'' in ''{1}'' which will be removed shortly. Use ''{2}'' instead.",
+                        "canvas{background-color}", url, "fill-color"));
             }
         }
     }

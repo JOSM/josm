@@ -270,7 +270,9 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         } else {
             model.setSelectedRelations(relations);
             Integer i = model.getVisibleRelationIndex(relations.iterator().next());
-            if (i != null) { // Not all relations have to be in the list (for example when the relation list is hidden, it's not updated with new relations)
+            if (i != null) {
+                // Not all relations have to be in the list
+                // (for example when the relation list is hidden, it's not updated with new relations)
                 displaylist.scrollRectToVisible(displaylist.getCellBounds(i, i));
             }
         }

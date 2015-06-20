@@ -634,7 +634,8 @@ public class LayerListDialog extends ToggleDialog {
      * The action to activate the currently selected layer
      */
 
-    public final class ActivateLayerAction extends AbstractAction implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction{
+    public final class ActivateLayerAction extends AbstractAction
+    implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction{
         private transient Layer layer;
         private transient Shortcut multikeyShortcut;
 

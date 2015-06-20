@@ -43,7 +43,7 @@ public abstract class DownloadAlongAction extends JosmAction {
     public DownloadAlongAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
         super(name, iconName, tooltip, shortcut, registerInToolbar);
     }
-    
+
     protected static void addToDownload(Area a, Rectangle2D r, Collection<Rectangle2D> results, double maxArea) {
         Area tmp = new Area(r);
         // intersect with sought-after area
@@ -73,7 +73,7 @@ public abstract class DownloadAlongAction extends JosmAction {
             results.add(bounds);
         }
     }
-    
+
     /**
      * Area "a" contains the hull that we would like to download data for. however we
      * can only download rectangles, so the following is an attempt at finding a number of
@@ -91,15 +91,19 @@ public abstract class DownloadAlongAction extends JosmAction {
      * This functions calculates the rectangles, asks the user to continue and downloads
      * the areas if applicable.
      */
-    protected static void confirmAndDownloadAreas(Area a, double maxArea, boolean osmDownload, boolean gpxDownload, String title, ProgressMonitor progressMonitor) {
+    protected static void confirmAndDownloadAreas(Area a, double maxArea, boolean osmDownload, boolean gpxDownload, String title,
+            ProgressMonitor progressMonitor) {
         List<Rectangle2D> toDownload = new ArrayList<>();
         addToDownload(a, a.getBounds(), toDownload, maxArea);
         if (toDownload.isEmpty()) {
             return;
         }
         JPanel msg = new JPanel(new GridBagLayout());
-        msg.add(new JLabel(tr("<html>This action will require {0} individual<br>" + "download requests. Do you wish<br>to continue?</html>", toDownload.size())), GBC.eol());
-        if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent, msg, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {
+        msg.add(new JLabel(
+                tr("<html>This action will require {0} individual<br>" + "download requests. Do you wish<br>to continue?</html>",
+                        toDownload.size())), GBC.eol());
+        if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent, msg, title,
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {
             return;
         }
         final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));

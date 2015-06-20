@@ -156,7 +156,8 @@ public final class ConditionalOptionPaneUtil {
      * @see JOptionPane#WARNING_MESSAGE
      * @see JOptionPane#ERROR_MESSAGE
      */
-    public static boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
+    public static boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title,
+            int optionType, int messageType, int trueOption) throws HeadlessException {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret == trueOption;

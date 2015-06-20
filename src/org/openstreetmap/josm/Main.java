@@ -1039,8 +1039,10 @@ public abstract class Main {
     }
 
     /**
-     * Asks user to perform "save layer" operations (save on disk and/or upload data to server) for all {@link AbstractModifiableLayer} before JOSM exits.
-     * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
+     * Asks user to perform "save layer" operations (save on disk and/or upload data to server) for all
+     * {@link AbstractModifiableLayer} before JOSM exits.
+     * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations.
+     *         {@code false} if the user cancels.
      * @since 2025
      */
     public static boolean saveUnsavedModifications() {
@@ -1053,7 +1055,8 @@ public abstract class Main {
      *
      * @param selectedLayers The layers to check. Only instances of {@link AbstractModifiableLayer} are considered.
      * @param exit {@code true} if JOSM is exiting, {@code false} otherwise.
-     * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
+     * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations.
+     *         {@code false} if the user cancels.
      * @since 5519
      */
     public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, boolean exit) {

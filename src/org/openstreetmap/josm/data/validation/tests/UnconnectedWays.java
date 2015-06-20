@@ -441,7 +441,8 @@ public abstract class UnconnectedWays extends Test {
     @Override
     public void visit(Way w) {
         if (w.getNodesCount() > 0 // do not consider empty ways
-                && !w.hasKey("addr:interpolation") // ignore addr:interpolation ways as they are not physical features and most of the time very near the associated highway, which is perfectly normal, see #9332
+                && !w.hasKey("addr:interpolation") // ignore addr:interpolation ways as they are not physical features and most of
+                                                   // the time very near the associated highway, which is perfectly normal, see #9332
                 && !w.hasTag("highway", "platform") && !w.hasTag("railway", "platform") // similarly for public transport platforms
                 ) {
             ways.addAll(getWaySegments(w));

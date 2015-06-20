@@ -4,7 +4,8 @@ package org.openstreetmap.josm.io.auth;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * CredentialsAgentResponse represents the response from {@link CredentialsAgent#getCredentials(java.net.Authenticator.RequestorType, String, boolean)}.
+ * CredentialsAgentResponse represents the response from
+ * {@link CredentialsAgent#getCredentials(java.net.Authenticator.RequestorType, String, boolean)}.
  *
  * The response consists of the username and the password the requested credentials consists of.
  * In addition, it provides information whether authentication was canceled by the user, i.e.

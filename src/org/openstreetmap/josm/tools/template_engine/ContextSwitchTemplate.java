@@ -219,15 +219,21 @@ public class ContextSwitchTemplate implements TemplateEntry {
             if (lhs instanceof ContextProvider && rhs instanceof ContextProvider)
                 return new OrSet((ContextProvider)lhs, (ContextProvider)rhs);
             else if (lhs instanceof ContextProvider)
-                throw new ParseError(tr("Error in search expression on position {0} - right side of or(|) expression must return set of primitives", searchExpressionPosition));
+                throw new ParseError(
+                        tr("Error in search expression on position {0} - right side of or(|) expression must return set of primitives",
+                                searchExpressionPosition));
             else if (rhs instanceof ContextProvider)
-                throw new ParseError(tr("Error in search expression on position {0} - left side of or(|) expression must return set of primitives", searchExpressionPosition));
+                throw new ParseError(
+                        tr("Error in search expression on position {0} - left side of or(|) expression must return set of primitives",
+                                searchExpressionPosition));
             else
                 return m;
         } else if (m instanceof Not) {
             Match match = transform(((Not) m).getMatch(), searchExpressionPosition);
             if (match instanceof ContextProvider)
-                throw new ParseError(tr("Error in search expression on position {0} - not(-) cannot be used in this context", searchExpressionPosition));
+                throw new ParseError(
+                        tr("Error in search expression on position {0} - not(-) cannot be used in this context",
+                                searchExpressionPosition));
             else
                 return m;
         } else
@@ -237,7 +243,9 @@ public class ContextSwitchTemplate implements TemplateEntry {
     public ContextSwitchTemplate(Match match, TemplateEntry template, int searchExpressionPosition) throws ParseError {
         Match m = transform(match, searchExpressionPosition);
         if (!(m instanceof ContextProvider))
-            throw new ParseError(tr("Error in search expression on position {0} - expression must return different then current primitive", searchExpressionPosition));
+            throw new ParseError(
+                    tr("Error in search expression on position {0} - expression must return different then current primitive",
+                            searchExpressionPosition));
         else {
             context = (ContextProvider) m;
         }

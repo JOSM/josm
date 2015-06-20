@@ -22,20 +22,19 @@ import org.openstreetmap.josm.data.coor.LatLon;
 public class ExifReaderTest {
 
     private File orientationSampleFile, directionSampleFile;
-    
+
     /**
      * Setup test
-     * @throws Exception
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         directionSampleFile = new File("data_nodist/exif-example_direction.jpg");
         orientationSampleFile = new File("data_nodist/exif-example_orientation=6.jpg");
     }
 
-    /** 
+    /**
      * Test time extraction
-     * @throws ParseException 
+     * @throws ParseException if {@link ExifReader#readTime} fails to parse date/time of sample file
      */
     @Test
     public void testReadTime() throws ParseException {
@@ -51,7 +50,7 @@ public class ExifReaderTest {
         Integer orientation = ExifReader.readOrientation(orientationSampleFile);
         assertEquals(Integer.valueOf(6), orientation);
     }
-    
+
     /**
      * Test coordinates extraction
      */

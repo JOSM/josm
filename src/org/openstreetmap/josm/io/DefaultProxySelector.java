@@ -115,7 +115,8 @@ public class DefaultProxySelector extends ProxySelector {
         } else {
             proxyPolicy = ProxyPolicy.fromName(value);
             if (proxyPolicy == null) {
-                Main.warn(tr("Unexpected value for preference ''{0}'' found. Got ''{1}''. Will use no proxy.", ProxyPreferencesPanel.PROXY_POLICY, value));
+                Main.warn(tr("Unexpected value for preference ''{0}'' found. Got ''{1}''. Will use no proxy.",
+                        ProxyPreferencesPanel.PROXY_POLICY, value));
                 proxyPolicy = ProxyPolicy.NO_PROXY;
             }
         }

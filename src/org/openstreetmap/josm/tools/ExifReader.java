@@ -82,7 +82,8 @@ public final class ExifReader {
      * <li>The 0th row is the visual right-hand side of the image, and the 0th column is the visual bottom.</li>
      * <li>The 0th row is the visual left-hand side of the image, and the 0th column is the visual bottom.</li></ol>
      * @see <a href="http://www.impulseadventure.com/photo/exif-orientation.html">http://www.impulseadventure.com/photo/exif-orientation.html</a>
-     * @see <a href="http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto">http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto</a>
+     * @see <a href="http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto">
+     * http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto</a>
      */
     public static Integer readOrientation(File filename) {
         try {
@@ -135,7 +136,8 @@ public final class ExifReader {
     /**
      * Returns the direction of the given JPEG file.
      * @param filename The JPEG file to read
-     * @return The direction of the image when it was captures (in degrees between 0.0 and 359.99), or {@code null} if missing or if {@code dirGps} is null
+     * @return The direction of the image when it was captures (in degrees between 0.0 and 359.99),
+     * or {@code null} if missing or if {@code dirGps} is null
      * @since 6209
      */
     public static Double readDirection(File filename) {
@@ -154,7 +156,8 @@ public final class ExifReader {
     /**
      * Returns the direction of the given EXIF GPS directory.
      * @param dirGps The EXIF GPS directory
-     * @return The direction of the image when it was captures (in degrees between 0.0 and 359.99), or {@code null} if missing or if {@code dirGps} is null
+     * @return The direction of the image when it was captures (in degrees between 0.0 and 359.99),
+     * or {@code null} if missing or if {@code dirGps} is null
      * @since 6209
      */
     public static Double readDirection(GpsDirectory dirGps) {

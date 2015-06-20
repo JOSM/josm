@@ -220,7 +220,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
-    private void displayErrorMessage(final ProgressMonitor monitor, final String msg, final String details, final String title, final String firstMessage) {
+    private void displayErrorMessage(final ProgressMonitor monitor, final String msg, final String details, final String title,
+            final String firstMessage) {
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override public void run() {
                 JPanel panel = new JPanel(new GridBagLayout());
@@ -254,7 +255,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     protected void cachePluginList(String site, String list) {
         File pluginDir = Main.pref.getPluginsDirectory();
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
-            Main.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
+            Main.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.",
+                    pluginDir.toString(), site));
         }
         File cacheFile = createSiteCacheFile(pluginDir, site);
         getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));

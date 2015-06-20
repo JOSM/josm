@@ -490,6 +490,109 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     public class Settings extends DefaultTabPreferenceSetting {
 
+        private final class SelectedListTransferHandler extends TransferHandler {
+            @Override
+            @SuppressWarnings("unchecked")
+            protected Transferable createTransferable(JComponent c) {
+                List<ActionDefinition> actions = new ArrayList<>();
+                for (ActionDefinition o: ((JList<ActionDefinition>)c).getSelectedValuesList()) {
+                    actions.add(o);
+                }
+                return new ActionTransferable(actions);
+            }
+
+            @Override
+            public int getSourceActions(JComponent c) {
+                return TransferHandler.MOVE;
+            }
+
+            @Override
+            public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+                for (DataFlavor f : transferFlavors) {
+                    if (ACTION_FLAVOR.equals(f))
+                        return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void exportAsDrag(JComponent comp, InputEvent e, int action) {
+                super.exportAsDrag(comp, e, action);
+                movingComponent = "list";
+            }
+
+            @Override
+            public boolean importData(JComponent comp, Transferable t) {
+                try {
+                    int dropIndex = selectedList.locationToIndex(selectedList.getMousePosition(true));
+                    @SuppressWarnings("unchecked")
+                    List<ActionDefinition> draggedData = (List<ActionDefinition>) t.getTransferData(ACTION_FLAVOR);
+
+                    Object leadItem = dropIndex >= 0 ? selected.elementAt(dropIndex) : null;
+                    int dataLength = draggedData.size();
+
+                    if (leadItem != null) {
+                        for (Object o: draggedData) {
+                            if (leadItem.equals(o))
+                                return false;
+                        }
+                    }
+
+                    int dragLeadIndex = -1;
+                    boolean localDrop = "list".equals(movingComponent);
+
+                    if (localDrop) {
+                        dragLeadIndex = selected.indexOf(draggedData.get(0));
+                        for (Object o: draggedData) {
+                            selected.removeElement(o);
+                        }
+                    }
+                    int[] indices = new int[dataLength];
+
+                    if (localDrop) {
+                        int adjustedLeadIndex = selected.indexOf(leadItem);
+                        int insertionAdjustment = dragLeadIndex <= adjustedLeadIndex ? 1 : 0;
+                        for (int i = 0; i < dataLength; i++) {
+                            selected.insertElementAt(draggedData.get(i), adjustedLeadIndex + insertionAdjustment + i);
+                            indices[i] = adjustedLeadIndex + insertionAdjustment + i;
+                        }
+                    } else {
+                        for (int i = 0; i < dataLength; i++) {
+                            selected.add(dropIndex, draggedData.get(i));
+                            indices[i] = dropIndex + i;
+                        }
+                    }
+                    selectedList.clearSelection();
+                    selectedList.setSelectedIndices(indices);
+                    movingComponent = "";
+                    return true;
+                } catch (Exception e) {
+                    Main.error(e);
+                }
+                return false;
+            }
+
+            @Override
+            protected void exportDone(JComponent source, Transferable data, int action) {
+                if ("list".equals(movingComponent)) {
+                    try {
+                        List<?> draggedData = (List<?>) data.getTransferData(ACTION_FLAVOR);
+                        boolean localDrop = selected.contains(draggedData.get(0));
+                        if (localDrop) {
+                            int[] indices = selectedList.getSelectedIndices();
+                            Arrays.sort(indices);
+                            for (int i = indices.length - 1; i >= 0; i--) {
+                                selected.remove(indices[i]);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Main.error(e);
+                    }
+                    movingComponent = "";
+                }
+            }
+        }
+
         private final class Move implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -661,108 +764,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             });
 
             selectedList.setDragEnabled(true);
-            selectedList.setTransferHandler(new TransferHandler() {
-                @Override
-                @SuppressWarnings("unchecked")
-                protected Transferable createTransferable(JComponent c) {
-                    List<ActionDefinition> actions = new ArrayList<>();
-                    for (ActionDefinition o: ((JList<ActionDefinition>)c).getSelectedValuesList()) {
-                        actions.add(o);
-                    }
-                    return new ActionTransferable(actions);
-                }
-
-                @Override
-                public int getSourceActions(JComponent c) {
-                    return TransferHandler.MOVE;
-                }
-
-                @Override
-                public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
-                    for (DataFlavor f : transferFlavors) {
-                        if (ACTION_FLAVOR.equals(f))
-                            return true;
-                    }
-                    return false;
-                }
-
-                @Override
-                public void exportAsDrag(JComponent comp, InputEvent e, int action) {
-                    super.exportAsDrag(comp, e, action);
-                    movingComponent = "list";
-                }
-
-                @Override
-                public boolean importData(JComponent comp, Transferable t) {
-                    try {
-                        int dropIndex = selectedList.locationToIndex(selectedList.getMousePosition(true));
-                        @SuppressWarnings("unchecked")
-                        List<ActionDefinition> draggedData = (List<ActionDefinition>) t.getTransferData(ACTION_FLAVOR);
-
-                        Object leadItem = dropIndex >= 0 ? selected.elementAt(dropIndex) : null;
-                        int dataLength = draggedData.size();
-
-                        if (leadItem != null) {
-                            for (Object o: draggedData) {
-                                if (leadItem.equals(o))
-                                    return false;
-                            }
-                        }
-
-                        int dragLeadIndex = -1;
-                        boolean localDrop = "list".equals(movingComponent);
-
-                        if (localDrop) {
-                            dragLeadIndex = selected.indexOf(draggedData.get(0));
-                            for (Object o: draggedData) {
-                                selected.removeElement(o);
-                            }
-                        }
-                        int[] indices = new int[dataLength];
-
-                        if (localDrop) {
-                            int adjustedLeadIndex = selected.indexOf(leadItem);
-                            int insertionAdjustment = dragLeadIndex <= adjustedLeadIndex ? 1 : 0;
-                            for (int i = 0; i < dataLength; i++) {
-                                selected.insertElementAt(draggedData.get(i), adjustedLeadIndex + insertionAdjustment + i);
-                                indices[i] = adjustedLeadIndex + insertionAdjustment + i;
-                            }
-                        } else {
-                            for (int i = 0; i < dataLength; i++) {
-                                selected.add(dropIndex, draggedData.get(i));
-                                indices[i] = dropIndex + i;
-                            }
-                        }
-                        selectedList.clearSelection();
-                        selectedList.setSelectedIndices(indices);
-                        movingComponent = "";
-                        return true;
-                    } catch (Exception e) {
-                        Main.error(e);
-                    }
-                    return false;
-                }
-
-                @Override
-                protected void exportDone(JComponent source, Transferable data, int action) {
-                    if ("list".equals(movingComponent)) {
-                        try {
-                            List<?> draggedData = (List<?>) data.getTransferData(ACTION_FLAVOR);
-                            boolean localDrop = selected.contains(draggedData.get(0));
-                            if (localDrop) {
-                                int[] indices = selectedList.getSelectedIndices();
-                                Arrays.sort(indices);
-                                for (int i = indices.length - 1; i >= 0; i--) {
-                                    selected.remove(indices[i]);
-                                }
-                            }
-                        } catch (Exception e) {
-                            Main.error(e);
-                        }
-                        movingComponent = "";
-                    }
-                }
-            });
+            selectedList.setTransferHandler(new SelectedListTransferHandler());
 
             actionsTree.setTransferHandler(new TransferHandler() {
                 private static final long serialVersionUID = 1L;

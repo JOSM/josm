@@ -72,8 +72,7 @@ public class JCSCacheManager {
         Logger jcsLog = Logger.getLogger("org.apache.commons.jcs");
         jcsLog.setLevel(Level.INFO);
         jcsLog.setUseParentHandlers(false);
-        //Logger.getLogger("org.apache.common").setUseParentHandlers(false);
-        // we need a separate handler from Main's, as we  downgrade LEVEL.INFO to DEBUG level
+        // we need a separate handler from Main's, as we downgrade LEVEL.INFO to DEBUG level
         jcsLog.addHandler(new Handler() {
             @Override
             public void publish(LogRecord record) {
@@ -99,24 +98,22 @@ public class JCSCacheManager {
             }
         });
 
-
-        CompositeCacheManager cm  = CompositeCacheManager.getUnconfiguredInstance();
         // this could be moved to external file
         Properties props = new Properties();
         // these are default common to all cache regions
         // use of auxiliary cache and sizing of the caches is done with giving proper geCache(...) params
-        props.setProperty("jcs.default.cacheattributes",                            org.apache.commons.jcs.engine.CompositeCacheAttributes.class.getCanonicalName());
-        props.setProperty("jcs.default.cacheattributes.MaxObjects",                 DEFAULT_MAX_OBJECTS_IN_MEMORY.get().toString());
-        props.setProperty("jcs.default.cacheattributes.UseMemoryShrinker",          "true");
-        props.setProperty("jcs.default.cacheattributes.DiskUsagePatternName",       "UPDATE"); // store elements on disk on put
-        props.setProperty("jcs.default.elementattributes",                          CacheEntryAttributes.class.getCanonicalName());
-        props.setProperty("jcs.default.elementattributes.IsEternal",                "false");
-        props.setProperty("jcs.default.elementattributes.MaxLife",                  Long.toString(maxObjectTTL));
-        props.setProperty("jcs.default.elementattributes.IdleTime",                 Long.toString(maxObjectTTL));
-        props.setProperty("jcs.default.elementattributes.IsSpool",                  "true");
+        props.setProperty("jcs.default.cacheattributes",                      CompositeCacheAttributes.class.getCanonicalName());
+        props.setProperty("jcs.default.cacheattributes.MaxObjects",           DEFAULT_MAX_OBJECTS_IN_MEMORY.get().toString());
+        props.setProperty("jcs.default.cacheattributes.UseMemoryShrinker",    "true");
+        props.setProperty("jcs.default.cacheattributes.DiskUsagePatternName", "UPDATE"); // store elements on disk on put
+        props.setProperty("jcs.default.elementattributes",                    CacheEntryAttributes.class.getCanonicalName());
+        props.setProperty("jcs.default.elementattributes.IsEternal",          "false");
+        props.setProperty("jcs.default.elementattributes.MaxLife",            Long.toString(maxObjectTTL));
+        props.setProperty("jcs.default.elementattributes.IdleTime",           Long.toString(maxObjectTTL));
+        props.setProperty("jcs.default.elementattributes.IsSpool",            "true");
+        CompositeCacheManager cm = CompositeCacheManager.getUnconfiguredInstance();
         cm.configure(props);
         cacheManager = cm;
-
     }
 
     /**

@@ -40,7 +40,8 @@ public class MarkerSessionImporter implements SessionLayerImporter {
             }
 
             try (InputStream in = support.getInputStream(fileStr)) {
-                GpxImporter.GpxImporterData importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
+                GpxImporter.GpxImporterData importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(),
+                        null, progressMonitor);
 
                 support.addPostLayersTask(importData.getPostLayerTask());
 

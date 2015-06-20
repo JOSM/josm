@@ -246,7 +246,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
         colorTypeVelocity.setToolTipText(tr("Colors points and track segments by velocity."));
         colorTypeDirection.setToolTipText(tr("Colors points and track segments by direction."));
-        colorTypeDilution.setToolTipText(tr("Colors points and track segments by dilution of position (HDOP). Your capture device needs to log that information."));
+        colorTypeDilution.setToolTipText(
+                tr("Colors points and track segments by dilution of position (HDOP). Your capture device needs to log that information."));
         colorTypeTime.setToolTipText(tr("Colors points and track segments by its timestamp."));
 
         // color Tracks by Velocity Tune
@@ -475,7 +476,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         try {
             parser.parse();
         } catch (ParseError e) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Incorrect waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(Main.parent,
+                    tr("Incorrect waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
             waypointLabelPattern.requestFocus();
             return false;
         }
@@ -483,7 +485,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         try {
             parser.parse();
         } catch (ParseError e) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Incorrect audio waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(Main.parent,
+                    tr("Incorrect audio waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
             audioWaypointLabelPattern.requestFocus();
             return false;
         }

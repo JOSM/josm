@@ -88,7 +88,7 @@ public class ParallelWays {
             }
         }
 
-        // Ugly method of ensuring that the offset isn't inverted. I'm sure there is a better and more elegant way, but I'm starting to get sleepy, so I do this for now.
+        // Ugly method of ensuring that the offset isn't inverted. I'm sure there is a better and more elegant way
         Way refWay = ways.get(refWayIndex);
         boolean refWayReversed = true;
         for (int i = 0; i < sortedNodes.size() - 1; i++) {

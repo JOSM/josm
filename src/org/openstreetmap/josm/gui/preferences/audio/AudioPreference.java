@@ -64,7 +64,8 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
 
         // audioTraceVisible
         markerAudioTraceVisible.setSelected(Main.pref.getBoolean("marker.traceaudio", true));
-        markerAudioTraceVisible.setToolTipText(tr("Display a moving icon representing the point on the synchronized track where the audio currently playing was recorded."));
+        markerAudioTraceVisible.setToolTipText(
+                tr("Display a moving icon representing the point on the synchronized track where the audio currently playing was recorded."));
         audio.add(markerAudioTraceVisible, GBC.eol().insets(0,0,0,0));
 
         // buttonLabels
@@ -86,17 +87,20 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
 
         // audioMarkersFromNamedTrackpoints
         audioMarkersFromNamedTrackpoints.setSelected(Main.pref.getBoolean("marker.audiofromnamedtrackpoints", false));
-        audioMarkersFromNamedTrackpoints.setToolTipText(tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
+        audioMarkersFromNamedTrackpoints.setToolTipText(
+                tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
         audio.add(audioMarkersFromNamedTrackpoints, GBC.eol().insets(10,0,0,0));
 
         // audioMarkersFromWavTimestamps
         audioMarkersFromWavTimestamps.setSelected(Main.pref.getBoolean("marker.audiofromwavtimestamps", false));
-        audioMarkersFromWavTimestamps.setToolTipText(tr("Create audio markers at the position on the track corresponding to the modified time of each audio WAV file imported."));
+        audioMarkersFromWavTimestamps.setToolTipText(
+                tr("Create audio markers at the position on the track corresponding to the modified time of each audio WAV file imported."));
         audio.add(audioMarkersFromWavTimestamps, GBC.eol().insets(10,0,0,0));
 
         // audioMarkersFromStart
         audioMarkersFromStart.setSelected(Main.pref.getBoolean("marker.audiofromstart"));
-        audioMarkersFromStart.setToolTipText(tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
+        audioMarkersFromStart.setToolTipText(
+                tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
         audio.add(audioMarkersFromStart, GBC.eol().insets(10,0,0,0));
 
         audioForwardBackAmount.setText(Main.pref.get("audio.forwardbackamount", "10.0"));
@@ -110,7 +114,8 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
         audio.add(audioFastForwardMultiplier, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
         audioLeadIn.setText(Main.pref.get("audio.leadin", "1.0"));
-        audioLeadIn.setToolTipText(tr("Playback starts this number of seconds before (or after, if negative) the audio track position requested"));
+        audioLeadIn.setToolTipText(
+                tr("Playback starts this number of seconds before (or after, if negative) the audio track position requested"));
         audio.add(new JLabel(tr("Lead-in time (seconds)")), GBC.std());
         audio.add(audioLeadIn, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 

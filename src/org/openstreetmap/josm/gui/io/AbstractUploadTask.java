@@ -63,7 +63,8 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
             throw new IllegalStateException(tr("Failed to update primitive with id {0} because current edit layer is null", id));
         OsmPrimitive p = layer.data.getPrimitiveById(id, type);
         if (p == null)
-            throw new IllegalStateException(tr("Failed to update primitive with id {0} because current edit layer does not include such a primitive", id));
+            throw new IllegalStateException(
+                    tr("Failed to update primitive with id {0} because current edit layer does not include such a primitive", id));
         Main.worker.execute(new UpdatePrimitivesTask(layer, Collections.singleton(p)));
     }
 

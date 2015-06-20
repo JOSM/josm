@@ -27,7 +27,8 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         void setCustomText(String text);
         void setCurrentAction(String text);
         void setIndeterminate(boolean newValue);
-        void appendLogMessage(String message); //TODO Not implemented properly in background monitor, log message will get lost if progress runs in background
+        // TODO Not implemented properly in background monitor, log message will get lost if progress runs in background
+        void appendLogMessage(String message);
     }
 
     public static final int PROGRESS_BAR_MAX = 10000;
@@ -46,7 +47,8 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     private boolean cancelable;
 
     private void doInEDT(Runnable runnable) {
-        // This must be invoke later even if current thread is EDT because inside there is dialog.setVisible which freeze current code flow until modal dialog is closed
+        // This must be invoke later even if current thread is EDT because inside there is dialog.setVisible
+        // which freeze current code flow until modal dialog is closed
         SwingUtilities.invokeLater(runnable);
     }
 

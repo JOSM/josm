@@ -86,7 +86,8 @@ public class BoxTextElemStyle extends ElemStyle {
     public HorizontalTextAlignment hAlign;
     public VerticalTextAlignment vAlign;
 
-    public BoxTextElemStyle(Cascade c, TextElement text, BoxProvider boxProvider, Rectangle box, HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign) {
+    public BoxTextElemStyle(Cascade c, TextElement text, BoxProvider boxProvider, Rectangle box,
+            HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign) {
         super(c, 5f);
         CheckParameterUtil.ensureParameterNotNull(text);
         CheckParameterUtil.ensureParameterNotNull(hAlign);

@@ -88,7 +88,8 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
                         numObjects, numObjects
                 );
             } else if (numRequests > 1){
-                msg = tr("Uploading <strong>{0} objects</strong> to <strong>1 changeset</strong> using <strong>{1} requests</strong>", numObjects, numRequests);
+                msg = tr("Uploading <strong>{0} objects</strong> to <strong>1 changeset</strong> using <strong>{1} requests</strong>",
+                        numObjects, numRequests);
             }
             msg = msg + " (<a href=\"urn:advanced-configuration\">" + tr("advanced configuration") + "</a>)";
         } else {
@@ -97,7 +98,8 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
                 msg = tr("{0} objects exceed the max. allowed {1} objects in a changeset on the server ''{2}''. Please <a href=\"urn:advanced-configuration\">configure</a> how to proceed with <strong>multiple changesets</strong>",
                         numObjects, maxChunkSize, OsmApi.getOsmApi().getBaseUrl());
             } else if (numRequests > 1){
-                msg = tr("Uploading <strong>{0} objects</strong> to <strong>multiple changesets</strong> using <strong>{1} requests</strong>", numObjects, numRequests);
+                msg = tr("Uploading <strong>{0} objects</strong> to <strong>multiple changesets</strong> using <strong>{1} requests</strong>",
+                        numObjects, numRequests);
                 msg = msg + " (<a href=\"urn:advanced-configuration\">" + tr("advanced configuration") + "</a>)";
             }
         }

@@ -28,6 +28,68 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
 
     private static final DatasetEventManager instance = new DatasetEventManager();
 
+    private final class EdtRunnable implements Runnable {
+        @Override
+        public void run() {
+            while (!eventsInEDT.isEmpty()) {
+                List<AbstractDatasetChangedEvent> events = new ArrayList<>(eventsInEDT);
+
+                DataSet dataSet = null;
+                AbstractDatasetChangedEvent consolidatedEvent = null;
+                AbstractDatasetChangedEvent event = null;
+
+                while ((event = eventsInEDT.poll()) != null) {
+                    fireEvents(inEDTListeners, event);
+
+                    // DataSet changed - fire consolidated event early
+                    if (consolidatedEvent != null && dataSet != event.getDataset()) {
+                        fireConsolidatedEvents(inEDTListeners, consolidatedEvent);
+                        consolidatedEvent = null;
+                    }
+
+                    dataSet = event.getDataset();
+
+                    // Build consolidated event
+                    if (event instanceof DataChangedEvent) {
+                        // DataChangeEvent can contains other events, so it gets special handling
+                        DataChangedEvent dataEvent = (DataChangedEvent) event;
+                        if (dataEvent.getEvents() == null) {
+                            consolidatedEvent = dataEvent; // Dataset was completely changed, we can ignore older events
+                        } else {
+                            if (consolidatedEvent == null) {
+                                consolidatedEvent = new DataChangedEvent(dataSet, dataEvent.getEvents());
+                            } else if (consolidatedEvent instanceof DataChangedEvent) {
+                                List<AbstractDatasetChangedEvent> evts = ((DataChangedEvent) consolidatedEvent).getEvents();
+                                if (evts != null) {
+                                    evts.addAll(dataEvent.getEvents());
+                                }
+                            } else {
+                                AbstractDatasetChangedEvent oldConsolidateEvent = consolidatedEvent;
+                                consolidatedEvent = new DataChangedEvent(dataSet, dataEvent.getEvents());
+                                ((DataChangedEvent) consolidatedEvent).getEvents().add(oldConsolidateEvent);
+                            }
+                        }
+                    } else {
+                        // Normal events
+                        if (consolidatedEvent == null) {
+                            consolidatedEvent = event;
+                        } else if (consolidatedEvent instanceof DataChangedEvent) {
+                            List<AbstractDatasetChangedEvent> evs = ((DataChangedEvent) consolidatedEvent).getEvents();
+                            if (evs != null) {
+                                evs.add(event);
+                            }
+                        } else {
+                            consolidatedEvent = new DataChangedEvent(dataSet, new ArrayList<>(Arrays.asList(consolidatedEvent)));
+                        }
+                    }
+                }
+
+                // Fire consolidated event
+                fireConsolidatedEvents(inEDTListeners, consolidatedEvent);
+            }
+        }
+    }
+
     public enum FireMode {
         /**
          * Fire in calling thread immediately.
@@ -71,6 +133,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
     private final CopyOnWriteArrayList<ListenerInfo> inEDTListeners = new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<ListenerInfo> normalListeners = new CopyOnWriteArrayList<>();
     private final DataSetListener myListener = new DataSetListenerAdapter(this);
+    private final Runnable edtRunnable = new EdtRunnable();
 
     /**
      * Constructs a new {@code DatasetEventManager}.
@@ -136,68 +199,4 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         eventsInEDT.add(event);
         SwingUtilities.invokeLater(edtRunnable);
     }
-
-    private final Runnable edtRunnable = new Runnable() {
-        @Override
-        public void run() {
-            while (!eventsInEDT.isEmpty()) {
-                List<AbstractDatasetChangedEvent> events = new ArrayList<>();
-                events.addAll(eventsInEDT);
-
-                DataSet dataSet = null;
-                AbstractDatasetChangedEvent consolidatedEvent = null;
-                AbstractDatasetChangedEvent event = null;
-
-                while ((event = eventsInEDT.poll()) != null) {
-                    fireEvents(inEDTListeners, event);
-
-                    // DataSet changed - fire consolidated event early
-                    if (consolidatedEvent != null && dataSet != event.getDataset()) {
-                        fireConsolidatedEvents(inEDTListeners, consolidatedEvent);
-                        consolidatedEvent = null;
-                    }
-
-                    dataSet = event.getDataset();
-
-                    // Build consolidated event
-                    if (event instanceof DataChangedEvent) {
-                        // DataChangeEvent can contains other events, so it gets special handling
-                        DataChangedEvent dataEvent = (DataChangedEvent) event;
-                        if (dataEvent.getEvents() == null) {
-                            consolidatedEvent = dataEvent; // Dataset was completely changed, we can ignore older events
-                        } else {
-                            if (consolidatedEvent == null) {
-                                consolidatedEvent = new DataChangedEvent(dataSet, dataEvent.getEvents());
-                            } else if (consolidatedEvent instanceof DataChangedEvent) {
-                                List<AbstractDatasetChangedEvent> evts = ((DataChangedEvent) consolidatedEvent).getEvents();
-                                if (evts != null) {
-                                    evts.addAll(dataEvent.getEvents());
-                                }
-                            } else {
-                                AbstractDatasetChangedEvent oldConsolidateEvent = consolidatedEvent;
-                                consolidatedEvent = new DataChangedEvent(dataSet, dataEvent.getEvents());
-                                ((DataChangedEvent) consolidatedEvent).getEvents().add(oldConsolidateEvent);
-                            }
-                        }
-                    } else {
-                        // Normal events
-                        if (consolidatedEvent == null) {
-                            consolidatedEvent = event;
-                        } else if (consolidatedEvent instanceof DataChangedEvent) {
-                            List<AbstractDatasetChangedEvent> evs = ((DataChangedEvent) consolidatedEvent).getEvents();
-                            if (evs != null) {
-                                evs.add(event);
-                            }
-                        } else {
-                            consolidatedEvent = new DataChangedEvent(dataSet, new ArrayList<>(Arrays.asList(consolidatedEvent)));
-                        }
-
-                    }
-                }
-
-                // Fire consolidated event
-                fireConsolidatedEvents(inEDTListeners, consolidatedEvent);
-            }
-        }
-    };
 }

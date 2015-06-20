@@ -488,7 +488,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return atLeastOnePositiveMatch;
     }
 
-    public static Collection<TaggingPreset> getMatchingPresets(final Collection<TaggingPresetType> t, final Map<String, String> tags, final boolean onlyShowable) {
+    public static Collection<TaggingPreset> getMatchingPresets(final Collection<TaggingPresetType> t,
+            final Map<String, String> tags, final boolean onlyShowable) {
         return Utils.filter(TaggingPresets.getTaggingPresets(), new Predicate<TaggingPreset>() {
             @Override
             public boolean evaluate(TaggingPreset object) {

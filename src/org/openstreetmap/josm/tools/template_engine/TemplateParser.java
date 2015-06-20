@@ -88,7 +88,8 @@ public class TemplateParser {
                 result.getEntries().add(condition);
             } else {
                 try {
-                    result.getEntries().add(new SearchExpressionCondition(SearchCompiler.compile(searchExpression.getText(), false, false), condition));
+                    result.getEntries().add(new SearchExpressionCondition(
+                            SearchCompiler.compile(searchExpression.getText(), false, false), condition));
                 } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
                     throw new ParseError(searchExpression.getPosition(), e);
                 }

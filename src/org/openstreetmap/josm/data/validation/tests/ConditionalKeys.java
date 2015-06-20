@@ -101,7 +101,8 @@ public class ConditionalKeys extends Test.TagTest {
         public static List<ConditionalValue> parse(String value) throws ConditionalParsingException {
             // <restriction-value> @ <condition>[;<restriction-value> @ <condition>]
             final List<ConditionalValue> r = new ArrayList<>();
-            final Pattern part = Pattern.compile("([^@\\p{Space}][^@]*?)" + "\\s*@\\s*" + "(\\([^)\\p{Space}][^)]+?\\)|[^();\\p{Space}][^();]*?)\\s*");
+            final Pattern part = Pattern.compile("([^@\\p{Space}][^@]*?)"
+                    + "\\s*@\\s*" + "(\\([^)\\p{Space}][^)]+?\\)|[^();\\p{Space}][^();]*?)\\s*");
             final Matcher m = Pattern.compile("(" + part + ")(;\\s*" + part + ")*").matcher(value);
             if (!m.matches()) {
                 throw new ConditionalParsingException(tr("Does not match pattern ''restriction value @ condition''"));

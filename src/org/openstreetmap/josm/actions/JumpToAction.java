@@ -127,7 +127,9 @@ public class JumpToAction extends JosmAction {
                 zoomLvl = Double.parseDouble(zm.getText());
                 ll = new LatLon(Double.parseDouble(lat.getText()), Double.parseDouble(lon.getText()));
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Could not parse Latitude, Longitude or Zoom. Please check."), tr("Unable to parse Lon/Lat"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(Main.parent,
+                        tr("Could not parse Latitude, Longitude or Zoom. Please check."),
+                        tr("Unable to parse Lon/Lat"), JOptionPane.ERROR_MESSAGE);
             }
         }
 

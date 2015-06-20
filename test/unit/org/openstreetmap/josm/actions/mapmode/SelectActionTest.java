@@ -19,7 +19,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -130,10 +129,9 @@ public class SelectActionTest {
 
     /**
      * Setup test.
-     * @throws UserCancelException
      */
     @BeforeClass
-    public static void setUp() throws UserCancelException {
+    public static void setUp() {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 

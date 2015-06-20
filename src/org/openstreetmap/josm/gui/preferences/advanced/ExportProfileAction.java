@@ -73,7 +73,8 @@ public class ExportProfileAction extends AbstractAction {
                 return tr("JOSM custom settings files (*.xml)");
             }
         };
-        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(false, false, title, filter, JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
+        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(false, false, title, filter,
+                JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
         if (fc != null) {
             File sel = fc.getSelectedFile();
             if (!sel.getName().endsWith(".xml")) sel=new File(sel.getAbsolutePath()+".xml");

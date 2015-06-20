@@ -116,16 +116,19 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
             toolTipText = tr("Please decide which values to keep");
             break;
         case KEEP_ONE:
-            toolTipText = tr("Value ''{0}'' is going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
+            toolTipText = tr("Value ''{0}'' is going to be applied for key ''{1}''",
+                    decision.getChosenValue(), decision.getKey());
             break;
         case SUM_ALL_NUMERIC:
-            toolTipText = tr("All numeric values sumed as ''{0}'' are going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
+            toolTipText = tr("All numeric values sumed as ''{0}'' are going to be applied for key ''{1}''",
+                    decision.getChosenValue(), decision.getKey());
             break;
         case KEEP_NONE:
             toolTipText = tr("The key ''{0}'' and all its values are going to be removed", decision.getKey());
             break;
         case KEEP_ALL:
-            toolTipText = tr("All values joined as ''{0}'' are going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
+            toolTipText = tr("All values joined as ''{0}'' are going to be applied for key ''{1}''",
+                    decision.getChosenValue(), decision.getKey());
             break;
         }
         setToolTipText(toolTipText);

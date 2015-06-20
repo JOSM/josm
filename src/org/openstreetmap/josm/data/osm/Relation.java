@@ -186,7 +186,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
     /**
      * Constructs an identical clone of the argument.
      * @param clone The relation to clone
-     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}. If {@code false}, does nothing
+     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
+     * If {@code false}, does nothing
      */
     public Relation(Relation clone, boolean clearMetadata) {
         super(clone.getUniqueId(), true);
@@ -489,7 +490,9 @@ public final class Relation extends OsmPrimitive implements IRelation {
             RelationMember[] members = this.members;
             for (RelationMember rm: members) {
                 if (rm.getMember().getDataSet() != dataSet)
-                    throw new DataIntegrityProblemException(String.format("Relation member must be part of the same dataset as relation(%s, %s)", getPrimitiveId(), rm.getMember().getPrimitiveId()));
+                    throw new DataIntegrityProblemException(
+                            String.format("Relation member must be part of the same dataset as relation(%s, %s)",
+                                    getPrimitiveId(), rm.getMember().getPrimitiveId()));
             }
             if (Main.pref.getBoolean("debug.checkDeleteReferenced", true)) {
                 for (RelationMember rm: members) {

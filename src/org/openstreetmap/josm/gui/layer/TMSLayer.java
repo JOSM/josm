@@ -128,6 +128,64 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache", defPath);
     }
 
+    private final class ShowTileInfoAction extends AbstractAction {
+        private ShowTileInfoAction() {
+            super(tr("Show Tile Info"));
+        }
+
+        private String getSizeString(int size) {
+            return new StringBuilder().append(size).append("x").append(size).toString();
+        }
+
+        private JTextField createTextField(String text) {
+            JTextField ret = new JTextField(text);
+            ret.setEditable(false);
+            ret.setBorder(BorderFactory.createEmptyBorder());
+            return ret;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (clickedTile != null) {
+                ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), new String[]{tr("OK")});
+                JPanel panel = new JPanel(new GridBagLayout());
+                Rectangle displaySize = tileToRect(clickedTile);
+                String url = "";
+                try {
+                    url = clickedTile.getUrl();
+                } catch (IOException e) {
+                    // silence exceptions
+                }
+
+                String[][] content = {
+                        {"Tile name", clickedTile.getKey()},
+                        {"Tile url", url},
+                        {"Tile size", getSizeString(clickedTile.getTileSource().getTileSize()) },
+                        {"Tile display size", new StringBuilder().append(displaySize.width).append("x").append(displaySize.height).toString()},
+                };
+
+                for (String[] entry: content) {
+                    panel.add(new JLabel(tr(entry[0]) + ":"), GBC.std());
+                    panel.add(GBC.glue(5,0), GBC.std());
+                    panel.add(createTextField(entry[1]), GBC.eol().fill(GBC.HORIZONTAL));
+                }
+
+                for (Entry<String, String> e: clickedTile.getMetadata().entrySet()) {
+                    panel.add(new JLabel(tr("Metadata ") + tr(e.getKey()) + ":"), GBC.std());
+                    panel.add(GBC.glue(5,0), GBC.std());
+                    String value = e.getValue();
+                    if ("lastModification".equals(e.getKey()) || "expirationTime".equals(e.getKey())) {
+                        value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(value)));
+                    }
+                    panel.add(createTextField(value), GBC.eol().fill(GBC.HORIZONTAL));
+                }
+                ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
+                ed.setContent(panel);
+                ed.showDialog();
+            }
+        }
+    }
+
     /**
      * Interface for creating TileLoaders, ie. classes responsible for loading tiles on map
      *
@@ -536,61 +594,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
         }));
 
-        tileOptionMenu.add(new JMenuItem(new AbstractAction(
-                tr("Show Tile Info")) {
-            private String getSizeString(int size) {
-                StringBuilder ret = new StringBuilder();
-                return ret.append(size).append("x").append(size).toString();
-            }
-
-            private JTextField createTextField(String text) {
-                JTextField ret = new JTextField(text);
-                ret.setEditable(false);
-                ret.setBorder(BorderFactory.createEmptyBorder());
-                return ret;
-            }
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                if (clickedTile != null) {
-                    ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), new String[]{tr("OK")});
-                    JPanel panel = new JPanel(new GridBagLayout());
-                    Rectangle displaySize = tileToRect(clickedTile);
-                    String url = "";
-                    try {
-                        url = clickedTile.getUrl();
-                    } catch (IOException e) {
-                        // silence exceptions
-                    }
-
-                    String[][] content = {
-                            {"Tile name", clickedTile.getKey()},
-                            {"Tile url", url},
-                            {"Tile size", getSizeString(clickedTile.getTileSource().getTileSize()) },
-                            {"Tile display size", new StringBuilder().append(displaySize.width).append("x").append(displaySize.height).toString()},
-                    };
-
-                    for (String[] entry: content) {
-                        panel.add(new JLabel(tr(entry[0]) + ":"), GBC.std());
-                        panel.add(GBC.glue(5,0), GBC.std());
-                        panel.add(createTextField(entry[1]), GBC.eol().fill(GBC.HORIZONTAL));
-                    }
-
-                    for (Entry<String, String> e: clickedTile.getMetadata().entrySet()) {
-                        panel.add(new JLabel(tr("Metadata ") + tr(e.getKey()) + ":"), GBC.std());
-                        panel.add(GBC.glue(5,0), GBC.std());
-                        String value = e.getValue();
-                        if ("lastModification".equals(e.getKey()) || "expirationTime".equals(e.getKey())) {
-                            value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(value)));
-                        }
-                        panel.add(createTextField(value), GBC.eol().fill(GBC.HORIZONTAL));
-
-                    }
-                    ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
-                    ed.setContent(panel);
-                    ed.showDialog();
-                }
-            }
-        }));
+        tileOptionMenu.add(new JMenuItem(new ShowTileInfoAction()));
 
         tileOptionMenu.add(new JMenuItem(new AbstractAction(
                 tr("Request Update")) {

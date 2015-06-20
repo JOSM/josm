@@ -24,7 +24,8 @@ public final class StyleCache {
     /* styles for each scale range */
     private final List<StyleList> data;
 
-    private static final Storage<StyleCache> internPool = new Storage<>(); // TODO: clean up the intern pool from time to time (after purge or layer removal)
+    // TODO: clean up the intern pool from time to time (after purge or layer removal)
+    private static final Storage<StyleCache> internPool = new Storage<>();
 
     public static final StyleCache EMPTY_STYLECACHE = (new StyleCache()).intern();
 

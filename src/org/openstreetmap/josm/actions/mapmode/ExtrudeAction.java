@@ -173,7 +173,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     // Dual alignment mode stuff
     /** {@code true}, if dual alignment mode is enabled. User wants following extrude to be dual aligned. */
     private boolean dualAlignEnabled;
-    /** {@code true}, if dual alignment is active. User is dragging the mouse, required conditions are met. Treat {@link #mode} (extrude/translate/create_new) as dual aligned. */
+    /** {@code true}, if dual alignment is active. User is dragging the mouse, required conditions are met.
+     * Treat {@link #mode} (extrude/translate/create_new) as dual aligned. */
     private boolean dualAlignActive;
     /** Dual alignment reference segments */
     private transient ReferenceSegment dualAlignSegment1, dualAlignSegment2;
@@ -621,7 +622,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         //find if the new points overlap existing segments (in case of 90 degree angles)
         Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
         boolean nodeOverlapsSegment = prevNode != null && Geometry.segmentsParallel(initialN1en, prevNode.getEastNorth(), initialN1en, newN1en);
-        // segmentAngleZero marks subset of nodeOverlapsSegment. nodeOverlapsSegment is true if angle between segments is 0 or PI, segmentAngleZero only if angle is 0
+        // segmentAngleZero marks subset of nodeOverlapsSegment.
+        // nodeOverlapsSegment is true if angle between segments is 0 or PI, segmentAngleZero only if angle is 0
         boolean segmentAngleZero = prevNode != null && Math.abs(Geometry.getCornerAngle(prevNode.getEastNorth(), initialN1en, newN1en)) < 1e-5;
         boolean hasOtherWays = hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
         List<Node> changedNodes = new ArrayList<>();
@@ -926,7 +928,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             newN2en = Geometry.getLineLineIntersection(n1movedEn, n2movedEn, dualAlignSegment2.p1, dualAlignSegment2.p2);
             if (newN1en == null || newN2en == null) return bestMovement;
             if (keepSegmentDirection && isOppositeDirection(newN1en, newN2en, initialN1en, initialN2en)) {
-                EastNorth collapsedSegmentPosition = Geometry.getLineLineIntersection(dualAlignSegment1.p1, dualAlignSegment1.p2, dualAlignSegment2.p1, dualAlignSegment2.p2);
+                EastNorth collapsedSegmentPosition = Geometry.getLineLineIntersection(dualAlignSegment1.p1, dualAlignSegment1.p2,
+                        dualAlignSegment2.p1, dualAlignSegment2.p2);
                 newN1en = collapsedSegmentPosition;
                 newN2en = collapsedSegmentPosition;
                 dualAlignSegmentCollapsed = true;
@@ -1171,11 +1174,14 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             // Here we should end up with a gross overestimate of the maximum viewport diagonal in what
             // Graphics2D calls 'user space'. Essentially a manhattan distance of manhattan distances.
             // This can be used as a safe length of line to generate which will always go off-viewport.
-            double linelength = Math.abs(widthpoint.getX()) + Math.abs(widthpoint.getY()) + Math.abs(heightpoint.getX()) + Math.abs(heightpoint.getY());
+            double linelength = Math.abs(widthpoint.getX()) + Math.abs(widthpoint.getY())
+                    + Math.abs(heightpoint.getX()) + Math.abs(heightpoint.getY());
 
-            return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * linelength) , start.getY() + (unitvector.getY() * linelength)));
+            return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * linelength) , start.getY()
+                    + (unitvector.getY() * linelength)));
         } catch (NoninvertibleTransformException e) {
-            return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * 10) , start.getY() + (unitvector.getY() * 10)));
+            return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * 10) , start.getY()
+                    + (unitvector.getY() * 10)));
         }
     }
 }

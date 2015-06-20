@@ -72,6 +72,111 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public final class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener, ExpertModeChangeListener, ChangeListener {
 
+    private final class PluginDownloadAfterTask implements Runnable {
+        private final PluginPreference preference;
+        private final PluginDownloadTask task;
+        private final List<PluginInformation> toDownload;
+
+        private PluginDownloadAfterTask(PluginPreference preference, PluginDownloadTask task,
+                List<PluginInformation> toDownload) {
+            this.preference = preference;
+            this.task = task;
+            this.toDownload = toDownload;
+        }
+
+        @Override
+        public void run() {
+            boolean requiresRestart = false;
+
+            for (PreferenceSetting setting : settingsInitialized) {
+                if (setting.ok()) {
+                    requiresRestart = true;
+                }
+            }
+
+            // build the messages. We only display one message, including the status information from the plugin download task
+            // and - if necessary - a hint to restart JOSM
+            //
+            StringBuilder sb = new StringBuilder();
+            sb.append("<html>");
+            if (task != null && !task.isCanceled()) {
+                PluginHandler.refreshLocalUpdatedPluginInfo(task.getDownloadedPlugins());
+                sb.append(PluginPreference.buildDownloadSummary(task));
+            }
+            if (requiresRestart) {
+                sb.append(tr("You have to restart JOSM for some settings to take effect."));
+                sb.append("<br/><br/>");
+                sb.append(tr("Would you like to restart now?"));
+            }
+            sb.append("</html>");
+
+            // display the message, if necessary
+            //
+            if (requiresRestart) {
+                final ButtonSpec[] options = RestartAction.getButtonSpecs();
+                if (0 == HelpAwareOptionPane.showOptionDialog(
+                        Main.parent,
+                        sb.toString(),
+                        tr("Restart"),
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null, /* no special icon */
+                        options,
+                        options[0],
+                        null /* no special help */
+                        )) {
+                    Main.main.menu.restart.actionPerformed(null);
+                }
+            } else if (task != null && !task.isCanceled()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        sb.toString(),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                        );
+            }
+
+            // load the plugins that can be loaded at runtime
+            List<PluginInformation> newPlugins = preference.getNewlyActivatedPlugins();
+            if (newPlugins != null) {
+                Collection<PluginInformation> downloadedPlugins = null;
+                if (task != null && !task.isCanceled()) {
+                    downloadedPlugins = task.getDownloadedPlugins();
+                }
+                List<PluginInformation> toLoad = new ArrayList<>();
+                for (PluginInformation pi : newPlugins) {
+                    if (toDownload.contains(pi) && downloadedPlugins != null && !downloadedPlugins.contains(pi)) {
+                        continue; // failed download
+                    }
+                    if (pi.canloadatruntime) {
+                        toLoad.add(pi);
+                    }
+                }
+                // check if plugin dependences can also be loaded
+                Collection<PluginInformation> allPlugins = new HashSet<>(toLoad);
+                for (PluginProxy proxy : PluginHandler.pluginList) {
+                    allPlugins.add(proxy.getPluginInformation());
+                }
+                boolean removed;
+                do {
+                    removed = false;
+                    Iterator<PluginInformation> it = toLoad.iterator();
+                    while (it.hasNext()) {
+                        if (!PluginHandler.checkRequiredPluginsPreconditions(null, allPlugins, it.next(), requiresRestart)) {
+                            it.remove();
+                            removed = true;
+                        }
+                    }
+                } while (removed);
+
+                if (!toLoad.isEmpty()) {
+                    PluginHandler.loadPlugins(PreferenceTabbedPane.this, toLoad, null);
+                }
+            }
+
+            Main.parent.repaint();
+        }
+    }
+
     /**
      * Allows PreferenceSettings to do validation of entered values when ok was pressed.
      * If data is invalid then event can return false to cancel closing of preferences dialog.
@@ -303,8 +408,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
      * Saves preferences.
      */
     public void savePreferences() {
-        // create a task for downloading plugins if the user has activated, yet not downloaded,
-        // new plugins
+        // create a task for downloading plugins if the user has activated, yet not downloaded, new plugins
         //
         final PluginPreference preference = getPluginPreference();
         final List<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
@@ -317,100 +421,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
         // this is the task which will run *after* the plugins are downloaded
         //
-        final Runnable continuation = new Runnable() {
-            @Override
-            public void run() {
-                boolean requiresRestart = false;
-
-                for (PreferenceSetting setting : settingsInitialized) {
-                    if (setting.ok()) {
-                        requiresRestart = true;
-                    }
-                }
-
-                // build the messages. We only display one message, including the status
-                // information from the plugin download task and - if necessary - a hint
-                // to restart JOSM
-                //
-                StringBuilder sb = new StringBuilder();
-                sb.append("<html>");
-                if (task != null && !task.isCanceled()) {
-                    PluginHandler.refreshLocalUpdatedPluginInfo(task.getDownloadedPlugins());
-                    sb.append(PluginPreference.buildDownloadSummary(task));
-                }
-                if (requiresRestart) {
-                    sb.append(tr("You have to restart JOSM for some settings to take effect."));
-                    sb.append("<br/><br/>");
-                    sb.append(tr("Would you like to restart now?"));
-                }
-                sb.append("</html>");
-
-                // display the message, if necessary
-                //
-                if (requiresRestart) {
-                    final ButtonSpec[] options = RestartAction.getButtonSpecs();
-                    if (0 == HelpAwareOptionPane.showOptionDialog(
-                            Main.parent,
-                            sb.toString(),
-                            tr("Restart"),
-                            JOptionPane.INFORMATION_MESSAGE,
-                            null, /* no special icon */
-                            options,
-                            options[0],
-                            null /* no special help */
-                            )) {
-                        Main.main.menu.restart.actionPerformed(null);
-                    }
-                } else if (task != null && !task.isCanceled()) {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            sb.toString(),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                            );
-                }
-
-                // load the plugins that can be loaded at runtime
-                List<PluginInformation> newPlugins = preference.getNewlyActivatedPlugins();
-                if (newPlugins != null) {
-                    Collection<PluginInformation> downloadedPlugins = null;
-                    if (task != null && !task.isCanceled()) {
-                        downloadedPlugins = task.getDownloadedPlugins();
-                    }
-                    List<PluginInformation> toLoad = new ArrayList<>();
-                    for (PluginInformation pi : newPlugins) {
-                        if (toDownload.contains(pi) && downloadedPlugins != null && !downloadedPlugins.contains(pi)) {
-                            continue; // failed download
-                        }
-                        if (pi.canloadatruntime) {
-                            toLoad.add(pi);
-                        }
-                    }
-                    // check if plugin dependences can also be loaded
-                    Collection<PluginInformation> allPlugins = new HashSet<>(toLoad);
-                    for (PluginProxy proxy : PluginHandler.pluginList) {
-                        allPlugins.add(proxy.getPluginInformation());
-                    }
-                    boolean removed;
-                    do {
-                        removed = false;
-                        Iterator<PluginInformation> it = toLoad.iterator();
-                        while (it.hasNext()) {
-                            if (!PluginHandler.checkRequiredPluginsPreconditions(null, allPlugins, it.next(), requiresRestart)) {
-                                it.remove();
-                                removed = true;
-                            }
-                        }
-                    } while (removed);
-
-                    if (!toLoad.isEmpty()) {
-                        PluginHandler.loadPlugins(PreferenceTabbedPane.this, toLoad, null);
-                    }
-                }
-
-                Main.parent.repaint();
-            }
-        };
+        final Runnable continuation = new PluginDownloadAfterTask(preference, task, toDownload);
 
         if (task != null) {
             // if we have to launch a plugin download task we do it asynchronously, followed

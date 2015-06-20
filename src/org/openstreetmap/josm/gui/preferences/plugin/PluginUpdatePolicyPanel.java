@@ -81,7 +81,8 @@ public class PluginUpdatePolicyPanel extends JPanel {
         rbVersionBasedUpatePolicy.put(Policy.NEVER, btn);
         bgVersionBasedUpdatePolicy.add(btn);
 
-        JMultilineLabel lbl = new JMultilineLabel(tr("Please decide whether JOSM shall automatically update active plugins at startup after an update of JOSM itself."));
+        JMultilineLabel lbl = new JMultilineLabel(
+                tr("Please decide whether JOSM shall automatically update active plugins at startup after an update of JOSM itself."));
         gc.gridy=0;
         pnl.add(lbl, gc);
         for (Policy p: Policy.values()) {

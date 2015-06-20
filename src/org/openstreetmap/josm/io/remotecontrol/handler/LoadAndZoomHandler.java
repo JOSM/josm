@@ -137,7 +137,8 @@ public class LoadAndZoomHandler extends RequestHandler {
                     if (toDownload != null && toDownload.isEmpty()) {
                         Main.info("RemoteControl: no download necessary");
                     } else {
-                        Future<?> future = osmTask.download(newLayer, new Bounds(minlat,minlon,maxlat,maxlon), null /* let the task manage the progress monitor */);
+                        Future<?> future = osmTask.download(newLayer, new Bounds(minlat,minlon,maxlat,maxlon),
+                                null /* let the task manage the progress monitor */);
                         Main.worker.submit(new PostDownloadHandler(osmTask, future));
                     }
                 }

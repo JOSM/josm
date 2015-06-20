@@ -72,7 +72,8 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      * TODO: do not pass Icon, pass ImageProvider instead
      */
-    public JosmAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar, String toolbarId, boolean installAdapters) {
+    public JosmAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar,
+            String toolbarId, boolean installAdapters) {
         super(name);
         if(icon != null)
             icon.getResource().getImageIcon(this);
@@ -110,7 +111,8 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar, String toolbarId, boolean installAdapters) {
+    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar,
+            String toolbarId, boolean installAdapters) {
         this(name, iconName == null ? null : new ImageProvider(iconName), tooltip, shortcut, registerInToolbar,
                 toolbarId == null ? iconName : toolbarId, installAdapters);
     }

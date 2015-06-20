@@ -87,7 +87,8 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
         descLabel.setFont(descLabel.getFont().deriveFont(Font.PLAIN));
         remote.add(descLabel, GBC.eol().insets(5, 5, 0, 10).fill(GBC.HORIZONTAL));
 
-        final JLabel portLabel = new JLabel("<html>" + tr("JOSM will always listen at <b>port {0}</b> (http) and <b>port {1}</b> (https) on localhost."
+        final JLabel portLabel = new JLabel("<html>"
+                + tr("JOSM will always listen at <b>port {0}</b> (http) and <b>port {1}</b> (https) on localhost."
                 + "<br>These ports are not configurable because they are referenced by external applications talking to JOSM.",
                 Main.pref.get("remote.control.port", "8111"),
                 Main.pref.get("remote.control.https.port", "8112")) + "</html>");

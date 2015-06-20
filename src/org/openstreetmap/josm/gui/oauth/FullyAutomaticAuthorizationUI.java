@@ -93,7 +93,8 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         gc.gridwidth = 2;
         HtmlPanel pnlMessage = new HtmlPanel();
         HTMLEditorKit kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
-        kit.getStyleSheet().addRule(".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
+        kit.getStyleSheet().addRule(
+                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
         kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
         pnlMessage.setText("<html><body><p class=\"warning-body\">"
                 + tr("Please enter your OSM user name and password. The password will <strong>not</strong> be saved "
@@ -142,7 +143,8 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         gc.gridwidth = 2;
         pnlMessage = new HtmlPanel();
         kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
-        kit.getStyleSheet().addRule(".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
+        kit.getStyleSheet().addRule(
+                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
         kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
         pnlMessage.setText("<html><body>"
                 + "<p class=\"warning-body\">"

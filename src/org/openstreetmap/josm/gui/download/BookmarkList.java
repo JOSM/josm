@@ -224,7 +224,8 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         }
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends Bookmark> list, Bookmark value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends Bookmark> list, Bookmark value, int index, boolean isSelected,
+                boolean cellHasFocus) {
             renderColor(isSelected);
             setText(value.getName());
             setToolTipText(buildToolTipText(value));

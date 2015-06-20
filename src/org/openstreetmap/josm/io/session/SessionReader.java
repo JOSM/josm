@@ -592,7 +592,8 @@ public class SessionReader {
         return zipFile.getInputStream(josEntry);
     }
 
-    private void loadSession(InputStream josIS, URI sessionFileURI, boolean zip, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
+    private void loadSession(InputStream josIS, URI sessionFileURI, boolean zip, ProgressMonitor progressMonitor)
+            throws IOException, IllegalDataException {
 
         this.sessionFileURI = sessionFileURI;
         this.zip = zip;

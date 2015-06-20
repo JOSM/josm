@@ -165,7 +165,8 @@ public class ChangePropertyCommand extends Command {
                 text = trn("Remove \"{0}\" for {1} object", "Remove \"{0}\" for {1} objects", objects.size(), entry.getKey(), objects.size());
             } else {
                 /* I18n: plural form for objects, but value < 2 not possible! */
-                text = trn("Set {0}={1} for {2} object", "Set {0}={1} for {2} objects", objects.size(), entry.getKey(), entry.getValue(), objects.size());
+                text = trn("Set {0}={1} for {2} object", "Set {0}={1} for {2} objects",
+                        objects.size(), entry.getKey(), entry.getValue(), objects.size());
             }
         } else {
             boolean allnull = true;

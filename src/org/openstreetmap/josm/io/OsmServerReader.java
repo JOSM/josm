@@ -116,7 +116,8 @@ public abstract class OsmServerReader extends OsmConnection {
      * @throws OsmTransferException if data transfer errors occur
      */
     @SuppressWarnings("resource")
-    protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason, boolean uncompressAccordingToContentDisposition) throws OsmTransferException {
+    protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason,
+            boolean uncompressAccordingToContentDisposition) throws OsmTransferException {
         try {
             OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlStr, Main.getJOSMWebsite());
             OnlineResource.OSM_API.checkOfflineAccess(urlStr, Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
@@ -158,7 +159,8 @@ public abstract class OsmServerReader extends OsmConnection {
                 activeConnection.connect();
             } catch (Exception e) {
                 Main.error(e);
-                OsmTransferException ote = new OsmTransferException(tr("Could not connect to the OSM server. Please check your internet connection."), e);
+                OsmTransferException ote = new OsmTransferException(
+                        tr("Could not connect to the OSM server. Please check your internet connection."), e);
                 ote.setUrl(url.toString());
                 throw ote;
             }

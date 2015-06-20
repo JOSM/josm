@@ -186,7 +186,8 @@ public final class Way extends OsmPrimitive implements IWay {
     /**
      * Replies the ordered {@link List} of chunks of this way. Each chunk is replied as a {@link Pair} of {@link Node nodes}.
      * @param sort If true, the nodes of each pair are sorted as defined by {@link Pair#sort}.
-     *             If false, Pair.a and Pair.b are in the way order (i.e for a given Pair(n), Pair(n-1).b == Pair(n).a, Pair(n).b == Pair(n+1).a, etc.)
+     *             If false, Pair.a and Pair.b are in the way order
+     *             (i.e for a given Pair(n), Pair(n-1).b == Pair(n).a, Pair(n).b == Pair(n+1).a, etc.)
      * @return The ordered list of chunks of this way.
      * @since 3348
      */
@@ -233,7 +234,8 @@ public final class Way extends OsmPrimitive implements IWay {
     /**
      * Contructs a new {@code Way} from an existing {@code Way}.
      * @param original The original {@code Way} to be identically cloned. Must not be null
-     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}. If {@code false}, does nothing
+     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
+     * If {@code false}, does nothing
      * @since 2410
      */
     public Way(Way original, boolean clearMetadata) {
@@ -596,7 +598,8 @@ public final class Way extends OsmPrimitive implements IWay {
                             tr("Nodes in way must be in the same dataset"));
                 if (n.isDeleted())
                     throw new DataIntegrityProblemException("Deleted node referenced: " + toString(),
-                            "<html>" + tr("Deleted node referenced by {0}", DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>");
+                            "<html>" + tr("Deleted node referenced by {0}",
+                                    DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>");
             }
             if (Main.pref.getBoolean("debug.checkNullCoor", true)) {
                 for (Node n: nodes) {

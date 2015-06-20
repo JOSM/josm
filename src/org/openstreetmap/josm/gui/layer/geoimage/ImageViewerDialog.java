@@ -106,7 +106,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDelete.getKeyStroke(), DELETE_TEXT);
         btnDelete.getActionMap().put(DELETE_TEXT, delAction);
 
-        ImageAction delFromDiskAction = new ImageAction(COMMAND_REMOVE_FROM_DISK, ImageProvider.get("dialogs", "geoimage/deletefromdisk"), tr("Delete image file from disk"));
+        ImageAction delFromDiskAction = new ImageAction(COMMAND_REMOVE_FROM_DISK,
+                ImageProvider.get("dialogs", "geoimage/deletefromdisk"), tr("Delete image file from disk"));
         JButton btnDeleteFromDisk = new JButton(delFromDiskAction);
         btnDeleteFromDisk.setPreferredSize(buttonDim);
         Shortcut scDeleteFromDisk = Shortcut.registerShortcut(
@@ -148,13 +149,16 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         "geoimage:last", tr("Geoimage: {0}", tr("Show last Image")), KeyEvent.VK_END, Shortcut.DIRECT)
         );
 
-        JToggleButton tbCentre = new JToggleButton(new ImageAction(COMMAND_CENTERVIEW, ImageProvider.get("dialogs", "centreview"), tr("Center view")));
+        JToggleButton tbCentre = new JToggleButton(new ImageAction(COMMAND_CENTERVIEW,
+                ImageProvider.get("dialogs", "centreview"), tr("Center view")));
         tbCentre.setPreferredSize(buttonDim);
 
-        JButton btnZoomBestFit = new JButton(new ImageAction(COMMAND_ZOOM, ImageProvider.get("dialogs", "zoom-best-fit"), tr("Zoom best fit and 1:1")));
+        JButton btnZoomBestFit = new JButton(new ImageAction(COMMAND_ZOOM,
+                ImageProvider.get("dialogs", "zoom-best-fit"), tr("Zoom best fit and 1:1")));
         btnZoomBestFit.setPreferredSize(buttonDim);
 
-        btnCollapse = new JButton(new ImageAction(COMMAND_COLLAPSE, ImageProvider.get("dialogs", "collapse"), tr("Move dialog to the side pane")));
+        btnCollapse = new JButton(new ImageAction(COMMAND_COLLAPSE,
+                ImageProvider.get("dialogs", "collapse"), tr("Move dialog to the side pane")));
         btnCollapse.setPreferredSize(new Dimension(20,20));
         btnCollapse.setAlignmentY(Component.TOP_ALIGNMENT);
 

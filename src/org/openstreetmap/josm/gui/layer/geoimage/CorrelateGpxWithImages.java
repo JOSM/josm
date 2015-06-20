@@ -104,6 +104,105 @@ public class CorrelateGpxWithImages extends AbstractAction {
         this.yLayer = layer;
     }
 
+    private final class SyncDialogWindowListener extends WindowAdapter {
+        private static final int CANCEL = -1;
+        private static final int DONE = 0;
+        private static final int AGAIN = 1;
+        private static final int NOTHING = 2;
+
+        private int checkAndSave() {
+            if (syncDialog.isVisible())
+                // nothing happened: JOSM was minimized or similar
+                return NOTHING;
+            int answer = syncDialog.getValue();
+            if(answer != 1)
+                return CANCEL;
+
+            // Parse values again, to display an error if the format is not recognized
+            try {
+                timezone = parseTimezone(tfTimezone.getText().trim());
+            } catch (ParseException e) {
+                JOptionPane.showMessageDialog(Main.parent, e.getMessage(),
+                        tr("Invalid timezone"), JOptionPane.ERROR_MESSAGE);
+                return AGAIN;
+            }
+
+            try {
+                delta = parseOffset(tfOffset.getText().trim());
+            } catch (ParseException e) {
+                JOptionPane.showMessageDialog(Main.parent, e.getMessage(),
+                        tr("Invalid offset"), JOptionPane.ERROR_MESSAGE);
+                return AGAIN;
+            }
+
+            if (lastNumMatched == 0 && new ExtendedDialog(
+                        Main.parent,
+                        tr("Correlate images with GPX track"),
+                        new String[] {tr("OK"), tr("Try Again")}).
+                        setContent(tr("No images could be matched!")).
+                        setButtonIcons(new String[] {"ok", "dialogs/refresh"}).
+                        showDialog().getValue() == 2)
+                return AGAIN;
+            return DONE;
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+            int result = checkAndSave();
+            switch (result) {
+            case NOTHING:
+                break;
+            case CANCEL:
+                if (yLayer != null) {
+                    for (ImageEntry ie : yLayer.data) {
+                        ie.tmp = null;
+                    }
+                    yLayer.updateBufferAndRepaint();
+                }
+                break;
+            case AGAIN:
+                actionPerformed(null);
+                break;
+            case DONE:
+                Main.pref.put("geoimage.timezone", formatTimezone(timezone));
+                Main.pref.put("geoimage.delta", Long.toString(delta * 1000));
+                Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
+
+                yLayer.useThumbs = cbShowThumbs.isSelected();
+                yLayer.startLoadThumbs();
+
+                // Search whether an other layer has yet defined some bounding box.
+                // If none, we'll zoom to the bounding box of the layer with the photos.
+                boolean boundingBoxedLayerFound = false;
+                for (Layer l: Main.map.mapView.getAllLayers()) {
+                    if (l != yLayer) {
+                        BoundingXYVisitor bbox = new BoundingXYVisitor();
+                        l.visitBoundingBox(bbox);
+                        if (bbox.getBounds() != null) {
+                            boundingBoxedLayerFound = true;
+                            break;
+                        }
+                    }
+                }
+                if (!boundingBoxedLayerFound) {
+                    BoundingXYVisitor bbox = new BoundingXYVisitor();
+                    yLayer.visitBoundingBox(bbox);
+                    Main.map.mapView.zoomTo(bbox);
+                }
+
+                for (ImageEntry ie : yLayer.data) {
+                    ie.applyTmp();
+                }
+
+                yLayer.updateBufferAndRepaint();
+
+                break;
+            default:
+                throw new IllegalStateException();
+            }
+        }
+    }
+
     private static class GpxDataWrapper {
         private String name;
         private GpxData data;
@@ -662,103 +761,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         outerPanel.add(syncDialog.getContentPane(), BorderLayout.PAGE_START);
         syncDialog.setContentPane(outerPanel);
         syncDialog.pack();
-        syncDialog.addWindowListener(new WindowAdapter() {
-            private static final int CANCEL = -1;
-            private static final int DONE = 0;
-            private static final int AGAIN = 1;
-            private static final int NOTHING = 2;
-            private int checkAndSave() {
-                if (syncDialog.isVisible())
-                    // nothing happened: JOSM was minimized or similar
-                    return NOTHING;
-                int answer = syncDialog.getValue();
-                if(answer != 1)
-                    return CANCEL;
-
-                // Parse values again, to display an error if the format is not recognized
-                try {
-                    timezone = parseTimezone(tfTimezone.getText().trim());
-                } catch (ParseException e) {
-                    JOptionPane.showMessageDialog(Main.parent, e.getMessage(),
-                            tr("Invalid timezone"), JOptionPane.ERROR_MESSAGE);
-                    return AGAIN;
-                }
-
-                try {
-                    delta = parseOffset(tfOffset.getText().trim());
-                } catch (ParseException e) {
-                    JOptionPane.showMessageDialog(Main.parent, e.getMessage(),
-                            tr("Invalid offset"), JOptionPane.ERROR_MESSAGE);
-                    return AGAIN;
-                }
-
-                if (lastNumMatched == 0 && new ExtendedDialog(
-                            Main.parent,
-                            tr("Correlate images with GPX track"),
-                            new String[] {tr("OK"), tr("Try Again")}).
-                            setContent(tr("No images could be matched!")).
-                            setButtonIcons(new String[] {"ok", "dialogs/refresh"}).
-                            showDialog().getValue() == 2)
-                    return AGAIN;
-                return DONE;
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-                int result = checkAndSave();
-                switch (result) {
-                case NOTHING:
-                    break;
-                case CANCEL:
-                    if (yLayer != null) {
-                        for (ImageEntry ie : yLayer.data) {
-                            ie.tmp = null;
-                        }
-                        yLayer.updateBufferAndRepaint();
-                    }
-                    break;
-                case AGAIN:
-                    actionPerformed(null);
-                    break;
-                case DONE:
-                    Main.pref.put("geoimage.timezone", formatTimezone(timezone));
-                    Main.pref.put("geoimage.delta", Long.toString(delta * 1000));
-                    Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
-
-                    yLayer.useThumbs = cbShowThumbs.isSelected();
-                    yLayer.startLoadThumbs();
-
-                    // Search whether an other layer has yet defined some bounding box.
-                    // If none, we'll zoom to the bounding box of the layer with the photos.
-                    boolean boundingBoxedLayerFound = false;
-                    for (Layer l: Main.map.mapView.getAllLayers()) {
-                        if (l != yLayer) {
-                            BoundingXYVisitor bbox = new BoundingXYVisitor();
-                            l.visitBoundingBox(bbox);
-                            if (bbox.getBounds() != null) {
-                                boundingBoxedLayerFound = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!boundingBoxedLayerFound) {
-                        BoundingXYVisitor bbox = new BoundingXYVisitor();
-                        yLayer.visitBoundingBox(bbox);
-                        Main.map.mapView.zoomTo(bbox);
-                    }
-
-                    for (ImageEntry ie : yLayer.data) {
-                        ie.applyTmp();
-                    }
-
-                    yLayer.updateBufferAndRepaint();
-
-                    break;
-                default:
-                    throw new IllegalStateException();
-                }
-            }
-        });
+        syncDialog.addWindowListener(new SyncDialogWindowListener());
         syncDialog.showDialog();
     }
 

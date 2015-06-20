@@ -13,7 +13,8 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
-public class RelationMemberConflictDecisionRenderer extends JLabel implements TableCellRenderer, ListCellRenderer<RelationMemberConflictDecisionType> {
+public class RelationMemberConflictDecisionRenderer extends JLabel
+implements TableCellRenderer, ListCellRenderer<RelationMemberConflictDecisionType> {
 
     private JosmComboBox<RelationMemberConflictDecisionType> cbDecisionTypes;
 

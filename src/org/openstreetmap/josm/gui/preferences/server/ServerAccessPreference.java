@@ -34,7 +34,8 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
     }
 
     private ServerAccessPreference() {
-        super(/* ICON(preferences/) */ "connection", tr("Connection Settings"), tr("Connection Settings for the OSM server."), false, new JTabbedPane());
+        super(/* ICON(preferences/) */ "connection", tr("Connection Settings"),
+                tr("Connection Settings for the OSM server."), false, new JTabbedPane());
     }
 
     /** indicates whether to use the default OSM URL or not */

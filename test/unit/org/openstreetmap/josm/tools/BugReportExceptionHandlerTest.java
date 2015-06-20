@@ -32,7 +32,7 @@ public class BugReportExceptionHandlerTest {
 
     /**
      * Test method for {@link org.openstreetmap.josm.tools.BugReportExceptionHandler#getBugReportUrl(java.lang.String)}.
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     @Test
     public void testGetBugReportUrl() throws IOException {

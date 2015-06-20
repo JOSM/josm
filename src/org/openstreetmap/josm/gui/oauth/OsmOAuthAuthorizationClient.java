@@ -426,7 +426,8 @@ public class OsmOAuthAuthorizationClient {
         }
     }
 
-    protected void sendAuthorisationRequest(SessionId sessionId, OAuthToken requestToken, OsmPrivileges privileges) throws OsmOAuthAuthorizationException {
+    protected void sendAuthorisationRequest(SessionId sessionId, OAuthToken requestToken, OsmPrivileges privileges)
+            throws OsmOAuthAuthorizationException {
         Map<String, String> parameters = new HashMap<>();
         fetchOAuthToken(sessionId, requestToken);
         parameters.put("oauth_token", requestToken.getKey());
@@ -491,8 +492,8 @@ public class OsmOAuthAuthorizationClient {
      * Automatically authorises a request token for a set of privileges.
      *
      * @param requestToken the request token. Must not be null.
-     * @param osmUserName the OSM user name. Must not be null.
-     * @param osmPassword the OSM password. Must not be null.
+     * @param userName the OSM user name. Must not be null.
+     * @param password the OSM password. Must not be null.
      * @param privileges the set of privileges. Must not be null.
      * @param monitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @throws IllegalArgumentException if requestToken is null
@@ -502,10 +503,11 @@ public class OsmOAuthAuthorizationClient {
      * @throws OsmOAuthAuthorizationException if the authorisation fails
      * @throws OsmTransferCanceledException if the task is canceled by the user
      */
-    public void authorise(OAuthToken requestToken, String osmUserName, String osmPassword, OsmPrivileges privileges, ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCanceledException{
+    public void authorise(OAuthToken requestToken, String userName, String password, OsmPrivileges privileges, ProgressMonitor monitor)
+            throws OsmOAuthAuthorizationException, OsmTransferCanceledException {
         CheckParameterUtil.ensureParameterNotNull(requestToken, "requestToken");
-        CheckParameterUtil.ensureParameterNotNull(osmUserName, "osmUserName");
-        CheckParameterUtil.ensureParameterNotNull(osmPassword, "osmPassword");
+        CheckParameterUtil.ensureParameterNotNull(userName, "userName");
+        CheckParameterUtil.ensureParameterNotNull(password, "password");
         CheckParameterUtil.ensureParameterNotNull(privileges, "privileges");
 
         if (monitor == null) {
@@ -516,13 +518,13 @@ public class OsmOAuthAuthorizationClient {
             monitor.setTicksCount(4);
             monitor.indeterminateSubTask(tr("Initializing a session at the OSM website..."));
             SessionId sessionId = fetchOsmWebsiteSessionId();
-            sessionId.userName = osmUserName;
+            sessionId.userName = userName;
             if (canceled)
                 throw new OsmTransferCanceledException("Authorization canceled");
             monitor.worked(1);
 
-            monitor.indeterminateSubTask(tr("Authenticating the session for user ''{0}''...", osmUserName));
-            authenticateOsmSession(sessionId, osmUserName, osmPassword);
+            monitor.indeterminateSubTask(tr("Authenticating the session for user ''{0}''...", userName));
+            authenticateOsmSession(sessionId, userName, password);
             if (canceled)
                 throw new OsmTransferCanceledException("Authorization canceled");
             monitor.worked(1);

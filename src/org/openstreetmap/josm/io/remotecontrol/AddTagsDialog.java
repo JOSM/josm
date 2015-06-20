@@ -227,7 +227,8 @@ public class AddTagsDialog extends ExtendedDialog {
     }
 
     /**
-     * If you click the "Add tags" button build a ChangePropertyCommand for every key that has a checked checkbox to apply the key value pair to all selected osm objects.
+     * If you click the "Add tags" button build a ChangePropertyCommand for every key that has a checked checkbox
+     * to apply the key value pair to all selected osm objects.
      * You get a entry for every key in the command queue.
      */
     @Override

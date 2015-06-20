@@ -26,7 +26,8 @@ public class Shape {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
         String[] components = asString.split(separator);
         if (components.length % 2 != 0)
-            throw new IllegalArgumentException(MessageFormat.format("Even number of doubles expected in string, got {0}: {1}", components.length, asString));
+            throw new IllegalArgumentException(MessageFormat.format("Even number of doubles expected in string, got {0}: {1}",
+                    components.length, asString));
         for (int i=0; i<components.length; i+=2) {
             addPoint(components[i], components[i+1]);
         }

@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.tools.date;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 

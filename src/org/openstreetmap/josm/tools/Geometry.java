@@ -904,7 +904,8 @@ public final class Geometry {
         for (MultipolygonBuilder.JoinedPolygon out : outerRings) {
             if (nodes.size() == 1
                     ? nodeInsidePolygon(nodes.get(0), out.getNodes())
-                    : EnumSet.of(PolygonIntersection.FIRST_INSIDE_SECOND, PolygonIntersection.CROSSING).contains(polygonIntersection(nodes, out.getNodes()))) {
+                    : EnumSet.of(PolygonIntersection.FIRST_INSIDE_SECOND, PolygonIntersection.CROSSING).contains(
+                            polygonIntersection(nodes, out.getNodes()))) {
                 boolean insideInner = false;
                 // If inside an outer, check it is not inside an inner
                 for (MultipolygonBuilder.JoinedPolygon in : innerRings) {
@@ -919,7 +920,8 @@ public final class Geometry {
                 // Inside outer but not inside inner -> the polygon appears to be inside a the multipolygon
                 if (!insideInner) {
                     // Final check using predicate
-                    if (isOuterWayAMatch == null || isOuterWayAMatch.evaluate(out.ways.get(0) /* TODO give a better representation of the outer ring to the predicate */)) {
+                    if (isOuterWayAMatch == null || isOuterWayAMatch.evaluate(out.ways.get(0)
+                            /* TODO give a better representation of the outer ring to the predicate */)) {
                         return true;
                     }
                 }

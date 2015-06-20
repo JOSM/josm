@@ -42,7 +42,8 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      * Adapter method supporting the ListCellRenderer interface.
      */
     @Override
-    public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list, OsmPrimitive value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list, OsmPrimitive value, int index,
+            boolean isSelected, boolean cellHasFocus) {
         Component def = defaultListCellRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         return renderer(def, value);
     }

@@ -57,8 +57,10 @@ public class ImportAudioAction extends AbstractAction {
     }
 
     private void warnCantImportIntoServerLayer(GpxLayer layer) {
-        String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>" + "Because its way points do not include a timestamp we cannot correlate them with audio data.</html>", layer.getName());
-        HelpAwareOptionPane.showOptionDialog(Main.parent, msg, tr("Import not possible"), JOptionPane.WARNING_MESSAGE, ht("/Action/ImportAudio#CantImportIntoGpxLayerFromServer"));
+        String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>Because its way points do not include a timestamp we cannot correlate them with audio data.</html>",
+                layer.getName());
+        HelpAwareOptionPane.showOptionDialog(Main.parent, msg, tr("Import not possible"),
+                JOptionPane.WARNING_MESSAGE, ht("/Action/ImportAudio#CantImportIntoGpxLayerFromServer"));
     }
 
     @Override
@@ -78,7 +80,8 @@ public class ImportAudioAction extends AbstractAction {
                 return tr("Wave Audio files (*.wav)");
             }
         };
-        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, true, null, filter, JFileChooser.FILES_ONLY, "markers.lastaudiodirectory");
+        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, true, null, filter,
+                JFileChooser.FILES_ONLY, "markers.lastaudiodirectory");
         if (fc != null) {
             File[] sel = fc.getSelectedFiles();
             // sort files in increasing order of timestamp (this is the end time, but so
