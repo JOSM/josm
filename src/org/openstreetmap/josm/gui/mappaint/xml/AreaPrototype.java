@@ -17,7 +17,9 @@ public class AreaPrototype extends Prototype {
         this.conditions = a.conditions;
     }
 
-    public AreaPrototype() { init(); }
+    public AreaPrototype() {
+        init();
+    }
 
     public final void init() {
         priority = 0;

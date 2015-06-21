@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -86,7 +87,10 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                                 }
                                 // TODO: handle thumbnail loading
                             } catch (NumberFormatException e) {
-                                // nothing
+                                // do nothing
+                                if (Main.isTraceEnabled()) {
+                                    Main.trace(e.getMessage());
+                                }
                             }
                         }
                     }

@@ -360,6 +360,9 @@ public class SplashScreen extends JFrame implements ChangeListener {
                 super.paint(g);
             } catch (NullPointerException ignore) {
                 // NullPointerException at javax.swing.text.html.StyleSheet$ListPainter.paint
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ignore.getMessage());
+                }
             }
         }
 

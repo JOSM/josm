@@ -656,6 +656,9 @@ public final class TaggingPresetItems {
                         textField.setText(Integer.toString(Integer.parseInt(LAST_VALUES.get(key)) + auto_increment_selected));
                     } catch (NumberFormatException ex) {
                         // Ignore - cannot auto-increment if last was non-numeric
+                        if (Main.isTraceEnabled()) {
+                            Main.trace(ex.getMessage());
+                        }
                     }
                 } else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default values feature is enabled
@@ -889,10 +892,11 @@ public final class TaggingPresetItems {
             if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
                 if (def && !PROP_FILL_DEFAULT.get()) {
                     // default is set and filling default values feature is disabled - check if all primitives are untagged
-                    for (OsmPrimitive s : sel)
+                    for (OsmPrimitive s : sel) {
                         if (s.hasKeys()) {
                             def = false;
                         }
+                    }
                 }
 
                 // all selected objects share the same value which is either true or false or unset,

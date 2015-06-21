@@ -314,6 +314,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             Main.pref.putInteger("osm-server.upload-strategy.chunk-size", chunkSize);
         } catch (NumberFormatException e) {
             // don't save invalid value to preferences
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
     }
 

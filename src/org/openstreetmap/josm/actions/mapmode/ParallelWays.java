@@ -78,8 +78,9 @@ public class ParallelWays {
             if (i < sortedNodesPath.size()-1) {
                 if (sortedNodesPath.get(i+1).getCoor().equals(n.getCoor())) {
                     removedNodes.add(n);
-                    for (Way w : ways)
+                    for (Way w : ways) {
                         w.removeNode(n);
+                    }
                     continue;
                 }
             }

@@ -1300,9 +1300,10 @@ public final class Utils {
      */
     public static boolean hasExtension(String filename, String ... extensions) {
         String name = filename.toLowerCase(Locale.ENGLISH);
-        for (String ext : extensions)
+        for (String ext : extensions) {
             if (name.endsWith("."+ext.toLowerCase(Locale.ENGLISH)))
                 return true;
+        }
         return false;
     }
 

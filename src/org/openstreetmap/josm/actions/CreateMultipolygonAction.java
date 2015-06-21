@@ -368,18 +368,25 @@ public class CreateMultipolygonAction extends JosmAction {
         }
 
         // filter out empty key conflicts - we need second iteration
-        if (!Main.pref.getBoolean("multipoly.alltags", false))
-            for (RelationMember m : relation.getMembers())
-                if (m.hasRole() && "outer".equals(m.getRole()) && m.isWay())
-                    for (String key : values.keySet())
-                        if (!m.getWay().hasKey(key) && !relation.hasKey(key))
+        if (!Main.pref.getBoolean("multipoly.alltags", false)) {
+            for (RelationMember m : relation.getMembers()) {
+                if (m.hasRole() && "outer".equals(m.getRole()) && m.isWay()) {
+                    for (String key : values.keySet()) {
+                        if (!m.getWay().hasKey(key) && !relation.hasKey(key)) {
                             conflictingKeys.add(key);
+                        }
+                    }
+                }
+            }
+        }
 
-        for (String key : conflictingKeys)
+        for (String key : conflictingKeys) {
             values.remove(key);
+        }
 
-        for (String linearTag : Main.pref.getCollection("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS))
+        for (String linearTag : Main.pref.getCollection("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS)) {
             values.remove(linearTag);
+        }
 
         if ("coastline".equals(values.get("natural")))
             values.remove("natural");

@@ -67,10 +67,10 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
 
     @Override
     public Collection<String> getPreferencesFromCode(String code) {
-        for (int i = 0; i < utmEPSGs.length; i++)
+        for (int i = 0; i < utmEPSGs.length; i++) {
             if (("EPSG:" + utmEPSGs[i]).equals(code))
                 return Collections.singleton(Integer.toString(i+1));
+        }
         return null;
     }
-
 }

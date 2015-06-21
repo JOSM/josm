@@ -931,9 +931,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      */
     private boolean isDataSetEmpty() {
         if (data != null) {
-            for (OsmPrimitive osm : data.allNonDeletedPrimitives())
+            for (OsmPrimitive osm : data.allNonDeletedPrimitives()) {
                 if (!osm.isDeleted() || !osm.isNewOrUndeleted())
                     return false;
+            }
         }
         return true;
     }

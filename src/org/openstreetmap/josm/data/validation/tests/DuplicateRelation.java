@@ -213,8 +213,9 @@ public class DuplicateRelation extends Test {
             return;
         List<RelationMember> rMembers = r.getMembers();
         Map<String, String> rkeys = r.getKeys();
-        for (String key : ignoreKeys)
+        for (String key : ignoreKeys) {
             rkeys.remove(key);
+        }
         RelationPair rKey = new RelationPair(rMembers, rkeys);
         relations.put(rKey, r);
         relationsNoKeys.put(rMembers, r);
@@ -230,10 +231,11 @@ public class DuplicateRelation extends Test {
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
         Set<Relation> relFix = new HashSet<>();
 
-        for (OsmPrimitive osm : sel)
+        for (OsmPrimitive osm : sel) {
             if (osm instanceof Relation && !osm.isDeleted()) {
                 relFix.add((Relation) osm);
             }
+        }
 
         if (relFix.size() < 2)
             return null;
@@ -293,10 +295,11 @@ public class DuplicateRelation extends Test {
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
         Set<Relation> relations = new HashSet<>();
 
-        for (OsmPrimitive osm : sel)
+        for (OsmPrimitive osm : sel) {
             if (osm instanceof Relation) {
                 relations.add((Relation) osm);
             }
+        }
 
         if (relations.size() < 2)
             return false;

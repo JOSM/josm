@@ -71,6 +71,9 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                             }
                         } catch (SAXException e) {
                             // We will handle this in step with validation
+                            if (Main.isTraceEnabled()) {
+                                Main.trace(e.getMessage());
+                            }
                         }
 
                         String errorMessage = null;

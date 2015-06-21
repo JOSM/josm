@@ -56,10 +56,7 @@ public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
             } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
                 setText(item.getTheirTagValue());
                 setToolTipText(item.getTheirTagValue());
-            } else {
-                // should not happen
             }
         }
     }
-
 }

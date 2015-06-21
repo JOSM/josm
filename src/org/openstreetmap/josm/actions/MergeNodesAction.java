@@ -205,9 +205,8 @@ public class MergeNodesAction extends JosmAction {
                     // make sure we collapse a sequence of deleted nodes
                     // to exactly one occurrence of the merged target node
                     newNodes.add(targetNode);
-                } else {
-                    // drop the node
                 }
+                // else: drop the node
             }
             if (newNodes.size() < 2) {
                 if (w.getReferrers().isEmpty()) {

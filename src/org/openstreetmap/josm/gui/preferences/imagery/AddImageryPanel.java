@@ -53,7 +53,10 @@ public abstract class AddImageryPanel extends JPanel {
 
     protected final void registerValidableComponent(AbstractButton component) {
         component.addChangeListener(new ChangeListener() {
-            @Override public void stateChanged(ChangeEvent e) { notifyListeners(); }
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                notifyListeners();
+            }
         });
     }
 

@@ -1123,9 +1123,10 @@ public final class PluginHandler {
      * @return The plugin of the specified name, if installed and loaded, or {@code null} otherwise.
      */
     public static Object getPlugin(String name) {
-        for (PluginProxy plugin : pluginList)
+        for (PluginProxy plugin : pluginList) {
             if (plugin.getPluginInformation().name.equals(name))
                 return plugin.plugin;
+        }
         return null;
     }
 

@@ -126,6 +126,9 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
                     try {
                         rotationAngle = RotationAngle.buildStaticRotation(rotationKW.val);
                     } catch (IllegalArgumentException ignore) {
+                        if (Main.isTraceEnabled()) {
+                            Main.trace(ignore.getMessage());
+                        }
                     }
                 }
             }

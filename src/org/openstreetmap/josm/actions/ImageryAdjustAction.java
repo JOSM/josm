@@ -238,6 +238,9 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
                     layer.setOffset(dx, dy);
                 } catch (NumberFormatException nfe) {
                     // we repaint offset numbers in any case
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(nfe.getMessage());
+                    }
                 }
             }
             updateOffsetIntl();

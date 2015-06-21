@@ -17,7 +17,12 @@ public class IconPrototype extends Prototype {
         this.conditions = i.conditions;
     }
 
-    public IconPrototype() { init(); }
+    /**
+     * Constructs a new {@code IconPrototype}.
+     */
+    public IconPrototype() {
+        init();
+    }
 
     public final void init() {
         priority = 0;

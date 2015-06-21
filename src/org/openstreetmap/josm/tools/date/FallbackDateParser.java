@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * Handles a number of different date formats encountered in OSM. This is built
  * based on similar code in JOSM. This class is not threadsafe, a separate
@@ -100,6 +102,9 @@ class FallbackDateParser {
 
             } catch (ParseException pe) {
                 // Ignore parsing errors and try the next pattern.
+                if (Main.isTraceEnabled()) {
+                    Main.trace(pe.getMessage());
+                }
             }
         }
 

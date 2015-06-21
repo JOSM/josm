@@ -74,6 +74,21 @@ JOSM Checkstyle rules
     </module>
     <module name="ModifierOrder"/>
     <module name="RedundantModifier"/>
+    <module name="AvoidNestedBlocks">
+      <property name="allowInSwitchCase" value="true"/>
+    </module>
+    <module name="EmptyBlock">
+      <property name="tokens" value="LITERAL_TRY,LITERAL_CATCH,LITERAL_FINALLY,LITERAL_DO,LITERAL_ELSE,LITERAL_FOR,INSTANCE_INIT,STATIC_INIT,LITERAL_SWITCH"/>
+    </module>
+    <module name="EmptyCatchBlock"/>
+    <module name="LeftCurly">
+      <property name="maxLineLength" value="140"/>
+    </module>
+    <module name="RightCurly"/>
+    <module name="NeedBraces">
+      <property name="tokens" value="LITERAL_DO,LITERAL_FOR,LITERAL_WHILE"/>
+      <property name="allowSingleLineStatement" value="true"/>
+    </module>
   </module>
   <module name="Header">
     <property name="header" value="// License: GPL. For details, see LICENSE file."/>

@@ -140,9 +140,10 @@ public class UploadSelectionAction extends JosmAction {
      * <code>primitives</code>
      */
     protected boolean hasPrimitivesToDelete(Collection<OsmPrimitive> primitives) {
-        for (OsmPrimitive p: primitives)
+        for (OsmPrimitive p: primitives) {
             if (p.isDeleted() && p.isModified() && !p.isNew())
                 return true;
+        }
         return false;
     }
 

@@ -108,8 +108,6 @@ public class TagMergeItem {
             } else {
                 primitive.put(key, myTagValue);
             }
-        } else {
-           // should not happen
         }
     }
 }

@@ -16,7 +16,12 @@ public class LinemodPrototype extends LinePrototype implements Comparable<Linemo
         this.widthMode = s.widthMode;
     }
 
-    public LinemodPrototype() { init(); }
+    /**
+     * Constructs a new {@code LinemodPrototype}.
+     */
+    public LinemodPrototype() {
+        init();
+    }
 
     @Override
     public final void init() {

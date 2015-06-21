@@ -664,8 +664,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 serverProjections = new ArrayList<>();
                 Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase(Locale.ENGLISH));
                 if (m.matches()) {
-                    for (String p : m.group(1).split(","))
+                    for (String p : m.group(1).split(",")) {
                         serverProjections.add(p);
+                    }
                 }
             } catch (Exception e) {
                 Main.warn(e);

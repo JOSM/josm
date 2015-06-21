@@ -52,10 +52,14 @@ public class PopupMenuLauncher extends MouseAdapter {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) { processEvent(e); }
+    public void mousePressed(MouseEvent e) {
+        processEvent(e);
+    }
 
     @Override
-    public void mouseReleased(MouseEvent e) { processEvent(e); }
+    public void mouseReleased(MouseEvent e) {
+        processEvent(e);
+    }
 
     private void processEvent(MouseEvent e) {
         if (e.isPopupTrigger() && (!checkEnabled || e.getComponent().isEnabled())) {

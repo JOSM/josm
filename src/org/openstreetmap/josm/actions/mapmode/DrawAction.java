@@ -538,10 +538,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // Don't allow creation of self-overlapping ways
                 if (way != null) {
                     int nodeCount = 0;
-                    for (Node p : way.getNodes())
+                    for (Node p : way.getNodes()) {
                         if (p.equals(n0)) {
                             nodeCount++;
                         }
+                    }
                     if (nodeCount > 1) {
                         way = null;
                     }

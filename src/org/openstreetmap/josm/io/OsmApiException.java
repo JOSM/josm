@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * Exception thrown when a communication error occurs when accessing the <a href="http://wiki.openstreetmap.org/wiki/API_v0.6">OSM API</a>.
  * @see OsmApi
@@ -143,6 +145,9 @@ public class OsmApiException extends OsmTransferException {
             }
         } catch (Exception e) {
             // Ignored
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         try {
             String eb = errorBody != null ? tr(errorBody.trim()) : "";
@@ -153,6 +158,9 @@ public class OsmApiException extends OsmTransferException {
             }
         } catch (Exception e) {
             // Ignored
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         return sb.toString();
     }

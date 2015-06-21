@@ -266,12 +266,13 @@ public class Diff {
                                now insist that it end with a significant snake.  */
                             int k;
 
-                            for (k = 1; xvec[x - k] == yvec[y - k]; k++)
+                            for (k = 1; xvec[x - k] == yvec[y - k]; k++) {
                                 if (k == SNAKE_LIMIT) {
                                     best = v;
                                     bestpos = d;
                                     break;
                                 }
+                            }
                         }
                     }
                 }
@@ -294,12 +295,13 @@ public class Diff {
                                now insist that it end with a significant snake.  */
                             int k;
 
-                            for (k = 0; xvec[x + k] == yvec[y + k]; k++)
+                            for (k = 0; xvec[x + k] == yvec[y + k]; k++) {
                                 if (k == SNAKE_LIMIT) {
                                     best = v;
                                     bestpos = d;
                                     break;
                                 }
+                            }
                         }
                     }
                 }
@@ -722,7 +724,7 @@ public class Diff {
 
                         /* Cancel any subrun of MINIMUM or more provisionals
                            within the larger run.  */
-                        for (j = 0, consec = 0; j < length; j++)
+                        for (j = 0, consec = 0; j < length; j++) {
                             if (discards[i + j] != 2) {
                                 consec = 0;
                             } else if (minimum == ++consec) {
@@ -731,6 +733,7 @@ public class Diff {
                             } else if (minimum < consec) {
                                 discards[i + j] = 0;
                             }
+                        }
 
                         /* Scan from beginning of run
                            until we find 3 or more nonprovisionals in a row
@@ -782,13 +785,14 @@ public class Diff {
         private void discard(final byte[] discards) {
             final int end = bufferedLines;
             int j = 0;
-            for (int i = 0; i < end; ++i)
+            for (int i = 0; i < end; ++i) {
                 if (noDiscards || discards[i] == 0) {
                     undiscarded[j] = equivs[i];
                     realindexes[j++] = i;
                 } else {
                     changedFlag[1+i] = true;
                 }
+            }
             nondiscardedLines = j;
         }
 

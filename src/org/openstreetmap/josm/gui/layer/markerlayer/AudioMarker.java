@@ -66,7 +66,9 @@ public class AudioMarker extends ButtonMarker {
      * the marker as well as indirectly
      *
      */
-    public void play() { play(0.0); }
+    public void play() {
+        play(0.0);
+    }
 
     public void adjustOffset(double adjustment) {
         syncOffset = adjustment; // added to offset may turn out negative, but that's ok

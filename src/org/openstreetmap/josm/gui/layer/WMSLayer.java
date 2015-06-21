@@ -489,11 +489,12 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     @Override
     public void visitBoundingBox(BoundingXYVisitor v) {
         for (int x = 0; x < dax; ++x) {
-            for (int y = 0; y < day; ++y)
+            for (int y = 0; y < day; ++y) {
                 if (images[x][y].getImage() != null) {
                     v.visit(images[x][y].getMin());
                     v.visit(images[x][y].getMax());
                 }
+            }
         }
     }
 

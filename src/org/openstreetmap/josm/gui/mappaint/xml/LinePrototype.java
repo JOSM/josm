@@ -29,7 +29,12 @@ public class LinePrototype extends Prototype {
         this.conditions = s.conditions;
     }
 
-    public LinePrototype() { init(); }
+    /**
+     * Constructs a new {@code LinePrototype}.
+     */
+    public LinePrototype() {
+        init();
+    }
 
     public void init() {
         priority = 0;

@@ -243,10 +243,11 @@ public class CombineWayAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         int numWays = 0;
-        for (OsmPrimitive osm : selection)
+        for (OsmPrimitive osm : selection) {
             if (osm instanceof Way) {
                 numWays++;
             }
+        }
         setEnabled(numWays >= 2);
     }
 

@@ -20,6 +20,7 @@ import javax.swing.DefaultListSelectionModel;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DatasetFactory;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
@@ -356,6 +357,9 @@ public class NodeListMergeModelTest {
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // OK
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
 
         try {
@@ -363,6 +367,9 @@ public class NodeListMergeModelTest {
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // OK
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
     }
 

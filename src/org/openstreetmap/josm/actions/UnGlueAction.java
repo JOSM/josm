@@ -410,10 +410,11 @@ public class UnGlueAction extends JosmAction {
         // According to previous check, only one valid way through that node
         List<Command> cmds = new LinkedList<>();
         Way way = null;
-        for (Way w: OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class))
+        for (Way w: OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
             if (w.isUsable() && w.getNodesCount() >= 1) {
                 way = w;
             }
+        }
         List<Node> oldNodes = way.getNodes();
         List<Node> newNodes = new ArrayList<>(oldNodes.size());
         List<Node> addNodes = new ArrayList<>();

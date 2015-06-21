@@ -220,11 +220,20 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
         edSearchText = new JosmTextField();
         edSearchText.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void removeUpdate(DocumentEvent e) { filterPresets(); }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterPresets();
+            }
 
-            @Override public void insertUpdate(DocumentEvent e) { filterPresets(); }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterPresets();
+            }
 
-            @Override public void changedUpdate(DocumentEvent e) { filterPresets(); }
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterPresets();
+            }
         });
         edSearchText.addKeyListener(new KeyAdapter() {
             @Override

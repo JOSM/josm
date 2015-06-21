@@ -130,9 +130,10 @@ public class PlatformHookUnixoid implements PlatformHook {
     @Override
     public void initSystemShortcuts() {
         // TODO: Insert system shortcuts here. See Windows and especially OSX to see how to.
-        for (int i = KeyEvent.VK_F1; i <= KeyEvent.VK_F12; ++i)
+        for (int i = KeyEvent.VK_F1; i <= KeyEvent.VK_F12; ++i) {
             Shortcut.registerSystemShortcut("screen:toogle"+i, tr("reserved"),
                     i, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
+        }
         Shortcut.registerSystemShortcut("system:reset", tr("reserved"),
                 KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
         Shortcut.registerSystemShortcut("system:resetX", tr("reserved"),
@@ -373,6 +374,9 @@ public class PlatformHookUnixoid implements PlatformHook {
                         }
                     } catch (IOException e) {
                         // Ignore
+                        if (Main.isTraceEnabled()) {
+                            Main.trace(e.getMessage());
+                        }
                     }
                 }
             }

@@ -61,11 +61,19 @@ public final class TextTagParser {
 
             while (true) {
                 skipEmpty();
-                if (pos == n) { break; }
+                if (pos == n) {
+                    break;
+                }
                 k = parseString("\n\r\t= ");
-                if (pos == n) { tags.clear();  break; }
+                if (pos == n) {
+                    tags.clear();
+                    break;
+                }
                 skipSign();
-                if (pos == n) { tags.clear();  break; }
+                if (pos == n) {
+                    tags.clear();
+                    break;
+                }
                 v = parseString("\n\r\t ");
                 tags.put(k, v);
             }

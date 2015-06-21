@@ -257,8 +257,9 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
                 newCursor = ImageProvider.getCursor("normal", "parallel"); // FIXME
             } else if (matchesCurrentModifiers(toggleSelectedModifierCombo)) {
                 newCursor = ImageProvider.getCursor("normal", "parallel"); // FIXME
-            } else {
+            } else if (Main.isDebugEnabled()) {
                 // TODO: set to a cursor indicating an error
+                Main.debug("TODO: set an error cursor");
             }
             break;
         case dragging:

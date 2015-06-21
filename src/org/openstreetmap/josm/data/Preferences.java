@@ -1066,6 +1066,9 @@ public class Preferences {
             return Integer.parseInt(v);
         } catch (NumberFormatException e) {
             // fall out
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         return def;
     }
@@ -1081,6 +1084,9 @@ public class Preferences {
             return Integer.parseInt(v);
         } catch (NumberFormatException e) {
             // fall out
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         return def;
     }
@@ -1094,6 +1100,9 @@ public class Preferences {
             return Long.parseLong(v);
         } catch (NumberFormatException e) {
             // fall out
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         return def;
     }
@@ -1107,6 +1116,9 @@ public class Preferences {
             return Double.parseDouble(v);
         } catch (NumberFormatException e) {
             // fall out
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         return def;
     }
@@ -1471,6 +1483,9 @@ public class Preferences {
             field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
         } catch (Exception e) {
             // Ignore all exceptions
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         // Workaround to fix a Java "feature"
         // See http://stackoverflow.com/q/7615645/2257172 and #9875

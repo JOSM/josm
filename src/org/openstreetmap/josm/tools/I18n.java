@@ -481,6 +481,9 @@ public final class I18n {
             }
         } catch (IOException e) {
             // Ignore
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
     }
 
@@ -510,6 +513,9 @@ public final class I18n {
             }
         } catch (IOException e) {
             // Ignore exception
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         return false;
     }

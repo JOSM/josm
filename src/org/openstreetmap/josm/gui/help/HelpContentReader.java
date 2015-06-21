@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
 
@@ -61,6 +62,9 @@ public class HelpContentReader extends WikiReader {
                     ex.setResponseCode(con.getResponseCode());
                 } catch (IOException e1) {
                     // ignore
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e1.getMessage());
+                    }
                 }
             }
             throw ex;

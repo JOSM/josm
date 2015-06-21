@@ -36,8 +36,9 @@ public class AllNodesVisitor extends AbstractVisitor {
     @Override
     public void visit(Way w) {
         if (w.isIncomplete()) return;
-        for (Node n : w.getNodes())
+        for (Node n : w.getNodes()) {
             visit(n);
+        }
     }
 
     /**
@@ -47,8 +48,9 @@ public class AllNodesVisitor extends AbstractVisitor {
      */
     @Override
     public void visit(Relation e) {
-        for (RelationMember m : e.getMembers())
+        for (RelationMember m : e.getMembers()) {
             if (m.isNode()) visit(m.getNode());
+        }
     }
 
     /**
@@ -58,8 +60,9 @@ public class AllNodesVisitor extends AbstractVisitor {
      */
     public static Collection<Node> getAllNodes(Collection<? extends OsmPrimitive> osms) {
         AllNodesVisitor v = new AllNodesVisitor();
-        for (OsmPrimitive osm : osms)
+        for (OsmPrimitive osm : osms) {
             osm.accept(v);
+        }
         return v.nodes;
     }
 }

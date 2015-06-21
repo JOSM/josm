@@ -218,9 +218,10 @@ public final class AlignInLineAction extends JosmAction {
         Node[] anchors = nodePairFurthestApart(nodes);
         Collection<Command> cmds = new ArrayList<>(nodes.size());
         Line line = new Line(anchors[0], anchors[1]);
-        for (Node node: nodes)
+        for (Node node: nodes) {
             if (node != anchors[0] && node != anchors[1])
                 cmds.add(line.projectionCommand(node));
+        }
         return new SequenceCommand(tr("Align Nodes in Line"), cmds);
     }
 
@@ -244,9 +245,10 @@ public final class AlignInLineAction extends JosmAction {
         List<Way> referers = new ArrayList<>(ways.size());
         for (Node n: nodes) {
             referers.clear();
-            for (OsmPrimitive o: n.getReferrers())
+            for (OsmPrimitive o: n.getReferrers()) {
                 if (ways.contains(o))
                     referers.add((Way) o);
+            }
             if (referers.size() == 1) {
                 Way way = referers.get(0);
                 if (way.isFirstLastNode(n)) continue;
@@ -273,11 +275,12 @@ public final class AlignInLineAction extends JosmAction {
         for (Way way: refWays) {
             List<Node> nodes = way.getNodes();
             neighbors.clear();
-            for (int i = 1; i < nodes.size()-1; i++)
+            for (int i = 1; i < nodes.size()-1; i++) {
                 if (nodes.get(i) == node) {
                     neighbors.add(nodes.get(i-1));
                     neighbors.add(nodes.get(i+1));
                 }
+            }
             if (neighbors.isEmpty())
                 continue;
             else if (neighbors.size() == 2)

@@ -1094,6 +1094,9 @@ public class AdvancedChangesetQueryPanel extends JPanel {
                     return df.parse(getComponent().getText());
                 } catch (ParseException e) {
                     // Try next format
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
                 }
             }
             return null;

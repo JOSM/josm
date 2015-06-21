@@ -154,6 +154,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                     url = clickedTile.getUrl();
                 } catch (IOException e) {
                     // silence exceptions
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
                 }
 
                 String[][] content = {

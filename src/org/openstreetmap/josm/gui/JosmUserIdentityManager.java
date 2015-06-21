@@ -201,10 +201,9 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
         } else {
             if (userName != null && !userName.equals(this.userName)) {
                 setPartiallyIdentified(userName);
-            } else {
-                // same name in the preferences as JOSM already knows about.
-                // keep the state, be it partially or fully identified
             }
+            // else: same name in the preferences as JOSM already knows about.
+            // keep the state, be it partially or fully identified
         }
     }
 

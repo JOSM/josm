@@ -50,24 +50,36 @@ public class JumpToAction extends JosmAction {
 
     class OsmURLListener implements DocumentListener {
         @Override
-        public void changedUpdate(DocumentEvent e) { parseURL(); }
+        public void changedUpdate(DocumentEvent e) {
+            parseURL();
+        }
 
         @Override
-        public void insertUpdate(DocumentEvent e) { parseURL(); }
+        public void insertUpdate(DocumentEvent e) {
+            parseURL();
+        }
 
         @Override
-        public void removeUpdate(DocumentEvent e) { parseURL(); }
+        public void removeUpdate(DocumentEvent e) {
+            parseURL();
+        }
     }
 
     class OsmLonLatListener implements DocumentListener {
         @Override
-        public void changedUpdate(DocumentEvent e) { updateUrl(false); }
+        public void changedUpdate(DocumentEvent e) {
+            updateUrl(false);
+        }
 
         @Override
-        public void insertUpdate(DocumentEvent e) { updateUrl(false); }
+        public void insertUpdate(DocumentEvent e) {
+            updateUrl(false);
+        }
 
         @Override
-        public void removeUpdate(DocumentEvent e) { updateUrl(false); }
+        public void removeUpdate(DocumentEvent e) {
+            updateUrl(false);
+        }
     }
 
     /**

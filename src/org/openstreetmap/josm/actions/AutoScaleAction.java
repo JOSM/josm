@@ -102,6 +102,8 @@ public class AutoScaleAction extends JosmAction {
         int shortcut = -1;
 
         // TODO: convert this to switch/case and make sure the parsing still works
+        // CHECKSTYLE.OFF: LeftCurly
+        // CHECKSTYLE.OFF: RightCurly
         /* leave as single line for shortcut overview parsing! */
         if (mode.equals("data")) { shortcut = KeyEvent.VK_1; }
         else if (mode.equals("layer")) { shortcut = KeyEvent.VK_2; }
@@ -111,6 +113,8 @@ public class AutoScaleAction extends JosmAction {
         else if (mode.equals("problem")) { shortcut = KeyEvent.VK_6; }
         else if (mode.equals("previous")) { shortcut = KeyEvent.VK_8; }
         else if (mode.equals("next")) { shortcut = KeyEvent.VK_9; }
+        // CHECKSTYLE.ON: LeftCurly
+        // CHECKSTYLE.ON: RightCurly
 
         return shortcut;
     }

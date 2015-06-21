@@ -78,183 +78,153 @@ public class SwissGridTest {
 
     @Test
     public void a_latlon2eastNorth_test() {
-        {
-            LatLon ll = new LatLon(46.518, 6.567);
-            EastNorth en = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en);
-            }
-            assertTrue("Lausanne", Math.abs(en.east() - 533111.69) < 0.1);
-            assertTrue("Lausanne", Math.abs(en.north() - 152227.85) < 0.1);
+        LatLon ll = new LatLon(46.518, 6.567);
+        EastNorth en = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en);
         }
+        assertTrue("Lausanne", Math.abs(en.east() - 533111.69) < 0.1);
+        assertTrue("Lausanne", Math.abs(en.north() - 152227.85) < 0.1);
 
-        {
-            LatLon ll = new LatLon(47.78, 8.58);
-            EastNorth en = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en);
-            }
-            assertTrue("Schafouse", Math.abs(en.east() - 685544.16) < 0.1);
-            assertTrue("Schafouse", Math.abs(en.north() - 292782.91) < 0.1);
+        ll = new LatLon(47.78, 8.58);
+        en = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en);
         }
+        assertTrue("Schafouse", Math.abs(en.east() - 685544.16) < 0.1);
+        assertTrue("Schafouse", Math.abs(en.north() - 292782.91) < 0.1);
 
-        {
-            LatLon ll = new LatLon(46.58, 10.48);
-            EastNorth en = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en);
-            }
-            assertTrue("Grinson", Math.abs(en.east() - 833068.04) < 0.1);
-            assertTrue("Grinson", Math.abs(en.north() - 163265.39) < 0.1);
+        ll = new LatLon(46.58, 10.48);
+        en = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en);
         }
+        assertTrue("Grinson", Math.abs(en.east() - 833068.04) < 0.1);
+        assertTrue("Grinson", Math.abs(en.north() - 163265.39) < 0.1);
 
-        {
-            LatLon ll = new LatLon(46.0 + 57.0 / 60 + 3.89813884505 / 3600, 7.0 + 26.0 / 60 + 19.076595154147 / 3600);
-            EastNorth en = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en);
-            }
-            assertTrue("Berne", Math.abs(en.east() - 600000.0) < 0.1);
-            assertTrue("Berne", Math.abs(en.north() - 200000.0) < 0.1);
+        ll = new LatLon(46.0 + 57.0 / 60 + 3.89813884505 / 3600, 7.0 + 26.0 / 60 + 19.076595154147 / 3600);
+        en = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en);
         }
-        {
-            LatLon ll = new LatLon(46.0 + 2.0 / 60 + 38.87 / 3600, 8.0 + 43.0 / 60 + 49.79 / 3600);
-            EastNorth en = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en);
-            }
-            assertTrue("Ref", Math.abs(en.east() - 700000.0) < 0.1);
-            assertTrue("Ref", Math.abs(en.north() - 100000.0) < 0.1);
+        assertTrue("Berne", Math.abs(en.east() - 600000.0) < 0.1);
+        assertTrue("Berne", Math.abs(en.north() - 200000.0) < 0.1);
+
+        ll = new LatLon(46.0 + 2.0 / 60 + 38.87 / 3600, 8.0 + 43.0 / 60 + 49.79 / 3600);
+        en = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en);
         }
+        assertTrue("Ref", Math.abs(en.east() - 700000.0) < 0.1);
+        assertTrue("Ref", Math.abs(en.north() - 100000.0) < 0.1);
     }
 
     @Test
     public void b_eastNorth2latlon_test() {
-        {
-            EastNorth en = new EastNorth(533111.69, 152227.85);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            if (debug) {
-                System.out.println(ll);
-            }
-            assertTrue("Lausanne", Math.abs(ll.lat() - 46.518) < 0.00001);
-            assertTrue("Lausanne", Math.abs(ll.lon() - 6.567) < 0.00001);
+        EastNorth en = new EastNorth(533111.69, 152227.85);
+        LatLon ll = Main.getProjection().eastNorth2latlon(en);
+        if (debug) {
+            System.out.println(ll);
         }
+        assertTrue("Lausanne", Math.abs(ll.lat() - 46.518) < 0.00001);
+        assertTrue("Lausanne", Math.abs(ll.lon() - 6.567) < 0.00001);
 
-        {
-            EastNorth en = new EastNorth(685544.16, 292782.91);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            if (debug) {
-                System.out.println(ll);
-            }
-            assertTrue("Schafouse", Math.abs(ll.lat() - 47.78) < 0.00001);
-            assertTrue("Schafouse", Math.abs(ll.lon() - 8.58) < 0.00001);
+        en = new EastNorth(685544.16, 292782.91);
+        ll = Main.getProjection().eastNorth2latlon(en);
+        if (debug) {
+            System.out.println(ll);
         }
+        assertTrue("Schafouse", Math.abs(ll.lat() - 47.78) < 0.00001);
+        assertTrue("Schafouse", Math.abs(ll.lon() - 8.58) < 0.00001);
 
-        {
-            EastNorth en = new EastNorth(833068.04, 163265.39);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            if (debug) {
-                System.out.println(ll);
-            }
-            assertTrue("Grinson", Math.abs(ll.lat() - 46.58) < 0.00001);
-            assertTrue("Grinson", Math.abs(ll.lon() - 10.48) < 0.00001);
+        en = new EastNorth(833068.04, 163265.39);
+        ll = Main.getProjection().eastNorth2latlon(en);
+        if (debug) {
+            System.out.println(ll);
         }
+        assertTrue("Grinson", Math.abs(ll.lat() - 46.58) < 0.00001);
+        assertTrue("Grinson", Math.abs(ll.lon() - 10.48) < 0.00001);
 
-        {
-            EastNorth en = new EastNorth(600000.0, 200000.0);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            if (debug) {
-                System.out.println(ll);
-            }
-            assertTrue("Berne", Math.abs(ll.lat() - (46.0 + 57.0 / 60 + 3.89813884505 / 3600)) < 0.00001);
-            assertTrue("Berne", Math.abs(ll.lon() - (7.0 + 26.0 / 60 + 19.076595154147 / 3600)) < 0.00001);
+        en = new EastNorth(600000.0, 200000.0);
+        ll = Main.getProjection().eastNorth2latlon(en);
+        if (debug) {
+            System.out.println(ll);
         }
+        assertTrue("Berne", Math.abs(ll.lat() - (46.0 + 57.0 / 60 + 3.89813884505 / 3600)) < 0.00001);
+        assertTrue("Berne", Math.abs(ll.lon() - (7.0 + 26.0 / 60 + 19.076595154147 / 3600)) < 0.00001);
 
-        {
-            EastNorth en = new EastNorth(700000.0, 100000.0);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            if (debug) {
-                System.out.println(ll);
-            }
-            assertTrue("Ref", Math.abs(ll.lat() - (46.0 + 2.0 / 60 + 38.87 / 3600)) < 0.00001);
-            assertTrue("Ref", Math.abs(ll.lon() - (8.0 + 43.0 / 60 + 49.79 / 3600)) < 0.00001);
+        en = new EastNorth(700000.0, 100000.0);
+        ll = Main.getProjection().eastNorth2latlon(en);
+        if (debug) {
+            System.out.println(ll);
         }
+        assertTrue("Ref", Math.abs(ll.lat() - (46.0 + 2.0 / 60 + 38.87 / 3600)) < 0.00001);
+        assertTrue("Ref", Math.abs(ll.lon() - (8.0 + 43.0 / 60 + 49.79 / 3600)) < 0.00001);
     }
-
 
     /**
      * Send and return should have less than 2mm of difference.
      */
     @Test
     public void c_sendandreturn_test() {
-        {
-            EastNorth en = new EastNorth(533111.69, 152227.85);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            EastNorth en2 = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en.east() - en2.east());
-            }
-            if (debug) {
-                System.out.println(en.north() - en2.north());
-            }
-            assertTrue("Lausanne", Math.abs(en.east() - en2.east()) < 0.002);
-            assertTrue("Lausanne", Math.abs(en.north() - en2.north()) < 0.002);
+        EastNorth en = new EastNorth(533111.69, 152227.85);
+        LatLon ll = Main.getProjection().eastNorth2latlon(en);
+        EastNorth en2 = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en.east() - en2.east());
         }
+        if (debug) {
+            System.out.println(en.north() - en2.north());
+        }
+        assertTrue("Lausanne", Math.abs(en.east() - en2.east()) < 0.002);
+        assertTrue("Lausanne", Math.abs(en.north() - en2.north()) < 0.002);
 
-        {
-            EastNorth en = new EastNorth(685544.16, 292782.91);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            EastNorth en2 = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en.east() - en2.east());
-            }
-            if (debug) {
-                System.out.println(en.north() - en2.north());
-            }
-            assertTrue("Schafouse", Math.abs(en.east() - en2.east()) < 0.002);
-            assertTrue("Schafouse", Math.abs(en.north() - en2.north()) < 0.002);
+        en = new EastNorth(685544.16, 292782.91);
+        ll = Main.getProjection().eastNorth2latlon(en);
+        en2 = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en.east() - en2.east());
         }
+        if (debug) {
+            System.out.println(en.north() - en2.north());
+        }
+        assertTrue("Schafouse", Math.abs(en.east() - en2.east()) < 0.002);
+        assertTrue("Schafouse", Math.abs(en.north() - en2.north()) < 0.002);
 
-        {
-            EastNorth en = new EastNorth(833068.04, 163265.39);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            EastNorth en2 = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en.east() - en2.east());
-            }
-            if (debug) {
-                System.out.println(en.north() - en2.north());
-            }
-            assertTrue("Grinson", Math.abs(en.east() - en2.east()) < 0.002);
-            assertTrue("Grinson", Math.abs(en.north() - en2.north()) < 0.002);
+        en = new EastNorth(833068.04, 163265.39);
+        ll = Main.getProjection().eastNorth2latlon(en);
+        en2 = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en.east() - en2.east());
         }
+        if (debug) {
+            System.out.println(en.north() - en2.north());
+        }
+        assertTrue("Grinson", Math.abs(en.east() - en2.east()) < 0.002);
+        assertTrue("Grinson", Math.abs(en.north() - en2.north()) < 0.002);
 
-        {
-            EastNorth en = new EastNorth(600000.0, 200000.0);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            EastNorth en2 = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en.east() - en2.east());
-            }
-            if (debug) {
-                System.out.println(en.north() - en2.north());
-            }
-            assertTrue("Berne", Math.abs(en.east() - en2.east()) < 0.002);
-            assertTrue("Berne", Math.abs(en.north() - en2.north()) < 0.002);
+        en = new EastNorth(600000.0, 200000.0);
+        ll = Main.getProjection().eastNorth2latlon(en);
+        en2 = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en.east() - en2.east());
         }
+        if (debug) {
+            System.out.println(en.north() - en2.north());
+        }
+        assertTrue("Berne", Math.abs(en.east() - en2.east()) < 0.002);
+        assertTrue("Berne", Math.abs(en.north() - en2.north()) < 0.002);
 
-        {
-            EastNorth en = new EastNorth(700000.0, 100000.0);
-            LatLon ll = Main.getProjection().eastNorth2latlon(en);
-            EastNorth en2 = Main.getProjection().latlon2eastNorth(ll);
-            if (debug) {
-                System.out.println(en.east() - en2.east());
-            }
-            if (debug) {
-                System.out.println(en.north() - en2.north());
-            }
-            assertTrue("Ref", Math.abs(en.east() - en2.east()) < 0.002);
-            assertTrue("Ref", Math.abs(en.north() - en2.north()) < 0.002);
+        en = new EastNorth(700000.0, 100000.0);
+        ll = Main.getProjection().eastNorth2latlon(en);
+        en2 = Main.getProjection().latlon2eastNorth(ll);
+        if (debug) {
+            System.out.println(en.east() - en2.east());
         }
+        if (debug) {
+            System.out.println(en.north() - en2.north());
+        }
+        assertTrue("Ref", Math.abs(en.east() - en2.east()) < 0.002);
+        assertTrue("Ref", Math.abs(en.north() - en2.north()) < 0.002);
     }
 }

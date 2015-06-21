@@ -841,6 +841,9 @@ public class GenericRelationEditor extends RelationEditor  {
                 memberTableModel.addMembersAtBeginning(toAdd);
             } catch (AddAbortException ex) {
                 // do nothing
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ex.getMessage());
+                }
             }
         }
 
@@ -868,6 +871,9 @@ public class GenericRelationEditor extends RelationEditor  {
                 memberTableModel.addMembersAtEnd(toAdd);
             } catch (AddAbortException ex) {
                 // do nothing
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ex.getMessage());
+                }
             }
         }
 
@@ -878,6 +884,9 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class AddSelectedBeforeSelection extends AddFromSelectionAction implements TableModelListener, ListSelectionListener {
+        /**
+         * Constructs a new {@code AddSelectedBeforeSelection}.
+         */
         public AddSelectedBeforeSelection() {
             putValue(SHORT_DESCRIPTION,
                     tr("Add all objects selected in the current dataset before the first selected member"));
@@ -898,8 +907,10 @@ public class GenericRelationEditor extends RelationEditor  {
                         .getSelectionModel().getMinSelectionIndex());
             } catch (AddAbortException ex) {
                 // do nothing
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ex.getMessage());
+                }
             }
-
         }
 
         @Override
@@ -934,6 +945,9 @@ public class GenericRelationEditor extends RelationEditor  {
                         .getSelectionModel().getMaxSelectionIndex());
             } catch (AddAbortException ex) {
                 // do nothing
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ex.getMessage());
+                }
             }
         }
 
@@ -949,6 +963,9 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class RemoveSelectedAction extends AbstractAction implements TableModelListener {
+        /**
+         * Constructs a new {@code RemoveSelectedAction}.
+         */
         public RemoveSelectedAction() {
             putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected objects"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "deletemembers"));
@@ -1776,6 +1793,9 @@ public class GenericRelationEditor extends RelationEditor  {
 
             } catch (AddAbortException ex) {
                 // Do nothing
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ex.getMessage());
+                }
             }
         }
     }

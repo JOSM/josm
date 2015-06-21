@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 
 /**
@@ -70,6 +71,9 @@ public class OsmUrlToBoundsTest {
                 bounds = OsmUrlToBounds.parse(item.url);
             } catch (IllegalArgumentException e) {
                 // Ignore. check if bounds is null after
+                if (Main.isTraceEnabled()) {
+                    Main.trace(e.getMessage());
+                }
             }
             Assert.assertEquals(item.url, item.bounds, bounds);
         }

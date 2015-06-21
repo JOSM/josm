@@ -71,10 +71,18 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
                 if (n.getEastNorth() != null) {
                     double east = n.getEastNorth().east();
                     double north = n.getEastNorth().north();
-                    if (east > maxEast) { maxEast = east; }
-                    if (east < minEast) { minEast = east; }
-                    if (north > maxNorth) { maxNorth = north; }
-                    if (north < minNorth) { minNorth = north; }
+                    if (east > maxEast) {
+                        maxEast = east;
+                    }
+                    if (east < minEast) {
+                        minEast = east;
+                    }
+                    if (north > maxNorth) {
+                        maxNorth = north;
+                    }
+                    if (north < minNorth) {
+                        minNorth = north;
+                    }
                 }
             }
             if (data.isIncomplete()) {

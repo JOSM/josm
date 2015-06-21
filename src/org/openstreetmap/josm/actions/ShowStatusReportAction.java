@@ -128,6 +128,9 @@ public final class ShowStatusReportAction extends JosmAction {
             }
         } catch (SecurityException e) {
             // Ignore exception
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         List<String> commandLineArgs = Main.getCommandLineArgs();
         if (!commandLineArgs.isEmpty()) {

@@ -933,6 +933,9 @@ public abstract class Main {
                         break;
                     } catch (ClassNotFoundException ex) {
                         // Do nothing
+                        if (Main.isTraceEnabled()) {
+                            Main.trace(ex.getMessage());
+                        }
                     }
                 }
                 if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {

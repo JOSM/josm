@@ -441,6 +441,9 @@ public final class ExceptionUtil {
             host = new URL(apiUrl).getHost();
         } catch (MalformedURLException ex) {
             // shouldn't happen
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
 
         return tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''<br>"
@@ -601,6 +604,9 @@ public final class ExceptionUtil {
             host = new URL(apiUrl).getHost();
         } catch (MalformedURLException ex) {
             // shouldn't happen
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
 
         Main.error(e);

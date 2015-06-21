@@ -92,7 +92,9 @@ public abstract class Plugin implements MapFrameListener {
      * Called in the preferences dialog to create a preferences page for the plugin,
      * if any available.
      */
-    public PreferenceSetting getPreferenceSetting() { return null; }
+    public PreferenceSetting getPreferenceSetting() {
+        return null;
+    }
 
     /**
      * Called in the download dialog to give the plugin a chance to modify the list

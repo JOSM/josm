@@ -726,6 +726,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             Toolkit.getDefaultToolkit().removeAWTEventListener(awtListener);
         } catch (SecurityException e) {
             // Don't care, awtListener probably wasn't registered anyway
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
         }
         mv.removeMouseMotionListener(mouseMotionListener);
         mv.removeKeyListener(keyAdapter);

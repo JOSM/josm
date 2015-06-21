@@ -181,37 +181,73 @@ public class QuadStateCheckBox extends JCheckBox {
                 }
             }
         }
-        /** Filter: No one may change the armed/selected/pressed status except us. */
-        @Override public void setArmed(boolean b) { }
 
-        @Override public void setSelected(boolean b) { }
+        // ----------------------------------------------------------------------
+        // Filter: No one may change the armed/selected/pressed status except us.
+        // ----------------------------------------------------------------------
 
-        @Override public void setPressed(boolean b) { }
+        @Override
+        public void setArmed(boolean b) { }
+
+        @Override
+        public void setSelected(boolean b) { }
+
+        @Override
+        public void setPressed(boolean b) { }
 
         /** We disable focusing on the component when it is not enabled. */
-        @Override public void setEnabled(boolean b) {
+        @Override
+        public void setEnabled(boolean b) {
             setFocusable(b);
             other.setEnabled(b);
         }
-        /** All these methods simply delegate to the "other" model
-         * that is being decorated. */
-        @Override public boolean isArmed() { return other.isArmed(); }
 
-        @Override public boolean isSelected() { return other.isSelected(); }
+        // -------------------------------------------------------------------------------
+        // All these methods simply delegate to the "other" model that is being decorated.
+        // -------------------------------------------------------------------------------
 
-        @Override public boolean isEnabled() { return other.isEnabled(); }
+        @Override
+        public boolean isArmed() {
+            return other.isArmed();
+        }
 
-        @Override public boolean isPressed() { return other.isPressed(); }
+        @Override
+        public boolean isSelected() {
+            return other.isSelected();
+        }
 
-        @Override public boolean isRollover() { return other.isRollover(); }
+        @Override
+        public boolean isEnabled() {
+            return other.isEnabled();
+        }
 
-        @Override public void setRollover(boolean b) { other.setRollover(b); }
+        @Override
+        public boolean isPressed() {
+            return other.isPressed();
+        }
 
-        @Override public void setMnemonic(int key) { other.setMnemonic(key); }
+        @Override
+        public boolean isRollover() {
+            return other.isRollover();
+        }
 
-        @Override public int getMnemonic() { return other.getMnemonic(); }
+        @Override
+        public void setRollover(boolean b) {
+            other.setRollover(b);
+        }
 
-        @Override public void setActionCommand(String s) {
+        @Override
+        public void setMnemonic(int key) {
+            other.setMnemonic(key);
+        }
+
+        @Override
+        public int getMnemonic() {
+            return other.getMnemonic();
+        }
+
+        @Override
+        public void setActionCommand(String s) {
             other.setActionCommand(s);
         }
 

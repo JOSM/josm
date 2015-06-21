@@ -247,13 +247,17 @@ public final class AlignInCircleAction extends JosmAction {
         int nodeCount = nodes.size();
         // Search first fixed node
         int startPosition = 0;
-        for (startPosition = 0; startPosition < nodeCount; startPosition++)
-            if (fixNodes.contains(nodes.get(startPosition % nodeCount))) break;
+        for (startPosition = 0; startPosition < nodeCount; startPosition++) {
+            if (fixNodes.contains(nodes.get(startPosition % nodeCount)))
+                break;
+        }
         int i = startPosition; // Start position for current arc
         int j; // End position for current arc
         while (i < startPosition + nodeCount) {
-            for (j = i + 1; j < startPosition + nodeCount; j++)
-                if (fixNodes.contains(nodes.get(j % nodeCount))) break;
+            for (j = i + 1; j < startPosition + nodeCount; j++) {
+                if (fixNodes.contains(nodes.get(j % nodeCount)))
+                    break;
+            }
             Node first = nodes.get(i % nodeCount);
             PolarCoor pcFirst = new PolarCoor(first.getEastNorth(), center, 0);
             pcFirst.radius = radius;
@@ -288,10 +292,13 @@ public final class AlignInCircleAction extends JosmAction {
      */
     private List<Node> collectNodesWithExternReferers(List<Way> ways) {
         List<Node> withReferrers = new ArrayList<>();
-        for (Way w: ways)
-            for (Node n: w.getNodes())
-                if (n.getReferrers().size() > 1)
+        for (Way w: ways) {
+            for (Node n: w.getNodes()) {
+                if (n.getReferrers().size() > 1) {
                     withReferrers.add(n);
+                }
+            }
+        }
         return withReferrers;
     }
 
@@ -311,16 +318,18 @@ public final class AlignInCircleAction extends JosmAction {
                 if (way == lastWay) continue;
                 if (way.firstNode() == lastNode) {
                     List<Node> wayNodes = way.getNodes();
-                    for (int i = 0; i < wayNodes.size() - 1; i++)
+                    for (int i = 0; i < wayNodes.size() - 1; i++) {
                         nodes.add(wayNodes.get(i));
+                    }
                     lastNode = way.lastNode();
                     lastWay = way;
                     break;
                 }
                 if (way.lastNode() == lastNode) {
                     List<Node> wayNodes = way.getNodes();
-                    for (int i = wayNodes.size() - 1; i > 0; i--)
+                    for (int i = wayNodes.size() - 1; i > 0; i--) {
                         nodes.add(wayNodes.get(i));
+                    }
                     lastNode = way.firstNode();
                     lastWay = way;
                     break;
@@ -347,11 +356,12 @@ public final class AlignInCircleAction extends JosmAction {
      */
     private boolean actionAllowed(Collection<Node> nodes) {
         boolean outside = false;
-        for (Node n: nodes)
+        for (Node n: nodes) {
             if (n.isOutsideDownloadArea()) {
                 outside = true;
                 break;
             }
+        }
         if (outside)
             new Notification(
                     tr("One or more nodes involved in this action is outside of the downloaded area."))

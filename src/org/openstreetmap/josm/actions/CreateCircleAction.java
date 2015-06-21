@@ -86,9 +86,10 @@ public final class CreateCircleAction extends JosmAction {
         }
         while (assign < nodesCount) {
             int imax = 0;
-            for (int i = 1; i < angles.length; i++)
+            for (int i = 1; i < angles.length; i++) {
                 if (remainder[i] > remainder[imax])
                     imax = i;
+            }
             count[imax]++;
             remainder[imax] = 0;
             assign++;

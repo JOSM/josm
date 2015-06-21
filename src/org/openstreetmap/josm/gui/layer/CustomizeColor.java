@@ -77,14 +77,16 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
         );
         switch (answer) {
         case 0:
-            for (Layer layer : layers)
+            for (Layer layer : layers) {
                 Main.pref.putColor("layer "+layer.getName(), c.getColor());
+            }
             break;
         case 1:
             return;
         case 2:
-            for (Layer layer : layers)
+            for (Layer layer : layers) {
                 Main.pref.putColor("layer "+layer.getName(), null);
+            }
             break;
         }
         Main.map.repaint();

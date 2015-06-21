@@ -78,6 +78,9 @@ public class OAuthParameters {
                 }
             } catch (MalformedURLException e) {
                 // Ignored
+                if (Main.isTraceEnabled()) {
+                    Main.trace(e.getMessage());
+                }
             }
         }
         return parameters;

@@ -164,8 +164,9 @@ public class JoinAreasAction extends JosmAction {
          * Inverse inside and outside
          */
         public void reverse() {
-            for (WayInPolygon way: ways)
+            for (WayInPolygon way: ways) {
                 way.insideToTheRight = !way.insideToTheRight;
+            }
             Collections.reverse(ways);
         }
     }
@@ -265,10 +266,12 @@ public class JoinAreasAction extends JosmAction {
             EastNorth en3 = N3.getEastNorth();
             double angle = Math.atan2(en3.getY() - en1.getY(), en3.getX() - en1.getX()) -
                     Math.atan2(en2.getY() - en1.getY(), en2.getX() - en1.getX());
-            while (angle >= 2*Math.PI)
+            while (angle >= 2*Math.PI) {
                 angle -= 2*Math.PI;
-            while (angle < 0)
+            }
+            while (angle < 0) {
                 angle += 2*Math.PI;
+            }
             return angle;
         }
 
@@ -1069,11 +1072,12 @@ public class JoinAreasAction extends JosmAction {
         // This seems to appear when is apply over invalid way like #9911 test-case
         // Remove all of these way to make the next work.
         List<WayInPolygon> cleanMultigonWays = new ArrayList<>();
-        for (WayInPolygon way: multigonWays)
+        for (WayInPolygon way: multigonWays) {
             if (way.way.getNodesCount() == 2 && way.way.isClosed())
                 discardedWays.add(way);
             else
                 cleanMultigonWays.add(way);
+        }
 
         WayTraverser traverser = new WayTraverser(cleanMultigonWays);
         List<AssembledPolygon> result = new ArrayList<>();
@@ -1104,8 +1108,9 @@ public class JoinAreasAction extends JosmAction {
                     if (ring.getNodes().size() <= 2) {
                         // Invalid ring (2 nodes) -> remove
                         traverser.removeWays(path);
-                        for (WayInPolygon way: path)
+                        for (WayInPolygon way: path) {
                             discardedResult.add(way.way);
+                        }
                     } else {
                         // Close ring -> add
                         result.add(ring);
@@ -1464,10 +1469,11 @@ public class JoinAreasAction extends JosmAction {
             newRel = new Relation();
             for (RelationRole r : multiouters) {
                 // Add members
-                for (RelationMember rm : r.rel.getMembers())
+                for (RelationMember rm : r.rel.getMembers()) {
                     if (!newRel.getMembers().contains(rm)) {
                         newRel.addMember(rm);
                     }
+                }
                 // Add tags
                 for (String key : r.rel.keySet()) {
                     newRel.put(key, r.rel.get(key));

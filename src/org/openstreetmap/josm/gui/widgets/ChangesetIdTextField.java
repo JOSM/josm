@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * A text field designed to enter a single OSM changeset ID.
  * @since 5765
@@ -25,7 +27,7 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
     public final int getChangesetId() {
         return validator.id;
     }
-    
+
     /**
      * Reads the changeset id.
      * @return true if a valid changeset id has been successfully read, false otherwise
@@ -35,12 +37,12 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
     public boolean readIds() {
         return validator.readChangesetId();
     }
-    
+
     /**
      * Validator for a changeset ID entered in a {@link JTextComponent}.
      */
     public static class ChangesetIdValidator extends AbstractTextComponentValidator {
-        
+
         private int id = 0;
 
         /**
@@ -64,7 +66,7 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
                 feedbackValid(tr("Please enter an integer value > 0"));
             }
         }
-        
+
         /**
          * Reads the changeset id.
          * @return true if a valid changeset id has been successfully read, false otherwise
@@ -81,6 +83,9 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
                     }
                 } catch (NumberFormatException e) {
                     // Ignored
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
                 }
             }
             return false;
