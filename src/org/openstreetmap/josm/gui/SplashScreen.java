@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -17,12 +17,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -34,6 +37,8 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
@@ -117,7 +122,12 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
     @Override
     public void stateChanged(ChangeEvent ignore) {
-        progressRenderer.setTasks(progressMonitor.toString());
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                progressRenderer.setTasks(progressMonitor.toString());
+            }
+        });
     }
 
     /**
@@ -128,11 +138,11 @@ public class SplashScreen extends JFrame implements ChangeListener {
         /**
          * Returns a HTML representation for this task.
          */
-        public abstract String toHtml();
+        public abstract StringBuilder toHtml(StringBuilder sb);
 
         @Override
         public final String toString() {
-            return toHtml();
+            return toHtml(new StringBuilder(1024)).toString();
         }
     }
 
@@ -158,8 +168,8 @@ public class SplashScreen extends JFrame implements ChangeListener {
         }
 
         @Override
-        public String toHtml() {
-            return name + "<i style='color: #666666;'>" + duration + "</i>";
+        public StringBuilder toHtml(StringBuilder sb) {
+            return sb.append(name).append("<i style='color: #666666;'>").append(duration).append("</i>");
         }
 
         @Override
@@ -192,9 +202,19 @@ public class SplashScreen extends JFrame implements ChangeListener {
         }
 
         @Override
-        public String toHtml() {
+        public StringBuilder toHtml(StringBuilder sb) {
             synchronized (tasks) {
-                return Utils.firstNonNull(name, "") + (tasks.isEmpty() ? "" : Utils.joinAsHtmlUnorderedList(tasks));
+                sb.append(Utils.firstNonNull(name, ""));
+                if (!tasks.isEmpty()) {
+                    sb.append("<ul>");
+                    for (Task i : tasks) {
+                        sb.append("<li>");
+                        i.toHtml(sb);
+                        sb.append("</li>");
+                    }
+                    sb.append("</ul>");
+                }
+                return sb;
             }
         }
 
@@ -327,47 +347,35 @@ public class SplashScreen extends JFrame implements ChangeListener {
     }
 
     private static class SplashScreenProgressRenderer extends JPanel {
-        private JLabel lblTaskTitle;
-        private JProgressBar progressBar;
+        private final JosmEditorPane lblTaskTitle = new JosmEditorPane();
+        private final JProgressBar progressBar = new JProgressBar(JProgressBar.HORIZONTAL);
         private static final String labelHtml = "<html>"
-                + "<style>ul {margin-top: 0; margin-bottom: 0; padding: 0;} li {margin: 0; padding: 0;}</style>"
-                + "<body height='320'>";
+                + "<style>ul {margin-top: 0; margin-bottom: 0; padding: 0;} li {margin: 0; padding: 0;}</style>";
 
         protected void build() {
             setLayout(new GridBagLayout());
-            GridBagConstraints gc = new GridBagConstraints();
-            gc.gridx = 0;
-            gc.gridy = 0;
-            gc.fill = GridBagConstraints.HORIZONTAL;
-            gc.weightx = 1.0;
-            gc.weighty = 0.0;
-            gc.insets = new Insets(5, 0, 0, 0);
-            add(lblTaskTitle = new JLabel(labelHtml), gc);
 
-            gc.gridy = 1;
-            gc.insets = new Insets(15, 0, 0, 0);
-            add(progressBar = new JProgressBar(JProgressBar.HORIZONTAL), gc);
+            JosmEditorPane.makeJLabelLike(lblTaskTitle, false);
+            lblTaskTitle.setText(labelHtml);
+            final JScrollPane scrollPane = new JScrollPane(lblTaskTitle,
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            scrollPane.setPreferredSize(new Dimension(0, 320));
+            scrollPane.setBorder(BorderFactory.createEmptyBorder());
+            add(scrollPane, GBC.eol().insets(5, 5, 0, 0).fill(GridBagConstraints.HORIZONTAL));
+
             progressBar.setIndeterminate(true);
+            add(progressBar, GBC.eol().insets(5, 15, 0, 0).fill(GridBagConstraints.HORIZONTAL));
         }
 
         public SplashScreenProgressRenderer() {
             build();
         }
 
-        @Override
-        public void paint(Graphics g) {
-            try {
-                super.paint(g);
-            } catch (NullPointerException ignore) {
-                // NullPointerException at javax.swing.text.html.StyleSheet$ListPainter.paint
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ignore.getMessage());
-                }
-            }
-        }
-
         public void setTasks(String tasks) {
-            lblTaskTitle.setText(labelHtml + tasks);
+            synchronized (lblTaskTitle) {
+                lblTaskTitle.setText(labelHtml + tasks);
+                lblTaskTitle.setCaretPosition(lblTaskTitle.getDocument().getLength());
+            }
             repaint();
         }
     }
