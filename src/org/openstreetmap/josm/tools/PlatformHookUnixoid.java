@@ -129,21 +129,22 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void initSystemShortcuts() {
+        // CHECKSTYLE.OFF: LineLength
         // TODO: Insert system shortcuts here. See Windows and especially OSX to see how to.
         for (int i = KeyEvent.VK_F1; i <= KeyEvent.VK_F12; ++i) {
-            Shortcut.registerSystemShortcut("screen:toogle"+i, tr("reserved"),
-                    i, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
+            Shortcut.registerSystemShortcut("screen:toogle"+i, tr("reserved"), i, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)
+                .setAutomatic();
         }
-        Shortcut.registerSystemShortcut("system:reset", tr("reserved"),
-                KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
-        Shortcut.registerSystemShortcut("system:resetX", tr("reserved"),
-                KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
+        Shortcut.registerSystemShortcut("system:reset", tr("reserved"), KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)
+            .setAutomatic();
+        Shortcut.registerSystemShortcut("system:resetX", tr("reserved"), KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)
+            .setAutomatic();
+        // CHECKSTYLE.ON: LineLength
     }
 
     /**
      * This should work for all platforms. Yeah, should.
-     * See PlatformHook.java for a list of reasons why
-     * this is implemented here...
+     * See PlatformHook.java for a list of reasons why this is implemented here...
      */
     @Override
     public String makeTooltip(String name, Shortcut sc) {
@@ -167,8 +168,7 @@ public class PlatformHookUnixoid implements PlatformHook {
     @Override
     public boolean canFullscreen() {
         return !GraphicsEnvironment.isHeadless() &&
-                GraphicsEnvironment.getLocalGraphicsEnvironment()
-        .getDefaultScreenDevice().isFullScreenSupported();
+                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().isFullScreenSupported();
     }
 
     @Override
@@ -459,16 +459,14 @@ public class PlatformHookUnixoid implements PlatformHook {
      * support for more scripts.</p>
      *
      * <p>The font configuration in Java doesn't include some Indic scripts,
-     * even though MS Windows ships with fonts that cover these unicode
-     * ranges.</p>
+     * even though MS Windows ships with fonts that cover these unicode ranges.</p>
      *
      * <p>To fix this, the fontconfig.properties template is copied to the JOSM
      * cache folder. Then, the additional entries are added to the font
      * configuration. Finally the system property "sun.awt.fontconfig" is set
      * to the customized fontconfig.properties file.</p>
      *
-     * <p>This is a crude hack, but better than no font display at all for these
-     * languages.
+     * <p>This is a crude hack, but better than no font display at all for these languages.
      * There is no guarantee, that the template file
      * ($JAVA_HOME/lib/fontconfig.properties.src) matches the default
      * configuration (which is in a binary format).
@@ -567,8 +565,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      *
      * Must be done without triggering the Java Font initialization.
      * (See {@link #extendFontconfig(java.lang.String)}, have to set system
-     * property first, which is then read by sun.awt.FontConfiguration upon
-     * initialization.)
+     * property first, which is then read by sun.awt.FontConfiguration upon initialization.)
      *
      * @return list of file names
      */
@@ -579,8 +576,7 @@ public class PlatformHookUnixoid implements PlatformHook {
     /**
      * Get default list of additional fonts to add to the configuration.
      *
-     * Java will choose thee first font in the list that can render a certain
-     * character.
+     * Java will choose thee first font in the list that can render a certain character.
      *
      * @return list of FontEntry objects
      */
