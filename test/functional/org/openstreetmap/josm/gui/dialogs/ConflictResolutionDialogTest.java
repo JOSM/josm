@@ -43,7 +43,7 @@ public class ConflictResolutionDialogTest extends JFrame {
         build();
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         ConflictResolutionDialogTest test = new ConflictResolutionDialogTest();
         test.setVisible(true);
         test.populate();

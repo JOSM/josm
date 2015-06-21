@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-
 /**
  * Cache Entry that has methods to get the BufferedImage, that will be cached along in memory
  * but will be not serialized when saved to the disk (to avoid duplication of data)

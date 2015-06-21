@@ -27,7 +27,6 @@ import org.openstreetmap.josm.Main;
  *
  *
  */
-
 public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
     private static final long serialVersionUID = 1L;
 

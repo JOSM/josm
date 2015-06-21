@@ -9,7 +9,11 @@ import java.util.Comparator;
 /**
  * Various utils, useful for unit tests.
  */
-public class TestUtils {
+public final class TestUtils {
+
+    private TestUtils() {
+        // Hide constructor for utility classes
+    }
 
     /**
      * Returns the path to test data root directory.

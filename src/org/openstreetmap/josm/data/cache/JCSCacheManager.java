@@ -33,7 +33,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  * Static configuration for now assumes some small LRU cache in memory and larger LRU cache on disk
  * @since 8168
  */
-public class JCSCacheManager {
+public final class JCSCacheManager {
     private static final Logger log = FeatureAdapter.getLogger(JCSCacheManager.class.getCanonicalName());
 
     private static volatile CompositeCacheManager cacheManager = null;

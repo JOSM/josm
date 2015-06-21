@@ -107,7 +107,7 @@ public final class ExpressionFactory {
      * Every method must be static.
      */
     @SuppressWarnings("UnusedDeclaration")
-    public static class Functions {
+    public static final class Functions {
 
         private Functions() {
             // Hide implicit public constructor for utility classes

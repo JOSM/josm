@@ -58,7 +58,7 @@ public class HistoryBrowserTest extends JFrame {
 
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         HistoryBrowserTest.init();
         new HistoryBrowserTest().setVisible(true);
     }

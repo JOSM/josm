@@ -1,16 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org;
 
+import java.util.Collection;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Ignore;
 import org.openstreetmap.josm.tools.Predicate;
 
-import java.util.Collection;
-
 @Ignore("no test")
-public class CustomMatchers {
+public final class CustomMatchers {
+
+    private CustomMatchers() {
+        // Hide constructor for utility classes
+    }
 
     public static <T> Matcher<? extends T> forPredicate(final Predicate<T> predicate) {
         return new TypeSafeMatcher<T>() {

@@ -478,7 +478,7 @@ public class ChangesetDialog extends ToggleDialog{
     /**
      * A utility class to fetch changesets and display the changeset dialog.
      */
-    public static class LaunchChangesetManager {
+    public static final class LaunchChangesetManager {
 
         private LaunchChangesetManager() {
             // Hide implicit public constructor for utility classes

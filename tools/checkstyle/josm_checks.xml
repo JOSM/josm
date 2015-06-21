@@ -89,6 +89,11 @@ JOSM Checkstyle rules
       <property name="tokens" value="LITERAL_DO,LITERAL_FOR,LITERAL_WHILE"/>
       <property name="allowSingleLineStatement" value="true"/>
     </module>
+    <module name="ArrayTypeStyle"/>
+    <module name="UpperEll"/>
+    <module name="OuterTypeFilename"/>
+    <module name="FinalClass"/>
+    <module name="HideUtilityClassConstructor"/>
   </module>
   <module name="Header">
     <property name="header" value="// License: GPL. For details, see LICENSE file."/>
@@ -103,4 +108,7 @@ JOSM Checkstyle rules
     <property name="checkFormat" value="$1"/>
   </module>
   <module name="FileTabCharacter"/>
+  <module name="NewlineAtEndOfFile">
+    <property name="lineSeparator" value="lf"/>
+  </module>
 </module>

@@ -485,7 +485,7 @@ public abstract class Condition {
         public final Method method;
         public final boolean not;
 
-        private PseudoClassCondition(Method method, boolean not) {
+        protected PseudoClassCondition(Method method, boolean not) {
             this.method = method;
             this.not = not;
         }
@@ -500,7 +500,6 @@ public abstract class Condition {
                 return new PseudoClassCondition(method, not);
             }
             throw new IllegalArgumentException("Invalid pseudo class specified: " + id);
-
         }
 
         protected static Method getMethod(String id) {

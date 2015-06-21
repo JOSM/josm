@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 /**
  * Look up, if there is right- or left-hand traffic at a certain place.
  */
-public class RightAndLefthandTraffic {
+public final class RightAndLefthandTraffic {
 
     private static class RLTrafficGeoProperty implements GeoProperty<Boolean> {
 

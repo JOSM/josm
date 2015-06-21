@@ -59,7 +59,7 @@ public class NodeListMergeModelTest {
                 break;
             }
             try {
-                int rows[] = (int[]) idx[i];
+                int[] rows = (int[]) idx[i];
                 if (rows.length != 2) {
                     fail("illegal selection range. Either null or not length 2: " + Arrays.toString(rows));
                 }
