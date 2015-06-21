@@ -499,7 +499,7 @@ public abstract class Condition {
             if (method != null) {
                 return new PseudoClassCondition(method, not);
             }
-            throw new IllegalArgumentException("Invalid pseudo class specified: " + id);
+            throw new MapCSSException("Invalid pseudo class specified: " + id);
         }
 
         protected static Method getMethod(String id) {

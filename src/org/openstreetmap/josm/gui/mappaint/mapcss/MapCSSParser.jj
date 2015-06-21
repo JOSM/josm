@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Subpart;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * MapCSS parser.
@@ -1144,8 +1145,9 @@ void error_skipto(int kind, MapCSSException me) {
     ParseException pe = generateParseException();
 
     if (me != null) {
-        me.setLine(pe.currentToken.next.beginLine);
-        me.setColumn(pe.currentToken.next.beginColumn);
+        final Token token = Utils.firstNonNull(pe.currentToken.next, pe.currentToken);
+        me.setLine(token.beginLine);
+        me.setColumn(token.beginColumn);
         e = me;
     } else {
         e = new ParseException(pe.getMessage()); // prevent memory leak
