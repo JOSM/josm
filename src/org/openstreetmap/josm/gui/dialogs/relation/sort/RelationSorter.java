@@ -5,15 +5,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.AlphanumComparator;
+import org.openstreetmap.josm.tools.Utils;
 
 public class RelationSorter {
 
@@ -90,10 +94,40 @@ public class RelationSorter {
             return m.getRole() != null && (m.getRole().startsWith("platform") || m.getRole().startsWith("stop"));
         }
 
+        private static String getStopName(OsmPrimitive p) {
+            for (Relation ref : Utils.filteredCollection(p.getReferrers(), Relation.class)) {
+                if (ref.hasTag("type", "public_transport") && ref.hasTag("public_transport", "stop_area") && ref.getName() != null) {
+                    return ref.getName();
+                }
+            }
+            return p.getName();
+        }
+
         @Override
         public List<RelationMember> sortMembers(List<RelationMember> list) {
-            // Retain order from original relation
-            return list;
+            final Map<String, RelationMember> platformByName = new HashMap<>();
+            for (RelationMember i : list) {
+                if ("platform".equals(i.getRole())) {
+                    final RelationMember old = platformByName.put(getStopName(i.getMember()), i);
+                    if (old != null) {
+                        // Platform with same name present. Stop to avoid damaging complicated relations.
+                        // This case can happily be handled differently.
+                        return list;
+                    }
+                }
+            }
+            final List<RelationMember> sorted = new ArrayList<>(list.size());
+            for (RelationMember i : list) {
+                if ("stop".equals(i.getRole())) {
+                    sorted.add(i);
+                    final RelationMember platform = platformByName.remove(getStopName(i.getMember()));
+                    if (platform != null) {
+                        sorted.add(platform);
+                    }
+                }
+            }
+            sorted.addAll(platformByName.values());
+            return sorted;
         }
     }
 
