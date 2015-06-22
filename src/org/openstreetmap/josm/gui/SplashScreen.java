@@ -12,10 +12,9 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -122,12 +121,12 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
     @Override
     public void stateChanged(ChangeEvent ignore) {
-        /*GuiHelper.runInEDT(new Runnable() {
+        GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {
                 progressRenderer.setTasks(progressMonitor.toString());
             }
-        });*/
+        });
     }
 
     /**
@@ -193,7 +192,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         private final String name;
         private final ChangeListener listener;
-        private final List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
+        private final List<Task> tasks = new CopyOnWriteArrayList<>();
         private SplashProgressMonitor latestSubtask;
 
         public SplashProgressMonitor(String name, ChangeListener listener) {
@@ -203,19 +202,17 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public StringBuilder toHtml(StringBuilder sb) {
-            synchronized (tasks) {
-                sb.append(Utils.firstNonNull(name, ""));
-                if (!tasks.isEmpty()) {
-                    sb.append("<ul>");
-                    for (Task i : tasks) {
-                        sb.append("<li>");
-                        i.toHtml(sb);
-                        sb.append("</li>");
-                    }
-                    sb.append("</ul>");
+            sb.append(Utils.firstNonNull(name, ""));
+            if (!tasks.isEmpty()) {
+                sb.append("<ul>");
+                for (Task i : tasks) {
+                    sb.append("<li>");
+                    i.toHtml(sb);
+                    sb.append("</li>");
                 }
-                return sb;
+                sb.append("</ul>");
             }
+            return sb;
         }
 
         @Override
@@ -387,11 +384,12 @@ public class SplashScreen extends JFrame implements ChangeListener {
             build();
         }
 
+        /**
+         * Sets the tasks to displayed. A HTML formatted list is expected.
+         */
         public void setTasks(String tasks) {
-            synchronized (lblTaskTitle) {
-                lblTaskTitle.setText(LABEL_HTML + tasks);
-                lblTaskTitle.setCaretPosition(lblTaskTitle.getDocument().getLength());
-            }
+            lblTaskTitle.setText(LABEL_HTML + tasks);
+            lblTaskTitle.setCaretPosition(lblTaskTitle.getDocument().getLength());
             repaint();
         }
     }
