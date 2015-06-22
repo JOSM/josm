@@ -122,12 +122,12 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
     @Override
     public void stateChanged(ChangeEvent ignore) {
-        GuiHelper.runInEDT(new Runnable() {
+        /*GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {
                 progressRenderer.setTasks(progressMonitor.toString());
             }
-        });
+        });*/
     }
 
     /**
@@ -265,11 +265,16 @@ public class SplashScreen extends JFrame implements ChangeListener {
         @Override
         @Deprecated
         public void finishTask() {
+            // Not used
         }
 
+        /**
+         * Displays the given task as finished.
+         * @param title the task title
+         */
         public void finishTask(String title) {
             final Task task = Utils.find(tasks, Predicates.<Task>equalTo(new MeasurableTask(title)));
-            if (task != null && task instanceof MeasurableTask) {
+            if (task instanceof MeasurableTask) {
                 ((MeasurableTask) task).finish();
                 Main.debug(tr("{0} completed in {1}", title, ((MeasurableTask) task).duration));
                 listener.stateChanged(null);
@@ -278,10 +283,12 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public void invalidate() {
+            // Not used
         }
 
         @Override
         public void setTicksCount(int ticks) {
+            // Not used
         }
 
         @Override
@@ -300,6 +307,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public void worked(int ticks) {
+            // Not used
         }
 
         @Override
@@ -309,22 +317,27 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public void cancel() {
+            // Not used
         }
 
         @Override
         public void addCancelListener(CancelListener listener) {
+            // Not used
         }
 
         @Override
         public void removeCancelListener(CancelListener listener) {
+            // Not used
         }
 
         @Override
         public void appendLogMessage(String message) {
+            // Not used
         }
 
         @Override
         public void setProgressTaskId(ProgressTaskId taskId) {
+            // Not used
         }
 
         @Override
@@ -349,14 +362,14 @@ public class SplashScreen extends JFrame implements ChangeListener {
     private static class SplashScreenProgressRenderer extends JPanel {
         private final JosmEditorPane lblTaskTitle = new JosmEditorPane();
         private final JProgressBar progressBar = new JProgressBar(JProgressBar.HORIZONTAL);
-        private static final String labelHtml = "<html>"
+        private static final String LABEL_HTML = "<html>"
                 + "<style>ul {margin-top: 0; margin-bottom: 0; padding: 0;} li {margin: 0; padding: 0;}</style>";
 
         protected void build() {
             setLayout(new GridBagLayout());
 
             JosmEditorPane.makeJLabelLike(lblTaskTitle, false);
-            lblTaskTitle.setText(labelHtml);
+            lblTaskTitle.setText(LABEL_HTML);
             final JScrollPane scrollPane = new JScrollPane(lblTaskTitle,
                     ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
             scrollPane.setPreferredSize(new Dimension(0, 320));
@@ -367,13 +380,16 @@ public class SplashScreen extends JFrame implements ChangeListener {
             add(progressBar, GBC.eol().insets(5, 15, 0, 0).fill(GridBagConstraints.HORIZONTAL));
         }
 
+        /**
+         * Constructs a new {@code SplashScreenProgressRenderer}.
+         */
         public SplashScreenProgressRenderer() {
             build();
         }
 
         public void setTasks(String tasks) {
             synchronized (lblTaskTitle) {
-                lblTaskTitle.setText(labelHtml + tasks);
+                lblTaskTitle.setText(LABEL_HTML + tasks);
                 lblTaskTitle.setCaretPosition(lblTaskTitle.getDocument().getLength());
             }
             repaint();
