@@ -590,6 +590,7 @@ void sheet(MapCSSStyleSource sheet):
         try {
             rule() w()
         } catch (MapCSSException mex) {
+            Main.error(mex);
             error_skipto(RBRACE, mex);
             w();
         } catch (ParseException ex) {
