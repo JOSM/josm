@@ -390,7 +390,6 @@ public class SplashScreen extends JFrame implements ChangeListener {
         public void setTasks(String tasks) {
             lblTaskTitle.setText(LABEL_HTML + tasks);
             lblTaskTitle.setCaretPosition(lblTaskTitle.getDocument().getLength());
-            repaint();
         }
     }
 }

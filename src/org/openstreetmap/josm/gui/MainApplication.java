@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -401,7 +402,12 @@ public class MainApplication extends Main {
         ProxySelector.setDefault(proxySelector);
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
 
-        final SplashScreen splash = new SplashScreen();
+        final SplashScreen splash = GuiHelper.runInEDTAndWaitAndReturn(new Callable<SplashScreen>() {
+            @Override
+            public SplashScreen call() {
+                return new SplashScreen();
+            }
+        });
         final SplashScreen.SplashProgressMonitor monitor = splash.getProgressMonitor();
         monitor.beginTask(tr("Initializing"));
         splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true));
