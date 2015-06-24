@@ -14,7 +14,6 @@
     <property name="build.dir" location="build"/>
     <property name="javacc.home" location="tools"/>
     <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
-    <property name="imagerytypes.dir" location="${src.dir}/org/openstreetmap/josm/data/imagery/types"/>
     <!-- build parameter: compression level (ant -Dclevel=N)
              N ranges from 0 (no compression) to 9 (maximum compression)
              default: 9 -->
@@ -290,7 +289,6 @@ Build-Date: ${build.tstamp}
         <delete dir="build"/>
         <delete dir="dist"/>
         <delete dir="${mapcss.dir}/parsergen"/>
-        <delete dir="${imagerytypes.dir}"/>
     </target>
     <path id="test.classpath">
         <fileset dir="${test.dir}/lib">
@@ -577,7 +575,7 @@ Build-Date: ${build.tstamp}
         <taskdef resource="checkstyletask.properties" classpath="tools/checkstyle/checkstyle-6.7-all.jar"/>
         <checkstyle config="tools/checkstyle/josm_checks.xml">
             <fileset dir="${basedir}/src/org/openstreetmap/josm" includes="**/*.java" 
-            	excludes="data/imagery/types/*.java,gui/mappaint/mapcss/parsergen/*.java"/>
+            	excludes="gui/mappaint/mapcss/parsergen/*.java"/>
             <fileset dir="${basedir}/test" includes="**/*.java"/>
             <formatter type="xml" toFile="checkstyle-josm.xml"/>
         </checkstyle>

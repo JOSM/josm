@@ -14,7 +14,6 @@
     <filter-data value="src/org/glassfish"/>
     <filter-data value="src/org/jdesktop"/>
     <filter-data value="src/org/openstreetmap/gui"/>
-    <filter-data value="src/org/openstreetmap/josm/data/imagery/types"/>
     <filter-data value="src/org/openstreetmap/josm/gui/mappaint/mapcss/parsergen"/>
     <filter-data value="src/org/w3"/>
     <filter-data value="data"/>
