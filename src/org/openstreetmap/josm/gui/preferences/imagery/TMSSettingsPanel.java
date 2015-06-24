@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoaderJob;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
@@ -40,8 +41,8 @@ public class TMSSettingsPanel extends JPanel {
      */
     public TMSSettingsPanel() {
         super(new GridBagLayout());
-        minZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.DEFAULT_MIN_ZOOM, TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
-        maxZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.DEFAULT_MAX_ZOOM, TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
+        minZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.PROP_MIN_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
+        maxZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.PROP_MAX_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
         maxElementsOnDisk = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.get().intValue(), 0, Integer.MAX_VALUE, 1));
         maxConcurrentDownloads = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoaderJob.THREAD_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
         maxDownloadsPerHost = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoader.HOST_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
@@ -94,7 +95,7 @@ public class TMSSettingsPanel extends JPanel {
         this.addToSlippyMapChosser.setSelected(TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get());
         this.maxZoomLvl.setValue(TMSLayer.getMaxZoomLvl(null));
         this.minZoomLvl.setValue(TMSLayer.getMinZoomLvl(null));
-        this.tilecacheDir.setText(TMSLayer.PROP_TILECACHE_DIR.get());
+        this.tilecacheDir.setText(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
         this.maxElementsOnDisk.setValue(TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.get());
         this.maxConcurrentDownloads.setValue(TMSCachedTileLoaderJob.THREAD_LIMIT.get());
         this.maxDownloadsPerHost.setValue(TMSCachedTileLoader.HOST_LIMIT.get());
@@ -131,9 +132,9 @@ public class TMSSettingsPanel extends JPanel {
             restartRequired = true;
         }
 
-        if (!TMSLayer.PROP_TILECACHE_DIR.get().equals(this.tilecacheDir.getText())) {
+        if (!CachedTileLoaderFactory.PROP_TILECACHE_DIR.get().equals(this.tilecacheDir.getText())) {
             restartRequired = true;
-            TMSLayer.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
+            CachedTileLoaderFactory.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
         }
 
         return restartRequired;

@@ -10,9 +10,9 @@ import java.util.Map;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
+import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
@@ -45,15 +45,18 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         ImageryPreferenceEntry prefEntry = Preferences.deserializeStruct(attributes, ImageryPreferenceEntry.class);
         ImageryInfo i = new ImageryInfo(prefEntry);
         ImageryLayer layer = ImageryLayer.create(i);
-        if (layer instanceof WMSLayer) {
-            WMSLayer wms = (WMSLayer) layer;
-            String autoDownload = attributes.get("automatic-downloading");
-            if (autoDownload != null) {
-                wms.setAutoDownload(Boolean.parseBoolean(autoDownload));
+        if (layer instanceof AbstractTileSourceLayer) {
+            AbstractTileSourceLayer tsLayer = (AbstractTileSourceLayer) layer;
+            if (attributes.containsKey("automatic-downloading")) {
+                tsLayer.autoLoad = new Boolean(attributes.get("automatic-downloading")).booleanValue();
             }
-            String autoResolution = attributes.get("automatically-change-resolution");
-            if (autoResolution != null) {
-                wms.setAutoResolution(Boolean.parseBoolean(autoResolution));
+
+            if (attributes.containsKey("automatically-change-resolution")) {
+                tsLayer.autoZoom = new Boolean(attributes.get("automatically-change-resolution")).booleanValue();
+            }
+
+            if (attributes.containsKey("show-errors")) {
+                tsLayer.showErrors = new Boolean(attributes.get("show-errors")).booleanValue();
             }
         }
         return layer;

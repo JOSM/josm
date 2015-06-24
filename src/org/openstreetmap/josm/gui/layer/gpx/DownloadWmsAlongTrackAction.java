@@ -24,8 +24,8 @@ import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.layer.WMSLayer;
-import org.openstreetmap.josm.gui.layer.WMSLayer.PrecacheTask;
+import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
+import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer.PrecacheTask;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
@@ -34,10 +34,17 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
+/**
+ * Class downloading WMS and TMS along the GPX track
+ *
+ */
 public class DownloadWmsAlongTrackAction extends AbstractAction {
 
     private final transient GpxData data;
 
+    /**
+     * @param data that represents GPX track, along which data should be downloaded
+     */
     public DownloadWmsAlongTrackAction(final GpxData data) {
         super(tr("Precache imagery tiles along this track"), ImageProvider.get("downloadalongtrack"));
         this.data = data;
@@ -56,14 +63,14 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         for (WayPoint p : data.waypoints) {
             points.add(p.getCoor());
         }
-        final WMSLayer layer = askWMSLayer();
+        final AbstractTileSourceLayer layer = askedLayer();
         if (layer != null) {
             PleaseWaitRunnable task = new PleaseWaitRunnable(tr("Precaching WMS")) {
                 private PrecacheTask precacheTask;
 
                 @Override
                 protected void realRun() throws SAXException, IOException, OsmTransferException {
-                    precacheTask = new PrecacheTask(progressMonitor);
+                    precacheTask = layer.new PrecacheTask(progressMonitor);
                     layer.downloadAreaToCache(precacheTask, points, 0, 0);
                     while (!precacheTask.isFinished() && !progressMonitor.isCanceled()) {
                         synchronized (this) {
@@ -94,13 +101,13 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         }
     }
 
-    protected WMSLayer askWMSLayer() {
-        Collection<WMSLayer> targetLayers = Main.map.mapView.getLayersOfType(WMSLayer.class);
+    protected AbstractTileSourceLayer askedLayer() {
+        Collection<AbstractTileSourceLayer> targetLayers = Main.map.mapView.getLayersOfType(AbstractTileSourceLayer.class);
         if (targetLayers.isEmpty()) {
             warnNoImageryLayers();
             return null;
         }
-        JosmComboBox<WMSLayer> layerList = new JosmComboBox<>(targetLayers.toArray(new WMSLayer[0]));
+        JosmComboBox<AbstractTileSourceLayer> layerList = new JosmComboBox<>(targetLayers.toArray(new AbstractTileSourceLayer[0]));
         layerList.setRenderer(new LayerListCellRenderer());
         layerList.setSelectedIndex(0);
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -113,7 +120,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         if (ed.getValue() != 1) {
             return null;
         }
-        return (WMSLayer) layerList.getSelectedItem();
+        return (AbstractTileSourceLayer) layerList.getSelectedItem();
     }
 
     protected void warnNoImageryLayers() {

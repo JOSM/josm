@@ -16,6 +16,7 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.tools.Utils;
@@ -186,6 +187,11 @@ public class LatLon extends Coordinate {
     protected LatLon(LatLon coor) {
         super(coor.lon(), coor.lat());
     }
+
+    public LatLon(ICoordinate coor) {
+        this(coor.getLat(), coor.getLon());
+    }
+
 
     /**
      * Returns the latitude, i.e., the north-south position in degrees.
@@ -432,5 +438,9 @@ public class LatLon extends Coordinate {
         if (java.lang.Double.doubleToLongBits(y) != java.lang.Double.doubleToLongBits(other.y))
             return false;
         return true;
+    }
+
+    public ICoordinate toCoordinate() {
+        return new org.openstreetmap.gui.jmapviewer.Coordinate(lat(), lon());
     }
 }

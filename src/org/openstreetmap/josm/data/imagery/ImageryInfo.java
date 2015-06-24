@@ -18,9 +18,9 @@ import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 
-import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
@@ -574,7 +574,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     @Override
-    public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) {
+    public String getAttributionText(int zoom, ICoordinate topLeft, ICoordinate botRight) {
         return attributionText;
     }
 

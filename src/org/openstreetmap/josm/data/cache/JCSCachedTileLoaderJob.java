@@ -192,7 +192,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return;
             }
             // object not in cache, so submit work to separate thread
-            getDownloadExecutor().execute(this);
+            downloadJobExecutor.execute(this);
         }
     }
 
@@ -229,13 +229,6 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      */
     protected String getServerKey() {
         return getUrl().getHost();
-    }
-
-    /**
-     * this needs to be non-static, so it can be overridden by subclasses
-     */
-    protected ThreadPoolExecutor getDownloadExecutor() {
-        return downloadJobExecutor;
     }
 
     @Override
@@ -505,12 +498,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * cancels all outstanding tasks in the queue.
      */
     public void cancelOutstandingTasks() {
-        ThreadPoolExecutor downloadExecutor = getDownloadExecutor();
-        for (Runnable r: downloadExecutor.getQueue()) {
-            if (downloadExecutor.remove(r)) {
-                if (r instanceof JCSCachedTileLoaderJob) {
-                    ((JCSCachedTileLoaderJob<?, ?>) r).handleJobCancellation();
-                }
+        for(Runnable r: downloadJobExecutor.getQueue()) {
+            if (downloadJobExecutor.remove(r) && r instanceof JCSCachedTileLoaderJob) {
+                ((JCSCachedTileLoaderJob<?, ?>) r).handleJobCancellation();
             }
         }
     }

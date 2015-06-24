@@ -28,11 +28,11 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  */
 public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCache {
 
-    private final ICacheAccess<String, BufferedImageCacheEntry> cache;
-    private final int connectTimeout;
-    private final int readTimeout;
-    private final Map<String, String> headers;
-    private final TileLoaderListener listener;
+    protected final ICacheAccess<String, BufferedImageCacheEntry> cache;
+    protected final int connectTimeout;
+    protected final int readTimeout;
+    protected final Map<String, String> headers;
+    protected final TileLoaderListener listener;
     private static final String PREFERENCE_PREFIX   = "imagery.tms.cache.";
 
     /**
@@ -54,20 +54,9 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
      * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS
      * and for TMS imagery
      */
-    private static ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = getThreadPoolExecutor();
+    private static ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = getNewThreadPoolExecutor("TMS downloader");
 
-    private final ThreadPoolExecutor downloadExecutor = DEFAULT_DOWNLOAD_JOB_DISPATCHER;
-
-    private static ThreadPoolExecutor getThreadPoolExecutor() {
-        return new ThreadPoolExecutor(
-                THREAD_LIMIT.get().intValue(), // keep the thread number constant
-                THREAD_LIMIT.get().intValue(), // do not this number of threads
-                30, // keepalive for thread
-                TimeUnit.SECONDS,
-                new HostLimitQueue(HOST_LIMIT.get().intValue()),
-                JCSCachedTileLoaderJob.getNamedThreadFactory("TMS downloader")
-                );
-    }
+    private ThreadPoolExecutor downloadExecutor = DEFAULT_DOWNLOAD_JOB_DISPATCHER;
 
     /**
      * Constructor
@@ -91,10 +80,34 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
         this.listener = listener;
     }
 
+    /**
+     * @param name name of the threads
+     * @param workers number of worker thread to keep
+     * @return new ThreadPoolExecutor that will use a @see HostLimitQueue based queue
+     */
+    public static ThreadPoolExecutor getNewThreadPoolExecutor(String name, int workers) {
+        return new ThreadPoolExecutor(
+                workers, // keep the thread number constant
+                workers, // do not this number of threads
+                30, // keepalive for thread
+                TimeUnit.SECONDS,
+                new HostLimitQueue(HOST_LIMIT.get().intValue()),
+                JCSCachedTileLoaderJob.getNamedThreadFactory(name)
+                );
+    }
+
+    /**
+     * @param name name of threads
+     * @return new ThreadPoolExecutor that will use a @see HostLimitQueue based queue, with default number of threads
+     */
+    public static ThreadPoolExecutor getNewThreadPoolExecutor(String name) {
+        return getNewThreadPoolExecutor(name, THREAD_LIMIT.get().intValue());
+    }
+
     @Override
     public TileJob createTileLoaderJob(Tile tile) {
         return new TMSCachedTileLoaderJob(listener, tile, cache,
-                connectTimeout, readTimeout, headers, downloadExecutor);
+                connectTimeout, readTimeout, headers, getDownloadExecutor());
     }
 
     @Override
@@ -140,4 +153,23 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
             }
         }
     }
+
+    /**
+     * Sets the download executor that will be used to download tiles instead of default one.
+     * You can use {@link #getNewThreadPoolExecutor} to create a new download executor with separate
+     * queue from default.
+     *
+     * @param downloadExecutor
+     */
+    public void setDownloadExecutor(ThreadPoolExecutor downloadExecutor) {
+        this.downloadExecutor = downloadExecutor;
+    }
+
+    /**
+     * @return download executor that is used by this factory
+     */
+    public ThreadPoolExecutor getDownloadExecutor() {
+        return downloadExecutor;
+    }
+
 }

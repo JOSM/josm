@@ -26,6 +26,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -69,7 +70,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
                     continue;
                 }
                 try {
-                    TileSource source = TMSLayer.getTileSource(info);
+                    TileSource source = TMSLayer.getTileSourceStatic(info);
                     if (source != null) {
                         sources.add(source);
                     }
@@ -123,8 +124,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     private transient Bounds bbox;
 
     // upper left and lower right corners of the selection rectangle (x/y on ZOOM_MAX)
-    private Coordinate iSelectionRectStart;
-    private Coordinate iSelectionRectEnd;
+    private ICoordinate iSelectionRectStart;
+    private ICoordinate iSelectionRectEnd;
 
     /**
      * Constructs a new {@code SlippyMapBBoxChooser}.

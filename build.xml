@@ -198,22 +198,7 @@ Build-Date: ${build.tstamp}
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </exec>
     </target>
-    <target name="-jaxb_win" if="isWindows">
-        <property name="xjc" value="${java.home}\..\bin\xjc.exe" />
-    </target>
-    <target name="-jaxb_nix" unless="isWindows">
-        <property name="xjc" value="${java.home}/../bin/xjc" />
-    </target>
-    <target name="jaxb" depends="init, -jaxb_win, -jaxb_nix" unless="jaxb.notRequired">
-        <exec executable="${xjc}" failonerror="true">
-            <arg value="-d"/>
-            <arg value="${src.dir}"/>
-            <arg value="-encoding"/>
-            <arg value="UTF-8"/>
-            <arg value="data_nodist/wms-cache.xsd"/>
-        </exec>
-    </target>
-    <target name="compile" depends="init,javacc,jaxb">
+    <target name="compile" depends="init,javacc">
         <!-- COTS -->
         <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**" nowarn="on" encoding="iso-8859-1"
             destdir="build" target="1.7" source="1.7" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
@@ -238,8 +223,8 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/logging/impl/LogKitLogger.java"/>
             <exclude name="org/apache/commons/logging/impl/ServletContextCleaner.java"/>
         </javac>
-        <!-- JMapViewer/JOSM -->
-        <javac srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
+        <!-- JMapViewer -->
+        <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/josm/**,JOSM.java,gnu/**" 
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
@@ -255,6 +240,26 @@ Build-Date: ${build.tstamp}
             <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
         </javac>
+
+        <!-- JOSM -->
+        <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
+            destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            <compilerarg value="-Xlint:cast"/>
+            <compilerarg value="-Xlint:deprecation"/>
+            <compilerarg value="-Xlint:dep-ann"/>
+            <compilerarg value="-Xlint:divzero"/>
+            <compilerarg value="-Xlint:empty"/>
+            <compilerarg value="-Xlint:finally"/>
+            <compilerarg value="-Xlint:overrides"/>
+            <!--<compilerarg value="-Xlint:rawtypes"/>-->
+            <compilerarg value="-Xlint:static"/>
+            <compilerarg value="-Xlint:try"/>
+            <compilerarg value="-Xlint:unchecked"/>
+            <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
+            <compilerarg value="-XDignore.symbol.file"/>
+        </javac>
+
+
         <copy todir="build" failonerror="no" includeemptydirs="no">
             <fileset dir="resources"/>
         </copy>
