@@ -331,7 +331,7 @@ public class CreateMultipolygonAction extends JosmAction {
         }
     }
 
-    public static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList("barrier", "fence_type", "source");
+    private static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList("barrier", "fence_type", "source");
 
     /**
      * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary

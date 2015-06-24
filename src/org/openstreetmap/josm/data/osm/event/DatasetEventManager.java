@@ -32,8 +32,6 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         @Override
         public void run() {
             while (!eventsInEDT.isEmpty()) {
-                List<AbstractDatasetChangedEvent> events = new ArrayList<>(eventsInEDT);
-
                 DataSet dataSet = null;
                 AbstractDatasetChangedEvent consolidatedEvent = null;
                 AbstractDatasetChangedEvent event = null;
@@ -125,6 +123,10 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         }
     }
 
+    /**
+     * Replies the unique instance.
+     * @return the unique instance
+     */
     public static DatasetEventManager getInstance() {
         return instance;
     }

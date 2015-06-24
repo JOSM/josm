@@ -102,7 +102,7 @@ public class CustomProjection extends AbstractProjection {
         public final boolean hasValue;
 
         /** Map of all parameters by key */
-        public static final Map<String, Param> paramsByKey = new HashMap<>();
+        static final Map<String, Param> paramsByKey = new HashMap<>();
         static {
             for (Param p : Param.values()) {
                 paramsByKey.put(p.key, p);
