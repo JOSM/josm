@@ -14,8 +14,7 @@ import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
  * Separate class to handle WMS jobs, as it needs to react differently to HTTP response codes from WMS server
  *
  * @author Wiktor Niesiobędzki
- * @since TODO
- *
+ * @since 8526
  */
 public class WMSCachedTileLoaderJob extends TMSCachedTileLoaderJob {
 
@@ -44,5 +43,4 @@ public class WMSCachedTileLoaderJob extends TMSCachedTileLoaderJob {
         }
         return null;
     }
-
 }

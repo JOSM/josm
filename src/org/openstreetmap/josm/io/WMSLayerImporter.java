@@ -40,7 +40,6 @@ public class WMSLayerImporter extends FileImporter {
         super(FILE_FILTER);
     }
 
-
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         CheckParameterUtil.ensureParameterNotNull(file, "file");
@@ -60,19 +59,19 @@ public class WMSLayerImporter extends FileImporter {
                 int imageSize = ois.readInt();
                 double pixelPerDegree = ois.readDouble();
 
-                String name = (String)ois.readObject();
-                String extendedUrl = (String)ois.readObject();
+                String name = (String) ois.readObject();
+                String extendedUrl = (String) ois.readObject();
 
                 info = new ImageryInfo(name);
                 info.setExtendedUrl(extendedUrl);
                 info.setPixelPerDegree(pixelPerDegree);
                 info.setTileSize(imageSize);
-            } else if (sfv == WMSLayerExporter.CURRENT_FILE_VERSION){
+            } else if (sfv == WMSLayerExporter.CURRENT_FILE_VERSION) {
                 zoomTo = (EastNorth) ois.readObject();
 
                 @SuppressWarnings("unchecked")
                 ImageryPreferenceEntry entry = Preferences.deserializeStruct(
-                        (Map<String, String>)ois.readObject(),
+                        (Map<String, String>) ois.readObject(),
                         ImageryPreferenceEntry.class);
                 info = new ImageryInfo(entry);
             } else {

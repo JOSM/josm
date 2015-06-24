@@ -16,8 +16,7 @@ import org.openstreetmap.josm.data.preferences.StringProperty;
  * TileLoaderFactory creating JCS cached TileLoaders
  *
  * @author Wiktor Niesiobędzki
- * @since TODO
- *
+ * @since 8526
  */
 public abstract class CachedTileLoaderFactory implements TileLoaderFactory {
     /**
@@ -58,7 +57,7 @@ public abstract class CachedTileLoaderFactory implements TileLoaderFactory {
 
         try {
             return getLoader(listener, cacheName,
-                    Main.pref.getInteger("socket.timeout.connect",15) * 1000,
+                    Main.pref.getInteger("socket.timeout.connect", 15) * 1000,
                     Main.pref.getInteger("socket.timeout.read", 30) * 1000,
                     headers,
                     PROP_TILECACHE_DIR.get());
@@ -68,5 +67,6 @@ public abstract class CachedTileLoaderFactory implements TileLoaderFactory {
         return null;
     }
 
-    protected abstract TileLoader getLoader(TileLoaderListener listener, String cacheName, int connectTimeout, int readTimeout, Map<String, String> headers, String cacheDir) throws IOException;
+    protected abstract TileLoader getLoader(TileLoaderListener listener, String cacheName, int connectTimeout, int readTimeout,
+            Map<String, String> headers, String cacheDir) throws IOException;
 }

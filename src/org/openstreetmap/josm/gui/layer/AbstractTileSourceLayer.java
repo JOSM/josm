@@ -79,14 +79,14 @@ import org.openstreetmap.josm.io.WMSLayerImporter;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
- *
  * Base abstract class that supports displaying images provided by TileSource. It might be TMS source, WMS or WMTS
  *
  * It implements all standard functions of tilesource based layers: autozoom,  tile reloads, layer saving, loading,etc.
  *
+ * @author Upliner
  * @author Wiktor Niesiobędzki
- * @since TODO
- *
+ * @since 3715
+ * @since 8526 (copied from TMSLayer)
  */
 public abstract class AbstractTileSourceLayer extends ImageryLayer implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     private static final String PREFERENCE_PREFIX   = "imagery.generic";
@@ -134,13 +134,12 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     /**
      * Creates Tile Source based Imagery Layer based on Imagery Info
-     * @param info
-     * @param tileSource
+     * @param info imagery info
      */
     public AbstractTileSourceLayer(ImageryInfo info) {
         super(info);
 
-        if(!isProjectionSupported(Main.getProjection())) {
+        if (!isProjectionSupported(Main.getProjection())) {
             JOptionPane.showMessageDialog(Main.parent,
                     tr("This layer do not support the projection {0}.\n{1}\n"
                             + "Change the projection or remove the layer.",
@@ -159,7 +158,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     /**
      *
-     * @param info
+     * @param info imagery info
      * @return TileSource for specified ImageryInfo
      * @throws IllegalArgumentException when Imagery is not supported by layer
      */
@@ -184,8 +183,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         if (tileLoader == null)
             tileLoader = new OsmTileLoader(this);
     }
-
-
 
     @Override
     public synchronized void tileLoadingFinished(Tile tile, boolean success) {
@@ -218,10 +215,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     public void clearTileCache(ProgressMonitor monitor) {
         tileCache.clear();
         if (tileLoader instanceof CachedTileLoader) {
-            ((CachedTileLoader)tileLoader).clearCache(tileSource);
+            ((CachedTileLoader) tileLoader).clearCache(tileSource);
         }
     }
-
 
     /**
      * Initiates a repaint of Main.map
@@ -261,7 +257,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         return screenPixels/tilePixels;
     }
 
-    private final int getBestZoom() {
+    private int getBestZoom() {
         double factor = getScaleFactor(1); // check the ratio between area of tilesize at zoom 1 to current view
         double result = Math.log(factor)/Math.log(2)/2+1;
         /*
@@ -274,7 +270,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
          * Remember, that result here, should correspond to TMSLayer.paint(...)
          * getScaleFactor(...) is supposed to be between 0.75 and 3
          */
-        int intResult = (int)Math.floor(result);
+        int intResult = (int) Math.floor(result);
         if (intResult > getMaxZoomLvl())
             return getMaxZoomLvl();
         if (intResult < getMinZoomLvl())
@@ -282,15 +278,82 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         return intResult;
     }
 
-
-    private final static boolean actionSupportLayers(List<Layer> layers) {
+    private static boolean actionSupportLayers(List<Layer> layers) {
         return layers.size() == 1 && layers.get(0) instanceof TMSLayer;
+    }
+
+    private final class ShowTileInfoAction extends AbstractAction {
+        private final TileHolder clickedTileHolder;
+
+        private ShowTileInfoAction(TileHolder clickedTileHolder) {
+            super(tr("Show Tile Info"));
+            this.clickedTileHolder = clickedTileHolder;
+        }
+
+        private String getSizeString(int size) {
+            StringBuilder ret = new StringBuilder();
+            return ret.append(size).append("x").append(size).toString();
+        }
+
+        private JTextField createTextField(String text) {
+            JTextField ret = new JTextField(text);
+            ret.setEditable(false);
+            ret.setBorder(BorderFactory.createEmptyBorder());
+            return ret;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            Tile clickedTile = clickedTileHolder.getTile();
+            if (clickedTile != null) {
+                ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), new String[]{tr("OK")});
+                JPanel panel = new JPanel(new GridBagLayout());
+                Rectangle displaySize = tileToRect(clickedTile);
+                String url = "";
+                try {
+                    url = clickedTile.getUrl();
+                } catch (IOException e) {
+                    // silence exceptions
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
+                }
+
+                String[][] content = {
+                        {"Tile name", clickedTile.getKey()},
+                        {"Tile url", url},
+                        {"Tile size", getSizeString(clickedTile.getTileSource().getTileSize()) },
+                        {"Tile display size", new StringBuilder().append(displaySize.width).append("x").append(displaySize.height).toString()},
+                };
+
+                for (String[] entry: content) {
+                    panel.add(new JLabel(tr(entry[0]) + ":"), GBC.std());
+                    panel.add(GBC.glue(5, 0), GBC.std());
+                    panel.add(createTextField(entry[1]), GBC.eol().fill(GBC.HORIZONTAL));
+                }
+
+                for (Entry<String, String> e: clickedTile.getMetadata().entrySet()) {
+                    panel.add(new JLabel(tr("Metadata ") + tr(e.getKey()) + ":"), GBC.std());
+                    panel.add(GBC.glue(5, 0), GBC.std());
+                    String value = e.getValue();
+                    if ("lastModification".equals(e.getKey()) || "expirationTime".equals(e.getKey())) {
+                        value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(value)));
+                    }
+                    panel.add(createTextField(value), GBC.eol().fill(GBC.HORIZONTAL));
+
+                }
+                ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
+                ed.setContent(panel);
+                ed.showDialog();
+            }
+        }
     }
 
     private class AutoZoomAction extends AbstractAction implements LayerAction {
         public AutoZoomAction() {
             super(tr("Auto Zoom"));
         }
+
         @Override
         public void actionPerformed(ActionEvent ae) {
             autoZoom = !autoZoom;
@@ -301,20 +364,21 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             item.setSelected(autoZoom);
             return item;
         }
+
         @Override
         public boolean supportLayers(List<Layer> layers) {
             return actionSupportLayers(layers);
         }
-
     }
 
     private class AutoLoadTilesAction extends AbstractAction implements LayerAction {
         public AutoLoadTilesAction() {
             super(tr("Auto load tiles"));
         }
+
         @Override
         public void actionPerformed(ActionEvent ae) {
-            autoLoad= !autoLoad;
+            autoLoad = !autoLoad;
         }
 
         public Component createMenuComponent() {
@@ -322,6 +386,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             item.setSelected(autoLoad);
             return item;
         }
+
         @Override
         public boolean supportLayers(List<Layer> layers) {
             return actionSupportLayers(layers);
@@ -332,6 +397,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         public LoadAllTilesAction() {
             super(tr("Load All Tiles"));
         }
+
         @Override
         public void actionPerformed(ActionEvent ae) {
             loadAllTiles(true);
@@ -355,6 +421,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         public ZoomToNativeLevelAction() {
             super(tr("Zoom to native resolution"));
         }
+
         @Override
         public void actionPerformed(ActionEvent ae) {
             double new_factor = Math.sqrt(getScaleFactor(currentZoomLevel));
@@ -367,16 +434,17 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         public ZoomToBestAction() {
             super(tr("Change resolution"));
         }
+
         @Override
         public void actionPerformed(ActionEvent ae) {
             setZoomLevel(getBestZoom());
         }
     }
 
-    /*
+    /**
      * Simple class to keep clickedTile within hookUpMapView
      */
-    private class TileHolder {
+    private static final class TileHolder {
         private Tile t = null;
 
         public Tile getTile() {
@@ -431,63 +499,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             }
         }));
 
-        tileOptionMenu.add(new JMenuItem(new AbstractAction(
-                tr("Show Tile Info")) {
-            private String getSizeString(int size) {
-                StringBuilder ret = new StringBuilder();
-                return ret.append(size).append("x").append(size).toString();
-            }
-
-            private JTextField createTextField(String text) {
-                JTextField ret = new JTextField(text);
-                ret.setEditable(false);
-                ret.setBorder(BorderFactory.createEmptyBorder());
-                return ret;
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                Tile clickedTile = clickedTileHolder.getTile();
-                if (clickedTile != null) {
-                    ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), new String[]{tr("OK")});
-                    JPanel panel = new JPanel(new GridBagLayout());
-                    Rectangle displaySize = tileToRect(clickedTile);
-                    String url = "";
-                    try {
-                        url = clickedTile.getUrl();
-                    } catch (IOException e) {
-                        // silence exceptions
-                    }
-
-                    String[][] content = {
-                            {"Tile name", clickedTile.getKey()},
-                            {"Tile url", url},
-                            {"Tile size", getSizeString(clickedTile.getTileSource().getTileSize()) },
-                            {"Tile display size", new StringBuilder().append(displaySize.width).append("x").append(displaySize.height).toString()},
-                    };
-
-                    for (String[] entry: content) {
-                        panel.add(new JLabel(tr(entry[0]) + ":"), GBC.std());
-                        panel.add(GBC.glue(5,0), GBC.std());
-                        panel.add(createTextField(entry[1]), GBC.eol().fill(GBC.HORIZONTAL));
-                    }
-
-                    for (Entry<String, String> e: clickedTile.getMetadata().entrySet()) {
-                        panel.add(new JLabel(tr("Metadata ") + tr(e.getKey()) + ":"), GBC.std());
-                        panel.add(GBC.glue(5,0), GBC.std());
-                        String value = e.getValue();
-                        if ("lastModification".equals(e.getKey()) || "expirationTime".equals(e.getKey())) {
-                            value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(value)));
-                        }
-                        panel.add(createTextField(value), GBC.eol().fill(GBC.HORIZONTAL));
-
-                    }
-                    ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
-                    ed.setContent(panel);
-                    ed.showDialog();
-                }
-            }
-        }));
+        tileOptionMenu.add(new JMenuItem(new ShowTileInfoAction(clickedTileHolder)));
 
         tileOptionMenu.add(new JMenuItem(new LoadAllTilesAction()));
         tileOptionMenu.add(new JMenuItem(new LoadErroneusTilesAction()));
@@ -585,10 +597,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * @return maximum zoom level, not higher than supported by tilesource nor set by the user
      */
     public static int checkMaxZoomLvl(int maxZoomLvl, TileSource ts) {
-        if(maxZoomLvl > MAX_ZOOM) {
+        if (maxZoomLvl > MAX_ZOOM) {
             maxZoomLvl = MAX_ZOOM;
         }
-        if(maxZoomLvl < PROP_MIN_ZOOM_LVL.get()) {
+        if (maxZoomLvl < PROP_MIN_ZOOM_LVL.get()) {
             maxZoomLvl = PROP_MIN_ZOOM_LVL.get();
         }
         if (ts != null && ts.getMaxZoom() != 0 && ts.getMaxZoom() < maxZoomLvl) {
@@ -604,10 +616,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * @return minimum zoom level, not higher than supported by tilesource nor set by the user
      */
     public static int checkMinZoomLvl(int minZoomLvl, TileSource ts) {
-        if(minZoomLvl < MIN_ZOOM) {
+        if (minZoomLvl < MIN_ZOOM) {
             minZoomLvl = MIN_ZOOM;
         }
-        if(minZoomLvl > PROP_MAX_ZOOM_LVL.get()) {
+        if (minZoomLvl > PROP_MAX_ZOOM_LVL.get()) {
             minZoomLvl = getMaxZoomLvl(ts);
         }
         if (ts != null && ts.getMinZoom() > minZoomLvl) {
@@ -615,7 +627,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
         return minZoomLvl;
     }
-
 
     /**
      * @param ts TileSource for which we want to know maximum zoom level
@@ -633,10 +644,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         return checkMinZoomLvl(PROP_MIN_ZOOM_LVL.get(), ts);
     }
 
-
     /**
      * Sets maximum zoom level, that layer will attempt show
-     * @param maxZoomLvl
+     * @param maxZoomLvl maximum zoom level
      */
     public static void setMaxZoomLvl(int maxZoomLvl) {
         maxZoomLvl = checkMaxZoomLvl(maxZoomLvl, null);
@@ -645,13 +655,12 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     /**
      * Sets minimum zoom level, that layer will attempt show
-     * @param minZoomLvl
+     * @param minZoomLvl minimum zoom level
      */
     public static void setMinZoomLvl(int minZoomLvl) {
         minZoomLvl = checkMinZoomLvl(minZoomLvl, null);
         PROP_MIN_ZOOM_LVL.put(minZoomLvl);
     }
-
 
     /**
      * This fires every time the user changes the zoom, but also (due to ZoomChangeListener) - on all
@@ -663,7 +672,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             Main.debug("zoomChanged(): " + currentZoomLevel);
         }
         if (tileLoader instanceof TMSCachedTileLoader) {
-            ((TMSCachedTileLoader)tileLoader).cancelOutstandingTasks();
+            ((TMSCachedTileLoader) tileLoader).cancelOutstandingTasks();
         }
         needRedraw = true;
     }
@@ -686,7 +695,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     public boolean zoomIncreaseAllowed() {
         boolean zia = currentZoomLevel < this.getMaxZoomLvl();
         if (Main.isDebugEnabled()) {
-            Main.debug("zoomIncreaseAllowed(): " + zia + " " + currentZoomLevel + " vs. " + this.getMaxZoomLvl() );
+            Main.debug("zoomIncreaseAllowed(): " + zia + " " + currentZoomLevel + " vs. " + this.getMaxZoomLvl());
         }
         return zia;
     }
@@ -811,8 +820,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     private void loadAllTiles(boolean force) {
         TileSet ts = getVisibleTileSet();
 
-        // if there is more than 18 tiles on screen in any direction, do not
-        // load all tiles!
+        // if there is more than 18 tiles on screen in any direction, do not load all tiles!
         if (ts.tooLarge()) {
             Main.warn("Not downloading all tiles because there is more than 18 tiles on an axis!");
             return;
@@ -883,8 +891,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         Rectangle target = source;
 
         // If a border is specified, only draw the intersection
-        // if what we have combined with what we are supposed
-        // to draw.
+        // if what we have combined with what we are supposed to draw.
         if (border != null) {
             target = source.intersection(border);
             if (Main.isDebugEnabled()) {
@@ -905,14 +912,13 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         // How many pixels into the 'source' rectangle are we drawing?
         int screen_x_offset = target.x - source.x;
         int screen_y_offset = target.y - source.y;
-        // And how many pixels into the image itself does that
-        // correlate to?
-        int img_x_offset = (int)(screen_x_offset * imageXScaling + 0.5);
-        int img_y_offset = (int)(screen_y_offset * imageYScaling + 0.5);
+        // And how many pixels into the image itself does that correlate to?
+        int img_x_offset = (int) (screen_x_offset * imageXScaling + 0.5);
+        int img_y_offset = (int) (screen_y_offset * imageYScaling + 0.5);
         // Now calculate the other corner of the image that we need
         // by scaling the 'target' rectangle's dimensions.
-        int img_x_end = img_x_offset + (int)(target.getWidth() * imageXScaling + 0.5);
-        int img_y_end = img_y_offset + (int)(target.getHeight() * imageYScaling + 0.5);
+        int img_x_end = img_x_offset + (int) (target.getWidth() * imageXScaling + 0.5);
+        int img_y_end = img_y_offset + (int) (target.getHeight() * imageYScaling + 0.5);
 
         if (Main.isDebugEnabled()) {
             Main.debug("drawing image into target rect: " + target);
@@ -950,9 +956,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         // The callers of this code *require* that we return any tiles
         // that we do not draw in missedTiles.  ts.allExistingTiles() by
         // default will only return already-existing tiles.  However, we
-        // need to return *all* tiles to the callers, so force creation
-        // here.
-        //boolean forceTileCreation = true;
+        // need to return *all* tiles to the callers, so force creation here.
         for (Tile tile : ts.allTilesCreate()) {
             Image img = getLoadedTileImage(tile);
             if (img == null || tile.hasError()) {
@@ -974,9 +978,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     private void myDrawString(Graphics g, String text, int x, int y) {
         Color oldColor = g.getColor();
         g.setColor(Color.black);
-        g.drawString(text,x+1,y+1);
+        g.drawString(text, x+1, y+1);
         g.setColor(oldColor);
-        g.drawString(text,x,y);
+        g.drawString(text, x, y);
     }
 
     private void paintTileText(TileSet ts, Tile tile, Graphics g, MapView mv, int zoom, Tile t) {
@@ -1003,7 +1007,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
         if (tile.hasError() && showErrors) {
             myDrawString(g, tr("Error") + ": " + tr(tile.getErrorMessage()), p.x + 2, texty);
-            texty += 1 + fontHeight;
+            //texty += 1 + fontHeight;
         }
 
         /*int xCursor = -1;
@@ -1047,10 +1051,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     private Coordinate getShiftedCoord(EastNorth en) {
         LatLon ll = getShiftedLatLon(en);
-        return new Coordinate(ll.lat(),ll.lon());
+        return new Coordinate(ll.lat(), ll.lon());
     }
 
-    private final TileSet nullTileSet = new TileSet((LatLon)null, (LatLon)null, 0);
+    private final TileSet nullTileSet = new TileSet((LatLon) null, (LatLon) null, 0);
     private final class TileSet {
         int x0, x1, y0, y1;
         int zoom;
@@ -1059,7 +1063,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
          * Create a TileSet by EastNorth bbox taking a layer shift in account
          */
         private TileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
-            this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight),zoom);
+            this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
         }
 
         /**
@@ -1177,6 +1181,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 private int getDistance(Tile t) {
                     return Math.abs(t.getXtile() - centerX) + Math.abs(t.getYtile() - centerY);
                 }
+
                 @Override
                 public int compare(Tile o1, Tile o2) {
                     int distance1 = getDistance(o1);
@@ -1185,7 +1190,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 }
             };
         }
-
 
         private void loadAllTiles(boolean force) {
             if (!autoLoad && !force)
@@ -1207,7 +1211,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             }
         }
     }
-
 
     private static class TileSetInfo {
         public boolean hasVisibleTiles = false;
@@ -1247,6 +1250,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             this.tileSets = new TileSet[maxZoom - minZoom + 1];
             this.tileSetInfos = new TileSetInfo[maxZoom - minZoom + 1];
         }
+
         public TileSet getTileSet(int zoom) {
             if (zoom < minZoom)
                 return nullTileSet;
@@ -1315,7 +1319,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 }
             }
             // Do binary search between currentZoomLevel and displayZoomLevel
-            while (zoom > displayZoomLevel && !tsi.hasVisibleTiles && tsi.hasOverzoomedTiles){
+            while (zoom > displayZoomLevel && !tsi.hasVisibleTiles && tsi.hasOverzoomedTiles) {
                 zoom = (zoom + displayZoomLevel)/2;
                 tsi = dts.getTileSetInfo(zoom);
             }
@@ -1421,11 +1425,11 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
             myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
             myDrawString(g, tr("Best zoom: {0}", getBestZoom()), 50, 185);
-            if(tileLoader instanceof TMSCachedTileLoader) {
-                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader)tileLoader;
+            if (tileLoader instanceof TMSCachedTileLoader) {
+                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
                 int offset = 185;
-                for(String part: cachedTileLoader.getStats().split("\n")) {
-                    myDrawString(g, tr("Cache stats: {0}", part), 50, offset+=15);
+                for (String part: cachedTileLoader.getStats().split("\n")) {
+                    myDrawString(g, tr("Cache stats: {0}", part), 50, offset += 15);
                 }
 
             }
@@ -1494,7 +1498,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     @Override
     public String getToolTipText() {
-        if(autoLoad) {
+        if (autoLoad) {
             return tr("{0} ({1}), automatically downloading in zoom {2}", this.getClass().getSimpleName(), getName(), currentZoomLevel);
         } else {
             return tr("{0} ({1}), downloading in zoom {2}", this.getClass().getSimpleName(), getName(), currentZoomLevel);
@@ -1552,10 +1556,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
          */
         public void cancel() {
             if (tileLoader instanceof TMSCachedTileLoader) {
-                ((TMSCachedTileLoader)tileLoader).cancelOutstandingTasks();
+                ((TMSCachedTileLoader) tileLoader).cancelOutstandingTasks();
             }
         }
-
 
         @Override
         public void tileLoadingFinished(Tile tile, boolean success) {
@@ -1580,13 +1583,13 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      *
      * To prevent accidental clear of the queue, new download executor is created with separate queue
      *
-     * @param precacheTask
-     * @param points
+     * @param precacheTask Task responsible for precaching imagery
+     * @param points lat/lon coordinates to download
      * @param bufferX how many units in current Coordinate Reference System to cover in X axis in both sides
      * @param bufferY how many units in current Coordinate Reference System to cover in Y axis in both sides
      */
     public void downloadAreaToCache(final PrecacheTask precacheTask, List<LatLon> points, double bufferX, double bufferY) {
-        final Set<Tile> requestedTiles = new ConcurrentSkipListSet <>(new Comparator<Tile>() {
+        final Set<Tile> requestedTiles = new ConcurrentSkipListSet<>(new Comparator<Tile>() {
             public int compare(Tile o1, Tile o2) {
                 return String.CASE_INSENSITIVE_ORDER.compare(o1.getKey(), o2.getKey());
             }
@@ -1603,8 +1606,8 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             int minX = Math.min(curTile.getXIndex() - 1, minTile.getXIndex());
             int maxX = Math.min(curTile.getXIndex() + 1, minTile.getXIndex());
 
-            for (int x= minX; x<=maxX; x++) {
-                for (int y= minY; y<=maxY; y++) {
+            for (int x = minX; x <= maxX; x++) {
+                for (int y = minY; y <= maxY; y++) {
                     requestedTiles.add(new Tile(tileSource, x, y, currentZoomLevel));
                 }
             }

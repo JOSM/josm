@@ -22,7 +22,6 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 
-
 /**
  * Class that displays a slippy map layer.
  *
@@ -33,12 +32,14 @@ import org.openstreetmap.josm.data.projection.Projection;
  *
  */
 public class TMSLayer extends AbstractTileSourceLayer {
-    private static final String PREFERENCE_PREFIX   = "imagery.tms";
+    private static final String PREFERENCE_PREFIX = "imagery.tms";
 
     /** minimum zoom level for TMS layer */
-    public static final IntegerProperty PROP_MIN_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".min_zoom_lvl", AbstractTileSourceLayer.PROP_MIN_ZOOM_LVL.get());
+    public static final IntegerProperty PROP_MIN_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".min_zoom_lvl",
+            AbstractTileSourceLayer.PROP_MIN_ZOOM_LVL.get());
     /** maximum zoom level for TMS layer */
-    public static final IntegerProperty PROP_MAX_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".max_zoom_lvl", AbstractTileSourceLayer.PROP_MAX_ZOOM_LVL.get());
+    public static final IntegerProperty PROP_MAX_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".max_zoom_lvl",
+            AbstractTileSourceLayer.PROP_MAX_ZOOM_LVL.get());
     /** shall TMS layers be added to download dialog */
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser", true);
 
@@ -78,7 +79,7 @@ public class TMSLayer extends AbstractTileSourceLayer {
     @Override
     protected Map<String, String> getHeaders(TileSource tileSource) {
         if (tileSource instanceof TemplatedTMSTileSource) {
-            return ((TemplatedTMSTileSource)tileSource).getHeaders();
+            return ((TemplatedTMSTileSource) tileSource).getHeaders();
         }
         return null;
     }

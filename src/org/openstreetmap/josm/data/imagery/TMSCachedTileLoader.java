@@ -159,7 +159,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
      * You can use {@link #getNewThreadPoolExecutor} to create a new download executor with separate
      * queue from default.
      *
-     * @param downloadExecutor
+     * @param downloadExecutor download executor that will be used to download tiles
      */
     public void setDownloadExecutor(ThreadPoolExecutor downloadExecutor) {
         this.downloadExecutor = downloadExecutor;
@@ -171,5 +171,4 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
     public ThreadPoolExecutor getDownloadExecutor() {
         return downloadExecutor;
     }
-
 }

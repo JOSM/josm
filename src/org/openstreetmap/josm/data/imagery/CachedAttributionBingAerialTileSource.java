@@ -19,8 +19,7 @@ import org.xml.sax.InputSource;
  * Bing TileSource with cached attribution
  *
  * @author Wiktor Niesiobędzki
- * @since TODO
- *
+ * @since 8526
  */
 public class CachedAttributionBingAerialTileSource extends BingAerialTileSource {
     /**
@@ -70,4 +69,3 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
         };
     }
 }
-

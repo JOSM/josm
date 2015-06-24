@@ -57,7 +57,7 @@ public class WMSLayer extends AbstractTileSourceLayer {
             @Override
             public void projectionChanged(Projection oldValue, Projection newValue) {
                 if (!oldValue.equals(newValue) && tileSource instanceof TemplatedWMSTileSource) {
-                    ((TemplatedWMSTileSource)tileSource).initProjection(newValue);
+                    ((TemplatedWMSTileSource) tileSource).initProjection(newValue);
                 }
 
             }
@@ -95,7 +95,6 @@ public class WMSLayer extends AbstractTileSourceLayer {
         return ret.toArray(new Action[]{});
     }
 
-
     @Override
     protected TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
         if (info.getImageryType() == ImageryType.WMS && info.getUrl() != null) {
@@ -126,7 +125,6 @@ public class WMSLayer extends AbstractTileSourceLayer {
         }
     }
 
-
     /**
      * Checks that WMS layer is a grabber-compatible one (HTML or WMS).
      * @throws IllegalStateException if imagery time is neither HTML nor WMS
@@ -152,7 +150,7 @@ public class WMSLayer extends AbstractTileSourceLayer {
     @Override
     protected Map<String, String> getHeaders(TileSource tileSource) {
         if (tileSource instanceof TemplatedWMSTileSource) {
-            return ((TemplatedWMSTileSource)tileSource).getHeaders();
+            return ((TemplatedWMSTileSource) tileSource).getHeaders();
         }
         return null;
     }

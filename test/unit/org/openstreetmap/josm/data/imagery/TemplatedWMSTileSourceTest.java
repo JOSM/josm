@@ -76,7 +76,6 @@ public class TemplatedWMSTileSourceTest {
 
     }
 
-
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         LatLon result = getTileLatLon(source, x, y, z);
@@ -96,7 +95,8 @@ public class TemplatedWMSTileSourceTest {
                     getTileLatLon(source, tileIndex, z),
                     getTileLatLon(source, tileIndex.getXIndex() + 1, tileIndex.getYIndex() + 1, z)
                     );
-            assertTrue(location.toDisplayString() + " not within " + bbox.toString() + " for tile " + z + "/" + tileIndex.getXIndex() + "/" + tileIndex.getYIndex(),
+            assertTrue(location.toDisplayString() + " not within " + bbox.toString() +
+                    " for tile " + z + "/" + tileIndex.getXIndex() + "/" + tileIndex.getYIndex(),
                     bbox.bounds(location));
         }
     }
@@ -108,6 +108,7 @@ public class TemplatedWMSTileSourceTest {
     private LatLon getTileLatLon(TemplatedWMSTileSource source, int x, int y, int z) {
         return new LatLon(source.tileXYToLatLon(new Tile(source, x, y, z)));
     }
+
     private void verifyTileSquarness(TemplatedWMSTileSource source, int x, int y, int z) {
         Projection proj = Main.getProjection();
         EastNorth min = proj.latlon2eastNorth(getTileLatLon(source, x, y, z));
@@ -115,10 +116,7 @@ public class TemplatedWMSTileSourceTest {
         double y_size = Math.abs(min.getY() - max.getY());
         double x_size = Math.abs(min.getX() - max.getX());
         assertEquals(x_size, y_size, 1e-05);
-
     }
-
-
 
     private TemplatedWMSTileSource getSource() {
         TemplatedWMSTileSource source = new TemplatedWMSTileSource(testImageryWMS);

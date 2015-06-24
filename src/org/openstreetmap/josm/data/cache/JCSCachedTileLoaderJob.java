@@ -498,7 +498,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * cancels all outstanding tasks in the queue.
      */
     public void cancelOutstandingTasks() {
-        for(Runnable r: downloadJobExecutor.getQueue()) {
+        for (Runnable r: downloadJobExecutor.getQueue()) {
             if (downloadJobExecutor.remove(r) && r instanceof JCSCachedTileLoaderJob) {
                 ((JCSCachedTileLoaderJob<?, ?>) r).handleJobCancellation();
             }

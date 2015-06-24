@@ -78,6 +78,7 @@ public abstract class ImageryLayer extends Layer {
 
     /**
      * Constructs a new {@code ImageryLayer}.
+     * @param info imagery info
      */
     public ImageryLayer(ImageryInfo info) {
         super(info.getName());

@@ -48,15 +48,15 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         if (layer instanceof AbstractTileSourceLayer) {
             AbstractTileSourceLayer tsLayer = (AbstractTileSourceLayer) layer;
             if (attributes.containsKey("automatic-downloading")) {
-                tsLayer.autoLoad = new Boolean(attributes.get("automatic-downloading")).booleanValue();
+                tsLayer.autoLoad = Boolean.valueOf(attributes.get("automatic-downloading"));
             }
 
             if (attributes.containsKey("automatically-change-resolution")) {
-                tsLayer.autoZoom = new Boolean(attributes.get("automatically-change-resolution")).booleanValue();
+                tsLayer.autoZoom = Boolean.valueOf(attributes.get("automatically-change-resolution"));
             }
 
             if (attributes.containsKey("show-errors")) {
-                tsLayer.showErrors = new Boolean(attributes.get("show-errors")).booleanValue();
+                tsLayer.showErrors = Boolean.valueOf(attributes.get("show-errors"));
             }
         }
         return layer;

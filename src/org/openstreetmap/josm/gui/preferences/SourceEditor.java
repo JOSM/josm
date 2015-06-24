@@ -144,8 +144,7 @@ public abstract class SourceEditor extends JPanel {
         selectionModel = new DefaultListSelectionModel();
         activeSourcesModel = new ActiveSourcesModel(selectionModel);
         tblActiveSources = new JTable(activeSourcesModel) {
-            // some kind of hack to prevent the table from scrolling slightly to the
-            // right when clicking on the text
+            // some kind of hack to prevent the table from scrolling slightly to the right when clicking on the text
             @Override
             public void scrollRectToVisible(Rectangle aRect) {
                 super.scrollRectToVisible(new Rectangle(0, aRect.y, aRect.width, aRect.height));

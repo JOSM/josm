@@ -10,8 +10,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
  * Factory creating TileLoaders for layers
  *
  * @author Wiktor Niesiobędzki
- * @since TODO
- *
+ * @since 8526
  */
 public interface TileLoaderFactory {
 
@@ -27,5 +26,4 @@ public interface TileLoaderFactory {
      * @return TileLoader that uses both of above
      */
     TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> headers);
-
 }

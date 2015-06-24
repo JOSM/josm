@@ -14,13 +14,12 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  * to define number of simultaneous downloads for WMS separately
  *
  * @author Wiktor Niesiobędzki
- * @since TODO
- *
+ * @since 8526
  */
 public class WMSCachedTileLoader extends TMSCachedTileLoader {
 
     /** limit of concurrent connections to WMS tile source (per source) */
-    public static IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.wms.simultaneousConnections", 3);
+    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.wms.simultaneousConnections", 3);
 
     /**
      * Creates a TileLoader with separate WMS downloader.
