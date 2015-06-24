@@ -436,13 +436,14 @@ Build-Date: ${build.tstamp}
         -keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplication {
             public static void main(java.lang.String[]);
         }
-        -keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplet
 
         -keep class JOSM
         -keep class * extends org.openstreetmap.josm.io.FileImporter
         -keep class * extends org.openstreetmap.josm.io.FileExporter
-        -keep class org.w3._2001.xmlschema.Adapter1
         -keep class org.openstreetmap.josm.actions.search.SearchCompiler$Never
+        -keep class org.openstreetmap.josm.gui.mappaint.mapcss.Condition$PseudoClasses {
+            static boolean *(org.openstreetmap.josm.gui.mappaint.Environment);
+        }
         -keep class org.apache.commons.logging.impl.*
 
         -keepclassmembers enum  * {
