@@ -111,4 +111,7 @@ JOSM Checkstyle rules
   <module name="NewlineAtEndOfFile">
     <property name="lineSeparator" value="lf"/>
   </module>
+  <module name="SuppressionFilter">
+    <property name="file" value="tools/checkstyle/josm_filters.xml"/>
+  </module>
 </module>
