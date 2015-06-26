@@ -257,7 +257,7 @@ class TagEditHelper {
                 }
             };
 
-        private transient ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
+        private final transient ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
             private final DefaultListCellRenderer def = new DefaultListCellRenderer();
             @Override
             public Component getListCellRendererComponent(JList<? extends AutoCompletionListItem> list,
@@ -504,7 +504,9 @@ class TagEditHelper {
 
                    List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
                    Collections.sort(valueList, comparator);
-
+                   if (Main.isDebugEnabled()) {
+                       Main.debug("Focus gained by {0}, e={1}", values, e);
+                   }
                    values.setPossibleACItems(valueList);
                    values.getEditor().selectAll();
                    objKey = key;
@@ -515,7 +517,7 @@ class TagEditHelper {
         }
 
         protected JPopupMenu popupMenu = new JPopupMenu() {
-            private JCheckBoxMenuItem fixTagLanguageCb = new JCheckBoxMenuItem(
+            private final JCheckBoxMenuItem fixTagLanguageCb = new JCheckBoxMenuItem(
                 new AbstractAction(tr("Use English language for tag by default")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
