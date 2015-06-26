@@ -102,7 +102,9 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
      * lists of listeners are not cleared!
      */
     public void unregister() {
-        timer.stop();
+        if (timer != null) {
+            timer.stop();
+        }
         set.clear();
         if (!keyListeners.isEmpty()) {
             Main.warn(tr("Some of the key listeners forgot to remove themselves: {0}"), keyListeners.toString());

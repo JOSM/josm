@@ -258,7 +258,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             for (JComponent c: allMapModeButtons) c.setFocusTraversalKeysEnabled(false);
         }
 
-        keyDetector.register();
+        if (Main.pref.getBoolean("debug.advanced-keypress-detector.enable", true)) {
+            keyDetector.register();
+        }
     }
 
     public boolean selectSelectTool(boolean onlyIfModeless) {
