@@ -127,7 +127,8 @@ public class AddTagsDialog extends ExtendedDialog {
 
         this.sender = senderName;
 
-        final DefaultTableModel tm = new DefaultTableModel(new String[] {tr("Assume"), tr("Key"), tr("Value"), tr("Existing values")}, tags.length) {
+        final DefaultTableModel tm = new DefaultTableModel(new String[] {tr("Assume"), tr("Key"), tr("Value"), tr("Existing values")},
+                tags.length) {
             private final Class<?>[] types = {Boolean.class, String.class, Object.class, ExistingValues.class};
             @Override
             public Class<?> getColumnClass(int c) {

@@ -177,7 +177,8 @@ public class DataSetMerger {
                 OsmPrimitive target = it.next();
                 OsmPrimitive source = sourceDataSet.getPrimitiveById(target.getPrimitiveId());
                 if (source == null)
-                    throw new RuntimeException(tr("Object of type {0} with id {1} was marked to be deleted, but it''s missing in the source dataset",
+                    throw new RuntimeException(
+                            tr("Object of type {0} with id {1} was marked to be deleted, but it''s missing in the source dataset",
                             target.getType(), target.getUniqueId()));
 
                 List<OsmPrimitive> referrers = target.getReferrers();

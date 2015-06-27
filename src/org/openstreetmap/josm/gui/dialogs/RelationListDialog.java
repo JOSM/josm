@@ -107,7 +107,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     /** the duplicate action */
     private final DuplicateRelationAction duplicateAction = new DuplicateRelationAction();
     private final DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
-    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
+    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction =
+            new DownloadSelectedIncompleteMembersAction();
     private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
     private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);
     private final SelectRelationAction selectRelationAction = new SelectRelationAction(false);

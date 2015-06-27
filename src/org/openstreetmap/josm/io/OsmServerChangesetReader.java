@@ -140,7 +140,8 @@ public class OsmServerChangesetReader extends OsmServerReader {
      * @throws IllegalArgumentException if id &lt;= 0
      * @since 7704
      */
-    public List<Changeset> readChangesets(Collection<Integer> ids, boolean includeDiscussion, ProgressMonitor monitor) throws OsmTransferException {
+    public List<Changeset> readChangesets(Collection<Integer> ids, boolean includeDiscussion, ProgressMonitor monitor)
+            throws OsmTransferException {
         if (ids == null)
             return Collections.emptyList();
         if (monitor == null) {
@@ -191,7 +192,8 @@ public class OsmServerChangesetReader extends OsmServerReader {
      */
     public ChangesetDataSet downloadChangeset(int id, ProgressMonitor monitor) throws OsmTransferException {
         if (id <= 0)
-            throw new IllegalArgumentException(MessageFormat.format("Expected value of type integer > 0 for parameter ''{0}'', got {1}", "id", id));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Expected value of type integer > 0 for parameter ''{0}'', got {1}", "id", id));
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }

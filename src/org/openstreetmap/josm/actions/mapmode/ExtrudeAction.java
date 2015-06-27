@@ -914,7 +914,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         EastNorth n1movedEn = initialN1en.add(bestMovement), n2movedEn;
 
         // find out the movement distance, in metres
-        double distance = Main.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(Main.getProjection().eastNorth2latlon(n1movedEn));
+        double distance = Main.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(
+                Main.getProjection().eastNorth2latlon(n1movedEn));
         Main.map.statusLine.setDist(distance);
         updateStatusLine();
 

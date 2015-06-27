@@ -1481,7 +1481,8 @@ public final class PluginHandler {
             gc.gridy = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weighty = 0.0;
-            add(cbDontShowAgain = new JCheckBox(tr("Do not ask again and remember my decision (go to Preferences->Plugins to change it later)")), gc);
+            add(cbDontShowAgain = new JCheckBox(
+                    tr("Do not ask again and remember my decision (go to Preferences->Plugins to change it later)")), gc);
             cbDontShowAgain.setFont(cbDontShowAgain.getFont().deriveFont(Font.PLAIN));
         }
 

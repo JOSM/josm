@@ -124,7 +124,8 @@ public class OsmServerUserInfoReader extends OsmServerReader {
                 try {
                     userInfo.setUnreadMessages(Integer.parseInt(v));
                 } catch (NumberFormatException e) {
-                    throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "unread", "received", v), e);
+                    throw new XmlParsingException(
+                            tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "unread", "received", v), e);
                 }
             }
 

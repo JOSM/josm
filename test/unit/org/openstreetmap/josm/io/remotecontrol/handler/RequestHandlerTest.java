@@ -70,7 +70,9 @@ public class RequestHandlerTest {
     @Test
     public void testRequestParameter4() {
         assertThat(getRequestParameter(
+                // CHECKSTYLE.OFF: LineLength
                 "http://example.com/:@-._~!$&'()*+,=;:@-._~!$&'()*+,=:@-._~!$&'()*+,==?/?:@-._~!$'()*+,;=/?:@-._~!$'()*+,;==#/?:@-._~!$&'()*+,;="),
+                // CHECKSTYLE.ON: LineLength
                 is(Collections.singletonMap("/?:@-._~!$'()* ,;", "/?:@-._~!$'()* ,;==")));
     }
 

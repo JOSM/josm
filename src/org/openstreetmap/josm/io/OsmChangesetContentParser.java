@@ -80,7 +80,9 @@ public class OsmChangesetContentParser {
             case "way":
             case "relation":
                 if (currentModificationType == null) {
+                    // CHECKSTYLE.OFF: LineLength
                     throwException(tr("Illegal document structure. Found node, way, or relation outside of ''create'', ''modify'', or ''delete''."));
+                    // CHECKSTYLE.ON: LineLength
                 }
                 data.put(currentPrimitive, currentModificationType);
                 break;

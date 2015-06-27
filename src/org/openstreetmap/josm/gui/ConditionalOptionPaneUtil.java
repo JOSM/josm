@@ -70,7 +70,8 @@ public final class ConditionalOptionPaneUtil {
     }
 
     /**
-     * Determines whether the key has been marked to be part of a bulk operation (in order to provide a "Do not show again (this operation)" option).
+     * Determines whether the key has been marked to be part of a bulk operation
+     * (in order to provide a "Do not show again (this operation)" option).
      * @param prefKey the preference key
      */
     public static boolean isInBulkOperation(final String prefKey) {

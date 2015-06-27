@@ -607,12 +607,12 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     protected static void informAboutTagConflicts(
             final Collection<? extends OsmPrimitive> primitives,
             final TagCollection normalizedTags) throws UserCancelException {
-        String conflicts = Utils.joinAsHtmlUnorderedList(Utils.transform(normalizedTags.getKeysWithMultipleValues(), new Function<String, String>() {
-
+        String conflicts = Utils.joinAsHtmlUnorderedList(Utils.transform(normalizedTags.getKeysWithMultipleValues(),
+                new Function<String, String>() {
             @Override
             public String apply(String key) {
-                return tr("{0} ({1})", key, Utils.join(tr(", "), Utils.transform(normalizedTags.getValues(key), new Function<String, String>() {
-
+                return tr("{0} ({1})", key, Utils.join(tr(", "), Utils.transform(normalizedTags.getValues(key),
+                        new Function<String, String>() {
                     @Override
                     public String apply(String x) {
                         return x == null || x.isEmpty() ? tr("<i>missing</i>") : x;

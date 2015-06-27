@@ -334,7 +334,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     // we sent ETag or If-Modified-Since, but didn't get 304 response code
                     // for further requests - use HEAD
                     String serverKey = getServerKey();
-                    log.log(Level.INFO, "JCS - Host: {0} found not to return 304 codes for If-Modifed-Since or If-None-Match headers", serverKey);
+                    log.log(Level.INFO, "JCS - Host: {0} found not to return 304 codes for If-Modifed-Since or If-None-Match headers",
+                            serverKey);
                     useHead.put(serverKey, Boolean.TRUE);
                 }
             }

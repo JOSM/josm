@@ -50,7 +50,8 @@ public final class OpenBrowser {
                     // see #5629 #5108 #9568
                     Main.platform.openUrl(uri.toString());
                 } else {
-                    // This is not the case with some Linux environments (see below), and not sure about Mac OS X, so we need to handle API failure
+                    // This is not the case with some Linux environments (see below),
+                    // and not sure about Mac OS X, so we need to handle API failure
                     try {
                         Desktop.getDesktop().browse(uri);
                     } catch (IOException e) {

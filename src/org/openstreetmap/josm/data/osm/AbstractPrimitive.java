@@ -527,7 +527,8 @@ public abstract class AbstractPrimitive implements IPrimitive {
         } else {
             for (int i = 0; i < keys.length; i += 2) {
                 if (keys[i].equals(key)) {
-                    keys[i+1] = value;  // This modifies the keys array but it doesn't make it invalidate for any time so its ok (see note no top)
+                    // This modifies the keys array but it doesn't make it invalidate for any time so its ok (see note no top)
+                    keys[i+1] = value;
                     keysChangedImpl(originalKeys);
                     return;
                 }

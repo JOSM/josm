@@ -196,7 +196,8 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
     /**
      * Task can run in background if returned value != null. Note that it's tasks responsibility
      * to ensure proper synchronization, PleaseWaitRunnable doesn't with it.
-     * @return If returned value is != null then task can run in background. TaskId could be used in future for "Always run in background" checkbox
+     * @return If returned value is != null then task can run in background.
+     * TaskId could be used in future for "Always run in background" checkbox
      */
     public ProgressTaskId canRunInBackground() {
         return null;

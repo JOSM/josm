@@ -90,7 +90,8 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * @param serverVersion  the version of the primitive on the server
      * @param myVersion  the version of the primitive in the local dataset
      */
-    protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion, String myVersion) {
+    protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion,
+            String myVersion) {
         String lbl = "";
         switch(primitiveType) {
         case NODE: lbl =  tr("Synchronize node {0} only", id); break;

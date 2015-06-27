@@ -295,7 +295,9 @@ public class DeleteAction extends MapMode implements ModifierListener {
 
     @Override
     public String getModeHelpText() {
+        // CHECKSTYLE.OFF: LineLength
         return tr("Click to delete. Shift: delete way segment. Alt: do not delete unused nodes when deleting a way. Ctrl: delete referring objects.");
+        // CHECKSTYLE.ON: LineLength
     }
 
     @Override

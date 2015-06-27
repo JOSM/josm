@@ -109,7 +109,8 @@ public class ImportAudioAction extends AbstractAction {
             } else {
                 names = "";
             }
-            MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", layer.getName()) + names, layer.getAssociatedFile(), layer);
+            MarkerLayer ml = new MarkerLayer(new GpxData(),
+                    tr("Audio markers from {0}", layer.getName()) + names, layer.getAssociatedFile(), layer);
             double firstStartTime = sel[0].lastModified() / 1000.0 - AudioUtil.getCalibratedDuration(sel[0]);
             Markers m = new Markers();
             for (File file : sel) {
@@ -310,7 +311,9 @@ public class ImportAudioAction extends AbstractAction {
             JOptionPane
             .showMessageDialog(
                     Main.parent,
+                    // CHECKSTYLE.OFF: LineLength
                     tr("Some waypoints with timestamps from before the start of the track or after the end were omitted or moved to the start."));
+                    // CHECKSTYLE.ON: LineLength
             markers.timedMarkersOmitted = timedMarkersOmitted;
         }
         if (untimedMarkersOmitted && !markers.untimedMarkersOmitted) {

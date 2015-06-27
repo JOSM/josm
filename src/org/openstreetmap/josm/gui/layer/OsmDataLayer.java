@@ -858,7 +858,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     /**
      * Sets the "discouraged upload" flag.
-     * @param uploadDiscouraged {@code true} if upload of data managed by this layer is discouraged. This feature allows to use "private" data layers.
+     * @param uploadDiscouraged {@code true} if upload of data managed by this layer is discouraged.
+     * This feature allows to use "private" data layers.
      */
     public final void setUploadDiscouraged(boolean uploadDiscouraged) {
         if (uploadDiscouraged ^ isUploadDiscouraged()) {

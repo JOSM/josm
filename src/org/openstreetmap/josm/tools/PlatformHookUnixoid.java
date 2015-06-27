@@ -260,7 +260,8 @@ public class PlatformHookUnixoid implements PlatformHook {
         String osName = System.getProperty("os.name");
         if ("Linux".equalsIgnoreCase(osName)) {
             try {
-                // Try lsb_release (only available on LSB-compliant Linux systems, see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
+                // Try lsb_release (only available on LSB-compliant Linux systems,
+                // see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
                 Process p = Runtime.getRuntime().exec("lsb_release -ds");
                 try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
                     String line = Utils.strip(input.readLine());

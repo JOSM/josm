@@ -34,6 +34,8 @@ import javax.swing.border.Border;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction;
 
+// CHECKSTYLE.OFF: HideUtilityClassConstructor
+
 /**
  * This class makes it easy to drag and drop files from the operating
  * system to a Java program. Any {@link java.awt.Component} can be
@@ -75,6 +77,8 @@ import org.openstreetmap.josm.actions.OpenFileAction;
  * @since 1231
  */
 public class FileDrop {
+
+    // CHECKSTYLE.ON: HideUtilityClassConstructor
 
     private Border normalBorder;
     private DropTargetListener dropListener;

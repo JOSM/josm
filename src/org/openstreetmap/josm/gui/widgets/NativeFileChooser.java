@@ -106,6 +106,7 @@ public class NativeFileChooser extends AbstractFileChooser {
 
     @Override
     public void setFileSelectionMode(int selectionMode) {
+        // CHECKSTYLE.OFF: LineLength
         // TODO implement this after Oracle fixes JDK-6192906 / JDK-6699863 / JDK-6927978 / JDK-7125172:
         // https://bugs.openjdk.java.net/browse/JDK-6192906 : Add more features to java.awt.FileDialog
         // https://bugs.openjdk.java.net/browse/JDK-6699863 : awt filedialog cannot select directories
@@ -115,6 +116,7 @@ public class NativeFileChooser extends AbstractFileChooser {
         // There is however a basic support for directory selection on OS X, with Java >= 7u40:
         // http://stackoverflow.com/questions/1224714/how-can-i-make-a-java-filedialog-accept-directories-as-its-filetype-in-os-x/1224744#1224744
         // https://bugs.openjdk.java.net/browse/JDK-7161437 : [macosx] awt.FileDialog doesn't respond appropriately for mac when selecting folders
+        // CHECKSTYLE.ON: LineLength
         this.selectionMode = selectionMode;
     }
 
@@ -163,10 +165,12 @@ public class NativeFileChooser extends AbstractFileChooser {
     public static boolean supportsSelectionMode(int selectionMode) {
         switch (selectionMode) {
         case JFileChooser.FILES_AND_DIRECTORIES:
+            // CHECKSTYLE.OFF: LineLength
             // https://bugs.openjdk.java.net/browse/JDK-7125172 : FileDialog objects don't allow directory AND files selection simultaneously
             return false;
         case JFileChooser.DIRECTORIES_ONLY:
             // http://stackoverflow.com/questions/1224714/how-can-i-make-a-java-filedialog-accept-directories-as-its-filetype-in-os-x/1224744#1224744
+            // CHECKSTYLE.ON: LineLength
             return Main.isPlatformOsx();
         case JFileChooser.FILES_ONLY:
         default:

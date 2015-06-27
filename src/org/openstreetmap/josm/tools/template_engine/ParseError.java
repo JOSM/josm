@@ -16,7 +16,8 @@ public class ParseError extends Exception {
     }
 
     public ParseError(Token unexpectedToken, TokenType expected) {
-        super(tr("Unexpected token on position {0}. Expected {1}, found {2}", unexpectedToken.getPosition(), expected, unexpectedToken.getType()));
+        super(tr("Unexpected token on position {0}. Expected {1}, found {2}",
+                unexpectedToken.getPosition(), expected, unexpectedToken.getType()));
         this.unexpectedToken = unexpectedToken;
     }
 

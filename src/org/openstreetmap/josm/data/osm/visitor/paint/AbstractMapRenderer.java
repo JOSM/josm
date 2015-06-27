@@ -126,8 +126,7 @@ public abstract class AbstractMapRenderer implements Rendering {
         g.draw(path);
         try {
             // print highlighted virtual nodes. Since only the color changes, simply
-            // drawing them over the existing ones works fine (at least in their current
-            // simple style)
+            // drawing them over the existing ones works fine (at least in their current simple style)
             path = new GeneralPath();
             for (WaySegment wseg: data.getHighlightedVirtualNodes()) {
                 if (wseg.way.isUsable() && !wseg.way.isDisabled()) {
@@ -140,9 +139,10 @@ public abstract class AbstractMapRenderer implements Rendering {
             // Silently ignore any ArrayIndexOutOfBoundsException that may be raised
             // if the way has changed while being rendered (fix #7979)
             // TODO: proper solution ?
-            // Idea from bastiK: avoid the WaySegment class and add another data class with { Way way; Node firstNode, secondNode; int firstIdx; }.
-            // On read, it would first check, if the way still has firstIdx+2 nodes, then check if the corresponding way nodes are still the same
-            // and report changes in a more controlled manner.
+            // Idea from bastiK:
+            // avoid the WaySegment class and add another data class with { Way way; Node firstNode, secondNode; int firstIdx; }.
+            // On read, it would first check, if the way still has firstIdx+2 nodes, then check if the corresponding way nodes are still
+            // the same and report changes in a more controlled manner.
             if (Main.isTraceEnabled()) {
                 Main.trace(e.getMessage());
             }

@@ -13,6 +13,8 @@ import org.openstreetmap.josm.io.CachedFile;
  */
 public class NTV2GridShiftFileWrapper {
 
+    // CHECKSTYLE.OFF: LineLength
+
     /**
      * Used in Germany to convert coordinates between the DHDN (<i>Deutsches Hauptdreiecksnetz</i>)
      * and ETRS89 (<i>European Terrestrial Reference System 1989</i>) datums.
@@ -28,6 +30,8 @@ public class NTV2GridShiftFileWrapper {
      * [French] Transformation de coordonnées NTF – RGF93 / Format de grille NTv2</a>
      */
     public static final NTV2GridShiftFileWrapper ntf_rgf93 = new NTV2GridShiftFileWrapper("resource://data/projection/ntf_r93_b.gsb");
+
+    // CHECKSTYLE.ON: LineLength
 
     private NTV2GridShiftFile instance = null;
     private String gridFileName;

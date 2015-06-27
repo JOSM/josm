@@ -152,9 +152,10 @@ public abstract class ImageryLayer extends Layer {
     }
 
     public static ImageryLayer create(ImageryInfo info) {
-        if (info.getImageryType() == ImageryType.WMS || info.getImageryType() == ImageryType.HTML)
+        ImageryType type = info.getImageryType();
+        if (type == ImageryType.WMS || type == ImageryType.HTML)
             return new WMSLayer(info);
-        else if (info.getImageryType() == ImageryType.TMS || info.getImageryType() == ImageryType.BING || info.getImageryType() == ImageryType.SCANEX)
+        else if (type == ImageryType.TMS || type == ImageryType.BING || type == ImageryType.SCANEX)
             return new TMSLayer(info);
         else throw new AssertionError();
     }

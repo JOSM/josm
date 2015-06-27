@@ -35,11 +35,11 @@ JOSM Checkstyle rules
       <property name="max" value="50"/>
     </module>
     <module name="ExecutableStatementCount">
-      <property name="max" value="128"/>
+      <property name="max" value="150"/>
       <property name="tokens" value="INSTANCE_INIT,STATIC_INIT,METHOD_DEF,CTOR_DEF"/>
     </module>
     <module name="LineLength">
-      <property name="max" value="150"/>
+      <property name="max" value="145"/>
       <property name="tabWidth" value="4"/>
     </module>
     <module name="MethodLength">

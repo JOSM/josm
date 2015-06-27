@@ -430,7 +430,8 @@ public class MapCSSTagChecker extends Test.TagTest {
             final Matcher m = Pattern.compile("\\{(\\d+)\\.(key|value|tag)\\}").matcher(s);
             final StringBuffer sb = new StringBuffer();
             while (m.find()) {
-                final String argument = determineArgument((Selector.GeneralSelector) matchingSelector, Integer.parseInt(m.group(1)), m.group(2), p);
+                final String argument = determineArgument((Selector.GeneralSelector) matchingSelector,
+                        Integer.parseInt(m.group(1)), m.group(2), p);
                 try {
                     // Perform replacement with null-safe + regex-safe handling
                     m.appendReplacement(sb, String.valueOf(argument).replace("^(", "").replace(")$", ""));

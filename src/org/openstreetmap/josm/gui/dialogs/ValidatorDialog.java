@@ -593,7 +593,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                     });
                 }
                 // It is wanted to ignore an error if it said fixable, even if fixCommand was null
-                // This is to fix #5764 and #5773: a delete command, for example, may be null if all concerned primitives have already been deleted
+                // This is to fix #5764 and #5773:
+                // a delete command, for example, may be null if all concerned primitives have already been deleted
                 error.setIgnored(true);
             }
         }

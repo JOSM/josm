@@ -182,7 +182,8 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
 
     private final DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
-    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
+    private final DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction =
+            new DownloadSelectedIncompleteMembersAction();
 
     private final SelectMembersAction selectMembersAction = new SelectMembersAction(false);
     private final SelectMembersAction addMembersToSelectionAction = new SelectMembersAction(true);

@@ -19,6 +19,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
+// CHECKSTYLE.OFF: LineLength
+
 /**
  * Projection for the SwissGrid CH1903 / L03, see <a href="https://en.wikipedia.org/wiki/Swiss_coordinate_system">Wikipedia article</a>.<br>
  *
@@ -31,6 +33,8 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * this formula (rigorous formulas)</a>.
  */
 public class SwissObliqueMercator implements Proj {
+
+    // CHECKSTYLE.ON: LineLength
 
     private Ellipsoid ellps;
     private double kR;

@@ -335,7 +335,8 @@ public class TagTable extends JTable  {
             if (buf == null || buf.isEmpty() || buf.matches(CopyAction.CLIPBOARD_REGEXP)) {
                 List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();
                 if (directlyAdded == null || directlyAdded.isEmpty()) return;
-                PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded, Collections.<OsmPrimitive>singletonList(relation));
+                PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded,
+                        Collections.<OsmPrimitive>singletonList(relation));
                 model.updateTags(tagPaster.execute());
             } else {
                 // Paste tags from arbitrary text

@@ -476,7 +476,8 @@ public class DeleteCommand extends Command {
         }
     }
 
-    public static boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore) {
+    public static boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives,
+            Collection<? extends OsmPrimitive> ignore) {
         return Command.checkAndConfirmOutlyingOperation("delete",
                 tr("Delete confirmation"),
                 tr("You are about to delete nodes outside of the area you have downloaded."

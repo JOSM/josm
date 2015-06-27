@@ -158,7 +158,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         drawRawGpsLinesAll.addActionListener(drawRawGpsLinesActionListener);
 
         // drawRawGpsMaxLineLengthLocal
-        drawRawGpsMaxLineLengthLocal.setToolTipText(tr("Maximum length (in meters) to draw lines for local files. Set to ''-1'' to draw all lines."));
+        drawRawGpsMaxLineLengthLocal.setToolTipText(
+                tr("Maximum length (in meters) to draw lines for local files. Set to ''-1'' to draw all lines."));
         label = new JLabel(tr("Maximum length for local files (meters)"));
         add(label, GBC.std().insets(40, 0, 0, 0));
         add(drawRawGpsMaxLineLengthLocal, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));

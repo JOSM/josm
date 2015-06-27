@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.Utils;
  * <b>Longitude</b> specifies the east-west position in degrees
  * where valid values are in the [-180,180] and positive values specify positions east of the prime meridian.
  * <br>
- * <img alt="lat/lon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Latitude_and_Longitude_of_the_Earth.svg/500px-Latitude_and_Longitude_of_the_Earth.svg.png">
+ * <img alt="lat/lon" src="https://upload.wikimedia.org/wikipedia/commons/6/62/Latitude_and_Longitude_of_the_Earth.svg">
  * <br>
  * This class is immutable.
  *

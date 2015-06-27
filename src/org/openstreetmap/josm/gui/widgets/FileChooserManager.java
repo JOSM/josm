@@ -48,6 +48,8 @@ public class FileChooserManager {
         this(open, null);
     }
 
+    // CHECKSTYLE.OFF: LineLength
+
     /**
      * Creates a new {@code FileChooserManager}.
      * @param open If true, "Open File" dialogs will be created. If false, "Save File" dialogs will be created.
@@ -74,6 +76,8 @@ public class FileChooserManager {
                 defaultDir == null || defaultDir.isEmpty() ? "." : defaultDir
                 : Main.pref.get(this.lastDirProperty);
     }
+
+    // CHECKSTYLE.ON: LineLength
 
     /**
      * Replies the {@code AbstractFileChooser} that has been previously created.

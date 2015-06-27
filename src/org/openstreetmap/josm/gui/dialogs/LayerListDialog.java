@@ -947,7 +947,9 @@ public class LayerListDialog extends ToggleDialog {
             boolean visible = layer.isVisible();
             setSelected(visible);
             setTranslucent(layer.getOpacity() < 1.0);
-            setToolTipText(visible ? tr("layer is currently visible (click to hide layer)") : tr("layer is currently hidden (click to show layer)"));
+            setToolTipText(visible ?
+                tr("layer is currently visible (click to hide layer)") :
+                tr("layer is currently hidden (click to show layer)"));
         }
     }
 

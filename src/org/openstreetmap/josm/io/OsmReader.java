@@ -316,7 +316,8 @@ public class OsmReader extends AbstractReader {
         try {
             id = Long.parseLong(value);
         } catch (NumberFormatException e) {
-            throwException(tr("Illegal value for attribute ''ref'' on member in relation {0}. Got {1}", Long.toString(r.getUniqueId()), value), e);
+            throwException(tr("Illegal value for attribute ''ref'' on member in relation {0}. Got {1}", Long.toString(r.getUniqueId()),
+                    value), e);
         }
         value = parser.getAttributeValue(null, "type");
         if (value == null) {
@@ -501,7 +502,8 @@ public class OsmReader extends AbstractReader {
                 Main.debug(e.getMessage());
                 if (current.isNew()) {
                     // for a new primitive we just log a warning
-                    Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.getUniqueId()));
+                    Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.",
+                            v, current.getUniqueId()));
                     current.setChangesetId(0);
                 } else {
                     // for an existing primitive this is a problem
@@ -515,7 +517,8 @@ public class OsmReader extends AbstractReader {
             if (current.getChangesetId() <= 0) {
                 if (current.isNew()) {
                     // for a new primitive we just log a warning
-                    Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.getUniqueId()));
+                    Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.",
+                            v, current.getUniqueId()));
                     current.setChangesetId(0);
                 } else {
                     // for an existing primitive this is a problem

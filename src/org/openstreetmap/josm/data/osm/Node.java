@@ -373,7 +373,8 @@ public final class Node extends OsmPrimitive implements INode {
                 for (final Node n : w.getNodes()) {
                     final boolean containsN = visited.contains(n);
                     visited.add(n);
-                    if (!containsN && (predicate == null || predicate.evaluate(n)) && n.isConnectedTo(otherNodes, hops - 1, predicate, visited)) {
+                    if (!containsN && (predicate == null || predicate.evaluate(n))
+                            && n.isConnectedTo(otherNodes, hops - 1, predicate, visited)) {
                         return true;
                     }
                 }

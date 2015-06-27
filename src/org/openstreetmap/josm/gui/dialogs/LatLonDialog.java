@@ -468,7 +468,8 @@ public class LatLonDialog extends ExtendedDialog {
         setLatLon(latLon, coord2deg, coord2min, coord2sec, card2);
     }
 
-    private static void setLatLon(final LatLonHolder latLon, final double coordDeg, final double coordMin, final double coordSec, final String card) {
+    private static void setLatLon(final LatLonHolder latLon, final double coordDeg, final double coordMin, final double coordSec,
+            final String card) {
         if (coordDeg < -180 || coordDeg > 180 || coordMin < 0 || coordMin >= 60 || coordSec < 0 || coordSec > 60) {
             throw new IllegalArgumentException("out of range");
         }

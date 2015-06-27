@@ -205,14 +205,14 @@ public class Marker implements TemplateEngineDataProvider {
                     }
                 }
 
-                String urlString = url == null ? "" : url.toString();
+                String urlStr = url == null ? "" : url.toString();
                 if (url == null) {
                     String symbolName = wpt.getString("symbol");
                     if (symbolName == null) {
                         symbolName = wpt.getString(GpxConstants.PT_SYM);
                     }
                     return new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
-                } else if (urlString.endsWith(".wav")) {
+                } else if (urlStr.endsWith(".wav")) {
                     AudioMarker audioMarker = new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
                     Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
                     if (exts != null && exts.containsKey("offset")) {
@@ -223,7 +223,7 @@ public class Marker implements TemplateEngineDataProvider {
                         }
                     }
                     return audioMarker;
-                } else if (urlString.endsWith(".png") || urlString.endsWith(".jpg") || urlString.endsWith(".jpeg") || urlString.endsWith(".gif")) {
+                } else if (urlStr.endsWith(".png") || urlStr.endsWith(".jpg") || urlStr.endsWith(".jpeg") || urlStr.endsWith(".gif")) {
                     return new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset);
                 } else {
                     return new WebMarker(wpt.getCoor(), url, parentLayer, time, offset);

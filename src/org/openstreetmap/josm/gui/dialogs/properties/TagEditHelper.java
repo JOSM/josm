@@ -415,7 +415,8 @@ class TagEditHelper {
 
     public static final BooleanProperty PROPERTY_FIX_TAG_LOCALE = new BooleanProperty("properties.fix-tag-combobox-locale", false);
     public static final BooleanProperty PROPERTY_REMEMBER_TAGS = new BooleanProperty("properties.remember-recently-added-tags", true);
-    public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags", DEFAULT_LRU_TAGS_NUMBER);
+    public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags",
+            DEFAULT_LRU_TAGS_NUMBER);
 
     abstract class AbstractTagsDialog extends ExtendedDialog {
         protected AutoCompletingComboBox keys;
@@ -696,7 +697,9 @@ class TagEditHelper {
                 // Create action for reusing the tag, with keyboard shortcut Ctrl+(1-5)
                 String actionShortcutKey = "properties:recent:"+count;
                 String actionShortcutShiftKey = "properties:recent:shift:"+count;
+                // CHECKSTYLE.OFF: LineLength
                 Shortcut sc = Shortcut.registerShortcut(actionShortcutKey, tr("Choose recent tag {0}", count), KeyEvent.VK_0+count, Shortcut.CTRL);
+                // CHECKSTYLE.ON: LineLength
                 final JosmAction action = new JosmAction(actionShortcutKey, null, tr("Use this tag again"), sc, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {

@@ -230,7 +230,8 @@ public class BoxTextElemStyle extends ElemStyle {
 
     @Override
     public String toString() {
-        return "BoxTextElemStyle{" + super.toString() + " " + text.toStringImpl() + " box=" + box + " hAlign=" + hAlign + " vAlign=" + vAlign + '}';
+        return "BoxTextElemStyle{" + super.toString() + " " + text.toStringImpl()
+                + " box=" + box + " hAlign=" + hAlign + " vAlign=" + vAlign + '}';
     }
 
 }

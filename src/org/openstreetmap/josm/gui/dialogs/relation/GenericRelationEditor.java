@@ -221,7 +221,9 @@ public class GenericRelationEditor extends RelationEditor  {
         );
         registerCopyPasteAction(tagEditorPanel.getPasteAction(),
                 "PASTE_TAGS",
+                // CHECKSTYLE.OFF: LineLength
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.CTRL_SHIFT).getKeyStroke());
+                // CHECKSTYLE.ON: LineLength
         registerCopyPasteAction(new PasteMembersAction(), "PASTE_MEMBERS", Shortcut.getPasteKeyStroke());
         registerCopyPasteAction(new CopyMembersAction(), "COPY_MEMBERS", Shortcut.getCopyKeyStroke());
 
@@ -694,7 +696,8 @@ public class GenericRelationEditor extends RelationEditor  {
         }
         getRootPane().getActionMap().put(actionName, action);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
-        // Assign also to JTables because they have their own Copy&Paste implementation (which is disabled in this case but eats key shortcuts anyway)
+        // Assign also to JTables because they have their own Copy&Paste implementation
+        // (which is disabled in this case but eats key shortcuts anyway)
         memberTable.getInputMap(JComponent.WHEN_FOCUSED).put(shortcut, actionName);
         memberTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(shortcut, actionName);
         memberTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);

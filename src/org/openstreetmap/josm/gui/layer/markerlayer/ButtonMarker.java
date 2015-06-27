@@ -30,7 +30,8 @@ public class ButtonMarker extends Marker {
         buttonRectangle = new Rectangle(0, 0, symbol.getIconWidth(), symbol.getIconHeight());
     }
 
-    public ButtonMarker(LatLon ll, TemplateEngineDataProvider dataProvider, String buttonImage, MarkerLayer parentLayer, double time, double offset) {
+    public ButtonMarker(LatLon ll, TemplateEngineDataProvider dataProvider, String buttonImage, MarkerLayer parentLayer, double time,
+            double offset) {
         super(ll, dataProvider, buttonImage, parentLayer, time, offset);
         buttonRectangle = new Rectangle(0, 0, symbol.getIconWidth(), symbol.getIconHeight());
     }

@@ -261,7 +261,8 @@ public final class ExpressionFactory {
         }
 
         /**
-         * Creates a color value with the specified amounts of {@code r}ed, {@code g}reen, {@code b}lue, {@code alpha} (arguments from 0.0 to 1.0)
+         * Creates a color value with the specified amounts of {@code r}ed, {@code g}reen, {@code b}lue, {@code alpha}
+         * (arguments from 0.0 to 1.0)
          * @param r the red component
          * @param g the green component
          * @param b the blue component

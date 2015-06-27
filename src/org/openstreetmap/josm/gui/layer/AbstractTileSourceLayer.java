@@ -1398,13 +1398,13 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         g.setColor(Color.red);
         g.setFont(InfoFont);
 
-        // The current zoom tileset should have all of its tiles
-        // due to the loadAllTiles(), unless it to tooLarge()
+        // The current zoom tileset should have all of its tiles due to the loadAllTiles(), unless it to tooLarge()
         for (Tile t : ts.allExistingTiles()) {
             this.paintTileText(ts, t, g, mv, displayZoomLevel, t);
         }
 
-        attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), getShiftedCoord(topLeft), getShiftedCoord(botRight), displayZoomLevel, this);
+        attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), getShiftedCoord(topLeft), getShiftedCoord(botRight),
+                displayZoomLevel, this);
 
         //g.drawString("currentZoomLevel=" + currentZoomLevel, 120, 120);
         g.setColor(Color.lightGray);

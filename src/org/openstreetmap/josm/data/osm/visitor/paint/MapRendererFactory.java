@@ -249,7 +249,8 @@ public final class MapRendererFactory {
         Class<? extends AbstractMapRenderer> defaultRenderer = StyledMapRenderer.class;
         if (!isRegistered(defaultRenderer))
             throw new IllegalStateException(
-                    MessageFormat.format("Class ''{0}'' not registered as renderer. Can''t activate default renderer.", defaultRenderer.getName())
+                    MessageFormat.format("Class ''{0}'' not registered as renderer. Can''t activate default renderer.",
+                            defaultRenderer.getName())
             );
         activate(defaultRenderer);
     }

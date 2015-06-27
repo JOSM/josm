@@ -132,7 +132,9 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         //      For CRS x and y are as specified by the EPSG
         //          E.g. [1] lists lat as first coordinate axis and lot as second, so it is switched for EPSG:4326.
         //          For most other EPSG code there seems to be no difference.
+        // CHECKSTYLE.OFF: LineLength
         // [1] https://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::4326&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:4326
+        // CHECKSTYLE.ON: LineLength
         boolean switchLatLon = false;
         if (baseUrl.toLowerCase().contains("crs=epsg:4326")) {
             switchLatLon = true;

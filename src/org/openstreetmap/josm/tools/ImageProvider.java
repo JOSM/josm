@@ -856,7 +856,9 @@ public class ImageProvider {
                 try {
                     // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
                     // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
+                    // CHECKSTYLE.OFF: LineLength
                     // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
+                    // CHECKSTYLE.ON: LineLength
                     Image img = read(new ByteArrayInputStream(bytes), false, true);
                     return img == null ? null : new ImageResource(img);
                 } catch (IOException e) {
@@ -1540,6 +1542,8 @@ public class ImageProvider {
         return bi;
     }
 
+    // CHECKSTYLE.OFF: LineLength
+
     /**
      * Returns the {@code TransparentColor} defined in image reader metadata.
      * @param model The image color model
@@ -1550,6 +1554,7 @@ public class ImageProvider {
      * @since 7499
      */
     public static Color getTransparentColor(ColorModel model, ImageReader reader) throws IOException {
+        // CHECKSTYLE.ON: LineLength
         try {
             IIOMetadata metadata = reader.getImageMetadata(0);
             if (metadata != null) {

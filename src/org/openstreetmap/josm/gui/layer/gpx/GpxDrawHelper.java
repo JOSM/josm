@@ -326,7 +326,8 @@ public class GpxDrawHelper {
                         break;
                     case TIME:
                         double t = trkPnt.time;
-                        if (t > 0 && t <= now && maxval - minval > minTrackDurationForTimeColoring) { // skip bad timestamps and very short tracks
+                        // skip bad timestamps and very short tracks
+                        if (t > 0 && t <= now && maxval - minval > minTrackDurationForTimeColoring) {
                             color = dateScale.getColor(t);
                         } else {
                             color = dateScale.getNoDataColor();

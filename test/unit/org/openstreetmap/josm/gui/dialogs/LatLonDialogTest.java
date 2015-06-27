@@ -35,7 +35,8 @@ public class LatLonDialogTest {
 
     @Test
     public void test6() throws Exception {
-        assertThat(LatLonDialog.parseLatLon("N 49°29'04\" E 19°24'43\""), is(new LatLon(49 + 29. / 60 + 04. / 3600, 19 + 24. / 60 + 43. / 3600)));
+        assertThat(LatLonDialog.parseLatLon("N 49°29'04\" E 19°24'43\""),
+                is(new LatLon(49 + 29. / 60 + 04. / 3600, 19 + 24. / 60 + 43. / 3600)));
     }
 
     @Test
@@ -45,7 +46,8 @@ public class LatLonDialogTest {
 
     @Test
     public void test8() throws Exception {
-        assertThat(LatLonDialog.parseLatLon("49°29'21\" N 19°24'38\" E"), is(new LatLon(49 + 29. / 60 + 21. / 3600, 19 + 24. / 60 + 38. / 3600)));
+        assertThat(LatLonDialog.parseLatLon("49°29'21\" N 19°24'38\" E"),
+                is(new LatLon(49 + 29. / 60 + 21. / 3600, 19 + 24. / 60 + 38. / 3600)));
     }
 
     @Test

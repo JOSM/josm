@@ -216,7 +216,8 @@ public class TemplateEngineTest {
 
     @Test
     public void testMultilevel() throws ParseError {
-        TemplateParser parser = new TemplateParser("!{(parent(parent(type=type1)) type=grandparent) | (parent type=type2 type=parent2) '{name}'}");
+        TemplateParser parser = new TemplateParser(
+                "!{(parent(parent(type=type1)) type=grandparent) | (parent type=type2 type=parent2) '{name}'}");
         DatasetFactory ds = new DatasetFactory();
         Relation parent1 = ds.addRelation(1);
         parent1.put("type", "parent1");

@@ -526,7 +526,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
                 } else if (im.isFullyIdentified()) {
                     query.forUser(im.getUserId());
                 } else
-                    throw new IllegalStateException(tr("Cannot restrict changeset query to the current user because the current user is anonymous"));
+                    throw new IllegalStateException(
+                            tr("Cannot restrict changeset query to the current user because the current user is anonymous"));
             } else if (rbRestrictToUid.isSelected()) {
                 int uid  = valUid.getUid();
                 if (uid > 0) {
@@ -535,7 +536,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
                     throw new IllegalStateException(tr("Current value ''{0}'' for user ID is not valid", tfUid.getText()));
             } else if (rbRestrictToUserName.isSelected()) {
                 if (!valUserName.isValid())
-                    throw new IllegalStateException(tr("Cannot restrict the changeset query to the user name ''{0}''", tfUserName.getText()));
+                    throw new IllegalStateException(
+                            tr("Cannot restrict the changeset query to the user name ''{0}''", tfUserName.getText()));
                 query.forUser(tfUserName.getText());
             }
         }

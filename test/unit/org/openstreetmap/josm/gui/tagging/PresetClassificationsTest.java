@@ -35,7 +35,8 @@ public class PresetClassificationsTest {
     }
 
     private List<TaggingPresetSelector.PresetClassification> getMatchingPresets(String searchText, OsmPrimitive w) {
-        return classifications.getMatchingPresets(searchText, true, true, EnumSet.of(TaggingPresetType.forPrimitive(w)), Collections.singleton(w));
+        return classifications.getMatchingPresets(searchText, true, true, EnumSet.of(TaggingPresetType.forPrimitive(w)),
+                Collections.singleton(w));
     }
 
     private List<String> getMatchingPresetNames(String searchText, OsmPrimitive w) {

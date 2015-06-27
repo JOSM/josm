@@ -24,7 +24,8 @@ import org.w3c.dom.NodeList;
 public class GeoImageSessionImporter implements SessionLayerImporter {
 
     @Override
-    public Layer load(Element elem, SessionReader.ImportSupport support, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
+    public Layer load(Element elem, SessionReader.ImportSupport support, ProgressMonitor progressMonitor)
+            throws IOException, IllegalDataException {
         String version = elem.getAttribute("version");
         if (!"0.1".equals(version)) {
             throw new IllegalDataException(tr("Version ''{0}'' of meta data for geoimage layer is not supported. Expected: 0.1", version));

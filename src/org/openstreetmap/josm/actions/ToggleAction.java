@@ -78,7 +78,8 @@ public abstract class ToggleAction extends JosmAction {
         if (selected instanceof Boolean) {
             return (Boolean) selected;
         } else {
-            Main.warn(getClass().getName()+" does not define a boolean for SELECTED_KEY but "+selected+". You should report it to JOSM developers.");
+            Main.warn(getClass().getName() + " does not define a boolean for SELECTED_KEY but " + selected +
+                    ". You should report it to JOSM developers.");
             return false;
         }
     }

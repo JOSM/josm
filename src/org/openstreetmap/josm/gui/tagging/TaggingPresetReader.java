@@ -42,7 +42,8 @@ public final class TaggingPresetReader {
      * The accepted MIME types sent in the HTTP Accept header.
      * @since 6867
      */
-    public static final String PRESET_MIME_TYPES = "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
+    public static final String PRESET_MIME_TYPES =
+            "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
     private TaggingPresetReader() {
         // Hide default constructor for utils classes
@@ -305,7 +306,8 @@ public final class TaggingPresetReader {
      * @throws SAXException if any XML error occurs
      * @throws IOException if any I/O error occurs
      */
-    static Collection<TaggingPreset> readAll(String source, boolean validate, HashSetWithLast<TaggingPreset> all) throws SAXException, IOException {
+    static Collection<TaggingPreset> readAll(String source, boolean validate, HashSetWithLast<TaggingPreset> all)
+            throws SAXException, IOException {
         Collection<TaggingPreset> tp;
         CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
         try (

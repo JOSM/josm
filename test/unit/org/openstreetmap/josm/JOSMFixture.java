@@ -73,7 +73,9 @@ public class JOSMFixture {
             File f = new File(josmHome);
             if (!f.exists() || !f.canRead()) {
                 fail(MessageFormat.format(
+                        // CHECKSTYLE.OFF: LineLength
                         "property ''{0}'' points to ''{1}'' which is either not existing ({2}) or not readable ({3}). Current directory is ''{4}''.",
+                        // CHECKSTYLE.ON: LineLength
                         "josm.home", josmHome, f.exists(), f.canRead(), Paths.get("").toAbsolutePath()));
             }
         }

@@ -396,9 +396,9 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
                 if (onlyApplicable) {
                     boolean suitable = preset.typeMatches(presetTypes);
 
-                    if (!suitable && preset.types.contains(TaggingPresetType.RELATION) && preset.roles != null && !preset.roles.roles.isEmpty()) {
+                    if (!suitable && preset.types.contains(TaggingPresetType.RELATION)
+                            && preset.roles != null && !preset.roles.roles.isEmpty()) {
                         final Predicate<Role> memberExpressionMatchesOnePrimitive = new Predicate<Role>() {
-
                             @Override
                             public boolean evaluate(Role object) {
                                 return object.memberExpression != null

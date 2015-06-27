@@ -82,7 +82,8 @@ public class ProjectionRegressionTest {
         }
 
         Random rand = new Random();
-        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PROJECTION_DATA_FILE), StandardCharsets.UTF_8))) {
+        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(PROJECTION_DATA_FILE), StandardCharsets.UTF_8))) {
             out.write("# Data for test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java\n");
             out.write("# Format: 1. Projection code; 2. lat/lon; 3. lat/lon projected -> east/north; 4. east/north (3.) inverse projected\n");
             for (String code : codesToWrite) {

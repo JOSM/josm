@@ -307,7 +307,8 @@ public class SessionReader {
             Element centerEl = getElementByTagName(viewportEl, "center");
             if (centerEl != null && centerEl.hasAttribute("lat") && centerEl.hasAttribute("lon")) {
                 try {
-                    LatLon centerLL = new LatLon(Double.parseDouble(centerEl.getAttribute("lat")), Double.parseDouble(centerEl.getAttribute("lon")));
+                    LatLon centerLL = new LatLon(Double.parseDouble(centerEl.getAttribute("lat")),
+                            Double.parseDouble(centerEl.getAttribute("lon")));
                     center = Projections.project(centerLL);
                 } catch (NumberFormatException ex) {
                     Main.warn(ex);

@@ -158,7 +158,8 @@ public class SystemOfMeasurement {
         double a = area / (aValue*aValue);
         boolean lowerOnly = Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false);
         boolean customAreaOnly = Main.pref.getBoolean("system_of_measurement.use_only_custom_area_unit", false);
-        if ((!lowerOnly && areaCustomValue > 0 && a > areaCustomValue / (aValue*aValue) && a < (bValue*bValue) / (aValue*aValue)) || customAreaOnly)
+        if ((!lowerOnly && areaCustomValue > 0 && a > areaCustomValue / (aValue*aValue)
+                && a < (bValue*bValue) / (aValue*aValue)) || customAreaOnly)
             return formatText(area / areaCustomValue, areaCustomName, format);
         else if (!lowerOnly && a >= (bValue*bValue) / (aValue*aValue))
             return formatText(area / (bValue * bValue), bName + "\u00b2", format);

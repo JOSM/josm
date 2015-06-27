@@ -69,7 +69,8 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      *
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp, List<RelationMemberData> members) {
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp,
+            List<RelationMemberData> members) {
         this(id, version, visible, user, changesetId, timestamp);
         if (members != null) {
             this.members.addAll(members);

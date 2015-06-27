@@ -403,7 +403,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
          */
         public SelectAndZoomAction() {
             putValue(NAME, tr("Select and zoom"));
-            putValue(SHORT_DESCRIPTION, tr("Selects the objects that take part in this command (unless currently deleted), then and zooms to it"));
+            putValue(SHORT_DESCRIPTION,
+                    tr("Selects the objects that take part in this command (unless currently deleted), then and zooms to it"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
         }
 

@@ -153,7 +153,7 @@ public class RelationTree extends JTree {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true /* full load */);
+                OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true);
                 ds = reader.parseOsm(progressMonitor
                         .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch (Exception e) {

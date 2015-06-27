@@ -97,6 +97,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
         nc.addMouseWheelListener(this);
 
         if (contentPane != null) {
+            // CHECKSTYLE.OFF: LineLength
             contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 Shortcut.registerShortcut("system:movefocusright", tr("Map: {0}", tr("Move right")), KeyEvent.VK_RIGHT, Shortcut.CTRL).getKeyStroke(),
                 "MapMover.Zoomer.right");
@@ -116,6 +117,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
                 Shortcut.registerShortcut("system:movefocusdown", tr("Map: {0}", tr("Move down")), KeyEvent.VK_DOWN, Shortcut.CTRL).getKeyStroke(),
                 "MapMover.Zoomer.down");
             contentPane.getActionMap().put("MapMover.Zoomer.down", new ZoomerAction("down"));
+            // CHECKSTYLE.ON: LineLength
 
             // see #10592 - Disable these alternate shortcuts on OS X because of conflict with system shortcut
             if (!Main.isPlatformOsx()) {

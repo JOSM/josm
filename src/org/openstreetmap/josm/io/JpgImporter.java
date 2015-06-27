@@ -87,7 +87,8 @@ public class JpgImporter extends FileImporter {
         }
     }
 
-    private void addRecursiveFiles(List<File> files, Set<String> visitedDirs, List<File> sel, ProgressMonitor progressMonitor) throws IOException {
+    private void addRecursiveFiles(List<File> files, Set<String> visitedDirs, List<File> sel, ProgressMonitor progressMonitor)
+            throws IOException {
 
         if (progressMonitor.isCanceled())
             return;

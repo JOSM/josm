@@ -125,13 +125,15 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 // API 0.6 does not support requests crossing the 180th meridian, so make two requests
                 DataSet ds2 = null;
 
-                try (InputStream in = getInputStream(getRequestForBbox(lon1, lat1, 180.0, lat2), progressMonitor.createSubTaskMonitor(9, false))) {
+                try (InputStream in = getInputStream(getRequestForBbox(lon1, lat1, 180.0, lat2),
+                        progressMonitor.createSubTaskMonitor(9, false))) {
                     if (in == null)
                         return null;
                     ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
                 }
 
-                try (InputStream in = getInputStream(getRequestForBbox(-180.0, lat1, lon2, lat2), progressMonitor.createSubTaskMonitor(9, false))) {
+                try (InputStream in = getInputStream(getRequestForBbox(-180.0, lat1, lon2, lat2),
+                        progressMonitor.createSubTaskMonitor(9, false))) {
                     if (in == null)
                         return null;
                     ds2 = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
@@ -142,7 +144,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
 
             } else {
                 // Simple request
-                try (InputStream in = getInputStream(getRequestForBbox(lon1, lat1, lon2, lat2), progressMonitor.createSubTaskMonitor(9, false))) {
+                try (InputStream in = getInputStream(getRequestForBbox(lon1, lat1, lon2, lat2),
+                        progressMonitor.createSubTaskMonitor(9, false))) {
                     if (in == null)
                         return null;
                     ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
@@ -160,7 +163,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
     }
 
     @Override
-    public List<Note> parseNotes(int noteLimit, int daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException, MoreNotesException {
+    public List<Note> parseNotes(int noteLimit, int daysClosed, ProgressMonitor progressMonitor)
+            throws OsmTransferException, MoreNotesException {
         progressMonitor.beginTask("Downloading notes");
         CheckParameterUtil.ensureThat(noteLimit > 0, "Requested note limit is less than 1.");
         // see result_limit in https://github.com/openstreetmap/openstreetmap-website/blob/master/app/controllers/notes_controller.rb

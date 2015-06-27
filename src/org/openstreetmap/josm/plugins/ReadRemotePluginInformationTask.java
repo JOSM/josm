@@ -190,7 +190,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
-    private void handleIOException(final ProgressMonitor monitor, IOException e, final String title, final String firstMessage, boolean displayMsg) {
+    private void handleIOException(final ProgressMonitor monitor, IOException e, final String title, final String firstMessage,
+            boolean displayMsg) {
         StringBuilder sb = new StringBuilder();
         try (InputStream errStream = connection.getErrorStream()) {
             if (errStream != null) {

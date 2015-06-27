@@ -57,10 +57,10 @@ public class SplitWayAction extends JosmAction {
         private List<Way> newWays;
 
         /**
-         * @param command The command to be performed to split the way (which is saved for later retrieval by the {@link #getCommand} method)
-         * @param newSelection The new list of selected primitives ids (which is saved for later retrieval by the {@link #getNewSelection} method)
-         * @param originalWay The original way being split (which is saved for later retrieval by the {@link #getOriginalWay} method)
-         * @param newWays The resulting new ways (which is saved for later retrieval by the {@link #getOriginalWay} method)
+         * @param command The command to be performed to split the way (which is saved for later retrieval with {@link #getCommand})
+         * @param newSelection The new list of selected primitives ids (which is saved for later retrieval with {@link #getNewSelection})
+         * @param originalWay The original way being split (which is saved for later retrieval with {@link #getOriginalWay})
+         * @param newWays The resulting new ways (which is saved for later retrieval with {@link #getOriginalWay})
          */
         public SplitWayResult(Command command, List<? extends PrimitiveId> newSelection, Way originalWay, List<Way> newWays) {
             this.command = command;
@@ -341,7 +341,8 @@ public class SplitWayAction extends JosmAction {
      * @param selection The list of currently selected primitives
      * @return the result from the split operation
      */
-    public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks, Collection<? extends OsmPrimitive> selection) {
+    public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks,
+            Collection<? extends OsmPrimitive> selection) {
         // build a list of commands, and also a new selection list
         Collection<Command> commandList = new ArrayList<>(wayChunks.size());
         List<OsmPrimitive> newSelection = new ArrayList<>(selection.size() + wayChunks.size());

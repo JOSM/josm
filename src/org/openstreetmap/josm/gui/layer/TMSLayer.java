@@ -41,7 +41,8 @@ public class TMSLayer extends AbstractTileSourceLayer {
     public static final IntegerProperty PROP_MAX_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".max_zoom_lvl",
             AbstractTileSourceLayer.PROP_MAX_ZOOM_LVL.get());
     /** shall TMS layers be added to download dialog */
-    public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser", true);
+    public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser",
+            true);
 
     /** loader factory responsible for loading tiles for this layer */
     public static TileLoaderFactory loaderFactory = new CachedTileLoaderFactory("TMS"){

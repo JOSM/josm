@@ -316,7 +316,8 @@ public class OsmOAuthAuthorizationClient {
             connection.connect();
             SessionId sessionId = extractOsmSession(connection);
             if (sessionId == null)
-                throw new OsmOAuthAuthorizationException(tr("OSM website did not return a session cookie in response to ''{0}'',", url.toString()));
+                throw new OsmOAuthAuthorizationException(
+                        tr("OSM website did not return a session cookie in response to ''{0}'',", url.toString()));
             return sessionId;
         } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
@@ -346,7 +347,8 @@ public class OsmOAuthAuthorizationClient {
             connection.connect();
             sessionId.token = extractToken(connection);
             if (sessionId.token == null)
-                throw new OsmOAuthAuthorizationException(tr("OSM website did not return a session cookie in response to ''{0}'',", url.toString()));
+                throw new OsmOAuthAuthorizationException(tr("OSM website did not return a session cookie in response to ''{0}'',",
+                        url.toString()));
         } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         } finally {
@@ -395,7 +397,8 @@ public class OsmOAuthAuthorizationClient {
             //
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_MOVED_TEMP)
-                throw new OsmOAuthAuthorizationException(tr("Failed to authenticate user ''{0}'' with password ''***'' as OAuth user", userName));
+                throw new OsmOAuthAuthorizationException(tr("Failed to authenticate user ''{0}'' with password ''***'' as OAuth user",
+                        userName));
         } catch (OsmOAuthAuthorizationException e) {
             throw new OsmLoginFailedException(e.getCause());
         } catch (IOException e) {

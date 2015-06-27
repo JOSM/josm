@@ -237,11 +237,13 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         }
     }
 
-    @Override protected void realRun() {
+    @Override
+    protected void realRun() {
         try {
             uploadloop: while (true) {
                 try {
-                    getProgressMonitor().subTask(trn("Uploading {0} object...", "Uploading {0} objects...", toUpload.getSize(), toUpload.getSize()));
+                    getProgressMonitor().subTask(
+                            trn("Uploading {0} object...", "Uploading {0} objects...", toUpload.getSize(), toUpload.getSize()));
                     synchronized (this) {
                         writer = new OsmServerWriter();
                     }

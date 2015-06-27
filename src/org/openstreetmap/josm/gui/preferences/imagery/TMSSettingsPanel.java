@@ -41,11 +41,16 @@ public class TMSSettingsPanel extends JPanel {
      */
     public TMSSettingsPanel() {
         super(new GridBagLayout());
-        minZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.PROP_MIN_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
-        maxZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.PROP_MAX_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
-        maxElementsOnDisk = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.get().intValue(), 0, Integer.MAX_VALUE, 1));
-        maxConcurrentDownloads = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoaderJob.THREAD_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
-        maxDownloadsPerHost = new JSpinner(new SpinnerNumberModel(TMSCachedTileLoader.HOST_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
+        minZoomLvl = new JSpinner(new SpinnerNumberModel(
+                TMSLayer.PROP_MIN_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
+        maxZoomLvl = new JSpinner(new SpinnerNumberModel(
+                TMSLayer.PROP_MAX_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
+        maxElementsOnDisk = new JSpinner(new SpinnerNumberModel(
+                TMSCachedTileLoader.MAX_OBJECTS_ON_DISK.get().intValue(), 0, Integer.MAX_VALUE, 1));
+        maxConcurrentDownloads = new JSpinner(new SpinnerNumberModel(
+                TMSCachedTileLoaderJob.THREAD_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
+        maxDownloadsPerHost = new JSpinner(new SpinnerNumberModel(
+                TMSCachedTileLoader.HOST_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
 
         add(new JLabel(tr("Auto zoom by default: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());

@@ -155,7 +155,8 @@ public class OsmServerBackreferenceReaderTest {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         Main.logLevel = 4;
 
-        File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
+        File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"),
+                MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
 
         String p = System.getProperty("useCachedDataset");
         if (p != null && Boolean.parseBoolean(p.trim().toLowerCase())) {

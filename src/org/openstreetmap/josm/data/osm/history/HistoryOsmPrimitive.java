@@ -74,7 +74,8 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
      */
-    public HistoryOsmPrimitive(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) {
+    public HistoryOsmPrimitive(long id, long version, boolean visible, User user, long changesetId, Date timestamp,
+            boolean checkHistoricParams) {
         ensurePositiveLong(id, "id");
         ensurePositiveLong(version, "version");
         CheckParameterUtil.ensureParameterNotNull(user, "user");

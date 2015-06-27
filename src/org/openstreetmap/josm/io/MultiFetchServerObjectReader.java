@@ -512,7 +512,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
          * @return the {@link FetchResult} of this operation
          * @throws OsmTransferException if an error occurs while communicating with the API server
          */
-        protected FetchResult multiGetIdPackage(OsmPrimitiveType type, Set<Long> pkg, ProgressMonitor progressMonitor) throws OsmTransferException {
+        protected FetchResult multiGetIdPackage(OsmPrimitiveType type, Set<Long> pkg, ProgressMonitor progressMonitor)
+                throws OsmTransferException {
             String request = buildRequestString(type, pkg);
             FetchResult result = null;
             try (InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE)) {
@@ -570,7 +571,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
          * @return the {@link FetchResult} of this operation
          * @throws OsmTransferException if an error occurs while communicating with the API server
          */
-        protected FetchResult singleGetIdPackage(OsmPrimitiveType type, Set<Long> pkg, ProgressMonitor progressMonitor) throws OsmTransferException {
+        protected FetchResult singleGetIdPackage(OsmPrimitiveType type, Set<Long> pkg, ProgressMonitor progressMonitor)
+                throws OsmTransferException {
             FetchResult result = new FetchResult(new DataSet(), new HashSet<PrimitiveId>());
             String baseUrl = OsmApi.getOsmApi().getBaseUrl();
             for (long id : pkg) {

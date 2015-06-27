@@ -23,6 +23,8 @@ public class SwissGridTest {
         Main.setProjection(Projections.getProjectionByCode(SWISS_EPSG_CODE)); // Swiss grid
     }
 
+    // CHECKSTYLE.OFF: LineLength
+
     /**
      * source: http://www.swisstopo.admin.ch/internet/swisstopo/en/home/topics/survey/sys/refsys/switzerland.parsysrelated1.37696.downloadList.97912.DownloadFile.tmp/swissprojectionen.pdf
      */
@@ -32,6 +34,8 @@ public class SwissGridTest {
             new ProjData("Pfaender",        d(9, 47, 3.697723), d(47, 30, 55.172797), 1089.372, 776668.105, 265372.681, 1042.624),
             new ProjData("La Givrine",      d(6, 6, 7.326361), d(46, 27, 14.690021), 1258.274,  497313.292, 145625.438, 1207.434),
             new ProjData("Monte Generoso",  d(9, 1, 16.389053), d(45, 55, 45.438020), 1685.027, 722758.810, 87649.670, 1636.600) };
+
+    // CHECKSTYLE.ON: LineLength
 
     private double d(double deg, double min, double sec) {
         return deg + min / 60. + sec / 3600.;

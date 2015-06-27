@@ -826,10 +826,9 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             ed.setButtonIcons(new String[]{"reorder", "cancel"});
             ed.setContent(
                     /* for correct i18n of plural forms - see #9110 */
-                    trn(
-                            "You moved more than {0} element. " + "Moving a large number of elements is often an error.\n" + "Really move them?",
-                            "You moved more than {0} elements. " + "Moving a large number of elements is often an error.\n" + "Really move them?",
-                            max, max));
+                    trn("You moved more than {0} element. " + "Moving a large number of elements is often an error.\n" + "Really move them?",
+                        "You moved more than {0} elements. " + "Moving a large number of elements is often an error.\n" + "Really move them?",
+                        max, max));
             ed.setCancelButton(2);
             ed.toggleEnable("movedManyElements");
             ed.showDialog();

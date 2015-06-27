@@ -30,7 +30,8 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
         if (OsmPrimitive.getDiscardableKeys().contains(key)) {
             if (isSelected) {
                 c.setForeground(Main.pref.getColor(marktr("Discardable key: selection Foreground"), Color.GRAY));
-                c.setBackground(Main.pref.getColor(marktr("Discardable key: selection Background"), defaults.getColor("Table.selectionBackground")));
+                c.setBackground(Main.pref.getColor(marktr("Discardable key: selection Background"),
+                        defaults.getColor("Table.selectionBackground")));
             } else {
                 c.setForeground(Main.pref.getColor(marktr("Discardable key: foreground"), Color.GRAY));
                 c.setBackground(Main.pref.getColor(marktr("Discardable key: background"), defaults.getColor("Table.background")));

@@ -230,6 +230,8 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         }
     }
 
+    // CHECKSTYLE.OFF: ParameterNumber
+
     /**
      * Add all those listeners to handle the enable state of the fields.
      */
@@ -247,6 +249,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             final JLabel copyrightYearLabel,
             final JLabel warning) {
 
+        // CHECKSTYLE.ON: ParameterNumber
         ActionListener authorActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

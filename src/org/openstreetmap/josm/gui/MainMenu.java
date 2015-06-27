@@ -517,7 +517,8 @@ public class MainMenu extends JMenuBar {
      * @param menu the menu to add the action to
      * @param actionToBeInserted the action that should get a menu item directly below {@code existingMenuEntryAction}
      * @param isExpert whether the entry should only be visible if the expert mode is activated
-     * @param existingMenuEntryAction an action already added to the menu {@code menu}, the action {@code actionToBeInserted} is added directly below
+     * @param existingMenuEntryAction an action already added to the menu {@code menu},
+     * the action {@code actionToBeInserted} is added directly below
      * @return the created menu item
      */
     public static JMenuItem addAfter(JMenu menu, JosmAction actionToBeInserted, boolean isExpert, JosmAction existingMenuEntryAction) {

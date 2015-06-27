@@ -220,7 +220,8 @@ public class CreateMultipolygonAction extends JosmAction {
     /**
      * Returns a {@link Pair} of a multipolygon creating/modifying {@link Command} as well as the multipolygon {@link Relation}.
      */
-    public static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
+    public static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> selectedWays,
+            Relation selectedMultipolygonRelation) {
 
         final Pair<Relation, Relation> rr = selectedMultipolygonRelation == null
                 ? createMultipolygonRelation(selectedWays, true)

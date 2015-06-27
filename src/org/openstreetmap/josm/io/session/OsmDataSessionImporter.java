@@ -38,7 +38,8 @@ public class OsmDataSessionImporter implements SessionLayerImporter {
 
             OsmImporter importer = new OsmImporter();
             try (InputStream in = support.getInputStream(fileStr)) {
-                OsmImporter.OsmImporterData importData = importer.loadLayer(in, support.getFile(fileStr), support.getLayerName(), progressMonitor);
+                OsmImporter.OsmImporterData importData = importer.loadLayer(in, support.getFile(fileStr), support.getLayerName(),
+                        progressMonitor);
 
                 support.addPostLayersTask(importData.getPostLayerTask());
                 return importData.getLayer();

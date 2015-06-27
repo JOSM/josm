@@ -232,7 +232,9 @@ public class RemoteControlHttpsServer extends Thread {
 
             X509Certificate cert = generateCertificate("CN=localhost, OU=JOSM, O=OpenStreetMap", pair, 1825, "SHA256withRSA",
                     // see #10033#comment:20: All browsers respect "ip" in SAN, except IE which only understands DNS entries:
+                    // CHECKSTYLE.OFF: LineLength
                     // https://connect.microsoft.com/IE/feedback/details/814744/the-ie-doesnt-trust-a-san-certificate-when-connecting-to-ip-address
+                    // CHECKSTYLE.ON: LineLength
                     "dns:localhost,ip:127.0.0.1,dns:127.0.0.1,ip:::1,uri:https://127.0.0.1:"+HTTPS_PORT+",uri:https://::1:"+HTTPS_PORT);
 
             KeyStore ks = KeyStore.getInstance("JKS");

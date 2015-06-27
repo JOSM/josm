@@ -1036,7 +1036,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (NavigatableComponent.PROPNAME_CENTER.equals(evt.getPropertyName()) || NavigatableComponent.PROPNAME_SCALE.equals(evt.getPropertyName())) {
+        if (NavigatableComponent.PROPNAME_CENTER.equals(evt.getPropertyName()) ||
+                NavigatableComponent.PROPNAME_SCALE.equals(evt.getPropertyName())) {
             updateOffscreenBuffer = true;
         }
     }

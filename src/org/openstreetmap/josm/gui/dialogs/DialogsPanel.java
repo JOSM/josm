@@ -125,7 +125,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
          * in the last panel anyway.
          */
         JPanel p = panels.get(N-1); // current Panel (start with last one)
-        int k = -1;                 // indicates that the current Panel index is N-1, but no default-view-Dialog has been added to this Panel yet.
+        int k = -1;                 // indicates that current Panel index is N-1, but no default-view-Dialog has been added to this Panel yet.
         for (int i = N-1; i >= 0; --i) {
             final ToggleDialog dlg = allDialogs.get(i);
             if (dlg.isDialogInDefaultView()) {
