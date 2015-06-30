@@ -485,3 +485,29 @@ relation[/^..$/][!to] {
   suggestAlternative: "sport=billiards";
   fixAdd: "sport=billiards";
 }
+
+/* see #11499 */
+*[payment:credit_cards=yes] {
+  throwWarning: tr("{0} is inaccurate", "{0.tag}");
+  suggestAlternative: "payment:mastercard=yes";
+  suggestAlternative: "payment:visa=yes";
+  suggestAlternative: "...";
+}
+*[payment:debit_cards=yes] {
+  throwWarning: tr("{0} is inaccurate", "{0.tag}");
+  suggestAlternative: "payment:maestro=yes";
+  suggestAlternative: "payment:girocard=yes";
+  suggestAlternative: "...";
+}
+*[payment:electronic_purses=yes] {
+  throwWarning: tr("{0} is inaccurate", "{0.tag}");
+  suggestAlternative: "payment:ep_geldkarte=yes";
+  suggestAlternative: "payment:ep_quick=yes";
+  suggestAlternative: "...";
+}
+*[payment:cryptocurrencies=yes] {
+  throwWarning: tr("{0} is inaccurate", "{0.tag}");
+  suggestAlternative: "payment:bitcoin=yes";
+  suggestAlternative: "payment:litecoin=yes";
+  suggestAlternative: "...";
+}
