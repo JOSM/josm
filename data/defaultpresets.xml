@@ -7213,54 +7213,54 @@
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:payment"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:payment" />
         <space />
-        <combo key="payment:cash" text="Cash" values="yes,no" />
+        <combo key="payment:cash" text="Cash" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:coins" text="Coins" />
-            <check key="payment:notes" text="Notes" text_context="payment" />
+            <check key="payment:coins" text="Coins" match="keyvalue" />
+            <check key="payment:notes" text="Notes" text_context="payment" match="keyvalue" />
         </checkgroup>
         <space />
-        <combo key="payment:debit_cards" text="Debit cards" values="no" />
+        <combo key="payment:debit_cards" text="Debit cards" values="no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:bankaxess" text="BankAxess" />
-            <check key="payment:bancomat" text="Bancomat" />
-            <check key="payment:girocard" text="Girocard" />
-            <check key="payment:laser" text="Laser" />
-            <check key="payment:maestro" text="Maestro" />
-            <check key="payment:visa_debit" text="Visa Debit" />
-            <check key="payment:visa_electron" text="Visa Electron" />
+            <check key="payment:bankaxess" text="BankAxess" match="keyvalue" />
+            <check key="payment:bancomat" text="Bancomat" match="keyvalue" />
+            <check key="payment:girocard" text="Girocard" match="keyvalue" />
+            <check key="payment:laser" text="Laser" match="keyvalue" />
+            <check key="payment:maestro" text="Maestro" match="keyvalue" />
+            <check key="payment:visa_debit" text="Visa Debit" match="keyvalue" />
+            <check key="payment:visa_electron" text="Visa Electron" match="keyvalue" />
         </checkgroup>
         <space />
-        <combo key="payment:credit_cards" text="Credit cards" values="no" />
+        <combo key="payment:credit_cards" text="Credit cards" values="no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:american_express" text="American Express" />
-            <check key="payment:diners_club" text="Diners Club" />
-            <check key="payment:discover_card" text="Discover Card" />
-            <check key="payment:jcb" text="JCB" />
-            <check key="payment:mastercard" text="Mastercard" />
-            <check key="payment:visa" text="Visa" />
+            <check key="payment:american_express" text="American Express" match="keyvalue" />
+            <check key="payment:diners_club" text="Diners Club" match="keyvalue" />
+            <check key="payment:discover_card" text="Discover Card" match="keyvalue" />
+            <check key="payment:jcb" text="JCB" match="keyvalue" />
+            <check key="payment:mastercard" text="Mastercard" match="keyvalue" />
+            <check key="payment:visa" text="Visa" match="keyvalue" />
         </checkgroup>
         <space />
-        <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="no" />
+        <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:ep_avant" text="Avant (fi)" />
-            <check key="payment:ep_cash" text="Cash (ch)" />
-            <check key="payment:ep_chipknip" text="Chipknip (nl)" />
-            <check key="payment:ep_geldkarte" text="Geldkarte (de)" />
-            <check key="payment:ep_mep" text="Mep (pt)" />
-            <check key="payment:ep_minicash" text="Minicash (lu)" />
-            <check key="payment:ep_minipay" text="Minipay (it)" />
-            <check key="payment:ep_monedero" text="Mondero (ar)" />
-            <check key="payment:ep_monedero4b" text="Mondero 4b (es)" />
-            <check key="payment:ep_moneo" text="Moneo (fr)" />
-            <check key="payment:ep_proton" text="Proton (be)" />
-            <check key="payment:ep_quick" text="Quick (au)" />
+            <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" />
+            <check key="payment:ep_cash" text="Cash (ch)" match="keyvalue" />
+            <check key="payment:ep_chipknip" text="Chipknip (nl)" match="keyvalue" />
+            <check key="payment:ep_geldkarte" text="Geldkarte (de)" match="keyvalue" />
+            <check key="payment:ep_mep" text="Mep (pt)" match="keyvalue" />
+            <check key="payment:ep_minicash" text="Minicash (lu)" match="keyvalue" />
+            <check key="payment:ep_minipay" text="Minipay (it)" match="keyvalue" />
+            <check key="payment:ep_monedero" text="Mondero (ar)" match="keyvalue" />
+            <check key="payment:ep_monedero4b" text="Mondero 4b (es)" match="keyvalue" />
+            <check key="payment:ep_moneo" text="Moneo (fr)" match="keyvalue" />
+            <check key="payment:ep_proton" text="Proton (be)" match="keyvalue" />
+            <check key="payment:ep_quick" text="Quick (au)" match="keyvalue" />
         </checkgroup>
         <space />
-        <combo key="payment:cryptocurrencies" text="Cryptocurrencies" values="no" />
+        <combo key="payment:cryptocurrencies" text="Cryptocurrencies" values="no" match="keyvalue" />
         <checkgroup columns="4">
-            <check key="payment:bitcoin" text="Bitcoin" />
-            <check key="payment:dogecoin" text="Dogecoin" />
-            <check key="payment:litecoin" text="Litecoin" />
+            <check key="payment:bitcoin" text="Bitcoin" match="keyvalue" />
+            <check key="payment:dogecoin" text="Dogecoin" match="keyvalue" />
+            <check key="payment:litecoin" text="Litecoin" match="keyvalue" />
         </checkgroup>
     </item> <!-- Payment Methods -->
   </group> <!-- Shops -->
