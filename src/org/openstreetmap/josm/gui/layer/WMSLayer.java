@@ -16,6 +16,7 @@ import javax.swing.Action;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -133,11 +134,12 @@ public class WMSLayer extends AbstractTileSourceLayer {
             ret.append(e).append(", ");
         }
         String appendix = "";
-        if (supportedProjections.contains("EPSG:4326")) {
+
+        if (supportedProjections.contains("EPSG:4326") &&  "EPSG:3857".equals(Main.getProjection().toCode())) {
             appendix = ". " + tr("JOSM will use EPSG:4326 to query the server, but results may vary "
                     + "depending on the WMS server");
         }
-        return ret.substring(0, ret.length()-2);
+        return ret.substring(0, ret.length()-2) + appendix;
     }
 
     @Override
