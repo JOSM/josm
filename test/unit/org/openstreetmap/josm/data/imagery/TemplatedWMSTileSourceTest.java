@@ -47,6 +47,7 @@ public class TemplatedWMSTileSourceTest {
                 verifyTileSquarness(source, x, y, 2);
             }
         }
+        verifyTileSquarness(source, 2270, 1323, 12);
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
 
@@ -61,6 +62,7 @@ public class TemplatedWMSTileSourceTest {
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
         verifyTileSquarness(source, 2, 2, 2);
         verifyTileSquarness(source, 150, 20, 18);
+        verifyTileSquarness(source, 2270, 1323, 12);
     }
 
     @Test
@@ -73,7 +75,7 @@ public class TemplatedWMSTileSourceTest {
 
         verifyTileSquarness(source, 2, 2, 2);
         verifyTileSquarness(source, 150, 20, 18);
-
+        verifyTileSquarness(source, 2270, 1323, 12);
     }
 
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
@@ -111,11 +113,30 @@ public class TemplatedWMSTileSourceTest {
 
     private void verifyTileSquarness(TemplatedWMSTileSource source, int x, int y, int z) {
         Projection proj = Main.getProjection();
-        EastNorth min = proj.latlon2eastNorth(getTileLatLon(source, x, y, z));
-        EastNorth max = proj.latlon2eastNorth(getTileLatLon(source, x + 1, y + 1, z));
-        double y_size = Math.abs(min.getY() - max.getY());
-        double x_size = Math.abs(min.getX() - max.getX());
+        /**
+         * t1 | t2
+         * -------
+         * t3 | t4
+         */
+        EastNorth t1 = proj.latlon2eastNorth(getTileLatLon(source, x, y, z));
+        EastNorth t2 = proj.latlon2eastNorth(getTileLatLon(source, x + 1, y, z));
+        EastNorth t3 = proj.latlon2eastNorth(getTileLatLon(source, x, y + 1, z));
+        EastNorth t4 = proj.latlon2eastNorth(getTileLatLon(source, x + 1, y + 1, z));
+        double y_size = Math.abs(t1.getY() - t4.getY());
+        double x_size = Math.abs(t1.getX() - t4.getX());
         assertEquals(x_size, y_size, 1e-05);
+        assertEquals(y_size, Math.abs(t1.getY() - t3.getY()), 1e-05);
+        assertEquals(x_size, Math.abs(t1.getX() - t2.getX()), 1e-05);
+
+        t1 = source.getTileEastNorth(x, y, z);
+        t2 = source.getTileEastNorth(x + 1, y, z);
+        t3 = source.getTileEastNorth(x, y + 1, z);
+        t4 = source.getTileEastNorth(x + 1, y + 1, z);
+        y_size = Math.abs(t1.getY() - t4.getY());
+        x_size = Math.abs(t1.getX() - t4.getX());
+        assertEquals(x_size, y_size, 1e-05);
+        assertEquals(y_size, Math.abs(t1.getY() - t3.getY()), 1e-05);
+        assertEquals(x_size, Math.abs(t1.getX() - t2.getX()), 1e-05);
     }
 
     private TemplatedWMSTileSource getSource() {

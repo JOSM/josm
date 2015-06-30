@@ -16,7 +16,6 @@ import javax.swing.Action;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -27,9 +26,6 @@ import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
@@ -41,47 +37,17 @@ public class WMSLayer extends AbstractTileSourceLayer {
     public static final IntegerProperty PROP_IMAGE_SIZE = new IntegerProperty("imagery.wms.imageSize", 512);
     /** should WMS layer autozoom in default mode */
     public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty("imagery.wms.default_autozoom", true);
+    private List<String> supportedProjections;
 
     /**
      * Constructs a new {@code WMSLayer}.
      * @param info ImageryInfo description of the layer
      */
+
+
     public WMSLayer(ImageryInfo info) {
         super(info);
-    }
-
-    @Override
-    public void hookUpMapView() {
-        super.hookUpMapView();
-        final ProjectionChangeListener listener = new ProjectionChangeListener() {
-            @Override
-            public void projectionChanged(Projection oldValue, Projection newValue) {
-                if (!oldValue.equals(newValue) && tileSource instanceof TemplatedWMSTileSource) {
-                    ((TemplatedWMSTileSource) tileSource).initProjection(newValue);
-                }
-
-            }
-        };
-        Main.addProjectionChangeListener(listener);
-
-        MapView.addLayerChangeListener(new LayerChangeListener() {
-            @Override
-            public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-                // empty
-            }
-
-            @Override
-            public void layerAdded(Layer newLayer) {
-                // empty
-            }
-
-            @Override
-            public void layerRemoved(Layer oldLayer) {
-                if (oldLayer == WMSLayer.this) {
-                    Main.removeProjectionChangeListener(listener);
-                }
-            }
-        });
+        this.supportedProjections = info.getServerProjections();
     }
 
     @Override
@@ -154,4 +120,34 @@ public class WMSLayer extends AbstractTileSourceLayer {
         }
         return null;
     }
+
+    @Override
+    public boolean isProjectionSupported(Projection proj) {
+        return supportedProjections == null || supportedProjections.isEmpty() || supportedProjections.contains(proj.toCode());
+    }
+
+    @Override
+    public String nameSupportedProjections() {
+        StringBuffer ret = new StringBuffer();
+        for (String e: supportedProjections) {
+            ret.append(e).append(", ");
+        }
+        String appendix = "";
+        if (supportedProjections.contains("EPSG:4326")) {
+            appendix = ". " + tr("JOSM will use EPSG:4326 to query the server, but results may vary "
+                    + "depending on the WMS server");
+        }
+        return ret.substring(0, ret.length()-2);
+    }
+
+    @Override
+    public void projectionChanged(Projection oldValue, Projection newValue) {
+        super.projectionChanged(oldValue, newValue);
+
+        if (!newValue.equals(oldValue) && tileSource instanceof TemplatedWMSTileSource) {
+            ((TemplatedWMSTileSource) tileSource).initProjection(newValue);
+        }
+
+    }
+
 }

@@ -446,7 +446,8 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     public void projectionChanged(Projection oldValue, Projection newValue) {
         if (!isProjectionSupported(newValue)) {
             JOptionPane.showMessageDialog(Main.parent,
-                    tr("The layer {0} does not support the new projection {1}.\n{2}\n"
+                    tr("The layer {0} does not support the new projection {1}.\n"
+                            + "Supported projections are: {2}\n"
                             + "Change the projection again or remove the layer.",
                             getName(), newValue.toCode(), nameSupportedProjections()),
                             tr("Warning"),

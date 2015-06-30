@@ -138,19 +138,8 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      */
     public AbstractTileSourceLayer(ImageryInfo info) {
         super(info);
-
-        if (!isProjectionSupported(Main.getProjection())) {
-            JOptionPane.showMessageDialog(Main.parent,
-                    tr("This layer do not support the projection {0}.\n{1}\n"
-                            + "Change the projection or remove the layer.",
-                            Main.getProjection().toCode(), nameSupportedProjections()),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE);
-        }
         setBackgroundLayer(true);
         this.setVisible(true);
-
-        initTileSource(getTileSource(info));
         MapView.addZoomChangeListener(this);
     }
 
@@ -461,6 +450,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      */
     @Override
     public void hookUpMapView() {
+        initTileSource(getTileSource(info));
+        projectionChanged(null, Main.getProjection()); // check if projection is supported
+
         // keep them final here, so we avoid namespace clutter in the class
         final JPopupMenu tileOptionMenu = new JPopupMenu();
         final TileHolder clickedTileHolder = new TileHolder();
