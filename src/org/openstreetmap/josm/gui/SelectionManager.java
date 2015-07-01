@@ -1,7 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import java.awt.Component;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -16,24 +17,30 @@ import java.util.LinkedList;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SelectByInternalPointAction;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Manages the selection of a rectangle. Listening to left and right mouse button
+ * Manages the selection of a rectangle or a lasso loop. Listening to left and right mouse button
  * presses and to mouse motions and draw the rectangle accordingly.
  *
  * Left mouse button selects a rectangle from the press until release. Pressing
- * right mouse button while left is still pressed enable the rectangle to move
+ * right mouse button while left is still pressed enable the selection area to move
  * around. Releasing the left button fires an action event to the listener given
  * at constructor, except if the right is still pressed, which just remove the
  * selection rectangle and does nothing.
  *
+ * It is possible to switch between lasso selection and rectangle selection by using {@link #setLassoMode(boolean)}.
+ *
  * The point where the left mouse button was pressed and the current mouse
  * position are two opposite corners of the selection rectangle.
  *
- * It is possible to specify an aspect ratio (width per height) which the
+ * For rectangle mode, it is possible to specify an aspect ratio (width per height) which the
  * selection rectangle always must have. In this case, the selection rectangle
  * will be the largest window with this aspect ratio, where the position the left
  * mouse button was pressed and the corner of the current mouse position are at
@@ -55,9 +62,10 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     public interface SelectionEnded {
         /**
          * Called, when the left mouse button was released.
-         * @param r The rectangle that is currently the selection.
+         * @param r The rectangle that encloses the current selection.
          * @param e The mouse event.
          * @see InputEvent#getModifiersEx()
+         * @see SelectionManager#getSelectedObjects(boolean)
          */
         void selectionEnded(Rectangle r, MouseEvent e);
 
@@ -74,21 +82,47 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
          */
         void removePropertyChangeListener(PropertyChangeListener listener);
     }
+
+    /**
+     * This draws the selection hint (rectangle or lasso polygon) on the screen.
+     *
+     * @author Michael Zangl
+     */
+    private class SelectionHintLayer implements MapViewPaintable {
+        @Override
+        public void paint(Graphics2D g, MapView mv, Bounds bbox) {
+            if (mousePos == null || mousePosStart == null || mousePos == mousePosStart)
+                return;
+            Color color = Utils.complement(PaintColors.getBackgroundColor());
+            g.setColor(color);
+            if (lassoMode) {
+                g.drawPolygon(lasso);
+
+                g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 8));
+                g.fillPolygon(lasso);
+            } else {
+                Rectangle paintRect = getSelectionRectangle();
+                g.drawRect(paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+            }
+        }
+    }
+
     /**
      * The listener that receives the events after left mouse button is released.
      */
     private final SelectionEnded selectionEndedListener;
     /**
      * Position of the map when the mouse button was pressed.
-     * If this is not <code>null</code>, a rectangle is drawn on screen.
+     * If this is not <code>null</code>, a rectangle/lasso line is drawn on screen.
+     * If this is <code>null</code>, no selection is active.
      */
     private Point mousePosStart;
     /**
-     * Position of the map when the selection rectangle was last drawn.
+     * The last position of the mouse while the mouse button was pressed.
      */
     private Point mousePos;
     /**
-     * The Component, the selection rectangle is drawn onto.
+     * The Component that provides us with OSM data and the aspect is taken from.
      */
     private final NavigatableComponent nc;
     /**
@@ -97,8 +131,21 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     private boolean aspectRatio;
 
+    /**
+     * <code>true</code> if we should paint a lasso instead of a rectangle.
+     */
     private boolean lassoMode;
+    /**
+     * The polygon to store the selection outline if {@link #lassoMode} is used.
+     */
     private Polygon lasso = new Polygon();
+
+    /**
+     * The result of the last selection.
+     */
+    private Polygon selectionResult = new Polygon();
+
+    private final SelectionHintLayer selectionHintLayer = new SelectionHintLayer();
 
     /**
      * Create a new SelectionManager.
@@ -107,7 +154,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      *      the left button is released.
      * @param aspectRatio If true, the selection window must obtain the aspect
      *      ratio of the drawComponent.
-     * @param navComp The component, the rectangle is drawn onto.
+     * @param navComp The component that provides us with OSM data and the aspect is taken from.
      */
     public SelectionManager(SelectionEnded selectionEndedListener, boolean aspectRatio, NavigatableComponent navComp) {
         this.selectionEndedListener = selectionEndedListener;
@@ -116,11 +163,11 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     }
 
     /**
-     * Register itself at the given event source.
+     * Register itself at the given event source and add a hint layer.
      * @param eventSource The emitter of the mouse events.
      * @param lassoMode {@code true} to enable lasso mode, {@code false} to disable it.
      */
-    public void register(NavigatableComponent eventSource, boolean lassoMode) {
+    public void register(MapView eventSource, boolean lassoMode) {
        this.lassoMode = lassoMode;
         eventSource.addMouseListener(this);
         eventSource.addMouseMotionListener(this);
@@ -128,20 +175,19 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         eventSource.addPropertyChangeListener("scale", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if (mousePosStart != null) {
-                    paintRect();
-                    mousePos = mousePosStart = null;
-                }
+                abortSelecting();
             }
         });
+        eventSource.addTemporaryLayer(selectionHintLayer);
     }
     /**
-     * Unregister itself from the given event source. If a selection rectangle is
-     * shown, hide it first.
+     * Unregister itself from the given event source and hide the selection hint layer.
      *
      * @param eventSource The emitter of the mouse events.
      */
-    public void unregister(Component eventSource) {
+    public void unregister(MapView eventSource) {
+        abortSelecting();
+        eventSource.removeTemporaryLayer(selectionHintLayer);
         eventSource.removeMouseListener(this);
         eventSource.removeMouseMotionListener(this);
         selectionEndedListener.removePropertyChangeListener(this);
@@ -175,24 +221,29 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             if (mousePosStart == null) {
                 mousePosStart = mousePos = e.getPoint();
             }
-            if (!lassoMode) {
-                paintRect();
-            }
+            selectionAreaChanged();
         }
 
         if (buttonPressed == MouseEvent.BUTTON1_DOWN_MASK) {
             mousePos = e.getPoint();
-            if (lassoMode) {
-                paintLasso();
-            } else {
-                paintRect();
-            }
+            addLassoPoint(e.getPoint());
+            selectionAreaChanged();
         } else if (buttonPressed == (MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK)) {
-            mousePosStart.x += e.getX()-mousePos.x;
-            mousePosStart.y += e.getY()-mousePos.y;
+            moveSelection(e.getX()-mousePos.x, e.getY()-mousePos.y);
             mousePos = e.getPoint();
-            paintRect();
+            selectionAreaChanged();
         }
+    }
+
+    /**
+     * Moves the current selection by some pixels.
+     * @param dx How much to move it in x direction.
+     * @param dy How much to move it in y direction.
+     */
+    private void moveSelection(int dx, int dy) {
+        mousePosStart.x += dx;
+        mousePosStart.y += dy;
+        lasso.translate(dx, dy);
     }
 
     /**
@@ -200,45 +251,39 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.getButton() != MouseEvent.BUTTON1)
-            return;
-        if (mousePos == null || mousePosStart == null)
-            return; // injected release from outside
-        // disable the selection rect
-        Rectangle r;
-        if (!lassoMode) {
-            nc.requestClearRect();
-            r = getSelectionRectangle();
-
-            lasso = rectToPolygon(r);
-        } else {
-            nc.requestClearPoly();
-            lasso.addPoint(mousePos.x, mousePos.y);
-            r = lasso.getBounds();
-        }
-        mousePosStart = null;
-        mousePos = null;
-
-        if ((e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == 0) {
-            selectionEndedListener.selectionEnded(r, e);
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            endSelecting(e);
         }
     }
 
     /**
-     * Draws a selection rectangle on screen.
+     * Ends the selection of the current area. This simulates a release of mouse button 1.
+     * @param e A mouse event that caused this. Needed for backward compatibility.
      */
-    private void paintRect() {
-        if (mousePos == null || mousePosStart == null || mousePos == mousePosStart)
-            return;
-        nc.requestPaintRect(getSelectionRectangle());
+    public void endSelecting(MouseEvent e) {
+        mousePos = e.getPoint();
+        if (lassoMode) {
+            addLassoPoint(e.getPoint());
+        }
+
+        // Left mouse was released while right is still pressed.
+        boolean rightMouseStillPressed = (e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) != 0;
+
+        if (!rightMouseStillPressed) {
+            selectingDone(e);
+        }
+        abortSelecting();
     }
 
-    private void paintLasso() {
-        if (mousePos == null || mousePosStart == null || mousePos == mousePosStart) {
+    private void addLassoPoint(Point point) {
+        if (isNoSelection()) {
             return;
         }
-        lasso.addPoint(mousePos.x, mousePos.y);
-        nc.requestPaintPoly(lasso);
+        lasso.addPoint(point.x, point.y);
+    }
+
+    private boolean isNoSelection() {
+        return mousePos == null || mousePosStart == null || mousePos == mousePosStart;
     }
 
     /**
@@ -286,15 +331,49 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if ("active".equals(evt.getPropertyName()) && !(Boolean) evt.getNewValue() && mousePosStart != null) {
-            paintRect();
-            mousePosStart = null;
-            mousePos = null;
+        if ("active".equals(evt.getPropertyName()) && !(Boolean)evt.getNewValue()) {
+            abortSelecting();
         }
     }
 
     /**
-     * Return a list of all objects in the selection, respecting the different
+     * Stores the  current selection and stores the result in {@link #selectionResult} to  be retrieved by {@link #getSelectedObjects(boolean)} later.
+     * @param e The mouse event that caused the selection to be finished.
+     */
+    private void selectingDone(MouseEvent e) {
+        if (isNoSelection()) {
+            // Nothing selected.
+            return;
+        }
+        Rectangle r;
+        if (lassoMode) {
+            r = lasso.getBounds();
+
+            selectionResult = new Polygon(lasso.xpoints, lasso.ypoints, lasso.npoints);
+        } else {
+            r = getSelectionRectangle();
+
+            selectionResult = rectToPolygon(r);
+        }
+        selectionEndedListener.selectionEnded(r, e);
+    }
+
+    private void abortSelecting() {
+        if (mousePosStart != null) {
+            mousePos = mousePosStart = null;
+            lasso.reset();
+            selectionAreaChanged();
+        }
+    }
+
+    private void selectionAreaChanged() {
+        // Trigger a redraw of the map view.
+        // A nicer way would be to provide change events for the temporary layer.
+        Main.map.mapView.repaint();
+    }
+
+    /**
+     * Return a list of all objects in the active/last selection, respecting the different
      * modifier.
      *
      * @param alt Whether the alt key was pressed, which means select all
@@ -307,13 +386,13 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 
         // whether user only clicked, not dragged.
         boolean clicked = false;
-        Rectangle bounding = lasso.getBounds();
+        Rectangle bounding = selectionResult.getBounds();
         if (bounding.height <= 2 && bounding.width <= 2) {
             clicked = true;
         }
 
         if (clicked) {
-            Point center = new Point(lasso.xpoints[0], lasso.ypoints[0]);
+            Point center = new Point(selectionResult.xpoints[0], selectionResult.ypoints[0]);
             OsmPrimitive osm = nc.getNearestNodeOrWay(center, OsmPrimitive.isSelectablePredicate, false);
             if (osm != null) {
                 selection.add(osm);
@@ -321,7 +400,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         } else {
             // nodes
             for (Node n : nc.getCurrentDataSet().getNodes()) {
-                if (n.isSelectable() && lasso.contains(nc.getPoint2D(n))) {
+                if (n.isSelectable() && selectionResult.contains(nc.getPoint2D(n))) {
                     selection.add(n);
                 }
             }
@@ -333,7 +412,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 }
                 if (alt) {
                     for (Node n : w.getNodes()) {
-                        if (!n.isIncomplete() && lasso.contains(nc.getPoint2D(n))) {
+                        if (!n.isIncomplete() && selectionResult.contains(nc.getPoint2D(n))) {
                             selection.add(w);
                             break;
                         }
@@ -341,7 +420,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 } else {
                     boolean allIn = true;
                     for (Node n : w.getNodes()) {
-                        if (!n.isIncomplete() && !lasso.contains(nc.getPoint(n))) {
+                        if (!n.isIncomplete() && !selectionResult.contains(nc.getPoint(n))) {
                             allIn = false;
                             break;
                         }
