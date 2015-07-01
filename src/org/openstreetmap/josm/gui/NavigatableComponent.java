@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.util.CursorManager;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -186,6 +187,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     private Polygon paintPoly = null;
 
     protected transient ViewportData initialViewport;
+
+    protected transient final CursorManager cursorManager = new CursorManager(this);
 
     /**
      * Constructs a new {@code NavigatableComponent}.
@@ -1436,30 +1439,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return (int) id.getValue();
     }
 
-    private static class CursorInfo {
-        private final Cursor cursor;
-        private final Object object;
-
-        public CursorInfo(Cursor c, Object o) {
-            cursor = c;
-            object = o;
-        }
-    }
-
-    private LinkedList<CursorInfo> cursors = new LinkedList<>();
-
     /**
      * Set new cursor.
      */
     public void setNewCursor(Cursor cursor, Object reference) {
-        if (!cursors.isEmpty()) {
-            CursorInfo l = cursors.getLast();
-            if (l != null && l.cursor == cursor && l.object == reference)
-                return;
-            stripCursors(reference);
-        }
-        cursors.add(new CursorInfo(cursor, reference));
-        setCursor(cursor);
+        cursorManager.setNewCursor(cursor, reference);
     }
 
     public void setNewCursor(int cursor, Object reference) {
@@ -1470,29 +1454,15 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Remove the new cursor and reset to previous
      */
     public void resetCursor(Object reference) {
-        if (cursors.isEmpty()) {
-            setCursor(null);
-            return;
-        }
-        CursorInfo l = cursors.getLast();
-        stripCursors(reference);
-        if (l != null && l.object == reference) {
-            if (cursors.isEmpty()) {
-                setCursor(null);
-            } else {
-                setCursor(cursors.getLast().cursor);
-            }
-        }
+        cursorManager.resetCursor(reference);
     }
 
-    private void stripCursors(Object reference) {
-        LinkedList<CursorInfo> c = new LinkedList<>();
-        for (CursorInfo i : cursors) {
-            if (i.object != reference) {
-                c.add(i);
-            }
-        }
-        cursors = c;
+    /**
+     * Gets the cursor manager that is used for this NavigatableComponent.
+     * @return The cursor manager.
+     */
+    public CursorManager getCursorManager() {
+        return cursorManager;
     }
 
     @Override
