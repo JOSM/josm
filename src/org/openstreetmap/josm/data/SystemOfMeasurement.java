@@ -23,6 +23,7 @@ public class SystemOfMeasurement {
 
     /**
      * Interface to notify listeners of the change of the system of measurement.
+     * @since 8554
      */
     public interface SoMChangeListener {
         /**
@@ -73,18 +74,20 @@ public class SystemOfMeasurement {
     private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
-     * Removes a global SoM change listener
+     * Removes a global SoM change listener.
      *
      * @param listener the listener. Ignored if null or already absent
+     * @since 8554
      */
     public static void removeSoMChangeListener(SoMChangeListener listener) {
         somChangeListeners.remove(listener);
     }
 
     /**
-     * Adds a SoM change listener
+     * Adds a SoM change listener.
      *
      * @param listener the listener. Ignored if null or already registered.
+     * @since 8554
      */
     public static void addSoMChangeListener(SoMChangeListener listener) {
         if (listener != null) {
@@ -101,6 +104,7 @@ public class SystemOfMeasurement {
     /**
      * Returns the current global system of measurement.
      * @return The current system of measurement (metric system by default).
+     * @since 8554
      */
     public static SystemOfMeasurement getSystemOfMeasurement() {
         SystemOfMeasurement som = SystemOfMeasurement.ALL_SYSTEMS.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get());
@@ -113,6 +117,7 @@ public class SystemOfMeasurement {
      * Sets the current global system of measurement.
      * @param somKey The system of measurement key. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
      * @throws IllegalArgumentException if {@code somKey} is not known
+     * @since 8554
      */
     public static void setSystemOfMeasurement(String somKey) {
         if (!SystemOfMeasurement.ALL_SYSTEMS.containsKey(somKey)) {
