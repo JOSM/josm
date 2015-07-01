@@ -7,15 +7,31 @@ import java.text.NumberFormat;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 
 /**
  * A system of units used to express length and area measurements.
+ * <p>
+ * This class also manages one globally set system of measurement stored in the {@link ProjectionPreference}
  * @since 3406 (creation)
  * @since 6992 (extraction in this package)
  */
 public class SystemOfMeasurement {
+
+    /**
+     * Interface to notify listeners of the change of the system of measurement.
+     */
+    public interface SoMChangeListener {
+        /**
+         * The current SoM has changed.
+         * @param oldSoM The old system of measurement
+         * @param newSoM The new (current) system of measurement
+         */
+        void systemOfMeasurementChanged(String oldSoM, String newSoM);
+    }
 
     /**
      * Metric system (international standard).
@@ -52,6 +68,60 @@ public class SystemOfMeasurement {
         ALL_SYSTEMS.put(marktr("Chinese"), CHINESE);
         ALL_SYSTEMS.put(marktr("Imperial"), IMPERIAL);
         ALL_SYSTEMS.put(marktr("Nautical Mile"), NAUTICAL_MILE);
+    }
+
+    private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<>();
+
+    /**
+     * Removes a global SoM change listener
+     *
+     * @param listener the listener. Ignored if null or already absent
+     */
+    public static void removeSoMChangeListener(SoMChangeListener listener) {
+        somChangeListeners.remove(listener);
+    }
+
+    /**
+     * Adds a SoM change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     */
+    public static void addSoMChangeListener(SoMChangeListener listener) {
+        if (listener != null) {
+            somChangeListeners.addIfAbsent(listener);
+        }
+    }
+
+    protected static void fireSoMChanged(String oldSoM, String newSoM) {
+        for (SoMChangeListener l : somChangeListeners) {
+            l.systemOfMeasurementChanged(oldSoM, newSoM);
+        }
+    }
+
+    /**
+     * Returns the current global system of measurement.
+     * @return The current system of measurement (metric system by default).
+     */
+    public static SystemOfMeasurement getSystemOfMeasurement() {
+        SystemOfMeasurement som = SystemOfMeasurement.ALL_SYSTEMS.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get());
+        if (som == null)
+            return SystemOfMeasurement.METRIC;
+        return som;
+    }
+
+    /**
+     * Sets the current global system of measurement.
+     * @param somKey The system of measurement key. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
+     * @throws IllegalArgumentException if {@code somKey} is not known
+     */
+    public static void setSystemOfMeasurement(String somKey) {
+        if (!SystemOfMeasurement.ALL_SYSTEMS.containsKey(somKey)) {
+            throw new IllegalArgumentException("Invalid system of measurement: "+somKey);
+        }
+        String oldKey = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
+        if (ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.put(somKey)) {
+            fireSoMChanged(oldKey, somKey);
+        }
     }
 
     /** First value, in meters, used to translate unit according to above formula. */

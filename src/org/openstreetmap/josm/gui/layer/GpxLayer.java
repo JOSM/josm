@@ -25,6 +25,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
@@ -149,7 +150,7 @@ public class GpxLayer extends Layer {
                 info.append("</td><td>");
                 info.append(getTimespanForTrack(trk));
                 info.append("</td><td>");
-                info.append(NavigatableComponent.getSystemOfMeasurement().getDistText(trk.length()));
+                info.append(SystemOfMeasurement.getSystemOfMeasurement().getDistText(trk.length()));
                 info.append("</td><td>");
                 if (trk.getAttributes().containsKey("url")) {
                     info.append(trk.get("url"));
@@ -159,7 +160,7 @@ public class GpxLayer extends Layer {
             info.append("</table><br><br>");
         }
 
-        info.append(tr("Length: {0}", NavigatableComponent.getSystemOfMeasurement().getDistText(data.length()))).append("<br>")
+        info.append(tr("Length: {0}", SystemOfMeasurement.getSystemOfMeasurement().getDistText(data.length()))).append("<br>")
             .append(trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size())).append(
                 trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>");
 
@@ -221,7 +222,7 @@ public class GpxLayer extends Layer {
         info.append(trn("{0} track, ", "{0} tracks, ", data.tracks.size(), data.tracks.size()))
             .append(trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size()))
             .append(trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>")
-            .append(tr("Length: {0}", NavigatableComponent.getSystemOfMeasurement().getDistText(data.length())))
+            .append(tr("Length: {0}", SystemOfMeasurement.getSystemOfMeasurement().getDistText(data.length())))
             .append("<br></html>");
         return info.toString();
     }

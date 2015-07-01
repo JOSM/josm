@@ -32,10 +32,10 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -82,7 +82,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
          */
         @Override
         public String toString() {
-            return NavigatableComponent.getSystemOfMeasurement().getDistText(value);
+            return SystemOfMeasurement.getSystemOfMeasurement().getDistText(value);
         }
     }
 

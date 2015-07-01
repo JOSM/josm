@@ -53,13 +53,13 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
+import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
-import org.openstreetmap.josm.gui.NavigatableComponent.SoMChangeListener;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
@@ -864,7 +864,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             });
         }
 
-        NavigatableComponent.addSoMChangeListener(somListener = new SoMChangeListener() {
+        SystemOfMeasurement.addSoMChangeListener(somListener = new SoMChangeListener() {
             @Override
             public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
                 setDist(distValue);
@@ -907,7 +907,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      * @since 6960
      */
     public void updateSystemOfMeasurement(String newsom) {
-        NavigatableComponent.setSystemOfMeasurement(newsom);
+        SystemOfMeasurement.setSystemOfMeasurement(newsom);
         if (Main.pref.getBoolean("statusbar.notify.change-system-of-measurement", true)) {
             new Notification(tr("System of measurement changed to {0}", newsom))
                 .setDuration(Notification.TIME_SHORT)
@@ -1019,7 +1019,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
     @Override
     public void destroy() {
-        NavigatableComponent.removeSoMChangeListener(somListener);
+        SystemOfMeasurement.removeSoMChangeListener(somListener);
         Main.pref.removePreferenceChangeListener(this);
 
         // MapFrame gets destroyed when the last layer is removed, but the status line background

@@ -31,7 +31,6 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -423,7 +422,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             // TODO: Very simple snapping
             // - Snap steps relative to the distance?
             double snapDistance;
-            SystemOfMeasurement som = NavigatableComponent.getSystemOfMeasurement();
+            SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
             if (som.equals(SystemOfMeasurement.CHINESE)) {
                 snapDistance = snapDistanceChinese * SystemOfMeasurement.CHINESE.aValue;
             } else if (som.equals(SystemOfMeasurement.IMPERIAL)) {

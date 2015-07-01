@@ -51,7 +51,6 @@ import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -78,13 +77,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Interface to notify listeners of the change of the system of measurement.
      * @since 6056
      */
-    public interface SoMChangeListener {
-        /**
-         * The current SoM has changed.
-         * @param oldSoM The old system of measurement
-         * @param newSoM The new (current) system of measurement
-         */
-        void systemOfMeasurementChanged(String oldSoM, String newSoM);
+    @Deprecated
+    public interface SoMChangeListener extends SystemOfMeasurement.SoMChangeListener {
     }
 
     public transient Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
@@ -137,7 +131,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Removes a SoM change listener
@@ -145,8 +138,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param listener the listener. Ignored if null or already absent
      * @since 6056
      */
+    @Deprecated
     public static void removeSoMChangeListener(NavigatableComponent.SoMChangeListener listener) {
-        somChangeListeners.remove(listener);
+        SystemOfMeasurement.removeSoMChangeListener(listener);
     }
 
     /**
@@ -155,25 +149,33 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param listener the listener. Ignored if null or already registered.
      * @since 6056
      */
+    @Deprecated
     public static void addSoMChangeListener(NavigatableComponent.SoMChangeListener listener) {
-        if (listener != null) {
-            somChangeListeners.addIfAbsent(listener);
-        }
-    }
-
-    protected static void fireSoMChanged(String oldSoM, String newSoM) {
-        for (SoMChangeListener l : somChangeListeners) {
-            l.systemOfMeasurementChanged(oldSoM, newSoM);
-        }
+        SystemOfMeasurement.addSoMChangeListener(listener);
     }
 
     /**
-     * The scale factor in x or y-units per pixel. This means, if scale = 10,
-     * every physical pixel on screen are 10 x or 10 y units in the
-     * northing/easting space of the projection.
+     * Returns the current system of measurement.
+     * @return The current system of measurement (metric system by default).
+     * @since 3490
      */
-    private double scale = Main.getProjection().getDefaultZoomInPPD();
+    @Deprecated
+    public static SystemOfMeasurement getSystemOfMeasurement() {
+        return SystemOfMeasurement.getSystemOfMeasurement();
+    }
 
+    /**
+     * Sets the current system of measurement.
+     * @param somKey The system of measurement key. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
+     * @throws IllegalArgumentException if {@code somKey} is not known
+     * @since 6056
+     */
+    @Deprecated
+    public static void setSystemOfMeasurement(String somKey) {
+        SystemOfMeasurement.setSystemOfMeasurement(somKey);
+    }
+
+    private double scale = Main.getProjection().getDefaultZoomInPPD();
     /**
      * Center n/e coordinate of the desired screen center.
      */
@@ -211,7 +213,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @since 3406
      */
     public static String getDistText(double dist) {
-        return getSystemOfMeasurement().getDistText(dist);
+        return SystemOfMeasurement.getSystemOfMeasurement().getDistText(dist);
     }
 
     /**
@@ -223,7 +225,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @since 7135
      */
     public static String getDistText(final double dist, final NumberFormat format, final double threshold) {
-        return getSystemOfMeasurement().getDistText(dist, format, threshold);
+        return SystemOfMeasurement.getSystemOfMeasurement().getDistText(dist, format, threshold);
     }
 
     /**
@@ -233,7 +235,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @since 5560
      */
     public static String getAreaText(double area) {
-        return getSystemOfMeasurement().getAreaText(area);
+        return SystemOfMeasurement.getSystemOfMeasurement().getAreaText(area);
     }
 
     /**
@@ -245,7 +247,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @since 7135
      */
     public static String getAreaText(final double area, final NumberFormat format, final double threshold) {
-        return getSystemOfMeasurement().getAreaText(area, format, threshold);
+        return SystemOfMeasurement.getSystemOfMeasurement().getAreaText(area, format, threshold);
     }
 
     public String getDist100PixelText() {
@@ -1432,34 +1434,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         CRC32 id = new CRC32();
         id.update(x.getBytes(StandardCharsets.UTF_8));
         return (int) id.getValue();
-    }
-
-    /**
-     * Returns the current system of measurement.
-     * @return The current system of measurement (metric system by default).
-     * @since 3490
-     */
-    public static SystemOfMeasurement getSystemOfMeasurement() {
-        SystemOfMeasurement som = SystemOfMeasurement.ALL_SYSTEMS.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get());
-        if (som == null)
-            return SystemOfMeasurement.METRIC;
-        return som;
-    }
-
-    /**
-     * Sets the current system of measurement.
-     * @param somKey The system of measurement key. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
-     * @throws IllegalArgumentException if {@code somKey} is not known
-     * @since 6056
-     */
-    public static void setSystemOfMeasurement(String somKey) {
-        if (!SystemOfMeasurement.ALL_SYSTEMS.containsKey(somKey)) {
-            throw new IllegalArgumentException("Invalid system of measurement: "+somKey);
-        }
-        String oldKey = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
-        if (ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.put(somKey)) {
-            fireSoMChanged(oldKey, somKey);
-        }
     }
 
     private static class CursorInfo {

@@ -29,7 +29,6 @@ import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -383,7 +382,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
 
         int i = unitsCombo.getSelectedIndex();
-        NavigatableComponent.setSystemOfMeasurement(unitsValues[i]);
+        SystemOfMeasurement.setSystemOfMeasurement(unitsValues[i]);
 
         return false;
     }
