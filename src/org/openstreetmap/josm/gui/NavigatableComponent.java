@@ -77,6 +77,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Interface to notify listeners of the change of the system of measurement.
      * @since 6056
+     * @deprecated use {@link org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener} instead.
      */
     @Deprecated
     public interface SoMChangeListener extends SystemOfMeasurement.SoMChangeListener {
@@ -134,10 +135,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
 
     /**
-     * Removes a SoM change listener
+     * Removes a SoM change listener.
      *
      * @param listener the listener. Ignored if null or already absent
      * @since 6056
+     * @deprecated use {@link SystemOfMeasurement#removeSoMChangeListener} instead.
      */
     @Deprecated
     public static void removeSoMChangeListener(NavigatableComponent.SoMChangeListener listener) {
@@ -149,6 +151,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @param listener the listener. Ignored if null or already registered.
      * @since 6056
+     * @deprecated use {@link SystemOfMeasurement#addSoMChangeListener} instead.
      */
     @Deprecated
     public static void addSoMChangeListener(NavigatableComponent.SoMChangeListener listener) {
@@ -159,6 +162,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Returns the current system of measurement.
      * @return The current system of measurement (metric system by default).
      * @since 3490
+     * @deprecated use {@link SystemOfMeasurement#getSoMChangeListener} instead.
      */
     @Deprecated
     public static SystemOfMeasurement getSystemOfMeasurement() {
@@ -170,6 +174,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param somKey The system of measurement key. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
      * @throws IllegalArgumentException if {@code somKey} is not known
      * @since 6056
+     * @deprecated use {@link SystemOfMeasurement#setSoMChangeListener} instead.
      */
     @Deprecated
     public static void setSystemOfMeasurement(String somKey) {
@@ -188,7 +193,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     protected transient ViewportData initialViewport;
 
-    protected transient final CursorManager cursorManager = new CursorManager(this);
+    protected final transient CursorManager cursorManager = new CursorManager(this);
 
     /**
      * Constructs a new {@code NavigatableComponent}.

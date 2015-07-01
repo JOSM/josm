@@ -52,6 +52,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
@@ -349,7 +350,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         zoomSlider.setFocusTraversalKeysEnabled(Shortcut.findShortcut(KeyEvent.VK_TAB, 0) == null);
 
         MapScaler scaler = new MapScaler(forMapView);
-        scaler.setLocation(10,30);
+        scaler.setLocation(10, 30);
 
         return Arrays.asList(zoomSlider, scaler);
     }
@@ -690,7 +691,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
                     }
             );
             Collections.reverse(ret);
-            return ret;            
+            return ret;
         } finally {
             layerLock.readLock().unlock();
         }
@@ -965,7 +966,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     }
 
     private OsmDataLayer findNewEditLayer(List<Layer> layersList) {
-        OsmDataLayer newEditLayer = layersList.contains(editLayer)?editLayer:null;
+        OsmDataLayer newEditLayer = layersList.contains(editLayer) ? editLayer : null;
         // Find new edit layer
         if (activeLayer != editLayer || !layersList.contains(editLayer)) {
             if (activeLayer instanceof OsmDataLayer && layersList.contains(activeLayer)) {
@@ -1013,7 +1014,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
      * Sets the active layer. Propagates this change to all map buttons.
      * @param layer The layer to be active.
      * @param setEditLayer if this is <code>true</code>, the edit layer is also set.
-     * @return
+     * @return {@code true} if the active layer has changed, {@code false otherwise}
      */
     private boolean setActiveLayer(final Layer layer, boolean setEditLayer) {
         if (layer != null && !layers.contains(layer))
@@ -1022,7 +1023,6 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         if (layer == activeLayer)
             return false;
 
-        Layer old = activeLayer;
         activeLayer = layer;
         if (setEditLayer) {
             setEditLayer(layers);
@@ -1053,7 +1053,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
          * that I switch layers and actions at the same time and it was annoying to mind the
          * order. This way it works as visual clue for new users */
         for (final AbstractButton b: Main.map.allMapModeButtons) {
-            MapMode mode = (MapMode)b.getAction();
+            MapMode mode = (MapMode) b.getAction();
             final boolean activeLayerSupported = mode.layerIsSupported(activeLayer);
             if (activeLayerSupported) {
                 Main.registerActionShortcut(mode, mode.getShortcut()); //fix #6876
@@ -1271,7 +1271,8 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
     @Override
     public void repaint(long tm, int x, int y, int width, int height) {
-        // This is the main repaint method, all other methods are convenience methods and simply call this method. This is just an observation, not a must, but seems to be true for all implementations I found so far.
+        // This is the main repaint method, all other methods are convenience methods and simply call this method.
+        // This is just an observation, not a must, but seems to be true for all implementations I found so far.
         if (repaintListeners != null) {
             // Might get called early in super constructor
             for (RepaintListener l : repaintListeners) {

@@ -1364,7 +1364,7 @@ public class Preferences {
                 JsonValue value = e.getValue();
                 if (value instanceof JsonString) {
                     // in some cases, when JsonValue.toString() is called, then additional quotation marks are left in value
-                    ret.put(e.getKey(), ((JsonString)value).getString());
+                    ret.put(e.getKey(), ((JsonString) value).getString());
                 } else {
                     ret.put(e.getKey(), e.getValue().toString());
                 }

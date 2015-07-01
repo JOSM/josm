@@ -49,6 +49,7 @@ public class EastNorth extends Coordinate {
      * This produces result = en2 - this.
      * @param en2 The instance to subtract this one from.
      * @return The new EastNorth position.
+     * @deprecated use {@code subtract} on the other EastNorth instead
      */
     @Deprecated
     public EastNorth sub(EastNorth en2) {

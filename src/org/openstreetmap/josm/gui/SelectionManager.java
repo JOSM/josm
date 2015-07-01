@@ -331,13 +331,14 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if ("active".equals(evt.getPropertyName()) && !(Boolean)evt.getNewValue()) {
+        if ("active".equals(evt.getPropertyName()) && !(Boolean) evt.getNewValue()) {
             abortSelecting();
         }
     }
 
     /**
-     * Stores the  current selection and stores the result in {@link #selectionResult} to  be retrieved by {@link #getSelectedObjects(boolean)} later.
+     * Stores the  current selection and stores the result in {@link #selectionResult} to  be retrieved by
+     * {@link #getSelectedObjects(boolean)} later.
      * @param e The mouse event that caused the selection to be finished.
      */
     private void selectingDone(MouseEvent e) {

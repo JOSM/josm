@@ -44,8 +44,6 @@ public class WMSLayer extends AbstractTileSourceLayer {
      * Constructs a new {@code WMSLayer}.
      * @param info ImageryInfo description of the layer
      */
-
-
     public WMSLayer(ImageryInfo info) {
         super(info);
         this.supportedProjections = info.getServerProjections();
@@ -149,7 +147,5 @@ public class WMSLayer extends AbstractTileSourceLayer {
         if (!newValue.equals(oldValue) && tileSource instanceof TemplatedWMSTileSource) {
             ((TemplatedWMSTileSource) tileSource).initProjection(newValue);
         }
-
     }
-
 }
