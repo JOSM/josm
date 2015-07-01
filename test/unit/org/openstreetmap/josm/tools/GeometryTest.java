@@ -2,9 +2,8 @@
 package org.openstreetmap.josm.tools;
 
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.BeforeClass;
-
+import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.EastNorth;
 
@@ -29,14 +28,14 @@ public class GeometryTest {
         EastNorth p4 = new EastNorth(-9477814.628697459, 1.5392962142181376E7);
 
         EastNorth intersectionPoint = Geometry.getLineLineIntersection(p1, p2, p3, p4);
-        
-        EastNorth d1 = intersectionPoint.sub(p3);
-        EastNorth d2 = p2.sub(p1);
+
+        EastNorth d1 = p3.subtract(intersectionPoint);
+        EastNorth d2 = p1.subtract(p2);
         Double crossProduct = d1.east()*d2.north() - d1.north()*d2.east();
         Double scalarProduct = d1.east()*d2.east() + d1.north()*d2.north();
         Double len1 = d1.length();
         Double len2 = d2.length();
-        
+
         Double angle1 = Geometry.getCornerAngle(p1, p2, intersectionPoint);
         Double angle2 = Geometry.getCornerAngle(p3, p4, intersectionPoint);
         Assert.assertTrue("intersection point not on line, angle: " + angle1,

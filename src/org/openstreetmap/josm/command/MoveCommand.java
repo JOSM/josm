@@ -68,7 +68,7 @@ public class MoveCommand extends Command {
      * @param position The new location (lat/lon)
      */
     public MoveCommand(Node node, LatLon position) {
-        this(Collections.singleton((OsmPrimitive) node), node.getEastNorth().sub(Projections.project(position)));
+        this(Collections.singleton((OsmPrimitive) node), Projections.project(position).subtract(node.getEastNorth()));
     }
 
     /**

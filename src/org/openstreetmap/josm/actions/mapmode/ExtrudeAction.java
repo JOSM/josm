@@ -473,8 +473,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 if (mode == Mode.extrude || mode == Mode.create_new) {
                     // nothing here
                 } else if (mode == Mode.translate) {
-                    EastNorth movement1 = initialN1en.sub(newN1en);
-                    EastNorth movement2 = initialN2en.sub(newN2en);
+                    EastNorth movement1 = newN1en.subtract(initialN1en);
+                    EastNorth movement2 = newN2en.subtract(initialN2en);
                     // move nodes to new position
                     if (moveCommand == null || moveCommand2 == null) {
                         // make a new move commands
@@ -733,7 +733,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     private EastNorth calculateBestMovement(EastNorth mouseEn) {
 
         EastNorth initialMouseEn = Main.map.mapView.getEastNorth(initialMousePos.x, initialMousePos.y);
-        EastNorth mouseMovement = initialMouseEn.sub(mouseEn);
+        EastNorth mouseMovement = mouseEn.subtract(initialMouseEn);
 
         double bestDistance = Double.POSITIVE_INFINITY;
         EastNorth bestMovement = null;
@@ -781,7 +781,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             return null;
         else
             //return distance form base to target position
-            return intersectionPoint.sub(targetPos);
+            return targetPos.subtract(intersectionPoint);
     }
 
     /**

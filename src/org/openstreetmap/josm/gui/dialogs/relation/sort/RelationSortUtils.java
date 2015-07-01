@@ -40,8 +40,8 @@ final class RelationSortUtils {
             EastNorth en2 = w.getNode(1).getEastNorth();
             EastNorth en3 = w.getNode(2).getEastNorth();
             if (en1 != null && en2 != null && en3 != null) {
-                en1 = en1.sub(en2);
-                en2 = en2.sub(en3);
+                en1 = en2.subtract(en1);
+                en2 = en3.subtract(en2);
                 return en1.north() * en2.east() - en2.north() * en1.east() > 0 ? ROUNDABOUT_LEFT : ROUNDABOUT_RIGHT;
             }
         }

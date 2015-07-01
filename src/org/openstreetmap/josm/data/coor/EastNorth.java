@@ -24,23 +24,66 @@ public class EastNorth extends Coordinate {
         return y;
     }
 
-    public EastNorth add(double dx, double dy) {
-        return new EastNorth(x+dx, y+dy);
+    /**
+     * Adds an offset to this {@link EastNorth} instance and returns the result.
+     * @param dEast The offset to add in east direction.
+     * @param dNorth The offset to add in north direction.
+     * @return The result.
+     */
+    public EastNorth add(double dEast, double dNorth) {
+        return new EastNorth(east()+dEast, north()+dNorth);
     }
 
+    /**
+     * Adds the coordinates of an other EastNorth instance to this one.
+     * @param other The other instance.
+     * @return The new EastNorth position.
+     */
     public EastNorth add(EastNorth other) {
         return new EastNorth(x+other.x, y+other.y);
+    }
+
+    /**
+     * Subtracts the coordinates of this EastNorth instance from the other one.
+     * <p>
+     * This produces result = en2 - this.
+     * @param en2 The instance to subtract this one from.
+     * @return The new EastNorth position.
+     */
+    @Deprecated
+    public EastNorth sub(EastNorth en2) {
+        return en2.subtract(this);
+    }
+
+    /**
+     * Subtracts an east/north value from this point.
+     * @param other The other value to subtract from this.
+     * @return A point with the new coordinates.
+     */
+    public EastNorth subtract(EastNorth other) {
+        return new EastNorth(x-other.x, y-other.y);
     }
 
     public EastNorth scale(double s) {
         return new EastNorth(s * x, s * y);
     }
 
+    /**
+     * Does a linear interpolation between two EastNorth instances.
+     * @param en2 The other EstNort instance.
+     * @param proportion The proportion the other instance influences the result.
+     * @return The new {@link EastNorth} position.
+     */
     public EastNorth interpolate(EastNorth en2, double proportion) {
         return new EastNorth(this.x + proportion * (en2.x - this.x),
                 this.y + proportion * (en2.y - this.y));
     }
 
+    /**
+     * Gets the center between two {@link EastNorth} instances.
+     * @param en2 The other instance.
+     * @return The center between this and the other instance.
+     */
     public EastNorth getCenter(EastNorth en2) {
         return new EastNorth((this.x + en2.x)/2.0, (this.y + en2.y)/2.0);
     }
@@ -98,10 +141,6 @@ public class EastNorth extends Coordinate {
      */
     public boolean isValid() {
         return !Double.isNaN(x) && !Double.isNaN(y) && !Double.isInfinite(x) && !Double.isInfinite(y);
-    }
-
-    public EastNorth sub(EastNorth en) {
-        return new EastNorth(en.east() - east(), en.north() - north());
     }
 
     /**
