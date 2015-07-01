@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -301,14 +302,9 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             @Override public void componentResized(ComponentEvent e) {
                 removeComponentListener(this);
 
-                MapSlider zoomSlider = new MapSlider(MapView.this);
-                add(zoomSlider);
-                zoomSlider.setBounds(3, 0, 114, 30);
-                zoomSlider.setFocusTraversalKeysEnabled(!unregisterTab);
-
-                MapScaler scaler = new MapScaler(MapView.this);
-                add(scaler);
-                scaler.setLocation(10, 30);
+                for (JComponent c : getMapNavigationComponents(MapView.this)) {
+                    MapView.this.add(c);
+                }
 
                 mapMover = new MapMover(MapView.this, contentPane);
             }
@@ -340,6 +336,22 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         if (Shortcut.findShortcut(KeyEvent.VK_TAB, 0) != null) {
             setFocusTraversalKeysEnabled(false);
         }
+    }
+
+    /**
+     * Adds the map navigation components to a
+     * @param forMapView The map view to get the components for.
+     * @return A list containing the correctly positioned map navigation components.
+     */
+    public static List<? extends JComponent> getMapNavigationComponents(MapView forMapView) {
+        MapSlider zoomSlider = new MapSlider(forMapView);
+        zoomSlider.setBounds(3, 0, 114, 30);
+        zoomSlider.setFocusTraversalKeysEnabled(Shortcut.findShortcut(KeyEvent.VK_TAB, 0) == null);
+
+        MapScaler scaler = new MapScaler(forMapView);
+        scaler.setLocation(10,30);
+
+        return Arrays.asList(zoomSlider, scaler);
     }
 
     // remebered geometry of the component
