@@ -25,15 +25,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.swing.AbstractButton;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -267,7 +268,12 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
      */
     public MouseEvent lastMEvent = new MouseEvent(this, 0, 0, 0, 0, 0, 0, false); // In case somebody reads it before first mouse move
 
-    private final transient List<MapViewPaintable> temporaryLayers = new LinkedList<>();
+    /**
+     * Temporary layers (selection rectangle, etc.) that are never cached and
+     * drawn on top of regular layers.
+     * Access must be synchronized.
+     */
+    private final transient Set<MapViewPaintable> temporaryLayers = new LinkedHashSet<>();
 
     private transient BufferedImage nonChangedLayersBuffer;
     private transient BufferedImage offscreenBuffer;
@@ -781,8 +787,10 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             paintLayer(visibleLayers.get(i), tempG, box);
         }
 
-        for (MapViewPaintable mvp : temporaryLayers) {
-            mvp.paint(tempG, this, box);
+        synchronized (temporaryLayers) {
+            for (MapViewPaintable mvp : temporaryLayers) {
+                mvp.paint(tempG, this, box);
+            }
         }
 
         // draw world borders
@@ -1062,13 +1070,39 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         }
     }
 
+    /**
+     * Adds a new temporary layer.
+     * <p>
+     * A temporary layer is a layer that is painted above all normal layers. Layers are painted in the order they are added.
+     *
+     * @param mvp The layer to paint.
+     * @return <code>true</code> if the layer was added.
+     */
     public boolean addTemporaryLayer(MapViewPaintable mvp) {
-        if (temporaryLayers.contains(mvp)) return false;
-        return temporaryLayers.add(mvp);
+        synchronized (temporaryLayers) {
+            return temporaryLayers.add(mvp);
+        }
     }
 
+    /**
+     * Removes a layer previously added as temporary layer.
+     * @param mvp The layer to remove.
+     * @return <code>true</code> if that layer was removed.
+     */
     public boolean removeTemporaryLayer(MapViewPaintable mvp) {
-        return temporaryLayers.remove(mvp);
+        synchronized (temporaryLayers) {
+            return temporaryLayers.remove(mvp);
+        }
+    }
+
+    /**
+     * Gets a list of temporary layers.
+     * @return The layers in the order they are added.
+     */
+    public List<MapViewPaintable> getTemporaryLayers() {
+        synchronized (temporaryLayers) {
+            return Collections.unmodifiableList(new ArrayList<>(temporaryLayers));
+        }
     }
 
     @Override
@@ -1139,7 +1173,9 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             layerLock.writeLock().unlock();
         }
         nonChangedLayers.clear();
-        temporaryLayers.clear();
+        synchronized (temporaryLayers) {
+            temporaryLayers.clear();
+        }
     }
 
     @Override
