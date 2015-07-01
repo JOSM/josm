@@ -578,6 +578,11 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         }
     }
 
+    /**
+     * Checks if virtual nodes should be drawn. Default is <code>false</code>
+     * @return The virtual nodes property.
+     * @see Rendering#render(DataSet, boolean, Bounds)
+     */
     public boolean isVirtualNodesEnabled() {
         return virtualNodesEnabled;
     }
@@ -692,25 +697,8 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
      */
     @Override
     public void paint(Graphics g) {
-        if (initialViewport != null) {
-            zoomTo(initialViewport);
-            initialViewport = null;
-        }
-        if (BugReportExceptionHandler.exceptionHandlingInProgress())
+        if (!prepareToDraw()) {
             return;
-
-        if (center == null)
-            return; // no data loaded yet.
-
-        // if the position was remembered, we need to adjust center once before repainting
-        if (oldLoc != null && oldSize != null) {
-            Point l1  = getLocationOnScreen();
-            final EastNorth newCenter = new EastNorth(
-                    center.getX()+ (l1.x-oldLoc.x - (oldSize.width-getWidth())/2.0)*getScale(),
-                    center.getY()+ (oldLoc.y-l1.y + (oldSize.height-getHeight())/2.0)*getScale()
-                    );
-            oldLoc = null; oldSize = null;
-            zoomTo(newCenter);
         }
 
         List<Layer> visibleLayers = getVisibleLayersInZOrder();
@@ -846,6 +834,35 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
         g.drawImage(offscreenBuffer, 0, 0, null);
         super.paint(g);
+    }
+
+    /**
+     * Sets up the viewport to prepare for drawing the view.
+     * @return <code>true</code> if the view can be drawn, <code>false</code> otherwise.
+     */
+    public boolean prepareToDraw() {
+        if (initialViewport != null) {
+            zoomTo(initialViewport);
+            initialViewport = null;
+        }
+        if (BugReportExceptionHandler.exceptionHandlingInProgress())
+            return false;
+
+        if (getCenter() == null)
+            return false; // no data loaded yet.
+
+        // if the position was remembered, we need to adjust center once before repainting
+        if (oldLoc != null && oldSize != null) {
+            Point l1  = getLocationOnScreen();
+            final EastNorth newCenter = new EastNorth(
+                    getCenter().getX()+ (l1.x-oldLoc.x - (oldSize.width-getWidth())/2.0)*getScale(),
+                    getCenter().getY()+ (oldLoc.y-l1.y + (oldSize.height-getHeight())/2.0)*getScale()
+                    );
+            oldLoc = null; oldSize = null;
+            zoomTo(newCenter);
+        }
+
+        return true;
     }
 
     /**
