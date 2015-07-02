@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:cc="http://web.resource.org/cc/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" xmlns:ns1="http://sozi.baierouge.fr" id="svg2" sodipodi:docname="book.svg" viewBox="0 0 110 115" sodipodi:version="0.32" version="1.0" inkscape:output_extension="org.inkscape.output.svg.inkscape" inkscape:version="0.45.1" sodipodi:docbase="/home/denilson/Arte/book">
+  <sodipodi:namedview id="base" gridspacingy="10px" gridspacingx="10px" inkscape:zoom="2.2594447" height="115px" borderopacity="1.0" inkscape:current-layer="layer1" inkscape:cx="135.47134" inkscape:cy="89.800824" inkscape:object-paths="false" inkscape:grid-bbox="false" showgrid="true" width="110px" inkscape:document-units="px" bordercolor="#666666" inkscape:window-x="0" guidetolerance="10" objecttolerance="10" inkscape:object-nodes="false" inkscape:window-y="20" inkscape:window-width="1024" inkscape:pageopacity="0.0" inkscape:pageshadow="2" pagecolor="#ffffff" gridtolerance="10000" inkscape:object-points="false" inkscape:window-height="748"/>
+  <defs id="defs4">
+    <linearGradient id="linearGradient8148">
+      <stop id="stop8150" style="stop-color:#bfbfbf" offset="0"/>
+      <stop id="stop8152" style="stop-color:#f0f0f0" offset="1"/>
+    </linearGradient>
+    <linearGradient id="linearGradient7144">
+      <stop id="stop7146" style="stop-color:#5e411f" offset="0"/>
+      <stop id="stop7148" style="stop-color:#be843f" offset="1"/>
+    </linearGradient>
+    <linearGradient id="linearGradient9162" y2="57.382" gradientUnits="userSpaceOnUse" x2="110.66" gradientTransform="translate(-23.251 -22.479)" y1="84.858" x1="105.88" inkscape:collect="always">
+      <stop id="stop8142" style="stop-color:#fffe7f" offset="0"/>
+      <stop id="stop8144" style="stop-color:#ffffbf" offset="1"/>
+    </linearGradient>
+    <linearGradient id="linearGradient9165" y2="139.47" xlink:href="#linearGradient7144" gradientUnits="userSpaceOnUse" x2="129.18" gradientTransform="translate(-22.118 -21.799)" y1="86.894" x1="48.713" inkscape:collect="always"/>
+    <linearGradient id="linearGradient9168" y2="107.82" xlink:href="#linearGradient8148" gradientUnits="userSpaceOnUse" x2="139.63" gradientTransform="translate(-22.118 -21.799)" y1="105.83" x1="133.04" inkscape:collect="always"/>
+    <linearGradient id="linearGradient9171" y2="147.33" xlink:href="#linearGradient8148" gradientUnits="userSpaceOnUse" x2="106.26" gradientTransform="translate(-22.118 -21.799)" y1="136.25" x1="107.39" inkscape:collect="always"/>
+    <linearGradient id="linearGradient9174" y2="154.3" xlink:href="#linearGradient7144" gradientUnits="userSpaceOnUse" x2="134.56" gradientTransform="translate(-22.118 -21.799)" y1="82.104" x1="81.779" inkscape:collect="always"/>
+    <linearGradient id="linearGradient9177" y2="98.218" xlink:href="#linearGradient7144" gradientUnits="userSpaceOnUse" x2="62.828" gradientTransform="translate(-22.118 -21.799)" y1="97.321" x1="59.666" inkscape:collect="always"/>
+  </defs>
+  <g id="layer1" inkscape:label="Layer 1" inkscape:groupmode="layer" transform="translate(-22.269 -20.463)">
+    <path id="path4189" sodipodi:nodetypes="ccccc" style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:url(#linearGradient9177)" d="m55.76 23.935c-2.053-0.205-2.916 3.207-4.162 6.355l-25.938 83.93 5.341 3.14 24.759-93.425z"/>
+    <path id="path3206" sodipodi:nodetypes="ccccccc" style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:url(#linearGradient9174)" d="m29.901 109.39c-4.816-0.41-6.508 12.96-2.998 13.72l85.247 8.89 17.35-88.172-14.43-1.967-13.25 68.909-71.919-1.38z"/>
+    <path id="path5162" sodipodi:nodetypes="cccc" style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:url(#linearGradient9171)" d="m104.31 114.26l-72.679-6.17c-3.682 0.01-6.16 12.41-3.277 12.99l81.346 7.73"/>
+    <path id="path6139" sodipodi:nodetypes="ccccc" style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:url(#linearGradient9168)" d="m126.03 45.556l-16.88 83.004c-4.03-1.55-6.76-10.51-4.2-14.17l16.6-83.31c-1.24 3.888 1.31 13.362 4.48 14.476z"/>
+    <path id="path4187" style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:url(#linearGradient9165)" d="m107.32 117.17l-77.623-7.78 26.009-85.404 69.014 4.916-17.4 88.268z"/>
+    <path id="path3214" sodipodi:nodetypes="ccccc" style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:url(#linearGradient9162)" d="m64.316 33.137l43.664 3.255-5.69 28.898-44.558-4.117 6.584-28.036z"/>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Book</dc:title>
+        <dc:date>2007-12-03T18:49:27</dc:date>
+        <dc:description>A simple SVG book based on a drawing made on Gimp by Sam Switzer.</dc:description>
+        <dc:source>https://openclipart.org/detail/9358/book-by-crazyterabyte</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>CrazyTerabyte</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>book</rdf:li>
+            <rdf:li>how i did it</rdf:li>
+            <rdf:li>remix</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
