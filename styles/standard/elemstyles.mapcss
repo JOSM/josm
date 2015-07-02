@@ -3575,6 +3575,7 @@ node[aerialway=goods] {
 area[sport="9pin"],
 area[sport="10pin"],
 area[sport=athletics],
+area[sport=running],
 area[sport=soccer],
 area[sport=australian_football],
 area[sport=american_football],
@@ -3596,6 +3597,11 @@ node[sport="10pin"] {
 }
 node[sport=athletics] {
     icon-image: "sport/athletics.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=running] {
+    icon-image: "sport/running.svg";
     set icon_z17;
     text: auto;
 }
@@ -3622,7 +3628,6 @@ area[sport=canoe],
 area[sport=chess],
 area[sport=climbing]:closed,
 area[sport=cricket],
-area[sport=cricket_nets],
 area[sport=croquet] {
     fill-color: sport#bde3cb;
 }
@@ -3662,11 +3667,6 @@ node[sport=climbing] {
     text: auto;
 }
 node[sport=cricket] {
-    icon-image: "sport/cricket.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=cricket_nets] {
     icon-image: "sport/cricket.png";
     set icon_z17;
     text: auto;
