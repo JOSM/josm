@@ -63,7 +63,7 @@
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
-            <arg value="."/>
+            <arg value="http://josm.openstreetmap.de/svn/trunk"/>
         </exec>
         <condition property="svn.info.success">
             <equals arg1="${svn.info.result}" arg2="0" />
