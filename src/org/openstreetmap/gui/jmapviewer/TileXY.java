@@ -37,7 +37,7 @@ public class TileXY {
      * @return y index of the tile as integer
      */
     public int getYIndex() {
-        return y < 0 ? (int) Math.ceil(x) : (int) Math.floor(y);
+        return y < 0 ? (int) Math.ceil(y) : (int) Math.floor(y);
     }
 
     /**
