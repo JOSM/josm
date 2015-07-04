@@ -160,12 +160,12 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     }
 
     @Override
-    public Coordinate XYToLatLon(Point point, int zoom) {
+    public ICoordinate XYToLatLon(Point point, int zoom) {
         return XYToLatLon(point.x, point.y, zoom);
     }
 
     @Override
-    public Coordinate XYToLatLon(int x, int y, int zoom) {
+    public ICoordinate XYToLatLon(int x, int y, int zoom) {
         return new Coordinate(
                 osmMercator.YToLat(y, zoom),
                 osmMercator.XToLon(x, zoom)
@@ -206,17 +206,17 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     }
 
     @Override
-    public Coordinate tileXYToLatLon(TileXY xy, int zoom) {
+    public ICoordinate tileXYToLatLon(TileXY xy, int zoom) {
         return tileXYToLatLon(xy.getXIndex(), xy.getYIndex(), zoom);
     }
 
     @Override
-    public Coordinate tileXYToLatLon(Tile tile) {
+    public ICoordinate tileXYToLatLon(Tile tile) {
         return tileXYToLatLon(tile.getXtile(), tile.getYtile(), tile.getZoom());
     }
 
     @Override
-    public Coordinate tileXYToLatLon(int x, int y, int zoom) {
+    public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
         return new Coordinate(
                 osmMercator.YToLat(y * tileSize, zoom),
                 osmMercator.XToLon(x * tileSize, zoom)
