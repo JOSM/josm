@@ -39,11 +39,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -82,6 +80,8 @@ public final class Utils {
     private static final int MILLIS_OF_DAY = 86400000;
 
     public static final String URL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
+
+    private static char[] DEFAULT_STRIP = {'\u200B', '\uFEFF'};
 
     /**
      * Tests whether {@code predicate} applies to at least one elements from {@code collection}.
@@ -901,7 +901,10 @@ public final class Utils {
      * @since 5772
      */
     public static String strip(final String str) {
-        return strip(str, null);
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return strip(str, DEFAULT_STRIP);
     }
 
     /**
@@ -916,36 +919,52 @@ public final class Utils {
         if (str == null || str.isEmpty()) {
             return str;
         }
-        // create set with chars to skip
-        Set<Character> skipSet = new HashSet<>();
-        // '\u200B' (ZERO WIDTH SPACE character) needs to be handled manually because of change in Unicode 6.0 (Java 7, see #8918)
-        skipSet.add('\u200B');
-        // same for '\uFEFF' (ZERO WIDTH NO-BREAK SPACE)
-        skipSet.add('\uFEFF');
-        if (skipChars != null) {
-            for (char c : skipChars.toCharArray()) {
-                skipSet.add(c);
-            }
-        }
+        return strip(str, stripChars(skipChars));
+    }
+
+    private static String strip(final String str, final char[] skipChars) {
+
         int start = 0;
         int end = str.length();
         boolean leadingSkipChar = true;
         while (leadingSkipChar && start < end) {
             char c = str.charAt(start);
-            leadingSkipChar = Character.isWhitespace(c) || Character.isSpaceChar(c) || skipSet.contains(c);
+            leadingSkipChar = Character.isWhitespace(c) || Character.isSpaceChar(c) || stripChar(skipChars, c);
             if (leadingSkipChar) {
                 start++;
             }
         }
         boolean trailingSkipChar = true;
-        while (trailingSkipChar && end > start+1) {
-            char c = str.charAt(end-1);
-            trailingSkipChar = Character.isWhitespace(c) || Character.isSpaceChar(c) || skipSet.contains(c);
+        while (trailingSkipChar && end > start + 1) {
+            char c = str.charAt(end - 1);
+            trailingSkipChar = Character.isWhitespace(c) || Character.isSpaceChar(c) || stripChar(skipChars, c);
             if (trailingSkipChar) {
                 end--;
             }
         }
+
         return str.substring(start, end);
+    }
+
+    private static char[] stripChars(final String skipChars) {
+        if (skipChars == null || skipChars.isEmpty()) {
+            return DEFAULT_STRIP;
+        }
+
+        char[] chars = new char[DEFAULT_STRIP.length + skipChars.length()];
+        System.arraycopy(DEFAULT_STRIP, 0, chars, 0, DEFAULT_STRIP.length);
+        skipChars.getChars(0, skipChars.length(), chars, DEFAULT_STRIP.length);
+
+        return chars;
+    }
+
+    private static boolean stripChar(final char[] strip, char c) {
+        for (char s : strip) {
+            if (c == s) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -989,7 +1008,7 @@ public final class Utils {
         }
         File josmTmpDir = new File(tmpDir, "JOSM");
         if (!josmTmpDir.exists() && !josmTmpDir.mkdirs()) {
-            Main.warn("Unable to create temp directory "+josmTmpDir);
+            Main.warn("Unable to create temp directory " + josmTmpDir);
         }
         return josmTmpDir;
     }
@@ -1034,7 +1053,7 @@ public final class Utils {
      * @param positionList a list of positions
      * @return a human readable representation
      */
-    public static String getPositionListString(List<Integer> positionList)  {
+    public static String getPositionListString(List<Integer> positionList) {
         Collections.sort(positionList);
         final StringBuilder sb = new StringBuilder(32);
         sb.append(positionList.get(0));
@@ -1058,7 +1077,6 @@ public final class Utils {
         }
         return sb.toString();
     }
-
 
     /**
      * Returns a list of capture groups if {@link Matcher#matches()}, or {@code null}.
@@ -1158,7 +1176,7 @@ public final class Utils {
         StringBuilder sb = new StringBuilder(url.substring(0, url.indexOf('?') + 1));
 
         for (int i = 0; i < query.length(); i++) {
-            String c = query.substring(i, i+1);
+            String c = query.substring(i, i + 1);
             if (URL_CHARS.contains(c)) {
                 sb.append(c);
             } else {
@@ -1245,9 +1263,9 @@ public final class Utils {
         if (value != null) {
             String old = System.setProperty(key, value);
             if (!key.toLowerCase(Locale.ENGLISH).contains("password")) {
-                Main.debug("System property '"+key+"' set to '"+value+"'. Old value was '"+old+"'");
+                Main.debug("System property '" + key + "' set to '" + value + "'. Old value was '" + old + "'");
             } else {
-                Main.debug("System property '"+key+"' changed.");
+                Main.debug("System property '" + key + "' changed.");
             }
             return old;
         }
@@ -1282,11 +1300,11 @@ public final class Utils {
     public static void parseSafeSAX(InputSource is, DefaultHandler dh) throws ParserConfigurationException, SAXException, IOException {
         long start = System.currentTimeMillis();
         if (Main.isDebugEnabled()) {
-            Main.debug("Starting SAX parsing of "+is+" using "+dh);
+            Main.debug("Starting SAX parsing of " + is + " using " + dh);
         }
         newSafeSAXParser().parse(is, dh);
         if (Main.isDebugEnabled()) {
-            Main.debug("SAX parsing done in " + getDurationString(System.currentTimeMillis()-start));
+            Main.debug("SAX parsing done in " + getDurationString(System.currentTimeMillis() - start));
         }
     }
 
@@ -1298,10 +1316,10 @@ public final class Utils {
      * @return {@code true} if the filename has one of the given extensions
      * @since 8404
      */
-    public static boolean hasExtension(String filename, String ... extensions) {
+    public static boolean hasExtension(String filename, String... extensions) {
         String name = filename.toLowerCase(Locale.ENGLISH);
         for (String ext : extensions) {
-            if (name.endsWith("."+ext.toLowerCase(Locale.ENGLISH)))
+            if (name.endsWith("." + ext.toLowerCase(Locale.ENGLISH)))
                 return true;
         }
         return false;
@@ -1315,7 +1333,7 @@ public final class Utils {
      * @return {@code true} if the file's name has one of the given extensions
      * @since 8404
      */
-    public static boolean hasExtension(File file, String ... extensions) {
+    public static boolean hasExtension(File file, String... extensions) {
         return hasExtension(file.getName(), extensions);
     }
 }
