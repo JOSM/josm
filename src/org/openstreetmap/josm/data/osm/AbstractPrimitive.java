@@ -291,6 +291,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
         this.timestamp = (int) (timestamp.getTime() / 1000);
     }
 
+    @Override
+    public void setRawTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
+
     /**
      * Time of last modification to this object. This is not set by JOSM but
      * read from the server and delivered back to the server unmodified. It is
@@ -301,6 +306,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
     @Override
     public Date getTimestamp() {
         return new Date(timestamp * 1000L);
+    }
+
+    @Override
+    public int getRawTimestamp() {
+        return timestamp;
     }
 
     @Override

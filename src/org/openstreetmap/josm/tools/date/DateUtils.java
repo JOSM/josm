@@ -118,6 +118,24 @@ public final class DateUtils {
         }
     }
 
+    private static String toXmlFormat(GregorianCalendar cal) {
+        XMLGregorianCalendar xgc = XML_DATE.newXMLGregorianCalendar(cal);
+        if (cal.get(Calendar.MILLISECOND) == 0) {
+            xgc.setFractionalSecond(null);
+        }
+        return xgc.toXMLFormat();
+    }
+
+    /**
+     * Formats a date to the XML UTC format regardless of current locale.
+     * @param timestamp number of seconds since the epoch
+     * @return The formatted date
+     */
+    public static synchronized String fromTimestamp(int timestamp) {
+        calendar.setTimeInMillis(timestamp * 1000L);
+        return toXmlFormat(calendar);
+    }
+
     /**
      * Formats a date to the XML UTC format regardless of current locale.
      * @param date The date to format
@@ -125,9 +143,7 @@ public final class DateUtils {
      */
     public static synchronized String fromDate(Date date) {
         calendar.setTime(date);
-        XMLGregorianCalendar xgc = XML_DATE.newXMLGregorianCalendar(calendar);
-        if (calendar.get(Calendar.MILLISECOND) == 0) xgc.setFractionalSecond(null);
-        return xgc.toXMLFormat();
+        return toXmlFormat(calendar);
     }
 
     private static boolean checkLayout(String text, String pattern) {

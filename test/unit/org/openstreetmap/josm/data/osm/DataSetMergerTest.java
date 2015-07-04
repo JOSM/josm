@@ -316,14 +316,13 @@ public class DataSetMergerTest {
         n1.setUser(theirUser);
         their.addPrimitive(n1);
 
-
         DataSetMerger visitor = new DataSetMerger(my, their);
         visitor.merge();
 
         Node n2 = my.getNodes().iterator().next();
         assertEquals(0, visitor.getConflicts().size());
         assertEquals("value1", n2.get("key1"));
-        assertTrue(n1.getTimestamp().equals(n2.getTimestamp()));
+        assertEquals(n1.getRawTimestamp(), n2.getRawTimestamp());
         assertEquals(theirUser, n2.getUser());
         assertSame(n2, n);
         assertNotSame(n2, n1);
@@ -350,14 +349,13 @@ public class DataSetMergerTest {
         n1.setTimestamp(timestamp);
         their.addPrimitive(n1);
 
-
         DataSetMerger visitor = new DataSetMerger(my, their);
         visitor.merge();
 
         Node n2 = my.getNodes().iterator().next();
         assertEquals(0, visitor.getConflicts().size());
         assertEquals("value1", n2.get("key1"));
-        assertTrue(n1.getTimestamp().equals(n2.getTimestamp()));
+        assertEquals(n1.getRawTimestamp(), n2.getRawTimestamp());
         assertFalse(n2.isIncomplete());
         assertSame(n2, n);
     }
@@ -664,7 +662,7 @@ public class DataSetMergerTest {
         assertEquals(0, visitor.getConflicts().size());
         assertEquals("their", merged.getUser().getName());
         assertEquals(1111, merged.getUser().getId());
-        assertEquals(theirWay.getTimestamp(), merged.getTimestamp());
+        assertEquals(theirWay.getRawTimestamp(), merged.getRawTimestamp());
         assertSame(merged, myWay);
         assertSame(merged.getNode(0), n1);
         assertSame(merged.getNode(1), n2);
@@ -718,7 +716,7 @@ public class DataSetMergerTest {
         assertEquals(0, visitor.getConflicts().size());
         assertEquals("their", merged.getUser().getName());
         assertEquals(1111, merged.getUser().getId());
-        assertEquals(theirWay.getTimestamp(), merged.getTimestamp());
+        assertEquals(theirWay.getRawTimestamp(), merged.getRawTimestamp());
         assertSame(merged, myWay);
         assertSame(merged.getNode(0), n1);
         assertSame(merged.getNode(1), n2);

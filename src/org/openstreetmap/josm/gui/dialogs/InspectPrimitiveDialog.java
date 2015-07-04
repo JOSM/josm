@@ -232,7 +232,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         void addCommon(OsmPrimitive o) {
             add(tr("Data Set: "), Integer.toHexString(o.getDataSet().hashCode()));
             add(tr("Edited at: "), o.isTimestampEmpty() ? tr("<new object>")
-                    : DateUtils.fromDate(o.getTimestamp()));
+                    : DateUtils.fromTimestamp(o.getRawTimestamp()));
             add(tr("Edited by: "), o.getUser() == null ? tr("<new object>")
                     : getNameAndId(o.getUser().getName(), o.getUser().getId()));
             add(tr("Version: "), Integer.toString(o.getVersion()));

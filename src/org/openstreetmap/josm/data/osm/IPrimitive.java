@@ -40,7 +40,11 @@ public interface IPrimitive extends Tagged, PrimitiveId {
 
     Date getTimestamp();
 
+    int getRawTimestamp();
+
     void setTimestamp(Date timestamp);
+
+    void setRawTimestamp(int timestamp);
 
     boolean isTimestampEmpty();
 

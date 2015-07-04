@@ -1227,7 +1227,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     public void load(PrimitiveData data) {
         // Write lock is provided by subclasses
         setKeys(data.getKeys());
-        setTimestamp(data.getTimestamp());
+        setRawTimestamp(data.getRawTimestamp());
         user = data.getUser();
         setChangesetId(data.getChangesetId());
         setDeleted(data.isDeleted());
@@ -1249,7 +1249,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     protected void saveCommonAttributes(PrimitiveData data) {
         data.setId(id);
         data.setKeys(getKeys());
-        data.setTimestamp(getTimestamp());
+        data.setRawTimestamp(getRawTimestamp());
         data.setUser(user);
         data.setDeleted(isDeleted());
         data.setModified(isModified());

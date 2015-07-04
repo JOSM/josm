@@ -566,7 +566,7 @@ public class SearchCompiler {
                 String mv = null;
 
                 if ("timestamp".equals(key)) {
-                    mv = DateUtils.fromDate(osm.getTimestamp());
+                    mv = DateUtils.fromTimestamp(osm.getRawTimestamp());
                 } else {
                     mv = osm.get(key);
                     if (!caseSensitive && mv == null) {
@@ -1086,7 +1086,7 @@ public class SearchCompiler {
 
         @Override
         protected Long getNumber(OsmPrimitive osm) {
-            return osm.getTimestamp().getTime();
+            return osm.getRawTimestamp() * 1000L;
         }
 
         @Override

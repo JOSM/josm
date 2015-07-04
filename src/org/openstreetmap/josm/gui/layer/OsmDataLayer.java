@@ -596,7 +596,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
 
         if (!n.isTimestampEmpty()) {
-            wpt.put("time", DateUtils.fromDate(n.getTimestamp()));
+            wpt.put("time", DateUtils.fromTimestamp(n.getRawTimestamp()));
             wpt.setTime();
         }
 

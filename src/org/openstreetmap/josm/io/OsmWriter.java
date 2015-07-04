@@ -298,7 +298,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
                 }
             }
             if (!osm.isTimestampEmpty()) {
-                out.print(" timestamp='"+DateUtils.fromDate(osm.getTimestamp())+"'");
+                out.print(" timestamp='"+DateUtils.fromTimestamp(osm.getRawTimestamp())+"'");
             }
             // user and visible added with 0.4 API
             if (osm.getUser() != null) {
