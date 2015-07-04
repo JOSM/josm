@@ -1,0 +1,890 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0 http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0/inspire_vs_ows_11.xsd">
+	<ows:ServiceIdentification>
+		<ows:Title>Usługa przeglądania rastrowych map topograficznych dla Polski. Profil kafelkowany (WMTS)</ows:Title>
+		<ows:Abstract>Usługa przeglądania rastrowych map topograficznych dla obszaru Polski. Mapa topograficzna Polski jest wielkoskalowym urzędowym opracowaniem kartograficznym, sporządzanym i aktualizowanym w sposób jednolity dla całego kraju. Jej treść stanowią elementy środowiska geograficznego powierzchni Ziemi i ich przestrzenne związki. Usługa wykorzystuje interfejs WMTS OGC w wersji 1.0.0. </ows:Abstract>
+		<ows:Keywords>
+			<ows:Keyword>WMTS</ows:Keyword>
+			<ows:Keyword>Tiled</ows:Keyword>
+			<ows:Keyword>Web Map Tile Service</ows:Keyword>
+			<ows:Keyword>Zagospodarowanie przestrzenne</ows:Keyword>
+			<ows:Keyword>Wody i obiekty z nimi związane</ows:Keyword>
+			<ows:Keyword>Transport networks</ows:Keyword>
+			<ows:Keyword>Sieci transportowe</ows:Keyword>
+			<ows:Keyword>Sea regions</ows:Keyword>
+			<ows:Keyword>Rzeźba terenu</ows:Keyword>
+			<ows:Keyword>Roślinność, uprawy i grunty</ows:Keyword>
+			<ows:Keyword>Regiony morskie</ows:Keyword>
+			<ows:Keyword>Railways</ows:Keyword>
+			<ows:Keyword>Railway stations</ows:Keyword>
+			<ows:Keyword>Obiekty gospodarcze</ows:Keyword>
+			<ows:Keyword>Nazwy geograficzne</ows:Keyword>
+			<ows:Keyword>Land use</ows:Keyword>
+			<ows:Keyword>Land relief</ows:Keyword>
+			<ows:Keyword>Koleje i obiekty z nimi związane</ows:Keyword>
+			<ows:Keyword>Granice</ows:Keyword>
+			<ows:Keyword>Geographical names</ows:Keyword>
+			<ows:Keyword>Geodetic control network points</ows:Keyword>
+			<ows:Keyword>Drogi i obiekty z nimi związane</ows:Keyword>
+			<ows:Keyword>Buildings</ows:Keyword>
+			<ows:Keyword>Budynki</ows:Keyword>
+			<ows:Keyword>Budynki i budowle</ows:Keyword>
+			<ows:Keyword>Boundary</ows:Keyword>
+			<ows:Keyword>Boundaries</ows:Keyword>
+		</ows:Keywords>
+		<ows:ServiceType>OGC WMTS</ows:ServiceType>
+		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+		<ows:Fees>Korzystanie z usługi danych przestrzennych oznacza akceptację bez ograniczeń i zastrzeżeń Regulaminu dostępnego na stronie internetowej Geoportalu http://www.geoportal.gov.pl/</ows:Fees>
+		<ows:AccessConstraints>brak ograniczeń</ows:AccessConstraints> 
+	</ows:ServiceIdentification>
+	<ows:ServiceProvider>
+		<ows:ProviderName>Centralny Ośrodek Dokumentacji Geodezyjnej i Kartograficznej </ows:ProviderName>
+		<ows:ProviderSite xlink:type="simple" xlink:href="www.geoportal.gov.pl"/>
+		<ows:ServiceContact>
+			<ows:IndividualName>Dział Geoportal</ows:IndividualName>
+			<ows:ContactInfo>
+				<ows:Phone>
+					<ows:Voice>+48225322501</ows:Voice>
+				</ows:Phone>
+				<ows:Address>
+					<ows:DeliveryPoint>ul. Jana Olbrachta 94B</ows:DeliveryPoint>
+					<ows:City>Warszawa</ows:City>
+					<ows:AdministrativeArea>mazowieckie</ows:AdministrativeArea>
+					<ows:PostalCode>01-102</ows:PostalCode>
+					<ows:Country>Polska</ows:Country>
+					<ows:ElectronicMailAddress>geoportal@geoportal.gov.pl</ows:ElectronicMailAddress>
+				</ows:Address>
+			</ows:ContactInfo>
+		</ows:ServiceContact>
+	</ows:ServiceProvider>
+	<ows:OperationsMetadata>
+		<ows:Operation name="GetCapabilities">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>KVP</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="GetTile">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>KVP</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="GetFeatureInfo">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>KVP</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<inspire_vs:ExtendedCapabilities>
+			<inspire_common:ResourceLocator>
+				<inspire_common:URL>http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?REQUEST=GetCapabilities&amp;SERVICE=WMTS</inspire_common:URL>
+				<inspire_common:MediaType>text/xml</inspire_common:MediaType>
+			</inspire_common:ResourceLocator>
+			<inspire_common:ResourceType>service</inspire_common:ResourceType>
+			<inspire_common:TemporalReference>
+				<inspire_common:DateOfPublication>2012-10-24</inspire_common:DateOfPublication>
+			</inspire_common:TemporalReference>
+			<inspire_common:Conformity>
+				<inspire_common:Specification xsi:type="inspire_common:citationInspireInteroperabilityRegulation_pol">
+					<inspire_common:Title>ROZPORZĄDZENIE KOMISJI (UE) NR 1089/2010 z dnia 23 listopada 2010 r. w sprawie wykonania dyrektywy 2007/2/WE Parlamentu Europejskiego i Rady w zakresie interoperacyjności zbiorów i usług danych przestrzennych</inspire_common:Title>
+					<inspire_common:DateOfPublication>2010-12-08</inspire_common:DateOfPublication>
+					<inspire_common:URI>OJ:L:2010:323:0011:0102:PL:PDF</inspire_common:URI>
+					<inspire_common:ResourceLocator>
+						<inspire_common:URL>http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2010:323:0011:0102:PL:PDF</inspire_common:URL>
+						<inspire_common:MediaType>application/pdf</inspire_common:MediaType>
+					</inspire_common:ResourceLocator>
+				</inspire_common:Specification>
+				<inspire_common:Degree>notConformant</inspire_common:Degree>
+			</inspire_common:Conformity>
+			<inspire_common:MetadataPointOfContact>
+				<inspire_common:OrganisationName>Centralny Ośrodek Dokumentacji Geodezyjnej i Kartograficznej</inspire_common:OrganisationName>
+				<inspire_common:EmailAddress>geoportal@geoportal.gov.pl</inspire_common:EmailAddress>
+			</inspire_common:MetadataPointOfContact>
+			<inspire_common:MetadataDate>2012-10-24</inspire_common:MetadataDate>
+			<inspire_common:SpatialDataServiceType>view</inspire_common:SpatialDataServiceType>
+			<inspire_common:MandatoryKeyword>
+				<inspire_common:KeywordValue>infoMapAccessService</inspire_common:KeywordValue>
+			</inspire_common:MandatoryKeyword>
+			<inspire_common:Keyword xsi:type="inspire_common:inspireTheme_pol">
+				<inspire_common:OriginatingControlledVocabulary>
+					<inspire_common:Title>GEMET - INSPIRE themes</inspire_common:Title>
+					<inspire_common:DateOfPublication>2008-06-01</inspire_common:DateOfPublication>
+				</inspire_common:OriginatingControlledVocabulary>
+				<inspire_common:KeywordValue>Użytkowanie terenu</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>WMTS</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Tiled</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Web Map Tile Service</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Boundaries</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Boundary</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Budynki i budowle</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Budynki</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Buildings</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Drogi i obiekty z nimi związane</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Geodetic control network points</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Geographical names</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Granice</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Koleje i obiekty z nimi związane</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Land relief</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Land use</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Nazwy geograficzne</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Obiekty gospodarcze</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Railway stations</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Railways</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Regiony morskie</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Roślinność, uprawy i grunty</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Rzeźba terenu</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Sea regions</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Sieci transportowe</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Transport networks</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Wody i obiekty z nimi związane</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Zagospodarowanie przestrzenne</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:SupportedLanguages xmlns="http://inspire.ec.europa.eu/schemas/common/1.0">
+				<inspire_common:DefaultLanguage>
+					<inspire_common:Language>pol</inspire_common:Language>
+				</inspire_common:DefaultLanguage>
+			</inspire_common:SupportedLanguages>
+			<inspire_common:ResponseLanguage xmlns="http://inspire.ec.europa.eu/schemas/common/1.0">
+				<inspire_common:Language>pol</inspire_common:Language>
+			</inspire_common:ResponseLanguage>
+			<inspire_common:MetadataUrl>
+				<inspire_common:URL>http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=a658ac75-e2c6-4405-8bae-8d0f98f1babf</inspire_common:URL>
+				<inspire_common:MediaType>text/xml</inspire_common:MediaType>
+			</inspire_common:MetadataUrl>
+		</inspire_vs:ExtendedCapabilities>
+	</ows:OperationsMetadata>
+	<Contents>
+		<Layer>
+			<ows:Title>MAPA TOPOGRAFICZNA</ows:Title>
+			<ows:Abstract>Warstwa prezentująca rastrową mapę topograficzną</ows:Abstract>
+			<ows:Keywords>
+				<ows:Keyword>Mapa topograficzna</ows:Keyword>
+			</ows:Keywords>
+			<ows:Identifier>MAPA TOPOGRAFICZNA</ows:Identifier>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=2394082c-56b0-4d6c-b877-40fe5192f489&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=7c66424b-5cb7-46e2-a093-eb2536bd7ee3&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=e44c7e17-54fa-4857-8bf0-dea6f3995a25&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=28795640-bb42-48d5-bb0a-76837729cb0f&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=5a44a4c3-1bd6-4221-9a5d-9b1ef0a580c3&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=a81f32f3-1826-4356-93fd-c87f468bbf38&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=b5a4ea76-4348-473e-bf82-49bb1d959d4a&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=ea41623c-4e74-4d9f-ad4a-d977b86e323d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=85c58c16-0d7c-464e-b06a-539cc00d443f&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=ef54f773-8e0c-4916-bf17-76aa03394735&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=8a1ad8bb-2319-460f-b8d9-2ff7f188557d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=17b603d8-b5c7-4b61-ad92-55f396f93f5d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=3da84f4a-3b0c-4ded-a727-a83f14f562c5&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=1254ad45-d875-497f-b238-8c8f025f7f28&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=26bddb02-cd91-4563-bd9c-2acc42caec77&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=9936d901-6289-4067-96af-b5671bcbb366&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=b4abe60a-4fb3-4e5e-ad84-c7b2bfe62173&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=d743643b-ee18-417c-ae39-2b8205c0a0ac&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=8d32b509-068a-4c0b-bc54-758a1c8d04d6&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=165177bb-a595-4532-9b12-4d5920f09b2e&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=cdb7538b-f8f8-41b9-bb60-41d431785d15&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=1e271af9-4ada-4c52-a464-cede4af6336e&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=ce2745a2-8186-4049-9c87-b672465e1dd3&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=0e4a48d7-edb1-487b-9389-8ea6a5d51f48&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=a60cdac8-c2a6-4f2d-855e-6fa95df0c490&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=e4e3c5f1-8c44-424b-9198-a6bd08534651&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=166a1466-ca16-4454-b09d-525c9dd4eafc&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=76d200f7-4f80-4ccf-9fff-625b97ed20f0&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=f7c1f40a-4402-4e68-a4bf-31f2ab23afe1&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=45d7c316-3df8-47cf-befc-834746f10fe0&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=9cdd82e4-7164-41f9-a987-66a7b5792420&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=3082b644-f710-48d9-8f37-c8516a2583af&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=78009945-ac8a-4eda-97ef-76ffc2155c34&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=ed1447c5-f47f-4b8e-b84b-8ada731cd34d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=aa101eeb-0bde-492d-ab13-950571f45712&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=2149db7f-5d67-43d3-8d0d-851f7e7c5690&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=198cc302-5fa9-4808-aada-e1cb9086b0d4&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=99f7c5bc-de8e-4dc5-9630-851a5872425d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=f31dc834-fc33-474b-a033-1e26b8f2c82b&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=9c1d1a77-41a9-4f2d-aa4a-60d2fef4aa6f&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=a80b842b-e9d1-4d56-beae-02541aad9b16&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=6f876f3a-70fc-4429-ab08-ec109990bd0e&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=a96fc82b-bb87-4b31-9b5a-486940c75c09&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=5aa2b24b-a048-409d-857b-3673f8b8d11a&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=b6ce2a0c-f1fc-4ec3-b8e4-158356eb6dc7&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=21becd36-2a71-49d4-8c84-1173f193b522&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=7814ee5a-a1f2-43ca-83b6-2ece8f15eb2a&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=74b8c281-938c-4055-b579-1861c2b9cf8d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=ff669880-8e76-4470-9847-0ff79195894a&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=9e463571-8e6e-427e-a868-8db8471edb43&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=4ae04e43-0234-4022-a28d-887f5d494799&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=f1f0868a-0e0a-4181-bbdf-1a262e6cf40d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=9c502ba0-2e04-4f0d-9653-4e2027a856b9&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=e1084309-84ef-4c9c-9cf5-e77e817ebf66&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=2ffd5d4f-9a48-44fe-991f-767df1ac8829&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=8c16c478-6fce-4a85-8fdd-07dcb86dbc6d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=d781ea1e-3d3a-4f52-82c4-be2f84bd5b58&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=fa77d76c-ada7-47fe-8e59-9cbb22782b15&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=dbc0739e-e8f6-48cf-a054-c0e1fe93b3b9&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=15f4b0ba-c4dd-4807-a5eb-5a182aed5bfe&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=5cf620ea-874d-4cc3-9f47-18ddcae64555&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=8add5a9a-9a06-4562-b09b-0314ab60a681&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=ef0a91c7-b040-4f7b-b792-173bdbf02509&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=46786374-dfd4-4f8a-ae89-312ff1523290&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=e98e05b4-7d72-4f02-b6ad-ea205455c7af&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=7518e1d0-e91e-4485-90c0-51de2801faee&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=e885a9be-6145-4e46-a6f3-74fb3594b741&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=337c2f6f-0b04-4517-b2d0-e2c4bfa75cc0&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=2eca49be-2e99-43f5-b957-218cf1e672f9&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=05b5ac2e-cb0e-4218-a3a7-c466e7de9018&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=31cfd901-5463-4157-84dd-c771a79c5516&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=d940d836-1c80-46db-b0f9-b28361ce8b05&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=77ee9941-1c10-42aa-9276-5daaad01db52&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=8e024bec-33e9-4d4f-b3ea-f1f45aa87d68&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=29fdc2c1-f9ec-4e3b-8b99-bd51dcbf1ddc&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=df7cbf8a-feb4-4ce5-9da1-7e0e97379aa1&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=cf1f8637-54c1-464d-a451-a465871325ed&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=70cd76d2-08e2-4bef-b33f-60c571b2f461&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=609d7a26-e030-43a3-bfd1-8fd93897448d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=d3f574dd-f2c4-4292-9f01-e38dbcbb552f&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=b3de61ab-3e0a-40fd-ac13-7226da40dcc9&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=51da7c13-30d4-4096-a19b-0533040a3c49&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=40e391fd-f433-49a6-8550-7d6db6ad1071&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=615d2830-7a98-49b0-a34c-0e7b964caf5a&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=839a3ae5-eb87-4258-b8a0-9126f52ed5ab&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=e4cf00e0-0dde-4df4-8678-7f8289efde9d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=a35ed65c-79bd-446a-9328-2893d1593ba2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=bf3695e0-8a34-437d-8e18-e8e40752484b&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=3b064e38-78b3-4514-8594-bd96beabc37f&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=035d324a-c5bd-4b08-8683-f10465b3371e&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=bf81fea4-aece-4590-a69a-0f81cb1211a4&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=b0a1d3db-4fae-4ddb-9274-8257697311db&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=50e2ec68-65cd-49fe-b50d-18660829b7ed&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=512b3aa6-4f23-48eb-b7b7-1d0b8df63f0d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=46185c64-09b5-44e8-abfb-c9b324d11b45&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=9292c599-2387-4da6-8415-fa5e6cd9c68e&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=65955f07-d2ad-4e1a-9821-5b98245d14a4&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=b208bac3-2ae1-475f-a086-5b8e7edd5459&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=1f37e4cb-a0bb-4897-a4f5-cfb61f835f04&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=2b5b8ec0-c610-4f5f-9ad2-de223dba9e01&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=7b81454c-0b25-4c91-a118-4a515c648063&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=6a771193-4540-40f2-b346-008382b47748&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=c0fc7faf-2772-4791-b82a-4a77439913f1&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=dde745fd-e27d-47d7-a705-747f7590051e&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=a0c61f97-b03d-4b6e-b880-3b3adebf2fd7&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=5c3774a0-a4be-4ba1-ad26-7b83a7fa87ed&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=faf7b8fd-482d-4521-b6fe-ba11eabccde8&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=f6f3828f-9f52-4cb8-bfef-ccc4b8efd556&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=c5d71afa-c9af-47c0-ad13-7dd07df7b6dc&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=8aa23dbc-994b-47d5-9734-224a725208ab&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=d75e0fe6-b22d-480b-9d45-4f916771caf9&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=ceea656e-6f51-4c6a-861b-a94228105b4d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=8a2ee61b-4b4c-401d-89e8-51a422c0fc6a&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=b4e4189b-e1ea-424d-8f99-ce8479320879&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=5b1520f4-2778-47de-ba4e-26d8b8e775b1&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=553f1dc2-2bc5-4d8f-b365-120c7f47ec67&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=1e3fa885-e296-406a-9d33-12ef1b490c94&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=e0cb643d-aca5-47f1-bee0-7524ed0cdd77&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=d224d937-3c37-4b86-b351-370f3e4414c7&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=627721d4-b72d-4051-90b8-3d117692217d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=0eea456c-65ef-4e79-93af-d1d5844bf2a9&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=50a0f02d-8180-425e-a6e6-a896f22b55fb&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=57c9db00-4358-49f2-9f0a-24d3fd99c96b&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=52152f60-1c64-490f-94ab-674a8fca9184&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=cc78be09-98ab-4bf7-872c-e6d017997679&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=e68baffd-af42-46c3-8261-e603e2421d27&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=ba9270b9-89e3-44d6-8a1c-a4be04135eea&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=43df6dc9-8f19-4865-a4ba-5e595e262a1b&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=63689c14-00e0-4f2c-8559-ac0a8c7f66cc&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=08a4cbc7-4870-449c-9aa2-6183e994a680&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=be32b35e-f81d-4d7a-a093-0da17d26de52&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=49bb53b4-1d77-45b8-baaf-e253fd8b543d&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=8d7ace66-24fc-452b-8014-7b35c8aa9595&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=409b63bb-aee8-40ed-8b72-21444197a007&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=cf189ca8-bf44-4a08-ae0b-410642c65af2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=2ccc02d1-3c6b-4497-9c05-4dbe64d8f501&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=50f3f539-36c3-4e44-96fd-1bc8478e2f99&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=aec21e4d-6e59-4c76-9ab9-458ad7ae557c&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+						<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;ID=d26ae241-c701-408a-a8bf-72f7708616bf&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd"/>
+			<Style isDefault="true">
+				<ows:Title>Styl domyślny dla mapy topograficznej</ows:Title>
+				<ows:Identifier>default</ows:Identifier>		
+				<LegendURL format="image/png" xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/TOPO/legenda.png"/> 
+			</Style>
+			<Format>image/jpeg</Format>
+			<InfoFormat>text/html</InfoFormat>
+		    <InfoFormat>text/xml; subtype=gml/3.2</InfoFormat>
+		    <InfoFormat>application/gml+xml; version=3.2</InfoFormat>
+		    
+		    
+    
+   
+    <TileMatrixSetLink>
+	<TileMatrixSet>EPSG:2180</TileMatrixSet>
+      <TileMatrixSetLimits>
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:0</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>0</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>0</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:1</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>1</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>1</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:2</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>2</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>2</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:3</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>5</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>5</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:4</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>11</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>11</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:5</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>22</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>23</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:6</TileMatrix>
+          <MinTileRow>1</MinTileRow>
+          <MaxTileRow>56</MaxTileRow>
+          <MinTileCol>1</MinTileCol>
+          <MaxTileCol>59</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:7</TileMatrix>
+          <MinTileRow>2</MinTileRow>
+          <MaxTileRow>112</MaxTileRow>
+          <MinTileCol>3</MinTileCol>
+          <MaxTileCol>119</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:8</TileMatrix>
+          <MinTileRow>5</MinTileRow>
+          <MaxTileRow>224</MaxTileRow>
+          <MinTileCol>7</MinTileCol>
+          <MaxTileCol>239</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:9</TileMatrix>
+          <MinTileRow>14</MinTileRow>
+          <MaxTileRow>561</MaxTileRow>
+          <MinTileCol>18</MinTileCol>
+          <MaxTileCol>597</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:10</TileMatrix>
+          <MinTileRow>29</MinTileRow>
+          <MaxTileRow>1122</MaxTileRow>
+          <MinTileCol>36</MinTileCol>
+          <MaxTileCol>1195</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:11</TileMatrix>
+          <MinTileRow>73</MinTileRow>
+          <MaxTileRow>2805</MaxTileRow>
+          <MinTileCol>92</MinTileCol>
+          <MaxTileCol>2989</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:12</TileMatrix>
+          <MinTileRow>147</MinTileRow>
+          <MaxTileRow>5610</MaxTileRow>
+          <MinTileCol>184</MinTileCol>
+          <MaxTileCol>5979</MaxTileCol>
+        </TileMatrixLimits>
+    
+      </TileMatrixSetLimits>
+    </TileMatrixSetLink>
+  
+   
+    <TileMatrixSetLink>
+	<TileMatrixSet>EPSG:4326</TileMatrixSet>
+      <TileMatrixSetLimits>
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:0</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>0</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>1</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:1</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>1</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>2</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:2</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>3</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>5</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:3</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>6</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>11</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:4</TileMatrix>
+          <MinTileRow>1</MinTileRow>
+          <MaxTileRow>12</MaxTileRow>
+          <MinTileCol>1</MinTileCol>
+          <MaxTileCol>22</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:5</TileMatrix>
+          <MinTileRow>2</MinTileRow>
+          <MaxTileRow>24</MaxTileRow>
+          <MinTileCol>3</MinTileCol>
+          <MaxTileCol>44</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:6</TileMatrix>
+          <MinTileRow>5</MinTileRow>
+          <MaxTileRow>61</MaxTileRow>
+          <MinTileCol>9</MinTileCol>
+          <MaxTileCol>110</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:7</TileMatrix>
+          <MinTileRow>10</MinTileRow>
+          <MaxTileRow>122</MaxTileRow>
+          <MinTileCol>18</MinTileCol>
+          <MaxTileCol>220</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:8</TileMatrix>
+          <MinTileRow>21</MinTileRow>
+          <MaxTileRow>244</MaxTileRow>
+          <MinTileCol>36</MinTileCol>
+          <MaxTileCol>441</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:9</TileMatrix>
+          <MinTileRow>54</MinTileRow>
+          <MaxTileRow>612</MaxTileRow>
+          <MinTileCol>90</MinTileCol>
+          <MaxTileCol>1103</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:10</TileMatrix>
+          <MinTileRow>109</MinTileRow>
+          <MaxTileRow>1224</MaxTileRow>
+          <MinTileCol>181</MinTileCol>
+          <MaxTileCol>2206</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:11</TileMatrix>
+          <MinTileRow>273</MinTileRow>
+          <MaxTileRow>3060</MaxTileRow>
+          <MinTileCol>453</MinTileCol>
+          <MaxTileCol>5516</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:12</TileMatrix>
+          <MinTileRow>547</MinTileRow>
+          <MaxTileRow>6120</MaxTileRow>
+          <MinTileCol>906</MinTileCol>
+          <MaxTileCol>11033</MaxTileCol>
+        </TileMatrixLimits>
+    
+      </TileMatrixSetLimits>
+    </TileMatrixSetLink>
+  
+	</Layer>
+	
+  <TileMatrixSet>
+    <ows:Identifier>EPSG:2180</ows:Identifier>
+    <ows:SupportedCRS>urn:ogc:def:crs:EPSG::2180</ows:SupportedCRS>
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:0</ows:Identifier>
+      <ScaleDenominator>7559538.928571429</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>1</MatrixWidth>
+      <MatrixHeight>1</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:1</ows:Identifier>
+      <ScaleDenominator>3779769.4642857146</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>2</MatrixWidth>
+      <MatrixHeight>2</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:2</ows:Identifier>
+      <ScaleDenominator>1889884.7321428573</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>3</MatrixWidth>
+      <MatrixHeight>3</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:3</ows:Identifier>
+      <ScaleDenominator>944942.3660714286</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>6</MatrixWidth>
+      <MatrixHeight>6</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:4</ows:Identifier>
+      <ScaleDenominator>472471.1830357143</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>12</MatrixWidth>
+      <MatrixHeight>12</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:5</ows:Identifier>
+      <ScaleDenominator>236235.59151785716</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>24</MatrixWidth>
+      <MatrixHeight>23</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:6</ows:Identifier>
+      <ScaleDenominator>94494.23660714286</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>60</MatrixWidth>
+      <MatrixHeight>57</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:7</ows:Identifier>
+      <ScaleDenominator>47247.11830357143</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>120</MatrixWidth>
+      <MatrixHeight>113</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:8</ows:Identifier>
+      <ScaleDenominator>23623.559151785714</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>240</MatrixWidth>
+      <MatrixHeight>225</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:9</ows:Identifier>
+      <ScaleDenominator>9449.423660714287</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>598</MatrixWidth>
+      <MatrixHeight>562</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:10</ows:Identifier>
+      <ScaleDenominator>4724.711830357143</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>1196</MatrixWidth>
+      <MatrixHeight>1123</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:11</ows:Identifier>
+      <ScaleDenominator>1889.8847321428573</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>2990</MatrixWidth>
+      <MatrixHeight>2806</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:12</ows:Identifier>
+      <ScaleDenominator>944.9423660714286</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>5980</MatrixWidth>
+      <MatrixHeight>5611</MatrixHeight>
+    </TileMatrix>
+    
+    
+</TileMatrixSet>
+
+ 
+  <TileMatrixSet>
+    <ows:Identifier>EPSG:4326</ows:Identifier>
+    <ows:SupportedCRS>urn:ogc:def:crs:EPSG::4326</ows:SupportedCRS>
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:0</ows:Identifier>
+      <ScaleDenominator>7559538.928571429</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>2</MatrixWidth>
+      <MatrixHeight>1</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:1</ows:Identifier>
+      <ScaleDenominator>3779769.4642857146</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>3</MatrixWidth>
+      <MatrixHeight>2</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:2</ows:Identifier>
+      <ScaleDenominator>1889884.7321428573</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>6</MatrixWidth>
+      <MatrixHeight>4</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:3</ows:Identifier>
+      <ScaleDenominator>944942.3660714286</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>12</MatrixWidth>
+      <MatrixHeight>7</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:4</ows:Identifier>
+      <ScaleDenominator>472471.1830357143</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>23</MatrixWidth>
+      <MatrixHeight>13</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:5</ows:Identifier>
+      <ScaleDenominator>236235.59151785716</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>45</MatrixWidth>
+      <MatrixHeight>25</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:6</ows:Identifier>
+      <ScaleDenominator>94494.23660714286</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>111</MatrixWidth>
+      <MatrixHeight>62</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:7</ows:Identifier>
+      <ScaleDenominator>47247.11830357143</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>221</MatrixWidth>
+      <MatrixHeight>123</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:8</ows:Identifier>
+      <ScaleDenominator>23623.559151785714</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>442</MatrixWidth>
+      <MatrixHeight>245</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:9</ows:Identifier>
+      <ScaleDenominator>9449.423660714287</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>1104</MatrixWidth>
+      <MatrixHeight>613</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:10</ows:Identifier>
+      <ScaleDenominator>4724.711830357143</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>2207</MatrixWidth>
+      <MatrixHeight>1225</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:11</ows:Identifier>
+      <ScaleDenominator>1889.8847321428573</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>5517</MatrixWidth>
+      <MatrixHeight>3061</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:12</ows:Identifier>
+      <ScaleDenominator>944.9423660714286</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>11034</MatrixWidth>
+      <MatrixHeight>6121</MatrixHeight>
+    </TileMatrix>
+    
+    
+</TileMatrixSet>
+
+ 
+	</Contents>
+</Capabilities>

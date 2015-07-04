@@ -177,7 +177,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
     }
 
     protected final String getWmsUrl() {
-        return sanitize(wmsUrl.getText());
+        return sanitize(wmsUrl.getText(), ImageryInfo.ImageryType.WMS);
     }
 
     @Override

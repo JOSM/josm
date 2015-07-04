@@ -55,7 +55,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         /** TMS entry for Russian company <a href="https://wiki.openstreetmap.org/wiki/WikiProject_Russia/kosmosnimki">ScanEx</a>. **/
         SCANEX("scanex"),
         /** A WMS endpoint entry only stores the WMS server info, without layer, which are chosen later by the user. **/
-        WMS_ENDPOINT("wms_endpoint");
+        WMS_ENDPOINT("wms_endpoint"),
+        /** WMTS stores GetCapabilities URL. Does not store any information about the layer **/
+        WMTS("wmts");
 
 
         private final String typeString;

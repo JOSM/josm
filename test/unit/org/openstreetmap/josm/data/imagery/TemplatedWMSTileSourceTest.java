@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.JOSMFixture;
@@ -47,6 +46,7 @@ public class TemplatedWMSTileSourceTest {
                 verifyTileSquarness(source, x, y, 2);
             }
         }
+        verifyTileSquarness(source, 150, 20, 18);
         verifyTileSquarness(source, 2270, 1323, 12);
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
@@ -108,7 +108,7 @@ public class TemplatedWMSTileSourceTest {
     }
 
     private LatLon getTileLatLon(TemplatedWMSTileSource source, int x, int y, int z) {
-        return new LatLon(source.tileXYToLatLon(new Tile(source, x, y, z)));
+        return new LatLon(source.tileXYToLatLon(x, y, z));
     }
 
     private void verifyTileSquarness(TemplatedWMSTileSource source, int x, int y, int z) {

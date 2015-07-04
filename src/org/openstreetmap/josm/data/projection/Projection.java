@@ -67,4 +67,15 @@ public interface Projection {
      * @return the supported lat/lon rectangle for this projection
      */
     Bounds getWorldBoundsLatLon();
+
+    /**
+     * Get the number of meters per unit of this projection. This more
+     * defines the scale of the map, than real conversion of unit to meters
+     * as this value is more less correct only along great circles.
+     *
+     * Used by WMTS to properly scale tiles
+     * @return meters per unit of projection
+     *
+     */
+    double getMetersPerUnit();
 }

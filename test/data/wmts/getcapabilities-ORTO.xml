@@ -1,0 +1,779 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0 http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0/inspire_vs_ows_11.xsd">
+	<ows:ServiceIdentification>
+		<ows:Title>Usługa przeglądania ortofotomap dla obszaru Polski. Profil kafelkowany (WMTS)</ows:Title>
+		<ows:Abstract>Usługa przeglądania ortofotomap dla obszaru Polski. Dane udostępniane za pomocą tej usługi stanowią ortofotomapę wykonaną ze zdjęć lotniczych. Usługa wykorzystuje interfejs WMTS OGC w wersji 1.0.0.</ows:Abstract>
+		<ows:Keywords>
+			<ows:Keyword>WMTS</ows:Keyword>
+			<ows:Keyword>Tiled</ows:Keyword>
+			<ows:Keyword>Web Map Tile Service</ows:Keyword>
+			<ows:Keyword>Usługa przeglądania</ows:Keyword>
+			<ows:Keyword>Aerial ortoimagery</ows:Keyword>
+			<ows:Keyword>Aerial photography</ows:Keyword>
+			<ows:Keyword>Dane referencyjne</ows:Keyword>
+			<ows:Keyword>Fotografia terenu</ows:Keyword>
+			<ows:Keyword>Land image</ows:Keyword>
+			<ows:Keyword>Land photography</ows:Keyword>
+			<ows:Keyword>Obraz terenu</ows:Keyword>
+			<ows:Keyword>Orthoimagery</ows:Keyword>
+			<ows:Keyword>Ortofotogram</ows:Keyword>
+			<ows:Keyword>Ortofotomapa lotnicza</ows:Keyword>
+			<ows:Keyword>Ortofotomapa</ows:Keyword>
+			<ows:Keyword>Raster</ows:Keyword>
+			<ows:Keyword>Rastry</ows:Keyword>
+			<ows:Keyword>Referential data</ows:Keyword>
+			<ows:Keyword>Zdjęcie lotnicze</ows:Keyword>
+			<ows:Keyword>Sporządzanie ortoobrazów</ows:Keyword>
+		</ows:Keywords>
+		
+		<ows:ServiceType>OGC WMTS</ows:ServiceType>
+		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+		<ows:Fees>Korzystanie z usługi danych przestrzennych oznacza akceptację bez ograniczeń i zastrzeżeń Regulaminu dostępnego na stronie internetowej Geoportalu http://www.geoportal.gov.pl/</ows:Fees>
+		<ows:AccessConstraints>brak ograniczeń</ows:AccessConstraints> 
+	</ows:ServiceIdentification>
+	<ows:ServiceProvider>
+		<ows:ProviderName>Centralny Ośrodek Dokumentacji Geodezyjnej i Kartograficznej </ows:ProviderName>
+		<ows:ProviderSite xlink:type="simple" xlink:href="www.geoportal.gov.pl"/>
+		<ows:ServiceContact>
+			<ows:IndividualName>Dział Geoportal</ows:IndividualName>
+			<ows:ContactInfo>
+				<ows:Phone>
+					<ows:Voice>+48225322501</ows:Voice>
+				</ows:Phone>
+				<ows:Address>
+					<ows:DeliveryPoint>ul. Jana Olbrachta 94B</ows:DeliveryPoint>
+					<ows:City>Warszawa</ows:City>
+					<ows:AdministrativeArea>mazowieckie</ows:AdministrativeArea>
+					<ows:PostalCode>01-102</ows:PostalCode>
+					<ows:Country>Polska</ows:Country>
+					<ows:ElectronicMailAddress>geoportal@geoportal.gov.pl</ows:ElectronicMailAddress>
+				</ows:Address>
+			</ows:ContactInfo>
+		</ows:ServiceContact>
+	</ows:ServiceProvider>
+	<ows:OperationsMetadata>
+		<ows:Operation name="GetCapabilities">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/ORTO?">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>KVP</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="GetTile">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/ORTO?">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>KVP</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="GetFeatureInfo">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/ORTO?">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>KVP</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<inspire_vs:ExtendedCapabilities>
+			<inspire_common:ResourceLocator>
+				<inspire_common:URL>http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/ORTO?REQUEST=GetCapabilities&amp;SERVICE=WMTS</inspire_common:URL>
+				<inspire_common:MediaType>text/xml</inspire_common:MediaType>
+			</inspire_common:ResourceLocator>
+			<inspire_common:ResourceType>service</inspire_common:ResourceType>
+			<inspire_common:TemporalReference>
+				<inspire_common:DateOfPublication>2012-10-24</inspire_common:DateOfPublication>
+			</inspire_common:TemporalReference>
+			<inspire_common:Conformity>
+				<inspire_common:Specification xsi:type="inspire_common:citationInspireInteroperabilityRegulation_pol">
+					<inspire_common:Title>ROZPORZĄDZENIE KOMISJI (UE) NR 1089/2010 z dnia 23 listopada 2010 r. w sprawie wykonania dyrektywy 2007/2/WE Parlamentu Europejskiego i Rady w zakresie interoperacyjności zbiorów i usług danych przestrzennych</inspire_common:Title>
+					<inspire_common:DateOfPublication>2010-12-08</inspire_common:DateOfPublication>
+					<inspire_common:URI>OJ:L:2010:323:0011:0102:PL:PDF</inspire_common:URI>
+					<inspire_common:ResourceLocator>
+						<inspire_common:URL>http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2010:323:0011:0102:PL:PDF</inspire_common:URL>
+						<inspire_common:MediaType>application/pdf</inspire_common:MediaType>
+					</inspire_common:ResourceLocator>
+				</inspire_common:Specification>
+				<inspire_common:Degree>notConformant</inspire_common:Degree>
+			</inspire_common:Conformity>
+			<inspire_common:MetadataPointOfContact>
+				<inspire_common:OrganisationName>Centralny Ośrodek Dokumentacji Geodezyjnej i Kartograficznej</inspire_common:OrganisationName>
+				<inspire_common:EmailAddress>geoportal@geoportal.gov.pl</inspire_common:EmailAddress>
+			</inspire_common:MetadataPointOfContact>
+			<inspire_common:MetadataDate>2012-10-24</inspire_common:MetadataDate>
+			<inspire_common:SpatialDataServiceType>view</inspire_common:SpatialDataServiceType>
+			<inspire_common:MandatoryKeyword>
+				<inspire_common:KeywordValue>infoMapAccessService</inspire_common:KeywordValue>
+			</inspire_common:MandatoryKeyword>
+			<inspire_common:Keyword xsi:type="inspire_common:inspireTheme_pol">
+				<inspire_common:OriginatingControlledVocabulary>
+					<inspire_common:Title>GEMET - INSPIRE themes</inspire_common:Title>
+					<inspire_common:DateOfPublication>2008-06-01</inspire_common:DateOfPublication>
+				</inspire_common:OriginatingControlledVocabulary>
+				<inspire_common:KeywordValue>Użytkowanie terenu</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>WMTS</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Tiled</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>View service</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Web Map Tile Service</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Usługa przeglądania</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Aerial ortoimagery</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Aerial photography</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Dane referencyjne</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Fotografia terenu</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Land image</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Land photography</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Obraz terenu</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Orthoimagery</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Ortofotogram</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Ortofotomapa lotnicza</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Ortofotomapa</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Raster</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Rastry</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Referential data</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Zdjęcie lotnicze</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:Keyword>
+				<inspire_common:KeywordValue>Sporządzanie ortoobrazów</inspire_common:KeywordValue>
+			</inspire_common:Keyword>
+			<inspire_common:SupportedLanguages xmlns="http://inspire.ec.europa.eu/schemas/common/1.0">
+				<inspire_common:DefaultLanguage>
+					<inspire_common:Language>pol</inspire_common:Language>
+				</inspire_common:DefaultLanguage>
+			</inspire_common:SupportedLanguages>
+			<inspire_common:ResponseLanguage xmlns="http://inspire.ec.europa.eu/schemas/common/1.0">
+				<inspire_common:Language>pol</inspire_common:Language>
+			</inspire_common:ResponseLanguage>
+			<inspire_common:MetadataUrl>
+				<inspire_common:URL>http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=8b61894c-5e89-4626-8353-9f00b302d2eb</inspire_common:URL>
+				<inspire_common:MediaType>text/xml</inspire_common:MediaType>
+			</inspire_common:MetadataUrl>
+		</inspire_vs:ExtendedCapabilities>
+	</ows:OperationsMetadata>
+	<Contents>
+		<Layer>
+			<ows:Title>ORTOFOTOMAPA</ows:Title>
+			<ows:Abstract>Warstwa prezentująca ortofotomapę utworzoną ze zdjęć lotniczych.</ows:Abstract>
+			<ows:Keywords>
+				<ows:Keyword>Ortofotomapa</ows:Keyword>
+			</ows:Keywords>
+			<ows:Identifier>ORTOFOTOMAPA</ows:Identifier>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=b0c395a9-b92c-408e-a37e-06fa772a4ac2"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=ac363dce-91cb-4518-a4a3-f7e088811b11"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=21162299-f3c9-4d96-9b64-542d5557c9f7"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=65757f80-0fe9-11df-8a39-0800200c9a66"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=36440873-342a-47ad-b167-f24cd60e2f7d"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=abf8dc2d-a36a-4e29-9a8c-54cd51bdb525"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=49062708-089e-4d8e-9376-a53220bda2f7"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=e8e65f25-2b6a-4dae-bd97-97b057cd484a"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=b3b4d1fa-e2da-4360-a5da-4e7c50240164"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=09bc4e9c-362f-486d-b283-13f0b1067eb4"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=5efe5701-6d56-42ec-a495-bcfde95ed762"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=0c799a9f-76e0-4c9a-863f-81a70733c9f5"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=e4c17d3b-dfdd-4686-a7c9-79d749a5ff0c"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=2fc68963-45dd-4061-8d8b-5ca1630bb672"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=8a338383-2bd7-44f5-b925-6ad4ce6eb858"/>
+			<ows:Metadata xlink:href="http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=b6d807be-8157-4c6e-90a2-587bea0a203c"/>
+			<Style isDefault="true">
+				<ows:Title>Styl domyślny dla ortofotomapy</ows:Title>
+				<ows:Identifier>default</ows:Identifier>		
+				<LegendURL format="image/png" xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/ORTO/legenda.png"/> 
+			</Style>
+			<Format>image/jpeg</Format>
+			<InfoFormat>text/html</InfoFormat>
+		    <InfoFormat>text/xml; subtype=gml/3.2</InfoFormat>
+		    <InfoFormat>application/gml+xml; version=3.2</InfoFormat>
+		    
+		    
+    
+   
+    <TileMatrixSetLink>
+	<TileMatrixSet>EPSG:2180</TileMatrixSet>
+      <TileMatrixSetLimits>
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:0</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>0</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>0</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:1</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>1</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>1</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:2</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>2</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>2</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:3</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>5</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>5</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:4</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>10</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>11</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:5</TileMatrix>
+          <MinTileRow>1</MinTileRow>
+          <MaxTileRow>21</MaxTileRow>
+          <MinTileCol>1</MinTileCol>
+          <MaxTileCol>22</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:6</TileMatrix>
+          <MinTileRow>3</MinTileRow>
+          <MaxTileRow>53</MaxTileRow>
+          <MinTileCol>4</MinTileCol>
+          <MaxTileCol>56</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:7</TileMatrix>
+          <MinTileRow>7</MinTileRow>
+          <MaxTileRow>107</MaxTileRow>
+          <MinTileCol>9</MinTileCol>
+          <MaxTileCol>113</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:8</TileMatrix>
+          <MinTileRow>14</MinTileRow>
+          <MaxTileRow>214</MaxTileRow>
+          <MinTileCol>19</MinTileCol>
+          <MaxTileCol>227</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:9</TileMatrix>
+          <MinTileRow>36</MinTileRow>
+          <MaxTileRow>535</MaxTileRow>
+          <MinTileCol>47</MinTileCol>
+          <MaxTileCol>568</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:10</TileMatrix>
+          <MinTileRow>73</MinTileRow>
+          <MaxTileRow>1070</MaxTileRow>
+          <MinTileCol>95</MinTileCol>
+          <MaxTileCol>1136</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:11</TileMatrix>
+          <MinTileRow>184</MinTileRow>
+          <MaxTileRow>2675</MaxTileRow>
+          <MinTileCol>239</MinTileCol>
+          <MaxTileCol>2842</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:12</TileMatrix>
+          <MinTileRow>369</MinTileRow>
+          <MaxTileRow>5351</MaxTileRow>
+          <MinTileCol>479</MinTileCol>
+          <MaxTileCol>5684</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:2180:13</TileMatrix>
+          <MinTileRow>738</MinTileRow>
+          <MaxTileRow>10703</MaxTileRow>
+          <MinTileCol>959</MinTileCol>
+          <MaxTileCol>11368</MaxTileCol>
+        </TileMatrixLimits>
+    
+      </TileMatrixSetLimits>
+    </TileMatrixSetLink>
+  
+   
+    <TileMatrixSetLink>
+	<TileMatrixSet>EPSG:4326</TileMatrixSet>
+      <TileMatrixSetLimits>
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:0</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>0</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>1</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:1</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>1</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>2</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:2</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>2</MaxTileRow>
+          <MinTileCol>0</MinTileCol>
+          <MaxTileCol>5</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:3</TileMatrix>
+          <MinTileRow>0</MinTileRow>
+          <MaxTileRow>5</MaxTileRow>
+          <MinTileCol>1</MinTileCol>
+          <MaxTileCol>10</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:4</TileMatrix>
+          <MinTileRow>1</MinTileRow>
+          <MaxTileRow>11</MaxTileRow>
+          <MinTileCol>2</MinTileCol>
+          <MaxTileCol>20</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:5</TileMatrix>
+          <MinTileRow>3</MinTileRow>
+          <MaxTileRow>23</MaxTileRow>
+          <MinTileCol>5</MinTileCol>
+          <MaxTileCol>41</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:6</TileMatrix>
+          <MinTileRow>8</MinTileRow>
+          <MaxTileRow>58</MaxTileRow>
+          <MinTileCol>14</MinTileCol>
+          <MaxTileCol>104</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:7</TileMatrix>
+          <MinTileRow>17</MinTileRow>
+          <MaxTileRow>116</MaxTileRow>
+          <MinTileCol>29</MinTileCol>
+          <MaxTileCol>209</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:8</TileMatrix>
+          <MinTileRow>35</MinTileRow>
+          <MaxTileRow>233</MaxTileRow>
+          <MinTileCol>58</MinTileCol>
+          <MaxTileCol>418</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:9</TileMatrix>
+          <MinTileRow>87</MinTileRow>
+          <MaxTileRow>584</MaxTileRow>
+          <MinTileCol>146</MinTileCol>
+          <MaxTileCol>1047</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:10</TileMatrix>
+          <MinTileRow>175</MinTileRow>
+          <MaxTileRow>1168</MaxTileRow>
+          <MinTileCol>292</MinTileCol>
+          <MaxTileCol>2094</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:11</TileMatrix>
+          <MinTileRow>439</MinTileRow>
+          <MaxTileRow>2921</MaxTileRow>
+          <MinTileCol>731</MinTileCol>
+          <MaxTileCol>5236</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:12</TileMatrix>
+          <MinTileRow>879</MinTileRow>
+          <MaxTileRow>5842</MaxTileRow>
+          <MinTileCol>1463</MinTileCol>
+          <MaxTileCol>10473</MaxTileCol>
+        </TileMatrixLimits>
+    
+    	<TileMatrixLimits>
+          <TileMatrix>EPSG:4326:13</TileMatrix>
+          <MinTileRow>1759</MinTileRow>
+          <MaxTileRow>11685</MaxTileRow>
+          <MinTileCol>2926</MinTileCol>
+          <MaxTileCol>20946</MaxTileCol>
+        </TileMatrixLimits>
+    
+      </TileMatrixSetLimits>
+    </TileMatrixSetLink>
+  
+	</Layer>
+	
+  <TileMatrixSet>
+    <ows:Identifier>EPSG:2180</ows:Identifier>
+    <ows:SupportedCRS>urn:ogc:def:crs:EPSG::2180</ows:SupportedCRS>
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:0</ows:Identifier>
+      <ScaleDenominator>7559538.928571429</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>1</MatrixWidth>
+      <MatrixHeight>1</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:1</ows:Identifier>
+      <ScaleDenominator>3779769.4642857146</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>2</MatrixWidth>
+      <MatrixHeight>2</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:2</ows:Identifier>
+      <ScaleDenominator>1889884.7321428573</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>3</MatrixWidth>
+      <MatrixHeight>3</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:3</ows:Identifier>
+      <ScaleDenominator>944942.3660714286</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>6</MatrixWidth>
+      <MatrixHeight>6</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:4</ows:Identifier>
+      <ScaleDenominator>472471.1830357143</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>12</MatrixWidth>
+      <MatrixHeight>11</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:5</ows:Identifier>
+      <ScaleDenominator>236235.59151785716</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>23</MatrixWidth>
+      <MatrixHeight>22</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:6</ows:Identifier>
+      <ScaleDenominator>94494.23660714286</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>57</MatrixWidth>
+      <MatrixHeight>54</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:7</ows:Identifier>
+      <ScaleDenominator>47247.11830357143</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>114</MatrixWidth>
+      <MatrixHeight>108</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:8</ows:Identifier>
+      <ScaleDenominator>23623.559151785714</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>228</MatrixWidth>
+      <MatrixHeight>215</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:9</ows:Identifier>
+      <ScaleDenominator>9449.423660714287</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>569</MatrixWidth>
+      <MatrixHeight>536</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:10</ows:Identifier>
+      <ScaleDenominator>4724.711830357143</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>1137</MatrixWidth>
+      <MatrixHeight>1071</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:11</ows:Identifier>
+      <ScaleDenominator>1889.8847321428573</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>2843</MatrixWidth>
+      <MatrixHeight>2676</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:12</ows:Identifier>
+      <ScaleDenominator>944.9423660714286</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>5685</MatrixWidth>
+      <MatrixHeight>5352</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:2180:13</ows:Identifier>
+      <ScaleDenominator>472.4711830357143</ScaleDenominator>
+      <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>11369</MatrixWidth>
+      <MatrixHeight>10704</MatrixHeight>
+    </TileMatrix>
+    
+    
+</TileMatrixSet>
+
+ 
+  <TileMatrixSet>
+    <ows:Identifier>EPSG:4326</ows:Identifier>
+    <ows:SupportedCRS>urn:ogc:def:crs:EPSG::4326</ows:SupportedCRS>
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:0</ows:Identifier>
+      <ScaleDenominator>7559538.928571429</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>2</MatrixWidth>
+      <MatrixHeight>1</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:1</ows:Identifier>
+      <ScaleDenominator>3779769.4642857146</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>3</MatrixWidth>
+      <MatrixHeight>2</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:2</ows:Identifier>
+      <ScaleDenominator>1889884.7321428573</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>6</MatrixWidth>
+      <MatrixHeight>3</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:3</ows:Identifier>
+      <ScaleDenominator>944942.3660714286</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>11</MatrixWidth>
+      <MatrixHeight>6</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:4</ows:Identifier>
+      <ScaleDenominator>472471.1830357143</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>21</MatrixWidth>
+      <MatrixHeight>12</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:5</ows:Identifier>
+      <ScaleDenominator>236235.59151785716</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>42</MatrixWidth>
+      <MatrixHeight>24</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:6</ows:Identifier>
+      <ScaleDenominator>94494.23660714286</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>105</MatrixWidth>
+      <MatrixHeight>59</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:7</ows:Identifier>
+      <ScaleDenominator>47247.11830357143</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>210</MatrixWidth>
+      <MatrixHeight>117</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:8</ows:Identifier>
+      <ScaleDenominator>23623.559151785714</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>419</MatrixWidth>
+      <MatrixHeight>234</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:9</ows:Identifier>
+      <ScaleDenominator>9449.423660714287</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>1048</MatrixWidth>
+      <MatrixHeight>585</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:10</ows:Identifier>
+      <ScaleDenominator>4724.711830357143</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>2095</MatrixWidth>
+      <MatrixHeight>1169</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:11</ows:Identifier>
+      <ScaleDenominator>1889.8847321428573</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>5237</MatrixWidth>
+      <MatrixHeight>2922</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:12</ows:Identifier>
+      <ScaleDenominator>944.9423660714286</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>10474</MatrixWidth>
+      <MatrixHeight>5843</MatrixHeight>
+    </TileMatrix>
+    
+    <TileMatrix>
+      <ows:Identifier>EPSG:4326:13</ows:Identifier>
+      <ScaleDenominator>472.4711830357143</ScaleDenominator>
+      <TopLeftCorner>56.0 12.0</TopLeftCorner>
+      <TileWidth>512</TileWidth>
+      <TileHeight>512</TileHeight>
+      <MatrixWidth>20947</MatrixWidth>
+      <MatrixHeight>11686</MatrixHeight>
+    </TileMatrix>
+    
+    
+</TileMatrixSet>
+
+ 
+	</Contents>
+</Capabilities>

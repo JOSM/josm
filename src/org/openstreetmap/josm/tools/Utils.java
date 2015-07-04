@@ -13,6 +13,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -1335,5 +1336,33 @@ public final class Utils {
      */
     public static boolean hasExtension(File file, String... extensions) {
         return hasExtension(file.getName(), extensions);
+    }
+
+    /**
+     * Reads the input stream and closes the stream at the end of processing (regardless if an exception was thrown)
+     *
+     * @param stream
+     * @return byte array of data in input stream
+     * @throws IOException
+     */
+    public static byte[] readBytesFromStream(InputStream stream) throws IOException {
+        try {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream(stream.available());
+            byte[] buffer = new byte[2048];
+            boolean finished = false;
+            do {
+                int read = stream.read(buffer);
+                if (read >= 0) {
+                    bout.write(buffer, 0, read);
+                } else {
+                    finished = true;
+                }
+            } while (!finished);
+            if (bout.size() == 0)
+                return null;
+            return bout.toByteArray();
+        } finally {
+            stream.close();
+        }
     }
 }
