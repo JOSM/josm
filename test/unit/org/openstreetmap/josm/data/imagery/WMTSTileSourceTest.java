@@ -21,7 +21,8 @@ public class WMTSTileSourceTest {
     private ImageryInfo testImageryPSEUDO_MERCATOR = getImagery("test/data/wmts/getcapabilities-pseudo-mercator.xml");
     private ImageryInfo testImageryTOPO_PL = getImagery("test/data/wmts/getcapabilities-TOPO.xml");
     private ImageryInfo testImageryORTO_PL = getImagery("test/data/wmts/getcapabilities-ORTO.xml");
-
+    private ImageryInfo testImageryWIEN = getImagery("test/data/wmts/getCapabilities-wien.xml");
+    private ImageryInfo testImageryWALLONIE = getImagery("test/data/wmts/WMTSCapabilities-Wallonie.xml");
 
     @BeforeClass
     public static void setUp() {
@@ -65,6 +66,43 @@ public class WMTSTileSourceTest {
         assertEquals("TileYMax", 1, testSource.getTileYMax(1));
         assertEquals("TileXMax", 2, testSource.getTileXMax(2));
         assertEquals("TileYMax", 2, testSource.getTileYMax(2));
+        assertEquals("TileXMax", 5, testSource.getTileXMax(3));
+        assertEquals("TileYMax", 4, testSource.getTileYMax(3));
+
+    }
+
+    @Test
+    public void testWALLONIE() throws MalformedURLException, IOException {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
+        WMTSTileSource testSource = new WMTSTileSource(testImageryWALLONIE);
+    }
+
+    @Test
+    public void testWIEN() throws MalformedURLException, IOException {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        WMTSTileSource testSource = new WMTSTileSource(testImageryWIEN);
+        int zoomOffset = 10;
+
+        verifyMercatorTile(testSource, 0, 0, 1, zoomOffset);
+        verifyMercatorTile(testSource, 0, 0, 2, zoomOffset);
+        verifyMercatorTile(testSource, 1, 1, 2, zoomOffset);
+        for(int x = 0; x < 4; x++) {
+            for(int y = 0; y < 4; y++) {
+                verifyMercatorTile(testSource, x, y, 3, zoomOffset);
+            }
+        }
+        for(int x = 0; x < 8; x++) {
+            for(int y = 0; y < 4; y++) {
+                verifyMercatorTile(testSource, x, y, zoomOffset);
+            }
+        }
+
+        verifyMercatorTile(testSource, 2<<9 - 1, 2<<8 - 1, zoomOffset);
+
+        assertEquals("TileXMax", 1, testSource.getTileXMax(1));
+        assertEquals("TileYMax", 1, testSource.getTileYMax(1));
+        assertEquals("TileXMax", 2, testSource.getTileXMax(2));
+        assertEquals("TileYMax", 2, testSource.getTileYMax(2));
         assertEquals("TileXMax", 4, testSource.getTileXMax(3));
         assertEquals("TileYMax", 4, testSource.getTileYMax(3));
 
@@ -76,7 +114,7 @@ public class WMTSTileSourceTest {
         WMTSTileSource testSource = new WMTSTileSource(testImageryTOPO_PL);
         verifyTile(new LatLon(56,12), testSource, 0, 0, 1);
         verifyTile(new LatLon(56,12), testSource, 0, 0, 2);
-        verifyTile(new LatLon(51.1323176, 16.8676823), testSource, 1, 1, 2);
+        verifyTile(new LatLon(51.1268639, 16.8731360), testSource, 1, 1, 2);
 
         assertEquals("TileXMax", 37, testSource.getTileXMax(1));
         assertEquals("TileYMax", 19, testSource.getTileYMax(1));
@@ -116,9 +154,13 @@ public class WMTSTileSourceTest {
     }
 
     private void verifyMercatorTile(WMTSTileSource testSource, int x, int y, int z) {
+        verifyMercatorTile(testSource, x, y, z, -1);
+    }
+
+    private void verifyMercatorTile(WMTSTileSource testSource, int x, int y, int z, int zoomOffset) {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         LatLon result = new LatLon(testSource.tileXYToLatLon(x, y, z));
-        LatLon expected = new LatLon(verifier.tileXYToLatLon(x, y, z-1));
+        LatLon expected = new LatLon(verifier.tileXYToLatLon(x, y, z + zoomOffset));
         System.out.println(z + "/" + x + "/" + y + " - result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString());
         assertEquals("Longitude" , expected.lon(), result.lon(), 1e-04);
         assertEquals("Latitude", expected.lat(), result.lat(), 1e-04);
