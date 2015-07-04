@@ -1,362 +1,362 @@
 # NAD27(76) / MTM zone 8
-<2017> +proj=tmerc +lat_0=0 +lon_0=-73.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-75.5,40,-74,60  <>
+<2017> +proj=tmerc +lat_0=0 +lon_0=-73.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-75.5,40,-74,60  <>
 # NAD27(76) / MTM zone 9
-<2018> +proj=tmerc +lat_0=0 +lon_0=-76.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-78.5,40,-74.5,60  <>
+<2018> +proj=tmerc +lat_0=0 +lon_0=-76.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-78.5,40,-74.5,60  <>
 # NAD27(76) / MTM zone 10
-<2019> +proj=tmerc +lat_0=0 +lon_0=-79.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-81.5,40,-77.5,60  <>
+<2019> +proj=tmerc +lat_0=0 +lon_0=-79.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-81.5,40,-77.5,60  <>
 # NAD27(76) / MTM zone 11
-<2020> +proj=tmerc +lat_0=0 +lon_0=-82.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-84,40,-80.5,60  <>
+<2020> +proj=tmerc +lat_0=0 +lon_0=-82.5 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-84,40,-80.5,60  <>
 # NAD27(76) / MTM zone 12
-<2021> +proj=tmerc +lat_0=0 +lon_0=-81 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-83,40,-79,60  <>
+<2021> +proj=tmerc +lat_0=0 +lon_0=-81 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-83,40,-79,60  <>
 # NAD27(76) / MTM zone 13
-<2022> +proj=tmerc +lat_0=0 +lon_0=-84 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-86,40,-82,60  <>
+<2022> +proj=tmerc +lat_0=0 +lon_0=-84 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-86,40,-82,60  <>
 # NAD27(76) / MTM zone 14
-<2023> +proj=tmerc +lat_0=0 +lon_0=-87 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-89,40,-85,60  <>
+<2023> +proj=tmerc +lat_0=0 +lon_0=-87 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-89,40,-85,60  <>
 # NAD27(76) / MTM zone 15
-<2024> +proj=tmerc +lat_0=0 +lon_0=-90 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-92,40,-88,60  <>
+<2024> +proj=tmerc +lat_0=0 +lon_0=-90 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-92,40,-88,60  <>
 # NAD27(76) / MTM zone 16
-<2025> +proj=tmerc +lat_0=0 +lon_0=-93 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-95,40,-91,60  <>
+<2025> +proj=tmerc +lat_0=0 +lon_0=-93 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-95,40,-91,60  <>
 # NAD27(76) / MTM zone 17
-<2026> +proj=tmerc +lat_0=0 +lon_0=-96 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +bounds=-96,40,-94,60  <>
+<2026> +proj=tmerc +lat_0=0 +lon_0=-96 +k=0.9999 +x_0=304800 +y_0=0 +ellps=clrk66 +units=m +bounds=-96,40,-94,60  <>
 # Lambert 93 (France)
-<2154> +proj=lcc +lat_0=46.5 +lat_1=44 +lat_2=49 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,41,10.2,51  <>
+<2154> +proj=lcc +lat_0=46.5 +lat_1=44 +lat_2=49 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,41,10.2,51  <>
 # PUWG 2000 Zone 5 (Poland)
-<2176> +proj=tmerc +lon_0=15 +k_0=0.999923 +x_0=5500000 +ellps=GRS80 +nadgrids=null +bounds=13.5,49,16.5,54.84  <>
+<2176> +proj=tmerc +lon_0=15 +k_0=0.999923 +x_0=5500000 +ellps=GRS80 +nadgrids=null +units=m +bounds=13.5,49,16.5,54.84  <>
 # PUWG 2000 Zone 6 (Poland)
-<2177> +proj=tmerc +lon_0=18 +k_0=0.999923 +x_0=6500000 +ellps=GRS80 +nadgrids=null +bounds=16.5,49,19.5,54.84  <>
+<2177> +proj=tmerc +lon_0=18 +k_0=0.999923 +x_0=6500000 +ellps=GRS80 +nadgrids=null +units=m +bounds=16.5,49,19.5,54.84  <>
 # PUWG 2000 Zone 7 (Poland)
-<2178> +proj=tmerc +lon_0=21 +k_0=0.999923 +x_0=7500000 +ellps=GRS80 +nadgrids=null +bounds=19.5,49,22.5,54.84  <>
+<2178> +proj=tmerc +lon_0=21 +k_0=0.999923 +x_0=7500000 +ellps=GRS80 +nadgrids=null +units=m +bounds=19.5,49,22.5,54.84  <>
 # PUWG 2000 Zone 8 (Poland)
-<2179> +proj=tmerc +lon_0=24 +k_0=0.999923 +x_0=8500000 +ellps=GRS80 +nadgrids=null +bounds=22.5,49,25.5,54.84  <>
+<2179> +proj=tmerc +lon_0=24 +k_0=0.999923 +x_0=8500000 +ellps=GRS80 +nadgrids=null +units=m +bounds=22.5,49,25.5,54.84  <>
 # PUWG 1992 (Poland)
-<2180> +proj=tmerc +lon_0=19 +k_0=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +nadgrids=null +bounds=14.12,49,24.15,54.84  <>
+<2180> +proj=tmerc +lon_0=19 +k_0=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +nadgrids=null +units=m +bounds=14.12,49,24.15,54.84  <>
 # UTM France (DOM) Fort Marigot
-<2969> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=intl +towgs84=136.596,248.148,-429.789 +bounds=-63.25,17.6,-62.5,18.5  <>
+<2969> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=intl +towgs84=136.596,248.148,-429.789 +units=m +bounds=-63.25,17.6,-62.5,18.5  <>
 # UTM France (DOM) Sainte Anne
-<2970> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=intl +towgs84=-472.29,-5.63,-304.12,0.4362,-0.8374,0.2563,1.8984 +bounds=-61.9,15.8,-60.9,16.6  <>
+<2970> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=intl +towgs84=-472.29,-5.63,-304.12,0.4362,-0.8374,0.2563,1.8984 +units=m +bounds=-61.9,15.8,-60.9,16.6  <>
 # UTM France (DOM) Guyane
-<2972> +proj=tmerc +lon_0=-51 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +nadgrids=null +bounds=-54,2.16,-49.62,9.06  <>
+<2972> +proj=tmerc +lon_0=-51 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-54,2.16,-49.62,9.06  <>
 # UTM France (DOM) Martinique
-<2973> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=intl +towgs84=126.926,547.939,130.409,-2.7867,5.16124,-0.85844,13.82265 +bounds=-61.25,14.25,-60.725,15.025  <>
+<2973> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=intl +towgs84=126.926,547.939,130.409,-2.7867,5.16124,-0.85844,13.82265 +units=m +bounds=-61.25,14.25,-60.725,15.025  <>
 # UTM France (DOM) Reunion
-<2975> +proj=tmerc +lon_0=57 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=GRS80 +nadgrids=null +bounds=37.58,-25.92,58.27,-10.6  <>
+<2975> +proj=tmerc +lon_0=57 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=GRS80 +nadgrids=null +units=m +bounds=37.58,-25.92,58.27,-10.6  <>
 # Monte Mario / Italy zone 1
-<3003> +proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=1500000 +y_0=0 +ellps=intl +bounds=5,36,13,48 <>
+<3003> +proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=1500000 +y_0=0 +ellps=intl +units=m +bounds=5,36,13,48 <>
 # Monte Mario / Italy zone 2
-<3004> +proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=2520000 +y_0=0 +ellps=intl +bounds=11,34,24,48 <>
+<3004> +proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=2520000 +y_0=0 +ellps=intl +units=m +bounds=11,34,24,48 <>
 # SWEREF99 13 30 / EPSG:3008 (Sweden)
-<3008> +proj=tmerc +lon_0=13.5 +x_0=150000 +ellps=GRS80 +nadgrids=null +bounds=12.1,55.2,14.65,62.26  <>
+<3008> +proj=tmerc +lon_0=13.5 +x_0=150000 +ellps=GRS80 +nadgrids=null +units=m +bounds=12.1,55.2,14.65,62.26  <>
 # LKS-92 (Latvia TM)
-<3059> +proj=tmerc +lon_0=24 +k_0=0.9996 +x_0=500000 +y_0=-6000000 +ellps=GRS80 +nadgrids=null +bounds=-180,-90,180,90  <>
+<3059> +proj=tmerc +lon_0=24 +k_0=0.9996 +x_0=500000 +y_0=-6000000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-180,-90,180,90  <>
 # Lambert Zone (Estonia)
-<3301> +proj=lcc +lat_0=57.51755393055556 +lat_1=59.333333333333336 +lat_2=58 +lon_0=24 +x_0=500000 +y_0=6375000 +ellps=GRS80 +nadgrids=null +bounds=21.64,56.05,28.58,61.13  <>
+<3301> +proj=lcc +lat_0=57.51755393055556 +lat_1=59.333333333333336 +lat_2=58 +lon_0=24 +x_0=500000 +y_0=6375000 +ellps=GRS80 +nadgrids=null +units=m +bounds=21.64,56.05,28.58,61.13  <>
 # Belgian Lambert 2008
-<3812> +proj=lcc +lat_0=50d47'52.134" +lat_1=49d50'0" +lat_2=51d10'0" +lon_0=4d21'33.177" +x_0=649328 +y_0=665262 +ellps=GRS80 +nadgrids=null +bounds=2.54,49.51,6.4,51.5  <>
+<3812> +proj=lcc +lat_0=50d47'52.134" +lat_1=49d50'0" +lat_2=51d10'0" +lon_0=4d21'33.177" +x_0=649328 +y_0=665262 +ellps=GRS80 +nadgrids=null +units=m +bounds=2.54,49.51,6.4,51.5  <>
 # Pseudo-Mercator
-<3857> +proj=josm:smerc +ellps=WGS84 +datum=WGS84 +bounds=-180,-85.05112877980659,180,85.05112877980659  <>
+<3857> +proj=josm:smerc +ellps=WGS84 +datum=WGS84 +units=m +bounds=-180,-85.05112877980659,180,85.05112877980659  <>
 # Lambert CC9 (France) Zone 42
-<3942> +proj=lcc +lat_0=42 +lat_1=41.25 +lat_2=42.75 +lon_0=3 +x_0=1700000 +y_0=1200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,41,10.2,44.5  <>
+<3942> +proj=lcc +lat_0=42 +lat_1=41.25 +lat_2=42.75 +lon_0=3 +x_0=1700000 +y_0=1200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,41,10.2,44.5  <>
 # Lambert CC9 (France) Zone 43
-<3943> +proj=lcc +lat_0=43 +lat_1=42.25 +lat_2=43.75 +lon_0=3 +x_0=1700000 +y_0=2200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,41,10.2,45.5  <>
+<3943> +proj=lcc +lat_0=43 +lat_1=42.25 +lat_2=43.75 +lon_0=3 +x_0=1700000 +y_0=2200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,41,10.2,45.5  <>
 # Lambert CC9 (France) Zone 44
-<3944> +proj=lcc +lat_0=44 +lat_1=43.25 +lat_2=44.75 +lon_0=3 +x_0=1700000 +y_0=3200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,41.5,10.2,46.5  <>
+<3944> +proj=lcc +lat_0=44 +lat_1=43.25 +lat_2=44.75 +lon_0=3 +x_0=1700000 +y_0=3200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,41.5,10.2,46.5  <>
 # Lambert CC9 (France) Zone 45
-<3945> +proj=lcc +lat_0=45 +lat_1=44.25 +lat_2=45.75 +lon_0=3 +x_0=1700000 +y_0=4200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,42.5,10.2,47.5  <>
+<3945> +proj=lcc +lat_0=45 +lat_1=44.25 +lat_2=45.75 +lon_0=3 +x_0=1700000 +y_0=4200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,42.5,10.2,47.5  <>
 # Lambert CC9 (France) Zone 46
-<3946> +proj=lcc +lat_0=46 +lat_1=45.25 +lat_2=46.75 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,43.5,10.2,48.5  <>
+<3946> +proj=lcc +lat_0=46 +lat_1=45.25 +lat_2=46.75 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,43.5,10.2,48.5  <>
 # Lambert CC9 (France) Zone 47
-<3947> +proj=lcc +lat_0=47 +lat_1=46.25 +lat_2=47.75 +lon_0=3 +x_0=1700000 +y_0=6200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,44.5,10.2,49.5  <>
+<3947> +proj=lcc +lat_0=47 +lat_1=46.25 +lat_2=47.75 +lon_0=3 +x_0=1700000 +y_0=6200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,44.5,10.2,49.5  <>
 # Lambert CC9 (France) Zone 48
-<3948> +proj=lcc +lat_0=48 +lat_1=47.25 +lat_2=48.75 +lon_0=3 +x_0=1700000 +y_0=7200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,45.5,10.2,50.5  <>
+<3948> +proj=lcc +lat_0=48 +lat_1=47.25 +lat_2=48.75 +lon_0=3 +x_0=1700000 +y_0=7200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,45.5,10.2,50.5  <>
 # Lambert CC9 (France) Zone 49
-<3949> +proj=lcc +lat_0=49 +lat_1=48.25 +lat_2=49.75 +lon_0=3 +x_0=1700000 +y_0=8200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,46.5,10.2,51.1  <>
+<3949> +proj=lcc +lat_0=49 +lat_1=48.25 +lat_2=49.75 +lon_0=3 +x_0=1700000 +y_0=8200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,46.5,10.2,51.1  <>
 # Lambert CC9 (France) Zone 50
-<3950> +proj=lcc +lat_0=50 +lat_1=49.25 +lat_2=50.75 +lon_0=3 +x_0=1700000 +y_0=9200000 +ellps=GRS80 +nadgrids=null +bounds=-5.5,47.5,10.2,51.1  <>
+<3950> +proj=lcc +lat_0=50 +lat_1=49.25 +lat_2=50.75 +lon_0=3 +x_0=1700000 +y_0=9200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,47.5,10.2,51.1  <>
 # ETRS89
 <4258> +proj=lonlat +ellps=GRS80 +datum=GRS80 +bounds=-180,-90,180,90  <>
 # WGS 84
 <4326> +proj=lonlat +ellps=WGS84 +datum=WGS84 +bounds=-180,-90,180,90  <>
 # Swiss Grid (Switzerland)
-<21781> +proj=somerc +lat_0=46d57'8.66" +lon_0=7d26'22.5" +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346 +bounds=5.7,45.7,10.6,47.9  <>
+<21781> +proj=somerc +lat_0=46d57'8.66" +lon_0=7d26'22.5" +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346 +units=m +bounds=5.7,45.7,10.6,47.9  <>
 # HD72 / EOV (Hungary)
 <23700> +proj=somerc +lat_0=47.14439372222222 +lon_0=19.04857177777778 +k_0=0.99993 +x_0=650000 +y_0=200000 +ellps=GRS67 +towgs84=52.17,-71.82,-14.9 +units=m +bounds=16.1200,45.7800,22.9100,48.6000  <>
 # ETRS89 / UTM zone 28N
-<25828> +proj=tmerc +lon_0=-15 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=-20,-5,-10,85 <>
+<25828> +proj=tmerc +lon_0=-15 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=-20,-5,-10,85 <>
 # ETRS89 / UTM zone 29N
-<25829> +proj=tmerc +lon_0=-9 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=-14,-5,-4,85  <>
+<25829> +proj=tmerc +lon_0=-9 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=-14,-5,-4,85  <>
 # ETRS89 / UTM zone 30N
-<25830> +proj=tmerc +lon_0=-3 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=-8,-5,2,85  <>
+<25830> +proj=tmerc +lon_0=-3 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=-8,-5,2,85  <>
 # ETRS89 / UTM zone 31N
-<25831> +proj=tmerc +lon_0=3 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=-2,-5,8,85  <>
+<25831> +proj=tmerc +lon_0=3 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=-2,-5,8,85  <>
 # ETRS89 / UTM zone 32N
-<25832> +proj=tmerc +lon_0=9 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=4,-5,14,85  <>
+<25832> +proj=tmerc +lon_0=9 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=4,-5,14,85  <>
 # ETRS89 / UTM zone 33N
-<25833> +proj=tmerc +lon_0=15 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=10,-5,20,85  <>
+<25833> +proj=tmerc +lon_0=15 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=10,-5,20,85  <>
 # ETRS89 / UTM zone 34N
-<25834> +proj=tmerc +lon_0=21 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=16,-5,26,85  <>
+<25834> +proj=tmerc +lon_0=21 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=16,-5,26,85  <>
 # ETRS89 / UTM zone 35N
-<25835> +proj=tmerc +lon_0=27 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=22,-5,32,85  <>
+<25835> +proj=tmerc +lon_0=27 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=22,-5,32,85  <>
 # ETRS89 / UTM zone 36N
-<25836> +proj=tmerc +lon_0=33 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=28,-5,38,85  <>
+<25836> +proj=tmerc +lon_0=33 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=28,-5,38,85  <>
 # ETRS89 / UTM zone 37N
-<25837> +proj=tmerc +lon_0=39 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=34,-5,44,85  <>
+<25837> +proj=tmerc +lon_0=39 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=34,-5,44,85  <>
 # ETRS89 / UTM zone 38N
-<25838> +proj=tmerc +lon_0=45 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +bounds=40,-5,50,85  <>
+<25838> +proj=tmerc +lon_0=45 +k_0=0.9996 +x_0=500000 +ellps=GRS80 +datum=GRS80 +units=m +bounds=40,-5,50,85  <>
 # Lambert 4 Zones France (Nord)
-<27561> +proj=lcc +lat_0=49.5 +lat_1=48d35'54.682" +lat_2=50d23'45.282" +lon_0=2d20'14.025" +x_0=600000 +y_0=200000 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93_b.gsb +bounds=-4.416666666666665,46.65,9.18,51.300000000000004  <>
+<27561> +proj=lcc +lat_0=49.5 +lat_1=48d35'54.682" +lat_2=50d23'45.282" +lon_0=2d20'14.025" +x_0=600000 +y_0=200000 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93_b.gsb +units=m +bounds=-4.416666666666665,46.65,9.18,51.300000000000004  <>
 # Lambert 4 Zones France (Centre)
-<27562> +proj=lcc +lat_0=46.8 +lat_1=45d53'56.108" +lat_2=47d41'45.652" +lon_0=2d20'14.025" +x_0=600000 +y_0=200000 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93_b.gsb +bounds=-4.416666666666665,43.95,9.18,49.65  <>
+<27562> +proj=lcc +lat_0=46.8 +lat_1=45d53'56.108" +lat_2=47d41'45.652" +lon_0=2d20'14.025" +x_0=600000 +y_0=200000 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93_b.gsb +units=m +bounds=-4.416666666666665,43.95,9.18,49.65  <>
 # Lambert 4 Zones France (South)
-<27563> +proj=lcc +lat_0=44.1 +lat_1=43d11'57.449" +lat_2=44d59'45.938" +lon_0=2d20'14.025" +x_0=600000 +y_0=200000 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93_b.gsb +bounds=-4.416666666666665,41.49,9.18,46.95  <>
+<27563> +proj=lcc +lat_0=44.1 +lat_1=43d11'57.449" +lat_2=44d59'45.938" +lon_0=2d20'14.025" +x_0=600000 +y_0=200000 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93_b.gsb +units=m +bounds=-4.416666666666665,41.49,9.18,46.95  <>
 # Lambert 4 Zones France (Corsica)
-<27564> +proj=lcc +lat_0=42.165 +lat_1=41d33'37.396" +lat_2=42d46'3.588" +lon_0=2d20'14.025" +x_0=234.358 +y_0=185861.369 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93_b.gsb +bounds=-4.416666666666665,41.49,9.18,44.267667  <>
+<27564> +proj=lcc +lat_0=42.165 +lat_1=41d33'37.396" +lat_2=42d46'3.588" +lon_0=2d20'14.025" +x_0=234.358 +y_0=185861.369 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93_b.gsb +units=m +bounds=-4.416666666666665,41.49,9.18,44.267667  <>
 # Belgian Lambert 1972
-<31370> +proj=lcc +lat_0=90 +lat_1=49d50'0.00204" +lat_2=51d10'0.00204" +lon_0=4d22'2.952" +x_0=150000.013 +y_0=5400088.438 +ellps=intl +towgs84=-99.06,53.32,-112.49,0.419,-0.83,1.885,-1.0 +bounds=2.54,49.51,6.4,51.5  <>
+<31370> +proj=lcc +lat_0=90 +lat_1=49d50'0.00204" +lat_2=51d10'0.00204" +lon_0=4d22'2.952" +x_0=150000.013 +y_0=5400088.438 +ellps=intl +towgs84=-99.06,53.32,-112.49,0.419,-0.83,1.885,-1.0 +units=m +bounds=2.54,49.51,6.4,51.5  <>
 # Gauß-Krüger Zone 2
-<31466> +proj=tmerc +lon_0=6 +x_0=2500000 +ellps=bessel +nadgrids=BETA2007.gsb +bounds=3.5,-5,8.5,85  <>
+<31466> +proj=tmerc +lon_0=6 +x_0=2500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +bounds=3.5,-5,8.5,85  <>
 # Gauß-Krüger Zone 3
-<31467> +proj=tmerc +lon_0=9 +x_0=3500000 +ellps=bessel +nadgrids=BETA2007.gsb +bounds=6.5,-5,11.5,85  <>
+<31467> +proj=tmerc +lon_0=9 +x_0=3500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +bounds=6.5,-5,11.5,85  <>
 # Gauß-Krüger Zone 4
-<31468> +proj=tmerc +lon_0=12 +x_0=4500000 +ellps=bessel +nadgrids=BETA2007.gsb +bounds=9.5,-5,14.5,85  <>
+<31468> +proj=tmerc +lon_0=12 +x_0=4500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +bounds=9.5,-5,14.5,85  <>
 # Gauß-Krüger Zone 5
-<31469> +proj=tmerc +lon_0=15 +x_0=5500000 +ellps=bessel +nadgrids=BETA2007.gsb +bounds=12.5,-5,17.5,85  <>
+<31469> +proj=tmerc +lon_0=15 +x_0=5500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +bounds=12.5,-5,17.5,85  <>
 # UTM zone 1N
-<32601> +proj=tmerc +lon_0=-177 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-182,-5,-172,85  <>
+<32601> +proj=tmerc +lon_0=-177 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-182,-5,-172,85  <>
 # UTM zone 2N
-<32602> +proj=tmerc +lon_0=-171 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-176,-5,-166,85  <>
+<32602> +proj=tmerc +lon_0=-171 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-176,-5,-166,85  <>
 # UTM zone 3N
-<32603> +proj=tmerc +lon_0=-165 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-170,-5,-160,85  <>
+<32603> +proj=tmerc +lon_0=-165 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-170,-5,-160,85  <>
 # UTM zone 4N
-<32604> +proj=tmerc +lon_0=-159 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-164,-5,-154,85  <>
+<32604> +proj=tmerc +lon_0=-159 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-164,-5,-154,85  <>
 # UTM zone 5N
-<32605> +proj=tmerc +lon_0=-153 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-158,-5,-148,85  <>
+<32605> +proj=tmerc +lon_0=-153 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-158,-5,-148,85  <>
 # UTM zone 6N
-<32606> +proj=tmerc +lon_0=-147 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-152,-5,-142,85  <>
+<32606> +proj=tmerc +lon_0=-147 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-152,-5,-142,85  <>
 # UTM zone 7N
-<32607> +proj=tmerc +lon_0=-141 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-146,-5,-136,85  <>
+<32607> +proj=tmerc +lon_0=-141 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-146,-5,-136,85  <>
 # UTM zone 8N
-<32608> +proj=tmerc +lon_0=-135 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-140,-5,-130,85  <>
+<32608> +proj=tmerc +lon_0=-135 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-140,-5,-130,85  <>
 # UTM zone 9N
-<32609> +proj=tmerc +lon_0=-129 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-134,-5,-124,85  <>
+<32609> +proj=tmerc +lon_0=-129 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-134,-5,-124,85  <>
 # UTM zone 10N
-<32610> +proj=tmerc +lon_0=-123 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-128,-5,-118,85  <>
+<32610> +proj=tmerc +lon_0=-123 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-128,-5,-118,85  <>
 # UTM zone 11N
-<32611> +proj=tmerc +lon_0=-117 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-122,-5,-112,85  <>
+<32611> +proj=tmerc +lon_0=-117 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-122,-5,-112,85  <>
 # UTM zone 12N
-<32612> +proj=tmerc +lon_0=-111 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-116,-5,-106,85  <>
+<32612> +proj=tmerc +lon_0=-111 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-116,-5,-106,85  <>
 # UTM zone 13N
-<32613> +proj=tmerc +lon_0=-105 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-110,-5,-100,85  <>
+<32613> +proj=tmerc +lon_0=-105 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-110,-5,-100,85  <>
 # UTM zone 14N
-<32614> +proj=tmerc +lon_0=-99 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-104,-5,-94,85  <>
+<32614> +proj=tmerc +lon_0=-99 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-104,-5,-94,85  <>
 # UTM zone 15N
-<32615> +proj=tmerc +lon_0=-93 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-98,-5,-88,85  <>
+<32615> +proj=tmerc +lon_0=-93 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-98,-5,-88,85  <>
 # UTM zone 16N
-<32616> +proj=tmerc +lon_0=-87 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-92,-5,-82,85  <>
+<32616> +proj=tmerc +lon_0=-87 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-92,-5,-82,85  <>
 # UTM zone 17N
-<32617> +proj=tmerc +lon_0=-81 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-86,-5,-76,85  <>
+<32617> +proj=tmerc +lon_0=-81 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-86,-5,-76,85  <>
 # UTM zone 18N
-<32618> +proj=tmerc +lon_0=-75 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-80,-5,-70,85  <>
+<32618> +proj=tmerc +lon_0=-75 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-80,-5,-70,85  <>
 # UTM zone 19N
-<32619> +proj=tmerc +lon_0=-69 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-74,-5,-64,85  <>
+<32619> +proj=tmerc +lon_0=-69 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-74,-5,-64,85  <>
 # UTM zone 20N
-<32620> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-68,-5,-58,85  <>
+<32620> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-68,-5,-58,85  <>
 # UTM zone 21N
-<32621> +proj=tmerc +lon_0=-57 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-62,-5,-52,85  <>
+<32621> +proj=tmerc +lon_0=-57 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-62,-5,-52,85  <>
 # UTM zone 22N
-<32622> +proj=tmerc +lon_0=-51 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-56,-5,-46,85  <>
+<32622> +proj=tmerc +lon_0=-51 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-56,-5,-46,85  <>
 # UTM zone 23N
-<32623> +proj=tmerc +lon_0=-45 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-50,-5,-40,85  <>
+<32623> +proj=tmerc +lon_0=-45 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-50,-5,-40,85  <>
 # UTM zone 24N
-<32624> +proj=tmerc +lon_0=-39 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-44,-5,-34,85  <>
+<32624> +proj=tmerc +lon_0=-39 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-44,-5,-34,85  <>
 # UTM zone 25N
-<32625> +proj=tmerc +lon_0=-33 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-38,-5,-28,85  <>
+<32625> +proj=tmerc +lon_0=-33 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-38,-5,-28,85  <>
 # UTM zone 26N
-<32626> +proj=tmerc +lon_0=-27 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-32,-5,-22,85  <>
+<32626> +proj=tmerc +lon_0=-27 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-32,-5,-22,85  <>
 # UTM zone 27N
-<32627> +proj=tmerc +lon_0=-21 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-26,-5,-16,85  <>
+<32627> +proj=tmerc +lon_0=-21 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-26,-5,-16,85  <>
 # UTM zone 28N
-<32628> +proj=tmerc +lon_0=-15 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-20,-5,-10,85  <>
+<32628> +proj=tmerc +lon_0=-15 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-20,-5,-10,85  <>
 # UTM zone 29N
-<32629> +proj=tmerc +lon_0=-9 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-14,-5,-4,85  <>
+<32629> +proj=tmerc +lon_0=-9 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-14,-5,-4,85  <>
 # UTM zone 30N
-<32630> +proj=tmerc +lon_0=-3 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-8,-5,2,85  <>
+<32630> +proj=tmerc +lon_0=-3 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-8,-5,2,85  <>
 # UTM zone 31N
-<32631> +proj=tmerc +lon_0=3 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-2,-5,8,85  <>
+<32631> +proj=tmerc +lon_0=3 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-2,-5,8,85  <>
 # UTM zone 32N
-<32632> +proj=tmerc +lon_0=9 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=4,-5,14,85  <>
+<32632> +proj=tmerc +lon_0=9 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=4,-5,14,85  <>
 # UTM zone 33N
-<32633> +proj=tmerc +lon_0=15 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=10,-5,20,85  <>
+<32633> +proj=tmerc +lon_0=15 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=10,-5,20,85  <>
 # UTM zone 34N
-<32634> +proj=tmerc +lon_0=21 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=16,-5,26,85  <>
+<32634> +proj=tmerc +lon_0=21 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=16,-5,26,85  <>
 # UTM zone 35N
-<32635> +proj=tmerc +lon_0=27 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=22,-5,32,85  <>
+<32635> +proj=tmerc +lon_0=27 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=22,-5,32,85  <>
 # UTM zone 36N
-<32636> +proj=tmerc +lon_0=33 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=28,-5,38,85  <>
+<32636> +proj=tmerc +lon_0=33 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=28,-5,38,85  <>
 # UTM zone 37N
-<32637> +proj=tmerc +lon_0=39 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=34,-5,44,85  <>
+<32637> +proj=tmerc +lon_0=39 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=34,-5,44,85  <>
 # UTM zone 38N
-<32638> +proj=tmerc +lon_0=45 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=40,-5,50,85  <>
+<32638> +proj=tmerc +lon_0=45 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=40,-5,50,85  <>
 # UTM zone 39N
-<32639> +proj=tmerc +lon_0=51 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=46,-5,56,85  <>
+<32639> +proj=tmerc +lon_0=51 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=46,-5,56,85  <>
 # UTM zone 40N
-<32640> +proj=tmerc +lon_0=57 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=52,-5,62,85  <>
+<32640> +proj=tmerc +lon_0=57 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=52,-5,62,85  <>
 # UTM zone 41N
-<32641> +proj=tmerc +lon_0=63 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=58,-5,68,85  <>
+<32641> +proj=tmerc +lon_0=63 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=58,-5,68,85  <>
 # UTM zone 42N
-<32642> +proj=tmerc +lon_0=69 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=64,-5,74,85  <>
+<32642> +proj=tmerc +lon_0=69 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=64,-5,74,85  <>
 # UTM zone 43N
-<32643> +proj=tmerc +lon_0=75 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=70,-5,80,85  <>
+<32643> +proj=tmerc +lon_0=75 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=70,-5,80,85  <>
 # UTM zone 44N
-<32644> +proj=tmerc +lon_0=81 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=76,-5,86,85  <>
+<32644> +proj=tmerc +lon_0=81 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=76,-5,86,85  <>
 # UTM zone 45N
-<32645> +proj=tmerc +lon_0=87 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=82,-5,92,85  <>
+<32645> +proj=tmerc +lon_0=87 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=82,-5,92,85  <>
 # UTM zone 46N
-<32646> +proj=tmerc +lon_0=93 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=88,-5,98,85  <>
+<32646> +proj=tmerc +lon_0=93 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=88,-5,98,85  <>
 # UTM zone 47N
-<32647> +proj=tmerc +lon_0=99 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=94,-5,104,85  <>
+<32647> +proj=tmerc +lon_0=99 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=94,-5,104,85  <>
 # UTM zone 48N
-<32648> +proj=tmerc +lon_0=105 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=100,-5,110,85  <>
+<32648> +proj=tmerc +lon_0=105 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=100,-5,110,85  <>
 # UTM zone 49N
-<32649> +proj=tmerc +lon_0=111 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=106,-5,116,85  <>
+<32649> +proj=tmerc +lon_0=111 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=106,-5,116,85  <>
 # UTM zone 50N
-<32650> +proj=tmerc +lon_0=117 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=112,-5,122,85  <>
+<32650> +proj=tmerc +lon_0=117 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=112,-5,122,85  <>
 # UTM zone 51N
-<32651> +proj=tmerc +lon_0=123 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=118,-5,128,85  <>
+<32651> +proj=tmerc +lon_0=123 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=118,-5,128,85  <>
 # UTM zone 52N
-<32652> +proj=tmerc +lon_0=129 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=124,-5,134,85  <>
+<32652> +proj=tmerc +lon_0=129 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=124,-5,134,85  <>
 # UTM zone 53N
-<32653> +proj=tmerc +lon_0=135 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=130,-5,140,85  <>
+<32653> +proj=tmerc +lon_0=135 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=130,-5,140,85  <>
 # UTM zone 54N
-<32654> +proj=tmerc +lon_0=141 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=136,-5,146,85  <>
+<32654> +proj=tmerc +lon_0=141 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=136,-5,146,85  <>
 # UTM zone 55N
-<32655> +proj=tmerc +lon_0=147 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=142,-5,152,85  <>
+<32655> +proj=tmerc +lon_0=147 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=142,-5,152,85  <>
 # UTM zone 56N
-<32656> +proj=tmerc +lon_0=153 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=148,-5,158,85  <>
+<32656> +proj=tmerc +lon_0=153 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=148,-5,158,85  <>
 # UTM zone 57N
-<32657> +proj=tmerc +lon_0=159 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=154,-5,164,85  <>
+<32657> +proj=tmerc +lon_0=159 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=154,-5,164,85  <>
 # UTM zone 58N
-<32658> +proj=tmerc +lon_0=165 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=160,-5,170,85  <>
+<32658> +proj=tmerc +lon_0=165 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=160,-5,170,85  <>
 # UTM zone 59N
-<32659> +proj=tmerc +lon_0=171 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=166,-5,176,85  <>
+<32659> +proj=tmerc +lon_0=171 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=166,-5,176,85  <>
 # UTM zone 60N
-<32660> +proj=tmerc +lon_0=177 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=172,-5,182,85  <>
+<32660> +proj=tmerc +lon_0=177 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=172,-5,182,85  <>
 # UTM zone 1S
-<32701> +proj=tmerc +lon_0=-177 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-182,-85,-172,5  <>
+<32701> +proj=tmerc +lon_0=-177 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-182,-85,-172,5  <>
 # UTM zone 2S
-<32702> +proj=tmerc +lon_0=-171 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-176,-85,-166,5  <>
+<32702> +proj=tmerc +lon_0=-171 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-176,-85,-166,5  <>
 # UTM zone 3S
-<32703> +proj=tmerc +lon_0=-165 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-170,-85,-160,5  <>
+<32703> +proj=tmerc +lon_0=-165 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-170,-85,-160,5  <>
 # UTM zone 4S
-<32704> +proj=tmerc +lon_0=-159 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-164,-85,-154,5  <>
+<32704> +proj=tmerc +lon_0=-159 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-164,-85,-154,5  <>
 # UTM zone 5S
-<32705> +proj=tmerc +lon_0=-153 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-158,-85,-148,5  <>
+<32705> +proj=tmerc +lon_0=-153 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-158,-85,-148,5  <>
 # UTM zone 6S
-<32706> +proj=tmerc +lon_0=-147 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-152,-85,-142,5  <>
+<32706> +proj=tmerc +lon_0=-147 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-152,-85,-142,5  <>
 # UTM zone 7S
-<32707> +proj=tmerc +lon_0=-141 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-146,-85,-136,5  <>
+<32707> +proj=tmerc +lon_0=-141 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-146,-85,-136,5  <>
 # UTM zone 8S
-<32708> +proj=tmerc +lon_0=-135 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-140,-85,-130,5  <>
+<32708> +proj=tmerc +lon_0=-135 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-140,-85,-130,5  <>
 # UTM zone 9S
-<32709> +proj=tmerc +lon_0=-129 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-134,-85,-124,5  <>
+<32709> +proj=tmerc +lon_0=-129 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-134,-85,-124,5  <>
 # UTM zone 10S
-<32710> +proj=tmerc +lon_0=-123 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-128,-85,-118,5  <>
+<32710> +proj=tmerc +lon_0=-123 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-128,-85,-118,5  <>
 # UTM zone 11S
-<32711> +proj=tmerc +lon_0=-117 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-122,-85,-112,5  <>
+<32711> +proj=tmerc +lon_0=-117 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-122,-85,-112,5  <>
 # UTM zone 12S
-<32712> +proj=tmerc +lon_0=-111 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-116,-85,-106,5  <>
+<32712> +proj=tmerc +lon_0=-111 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-116,-85,-106,5  <>
 # UTM zone 13S
-<32713> +proj=tmerc +lon_0=-105 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-110,-85,-100,5  <>
+<32713> +proj=tmerc +lon_0=-105 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-110,-85,-100,5  <>
 # UTM zone 14S
-<32714> +proj=tmerc +lon_0=-99 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-104,-85,-94,5  <>
+<32714> +proj=tmerc +lon_0=-99 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-104,-85,-94,5  <>
 # UTM zone 15S
-<32715> +proj=tmerc +lon_0=-93 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-98,-85,-88,5  <>
+<32715> +proj=tmerc +lon_0=-93 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-98,-85,-88,5  <>
 # UTM zone 16S
-<32716> +proj=tmerc +lon_0=-87 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-92,-85,-82,5  <>
+<32716> +proj=tmerc +lon_0=-87 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-92,-85,-82,5  <>
 # UTM zone 17S
-<32717> +proj=tmerc +lon_0=-81 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-86,-85,-76,5  <>
+<32717> +proj=tmerc +lon_0=-81 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-86,-85,-76,5  <>
 # UTM zone 18S
-<32718> +proj=tmerc +lon_0=-75 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-80,-85,-70,5  <>
+<32718> +proj=tmerc +lon_0=-75 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-80,-85,-70,5  <>
 # UTM zone 19S
-<32719> +proj=tmerc +lon_0=-69 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-74,-85,-64,5  <>
+<32719> +proj=tmerc +lon_0=-69 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-74,-85,-64,5  <>
 # UTM zone 20S
-<32720> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-68,-85,-58,5  <>
+<32720> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-68,-85,-58,5  <>
 # UTM zone 21S
-<32721> +proj=tmerc +lon_0=-57 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-62,-85,-52,5  <>
+<32721> +proj=tmerc +lon_0=-57 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-62,-85,-52,5  <>
 # UTM zone 22S
-<32722> +proj=tmerc +lon_0=-51 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-56,-85,-46,5  <>
+<32722> +proj=tmerc +lon_0=-51 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-56,-85,-46,5  <>
 # UTM zone 23S
-<32723> +proj=tmerc +lon_0=-45 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-50,-85,-40,5  <>
+<32723> +proj=tmerc +lon_0=-45 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-50,-85,-40,5  <>
 # UTM zone 24S
-<32724> +proj=tmerc +lon_0=-39 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-44,-85,-34,5  <>
+<32724> +proj=tmerc +lon_0=-39 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-44,-85,-34,5  <>
 # UTM zone 25S
-<32725> +proj=tmerc +lon_0=-33 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-38,-85,-28,5  <>
+<32725> +proj=tmerc +lon_0=-33 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-38,-85,-28,5  <>
 # UTM zone 26S
-<32726> +proj=tmerc +lon_0=-27 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-32,-85,-22,5  <>
+<32726> +proj=tmerc +lon_0=-27 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-32,-85,-22,5  <>
 # UTM zone 27S
-<32727> +proj=tmerc +lon_0=-21 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-26,-85,-16,5  <>
+<32727> +proj=tmerc +lon_0=-21 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-26,-85,-16,5  <>
 # UTM zone 28S
-<32728> +proj=tmerc +lon_0=-15 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-20,-85,-10,5  <>
+<32728> +proj=tmerc +lon_0=-15 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-20,-85,-10,5  <>
 # UTM zone 29S
-<32729> +proj=tmerc +lon_0=-9 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-14,-85,-4,5  <>
+<32729> +proj=tmerc +lon_0=-9 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-14,-85,-4,5  <>
 # UTM zone 30S
-<32730> +proj=tmerc +lon_0=-3 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-8,-85,2,5  <>
+<32730> +proj=tmerc +lon_0=-3 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-8,-85,2,5  <>
 # UTM zone 31S
-<32731> +proj=tmerc +lon_0=3 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=-2,-85,8,5  <>
+<32731> +proj=tmerc +lon_0=3 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-2,-85,8,5  <>
 # UTM zone 32S
-<32732> +proj=tmerc +lon_0=9 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=4,-85,14,5  <>
+<32732> +proj=tmerc +lon_0=9 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=4,-85,14,5  <>
 # UTM zone 33S
-<32733> +proj=tmerc +lon_0=15 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=10,-85,20,5  <>
+<32733> +proj=tmerc +lon_0=15 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=10,-85,20,5  <>
 # UTM zone 34S
-<32734> +proj=tmerc +lon_0=21 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=16,-85,26,5  <>
+<32734> +proj=tmerc +lon_0=21 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=16,-85,26,5  <>
 # UTM zone 35S
-<32735> +proj=tmerc +lon_0=27 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=22,-85,32,5  <>
+<32735> +proj=tmerc +lon_0=27 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=22,-85,32,5  <>
 # UTM zone 36S
-<32736> +proj=tmerc +lon_0=33 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=28,-85,38,5  <>
+<32736> +proj=tmerc +lon_0=33 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=28,-85,38,5  <>
 # UTM zone 37S
-<32737> +proj=tmerc +lon_0=39 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=34,-85,44,5  <>
+<32737> +proj=tmerc +lon_0=39 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=34,-85,44,5  <>
 # UTM zone 38S
-<32738> +proj=tmerc +lon_0=45 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=40,-85,50,5  <>
+<32738> +proj=tmerc +lon_0=45 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=40,-85,50,5  <>
 # UTM zone 39S
-<32739> +proj=tmerc +lon_0=51 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=46,-85,56,5  <>
+<32739> +proj=tmerc +lon_0=51 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=46,-85,56,5  <>
 # UTM zone 40S
-<32740> +proj=tmerc +lon_0=57 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=52,-85,62,5  <>
+<32740> +proj=tmerc +lon_0=57 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=52,-85,62,5  <>
 # UTM zone 41S
-<32741> +proj=tmerc +lon_0=63 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=58,-85,68,5  <>
+<32741> +proj=tmerc +lon_0=63 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=58,-85,68,5  <>
 # UTM zone 42S
-<32742> +proj=tmerc +lon_0=69 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=64,-85,74,5  <>
+<32742> +proj=tmerc +lon_0=69 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=64,-85,74,5  <>
 # UTM zone 43S
-<32743> +proj=tmerc +lon_0=75 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=70,-85,80,5  <>
+<32743> +proj=tmerc +lon_0=75 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=70,-85,80,5  <>
 # UTM zone 44S
-<32744> +proj=tmerc +lon_0=81 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=76,-85,86,5  <>
+<32744> +proj=tmerc +lon_0=81 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=76,-85,86,5  <>
 # UTM zone 45S
-<32745> +proj=tmerc +lon_0=87 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=82,-85,92,5  <>
+<32745> +proj=tmerc +lon_0=87 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=82,-85,92,5  <>
 # UTM zone 46S
-<32746> +proj=tmerc +lon_0=93 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=88,-85,98,5  <>
+<32746> +proj=tmerc +lon_0=93 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=88,-85,98,5  <>
 # UTM zone 47S
-<32747> +proj=tmerc +lon_0=99 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=94,-85,104,5  <>
+<32747> +proj=tmerc +lon_0=99 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=94,-85,104,5  <>
 # UTM zone 48S
-<32748> +proj=tmerc +lon_0=105 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=100,-85,110,5  <>
+<32748> +proj=tmerc +lon_0=105 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=100,-85,110,5  <>
 # UTM zone 49S
-<32749> +proj=tmerc +lon_0=111 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=106,-85,116,5  <>
+<32749> +proj=tmerc +lon_0=111 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=106,-85,116,5  <>
 # UTM zone 50S
-<32750> +proj=tmerc +lon_0=117 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=112,-85,122,5  <>
+<32750> +proj=tmerc +lon_0=117 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=112,-85,122,5  <>
 # UTM zone 51S
-<32751> +proj=tmerc +lon_0=123 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=118,-85,128,5  <>
+<32751> +proj=tmerc +lon_0=123 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=118,-85,128,5  <>
 # UTM zone 52S
-<32752> +proj=tmerc +lon_0=129 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=124,-85,134,5  <>
+<32752> +proj=tmerc +lon_0=129 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=124,-85,134,5  <>
 # UTM zone 53S
-<32753> +proj=tmerc +lon_0=135 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=130,-85,140,5  <>
+<32753> +proj=tmerc +lon_0=135 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=130,-85,140,5  <>
 # UTM zone 54S
-<32754> +proj=tmerc +lon_0=141 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=136,-85,146,5  <>
+<32754> +proj=tmerc +lon_0=141 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=136,-85,146,5  <>
 # UTM zone 55S
-<32755> +proj=tmerc +lon_0=147 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=142,-85,152,5  <>
+<32755> +proj=tmerc +lon_0=147 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=142,-85,152,5  <>
 # UTM zone 56S
-<32756> +proj=tmerc +lon_0=153 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=148,-85,158,5  <>
+<32756> +proj=tmerc +lon_0=153 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=148,-85,158,5  <>
 # UTM zone 57S
-<32757> +proj=tmerc +lon_0=159 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=154,-85,164,5  <>
+<32757> +proj=tmerc +lon_0=159 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=154,-85,164,5  <>
 # UTM zone 58S
-<32758> +proj=tmerc +lon_0=165 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=160,-85,170,5  <>
+<32758> +proj=tmerc +lon_0=165 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=160,-85,170,5  <>
 # UTM zone 59S
-<32759> +proj=tmerc +lon_0=171 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=166,-85,176,5  <>
+<32759> +proj=tmerc +lon_0=171 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=166,-85,176,5  <>
 # UTM zone 60S
-<32760> +proj=tmerc +lon_0=177 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +bounds=172,-85,182,5  <>
+<32760> +proj=tmerc +lon_0=177 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=172,-85,182,5  <>

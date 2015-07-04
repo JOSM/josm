@@ -77,14 +77,6 @@ public class TMSLayer extends AbstractTileSourceLayer {
         return loaderFactory;
     }
 
-    @Override
-    protected Map<String, String> getHeaders(TileSource tileSource) {
-        if (tileSource instanceof TemplatedTMSTileSource) {
-            return ((TemplatedTMSTileSource) tileSource).getHeaders();
-        }
-        return null;
-    }
-
     /**
      * Creates and returns a new TileSource instance depending on the {@link ImageryType}
      * of the passed ImageryInfo object.

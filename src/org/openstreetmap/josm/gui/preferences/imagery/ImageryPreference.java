@@ -388,6 +388,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             activeToolbar.setOpaque(false);
             activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.WMS));
             activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.TMS));
+            activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.WMTS));
             //activeToolbar.add(edit); TODO
             activeToolbar.add(remove);
             add(activeToolbar, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
@@ -481,10 +482,19 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 putValue(NAME, type.toString());
                 putValue(SHORT_DESCRIPTION, tr("Add a new {0} entry by entering the URL", type.toString()));
                 String icon = /* ICON(dialogs/) */ "add";
-                if (ImageryInfo.ImageryType.WMS.equals(type))
+                switch (type) {
+                case WMS:
                     icon = /* ICON(dialogs/) */ "add_wms";
-                else if (ImageryInfo.ImageryType.TMS.equals(type))
+                    break;
+                case TMS:
                     icon = /* ICON(dialogs/) */ "add_tms";
+                    break;
+                case WMTS:
+                    icon = /* ICON(dialogs/) */ "add_wmts";
+                    break;
+                default:
+                    break;
+                }
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", icon));
                 this.type = type;
             }
@@ -492,11 +502,17 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 final AddImageryPanel p;
-                if (ImageryInfo.ImageryType.WMS.equals(type)) {
+                switch (type) {
+                case WMS:
                     p = new AddWMSLayerPanel();
-                } else if (ImageryInfo.ImageryType.TMS.equals(type)) {
+                    break;
+                case TMS:
                     p = new AddTMSLayerPanel();
-                } else {
+                    break;
+                case WMTS:
+                    p = new AddWMTSLayerPanel();
+                    break;
+                default:
                     throw new IllegalStateException("Type " + type + " not supported");
                 }
 

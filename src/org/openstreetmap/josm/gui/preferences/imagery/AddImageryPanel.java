@@ -15,6 +15,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
@@ -83,6 +84,16 @@ public abstract class AddImageryPanel extends JPanel {
 
     protected static String sanitize(String s) {
         return s.replaceAll("[\r\n]+", "").trim();
+    }
+
+    protected static String sanitize(String s, ImageryType type) {
+        String ret = s;
+        String imageryType = type.getTypeString() + ":";
+        if (ret.startsWith(imageryType)) {
+            // remove ImageryType from URL
+            ret = ret.substring(imageryType.length());
+        }
+        return sanitize(ret);
     }
 
     protected final String getImageryName() {

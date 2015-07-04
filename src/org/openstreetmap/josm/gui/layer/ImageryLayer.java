@@ -40,7 +40,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ImageryAdjustAction;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -152,12 +151,19 @@ public abstract class ImageryLayer extends Layer {
     }
 
     public static ImageryLayer create(ImageryInfo info) {
-        ImageryType type = info.getImageryType();
-        if (type == ImageryType.WMS || type == ImageryType.HTML)
+        switch(info.getImageryType()) {
+        case WMS:
+        case HTML:
             return new WMSLayer(info);
-        else if (type == ImageryType.TMS || type == ImageryType.BING || type == ImageryType.SCANEX)
+        case WMTS:
+            return new WMTSLayer(info);
+        case TMS:
+        case BING:
+        case SCANEX:
             return new TMSLayer(info);
-        else throw new AssertionError();
+        default:
+            throw new AssertionError(tr("Unsupported imagery type: {0}", info.getImageryType()));
+        }
     }
 
     class ApplyOffsetAction extends AbstractAction {

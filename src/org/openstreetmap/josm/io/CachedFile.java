@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -70,6 +73,8 @@ public class CachedFile {
 
     public static final long DEFAULT_MAXTIME = -1L;
     public static final long DAYS = 24*60*60; // factor to get caching time in days
+
+    private Map<String, String> httpHeaders = new ConcurrentHashMap<>();
 
     /**
      * Constructs a CachedFile object from a given filename, URL or internal resource.
@@ -141,6 +146,16 @@ public class CachedFile {
      */
     public CachedFile setCachingStrategy(CachingStrategy cachingStrategy) {
         this.cachingStrategy = cachingStrategy;
+        return this;
+    }
+
+    /**
+     * Sets the http headers. Only applies to URL pointing to http or https resources
+     * @param headers that should be sent together with request
+     * @return this object
+     */
+    public CachedFile setHttpHeaders(Map<String, String> headers) {
+        this.httpHeaders.putAll(headers);
         return this;
     }
 
@@ -396,7 +411,7 @@ public class CachedFile {
         String localPath = "mirror_" + a;
         destDirFile = new File(destDir, localPath + ".tmp");
         try {
-            HttpURLConnection con = connectFollowingRedirect(url, httpAccept, ifModifiedSince);
+            HttpURLConnection con = connectFollowingRedirect(url, httpAccept, ifModifiedSince, httpHeaders);
             if (ifModifiedSince != null && con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
                 if (Main.isDebugEnabled()) {
                     Main.debug("304 Not Modified ("+urlStr+")");
@@ -463,6 +478,29 @@ public class CachedFile {
      */
     public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept, Long ifModifiedSince)
             throws MalformedURLException, IOException {
+        return connectFollowingRedirect(downloadUrl, httpAccept, ifModifiedSince, null);
+    }
+    /**
+     * Opens a connection for downloading a resource.
+     * <p>
+     * Manually follows redirects because
+     * {@link HttpURLConnection#setFollowRedirects(boolean)} fails if the redirect
+     * is going from a http to a https URL, see <a href="https://bugs.openjdk.java.net/browse/JDK-4620571">bug report</a>.
+     * <p>
+     * This can cause problems when downloading from certain GitHub URLs.
+     *
+     * @param downloadUrl The resource URL to download
+     * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Can be {@code null}
+     * @param ifModifiedSince The download time of the cache file, optional
+     * @param headers http headers to be sent together with http request
+     * @return The HTTP connection effectively linked to the resource, after all potential redirections
+     * @throws MalformedURLException If a redirected URL is wrong
+     * @throws IOException If any I/O operation goes wrong
+     * @throws OfflineAccessException if resource is accessed in offline mode, in any protocol
+     * @since TODO
+     */
+    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept, Long ifModifiedSince, Map<String, String> headers)
+            throws MalformedURLException, IOException {
         CheckParameterUtil.ensureParameterNotNull(downloadUrl, "downloadUrl");
         String downloadString = downloadUrl.toExternalForm();
 
@@ -473,6 +511,11 @@ public class CachedFile {
             HttpURLConnection con = Utils.openHttpConnection(downloadUrl);
             if (ifModifiedSince != null) {
                 con.setIfModifiedSince(ifModifiedSince);
+            }
+            if (headers != null) {
+                for (Entry<String, String> header: headers.entrySet()) {
+                    con.setRequestProperty(header.getKey(), header.getValue());
+                }
             }
             con.setInstanceFollowRedirects(false);
             con.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);

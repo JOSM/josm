@@ -1,10 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.cache;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,6 +27,7 @@ import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * @author Wiktor Niesiobędzki
@@ -349,7 +348,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 }
 
                 attributes.setResponseCode(responseCode(urlConn));
-                byte[] raw = read(urlConn);
+                byte[] raw = Utils.readBytesFromStream(urlConn.getInputStream());
 
                 if (isResponseLoadable(urlConn.getHeaderFields(), responseCode(urlConn), raw)) {
                     // we need to check cacheEmpty, so for cases, when data is returned, but we want to store
@@ -470,28 +469,6 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         }
         // for other URL connections, do not use HEAD requests for cache validation
         return false;
-    }
-
-    private static byte[] read(URLConnection urlConn) throws IOException {
-        InputStream input = urlConn.getInputStream();
-        try {
-            ByteArrayOutputStream bout = new ByteArrayOutputStream(input.available());
-            byte[] buffer = new byte[2048];
-            boolean finished = false;
-            do {
-                int read = input.read(buffer);
-                if (read >= 0) {
-                    bout.write(buffer, 0, read);
-                } else {
-                    finished = true;
-                }
-            } while (!finished);
-            if (bout.size() == 0)
-                return null;
-            return bout.toByteArray();
-        } finally {
-            input.close();
-        }
     }
 
     /**

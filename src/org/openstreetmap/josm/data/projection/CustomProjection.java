@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +35,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class CustomProjection extends AbstractProjection {
 
+    private final static Map<String, Double> UNITS_TO_METERS = getUnitsToMeters();
+    private final static double METER_PER_UNIT_DEGREE = 2 * Math.PI * 6370997 / 360;
+
     /**
      * pref String that defines the projection
      *
@@ -44,6 +48,7 @@ public class CustomProjection extends AbstractProjection {
     protected String code;
     protected String cacheDir;
     protected Bounds bounds;
+    private double metersPerUnit = METER_PER_UNIT_DEGREE; // default to degrees
 
     /**
      * Proj4-like projection parameters. See <a href="https://trac.osgeo.org/proj/wiki/GenParms">reference</a>.
@@ -88,10 +93,11 @@ public class CustomProjection extends AbstractProjection {
         /** the exact proj.4 string will be preserved in the WKT representation */
         wktext("wktext", false),  // ignored
         /** meters, US survey feet, etc. */
-        units("units", true),     // ignored
+        units("units", true),
         /** Don't use the /usr/share/proj/proj_def.dat defaults file */
         no_defs("no_defs", false),
         init("init", true),
+        to_meter("to_meter", true),
         // JOSM extensions, not present in PROJ.4
         wmssrs("wmssrs", true),
         bounds("bounds", true);
@@ -102,7 +108,7 @@ public class CustomProjection extends AbstractProjection {
         public final boolean hasValue;
 
         /** Map of all parameters by key */
-        static final Map<String, Param> paramsByKey = new HashMap<>();
+        static final Map<String, Param> paramsByKey = new ConcurrentHashMap<>();
         static {
             for (Param p : Param.values()) {
                 paramsByKey.put(p.key, p);
@@ -197,6 +203,14 @@ public class CustomProjection extends AbstractProjection {
             s = parameters.get(Param.wmssrs.key);
             if (s != null) {
                 this.code = s;
+            }
+            s = parameters.get(Param.units.key);
+            if (s != null) {
+                this.metersPerUnit = UNITS_TO_METERS.get(s);
+            }
+            s = parameters.get(Param.to_meter.key);
+            if (s != null) {
+                this.metersPerUnit = parseDouble(s, Param.to_meter.key);
             }
         }
     }
@@ -526,5 +540,37 @@ public class CustomProjection extends AbstractProjection {
     @Override
     public String toString() {
         return name != null ? name : tr("Custom Projection");
+    }
+
+    @Override
+    public double getMetersPerUnit() {
+        return metersPerUnit;
+    }
+
+    private static Map<String, Double> getUnitsToMeters() {
+        Map<String, Double> ret = new ConcurrentHashMap<>();
+        ret.put("km", 1000d);
+        ret.put("m", 1d);
+        ret.put("dm", 1d/10);
+        ret.put("cm", 1d/100);
+        ret.put("mm", 1d/1000);
+        ret.put("kmi", 1852.0);
+        ret.put("in", 0.0254);
+        ret.put("ft", 0.3048);
+        ret.put("yd", 0.9144);
+        ret.put("mi", 1609.344);
+        ret.put("fathom", 1.8288);
+        ret.put("chain", 20.1168);
+        ret.put("link", 0.201168);
+        ret.put("us-in", 1d/39.37);
+        ret.put("us-ft", 0.304800609601219);
+        ret.put("us-yd", 0.914401828803658);
+        ret.put("us-ch", 20.11684023368047);
+        ret.put("us-mi", 1609.347218694437);
+        ret.put("ind-yd", 0.91439523);
+        ret.put("ind-ft", 0.30479841);
+        ret.put("ind-ch", 20.11669506);
+        ret.put("degree", METER_PER_UNIT_DEGREE);
+        return ret;
     }
 }

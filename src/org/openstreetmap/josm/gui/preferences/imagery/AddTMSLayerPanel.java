@@ -10,6 +10,7 @@ import java.util.Arrays;
 import javax.swing.JLabel;
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
@@ -70,7 +71,7 @@ public class AddTMSLayerPanel extends AddImageryPanel {
         if (!z.isEmpty()) {
             a.append('[').append(z).append(']');
         }
-        a.append(':').append(getImageryRawUrl());
+        a.append(':').append(sanitize(getImageryRawUrl(), ImageryType.TMS));
         return a.toString();
     }
 

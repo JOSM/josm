@@ -63,5 +63,4 @@ public interface Proj {
      * @return array of length 2, containing lat and lon in radians.
      */
     double[] invproject(double east, double north);
-
 }
