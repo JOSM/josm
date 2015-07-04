@@ -410,7 +410,12 @@ public class MainApplication extends Main {
         });
         final SplashScreen.SplashProgressMonitor monitor = splash.getProgressMonitor();
         monitor.beginTask(tr("Initializing"));
-        splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true));
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true));
+            }
+        });
         Main.setInitStatusListener(new InitStatusListener() {
 
             @Override
