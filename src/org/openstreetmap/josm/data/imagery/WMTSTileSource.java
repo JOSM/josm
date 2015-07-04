@@ -161,6 +161,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     private TileMatrixSet currentTileMatrixSet;
     private double crsScale;
     private TransferMode transferMode;
+    private String style = "";
 
     /**
      * Creates a tile source based on imagery info
@@ -373,7 +374,8 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                 .replaceAll("\\{TileMatrixSet\\}", this.currentTileMatrixSet.identifier)
                 .replaceAll("\\{TileMatrix\\}", tileMatrix.identifier)
                 .replaceAll("\\{TileRow\\}", Integer.toString(tiley))
-                .replaceAll("\\{TileCol\\}", Integer.toString(tilex));
+                .replaceAll("\\{TileCol\\}", Integer.toString(tilex))
+                .replaceAll("\\{Style\\}", this.style);
     }
 
     /**
