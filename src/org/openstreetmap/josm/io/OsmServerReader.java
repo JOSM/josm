@@ -134,6 +134,7 @@ public abstract class OsmServerReader extends OsmConnection {
             } catch (Exception e) {
                 throw new OsmTransferException(tr("Failed to open connection to API {0}.", url.toExternalForm()), e);
             }
+            Utils.setupURLConnection(activeConnection);
             if (cancel) {
                 activeConnection.disconnect();
                 return null;
@@ -147,8 +148,6 @@ public abstract class OsmServerReader extends OsmConnection {
             if (Main.pref.getBoolean("osm-server.use-compression", true)) {
                 activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
             }
-
-            activeConnection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
 
             try {
                 if (reason != null && !reason.isEmpty()) {

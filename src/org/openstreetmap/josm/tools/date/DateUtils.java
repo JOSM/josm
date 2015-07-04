@@ -72,15 +72,15 @@ public final class DateUtils {
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx:00") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx:00")) {
             calendar.set(
-                parsePart(str, 0, 4),
-                parsePart(str, 5, 2)-1,
-                parsePart(str, 8, 2),
-                parsePart(str, 11, 2),
-                parsePart(str, 14, 2),
-                parsePart(str, 17, 2));
+                parsePart4(str, 0),
+                parsePart2(str, 5)-1,
+                parsePart2(str, 8),
+                parsePart2(str, 11),
+                parsePart2(str, 14),
+                parsePart2(str, 17));
 
             if (str.length() == 25) {
-                int plusHr = parsePart(str, 20, 2);
+                int plusHr = parsePart2(str, 20);
                 int mul = str.charAt(19) == '+' ? -3600000 : 3600000;
                 calendar.setTimeInMillis(calendar.getTimeInMillis()+plusHr*mul);
             }
@@ -91,15 +91,15 @@ public final class DateUtils {
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx+xx:00") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx-xx:00")) {
             calendar.set(
-                parsePart(str, 0, 4),
-                parsePart(str, 5, 2)-1,
-                parsePart(str, 8, 2),
-                parsePart(str, 11, 2),
-                parsePart(str, 14, 2),
-                parsePart(str, 17, 2));
-            long millis = parsePart(str, 20, 3);
+                parsePart4(str, 0),
+                parsePart2(str, 5)-1,
+                parsePart2(str, 8),
+                parsePart2(str, 11),
+                parsePart2(str, 14),
+                parsePart2(str, 17));
+            long millis = parsePart3(str, 20);
             if (str.length() == 29)
-                millis += parsePart(str, 24, 2) * (str.charAt(23) == '+' ? -3600000 : 3600000);
+                millis += parsePart2(str, 24) * (str.charAt(23) == '+' ? -3600000 : 3600000);
             calendar.setTimeInMillis(calendar.getTimeInMillis()+millis);
 
             return calendar.getTime();
@@ -141,8 +141,20 @@ public final class DateUtils {
         return true;
     }
 
-    private static int parsePart(String str, int off, int len) {
-        return Integer.parseInt(str.substring(off, off+len));
+    private static int num(char c) {
+        return c - '0';
+    }
+
+    private static int parsePart2(String str, int off) {
+        return 10 * num(str.charAt(off)) + num(str.charAt(off + 1));
+    }
+
+    private static int parsePart3(String str, int off) {
+        return 100 * num(str.charAt(off)) + 10 * num(str.charAt(off + 1)) + num(str.charAt(off + 2));
+    }
+
+    private static int parsePart4(String str, int off) {
+        return 1000 * num(str.charAt(off)) + 100 * num(str.charAt(off + 1)) + 10 * num(str.charAt(off + 2)) + num(str.charAt(off + 3));
     }
 
     /**
