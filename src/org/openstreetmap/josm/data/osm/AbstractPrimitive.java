@@ -291,6 +291,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
         this.timestamp = (int) (timestamp.getTime() / 1000);
     }
 
+    @Override
+    public void setRawTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
+
     /**
      * Time of last modification to this object. This is not set by JOSM but
      * read from the server and delivered back to the server unmodified. It is
@@ -301,6 +306,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
     @Override
     public Date getTimestamp() {
         return new Date(timestamp * 1000L);
+    }
+
+    @Override
+    public int getRawTimestamp() {
+        return timestamp;
     }
 
     @Override
@@ -458,7 +468,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      * The key/value list for this primitive.
-     *
      */
     protected String[] keys;
 
@@ -470,13 +479,18 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public Map<String, String> getKeys() {
-        Map<String, String> result = new HashMap<>();
-        String[] keys = this.keys;
-        if (keys != null) {
-            for (int i = 0; i < keys.length; i += 2) {
-                result.put(keys[i], keys[i + 1]);
-            }
+        final String[] keys = this.keys;
+        if (keys == null || keys.length == 0) {
+            return Collections.emptyMap();
+        } else if (keys.length == 2) {
+            return Collections.singletonMap(keys[0], keys[1]);
         }
+
+        final Map<String, String> result = new HashMap<>();
+        for (int i = 0; i < keys.length; i += 2) {
+            result.put(keys[i], keys[i + 1]);
+        }
+
         return result;
     }
 

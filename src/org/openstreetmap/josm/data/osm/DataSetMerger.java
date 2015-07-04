@@ -99,7 +99,7 @@ public class DataSetMerger {
                     // copy the technical attributes from other version
                     target.setVisible(source.isVisible());
                     target.setUser(source.getUser());
-                    target.setTimestamp(source.getTimestamp());
+                    target.setRawTimestamp(source.getRawTimestamp());
                     target.setModified(source.isModified());
                     objectsWithChildrenToMerge.add(source.getPrimitiveId());
                     return;
