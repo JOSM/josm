@@ -65,6 +65,15 @@ public final class DateUtils {
      * @return The date
      */
     public static synchronized Date fromString(String str) {
+        return new Date(tsFromString(str));
+    }
+
+    /**
+     * Parses XML date quickly, regardless of current locale.
+     * @param str The XML date as string
+     * @return The date in milliseconds since epoch
+     */
+    public static synchronized long tsFromString(String str) {
         // "2007-07-25T09:26:24{Z|{+|-}01:00}"
         if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
@@ -82,10 +91,10 @@ public final class DateUtils {
             if (str.length() == 25) {
                 int plusHr = parsePart2(str, 20);
                 int mul = str.charAt(19) == '+' ? -3600000 : 3600000;
-                calendar.setTimeInMillis(calendar.getTimeInMillis()+plusHr*mul);
+                return calendar.getTimeInMillis()+plusHr*mul;
             }
 
-            return calendar.getTime();
+            return calendar.getTimeInMillis();
         } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx+xx:00") ||
@@ -98,23 +107,23 @@ public final class DateUtils {
                 parsePart2(str, 14),
                 parsePart2(str, 17));
             long millis = parsePart3(str, 20);
-            if (str.length() == 29)
+            if (str.length() == 29){
                 millis += parsePart2(str, 24) * (str.charAt(23) == '+' ? -3600000 : 3600000);
-            calendar.setTimeInMillis(calendar.getTimeInMillis()+millis);
+            }
 
-            return calendar.getTime();
+            return calendar.getTimeInMillis() + millis;
         } else {
             // example date format "18-AUG-08 13:33:03"
             SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
             Date d = f.parse(str, new ParsePosition(0));
             if (d != null)
-                return d;
+                return d.getTime();
         }
 
         try {
-            return XML_DATE.newXMLGregorianCalendar(str).toGregorianCalendar().getTime();
+            return XML_DATE.newXMLGregorianCalendar(str).toGregorianCalendar().getTimeInMillis();
         } catch (Exception ex) {
-            return new Date();
+            return System.currentTimeMillis();
         }
     }
 

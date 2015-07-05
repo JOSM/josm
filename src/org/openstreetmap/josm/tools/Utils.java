@@ -1365,4 +1365,39 @@ public final class Utils {
             stream.close();
         }
     }
+
+    /**
+     * Returns the initial capacity to pass to the HashMap / HashSet constructor
+     * when it is initialized with a known number of entries.
+     * 
+     * When a HashMap is filled with entries, the underlying array is copied over
+     * to a larger one multiple times. To avoid this process when the number of
+     * entries is known in advance, the initial capacity of the array can be
+     * given to the HashMap constructor. This method returns a suitable value
+     * that avoids rehashing but doesn't waste memory.
+     * @param nEntries the number of entries expected
+     * @param loadFactor the load factor
+     * @return the initial capacity for the HashMap constructor
+     */
+    public static int hashMapInitialCapacity(int nEntries, float loadFactor) {
+        return (int) Math.ceil(nEntries / loadFactor);
+    }
+
+    /**
+     * Returns the initial capacity to pass to the HashMap / HashSet constructor
+     * when it is initialized with a known number of entries.
+     * 
+     * When a HashMap is filled with entries, the underlying array is copied over
+     * to a larger one multiple times. To avoid this process when the number of
+     * entries is known in advance, the initial capacity of the array can be
+     * given to the HashMap constructor. This method returns a suitable value
+     * that avoids rehashing but doesn't waste memory.
+     * 
+     * Assumes default load factor (0.75).
+     * @param nEntries the number of entries expected
+     * @return the initial capacity for the HashMap constructor
+     */
+    public static int hashMapInitialCapacity(int nEntries) {
+        return hashMapInitialCapacity(nEntries, 0.75f);
+    }
 }
