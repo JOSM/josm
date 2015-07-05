@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -406,8 +407,9 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         boolean isOsmDataLayer = layer instanceof OsmDataLayer;
         layerLock.writeLock().lock();
         layerLock.readLock().lock();
-        boolean fireSetActiveLayer = false;
+        EnumSet<LayerListenerType> listenersToFire = EnumSet.noneOf(LayerListenerType.class);
         Layer oldActiveLayer = activeLayer;
+        OsmDataLayer oldEditLayer = editLayer;
         try {
             try {
                 if (layer instanceof MarkerLayer && playHeadMarker == null) {
@@ -432,7 +434,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
                 if (isOsmDataLayer || oldActiveLayer == null) {
                     // autoselect the new layer
-                    fireSetActiveLayer = setActiveLayer(layer, true);
+                    listenersToFire.addAll(setActiveLayer(layer, true));
                 }
             } finally {
                 layerLock.writeLock().unlock();
@@ -442,16 +444,14 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             if (isOsmDataLayer) {
                 ((OsmDataLayer) layer).addLayerStateChangeListener(this);
             }
-            if (fireSetActiveLayer) {
-                onActiveLayerChanged(oldActiveLayer);
-            }
+            onActiveEditLayerChanged(oldActiveLayer, oldEditLayer, listenersToFire);
             layer.addPropertyChangeListener(this);
             Main.addProjectionChangeListener(layer);
             AudioPlayer.reset();
         } finally {
             layerLock.readLock().unlock();
         }
-        if (!fireSetActiveLayer) {
+        if (!listenersToFire.isEmpty()) {
             repaint();
         }
     }
@@ -530,14 +530,12 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
      * @param layer The layer to remove
      */
     public void removeLayer(Layer layer) {
-        boolean fireEditLayerChanged;
-        boolean fireSetActiveLayer = false;
         layerLock.writeLock().lock();
         layerLock.readLock().lock();
 
-        OsmDataLayer oldEditLayer = editLayer;
+        EnumSet<LayerListenerType> listenersToFire = EnumSet.noneOf(LayerListenerType.class);
         Layer oldActiveLayer = activeLayer;
-
+        OsmDataLayer oldEditLayer = editLayer;
         try {
             try {
                 List<Layer> layersList = new ArrayList<>(layers);
@@ -545,10 +543,10 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
                 if (!layersList.remove(layer))
                     return;
 
-                fireEditLayerChanged = setEditLayer(layersList);
+                listenersToFire = setEditLayer(layersList);
 
                 if (layer == activeLayer) {
-                    fireSetActiveLayer = setActiveLayer(determineNextActiveLayer(layersList), false);
+                    listenersToFire.addAll(setActiveLayer(determineNextActiveLayer(layersList), false));
                 }
 
                 if (layer instanceof OsmDataLayer) {
@@ -561,12 +559,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             } finally {
                 layerLock.writeLock().unlock();
             }
-            if (fireEditLayerChanged) {
-               onEditLayerChanged(oldEditLayer);
-            }
-            if (fireSetActiveLayer) {
-                onActiveLayerChanged(oldActiveLayer);
-            }
+            onActiveEditLayerChanged(oldActiveLayer, oldEditLayer, listenersToFire);
             fireLayerRemoved(layer);
             layer.removePropertyChangeListener(this);
             layer.destroy();
@@ -610,7 +603,8 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     public void moveLayer(Layer layer, int pos) {
         layerLock.writeLock().lock();
         layerLock.readLock().lock();
-        boolean fireEditLayerChanged;
+        EnumSet<LayerListenerType> listenersToFire;
+        Layer oldActiveLayer = activeLayer;
         OsmDataLayer oldEditLayer = editLayer;
         try {
             try {
@@ -625,13 +619,11 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
                 } else {
                     layers.add(pos, layer);
                 }
-                fireEditLayerChanged = setEditLayer(layers);
+                listenersToFire = setEditLayer(layers);
             } finally {
                 layerLock.writeLock().unlock();
             }
-            if (fireEditLayerChanged) {
-                onEditLayerChanged(editLayer);
-            }
+            onActiveEditLayerChanged(oldActiveLayer, oldEditLayer, listenersToFire);
             AudioPlayer.reset();
         } finally {
             layerLock.readLock().unlock();
@@ -945,9 +937,9 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
      * <p>
      * You must own a write {@link #layerLock} when calling this method.
      * @param layersList A list to select that layer from.
-     * @return <code>true</code> if the edit layer was really changed and the listeners should be informed.
+     * @return A list of change listeners that should be fired using {@link #onActiveEditLayerChanged(Layer, OsmDataLayer, EnumSet)}
      */
-    private boolean setEditLayer(List<Layer> layersList) {
+    private EnumSet<LayerListenerType> setEditLayer(List<Layer> layersList) {
         final OsmDataLayer newEditLayer = findNewEditLayer(layersList);
 
         // Set new edit layer
@@ -958,9 +950,9 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             }
 
             editLayer = newEditLayer;
-            return true;
+            return EnumSet.of(LayerListenerType.EDIT_LAYER_CHANGE);
         } else {
-            return false;
+            return EnumSet.noneOf(LayerListenerType.class);
         }
 
     }
@@ -993,17 +985,16 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     public void setActiveLayer(Layer layer) {
         layerLock.writeLock().lock();
         layerLock.readLock().lock();
+        EnumSet<LayerListenerType> listenersToFire;
         Layer oldActiveLayer = activeLayer;
+        OsmDataLayer oldEditLayer = editLayer;
         try {
-            boolean fireSetActiveLayer;
             try {
-                fireSetActiveLayer = setActiveLayer(layer, true);
+                listenersToFire = setActiveLayer(layer, true);
             } finally {
                 layerLock.writeLock().unlock();
             }
-            if (fireSetActiveLayer) {
-                onActiveLayerChanged(oldActiveLayer);
-            }
+            onActiveEditLayerChanged(oldActiveLayer, oldEditLayer, listenersToFire);
         } finally {
             layerLock.readLock().unlock();
         }
@@ -1014,21 +1005,22 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
      * Sets the active layer. Propagates this change to all map buttons.
      * @param layer The layer to be active.
      * @param setEditLayer if this is <code>true</code>, the edit layer is also set.
-     * @return {@code true} if the active layer has changed, {@code false otherwise}
+     * @return A list of change listeners that should be fired using {@link #onActiveEditLayerChanged(Layer, OsmDataLayer, EnumSet)}
      */
-    private boolean setActiveLayer(final Layer layer, boolean setEditLayer) {
+    private EnumSet<LayerListenerType> setActiveLayer(final Layer layer, boolean setEditLayer) {
         if (layer != null && !layers.contains(layer))
             throw new IllegalArgumentException(tr("Layer ''{0}'' must be in list of layers", layer.toString()));
 
         if (layer == activeLayer)
-            return false;
+            return EnumSet.noneOf(LayerListenerType.class);
 
         activeLayer = layer;
+        EnumSet<LayerListenerType> listenersToFire = EnumSet.of(LayerListenerType.ACTIVE_LAYER_CHANGE);
         if (setEditLayer) {
-            setEditLayer(layers);
+            listenersToFire.addAll(setEditLayer(layers));
         }
 
-        return true;
+        return listenersToFire;
     }
 
     /**
@@ -1042,6 +1034,26 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             return activeLayer;
         } finally {
             layerLock.readLock().unlock();
+        }
+    }
+
+    private enum LayerListenerType {
+        ACTIVE_LAYER_CHANGE,
+        EDIT_LAYER_CHANGE
+    }
+
+    /**
+     * This is called whenever one of active layer/edit layer or both may have been changed,
+     * @param oldActive The old active layer
+     * @param oldEdit The old edit layer.
+     * @param listenersToFire A mask of listeners to fire using {@link LayerListenerType}s
+     */
+    private void onActiveEditLayerChanged(final Layer oldActive, final OsmDataLayer oldEdit, EnumSet<LayerListenerType> listenersToFire) {
+        if (listenersToFire.contains(LayerListenerType.EDIT_LAYER_CHANGE)) {
+            onEditLayerChanged(oldEdit);
+        }
+        if (listenersToFire.contains(LayerListenerType.ACTIVE_LAYER_CHANGE)) {
+            onActiveLayerChanged(oldActive);
         }
     }
 
