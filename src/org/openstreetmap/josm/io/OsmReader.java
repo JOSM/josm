@@ -438,7 +438,7 @@ public class OsmReader extends AbstractReader {
 
         String time = parser.getAttributeValue(null, "timestamp");
         if (time != null && !time.isEmpty()) {
-            current.setTimestamp(DateUtils.fromString(time));
+            current.setRawTimestamp((int)(DateUtils.tsFromString(time)/1000));
         }
 
         String user = parser.getAttributeValue(null, "user");

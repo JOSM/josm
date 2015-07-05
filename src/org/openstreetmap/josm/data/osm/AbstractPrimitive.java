@@ -486,7 +486,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
             return Collections.singletonMap(keys[0], keys[1]);
         }
 
-        final Map<String, String> result = new HashMap<>();
+        final Map<String, String> result = new HashMap<>(Utils.hashMapInitialCapacity(keys.length / 2));
         for (int i = 0; i < keys.length; i += 2) {
             result.put(keys[i], keys[i + 1]);
         }
@@ -653,10 +653,15 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public final Collection<String> keySet() {
-        String[] keys = this.keys;
-        if (keys == null)
+        final String[] keys = this.keys;
+        if (keys == null){
             return Collections.emptySet();
-        Set<String> result = new HashSet<>(keys.length / 2);
+        }
+        if (keys.length == 1){
+            return Collections.singleton(keys[0]);
+        }
+
+        final Set<String> result = new HashSet<>(Utils.hashMapInitialCapacity(keys.length / 2));
         for (int i = 0; i < keys.length; i += 2) {
             result.add(keys[i]);
         }
