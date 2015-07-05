@@ -275,7 +275,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     private final class ShowTileInfoAction extends AbstractAction {
-        private transient final TileHolder clickedTileHolder;
+        private final transient TileHolder clickedTileHolder;
 
         private ShowTileInfoAction(TileHolder clickedTileHolder) {
             super(tr("Show Tile Info"));

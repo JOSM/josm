@@ -28,6 +28,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
         add(name, GBC.eol().fill(GBC.HORIZONTAL));
         registerValidableComponent(rawUrl);
     }
+
     @Override
     protected ImageryInfo getImageryInfo() {
         return new ImageryInfo(getImageryName(), "wmts:" + sanitize(getImageryRawUrl(), ImageryType.WMTS));
