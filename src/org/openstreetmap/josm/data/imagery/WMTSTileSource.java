@@ -72,7 +72,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         PATTERN_HEADER,
     };
 
-    private class TileMatrix {
+    private static class TileMatrix {
         String identifier;
         double scaleDenominator;
         EastNorth topLeftCorner;
@@ -80,7 +80,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         int tileHeight;
     }
 
-    private class TileMatrixSet {
+    private static class TileMatrixSet {
         SortedSet<TileMatrix> tileMatrix = new TreeSet<>(new Comparator<TileMatrix>() {
             @Override
             public int compare(TileMatrix o1, TileMatrix o2) {
@@ -92,7 +92,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         String identifier;
     }
 
-    private class Layer {
+    private static class Layer {
         String format;
         String name;
         Map<String, TileMatrixSet> tileMatrixSetByCRS = new ConcurrentHashMap<>();
@@ -123,7 +123,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         }
     }
 
-    private final class SelectLayerDialog extends ExtendedDialog {
+    private static final class SelectLayerDialog extends ExtendedDialog {
         private Layer[] layers;
         private JList<String> list;
 
@@ -206,7 +206,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         builderFactory.setValidating(false);
         builderFactory.setNamespaceAware(false);
         DocumentBuilder builder = null;
-        byte[] data = {};
         InputStream in = new CachedFile(baseUrl).
                 setHttpHeaders(headers).
                 setMaxAge(7 * CachedFile.DAYS).
@@ -214,7 +213,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                 getInputStream();
         try {
             builder = builderFactory.newDocumentBuilder();
-            data = Utils.readBytesFromStream(in);
+            byte[] data = Utils.readBytesFromStream(in);
             if (data == null || data.length == 0) {
                 throw new IllegalArgumentException("Could not read data from: " + baseUrl);
             }

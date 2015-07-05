@@ -1013,11 +1013,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 } else {
                     g.drawLine(0, p.y, mv.getWidth(), p.y);
                 }
-                yCursor = t.getYtile();
+                //yCursor = t.getYtile();
             }
-            // This draws the vertical lines for the entire
-            // column. Only draw them for the top tile in
-            // the column.
+            // This draws the vertical lines for the entire column. Only draw them for the top tile in the column.
             if (xCursor < t.getXtile()) {
                 if (t.getXtile() % 32 == 0) {
                     // level 7 tile boundary
@@ -1025,7 +1023,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 } else {
                     g.drawLine(p.x, 0, p.x, mv.getHeight());
                 }
-                xCursor = t.getXtile();
+                //xCursor = t.getXtile();
             }
         }
     }
