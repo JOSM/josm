@@ -49,18 +49,18 @@ public class WMTSTileSourceTest {
         verifyMercatorTile(testSource, 0, 0, 1);
         verifyMercatorTile(testSource, 0, 0, 2);
         verifyMercatorTile(testSource, 1, 1, 2);
-        for(int x = 0; x < 4; x++) {
-            for(int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
                 verifyMercatorTile(testSource, x, y, 3);
             }
         }
-        for(int x = 0; x < 8; x++) {
-            for(int y = 0; y < 4; y++) {
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 4; y++) {
                 verifyMercatorTile(testSource, x, y, 4);
             }
         }
 
-        verifyMercatorTile(testSource, 2<<9 - 1, 2<<8 - 1, 10);
+        verifyMercatorTile(testSource, 2 << 9 - 1, 2 << 8 - 1, 10);
 
         assertEquals("TileXMax", 1, testSource.getTileXMax(1));
         assertEquals("TileYMax", 1, testSource.getTileYMax(1));
@@ -68,7 +68,6 @@ public class WMTSTileSourceTest {
         assertEquals("TileYMax", 2, testSource.getTileYMax(2));
         assertEquals("TileXMax", 5, testSource.getTileXMax(3));
         assertEquals("TileYMax", 4, testSource.getTileYMax(3));
-
     }
 
     @Test
@@ -86,18 +85,18 @@ public class WMTSTileSourceTest {
         verifyMercatorTile(testSource, 0, 0, 1, zoomOffset);
         verifyMercatorTile(testSource, 0, 0, 2, zoomOffset);
         verifyMercatorTile(testSource, 1, 1, 2, zoomOffset);
-        for(int x = 0; x < 4; x++) {
-            for(int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
                 verifyMercatorTile(testSource, x, y, 3, zoomOffset);
             }
         }
-        for(int x = 0; x < 8; x++) {
-            for(int y = 0; y < 4; y++) {
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 4; y++) {
                 verifyMercatorTile(testSource, x, y, zoomOffset);
             }
         }
 
-        verifyMercatorTile(testSource, 2<<9 - 1, 2<<8 - 1, zoomOffset);
+        verifyMercatorTile(testSource, 2 << 9 - 1, 2 << 8 - 1, zoomOffset);
 
         assertEquals("TileXMax", 1, testSource.getTileXMax(1));
         assertEquals("TileYMax", 1, testSource.getTileYMax(1));
@@ -105,15 +104,14 @@ public class WMTSTileSourceTest {
         assertEquals("TileYMax", 2, testSource.getTileYMax(2));
         assertEquals("TileXMax", 4, testSource.getTileXMax(3));
         assertEquals("TileYMax", 4, testSource.getTileYMax(3));
-
     }
 
     @Test
     public void testGeoportalTOPOPL() throws IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryTOPO_PL);
-        verifyTile(new LatLon(56,12), testSource, 0, 0, 1);
-        verifyTile(new LatLon(56,12), testSource, 0, 0, 2);
+        verifyTile(new LatLon(56, 12), testSource, 0, 0, 1);
+        verifyTile(new LatLon(56, 12), testSource, 0, 0, 2);
         verifyTile(new LatLon(51.1268639, 16.8731360), testSource, 1, 1, 2);
 
         assertEquals("TileXMax", 37, testSource.getTileXMax(1));

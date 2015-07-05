@@ -87,14 +87,14 @@ public class WMTSLayer extends AbstractTileSourceLayer {
          LatLon topLeft = mv.getLatLon(0, 0);
          LatLon botLeft = mv.getLatLon(0, tileSource.getTileSize());
 
-         return Math.abs((north.getLat() - south.getLat()) / ( topLeft.lat() - botLeft.lat()));
+         return Math.abs((north.getLat() - south.getLat()) / (topLeft.lat() - botLeft.lat()));
     }
 
     @Override
     protected int getBestZoom() {
         if (!Main.isDisplayingMapView()) return 1;
 
-        for(int i=getMinZoomLvl(); i <= getMaxZoomLvl(); i++) {
+        for (int i = getMinZoomLvl(); i <= getMaxZoomLvl(); i++) {
             double ret = getTileToScreenRatio(i);
             if (ret < 1) {
                 return i;
@@ -105,13 +105,13 @@ public class WMTSLayer extends AbstractTileSourceLayer {
 
     @Override
     public boolean isProjectionSupported(Projection proj) {
-        return ((WMTSTileSource)tileSource).getSupportedProjections().contains(proj.toCode());
+        return ((WMTSTileSource) tileSource).getSupportedProjections().contains(proj.toCode());
     }
 
     @Override
     public String nameSupportedProjections() {
         StringBuilder ret = new StringBuilder();
-        for (String e: ((WMTSTileSource)tileSource).getSupportedProjections()) {
+        for (String e: ((WMTSTileSource) tileSource).getSupportedProjections()) {
             ret.append(e).append(", ");
         }
         return ret.substring(0, ret.length()-2);
@@ -120,7 +120,6 @@ public class WMTSLayer extends AbstractTileSourceLayer {
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
         super.projectionChanged(oldValue, newValue);
-        ((WMTSTileSource)tileSource).initProjection(newValue);
+        ((WMTSTileSource) tileSource).initProjection(newValue);
     }
-
 }

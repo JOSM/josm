@@ -35,8 +35,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class CustomProjection extends AbstractProjection {
 
-    private final static Map<String, Double> UNITS_TO_METERS = getUnitsToMeters();
-    private final static double METER_PER_UNIT_DEGREE = 2 * Math.PI * 6370997 / 360;
+    private static final Map<String, Double> UNITS_TO_METERS = getUnitsToMeters();
+    private static final double METER_PER_UNIT_DEGREE = 2 * Math.PI * 6370997 / 360;
 
     /**
      * pref String that defines the projection

@@ -1341,9 +1341,9 @@ public final class Utils {
     /**
      * Reads the input stream and closes the stream at the end of processing (regardless if an exception was thrown)
      *
-     * @param stream
+     * @param stream input stream
      * @return byte array of data in input stream
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     public static byte[] readBytesFromStream(InputStream stream) throws IOException {
         try {
