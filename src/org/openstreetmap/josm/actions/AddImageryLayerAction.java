@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -24,6 +26,7 @@ import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.preferences.imagery.WMSLayerTree;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
+import org.openstreetmap.josm.io.imagery.WMSImagery.LayerDetails;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageResourceCallback;
@@ -117,7 +120,20 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
             final String url = wms.buildGetMapUrl(
                     tree.getSelectedLayers(), (String) formats.getSelectedItem());
-            return new ImageryInfo(info.getName(), url, "wms", info.getEulaAcceptanceRequired(), info.getCookies());
+            Set<String> supportedCrs = new HashSet<>();
+            {
+                boolean first = true;
+                for(LayerDetails layer: tree.getSelectedLayers()) {
+                    if (first) {
+                        supportedCrs.addAll(layer.getProjections());
+                        first = false;
+                    }
+                    supportedCrs.retainAll(layer.getProjections());
+                }
+            }
+            ImageryInfo ret = new ImageryInfo(info.getName(), url, "wms", info.getEulaAcceptanceRequired(), info.getCookies());
+            ret.setServerProjections(supportedCrs);
+            return ret;
         } catch (MalformedURLException ex) {
             JOptionPane.showMessageDialog(Main.parent, tr("Invalid service URL."),
                     tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
