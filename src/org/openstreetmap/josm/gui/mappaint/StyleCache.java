@@ -147,6 +147,12 @@ public final class StyleCache {
     // this exception type is for debugging #8997 and can later be replaced
     // by AssertionError
     public static class RangeViolatedError extends Error {
+        public RangeViolatedError() {
+        }
+
+        public RangeViolatedError(String message) {
+            super(message);
+        }
     }
 
     /**
@@ -166,9 +172,9 @@ public final class StyleCache {
         }
         if (bd.get(i) == lower) {
             if (upper > bd.get(i+1))
-                throw new RangeViolatedError();
+                throw new RangeViolatedError("the new range must be within a single subrange (1)");
             if (data.get(i) != null)
-                throw new AssertionError("the new range must be within a subrange that has no data");
+                throw new RangeViolatedError("the new range must be within a subrange that has no data");
 
             if (bd.get(i+1) == upper) {
                 //  --|-------|--------|--
@@ -185,7 +191,7 @@ public final class StyleCache {
             return;
         } else {
             if (bd.get(i) < upper)
-                throw new AssertionError("the new range must be within a single subrange");
+                throw new RangeViolatedError("the new range must be within a single subrange (2)");
             if (data.get(i-1) != null)
                 throw new AssertionError();
 
