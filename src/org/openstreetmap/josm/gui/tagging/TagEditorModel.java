@@ -30,7 +30,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * TagEditorModel is a table model.
  *
  */
-@SuppressWarnings("serial")
 public class TagEditorModel extends AbstractTableModel {
     public static final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
@@ -406,19 +405,16 @@ public class TagEditorModel extends AbstractTableModel {
      *
      */
     public void applyToPrimitive(Tagged primitive) {
-        Map<String, String> tags = primitive.getKeys();
-        applyToTags(tags, false);
-        primitive.setKeys(tags);
+        primitive.setKeys(applyToTags(false));
     }
 
     /**
      * applies the current state of the tag editor model to a map of tags
      *
-     * @param tags the map of key/value pairs
-     *
+     * @return the map of key/value pairs
      */
-    public void applyToTags(Map<String, String> tags, boolean keepEmpty) {
-        tags.clear();
+    private Map<String, String> applyToTags(boolean keepEmpty) {
+        Map<String, String> result = new HashMap<>();
         for (TagModel tag: this.tags) {
             // tag still holds an unchanged list of different values for the same key.
             // no property change command required
@@ -431,8 +427,9 @@ public class TagEditorModel extends AbstractTableModel {
             if (!keepEmpty && (tag.getName().trim().isEmpty() || tag.getValue().trim().isEmpty())) {
                 continue;
             }
-            tags.put(tag.getName().trim(), tag.getValue().trim());
+            result.put(tag.getName().trim(), tag.getValue().trim());
         }
+        return result;
     }
 
     public Map<String, String> getTags() {
@@ -440,9 +437,7 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     public Map<String, String> getTags(boolean keepEmpty) {
-        Map<String, String> tags = new HashMap<>();
-        applyToTags(tags, keepEmpty);
-        return tags;
+        return applyToTags(keepEmpty);
     }
 
     /**
