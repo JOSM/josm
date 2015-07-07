@@ -279,7 +279,7 @@ node[ford?]:in-downloaded-area!.ford_on_waterway, node[ford?]:in-downloaded-area
 }
 
 /* see #10837 */
-way[destination][!oneway?] {
+way[destination][!oneway?][highway] {
   throwWarning: tr("incomplete usage of {0} on a way without {1}", "{0.key}", "{1.key}");
   suggestAlternative: "destination:forward";
   suggestAlternative: "destination:backward";
