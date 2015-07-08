@@ -279,7 +279,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                 tileMatrix.scaleDenominator = Double.parseDouble(getStringByXpath(tileMatrixNode, "ScaleDenominator"));
                 String[] topLeftCorner = getStringByXpath(tileMatrixNode, "TopLeftCorner").split(" ");
 
-                if(matrixProj.switchXY()) {
+                if (matrixProj.switchXY()) {
                     tileMatrix.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[1]), Double.parseDouble(topLeftCorner[0]));
                 } else {
                     tileMatrix.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[0]), Double.parseDouble(topLeftCorner[1]));
