@@ -10,7 +10,6 @@ import java.net.MalformedURLException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
@@ -69,7 +68,7 @@ public class WMTSTileSourceTest {
         assertEquals("TileYMax", 1, testSource.getTileYMax(1));
         assertEquals("TileXMax", 2, testSource.getTileXMax(2));
         assertEquals("TileYMax", 2, testSource.getTileYMax(2));
-        assertEquals("TileXMax", 5, testSource.getTileXMax(3));
+        assertEquals("TileXMax", 4, testSource.getTileXMax(3));
         assertEquals("TileYMax", 4, testSource.getTileYMax(3));
 
     }
@@ -78,26 +77,36 @@ public class WMTSTileSourceTest {
     public void testWALLONIE() throws MalformedURLException, IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWALLONIE);
+        assertEquals("http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/"
+                + "MapServer/WMTS/tile/1.0.0/DONNEES_BASE_FOND_PLAN_ANNOTATIONS_2012_RW_NB/default/default028mm/5/1219/1063.png",
+                testSource.getTileUrl(6, 1063, 1219));
+
+        // +bounds=2.54,49.51,6.4,51.5
         Bounds wallonieBounds = new Bounds(
                 new LatLon(49.485372459967245, 2.840548314430268),
                 new LatLon(50.820959517561256, 6.427849693016202)
                 );
-        verifyBounds(wallonieBounds, testSource, 10, 20324, 17724);
+        verifyBounds(wallonieBounds, testSource, 6, 1063, 1219);
+        verifyBounds(wallonieBounds, testSource, 11, 17724, 20324);
+        LatLon ll = new LatLon(testSource.tileXYToLatLon(1063, 1219, 6));
 
     }
 
     private void verifyBounds(Bounds bounds, WMTSTileSource testSource, int z, int x, int y) {
-        LatLon ret = new LatLon(testSource.tileXYToLatLon(y, y, z));
+        LatLon ret = new LatLon(testSource.tileXYToLatLon(x, y, z));
         assertTrue(ret.toDisplayString() + " doesn't lie within: " + bounds.toString(), bounds.contains(ret));
+        int tileXmax = testSource.getTileXMax(z);
+        int tileYmax = testSource.getTileYMax(z);
+        assertTrue("tile x: " + x + " is greater than allowed max: " + tileXmax, tileXmax >= x);
+        assertTrue("tile y: " + y + " is greater than allowed max: " + tileYmax, tileYmax >= y);
     }
 
     @Test
     public void testWIEN() throws MalformedURLException, IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWIEN);
-        int zoomOffset = 10;
+        int zoomOffset = 9;
 
-        // Linz - 11/1105/709.png
         verifyMercatorTile(testSource, 0, 0, 1, zoomOffset);
         verifyMercatorTile(testSource, 1105, 709, 2, zoomOffset);
         verifyMercatorTile(testSource, 1, 1, 1, zoomOffset);
@@ -105,12 +114,6 @@ public class WMTSTileSourceTest {
         verifyMercatorTile(testSource, 0, 0, 2, zoomOffset);
         verifyMercatorTile(testSource, 1, 1, 2, zoomOffset);
 
-
-        LatLon ll = new LatLon(testSource.tileXYToLatLon(500,  500, 1));
-
-        TileXY xy = testSource.latLonToTileXY(new LatLon(48.21, 14.24).toCoordinate(), 1);
-        assertTrue("X index is negative: " + xy.getXIndex(), xy.getXIndex() > 0);
-        assertTrue(xy.getYIndex() > 0);
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
                 verifyMercatorTile(testSource, x, y, 3, zoomOffset);
@@ -118,18 +121,25 @@ public class WMTSTileSourceTest {
         }
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 4; y++) {
-                verifyMercatorTile(testSource, x, y, zoomOffset);
+                verifyMercatorTile(testSource, x, y, 4, zoomOffset);
             }
         }
 
-        verifyMercatorTile(testSource, 2 << 9 - 1, 2 << 8 - 1, zoomOffset);
+        verifyMercatorTile(testSource, 2 << 9 - 1, 2 << 8 - 1, 2, zoomOffset);
 
-        assertEquals("TileXMax", 1, testSource.getTileXMax(1));
-        assertEquals("TileYMax", 1, testSource.getTileYMax(1));
-        assertEquals("TileXMax", 2, testSource.getTileXMax(2));
-        assertEquals("TileYMax", 2, testSource.getTileYMax(2));
-        assertEquals("TileXMax", 4, testSource.getTileXMax(3));
-        assertEquals("TileYMax", 4, testSource.getTileYMax(3));
+        verifyMercatorMax(testSource, 1, zoomOffset);
+        verifyMercatorMax(testSource, 2, zoomOffset);
+        verifyMercatorMax(testSource, 3, zoomOffset);
+    }
+
+    private void verifyMercatorMax(WMTSTileSource testSource, int zoom, int zoomOffset) {
+        TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
+        int result = testSource.getTileXMax(zoom);
+        int expected = verifier.getTileXMax(zoom + zoomOffset);
+        assertTrue("TileXMax expected: " + expected + " got: " + result, Math.abs(result - expected) < 5);
+        result = testSource.getTileYMax(zoom);
+        expected = verifier.getTileYMax(zoom + zoomOffset);
+        assertTrue("TileYMax expected: " + expected + " got: " + result, Math.abs(result - expected) < 5);
     }
 
     @Test
@@ -140,15 +150,15 @@ public class WMTSTileSourceTest {
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 2);
         verifyTile(new LatLon(51.1268639, 16.8731360), testSource, 1, 1, 2);
 
-        assertEquals("TileXMax", 37, testSource.getTileXMax(1));
-        assertEquals("TileYMax", 19, testSource.getTileYMax(1));
-        assertEquals("TileXMax", 74, testSource.getTileXMax(2));
-        assertEquals("TileYMax", 37, testSource.getTileYMax(2));
-        assertEquals("TileXMax", 148, testSource.getTileXMax(3));
-        assertEquals("TileYMax", 74, testSource.getTileYMax(3));
+        assertEquals("TileXMax", 2, testSource.getTileXMax(1));
+        assertEquals("TileYMax", 1, testSource.getTileYMax(1));
+        assertEquals("TileXMax", 3, testSource.getTileXMax(2));
+        assertEquals("TileYMax", 2, testSource.getTileYMax(2));
+        assertEquals("TileXMax", 6, testSource.getTileXMax(3));
+        assertEquals("TileYMax", 4, testSource.getTileYMax(3));
         assertEquals(
                 "http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?SERVICE=WMTS&REQUEST=GetTile&"
-                + "VERSION=1.0.0&LAYER=MAPA TOPOGRAFICZNA&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:4326&"
+                + "VERSION=1.0.0&LAYER=MAPA TOPOGRAFICZNA&STYLE=default&FORMAT=image/jpeg&tileMatrixSet=EPSG:4326&"
                 + "tileMatrix=EPSG:4326:0&tileRow=1&tileCol=1",
                 testSource.getTileUrl(1,  1,  1));
     }
@@ -158,7 +168,6 @@ public class WMTSTileSourceTest {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
         verifyTile(new LatLon(53.5993712684958, 19.560669777688176), testSource, 12412, 3941, 14);
-
         verifyTile(new LatLon(49.783096954497786, 22.79034127751704), testSource, 17714, 10206, 14);
     }
 
@@ -186,13 +195,8 @@ public class WMTSTileSourceTest {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         LatLon result = new LatLon(testSource.tileXYToLatLon(x, y, z));
         LatLon expected = new LatLon(verifier.tileXYToLatLon(x, y, z + zoomOffset));
-        System.out.println(z + "/" + x + "/" + y + " - result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString());
+        //System.out.println(z + "/" + x + "/" + y + " - result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString());
         assertEquals("Longitude" , expected.lon(), result.lon(), 1e-04);
         assertEquals("Latitude", expected.lat(), result.lat(), 1e-04);
-        //assertTrue("result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString(), result.equalsEpsilon(expected));
-//        LatLon tileCenter = new Bounds(result, new LatLon(testSource.tileXYToLatLon(x+1, y+1, z))).getCenter();
-//        TileXY backwardsResult = testSource.latLonToTileXY(tileCenter.toCoordinate(), z);
-        //assertEquals(x, backwardsResult.getXIndex());
-        //assertEquals(y, backwardsResult.getYIndex());
     }
 }
