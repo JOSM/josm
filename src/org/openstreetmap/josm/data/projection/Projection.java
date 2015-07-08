@@ -78,4 +78,12 @@ public interface Projection {
      *
      */
     double getMetersPerUnit();
+
+    /**
+     * Does this projection natural order of coordinates is North East,
+     * instead of East North
+     *
+     * @return true if natural order of coordinates is North East, false if East North
+     */
+    boolean switchXY();
 }

@@ -21,15 +21,15 @@
 # Lambert 93 (France)
 <2154> +proj=lcc +lat_0=46.5 +lat_1=44 +lat_2=49 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,41,10.2,51  <>
 # PUWG 2000 Zone 5 (Poland)
-<2176> +proj=tmerc +lon_0=15 +k_0=0.999923 +x_0=5500000 +ellps=GRS80 +nadgrids=null +units=m +bounds=13.5,49,16.5,54.84  <>
+<2176> +proj=tmerc +lon_0=15 +k_0=0.999923 +x_0=5500000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=13.5,49,16.5,54.84  <>
 # PUWG 2000 Zone 6 (Poland)
-<2177> +proj=tmerc +lon_0=18 +k_0=0.999923 +x_0=6500000 +ellps=GRS80 +nadgrids=null +units=m +bounds=16.5,49,19.5,54.84  <>
+<2177> +proj=tmerc +lon_0=18 +k_0=0.999923 +x_0=6500000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=16.5,49,19.5,54.84  <>
 # PUWG 2000 Zone 7 (Poland)
-<2178> +proj=tmerc +lon_0=21 +k_0=0.999923 +x_0=7500000 +ellps=GRS80 +nadgrids=null +units=m +bounds=19.5,49,22.5,54.84  <>
+<2178> +proj=tmerc +lon_0=21 +k_0=0.999923 +x_0=7500000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=19.5,49,22.5,54.84  <>
 # PUWG 2000 Zone 8 (Poland)
-<2179> +proj=tmerc +lon_0=24 +k_0=0.999923 +x_0=8500000 +ellps=GRS80 +nadgrids=null +units=m +bounds=22.5,49,25.5,54.84  <>
+<2179> +proj=tmerc +lon_0=24 +k_0=0.999923 +x_0=8500000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=22.5,49,25.5,54.84  <>
 # PUWG 1992 (Poland)
-<2180> +proj=tmerc +lon_0=19 +k_0=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +nadgrids=null +units=m +bounds=14.12,49,24.15,54.84  <>
+<2180> +proj=tmerc +lon_0=19 +k_0=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=14.12,49,24.15,54.84  <>
 # UTM France (DOM) Fort Marigot
 <2969> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=intl +towgs84=136.596,248.148,-429.789 +units=m +bounds=-63.25,17.6,-62.5,18.5  <>
 # UTM France (DOM) Sainte Anne
@@ -45,11 +45,11 @@
 # Monte Mario / Italy zone 2
 <3004> +proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=2520000 +y_0=0 +ellps=intl +units=m +bounds=11,34,24,48 <>
 # SWEREF99 13 30 / EPSG:3008 (Sweden)
-<3008> +proj=tmerc +lon_0=13.5 +x_0=150000 +ellps=GRS80 +nadgrids=null +units=m +bounds=12.1,55.2,14.65,62.26  <>
+<3008> +proj=tmerc +lon_0=13.5 +x_0=150000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=12.1,55.2,14.65,62.26  <>
 # LKS-92 (Latvia TM)
-<3059> +proj=tmerc +lon_0=24 +k_0=0.9996 +x_0=500000 +y_0=-6000000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-180,-90,180,90  <>
+<3059> +proj=tmerc +lon_0=24 +k_0=0.9996 +x_0=500000 +y_0=-6000000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=-180,-90,180,90  <>
 # Lambert Zone (Estonia)
-<3301> +proj=lcc +lat_0=57.51755393055556 +lat_1=59.333333333333336 +lat_2=58 +lon_0=24 +x_0=500000 +y_0=6375000 +ellps=GRS80 +nadgrids=null +units=m +bounds=21.64,56.05,28.58,61.13  <>
+<3301> +proj=lcc +lat_0=57.51755393055556 +lat_1=59.333333333333336 +lat_2=58 +lon_0=24 +x_0=500000 +y_0=6375000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=21.64,56.05,28.58,61.13  <>
 # Belgian Lambert 2008
 <3812> +proj=lcc +lat_0=50d47'52.134" +lat_1=49d50'0" +lat_2=51d10'0" +lon_0=4d21'33.177" +x_0=649328 +y_0=665262 +ellps=GRS80 +nadgrids=null +units=m +bounds=2.54,49.51,6.4,51.5  <>
 # Pseudo-Mercator
@@ -73,9 +73,9 @@
 # Lambert CC9 (France) Zone 50
 <3950> +proj=lcc +lat_0=50 +lat_1=49.25 +lat_2=50.75 +lon_0=3 +x_0=1700000 +y_0=9200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,47.5,10.2,51.1  <>
 # ETRS89
-<4258> +proj=lonlat +ellps=GRS80 +datum=GRS80 +bounds=-180,-90,180,90  <>
+<4258> +proj=lonlat +ellps=GRS80 +datum=GRS80 +axis=neu +bounds=-180,-90,180,90  <>
 # WGS 84
-<4326> +proj=lonlat +ellps=WGS84 +datum=WGS84 +bounds=-180,-90,180,90  <>
+<4326> +proj=lonlat +ellps=WGS84 +datum=WGS84 +axis=neu +bounds=-180,-90,180,90  <>
 # Swiss Grid (Switzerland)
 <21781> +proj=somerc +lat_0=46d57'8.66" +lon_0=7d26'22.5" +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346 +units=m +bounds=5.7,45.7,10.6,47.9  <>
 # HD72 / EOV (Hungary)
@@ -113,13 +113,13 @@
 # Belgian Lambert 1972
 <31370> +proj=lcc +lat_0=90 +lat_1=49d50'0.00204" +lat_2=51d10'0.00204" +lon_0=4d22'2.952" +x_0=150000.013 +y_0=5400088.438 +ellps=intl +towgs84=-99.06,53.32,-112.49,0.419,-0.83,1.885,-1.0 +units=m +bounds=2.54,49.51,6.4,51.5  <>
 # Gauß-Krüger Zone 2
-<31466> +proj=tmerc +lon_0=6 +x_0=2500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +bounds=3.5,-5,8.5,85  <>
+<31466> +proj=tmerc +lon_0=6 +x_0=2500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +axis=neu +bounds=3.5,-5,8.5,85  <>
 # Gauß-Krüger Zone 3
-<31467> +proj=tmerc +lon_0=9 +x_0=3500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +bounds=6.5,-5,11.5,85  <>
+<31467> +proj=tmerc +lon_0=9 +x_0=3500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +axis=neu +bounds=6.5,-5,11.5,85  <>
 # Gauß-Krüger Zone 4
-<31468> +proj=tmerc +lon_0=12 +x_0=4500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +bounds=9.5,-5,14.5,85  <>
+<31468> +proj=tmerc +lon_0=12 +x_0=4500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +axis=neu +bounds=9.5,-5,14.5,85  <>
 # Gauß-Krüger Zone 5
-<31469> +proj=tmerc +lon_0=15 +x_0=5500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +bounds=12.5,-5,17.5,85  <>
+<31469> +proj=tmerc +lon_0=15 +x_0=5500000 +ellps=bessel +nadgrids=BETA2007.gsb +units=m +axis=neu +bounds=12.5,-5,17.5,85  <>
 # UTM zone 1N
 <32601> +proj=tmerc +lon_0=-177 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +units=m +bounds=-182,-5,-172,85  <>
 # UTM zone 2N

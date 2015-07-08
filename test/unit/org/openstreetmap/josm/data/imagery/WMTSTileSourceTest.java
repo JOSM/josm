@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.imagery;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +10,11 @@ import java.net.MalformedURLException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
 
@@ -68,13 +71,27 @@ public class WMTSTileSourceTest {
         assertEquals("TileYMax", 2, testSource.getTileYMax(2));
         assertEquals("TileXMax", 5, testSource.getTileXMax(3));
         assertEquals("TileYMax", 4, testSource.getTileYMax(3));
+
     }
 
     @Test
     public void testWALLONIE() throws MalformedURLException, IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWALLONIE);
+        Bounds wallonieBounds = new Bounds(
+                new LatLon(49.485372459967245, 2.840548314430268),
+                new LatLon(50.820959517561256, 6.427849693016202)
+                );
+        verifyBounds(wallonieBounds, testSource, 10, 20324, 17724);
+
     }
+
+    private void verifyBounds(Bounds bounds, WMTSTileSource testSource, int z, int x, int y) {
+        LatLon ret = new LatLon(testSource.tileXYToLatLon(y, y, z));
+        assertTrue(ret.toDisplayString() + " doesn't lie within: " + bounds.toString(), bounds.contains(ret));
+    }
+
+
 
     @Test
     public void testWIEN() throws MalformedURLException, IOException {
@@ -82,21 +99,32 @@ public class WMTSTileSourceTest {
         WMTSTileSource testSource = new WMTSTileSource(testImageryWIEN);
         int zoomOffset = 10;
 
+        // Linz - 11/1105/709.png
         verifyMercatorTile(testSource, 0, 0, 1, zoomOffset);
+        verifyMercatorTile(testSource, 1105, 709, 2, zoomOffset);
+        verifyMercatorTile(testSource, 1, 1, 1, zoomOffset);
+        verifyMercatorTile(testSource, 2, 2, 1, zoomOffset);
         verifyMercatorTile(testSource, 0, 0, 2, zoomOffset);
         verifyMercatorTile(testSource, 1, 1, 2, zoomOffset);
-        for (int x = 0; x < 4; x++) {
-            for (int y = 0; y < 4; y++) {
+
+
+        LatLon ll = new LatLon(testSource.tileXYToLatLon(500,  500, 1));
+
+        TileXY xy = testSource.latLonToTileXY(new LatLon(48.21, 14.24).toCoordinate(), 1);
+        assertTrue("X index is negative: " + xy.getXIndex(), xy.getXIndex() > 0);
+        assertTrue(xy.getYIndex() > 0);
+        for(int x = 0; x < 4; x++) {
+            for(int y = 0; y < 4; y++) {
                 verifyMercatorTile(testSource, x, y, 3, zoomOffset);
             }
         }
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 4; y++) {
+        for(int x = 0; x < 8; x++) {
+            for(int y = 0; y < 4; y++) {
                 verifyMercatorTile(testSource, x, y, zoomOffset);
             }
         }
 
-        verifyMercatorTile(testSource, 2 << 9 - 1, 2 << 8 - 1, zoomOffset);
+        verifyMercatorTile(testSource, 2<<9 - 1, 2<<8 - 1, zoomOffset);
 
         assertEquals("TileXMax", 1, testSource.getTileXMax(1));
         assertEquals("TileYMax", 1, testSource.getTileYMax(1));
@@ -121,8 +149,9 @@ public class WMTSTileSourceTest {
         assertEquals("TileXMax", 148, testSource.getTileXMax(3));
         assertEquals("TileYMax", 74, testSource.getTileYMax(3));
         assertEquals(
-                "http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=MAPA "
-                + "TOPOGRAFICZNA&STYLE=&FORMAT=image/jpeg&TileMatrixSet=EPSG:4326&TileMatrix=EPSG:4326:0&TileRow=1&TileCol=1",
+                "http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?SERVICE=WMTS&REQUEST=GetTile&"
+                + "VERSION=1.0.0&LAYER=MAPA TOPOGRAFICZNA&STYLE=&FORMAT=image/jpeg&tileMatrixSet=EPSG:4326&"
+                + "tileMatrix=EPSG:4326:0&tileRow=1&tileCol=1",
                 testSource.getTileUrl(1,  1,  1));
     }
 

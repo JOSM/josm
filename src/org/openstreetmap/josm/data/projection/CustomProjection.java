@@ -49,6 +49,7 @@ public class CustomProjection extends AbstractProjection {
     protected String cacheDir;
     protected Bounds bounds;
     private double metersPerUnit = METER_PER_UNIT_DEGREE; // default to degrees
+    private String axis = "enu"; // default axis orientation is East, North, Up
 
     /**
      * Proj4-like projection parameters. See <a href="https://trac.osgeo.org/proj/wiki/GenParms">reference</a>.
@@ -97,7 +98,10 @@ public class CustomProjection extends AbstractProjection {
         /** Don't use the /usr/share/proj/proj_def.dat defaults file */
         no_defs("no_defs", false),
         init("init", true),
+        /** crs units to meter multiplier */
         to_meter("to_meter", true),
+        /** definition of axis for projection */
+        axis("axis", true),
         // JOSM extensions, not present in PROJ.4
         wmssrs("wmssrs", true),
         bounds("bounds", true);
@@ -211,6 +215,10 @@ public class CustomProjection extends AbstractProjection {
             s = parameters.get(Param.to_meter.key);
             if (s != null) {
                 this.metersPerUnit = parseDouble(s, Param.to_meter.key);
+            }
+            s = parameters.get(Param.axis.key);
+            if (s != null) {
+                this.axis  = s;
             }
         }
     }
@@ -545,6 +553,12 @@ public class CustomProjection extends AbstractProjection {
     @Override
     public double getMetersPerUnit() {
         return metersPerUnit;
+    }
+
+    @Override
+    public boolean switchXY() {
+        // TODO: support for other axis orientation such as West South, and Up Down
+        return this.axis.startsWith("ne");
     }
 
     private static Map<String, Double> getUnitsToMeters() {
