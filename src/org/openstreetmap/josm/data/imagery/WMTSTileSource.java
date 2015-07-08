@@ -46,6 +46,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -65,7 +66,7 @@ import org.w3c.dom.NodeList;
 public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource {
     private static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
 
-    private static final String URL_GET_ENCODING_PARAMS = "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER={layer}&STYLE={style}&"
+    private static final String URL_GET_ENCODING_PARAMS = "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER={layer}&STYLE={Style}&"
             + "FORMAT={format}&tileMatrixSet={TileMatrixSet}&tileMatrix={TileMatrix}&tileRow={TileRow}&tileCol={TileCol}";
 
     private static final String[] ALL_PATTERNS = {
@@ -228,9 +229,8 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
             return parseLayer(layersNodeList, matrixSetById);
 
         } catch (Exception e) {
-            Main.error(e);
+            throw new IllegalArgumentException(e);
         }
-        return null;
     }
 
     private static String normalizeCapabilitiesUrl(String url) throws MalformedURLException {
@@ -267,13 +267,23 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
             matrixSet.identifier = getStringByXpath(matrixSetNode, "Identifier");
             matrixSet.crs = crsToCode(getStringByXpath(matrixSetNode, "SupportedCRS"));
             NodeList tileMatrixList = getByXpath(matrixSetNode, "TileMatrix");
+            Projection matrixProj = Projections.getProjectionByCode(matrixSet.crs);
+            if (matrixProj == null) {
+                // use current projection if none found. Maybe user is using custom string
+                matrixProj = Main.getProjection();
+            }
             for (int matrixId = 0; matrixId < tileMatrixList.getLength(); matrixId++) {
                 Node tileMatrixNode = tileMatrixList.item(matrixId);
                 TileMatrix tileMatrix = new TileMatrix();
                 tileMatrix.identifier = getStringByXpath(tileMatrixNode, "Identifier");
                 tileMatrix.scaleDenominator = Double.parseDouble(getStringByXpath(tileMatrixNode, "ScaleDenominator"));
                 String[] topLeftCorner = getStringByXpath(tileMatrixNode, "TopLeftCorner").split(" ");
-                tileMatrix.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[1]), Double.parseDouble(topLeftCorner[0]));
+
+                if(matrixProj.switchXY()) {
+                    tileMatrix.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[1]), Double.parseDouble(topLeftCorner[0]));
+                } else {
+                    tileMatrix.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[0]), Double.parseDouble(topLeftCorner[1]));
+                }
                 tileMatrix.tileHeight = Integer.parseInt(getStringByXpath(tileMatrixNode, "TileHeight"));
                 tileMatrix.tileWidth = Integer.parseInt(getStringByXpath(tileMatrixNode, "TileHeight"));
                 if (tileMatrix.tileHeight != tileMatrix.tileWidth) {
@@ -290,7 +300,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
 
     private static String crsToCode(String crsIdentifier) {
         if (crsIdentifier.startsWith("urn:ogc:def:crs:")) {
-            return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*):[^:]*:(.*)$", "$1:$2");
+            return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*):.*:(.*)$", "$1:$2");
         }
         return crsIdentifier;
     }
@@ -438,7 +448,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
             return Main.getProjection().getWorldBoundsLatLon().getCenter().toCoordinate();
         }
         double scale = matrix.scaleDenominator * this.crsScale;
-        EastNorth ret = new EastNorth(matrix.topLeftCorner.getX() + x * scale, matrix.topLeftCorner.getY() - y * scale);
+        EastNorth ret = new EastNorth(matrix.topLeftCorner.east() + x * scale, matrix.topLeftCorner.north() - y * scale);
         return Main.getProjection().eastNorth2latlon(ret).toCoordinate();
     }
 
@@ -588,7 +598,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         Bounds bounds = Main.getProjection().getWorldBoundsLatLon();
         EastNorth min = proj.latlon2eastNorth(bounds.getMin());
         EastNorth max = proj.latlon2eastNorth(bounds.getMax());
-        return (int) Math.ceil(Math.abs(max.getY() - min.getY()) / scale);
+        return (int) Math.ceil(Math.abs(max.north() - min.north()) / scale);
     }
 
     private int getTileXMax(int zoom, Projection proj) {
@@ -600,6 +610,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         Bounds bounds = Main.getProjection().getWorldBoundsLatLon();
         EastNorth min = proj.latlon2eastNorth(bounds.getMin());
         EastNorth max = proj.latlon2eastNorth(bounds.getMax());
-        return (int) Math.ceil(Math.abs(max.getX() - min.getX()) / scale);
+        return (int) Math.ceil(Math.abs(max.east() - min.east()) / scale);
     }
 }

@@ -138,8 +138,9 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         boolean switchLatLon = false;
         if (baseUrl.toLowerCase().contains("crs=epsg:4326")) {
             switchLatLon = true;
-        } else if (baseUrl.toLowerCase().contains("crs=") && "EPSG:4326".equals(myProjCode)) {
-            switchLatLon = true;
+        } else if (baseUrl.toLowerCase().contains("crs=")) {
+            // assume WMS 1.3.0
+            switchLatLon = Main.getProjection().switchXY();
         }
         String bbox;
         if (switchLatLon) {

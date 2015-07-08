@@ -68,11 +68,11 @@ public class WMTSLayer extends AbstractTileSourceLayer {
                 info.setAttribution(tileSource);
                 return tileSource;
             }
-        } catch (Exception e) {
-            Main.warn("Could not create imagery layer:");
+            return null;
+        } catch (IOException e) {
             Main.warn(e);
+            throw new IllegalArgumentException(e);
         }
-        return null;
     }
 
     /**

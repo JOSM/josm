@@ -59,39 +59,6 @@
 			</TileMatrixSetLink>
 			<ResourceURL format="image/png" template="http://webgis.linz.at/WMTS/1.0.0/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png" resourceType="tile"/> 
 		</Layer>
-		<Layer>
-			<ows:Title>Stadtkarte</ows:Title>
-			<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
-				<ows:LowerCorner>14.42 48.21</ows:LowerCorner>
-				<ows:UpperCorner>14.24 48.38</ows:UpperCorner>
-			</ows:WGS84BoundingBox>
-			<ows:Identifier>Stadtkarte</ows:Identifier>
-			<Style isDefault="true">
-				<ows:Identifier>normal</ows:Identifier>
-			</Style>
-			<Format>image/png</Format>
-			<TileMatrixSetLink>
-				<TileMatrixSet>Stadtkarte_standard</TileMatrixSet>  
-			</TileMatrixSetLink>
-			<ResourceURL format="image/png" template="http://webgis.linz.at/WMTS/1.0.0/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png" resourceType="tile"/>
-		</Layer>
-		<Layer>
-			<ows:Title>Beschriftungen</ows:Title>
-			<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
-				<ows:LowerCorner>14.42 48.21</ows:LowerCorner>
-				<ows:UpperCorner>14.24 48.38</ows:UpperCorner>
-			</ows:WGS84BoundingBox>
-			<ows:Identifier>Beschriftungen</ows:Identifier>
-			<Style isDefault="true">
-				<ows:Identifier>normal</ows:Identifier>
-			</Style>
-			<Format>image/png</Format>
-			<TileMatrixSetLink>
-				<TileMatrixSet>Beschriftungen_alles</TileMatrixSet>
-			</TileMatrixSetLink>
-			<ResourceURL format="image/png" template="http://webgis.linz.at/WMTS/1.0.0/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png" resourceType="tile"/>
-		</Layer>
-
 		<TileMatrixSet>
 			<ows:Identifier>Orthofotos_standard</ows:Identifier>
 			<ows:BoundingBox crs="urn:ogc:def:crs:EPSG:6.18:3:3857">
