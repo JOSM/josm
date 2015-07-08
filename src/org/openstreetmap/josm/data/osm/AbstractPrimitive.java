@@ -654,10 +654,10 @@ public abstract class AbstractPrimitive implements IPrimitive {
     @Override
     public final Collection<String> keySet() {
         final String[] keys = this.keys;
-        if (keys == null){
+        if (keys == null) {
             return Collections.emptySet();
         }
-        if (keys.length == 1){
+        if (keys.length == 1) {
             return Collections.singleton(keys[0]);
         }
 
