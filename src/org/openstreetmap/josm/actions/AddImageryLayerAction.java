@@ -121,15 +121,13 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             final String url = wms.buildGetMapUrl(
                     tree.getSelectedLayers(), (String) formats.getSelectedItem());
             Set<String> supportedCrs = new HashSet<>();
-            {
-                boolean first = true;
-                for(LayerDetails layer: tree.getSelectedLayers()) {
-                    if (first) {
-                        supportedCrs.addAll(layer.getProjections());
-                        first = false;
-                    }
-                    supportedCrs.retainAll(layer.getProjections());
+            boolean first = true;
+            for (LayerDetails layer: tree.getSelectedLayers()) {
+                if (first) {
+                    supportedCrs.addAll(layer.getProjections());
+                    first = false;
                 }
+                supportedCrs.retainAll(layer.getProjections());
             }
             ImageryInfo ret = new ImageryInfo(info.getName(), url, "wms", info.getEulaAcceptanceRequired(), info.getCookies());
             ret.setServerProjections(supportedCrs);
