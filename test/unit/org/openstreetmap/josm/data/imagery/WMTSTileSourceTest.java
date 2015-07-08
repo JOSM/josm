@@ -91,8 +91,6 @@ public class WMTSTileSourceTest {
         assertTrue(ret.toDisplayString() + " doesn't lie within: " + bounds.toString(), bounds.contains(ret));
     }
 
-
-
     @Test
     public void testWIEN() throws MalformedURLException, IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
@@ -113,18 +111,18 @@ public class WMTSTileSourceTest {
         TileXY xy = testSource.latLonToTileXY(new LatLon(48.21, 14.24).toCoordinate(), 1);
         assertTrue("X index is negative: " + xy.getXIndex(), xy.getXIndex() > 0);
         assertTrue(xy.getYIndex() > 0);
-        for(int x = 0; x < 4; x++) {
-            for(int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
                 verifyMercatorTile(testSource, x, y, 3, zoomOffset);
             }
         }
-        for(int x = 0; x < 8; x++) {
-            for(int y = 0; y < 4; y++) {
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 4; y++) {
                 verifyMercatorTile(testSource, x, y, zoomOffset);
             }
         }
 
-        verifyMercatorTile(testSource, 2<<9 - 1, 2<<8 - 1, zoomOffset);
+        verifyMercatorTile(testSource, 2 << 9 - 1, 2 << 8 - 1, zoomOffset);
 
         assertEquals("TileXMax", 1, testSource.getTileXMax(1));
         assertEquals("TileYMax", 1, testSource.getTileYMax(1));
