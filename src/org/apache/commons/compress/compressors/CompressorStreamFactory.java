@@ -80,6 +80,7 @@ public class CompressorStreamFactory {
      * @since 1.1
      */
     public static final String GZIP = "gz";
+    
     /**
      * Constant (value {@value}) used to identify the PACK200 compression algorithm.
      * @since 1.3
@@ -140,7 +141,6 @@ public class CompressorStreamFactory {
      * If false, stop after the first stream and leave the 
      * input position to point to the next byte after the stream
      */
-
     private volatile boolean decompressConcatenated = false;
 
     /**
