@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import java.io.IOException;
 import java.util.Map;
 
+import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -80,12 +81,14 @@ public class WMTSLayer extends AbstractTileSourceLayer {
      * @return how many pixels of the screen occupies one pixel of the tile
      */
     private double getTileToScreenRatio(int zoom) {
-         ICoordinate north = tileSource.tileXYToLatLon(0, 0, zoom);
-         ICoordinate south = tileSource.tileXYToLatLon(0, 1, zoom);
-
          MapView mv = Main.map.mapView;
          LatLon topLeft = mv.getLatLon(0, 0);
          LatLon botLeft = mv.getLatLon(0, tileSource.getTileSize());
+
+         TileXY topLeftTile = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
+
+         ICoordinate north = tileSource.tileXYToLatLon(topLeftTile.getXIndex(), topLeftTile.getYIndex(), zoom);
+         ICoordinate south = tileSource.tileXYToLatLon(topLeftTile.getXIndex(), topLeftTile.getYIndex() + 1, zoom);
 
          return Math.abs((north.getLat() - south.getLat()) / (topLeft.lat() - botLeft.lat()));
     }
@@ -94,10 +97,10 @@ public class WMTSLayer extends AbstractTileSourceLayer {
     protected int getBestZoom() {
         if (!Main.isDisplayingMapView()) return 1;
 
-        for (int i = getMinZoomLvl(); i <= getMaxZoomLvl(); i++) {
+        for (int i = getMinZoomLvl() + 1; i <= getMaxZoomLvl(); i++) {
             double ret = getTileToScreenRatio(i);
             if (ret < 1) {
-                return i;
+                return i - 1;
             }
         }
         return getMaxZoomLvl();
