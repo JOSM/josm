@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.Utils;
  * a reference to an user object, and make sure that for each username there
  * is only one user object.
  *
- *
+ * @since 227
  */
 public final class User {
 
@@ -58,6 +58,8 @@ public final class User {
         return user;
     }
 
+    private static User lastUser = null;
+
     /**
      * Creates a user known to the OSM server
      *
@@ -66,12 +68,21 @@ public final class User {
      * @return a new OSM user with the given name and uid
      */
     public static synchronized User createOsmUser(long uid, String name) {
-        User user = userMap.get(uid);
+
+        if (lastUser != null && lastUser.getId() == uid) {
+            return lastUser;
+        }
+
+        Long ouid = uid;
+        User user = userMap.get(ouid);
         if (user == null) {
             user = new User(uid, name);
-            userMap.put(user.getId(), user);
+            userMap.put(ouid, user);
         }
         if (name != null) user.addName(name);
+
+        lastUser = user;
+
         return user;
     }
 
