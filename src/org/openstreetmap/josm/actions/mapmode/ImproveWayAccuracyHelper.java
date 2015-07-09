@@ -85,6 +85,12 @@ final class ImproveWayAccuracyHelper {
         mainLoop:
         for (Node n : w.getNodes()) {
             EastNorth nEN = n.getEastNorth();
+
+            if (nEN == null) {
+                // Might happen if lat/lon for that point are not known.
+                continue;
+            }
+
             currentDistance = pEN.distance(nEN);
 
             if (currentDistance < bestDistance) {
