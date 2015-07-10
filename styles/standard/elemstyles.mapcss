@@ -1434,7 +1434,7 @@ node[man_made=watermill] {
     text: auto;
 }
 node[man_made=water_tower] {
-    icon-image: "misc/landmark/water_tower.png";
+    icon-image: "misc/landmark/water_tower.svg";
     set icon_z17;
     text: auto;
 }
@@ -1749,7 +1749,7 @@ area[shop=bag] {
     fill-color: shop#00005f;
 }
 node[shop=supermarket] {
-    icon-image: "shop/supermarket.png";
+    icon-image: "shop/supermarket.svg";
     set icon_z17;
     text: auto;
 }
@@ -1971,7 +1971,7 @@ node[shop=musical_instrument] {
     text: auto;
 }
 node[shop=newsagent] {
-    icon-image: "shop/kiosk.png";
+    icon-image: "shop/news.svg";
     set icon_z17;
     text: auto;
 }
@@ -2341,7 +2341,7 @@ node[amenity=telephone] {
     text: auto;
 }
 node[amenity=clock] {
-    icon-image: "service/clock.png";
+    icon-image: "service/clock.svg";
     set icon_z17;
     text: auto;
 }
@@ -2688,12 +2688,12 @@ node[amenity=arts_centre] {
     text: auto;
 }
 node[amenity=courthouse] {
-    icon-image: "service/administration/court_of_law.png";
+    icon-image: "service/administration/courthouse.svg";
     set icon_z17;
     text: auto;
 }
 node[amenity=prison] {
-    icon-image: "service/administration/prison.png";
+    icon-image: "service/administration/prison.svg";
     set icon_z17;
     text: auto;
 }
@@ -2844,12 +2844,12 @@ area[tourism=caravan_site] {
     fill-color: hotel#e1a0a2;
 }
 node[tourism=hotel] {
-    icon-image: "accommodation.png";
+    icon-image: "accommodation/hotel.svg";
     set icon_z17;
     text: auto;
 }
 node[tourism=motel] {
-    icon-image: "accommodation/motel.png";
+    icon-image: "accommodation/motel.svg";
     set icon_z17;
     text: auto;
 }
@@ -2859,7 +2859,7 @@ node[tourism=guest_house] {
     text: auto;
 }
 node[tourism=hostel] {
-    icon-image: "accommodation/hostel.png";
+    icon-image: "accommodation/hostel.svg";
     set icon_z17;
     text: auto;
 }
@@ -2932,7 +2932,7 @@ node[tourism=artwork] {
     text: auto;
 }
 node[tourism=museum] {
-    icon-image: "sightseeing/museum.png";
+    icon-image: "sightseeing/museum.svg";
     set icon_z17;
     text: auto;
 }

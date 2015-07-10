@@ -3196,7 +3196,7 @@
   </group> <!-- Transport -->
   <group name="Facilities" icon="presets/bed.png">
     <group name="Accommodation" icon="presets/bed.png">
-        <item name="Hotel" icon="styles/standard/accommodation.png" type="node,closedway" preset_name_label="true">
+        <item name="Hotel" icon="styles/standard/accommodation/hotel.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=hotel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=hotel"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:tourism=hotel"
@@ -3217,7 +3217,7 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Hotel -->
-        <item name="Motel" icon="styles/standard/accommodation/motel.png" type="node,closedway" preset_name_label="true">
+        <item name="Motel" icon="styles/standard/accommodation/motel.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=motel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=motel"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:tourism=motel"
@@ -3276,7 +3276,7 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Chalet -->
-        <item name="Hostel" icon="styles/standard/accommodation/hostel.png" type="node,closedway" preset_name_label="true">
+        <item name="Hostel" icon="styles/standard/accommodation/hostel.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=hostel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=hostel"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=hostel"
@@ -3886,7 +3886,7 @@
         </item> <!-- Private Swimming Pool -->
     </group> <!-- Leisure -->
     <group name="Culture" icon="presets/theater.png">
-        <item name="Museum" icon="styles/standard/sightseeing/museum.png" type="node,closedway" preset_name_label="true">
+        <item name="Museum" icon="styles/standard/sightseeing/museum.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=museum"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=museum"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=museum"
@@ -4186,7 +4186,7 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Embassy -->
-        <item name="Courthouse" icon="presets/JusticeScales.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Courthouse" icon="styles/standard/service/administration/courthouse.svg" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=courthouse"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=courthouse"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=courthouse"
@@ -4198,7 +4198,7 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Courthouse -->
-        <item name="Prison" icon="presets/prison.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Prison" icon="styles/standard/service/administration/prison.svg" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=prison"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=prison"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=prison"
@@ -4581,7 +4581,7 @@
             </optional>
             -->
         </item> <!-- Automated Defibrillator -->
-        <item name="Clock" icon="styles/standard/service/clock.png" type="node" preset_name_label="true">
+        <item name="Clock" icon="styles/standard/service/clock.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=clock"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=clock"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=clock"
@@ -5547,7 +5547,7 @@
             <key key="man_made" value="embankment" />
         </item> <!-- Embankment -->
         <separator/>
-        <item name="Water Tower" icon="styles/standard/misc/landmark/water_tower.png" type="node,closedway" preset_name_label="true">
+        <item name="Water Tower" icon="styles/standard/misc/landmark/water_tower.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=water_tower"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=water_tower"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:man_made=water_tower"
@@ -6314,8 +6314,8 @@
     </group> <!-- Historic Places -->
   </group> <!-- Man Made -->
   <group name="Shops" icon="styles/standard/shop/mall.png">
-    <group name="Food" icon="styles/standard/shop/supermarket.png">
-        <item name="Supermarket" icon="styles/standard/shop/supermarket.png" type="node,closedway" preset_name_label="true">
+    <group name="Food" icon="styles/standard/shop/supermarket.svg">
+        <item name="Supermarket" icon="styles/standard/shop/supermarket.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=supermarket"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=supermarket"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=supermarket"
@@ -6905,7 +6905,7 @@
             <combo key="second_hand" text="Second hand" values="only,yes,no" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Book Store -->
-        <item name="Newspaper Stand" icon="presets/kiosk.png" type="node,closedway" preset_name_label="true">
+        <item name="Newspaper Stand" icon="styles/standard/shop/news.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=newsagent"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=newsagent"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=newsagent"
