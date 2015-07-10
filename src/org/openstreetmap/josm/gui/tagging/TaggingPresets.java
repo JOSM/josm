@@ -54,7 +54,11 @@ public final class TaggingPresets {
             Map<TaggingPresetMenu, JMenu> submenus = new HashMap<>();
             for (final TaggingPreset p : taggingPresets) {
                 JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
-                if (p instanceof TaggingPresetSeparator) {
+                if (m == null && p.group != null) {
+                    Main.error("No tagging preset submenu for " + p.group);
+                } else if (m == null) {
+                    Main.error("No tagging preset menu. Tagging preset " + p + " won't be available there");
+                } else if (p instanceof TaggingPresetSeparator) {
                     m.add(new JSeparator());
                 } else if (p instanceof TaggingPresetMenu) {
                     JMenu submenu = new JMenu(p);
