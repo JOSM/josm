@@ -214,17 +214,13 @@ public class CachedFile {
         try {
             url = new URL(name);
             if ("file".equals(url.getProtocol())) {
-                System.out.println("file protocol");
                 cacheFile = new File(name.substring("file:/".length() - 1));
                 if (!cacheFile.exists()) {
                     cacheFile = new File(name.substring("file://".length() - 1));
-                    System.out.println(cacheFile.getPath());
                 }
             } else {
-                System.out.println(url.getProtocol() + " doesnt equal file");
                 cacheFile = checkLocal(url);
             }
-            System.out.println(cacheFile.getPath());
         } catch (MalformedURLException e) {
             if (name.startsWith("resource://")) {
                 return null;
