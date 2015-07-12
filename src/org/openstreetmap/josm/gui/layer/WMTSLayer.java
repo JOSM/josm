@@ -2,19 +2,17 @@
 package org.openstreetmap.josm.gui.layer;
 
 import java.io.IOException;
-import java.util.Map;
 
+import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
-import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -31,11 +29,12 @@ import org.openstreetmap.josm.gui.MapView;
  * @author Wiktor Niesiobędzki
  *
  */
-public class WMTSLayer extends AbstractTileSourceLayer {
+public class WMTSLayer extends AbstractCachedTileSourceLayer {
     /**
      * default setting of autozoom per layer
      */
     public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty("imagery.wmts.default_autozoom", true);
+    private static final String CACHE_REGION_NAME = "WMTS";
 
 
     /**
@@ -44,20 +43,7 @@ public class WMTSLayer extends AbstractTileSourceLayer {
      */
     public WMTSLayer(ImageryInfo info) {
         super(info);
-    }
-
-    private static TileLoaderFactory loaderFactory = new CachedTileLoaderFactory("WMTS") {
-        @Override
-        protected TileLoader getLoader(TileLoaderListener listener, String cacheName, int connectTimeout,
-                int readTimeout, Map<String, String> headers, String cacheDir) throws IOException {
-            return new WMSCachedTileLoader(listener, cacheName, connectTimeout, readTimeout, headers, cacheDir);
-        }
-
-    };
-
-    @Override
-    protected TileLoaderFactory getTileLoaderFactory() {
-        return loaderFactory;
+        autoZoom = PROP_DEFAULT_AUTOZOOM.get();
     }
 
     @Override
@@ -124,5 +110,22 @@ public class WMTSLayer extends AbstractTileSourceLayer {
     public void projectionChanged(Projection oldValue, Projection newValue) {
         super.projectionChanged(oldValue, newValue);
         ((WMTSTileSource) tileSource).initProjection(newValue);
+    }
+
+    @Override
+    protected Class<? extends TileLoader> getTileLoaderClass() {
+        return WMSCachedTileLoader.class;
+    }
+
+    @Override
+    protected String getCacheName() {
+        return CACHE_REGION_NAME;
+    }
+
+    /**
+     * @return cache region for WMTS layer
+     */
+    public static CacheAccess<String, BufferedImageCacheEntry> getCache() {
+        return AbstractCachedTileSourceLayer.getCache(CACHE_REGION_NAME);
     }
 }

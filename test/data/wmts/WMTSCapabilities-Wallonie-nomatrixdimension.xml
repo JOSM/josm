@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml"
+	xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd"
+	version="1.0.0">
+	<!-- Service Identification -->
+	<ows:ServiceIdentification>
+		<ows:Title>DONNEES_BASE_FOND_PLAN_ANNOTATIONS_2012_RW_NB</ows:Title>
+		<ows:ServiceType>OGC WMTS</ows:ServiceType>
+		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+	</ows:ServiceIdentification> <!-- Operations Metadata -->
+	<ows:OperationsMetadata>
+		<ows:Operation name="GetCapabilities">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get
+						xlink:href="http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/MapServer/WMTS/1.0.0/WMTSCapabilities.xml">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>RESTful</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+					<!-- add KVP binding in 10.1 -->
+					<ows:Get
+						xlink:href="http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/MapServer/WMTS?">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>KVP</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="GetTile">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get
+						xlink:href="http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/MapServer/WMTS/tile/1.0.0/">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>RESTful</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+					<ows:Get
+						xlink:href="http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/MapServer/WMTS?">
+						<ows:Constraint name="GetEncoding">
+							<ows:AllowedValues>
+								<ows:Value>KVP</ows:Value>
+							</ows:AllowedValues>
+						</ows:Constraint>
+					</ows:Get>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+	</ows:OperationsMetadata>
+	<Contents>
+		<!--Layer -->
+		<Layer>
+			<ows:Title>DONNEES_BASE_FOND_PLAN_ANNOTATIONS_2012_RW_NB</ows:Title>
+			<ows:Identifier>DONNEES_BASE_FOND_PLAN_ANNOTATIONS_2012_RW_NB</ows:Identifier>
+			<ows:BoundingBox crs="urn:ogc:def:crs:EPSG::31370">
+				<ows:LowerCorner>42300.92807390103 21237.786800000817</ows:LowerCorner>
+				<ows:UpperCorner>295130.32186220103 167836.14678540602</ows:UpperCorner>
+			</ows:BoundingBox>
+			<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+				<ows:LowerCorner>2.840548314430268 49.485372459967245</ows:LowerCorner>
+				<ows:UpperCorner>6.427849693016202 50.820959517561256</ows:UpperCorner>
+			</ows:WGS84BoundingBox>
+			<Style isDefault="true">
+				<ows:Title>Default Style</ows:Title>
+				<ows:Identifier>default</ows:Identifier>
+			</Style>
+			<Format>image/png</Format>
+			<TileMatrixSetLink>
+				<TileMatrixSet>default028mm</TileMatrixSet>
+			</TileMatrixSetLink>
+			<ResourceURL format="image/png" resourceType="tile"
+				template="http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/MapServer/WMTS/tile/1.0.0/DONNEES_BASE_FOND_PLAN_ANNOTATIONS_2012_RW_NB/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png" />
+		</Layer> <!--TileMatrixSet -->
+		<TileMatrixSet>
+			<ows:Title>TileMatrix using 0.28mm</ows:Title>
+			<ows:Abstract>The tile matrix set that has scale values calculated based on the dpi defined by OGC specification (dpi assumes 0.28mm as the physical distance of a pixel).</ows:Abstract>
+			<ows:Identifier>default028mm</ows:Identifier>
+			<ows:SupportedCRS>urn:ogc:def:crs:EPSG::31370</ows:SupportedCRS>
+			<TileMatrix>
+				<ows:Identifier>0</ows:Identifier>
+				<ScaleDenominator>1417413.5491126343</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>1</ows:Identifier>
+				<ScaleDenominator>1181177.957593862</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>2</ows:Identifier>
+				<ScaleDenominator>944942.3660750897</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>3</ows:Identifier>
+				<ScaleDenominator>708706.7745563171</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>4</ows:Identifier>
+				<ScaleDenominator>472471.18303754483</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>5</ows:Identifier>
+				<ScaleDenominator>236235.59151877242</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>6</ows:Identifier>
+				<ScaleDenominator>94494.23660750895</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>7</ows:Identifier>
+				<ScaleDenominator>70870.67745563173</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>8</ows:Identifier>
+				<ScaleDenominator>47247.118303754476</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>9</ows:Identifier>
+				<ScaleDenominator>23623.559151877238</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>10</ows:Identifier>
+				<ScaleDenominator>14174.135491126344</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>11</ows:Identifier>
+				<ScaleDenominator>9449.423660750896</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>12</ows:Identifier>
+				<ScaleDenominator>4724.711830375448</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>13</ows:Identifier>
+				<ScaleDenominator>2362.355915187724</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>14</ows:Identifier>
+				<ScaleDenominator>944.9423660750896</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>15</ows:Identifier>
+				<ScaleDenominator>472.4711830375448</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+			<TileMatrix>
+				<ows:Identifier>16</ows:Identifier>
+				<ScaleDenominator>236.2355915187724</ScaleDenominator>
+				<TopLeftCorner>-3.58727E7 4.14227E7</TopLeftCorner>
+				<TileWidth>512</TileWidth>
+				<TileHeight>512</TileHeight>
+			</TileMatrix>
+		</TileMatrixSet>
+	</Contents>
+	<ServiceMetadataURL
+		xlink:href="http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/MapServer/WMTS/1.0.0/WMTSCapabilities.xml" />
+</Capabilities>

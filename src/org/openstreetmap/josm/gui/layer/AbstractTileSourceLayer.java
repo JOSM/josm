@@ -205,10 +205,15 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * @param monitor not used in this implementation - as cache clear is instaneus
      */
     public void clearTileCache(ProgressMonitor monitor) {
-        tileCache.clear();
         if (tileLoader instanceof CachedTileLoader) {
             ((CachedTileLoader) tileLoader).clearCache(tileSource);
         }
+        // if we use TMSCachedTileLoader, we already cleared by tile source, this is needed
+        // to prevent removal of additional objects
+        if (!(tileLoader instanceof TMSCachedTileLoader)) {
+            tileCache.clear();
+        }
+
     }
 
     /**
@@ -1408,6 +1413,11 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 myDrawString(g, tr("increase zoom level to see more detail"), 120, 120);
             }
         }
+
+        if (zoom < getMinZoomLvl() && (ts.insane() || ts.tooLarge())) {
+            myDrawString(g, tr("zoom in to load any tiles"), 120, 120);
+        }
+
         if (noTilesAtZoom) {
             myDrawString(g, tr("No tiles at this zoom level"), 120, 120);
         }
