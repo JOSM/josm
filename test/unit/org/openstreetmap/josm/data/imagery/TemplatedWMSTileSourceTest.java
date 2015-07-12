@@ -35,15 +35,15 @@ public class TemplatedWMSTileSourceTest {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         TemplatedWMSTileSource source = new TemplatedWMSTileSource(testImageryWMS);
         verifyMercatorTile(source, 0, 1, 2);
-        verifyMercatorTile(source, 0, 0, 0);
         verifyMercatorTile(source, 0, 0, 1);
-        verifyMercatorTile(source, 0, 1, 1);
-        verifyMercatorTile(source, 1, 0, 1);
-        verifyMercatorTile(source, 1, 1, 1);
+        verifyMercatorTile(source, 0, 0, 2);
+        verifyMercatorTile(source, 0, 1, 2);
+        verifyMercatorTile(source, 1, 0, 2);
+        verifyMercatorTile(source, 1, 1, 2);
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
-                verifyMercatorTile(source, x, y, 2);
-                verifyTileSquarness(source, x, y, 2);
+                verifyMercatorTile(source, x, y, 3);
+                verifyTileSquarness(source, x, y, 3);
             }
         }
         verifyTileSquarness(source, 150, 20, 18);
@@ -81,7 +81,7 @@ public class TemplatedWMSTileSourceTest {
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         LatLon result = getTileLatLon(source, x, y, z);
-        LatLon expected = new LatLon(verifier.tileYToLat(y, z), verifier.tileXToLon(x, z)); //
+        LatLon expected = new LatLon(verifier.tileYToLat(y, z - 1), verifier.tileXToLon(x, z - 1)); //
         System.out.println(z + "/" + x + "/" + y + " - result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString());
         assertTrue("result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString(), result.equalsEpsilon(expected));
         LatLon tileCenter = new Bounds(result, getTileLatLon(source, x+1, y+1, z)).getCenter();
@@ -124,9 +124,10 @@ public class TemplatedWMSTileSourceTest {
         EastNorth t4 = proj.latlon2eastNorth(getTileLatLon(source, x + 1, y + 1, z));
         double y_size = Math.abs(t1.getY() - t4.getY());
         double x_size = Math.abs(t1.getX() - t4.getX());
-        assertEquals(x_size, y_size, 1e-05);
-        assertEquals(y_size, Math.abs(t1.getY() - t3.getY()), 1e-05);
-        assertEquals(x_size, Math.abs(t1.getX() - t2.getX()), 1e-05);
+
+        assertEquals(x_size, y_size, Math.max(x_size, y_size) * 1e-05);
+        assertEquals(y_size, Math.abs(t1.getY() - t3.getY()), y_size * 1e-05);
+        assertEquals(x_size, Math.abs(t1.getX() - t2.getX()), x_size * 1e-05);
 
         t1 = source.getTileEastNorth(x, y, z);
         t2 = source.getTileEastNorth(x + 1, y, z);
@@ -134,9 +135,9 @@ public class TemplatedWMSTileSourceTest {
         t4 = source.getTileEastNorth(x + 1, y + 1, z);
         y_size = Math.abs(t1.getY() - t4.getY());
         x_size = Math.abs(t1.getX() - t4.getX());
-        assertEquals(x_size, y_size, 1e-05);
-        assertEquals(y_size, Math.abs(t1.getY() - t3.getY()), 1e-05);
-        assertEquals(x_size, Math.abs(t1.getX() - t2.getX()), 1e-05);
+        assertEquals(x_size, y_size, Math.max(x_size, y_size) * 1e-05);
+        assertEquals(y_size, Math.abs(t1.getY() - t3.getY()), y_size * 1e-05);
+        assertEquals(x_size, Math.abs(t1.getX() - t2.getX()), x_size * 1e-05);
     }
 
     private TemplatedWMSTileSource getSource() {
