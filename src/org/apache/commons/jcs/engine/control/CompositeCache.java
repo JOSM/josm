@@ -1684,7 +1684,7 @@ public class CompositeCache<K, V>
                 log.warn("No element event queue available for cache " + getCacheName());
                 return;
             }
-            IElementEvent event = new ElementEvent( element, eventType );
+            IElementEvent<ICacheElement<K, V>> event = new ElementEvent<ICacheElement<K, V>>( element, eventType );
             for (IElementEventHandler hand : eventHandlers)
             {
                 try

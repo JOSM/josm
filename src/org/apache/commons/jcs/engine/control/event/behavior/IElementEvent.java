@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * Defines how an element event object should behave.
  */
-public interface IElementEvent
+public interface IElementEvent<T>
     extends Serializable
 {
     /**
@@ -38,5 +38,5 @@ public interface IElementEvent
     /**
      * @return the source of the event.
      */
-    Object getSource();
+    T getSource();
 }
