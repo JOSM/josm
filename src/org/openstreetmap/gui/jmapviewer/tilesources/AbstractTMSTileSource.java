@@ -277,6 +277,11 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         return ret;
     }
 
+    @Override
+    public String getTileId(int zoom, int tilex, int tiley) {
+        return this.baseUrl + "/" + zoom + "/" + tilex + "/" + tiley;
+    }
+
     private int getTileMax(int zoom) {
         return (int)Math.pow(2.0, zoom) - 1;
     }

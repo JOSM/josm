@@ -96,6 +96,17 @@ public interface TileSource extends Attributed {
     String getTileUrl(int zoom, int tilex, int tiley) throws IOException;
 
     /**
+     * Creates tile identifier that is unique among all tile sources, but the same tile will always
+     * get the same identifier. Used for creation of cache key.
+     *
+     * @param zoom
+     * @param tilex
+     * @param tiley
+     * @return tile identifier
+     */
+    String getTileId(int zoom, int tilex, int tiley);
+
+    /**
      * Specifies how large each tile is.
      * @return The size of a single tile in pixels. -1 if default size should be used
      */
@@ -144,6 +155,11 @@ public interface TileSource extends Attributed {
      */
     public Point latLonToXY(double lat, double lon, int zoom);
 
+    /**
+     * @param point
+     * @param zoom
+     * @return transforms longitude and latitude to pixel space (as if all tiles at specified zoom level where joined)
+     */
     public Point latLonToXY(ICoordinate point, int zoom);
 
     /**
@@ -171,6 +187,13 @@ public interface TileSource extends Attributed {
      */
     public ICoordinate XYToLatLon(Point point, int zoom);
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param zoom
+     * @return WGS84 Coordinates of given point
+     */
     public ICoordinate XYToLatLon(int x, int y, int zoom);
 
     /**
@@ -199,6 +222,12 @@ public interface TileSource extends Attributed {
      */
     public TileXY latLonToTileXY(double lat, double lon, int zoom);
 
+    /**
+     *
+     * @param point
+     * @param zoom
+     * @return x and y tile indices
+     */
     public TileXY latLonToTileXY(ICoordinate point, int zoom);
 
     /**
@@ -226,8 +255,20 @@ public interface TileSource extends Attributed {
      */
     public ICoordinate tileXYToLatLon(TileXY xy, int zoom);
 
+    /**
+     *
+     * @param tile
+     * @return WGS84 coordinates of given tile
+     */
     public ICoordinate tileXYToLatLon(Tile tile);
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param zoom
+     * @return WGS84 coordinates of given tile
+     */
     public ICoordinate tileXYToLatLon(int x, int y, int zoom);
 
     /**
