@@ -234,7 +234,6 @@ public class MapRectifierWMSmenuAction extends JosmAction {
      */
     private void addWMSLayer(String title, String url) {
         WMSLayer layer = new WMSLayer(new ImageryInfo(title, url));
-        layer.checkGrabberType();
         Main.main.addLayer(layer);
     }
 

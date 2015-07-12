@@ -72,6 +72,13 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  */
 public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
+    private ImageryProvidersPanel imageryProviders;
+    private ImageryLayerInfo layerInfo;
+
+    private CommonSettingsPanel commonSettings;
+    private WMSSettingsPanel wmsSettings;
+    private TMSSettingsPanel tmsSettings;
+
     /**
      * Factory used to create a new {@code ImageryPreference}.
      */
@@ -86,13 +93,6 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         super(/* ICON(preferences/) */ "imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"),
                 false, new JTabbedPane());
     }
-
-    private ImageryProvidersPanel imageryProviders;
-    private ImageryLayerInfo layerInfo;
-
-    private CommonSettingsPanel commonSettings;
-    private WMSSettingsPanel wmsSettings;
-    private TMSSettingsPanel tmsSettings;
 
     private void addSettingsSection(final JPanel p, String name, JPanel section) {
         addSettingsSection(p, name, section, GBC.eol());
@@ -130,6 +130,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         pane.addTab(tr("Imagery providers"), imageryProviders);
         pane.addTab(tr("Settings"), buildSettingsPanel());
         pane.addTab(tr("Offset bookmarks"), new OffsetBookmarksPanel(gui));
+        pane.addTab(tr("Cache contents") , new CacheContentsPanel());
         loadSettings();
         p.add(pane, GBC.std().fill(GBC.BOTH));
     }

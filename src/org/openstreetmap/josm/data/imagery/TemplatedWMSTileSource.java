@@ -4,14 +4,13 @@ package org.openstreetmap.josm.data.imagery;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,11 +35,10 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * @since 8526
  */
 public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTileSource {
-    private Map<String, String> headers = new HashMap<>();
-    private List<String> serverProjections;
+    private Map<String, String> headers = new ConcurrentHashMap<>();
+    private final List<String> serverProjections;
     private EastNorth topLeftCorner;
 
-    private static final String COOKIE_HEADER   = "Cookie";
     private static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
     private static final String PATTERN_PROJ    = "\\{proj(\\([^})]+\\))?\\}";
     private static final String PATTERN_BBOX    = "\\{bbox\\}";
@@ -68,10 +66,17 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         initProjection();
     }
 
+    /**
+     * Initializes class with current projection in JOSM. This call is needed every time projection changes.
+     */
     public void initProjection() {
         initProjection(Main.getProjection());
     }
 
+    /**
+     * Initializes class with projection in JOSM. This call is needed every time projection changes.
+     * @param proj new projection that shall be used for computations
+     */
     public void initProjection(Projection proj) {
         Bounds bounds = proj.getWorldBoundsLatLon();
         EastNorth min = proj.latlon2eastNorth(bounds.getMin());
@@ -92,7 +97,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     }
 
     @Override
-    public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
+    public String getTileUrl(int zoom, int tilex, int tiley) {
         String myProjCode = Main.getProjection().toCode();
 
         EastNorth nw = getTileEastNorth(tilex, tiley, zoom);
@@ -224,7 +229,12 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
 
     @Override
     public int getTileXMax(int zoom) {
-        return getTileXMax(zoom, Main.getProjection());
+        Projection proj = Main.getProjection();
+        double scale = getDegreesPerTile(zoom);
+        Bounds bounds = Main.getProjection().getWorldBoundsLatLon();
+        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
+        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
+        return (int) Math.ceil(Math.abs(max.getX() - min.getX()) / scale);
     }
 
     @Override
@@ -232,10 +242,14 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         return 0;
     }
 
-    //TODO: cache this method with projection code as the key
     @Override
     public int getTileYMax(int zoom) {
-        return getTileYMax(zoom, Main.getProjection());
+        Projection proj = Main.getProjection();
+        double scale = getDegreesPerTile(zoom);
+        Bounds bounds = Main.getProjection().getWorldBoundsLatLon();
+        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
+        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
+        return (int) Math.ceil(Math.abs(max.getY() - min.getY()) / scale);
     }
 
     @Override
@@ -346,28 +360,15 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         Bounds bounds = proj.getWorldBoundsLatLon();
         EastNorth min = proj.latlon2eastNorth(bounds.getMin());
         EastNorth max = proj.latlon2eastNorth(bounds.getMax());
-        int tilesPerZoom = (int) Math.pow(2, zoom);
-        double ret = Math.max(
+        int tilesPerZoom = (int) Math.pow(2, zoom - 1);
+        return Math.max(
                 Math.abs(max.getY() - min.getY()) / tilesPerZoom,
                 Math.abs(max.getX() - min.getX()) / tilesPerZoom
                 );
-
-        return ret;
     }
 
-    private int getTileYMax(int zoom, Projection proj) {
-        double scale = getDegreesPerTile(zoom);
-        Bounds bounds = Main.getProjection().getWorldBoundsLatLon();
-        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
-        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
-        return (int) Math.ceil(Math.abs(max.getY() - min.getY()) / scale);
-    }
-
-    private int getTileXMax(int zoom, Projection proj) {
-        double scale = getDegreesPerTile(zoom);
-        Bounds bounds = Main.getProjection().getWorldBoundsLatLon();
-        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
-        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
-        return (int) Math.ceil(Math.abs(max.getX() - min.getX()) / scale);
+    @Override
+    public String getTileId(int zoom, int tilex, int tiley) {
+        return getTileUrl(zoom, tilex, tiley);
     }
 }

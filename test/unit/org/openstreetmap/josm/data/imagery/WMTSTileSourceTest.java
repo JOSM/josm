@@ -88,8 +88,19 @@ public class WMTSTileSourceTest {
                 );
         verifyBounds(wallonieBounds, testSource, 6, 1063, 1219);
         verifyBounds(wallonieBounds, testSource, 11, 17724, 20324);
-        LatLon ll = new LatLon(testSource.tileXYToLatLon(1063, 1219, 6));
+    }
 
+    @Test
+    public void testWALLONIENoMatrixDimension() throws MalformedURLException, IOException {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
+        WMTSTileSource testSource = new WMTSTileSource(getImagery("test/data/wmts/WMTSCapabilities-Wallonie-nomatrixdimension.xml"));
+        Bounds wallonieBounds = new Bounds(
+                new LatLon(49.485372459967245, 2.840548314430268),
+                new LatLon(50.820959517561256, 6.427849693016202)
+                );
+
+        verifyBounds(wallonieBounds, testSource, 6, 1063, 1219);
+        verifyBounds(wallonieBounds, testSource, 11, 17724, 20324);
     }
 
     private void verifyBounds(Bounds bounds, WMTSTileSource testSource, int z, int x, int y) {

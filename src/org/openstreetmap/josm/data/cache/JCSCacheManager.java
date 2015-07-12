@@ -14,7 +14,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
-import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCache;
+import org.apache.commons.jcs.auxiliary.AuxiliaryCacheFactory;
+import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheFactory;
 import org.apache.commons.jcs.engine.CompositeCacheAttributes;
@@ -34,12 +35,12 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  * @since 8168
  */
 public final class JCSCacheManager {
-    private static final Logger log = FeatureAdapter.getLogger(JCSCacheManager.class.getCanonicalName());
+    private static final Logger LOG = FeatureAdapter.getLogger(JCSCacheManager.class.getCanonicalName());
 
     private static volatile CompositeCacheManager cacheManager = null;
     private static long maxObjectTTL        = Long.MAX_VALUE;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
-    private static final IndexedDiskCacheFactory diskCacheFactory = new IndexedDiskCacheFactory();
+    private static final AuxiliaryCacheFactory diskCacheFactory = new IndexedDiskCacheFactory();
     private static FileLock cacheDirLock = null;
 
     /**
@@ -60,16 +61,16 @@ public final class JCSCacheManager {
 
         File cacheDirLockPath = new File(cacheDir, ".lock");
         if (!cacheDirLockPath.exists() && !cacheDirLockPath.createNewFile()) {
-            log.log(Level.WARNING, "Cannot create cache dir lock file");
+            LOG.log(Level.WARNING, "Cannot create cache dir lock file");
         }
         cacheDirLock = new FileOutputStream(cacheDirLockPath).getChannel().tryLock();
 
         if (cacheDirLock == null)
-            log.log(Level.WARNING, "Cannot lock cache directory. Will not use disk cache");
+            LOG.log(Level.WARNING, "Cannot lock cache directory. Will not use disk cache");
 
         // raising logging level gives ~500x performance gain
         // http://westsworld.dk/blog/2008/01/jcs-and-performance/
-        Logger jcsLog = Logger.getLogger("org.apache.commons.jcs");
+        final Logger jcsLog = Logger.getLogger("org.apache.commons.jcs");
         jcsLog.setLevel(Level.INFO);
         jcsLog.setUseParentHandlers(false);
         // we need a separate handler from Main's, as we downgrade LEVEL.INFO to DEBUG level
@@ -91,10 +92,12 @@ public final class JCSCacheManager {
 
             @Override
             public void flush() {
+                // nothing to be done on flush
             }
 
             @Override
             public void close() {
+                // nothing to be done on close
             }
         });
 
@@ -130,7 +133,7 @@ public final class JCSCacheManager {
      * Returns configured cache object with defined limits of memory cache and disk cache
      * @param cacheName         region name
      * @param maxMemoryObjects  number of objects to keep in memory
-     * @param maxDiskObjects    number of objects to keep on disk (if cachePath provided)
+     * @param maxDiskObjects    maximum size of the objects stored on disk in kB
      * @param cachePath         path to disk cache. if null, no disk cache will be created
      * @return cache access object
      * @throws IOException if directory is not found
@@ -152,11 +155,16 @@ public final class JCSCacheManager {
         CompositeCache<K, V> cc = cacheManager.getCache(cacheName, getCacheAttributes(maxMemoryObjects));
 
         if (cachePath != null && cacheDirLock != null) {
-            IndexedDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath);
+            IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath);
             diskAttributes.setCacheName(cacheName);
-            IndexedDiskCache<K, V> diskCache = diskCacheFactory.createCache(diskAttributes, cacheManager, null, new StandardSerializer());
-
-            cc.setAuxCaches(new AuxiliaryCache[]{diskCache});
+            try {
+                if (cc.getAuxCaches().length == 0) {
+                    AuxiliaryCache<K, V> diskCache = diskCacheFactory.createCache(diskAttributes, cacheManager, null, new StandardSerializer());
+                    cc.setAuxCaches(new AuxiliaryCache[]{diskCache});
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         return new CacheAccess<K, V>(cc);
     }
@@ -172,13 +180,14 @@ public final class JCSCacheManager {
         }
     }
 
-    private static IndexedDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath) {
+    private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath) {
         IndexedDiskCacheAttributes ret = new IndexedDiskCacheAttributes();
+        ret.setDiskLimitType(IDiskCacheAttributes.DiskLimitType.SIZE);
         ret.setMaxKeySize(maxDiskObjects);
         if (cachePath != null) {
             File path = new File(cachePath);
             if (!path.exists() && !path.mkdirs()) {
-                log.log(Level.WARNING, "Failed to create cache path: {0}", cachePath);
+                LOG.log(Level.WARNING, "Failed to create cache path: {0}", cachePath);
             } else {
                 ret.setDiskPath(path);
             }

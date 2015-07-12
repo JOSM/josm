@@ -39,7 +39,7 @@ public class WMSCachedTileLoaderJob extends TMSCachedTileLoaderJob {
         // include projection in cache key, as with different projections different response will be returned from server
         String key = super.getCacheKey();
         if (key != null) {
-            return Main.getProjection().toCode() + key;
+            return key + Main.getProjection().toCode();
         }
         return null;
     }

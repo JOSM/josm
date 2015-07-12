@@ -14,7 +14,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -26,9 +25,11 @@ import java.util.regex.Pattern;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -42,7 +43,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -52,7 +52,6 @@ import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -74,13 +73,13 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     };
 
     private static class TileMatrix {
-        String identifier;
-        double scaleDenominator;
-        EastNorth topLeftCorner;
-        int tileWidth;
-        int tileHeight;
-        public int matrixWidth = -1;
-        public int matrixHeight = -1;
+        private String identifier;
+        private double scaleDenominator;
+        private EastNorth topLeftCorner;
+        private int tileWidth;
+        private int tileHeight;
+        private int matrixWidth = -1;
+        private int matrixHeight = -1;
     }
 
     private static class TileMatrixSet {
@@ -91,16 +90,16 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                 return -1 * Double.compare(o1.scaleDenominator, o2.scaleDenominator);
             }
         }); // sorted by zoom level
-        String crs;
-        String identifier;
+        private String crs;
+        private String identifier;
     }
 
     private static class Layer {
-        String format;
-        String name;
-        Map<String, TileMatrixSet> tileMatrixSetByCRS = new ConcurrentHashMap<>();
-        public String baseUrl;
-        public String style;
+        private String format;
+        private String name;
+        private Map<String, TileMatrixSet> tileMatrixSetByCRS = new ConcurrentHashMap<>();
+        private String baseUrl;
+        private String style;
     }
 
     private enum TransferMode {
@@ -128,10 +127,10 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     }
 
     private static final class SelectLayerDialog extends ExtendedDialog {
-        private Layer[] layers;
-        private JList<String> list;
+        private final Layer[] layers;
+        private final JList<String> list;
 
-        private SelectLayerDialog(Collection<Layer> layers) {
+        public SelectLayerDialog(Collection<Layer> layers) {
             super(Main.parent, tr("Select WMTS layer"), new String[]{tr("Add layers"), tr("Cancel")});
             this.layers = layers.toArray(new Layer[]{});
             this.list = new JList<>(getLayerNames(layers));
@@ -142,7 +141,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
             setContent(panel);
         }
 
-        private String[] getLayerNames(Collection<Layer> layers) {
+        private static final String[] getLayerNames(Collection<Layer> layers) {
             Collection<String> ret = new ArrayList<>();
             for (Layer layer: layers) {
                 ret.add(layer.name);
@@ -159,7 +158,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         }
     }
 
-    private Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers = new ConcurrentHashMap<>();
     private Collection<Layer> layers;
     private Layer currentLayer;
     private TileMatrixSet currentTileMatrixSet;
@@ -176,10 +175,10 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         this.baseUrl = normalizeCapabilitiesUrl(handleTemplate(info.getUrl()));
         this.layers = getCapabilities();
         if (layers.size() > 1) {
-            SelectLayerDialog layerSelection = new SelectLayerDialog(layers);
+            final SelectLayerDialog layerSelection = new SelectLayerDialog(layers);
             if (layerSelection.showDialog().getValue() == 1) {
                 this.currentLayer = layerSelection.getSelectedLayer();
-                // TODO: save layer information into ImageryInfo / ImageryPreferences
+                // TODO: save layer information into ImageryInfo / ImageryPreferences?
             } else {
                 throw new IllegalArgumentException(); //user canceled operation
             }
@@ -204,10 +203,16 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         return output.toString();
     }
 
-    private Collection<Layer> getCapabilities() throws IOException  {
+    private Collection<Layer> getCapabilities() throws IOException {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setValidating(false);
         builderFactory.setNamespaceAware(false);
+        try {
+            builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (ParserConfigurationException e) {
+            //this should not happen
+            throw new IllegalArgumentException(e);
+        }
         DocumentBuilder builder = null;
         InputStream in = new CachedFile(baseUrl).
                 setHttpHeaders(headers).
@@ -265,7 +270,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
 
     }
 
-    private Map<String, TileMatrixSet> parseMatrices(NodeList nodeList) throws DOMException, XPathExpressionException {
+    private Map<String, TileMatrixSet> parseMatrices(NodeList nodeList) throws XPathExpressionException {
         Map<String, TileMatrixSet> ret = new ConcurrentHashMap<>();
         for (int matrixSetId = 0; matrixSetId < nodeList.getLength(); matrixSetId++) {
             Node matrixSetNode = nodeList.item(matrixSetId);
@@ -313,7 +318,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         return crsIdentifier;
     }
 
-    private int getOptionalIntegerByXpath(Node document, String xpathQuery) throws XPathExpressionException {
+    private static int getOptionalIntegerByXpath(Node document, String xpathQuery) throws XPathExpressionException {
         String ret = getStringByXpath(document, xpathQuery);
         if (ret == null || "".equals(ret)) {
             return -1;
@@ -373,7 +378,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     }
 
     @Override
-    public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
+    public String getTileUrl(int zoom, int tilex, int tiley) {
         String url;
         switch (transferMode) {
         case KVP:
@@ -470,12 +475,13 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
 
     @Override
     public TileXY latLonToTileXY(double lat, double lon, int zoom) {
-        Projection proj = Main.getProjection();
-        EastNorth enPoint = proj.latlon2eastNorth(new LatLon(lat, lon));
         TileMatrix matrix = getTileMatrix(zoom);
         if (matrix == null) {
             return new TileXY(0, 0);
         }
+
+        Projection proj = Main.getProjection();
+        EastNorth enPoint = proj.latlon2eastNorth(new LatLon(lat, lon));
         double scale = matrix.scaleDenominator * this.crsScale;
         return new TileXY(
                 (enPoint.east() - matrix.topLeftCorner.east()) / scale,
@@ -576,6 +582,12 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         return 0;
     }
 
+    @Override
+    public String getTileId(int zoom, int tilex, int tiley) {
+        return getTileUrl(zoom, tilex, tiley);
+    }
+
+
     /**
      * Checks if url is acceptable by this Tile Source
      * @param url URL to check
@@ -616,9 +628,8 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         }
 
         double scale = matrix.scaleDenominator * this.crsScale;
-        Bounds bounds = proj.getWorldBoundsLatLon();
-        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
-        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
+        EastNorth min = matrix.topLeftCorner;
+        EastNorth max = proj.latlon2eastNorth(proj.getWorldBoundsLatLon().getMax());
         return (int) Math.ceil(Math.abs(max.north() - min.north()) / scale);
     }
 
@@ -632,9 +643,8 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         }
 
         double scale = matrix.scaleDenominator * this.crsScale;
-        Bounds bounds = proj.getWorldBoundsLatLon();
-        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
-        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
+        EastNorth min = matrix.topLeftCorner;
+        EastNorth max = proj.latlon2eastNorth(proj.getWorldBoundsLatLon().getMax());
         return (int) Math.ceil(Math.abs(max.east() - min.east()) / scale);
     }
 }

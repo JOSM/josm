@@ -16,7 +16,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.HostLimitQueue;
-import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
@@ -33,16 +32,11 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
     protected final int readTimeout;
     protected final Map<String, String> headers;
     protected final TileLoaderListener listener;
-    private static final String PREFERENCE_PREFIX   = "imagery.tms.cache.";
-
-    /**
-     * how many object on disk should be stored for TMS region. Average tile size is about 20kb. 25000 is around 500MB under this assumption
-     */
-    public static final IntegerProperty MAX_OBJECTS_ON_DISK = new IntegerProperty(PREFERENCE_PREFIX + "max_objects_disk", 25000);
 
     /**
      * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for TMS
      */
+
     public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobs", 25);
 
     /**
@@ -50,30 +44,28 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
      */
     public static final IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
 
+
     /**
      * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS
      * and for TMS imagery
      */
     private static ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = getNewThreadPoolExecutor("TMS downloader");
 
+
     private ThreadPoolExecutor downloadExecutor = DEFAULT_DOWNLOAD_JOB_DISPATCHER;
 
     /**
      * Constructor
      * @param listener          called when tile loading has finished
-     * @param name              of the cache
+     * @param cache              of the cache
      * @param connectTimeout    to remote resource
      * @param readTimeout       to remote resource
      * @param headers           HTTP headers to be sent along with request
-     * @param cacheDir          where cache file shall reside
      * @throws IOException      when cache initialization fails
      */
-    public TMSCachedTileLoader(TileLoaderListener listener, String name, int connectTimeout, int readTimeout,
-            Map<String, String> headers, String cacheDir) throws IOException {
-        this.cache = JCSCacheManager.getCache(name,
-                200, // use fairly small memory cache, as cached objects are quite big, as they contain BufferedImages
-                MAX_OBJECTS_ON_DISK.get(),
-                cacheDir);
+    public TMSCachedTileLoader(TileLoaderListener listener, ICacheAccess<String, BufferedImageCacheEntry> cache,
+            int connectTimeout, int readTimeout, Map<String, String> headers) throws IOException {
+        this.cache = cache;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
         this.headers = headers;
@@ -112,7 +104,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
 
     @Override
     public void clearCache(TileSource source) {
-        this.cache.clear();
+        this.cache.remove(source.getName() + ":");
     }
 
     @Override

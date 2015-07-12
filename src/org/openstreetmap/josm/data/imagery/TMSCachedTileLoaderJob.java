@@ -84,8 +84,14 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     @Override
     public String getCacheKey() {
-        if (tile != null)
-            return tile.getKey();
+        if (tile != null) {
+            TileSource tileSource = tile.getTileSource();
+            String tsName = tileSource.getName();
+            if (tsName == null) {
+                tsName = "";
+            }
+            return tsName.replace(":", "_") + ":" + tileSource.getTileId(tile.getZoom(), tile.getXtile(), tile.getYtile());
+        }
         return null;
     }
 
@@ -127,13 +133,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         return false;
     }
 
-    private boolean isNoTileAtZoom() {
-        if (attributes == null) {
-            LOG.warning("Cache attributes are null");
-        }
-        return attributes != null && attributes.isNoTileAtZoom();
-    }
-
     @Override
     protected boolean isResponseLoadable(Map<String, List<String>> headers, int statusCode, byte[] content) {
         attributes.setMetadata(tile.getTileSource().getMetadata(headers));
@@ -147,16 +146,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     @Override
     protected boolean cacheAsEmpty() {
         return isNoTileAtZoom() || super.cacheAsEmpty();
-    }
-
-    private boolean handleNoTileAtZoom() {
-        if (isNoTileAtZoom()) {
-            LOG.log(Level.FINE, "JCS TMS - Tile valid, but no file, as no tiles at this level {0}", tile);
-            tile.setError("No tile at this zoom level");
-            tile.putValue("tile-info", "no-tile");
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -230,6 +219,44 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     }
 
     /**
+     * For TMS use BaseURL as settings discovery, so for different paths, we will have different settings (useful for developer servers)
+     *
+     * @return base URL of TMS or server url as defined in super class
+     */
+    @Override
+    protected String getServerKey() {
+        TileSource ts = tile.getSource();
+        if (ts instanceof AbstractTMSTileSource) {
+            return ((AbstractTMSTileSource) ts).getBaseUrl();
+        }
+        return super.getServerKey();
+    }
+
+    @Override
+    protected BufferedImageCacheEntry createCacheEntry(byte[] content) {
+        return new BufferedImageCacheEntry(content);
+    }
+
+    @Override
+    public void submit() {
+        submit(false);
+    }
+
+    @Override
+    protected CacheEntryAttributes parseHeaders(URLConnection urlConn) {
+        CacheEntryAttributes ret = super.parseHeaders(urlConn);
+        // keep the expiration time between MINIMUM_EXPIRES and MAXIMUM_EXPIRES, so we will cache the tiles
+        // at least for some short period of time, but not too long
+        if (ret.getExpirationTime() < MINIMUM_EXPIRES) {
+            ret.setExpirationTime(now + MINIMUM_EXPIRES);
+        }
+        if (ret.getExpirationTime() > MAXIMUM_EXPIRES) {
+            ret.setExpirationTime(now + MAXIMUM_EXPIRES);
+        }
+        return ret;
+    }
+
+    /**
      * Method for getting the tile from cache only, without trying to reach remote resource
      * @return tile or null, if nothing (useful) was found in cache
      */
@@ -271,41 +298,22 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         }
     }
 
-    /**
-     * For TMS use BaseURL as settings discovery, so for different paths, we will have different settings (useful for developer servers)
-     *
-     * @return base URL of TMS or server url as defined in super class
-     */
-    @Override
-    protected String getServerKey() {
-        TileSource ts = tile.getSource();
-        if (ts instanceof AbstractTMSTileSource) {
-            return ((AbstractTMSTileSource) ts).getBaseUrl();
+    private boolean handleNoTileAtZoom() {
+        if (isNoTileAtZoom()) {
+            LOG.log(Level.FINE, "JCS TMS - Tile valid, but no file, as no tiles at this level {0}", tile);
+            tile.setError("No tile at this zoom level");
+            tile.putValue("tile-info", "no-tile");
+            return true;
         }
-        return super.getServerKey();
+        return false;
     }
 
-    @Override
-    protected BufferedImageCacheEntry createCacheEntry(byte[] content) {
-        return new BufferedImageCacheEntry(content);
+    private boolean isNoTileAtZoom() {
+        if (attributes == null) {
+            LOG.warning("Cache attributes are null");
+        }
+        return attributes != null && attributes.isNoTileAtZoom();
     }
 
-    @Override
-    public void submit() {
-        submit(false);
-    }
 
-    @Override
-    protected CacheEntryAttributes parseHeaders(URLConnection urlConn) {
-        CacheEntryAttributes ret = super.parseHeaders(urlConn);
-        // keep the expiration time between MINIMUM_EXPIRES and MAXIMUM_EXPIRES, so we will cache the tiles
-        // at least for some short period of time, but not too long
-        if (ret.getExpirationTime() < MINIMUM_EXPIRES) {
-            ret.setExpirationTime(now + MINIMUM_EXPIRES);
-        }
-        if (ret.getExpirationTime() > MAXIMUM_EXPIRES) {
-            ret.setExpirationTime(now + MAXIMUM_EXPIRES);
-        }
-        return ret;
-    }
 }

@@ -14,9 +14,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
+import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
+import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -30,13 +35,23 @@ public class CommonSettingsPanel extends JPanel {
     private final JButton btnFadeColor;
     private final JSlider fadeAmount = new JSlider(0, 100);
     private final JosmComboBox<String> sharpen;
+    private final JosmTextField tilecacheDir = new JosmTextField();
+    private final JSpinner maxElementsOnDisk;
+    private final JSpinner maxElementsInRam;
+
 
     /**
      * Constructs a new {@code CommonSettingsPanel}.
      */
     public CommonSettingsPanel() {
         super(new GridBagLayout());
-        
+
+        this.maxElementsInRam = new JSpinner(new SpinnerNumberModel(
+                AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get().intValue(), 0, Integer.MAX_VALUE, 1));
+        this.maxElementsOnDisk = new JSpinner(new SpinnerNumberModel(
+                AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().intValue(), 0, Integer.MAX_VALUE, 1));
+
+
         this.btnFadeColor = new JButton();
 
         this.btnFadeColor.addActionListener(new ActionListener() {
@@ -71,8 +86,20 @@ public class CommonSettingsPanel extends JPanel {
         add(new JLabel(tr("Sharpen (requires layer re-add): ")));
         add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         add(this.sharpen, GBC.eol().fill(GBC.HORIZONTAL));
+
+        add(new JLabel(tr("Tile cache directory: ")), GBC.std());
+        add(GBC.glue(5, 0), GBC.std());
+        add(tilecacheDir, GBC.eol().fill(GBC.HORIZONTAL));
+
+        add(new JLabel(tr("Maximum size of disk cache (per imagery) in MB: ")), GBC.std());
+        add(GBC.glue(5, 0), GBC.std());
+        add(this.maxElementsOnDisk, GBC.eol());
+
+        add(new JLabel(tr("Maximum number of objects in memory cache: ")), GBC.std());
+        add(GBC.glue(5, 0), GBC.std());
+        add(this.maxElementsInRam, GBC.eol());
     }
-    
+
     /**
      * Loads the common settings.
      */
@@ -82,8 +109,12 @@ public class CommonSettingsPanel extends JPanel {
         this.btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
         this.fadeAmount.setValue(ImageryLayer.PROP_FADE_AMOUNT.get());
         this.sharpen.setSelectedIndex(Math.max(0, Math.min(2, ImageryLayer.PROP_SHARPEN_LEVEL.get())));
+        this.tilecacheDir.setText(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
+        this.maxElementsOnDisk.setValue(AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get());
+        this.maxElementsInRam.setValue(AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get());
+
     }
-    
+
     /**
      * Saves the common settings.
      * @return true when restart is required
@@ -92,6 +123,23 @@ public class CommonSettingsPanel extends JPanel {
         ImageryLayer.PROP_FADE_AMOUNT.put(this.fadeAmount.getValue());
         ImageryLayer.PROP_FADE_COLOR.put(this.btnFadeColor.getBackground());
         ImageryLayer.PROP_SHARPEN_LEVEL.put(sharpen.getSelectedIndex());
-        return false;
+        boolean restartRequired = false;
+        if (!AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().equals(this.maxElementsOnDisk.getValue())) {
+            AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.put((Integer) this.maxElementsOnDisk.getValue());
+            restartRequired = true;
+        }
+
+
+        if (!CachedTileLoaderFactory.PROP_TILECACHE_DIR.get().equals(this.tilecacheDir.getText())) {
+            restartRequired = true;
+            CachedTileLoaderFactory.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
+        }
+
+        if (!AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get().equals(this.maxElementsInRam.getValue())) {
+            AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.put((Integer) this.maxElementsInRam.getValue());
+        }
+
+
+        return restartRequired;
     }
 }

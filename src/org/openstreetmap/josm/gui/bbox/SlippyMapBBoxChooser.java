@@ -39,7 +39,9 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 
 public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
@@ -138,7 +140,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         Map<String, String> headers = new HashMap<>();
         headers.put("User-Agent", Version.getInstance().getFullAgentString());
 
-        cachedLoader = TMSLayer.loaderFactory.makeTileLoader(this, headers);
+        cachedLoader = AbstractCachedTileSourceLayer.getTileLoaderFactory("TMS", TMSCachedTileLoader.class).makeTileLoader(this,  headers);
 
         uncachedLoader = new OsmTileLoader(this);
         uncachedLoader.headers.putAll(headers);

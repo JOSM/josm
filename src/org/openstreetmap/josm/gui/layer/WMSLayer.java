@@ -4,25 +4,25 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
+import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.TemplatedWMSTileSource;
-import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -33,12 +33,21 @@ import org.openstreetmap.josm.data.projection.Projection;
  * fetched this way is tiled and managed to the disc to reduce server load.
  *
  */
-public class WMSLayer extends AbstractTileSourceLayer {
+public class WMSLayer extends AbstractCachedTileSourceLayer {
+    private static final String PREFERENCE_PREFIX   = "imagery.wms.";
+
     /** default tile size for WMS Layer */
-    public static final IntegerProperty PROP_IMAGE_SIZE = new IntegerProperty("imagery.wms.imageSize", 512);
+    public static final IntegerProperty PROP_IMAGE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + "imageSize", 512);
+
     /** should WMS layer autozoom in default mode */
-    public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty("imagery.wms.default_autozoom", true);
-    private List<String> supportedProjections;
+    public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty(PREFERENCE_PREFIX + "default_autozoom", true);
+
+    /** limit of concurrent connections to WMS tile source (per source) */
+    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty(PREFERENCE_PREFIX + "simultaneousConnections", 3);
+
+    private static final String CACHE_REGION_NAME = "WMS";
+
+    private Set<String> supportedProjections;
 
     /**
      * Constructs a new {@code WMSLayer}.
@@ -46,7 +55,9 @@ public class WMSLayer extends AbstractTileSourceLayer {
      */
     public WMSLayer(ImageryInfo info) {
         super(info);
-        this.supportedProjections = info.getServerProjections();
+        this.supportedProjections = new TreeSet<>(info.getServerProjections());
+        this.autoZoom = PROP_DEFAULT_AUTOZOOM.get();
+
     }
 
     @Override
@@ -61,7 +72,7 @@ public class WMSLayer extends AbstractTileSourceLayer {
     }
 
     @Override
-    protected TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
+    protected TileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.WMS && info.getUrl() != null) {
             TemplatedWMSTileSource.checkUrl(info.getUrl());
             TemplatedWMSTileSource tileSource = new TemplatedWMSTileSource(info);
@@ -88,28 +99,6 @@ public class WMSLayer extends AbstractTileSourceLayer {
         public void actionPerformed(ActionEvent ev) {
             ImageryLayerInfo.addLayer(new ImageryInfo(info));
         }
-    }
-
-    /**
-     * Checks that WMS layer is a grabber-compatible one (HTML or WMS).
-     * @throws IllegalStateException if imagery time is neither HTML nor WMS
-     * @since 8068
-     */
-    public void checkGrabberType() {
-    }
-
-    private static TileLoaderFactory loaderFactory = new CachedTileLoaderFactory("WMS") {
-        @Override
-        protected TileLoader getLoader(TileLoaderListener listener, String cacheName, int connectTimeout,
-                int readTimeout, Map<String, String> headers, String cacheDir) throws IOException {
-            return new WMSCachedTileLoader(listener, cacheName, connectTimeout, readTimeout, headers, cacheDir);
-        }
-
-    };
-
-    @Override
-    protected TileLoaderFactory getTileLoaderFactory() {
-        return loaderFactory;
     }
 
     @Override
@@ -147,5 +136,33 @@ public class WMSLayer extends AbstractTileSourceLayer {
         if (!newValue.equals(oldValue) && tileSource instanceof TemplatedWMSTileSource) {
             ((TemplatedWMSTileSource) tileSource).initProjection(newValue);
         }
+    }
+
+    /**
+     * Checks that WMS layer is a grabber-compatible one (HTML or WMS).
+     * @throws IllegalStateException if imagery time is neither HTML nor WMS
+     * @since 8068
+     * @deprecated not implemented anymore
+     */
+    @Deprecated
+    public void checkGrabberType() {
+        // not implemented
+    }
+
+    @Override
+    protected Class<? extends TileLoader> getTileLoaderClass() {
+        return WMSCachedTileLoader.class;
+    }
+
+    @Override
+    protected String getCacheName() {
+        return CACHE_REGION_NAME;
+    }
+
+    /**
+     * @return cache region for WMS layer
+     */
+    public static CacheAccess<String, BufferedImageCacheEntry> getCache() {
+        return AbstractCachedTileSourceLayer.getCache(CACHE_REGION_NAME);
     }
 }
