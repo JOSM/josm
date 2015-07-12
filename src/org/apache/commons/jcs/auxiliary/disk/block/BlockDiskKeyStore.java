@@ -19,16 +19,6 @@ package org.apache.commons.jcs.auxiliary.disk.block;
  * under the License.
  */
 
-import org.apache.commons.jcs.auxiliary.disk.LRUMapJCS;
-import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes.DiskLimitType;
-import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskElementDescriptor;
-import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
-import org.apache.commons.jcs.utils.struct.AbstractLRUMap;
-import org.apache.commons.jcs.utils.struct.LRUMap;
-import org.apache.commons.jcs.utils.timing.ElapsedTimer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
@@ -42,6 +32,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes.DiskLimitType;
+import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
+import org.apache.commons.jcs.utils.struct.AbstractLRUMap;
+import org.apache.commons.jcs.utils.struct.LRUMap;
+import org.apache.commons.jcs.utils.timing.ElapsedTimer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This is responsible for storing the keys.
@@ -419,6 +417,7 @@ public class BlockDiskKeyStore<K>
          * @param key
          * @param value
          */
+        @Override
         protected void processRemovedLRU( K key, int[] value )
         {
             blockDiskCache.freeBlocks( value );

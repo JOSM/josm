@@ -19,21 +19,6 @@ package org.apache.commons.jcs.auxiliary.disk.block;
  * under the License.
  */
 
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
-import org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache;
-import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes.DiskLimitType;
-import org.apache.commons.jcs.engine.CacheConstants;
-import org.apache.commons.jcs.engine.behavior.ICacheElement;
-import org.apache.commons.jcs.engine.behavior.IElementSerializer;
-import org.apache.commons.jcs.engine.behavior.IRequireScheduler;
-import org.apache.commons.jcs.engine.control.group.GroupAttrName;
-import org.apache.commons.jcs.engine.stats.StatElement;
-import org.apache.commons.jcs.engine.stats.Stats;
-import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
-import org.apache.commons.jcs.engine.stats.behavior.IStats;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,6 +31,20 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
+import org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache;
+import org.apache.commons.jcs.engine.CacheConstants;
+import org.apache.commons.jcs.engine.behavior.ICacheElement;
+import org.apache.commons.jcs.engine.behavior.IElementSerializer;
+import org.apache.commons.jcs.engine.behavior.IRequireScheduler;
+import org.apache.commons.jcs.engine.control.group.GroupAttrName;
+import org.apache.commons.jcs.engine.stats.StatElement;
+import org.apache.commons.jcs.engine.stats.Stats;
+import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
+import org.apache.commons.jcs.engine.stats.behavior.IStats;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * There is one BlockDiskCache per region. It manages the key and data store.

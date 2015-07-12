@@ -19,11 +19,6 @@ package org.apache.commons.jcs.utils.threadpool;
  * under the License.
  */
 
-import org.apache.commons.jcs.utils.props.PropertyLoader;
-import org.apache.commons.jcs.utils.threadpool.PoolConfiguration.WhenBlockedPolicy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -31,6 +26,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.jcs.utils.props.PropertyLoader;
+import org.apache.commons.jcs.utils.threadpool.PoolConfiguration.WhenBlockedPolicy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This manages threadpools for an application using Doug Lea's Util Concurrent package.
@@ -99,17 +99,14 @@ public class ThreadPoolManager
     /** The default config, created using property defaults if present, else those above. */
     private static PoolConfiguration defaultConfig;
 
-    /** This is the default value. */
-    public static final String DEFAULT_PROPS_FILE_NAME = "cache.ccf";
-
     /** Setting this after initialization will have no effect.  */
     private static String propsFileName = null;
 
     /** the root property name */
-    public static String PROP_NAME_ROOT = "thread_pool";
+    private static final String PROP_NAME_ROOT = "thread_pool";
 
     /** default property file name */
-    private static String DEFAULT_PROP_NAME_ROOT = "thread_pool.default";
+    private static final String DEFAULT_PROP_NAME_ROOT = "thread_pool.default";
 
     /**
      * You can specify the properties to be used to configure the thread pool. Setting this post
@@ -203,6 +200,29 @@ public class ThreadPoolManager
             INSTANCE = new ThreadPoolManager();
         }
         return INSTANCE;
+    }
+
+    /**
+     * Dispose of the instance of the ThreadPoolManger and shut down all thread pools
+     */
+    public static synchronized void dispose()
+    {
+        if ( INSTANCE != null )
+        {
+            for ( String poolName : INSTANCE.getPoolNames())
+            {
+                try
+                {
+                    INSTANCE.getPool(poolName).shutdownNow();
+                }
+                catch (Throwable t)
+                {
+                    log.warn("Failed to close pool " + poolName, t);
+                }
+            }
+
+            INSTANCE = null;
+        }
     }
 
     /**
