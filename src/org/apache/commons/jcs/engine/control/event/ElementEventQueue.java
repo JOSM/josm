@@ -19,17 +19,17 @@ package org.apache.commons.jcs.engine.control.event;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.jcs.engine.control.event.behavior.IElementEvent;
 import org.apache.commons.jcs.engine.control.event.behavior.IElementEventHandler;
 import org.apache.commons.jcs.engine.control.event.behavior.IElementEventQueue;
 import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An event queue is used to propagate ordered cache events to one and only one target listener.
@@ -95,7 +95,7 @@ public class ElementEventQueue
      * @throws IOException
      */
     @Override
-    public void addElementEvent( IElementEventHandler hand, IElementEvent event )
+    public <T> void addElementEvent( IElementEventHandler hand, IElementEvent<T> event )
         throws IOException
     {
 
@@ -167,7 +167,7 @@ public class ElementEventQueue
         private final IElementEventHandler hand;
 
         /** event */
-        private final IElementEvent event;
+        private final IElementEvent<?> event;
 
         /**
          * Constructor for the PutEvent object.
@@ -177,7 +177,7 @@ public class ElementEventQueue
          * @throws IOException
          */
         @SuppressWarnings("synthetic-access")
-        ElementEventRunner( IElementEventHandler hand, IElementEvent event )
+        ElementEventRunner( IElementEventHandler hand, IElementEvent<?> event )
             throws IOException
         {
             if ( log.isDebugEnabled() )

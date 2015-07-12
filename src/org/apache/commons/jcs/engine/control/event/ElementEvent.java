@@ -19,18 +19,18 @@ package org.apache.commons.jcs.engine.control.event;
  * under the License.
  */
 
+import java.util.EventObject;
+
 import org.apache.commons.jcs.engine.control.event.behavior.ElementEventType;
 import org.apache.commons.jcs.engine.control.event.behavior.IElementEvent;
-
-import java.util.EventObject;
 
 /**
  * Element events will trigger the creation of Element Event objects. This is a wrapper around the
  * cache element that indicates the event triggered.
  */
-public class ElementEvent
+public class ElementEvent<T>
     extends EventObject
-    implements IElementEvent
+    implements IElementEvent<T>
 {
     /** Don't change */
     private static final long serialVersionUID = -5364117411457467056L;
@@ -41,10 +41,10 @@ public class ElementEvent
     /**
      * Constructor for the ElementEvent object
      * <p>
-     * @param source The Cache Element (should restrict?)
+     * @param source The Cache Element
      * @param elementEvent The event id defined in the enum class.
      */
-    public ElementEvent( Object source, ElementEventType elementEvent )
+    public ElementEvent( T source, ElementEventType elementEvent )
     {
         super( source );
         this.elementEvent = elementEvent;
@@ -59,5 +59,16 @@ public class ElementEvent
     public ElementEventType getElementEvent()
     {
         return elementEvent;
+    }
+
+    /**
+     * @return the source of the event.
+     */
+    @SuppressWarnings("unchecked") // Generified
+    @Override
+    public T getSource()
+    {
+        return (T) super.getSource();
+
     }
 }
