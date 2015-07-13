@@ -592,6 +592,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 }
             }
         });
+
+        // FIXME: why do we need this? Without this, if you add a WMS layer and do not move the mouse, sometimes, tiles do not
+        // start loading.
+        Main.map.repaint(500);
     }
 
     /**
