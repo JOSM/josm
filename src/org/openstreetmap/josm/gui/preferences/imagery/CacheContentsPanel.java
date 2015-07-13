@@ -55,10 +55,10 @@ import org.openstreetmap.josm.tools.Pair;
 public class CacheContentsPanel extends JPanel {
 
     private static class ButtonColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
-        private Action action;
-        private JButton renderButton;
+        private final Action action;
+        private final JButton renderButton;
 
-        public ButtonColumn(Action action) {
+        private ButtonColumn(Action action) {
             this.action = action;
             renderButton = new JButton();
             renderButton.addActionListener(this);
@@ -108,7 +108,7 @@ public class CacheContentsPanel extends JPanel {
 
     }
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private transient ExecutorService executor = Executors.newSingleThreadExecutor();
 
     /**
      * Creates cache content panel
@@ -140,6 +140,8 @@ public class CacheContentsPanel extends JPanel {
         add(
                 new JScrollPane(getTableForCache(cache)),
                 GBC.eol().fill(GBC.BOTH));
+
+        executor.shutdown();
     }
 
     private Long getCacheSize(CacheAccess<String, BufferedImageCacheEntry> cache) {
@@ -155,10 +157,10 @@ public class CacheContentsPanel extends JPanel {
                 }
             }
         }
-        return new Long(-1);
+        return Long.valueOf(-1);
     }
 
-    private Map<String, Integer> getCacheStats(CacheAccess<String, BufferedImageCacheEntry> cache) {
+    private static Map<String, Integer> getCacheStats(CacheAccess<String, BufferedImageCacheEntry> cache) {
         Set<String> keySet = cache.getCacheControl().getKeySet();
         Map<String, int[]> temp = new ConcurrentHashMap<>(); // use int[] as a Object reference to int, gives better performance
         for (String key: keySet) {
@@ -212,7 +214,7 @@ public class CacheContentsPanel extends JPanel {
         });
     }
 
-    private JTable getTableForCache(CacheAccess<String, BufferedImageCacheEntry> cache) {
+    private JTable getTableForCache(final CacheAccess<String, BufferedImageCacheEntry> cache) {
         final DefaultTableModel tableModel = new DefaultTableModel(
                 new String[][]{{tr("Loading data"), tr("Please wait"), ""}},
                 new String[]{"Cache name", "Object Count", "Clear"}) {
@@ -232,6 +234,7 @@ public class CacheContentsPanel extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         int row = ret.convertRowIndexToModel(ret.getEditingRow());
                         tableModel.setValueAt("0", row, 1);
+                        cache.remove(ret.getValueAt(row, 0) + ":");
                     }
                 });
         TableColumn tableColumn = ret.getColumnModel().getColumn(2);
