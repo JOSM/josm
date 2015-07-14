@@ -17,6 +17,7 @@ import javax.swing.Action;
 import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -72,7 +73,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
     }
 
     @Override
-    protected TileSource getTileSource(ImageryInfo info) {
+    protected AbstractTMSTileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.WMS && info.getUrl() != null) {
             TemplatedWMSTileSource.checkUrl(info.getUrl());
             TemplatedWMSTileSource tileSource = new TemplatedWMSTileSource(info);

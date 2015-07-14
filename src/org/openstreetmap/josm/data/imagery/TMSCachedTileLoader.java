@@ -16,8 +16,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.HostLimitQueue;
-import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * @author Wiktor Niesiobędzki
@@ -84,7 +84,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
                 30, // keepalive for thread
                 TimeUnit.SECONDS,
                 new HostLimitQueue(HOST_LIMIT.get().intValue()),
-                JCSCachedTileLoaderJob.getNamedThreadFactory(name)
+                Utils.getNamedThreadFactory(name)
                 );
     }
 

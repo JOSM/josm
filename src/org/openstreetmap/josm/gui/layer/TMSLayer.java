@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
@@ -65,7 +65,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
      * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
     @Override
-    protected TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
+    protected AbstractTMSTileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
         return getTileSourceStatic(info);
     }
 
@@ -95,7 +95,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
      * @return a new TileSource instance or null if no TileSource for the ImageryInfo/ImageryType could be found.
      * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
-    public static TileSource getTileSourceStatic(ImageryInfo info) throws IllegalArgumentException {
+    public static AbstractTMSTileSource getTileSourceStatic(ImageryInfo info) throws IllegalArgumentException {
         if (info.getImageryType() == ImageryType.TMS) {
             TemplatedTMSTileSource.checkUrl(info.getUrl());
             TMSTileSource t = new TemplatedTMSTileSource(info);

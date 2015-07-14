@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -1369,7 +1370,7 @@ public final class Utils {
     /**
      * Returns the initial capacity to pass to the HashMap / HashSet constructor
      * when it is initialized with a known number of entries.
-     * 
+     *
      * When a HashMap is filled with entries, the underlying array is copied over
      * to a larger one multiple times. To avoid this process when the number of
      * entries is known in advance, the initial capacity of the array can be
@@ -1386,18 +1387,33 @@ public final class Utils {
     /**
      * Returns the initial capacity to pass to the HashMap / HashSet constructor
      * when it is initialized with a known number of entries.
-     * 
+     *
      * When a HashMap is filled with entries, the underlying array is copied over
      * to a larger one multiple times. To avoid this process when the number of
      * entries is known in advance, the initial capacity of the array can be
      * given to the HashMap constructor. This method returns a suitable value
      * that avoids rehashing but doesn't waste memory.
-     * 
+     *
      * Assumes default load factor (0.75).
      * @param nEntries the number of entries expected
      * @return the initial capacity for the HashMap constructor
      */
     public static int hashMapInitialCapacity(int nEntries) {
         return hashMapInitialCapacity(nEntries, 0.75f);
+    }
+
+    /**
+     * @param name to be set for the threads
+     * @return Thread Factory returning named threads
+     */
+    public static ThreadFactory getNamedThreadFactory(final String name) {
+        return new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = Executors.defaultThreadFactory().newThread(r);
+                t.setName(name);
+                return t;
+            }
+        };
     }
 }

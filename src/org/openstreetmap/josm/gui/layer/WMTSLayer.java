@@ -7,7 +7,7 @@ import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -47,7 +47,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer {
     }
 
     @Override
-    protected TileSource getTileSource(ImageryInfo info) {
+    protected AbstractTMSTileSource getTileSource(ImageryInfo info) {
         try {
             if (info.getImageryType() == ImageryType.WMTS && info.getUrl() != null) {
                 WMTSTileSource.checkUrl(info.getUrl());
