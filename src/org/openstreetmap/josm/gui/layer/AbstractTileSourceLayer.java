@@ -19,6 +19,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +57,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
@@ -128,7 +131,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     public boolean showErrors;
 
     protected TileCache tileCache;
-    protected TileSource tileSource;
+    protected AbstractTMSTileSource tileSource;
     protected TileLoader tileLoader;
 
     /**
@@ -150,7 +153,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * @return TileSource for specified ImageryInfo
      * @throws IllegalArgumentException when Imagery is not supported by layer
      */
-    protected abstract TileSource getTileSource(ImageryInfo info) throws IllegalArgumentException;
+    protected abstract AbstractTMSTileSource getTileSource(ImageryInfo info) throws IllegalArgumentException;
 
     protected Map<String, String> getHeaders(TileSource tileSource) {
         if (tileSource instanceof TemplatedTileSource) {
@@ -159,7 +162,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         return null;
     }
 
-    protected void initTileSource(TileSource tileSource) {
+    protected void initTileSource(AbstractTMSTileSource tileSource) {
         attribution.initialize(tileSource);
 
         currentZoomLevel = getBestZoom();
@@ -172,6 +175,17 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         } else {
             tileCache = new MemoryTileCache();
         }
+
+        try {
+            if ("file".equalsIgnoreCase(new URL(tileSource.getBaseUrl()).getProtocol())) {
+                tileLoader = new OsmTileLoader(this);
+                tileCache = new MemoryTileCache();
+            }
+        } catch (MalformedURLException e) {
+            // ignore, assume that this is not a file
+        }
+
+
         if (tileLoader == null)
             tileLoader = new OsmTileLoader(this);
     }
