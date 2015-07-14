@@ -141,7 +141,7 @@ public abstract class AbstractCachedTileSourceLayer extends AbstractTileSourceLa
     }
 
     protected int getDiskCacheSize() {
-        return MAX_DISK_CACHE_SIZE.get();
+        return MAX_DISK_CACHE_SIZE.get() * 1024;
     }
 
     protected abstract String getCacheName();
