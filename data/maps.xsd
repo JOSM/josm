@@ -27,6 +27,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="wms" />
 			<xs:enumeration value="wms_endpoint" />
+			<xs:enumeration value="wmts" />
 			<xs:enumeration value="tms" />
 			<xs:enumeration value="html" />
 			<xs:enumeration value="bing" />
