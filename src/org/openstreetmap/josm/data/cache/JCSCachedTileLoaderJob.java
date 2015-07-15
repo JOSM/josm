@@ -198,6 +198,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * @return checks if object from cache has sufficient data to be returned
      */
     protected boolean isObjectLoadable() {
+        if (cacheData == null) {
+            return false;
+        }
         byte[] content = cacheData.getContent();
         return content != null && content.length > 0;
     }
@@ -337,7 +340,12 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 }
 
                 attributes.setResponseCode(urlConn.getResponseCode());
-                byte[] raw = Utils.readBytesFromStream(urlConn.getInputStream());
+                byte[] raw;
+                if (urlConn.getResponseCode() == 200) {
+                    raw = Utils.readBytesFromStream(urlConn.getInputStream());
+                } else {
+                    raw = new byte[]{};
+                }
 
                 if (isResponseLoadable(urlConn.getHeaderFields(), urlConn.getResponseCode(), raw)) {
                     // we need to check cacheEmpty, so for cases, when data is returned, but we want to store
@@ -439,8 +447,10 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         urlConn.setRequestProperty("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         urlConn.setReadTimeout(readTimeout); // 30 seconds read timeout
         urlConn.setConnectTimeout(connectTimeout);
-        for (Map.Entry<String, String> e: headers.entrySet()) {
-            urlConn.setRequestProperty(e.getKey(), e.getValue());
+        if (headers != null) {
+            for (Map.Entry<String, String> e: headers.entrySet()) {
+                urlConn.setRequestProperty(e.getKey(), e.getValue());
+            }
         }
         if (force) {
             urlConn.setUseCaches(false);

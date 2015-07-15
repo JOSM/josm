@@ -141,7 +141,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
             setContent(panel);
         }
 
-        private static final String[] getLayerNames(Collection<Layer> layers) {
+        private static String[] getLayerNames(Collection<Layer> layers) {
             Collection<String> ret = new ArrayList<>();
             for (Layer layer: layers) {
                 ret.add(layer.name);
