@@ -14,12 +14,11 @@ import org.openstreetmap.josm.JOSMFixture;
 
 public class JCSCachedTileLoaderJobTest {
     private static class TestCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, CacheEntry> {
+        private String url;
 
-        private int responseCode;
-
-        public TestCachedTileLoaderJob(int responseCode) throws IOException {
+        public TestCachedTileLoaderJob(String url) throws IOException {
             super(getCache(), 30000, 30000, null);
-            this.responseCode = responseCode;
+            this.url = url;
         }
 
         private static ICacheAccess<String, CacheEntry> getCache() throws IOException {
@@ -34,7 +33,7 @@ public class JCSCachedTileLoaderJobTest {
         @Override
         public URL getUrl() {
             try {
-                return new URL("http://httpstat.us/" + Integer.toString(responseCode));
+                return new URL(url);
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
@@ -85,8 +84,21 @@ public class JCSCachedTileLoaderJobTest {
         testStatusCode(502);
     }
 
+    @Test
+    public void testUnkownHost() throws Exception {
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob("http://unkownhost.unkownhost/unkown");
+        Listener listener = new Listener();
+        job.submit(listener, true);
+        synchronized (listener) {
+            if (!listener.ready) {
+                listener.wait();
+            }
+        }
+        assertEquals("java.net.UnknownHostException: unkownhost.unkownhost", listener.attributes.getErrorMessage());
+    }
+
     public void testStatusCode(int responseCode) throws Exception {
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob(responseCode);
+        TestCachedTileLoaderJob job = getStatusLoaderJob(responseCode);
         Listener listener = new Listener();
         job.submit(listener, true);
         synchronized (listener) {
@@ -97,5 +109,10 @@ public class JCSCachedTileLoaderJobTest {
         assertEquals(responseCode, listener.attributes.getResponseCode());
 
     }
+
+    private static TestCachedTileLoaderJob getStatusLoaderJob(int responseCode) throws IOException {
+        return new TestCachedTileLoaderJob("http://httpstat.us/" + responseCode);
+    }
+
 }
 

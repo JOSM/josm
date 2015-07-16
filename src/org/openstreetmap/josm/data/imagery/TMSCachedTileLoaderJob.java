@@ -187,8 +187,12 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                         }
                     }
                     int httpStatusCode = attributes.getResponseCode();
-                    if (!isNoTileAtZoom() && httpStatusCode >= 400) {
-                        tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
+                    if (!isNoTileAtZoom() && httpStatusCode >= 400 && httpStatusCode != 499) {
+                        if (attributes.getErrorMessage() == null) {
+                            tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
+                        } else {
+                            tile.setError(tr("Error downloading tiles: {0}", attributes.getErrorMessage()));
+                        }
                         status = false;
                     }
                     break;
@@ -208,7 +212,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             }
         } catch (IOException e) {
             LOG.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
-            tile.setError(e.getMessage());
+            tile.setError(e.toString());
             tile.setLoaded(false);
             if (listeners != null) { // listeners might be null, if some other thread notified already about success
                 for (TileLoaderListener l: listeners) {
@@ -284,8 +288,10 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                     handleNoTileAtZoom();
                     tile.finishLoading();
                 }
-                if (attributes.getResponseCode() >= 400) {
+                if (attributes.getErrorMessage() == null) {
                     tile.setError(tr("HTTP error {0} when loading tiles", attributes.getResponseCode()));
+                } else {
+                    tile.setError(tr("Error downloading tiles: {0}", attributes.getErrorMessage()));
                 }
                 return tile;
             } catch (IOException e) {
