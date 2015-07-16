@@ -368,6 +368,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         } catch (FileNotFoundException e) {
             log.log(Level.FINE, "JCS - Caching empty object as server returned 404 for: {0}", getUrl());
             attributes.setResponseCode(404);
+            attributes.setErrorMessage(e.toString());
             boolean doCache = isResponseLoadable(null, 404, null) || cacheAsEmpty();
             if (doCache) {
                 cacheData = createCacheEntry(new byte[]{});
@@ -376,7 +377,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             return doCache;
         } catch (IOException e) {
             log.log(Level.FINE, "JCS - IOExecption during communication with server for: {0}", getUrl());
-
+            attributes.setErrorMessage(e.toString());
             attributes.setResponseCode(499); // set dummy error code
             boolean doCache = isResponseLoadable(null, 499, null) || cacheAsEmpty(); //generic 499 error code returned
             if (doCache) {
@@ -385,6 +386,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             }
             return doCache;
         } catch (Exception e) {
+            attributes.setErrorMessage(e.toString());
             log.log(Level.WARNING, "JCS - Exception during download {0}",  getUrl());
             Main.warn(e);
         }

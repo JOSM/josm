@@ -27,14 +27,17 @@ public class CacheEntryAttributes extends ElementAttributes {
     private static final String LAST_MODIFICATION = "lastModification";
     private static final String EXPIRATION_TIME = "expirationTime";
     private static final String HTTP_RESPONSE_CODE = "httpResponceCode";
+    private static final String ERROR_MESSAGE = "errorMessage";
     // this contains all of the above
     private static final Set<String> RESERVED_KEYS = new HashSet<>(Arrays.asList(new String[]{
         NO_TILE_AT_ZOOM,
         ETAG,
         LAST_MODIFICATION,
         EXPIRATION_TIME,
-        HTTP_RESPONSE_CODE
+        HTTP_RESPONSE_CODE,
+        ERROR_MESSAGE
     }));
+
 
     /**
      * Constructs a new {@code CacheEntryAttributes}.
@@ -174,5 +177,19 @@ public class CacheEntryAttributes extends ElementAttributes {
      */
     public Map<String, String> getMetadata() {
         return Collections.unmodifiableMap(attrs);
+    }
+
+    /**
+     * @return error message returned while retrieving this object
+     */
+    public String getErrorMessage() {
+        return attrs.get(ERROR_MESSAGE);
+    }
+
+    /**
+     * @param message error message related to this object
+     */
+    public void setErrorMessage(String message) {
+        attrs.put(ERROR_MESSAGE, message);
     }
 }
