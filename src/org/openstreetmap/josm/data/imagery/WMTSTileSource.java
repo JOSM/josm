@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -179,6 +180,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
             if (layerSelection.showDialog().getValue() == 1) {
                 this.currentLayer = layerSelection.getSelectedLayer();
                 // TODO: save layer information into ImageryInfo / ImageryPreferences?
+                saveAsDefaultLayer();
             } else {
                 throw new IllegalArgumentException(); //user canceled operation
             }
@@ -189,6 +191,17 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         }
 
         initProjection();
+    }
+
+    private void saveAsDefaultLayer() {
+        Main.info(tr("currentLayer: {0}", currentLayer.name));
+        HashMap<String, String> layerDetails =  new HashMap<String, String>();
+        layerDetails.put("source-name", this.name);
+        layerDetails.put("baseUrl", this.baseUrl);
+        layerDetails.put("layer-name", this.currentLayer.name);
+        Collection<Map<String, String>> list = new ArrayList<>();
+        list.add(layerDetails);
+        Main.pref.putListOfStructs("wmts-default-layer", list);
     }
 
     private String handleTemplate(String url) {
