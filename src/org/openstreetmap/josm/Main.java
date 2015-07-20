@@ -71,6 +71,8 @@ import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
@@ -88,6 +90,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
@@ -756,11 +759,38 @@ public abstract class Main {
             createMapFrame(layer, viewport);
         }
         layer.hookUpMapView();
+        //Osm layer
         map.mapView.addLayer(layer);
+        Main.info(layer.getName());
+
         if (noMap) {
             Main.map.setVisible(true);
+          //Previously loaded background WMTS Layer
+            getDefaultLayer();
         } else if (viewport != null) {
             Main.map.mapView.zoomTo(viewport);
+        }
+    }
+
+    private void getDefaultLayer() {
+        Collection<Map<String, String>> savedLayer = pref.getListOfStructs("wmts-default-layer", (Collection<Map<String, String>>) null);
+        Map<String, String> layerDetails = savedLayer.iterator().next();
+        ImageryLayer wmtsLayer = null;
+        if(!layerDetails.isEmpty()){
+            List<ImageryInfo> info = new ArrayList<>(ImageryLayerInfo.instance.getLayers());
+            Main.info(info.toArray().toString());
+            for (ImageryInfo current: info) {
+                Main.info(current.getName());
+                if(current.getName().equals(layerDetails.get("source-name"))){
+                        wmtsLayer = ImageryLayer.create(current);
+                }
+            }
+            if(wmtsLayer == null){
+                Main.warn("No default layer was found");
+                return;
+            }
+            wmtsLayer.hookUpMapView();
+            map.mapView.addLayer(wmtsLayer);
         }
     }
 
