@@ -102,6 +102,10 @@ public class CustomProjection extends AbstractProjection {
         to_meter("to_meter", true),
         /** definition of axis for projection */
         axis("axis", true),
+        /** UTM zone */
+        zone("zone", true),
+        /** indicate southern hemisphere for UTM */
+        south("south", false),
         // JOSM extensions, not present in PROJ.4
         wmssrs("wmssrs", true),
         bounds("bounds", true);
@@ -184,6 +188,24 @@ public class CustomProjection extends AbstractProjection {
             ellps = parseEllipsoid(parameters);
             datum = parseDatum(parameters, ellps);
             proj = parseProjection(parameters, ellps);
+            // "utm" is a shortcut for a set of parameters
+            if ("utm".equals(parameters.get(Param.proj.key))) {
+                String zoneStr = parameters.get(Param.zone.key);
+                Integer zone;
+                if (zoneStr == null) 
+                    throw new ProjectionConfigurationException(tr("UTM projection (''+proj=utm'') requires ''+zone=...'' parameter."));
+                try {
+                    zone = Integer.parseInt(zoneStr);
+                } catch (NumberFormatException e) {
+                    zone = null;
+                }
+                if (zone == null || zone < 1 || zone > 60)
+                    throw new ProjectionConfigurationException(tr("Expected integer value in range 1-60 for ''+zone=...'' paramter."));
+                this.lon0 = 6 * zone - 183;
+                this.k0 = 0.9996;
+                this.x0 = 500000;
+                this.y0 = parameters.containsKey(Param.south.key) ? 10000000 : 0;
+            }
             String s = parameters.get(Param.x_0.key);
             if (s != null) {
                 this.x0 = parseDouble(s, Param.x_0.key);
@@ -399,6 +421,10 @@ public class CustomProjection extends AbstractProjection {
         String id = parameters.get(Param.proj.key);
         if (id == null) throw new ProjectionConfigurationException(tr("Projection required (+proj=*)"));
 
+        // "utm" is not a real projection, but a shortcut for a set of parameters
+        if ("utm".equals(id)) {
+            id = "tmerc";
+        }
         Proj proj =  Projections.getBaseProjection(id);
         if (proj == null) throw new ProjectionConfigurationException(tr("Unknown projection identifier: ''{0}''", id));
 
@@ -435,7 +461,7 @@ public class CustomProjection extends AbstractProjection {
 
     public static double parseDouble(Map<String, String> parameters, String parameterName) throws ProjectionConfigurationException {
         if (!parameters.containsKey(parameterName))
-            throw new IllegalArgumentException(tr("Unknown parameter ''{0}''", parameterName));
+            throw new ProjectionConfigurationException(tr("Unknown parameter ''{0}''", parameterName));
         String doubleStr = parameters.get(parameterName);
         if (doubleStr == null)
             throw new ProjectionConfigurationException(
