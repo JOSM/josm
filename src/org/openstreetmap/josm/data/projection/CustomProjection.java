@@ -187,6 +187,9 @@ public class CustomProjection extends AbstractProjection {
             Map<String, String> parameters = parseParameterList(pref);
             ellps = parseEllipsoid(parameters);
             datum = parseDatum(parameters, ellps);
+            if (ellps == null) {
+                ellps = datum.getEllipsoid();
+            }
             proj = parseProjection(parameters, ellps);
             // "utm" is a shortcut for a set of parameters
             if ("utm".equals(parameters.get(Param.proj.key))) {
@@ -337,13 +340,23 @@ public class CustomProjection extends AbstractProjection {
                 parameters.containsKey(Param.f.key) ||
                 parameters.containsKey(Param.b.key))
             throw new ProjectionConfigurationException(tr("Combination of ellipsoid parameters is not supported."));
-        if (parameters.containsKey(Param.no_defs.key))
-            throw new ProjectionConfigurationException(tr("Ellipsoid required (+ellps=* or +a=*, +b=*)"));
-        // nothing specified, use WGS84 as default
-        return Ellipsoid.WGS84;
+        return null;
     }
 
     public Datum parseDatum(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {
+        String datumId = parameters.get(Param.datum.key);
+        if (datumId != null) {
+            Datum datum = Projections.getDatum(datumId);
+            if (datum == null) throw new ProjectionConfigurationException(tr("Unknown datum identifier: ''{0}''", datumId));
+            return datum;
+        }
+        if (ellps == null) {
+            if (parameters.containsKey(Param.no_defs.key))
+                throw new ProjectionConfigurationException(tr("Ellipsoid required (+ellps=* or +a=*, +b=*)"));
+            // nothing specified, use WGS84 as default
+            ellps = Ellipsoid.WGS84;
+        }
+        
         String nadgridsId = parameters.get(Param.nadgrids.key);
         if (nadgridsId != null) {
             if (nadgridsId.startsWith("@")) {
@@ -361,12 +374,6 @@ public class CustomProjection extends AbstractProjection {
         if (towgs84 != null)
             return parseToWGS84(towgs84, ellps);
 
-        String datumId = parameters.get(Param.datum.key);
-        if (datumId != null) {
-            Datum datum = Projections.getDatum(datumId);
-            if (datum == null) throw new ProjectionConfigurationException(tr("Unknown datum identifier: ''{0}''", datumId));
-            return datum;
-        }
         if (parameters.containsKey(Param.no_defs.key))
             throw new ProjectionConfigurationException(tr("Datum required (+datum=*, +towgs84=* or +nadgrids=*)"));
         return new CentricDatum(null, null, ellps);
