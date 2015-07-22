@@ -18,8 +18,10 @@ import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -51,14 +53,18 @@ import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeLayerAction;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -142,13 +148,12 @@ public class LayerListDialog extends ToggleDialog {
      * to toggle the visibility of the first ten layers.
      */
     private void createVisibilityToggleShortcuts() {
-        final int[] k = {
-                KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_3, KeyEvent.VK_4, KeyEvent.VK_5,
-                KeyEvent.VK_6, KeyEvent.VK_7, KeyEvent.VK_8, KeyEvent.VK_9, KeyEvent.VK_0};
+        final int[] k = { KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_3, KeyEvent.VK_4, KeyEvent.VK_5, KeyEvent.VK_6,
+                KeyEvent.VK_7, KeyEvent.VK_8, KeyEvent.VK_9, KeyEvent.VK_0 };
 
         for (int i = 0; i < 10; i++) {
-            visibilityToggleShortcuts[i] = Shortcut.registerShortcut("subwindow:layers:toggleLayer" + (i+1),
-                    tr("Toggle visibility of layer: {0}", i+1), k[i], Shortcut.ALT);
+            visibilityToggleShortcuts[i] = Shortcut.registerShortcut("subwindow:layers:toggleLayer" + (i + 1),
+                    tr("Toggle visibility of layer: {0}", i + 1), k[i], Shortcut.ALT);
             visibilityToggleActions[i] = new ToggleLayerIndexVisibility(i);
             Main.registerActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
         }
@@ -158,9 +163,8 @@ public class LayerListDialog extends ToggleDialog {
      * Creates a layer list and attach it to the given mapView.
      */
     protected LayerListDialog(MapFrame mapFrame) {
-        super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
-                Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L,
-                        Shortcut.ALT_SHIFT), 100, true);
+        super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."), Shortcut.registerShortcut(
+                "subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L, Shortcut.ALT_SHIFT), 100, true);
 
         // create the models
         //
@@ -191,7 +195,8 @@ public class LayerListDialog extends ToggleDialog {
         layerList.getColumnModel().getColumn(1).setPreferredWidth(16);
         layerList.getColumnModel().getColumn(1).setResizable(false);
         layerList.getColumnModel().getColumn(2).setCellRenderer(new LayerNameCellRenderer());
-        layerList.getColumnModel().getColumn(2).setCellEditor(new LayerNameCellEditor(new DisableShortcutsOnFocusGainedTextField()));
+        layerList.getColumnModel().getColumn(2)
+                .setCellEditor(new LayerNameCellEditor(new DisableShortcutsOnFocusGainedTextField()));
         // Disable some default JTable shortcuts to use JOSM ones (see #5678, #10458)
         for (KeyStroke ks : new KeyStroke[] {
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, GuiHelper.getMenuShortcutKeyMaskEx()),
@@ -204,11 +209,8 @@ public class LayerListDialog extends ToggleDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_DOWN_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0),
-                KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0),
-                KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0),
-                KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0),
-        }) {
+                KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0),
+                KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0), }) {
             layerList.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ks, new Object());
         }
 
@@ -217,20 +219,18 @@ public class LayerListDialog extends ToggleDialog {
         final MapView mapView = mapFrame.mapView;
         model.populate();
         model.setSelectedLayer(mapView.getActiveLayer());
-        model.addLayerListModelListener(
-                new LayerListModelListener() {
-                    @Override
-                    public void makeVisible(int row, Layer layer) {
-                        layerList.scrollToVisible(row, 0);
-                        layerList.repaint();
-                    }
+        model.addLayerListModelListener(new LayerListModelListener() {
+            @Override
+            public void makeVisible(int row, Layer layer) {
+                layerList.scrollToVisible(row, 0);
+                layerList.repaint();
+            }
 
-                    @Override
-                    public void refresh() {
-                        layerList.repaint();
-                    }
-                }
-                );
+            @Override
+            public void refresh() {
+                layerList.repaint();
+            }
+        });
 
         // -- move up action
         MoveUpAction moveUpAction = new MoveUpAction();
@@ -274,9 +274,8 @@ public class LayerListDialog extends ToggleDialog {
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
-        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete"
-                );
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
+                "delete");
         getActionMap().put("delete", deleteLayerAction);
 
         // Activate layer on Enter key press
@@ -291,16 +290,14 @@ public class LayerListDialog extends ToggleDialog {
         // Show/Activate layer on Enter key press
         InputMapUtils.addSpacebarAction(layerList, showHideLayerAction);
 
-        createLayout(layerList, true, Arrays.asList(new SideButton[] {
-                new SideButton(moveUpAction, false),
-                new SideButton(moveDownAction, false),
-                new SideButton(activateLayerAction, false),
-                new SideButton(showHideLayerAction, false),
-                opacityButton,
-                new SideButton(mergeLayerAction, false),
-                new SideButton(duplicateLayerAction, false),
-                new SideButton(deleteLayerAction, false)
-        }));
+        createLayout(
+                layerList,
+                true,
+                Arrays.asList(new SideButton[] { new SideButton(moveUpAction, false),
+                        new SideButton(moveDownAction, false), new SideButton(activateLayerAction, false),
+                        new SideButton(showHideLayerAction, false), opacityButton,
+                        new SideButton(mergeLayerAction, false), new SideButton(duplicateLayerAction, false),
+                        new SideButton(deleteLayerAction, false) }));
 
         createVisibilityToggleShortcuts();
     }
@@ -339,14 +336,12 @@ public class LayerListDialog extends ToggleDialog {
      * @param listSelectionModel  the source emitting {@link ListSelectionEvent}s
      */
     protected void adaptTo(final IEnabledStateUpdating listener, ListSelectionModel listSelectionModel) {
-        listSelectionModel.addListSelectionListener(
-                new ListSelectionListener() {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e) {
-                        listener.updateEnabledState();
-                    }
-                }
-                );
+        listSelectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                listener.updateEnabledState();
+            }
+        });
     }
 
     /**
@@ -358,15 +353,13 @@ public class LayerListDialog extends ToggleDialog {
      * @param listModel the source emitting {@link ListDataEvent}s
      */
     protected void adaptTo(final IEnabledStateUpdating listener, LayerListModel listModel) {
-        listModel.addTableModelListener(
-                new TableModelListener() {
+        listModel.addTableModelListener(new TableModelListener() {
 
-                    @Override
-                    public void tableChanged(TableModelEvent e) {
-                        listener.updateEnabledState();
-                    }
-                }
-                );
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                listener.updateEnabledState();
+            }
+        });
     }
 
     @Override
@@ -379,6 +372,53 @@ public class LayerListDialog extends ToggleDialog {
         JumpToMarkerActions.unregisterActions();
         super.destroy();
         instance = null;
+    }
+
+    /*
+     * Add a layer from the imagery source of this layer.
+     * Current implementation for WMTSTileSource only
+     */
+    private final class AddLayerAction extends AbstractAction implements LayerAction, IEnabledStateUpdating {
+
+        public AddLayerAction() {
+            putValue(NAME, tr("Add Layer"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+            putValue(SHORT_DESCRIPTION, tr("Add another layer from same imagery source"));
+            updateEnabledState();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Layer selectedLayer = model.getSelectedLayers().get(0);
+            getSourceLayers();
+        }
+
+        @Override
+        public Component createMenuComponent() {
+            return new JMenuItem(this);
+        }
+
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            return true;
+        }
+
+        @Override
+        public void updateEnabledState() {
+            Layer layer = getModel().getSelectedLayers().get(0);
+            if (layer instanceof WMTSLayer) {
+                ImageryInfo info = ((WMTSLayer) layer).getInfo();
+                Collection<Map<String, String>> savedLayer = Main.pref.getListOfStructs("wmts-default-layer",
+                        (Collection<Map<String, String>>) null);
+                Map<String, String> layerDetails = savedLayer.iterator().next();
+                if(!info.getName().equals(layerDetails.get("source-name"))){
+                    setEnabled(false);
+                    return;
+                }
+            }
+            setEnabled(true);
+        }
+
     }
 
     /**
@@ -405,7 +445,7 @@ public class LayerListDialog extends ToggleDialog {
                 return;
             if (!Main.saveUnsavedModifications(selectedLayers, false))
                 return;
-            for (Layer l: selectedLayers) {
+            for (Layer l : selectedLayers) {
                 Main.main.removeLayer(l);
             }
         }
@@ -439,7 +479,8 @@ public class LayerListDialog extends ToggleDialog {
     /**
      * Action which will toggle the visibility of the currently selected layers.
      */
-    public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction, MultikeyShortcutAction {
+    public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction,
+            MultikeyShortcutAction {
 
         private transient WeakReference<Layer> lastLayer;
         private transient Shortcut multikeyShortcut;
@@ -453,8 +494,8 @@ public class LayerListDialog extends ToggleDialog {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
-            multikeyShortcut = Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",
-                    tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.SHIFT);
+            multikeyShortcut = Shortcut.registerShortcut("core_multikey:showHideLayer",
+                    tr("Multikey: {0}", tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.SHIFT);
             multikeyShortcut.setAccelerator(this);
             updateEnabledState();
         }
@@ -561,18 +602,19 @@ public class LayerListDialog extends ToggleDialog {
             slider.addChangeListener(new ChangeListener() {
                 @Override
                 public void stateChanged(ChangeEvent e) {
-                    setOpacity((double) slider.getValue()/100);
+                    setOpacity((double) slider.getValue() / 100);
                 }
             });
             popup.add(slider);
         }
 
         private void setOpacity(double value) {
-            if (!isEnabled()) return;
+            if (!isEnabled())
+                return;
             if (layer != null) {
                 layer.setOpacity(value);
             } else {
-                for (Layer layer: model.getSelectedLayers()) {
+                for (Layer layer : model.getSelectedLayers()) {
                     layer.setOpacity(value);
                 }
             }
@@ -584,7 +626,7 @@ public class LayerListDialog extends ToggleDialog {
             else {
                 double opacity = 0;
                 List<Layer> layers = model.getSelectedLayers();
-                for (Layer layer: layers) {
+                for (Layer layer : layers) {
                     opacity += layer.getOpacity();
                 }
                 return opacity / layers.size();
@@ -593,7 +635,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            slider.setValue((int) Math.round(getOpacity()*100));
+            slider.setValue((int) Math.round(getOpacity() * 100));
             if (e.getSource() == opacityButton) {
                 popup.show(opacityButton, 0, opacityButton.getHeight());
             } else {
@@ -637,8 +679,8 @@ public class LayerListDialog extends ToggleDialog {
      * The action to activate the currently selected layer
      */
 
-    public final class ActivateLayerAction extends AbstractAction
-    implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction{
+    public final class ActivateLayerAction extends AbstractAction implements IEnabledStateUpdating,
+            MapView.LayerChangeListener, MultikeyShortcutAction {
         private transient Layer layer;
         private transient Shortcut multikeyShortcut;
 
@@ -661,8 +703,8 @@ public class LayerListDialog extends ToggleDialog {
             putValue(NAME, tr("Activate"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
             putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
-            multikeyShortcut = Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
-                    tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT);
+            multikeyShortcut = Shortcut.registerShortcut("core_multikey:activateLayer",
+                    tr("Multikey: {0}", tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT);
             multikeyShortcut.setAccelerator(this);
             putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
         }
@@ -690,7 +732,8 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         protected boolean isActiveLayer(Layer layer) {
-            if (!Main.isDisplayingMapView()) return false;
+            if (!Main.isDisplayingMapView())
+                return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
 
@@ -792,7 +835,8 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         protected boolean isActiveLayer(Layer layer) {
-            if (!Main.isDisplayingMapView()) return false;
+            if (!Main.isDisplayingMapView())
+                return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
 
@@ -801,9 +845,9 @@ public class LayerListDialog extends ToggleDialog {
             if (layer == null) {
                 if (getModel().getSelectedLayers().isEmpty()) {
                     setEnabled(false);
-                } else  if (getModel().getSelectedLayers().size() > 1) {
+                } else if (getModel().getSelectedLayers().size() > 1) {
                     Layer firstLayer = getModel().getSelectedLayers().get(0);
-                    for (Layer l: getModel().getSelectedLayers()) {
+                    for (Layer l : getModel().getSelectedLayers()) {
                         if (l != firstLayer && (!l.isMergable(firstLayer) || !firstLayer.isMergable(l))) {
                             setEnabled(false);
                             return;
@@ -856,7 +900,7 @@ public class LayerListDialog extends ToggleDialog {
                 return;
 
             List<String> layerNames = new ArrayList<>();
-            for (Layer l: Main.map.mapView.getAllLayers()) {
+            for (Layer l : Main.map.mapView.getAllLayers()) {
                 layerNames.add(l.getName());
             }
             if (layer instanceof OsmDataLayer) {
@@ -934,7 +978,8 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         public void setTranslucent(boolean isTranslucent) {
-            if (this.isTranslucent == isTranslucent) return;
+            if (this.isTranslucent == isTranslucent)
+                return;
             if (isTranslucent) {
                 setSelectedIcon(iconEyeTranslucent);
             } else {
@@ -947,9 +992,8 @@ public class LayerListDialog extends ToggleDialog {
             boolean visible = layer.isVisible();
             setSelected(visible);
             setTranslucent(layer.getOpacity() < 1.0);
-            setToolTipText(visible ?
-                tr("layer is currently visible (click to hide layer)") :
-                tr("layer is currently hidden (click to show layer)"));
+            setToolTipText(visible ? tr("layer is currently visible (click to hide layer)")
+                    : tr("layer is currently hidden (click to show layer)"));
         }
     }
 
@@ -964,10 +1008,12 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            boolean active =  value != null && (Boolean) value;
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column) {
+            boolean active = value != null && (Boolean) value;
             cb.setSelected(active);
-            cb.setToolTipText(active ? tr("this layer is the active layer") : tr("this layer is not currently active (click to activate)"));
+            cb.setToolTipText(active ? tr("this layer is the active layer")
+                    : tr("this layer is not currently active (click to activate)"));
             return cb;
         }
     }
@@ -983,7 +1029,8 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column) {
             if (value != null) {
                 cb.updateStatus((Layer) value);
             }
@@ -1009,17 +1056,19 @@ public class LayerListDialog extends ToggleDialog {
     private class LayerNameCellRenderer extends DefaultTableCellRenderer {
 
         protected boolean isActiveLayer(Layer layer) {
-            if (!Main.isDisplayingMapView()) return false;
+            if (!Main.isDisplayingMapView())
+                return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column) {
             if (value == null)
                 return this;
             Layer layer = (Layer) value;
-            JLabel label = (JLabel) super.getTableCellRendererComponent(table,
-                    layer.getName(), isSelected, hasFocus, row, column);
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table, layer.getName(), isSelected, hasFocus,
+                    row, column);
             if (isActiveLayer(layer)) {
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             }
@@ -1078,7 +1127,7 @@ public class LayerListDialog extends ToggleDialog {
     /**
      * The action to move up the currently selected entries in the list.
      */
-    class MoveUpAction extends AbstractAction implements  IEnabledStateUpdating{
+    class MoveUpAction extends AbstractAction implements IEnabledStateUpdating {
         public MoveUpAction() {
             putValue(NAME, tr("Move up"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));
@@ -1131,7 +1180,6 @@ public class LayerListDialog extends ToggleDialog {
          */
         void makeVisible(int index, Layer layer);
 
-
         /**
          * Fired when something has changed in the layer list model.
          */
@@ -1152,7 +1200,8 @@ public class LayerListDialog extends ToggleDialog {
      * It also listens to {@link PropertyChangeEvent}s of every {@link Layer} it manages, in particular to
      * the properties {@link Layer#VISIBLE_PROP} and {@link Layer#NAME_PROP}.
      */
-    public final class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
+    public final class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener,
+            PropertyChangeListener {
         /** manages list selection state*/
         private DefaultListSelectionModel selectionModel;
         private CopyOnWriteArrayList<LayerListModelListener> listeners;
@@ -1215,7 +1264,7 @@ public class LayerListDialog extends ToggleDialog {
          * Populates the model with the current layers managed by {@link MapView}.
          */
         public void populate() {
-            for (Layer layer: getLayers()) {
+            for (Layer layer : getLayers()) {
                 // make sure the model is registered exactly once
                 layer.removePropertyChangeListener(this);
                 layer.addPropertyChangeListener(this);
@@ -1284,7 +1333,7 @@ public class LayerListDialog extends ToggleDialog {
                 @Override
                 public void run() {
                     if (rows.isEmpty() && size > 0) {
-                        selectionModel.setSelectionInterval(size-1, size-1);
+                        selectionModel.setSelectionInterval(size - 1, size - 1);
                     }
                     fireTableDataChanged();
                     fireRefresh();
@@ -1299,7 +1348,8 @@ public class LayerListDialog extends ToggleDialog {
          * @param layer the layer
          */
         protected void onAddLayer(Layer layer) {
-            if (layer == null) return;
+            if (layer == null)
+                return;
             layer.addPropertyChangeListener(this);
             fireTableDataChanged();
             int idx = getLayers().indexOf(layer);
@@ -1314,7 +1364,8 @@ public class LayerListDialog extends ToggleDialog {
          * @return the first layer. Null if no layers are present
          */
         public Layer getFirstLayer() {
-            if (getRowCount() == 0) return null;
+            if (getRowCount() == 0)
+                return null;
             return getLayers().get(0);
         }
 
@@ -1346,19 +1397,20 @@ public class LayerListDialog extends ToggleDialog {
          *
          */
         public void moveUp() {
-            if (!canMoveUp()) return;
+            if (!canMoveUp())
+                return;
             List<Integer> sel = getSelectedRows();
             List<Layer> layers = getLayers();
             for (int row : sel) {
                 Layer l1 = layers.get(row);
-                Layer l2 = layers.get(row-1);
+                Layer l2 = layers.get(row - 1);
                 Main.map.mapView.moveLayer(l2, row);
-                Main.map.mapView.moveLayer(l1, row-1);
+                Main.map.mapView.moveLayer(l1, row - 1);
             }
             fireTableDataChanged();
             selectionModel.clearSelection();
             for (int row : sel) {
-                selectionModel.addSelectionInterval(row-1, row-1);
+                selectionModel.addSelectionInterval(row - 1, row - 1);
             }
             ensureSelectedIsVisible();
         }
@@ -1370,7 +1422,7 @@ public class LayerListDialog extends ToggleDialog {
          */
         public boolean canMoveDown() {
             List<Integer> sel = getSelectedRows();
-            return !sel.isEmpty() && sel.get(sel.size()-1) < getLayers().size()-1;
+            return !sel.isEmpty() && sel.get(sel.size() - 1) < getLayers().size() - 1;
         }
 
         /**
@@ -1378,20 +1430,21 @@ public class LayerListDialog extends ToggleDialog {
          *
          */
         public void moveDown() {
-            if (!canMoveDown()) return;
+            if (!canMoveDown())
+                return;
             List<Integer> sel = getSelectedRows();
             Collections.reverse(sel);
             List<Layer> layers = getLayers();
             for (int row : sel) {
                 Layer l1 = layers.get(row);
-                Layer l2 = layers.get(row+1);
-                Main.map.mapView.moveLayer(l1, row+1);
+                Layer l2 = layers.get(row + 1);
+                Main.map.mapView.moveLayer(l1, row + 1);
                 Main.map.mapView.moveLayer(l2, row);
             }
             fireTableDataChanged();
             selectionModel.clearSelection();
             for (int row : sel) {
-                selectionModel.addSelectionInterval(row+1, row+1);
+                selectionModel.addSelectionInterval(row + 1, row + 1);
             }
             ensureSelectedIsVisible();
         }
@@ -1403,9 +1456,11 @@ public class LayerListDialog extends ToggleDialog {
          */
         protected void ensureSelectedIsVisible() {
             int index = selectionModel.getMinSelectionIndex();
-            if (index < 0) return;
+            if (index < 0)
+                return;
             List<Layer> layers = getLayers();
-            if (index >= layers.size()) return;
+            if (index >= layers.size())
+                return;
             Layer layer = layers.get(index);
             fireMakeVisible(index, layer);
         }
@@ -1442,7 +1497,7 @@ public class LayerListDialog extends ToggleDialog {
          */
         public List<Layer> getLayers() {
             if (!Main.isDisplayingMapView())
-                return Collections.<Layer>emptyList();
+                return Collections.<Layer> emptyList();
             return Main.map.mapView.getAllLayersAsList();
         }
 
@@ -1473,7 +1528,8 @@ public class LayerListDialog extends ToggleDialog {
          * @return the active layer. null, if no active layer is available
          */
         protected Layer getActiveLayer() {
-            if (!Main.isDisplayingMapView()) return null;
+            if (!Main.isDisplayingMapView())
+                return null;
             return Main.map.mapView.getActiveLayer();
         }
 
@@ -1484,7 +1540,8 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public int getRowCount() {
             List<Layer> layers = getLayers();
-            if (layers == null) return 0;
+            if (layers == null)
+                return 0;
             return layers.size();
         }
 
@@ -1498,10 +1555,14 @@ public class LayerListDialog extends ToggleDialog {
             List<Layer> layers = getLayers();
             if (row >= 0 && row < layers.size()) {
                 switch (col) {
-                case 0: return layers.get(row) == getActiveLayer();
-                case 1: return layers.get(row);
-                case 2: return layers.get(row);
-                default: throw new RuntimeException();
+                case 0:
+                    return layers.get(row) == getActiveLayer();
+                case 1:
+                    return layers.get(row);
+                case 2:
+                    return layers.get(row);
+                default:
+                    throw new RuntimeException();
                 }
             }
             return null;
@@ -1530,7 +1591,8 @@ public class LayerListDialog extends ToggleDialog {
                 case 2:
                     l.setName((String) value);
                     break;
-                default: throw new RuntimeException();
+                default:
+                    throw new RuntimeException();
                 }
                 fireTableCellUpdated(row, col);
             }
@@ -1580,7 +1642,8 @@ public class LayerListDialog extends ToggleDialog {
             if (evt.getSource() instanceof Layer) {
                 Layer layer = (Layer) evt.getSource();
                 final int idx = getLayers().indexOf(layer);
-                if (idx < 0) return;
+                if (idx < 0)
+                    return;
                 fireRefresh();
             }
         }
@@ -1610,6 +1673,13 @@ public class LayerListDialog extends ToggleDialog {
      */
     public ShowHideLayerAction createShowHideLayerAction() {
         return new ShowHideLayerAction();
+    }
+
+    /**
+     * Creates an {@link AddLayerAction}
+     */
+    public AddLayerAction createAddLayerAction() {
+        return new AddLayerAction();
     }
 
     /**
@@ -1678,7 +1748,7 @@ public class LayerListDialog extends ToggleDialog {
         List<Layer> layers = Main.map.mapView.getAllLayersAsList();
 
         int index = 0;
-        for (Layer l: layers) {
+        for (Layer l : layers) {
             if (layerClass.isAssignableFrom(l.getClass())) {
                 result.add(new MultikeyInfo(index, l.getName()));
             }
@@ -1716,5 +1786,28 @@ public class LayerListDialog extends ToggleDialog {
             return null;
 
         return new MultikeyInfo(index, l.getName());
+    }
+
+    private void getSourceLayers() {
+        Collection<Map<String, String>> savedLayer = Main.pref.getListOfStructs("wmts-default-layer",
+                (Collection<Map<String, String>>) null);
+        Map<String, String> layerDetails = savedLayer.iterator().next();
+        ImageryLayer wmtsLayer = null;
+        if (!layerDetails.isEmpty()) {
+            List<ImageryInfo> info = new ArrayList<>(ImageryLayerInfo.instance.getLayers());
+            Main.info(info.toArray().toString());
+            for (ImageryInfo current : info) {
+                Main.info(current.getName());
+                if (current.getName().equals(layerDetails.get("source-name"))) {
+                    wmtsLayer = ImageryLayer.create(current);
+                }
+            }
+            if (wmtsLayer == null) {
+                Main.warn("No default layer was found");
+                return;
+            }
+            wmtsLayer.hookUpMapView();
+            Main.map.mapView.addLayer(wmtsLayer);
+        }
     }
 }

@@ -1495,7 +1495,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     @Override
     public Action[] getMenuEntries() {
-        return new Action[] {
+        return new Action[] {LayerListDialog.getInstance().createAddLayerAction(),
                 LayerListDialog.getInstance().createActivateLayerAction(this),
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
