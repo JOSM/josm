@@ -195,7 +195,7 @@ public class CustomProjection extends AbstractProjection {
             if ("utm".equals(parameters.get(Param.proj.key))) {
                 String zoneStr = parameters.get(Param.zone.key);
                 Integer zone;
-                if (zoneStr == null) 
+                if (zoneStr == null)
                     throw new ProjectionConfigurationException(tr("UTM projection (''+proj=utm'') requires ''+zone=...'' parameter."));
                 try {
                     zone = Integer.parseInt(zoneStr);
@@ -235,7 +235,12 @@ public class CustomProjection extends AbstractProjection {
             }
             s = parameters.get(Param.units.key);
             if (s != null) {
-                this.metersPerUnit = UNITS_TO_METERS.get(s);
+                s = Utils.strip(s, "\"");
+                if (UNITS_TO_METERS.containsKey(s)) {
+                    this.metersPerUnit = UNITS_TO_METERS.get(s);
+                } else {
+                    Main.warn("No metersPerUnit found for: " + s);
+                }
             }
             s = parameters.get(Param.to_meter.key);
             if (s != null) {
@@ -356,7 +361,7 @@ public class CustomProjection extends AbstractProjection {
             // nothing specified, use WGS84 as default
             ellps = Ellipsoid.WGS84;
         }
-        
+
         String nadgridsId = parameters.get(Param.nadgrids.key);
         if (nadgridsId != null) {
             if (nadgridsId.startsWith("@")) {
