@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -652,6 +652,8 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     /**
      * Creates a list of the visible layers in Z-Order, the layer with the lowest Z-Order
      * first, layer with the highest Z-Order last.
+     * <p>
+     * The active data layer is pulled above all adjacent data layers.
      *
      * @return a list of the visible in Z-Order, the layer with the lowest Z-Order
      * first, layer with the highest Z-Order last.
@@ -660,27 +662,28 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         layerLock.readLock().lock();
         try {
             List<Layer> ret = new ArrayList<>();
-            for (Layer l: layers) {
-                if (l.isVisible()) {
+            // This is set while we delay the addition of the active layer.
+            boolean activeLayerDelayed = false;
+            for (ListIterator<Layer> iterator = layers.listIterator(layers.size()); iterator.hasPrevious();) {
+                Layer l = iterator.previous();
+                if (!l.isVisible()) {
+                    // ignored
+                } else if (l == activeLayer && l instanceof OsmDataLayer) {
+                    // delay and add after the current block of OsmDataLayer
+                    activeLayerDelayed = true;
+                } else {
+                    if (activeLayerDelayed && !(l instanceof OsmDataLayer)) {
+                        // add active layer before the current one.
+                        ret.add(activeLayer);
+                        activeLayerDelayed = false;
+                    }
+                    // Add this layer now
                     ret.add(l);
                 }
             }
-            // sort according to position in the list of layers, with one exception:
-            // an active data layer always becomes a higher Z-Order than all other data layers
-            Collections.sort(
-                    ret,
-                    new Comparator<Layer>() {
-                        @Override
-                        public int compare(Layer l1, Layer l2) {
-                            if (l1 instanceof OsmDataLayer && l2 instanceof OsmDataLayer) {
-                                if (l1 == getActiveLayer()) return -1;
-                                if (l2 == getActiveLayer()) return 1;
-                                return Integer.compare(layers.indexOf(l1), layers.indexOf(l2));
-                            } else
-                                return Integer.compare(layers.indexOf(l1), layers.indexOf(l2));
-                        }
-                    }
-            );
+            if (activeLayerDelayed) {
+                ret.add(activeLayer);
+            }
             Collections.reverse(ret);
             return ret;
         } finally {
