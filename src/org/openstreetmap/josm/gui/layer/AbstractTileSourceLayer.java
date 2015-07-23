@@ -183,6 +183,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             }
         } catch (MalformedURLException e) {
             // ignore, assume that this is not a file
+            if (Main.isDebugEnabled()) {
+                Main.debug(e.getMessage());
+            }
         }
 
         if (tileLoader == null)
