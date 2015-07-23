@@ -298,7 +298,6 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     public MapView(final JPanel contentPane, final ViewportData viewportData) {
         initialViewport = viewportData;
         Main.pref.addPreferenceChangeListener(this);
-        final boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0) != null;
 
         addComponentListener(new ComponentAdapter() {
             @Override public void componentResized(ComponentEvent e) {
@@ -360,7 +359,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     private Dimension oldSize = null;
     private Point oldLoc = null;
 
-    /*
+    /**
      * Call this method to keep map position on screen during next repaint
      */
     public void rememberLastPositionOnScreen() {

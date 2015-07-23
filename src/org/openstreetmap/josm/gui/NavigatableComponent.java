@@ -162,7 +162,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Returns the current system of measurement.
      * @return The current system of measurement (metric system by default).
      * @since 3490
-     * @deprecated use {@link SystemOfMeasurement#getSoMChangeListener} instead.
+     * @deprecated use {@link SystemOfMeasurement#getSystemOfMeasurement} instead.
      */
     @Deprecated
     public static SystemOfMeasurement getSystemOfMeasurement() {
@@ -174,7 +174,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param somKey The system of measurement key. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
      * @throws IllegalArgumentException if {@code somKey} is not known
      * @since 6056
-     * @deprecated use {@link SystemOfMeasurement#setSoMChangeListener} instead.
+     * @deprecated use {@link SystemOfMeasurement#setSystemOfMeasurement} instead.
      */
     @Deprecated
     public static void setSystemOfMeasurement(String somKey) {
