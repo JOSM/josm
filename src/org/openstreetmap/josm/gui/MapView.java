@@ -684,7 +684,6 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             if (activeLayerDelayed) {
                 ret.add(activeLayer);
             }
-            Collections.reverse(ret);
             return ret;
         } finally {
             layerLock.readLock().unlock();
