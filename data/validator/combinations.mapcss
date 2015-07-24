@@ -251,7 +251,7 @@ way[highway][natural],
 }
 
 /* see #9593, #11183 */
-*[sport][!building][!club][tourism != hotel][highway != raceway][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool|recreation_ground|ice_rink)$/][natural !~ /^(beach|bare_rock|peak)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"] {
+*[sport][!building][!club][tourism != hotel][highway != raceway][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool|recreation_ground|ice_rink)$/][natural !~ /^(beach|bare_rock|peak|water)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"] {
     throwWarning: tr("sport without physical feature");
     assertMatch: "node sport=tennis";
     assertNoMatch: "node sport=tennis leisure=pitch";
