@@ -87,6 +87,7 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param p1 First point of the way segment.
      * @param p2 Second point of the way segment.
      * @param orderNumber The number of the segment in the way.
+     * @param clr The color to use for drawing the text.
      */
     protected void drawOrderNumber(Point p1, Point p2, int orderNumber, Color clr) {
         if (isSegmentVisible(p1, p2) && isLargeSegment(p1, p2, segmentNumberSpace)) {
