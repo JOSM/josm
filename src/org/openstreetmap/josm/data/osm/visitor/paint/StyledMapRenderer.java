@@ -257,6 +257,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * this case, but the method has been changed to simply return false by default.
      * (This can be changed with a setting in the advanced preferences.)
      *
+     * @param font The font to check.
      * @return false by default, but depends on the value of the advanced
      * preference glyph-bug=false|true|auto, where auto is the automatic detection
      * method which apparently no longer gives a useful result for Java 7.
@@ -290,10 +291,27 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     private Color highlightColorTransparent;
 
+    /**
+     * Flags used to store the primitive state along with the style. This is the normal style.
+     * <p>
+     * Not used in any public interfaces.
+     */
     private static final int FLAG_NORMAL = 0;
+    /**
+     * A primitive with {@link OsmPrimitive#isDisabled()}
+     */
     private static final int FLAG_DISABLED = 1;
+    /**
+     * A primitive with {@link OsmPrimitive#isMemberOfSelected()}
+     */
     private static final int FLAG_MEMBER_OF_SELECTED = 2;
+    /**
+     * A primitive with {@link OsmPrimitive#isSelected()}
+     */
     private static final int FLAG_SELECTED = 4;
+    /**
+     * A primitive with {@link OsmPrimitive#isOuterMemberOfSelected()}
+     */
     private static final int FLAG_OUTERMEMBER_OF_SELECTED = 8;
 
     private static final double PHI = Math.toRadians(20);
@@ -536,6 +554,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
+    /**
+     * Draws a multipolygon area.
+     * @param r The multipolygon relation
+     * @param color The color to fill the area with.
+     * @param fillImage The image to fill the area with. Overrides color.
+     * @param disabled If this should be drawn with a special disabled style.
+     * @param text The text to write on the area.
+     */
     public void drawArea(Relation r, Color color, MapImage fillImage, boolean disabled, TextElement text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
@@ -551,6 +577,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
+    /**
+     * Draws an area defined by a way. They way does not need to be closed, but it should.
+     * @param w The way.
+     * @param color The color to fill the area with.
+     * @param fillImage The image to fill the area with. Overrides color.
+     * @param disabled If this should be drawn with a special disabled style.
+     * @param text The text to write on the area.
+     */
     public void drawArea(Way w, Color color, MapImage fillImage, boolean disabled, TextElement text) {
         drawArea(w, getPath(w), color, fillImage, disabled, text);
     }
@@ -618,6 +652,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      *
      * @param way the way
      * @param pattern the image
+     * @param disabled If this should be drawn with a special disabled style.
      * @param offset offset from the way
      * @param spacing spacing between two images
      * @param phase initial spacing
@@ -846,11 +881,16 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     /**
      * Draw a number of the order of the two consecutive nodes within the
      * parents way
+     *
+     * @param n1 First node of the way segment.
+     * @param n2 Second node of the way segment.
+     * @param orderNumber The number of the segment in the way.
+     * @param clr The color to use for drawing the text.
      */
     public void drawOrderNumber(Node n1, Node n2, int orderNumber, Color clr) {
         Point p1 = nc.getPoint(n1);
         Point p2 = nc.getPoint(n2);
-        StyledMapRenderer.this.drawOrderNumber(p1, p2, orderNumber, clr);
+        drawOrderNumber(p1, p2, orderNumber, clr);
     }
 
     /**
@@ -1067,6 +1107,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 pVia, vx, vx2, vy, vy2, iconAngle, r.isSelected());
     }
 
+    /**
+     * Draws a text along a given way.
+     * @param way The way to draw the text on.
+     * @param text The text definition (font/.../text content) to draw.
+     */
     public void drawTextOnPath(Way way, TextElement text) {
         if (way == null || text == null)
             return;
@@ -1236,9 +1281,16 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     /**
-     * draw way
+     * draw way. This method allows for two draw styles (line using color, dashes using dashedColor) to be passed.
+     * @param way The way to draw
+     * @param color The base color to draw the way in
+     * @param line The line style to use. This is drawn using color.
+     * @param dashes The dash style to use. This is drawn using dashedColor. <code>null</code> if unused.
+     * @param dashedColor The color of the dashes.
+     * @param offset
      * @param showOrientation show arrows that indicate the technical orientation of
      *              the way (defined by order of nodes)
+     * @param showHeadArrowOnly True if only the arrow at the end of the line but not those on the segments should be displayed.
      * @param showOneway show symbols that indicate the direction of the feature,
      *              e.g. oneway street or waterway
      * @param onewayReversed for oneway=-1 and similar
@@ -1366,6 +1418,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         displaySegments(path, orientationArrows, onewayArrows, onewayArrowsCasing, color, line, dashes, dashedColor);
     }
 
+    /**
+     * Gets the "circum". This is the distance on the map in meters that 100 screen pixels represent.
+     * @return The "circum"
+     */
     public double getCircum() {
         return circum;
     }
