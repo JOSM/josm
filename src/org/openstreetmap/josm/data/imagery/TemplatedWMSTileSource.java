@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -38,6 +39,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     private Map<String, String> headers = new ConcurrentHashMap<>();
     private final List<String> serverProjections;
     private EastNorth topLeftCorner;
+    private Bounds worldBounds;
 
     private static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
     private static final String PATTERN_PROJ    = "\\{proj(\\([^})]+\\))?\\}";
@@ -78,9 +80,9 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
      * @param proj new projection that shall be used for computations
      */
     public void initProjection(Projection proj) {
-        Bounds bounds = proj.getWorldBoundsLatLon();
-        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
-        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
+        this.worldBounds = getWorldBounds();
+        EastNorth min = proj.latlon2eastNorth(worldBounds.getMin());
+        EastNorth max = proj.latlon2eastNorth(worldBounds.getMax());
         this.topLeftCorner = new EastNorth(min.east(), max.north());
     }
 
@@ -229,12 +231,8 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
 
     @Override
     public int getTileXMax(int zoom) {
-        Projection proj = Main.getProjection();
-        double scale = getDegreesPerTile(zoom);
-        Bounds bounds = Main.getProjection().getWorldBoundsLatLon();
-        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
-        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
-        return (int) Math.ceil(Math.abs(max.getX() - min.getX()) / scale);
+        LatLon bottomRight = new LatLon(worldBounds.getMinLat(), worldBounds.getMaxLon());
+        return latLonToTileXY(bottomRight.toCoordinate(), zoom).getXIndex();
     }
 
     @Override
@@ -244,12 +242,8 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
 
     @Override
     public int getTileYMax(int zoom) {
-        Projection proj = Main.getProjection();
-        double scale = getDegreesPerTile(zoom);
-        Bounds bounds = Main.getProjection().getWorldBoundsLatLon();
-        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
-        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
-        return (int) Math.ceil(Math.abs(max.getY() - min.getY()) / scale);
+        LatLon bottomRight = new LatLon(worldBounds.getMinLat(), worldBounds.getMaxLon());
+        return latLonToTileXY(bottomRight.toCoordinate(), zoom).getYIndex();
     }
 
     @Override
@@ -353,18 +347,35 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     }
 
     private double getDegreesPerTile(int zoom) {
-        return getDegreesPerTile(zoom, Main.getProjection());
-    }
+        Projection proj = Main.getProjection();
+        EastNorth min = proj.latlon2eastNorth(worldBounds.getMin());
+        EastNorth max = proj.latlon2eastNorth(worldBounds.getMax());
 
-    private double getDegreesPerTile(int zoom, Projection proj) {
-        Bounds bounds = proj.getWorldBoundsLatLon();
-        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
-        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
         int tilesPerZoom = (int) Math.pow(2, zoom - 1);
         return Math.max(
                 Math.abs(max.getY() - min.getY()) / tilesPerZoom,
                 Math.abs(max.getX() - min.getX()) / tilesPerZoom
                 );
+    }
+
+    /**
+     * returns world bounds, but detect situation, when default bounds are provided (-90, -180, 90, 180), and projection
+     * returns very close values for both min and max X. To work around this problem, cap this projection on north and south
+     * pole, the same way they are capped in Mercator projection, so conversions should work properly
+     */
+    private final static Bounds getWorldBounds() {
+        Projection proj = Main.getProjection();
+        Bounds bounds = proj.getWorldBoundsLatLon();
+        EastNorth min = proj.latlon2eastNorth(bounds.getMin());
+        EastNorth max = proj.latlon2eastNorth(bounds.getMax());
+
+        if (Math.abs(min.getX() - max.getX()) < 1 && bounds.equals(new Bounds(new LatLon(-90, -180), new LatLon(90, 180)))) {
+            return new Bounds(
+                    new LatLon(OsmMercator.MIN_LAT, bounds.getMinLon()),
+                    new LatLon(OsmMercator.MAX_LAT, bounds.getMaxLon())
+                    );
+        }
+        return bounds;
     }
 
     @Override
