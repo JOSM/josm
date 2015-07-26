@@ -19,6 +19,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -37,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultButtonModel;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -470,6 +472,23 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
     }
 
+    private class BooleanButtonModel extends DefaultButtonModel {
+        private Field field;
+
+        public BooleanButtonModel(Field field) {
+            this.field = field;
+        }
+
+        @Override
+        public boolean isSelected() {
+            try {
+                return field.getBoolean(AbstractTileSourceLayer.this);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
     /**
      * Creates popup menu items and binds to mouse actions
      */
@@ -479,20 +498,32 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         projectionChanged(null, Main.getProjection()); // check if projection is supported
         initTileSource(this.tileSource);
 
+        ;
         // keep them final here, so we avoid namespace clutter in the class
         final JPopupMenu tileOptionMenu = new JPopupMenu();
         final TileHolder clickedTileHolder = new TileHolder();
+        Field autoZoomField;
+        Field autoLoadField;
+        Field showErrorsField;
+        try {
+            autoZoomField = AbstractTileSourceLayer.class.getField("autoZoom");
+            autoLoadField = AbstractTileSourceLayer.class.getDeclaredField("autoLoad");
+            showErrorsField = AbstractTileSourceLayer.class.getDeclaredField("showErrors");
+        } catch (NoSuchFieldException | SecurityException e) {
+            // shoud not happen
+            throw new RuntimeException(e);
+        }
 
         autoZoom = PROP_DEFAULT_AUTOZOOM.get();
         JCheckBoxMenuItem autoZoomPopup = new JCheckBoxMenuItem();
+        autoZoomPopup.setModel(new BooleanButtonModel(autoZoomField));
         autoZoomPopup.setAction(new AutoZoomAction());
-        autoZoomPopup.setSelected(autoZoom);
         tileOptionMenu.add(autoZoomPopup);
 
         autoLoad = PROP_DEFAULT_AUTOLOAD.get();
         JCheckBoxMenuItem autoLoadPopup = new JCheckBoxMenuItem();
         autoLoadPopup.setAction(new AutoLoadTilesAction());
-        autoLoadPopup.setSelected(autoLoad);
+        autoLoadPopup.setModel(new BooleanButtonModel(autoLoadField));
         tileOptionMenu.add(autoLoadPopup);
 
         showErrors = PROP_DEFAULT_SHOWERRORS.get();
@@ -503,7 +534,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 showErrors = !showErrors;
             }
         });
-        showErrorsPopup.setSelected(showErrors);
+        showErrorsPopup.setModel(new BooleanButtonModel(showErrorsField));
         tileOptionMenu.add(showErrorsPopup);
 
         tileOptionMenu.add(new JMenuItem(new AbstractAction(tr("Load Tile")) {

@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -53,6 +54,7 @@ public class SessionWriter {
         registerSessionLayerExporter(OsmDataLayer.class , OsmDataSessionExporter.class);
         registerSessionLayerExporter(TMSLayer.class , ImagerySessionExporter.class);
         registerSessionLayerExporter(WMSLayer.class , ImagerySessionExporter.class);
+        registerSessionLayerExporter(WMTSLayer.class , ImagerySessionExporter.class);
         registerSessionLayerExporter(GpxLayer.class , GpxTracksSessionExporter.class);
         registerSessionLayerExporter(GeoImageLayer.class , GeoImageSessionExporter.class);
         registerSessionLayerExporter(MarkerLayer.class, MarkerSessionExporter.class);
