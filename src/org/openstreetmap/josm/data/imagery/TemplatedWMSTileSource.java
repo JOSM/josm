@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileXY;
@@ -168,49 +167,23 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     }
 
     @Override
-    public double getDistance(double lat1, double lon1, double lat2, double lon2) {
-        throw new UnsupportedOperationException("Not implemented");
+    public String getTileId(int zoom, int tilex, int tiley) {
+        return getTileUrl(zoom, tilex, tiley);
     }
 
     @Override
-    public int lonToX(double lon, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public int latToY(double lat, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double XToLon(int x, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double YToLat(int y, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double latToTileY(double lat, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public Coordinate tileXYToLatLon(Tile tile) {
+    public ICoordinate tileXYToLatLon(Tile tile) {
         return tileXYToLatLon(tile.getXtile(), tile.getYtile(), tile.getZoom());
     }
 
     @Override
-    public Coordinate tileXYToLatLon(TileXY xy, int zoom) {
+    public ICoordinate tileXYToLatLon(TileXY xy, int zoom) {
         return tileXYToLatLon(xy.getXIndex(), xy.getYIndex(), zoom);
     }
 
     @Override
-    public Coordinate tileXYToLatLon(int x, int y, int zoom) {
-        LatLon ret = Main.getProjection().eastNorth2latlon(getTileEastNorth(x, y, zoom));
-        return new Coordinate(ret.lat(),  ret.lon());
+    public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
+        return Main.getProjection().eastNorth2latlon(getTileEastNorth(x, y, zoom)).toCoordinate();
     }
 
     @Override
@@ -267,20 +240,24 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     }
 
     @Override
-    public Coordinate XYToLatLon(Point point, int zoom) {
+    public ICoordinate XYToLatLon(Point point, int zoom) {
         return XYToLatLon(point.x, point.y, zoom);
     }
 
     @Override
-    public Coordinate XYToLatLon(int x, int y, int zoom) {
+    public ICoordinate XYToLatLon(int x, int y, int zoom) {
         double scale = getDegreesPerTile(zoom) / getTileSize();
         Projection proj = Main.getProjection();
         EastNorth ret = new EastNorth(
                 topLeftCorner.east() + x * scale,
                 topLeftCorner.north() - y * scale
                 );
-        LatLon ll = proj.eastNorth2latlon(ret);
-        return new Coordinate(ll.lat(), ll.lon());
+        return proj.eastNorth2latlon(ret).toCoordinate();
+    }
+
+    @Override
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
     @Override
@@ -299,8 +276,33 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     }
 
     @Override
-    public Map<String, String> getHeaders() {
-        return headers;
+    public double getDistance(double lat1, double lon1, double lat2, double lon2) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public int lonToX(double lon, int zoom) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public int latToY(double lat, int zoom) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public double XToLon(int x, int zoom) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public double YToLat(int y, int zoom) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public double latToTileY(double lat, int zoom) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     /**
@@ -376,10 +378,5 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
                     );
         }
         return bounds;
-    }
-
-    @Override
-    public String getTileId(int zoom, int tilex, int tiley) {
-        return getTileUrl(zoom, tilex, tiley);
     }
 }
