@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -28,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -54,19 +56,30 @@ import org.openstreetmap.josm.tools.Pair;
  */
 public class CacheContentsPanel extends JPanel {
 
+    /**
+     *
+     * Class based on:  http://www.camick.com/java/source/ButtonColumn.java
+     * https://tips4java.wordpress.com/2009/07/12/table-button-column/
+     *
+     */
     private static final class ButtonColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
         private final Action action;
         private final JButton renderButton;
+        private JButton editButton;
+        private Object editorValue;
 
         private ButtonColumn(Action action) {
             this.action = action;
             renderButton = new JButton();
-            renderButton.addActionListener(this);
+            editButton = new JButton();
+            editButton.setFocusPainted(false);
+            editButton.addActionListener(this);
+            editButton.setBorder(new LineBorder(Color.BLUE));
         }
 
         @Override
         public Object getCellEditorValue() {
-            return renderButton;
+            return editorValue;
         }
 
         @Override
@@ -76,39 +89,50 @@ public class CacheContentsPanel extends JPanel {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            return getTableCellRendererComponent(table, value, isSelected, false, row, column);
+            this.editorValue = value;
+            if (value == null) {
+                editButton.setText("");
+                editButton.setIcon(null);
+            } else if (value instanceof Icon) {
+                editButton.setText("");
+                editButton.setIcon((Icon) value);
+            } else {
+                editButton.setText(value.toString());
+                editButton.setIcon(null);
+            }
+            this.editorValue = value;
+            return editButton;
         }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
-
             if (isSelected) {
-                    renderButton.setForeground(table.getSelectionForeground());
-                    renderButton.setBackground(table.getSelectionBackground());
+                renderButton.setForeground(table.getSelectionForeground());
+                renderButton.setBackground(table.getSelectionBackground());
             } else {
-                    renderButton.setForeground(table.getForeground());
-                    renderButton.setBackground(UIManager.getColor("Button.background"));
+                renderButton.setForeground(table.getForeground());
+                renderButton.setBackground(UIManager.getColor("Button.background"));
             }
 
             renderButton.setFocusPainted(hasFocus);
 
             if (value == null) {
-                    renderButton.setText("");
-                    renderButton.setIcon(null);
+                renderButton.setText("");
+                renderButton.setIcon(null);
             } else if (value instanceof Icon) {
-                    renderButton.setText("");
-                    renderButton.setIcon((Icon) value);
+                renderButton.setText("");
+                renderButton.setIcon((Icon) value);
             } else {
-                    renderButton.setText(value.toString());
-                    renderButton.setIcon(null);
+                renderButton.setText(value.toString());
+                renderButton.setIcon(null);
             }
             return renderButton;
         }
 
     }
 
-    private transient ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final transient ExecutorService executor = Executors.newSingleThreadExecutor();
 
     /**
      * Creates cache content panel
