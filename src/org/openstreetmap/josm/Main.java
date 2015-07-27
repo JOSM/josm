@@ -142,8 +142,10 @@ public abstract class Main {
      * @return <code>true</code> if JOSM currently displays a map view
      */
     public static boolean isDisplayingMapView() {
-        if (map == null) return false;
-        if (map.mapView == null) return false;
+        if (map == null)
+            return false;
+        if (map.mapView == null)
+            return false;
         return true;
     }
 
@@ -229,7 +231,8 @@ public abstract class Main {
     protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
     // First lines of last 5 error and warning messages, used for bug reports
-    private static final List<String> ERRORS_AND_WARNINGS = Collections.<String>synchronizedList(new ArrayList<String>());
+    private static final List<String> ERRORS_AND_WARNINGS = Collections
+            .<String> synchronizedList(new ArrayList<String>());
 
     private static final Set<OnlineResource> OFFLINE_RESOURCES = new HashSet<>();
 
@@ -272,7 +275,7 @@ public abstract class Main {
             return;
         if (msg != null && !msg.isEmpty()) {
             System.err.println(tr("ERROR: {0}", msg));
-            rememberWarnErrorMsg("E: "+msg);
+            rememberWarnErrorMsg("E: " + msg);
         }
     }
 
@@ -285,7 +288,7 @@ public abstract class Main {
             return;
         if (msg != null && !msg.isEmpty()) {
             System.err.println(tr("WARNING: {0}", msg));
-            rememberWarnErrorMsg("W: "+msg);
+            rememberWarnErrorMsg("W: " + msg);
         }
     }
 
@@ -569,8 +572,8 @@ public abstract class Main {
         // creating toolbar
         contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);
 
-        registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
-                KeyEvent.VK_F1, Shortcut.DIRECT));
+        registerActionShortcut(menu.help,
+                Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.DIRECT));
 
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
         List<Callable<Void>> tasks = new ArrayList<>();
@@ -624,8 +627,8 @@ public abstract class Main {
         });
 
         try {
-            for (Future<Void> i : Executors.newFixedThreadPool(
-                    Runtime.getRuntime().availableProcessors()).invokeAll(tasks)) {
+            for (Future<Void> i : Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()).invokeAll(
+                    tasks)) {
                 i.get();
             }
         } catch (Exception ex) {
@@ -756,7 +759,10 @@ public abstract class Main {
             createMapFrame(layer, viewport);
         }
         layer.hookUpMapView();
+        //Osm layer
         map.mapView.addLayer(layer);
+        Main.info(layer.getName());
+
         if (noMap) {
             Main.map.setVisible(true);
         } else if (viewport != null) {
@@ -785,7 +791,8 @@ public abstract class Main {
      * @return <code>true</code> if there is an edit layer
      */
     public boolean hasEditLayer() {
-        if (getEditLayer() == null) return false;
+        if (getEditLayer() == null)
+            return false;
         return true;
     }
 
@@ -795,7 +802,8 @@ public abstract class Main {
      * @return the current edit layer. <code>null</code>, if no current edit layer exists
      */
     public OsmDataLayer getEditLayer() {
-        if (!isDisplayingMapView()) return null;
+        if (!isDisplayingMapView())
+            return null;
         return map.mapView.getEditLayer();
     }
 
@@ -805,7 +813,8 @@ public abstract class Main {
      * @return the current data set. <code>null</code>, if no current data set exists
      */
     public DataSet getCurrentDataSet() {
-        if (!hasEditLayer()) return null;
+        if (!hasEditLayer())
+            return null;
         return getEditLayer().data;
     }
 
@@ -823,7 +832,8 @@ public abstract class Main {
             return ((DrawAction) map.mapMode).getInProgressSelection();
         } else {
             DataSet ds = getCurrentDataSet();
-            if (ds == null) return null;
+            if (ds == null)
+                return null;
             return ds.getSelected();
         }
     }
@@ -834,7 +844,8 @@ public abstract class Main {
      * @return the currently active layer. <code>null</code>, if currently no active layer exists
      */
     public Layer getActiveLayer() {
-        if (!isDisplayingMapView()) return null;
+        if (!isDisplayingMapView())
+            return null;
         return map.mapView.getActiveLayer();
     }
 
@@ -856,7 +867,8 @@ public abstract class Main {
         InputMap inputMap = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         Object existing = inputMap.get(keyStroke);
         if (existing != null && !existing.equals(action)) {
-            info(String.format("Keystroke %s is already assigned to %s, will be overridden by %s", keyStroke, existing, action));
+            info(String.format("Keystroke %s is already assigned to %s, will be overridden by %s", keyStroke, existing,
+                    action));
         }
         inputMap.put(keyStroke, action);
 
@@ -942,7 +954,7 @@ public abstract class Main {
                     try {
                         UIManager.setLookAndFeel((LookAndFeel) klass.newInstance());
                     } catch (Exception ex) {
-                        warn("Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
+                        warn("Cannot set Look and Feel: " + laf + ": " + ex.getMessage());
                     }
                 } else {
                     info("Look and Feel not found: " + laf);
@@ -974,8 +986,8 @@ public abstract class Main {
         }
 
         geometry = WindowGeometry.mainWindow("gui.geometry",
-            args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null,
-            !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
+                args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null,
+                !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
     }
 
     protected static void postConstructorProcessCmdLine(Map<Option, Collection<String>> args) {
@@ -983,7 +995,7 @@ public abstract class Main {
             List<File> fileList = new ArrayList<>();
             for (String s : args.get(Option.DOWNLOAD)) {
                 File f = null;
-                switch(paramType(s)) {
+                switch (paramType(s)) {
                 case httpUrl:
                     downloadFromParamHttp(false, s);
                     break;
@@ -994,12 +1006,8 @@ public abstract class Main {
                     try {
                         f = new File(new URI(s));
                     } catch (URISyntaxException e) {
-                        JOptionPane.showMessageDialog(
-                                Main.parent,
-                                tr("Ignoring malformed file URL: \"{0}\"", s),
-                                tr("Warning"),
-                                JOptionPane.WARNING_MESSAGE
-                                );
+                        JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed file URL: \"{0}\"", s),
+                                tr("Warning"), JOptionPane.WARNING_MESSAGE);
                     }
                     if (f != null) {
                         fileList.add(f);
@@ -1017,7 +1025,7 @@ public abstract class Main {
         }
         if (args.containsKey(Option.DOWNLOADGPS)) {
             for (String s : args.get(Option.DOWNLOADGPS)) {
-                switch(paramType(s)) {
+                switch (paramType(s)) {
                 case httpUrl:
                     downloadFromParamHttp(true, s);
                     break;
@@ -1026,12 +1034,9 @@ public abstract class Main {
                     break;
                 case fileUrl:
                 case fileName:
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                            );
+                    JOptionPane.showMessageDialog(Main.parent,
+                            tr("Parameter \"downloadgps\" does not accept file names or file URLs"), tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE);
                 }
             }
         }
@@ -1050,7 +1055,8 @@ public abstract class Main {
      * @since 2025
      */
     public static boolean saveUnsavedModifications() {
-        if (!isDisplayingMapView()) return true;
+        if (!isDisplayingMapView())
+            return true;
         return saveUnsavedModifications(map.mapView.getLayersOfType(AbstractModifiableLayer.class), true);
     }
 
@@ -1066,12 +1072,13 @@ public abstract class Main {
     public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, boolean exit) {
         SaveLayersDialog dialog = new SaveLayersDialog(parent);
         List<AbstractModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
-        for (Layer l: selectedLayers) {
+        for (Layer l : selectedLayers) {
             if (!(l instanceof AbstractModifiableLayer)) {
                 continue;
             }
             AbstractModifiableLayer odl = (AbstractModifiableLayer) l;
-            if ((odl.requiresSaveToFile() || (odl.requiresUploadToServer() && !odl.isUploadDiscouraged())) && odl.isModified()) {
+            if ((odl.requiresSaveToFile() || (odl.requiresUploadToServer() && !odl.isUploadDiscouraged()))
+                    && odl.isModified()) {
                 layersWithUnmodifiedChanges.add(odl);
             }
         }
@@ -1083,10 +1090,12 @@ public abstract class Main {
         if (!layersWithUnmodifiedChanges.isEmpty()) {
             dialog.getModel().populate(layersWithUnmodifiedChanges);
             dialog.setVisible(true);
-            switch(dialog.getUserAction()) {
-            case PROCEED: return true;
+            switch (dialog.getUserAction()) {
+            case PROCEED:
+                return true;
             case CANCEL:
-            default: return false;
+            default:
+                return false;
             }
         }
 
@@ -1114,7 +1123,7 @@ public abstract class Main {
             // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
             if (Main.isDisplayingMapView()) {
                 Collection<Layer> layers = new ArrayList<>(Main.map.mapView.getAllLayers());
-                for (Layer l: layers) {
+                for (Layer l : layers) {
                     Main.main.removeLayer(l);
                 }
             }
@@ -1133,7 +1142,9 @@ public abstract class Main {
      * The type of a command line parameter, to be used in switch statements.
      * @see #paramType
      */
-    private enum DownloadParamType { httpUrl, fileUrl, bounds, fileName }
+    private enum DownloadParamType {
+        httpUrl, fileUrl, bounds, fileName
+    }
 
     /**
      * Guess the type of a parameter string specified on the command line with --download= or --downloadgps.
@@ -1141,10 +1152,13 @@ public abstract class Main {
      * @return The guessed parameter type
      */
     private static DownloadParamType paramType(String s) {
-        if (s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
-        if (s.startsWith("file:")) return DownloadParamType.fileUrl;
+        if (s.startsWith("http:") || s.startsWith("https:"))
+            return DownloadParamType.httpUrl;
+        if (s.startsWith("file:"))
+            return DownloadParamType.fileUrl;
         String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
-        if (s.matches(coorPattern+"(,"+coorPattern+") {3}")) return DownloadParamType.bounds;
+        if (s.matches(coorPattern + "(," + coorPattern + ") {3}"))
+            return DownloadParamType.bounds;
         // everything else must be a file name
         return DownloadParamType.fileName;
     }
@@ -1157,12 +1171,8 @@ public abstract class Main {
     private static void downloadFromParamHttp(final boolean rawGps, String s) {
         final Bounds b = OsmUrlToBounds.parse(s);
         if (b == null) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Ignoring malformed URL: \"{0}\"", s),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-                    );
+            JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed URL: \"{0}\"", s), tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE);
         } else {
             downloadFromParamBounds(rawGps, b);
         }
@@ -1176,10 +1186,8 @@ public abstract class Main {
     private static void downloadFromParamBounds(final boolean rawGps, String s) {
         final StringTokenizer st = new StringTokenizer(s, ",");
         if (st.countTokens() == 4) {
-            Bounds b = new Bounds(
-                    new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())),
-                    new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()))
-                    );
+            Bounds b = new Bounds(new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())),
+                    new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())));
             downloadFromParamBounds(rawGps, b);
         }
     }
@@ -1210,20 +1218,18 @@ public abstract class Main {
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase(Locale.ENGLISH).startsWith("windows")) {
             platform = new PlatformHookWindows();
-        } else if ("Linux".equals(os) || "Solaris".equals(os) ||
-                "SunOS".equals(os) || "AIX".equals(os) ||
-                "FreeBSD".equals(os) || "NetBSD".equals(os) || "OpenBSD".equals(os)) {
+        } else if ("Linux".equals(os) || "Solaris".equals(os) || "SunOS".equals(os) || "AIX".equals(os)
+                || "FreeBSD".equals(os) || "NetBSD".equals(os) || "OpenBSD".equals(os)) {
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase(Locale.ENGLISH).startsWith("mac os x")) {
             platform = new PlatformHookOsx();
         } else {
-            warn("I don't know your operating system '"+os+"', so I'm guessing its some kind of *nix.");
+            warn("I don't know your operating system '" + os + "', so I'm guessing its some kind of *nix.");
             platform = new PlatformHookUnixoid();
         }
     }
 
-    private static class WindowPositionSizeListener extends WindowAdapter implements
-    ComponentListener {
+    private static class WindowPositionSizeListener extends WindowAdapter implements ComponentListener {
         @Override
         public void windowStateChanged(WindowEvent e) {
             Main.windowState = e.getNewState();
@@ -1284,13 +1290,12 @@ public abstract class Main {
             if (version.matches("^(1\\.)?[789].*"))
                 return;
             if (version.matches("^(1\\.)?[56].*")) {
-                JMultilineLabel ho = new JMultilineLabel("<html>"+
-                        tr("<h2>JOSM requires Java version {0}.</h2>"+
-                                "Detected Java version: {1}.<br>"+
-                                "You can <ul><li>update your Java (JRE) or</li>"+
-                                "<li>use an earlier (Java {2} compatible) version of JOSM.</li></ul>"+
-                                "More Info:", "7", version, "6")+"</html>");
-                JTextArea link = new JTextArea(HelpUtil.getWikiBaseHelpUrl()+"/Help/SystemRequirements");
+                JMultilineLabel ho = new JMultilineLabel("<html>"
+                        + tr("<h2>JOSM requires Java version {0}.</h2>" + "Detected Java version: {1}.<br>"
+                                + "You can <ul><li>update your Java (JRE) or</li>"
+                                + "<li>use an earlier (Java {2} compatible) version of JOSM.</li></ul>" + "More Info:",
+                                "7", version, "6") + "</html>");
+                JTextArea link = new JTextArea(HelpUtil.getWikiBaseHelpUrl() + "/Help/SystemRequirements");
                 link.setEditable(false);
                 link.setBackground(panel.getBackground());
                 JPanel panel = new JPanel(new GridBagLayout());
@@ -1303,14 +1308,14 @@ public abstract class Main {
                 final String EXIT = tr("Exit JOSM");
                 final String CONTINUE = tr("Continue, try anyway");
                 int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, new String[] {EXIT, CONTINUE}, EXIT);
+                        JOptionPane.ERROR_MESSAGE, null, new String[] { EXIT, CONTINUE }, EXIT);
                 if (ret == 0) {
                     System.exit(0);
                 }
                 return;
             }
         }
-        error("Could not recognize Java Version: "+version);
+        error("Could not recognize Java Version: " + version);
     }
 
     /* ----------------------------------------------------------------------------------------- */
@@ -1384,11 +1389,13 @@ public abstract class Main {
      * @param listener the listener. Ignored if <code>null</code>.
      */
     public static void addProjectionChangeListener(ProjectionChangeListener listener) {
-        if (listener == null) return;
+        if (listener == null)
+            return;
         synchronized (Main.class) {
             for (WeakReference<ProjectionChangeListener> wr : listeners) {
                 // already registered ? => abort
-                if (wr.get() == listener) return;
+                if (wr.get() == listener)
+                    return;
             }
             listeners.add(new WeakReference<>(listener));
         }
@@ -1400,7 +1407,8 @@ public abstract class Main {
      * @param listener the listener. Ignored if <code>null</code>.
      */
     public static void removeProjectionChangeListener(ProjectionChangeListener listener) {
-        if (listener == null) return;
+        if (listener == null)
+            return;
         synchronized (Main.class) {
             Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
             while (it.hasNext()) {
@@ -1426,6 +1434,7 @@ public abstract class Main {
          * Called when the user activates a window of another application.
          */
         void toOtherApplication();
+
         /**
          * Called when the user comes from a window of another application
          * back to JOSM.
@@ -1441,11 +1450,13 @@ public abstract class Main {
      * @param listener the listener. Ignored if <code>null</code>.
      */
     public static void addWindowSwitchListener(WindowSwitchListener listener) {
-        if (listener == null) return;
+        if (listener == null)
+            return;
         synchronized (Main.class) {
             for (WeakReference<WindowSwitchListener> wr : windowSwitchListeners) {
                 // already registered ? => abort
-                if (wr.get() == listener) return;
+                if (wr.get() == listener)
+                    return;
             }
             boolean wasEmpty = windowSwitchListeners.isEmpty();
             windowSwitchListeners.add(new WeakReference<>(listener));
@@ -1464,7 +1475,8 @@ public abstract class Main {
      * @param listener the listener. Ignored if <code>null</code>.
      */
     public static void removeWindowSwitchListener(WindowSwitchListener listener) {
-        if (listener == null) return;
+        if (listener == null)
+            return;
         synchronized (Main.class) {
             Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
             while (it.hasNext()) {
@@ -1631,7 +1643,7 @@ public abstract class Main {
         if (url != null && t != null) {
             Throwable old = addNetworkError(url.toExternalForm(), t);
             if (old != null) {
-                Main.warn("Already here "+old);
+                Main.warn("Already here " + old);
             }
             return old;
         }
