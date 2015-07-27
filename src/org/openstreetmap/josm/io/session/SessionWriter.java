@@ -63,7 +63,7 @@ public class SessionWriter {
     /**
      * Register a session layer exporter.
      *
-     * The exporter class must have an one-argument constructor with layerClass as formal parameter type.
+     * The exporter class must have a one-argument constructor with layerClass as formal parameter type.
      */
     public static void registerSessionLayerExporter(Class<? extends Layer> layerClass, Class<? extends SessionLayerExporter> exporter) {
         sessionLayerExporters.put(layerClass, exporter);
@@ -92,7 +92,7 @@ public class SessionWriter {
     /**
      * Constructs a new {@code SessionWriter}.
      * @param layers The ordered list of layers to save
-     * @param active The index of active layer in {@code layers} (starts to 0). Ignored if set to -1
+     * @param active The index of active layer in {@code layers} (starts at 0). Ignored if set to -1
      * @param exporters The exporters to use to save layers
      * @param zip {@code true} if a joz archive has to be created, {@code false otherwise}
      * @since 6271

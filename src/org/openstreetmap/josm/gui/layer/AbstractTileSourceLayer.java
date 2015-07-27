@@ -16,6 +16,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
@@ -1016,6 +1017,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 missedTiles.add(tile);
                 continue;
             }
+
+            // applying all filters to this layer
+            img = applyImageProcessors((BufferedImage) img);
+
             Rectangle sourceRect = tileToRect(tile);
             if (borderRect != null && !sourceRect.intersects(borderRect)) {
                 continue;
