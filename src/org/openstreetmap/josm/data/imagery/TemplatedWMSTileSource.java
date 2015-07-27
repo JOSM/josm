@@ -7,9 +7,10 @@ import java.awt.Point;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +37,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTileSource {
     private Map<String, String> headers = new ConcurrentHashMap<>();
-    private final List<String> serverProjections;
+    private final Set<String> serverProjections;
     private EastNorth topLeftCorner;
     private Bounds worldBounds;
 
@@ -62,7 +63,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
      */
     public TemplatedWMSTileSource(ImageryInfo info) {
         super(info);
-        this.serverProjections = info.getServerProjections();
+        this.serverProjections = new TreeSet<>(info.getServerProjections());
         handleTemplate();
         initProjection();
     }
@@ -142,9 +143,9 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         // [1] https://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::4326&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:4326
         // CHECKSTYLE.ON: LineLength
         boolean switchLatLon = false;
-        if (baseUrl.toLowerCase().contains("crs=epsg:4326")) {
+        if (baseUrl.toLowerCase(Locale.US).contains("crs=epsg:4326")) {
             switchLatLon = true;
-        } else if (baseUrl.toLowerCase().contains("crs=")) {
+        } else if (baseUrl.toLowerCase(Locale.US).contains("crs=")) {
             // assume WMS 1.3.0
             switchLatLon = Main.getProjection().switchXY();
         }
@@ -353,7 +354,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         EastNorth min = proj.latlon2eastNorth(worldBounds.getMin());
         EastNorth max = proj.latlon2eastNorth(worldBounds.getMax());
 
-        int tilesPerZoom = (int) Math.pow(2, zoom - 1);
+        int tilesPerZoom = (int) Math.pow(2d, zoom - 1);
         return Math.max(
                 Math.abs(max.getY() - min.getY()) / tilesPerZoom,
                 Math.abs(max.getX() - min.getX()) / tilesPerZoom
@@ -365,7 +366,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
      * returns very close values for both min and max X. To work around this problem, cap this projection on north and south
      * pole, the same way they are capped in Mercator projection, so conversions should work properly
      */
-    private final static Bounds getWorldBounds() {
+    private static Bounds getWorldBounds() {
         Projection proj = Main.getProjection();
         Bounds bounds = proj.getWorldBoundsLatLon();
         EastNorth min = proj.latlon2eastNorth(bounds.getMin());
