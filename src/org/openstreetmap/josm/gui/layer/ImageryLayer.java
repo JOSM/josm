@@ -21,6 +21,7 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,8 @@ public abstract class ImageryLayer extends Layer {
     public static final ColorProperty PROP_FADE_COLOR = new ColorProperty(marktr("Imagery fade"), Color.white);
     public static final IntegerProperty PROP_FADE_AMOUNT = new IntegerProperty("imagery.fade_amount", 0);
     public static final IntegerProperty PROP_SHARPEN_LEVEL = new IntegerProperty("imagery.sharpen_level", 0);
+
+    private final List<ImageProcessor> imageProcessors = new ArrayList<>();
 
     public static Color getFadeColor() {
         return PROP_FADE_COLOR.get();
@@ -248,6 +251,51 @@ public abstract class ImageryLayer extends Layer {
         }
         BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
         return op.filter(tmp, null);
+    }
+
+    /**
+     * This method adds the {@link ImageProcessor} to this Layer
+     *
+     * @param processor that processes the image
+     *
+     * @return true if processor was added, false otherwise
+     */
+    public boolean addImageProcessor(ImageProcessor processor) {
+        return imageProcessors.add(processor);
+    }
+
+    /**
+     * This method removes given {@link ImageProcessor} from this layer
+     *
+     * @param processor which is needed to be removed
+     *
+     * @return true if processor was removed
+     */
+    public boolean removeImageProcessor(ImageProcessor processor) {
+        return imageProcessors.remove(processor);
+    }
+
+    /**
+     * This method gets all {@link ImageProcessor}s of the layer
+     *
+     * @return list of image processors without removed one
+     */
+    public List<ImageProcessor> getImageProcessors() {
+        return imageProcessors;
+    }
+
+    /**
+     * Applies all the chosen {@link ImageProcessor}s to the image
+     *
+     * @param img - image which should be changed
+     *
+     * @return the new changed image
+     */
+    public BufferedImage applyImageProcessors(BufferedImage img) {
+        for (ImageProcessor processor : imageProcessors) {
+            img = processor.process(img);
+        }
+        return img;
     }
 
     /**

@@ -85,6 +85,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     public static final String VISIBLE_PROP = Layer.class.getName() + ".visible";
     public static final String OPACITY_PROP = Layer.class.getName() + ".opacity";
     public static final String NAME_PROP = Layer.class.getName() + ".name";
+    public static final String FILTER_STATE_PROP = Layer.class.getName() + ".filterstate";
 
     public static final int ICON_SIZE = 16;
 
@@ -313,6 +314,13 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     }
 
     /**
+     * Sets new state to the layer after applying {@link ImageProcessor}.
+     */
+    public void setFilterStateChanged() {
+        fireFilterStateChanged();
+    }
+
+    /**
      * Toggles the visibility state of this layer.
      */
     public void toggleVisible() {
@@ -355,6 +363,13 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      */
     protected void fireOpacityChanged(double oldValue, double newValue) {
         propertyChangeSupport.firePropertyChange(OPACITY_PROP, oldValue, newValue);
+    }
+
+    /**
+     * fires a property change for the property {@link #FILTER_STATE_PROP}.
+     */
+    protected void fireFilterStateChanged() {
+        propertyChangeSupport.firePropertyChange(FILTER_STATE_PROP, null, null);
     }
 
     /**

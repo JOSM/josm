@@ -1151,7 +1151,8 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(Layer.VISIBLE_PROP)) {
             repaint();
-        } else if (evt.getPropertyName().equals(Layer.OPACITY_PROP)) {
+        } else if (evt.getPropertyName().equals(Layer.OPACITY_PROP) ||
+                evt.getPropertyName().equals(Layer.FILTER_STATE_PROP)) {
             Layer l = (Layer) evt.getSource();
             if (l.isVisible()) {
                 changedLayer = l;
