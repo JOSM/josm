@@ -180,7 +180,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                 this.currentLayer = layerSelection.getSelectedLayer();
                 // TODO: save layer information into ImageryInfo / ImageryPreferences?
             } else {
-                throw new IllegalArgumentException(); //user canceled operation
+                throw new IllegalArgumentException(tr("No layer selected")); //user canceled operation
             }
         } else if (layers.size() == 1) {
             this.currentLayer = this.layers.iterator().next();
