@@ -12,7 +12,6 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
-import org.openstreetmap.josm.data.imagery.TMSCachedTileLoaderJob;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -43,7 +42,7 @@ public class TMSSettingsPanel extends JPanel {
         maxZoomLvl = new JSpinner(new SpinnerNumberModel(
                 TMSLayer.PROP_MAX_ZOOM_LVL.get().intValue(), TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
         maxConcurrentDownloads = new JSpinner(new SpinnerNumberModel(
-                TMSCachedTileLoaderJob.THREAD_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
+                TMSCachedTileLoader.THREAD_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
         maxDownloadsPerHost = new JSpinner(new SpinnerNumberModel(
                 TMSCachedTileLoader.HOST_LIMIT.get().intValue(), 0, Integer.MAX_VALUE, 1));
 
@@ -87,7 +86,7 @@ public class TMSSettingsPanel extends JPanel {
         this.addToSlippyMapChosser.setSelected(TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get());
         this.maxZoomLvl.setValue(TMSLayer.getMaxZoomLvl(null));
         this.minZoomLvl.setValue(TMSLayer.getMinZoomLvl(null));
-        this.maxConcurrentDownloads.setValue(TMSCachedTileLoaderJob.THREAD_LIMIT.get());
+        this.maxConcurrentDownloads.setValue(TMSCachedTileLoader.THREAD_LIMIT.get());
         this.maxDownloadsPerHost.setValue(TMSCachedTileLoader.HOST_LIMIT.get());
     }
 
