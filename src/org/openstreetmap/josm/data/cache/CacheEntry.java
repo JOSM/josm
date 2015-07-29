@@ -25,6 +25,9 @@ public class CacheEntry implements Serializable {
      * @return cache entry content
      */
     public byte[] getContent() {
+        if (content == null) {
+            return new byte[]{};
+        }
         return Arrays.copyOf(content, content.length);
     }
 }
