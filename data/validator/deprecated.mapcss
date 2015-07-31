@@ -331,9 +331,9 @@
   fixAdd: "park_ride=yes";
 }
 
-/* see #10661, #10837 */
+/* see #10661, #10837, #11737 */
 *[barrier=yes],
-*[aerialway=yes],
+*[aerialway=yes][!public_transport],
 *[amenity=yes],
 *[place=yes] {
   throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by a specific value.", "{0.key}", "{0.value}");
