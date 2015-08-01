@@ -1,11 +1,11 @@
-// License: BSD or GPL. For details, see Readme.txt file.
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.util.Random;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 
-/*
+/**
  * This tilesource uses different to OsmMercator projection.
  *
  * Earth is assumed an ellipsoid in this projection, unlike
@@ -17,7 +17,6 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
  *
  * TODO: correct getDistance() method.
  */
-
 public class ScanexTileSource extends TMSTileSource {
     private static final String DEFAULT_URL = "http://maps.kosmosnimki.ru";
     private static final int DEFAULT_MAXZOOM = 14;
@@ -34,9 +33,11 @@ public class ScanexTileSource extends TMSTileSource {
             this.name = name;
             this.uri = uri;
         }
+
         public String getName() {
             return name;
         }
+
         public String getUri() {
             return uri;
         }
@@ -65,12 +66,12 @@ public class ScanexTileSource extends TMSTileSource {
 
     @Override
     public String getExtension() {
-        return("jpeg");
+        return "jpeg";
     }
 
     @Override
     public String getTilePath(int zoom, int tilex, int tiley) {
-        int tmp = (int)Math.pow(2.0, zoom - 1);
+        int tmp = (int) Math.pow(2.0, zoom - 1);
 
         tilex = tilex - tmp;
         tiley = tmp - tiley - 1;
@@ -83,7 +84,6 @@ public class ScanexTileSource extends TMSTileSource {
         return TileUpdate.IfNoneMatch;
     }
 
-
     /*
      * Latitude to Y and back calculations.
      */
@@ -93,12 +93,12 @@ public class ScanexTileSource extends TMSTileSource {
 
     @Override
     public int latToY(double lat, int zoom) {
-        return (int )(latToTileY(lat, zoom) * tileSize);
+        return (int) (latToTileY(lat, zoom) * tileSize);
     }
 
     @Override
     public double YToLat(int y, int zoom) {
-        return tileYToLat((double )y / tileSize, zoom);
+        return tileYToLat((double) y / tileSize, zoom);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class ScanexTileSource extends TMSTileSource {
 
     @Override
     public double tileYToLat(int y, int zoom) {
-        return tileYToLat((double )y, zoom);
+        return tileYToLat((double) y, zoom);
     }
 
     /*
@@ -132,7 +132,7 @@ public class ScanexTileSource extends TMSTileSource {
             if (lat > OsmMercator.MAX_LAT || lat < OsmMercator.MIN_LAT) {
                 Random r = new Random();
                 lat = OsmMercator.MIN_LAT +
-                  r.nextInt((int )(OsmMercator.MAX_LAT - OsmMercator.MIN_LAT));
+                  r.nextInt((int) (OsmMercator.MAX_LAT - OsmMercator.MIN_LAT));
             }
         } while ((Math.abs(lat0 - lat) > 0.000001));
 
@@ -143,17 +143,17 @@ public class ScanexTileSource extends TMSTileSource {
 
     /* Next term in Newton's polynomial */
     private double NextTerm(double lat, double y, int zoom) {
-        double sinl=Math.sin(lat);
-        double cosl=Math.cos(lat);
+        double sinl = Math.sin(lat);
+        double cosl = Math.cos(lat);
         double ec, f, df;
 
-        zoom = (int )Math.pow(2.0, zoom - 1);
+        zoom = (int) Math.pow(2.0, zoom - 1);
         ec = Math.exp((1 - y/zoom)*Math.PI);
 
         f = (Math.tan(Math.PI/4+lat/2) -
             ec * Math.pow(Math.tan(Math.PI/4 + Math.asin(E * sinl)/2), E));
         df = 1/(1 - sinl) - ec * E * cosl/((1 - E * sinl) *
-            (Math.sqrt (1 - E * E * sinl * sinl)));
+            (Math.sqrt(1 - E * E * sinl * sinl)));
 
         return (f/df);
     }

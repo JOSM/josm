@@ -52,9 +52,11 @@ public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEd
             return data;
         }
     }*/
-    public void addNodeListener(MouseAdapter listener){
+
+    public void addNodeListener(MouseAdapter listener) {
         renderer.addNodeListener(listener);
     }
+
     @Override
     public boolean isCellEditable(final EventObject event) {
         if (!(event instanceof MouseEvent)) return false;
@@ -75,8 +77,7 @@ public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEd
     @Override
     public Component getTreeCellEditorComponent(final JTree tree,
         final Object value, final boolean selected, final boolean expanded,
-        final boolean leaf, final int row)
-    {
+        final boolean leaf, final int row) {
 
         final Component editor =
             renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf,

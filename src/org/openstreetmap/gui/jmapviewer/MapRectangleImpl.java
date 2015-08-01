@@ -18,15 +18,19 @@ public class MapRectangleImpl extends MapObjectImpl implements MapRectangle {
     public MapRectangleImpl(Coordinate topLeft, Coordinate bottomRight) {
         this(null, null, topLeft, bottomRight);
     }
+
     public MapRectangleImpl(String name, Coordinate topLeft, Coordinate bottomRight) {
         this(null, name, topLeft, bottomRight);
     }
+
     public MapRectangleImpl(Layer layer, Coordinate topLeft, Coordinate bottomRight) {
         this(layer, null, topLeft, bottomRight);
     }
+
     public MapRectangleImpl(Layer layer, String name, Coordinate topLeft, Coordinate bottomRight) {
         this(layer, name, topLeft, bottomRight, getDefaultStyle());
     }
+
     public MapRectangleImpl(Layer layer, String name, Coordinate topLeft, Coordinate bottomRight, Style style) {
         super(layer, name, style);
         this.topLeft = topLeft;
@@ -61,13 +65,13 @@ public class MapRectangleImpl extends MapObjectImpl implements MapRectangle {
         if (g instanceof Graphics2D) {
             ((Graphics2D) g).setStroke(oldStroke);
         }
-        int width=bottomRight.x-topLeft.x;
-        int height=bottomRight.y-topLeft.y;
-        Point p= new Point(topLeft.x+(width/2), topLeft.y+(height/2));
-        if(getLayer()==null||getLayer().isVisibleTexts()) paintText(g, p);
+        int width = bottomRight.x-topLeft.x;
+        int height = bottomRight.y-topLeft.y;
+        Point p = new Point(topLeft.x+(width/2), topLeft.y+(height/2));
+        if (getLayer() == null || getLayer().isVisibleTexts()) paintText(g, p);
     }
 
-    public static Style getDefaultStyle(){
+    public static Style getDefaultStyle() {
         return new Style(Color.BLUE, null, new BasicStroke(2), getDefaultFont());
     }
 

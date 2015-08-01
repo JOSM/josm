@@ -11,7 +11,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
     
     /**
-     * The OSM attribution. Must be always in line with <a href="https://www.openstreetmap.org/copyright/en">https://www.openstreetmap.org/copyright/en</a>
+     * The OSM attribution. Must be always in line with 
+     * <a href="https://www.openstreetmap.org/copyright/en">https://www.openstreetmap.org/copyright/en</a>
      */
     public static final String DEFAULT_OSM_ATTRIBUTION = "\u00a9 OpenStreetMap contributors";
     

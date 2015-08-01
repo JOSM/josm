@@ -1,4 +1,4 @@
-// License: GPL. For details, see LICENSE file.
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
 import java.util.Map;
@@ -14,5 +14,5 @@ public interface TemplatedTileSource extends TileSource {
      *
      * @return headers to be sent with http requests
      */
-    public Map<String, String> getHeaders();
+    Map<String, String> getHeaders();
 }

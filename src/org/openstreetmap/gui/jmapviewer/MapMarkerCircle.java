@@ -27,21 +27,27 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
     public MapMarkerCircle(Coordinate coord, double radius) {
         this(null, null, coord, radius);
     }
+
     public MapMarkerCircle(String name, Coordinate coord, double radius) {
         this(null, name, coord, radius);
     }
+
     public MapMarkerCircle(Layer layer, Coordinate coord, double radius) {
         this(layer, null, coord, radius);
     }
+
     public MapMarkerCircle(double lat, double lon, double radius) {
-        this(null, null, new Coordinate(lat,lon), radius);
+        this(null, null, new Coordinate(lat, lon), radius);
     }
+
     public MapMarkerCircle(Layer layer, double lat, double lon, double radius) {
-        this(layer, null, new Coordinate(lat,lon), radius);
+        this(layer, null, new Coordinate(lat, lon), radius);
     }
+
     public MapMarkerCircle(Layer layer, String name, Coordinate coord, double radius) {
         this(layer, name, coord, radius, STYLE.VARIABLE, getDefaultStyle());
     }
+
     public MapMarkerCircle(Layer layer, String name, Coordinate coord, double radius, STYLE markerStyle, Style style) {
         super(layer, name, style);
         this.markerStyle = markerStyle;
@@ -49,9 +55,10 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
         this.radius = radius;
     }
 
-    public Coordinate getCoordinate(){
+    public Coordinate getCoordinate() {
         return coord;
     }
+
     public double getLat() {
         return coord.getLat();
     }
@@ -72,7 +79,7 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
         int size_h = radius;
         int size = size_h * 2;
 
-        if (g instanceof Graphics2D && getBackColor()!=null) {
+        if (g instanceof Graphics2D && getBackColor() != null) {
             Graphics2D g2 = (Graphics2D) g;
             Composite oldComposite = g2.getComposite();
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
@@ -83,24 +90,27 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
         g.setColor(getColor());
         g.drawOval(position.x - size_h, position.y - size_h, size, size);
 
-        if(getLayer()==null||getLayer().isVisibleTexts()) paintText(g, position);
+        if (getLayer() == null || getLayer().isVisibleTexts()) paintText(g, position);
     }
 
-    public static Style getDefaultStyle(){
-        return new Style(Color.ORANGE, new Color(200,200,200,200), null, getDefaultFont());
+    public static Style getDefaultStyle() {
+        return new Style(Color.ORANGE, new Color(200, 200, 200, 200), null, getDefaultFont());
     }
+
     @Override
     public String toString() {
         return "MapMarker at " + getLat() + " " + getLon();
     }
+
     @Override
     public void setLat(double lat) {
-        if(coord==null) coord = new Coordinate(lat,0);
+        if (coord == null) coord = new Coordinate(lat, 0);
         else coord.setLat(lat);
     }
+
     @Override
     public void setLon(double lon) {
-        if(coord==null) coord = new Coordinate(0,lon);
+        if (coord == null) coord = new Coordinate(0, lon);
         else coord.setLon(lon);
     }
 }

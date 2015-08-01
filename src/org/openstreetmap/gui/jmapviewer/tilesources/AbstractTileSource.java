@@ -8,7 +8,7 @@ import java.util.Map;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-abstract public class AbstractTileSource implements TileSource {
+public abstract class AbstractTileSource implements TileSource {
 
     protected String attributionText;
     protected String attributionLinkURL;

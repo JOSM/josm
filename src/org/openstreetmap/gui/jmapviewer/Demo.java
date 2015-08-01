@@ -40,10 +40,10 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
 
     private JMapViewerTree treeMap = null;
 
-    private JLabel zoomLabel=null;
-    private JLabel zoomValue=null;
+    private JLabel zoomLabel = null;
+    private JLabel zoomValue = null;
 
-    private JLabel mperpLabelName=null;
+    private JLabel mperpLabelName = null;
     private JLabel mperpLabelValue = null;
 
     /**
@@ -67,11 +67,11 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         JPanel panelBottom = new JPanel();
         JPanel helpPanel = new JPanel();
 
-        mperpLabelName=new JLabel("Meters/Pixels: ");
-        mperpLabelValue=new JLabel(String.format("%s",map().getMeterPerPixel()));
+        mperpLabelName = new JLabel("Meters/Pixels: ");
+        mperpLabelValue = new JLabel(String.format("%s", map().getMeterPerPixel()));
 
-        zoomLabel=new JLabel("Zoom: ");
-        zoomValue=new JLabel(String.format("%s", map().getZoom()));
+        zoomLabel = new JLabel("Zoom: ");
+        zoomValue = new JLabel(String.format("%s", map().getZoom()));
 
         add(panel, BorderLayout.NORTH);
         add(helpPanel, BorderLayout.SOUTH);
@@ -100,7 +100,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
             }
         });
         JComboBox<TileLoader> tileLoaderSelector;
-        tileLoaderSelector = new JComboBox<>(new TileLoader[] { new OsmTileLoader(map()) });
+        tileLoaderSelector = new JComboBox<>(new TileLoader[] {new OsmTileLoader(map())});
         tileLoaderSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 map().setTileLoader((TileLoader) e.getItem());
@@ -186,9 +186,9 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         treeMap.addLayer(germanyWestLayer);
         treeMap.addLayer(germanyEastLayer);
 
-        MapPolygon bermudas = new MapPolygonImpl(c(49,1), c(45,10), c(40,5));
-        map().addMapPolygon( bermudas );
-        map().addMapPolygon( new MapPolygonImpl(germanyEastLayer, "Riedstadt", ebersheim, darmstadt, eberstadt, empty));
+        MapPolygon bermudas = new MapPolygonImpl(c(49, 1), c(45, 10), c(40, 5));
+        map().addMapPolygon(bermudas);
+        map().addMapPolygon(new MapPolygonImpl(germanyEastLayer, "Riedstadt", ebersheim, darmstadt, eberstadt, empty));
 
         map().addMapMarker(new MapMarkerCircle(germanyWestLayer, "North of Suisse", new Coordinate(48, 7), .5));
         Layer spain = treeMap.addLayer("Spain");
@@ -196,7 +196,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         spain.setVisible(false);
 
         Layer wales = treeMap.addLayer("UK");
-        map().addMapRectangle(new MapRectangleImpl(wales, "Wales", c(53.35,-4.57), c(51.64,-2.63)));
+        map().addMapRectangle(new MapRectangleImpl(wales, "Wales", c(53.35, -4.57), c(51.64, -2.63)));
 
         // map.setDisplayPosition(new Coordinate(49.807, 8.6), 11);
         // map.setTileGridVisible(true);
@@ -220,14 +220,16 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
                 } else {
                     map().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
-                if(showToolTip.isSelected()) map().setToolTipText(map().getPosition(p).toString());
+                if (showToolTip.isSelected()) map().setToolTipText(map().getPosition(p).toString());
             }
         });
     }
-    private JMapViewer map(){
+
+    private JMapViewer map() {
         return treeMap.getViewer();
     }
-    private static Coordinate c(double lat, double lon){
+
+    private static Coordinate c(double lat, double lon) {
         return new Coordinate(lat, lon);
     }
 
@@ -239,9 +241,9 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
     }
 
     private void updateZoomParameters() {
-        if (mperpLabelValue!=null)
-            mperpLabelValue.setText(String.format("%s",map().getMeterPerPixel()));
-        if (zoomValue!=null)
+        if (mperpLabelValue != null)
+            mperpLabelValue.setText(String.format("%s", map().getMeterPerPixel()));
+        if (zoomValue != null)
             zoomValue.setText(String.format("%s", map().getZoom()));
     }
 

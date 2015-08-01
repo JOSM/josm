@@ -21,26 +21,27 @@ public interface MapMarker extends MapObject, ICoordinate{
     /**
      * @return Latitude and Longitude of the map marker position
      */
-    public Coordinate getCoordinate();
+    Coordinate getCoordinate();
+
     /**
      * @return Latitude of the map marker position
      */
-    public double getLat();
+    double getLat();
 
     /**
      * @return Longitude of the map marker position
      */
-    public double getLon();
+    double getLon();
 
     /**
      * @return Radius of the map marker position
      */
-    public double getRadius();
+    double getRadius();
 
     /**
      * @return Style of the map marker
      */
-    public STYLE getMarkerStyle();
+    STYLE getMarkerStyle();
 
     /**
      * Paints the map marker on the map. The <code>position</code> specifies the
@@ -50,5 +51,5 @@ public interface MapMarker extends MapObject, ICoordinate{
      * @param position coordinates
      * @param radius radius
      */
-    public void paint(Graphics g, Point position, int radius);
+    void paint(Graphics g, Point position, int radius);
 }

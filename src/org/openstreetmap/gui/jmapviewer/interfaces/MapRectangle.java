@@ -19,12 +19,12 @@ public interface MapRectangle extends MapObject{
     /**
      * @return Latitude/Longitude of top left of rectangle
      */
-    public Coordinate getTopLeft();
+    Coordinate getTopLeft();
 
     /**
      * @return Latitude/Longitude of bottom right of rectangle
      */
-    public Coordinate getBottomRight();
+    Coordinate getBottomRight();
 
     /**
      * Paints the map rectangle on the map. The <code>topLeft</code> and
@@ -34,5 +34,5 @@ public interface MapRectangle extends MapObject{
      * @param topLeft lop left edge of painting region
      * @param bottomRight bottom right edge of painting region
      */
-    public void paint(Graphics g, Point topLeft, Point bottomRight);
+    void paint(Graphics g, Point topLeft, Point bottomRight);
 }

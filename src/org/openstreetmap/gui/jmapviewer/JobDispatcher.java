@@ -16,7 +16,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
  *
  * @author Jan Peter Stotz
  */
-public class JobDispatcher {
+public final class JobDispatcher {
 
     private static final JobDispatcher instance = new JobDispatcher();
 
@@ -73,7 +73,7 @@ public class JobDispatcher {
     /**
      * Function to set the maximum number of workers for tile loading.
      */
-    static public void setMaxWorkers(int workers) {
+    public static void setMaxWorkers(int workers) {
         workerThreadMaxCount = workers;
     }
 
@@ -95,8 +95,8 @@ public class JobDispatcher {
      */
     public void addJob(TileJob job) {
         try {
-            if(job.getTile() != null) {
-                for(TileJob oldJob : jobQueue) {
+            if (job.getTile() != null) {
+                for (TileJob oldJob : jobQueue) {
                     if (job.getTile().equals(oldJob.getTile())) {
                         return;
                     }
@@ -108,6 +108,7 @@ public class JobDispatcher {
                     addWorkerThread();
             }
         } catch (InterruptedException e) {
+            System.err.println("InterruptedException: " + e.getMessage());
         }
     }
 
@@ -145,7 +146,7 @@ public class JobDispatcher {
                     synchronized (instance) {
                         workerThreadIdleCount++;
                     }
-                    if(modeLIFO) {
+                    if (modeLIFO) {
                         if (firstThread)
                             job = jobQueue.takeLast();
                         else

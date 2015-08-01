@@ -10,14 +10,23 @@ import org.openstreetmap.gui.jmapviewer.Style;
 
 public interface MapObject {
 
-    public Layer getLayer();
-    public void setLayer(Layer layer);
-    public Style getStyle();
-    public Style getStyleAssigned();
-    public Color getColor();
-    public Color getBackColor();
-    public Stroke getStroke();
-    public Font getFont();
-    public String getName();
-    public boolean isVisible();
+    Layer getLayer();
+
+    void setLayer(Layer layer);
+
+    Style getStyle();
+
+    Style getStyleAssigned();
+
+    Color getColor();
+
+    Color getBackColor();
+
+    Stroke getStroke();
+
+    Font getFont();
+
+    String getName();
+
+    boolean isVisible();
 }

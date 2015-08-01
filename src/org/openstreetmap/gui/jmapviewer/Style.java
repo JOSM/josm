@@ -15,9 +15,10 @@ public class Style {
     private static final AlphaComposite TRANSPARENCY = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);
     private static final AlphaComposite OPAQUE = AlphaComposite.getInstance(AlphaComposite.SRC);
 
-    public Style(){
+    public Style() {
         super();
     }
+
     public Style(Color color, Color backColor, Stroke stroke, Font font) {
         super();
         this.color = color;
@@ -29,34 +30,44 @@ public class Style {
     public Color getColor() {
         return color;
     }
+
     public void setColor(Color color) {
         this.color = color;
     }
+
     public Color getBackColor() {
         return backColor;
     }
+
     public void setBackColor(Color backColor) {
         this.backColor = backColor;
     }
+
     public Stroke getStroke() {
         return stroke;
     }
+
     public void setStroke(Stroke stroke) {
         this.stroke = stroke;
     }
+
     public Font getFont() {
         return font;
     }
+
     public void setFont(Font font) {
         this.font = font;
     }
-    private AlphaComposite getAlphaComposite(Color color){
-        return color.getAlpha()==255?OPAQUE:TRANSPARENCY;
+
+    private AlphaComposite getAlphaComposite(Color color) {
+        return color.getAlpha() == 255 ? OPAQUE : TRANSPARENCY;
     }
-    public AlphaComposite getAlphaComposite(){
+
+    public AlphaComposite getAlphaComposite() {
         return getAlphaComposite(color);
     }
-    public AlphaComposite getBackAlphaComposite(){
+
+    public AlphaComposite getBackAlphaComposite() {
         return getAlphaComposite(backColor);
     }
 }

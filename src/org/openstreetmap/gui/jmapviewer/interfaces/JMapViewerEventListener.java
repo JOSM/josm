@@ -13,5 +13,5 @@ import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
  *
  */
 public interface JMapViewerEventListener extends EventListener {
-    public void processCommand(JMVCommandEvent command);
+    void processCommand(JMVCommandEvent command);
 }

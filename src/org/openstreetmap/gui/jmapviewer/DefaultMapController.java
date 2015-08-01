@@ -42,7 +42,8 @@ MouseWheelListener {
         if (!movementEnabled || !isMoving)
             return;
         // Is only the selected mouse button pressed?
-        if ((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == movementMouseButtonMask || isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) {
+        if ((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == movementMouseButtonMask 
+                || isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) {
             Point p = e.getPoint();
             if (lastDragPoint != null) {
                 int diffx = lastDragPoint.x - p.x;

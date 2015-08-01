@@ -100,7 +100,7 @@ public class OsmMercator {
     public double getDistance(double la1, double lo1, double la2, double lo2) {
         double aStartLat = Math.toRadians(la1);
         double aStartLong = Math.toRadians(lo1);
-        double aEndLat =Math.toRadians(la2);
+        double aEndLat = Math.toRadians(la2);
         double aEndLong = Math.toRadians(lo2);
 
         double distance = Math.acos(Math.sin(aStartLat) * Math.sin(aEndLat)
@@ -129,7 +129,7 @@ public class OsmMercator {
      */
     public double LonToX(double aLongitude, int aZoomlevel) {
         int mp = getMaxPixels(aZoomlevel);
-        double x = (mp * (aLongitude + 180l)) / 360l;
+        double x = (mp * (aLongitude + 180L)) / 360L;
         return Math.min(x, mp);
     }
 

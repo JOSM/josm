@@ -29,16 +29,19 @@ public class CheckBoxTree extends JTree{
 
     private final CheckBoxNodeEditor editor;
 
-    public CheckBoxTree(AbstractLayer layer){
+    public CheckBoxTree(AbstractLayer layer) {
         this(new CheckBoxNodeData(layer));
     }
-    public CheckBoxTree(String rootName){
+
+    public CheckBoxTree(String rootName) {
         this(new CheckBoxNodeData(rootName));
     }
-    public CheckBoxTree(CheckBoxNodeData root ){
+
+    public CheckBoxTree(CheckBoxNodeData root) {
         this(new DefaultMutableTreeNode(root));
     }
-    public CheckBoxTree(DefaultMutableTreeNode node){
+
+    public CheckBoxTree(DefaultMutableTreeNode node) {
         super(new DefaultTreeModel(node));
 
         final CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
@@ -52,12 +55,12 @@ public class CheckBoxTree extends JTree{
         getModel().addTreeModelListener(new TreeModelListener() {
             @Override
             public void treeNodesChanged(final TreeModelEvent e) {
-                DefaultTreeModel model = (DefaultTreeModel)e.getSource();
+                DefaultTreeModel model = (DefaultTreeModel) e.getSource();
                 Object[] nodes = e.getChildren();
                 DefaultMutableTreeNode node;
-                if(nodes==null||nodes.length==0){
+                if (nodes == null || nodes.length == 0) {
                     node = node(model.getRoot());
-                }else{
+                } else {
                     node = node(nodes[0]);
                 }
                 nodeChanged(node);
@@ -80,11 +83,13 @@ public class CheckBoxTree extends JTree{
             }
         });
     }
-    public void addNodeListener(MouseAdapter listener){
+
+    public void addNodeListener(MouseAdapter listener) {
         editor.addNodeListener(listener);
     }
-    public static void main(final String args[]) {
-        final DefaultMutableTreeNode root = new DefaultMutableTreeNode(new CheckBoxNodeData("Root",true));
+
+    public static void main(final String[] args) {
+        final DefaultMutableTreeNode root = new DefaultMutableTreeNode(new CheckBoxNodeData("Root", true));
 
         final DefaultMutableTreeNode accessibility =
             add(root, "Accessibility", true);
@@ -101,8 +106,8 @@ public class CheckBoxTree extends JTree{
         root.add(browsing);
 
         final CheckBoxTree tree = new CheckBoxTree(root);
-        ((DefaultMutableTreeNode)tree.getModel().getRoot()).add(new DefaultMutableTreeNode(new CheckBoxNodeData("gggg", null)));
-        ((DefaultTreeModel)tree.getModel()).reload();
+        ((DefaultMutableTreeNode) tree.getModel().getRoot()).add(new DefaultMutableTreeNode(new CheckBoxNodeData("gggg", null)));
+        ((DefaultTreeModel) tree.getModel()).reload();
         // listen for changes in the selection
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
@@ -118,9 +123,10 @@ public class CheckBoxTree extends JTree{
         frame.setSize(300, 150);
         frame.setVisible(true);
     }
-    private static Boolean childStatus(DefaultMutableTreeNode node){
+
+    private static Boolean childStatus(DefaultMutableTreeNode node) {
         Boolean status = data(node.getChildAt(0)).isSelected();
-        for (int i=1; i<node.getChildCount() && status!=null; i++){
+        for (int i = 1; i < node.getChildCount() && status != null; i++) {
             if (!status.equals(
                     data(node.getChildAt(i)).isSelected()
                     ))
@@ -128,69 +134,82 @@ public class CheckBoxTree extends JTree{
         }
         return status;
     }
-    private static void changeParents(DefaultMutableTreeNode node){
-        if(node!=null){
+
+    private static void changeParents(DefaultMutableTreeNode node) {
+        if (node != null) {
             DefaultMutableTreeNode parent = node(node.getParent());
-            if(parent!=null){
+            if (parent != null) {
                 CheckBoxNodeData dataParent = data(parent);
                 Boolean childStatus = childStatus(parent);
-                if(childStatus != null && !childStatus.equals(dataParent.isSelected())) {
+                if (childStatus != null && !childStatus.equals(dataParent.isSelected())) {
                     dataParent.setSelected(childStatus);
                     changeParents(parent);
                 }
             }
         }
     }
-    private static void nodeChanged(DefaultMutableTreeNode node){
-        if(node!=null){
+
+    private static void nodeChanged(DefaultMutableTreeNode node) {
+        if (node != null) {
             changeParents(node);
             setChildrens(node, data(node).isSelected());
         }
     }
-    private static void setChildrens(DefaultMutableTreeNode node, Boolean value){
-        for(int i=0; i<node.getChildCount(); i++){
+
+    private static void setChildrens(DefaultMutableTreeNode node, Boolean value) {
+        for (int i = 0; i < node.getChildCount(); i++) {
             DefaultMutableTreeNode childNode = node(node.getChildAt(i));
-            if (!data(childNode).isSelected().equals(data(node).isSelected())){
+            if (!data(childNode).isSelected().equals(data(node).isSelected())) {
                 data(childNode).setSelected(data(node).isSelected());
                 setChildrens(childNode, value);
             }
         }
     }
-    public DefaultMutableTreeNode rootNode(){
+
+    public DefaultMutableTreeNode rootNode() {
         return node(getModel().getRoot());
     }
-    public LayerGroup rootLayer(){
-        return (LayerGroup)rootData().getAbstractLayer();
+
+    public LayerGroup rootLayer() {
+        return (LayerGroup) rootData().getAbstractLayer();
     }
-    public CheckBoxNodeData rootData(){
+
+    public CheckBoxNodeData rootData() {
         return data(rootNode());
     }
-    private static DefaultMutableTreeNode node(Object node){
-        return (DefaultMutableTreeNode)node;
+
+    private static DefaultMutableTreeNode node(Object node) {
+        return (DefaultMutableTreeNode) node;
     }
-    public static CheckBoxNodeData data(DefaultMutableTreeNode node){
-        return node==null?null:(CheckBoxNodeData)node.getUserObject();
+
+    public static CheckBoxNodeData data(DefaultMutableTreeNode node) {
+        return node == null ? null : (CheckBoxNodeData) node.getUserObject();
     }
-    private static CheckBoxNodeData data(Object node){
+
+    private static CheckBoxNodeData data(Object node) {
         return data(node(node));
     }
-    private static DefaultMutableTreeNode add(final DefaultMutableTreeNode parent, final String text, final boolean checked){
+
+    private static DefaultMutableTreeNode add(final DefaultMutableTreeNode parent, final String text, final boolean checked) {
         final CheckBoxNodeData data = new CheckBoxNodeData(text, checked);
         final DefaultMutableTreeNode node = new DefaultMutableTreeNode(data);
         parent.add(node);
         return node;
     }
-    public static CheckBoxNodeData createNodeData(AbstractLayer layer){
+
+    public static CheckBoxNodeData createNodeData(AbstractLayer layer) {
         return new CheckBoxNodeData(layer);
     }
-    public static DefaultMutableTreeNode createNode(AbstractLayer layer){
+
+    public static DefaultMutableTreeNode createNode(AbstractLayer layer) {
         return new DefaultMutableTreeNode(createNodeData(layer));
     }
-    /*public DefaultMutableTreeNode addLayerGroup(LayerGroup group){
-        if(group!=null){
-            if(group.getParent()==null){
+
+    /*public DefaultMutableTreeNode addLayerGroup(LayerGroup group) {
+        if (group != null){
+            if (group.getParent() == null){
                 return add(rootNode(), group);
-            }else{
+            } else {
                 DefaultMutableTreeNode parentGroup = searchNode(group.getParent());
                 if(parentGroup==null) parentGroup = addLayerGroup(group.getParent());
                 DefaultMutableTreeNode node = add(parentGroup, group);
@@ -198,42 +217,48 @@ public class CheckBoxTree extends JTree{
             }
         }else return null;
     }*/
-    public Layer addLayer(String name){
+
+    public Layer addLayer(String name) {
         Layer layer = new Layer(name);
         addLayer(layer);
         return layer;
     }
-    public DefaultMutableTreeNode addLayer(AbstractLayer layer){
-        if (layer!=null){
+
+    public DefaultMutableTreeNode addLayer(AbstractLayer layer) {
+        if (layer != null) {
             DefaultMutableTreeNode parent;
-            if(layer.getParent()==null){
+            if (layer.getParent() == null) {
                 rootLayer().add(layer);
                 parent = rootNode();
-            }else{
+            } else {
                 parent = searchNode(layer.getParent());
-                if(parent==null) parent=addLayer(layer.getParent());
+                if (parent == null)
+                    parent = addLayer(layer.getParent());
             }
             return add(parent, layer);
-        }else return null;
+        } else return null;
     }
-    public DefaultMutableTreeNode add(DefaultMutableTreeNode parent, final AbstractLayer layer){
+
+    public DefaultMutableTreeNode add(DefaultMutableTreeNode parent, final AbstractLayer layer) {
         layer.setVisible(data(parent).isSelected());
         DefaultMutableTreeNode node = createNode(layer);
         parent.add(node);
-        ((DefaultTreeModel)getModel()).reload();
+        ((DefaultTreeModel) getModel()).reload();
         //System.out.println("Created node "+layer+" upper of "+data(parent));
         return node;
     }
-    public DefaultMutableTreeNode searchNode(AbstractLayer layer){
+
+    public DefaultMutableTreeNode searchNode(AbstractLayer layer) {
         return searchNode(rootNode(), layer);
     }
-    public DefaultMutableTreeNode searchNode(DefaultMutableTreeNode node, AbstractLayer layer){
+
+    public DefaultMutableTreeNode searchNode(DefaultMutableTreeNode node, AbstractLayer layer) {
         CheckBoxNodeData data = CheckBoxTree.data(node);
-        if(data.getAbstractLayer() == layer) return node;
-        else{
+        if (data.getAbstractLayer() == layer) return node;
+        else {
             DefaultMutableTreeNode found = null;
-            for(int i=0; i<node.getChildCount() && found==null; i++){
-                found = searchNode((DefaultMutableTreeNode)node.getChildAt(i), layer);
+            for (int i = 0; i < node.getChildCount() && found == null; i++) {
+                found = searchNode((DefaultMutableTreeNode) node.getChildAt(i), layer);
             }
             return found;
         }

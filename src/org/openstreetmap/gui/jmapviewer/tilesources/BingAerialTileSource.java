@@ -101,9 +101,10 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
             imageUrlTemplate = culturePattern.matcher(imageUrlTemplate).replaceAll(Locale.getDefault().toString());
             imageryZoomMax = Integer.parseInt(xpath.compile("//ImageryMetadata/ZoomMax/text()").evaluate(document));
 
-            NodeList subdomainTxt = (NodeList) xpath.compile("//ImageryMetadata/ImageUrlSubdomains/string/text()").evaluate(document, XPathConstants.NODESET);
+            NodeList subdomainTxt = (NodeList) xpath.compile("//ImageryMetadata/ImageUrlSubdomains/string/text()")
+                    .evaluate(document, XPathConstants.NODESET);
             subdomains = new String[subdomainTxt.getLength()];
-            for(int i = 0; i < subdomainTxt.getLength(); i++) {
+            for (int i = 0; i < subdomainTxt.getLength(); i++) {
                 subdomains[i] = subdomainTxt.item(i).getNodeValue();
             }
 
@@ -118,7 +119,8 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
             XPathExpression northLatXpath = xpath.compile("BoundingBox/NorthLatitude/text()");
             XPathExpression eastLonXpath = xpath.compile("BoundingBox/EastLongitude/text()");
 
-            NodeList imageryProviderNodes = (NodeList) xpath.compile("//ImageryMetadata/ImageryProvider").evaluate(document, XPathConstants.NODESET);
+            NodeList imageryProviderNodes = (NodeList) xpath.compile("//ImageryMetadata/ImageryProvider")
+                    .evaluate(document, XPathConstants.NODESET);
             List<Attribution> attributions = new ArrayList<>(imageryProviderNodes.getLength());
             for (int i = 0; i < imageryProviderNodes.getLength(); i++) {
                 Node providerNode = imageryProviderNodes.item(i);
@@ -126,7 +128,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
                 String attribution = attributionXpath.evaluate(providerNode);
 
                 NodeList coverageAreaNodes = (NodeList) coverageAreaXpath.evaluate(providerNode, XPathConstants.NODESET);
-                for(int j = 0; j < coverageAreaNodes.getLength(); j++) {
+                for (int j = 0; j < coverageAreaNodes.getLength(); j++) {
                     Node areaNode = coverageAreaNodes.item(j);
                     Attribution attr = new Attribution();
                     attr.attribution = attribution;
@@ -159,7 +161,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
 
     @Override
     public int getMaxZoom() {
-        if(imageryZoomMax != null)
+        if (imageryZoomMax != null)
             return imageryZoomMax;
         else
             return 22;
@@ -193,6 +195,9 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
                 // Some Linux distributions (like Debian) will remove Bing logo from sources, so get it at runtime
                 for (int i = 0; i < 5 && getAttribution() == null; i++) {
                     // Makes sure attribution is loaded
+                    if (JMapViewer.debug) {
+                        System.out.println("Bing attribution attempt " + (i+1));
+                    }
                 }
                 if (brandLogoUri != null && !brandLogoUri.isEmpty()) {
                     System.out.println("Reading Bing logo from "+brandLogoUri);
@@ -258,6 +263,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         } catch (ExecutionException ex) {
             throw new RuntimeException(ex.getCause());
         } catch (InterruptedException ign) {
+            System.err.println("InterruptedException: " + ign.getMessage());
         }
         return null;
     }

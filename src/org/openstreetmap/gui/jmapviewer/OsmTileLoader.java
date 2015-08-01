@@ -21,6 +21,75 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
  */
 public class OsmTileLoader implements TileLoader {
 
+    private final class OsmTileJob implements TileJob {
+        private final Tile tile;
+        InputStream input = null;
+        boolean force = false;
+
+        private OsmTileJob(Tile tile) {
+            this.tile = tile;
+        }
+
+        public void run() {
+            synchronized (tile) {
+                if ((tile.isLoaded() && !tile.hasError()) || tile.isLoading())
+                    return;
+                tile.loaded = false;
+                tile.error = false;
+                tile.loading = true;
+            }
+            try {
+                URLConnection conn = loadTileFromOsm(tile);
+                if (force) {
+                    conn.setUseCaches(false);
+                }
+                loadTileMetadata(tile, conn);
+                if ("no-tile".equals(tile.getValue("tile-info"))) {
+                    tile.setError("No tile at this zoom level");
+                } else {
+                    input = conn.getInputStream();
+                    try {
+                        tile.loadImage(input);
+                    } finally {
+                        input.close();
+                        input = null;
+                    }
+                }
+                tile.setLoaded(true);
+                listener.tileLoadingFinished(tile, true);
+            } catch (Exception e) {
+                tile.setError(e.getMessage());
+                listener.tileLoadingFinished(tile, false);
+                if (input == null) {
+                    try {
+                        System.err.println("Failed loading " + tile.getUrl() +": "
+                                +e.getClass() + ": " + e.getMessage());
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+                }
+            } finally {
+                tile.loading = false;
+                tile.setLoaded(true);
+            }
+        }
+
+        public Tile getTile() {
+            return tile;
+        }
+
+        @Override
+        public void submit() {
+            submit(false);
+        }
+
+        @Override
+        public void submit(boolean force) {
+            this.force = force;
+            run();
+        }
+    }
+
     /**
      * Holds the HTTP headers. Insert e.g. User-Agent here when default should not be used.
      */
@@ -37,72 +106,7 @@ public class OsmTileLoader implements TileLoader {
     }
 
     public TileJob createTileLoaderJob(final Tile tile) {
-        return new TileJob() {
-
-            InputStream input = null;
-            boolean force = false;
-
-            public void run() {
-                synchronized (tile) {
-                    if ((tile.isLoaded() && !tile.hasError()) || tile.isLoading())
-                        return;
-                    tile.loaded = false;
-                    tile.error = false;
-                    tile.loading = true;
-                }
-                try {
-                    URLConnection conn = loadTileFromOsm(tile);
-                    if (force) {
-                        conn.setUseCaches(false);
-                    }
-                    loadTileMetadata(tile, conn);
-                    if ("no-tile".equals(tile.getValue("tile-info"))) {
-                        tile.setError("No tile at this zoom level");
-                    } else {
-                        input = conn.getInputStream();
-                        try {
-                            tile.loadImage(input);
-                        } finally {
-                            input.close();
-                            input = null;
-                        }
-                    }
-                    tile.setLoaded(true);
-                    listener.tileLoadingFinished(tile, true);
-                } catch (Exception e) {
-                    tile.setError(e.getMessage());
-                    listener.tileLoadingFinished(tile, false);
-                    if (input == null) {
-                        try {
-                            System.err.println("Failed loading " + tile.getUrl() +": "
-                                    +e.getClass() + ": " + e.getMessage());
-                        } catch (IOException ioe) {
-                            ioe.printStackTrace();
-                        }
-                    }
-                } finally {
-                    tile.loading = false;
-                    tile.setLoaded(true);
-                }
-            }
-
-            public Tile getTile() {
-                return tile;
-            }
-
-            @Override
-            public void submit() {
-                submit(false);
-
-            }
-
-            @Override
-            public void submit(boolean force) {
-                this.force = force;
-                run();
-            }
-
-        };
+        return new OsmTileJob(tile);
     }
 
     protected URLConnection loadTileFromOsm(Tile tile) throws IOException {
@@ -110,7 +114,7 @@ public class OsmTileLoader implements TileLoader {
         url = new URL(tile.getUrl());
         URLConnection urlConn = url.openConnection();
         if (urlConn instanceof HttpURLConnection) {
-            prepareHttpUrlConnection((HttpURLConnection)urlConn);
+            prepareHttpUrlConnection((HttpURLConnection) urlConn);
         }
         return urlConn;
     }
@@ -137,7 +141,12 @@ public class OsmTileLoader implements TileLoader {
                         }
                     }
                 }
-            } catch (NumberFormatException e) {} //ignore malformed Cache-Control headers
+            } catch (NumberFormatException e) {
+                // ignore malformed Cache-Control headers
+                if (JMapViewer.debug) {
+                    System.err.println(e.getMessage());
+                }
+            }
         }
         if (!lng.equals(0L)) {
             tile.putValue("expires", lng.toString());
@@ -145,12 +154,12 @@ public class OsmTileLoader implements TileLoader {
     }
 
     protected void prepareHttpUrlConnection(HttpURLConnection urlConn) {
-        for(Entry<String, String> e : headers.entrySet()) {
+        for (Entry<String, String> e : headers.entrySet()) {
             urlConn.setRequestProperty(e.getKey(), e.getValue());
         }
-        if(timeoutConnect != 0)
+        if (timeoutConnect != 0)
             urlConn.setConnectTimeout(timeoutConnect);
-        if(timeoutRead != 0)
+        if (timeoutRead != 0)
             urlConn.setReadTimeout(timeoutRead);
     }
 
@@ -158,5 +167,4 @@ public class OsmTileLoader implements TileLoader {
     public String toString() {
         return getClass().getSimpleName();
     }
-
 }
