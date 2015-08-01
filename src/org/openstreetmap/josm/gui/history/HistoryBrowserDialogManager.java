@@ -180,7 +180,7 @@ public final class HistoryBrowserDialogManager implements MapView.LayerChangeLis
             return;
         }
 
-        Collection<PrimitiveId> toLoad = Utils.filter(primitives, unloadedHistoryPredicate);
+        Collection<? extends PrimitiveId> toLoad = Utils.filter(primitives, unloadedHistoryPredicate);
         if (!toLoad.isEmpty()) {
             HistoryLoadTask task = new HistoryLoadTask();
             for (PrimitiveId p : notNewPrimitives) {

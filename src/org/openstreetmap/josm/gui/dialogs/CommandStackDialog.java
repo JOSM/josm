@@ -337,7 +337,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      * @param path GUI elements
      * @return collection of affected primitives, onluy usable ones
      */
-    protected static FilteredCollection<OsmPrimitive> getAffectedPrimitives(TreePath path) {
+    protected static FilteredCollection<? extends OsmPrimitive> getAffectedPrimitives(TreePath path) {
         PseudoCommand c = ((CommandListMutableTreeNode) path.getLastPathComponent()).getCommand();
         final OsmDataLayer currentLayer = Main.main.getEditLayer();
         return new FilteredCollection<>(

@@ -20,6 +20,7 @@ import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -67,7 +68,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      * If {@link #filter} is not <code>null</code> only errors are displayed
      * that refer to one of the primitives in the filter.
      */
-    private transient Set<OsmPrimitive> filter = null;
+    private transient Set<? extends OsmPrimitive> filter = null;
 
     /** a counter to check if tree has been rebuild */
     private int updateCount;
@@ -344,7 +345,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      * Returns the filter list
      * @return the list of primitives used for filtering
      */
-    public Set<OsmPrimitive> getFilter() {
+    public Set<? extends OsmPrimitive> getFilter() {
         return filter;
     }
 
@@ -352,7 +353,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      * Set the filter list to a set of primitives
      * @param filter the list of primitives used for filtering
      */
-    public void setFilter(Set<OsmPrimitive> filter) {
+    public void setFilter(Set<? extends OsmPrimitive> filter) {
         if (filter != null && filter.isEmpty()) {
             this.filter = null;
         } else {
@@ -379,7 +380,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
         DefaultMutableTreeNode root = getRoot();
 
         int row = 0;
-        Enumeration<DefaultMutableTreeNode> children = root.breadthFirstEnumeration();
+        Enumeration<TreeNode> children = root.breadthFirstEnumeration();
         while (children.hasMoreElements()) {
             children.nextElement();
             expandRow(row++);

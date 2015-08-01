@@ -193,7 +193,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * Sets the list of primitives affected by this error
      * @param primitives the list of primitives affected by this error
      */
-    public void setPrimitives(List<OsmPrimitive> primitives) {
+    public void setPrimitives(List<? extends OsmPrimitive> primitives) {
         this.primitives = primitives;
     }
 

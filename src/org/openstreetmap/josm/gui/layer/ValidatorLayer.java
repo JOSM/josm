@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -68,9 +69,9 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
         DefaultMutableTreeNode severity = (DefaultMutableTreeNode) root.getLastChild();
         while (severity != null) {
-            Enumeration<DefaultMutableTreeNode> errorMessages = severity.breadthFirstEnumeration();
+            Enumeration<TreeNode> errorMessages = severity.breadthFirstEnumeration();
             while (errorMessages.hasMoreElements()) {
-                Object tn = errorMessages.nextElement().getUserObject();
+                Object tn = ((DefaultMutableTreeNode) errorMessages.nextElement()).getUserObject();
                 if (tn instanceof TestError) {
                     paintVisitor.visit((TestError) tn);
                 }
