@@ -37,8 +37,9 @@ public interface TileSource extends Attributed {
      * mechanisms.</li>
      * </ul>
      *
+     * @deprecated not used anymore
      */
-    @Deprecated //not used anymore
+    @Deprecated
     public enum TileUpdate {
         IfNoneMatch, ETag, IfModifiedSince, LastModified, None
     }
@@ -99,9 +100,9 @@ public interface TileSource extends Attributed {
      * Creates tile identifier that is unique among all tile sources, but the same tile will always
      * get the same identifier. Used for creation of cache key.
      *
-     * @param zoom
-     * @param tilex
-     * @param tiley
+     * @param zoom zoom level
+     * @param tilex X coordinate
+     * @param tiley Y coordinate
      * @return tile identifier
      */
     String getTileId(int zoom, int tilex, int tiley);
@@ -116,7 +117,7 @@ public interface TileSource extends Attributed {
      * @return default tile size, for this tile source
      * TODO: @since
      */
-    public int getDefaultTileSize();
+    int getDefaultTileSize();
 
     /**
      * Gets the distance using Spherical law of cosines.
@@ -130,172 +131,179 @@ public interface TileSource extends Attributed {
 
     /**
      * Transform longitude to pixelspace.
-     * @param aLongitude
-     * @param aZoomlevel
+     * @param aLongitude longitude
+     * @param aZoomlevel zoom level
      * @return [0..2^Zoomlevel*TILE_SIZE[
+     * @deprecated use {@link #latLonToXY(double, double, int)} instead
      */
     @Deprecated
     int lonToX(double aLongitude, int aZoomlevel);
 
     /**
      * Transforms latitude to pixelspace.
-     * @param aLat
-     * @param aZoomlevel
+     * @param aLat latitude
+     * @param aZoomlevel zoom level
      * @return [0..2^Zoomlevel*TILE_SIZE[
-     * @deprecated use lonLatToXY instead
+     * @deprecated use {@link #latLonToXY(double, double, int)} instead
      */
     @Deprecated
     int latToY(double aLat, int aZoomlevel);
 
     /**
-     * @param lon
-     * @param lat
-     * @param zoom
+     * @param lon longitude
+     * @param lat latitude
+     * @param zoom zoom level
      * @return transforms longitude and latitude to pixel space (as if all tiles at specified zoom level where joined)
      */
-    public Point latLonToXY(double lat, double lon, int zoom);
+    Point latLonToXY(double lat, double lon, int zoom);
 
     /**
-     * @param point
-     * @param zoom
+     * @param point point
+     * @param zoom zoom level
      * @return transforms longitude and latitude to pixel space (as if all tiles at specified zoom level where joined)
      */
-    public Point latLonToXY(ICoordinate point, int zoom);
+    Point latLonToXY(ICoordinate point, int zoom);
 
     /**
      * Transforms pixel coordinate X to longitude
-     * @param aX
-     * @param aZoomlevel
+     * @param aX X coordinate
+     * @param aZoomlevel zoom level
      * @return ]-180..180[
+     * @deprecated use {@link #XYToLatLon(int, int, int)} instead
      */
     @Deprecated
     double XToLon(int aX, int aZoomlevel);
 
     /**
      * Transforms pixel coordinate Y to latitude.
-     * @param aY
-     * @param aZoomlevel
+     * @param aY Y coordinate
+     * @param aZoomlevel zoom level
      * @return [MIN_LAT..MAX_LAT]
+     * @deprecated use {@link #XYToLatLon(int, int, int)} instead
      */
     @Deprecated
     double YToLat(int aY, int aZoomlevel);
 
     /**
-     * @param point
-     * @param zoom
+     * @param point point
+     * @param zoom zoom level
      * @return WGS84 Coordinates of given point
      */
-    public ICoordinate XYToLatLon(Point point, int zoom);
+    ICoordinate XYToLatLon(Point point, int zoom);
 
     /**
      *
-     * @param x
-     * @param y
-     * @param zoom
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param zoom zoom level
      * @return WGS84 Coordinates of given point
      */
-    public ICoordinate XYToLatLon(int x, int y, int zoom);
+    ICoordinate XYToLatLon(int x, int y, int zoom);
 
     /**
      * Transforms longitude to X tile coordinate.
-     * @param lon
-     * @param zoom
+     * @param lon longitude
+     * @param zoom zoom level
      * @return [0..2^Zoomlevel[
+     * @deprecated use {@link #latLonToTileXY(int, int, int)} instead
      */
     @Deprecated
     double lonToTileX(double lon, int zoom);
 
     /**
      * Transforms latitude to Y tile coordinate.
-     * @param lat
-     * @param zoom
+     * @param lat latitude
+     * @param zoom zoom level
      * @return [0..2^Zoomlevel[
+     * @deprecated use {@link #latLonToTileXY(int, int, int)} instead
      */
     @Deprecated
     double latToTileY(double lat, int zoom);
 
     /**
-     * @param lon
-     * @param lat
-     * @param zoom
+     * @param lon longitude
+     * @param lat latitude
+     * @param zoom zoom level
      * @return x and y tile indices
      */
-    public TileXY latLonToTileXY(double lat, double lon, int zoom);
+    TileXY latLonToTileXY(double lat, double lon, int zoom);
 
     /**
      *
-     * @param point
-     * @param zoom
+     * @param point point
+     * @param zoom zoom level
      * @return x and y tile indices
      */
-    public TileXY latLonToTileXY(ICoordinate point, int zoom);
+    TileXY latLonToTileXY(ICoordinate point, int zoom);
 
     /**
      * Transforms tile X coordinate to longitude.
-     * @param x
-     * @param zoom
+     * @param x X coordinate
+     * @param zoom zoom level
      * @return ]-180..180[
+     * @deprecated use {@link #tileXYToLatLon(int, int, int)} instead
      */
     @Deprecated
     double tileXToLon(int x, int zoom);
 
     /**
      * Transforms tile Y coordinate to latitude.
-     * @param y
-     * @param zoom
+     * @param y Y coordinate
+     * @param zoom zoom level
      * @return [MIN_LAT..MAX_LAT]
+     * @deprecated use {@link #tileXYToLatLon(int, int, int)} instead
      */
     @Deprecated
     double tileYToLat(int y, int zoom);
 
     /**
-     * @param xy
-     * @param zoom
+     * @param xy X/Y coordinates
+     * @param zoom zoom level
      * @return WGS84 coordinates of given tile
      */
-    public ICoordinate tileXYToLatLon(TileXY xy, int zoom);
+    ICoordinate tileXYToLatLon(TileXY xy, int zoom);
 
     /**
      *
-     * @param tile
+     * @param tile Tile
      * @return WGS84 coordinates of given tile
      */
-    public ICoordinate tileXYToLatLon(Tile tile);
+    ICoordinate tileXYToLatLon(Tile tile);
 
     /**
      *
-     * @param x
-     * @param y
-     * @param zoom
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param zoom zoom level
      * @return WGS84 coordinates of given tile
      */
-    public ICoordinate tileXYToLatLon(int x, int y, int zoom);
+    ICoordinate tileXYToLatLon(int x, int y, int zoom);
 
     /**
-     * @param zoom
+     * @param zoom zoom level
      * @return maximum X index of tile for specified zoom level
      */
-    public int getTileXMax(int zoom);
+    int getTileXMax(int zoom);
 
     /**
      *
-     * @param zoom
+     * @param zoom zoom level
      * @return minimum X index of tile for specified zoom level
      */
-    public int getTileXMin(int zoom);
+    int getTileXMin(int zoom);
 
     /**
      *
-     * @param zoom
+     * @param zoom zoom level
      * @return maximum Y index of tile for specified zoom level
      */
-    public int getTileYMax(int zoom);
+    int getTileYMax(int zoom);
 
     /**
-     * @param zoom
+     * @param zoom zoom level
      * @return minimum Y index of tile for specified zoom level
      */
-    public int getTileYMin(int zoom);
+    int getTileYMin(int zoom);
 
     /**
      * Determines, if the returned data from TileSource represent "no tile at this zoom level" situation. Detection
@@ -306,7 +314,7 @@ public interface TileSource extends Attributed {
      * @param content byte array representing the data returned from the server
      * @return true, if "no tile at this zoom level" situation detected
      */
-    public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content);
+    boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content);
 
     /**
      * Extracts metadata about the tile based on HTTP headers
@@ -314,7 +322,5 @@ public interface TileSource extends Attributed {
      * @param headers HTTP headers from Tile Source server
      * @return tile metadata
      */
-    public Map<String, String> getMetadata(Map<String, List<String>> headers);
-
-
+    Map<String, String> getMetadata(Map<String, List<String>> headers);
 }

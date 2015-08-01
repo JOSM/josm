@@ -19,5 +19,5 @@ public interface TileLoader {
      * @return {@link TileJob} implementation that performs the desired load
      *          action.
      */
-    public TileJob createTileLoaderJob(Tile tile);
+    TileJob createTileLoaderJob(Tile tile);
 }

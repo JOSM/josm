@@ -13,7 +13,7 @@ public class OsmTileSource {
 
         private static final String PATTERN = "https://%s.tile.openstreetmap.org";
 
-        private static final String[] SERVER = { "a", "b", "c" };
+        private static final String[] SERVER = {"a", "b", "c"};
 
         private int SERVER_NUM = 0;
 
@@ -26,7 +26,7 @@ public class OsmTileSource {
 
         @Override
         public String getBaseUrl() {
-            String url = String.format(this.baseUrl, new Object[] { SERVER[SERVER_NUM] });
+            String url = String.format(this.baseUrl, new Object[] {SERVER[SERVER_NUM]});
             SERVER_NUM = (SERVER_NUM + 1) % SERVER.length;
             return url;
         }
@@ -48,7 +48,7 @@ public class OsmTileSource {
 
         private static final String PATTERN = "http://%s.tile.opencyclemap.org/cycle";
 
-        private static final String[] SERVER = { "a", "b", "c" };
+        private static final String[] SERVER = {"a", "b", "c"};
 
         private int SERVER_NUM = 0;
 
@@ -61,7 +61,7 @@ public class OsmTileSource {
 
         @Override
         public String getBaseUrl() {
-            String url = String.format(this.baseUrl, new Object[] { SERVER[SERVER_NUM] });
+            String url = String.format(this.baseUrl, new Object[] {SERVER[SERVER_NUM]});
             SERVER_NUM = (SERVER_NUM + 1) % SERVER.length;
             return url;
         }

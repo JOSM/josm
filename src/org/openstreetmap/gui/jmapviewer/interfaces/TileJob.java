@@ -16,7 +16,7 @@ public interface TileJob extends Runnable {
      *
      * @return {@link Tile} to be handled
      */
-    public Tile getTile();
+    Tile getTile();
 
     /**
      * submits download job to backend.

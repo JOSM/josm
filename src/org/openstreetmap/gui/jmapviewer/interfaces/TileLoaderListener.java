@@ -12,5 +12,5 @@ public interface TileLoaderListener {
      * @param tile The tile
      * @param success {@code true} if the tile has been loaded successfully, {@code false} otherwise
      */
-    public void tileLoadingFinished(Tile tile, boolean success);
+    void tileLoadingFinished(Tile tile, boolean success);
 }

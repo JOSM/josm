@@ -26,23 +26,27 @@ public class CheckBoxNodePanel extends JPanel {
         add(check, BorderLayout.WEST);
         add(label, BorderLayout.CENTER);
     }
-    public void setSelected(Boolean bool){
-        if(bool==null){
+
+    public void setSelected(Boolean bool) {
+        if (bool == null) {
             check.getModel().setPressed(true);
             check.getModel().setArmed(true);
-        }else{
+        } else {
             check.setSelected(bool.booleanValue());
             check.getModel().setArmed(false);
         }
     }
+
     public CheckBoxNodeData getData() {
         data.setSelected(check.isSelected());
         return data;
     }
+
     public void setData(CheckBoxNodeData data) {
         this.data = data;
         label.setText(data.getText());
     }
+
     public JLabel getLabel() {
         return label;
     }

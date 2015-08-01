@@ -235,7 +235,6 @@ public class Tile {
         g.drawImage(image, x, y, width, height, null);
     }
 
-
     @Override
     public String toString() {
         return "Tile " + key;
@@ -347,7 +346,7 @@ public class Tile {
      *
      * @return metadata of the tile
      */
-    public Map<String,String> getMetadata() {
+    public Map<String, String> getMetadata() {
         if (metadata == null) {
             metadata = new HashMap<>();
         }

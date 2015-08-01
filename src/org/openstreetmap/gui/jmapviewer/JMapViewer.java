@@ -48,7 +48,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Vectors for clock-wise tile painting
      */
-    protected static final Point[] move = { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1) };
+    protected static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
 
     public static final int MAX_ZOOM = 22;
     public static final int MIN_ZOOM = 0;
@@ -423,7 +423,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * @param lat Latitude
      * @param lon longitude
      * @param offset Offset respect Latitude
-     * @param checkOutside
+     * @param checkOutside check if the point is outside the displayed area
      * @return Integer the radius in pixels
      */
     public Integer getLatOffset(double lat, double lon, double offset, boolean checkOutside) {
@@ -443,6 +443,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * @param offset Offset respect Latitude
      * @param checkOutside check if the point is outside the displayed area
      * @return Integer the radius in pixels
+     * @deprecated use {@link #getLatOffset(double, double, double, boolean)}
      */
     @Deprecated
     public Integer getLatOffset(double lat, double offset, boolean checkOutside) {

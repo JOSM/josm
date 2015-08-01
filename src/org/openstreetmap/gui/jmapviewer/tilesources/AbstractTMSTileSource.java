@@ -38,8 +38,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     public AbstractTMSTileSource(TileSourceInfo info) {
         this.name = info.getName();
         this.baseUrl = info.getUrl();
-        if(baseUrl != null && baseUrl.endsWith("/")) {
-            baseUrl = baseUrl.substring(0,baseUrl.length()-1);
+        if (baseUrl != null && baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length()-1);
         }
         this.id = info.getUrl();
         this.noTileHeaders = info.getNoTileHeaders();
@@ -128,19 +128,19 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
 
     @Override
     public int lonToX(double lon, int zoom) {
-        return (int )osmMercator.LonToX(lon, zoom);
+        return (int) osmMercator.LonToX(lon, zoom);
     }
 
     @Override
     public int latToY(double lat, int zoom) {
-        return (int )osmMercator.LatToY(lat, zoom);
+        return (int) osmMercator.LatToY(lat, zoom);
     }
 
     @Override
     public Point latLonToXY(double lat, double lon, int zoom) {
         return new Point(
-                (int)osmMercator.LonToX(lon, zoom),
-                (int)osmMercator.LatToY(lat, zoom)
+                (int) osmMercator.LonToX(lon, zoom),
+                (int) osmMercator.LatToY(lat, zoom)
                 );
     }
 
@@ -243,7 +243,6 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         return 0;
     }
 
-
     @Override
     public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content) {
         if (noTileHeaders != null && headers != null) {
@@ -283,6 +282,6 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     }
 
     private int getTileMax(int zoom) {
-        return (int)Math.pow(2.0, zoom) - 1;
+        return (int) Math.pow(2.0, zoom) - 1;
     }
 }

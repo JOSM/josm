@@ -51,7 +51,7 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
 
     /**
      * Creates Templated TMS Tile Source based on ImageryInfo
-     * @param info
+     * @param info imagery info
      */
     public TemplatedTMSTileSource(TileSourceInfo info) {
         super(info);
@@ -72,7 +72,7 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
         StringBuffer output = new StringBuffer();
         Matcher matcher = pattern.matcher(baseUrl);
         while (matcher.find()) {
-            headers.put(matcher.group(1),matcher.group(2));
+            headers.put(matcher.group(1), matcher.group(2));
             matcher.appendReplacement(output, "");
         }
         matcher.appendTail(output);
@@ -88,12 +88,12 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
         int finalZoom = zoom;
         Matcher m = Pattern.compile(".*"+PATTERN_ZOOM+".*").matcher(this.baseUrl);
         if (m.matches()) {
-            if(m.group(1) != null) {
+            if (m.group(1) != null) {
                 finalZoom = Integer.valueOf(m.group(1))-zoom;
             }
-            if(m.group(2) != null) {
+            if (m.group(2) != null) {
                 String ofs = m.group(2);
-                if(ofs.startsWith("+"))
+                if (ofs.startsWith("+"))
                     ofs = ofs.substring(1);
                 finalZoom += Integer.valueOf(ofs);
             }
@@ -102,8 +102,8 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
             .replaceAll(PATTERN_ZOOM, Integer.toString(finalZoom))
             .replaceAll(PATTERN_X, Integer.toString(tilex))
             .replaceAll(PATTERN_Y, Integer.toString(tiley))
-            .replaceAll(PATTERN_Y_YAHOO, Integer.toString((int)Math.pow(2, zoom-1)-1-tiley))
-            .replaceAll(PATTERN_NEG_Y, Integer.toString((int)Math.pow(2, zoom)-1-tiley));
+            .replaceAll(PATTERN_Y_YAHOO, Integer.toString((int) Math.pow(2, zoom-1)-1-tiley))
+            .replaceAll(PATTERN_NEG_Y, Integer.toString((int) Math.pow(2, zoom)-1-tiley));
         if (rand != null) {
             r = r.replaceAll(PATTERN_SWITCH, randomParts[rand.nextInt(randomParts.length)]);
         }
@@ -112,10 +112,10 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
 
     /**
      * Checks if url is acceptable by this Tile Source
-     * @param url
+     * @param url URL to check
      */
     public static void checkUrl(String url) {
-        assert url != null && !"".equals(url): "URL cannot be null or empty";
+        assert url != null && !"".equals(url) : "URL cannot be null or empty";
         Matcher m = Pattern.compile("\\{[^}]*\\}").matcher(url);
         while (m.find()) {
             boolean isSupportedPattern = false;

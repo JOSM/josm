@@ -16,7 +16,7 @@ public interface MapPolygon extends MapObject{
     /**
      * @return Latitude/Longitude of each point of polygon
      */
-    public List<? extends ICoordinate> getPoints();
+    List<? extends ICoordinate> getPoints();
 
     /**
      * Paints the map polygon on the map. The <code>points</code>
@@ -25,7 +25,7 @@ public interface MapPolygon extends MapObject{
      * @param g graphics
      * @param points list of points defining the polygon to draw
      */
-    public void paint(Graphics g, List<Point> points);
+    void paint(Graphics g, List<Point> points);
 
     /**
      * Paints the map polygon on the map. The <code>polygon</code>
@@ -34,5 +34,5 @@ public interface MapPolygon extends MapObject{
      * @param g graphics
      * @param polygon polygon to draw
      */
-    public void paint(Graphics g, Polygon polygon);
+    void paint(Graphics g, Polygon polygon);
 }

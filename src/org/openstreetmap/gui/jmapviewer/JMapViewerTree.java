@@ -34,10 +34,11 @@ public class JMapViewerTree extends JPanel{
     private JPanel treePanel;
     private JSplitPane splitPane;
 
-    public JMapViewerTree(String name){
+    public JMapViewerTree(String name) {
         this(name, false);
     }
-    public JMapViewerTree(String name, boolean treeVisible){
+
+    public JMapViewerTree(String name, boolean treeVisible) {
         super();
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
@@ -63,19 +64,22 @@ public class JMapViewerTree extends JPanel{
             public void mousePressed(MouseEvent e) {
                 maybeShowPopup(e);
             }
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 maybeShowPopup(e);
             }
+
             private void maybeShowPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
-                    AbstractLayer layer = ((CheckBoxNodePanel)e.getComponent()).getData().getAbstractLayer();
-                    if(layer!=null)
+                    AbstractLayer layer = ((CheckBoxNodePanel) e.getComponent()).getData().getAbstractLayer();
+                    if (layer != null)
                         JMapViewerTree.this.createPopupMenu(layer).show(e.getComponent(), e.getX(), e.getY());
                 }
             }
         });
     }
+
     private JPopupMenu createPopupMenu(final AbstractLayer layer) {
         JMenuItem menuItemShow = new JMenuItem("show texts");
         JMenuItem menuItemHide = new JMenuItem("hide texts");
@@ -84,17 +88,17 @@ public class JMapViewerTree extends JPanel{
         JPopupMenu popup = new JPopupMenu();
 
         // Create items
-        if(layer.isVisibleTexts()==null){
+        if (layer.isVisibleTexts() == null) {
             popup.add(menuItemShow);
             popup.add(menuItemHide);
-        }else if(layer.isVisibleTexts()) popup.add(menuItemHide);
+        } else if (layer.isVisibleTexts()) popup.add(menuItemHide);
         else popup.add(menuItemShow);
 
         menuItemShow.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 setVisibleTexts(layer, true);
-                if(layer.getParent()!=null) layer.getParent().calculateVisibleTexts();
+                if (layer.getParent() != null) layer.getParent().calculateVisibleTexts();
                 map.repaint();
             }
         });
@@ -102,73 +106,90 @@ public class JMapViewerTree extends JPanel{
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 setVisibleTexts(layer, false);
-                if(layer.getParent()!=null) layer.getParent().calculateVisibleTexts();
+                if (layer.getParent() != null) layer.getParent().calculateVisibleTexts();
                 map.repaint();
             }
         });
 
         return popup;
     }
-    private void setVisibleTexts(AbstractLayer layer, boolean visible){
+
+    private void setVisibleTexts(AbstractLayer layer, boolean visible) {
         layer.setVisibleTexts(visible);
-        if(layer instanceof LayerGroup){
-            LayerGroup group = (LayerGroup)layer;
-            if(group.getLayers()!=null) for(AbstractLayer al: group.getLayers()) setVisibleTexts(al, visible);
+        if (layer instanceof LayerGroup) {
+            LayerGroup group = (LayerGroup) layer;
+            if (group.getLayers() != null)
+                for (AbstractLayer al: group.getLayers()) {
+                    setVisibleTexts(al, visible);
+                }
         }
     }
-    public Layer addLayer(String name){
+
+    public Layer addLayer(String name) {
         Layer layer = new Layer(name);
         this.addLayer(layer);
         return layer;
     }
-    public JMapViewerTree addLayer(Layer layer){
+
+    public JMapViewerTree addLayer(Layer layer) {
         tree.addLayer(layer);
         return this;
     }
-    public JMapViewerTree addLayer(MapObject element){
+
+    public JMapViewerTree addLayer(MapObject element) {
         //element.getLayer().add(element);
         return addLayer(element.getLayer());
     }
-    public Layer removeFromLayer(MapObject element){
+
+    public Layer removeFromLayer(MapObject element) {
         element.getLayer().getElements().remove(element);
         return element.getLayer();
     }
-    public static int size(List<?> list){
-        return list==null?0:list.size();
+
+    public static int size(List<?> list) {
+        return list == null ? 0 : list.size();
     }
-    public JMapViewer getViewer(){
+
+    public JMapViewer getViewer() {
         return map;
     }
-    public CheckBoxTree getTree(){
+
+    public CheckBoxTree getTree() {
         return tree;
     }
+
     public void addMapObject(MapObject o){
 
     }
-    public void setTreeVisible(boolean visible){
+
+    public void setTreeVisible(boolean visible) {
         removeAll();
         revalidate();
-        if(visible){
+        if (visible) {
             splitPane.setLeftComponent(treePanel);
             splitPane.setRightComponent(map);
             add(splitPane, BorderLayout.CENTER);
-        }else add(map, BorderLayout.CENTER);
+        } else add(map, BorderLayout.CENTER);
         repaint();
     }
-    private void createRefresh(){
+
+    private void createRefresh() {
         tree.getModel().addTreeModelListener(new TreeModelListener() {
             @Override
             public void treeNodesChanged(final TreeModelEvent e) {
                 repaint();
             }
+
             @Override
             public void treeNodesInserted(TreeModelEvent arg0) {
                 // TODO Auto-generated method stub
             }
+
             @Override
             public void treeNodesRemoved(TreeModelEvent arg0) {
                 // TODO Auto-generated method stub
             }
+
             @Override
             public void treeStructureChanged(TreeModelEvent arg0) {
                 // TODO Auto-generated method stub

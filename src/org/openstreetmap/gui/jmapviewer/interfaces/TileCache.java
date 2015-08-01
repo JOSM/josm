@@ -27,7 +27,7 @@ public interface TileCache {
      * @return the requested tile or <code>null</code> if the tile is not
      *         present in the cache
      */
-    public Tile getTile(TileSource source, int x, int y, int z);
+    Tile getTile(TileSource source, int x, int y, int z);
 
     /**
      * Adds a tile to the cache. How long after adding a tile can be retrieved
@@ -36,15 +36,15 @@ public interface TileCache {
      *
      * @param tile the tile to be added
      */
-    public void addTile(Tile tile);
+    void addTile(Tile tile);
 
     /**
      * @return the number of tiles hold by the cache
      */
-    public int getTileCount();
+    int getTileCount();
 
     /**
      * Clears the cache deleting all tiles from memory.
      */
-    public void clear();
+    void clear();
 }

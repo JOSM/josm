@@ -1,4 +1,4 @@
-// License: GPL. For details, see LICENSE file.
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
 
 /**
@@ -53,5 +53,4 @@ public class TileXY {
     public double getY() {
         return y;
     }
-
 }

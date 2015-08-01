@@ -8,18 +8,22 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.logging.Logger;
 
-public class FeatureAdapter {
+public final class FeatureAdapter {
 
-    public static interface BrowserAdapter {
+    private FeatureAdapter() {
+        // private constructor for utility classes
+    }
+    
+    public interface BrowserAdapter {
         void openLink(String url);
     }
 
-    public static interface TranslationAdapter {
+    public interface TranslationAdapter {
         String tr(String text, Object... objects);
         // TODO: more i18n functions
     }
 
-    public static interface LoggingAdapter {
+    public interface LoggingAdapter {
         Logger getLogger(String name);
     }
 
