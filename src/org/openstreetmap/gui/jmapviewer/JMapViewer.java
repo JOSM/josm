@@ -48,14 +48,14 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Vectors for clock-wise tile painting
      */
-    protected static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
+    private static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
 
     public static final int MAX_ZOOM = 22;
     public static final int MIN_ZOOM = 0;
 
-    protected List<MapMarker> mapMarkerList;
-    protected List<MapRectangle> mapRectangleList;
-    protected List<MapPolygon> mapPolygonList;
+    protected transient List<MapMarker> mapMarkerList;
+    protected transient List<MapRectangle> mapRectangleList;
+    protected transient List<MapPolygon> mapPolygonList;
 
     protected boolean mapMarkersVisible;
     protected boolean mapRectanglesVisible;
@@ -64,7 +64,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     protected boolean tileGridVisible;
     protected boolean scrollWrapEnabled;
 
-    protected TileController tileController;
+    protected transient TileController tileController;
 
     /**
      * x- and y-position of the center of this map-panel on the world map
@@ -90,7 +90,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     protected transient TileSource tileSource;
 
-    protected AttributionSupport attribution = new AttributionSupport();
+    protected transient AttributionSupport attribution = new AttributionSupport();
 
     /**
      * Creates a standard {@link JMapViewer} instance that can be controlled via

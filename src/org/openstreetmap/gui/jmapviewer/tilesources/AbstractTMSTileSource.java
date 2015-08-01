@@ -128,19 +128,19 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
 
     @Override
     public int lonToX(double lon, int zoom) {
-        return (int) osmMercator.LonToX(lon, zoom);
+        return (int) osmMercator.lonToX(lon, zoom);
     }
 
     @Override
     public int latToY(double lat, int zoom) {
-        return (int) osmMercator.LatToY(lat, zoom);
+        return (int) osmMercator.latToY(lat, zoom);
     }
 
     @Override
     public Point latLonToXY(double lat, double lon, int zoom) {
         return new Point(
-                (int) osmMercator.LonToX(lon, zoom),
-                (int) osmMercator.LatToY(lat, zoom)
+                (int) osmMercator.lonToX(lon, zoom),
+                (int) osmMercator.latToY(lat, zoom)
                 );
     }
 
@@ -174,19 +174,19 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
 
     @Override
     public double latToTileY(double lat, int zoom) {
-        return osmMercator.LatToY(lat, zoom) / tileSize;
+        return osmMercator.latToY(lat, zoom) / tileSize;
     }
 
     @Override
     public double lonToTileX(double lon, int zoom) {
-        return osmMercator.LonToX(lon, zoom) / tileSize;
+        return osmMercator.lonToX(lon, zoom) / tileSize;
     }
 
     @Override
     public TileXY latLonToTileXY(double lat, double lon, int zoom) {
         return new TileXY(
-                osmMercator.LonToX(lon, zoom) / tileSize,
-                osmMercator.LatToY(lat, zoom) / tileSize
+                osmMercator.lonToX(lon, zoom) / tileSize,
+                osmMercator.latToY(lat, zoom) / tileSize
                 );
     }
 

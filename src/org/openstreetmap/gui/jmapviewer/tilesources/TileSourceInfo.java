@@ -13,8 +13,9 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
 public class TileSourceInfo {
     /** id for this imagery entry, optional at the moment */
     protected String id;
+
     /** URL of the imagery service */
-    protected  String url = null;
+    protected String url;
 
     /** name of the imagery layer */
     protected String name;
@@ -45,7 +46,7 @@ public class TileSourceInfo {
      * @param id unique id
      */
     public TileSourceInfo(String name, String base_url, String id) {
-        this(name);
+        this.name = name;
         this.url = base_url;
         this.id = id;
     }
@@ -56,20 +57,21 @@ public class TileSourceInfo {
      * @param name name
      */
     public TileSourceInfo(String name) {
-        this.name = name;
+        this(name, null, null);
     }
 
     /**
      * Creates empty TileSourceInfo class
      */
     public TileSourceInfo() {
+        this(null, null, null);
     }
 
     /**
      * Request name of the tile source
      * @return name of the tile source
      */
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
@@ -77,8 +79,17 @@ public class TileSourceInfo {
      * Request URL of the tile source
      * @return url of the tile source
      */
-    public String getUrl() {
+    public final String getUrl() {
         return url;
+    }
+
+    /**
+     * Request ID of the tile source. Id can be null. This gets the configured id as is.
+     * Due to a user error, this may not be unique.
+     * @return id of the tile source
+     */
+    public final String getId() {
+        return id;
     }
 
     /**
@@ -122,10 +133,19 @@ public class TileSourceInfo {
     }
 
     /**
+     * Request metadata headers
+     * @return mapping &lt;HTTP header name, Metadata key name&gt; for copying HTTP headers to Tile metadata
+     * @since 31125
+     */
+    public Map<String, String> getMetadataHeaders() {
+        return metadataHeaders;
+    }
+
+    /**
      * Sets the tile size provided by this tile source
      * @param tileSize tile size in pixels
      */
-    public void setTileSize(int tileSize) {
+    public final void setTileSize(int tileSize) {
         if (tileSize == 0 || tileSize < -1) {
             throw new AssertionError("Invalid tile size: " + tileSize);
         }
@@ -133,11 +153,26 @@ public class TileSourceInfo {
     }
 
     /**
-     *
-     * @return mapping &lt;HTTP header name, Metadata key name&gt; for copying HTTP headers to Tile metadata
-     * @since 31125
+     * Sets the tile URL.
+     * @param url tile URL
      */
-    public Map<String, String> getMetadataHeaders() {
-        return metadataHeaders;
+    public final void setUrl(String url) {
+        this.url = url;
+    }
+
+    /**
+     * Sets the tile name.
+     * @param name tile name
+     */
+    public final void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Sets the tile id.
+     * @param id tile id
+     */
+    public final void setId(String id) {
+        this.id = id;
     }
 }

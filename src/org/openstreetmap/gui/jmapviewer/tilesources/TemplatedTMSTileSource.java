@@ -89,13 +89,13 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
         Matcher m = Pattern.compile(".*"+PATTERN_ZOOM+".*").matcher(this.baseUrl);
         if (m.matches()) {
             if (m.group(1) != null) {
-                finalZoom = Integer.valueOf(m.group(1))-zoom;
+                finalZoom = Integer.parseInt(m.group(1))-zoom;
             }
             if (m.group(2) != null) {
                 String ofs = m.group(2);
                 if (ofs.startsWith("+"))
                     ofs = ofs.substring(1);
-                finalZoom += Integer.valueOf(ofs);
+                finalZoom += Integer.parseInt(ofs);
             }
         }
         String r = this.baseUrl

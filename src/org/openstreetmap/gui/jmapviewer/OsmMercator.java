@@ -15,7 +15,7 @@ public class OsmMercator {
     /**
      * default tile size
      */
-    public static int DEFAUL_TILE_SIZE = 256;
+    public static final int DEFAUL_TILE_SIZE = 256;
     /** maximum latitude (north) for mercator display */
     public static final double MAX_LAT = 85.05112877980659;
     /** minimum latitude (south) for mercator display */
@@ -127,7 +127,7 @@ public class OsmMercator {
      *            [-180..180]
      * @return [0..2^Zoomlevel*TILE_SIZE[
      */
-    public double LonToX(double aLongitude, int aZoomlevel) {
+    public double lonToX(double aLongitude, int aZoomlevel) {
         int mp = getMaxPixels(aZoomlevel);
         double x = (mp * (aLongitude + 180L)) / 360L;
         return Math.min(x, mp);
@@ -150,7 +150,7 @@ public class OsmMercator {
      *            [-90...90]
      * @return [0..2^Zoomlevel*TILE_SIZE[
      */
-    public double LatToY(double aLat, int aZoomlevel) {
+    public double latToY(double aLat, int aZoomlevel) {
         if (aLat < MIN_LAT)
             aLat = MIN_LAT;
         else if (aLat > MAX_LAT)
