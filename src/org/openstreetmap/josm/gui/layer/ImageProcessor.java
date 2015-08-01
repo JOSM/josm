@@ -20,6 +20,5 @@ public interface ImageProcessor {
      *
      * @return processed image
      */
-    public BufferedImage process(BufferedImage image);
-
+    BufferedImage process(BufferedImage image);
 }

@@ -112,6 +112,6 @@ JOSM Checkstyle rules
     <property name="lineSeparator" value="lf"/>
   </module>
   <module name="SuppressionFilter">
-    <property name="file" value="tools/checkstyle/josm_filters.xml"/>
+    <property name="file" value="${basedir}/tools/checkstyle/josm_filters.xml"/>
   </module>
 </module>

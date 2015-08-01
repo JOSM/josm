@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="test/lib/unitils-core/ognl-2.6.9.jar"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/unitils-core-3.3.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar"/>
+	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
