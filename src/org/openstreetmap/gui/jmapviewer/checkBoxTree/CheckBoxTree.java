@@ -20,13 +20,13 @@ import org.openstreetmap.gui.jmapviewer.LayerGroup;
 
 /**
  * JTree for checkBox Tree Layers
- * 
+ *
  * @author galo
  */
 public class CheckBoxTree extends JTree{
     /** Serial Version UID */
     private static final long serialVersionUID = 6943401106938034256L;
-    
+
     private final CheckBoxNodeEditor editor;
 
     public CheckBoxTree(AbstractLayer layer){
@@ -47,7 +47,7 @@ public class CheckBoxTree extends JTree{
         editor = new CheckBoxNodeEditor(this);
         setCellEditor(editor);
         setEditable(true);
-        
+
         // listen for changes in the model (including check box toggles)
         getModel().addTreeModelListener(new TreeModelListener() {
             @Override
@@ -120,8 +120,11 @@ public class CheckBoxTree extends JTree{
     }
     private static Boolean childStatus(DefaultMutableTreeNode node){
         Boolean status = data(node.getChildAt(0)).isSelected();
-        for(int i=1; i<node.getChildCount()&&status!=null; i++){
-            if(status != data(node.getChildAt(i)).isSelected()) return null;
+        for (int i=1; i<node.getChildCount() && status!=null; i++){
+            if (!status.equals(
+                    data(node.getChildAt(i)).isSelected()
+                    ))
+                return null;
         }
         return status;
     }
@@ -131,7 +134,7 @@ public class CheckBoxTree extends JTree{
             if(parent!=null){
                 CheckBoxNodeData dataParent = data(parent);
                 Boolean childStatus = childStatus(parent);
-                if(dataParent.isSelected()!=childStatus){
+                if(childStatus != null && !childStatus.equals(dataParent.isSelected())) {
                     dataParent.setSelected(childStatus);
                     changeParents(parent);
                 }
@@ -147,7 +150,7 @@ public class CheckBoxTree extends JTree{
     private static void setChildrens(DefaultMutableTreeNode node, Boolean value){
         for(int i=0; i<node.getChildCount(); i++){
             DefaultMutableTreeNode childNode = node(node.getChildAt(i));
-            if (data(childNode).isSelected() !=data(node).isSelected()){
+            if (!data(childNode).isSelected().equals(data(node).isSelected())){
                 data(childNode).setSelected(data(node).isSelected());
                 setChildrens(childNode, value);
             }
@@ -215,7 +218,7 @@ public class CheckBoxTree extends JTree{
     }
     public DefaultMutableTreeNode add(DefaultMutableTreeNode parent, final AbstractLayer layer){
         layer.setVisible(data(parent).isSelected());
-        DefaultMutableTreeNode node = createNode(layer); 
+        DefaultMutableTreeNode node = createNode(layer);
         parent.add(node);
         ((DefaultTreeModel)getModel()).reload();
         //System.out.println("Created node "+layer+" upper of "+data(parent));

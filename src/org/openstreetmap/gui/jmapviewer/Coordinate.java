@@ -5,7 +5,6 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Objects;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -17,7 +16,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
  * @author Jan Peter Stotz
  *
  */
-public class Coordinate implements Serializable, ICoordinate {
+public class Coordinate implements ICoordinate {
     private transient Point2D.Double data;
 
     public Coordinate(double lat, double lon) {
@@ -51,6 +50,7 @@ public class Coordinate implements Serializable, ICoordinate {
         data.y = (Double) in.readObject();
     }
 
+    @Override
     public String toString() {
         return "Coordinate[" + data.y + ", " + data.x + "]";
     }

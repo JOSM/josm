@@ -68,7 +68,7 @@ public abstract class MapObjectImpl {
         if(style==null&&stroke!=null) style=new Style();
         if(style!=null) style.setStroke(stroke);
     }
-    
+
     public Font getFont() {
         Style styleAssigned = getStyleAssigned();
         return styleAssigned == null ? null : getStyleAssigned().getFont();
@@ -94,8 +94,12 @@ public abstract class MapObjectImpl {
     }
     public static Font getDefaultFont(){
         Font f = UIManager.getDefaults().getFont("TextField.font");
+        if (f == null) {
+            f = Font.decode(null);
+        }
         return new Font(f.getName(), Font.BOLD, f.getSize());
     }
+
     public void paintText(Graphics g, Point position) {
         if(name!=null && g!=null && position!=null){
             if(getFont()==null){

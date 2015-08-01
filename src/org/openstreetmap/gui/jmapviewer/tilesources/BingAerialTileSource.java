@@ -60,7 +60,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         super(info);
     }
 
-    protected class Attribution {
+    protected static class Attribution {
         String attribution;
         int minZoom;
         int maxZoom;

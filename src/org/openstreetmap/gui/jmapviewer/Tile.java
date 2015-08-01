@@ -277,6 +277,9 @@ public class Tile {
             return false;
         if (zoom != other.zoom)
             return false;
+        if (!getTileSource().equals(other.getTileSource())) {
+            return false;
+        }
         return true;
     }
 

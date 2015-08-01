@@ -40,7 +40,7 @@ public class JMapViewerTree extends JPanel{
     public JMapViewerTree(String name, boolean treeVisible){
         super();
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        
+
         tree = new CheckBoxTree(name);
         treePanel = new JPanel();
         treePanel.setLayout(new BorderLayout());
@@ -50,7 +50,7 @@ public class JMapViewerTree extends JPanel{
 
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(150);
-        
+
         //Provide minimum sizes for the two components in the split pane
         Dimension minimumSize = new Dimension(100, 50);
         //tree.setMinimumSize(minimumSize);
@@ -59,15 +59,16 @@ public class JMapViewerTree extends JPanel{
         setLayout(new BorderLayout());
         setTreeVisible(treeVisible);
         tree.addNodeListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 maybeShowPopup(e);
             }
+            @Override
             public void mouseReleased(MouseEvent e) {
                 maybeShowPopup(e);
             }
             private void maybeShowPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
-                    e.getSource();
                     AbstractLayer layer = ((CheckBoxNodePanel)e.getComponent()).getData().getAbstractLayer();
                     if(layer!=null)
                         JMapViewerTree.this.createPopupMenu(layer).show(e.getComponent(), e.getX(), e.getY());
@@ -78,17 +79,17 @@ public class JMapViewerTree extends JPanel{
     private JPopupMenu createPopupMenu(final AbstractLayer layer) {
         JMenuItem menuItemShow = new JMenuItem("show texts");
         JMenuItem menuItemHide = new JMenuItem("hide texts");
- 
+
         //Create the popup menu.
         JPopupMenu popup = new JPopupMenu();
-        
+
         // Create items
         if(layer.isVisibleTexts()==null){
             popup.add(menuItemShow);
             popup.add(menuItemHide);
         }else if(layer.isVisibleTexts()) popup.add(menuItemHide);
         else popup.add(menuItemShow);
-        
+
         menuItemShow.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -105,7 +106,7 @@ public class JMapViewerTree extends JPanel{
                 map.repaint();
             }
         });
- 
+
         return popup;
     }
     private void setVisibleTexts(AbstractLayer layer, boolean visible){
@@ -142,7 +143,7 @@ public class JMapViewerTree extends JPanel{
         return tree;
     }
     public void addMapObject(MapObject o){
-        
+
     }
     public void setTreeVisible(boolean visible){
         removeAll();

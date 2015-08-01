@@ -88,7 +88,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     protected ZOOM_BUTTON_STYLE zoomButtonStyle;
 
-    protected TileSource tileSource;
+    protected transient TileSource tileSource;
 
     protected AttributionSupport attribution = new AttributionSupport();
 
@@ -262,7 +262,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         int y_max = Integer.MIN_VALUE;
         int mapZoomMax = tileController.getTileSource().getMaxZoom();
 
-        if (markers) {
+        if (markers && mapMarkerList != null) {
             synchronized (mapMarkerList) {
                 for (MapMarker marker : mapMarkerList) {
                     if (marker.isVisible()) {
@@ -276,7 +276,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             }
         }
 
-        if (rectangles) {
+        if (rectangles && mapRectangleList != null) {
             synchronized (mapRectangleList) {
                 for (MapRectangle rectangle : mapRectangleList) {
                     if (rectangle.isVisible()) {
@@ -291,7 +291,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             }
         }
 
-        if (polygons) {
+        if (polygons && mapPolygonList != null) {
             synchronized (mapPolygonList) {
                 for (MapPolygon polygon : mapPolygonList) {
                     if (polygon.isVisible()) {
