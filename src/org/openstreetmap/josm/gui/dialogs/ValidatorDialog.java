@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
@@ -196,9 +197,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 continue;
             }
 
-            Enumeration<DefaultMutableTreeNode> children = node.breadthFirstEnumeration();
+            Enumeration<TreeNode> children = node.breadthFirstEnumeration();
             while (children.hasMoreElements()) {
-                DefaultMutableTreeNode childNode = children.nextElement();
+                DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
                 if (processedNodes.contains(childNode)) {
                     continue;
                 }
@@ -246,9 +247,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                             a, a[1]);
                 }
                 if (asked == JOptionPane.YES_NO_OPTION) {
-                    Enumeration<DefaultMutableTreeNode> children = node.breadthFirstEnumeration();
+                    Enumeration<TreeNode> children = node.breadthFirstEnumeration();
                     while (children.hasMoreElements()) {
-                        DefaultMutableTreeNode childNode = children.nextElement();
+                        DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
                         if (processedNodes.contains(childNode)) {
                             continue;
                         }
@@ -271,9 +272,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 }
             }
 
-            Enumeration<DefaultMutableTreeNode> children = node.breadthFirstEnumeration();
+            Enumeration<TreeNode> children = node.breadthFirstEnumeration();
             while (children.hasMoreElements()) {
-                DefaultMutableTreeNode childNode = children.nextElement();
+                DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
                 if (processedNodes.contains(childNode)) {
                     continue;
                 }
@@ -314,9 +315,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         for (TreePath path : selectedPaths) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            Enumeration<DefaultMutableTreeNode> children = node.breadthFirstEnumeration();
+            Enumeration<TreeNode> children = node.breadthFirstEnumeration();
             while (children.hasMoreElements()) {
-                DefaultMutableTreeNode childNode = children.nextElement();
+                DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
                 Object nodeInfo = childNode.getUserObject();
                 if (nodeInfo instanceof TestError) {
                     TestError error = (TestError) nodeInfo;
@@ -346,9 +347,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (lastSelectedNode != null && !lastSelectedNode.equals(node)) {
-            Enumeration<DefaultMutableTreeNode> children = lastSelectedNode.breadthFirstEnumeration();
+            Enumeration<TreeNode> children = lastSelectedNode.breadthFirstEnumeration();
             while (children.hasMoreElements()) {
-                DefaultMutableTreeNode childNode = children.nextElement();
+                DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
                 Object nodeInfo = childNode.getUserObject();
                 if (nodeInfo instanceof TestError) {
                     TestError error = (TestError) nodeInfo;
@@ -361,9 +362,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (node == null)
             return hasFixes;
 
-        Enumeration<DefaultMutableTreeNode> children = node.breadthFirstEnumeration();
+        Enumeration<TreeNode> children = node.breadthFirstEnumeration();
         while (children.hasMoreElements()) {
-            DefaultMutableTreeNode childNode = children.nextElement();
+            DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
             Object nodeInfo = childNode.getUserObject();
             if (nodeInfo instanceof TestError) {
                 TestError error = (TestError) nodeInfo;
