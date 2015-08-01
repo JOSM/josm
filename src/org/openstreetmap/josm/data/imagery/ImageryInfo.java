@@ -373,11 +373,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param e The imagery preference entry
      */
     public ImageryInfo(ImageryPreferenceEntry e) {
+        super(e.name, e.url, e.id);
         CheckParameterUtil.ensureParameterNotNull(e.name, "name");
         CheckParameterUtil.ensureParameterNotNull(e.url, "url");
-        name = e.name;
-        id = e.id;
-        url = e.url;
         description = e.description;
         cookies = e.cookies;
         eulaAcceptanceRequired = e.eula;
@@ -421,9 +419,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param i The other imagery info
      */
     public ImageryInfo(ImageryInfo i) {
-        this.name = i.name;
-        this.id = i.id;
-        this.url = i.url;
+        super(i.name, i.url, i.id);
         this.defaultEntry = i.defaultEntry;
         this.cookies = i.cookies;
         this.eulaAcceptanceRequired = null;
@@ -679,27 +675,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     /**
      * Returns the entry name.
      * @return The entry name
-     */
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Returns the entry name.
-     * @return The entry name
      * @since 6968
      */
     public String getOriginalName() {
         return this.origName != null ? this.origName : this.name;
-    }
-
-    /**
-     * Sets the entry name.
-     * @param name The entry name
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
@@ -719,50 +698,13 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
     }
 
-    /**
-     * Gets the entry id.
-     *
-     * Id can be null. This gets the configured id as is. Due to a user error,
-     * this may not be unique. Use {@link ImageryLayerInfo#getUniqueId} to ensure
-     * a unique value.
-     * @return the id
-     */
-    public String getId() {
-        return this.id;
-    }
-
-    /**
-     * Sets the entry id.
-     * @param id the entry id
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public void clearId() {
         if (this.id != null) {
             Collection<String> newAddedIds = new TreeSet<>(Main.pref.getCollection("imagery.layers.addedIds"));
             newAddedIds.add(this.id);
             Main.pref.putCollection("imagery.layers.addedIds", newAddedIds);
         }
-        this.id = null;
-    }
-
-    /**
-     * Returns the entry URL.
-     * @return The entry URL
-     */
-    @Override
-    public String getUrl() {
-        return this.url;
-    }
-
-    /**
-     * Sets the entry URL.
-     * @param url The entry URL
-     */
-    public void setUrl(String url) {
-        this.url = url;
+        setId(null);
     }
 
     /**
