@@ -33,7 +33,7 @@ public final class JobDispatcher {
 
     protected BlockingDeque<TileJob> jobQueue = new LinkedBlockingDeque<>();
 
-    protected static int workerThreadMaxCount = 8;
+    private static int workerThreadMaxCount = 8;
 
     /**
      * Specifies the time span in seconds that a worker thread waits for new
@@ -41,7 +41,7 @@ public final class JobDispatcher {
      * terminates itself. Only the first worker thread works differently, it
      * ignores the timeout and will never terminate itself.
      */
-    protected static int workerThreadTimeout = 30;
+    private static int workerThreadTimeout = 30;
 
     /**
      * Type of queue, FIFO if <code>false</code>, LIFO if <code>true</code>

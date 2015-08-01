@@ -26,19 +26,19 @@ public class Tile {
     /**
      * Hourglass image that is displayed until a map tile has been loaded, except for overlay sources
      */
-    public static BufferedImage LOADING_IMAGE;
+    public static final BufferedImage LOADING_IMAGE = loadImage("images/hourglass.png");
 
     /**
      * Red cross image that is displayed after a loading error, except for overlay sources
      */
-    public static BufferedImage ERROR_IMAGE;
+    public static final BufferedImage ERROR_IMAGE = loadImage("images/error.png");
 
-    static {
+    private static BufferedImage loadImage(String path) {
         try {
-            LOADING_IMAGE = ImageIO.read(JMapViewer.class.getResourceAsStream("images/hourglass.png"));
-            ERROR_IMAGE = ImageIO.read(JMapViewer.class.getResourceAsStream("images/error.png"));
+            return ImageIO.read(JMapViewer.class.getResourceAsStream(path));
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
         }
     }
 
