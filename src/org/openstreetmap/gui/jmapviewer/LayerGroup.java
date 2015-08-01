@@ -5,7 +5,7 @@ import java.util.List;
 
 public class LayerGroup extends AbstractLayer{
     private List<AbstractLayer> layers;
-    
+
     public LayerGroup(String name){
         super(name);
     }
@@ -40,20 +40,21 @@ public class LayerGroup extends AbstractLayer{
         layers = add(layers, layer);
         return this;
     }
-    public void calculateVisibleTexts(){
+    public void calculateVisibleTexts() {
         Boolean calculate=null;
-        if(layers!=null&&layers.size()>0){
+        if (layers!=null&&layers.size()>0){
             calculate=layers.get(0).isVisibleTexts();
-            for(int i=1;i<layers.size(); i++){
+            for (int i=1;i<layers.size(); i++){
                 calculate = resultOf(calculate, layers.get(i).isVisibleTexts());
             }
         }
         setVisibleTexts(calculate);
         if(getParent()!=null) getParent().calculateVisibleTexts();
     }
-    public Boolean resultOf(Boolean b1, Boolean b2){
-        if(b1==null||b2==null) return null;
-        else if(b1.booleanValue() == b2.booleanValue()) return b1.booleanValue();
-        else return null;
+    public Boolean resultOf(Boolean b1, Boolean b2) {
+        if (b1 != null && b1.equals(b2)) {
+            return b1;
+        }
+        return Boolean.FALSE;
     }
 }

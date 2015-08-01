@@ -29,7 +29,7 @@ public class TileSourceInfo {
     protected int maxZoom;
 
     /** cookies that needs to be sent to tile source */
-    protected String cookies;
+    protected String cookies = "";
 
     /** tile size of the displayed tiles */
     private int tileSize = OsmMercator.DEFAUL_TILE_SIZE; // FIXME: set to -1 for next release

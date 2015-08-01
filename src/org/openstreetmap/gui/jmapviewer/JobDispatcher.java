@@ -97,14 +97,16 @@ public class JobDispatcher {
         try {
             if(job.getTile() != null) {
                 for(TileJob oldJob : jobQueue) {
-                    if(oldJob.getTile() == job.getTile()) {
+                    if (job.getTile().equals(oldJob.getTile())) {
                         return;
                     }
                 }
             }
             jobQueue.put(job);
-            if (workerThreadIdleCount == 0 && workerThreadCount < workerThreadMaxCount)
-                addWorkerThread();
+            synchronized (this) {
+                if (workerThreadIdleCount == 0 && workerThreadCount < workerThreadMaxCount)
+                    addWorkerThread();
+            }
         } catch (InterruptedException e) {
         }
     }

@@ -90,11 +90,11 @@ public class MemoryTileCache implements TileCache {
     }
 
     @Override
-    public int getTileCount() {
+    public synchronized int getTileCount() {
         return hash.size();
     }
 
-    public int getCacheSize() {
+    public synchronized int getCacheSize() {
         return cacheSize;
     }
 
@@ -116,26 +116,12 @@ public class MemoryTileCache implements TileCache {
      */
     protected static class CacheEntry {
         Tile tile;
-
         CacheEntry next;
         CacheEntry prev;
 
         protected CacheEntry(Tile tile) {
             this.tile = tile;
         }
-
-        public Tile getTile() {
-            return tile;
-        }
-
-        public CacheEntry getNext() {
-            return next;
-        }
-
-        public CacheEntry getPrev() {
-            return prev;
-        }
-
     }
 
     /**
