@@ -5,10 +5,10 @@ package org.openstreetmap.josm;
  * Timer utilities for performance tests.
  * @author Michael Zangl
  */
-public class PerformanceTestUtils {
+public final class PerformanceTestUtils {
     /**
      * A timer that measures the time from it's creation to the {@link #done()} call.
-    * @author Michael Zangl
+     * @author Michael Zangl
      */
     public static class PerformanceTestTimer {
         private String name;

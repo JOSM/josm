@@ -1287,7 +1287,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param line The line style to use. This is drawn using color.
      * @param dashes The dash style to use. This is drawn using dashedColor. <code>null</code> if unused.
      * @param dashedColor The color of the dashes.
-     * @param offset
+     * @param offset The offset
      * @param showOrientation show arrows that indicate the technical orientation of
      *              the way (defined by order of nodes)
      * @param showHeadArrowOnly True if only the arrow at the end of the line but not those on the segments should be displayed.

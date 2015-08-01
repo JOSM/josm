@@ -13,16 +13,20 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * This is an utility class that allows you to generate OSM test data.
  * @author Michael Zangl
  */
-public class OsmDataGenerator {
+public final class OsmDataGenerator {
     private static final int DEFAULT_KEY_VALUE_RATIO = 3;
     private static final int DEFAULT_NODE_COUNT = 1000;
     private static final String DATA_DIR = "data_nodist" + File.separator + "osmfiles";
+
+    private OsmDataGenerator() {
+        // private constructor for utility classes
+    }
 
     /**
      * A generator that generates test data by filling a data set.
      * @author Michael Zangl
      */
-    public static abstract class DataGenerator {
+    public abstract static class DataGenerator {
         private String datasetName;
         protected final Random random;
         private DataSet ds;
@@ -56,7 +60,7 @@ public class OsmDataGenerator {
 
         /**
          * Create a random node and add it to the dataset.
-         * @return
+         * @return a random node
          */
         protected Node createRandomNode(DataSet ds) {
             Node node = new Node();
@@ -93,13 +97,13 @@ public class OsmDataGenerator {
 
     /**
      * A data generator that generates a bunch of random nodes.
-    * @author Michael Zangl
+     * @author Michael Zangl
      */
     public static class NodeDataGenerator extends DataGenerator {
         protected final ArrayList<Node> nodes = new ArrayList<>();
         private final int nodeCount;
 
-        private NodeDataGenerator(String datasetName, int nodeCount) {
+        protected NodeDataGenerator(String datasetName, int nodeCount) {
             super(datasetName);
             this.nodeCount = nodeCount;
         }
@@ -123,9 +127,9 @@ public class OsmDataGenerator {
 
     /**
      * A data generator that generates a bunch of random nodes and fills them with keys/values.
-    * @author Michael Zangl
+     * @author Michael Zangl
      */
-    public static class KeyValueDataGenerator extends NodeDataGenerator {
+    public static final class KeyValueDataGenerator extends NodeDataGenerator {
 
         private static final int VALUE_COUNT = 200;
         private static final int KEY_COUNT = 150;
