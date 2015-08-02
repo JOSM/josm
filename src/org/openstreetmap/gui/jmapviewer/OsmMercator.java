@@ -65,7 +65,7 @@ public class OsmMercator {
     }
 
     public int falseNorthing(int aZoomlevel) {
-        return (-1 * getMaxPixels(aZoomlevel) / 2);
+        return -1 * getMaxPixels(aZoomlevel) / 2;
     }
 
     /**
@@ -80,10 +80,10 @@ public class OsmMercator {
      * @return the distance
      */
     public double getDistance(int x1, int y1, int x2, int y2, int zoomLevel) {
-        double la1 = YToLat(y1, zoomLevel);
-        double lo1 = XToLon(x1, zoomLevel);
-        double la2 = YToLat(y2, zoomLevel);
-        double lo2 = XToLon(x2, zoomLevel);
+        double la1 = yToLat(y1, zoomLevel);
+        double lo1 = xToLon(x1, zoomLevel);
+        double la2 = yToLat(y2, zoomLevel);
+        double lo2 = xToLon(x2, zoomLevel);
 
         return getDistance(la1, lo1, la2, lo2);
     }
@@ -107,7 +107,7 @@ public class OsmMercator {
                 + Math.cos(aStartLat) * Math.cos(aEndLat)
                 * Math.cos(aEndLong - aStartLong));
 
-        return (EARTH_RADIUS * distance);
+        return EARTH_RADIUS * distance;
     }
 
     /**
@@ -125,6 +125,7 @@ public class OsmMercator {
      *
      * @param aLongitude
      *            [-180..180]
+     * @param aZoomlevel zoom level
      * @return [0..2^Zoomlevel*TILE_SIZE[
      */
     public double lonToX(double aLongitude, int aZoomlevel) {
@@ -148,6 +149,7 @@ public class OsmMercator {
      * </p>
      * @param aLat
      *            [-90...90]
+     * @param aZoomlevel zoom level
      * @return [0..2^Zoomlevel*TILE_SIZE[
      */
     public double latToY(double aLat, int aZoomlevel) {
@@ -177,9 +179,10 @@ public class OsmMercator {
      * </p>
      * @param aX
      *            [0..2^Zoomlevel*TILE_WIDTH[
+     * @param aZoomlevel zoom level
      * @return ]-180..180[
      */
-    public double XToLon(int aX, int aZoomlevel) {
+    public double xToLon(int aX, int aZoomlevel) {
         return ((360d * aX) / getMaxPixels(aZoomlevel)) - 180.0;
     }
 
@@ -188,9 +191,10 @@ public class OsmMercator {
      *
      * @param aY
      *            [0..2^Zoomlevel*TILE_WIDTH[
+     * @param aZoomlevel zoom level
      * @return [MIN_LAT..MAX_LAT] is about [-85..85]
      */
-    public double YToLat(int aY, int aZoomlevel) {
+    public double yToLat(int aY, int aZoomlevel) {
         aY += falseNorthing(aZoomlevel);
         double latitude = (Math.PI / 2) - (2 * Math.atan(Math.exp(-1.0 * aY / radius(aZoomlevel))));
         return -1 * Math.toDegrees(latitude);

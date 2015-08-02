@@ -21,6 +21,15 @@ public class ScanexTileSource extends TMSTileSource {
     private static final int DEFAULT_MAXZOOM = 14;
     private static final String API_KEY = "4018C5A9AECAD8868ED5DEB2E41D09F7";
 
+    // Latitude to Y and back calculations.
+
+    /** radius of Earth at equator, m */
+    private static double RADIUS_E = 6378137;
+    /** equator length, m */
+    private static double EQUATOR = 40075016.68557849;
+    /** eccentricity of Earth's ellipsoid */
+    private static double E = 0.0818191908426;
+
     private enum ScanexLayer {
         IRS("irs", "/TileSender.ashx?ModeKey=tile&MapName=F7B8CF651682420FA1749D894C8AD0F6&LayerName=BAC78D764F0443BD9AF93E7A998C9F5B"),
         SPOT("spot", "/TileSender.ashx?ModeKey=tile&MapName=F7B8CF651682420FA1749D894C8AD0F6&LayerName=F51CE95441284AF6B2FC319B609C7DEC");
@@ -45,6 +54,13 @@ public class ScanexTileSource extends TMSTileSource {
     /** IRS by default */
     private ScanexLayer layer = ScanexLayer.IRS;
 
+    /** cached latitude used in {@link #tileYToLat(double, int)} */
+    private double cachedLat = 0;
+
+    /**
+     * Constructs a new {@code ScanexTileSource}.
+     * @param info tile source info
+     */
     public ScanexTileSource(TileSourceInfo info) {
         super(info);
         String url = info.getUrl();
@@ -76,13 +92,6 @@ public class ScanexTileSource extends TMSTileSource {
         return this.layer.getUri() + "&apikey=" + API_KEY + "&x=" + tilex + "&y=" + tiley + "&z=" + zoom;
     }
 
-    /*
-     * Latitude to Y and back calculations.
-     */
-    private static double RADIUS_E = 6378137;   /* radius of Earth at equator, m */
-    private static double EQUATOR = 40075016.68557849; /* equator length, m */
-    private static double E = 0.0818191908426;  /* eccentricity of Earth's ellipsoid */
-
     @Override
     public int latToY(double lat, int zoom) {
         return (int) (latToTileY(lat, zoom) * tileSize);
@@ -110,10 +119,8 @@ public class ScanexTileSource extends TMSTileSource {
      * To solve inverse formula latitude = f(y) we use
      * Newton's method. We cache previous calculated latitude,
      * because new one is usually close to the old one. In case
-     * if solution gets out of bounds, we reset to a new random
-     * value.
+     * if solution gets out of bounds, we reset to a new random value.
      */
-    private double cachedLat = 0;
     private double tileYToLat(double y, int zoom) {
         double lat0;
         double lat = cachedLat;
@@ -125,7 +132,7 @@ public class ScanexTileSource extends TMSTileSource {
                 lat = OsmMercator.MIN_LAT +
                   r.nextInt((int) (OsmMercator.MAX_LAT - OsmMercator.MIN_LAT));
             }
-        } while ((Math.abs(lat0 - lat) > 0.000001));
+        } while (Math.abs(lat0 - lat) > 0.000001);
 
         cachedLat = lat;
 
@@ -140,8 +147,8 @@ public class ScanexTileSource extends TMSTileSource {
         zoom = (int) Math.pow(2.0, zoom - 1);
         double ec = Math.exp((1 - y/zoom)*Math.PI);
 
-        double f = (Math.tan(Math.PI/4+lat/2) -
-            ec * Math.pow(Math.tan(Math.PI/4 + Math.asin(E * sinl)/2), E));
+        double f = Math.tan(Math.PI/4+lat/2) -
+            ec * Math.pow(Math.tan(Math.PI/4 + Math.asin(E * sinl)/2), E);
         double df = 1/(1 - sinl) - ec * E * cosl/((1 - E * sinl) *
             (Math.sqrt(1 - E * E * sinl * sinl)));
 

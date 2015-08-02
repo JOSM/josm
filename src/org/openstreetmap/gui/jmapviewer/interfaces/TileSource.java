@@ -169,7 +169,7 @@ public interface TileSource extends Attributed {
      * @param aX X coordinate
      * @param aZoomlevel zoom level
      * @return ]-180..180[
-     * @deprecated use {@link #XYToLatLon(int, int, int)} instead
+     * @deprecated use {@link #xyToLatLon(int, int, int)} instead
      */
     @Deprecated
     double XToLon(int aX, int aZoomlevel);
@@ -179,7 +179,7 @@ public interface TileSource extends Attributed {
      * @param aY Y coordinate
      * @param aZoomlevel zoom level
      * @return [MIN_LAT..MAX_LAT]
-     * @deprecated use {@link #XYToLatLon(int, int, int)} instead
+     * @deprecated use {@link #xyToLatLon(int, int, int)} instead
      */
     @Deprecated
     double YToLat(int aY, int aZoomlevel);
@@ -189,7 +189,7 @@ public interface TileSource extends Attributed {
      * @param zoom zoom level
      * @return WGS84 Coordinates of given point
      */
-    ICoordinate XYToLatLon(Point point, int zoom);
+    ICoordinate xyToLatLon(Point point, int zoom);
 
     /**
      *
@@ -198,7 +198,7 @@ public interface TileSource extends Attributed {
      * @param zoom zoom level
      * @return WGS84 Coordinates of given point
      */
-    ICoordinate XYToLatLon(int x, int y, int zoom);
+    ICoordinate xyToLatLon(int x, int y, int zoom);
 
     /**
      * Transforms longitude to X tile coordinate.
