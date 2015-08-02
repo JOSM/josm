@@ -25,8 +25,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     protected String name;
     protected String baseUrl;
     protected String id;
-    private Map<String, String> noTileHeaders;
-    private Map<String, String> metadataHeaders;
+    private final Map<String, String> noTileHeaders;
+    private final Map<String, String> metadataHeaders;
     protected int tileSize;
     protected OsmMercator osmMercator;
 
@@ -45,7 +45,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         this.noTileHeaders = info.getNoTileHeaders();
         this.metadataHeaders = info.getMetadataHeaders();
         this.tileSize = info.getTileSize();
-        osmMercator = new OsmMercator(this.tileSize);
+        this.osmMercator = new OsmMercator(this.tileSize);
     }
 
     /**
@@ -282,7 +282,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         return this.baseUrl + "/" + zoom + "/" + tilex + "/" + tiley;
     }
 
-    private int getTileMax(int zoom) {
+    private static int getTileMax(int zoom) {
         return (int) Math.pow(2.0, zoom) - 1;
     }
 }

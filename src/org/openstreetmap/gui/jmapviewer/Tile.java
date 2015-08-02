@@ -88,27 +88,25 @@ public class Tile {
 
     /**
      * Tries to get tiles of a lower or higher zoom level (one or two level
-     * difference) from cache and use it as a placeholder until the tile has
-     * been loaded.
+     * difference) from cache and use it as a placeholder until the tile has been loaded.
      */
     public void loadPlaceholderFromCache(TileCache cache) {
         BufferedImage tmpImage = new BufferedImage(source.getTileSize(), source.getTileSize(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g = (Graphics2D) tmpImage.getGraphics();
-        // g.drawImage(image, 0, 0, null);
         for (int zoomDiff = 1; zoomDiff < 5; zoomDiff++) {
             // first we check if there are already the 2^x tiles
             // of a higher detail level
-            int zoom_high = zoom + zoomDiff;
-            if (zoomDiff < 3 && zoom_high <= JMapViewer.MAX_ZOOM) {
+            int zoomHigh = zoom + zoomDiff;
+            if (zoomDiff < 3 && zoomHigh <= JMapViewer.MAX_ZOOM) {
                 int factor = 1 << zoomDiff;
-                int xtile_high = xtile << zoomDiff;
-                int ytile_high = ytile << zoomDiff;
+                int xtileHigh = xtile << zoomDiff;
+                int ytileHigh = ytile << zoomDiff;
                 double scale = 1.0 / factor;
                 g.setTransform(AffineTransform.getScaleInstance(scale, scale));
                 int paintedTileCount = 0;
                 for (int x = 0; x < factor; x++) {
                     for (int y = 0; y < factor; y++) {
-                        Tile tile = cache.getTile(source, xtile_high + x, ytile_high + y, zoom_high);
+                        Tile tile = cache.getTile(source, xtileHigh + x, ytileHigh + y, zoomHigh);
                         if (tile != null && tile.isLoaded()) {
                             paintedTileCount++;
                             tile.paint(g, x * source.getTileSize(), y * source.getTileSize());
@@ -121,18 +119,18 @@ public class Tile {
                 }
             }
 
-            int zoom_low = zoom - zoomDiff;
-            if (zoom_low >= JMapViewer.MIN_ZOOM) {
-                int xtile_low = xtile >> zoomDiff;
-                int ytile_low = ytile >> zoomDiff;
-                int factor = (1 << zoomDiff);
+            int zoomLow = zoom - zoomDiff;
+            if (zoomLow >= JMapViewer.MIN_ZOOM) {
+                int xtileLow = xtile >> zoomDiff;
+                int ytileLow = ytile >> zoomDiff;
+                int factor = 1 << zoomDiff;
                 double scale = factor;
                 AffineTransform at = new AffineTransform();
-                int translate_x = (xtile % factor) * source.getTileSize();
-                int translate_y = (ytile % factor) * source.getTileSize();
-                at.setTransform(scale, 0, 0, scale, -translate_x, -translate_y);
+                int translateX = (xtile % factor) * source.getTileSize();
+                int translateY = (ytile % factor) * source.getTileSize();
+                at.setTransform(scale, 0, 0, scale, -translateX, -translateY);
                 g.setTransform(at);
-                Tile tile = cache.getTile(source, xtile_low, ytile_low, zoom_low);
+                Tile tile = cache.getTile(source, xtileLow, ytileLow, zoomLow);
                 if (tile != null && tile.isLoaded()) {
                     tile.paint(g, 0, 0);
                     image = tmpImage;

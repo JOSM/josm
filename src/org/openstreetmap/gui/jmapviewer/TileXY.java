@@ -9,11 +9,12 @@ public class TileXY {
     /**
      * x index of the tile (horizontal)
      */
-    private double x;
+    private final double x;
+
     /**
      * y number of the tile (vertical)
      */
-    private double y;
+    private final double y;
 
     /**
      * Returns an instance of coordinates.

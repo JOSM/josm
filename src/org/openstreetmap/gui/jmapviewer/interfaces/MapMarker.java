@@ -16,7 +16,10 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
  */
 public interface MapMarker extends MapObject, ICoordinate{
 
-    public static enum STYLE {FIXED, VARIABLE}
+    public static enum STYLE {
+        FIXED,
+        VARIABLE
+    }
 
     /**
      * @return Latitude and Longitude of the map marker position

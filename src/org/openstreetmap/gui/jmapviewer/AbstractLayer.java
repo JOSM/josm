@@ -10,7 +10,7 @@ public class AbstractLayer {
     private String description;
     private Style style;
     private Boolean visible;
-    private Boolean visibleTexts = true;
+    private Boolean visibleTexts = Boolean.TRUE;
 
     public AbstractLayer(String name) {
         this(name, (String) null);
@@ -41,7 +41,7 @@ public class AbstractLayer {
         setName(name);
         setDescription(description);
         setStyle(style);
-        setVisible(true);
+        setVisible(Boolean.TRUE);
 
         if (parent != null) parent.add(this);
     }

@@ -114,7 +114,7 @@ public class JMapViewerTree extends JPanel{
         return popup;
     }
 
-    private void setVisibleTexts(AbstractLayer layer, boolean visible) {
+    private static void setVisibleTexts(AbstractLayer layer, boolean visible) {
         layer.setVisibleTexts(visible);
         if (layer instanceof LayerGroup) {
             LayerGroup group = (LayerGroup) layer;

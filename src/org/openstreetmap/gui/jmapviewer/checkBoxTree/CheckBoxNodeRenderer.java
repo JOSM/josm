@@ -21,13 +21,14 @@ public class CheckBoxNodeRenderer implements TreeCellRenderer{
 
     private final CheckBoxNodePanel panel = new CheckBoxNodePanel();
     private final DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
-    private final Color selectionForeground, selectionBackground;
-    private final Color textForeground, textBackground;
+    private final Color selectionForeground;
+    private final Color selectionBackground;
+    private final Color textForeground;
+    private final Color textBackground;
 
-    protected CheckBoxNodePanel getPanel() {
-        return panel;
-    }
-
+    /**
+     * Constructs a new {@code CheckBoxNodeRenderer}.
+     */
     public CheckBoxNodeRenderer() {
         final Font fontValue = UIManager.getFont("Tree.font");
         if (fontValue != null) panel.getLabel().setFont(fontValue);
@@ -42,9 +43,14 @@ public class CheckBoxNodeRenderer implements TreeCellRenderer{
         textBackground = UIManager.getColor("Tree.textBackground");
     }
 
+    protected CheckBoxNodePanel getPanel() {
+        return panel;
+    }
+
     public void addNodeListener(MouseAdapter listener) {
         panel.addMouseListener(listener);
     }
+
     // -- TreeCellRenderer methods --
 
     @Override
@@ -64,7 +70,7 @@ public class CheckBoxNodeRenderer implements TreeCellRenderer{
         //    tree.convertValueToText(value, selected, expanded, leaf, row, false);
         //panel.label.setText(stringValue);
 
-        panel.setSelected(false);
+        panel.setSelected(Boolean.FALSE);
 
         panel.setEnabled(tree.isEnabled());
 

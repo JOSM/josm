@@ -20,34 +20,80 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
  */
 public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
 
-    Coordinate coord;
-    double radius;
-    STYLE markerStyle;
+    private Coordinate coord;
+    private double radius;
+    private STYLE markerStyle;
 
+    /**
+     * Constructs a new {@code MapMarkerCircle}.
+     * @param coord Coordinates of the map marker
+     * @param radius Radius of the map marker position
+     */
     public MapMarkerCircle(Coordinate coord, double radius) {
         this(null, null, coord, radius);
     }
 
+    /**
+     * Constructs a new {@code MapMarkerCircle}.
+     * @param name Name of the map marker
+     * @param coord Coordinates of the map marker
+     * @param radius Radius of the map marker position
+     */
     public MapMarkerCircle(String name, Coordinate coord, double radius) {
         this(null, name, coord, radius);
     }
 
+    /**
+     * Constructs a new {@code MapMarkerCircle}.
+     * @param layer Layer of the map marker
+     * @param coord Coordinates of the map marker
+     * @param radius Radius of the map marker position
+     */
     public MapMarkerCircle(Layer layer, Coordinate coord, double radius) {
         this(layer, null, coord, radius);
     }
 
+    /**
+     * Constructs a new {@code MapMarkerCircle}.
+     * @param lat Latitude of the map marker
+     * @param lon Longitude of the map marker
+     * @param radius Radius of the map marker position
+     */
     public MapMarkerCircle(double lat, double lon, double radius) {
         this(null, null, new Coordinate(lat, lon), radius);
     }
 
+    /**
+     * Constructs a new {@code MapMarkerCircle}.
+     * @param layer Layer of the map marker
+     * @param lat Latitude of the map marker
+     * @param lon Longitude of the map marker
+     * @param radius Radius of the map marker position
+     */
     public MapMarkerCircle(Layer layer, double lat, double lon, double radius) {
         this(layer, null, new Coordinate(lat, lon), radius);
     }
 
+    /**
+     * Constructs a new {@code MapMarkerCircle}.
+     * @param layer Layer of the map marker
+     * @param name Name of the map marker
+     * @param coord Coordinates of the map marker
+     * @param radius Radius of the map marker position
+     */
     public MapMarkerCircle(Layer layer, String name, Coordinate coord, double radius) {
         this(layer, name, coord, radius, STYLE.VARIABLE, getDefaultStyle());
     }
 
+    /**
+     * Constructs a new {@code MapMarkerCircle}.
+     * @param layer Layer of the map marker
+     * @param name Name of the map marker
+     * @param coord Coordinates of the map marker
+     * @param radius Radius of the map marker position
+     * @param markerStyle Marker style (fixed or variable)
+     * @param style Graphical style
+     */
     public MapMarkerCircle(Layer layer, String name, Coordinate coord, double radius, STYLE markerStyle, Style style) {
         super(layer, name, style);
         this.markerStyle = markerStyle;

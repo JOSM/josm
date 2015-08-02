@@ -20,20 +20,20 @@ public final class JobDispatcher {
 
     private static final JobDispatcher instance = new JobDispatcher();
 
+    private static int workerThreadMaxCount = 8;
+
+    private final BlockingDeque<TileJob> jobQueue = new LinkedBlockingDeque<>();
+
+    private JobDispatcher() {
+        addWorkerThread().firstThread = true;
+    }
+
     /**
      * @return the singelton instance of the {@link JobDispatcher}
      */
     public static JobDispatcher getInstance() {
         return instance;
     }
-
-    private JobDispatcher() {
-        addWorkerThread().firstThread = true;
-    }
-
-    protected BlockingDeque<TileJob> jobQueue = new LinkedBlockingDeque<>();
-
-    private static int workerThreadMaxCount = 8;
 
     /**
      * Specifies the time span in seconds that a worker thread waits for new
@@ -46,22 +46,22 @@ public final class JobDispatcher {
     /**
      * Type of queue, FIFO if <code>false</code>, LIFO if <code>true</code>
      */
-    protected boolean modeLIFO = false;
+    private boolean modeLIFO = false;
 
     /**
      * Total number of worker threads currently idle or active
      */
-    protected int workerThreadCount = 0;
+    private int workerThreadCount = 0;
 
     /**
      * Number of worker threads currently idle
      */
-    protected int workerThreadIdleCount = 0;
+    private int workerThreadIdleCount = 0;
 
     /**
      * Just an id for identifying an worker thread instance
      */
-    protected int workerThreadId = 0;
+    private int workerThreadId = 0;
 
     /**
      * Removes all jobs from the queue that are currently not being processed.
@@ -112,7 +112,7 @@ public final class JobDispatcher {
         }
     }
 
-    protected JobThread addWorkerThread() {
+    private JobThread addWorkerThread() {
         JobThread jobThread = new JobThread(++workerThreadId);
         synchronized (this) {
             workerThreadCount++;
@@ -123,9 +123,13 @@ public final class JobDispatcher {
 
     public class JobThread extends Thread {
 
-        Runnable job;
-        boolean firstThread = false;
+        private Runnable job;
+        private boolean firstThread = false;
 
+        /**
+         * Constructs a new {@code JobThread}.
+         * @param threadId Thread ID
+         */
         public JobThread(int threadId) {
             super("OSMJobThread " + threadId);
             setDaemon(true);

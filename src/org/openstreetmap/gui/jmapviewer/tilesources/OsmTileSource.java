@@ -15,7 +15,7 @@ public class OsmTileSource {
 
         private static final String[] SERVER = {"a", "b", "c"};
 
-        private int SERVER_NUM = 0;
+        private int serverNum = 0;
 
         /**
          * Constructs a new {@code "Mapnik"} tile source.
@@ -26,14 +26,9 @@ public class OsmTileSource {
 
         @Override
         public String getBaseUrl() {
-            String url = String.format(this.baseUrl, new Object[] {SERVER[SERVER_NUM]});
-            SERVER_NUM = (SERVER_NUM + 1) % SERVER.length;
+            String url = String.format(this.baseUrl, new Object[] {SERVER[serverNum]});
+            serverNum = (serverNum + 1) % SERVER.length;
             return url;
-        }
-
-        @Override
-        public int getMaxZoom() {
-            return 19;
         }
 
         @Override
@@ -51,7 +46,7 @@ public class OsmTileSource {
 
         private static final String[] SERVER = {"a", "b", "c"};
 
-        private int SERVER_NUM = 0;
+        private int serverNum = 0;
 
         /**
          * Constructs a new {@code CycleMap} tile source.
@@ -62,8 +57,8 @@ public class OsmTileSource {
 
         @Override
         public String getBaseUrl() {
-            String url = String.format(this.baseUrl, new Object[] {SERVER[SERVER_NUM]});
-            SERVER_NUM = (SERVER_NUM + 1) % SERVER.length;
+            String url = String.format(this.baseUrl, new Object[] {SERVER[serverNum]});
+            serverNum = (serverNum + 1) % SERVER.length;
             return url;
         }
 
