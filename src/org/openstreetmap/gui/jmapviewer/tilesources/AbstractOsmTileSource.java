@@ -25,7 +25,6 @@ public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
      */
     public AbstractOsmTileSource(String name, String base_url, String id) {
         super(new TileSourceInfo(name, base_url, id));
-
     }
 
     @Override

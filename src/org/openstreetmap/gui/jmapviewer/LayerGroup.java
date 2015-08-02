@@ -52,7 +52,7 @@ public class LayerGroup extends AbstractLayer{
 
     public void calculateVisibleTexts() {
         Boolean calculate = null;
-        if (layers != null && layers.size() > 0) {
+        if (layers != null && !layers.isEmpty()) {
             calculate = layers.get(0).isVisibleTexts();
             for (int i = 1; i < layers.size(); i++) {
                 calculate = resultOf(calculate, layers.get(i).isVisibleTexts());

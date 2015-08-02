@@ -92,6 +92,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     protected transient AttributionSupport attribution = new AttributionSupport();
 
+    protected EventListenerList evtListenerList = new EventListenerList();
+
     /**
      * Creates a standard {@link JMapViewer} instance that can be controlled via
      * mouse: hold right mouse button for moving, double click left mouse button
@@ -1098,8 +1100,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         return attribution;
     }
 
-    protected EventListenerList evtListenerList = new EventListenerList();
-
     /**
      * @param listener listener to set
      */
@@ -1119,7 +1119,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      *
      * @param evt event to dispatch
      */
-    void fireJMVEvent(JMVCommandEvent evt) {
+    private void fireJMVEvent(JMVCommandEvent evt) {
         Object[] listeners = evtListenerList.getListenerList();
         for (int i = 0; i < listeners.length; i += 2) {
             if (listeners[i] == JMapViewerEventListener.class) {

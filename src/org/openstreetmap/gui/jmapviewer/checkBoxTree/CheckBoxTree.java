@@ -89,7 +89,7 @@ public class CheckBoxTree extends JTree{
     }
 
     public static void main(final String[] args) {
-        final DefaultMutableTreeNode root = new DefaultMutableTreeNode(new CheckBoxNodeData("Root", true));
+        final DefaultMutableTreeNode root = new DefaultMutableTreeNode(new CheckBoxNodeData("Root", Boolean.TRUE));
 
         final DefaultMutableTreeNode accessibility =
             add(root, "Accessibility", true);

@@ -22,9 +22,6 @@ MouseWheelListener {
     | MouseEvent.BUTTON2_DOWN_MASK;
 
     private static final int MAC_MOUSE_BUTTON3_MASK = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
-    public DefaultMapController(JMapViewer map) {
-        super(map);
-    }
 
     private Point lastDragPoint;
 
@@ -37,6 +34,10 @@ MouseWheelListener {
 
     private boolean wheelZoomEnabled = true;
     private boolean doubleClickZoomEnabled = true;
+
+    public DefaultMapController(JMapViewer map) {
+        super(map);
+    }
 
     @Override
     public void mouseDragged(MouseEvent e) {

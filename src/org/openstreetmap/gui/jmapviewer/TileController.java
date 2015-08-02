@@ -12,7 +12,7 @@ public class TileController {
     protected TileCache tileCache;
     protected TileSource tileSource;
 
-    JobDispatcher jobDispatcher;
+    protected JobDispatcher jobDispatcher;
 
     public TileController(TileSource source, TileCache tileCache, TileLoaderListener listener) {
         this.tileSource = source;
@@ -32,7 +32,7 @@ public class TileController {
      *         was not found in the cache.
      */
     public Tile getTile(int tilex, int tiley, int zoom) {
-        int max = (1 << zoom);
+        int max = 1 << zoom;
         if (tilex < 0 || tilex >= max || tiley < 0 || tiley >= max)
             return null;
         Tile tile = tileCache.getTile(tileSource, tilex, tiley, zoom);

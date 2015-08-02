@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
 
 public class BingAerialTileSource extends AbstractTMSTileSource {
 
-    private static String API_KEY = "Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU";
+    private static final String API_KEY = "Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU";
     private static volatile Future<List<Attribution>> attributions; // volatile is required for getAttribution(), see below.
     private static String imageUrlTemplate;
     private static Integer imageryZoomMax;
@@ -56,16 +56,19 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         super(new TileSourceInfo("Bing", null, null));
     }
 
+    /**
+     * Constructs a new {@code BingAerialTileSource}.
+     */
     public BingAerialTileSource(TileSourceInfo info) {
         super(info);
     }
 
     protected static class Attribution {
-        String attribution;
-        int minZoom;
-        int maxZoom;
-        Coordinate min;
-        Coordinate max;
+        private String attribution;
+        private int minZoom;
+        private int maxZoom;
+        private Coordinate min;
+        private Coordinate max;
     }
 
     @Override
@@ -99,7 +102,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
             XPath xpath = xPathFactory.newXPath();
             imageUrlTemplate = xpath.compile("//ImageryMetadata/ImageUrl/text()").evaluate(document);
             imageUrlTemplate = culturePattern.matcher(imageUrlTemplate).replaceAll(Locale.getDefault().toString());
-            imageryZoomMax = Integer.parseInt(xpath.compile("//ImageryMetadata/ZoomMax/text()").evaluate(document));
+            imageryZoomMax = Integer.valueOf(xpath.compile("//ImageryMetadata/ZoomMax/text()").evaluate(document));
 
             NodeList subdomainTxt = (NodeList) xpath.compile("//ImageryMetadata/ImageUrlSubdomains/string/text()")
                     .evaluate(document, XPathConstants.NODESET);
@@ -136,10 +139,10 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
                     attr.maxZoom = Integer.parseInt(zoomMaxXpath.evaluate(areaNode));
                     attr.minZoom = Integer.parseInt(zoomMinXpath.evaluate(areaNode));
 
-                    Double southLat = Double.parseDouble(southLatXpath.evaluate(areaNode));
-                    Double northLat = Double.parseDouble(northLatXpath.evaluate(areaNode));
-                    Double westLon = Double.parseDouble(westLonXpath.evaluate(areaNode));
-                    Double eastLon = Double.parseDouble(eastLonXpath.evaluate(areaNode));
+                    Double southLat = Double.valueOf(southLatXpath.evaluate(areaNode));
+                    Double northLat = Double.valueOf(northLatXpath.evaluate(areaNode));
+                    Double westLon = Double.valueOf(westLonXpath.evaluate(areaNode));
+                    Double eastLon = Double.valueOf(eastLonXpath.evaluate(areaNode));
                     attr.min = new Coordinate(southLat, westLon);
                     attr.max = new Coordinate(northLat, eastLon);
 
@@ -280,7 +283,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
                     if (topLeft.getLon() < attr.max.getLon() && botRight.getLon() > attr.min.getLon()
                             && topLeft.getLat() > attr.min.getLat() && botRight.getLat() < attr.max.getLat()) {
                         a.append(attr.attribution);
-                        a.append(" ");
+                        a.append(' ');
                     }
                 }
             }
@@ -291,7 +294,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
         return "Error loading Bing attribution data";
     }
 
-    static String computeQuadTree(int zoom, int tilex, int tiley) {
+    private static String computeQuadTree(int zoom, int tilex, int tiley) {
         StringBuilder k = new StringBuilder();
         for (int i = zoom; i > 0; i--) {
             char digit = 48;

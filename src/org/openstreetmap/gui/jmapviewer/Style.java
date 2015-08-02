@@ -59,7 +59,7 @@ public class Style {
         this.font = font;
     }
 
-    private AlphaComposite getAlphaComposite(Color color) {
+    private static AlphaComposite getAlphaComposite(Color color) {
         return color.getAlpha() == 255 ? OPAQUE : TRANSPARENCY;
     }
 

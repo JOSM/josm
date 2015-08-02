@@ -42,11 +42,11 @@ public class MemoryTileCache implements TileCache {
     @Override
     public synchronized void addTile(Tile tile) {
         CacheEntry entry = createCacheEntry(tile);
-            hash.put(tile.getKey(), entry);
-            lruTiles.addFirst(entry);
-            if (hash.size() > cacheSize) {
-                removeOldEntries();
-            }
+        hash.put(tile.getKey(), entry);
+        lruTiles.addFirst(entry);
+        if (hash.size() > cacheSize) {
+            removeOldEntries();
+        }
     }
 
     @Override
@@ -115,9 +115,9 @@ public class MemoryTileCache implements TileCache {
      * {@link #next} and {@link #prev} item in the list.
      */
     protected static class CacheEntry {
-        Tile tile;
-        CacheEntry next;
-        CacheEntry prev;
+        private Tile tile;
+        private CacheEntry next;
+        private CacheEntry prev;
 
         protected CacheEntry(Tile tile) {
             this.tile = tile;
@@ -136,6 +136,9 @@ public class MemoryTileCache implements TileCache {
         protected CacheEntry lastElement;
         protected int elementCount;
 
+        /**
+         * Constructs a new {@code CacheLinkedListElement}.
+         */
         public CacheLinkedListElement() {
             clear();
         }
@@ -207,6 +210,5 @@ public class MemoryTileCache implements TileCache {
         public CacheEntry getFirstElement() {
             return firstElement;
         }
-
     }
 }
