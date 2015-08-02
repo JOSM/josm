@@ -538,12 +538,12 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     }
 
     @Override
-    public Coordinate XYToLatLon(Point point, int zoom) {
-        return XYToLatLon(point.x, point.y, zoom);
+    public Coordinate xyToLatLon(Point point, int zoom) {
+        return xyToLatLon(point.x, point.y, zoom);
     }
 
     @Override
-    public Coordinate XYToLatLon(int x, int y, int zoom) {
+    public Coordinate xyToLatLon(int x, int y, int zoom) {
         TileMatrix matrix = getTileMatrix(zoom);
         if (matrix == null) {
             return new Coordinate(0, 0);
