@@ -79,6 +79,7 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
         baseUrl = output.toString();
     }
 
+    @Override
     public Map<String, String> getHeaders() {
         return headers;
     }

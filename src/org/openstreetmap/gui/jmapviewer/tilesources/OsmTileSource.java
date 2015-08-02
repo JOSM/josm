@@ -36,6 +36,7 @@ public class OsmTileSource {
             return 19;
         }
 
+        @Override
         public TileUpdate getTileUpdate() {
             return TileUpdate.IfNoneMatch;
         }
@@ -71,6 +72,7 @@ public class OsmTileSource {
             return 18;
         }
 
+        @Override
         public TileUpdate getTileUpdate() {
             return TileUpdate.LastModified;
         }

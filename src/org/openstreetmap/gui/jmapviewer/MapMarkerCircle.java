@@ -55,26 +55,32 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
         this.radius = radius;
     }
 
+    @Override
     public Coordinate getCoordinate() {
         return coord;
     }
 
+    @Override
     public double getLat() {
         return coord.getLat();
     }
 
+    @Override
     public double getLon() {
         return coord.getLon();
     }
 
+    @Override
     public double getRadius() {
         return radius;
     }
 
+    @Override
     public STYLE getMarkerStyle() {
         return markerStyle;
     }
 
+    @Override
     public void paint(Graphics g, Point position, int radius) {
         int size_h = radius;
         int size = size_h * 2;

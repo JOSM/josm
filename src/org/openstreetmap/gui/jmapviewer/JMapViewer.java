@@ -138,6 +138,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         zoomSlider.setBounds(10, 10, 30, 150);
         zoomSlider.setOpaque(false);
         zoomSlider.addChangeListener(new ChangeListener() {
+            @Override
             public void stateChanged(ChangeEvent e) {
                 setZoom(zoomSlider.getValue());
             }
@@ -156,6 +157,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         zoomInButton.setBounds(4, 155, size, size);
         zoomInButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 zoomIn();
             }
@@ -173,6 +175,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         zoomOutButton.setBounds(8 + size, 155, size, size);
         zoomOutButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 zoomOut();
             }
@@ -999,6 +1002,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
 
+    @Override
     public void tileLoadingFinished(Tile tile, boolean success) {
         tile.setLoaded(success);
         repaint();
