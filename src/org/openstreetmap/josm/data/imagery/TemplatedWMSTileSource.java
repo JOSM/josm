@@ -241,12 +241,12 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     }
 
     @Override
-    public ICoordinate XYToLatLon(Point point, int zoom) {
-        return XYToLatLon(point.x, point.y, zoom);
+    public ICoordinate xyToLatLon(Point point, int zoom) {
+        return xyToLatLon(point.x, point.y, zoom);
     }
 
     @Override
-    public ICoordinate XYToLatLon(int x, int y, int zoom) {
+    public ICoordinate xyToLatLon(int x, int y, int zoom) {
         double scale = getDegreesPerTile(zoom) / getTileSize();
         Projection proj = Main.getProjection();
         EastNorth ret = new EastNorth(
