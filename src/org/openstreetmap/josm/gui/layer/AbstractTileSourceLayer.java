@@ -496,6 +496,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     @Override
     public void hookUpMapView() {
         this.tileSource = getTileSource(info);
+        if (this.tileSource == null) {
+            throw new IllegalArgumentException(tr("Failed to create tile source"));
+        }
+
         projectionChanged(null, Main.getProjection()); // check if projection is supported
         initTileSource(this.tileSource);
 
@@ -857,7 +861,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             return false;
         if (tile.isLoading())
             return false;
-        tileLoader.createTileLoaderJob(tile).submit();
+        tileLoader.createTileLoaderJob(tile).submit(force);
         return true;
     }
 
