@@ -288,7 +288,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                     handleNoTileAtZoom();
                     tile.finishLoading();
                 }
-                if (attributes.getResponseCode() >= 400) {
+                if (attributes != null && attributes.getResponseCode() >= 400) {
                     if (attributes.getErrorMessage() == null) {
                         tile.setError(tr("HTTP error {0} when loading tiles", attributes.getResponseCode()));
                     } else {
