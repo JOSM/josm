@@ -51,6 +51,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     /**
      * @return default tile size to use, when not set in Imagery Preferences
      */
+    @Override
     public int getDefaultTileSize() {
         return OsmMercator.DEFAUL_TILE_SIZE;
     }

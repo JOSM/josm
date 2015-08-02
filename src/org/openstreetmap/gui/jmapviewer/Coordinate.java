@@ -23,18 +23,22 @@ public class Coordinate implements ICoordinate {
         data = new Point2D.Double(lon, lat);
     }
 
+    @Override
     public double getLat() {
         return data.y;
     }
 
+    @Override
     public void setLat(double lat) {
         data.y = lat;
     }
 
+    @Override
     public double getLon() {
         return data.x;
     }
 
+    @Override
     public void setLon(double lon) {
         data.x = lon;
     }

@@ -26,11 +26,13 @@ public interface MapMarker extends MapObject, ICoordinate{
     /**
      * @return Latitude of the map marker position
      */
+    @Override
     double getLat();
 
     /**
      * @return Longitude of the map marker position
      */
+    @Override
     double getLon();
 
     /**

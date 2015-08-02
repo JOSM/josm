@@ -76,6 +76,7 @@ public abstract class AbstractTileSource implements TileSource {
         this.termsOfUseURL = termsOfUseURL;
     }
 
+    @Override
     public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content) {
         // default handler - when HTTP 404 is returned, then treat this situation as no tile at this zoom level
         return statusCode == 404;

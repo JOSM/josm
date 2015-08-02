@@ -102,6 +102,7 @@ public class AbstractLayer {
         this.visibleTexts = visibleTexts;
     }
 
+    @Override
     public String toString() {
         return name;
     }

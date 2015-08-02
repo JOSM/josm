@@ -38,6 +38,7 @@ MouseWheelListener {
     private boolean wheelZoomEnabled = true;
     private boolean doubleClickZoomEnabled = true;
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         if (!movementEnabled || !isMoving)
             return;
@@ -54,12 +55,14 @@ MouseWheelListener {
         }
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
         if (doubleClickZoomEnabled && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             map.zoomIn(e.getPoint());
         }
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == movementMouseButton || isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) {
             lastDragPoint = null;
@@ -67,6 +70,7 @@ MouseWheelListener {
         }
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == movementMouseButton || isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
             lastDragPoint = null;
@@ -74,6 +78,7 @@ MouseWheelListener {
         }
     }
 
+    @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (wheelZoomEnabled) {
             map.setZoom(map.getZoom() - e.getWheelRotation(), e.getPoint());
@@ -140,12 +145,15 @@ MouseWheelListener {
         this.doubleClickZoomEnabled = doubleClickZoomEnabled;
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
         //
