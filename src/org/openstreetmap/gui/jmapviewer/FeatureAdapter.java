@@ -10,10 +10,14 @@ import java.util.logging.Logger;
 
 public final class FeatureAdapter {
 
+    private static BrowserAdapter browserAdapter = new DefaultBrowserAdapter();
+    private static TranslationAdapter translationAdapter = new DefaultTranslationAdapter();
+    private static LoggingAdapter loggingAdapter = new DefaultLoggingAdapter();
+
     private FeatureAdapter() {
         // private constructor for utility classes
     }
-    
+
     public interface BrowserAdapter {
         void openLink(String url);
     }
@@ -26,10 +30,6 @@ public final class FeatureAdapter {
     public interface LoggingAdapter {
         Logger getLogger(String name);
     }
-
-    private static BrowserAdapter browserAdapter = new DefaultBrowserAdapter();
-    private static TranslationAdapter translationAdapter = new DefaultTranslationAdapter();
-    private static LoggingAdapter loggingAdapter = new DefaultLoggingAdapter();
 
     public static void registerBrowserAdapter(BrowserAdapter browserAdapter) {
         FeatureAdapter.browserAdapter = browserAdapter;
@@ -50,7 +50,7 @@ public final class FeatureAdapter {
     public static String tr(String text, Object... objects) {
         return translationAdapter.tr(text, objects);
     }
-    
+
     public static Logger getLogger(String name) {
         return loggingAdapter.getLogger(name);
     }

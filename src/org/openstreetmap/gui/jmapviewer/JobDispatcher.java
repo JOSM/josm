@@ -22,19 +22,6 @@ public final class JobDispatcher {
 
     private static int workerThreadMaxCount = 8;
 
-    private final BlockingDeque<TileJob> jobQueue = new LinkedBlockingDeque<>();
-
-    private JobDispatcher() {
-        addWorkerThread().firstThread = true;
-    }
-
-    /**
-     * @return the singelton instance of the {@link JobDispatcher}
-     */
-    public static JobDispatcher getInstance() {
-        return instance;
-    }
-
     /**
      * Specifies the time span in seconds that a worker thread waits for new
      * jobs to perform. If the time span has elapsed the worker thread
@@ -63,6 +50,19 @@ public final class JobDispatcher {
      */
     private int workerThreadId = 0;
 
+    private final BlockingDeque<TileJob> jobQueue = new LinkedBlockingDeque<>();
+
+    private JobDispatcher() {
+        addWorkerThread().firstThread = true;
+    }
+
+    /**
+     * @return the singelton instance of the {@link JobDispatcher}
+     */
+    public static JobDispatcher getInstance() {
+        return instance;
+    }
+
     /**
      * Removes all jobs from the queue that are currently not being processed.
      */
@@ -72,6 +72,7 @@ public final class JobDispatcher {
 
     /**
      * Function to set the maximum number of workers for tile loading.
+     * @param workers maximum number of workers
      */
     public static void setMaxWorkers(int workers) {
         workerThreadMaxCount = workers;
@@ -179,5 +180,4 @@ public final class JobDispatcher {
             }
         }
     }
-
 }

@@ -58,6 +58,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
 
     /**
      * Constructs a new {@code BingAerialTileSource}.
+     * @param info imagery info
      */
     public BingAerialTileSource(TileSourceInfo info) {
         super(info);

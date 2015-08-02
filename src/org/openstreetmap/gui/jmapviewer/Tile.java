@@ -33,15 +33,6 @@ public class Tile {
      */
     public static final BufferedImage ERROR_IMAGE = loadImage("images/error.png");
 
-    private static BufferedImage loadImage(String path) {
-        try {
-            return ImageIO.read(JMapViewer.class.getResourceAsStream(path));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
     protected TileSource source;
     protected int xtile;
     protected int ytile;
@@ -86,9 +77,19 @@ public class Tile {
         this.key = getTileKey(source, xtile, ytile, zoom);
     }
 
+    private static BufferedImage loadImage(String path) {
+        try {
+            return ImageIO.read(JMapViewer.class.getResourceAsStream(path));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Tries to get tiles of a lower or higher zoom level (one or two level
      * difference) from cache and use it as a placeholder until the tile has been loaded.
+     * @param cache Tile cache
      */
     public void loadPlaceholderFromCache(TileCache cache) {
         BufferedImage tmpImage = new BufferedImage(source.getTileSize(), source.getTileSize(), BufferedImage.TYPE_INT_RGB);
