@@ -205,7 +205,7 @@ public interface TileSource extends Attributed {
      * @param lon longitude
      * @param zoom zoom level
      * @return [0..2^Zoomlevel[
-     * @deprecated use {@link #latLonToTileXY(int, int, int)} instead
+     * @deprecated use {@link #latLonToTileXY(double, double, int)} instead
      */
     @Deprecated
     double lonToTileX(double lon, int zoom);
@@ -215,7 +215,7 @@ public interface TileSource extends Attributed {
      * @param lat latitude
      * @param zoom zoom level
      * @return [0..2^Zoomlevel[
-     * @deprecated use {@link #latLonToTileXY(int, int, int)} instead
+     * @deprecated use {@link #latLonToTileXY(double, double, int)} instead
      */
     @Deprecated
     double latToTileY(double lat, int zoom);
