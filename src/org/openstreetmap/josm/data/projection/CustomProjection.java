@@ -203,7 +203,7 @@ public class CustomProjection extends AbstractProjection {
                     zone = null;
                 }
                 if (zone == null || zone < 1 || zone > 60)
-                    throw new ProjectionConfigurationException(tr("Expected integer value in range 1-60 for ''+zone=...'' paramter."));
+                    throw new ProjectionConfigurationException(tr("Expected integer value in range 1-60 for ''+zone=...'' parameter."));
                 this.lon0 = 6 * zone - 183;
                 this.k0 = 0.9996;
                 this.x0 = 500000;
