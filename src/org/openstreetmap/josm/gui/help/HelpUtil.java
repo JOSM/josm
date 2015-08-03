@@ -98,7 +98,7 @@ public final class HelpUtil {
      * @return the absolute help topic in the URL, i.e. "/De:Help/Action/New"
      */
     public static String extractAbsoluteHelpTopic(String url) {
-        if (!url.startsWith(getWikiBaseHelpUrl())) return null;
+        if (url == null || !url.startsWith(getWikiBaseHelpUrl())) return null;
         url = url.substring(getWikiBaseHelpUrl().length());
         String prefix = getHelpTopicPrefix(LocaleType.ENGLISH);
         if (url.startsWith(prefix))
