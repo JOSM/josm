@@ -262,7 +262,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         }
     }
 
-    private boolean isCacheElementValid() {
+    protected boolean isCacheElementValid() {
         long expires = attributes.getExpirationTime();
 
         // check by expire date set by server
