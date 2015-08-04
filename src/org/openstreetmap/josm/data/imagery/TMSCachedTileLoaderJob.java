@@ -266,7 +266,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
      */
     public Tile getCachedTile() {
         BufferedImageCacheEntry data = get();
-        if (isObjectLoadable()) {
+        if (isObjectLoadable() && isCacheElementValid()) {
             try {
                 // set tile metadata
                 if (this.attributes != null) {
