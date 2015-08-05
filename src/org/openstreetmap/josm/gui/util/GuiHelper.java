@@ -318,33 +318,10 @@ public final class GuiHelper {
 
     /**
      * Gets the font used to display JOSM title in about dialog and splash screen.
-     * @return By order or priority, the first font available in local fonts:
-     *         1. Helvetica Bold 20
-     *         2. Calibri Bold 23
-     *         3. Arial Bold 20
-     *         4. SansSerif Bold 20
-     *         Except if current language is Khmer, where it will be current font at size 20
      * @since 5797
      */
     public static Font getTitleFont() {
-        List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-        // Special font for Khmer script
-        if ("km".equals(LanguageInfo.getJOSMLocaleCode())) {
-            return UIManager.getFont("Label.font").deriveFont(20.0f);
-        }
-        // Helvetica is the preferred choice but is not available by default on Windows
-        // (https://www.microsoft.com/typography/fonts/product.aspx?pid=161)
-        if (fonts.contains("Helvetica")) {
-            return new Font("Helvetica", Font.BOLD, 20);
-        // Calibri is the default Windows font since Windows Vista but is not available on older versions of Windows, where Arial is preferred
-        } else if (fonts.contains("Calibri")) {
-            return new Font("Calibri", Font.BOLD, 23);
-        } else if (fonts.contains("Arial")) {
-            return new Font("Arial", Font.BOLD, 20);
-        // No luck, nothing found, fallback to one of the 5 fonts provided with Java (Serif, SansSerif, Monospaced, Dialog, and DialogInput)
-        } else {
-            return new Font("SansSerif", Font.BOLD, 20);
-        }
+        return new Font("SansSerif", Font.BOLD, 23);
     }
 
     /**
