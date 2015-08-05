@@ -275,12 +275,14 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                         new Object[]{getUrl(), Long.toString(expires), Long.toString(now)});
                 return false;
             }
-        } else {
+        } else if (attributes.getLastModification() > 0 &&
+                now - attributes.getLastModification() > DEFAULT_EXPIRE_TIME) {
             // check by file modification date
-            if (now - attributes.getLastModification() > DEFAULT_EXPIRE_TIME) {
-                log.log(Level.FINE, "JCS - Object has expired, maximum file age reached {0}", getUrl());
-                return false;
-            }
+            log.log(Level.FINE, "JCS - Object has expired, maximum file age reached {0}", getUrl());
+            return false;
+        } else if (now - attributes.getCreateTime() > DEFAULT_EXPIRE_TIME) {
+            log.log(Level.FINE, "JCS - Object has expired, maximum time since object creation reached {0}", getUrl());
+            return false;
         }
         return true;
     }

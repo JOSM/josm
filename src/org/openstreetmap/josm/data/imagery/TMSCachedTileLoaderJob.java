@@ -187,7 +187,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                         }
                     }
                     int httpStatusCode = attributes.getResponseCode();
-                    if (!isNoTileAtZoom() && httpStatusCode >= 400 && httpStatusCode != 499) {
+                    if (!isNoTileAtZoom() && httpStatusCode >= 400) {
                         if (attributes.getErrorMessage() == null) {
                             tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
                         } else {

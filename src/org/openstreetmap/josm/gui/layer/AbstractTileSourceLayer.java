@@ -1036,10 +1036,29 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     private void myDrawString(Graphics g, String text, int x, int y) {
         Color oldColor = g.getColor();
-        g.setColor(Color.black);
-        g.drawString(text, x+1, y+1);
-        g.setColor(oldColor);
-        g.drawString(text, x, y);
+        String textToDraw = text;
+        if (g.getFontMetrics().stringWidth(text) > tileSource.getTileSize()) {
+            // text longer than tile size, split it
+            StringBuilder line = new StringBuilder();
+            StringBuilder ret = new StringBuilder();
+            for(String s: text.split(" ")) {
+                if (g.getFontMetrics().stringWidth(line.toString() + s) > tileSource.getTileSize()) {
+                    ret.append(line).append("\n");
+                    line.setLength(0);
+                }
+                line.append(s).append(" ");
+            }
+            ret.append(line);
+            textToDraw = ret.toString();
+        }
+        int offset = 0;
+        for (String s: textToDraw.split("\n")) {
+            g.setColor(Color.black);
+            g.drawString(s, x + 1, y + offset + 1);
+            g.setColor(oldColor);
+            g.drawString(s, x, y + offset);
+            offset += g.getFontMetrics().getHeight() + 3;
+        }
     }
 
     private void paintTileText(TileSet ts, Tile tile, Graphics g, MapView mv, int zoom, Tile t) {
