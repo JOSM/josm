@@ -823,8 +823,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 .heading(currentMouseEastNorth));
         double baseHdg = -1;
         if (previousNode != null) {
-            baseHdg =  Math.toDegrees(previousNode.getEastNorth()
-                    .heading(getCurrentBaseNode().getEastNorth()));
+            EastNorth en = previousNode.getEastNorth();
+            if (en != null) {
+                baseHdg = Math.toDegrees(en.heading(getCurrentBaseNode().getEastNorth()));
+            }
         }
 
         snapHelper.checkAngleSnapping(currentMouseEastNorth, baseHdg, curHdg);
