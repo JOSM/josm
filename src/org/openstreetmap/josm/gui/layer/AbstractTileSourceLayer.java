@@ -1041,7 +1041,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             // text longer than tile size, split it
             StringBuilder line = new StringBuilder();
             StringBuilder ret = new StringBuilder();
-            for(String s: text.split(" ")) {
+            for (String s: text.split(" ")) {
                 if (g.getFontMetrics().stringWidth(line.toString() + s) > tileSource.getTileSize()) {
                     ret.append(line).append("\n");
                     line.setLength(0);
