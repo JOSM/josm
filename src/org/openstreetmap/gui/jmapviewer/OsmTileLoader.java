@@ -103,9 +103,17 @@ public class OsmTileLoader implements TileLoader {
     protected TileLoaderListener listener;
 
     public OsmTileLoader(TileLoaderListener listener) {
-        headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
+        this(listener, null);
+    }
+
+    public OsmTileLoader(TileLoaderListener listener, Map<String, String> headers) {
+        this.headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
+        if (headers != null) {
+            this.headers.putAll(headers);
+        }
         this.listener = listener;
     }
+
 
     @Override
     public TileJob createTileLoaderJob(final Tile tile) {
