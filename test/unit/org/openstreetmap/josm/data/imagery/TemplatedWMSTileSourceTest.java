@@ -134,7 +134,7 @@ public class TemplatedWMSTileSourceTest {
     }
 
     private void verifyLocation(TemplatedWMSTileSource source, LatLon location) {
-        for (int z = 22; z > 1; z--) {
+        for (int z = source.getMaxZoom(); z > source.getMinZoom() + 1; z--) {
             verifyLocation(source, location, z);
         }
     }
