@@ -173,16 +173,16 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         Map<String, String> headers = getHeaders(tileSource);
 
         tileLoader = getTileLoaderFactory().makeTileLoader(this, headers);
-        if (tileLoader instanceof TMSCachedTileLoader) {
-            tileCache = (TileCache) tileLoader;
-        } else {
-            tileCache = new MemoryTileCache();
-        }
+        /*
+         *  use MemoryTileCache instead of tileLoader JCS cache, as tileLoader caches only content (byte[] of image)
+         *  and MemoryTileCache caches whole Tile. This gives huge performance improvement when a lot of tiles are visible
+         *  in MapView (for example - when limiting min zoom in imagery)
+         */
+        tileCache = new MemoryTileCache(AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get());
 
         try {
             if ("file".equalsIgnoreCase(new URL(tileSource.getBaseUrl()).getProtocol())) {
                 tileLoader = new OsmTileLoader(this);
-                tileCache = new MemoryTileCache();
             }
         } catch (MalformedURLException e) {
             // ignore, assume that this is not a file
@@ -192,7 +192,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
 
         if (tileLoader == null)
-            tileLoader = new OsmTileLoader(this);
+            tileLoader = new OsmTileLoader(this, headers);
     }
 
     @Override
@@ -1483,18 +1483,13 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
         //g.drawString("currentZoomLevel=" + currentZoomLevel, 120, 120);
         g.setColor(Color.lightGray);
-        if (!autoZoom) {
-            if (ts.insane()) {
-                myDrawString(g, tr("zoom in to load any tiles"), 120, 120);
-            } else if (ts.tooLarge()) {
-                myDrawString(g, tr("zoom in to load more tiles"), 120, 120);
-            } else if (ts.tooSmall()) {
-                myDrawString(g, tr("increase zoom level to see more detail"), 120, 120);
-            }
-        }
 
-        if (zoom < getMinZoomLvl() && (ts.insane() || ts.tooLarge())) {
+        if (ts.insane()) {
             myDrawString(g, tr("zoom in to load any tiles"), 120, 120);
+        } else if (ts.tooLarge()) {
+            myDrawString(g, tr("zoom in to load more tiles"), 120, 120);
+        } else if (!autoZoom && ts.tooSmall()) {
+            myDrawString(g, tr("increase zoom level to see more detail"), 120, 120);
         }
 
         if (noTilesAtZoom) {

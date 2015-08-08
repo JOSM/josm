@@ -41,19 +41,20 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     private EastNorth topLeftCorner;
     private Bounds worldBounds;
 
-    private static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
-    private static final String PATTERN_PROJ    = "\\{proj(\\([^})]+\\))?\\}";
-    private static final String PATTERN_BBOX    = "\\{bbox\\}";
-    private static final String PATTERN_W       = "\\{w\\}";
-    private static final String PATTERN_S       = "\\{s\\}";
-    private static final String PATTERN_E       = "\\{e\\}";
-    private static final String PATTERN_N       = "\\{n\\}";
-    private static final String PATTERN_WIDTH   = "\\{width\\}";
-    private static final String PATTERN_HEIGHT  = "\\{height\\}";
+    private static final Pattern PATTERN_HEADER  = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
+    private static final Pattern PATTERN_PROJ    = Pattern.compile("\\{proj\\}");
+    private static final Pattern PATTERN_BBOX    = Pattern.compile("\\{bbox\\}");
+    private static final Pattern PATTERN_W       = Pattern.compile("\\{w\\}");
+    private static final Pattern PATTERN_S       = Pattern.compile("\\{s\\}");
+    private static final Pattern PATTERN_E       = Pattern.compile("\\{e\\}");
+    private static final Pattern PATTERN_N       = Pattern.compile("\\{n\\}");
+    private static final Pattern PATTERN_WIDTH   = Pattern.compile("\\{width\\}");
+    private static final Pattern PATTERN_HEIGHT  = Pattern.compile("\\{height\\}");
+    private static final Pattern PATTERN_PARAM   = Pattern.compile("\\{([^}]+)\\}");
 
     private static final NumberFormat latLonFormat = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
 
-    private static final String[] ALL_PATTERNS = {
+    private static final Pattern[] ALL_PATTERNS = {
         PATTERN_HEADER, PATTERN_PROJ, PATTERN_BBOX, PATTERN_W, PATTERN_S, PATTERN_E, PATTERN_N, PATTERN_WIDTH, PATTERN_HEIGHT
     };
 
@@ -66,6 +67,9 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         this.serverProjections = new TreeSet<>(info.getServerProjections());
         handleTemplate();
         initProjection();
+        // FIXME: remove in September 2015, when ImageryPreferenceEntry.tileSize will be initialized to -1 instead to 256
+        // need to leave it as it is to keep compatiblity between tested and latest JOSM versions
+        tileSize = WMSLayer.PROP_IMAGE_SIZE.get();
     }
 
     /**
@@ -88,13 +92,6 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
 
     @Override
     public int getDefaultTileSize() {
-        return WMSLayer.PROP_IMAGE_SIZE.get();
-    }
-
-    // FIXME: remove in September 2015, when ImageryPreferenceEntry.tileSize will be initialized to -1 instead to 256
-    // need to leave it as it is to keep compatiblity between tested and latest JOSM versions
-    @Override
-    public int getTileSize() {
         return WMSLayer.PROP_IMAGE_SIZE.get();
     }
 
@@ -155,16 +152,42 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         } else {
             bbox = String.format("%s,%s,%s,%s", latLonFormat.format(w), latLonFormat.format(s), latLonFormat.format(e), latLonFormat.format(n));
         }
-        return baseUrl.
-                replaceAll(PATTERN_PROJ,    myProjCode)
-                .replaceAll(PATTERN_BBOX,   bbox)
-                .replaceAll(PATTERN_W,      latLonFormat.format(w))
-                .replaceAll(PATTERN_S,      latLonFormat.format(s))
-                .replaceAll(PATTERN_E,      latLonFormat.format(e))
-                .replaceAll(PATTERN_N,      latLonFormat.format(n))
-                .replaceAll(PATTERN_WIDTH,  String.valueOf(getTileSize()))
-                .replaceAll(PATTERN_HEIGHT, String.valueOf(getTileSize()))
-                .replace(" ", "%20");
+
+        // Using StringBuffer and generic PATTERN_PARAM matcher gives 2x performance improvement over replaceAll
+        StringBuffer url = new StringBuffer(baseUrl.length());
+        Matcher matcher = PATTERN_PARAM.matcher(baseUrl);
+        while (matcher.find()) {
+            String replacement;
+            switch (matcher.group(1)) {
+            case "proj":
+                replacement = myProjCode;
+                break;
+            case "bbox":
+                replacement = bbox;
+                break;
+            case "w":
+                replacement = latLonFormat.format(w);
+                break;
+            case "s":
+                replacement = latLonFormat.format(s);
+                break;
+            case "e":
+                replacement = latLonFormat.format(e);
+                break;
+            case "n":
+                replacement = latLonFormat.format(n);
+                break;
+            case "width":
+            case "height":
+                replacement = String.valueOf(getTileSize());
+                break;
+            default:
+                replacement = "{" + matcher.group(1) + "}";
+            }
+            matcher.appendReplacement(url, replacement);
+        }
+        matcher.appendTail(url);
+        return url.toString().replace(" ", "%20");
     }
 
     @Override
@@ -312,11 +335,11 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
      */
     public static void checkUrl(String url) {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
-        Matcher m = Pattern.compile("\\{[^}]*\\}").matcher(url);
+        Matcher m = PATTERN_PARAM.matcher(url);
         while (m.find()) {
             boolean isSupportedPattern = false;
-            for (String pattern : ALL_PATTERNS) {
-                if (m.group().matches(pattern)) {
+            for (Pattern pattern : ALL_PATTERNS) {
+                if (pattern.matcher(m.group()).matches()) {
                     isSupportedPattern = true;
                     break;
                 }
@@ -330,9 +353,8 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
 
     private void handleTemplate() {
         // Capturing group pattern on switch values
-        Pattern pattern = Pattern.compile(PATTERN_HEADER);
         StringBuffer output = new StringBuffer();
-        Matcher matcher = pattern.matcher(this.baseUrl);
+        Matcher matcher = PATTERN_HEADER.matcher(this.baseUrl);
         while (matcher.find()) {
             headers.put(matcher.group(1), matcher.group(2));
             matcher.appendReplacement(output, "");
