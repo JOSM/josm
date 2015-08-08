@@ -173,13 +173,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
         if (first || force) {
             ensureCacheElement();
-            if (!force && cacheElement != null && isCacheElementValid() && isObjectLoadable()) {
-                // we got something in cache, and it's valid, so lets return it
-                log.log(Level.FINE, "JCS - Returning object from cache: {0}", getCacheKey());
-                finishLoading(LoadResult.SUCCESS);
-                return;
-            }
-            // object not in cache, so submit work to separate thread
+            // submit all jobs to separate thread, so calling thread is not blocked with IO when loading from disk
             downloadJobExecutor.execute(this);
         }
     }
@@ -228,6 +222,14 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         final String oldName = currentThread.getName();
         currentThread.setName("JCS Downloading: " + getUrl());
         try {
+            // try to fetch from cache
+            if (!force && cacheElement != null && isCacheElementValid() && isObjectLoadable()) {
+                // we got something in cache, and it's valid, so lets return it
+                log.log(Level.FINE, "JCS - Returning object from cache: {0}", getCacheKey());
+                finishLoading(LoadResult.SUCCESS);
+                return;
+            }
+
             // try to load object from remote resource
             if (loadObject()) {
                 finishLoading(LoadResult.SUCCESS);
@@ -305,7 +307,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return true;
             }
 
-            HttpURLConnection urlConn = getURLConnection();
+            HttpURLConnection urlConn = getURLConnection(getUrl());
 
             if (isObjectLoadable()  &&
                     (now - attributes.getLastModification()) <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
@@ -313,6 +315,15 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             }
             if (isObjectLoadable() && attributes.getEtag() != null) {
                 urlConn.addRequestProperty("If-None-Match", attributes.getEtag());
+            }
+
+            // follow redirects
+            for (int i = 0; i < 5; i++) {
+                if (urlConn.getResponseCode() == 302) {
+                    urlConn = getURLConnection(new URL(urlConn.getHeaderField("Location")));
+                } else {
+                    break;
+                }
             }
             if (urlConn.getResponseCode() == 304) {
                 // If isModifiedSince or If-None-Match has been set
@@ -446,8 +457,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         return ret;
     }
 
-    private HttpURLConnection getURLConnection() throws IOException {
-        HttpURLConnection urlConn = (HttpURLConnection) getUrl().openConnection();
+    private HttpURLConnection getURLConnection(URL url) throws IOException {
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.setRequestProperty("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         urlConn.setReadTimeout(readTimeout); // 30 seconds read timeout
         urlConn.setConnectTimeout(connectTimeout);
@@ -464,8 +475,15 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     private boolean isCacheValidUsingHead() throws IOException {
-        HttpURLConnection urlConn = getURLConnection();
+        HttpURLConnection urlConn = getURLConnection(getUrl());
         urlConn.setRequestMethod("HEAD");
+        for (int i = 0; i < 5; i++) {
+            if (urlConn.getResponseCode() == 302) {
+                urlConn = getURLConnection(new URL(urlConn.getHeaderField("Location")));
+            } else {
+                break;
+            }
+        }
         long lastModified = urlConn.getLastModified();
         return (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getRequestProperty("ETag"))) ||
                 (lastModified != 0 && lastModified <= attributes.getLastModification());
