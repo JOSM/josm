@@ -192,7 +192,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
 
         if (tileLoader == null)
-            tileLoader = new OsmTileLoader(this);
+            tileLoader = new OsmTileLoader(this, headers);
     }
 
     @Override
