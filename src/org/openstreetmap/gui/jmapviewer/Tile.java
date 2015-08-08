@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.imageio.ImageIO;
 
@@ -86,14 +87,49 @@ public class Tile {
         }
     }
 
+    private static class CachedCallable<V> implements Callable<V> {
+        private V result = null;
+        private Callable<V> callable;
+
+        /**
+         * Wraps callable so it is evaluated only once
+         * @param callable to cache
+         */
+        public CachedCallable(Callable<V> callable) {
+            this.callable = callable;
+        }
+
+        @Override
+        public synchronized V call() {
+            try {
+                if (result == null) {
+                    result = callable.call();
+                }
+                return result;
+            } catch (Exception e) {
+                // this should not happen here
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     /**
      * Tries to get tiles of a lower or higher zoom level (one or two level
      * difference) from cache and use it as a placeholder until the tile has been loaded.
      * @param cache Tile cache
      */
     public void loadPlaceholderFromCache(TileCache cache) {
-        BufferedImage tmpImage = new BufferedImage(source.getTileSize(), source.getTileSize(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = (Graphics2D) tmpImage.getGraphics();
+        /*
+         *  use LazyTask as creation of BufferedImage is very expensive
+         *  this way we can avoid object creation until we're sure it's needed
+         */
+        final CachedCallable<BufferedImage> tmpImage = new CachedCallable<>(new Callable<BufferedImage>() {
+            @Override
+            public BufferedImage call() throws Exception {
+                return new BufferedImage(source.getTileSize(), source.getTileSize(), BufferedImage.TYPE_INT_RGB);
+            }
+        });
+
         for (int zoomDiff = 1; zoomDiff < 5; zoomDiff++) {
             // first we check if there are already the 2^x tiles
             // of a higher detail level
@@ -102,20 +138,33 @@ public class Tile {
                 int factor = 1 << zoomDiff;
                 int xtileHigh = xtile << zoomDiff;
                 int ytileHigh = ytile << zoomDiff;
-                double scale = 1.0 / factor;
-                g.setTransform(AffineTransform.getScaleInstance(scale, scale));
+                final double scale = 1.0 / factor;
+
+                /*
+                 * use LazyTask for graphics to avoid evaluation of tmpImage, until we have
+                 * something to draw
+                 */
+                CachedCallable<Graphics2D> graphics = new CachedCallable<>(new Callable<Graphics2D>() {
+                    @Override
+                    public Graphics2D call() throws Exception {
+                        Graphics2D g = (Graphics2D) tmpImage.call().getGraphics();
+                        g.setTransform(AffineTransform.getScaleInstance(scale, scale));
+                        return g;
+                    }
+                });
+
                 int paintedTileCount = 0;
                 for (int x = 0; x < factor; x++) {
                     for (int y = 0; y < factor; y++) {
                         Tile tile = cache.getTile(source, xtileHigh + x, ytileHigh + y, zoomHigh);
                         if (tile != null && tile.isLoaded()) {
                             paintedTileCount++;
-                            tile.paint(g, x * source.getTileSize(), y * source.getTileSize());
+                            tile.paint(graphics.call(), x * source.getTileSize(), y * source.getTileSize());
                         }
                     }
                 }
                 if (paintedTileCount == factor * factor) {
-                    image = tmpImage;
+                    image = tmpImage.call();
                     return;
                 }
             }
@@ -124,17 +173,26 @@ public class Tile {
             if (zoomLow >= JMapViewer.MIN_ZOOM) {
                 int xtileLow = xtile >> zoomDiff;
                 int ytileLow = ytile >> zoomDiff;
-                int factor = 1 << zoomDiff;
-                double scale = factor;
-                AffineTransform at = new AffineTransform();
-                int translateX = (xtile % factor) * source.getTileSize();
-                int translateY = (ytile % factor) * source.getTileSize();
-                at.setTransform(scale, 0, 0, scale, -translateX, -translateY);
-                g.setTransform(at);
+                final int factor = 1 << zoomDiff;
+                final double scale = factor;
+                CachedCallable<Graphics2D> graphics = new CachedCallable<>(new Callable<Graphics2D>() {
+                    @Override
+                    public Graphics2D call() throws Exception {
+                        Graphics2D g = (Graphics2D) tmpImage.call().getGraphics();
+                        AffineTransform at = new AffineTransform();
+                        int translateX = (xtile % factor) * source.getTileSize();
+                        int translateY = (ytile % factor) * source.getTileSize();
+                        at.setTransform(scale, 0, 0, scale, -translateX, -translateY);
+                        g.setTransform(at);
+                        return g;
+                    }
+
+                });
+
                 Tile tile = cache.getTile(source, xtileLow, ytileLow, zoomLow);
                 if (tile != null && tile.isLoaded()) {
-                    tile.paint(g, 0, 0);
-                    image = tmpImage;
+                    tile.paint(graphics.call(), 0, 0);
+                    image = tmpImage.call();
                     return;
                 }
             }
