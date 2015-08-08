@@ -894,6 +894,31 @@ public final class Utils {
     }
 
     /**
+     * Opens a HTTP connection to given URL, sets the User-Agent property to JOSM's one, optionally disables Keep-Alive, and
+     * optionally - follows redirects. It means, that it's not possible to send custom headers with method
+     *
+     * @param httpURL The HTTP url to open (must use http:// or https://)
+     * @param keepAlive whether not to set header {@code Connection=close}
+     * @param followRedirects wheter or not to follow HTTP(S) redirects
+     * @return An open HTTP connection to the given URL
+     * @throws IOException if an I/O exception occurs
+     * @since 8650
+     */
+    public static HttpURLConnection openHttpConnection(URL httpURL, boolean keepAlive, boolean followRedirects) throws IOException {
+        HttpURLConnection connection = openHttpConnection(httpURL, keepAlive);
+        if (followRedirects) {
+            for (int i = 0; i < 5; i++) {
+                if (connection.getResponseCode() == 302) {
+                    connection = openHttpConnection(new URL(connection.getHeaderField("Location")), keepAlive);
+                } else {
+                    break;
+                }
+            }
+        }
+        return connection;
+    }
+
+    /**
      * An alternative to {@link String#trim()} to effectively remove all leading and trailing white characters, including Unicode ones.
      * @param str The string to strip
      * @return <code>str</code>, without leading and trailing characters, according to
