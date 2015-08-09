@@ -94,7 +94,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         LatLon bottomRight = new LatLon(worldBounds.getMinLat(), worldBounds.getMaxLon());
         tileXMax = new int[getMaxZoom() + 1];
         tileYMax = new int[getMaxZoom() + 1];
-        for(int zoom = getMinZoom(); zoom <= getMaxZoom(); zoom++) {
+        for (int zoom = getMinZoom(); zoom <= getMaxZoom(); zoom++) {
             TileXY maxTileIndex = latLonToTileXY(bottomRight.toCoordinate(), zoom);
             tileXMax[zoom] = maxTileIndex.getXIndex();
             tileYMax[zoom] = maxTileIndex.getYIndex();

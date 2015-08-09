@@ -547,11 +547,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
                     return;
                 }
             }
-            String[] newKeys = new String[keys.length + 2];
-            for (int i = 0; i < keys.length; i += 2) {
-                newKeys[i] = keys[i];
-                newKeys[i+1] = keys[i+1];
-            }
+            String[] newKeys = Arrays.copyOf(keys, keys.length + 2);
             newKeys[keys.length] = key;
             newKeys[keys.length + 1] = value;
             keys = newKeys;
