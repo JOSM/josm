@@ -192,8 +192,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     Main.map.mapView.zoomTo(bbox);
                 }
 
-                for (ImageEntry ie : yLayer.data) {
-                    ie.applyTmp();
+                if (yLayer.data != null) {
+                    for (ImageEntry ie : yLayer.data) {
+                        ie.applyTmp();
+                    }
                 }
 
                 yLayer.updateBufferAndRepaint();
