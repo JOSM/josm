@@ -239,7 +239,6 @@ Build-Date: ${build.tstamp}
             <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
         </javac>
-
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
@@ -257,7 +256,6 @@ Build-Date: ${build.tstamp}
             <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
         </javac>
-
 
         <copy todir="build" failonerror="no" includeemptydirs="no">
             <fileset dir="resources"/>
