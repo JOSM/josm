@@ -23,6 +23,56 @@ public final class OsmDataGenerator {
     }
 
     /**
+     * This is a list of randomly generated strings.
+     * <p>
+     * It provides methods to get them both interned and uninterned.
+     *
+     * @author Michael Zangl
+     */
+    public static final class RandomStringList {
+        private final Random random;
+        private final String[] strings;
+        private final String[] interned;
+
+        /**
+         * Creates a new, random List of Strings.
+         * @param seed The seed to use.
+         * @param size The size of the list.
+         */
+        public RandomStringList(int seed, int size) {
+            random = new Random(seed);
+            strings = new String[size];
+            interned = new String[size];
+            for (int i = 0; i < size; i++) {
+                strings[i] = randomString();
+                interned[i] = strings[i].intern();
+            }
+        }
+
+        protected String randomString() {
+            return RandomStringUtils.random(12, 0, 0, true, true, null, random);
+        }
+
+        /**
+         * Gets a String that was not interned.
+         * @return The String.
+         */
+        public String get() {
+            int n = random.nextInt(strings.length);
+            return strings[n];
+        }
+
+        /**
+         * Gets a String that was interned.
+         * @return The String.
+         */
+        public String getInterned() {
+            int n = random.nextInt(interned.length);
+            return interned[n];
+        }
+    }
+
+    /**
      * A generator that generates test data by filling a data set.
      * @author Michael Zangl
      */
@@ -67,10 +117,6 @@ public final class OsmDataGenerator {
             node.setEastNorth(new EastNorth(random.nextDouble(), random.nextDouble()));
             ds.addPrimitive(node);
             return node;
-        }
-
-        protected String randomString() {
-            return RandomStringUtils.random(12, 0, 0, true, true, null, random);
         }
 
         /**
@@ -134,8 +180,8 @@ public final class OsmDataGenerator {
         private static final int VALUE_COUNT = 200;
         private static final int KEY_COUNT = 150;
         private final double tagNodeRation;
-        private ArrayList<String> keys;
-        private ArrayList<String> values;
+        private RandomStringList keys;
+        private RandomStringList values;
 
         private KeyValueDataGenerator(String datasetName, int nodeCount, double tagNodeRation) {
             super(datasetName, nodeCount);
@@ -145,39 +191,49 @@ public final class OsmDataGenerator {
         @Override
         public void fillData(DataSet ds) {
             super.fillData(ds);
-            keys = new ArrayList<>();
-            for (int i = 0; i < KEY_COUNT; i++) {
-                keys.add(randomString());
-            }
-            values = new ArrayList<>();
-            for (int i = 0; i < VALUE_COUNT; i++) {
-                values.add(randomString());
-            }
+            keys = new RandomStringList(random.nextInt(), KEY_COUNT);
+            values = new RandomStringList(random.nextInt(), VALUE_COUNT);
 
             double tags = nodes.size() * tagNodeRation;
             for (int i = 0; i < tags; i++) {
-                String key = randomKey();
-                String value = randomValue();
+                String key = keys.get();
+                String value = values.get();
                 nodes.get(random.nextInt(nodes.size())).put(key, value);
             }
         }
 
         /**
+         * Gets the values that were used to fill the tags.
+         * @return The list of strings.
+         */
+        public RandomStringList randomValues() {
+            ensureInitialized();
+            return values;
+        }
+
+        /**
+         * Gets the list of keys that was used to fill the tags.
+         * @return The list of strings.
+         */
+        public RandomStringList randomKeys() {
+            ensureInitialized();
+            return keys;
+        }
+
+        /**
          * Gets a random value that was used to fill the tags.
-         * @return A random String probably used in as value somewhere.
+         * @return A random String probably used in as value somewhere. Not interned.
          */
         public String randomValue() {
-            ensureInitialized();
-            return values.get(random.nextInt(values.size()));
+            return randomValues().get();
         }
 
         /**
          * Gets a random key that was used to fill the tags.
-         * @return A random String probably used in as key somewhere.
+         * @return A random String probably used in as key somewhere. Not interned.
          */
         public String randomKey() {
-            ensureInitialized();
-            return keys.get(random.nextInt(keys.size()));
+            return randomKeys().get();
         }
     }
 
