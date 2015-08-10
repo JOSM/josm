@@ -157,11 +157,11 @@ class MapCSSParserTest {
     @Test
     public void testStandardKeyCondition() throws Exception {
         def c1 = (Condition.KeyCondition) getParser("[ highway ]").condition(Condition.Context.PRIMITIVE)
-        assert c1.matchType == null
+        assert Condition.KeyMatchType.EQ.equals(c1.matchType)
         assert c1.applies(getEnvironment("highway", "unclassified"))
         assert !c1.applies(getEnvironment("railway", "rail"))
         def c2 = (Condition.KeyCondition) getParser("[\"/slash/\"]").condition(Condition.Context.PRIMITIVE)
-        assert c2.matchType == null
+        assert Condition.KeyMatchType.EQ.equals(c2.matchType)
         assert c2.applies(getEnvironment("/slash/", "yes"))
         assert !c2.applies(getEnvironment("\"slash\"", "no"))
     }
