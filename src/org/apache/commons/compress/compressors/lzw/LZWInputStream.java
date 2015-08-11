@@ -34,16 +34,19 @@ import org.apache.commons.compress.utils.BitInputStream;
  * @since 1.10
  */
 public abstract class LZWInputStream extends CompressorInputStream {
+    protected static final int DEFAULT_CODE_SIZE = 9;
+    protected static final int UNUSED_PREFIX = -1;
+
     private final byte[] oneByte = new byte[1];
 
     protected final BitInputStream in;
-    protected int clearCode = -1;
-    protected int codeSize = 9;
-    protected byte previousCodeFirstChar;
-    protected int previousCode = -1;
-    protected int tableSize = 0;
-    protected int[] prefixes;
-    protected byte[] characters;
+    private int clearCode = -1;
+    private int codeSize = DEFAULT_CODE_SIZE;
+    private byte previousCodeFirstChar;
+    private int previousCode = UNUSED_PREFIX;
+    private int tableSize;
+    private int[] prefixes;
+    private byte[] characters;
     private byte[] outputStack;
     private int outputStackLocation;
 
@@ -178,4 +181,49 @@ public abstract class LZWInputStream extends CompressorInputStream {
         }
         return 0;
     }
+
+    protected int getCodeSize() {
+        return codeSize;
+    }
+
+    protected void resetCodeSize() {
+        setCodeSize(DEFAULT_CODE_SIZE);
+    }
+
+    protected void setCodeSize(int cs) {
+        this.codeSize = cs;
+    }
+
+    protected void incrementCodeSize() {
+        codeSize++;
+    }
+
+    protected void resetPreviousCode() {
+        this.previousCode = -1;
+    }
+
+    protected int getPrefix(int offset) {
+        return prefixes[offset];
+    }
+
+    protected void setPrefix(int offset, int value) {
+        prefixes[offset] = value;
+    }
+
+    protected int getPrefixesLength() {
+        return prefixes.length;
+    }
+
+    protected int getClearCode() {
+        return clearCode;
+    }
+
+    protected int getTableSize() {
+        return tableSize;
+    }
+
+    protected void setTableSize(int newSize) {
+        tableSize = newSize;
+    }
+
 }
