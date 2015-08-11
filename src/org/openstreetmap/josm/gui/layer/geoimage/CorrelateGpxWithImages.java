@@ -1095,6 +1095,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @return matching images
      */
     private List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
+        if (yLayer.data == null) {
+            return Collections.emptyList();
+        }
         List<ImageEntry> dateImgLst = new ArrayList<>(yLayer.data.size());
         for (ImageEntry e : yLayer.data) {
             if (!e.hasExifTime()) {
