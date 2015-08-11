@@ -50,7 +50,7 @@ public class ShowThumbnailAction extends AbstractAction implements LayerAction {
      *         {@code false} otherwise
      */
     private static boolean enabled(GeoImageLayer layer) {
-        return !layer.data.isEmpty();
+        return layer.data != null && !layer.data.isEmpty();
     }
 
     /** Create actual menu entry and define if it is enabled or not. */

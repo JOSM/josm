@@ -251,7 +251,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             if (layer != null) {
                 Main.main.addLayer(layer);
 
-                if (!canceled && !layer.data.isEmpty()) {
+                if (!canceled && layer.data != null && !layer.data.isEmpty()) {
                     boolean noGeotagFound = true;
                     for (ImageEntry e : layer.data) {
                         if (e.getPos() != null) {
@@ -316,7 +316,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
      */
     public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, final String name, boolean useThumbs) {
         super(name != null ? name : tr("Geotagged Images"));
-        Collections.sort(data);
+        if (data != null) {
+            Collections.sort(data);
+        }
         this.data = data;
         this.gpxLayer = gpxLayer;
         this.useThumbs = useThumbs;
@@ -754,7 +756,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public void checkPreviousNextButtons() {
-        ImageViewerDialog.setNextEnabled(currentPhoto < data.size() - 1);
+        ImageViewerDialog.setNextEnabled(data != null && currentPhoto < data.size() - 1);
         ImageViewerDialog.setPreviousEnabled(currentPhoto > 0);
     }
 
@@ -1086,6 +1088,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
      * @return List of images in layer
      */
     public List<ImageEntry> getImages() {
+        if (data == null) {
+            return Collections.emptyList();
+        }
         List<ImageEntry> copy = new ArrayList<>(data.size());
         for (ImageEntry ie : data) {
             copy.add(ie);
