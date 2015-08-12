@@ -450,7 +450,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 @Override
                 public int getSize() {
-                    return yLayer.data.size();
+                    return yLayer.data != null ? yLayer.data.size() : 0;
                 }
             });
             imgList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -823,8 +823,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             // The selection of images we are about to correlate may have changed.
             // So reset all images.
-            for (ImageEntry ie: yLayer.data) {
-                ie.tmp = null;
+            if (yLayer.data != null) {
+                for (ImageEntry ie: yLayer.data) {
+                    ie.tmp = null;
+                }
             }
 
             // Construct a list of images that have a date, and sort them on the date.

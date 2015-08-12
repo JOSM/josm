@@ -366,16 +366,20 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     private String infoText() {
         int tagged = 0;
         int newdata = 0;
-        for (ImageEntry e : data) {
-            if (e.getPos() != null) {
-                tagged++;
-            }
-            if (e.hasNewGpsData()) {
-                newdata++;
+        int n = 0;
+        if (data != null) {
+            n = data.size();
+            for (ImageEntry e : data) {
+                if (e.getPos() != null) {
+                    tagged++;
+                }
+                if (e.hasNewGpsData()) {
+                    newdata++;
+                }
             }
         }
         return "<html>"
-                + trn("{0} image loaded.", "{0} images loaded.", data.size(), data.size())
+                + trn("{0} image loaded.", "{0} images loaded.", n, n)
                 + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", tagged, tagged)
                 + (newdata > 0 ? "<br>" + trn("{0} has updated GPS data.", "{0} have updated GPS data.", newdata, newdata) : "")
                 + "</html>";
@@ -404,9 +408,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         stopLoadThumbs();
         l.stopLoadThumbs();
 
-        final ImageEntry selected = l.currentPhoto >= 0 ? l.data.get(l.currentPhoto) : null;
+        final ImageEntry selected = l.data != null && l.currentPhoto >= 0 ? l.data.get(l.currentPhoto) : null;
 
-        data.addAll(l.data);
+        if (l.data != null) {
+            data.addAll(l.data);
+        }
         Collections.sort(data);
 
         // Supress the double photos.
@@ -491,27 +497,29 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 tempG.fillRect(0, 0, width, height);
                 tempG.setComposite(saveComp);
 
-                for (ImageEntry e : data) {
-                    if (e.getPos() == null) {
-                        continue;
-                    }
-                    Point p = mv.getPoint(e.getPos());
-                    if (e.thumbnail != null) {
-                        Dimension d = scaledDimension(e.thumbnail);
-                        Rectangle target = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
-                        if (clip.intersects(target)) {
-                            tempG.drawImage(e.thumbnail, target.x, target.y, target.width, target.height, null);
+                if (data != null) {
+                    for (ImageEntry e : data) {
+                        if (e.getPos() == null) {
+                            continue;
                         }
-                    } else { // thumbnail not loaded yet
-                        icon.paintIcon(mv, tempG,
-                                p.x - icon.getIconWidth() / 2,
-                                p.y - icon.getIconHeight() / 2);
+                        Point p = mv.getPoint(e.getPos());
+                        if (e.thumbnail != null) {
+                            Dimension d = scaledDimension(e.thumbnail);
+                            Rectangle target = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
+                            if (clip.intersects(target)) {
+                                tempG.drawImage(e.thumbnail, target.x, target.y, target.width, target.height, null);
+                            }
+                        } else { // thumbnail not loaded yet
+                            icon.paintIcon(mv, tempG,
+                                    p.x - icon.getIconWidth() / 2,
+                                    p.y - icon.getIconHeight() / 2);
+                        }
                     }
                 }
                 updateOffscreenBuffer = false;
             }
             g.drawImage(offscreenBuffer, 0, 0, null);
-        } else {
+        } else if (data != null) {
             for (ImageEntry e : data) {
                 if (e.getPos() == null) {
                     continue;
@@ -1021,7 +1029,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     Main.map.mapView.removeMouseListener(mouseAdapter);
                     MapFrame.removeMapModeChangeListener(mapModeListener);
                     currentPhoto = -1;
-                    data.clear();
+                    if (data != null) {
+                        data.clear();
+                    }
                     data = null;
                     // stop listening to layer change events
                     MapView.removeLayerChangeListener(this);
