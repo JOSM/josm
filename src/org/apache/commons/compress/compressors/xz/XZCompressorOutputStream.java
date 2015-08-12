@@ -34,7 +34,9 @@ public class XZCompressorOutputStream extends CompressorOutputStream {
 
     /**
      * Creates a new XZ compressor using the default LZMA2 options.
-     * This is equivalent to <code>XZCompressorOutputStream(6)</code>.
+     * This is equivalent to <code>XZCompressorOutputStream(outputStream, 6)</code>.
+     * @param outputStream the stream to wrap
+     * @throws IOException on error
      */
     public XZCompressorOutputStream(OutputStream outputStream)
             throws IOException {
@@ -53,6 +55,9 @@ public class XZCompressorOutputStream extends CompressorOutputStream {
      * Unless the uncompressed size of the file exceeds 8&nbsp;MiB,
      * 16&nbsp;MiB, or 32&nbsp;MiB, it is waste of memory to use the
      * presets 7, 8, or 9, respectively.
+     * @param outputStream the stream to wrap
+     * @param preset the preset
+     * @throws IOException on error
      */
     public XZCompressorOutputStream(OutputStream outputStream, int preset)
             throws IOException {
