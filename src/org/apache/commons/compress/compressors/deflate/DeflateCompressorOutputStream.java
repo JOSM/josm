@@ -34,6 +34,8 @@ public class DeflateCompressorOutputStream extends CompressorOutputStream {
    
     /**
      * Creates a Deflate compressed output stream with the default parameters.
+     * @param outputStream the stream to wrap
+     * @throws IOException on error
      */
     public DeflateCompressorOutputStream(OutputStream outputStream) throws IOException {
         this(outputStream, new DeflateParameters());
@@ -41,6 +43,9 @@ public class DeflateCompressorOutputStream extends CompressorOutputStream {
 
     /**
      * Creates a Deflate compressed output stream with the specified parameters.
+     * @param outputStream the stream to wrap
+     * @param parameters the deflate parameters to apply
+     * @throws IOException on error
      */
     public DeflateCompressorOutputStream(OutputStream outputStream,
                                          DeflateParameters parameters) throws IOException {
