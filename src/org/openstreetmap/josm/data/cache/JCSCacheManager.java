@@ -38,7 +38,7 @@ public final class JCSCacheManager {
     private static final Logger LOG = FeatureAdapter.getLogger(JCSCacheManager.class.getCanonicalName());
 
     private static volatile CompositeCacheManager cacheManager = null;
-    private static long maxObjectTTL        = Long.MAX_VALUE;
+    private static long maxObjectTTL        = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
     private static final AuxiliaryCacheFactory diskCacheFactory = new IndexedDiskCacheFactory();
     private static FileLock cacheDirLock = null;
