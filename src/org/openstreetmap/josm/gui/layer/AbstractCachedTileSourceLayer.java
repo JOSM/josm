@@ -36,11 +36,6 @@ public abstract class AbstractCachedTileSourceLayer extends AbstractTileSourceLa
      */
     public static final IntegerProperty MAX_DISK_CACHE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + "max_disk_size", 512);
 
-    /**
-     * use fairly small memory cache, as cached objects are quite big, as they contain BufferedImages
-     */
-    public static final IntegerProperty MEMORY_CACHE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + "cache.max_objects_ram", 200);
-
     private ICacheAccess<String, BufferedImageCacheEntry> cache;
     private volatile TileLoaderFactory loaderFactory;
 

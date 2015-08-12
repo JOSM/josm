@@ -133,7 +133,19 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     /** if layer should show errors on tiles */
     public boolean showErrors;
 
-    protected TileCache tileCache;
+    /**
+     * use fairly small memory cache, as cached objects are quite big, as they contain BufferedImages
+     */
+    public static final IntegerProperty MEMORY_CACHE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + "cache.max_objects_ram", 200);
+
+    /*
+     *  use MemoryTileCache instead of tileLoader JCS cache, as tileLoader caches only content (byte[] of image)
+     *  and MemoryTileCache caches whole Tile. This gives huge performance improvement when a lot of tiles are visible
+     *  in MapView (for example - when limiting min zoom in imagery)
+     *
+     *  Use static instance so memory is shared between layers to prevent out of memory exceptions, when user is working with many layers
+     */
+    protected static TileCache tileCache = new MemoryTileCache(MEMORY_CACHE_SIZE.get());
     protected AbstractTMSTileSource tileSource;
     protected TileLoader tileLoader;
 
@@ -173,12 +185,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         Map<String, String> headers = getHeaders(tileSource);
 
         tileLoader = getTileLoaderFactory().makeTileLoader(this, headers);
-        /*
-         *  use MemoryTileCache instead of tileLoader JCS cache, as tileLoader caches only content (byte[] of image)
-         *  and MemoryTileCache caches whole Tile. This gives huge performance improvement when a lot of tiles are visible
-         *  in MapView (for example - when limiting min zoom in imagery)
-         */
-        tileCache = new MemoryTileCache(AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get());
 
         try {
             if ("file".equalsIgnoreCase(new URL(tileSource.getBaseUrl()).getProtocol())) {
