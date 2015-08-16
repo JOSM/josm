@@ -20,7 +20,8 @@ import org.openstreetmap.josm.io.OnlineResource;
 public final class DownloadNotesInViewAction extends JosmAction {
 
     private DownloadNotesInViewAction(String iconName) {
-        super(tr("Download notes in current view"), iconName, tr("Download notes in current view"), null, false);
+        super(tr("Download notes in current view"), iconName, tr("Download notes in current view"), null, false,
+                "dialogs/notes/download_in_view", true);
     }
 
     public static DownloadNotesInViewAction newActionWithNoteIcon() {
