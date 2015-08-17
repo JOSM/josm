@@ -2225,6 +2225,9 @@ node[amenity=ice_cream] {
     set icon_z17;
     text: auto;
 }
+area[amenity=bicycle_parking]:closed {
+    fill-color: amenity_traffic#f7efb7;
+}
 way[amenity=bicycle_parking] {
     width: 2;
     color: amenity_traffic#f7efb7;
@@ -2232,7 +2235,6 @@ way[amenity=bicycle_parking] {
 area[amenity=parking_space],
 area[amenity=parking],
 area[amenity=motorcycle_parking],
-area[amenity=bicycle_parking],
 area[amenity=bicycle_rental],
 area[amenity=bicycle_repair_station],
 area[amenity=car_rental],
