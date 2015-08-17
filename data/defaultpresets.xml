@@ -8368,11 +8368,11 @@
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Annotations"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Annotations" />
             <space />
-            <text key="phone" text="Phone Number" match="key" />
-            <text key="fax" text="Fax Number" match="key" />
-            <space />
             <text key="website" text="Website" match="key" />
             <text key="email" text="Email Address" match="key" />
+            <space />
+            <text key="phone" text="Phone Number" match="key" />
+            <text key="fax" text="Fax Number" match="key" />
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
@@ -8388,11 +8388,11 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:contact"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:contact" />
             <space />
-            <text key="contact:phone" text="Phone Number" match="key" />
-            <text key="contact:fax" text="Fax Number" match="key" />
-            <space />
             <text key="contact:website" text="Website" match="key" />
             <text key="contact:email" text="Email Address" match="key" />
+            <space />
+            <text key="contact:phone" text="Phone Number" match="key" />
+            <text key="contact:fax" text="Fax Number" match="key" />
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
