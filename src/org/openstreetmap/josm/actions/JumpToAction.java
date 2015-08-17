@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.dialogs.LatLonDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -149,9 +150,13 @@ public class JumpToAction extends JosmAction {
                 zoomLvl = Double.parseDouble(zm.getText());
                 ll = new LatLon(Double.parseDouble(lat.getText()), Double.parseDouble(lon.getText()));
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("Could not parse Latitude, Longitude or Zoom. Please check."),
-                        tr("Unable to parse Lon/Lat"), JOptionPane.ERROR_MESSAGE);
+                try {
+                    ll = LatLonDialog.parseLatLon(lat.getText() + "; " + lon.getText());
+                } catch (IllegalArgumentException ex2) {
+                    JOptionPane.showMessageDialog(Main.parent,
+                            tr("Could not parse Latitude, Longitude or Zoom. Please check."),
+                            tr("Unable to parse Lon/Lat"), JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
 
