@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -79,65 +81,13 @@ public class RestartAction extends JosmAction {
      */
     public static void restartJOSM() throws IOException {
         if (isRestartSupported() && !Main.exitJosm(false, 0)) return;
+        final List<String> cmd;
         try {
-            final List<String> cmd = new ArrayList<>();
             // special handling for OSX .app package
             if (Main.isPlatformOsx() && System.getProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
-                cmd.add("/usr/bin/osascript");
-                for (String line : RESTART_APPLE_SCRIPT.split("\n")) {
-                    cmd.add("-e");
-                    cmd.add(line);
-                }
+                cmd = getAppleCommands();
             } else {
-                // java binary
-                final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator +
-                        (Main.isPlatformWindows() ? "java.exe" : "java");
-                if (!new File(java).isFile()) {
-                    throw new IOException("Unable to find suitable java runtime at "+java);
-                }
-                cmd.add(java);
-                // vm arguments
-                List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
-                if (Main.isDebugEnabled()) {
-                    Main.debug("VM arguments: "+arguments);
-                }
-                for (String arg : arguments) {
-                    // When run from jp2launcher.exe, jnlpx.remove is true, while it is not when run from javaws
-                    // Always set it to false to avoid error caused by a missing jnlp file on the second restart
-                    arg = arg.replace("-Djnlpx.remove=true", "-Djnlpx.remove=false");
-                    // if it's the agent argument : we ignore it otherwise the
-                    // address of the old application and the new one will be in conflict
-                    if (!arg.contains("-agentlib")) {
-                        cmd.add(arg);
-                    }
-                }
-                // program main and program arguments (be careful a sun property. might not be supported by all JVM)
-                String[] mainCommand = System.getProperty("sun.java.command").split(" ");
-                // look for a .jar in all chunks to support paths with spaces (fix #9077)
-                StringBuilder sb = new StringBuilder(mainCommand[0]);
-                for (int i = 1; i < mainCommand.length && !mainCommand[i-1].endsWith(".jar"); i++) {
-                    sb.append(' ').append(mainCommand[i]);
-                }
-                String jarPath = sb.toString();
-                // program main is a jar
-                if (jarPath.endsWith(".jar")) {
-                    // if it's a jar, add -jar mainJar
-                    cmd.add("-jar");
-                    cmd.add(new File(jarPath).getPath());
-                } else {
-                    // else it's a .class, add the classpath and mainClass
-                    cmd.add("-cp");
-                    cmd.add("\"" + System.getProperty("java.class.path") + "\"");
-                    cmd.add(mainCommand[0]);
-                }
-                // if it's webstart add JNLP file. Use jnlpx.origFilenameArg instead of jnlp.application.href,
-                // because only this one is present when run from j2plauncher.exe (see #10795)
-                String jnlp = System.getProperty("jnlpx.origFilenameArg");
-                if (jnlp != null) {
-                    cmd.add(jnlp);
-                }
-                // finally add program arguments
-                cmd.addAll(Main.getCommandLineArgs());
+                cmd = getCommands();
             }
             Main.info("Restart "+cmd);
             if (Main.isDebugEnabled() && Main.pref.getBoolean("restart.debug.simulation")) {
@@ -161,6 +111,88 @@ public class RestartAction extends JosmAction {
         } catch (Exception e) {
             // something went wrong
             throw new IOException("Error while trying to restart the application", e);
+        }
+    }
+
+    private static List<String> getAppleCommands() {
+        final List<String> cmd = new ArrayList<>();
+        cmd.add("/usr/bin/osascript");
+        for (String line : RESTART_APPLE_SCRIPT.split("\n")) {
+            cmd.add("-e");
+            cmd.add(line);
+        }
+        return cmd;
+    }
+
+    private static List<String> getCommands() throws IOException {
+        final List<String> cmd = new ArrayList<>();
+        // java binary
+        cmd.add(getJavaRuntime());
+        // vm arguments
+        addVMArguments(cmd);
+        // Determine webstart JNLP file. Use jnlpx.origFilenameArg instead of jnlp.application.href,
+        // because only this one is present when run from j2plauncher.exe (see #10795)
+        final String jnlp = System.getProperty("jnlpx.origFilenameArg");
+        // program main and program arguments (be careful a sun property. might not be supported by all JVM)
+        final String javaCommand = System.getProperty("sun.java.command");
+        String[] mainCommand = javaCommand.split(" ");
+        if (javaCommand.endsWith(".jnlp") && jnlp == null) {
+            // see #11751 - jnlp on Linux
+            if (Main.isDebugEnabled()) {
+                Main.debug("Detected jnlp without jnlpx.origFilenameArg property set");
+            }
+            cmd.addAll(Arrays.asList(mainCommand));
+        } else {
+            // look for a .jar in all chunks to support paths with spaces (fix #9077)
+            StringBuilder sb = new StringBuilder(mainCommand[0]);
+            for (int i = 1; i < mainCommand.length && !mainCommand[i-1].endsWith(".jar"); i++) {
+                sb.append(' ').append(mainCommand[i]);
+            }
+            String jarPath = sb.toString();
+            // program main is a jar
+            if (jarPath.endsWith(".jar")) {
+                // if it's a jar, add -jar mainJar
+                cmd.add("-jar");
+                cmd.add(new File(jarPath).getPath());
+            } else {
+                // else it's a .class, add the classpath and mainClass
+                cmd.add("-cp");
+                cmd.add("\"" + System.getProperty("java.class.path") + "\"");
+                cmd.add(mainCommand[0]);
+            }
+            // add JNLP file.
+            if (jnlp != null) {
+                cmd.add(jnlp);
+            }
+        }
+        // finally add program arguments
+        cmd.addAll(Main.getCommandLineArgs());
+        return cmd;
+    }
+
+    private static String getJavaRuntime() throws IOException {
+        final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator +
+                (Main.isPlatformWindows() ? "java.exe" : "java");
+        if (!new File(java).isFile()) {
+            throw new IOException("Unable to find suitable java runtime at "+java);
+        }
+        return java;
+    }
+
+    private static void addVMArguments(Collection<String> cmd) {
+        List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+        if (Main.isDebugEnabled()) {
+            Main.debug("VM arguments: "+arguments);
+        }
+        for (String arg : arguments) {
+            // When run from jp2launcher.exe, jnlpx.remove is true, while it is not when run from javaws
+            // Always set it to false to avoid error caused by a missing jnlp file on the second restart
+            arg = arg.replace("-Djnlpx.remove=true", "-Djnlpx.remove=false");
+            // if it's the agent argument : we ignore it otherwise the
+            // address of the old application and the new one will be in conflict
+            if (!arg.contains("-agentlib")) {
+                cmd.add(arg);
+            }
         }
     }
 
