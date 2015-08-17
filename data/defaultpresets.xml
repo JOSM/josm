@@ -2728,11 +2728,11 @@
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:amenity=bicycle_parking" />
             <space />
             <key key="amenity" value="bicycle_parking" />
-            <reference ref="name_operator" />
-            <text key="capacity" text="Capacity" />
             <combo key="bicycle_parking" text="Type" values="anchors,building,ground_slots,informal,lockers,rack,shed,stands,wall_loops" />
+            <text key="name" text="Name" />
+            <text key="capacity" text="Capacity" />
+            <reference ref="parking_access_fee_operator_surface_smoothness" />
             <check key="covered" text="Covered" />
-            <reference ref="fee_interval" />
             <reference ref="supervised_lit_oh" />
         </item> <!-- Parking -->
         <item name="Bike Dealer" icon="presets/bike.png" type="node,closedway" preset_name_label="true">
