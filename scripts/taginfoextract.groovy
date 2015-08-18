@@ -361,6 +361,10 @@ class taginfoextract {
                 path = path.substring("images/styles/standard/".length())
                 def rev = osm_svn_revision()
                 return "https://trac.openstreetmap.org/export/${rev}/subversion/applications/share/map-icons/classic.small/${path}"
+            } else if (path.startsWith("styles/standard/")) {
+                path = path.substring("styles/standard/".length())
+                def rev = osm_svn_revision()
+                return "https://trac.openstreetmap.org/export/${rev}/subversion/applications/share/map-icons/classic.small/${path}"
             } else {
                 return "https://josm.openstreetmap.de/export/${josm_svn_revision}/josm/trunk/images/${path}"
             }
