@@ -73,14 +73,14 @@ public class DownloadAlongPanel extends JPanel {
         add(new JLabel(tr("meters")), GBC.eol());
 
         add(new JLabel(tr("Maximum area per request:")), GBC.std());
-        maxRect = new JSpinner(new SpinnerNumberModel(20.0, 1.0, 25.0, 1.0)) {
+        maxRect = new JSpinner(new SpinnerNumberModel(20.0, 0.01, 25.0, 1.0)) {
             @Override
             public Dimension getPreferredSize() {
                 return buffer.getPreferredSize();
             }
         };
         add(maxRect, GBC.std().insets(5, 5, 5, 5));
-        add(new JLabel(tr("sq km")), GBC.eol());
+        add(new JLabel("km\u00b2"), GBC.eol());
 
         if (prefNear != null) {
             add(new JLabel(tr("Download near:")), GBC.eol());
