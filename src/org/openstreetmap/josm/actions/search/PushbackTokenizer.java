@@ -57,7 +57,7 @@ public class PushbackTokenizer {
         KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")),
         EOF(marktr("<end-of-file>")), LESS_THAN("<less-than>"), GREATER_THAN("<greater-than>");
 
-        private Token(String name) {
+        Token(String name) {
             this.name = name;
         }
 

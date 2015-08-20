@@ -102,11 +102,11 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         move(Cursor.MOVE_CURSOR);
 
         private final Cursor c;
-        private SelectActionCursor(String main, String sub) {
+        SelectActionCursor(String main, String sub) {
             c = ImageProvider.getCursor(main, sub);
         }
 
-        private SelectActionCursor(int systemCursor) {
+        SelectActionCursor(int systemCursor) {
             c = Cursor.getPredefinedCursor(systemCursor);
         }
 

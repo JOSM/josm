@@ -53,7 +53,7 @@ public enum PaintColors implements ColorKey {
         MapPaintStyles.addMapPaintSylesUpdateListener(styleOverrideListener);
     }
 
-    private PaintColors(String name, Color defaultColor) {
+    PaintColors(String name, Color defaultColor) {
         this.name = name;
         this.defaultColor = defaultColor;
     }

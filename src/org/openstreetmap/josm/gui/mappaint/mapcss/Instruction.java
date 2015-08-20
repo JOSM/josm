@@ -14,7 +14,7 @@ public interface Instruction extends StyleKeys {
 
     void execute(Environment env);
 
-    public static class RelativeFloat {
+    class RelativeFloat {
         public final float val;
 
         public RelativeFloat(float val) {
@@ -27,7 +27,7 @@ public interface Instruction extends StyleKeys {
         }
     }
 
-    public static class AssignmentInstruction implements Instruction {
+    class AssignmentInstruction implements Instruction {
         public final String key;
         public final Object val;
         public final boolean isSetInstruction;

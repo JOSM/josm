@@ -69,7 +69,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
 
         private final Cursor c;
 
-        private DeleteMode(String cursorName) {
+        DeleteMode(String cursorName) {
             c = ImageProvider.getCursor("normal", cursorName);
         }
 

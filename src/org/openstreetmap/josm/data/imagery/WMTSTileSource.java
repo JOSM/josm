@@ -108,7 +108,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
 
         private final String typeString;
 
-        private TransferMode(String urlString) {
+        TransferMode(String urlString) {
             this.typeString = urlString;
         }
 

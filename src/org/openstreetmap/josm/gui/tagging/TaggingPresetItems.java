@@ -273,7 +273,7 @@ public final class TaggingPresetItems {
 
         private final String value;
 
-        private MatchType(String value) {
+        MatchType(String value) {
             this.value = value;
         }
 

@@ -40,7 +40,7 @@ public interface StyleSetting {
     /**
      * A style setting for boolean value (yes / no).
      */
-    public static class BooleanStyleSetting implements StyleSetting {
+    class BooleanStyleSetting implements StyleSetting {
         public final StyleSource parentStyle;
         public final String prefKey;
         public final String label;
