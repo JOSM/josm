@@ -38,7 +38,7 @@ class TwoColumnDiff {
             EMPTY(new Color(234, 234, 234));
 
             private final Color color;
-            private DiffItemType(Color color) {
+            DiffItemType(Color color) {
                 this.color = color;
             }
 

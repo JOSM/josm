@@ -62,7 +62,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
         private final String typeString;
 
-        private ImageryType(String urlString) {
+        ImageryType(String urlString) {
             this.typeString = urlString;
         }
 

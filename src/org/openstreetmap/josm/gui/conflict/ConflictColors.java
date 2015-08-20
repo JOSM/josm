@@ -50,7 +50,7 @@ public enum ConflictColors implements ColorKey {
     private final String name;
     private final Color defaultColor;
 
-    private ConflictColors(String name, Color defaultColor) {
+    ConflictColors(String name, Color defaultColor) {
         this.name = name;
         this.defaultColor = defaultColor;
     }

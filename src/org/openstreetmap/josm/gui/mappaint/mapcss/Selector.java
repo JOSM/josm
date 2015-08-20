@@ -68,7 +68,7 @@ public interface Selector {
      */
     Selector optimizedBaseCheck();
 
-    public static enum ChildOrParentSelectorType {
+    enum ChildOrParentSelectorType {
         CHILD, PARENT, ELEMENT_OF, CROSSING, SIBLING
     }
 
@@ -86,7 +86,7 @@ public interface Selector {
      * </pre>
      *
      */
-    public static class ChildOrParentSelector implements Selector {
+    class ChildOrParentSelector implements Selector {
         public final Selector left;
         public final LinkSelector link;
         public final Selector right;
@@ -441,7 +441,7 @@ public interface Selector {
      * {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector}.
      * @since 5841
      */
-    public abstract static class AbstractSelector implements Selector {
+    abstract class AbstractSelector implements Selector {
 
         protected final List<Condition> conds;
 
@@ -484,7 +484,7 @@ public interface Selector {
         }
     }
 
-    public static class LinkSelector extends AbstractSelector {
+    class LinkSelector extends AbstractSelector {
 
         public LinkSelector(List<Condition> conditions) {
             super(conditions);
@@ -517,7 +517,7 @@ public interface Selector {
         }
     }
 
-    public static class GeneralSelector extends OptimizedGeneralSelector {
+    class GeneralSelector extends OptimizedGeneralSelector {
 
         public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, Subpart subpart) {
             super(base, zoom, conds, subpart);
@@ -538,7 +538,7 @@ public interface Selector {
         }
     }
 
-    public static class OptimizedGeneralSelector extends AbstractSelector {
+    class OptimizedGeneralSelector extends AbstractSelector {
         public final String base;
         public final Range range;
         public final Subpart subpart;

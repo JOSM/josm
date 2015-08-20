@@ -23,7 +23,7 @@ public enum OnlineResource {
 
     private final String locName;
 
-    private OnlineResource(String locName) {
+    OnlineResource(String locName) {
         this.locName = locName;
     }
 

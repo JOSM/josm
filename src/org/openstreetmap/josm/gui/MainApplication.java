@@ -3,8 +3,6 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
 
 import java.awt.Dimension;
 import java.awt.Image;
@@ -69,6 +67,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Utils;
+
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
 
 /**
  * Main window class application.
@@ -207,7 +208,7 @@ public class MainApplication extends Main {
         private final String name;
         private final boolean requiresArg;
 
-        private Option(boolean requiresArgument) {
+        Option(boolean requiresArgument) {
             this.name = name().toLowerCase(Locale.ENGLISH).replace("_", "-");
             this.requiresArg = requiresArgument;
         }

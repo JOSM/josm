@@ -7,7 +7,7 @@ import javax.swing.Action;
 
 public interface MultikeyShortcutAction extends Action {
 
-    public static class MultikeyInfo {
+    class MultikeyInfo {
         private final int index;
         private final String description;
 

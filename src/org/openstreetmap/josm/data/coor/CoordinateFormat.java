@@ -30,7 +30,7 @@ public enum CoordinateFormat {
     EAST_NORTH (tr("Projected Coordinates"));
 
     private String displayName;
-    private CoordinateFormat(String displayName) {
+    CoordinateFormat(String displayName) {
         this.displayName = displayName;
     }
 

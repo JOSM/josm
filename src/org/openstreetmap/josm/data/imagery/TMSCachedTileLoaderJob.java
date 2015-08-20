@@ -105,16 +105,11 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
      *
      */
     @Override
-    public URL getUrl() {
+    public URL getUrl() throws IOException {
         if (url == null) {
-            try {
-                synchronized (this) {
-                    if (url == null)
-                        url = new URL(tile.getUrl());
-                }
-            } catch (IOException e) {
-                LOG.log(Level.WARNING, "JCS TMS Cache - error creating URL for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
-                LOG.log(Level.INFO, "Exception: ", e);
+            synchronized (this) {
+                if (url == null)
+                    url = new URL(tile.getUrl());
             }
         }
         return url;
@@ -151,7 +146,13 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     @Override
     public void submit(boolean force) {
         tile.initLoading();
-        super.submit(this, force);
+        try {
+            super.submit(this, force);
+        } catch (Exception e) {
+            // if we fail to submit the job, mark tile as loaded and set error message
+            tile.finishLoading();
+            tile.setError(e.getMessage());
+        }
     }
 
     @Override
