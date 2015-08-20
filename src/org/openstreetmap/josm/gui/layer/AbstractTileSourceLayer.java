@@ -1304,14 +1304,15 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         TileSetInfo result = new TileSetInfo();
         result.hasLoadingTiles = allTiles.size() < ts.size();
         for (Tile t : allTiles) {
+            if ("no-tile".equals(t.getValue("tile-info"))) {
+                result.hasOverzoomedTiles = true;
+            }
+
             if (t.isLoaded()) {
                 if (!t.hasError()) {
                     result.hasVisibleTiles = true;
                 }
-                if ("no-tile".equals(t.getValue("tile-info"))) {
-                    result.hasOverzoomedTiles = true;
-                }
-            } else {
+            } else if (t.isLoading()) {
                 result.hasLoadingTiles = true;
             }
         }
@@ -1409,12 +1410,14 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
             // If all tiles at displayZoomLevel is loaded, load all tiles at next zoom level
             // to make sure there're really no more zoom levels
+            // loading is done in the next if section
             if (zoom == displayZoomLevel && !tsi.hasLoadingTiles && zoom < dts.maxZoom) {
                 zoom++;
                 tsi = dts.getTileSetInfo(zoom);
             }
             // When we have overzoomed tiles and all tiles at current zoomlevel is loaded,
             // load tiles at previovus zoomlevels until we have all tiles on screen is loaded.
+            // loading is done in the next if section
             while (zoom > dts.minZoom && tsi.hasOverzoomedTiles && !tsi.hasLoadingTiles) {
                 zoom--;
                 tsi = dts.getTileSetInfo(zoom);

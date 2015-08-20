@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.cache;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,7 +58,12 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
                         releaseSemaphore(job);
                     }
                 } else {
-                    Main.info("TMS - Skipping job {0} because host limit reached", job.getUrl());
+                    URL url = null;
+                    try {
+                        url = job.getUrl();
+                    } catch (IOException e) {
+                    }
+                    Main.info("TMS - Skipping job {0} because host limit reached", url);
                 }
             }
         }
@@ -90,7 +97,13 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
     }
 
     private  Semaphore getSemaphore(JCSCachedTileLoaderJob<?, ?> job) {
-        String host = job.getUrl().getHost();
+        String host;
+        try {
+            host = job.getUrl().getHost();
+        } catch (IOException e) {
+            // do not pass me illegal URL's
+            throw new IllegalArgumentException(e);
+        }
         Semaphore limit = hostSemaphores.get(host);
         if (limit == null) {
             synchronized (hostSemaphores) {
