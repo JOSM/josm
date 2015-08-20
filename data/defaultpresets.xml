@@ -4805,6 +4805,7 @@
         <separator/>
         <item name="Advertising Column" icon="styles/standard/leisure/advertising_column.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:advertising=column"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:advertising=column"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:advertising=column" />
             <space />
             <key key="advertising" value="column" />
@@ -7174,6 +7175,7 @@
         </item> <!-- Travel Agency -->
         <item name="Musical Instrument" icon="presets/musical_instrument.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=musical_instrument"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=musical_instrument"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=musical_instrument"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=musical_instrument" />
             <space />
@@ -7971,6 +7973,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=greenhouse_horticulture"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=greenhouse_horticulture"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=greenhouse_horticulture"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=greenhouse_horticulture"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:landuse=greenhouse_horticulture"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=greenhouse_horticulture"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=greenhouse_horticulture"
