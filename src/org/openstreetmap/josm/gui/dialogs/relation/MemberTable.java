@@ -135,7 +135,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            if (highlightHelper.highlightOnly(toHighlight)) {
+                            if (Main.isDisplayingMapView() && highlightHelper.highlightOnly(toHighlight)) {
                                 Main.map.mapView.repaint();
                             }
                         }
