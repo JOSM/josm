@@ -444,6 +444,19 @@ public abstract class SourceEditor extends JPanel {
         return activeSourcesModel.getSources();
     }
 
+    /**
+     * Synchronously loads available sources and returns the parsed list.
+     */
+    Collection<ExtendedSourceEntry> loadAndGetAvailableSources() {
+        try {
+            final SourceLoader loader = new SourceLoader(availableSourcesUrl, sourceProviders);
+            loader.realRun();
+            return loader.sources;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     public void removeSources(Collection<Integer> idxs) {
         activeSourcesModel.removeIdxs(idxs);
     }
