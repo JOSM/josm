@@ -11,6 +11,7 @@ import java.awt.event.FocusListener;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -35,6 +36,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class LatLonDialog extends ExtendedDialog {
@@ -80,32 +82,48 @@ public class LatLonDialog extends ExtendedDialog {
         pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
 
         pnl.add(new HtmlPanel(
-                tr("Enter the coordinates for the new node.<br/>You can separate longitude and latitude with space, comma or semicolon.<br/>" +
-                        "Use positive numbers or N, E characters to indicate North or East cardinal direction.<br/>" +
-                        "For South and West cardinal directions you can use either negative numbers or S, W characters.<br/>" +
-                        "Coordinate value can be in one of three formats:<ul>" +
-                        "<li><i>degrees</i><tt>&deg;</tt></li>" +
-                        "<li><i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt></li>" +
-                        "<li><i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt> <i>seconds</i><tt>&quot</tt></li>" +
-                        "</ul>" +
-                        "Symbols <tt>&deg;</tt>, <tt>&#39;</tt>, <tt>&prime;</tt>, <tt>&quot;</tt>, <tt>&Prime;</tt> are optional.<br/><br/>" +
-                        "Some examples:<ul>{0}</ul>",
-                        "<li>49.29918&deg; 19.24788&deg;</li>" +
-                        "<li>N 49.29918 E 19.24788</li>" +
-                        "<li>W 49&deg;29.918&#39; S 19&deg;24.788&#39;</li>" +
-                        "<li>N 49&deg;29&#39;04&quot; E 19&deg;24&#39;43&quot;</li>" +
-                        "<li>49.29918 N, 19.24788 E</li>" +
-                        "<li>49&deg;29&#39;21&quot; N 19&deg;24&#39;38&quot; E</li>" +
-                        "<li>49 29 51, 19 24 18</li>" +
-                        "<li>49 29, 19 24</li>" +
-                        "<li>E 49 29, N 19 24</li>" +
-                        "<li>49&deg; 29; 19&deg; 24</li>" +
-                        "<li>N 49&deg; 29, W 19&deg; 24</li>" +
-                        "<li>49&deg; 29.5 S, 19&deg; 24.6 E</li>" +
-                        "<li>N 49 29.918 E 19 15.88</li>" +
-                        "<li>49 29.4 19 24.5</li>" +
-                        "<li>-49 29.4 N -19 24.5 W</li>" +
-                        "<li>48 deg 42&#39; 52.13\" N, 21 deg 11&#39; 47.60\" E</li>")),
+                Utils.join("<br/>", Arrays.asList(
+                        tr("Enter the coordinates for the new node."),
+                        tr("You can separate longitude and latitude with space, comma or semicolon."),
+                        tr("Use positive numbers or N, E characters to indicate North or East cardinal direction."),
+                        tr("For South and West cardinal directions you can use either negative numbers or S, W characters."),
+                        tr("Coordinate value can be in one of three formats:")
+                      )) +
+                Utils.joinAsHtmlUnorderedList(Arrays.asList(
+                        tr("<i>degrees</i><tt>&deg;</tt>"),
+                        tr("<i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt>"),
+                        tr("<i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt> <i>seconds</i><tt>&quot</tt>")
+                      )) +
+                Utils.join("<br/><br/>", Arrays.asList(
+                        tr("Symbols <tt>&deg;</tt>, <tt>&#39;</tt>, <tt>&prime;</tt>, <tt>&quot;</tt>, <tt>&Prime;</tt> are optional."),
+                        tr("You can also use the syntax <tt>lat=\"...\" lon=\"...\"</tt> or <tt>lat=''...'' lon=''...''</tt>."),
+                        tr("Some examples:")
+                      )) +
+                "<table><tr><td>" +
+                Utils.joinAsHtmlUnorderedList(Arrays.asList(
+                        "49.29918&deg; 19.24788&deg;",
+                        "N 49.29918 E 19.24788",
+                        "W 49&deg;29.918&#39; S 19&deg;24.788&#39;",
+                        "N 49&deg;29&#39;04&quot; E 19&deg;24&#39;43&quot;",
+                        "49.29918 N, 19.24788 E",
+                        "49&deg;29&#39;21&quot; N 19&deg;24&#39;38&quot; E",
+                        "49 29 51, 19 24 18",
+                        "49 29, 19 24",
+                        "E 49 29, N 19 24"
+                      )) +
+                "</td><td>" +
+                Utils.joinAsHtmlUnorderedList(Arrays.asList(
+                        "49&deg; 29; 19&deg; 24",
+                        "N 49&deg; 29, W 19&deg; 24",
+                        "49&deg; 29.5 S, 19&deg; 24.6 E",
+                        "N 49 29.918 E 19 15.88",
+                        "49 29.4 19 24.5",
+                        "-49 29.4 N -19 24.5 W",
+                        "48 deg 42&#39; 52.13\" N, 21 deg 11&#39; 47.60\" E",
+                        "lat=\"49.29918\" lon=\"19.24788\"",
+                        "lat='49.29918' lon='19.24788'"
+                    )) +
+                "</td></tr></table>"),
                 GBC.eol().fill().weight(1.0, 1.0));
 
         // parse and verify input on the fly
@@ -498,5 +516,4 @@ public class LatLonDialog extends ExtendedDialog {
     public void setEastNorthText(String text) {
         tfEastNorth.setText(text);
     }
-
 }
