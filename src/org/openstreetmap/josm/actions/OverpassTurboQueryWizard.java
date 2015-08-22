@@ -1,23 +1,25 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 /**
  * Uses <a href="https://github.com/tyrasd/overpass-turbo/">Overpass Turbo</a> query wizard code
  * to build an Overpass QL from a {@link org.openstreetmap.josm.actions.search.SearchAction} like query.
  *
  * Requires a JavaScript {@link ScriptEngine}.
+ * @since 8684
  */
-public class OverpassTurboQueryWizard {
+public final class OverpassTurboQueryWizard {
 
     private static OverpassTurboQueryWizard instance;
     private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");

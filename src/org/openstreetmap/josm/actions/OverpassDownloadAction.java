@@ -12,7 +12,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.Future;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
@@ -31,8 +37,15 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Download map data from Overpass API server.
+ * @since 8684
+ */
 public class OverpassDownloadAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code OverpassDownloadAction}.
+     */
     public OverpassDownloadAction() {
         super(tr("Download from Overpass API ..."), "download-overpass", tr("Download map data from Overpass API server."),
                 null, true, "overpassdownload/download", true);
@@ -55,7 +68,7 @@ public class OverpassDownloadAction extends JosmAction {
         }
     }
 
-    static class OverpassDownloadDialog extends DownloadDialog {
+    static final class OverpassDownloadDialog extends DownloadDialog {
 
         protected HistoryComboBox overpassWizard;
         protected JTextArea overpassQuery;
@@ -71,7 +84,7 @@ public class OverpassDownloadAction extends JosmAction {
             cbStartup.setVisible(false);
         }
 
-        static public OverpassDownloadDialog getInstance() {
+        public static OverpassDownloadDialog getInstance() {
             if (instance == null) {
                 instance = new OverpassDownloadDialog(Main.parent);
             }
