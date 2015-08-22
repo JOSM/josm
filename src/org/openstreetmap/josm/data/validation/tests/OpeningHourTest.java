@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Tests the correct usage of the opening hour syntax of the tags
@@ -54,12 +55,13 @@ public class OpeningHourTest extends Test.TagTest {
             try (Reader reader = new InputStreamReader(
                     new CachedFile("resource://data/validator/opening_hours.js").getInputStream(), StandardCharsets.UTF_8)) {
                 ENGINE.eval(reader);
+                ENGINE.eval("var opening_hours = require('opening_hours');");
                 // fake country/state to not get errors on holidays
                 ENGINE.eval("var nominatimJSON = {address: {state: 'Bayern', country_code: 'de'}};");
                 ENGINE.eval(
-                        "var oh = function (value, mode) {" +
+                        "var oh = function (value, mode, locale) {" +
                         " try {" +
-                        "    var r= new opening_hours(value, nominatimJSON, mode);" +
+                        "    var r = new opening_hours(value, nominatimJSON, {mode: mode, locale: locale});" +
                         "    r.getErrors = function() {return [];};" +
                         "    return r;" +
                         "  } catch (err) {" +
@@ -84,8 +86,8 @@ public class OpeningHourTest extends Test.TagTest {
         }
     }
 
-    protected Object parse(String value, CheckMode mode) throws ScriptException, NoSuchMethodException {
-        return ((Invocable) ENGINE).invokeFunction("oh", value, mode.code);
+    protected Object parse(String value, CheckMode mode, String locale) throws ScriptException, NoSuchMethodException {
+        return ((Invocable) ENGINE).invokeFunction("oh", value, mode.code, locale);
     }
 
     @SuppressWarnings("unchecked")
@@ -178,7 +180,7 @@ public class OpeningHourTest extends Test.TagTest {
      * @return a list of {@link TestError} or an empty list
      */
     public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, CheckMode mode) {
-        return checkOpeningHourSyntax(key, value, mode, false);
+        return checkOpeningHourSyntax(key, value, mode, false, LanguageInfo.getJOSMLocaleCode());
     }
 
     /**
@@ -189,16 +191,17 @@ public class OpeningHourTest extends Test.TagTest {
      * @param value the opening hour value to be checked.
      * @param mode whether to validate {@code value} as a time range, or points in time, or both.
      * @param ignoreOtherSeverity whether to ignore errors with {@link Severity#OTHER}.
+     * @param locale the locale code used for localizing messages
      * @return a list of {@link TestError} or an empty list
      */
     public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, CheckMode mode,
-            boolean ignoreOtherSeverity) {
+            boolean ignoreOtherSeverity, String locale) {
         if (ENGINE == null || value == null || value.trim().isEmpty()) {
             return Collections.emptyList();
         }
         final List<OpeningHoursTestError> errors = new ArrayList<>();
         try {
-            final Object r = parse(value, mode);
+            final Object r = parse(value, mode, locale);
             String prettifiedValue = null;
             try {
                 prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");

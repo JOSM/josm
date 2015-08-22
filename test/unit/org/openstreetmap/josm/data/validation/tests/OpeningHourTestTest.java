@@ -5,7 +5,9 @@ import static org.CustomMatchers.hasSize;
 import static org.CustomMatchers.isEmpty;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,6 +51,7 @@ public class OpeningHourTestTest {
         // frequently used tags according to https://taginfo.openstreetmap.org/keys/opening_hours#values
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "24/7"), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 08:30-20:00"), isEmpty());
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr sunrise-sunset"), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "09:00-21:00"), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su-Th sunset-24:00,04:00-sunrise; Fr-Sa sunset-sunrise"), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su-Th sunset-24:00, 04:00-sunrise; Fr-Sa sunset-sunrise"), hasSize(1));
@@ -56,6 +59,14 @@ public class OpeningHourTestTest {
                 .get(0).getSeverity(), is(Severity.OTHER));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su-Th sunset-24:00, 04:00-sunrise; Fr-Sa sunset-sunrise")
                 .get(0).getPrettifiedValue(), is("Su-Th sunset-24:00,04:00-sunrise; Fr-Sa sunset-sunrise"));
+    }
+
+    @Test
+    public void testI18n() throws Exception {
+        assertTrue(OPENING_HOUR_TEST.checkOpeningHourSyntax("opening_hours", ".", OpeningHourTest.CheckMode.POINTS_IN_TIME, false, "de")
+                .get(0).toString().contains("Unerwartetes Zeichen"));
+        assertFalse(OPENING_HOUR_TEST.checkOpeningHourSyntax("opening_hours", ".", OpeningHourTest.CheckMode.POINTS_IN_TIME, false, "en")
+                .get(0).toString().contains("Unerwartetes Zeichen"));
     }
 
     /**
