@@ -74,6 +74,7 @@ import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -165,6 +166,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
     private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private final HelpAction helpAction = new HelpAction();
+    private final TaginfoAction taginfoAction = new TaginfoAction();
     private final PasteValueAction pasteValueAction = new PasteValueAction();
     private final CopyValueAction copyValueAction = new CopyValueAction();
     private final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction();
@@ -396,6 +398,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         membershipMenuHandler.addAction(downloadSelectedIncompleteMembersAction);
         membershipMenu.addSeparator();
         membershipMenu.add(helpAction);
+        membershipMenu.add(taginfoAction);
 
         membershipTable.addMouseListener(new PopupMenuLauncher(membershipMenu) {
             @Override
@@ -449,6 +452,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         tagMenu.add(searchActionSame);
         tagMenu.addSeparator();
         tagMenu.add(helpAction);
+        tagMenu.add(taginfoAction);
         tagTable.addMouseListener(new PopupMenuLauncher(tagMenu));
     }
 
@@ -1143,6 +1147,39 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
             } catch (URISyntaxException e1) {
                 Main.error(e1);
             }
+        }
+    }
+
+    class TaginfoAction extends AbstractAction {
+
+        final StringProperty TAGINFO_URL_PROP = new StringProperty("taginfo.url", "https://taginfo.openstreetmap.org/");
+
+        public TaginfoAction() {
+            putValue(NAME, tr("Go to Taginfo"));
+            putValue(SHORT_DESCRIPTION, tr("Launch browser with Taginfo statistics for selected object"));
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void actionPerformed(ActionEvent e) {
+            final String url;
+            if (tagTable.getSelectedRowCount() == 1) {
+                final int row = tagTable.getSelectedRow();
+                final String key = Utils.encodeUrl(tagData.getValueAt(row, 0).toString());
+                Map<String, Integer> values = (Map<String, Integer>) tagData.getValueAt(row, 1);
+                if (values.size() == 1) {
+                    url = TAGINFO_URL_PROP.get() + "tags/" + key /* do not URL encode key, otherwise addr:street does not work */
+                            + "=" + Utils.encodeUrl(values.keySet().iterator().next());
+                } else {
+                    url = TAGINFO_URL_PROP.get() + "keys/" + key; /* do not URL encode key, otherwise addr:street does not work */
+                }
+            } else if (membershipTable.getSelectedRowCount() == 1) {
+                final String type = ((Relation) membershipData.getValueAt(membershipTable.getSelectedRow(), 0)).get("type");
+                url = TAGINFO_URL_PROP.get() + "relations/" + type;
+            } else {
+                return;
+            }
+            OpenBrowser.displayUrl(url);
         }
     }
 
