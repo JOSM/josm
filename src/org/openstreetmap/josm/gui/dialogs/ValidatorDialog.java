@@ -119,7 +119,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         lookupButton = new SideButton(new AbstractAction() {
             {
                 putValue(NAME, tr("Lookup"));
-                putValue(SHORT_DESCRIPTION, tr("Looks up the the selected primitives in the error list."));
+                putValue(SHORT_DESCRIPTION, tr("Looks up the selected primitives in the error list."));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
             }
 
