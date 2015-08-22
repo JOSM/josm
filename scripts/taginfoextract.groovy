@@ -6,16 +6,9 @@
  *
  * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t mappaint
  * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t presets
+ * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t external_presets
  */
 import groovy.json.JsonBuilder
-
-import java.awt.image.BufferedImage
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.Path
-
-import javax.imageio.ImageIO
-
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Version
 import org.openstreetmap.josm.data.coor.LatLon
@@ -28,18 +21,25 @@ import org.openstreetmap.josm.gui.NavigatableComponent
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle
-import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
+import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
+import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference
 import org.openstreetmap.josm.gui.tagging.TaggingPreset
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems
 import org.openstreetmap.josm.gui.tagging.TaggingPresetReader
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType
 import org.openstreetmap.josm.io.CachedFile
 import org.openstreetmap.josm.tools.Utils
+
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Path
 
 class taginfoextract {
 
@@ -186,6 +186,8 @@ class taginfoextract {
             script.run()
         } else if (options.t == 'presets') {
             script.run_presets()
+        } else if (options.t == 'external_presets') {
+            script.run_external_presets()
         } else {
             System.err.println 'Invalid type ' + options.t
             System.exit(1)
@@ -234,8 +236,13 @@ class taginfoextract {
 
     void run_presets() {
         init()
-        def tags = []
         def presets = TaggingPresetReader.readAll(input_file, true)
+        def tags = convert_presets(presets. "", true)
+        write_json("JOSM main presets", "Tags supported by the default presets in the OSM editor JOSM", tags)
+    }
+
+    def convert_presets(Iterable<TaggingPreset> presets, String descriptionPrefix, boolean addImages) {
+        def tags = []
         for (TaggingPreset preset : presets) {
             for (TaggingPresetItems.KeyedItem item : Utils.filteredCollection(preset.data, TaggingPresetItems.KeyedItem.class)) {
                 def values
@@ -246,18 +253,40 @@ class taginfoextract {
                 }
                 for (String value : values) {
                     def tag = [
-                            description: preset.name,
+                            description: descriptionPrefix + preset.name,
                             key: item.key,
                             value: value,
                             object_types: preset.types.collect {it == TaggingPresetType.CLOSEDWAY ? "area" : it.toString().toLowerCase()},
                     ]
-                    if (preset.iconName) tag += [icon_url: find_image_url(preset.iconName)]
+                    if (addImages && preset.iconName) tag += [icon_url: find_image_url(preset.iconName)]
                     tags += tag
                 }
             }
         }
+        return tags
+    }
 
-        write_json("JOSM main presets", "Tags supported by the default presets in the OSM editor JOSM", tags)
+    void run_external_presets() {
+        init()
+        def sources = new TaggingPresetPreference.TaggingPresetSourceEditor().loadAndGetAvailableSources()
+        def tags = []
+        for (def source : sources) {
+            if (source.url.startsWith("resource")) {
+                // default presets
+                continue;
+            }
+            try {
+                println "Loading ${source.url}"
+                def presets = TaggingPresetReader.readAll(source.url, false)
+                def t = convert_presets(presets, source.title + " ", false)
+                println "Converting ${t.size()} presets of ${source.title}"
+                tags += t
+            } catch (Exception ex) {
+                System.err.println("Skipping ${source.url} due to error")
+                ex.printStackTrace()
+            }
+        }
+        write_json("JOSM user presets", "Tags supported by the user contributed presets in the OSM editor JOSM", tags)
     }
 
     void run() {
@@ -324,6 +353,7 @@ class taginfoextract {
      */
     def init() {
         Main.initApplicationPreferences()
+        Main.determinePlatformHook()
         Main.pref.enableSaveOnPut(false)
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"))
         Path tmpdir = Files.createTempDirectory(FileSystems.getDefault().getPath(base_dir), "pref")

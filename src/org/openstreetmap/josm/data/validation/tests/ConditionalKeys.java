@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -131,7 +132,7 @@ public class ConditionalKeys extends Test.TagTest {
                 for (final String condition : conditional.conditions) {
                     if (condition.matches(".*[0-9]:[0-9]{2}.*")) {
                         final List<OpeningHourTest.OpeningHoursTestError> errors = openingHourTest.checkOpeningHourSyntax(
-                                "", condition, OpeningHourTest.CheckMode.TIME_RANGE, true);
+                                "", condition, OpeningHourTest.CheckMode.TIME_RANGE, true, LanguageInfo.getJOSMLocaleCode());
                         if (!errors.isEmpty()) {
                             return errors.get(0).getMessage();
                         }

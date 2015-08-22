@@ -76,6 +76,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     private SideButton ignoreButton;
     /** The select button */
     private SideButton selectButton;
+    /** The lookup button */
+    private SideButton lookupButton;
 
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final transient PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
@@ -113,6 +115,25 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         selectButton.setEnabled(false);
         buttons.add(selectButton);
+
+        lookupButton = new SideButton(new AbstractAction() {
+            {
+                putValue(NAME, tr("Lookup"));
+                putValue(SHORT_DESCRIPTION, tr("Looks up the the selected primitives in the error list."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final DataSet ds = Main.main.getCurrentDataSet();
+                if (ds == null) {
+                    return;
+                }
+                tree.selectRelatedErrors(ds.getSelected());
+            }
+        });
+
+        buttons.add(lookupButton);
 
         buttons.add(new SideButton(Main.main.validator.validateAction));
 

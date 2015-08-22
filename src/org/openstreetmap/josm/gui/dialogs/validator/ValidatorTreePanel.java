@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Enumeration;
@@ -34,6 +35,9 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -339,6 +343,38 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      */
     public List<TestError> getErrors() {
         return errors != null ? errors : Collections.<TestError>emptyList();
+    }
+
+    /**
+     * Selects all errors related to the specified {@code primitives}, i.e. where {@link TestError#getPrimitives()}
+     * returns a primitive present in {@code primitives}.
+     */
+    public void selectRelatedErrors(final Collection<OsmPrimitive> primitives) {
+        final Collection<TreePath> paths = new ArrayList<>();
+        walkAndSelectRelatedErrors(new TreePath(getRoot()), Predicates.inCollection(new HashSet<>(primitives)), paths);
+        getSelectionModel().clearSelection();
+        for (TreePath path : paths) {
+            expandPath(path);
+            getSelectionModel().addSelectionPath(path);
+        }
+    }
+
+    private void walkAndSelectRelatedErrors(final TreePath p, final Predicate<OsmPrimitive> isRelevant, final Collection<TreePath> paths) {
+        final int count = getModel().getChildCount(p.getLastPathComponent());
+        for (int i = 0; i < count; i++) {
+            final Object child = getModel().getChild(p.getLastPathComponent(), i);
+            if (getModel().isLeaf(child) && child instanceof DefaultMutableTreeNode
+                    && ((DefaultMutableTreeNode) child).getUserObject() instanceof TestError) {
+                final TestError error = (TestError) ((DefaultMutableTreeNode) child).getUserObject();
+                if (error.getPrimitives() != null) {
+                    if (Utils.exists(error.getPrimitives(), isRelevant)) {
+                        paths.add(p.pathByAddingChild(child));
+                    }
+                }
+            } else {
+                walkAndSelectRelatedErrors(p.pathByAddingChild(child), isRelevant, paths);
+            }
+        }
     }
 
     /**
