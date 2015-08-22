@@ -40,7 +40,7 @@ public interface TileSource extends Attributed {
      * @deprecated not used anymore
      */
     @Deprecated
-    public enum TileUpdate {
+    enum TileUpdate {
         IfNoneMatch, ETag, IfModifiedSince, LastModified, None
     }
 
