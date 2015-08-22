@@ -48,7 +48,6 @@ public class MemoryTileCache implements TileCache {
         lruTiles = new CacheLinkedListElement();
     }
 
-
     @Override
     public synchronized void addTile(Tile tile) {
         CacheEntry entry = createCacheEntry(tile);

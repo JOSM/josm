@@ -114,7 +114,6 @@ public class OsmTileLoader implements TileLoader {
         this.listener = listener;
     }
 
-
     @Override
     public TileJob createTileLoaderJob(final Tile tile) {
         return new OsmTileJob(tile);

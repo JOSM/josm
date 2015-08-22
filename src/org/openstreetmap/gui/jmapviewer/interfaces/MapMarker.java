@@ -16,7 +16,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
  */
 public interface MapMarker extends MapObject, ICoordinate{
 
-    public static enum STYLE {
+    enum STYLE {
         FIXED,
         VARIABLE
     }
