@@ -644,7 +644,7 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, gpxExport, true);
         fileMenu.addSeparator();
         add(fileMenu, download);
-        add(fileMenu, overpassDownload);
+        add(fileMenu, overpassDownload, true);
         add(fileMenu, downloadPrimitive);
         add(fileMenu, searchNotes);
         add(fileMenu, downloadNotesInView);
