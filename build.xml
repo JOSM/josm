@@ -14,7 +14,7 @@
     <property name="build.dir" location="build"/>
     <property name="javacc.home" location="tools"/>
     <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
-    <property name="groovy.jar" location="tools/groovy-all-2.4.3.jar"/>
+    <property name="groovy.jar" location="tools/groovy-all-2.4.4.jar"/>
     <!-- build parameter: compression level (ant -Dclevel=N)
              N ranges from 0 (no compression) to 9 (maximum compression)
              default: 9 -->

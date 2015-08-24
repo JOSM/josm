@@ -119,9 +119,10 @@ This is an overview of the files and directories in the JOSM code repository:
     - appbundler-1.0ea.jar  used to build Mac OS X package for Oracle Java 7
     - checkstyle/           libs and config files for checkstyle (automatically detects code style
                             problems in source code); can be launched as an ant target in build.xml
+    - commons-cli-1.3.1.jar dependency of Groovy Ant task
     - findbugs/             libs and config files for findbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
-    - groovy-all-2.4.3.jar  used for some unit tests and various scripts
+    - groovy-all-2.4.4.jar  used for some unit tests and various scripts
     - jacocoant.jar         used to include coverage data into JUnit test reports 
     - javacc.jar            used in the build process to generate some .java files from a javacc source file
                             (src/org/openstreetmap/josm/gui/mappaint/mapcss/MapCSSParser.jj)
