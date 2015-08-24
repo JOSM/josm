@@ -9,6 +9,14 @@
  * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t external_presets
  */
 import groovy.json.JsonBuilder
+
+import java.awt.image.BufferedImage
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Path
+
+import javax.imageio.ImageIO
+
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Version
 import org.openstreetmap.josm.data.coor.LatLon
@@ -21,10 +29,10 @@ import org.openstreetmap.josm.gui.NavigatableComponent
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
-import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference
@@ -34,12 +42,6 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetReader
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType
 import org.openstreetmap.josm.io.CachedFile
 import org.openstreetmap.josm.tools.Utils
-
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.Path
 
 class taginfoextract {
 
@@ -190,10 +192,14 @@ class taginfoextract {
             script.run_external_presets()
         } else {
             System.err.println 'Invalid type ' + options.t
-            System.exit(1)
+            if (!options.noexit) {
+                System.exit(1)
+            }
         }
 
-        System.exit(0)
+        if (!options.noexit) {
+            System.exit(0)
+        }
     }
 
     /**
@@ -207,6 +213,7 @@ class taginfoextract {
         cli.t(args:1, argName: "type", "the project type to be generated")
         cli._(longOpt:'svnrev', args:1, argName:"revision", "corresponding revision of the repository https://svn.openstreetmap.org/ (optional, current revision is read from the local checkout or from the web if not given, see --svnweb)")
         cli._(longOpt:'imgdir', args:1, argName:"directory", "directory to put the generated images in (default: ./taginfo-img)")
+        cli._(longOpt:'noexit', "don't call System.exit(), for use from Ant script")
         cli._(longOpt:'svnweb', 'fetch revision of the repository https://svn.openstreetmap.org/ from web and not from the local repository')
         cli._(longOpt:'imgurlprefix', args:1, argName:'prefix', 'image URLs prefix for generated image files')
         cli.h(longOpt:'help', "show this help")

@@ -14,6 +14,7 @@
     <property name="build.dir" location="build"/>
     <property name="javacc.home" location="tools"/>
     <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
+    <property name="groovy.jar" location="tools/groovy-all-2.4.3.jar"/>
     <!-- build parameter: compression level (ant -Dclevel=N)
              N ranges from 0 (no compression) to 9 (maximum compression)
              default: 9 -->
@@ -295,7 +296,7 @@ Build-Date: ${build.tstamp}
             <include name="**/*.jar"/>
         </fileset>
         <pathelement path="dist/josm-custom.jar"/>
-        <pathelement path="tools/groovy-all-2.4.3.jar"/>
+        <pathelement path="${groovy.jar}"/>
     </path>
     <macrodef name="init-test-preferences">
         <attribute name="testfamily"/>
@@ -342,7 +343,7 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
     <target name="test-compile" depends="test-init,dist">
-        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.4.3.jar"/>
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="${groovy.jar}"/>
         <call-groovyc testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>
@@ -570,6 +571,33 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.openstreetmap.josm.plugins.utilsplugin2.*"/>
             <path path="${dir}"/>
         </as:check-signature>
+    </target>
+
+    <macrodef name="_taginfo">
+        <attribute name="type"/>
+        <attribute name="output"/>
+        <sequential>
+            <echo message="Generating Taginfo for type @{type} to @{output}"/>
+            <groovy src="${taginfoextract}" classpath="dist/josm-custom.jar">
+                <arg value="-t"/>
+                <arg value="@{type}"/>
+                <arg value="--noexit"/>
+                <arg value="--svnweb"/>
+                <arg value="--imgurlprefix"/>
+                <arg value="${imgurlprefix}"/>
+                <arg value="-o"/>
+                <arg value="@{output}"/>
+            </groovy>
+        </sequential>
+    </macrodef>
+
+    <target name="taginfo" depends="dist">
+        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};tools/commons-cli-1.3.1.jar"/>
+        <property name="taginfoextract" value="scripts/taginfoextract.groovy"/>
+        <property name="imgurlprefix" value="http://josm.openstreetmap.de/download/taginfo/taginfo-img"/>
+    	<_taginfo type="mappaint" output="taginfo_style.json"/>
+    	<_taginfo type="presets" output="taginfo_presets.json"/>
+    	<_taginfo type="external_presets" output="taginfo_external_presets.json"/>
     </target>
 
     <target name="checkstyle">
