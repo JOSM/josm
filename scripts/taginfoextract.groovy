@@ -244,7 +244,7 @@ class taginfoextract {
     void run_presets() {
         init()
         def presets = TaggingPresetReader.readAll(input_file, true)
-        def tags = convert_presets(presets. "", true)
+        def tags = convert_presets(presets, "", true)
         write_json("JOSM main presets", "Tags supported by the default presets in the OSM editor JOSM", tags)
     }
 
