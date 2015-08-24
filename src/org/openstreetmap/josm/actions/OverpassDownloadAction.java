@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.Future;
 
@@ -62,7 +63,7 @@ public class OverpassDownloadAction extends JosmAction {
             Bounds area = dialog.getSelectedDownloadArea();
             DownloadOsmTask task = new DownloadOsmTask();
             Future<?> future = task.download(
-                    new OverpassDownloadReader(area, dialog.getOverpassQuery()),
+                    new OverpassDownloadReader(area, dialog.getOverpassServer(), dialog.getOverpassQuery()),
                     dialog.isNewLayerRequired(), area, null);
             Main.worker.submit(new PostDownloadHandler(task, future));
         }
@@ -70,9 +71,13 @@ public class OverpassDownloadAction extends JosmAction {
 
     static final class OverpassDownloadDialog extends DownloadDialog {
 
+        protected HistoryComboBox overpassServer;
         protected HistoryComboBox overpassWizard;
         protected JTextArea overpassQuery;
         private static OverpassDownloadDialog instance;
+        static final StringProperty OVERPASS_SERVER = new StringProperty("download.overpass.server", "http://overpass-api.de/api/");
+        static final CollectionProperty OVERPASS_SERVER_HISTORY = new CollectionProperty("download.overpass.servers",
+                Arrays.asList("http://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
         static final CollectionProperty OVERPASS_WIZARD_HISTORY = new CollectionProperty("download.overpass.wizard", new ArrayList<String>());
 
         private OverpassDownloadDialog(Component parent) {
@@ -128,6 +133,15 @@ public class OverpassDownloadAction extends JosmAction {
             GBC gbc = GBC.eol().fill(GBC.HORIZONTAL);
             gbc.ipady = 200;
             pnl.add(scrollPane, gbc);
+
+            overpassServer = new HistoryComboBox();
+            pnl.add(new JLabel(tr("Overpass server: ")), GBC.std().insets(5, 5, 5, 5));
+            pnl.add(overpassServer, GBC.eol().fill(GBC.HORIZONTAL));
+
+        }
+
+        public String getOverpassServer() {
+            return overpassServer.getText();
         }
 
         public String getOverpassQuery() {
@@ -137,6 +151,8 @@ public class OverpassDownloadAction extends JosmAction {
         @Override
         public void restoreSettings() {
             super.restoreSettings();
+            overpassServer.setPossibleItems(OVERPASS_SERVER_HISTORY.get());
+            overpassServer.setText(OVERPASS_SERVER.get());
             overpassWizard.setPossibleItems(OVERPASS_WIZARD_HISTORY.get());
         }
 
@@ -144,6 +160,8 @@ public class OverpassDownloadAction extends JosmAction {
         public void rememberSettings() {
             super.rememberSettings();
             overpassWizard.addCurrentItemToHistory();
+            OVERPASS_SERVER.put(getOverpassServer());
+            OVERPASS_SERVER_HISTORY.put(overpassServer.getHistory());
             OVERPASS_WIZARD_HISTORY.put(overpassWizard.getHistory());
         }
 
@@ -151,17 +169,18 @@ public class OverpassDownloadAction extends JosmAction {
 
     static class OverpassDownloadReader extends BoundingBoxDownloader {
 
+        final String overpassServer;
         final String overpassQuery;
-        static final StringProperty OVERPASS_URL = new StringProperty("download.overpass.url", "https://overpass-api.de/api/");
 
-        public OverpassDownloadReader(Bounds downloadArea, String overpassQuery) {
+        public OverpassDownloadReader(Bounds downloadArea, String overpassServer, String overpassQuery) {
             super(downloadArea);
+            this.overpassServer = overpassServer;
             this.overpassQuery = overpassQuery.trim();
         }
 
         @Override
         protected String getBaseUrl() {
-            return OVERPASS_URL.get();
+            return overpassServer;
         }
 
         @Override
