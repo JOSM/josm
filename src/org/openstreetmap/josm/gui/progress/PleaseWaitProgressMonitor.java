@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.progress;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -97,21 +98,37 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             return null;
     }
 
+    /**
+     * Constructs a new {@code PleaseWaitProgressMonitor}.
+     */
     public PleaseWaitProgressMonitor() {
         this("");
     }
 
+    /**
+     * Constructs a new {@code PleaseWaitProgressMonitor}.
+     */
     public PleaseWaitProgressMonitor(String windowTitle) {
         this(Main.parent);
         this.windowTitle = windowTitle;
     }
 
+    /**
+     * Constructs a new {@code PleaseWaitProgressMonitor}.
+     */
     public PleaseWaitProgressMonitor(Component dialogParent) {
         super(new CancelHandler());
-        this.dialogParent = JOptionPane.getFrameForComponent(dialogParent);
+        if (GraphicsEnvironment.isHeadless()) {
+            this.dialogParent = dialogParent;
+        } else {
+            this.dialogParent = JOptionPane.getFrameForComponent(dialogParent);
+        }
         this.cancelable = true;
     }
 
+    /**
+     * Constructs a new {@code PleaseWaitProgressMonitor}.
+     */
     public PleaseWaitProgressMonitor(Component dialogParent, String windowTitle) {
         this(JOptionPane.getFrameForComponent(dialogParent));
         this.windowTitle = windowTitle;
