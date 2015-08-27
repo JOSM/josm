@@ -38,7 +38,7 @@
 	<xs:simpleType name="zoom">
 		<xs:restriction base="xs:integer">
 			<xs:minInclusive value="1" />
-			<xs:maxInclusive value="22" />
+			<xs:maxInclusive value="24" />
 		</xs:restriction>
 	</xs:simpleType>
 
