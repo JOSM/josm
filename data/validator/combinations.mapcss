@@ -284,3 +284,25 @@ way[destination][!oneway?][highway] {
   suggestAlternative: "destination:forward";
   suggestAlternative: "destination:backward";
 }
+
+/* see #11389 */
+way["maxspeed:forward"=*"maxspeed:backward"][!maxspeed] {
+  throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
+  suggestAlternative: "maxspeed";
+  fixChangeKey: "maxspeed:forward=>maxspeed";
+  fixRemove: "maxspeed:backward";
+}
+way["maxspeed:forward"=*maxspeed]["maxspeed:backward"=*maxspeed][maxspeed] {
+  throwWarning: tr("Same value of {0}, {1} and {2}", "{0.key}", "{1.key}", "{2.key}");
+  set AllSameMaxspeed;
+  suggestAlternative: "maxspeed";
+  fixRemove: "maxspeed:forward";
+  fixRemove: "maxspeed:backward";
+}
+way["maxspeed:forward"]["maxspeed:backward"][maxspeed]!.AllSameMaxspeed {
+  throwWarning: tr("{0} and {1} together with {2} and conflicting values", "{0.key}", "{1.key}", "{2.key}");
+}
+way["maxspeed:forward"][maxspeed][!"maxspeed:backward"],
+way["maxspeed:backward"][maxspeed][!"maxspeed:forward"] {
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
+}
