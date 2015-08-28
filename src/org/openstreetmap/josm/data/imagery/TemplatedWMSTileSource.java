@@ -109,14 +109,13 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         degreesPerTile = new double[getMaxZoom() + 1];
 
         for (int zoom = getMinZoom(); zoom <= getMaxZoom(); zoom++) {
-            TileXY maxTileIndex = latLonToTileXY(bottomRight.toCoordinate(), zoom);
-            tileXMax[zoom] = maxTileIndex.getXIndex();
-            tileYMax[zoom] = maxTileIndex.getYIndex();
             // use well known scale set "GoogleCompatibile" from OGC WMTS spec to calculate number of tiles per zoom level
             // this makes the zoom levels "glued" to standard TMS zoom levels
             degreesPerTile[zoom] = (SCALE_DENOMINATOR_ZOOM_LEVEL_1 / Math.pow(2, zoom - 1)) * crsScale;
+            TileXY maxTileIndex = latLonToTileXY(bottomRight.toCoordinate(), zoom);
+            tileXMax[zoom] = maxTileIndex.getXIndex();
+            tileYMax[zoom] = maxTileIndex.getYIndex();
         }
-
     }
 
     @Override
