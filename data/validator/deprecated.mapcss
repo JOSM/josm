@@ -332,6 +332,7 @@
 }
 
 /* see #10661, #10837, #11737 */
+*[access=restricted],
 *[barrier=yes],
 *[aerialway=yes][!public_transport],
 *[amenity=yes],
