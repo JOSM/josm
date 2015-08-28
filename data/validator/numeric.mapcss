@@ -80,6 +80,15 @@ way[width][width !~ /^(([0-9]+\.?[0-9]*( [a-z]+)?)|([0-9]+\'([0-9]+\.?[0-9]*\")?
   assertNoMatch: "way maxwidth=2.5";
   assertNoMatch: "way maxwidth=7 ft";
 }
+*[maxweight][maxweight !~ /^(([0-9]+\.?[0-9]*( (t|kg|lbs))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/] {
+  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "maxweight");
+  assertMatch: "way maxweight=something";
+  assertMatch: "way maxweight=-5";
+  assertNoMatch: "way maxweight=2";
+  assertNoMatch: "way maxweight=6'6\"";
+  assertNoMatch: "way maxweight=2.5";
+  assertNoMatch: "way maxweight=7 kg";
+}
 way[maxspeed][maxspeed !~ /^(signals|none|unposted|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/],
 way[maxspeed:forward][maxspeed:forward !~ /^(signals|none|unposted|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/],
 way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/] {
