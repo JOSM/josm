@@ -35,7 +35,6 @@ public class TemplatedWMSTileSourceTest {
     public void testEPSG3857() {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         TemplatedWMSTileSource source = new TemplatedWMSTileSource(testImageryWMS);
-        verifyMercatorTile(source, 0, 1, 2);
         verifyMercatorTile(source, 0, 0, 1);
         verifyMercatorTile(source, 0, 0, 2);
         verifyMercatorTile(source, 0, 1, 2);
@@ -125,8 +124,10 @@ public class TemplatedWMSTileSourceTest {
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         LatLon result = getTileLatLon(source, x, y, z);
-        LatLon expected = new LatLon(verifier.tileYToLat(y, z - 1), verifier.tileXToLon(x, z - 1)); //
-        assertTrue("result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString(), result.equalsEpsilon(expected));
+        LatLon expected = new LatLon(verifier.tileYToLat(y, z - 1), verifier.tileXToLon(x, z - 1));
+        assertEquals(expected.lat(), result.lat(), 1e-4);
+        assertEquals(expected.lon(), result.lon(), 1e-4);
+        //assertTrue("result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString(), result.equalsEpsilon(expected));
         LatLon tileCenter = new Bounds(result, getTileLatLon(source, x+1, y+1, z)).getCenter();
         TileXY backwardsResult = source.latLonToTileXY(tileCenter.toCoordinate(), z);
         assertEquals(x, backwardsResult.getXIndex());
@@ -135,7 +136,10 @@ public class TemplatedWMSTileSourceTest {
 
     private void verifyLocation(TemplatedWMSTileSource source, LatLon location) {
         for (int z = source.getMaxZoom(); z > source.getMinZoom() + 1; z--) {
-            verifyLocation(source, location, z);
+            if (source.getTileXMax(z) != source.getTileXMin(z) && source.getTileYMax(z) != source.getTileYMin(z)) {
+                // do the tests only where there is more than one tile
+                verifyLocation(source, location, z);
+            }
         }
     }
 
