@@ -8582,7 +8582,7 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
                     <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
                 </roles>
@@ -8604,7 +8604,7 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
                     <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
                 </roles>
@@ -8628,7 +8628,7 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
                     <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
                 </roles>
@@ -8689,7 +8689,7 @@
                     <text key="detour" text="Ref of the way this is a detour to"/>
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway"/>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="fork" text="fork node for alternative routes" requisite="optional" type="node"/>
                 </roles>
             </item> <!-- Detour Route -->
@@ -8714,7 +8714,7 @@
                 <key key="route" value="railway"/>
                 <reference ref="name_ref_operator"/>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way" member_expression="railway"/>
+                    <role key="" text="route segment" requisite="required" type="way" member_expression="railway|route=ferry"/>
                 </roles>
             </item> <!-- Railway Route -->
             <item name="Road Route" icon="presets/path.png" type="relation" preset_name_label="true">
@@ -8730,10 +8730,10 @@
                 <text key="operator" text="Operator" />
                 <text key="distance" text="Distance (km)"/>
                 <roles>
-                    <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway"/>
-                    <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway"/>
-                    <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="highway"/>
-                    <role key="link" text="link segment" requisite="optional" type="way,closedway" member_expression="highway"/>
+                    <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
+                    <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
+                    <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
+                    <role key="link" text="link segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
                 </roles>
             </item> <!-- Road Route -->
         </group> <!-- Routes -->
