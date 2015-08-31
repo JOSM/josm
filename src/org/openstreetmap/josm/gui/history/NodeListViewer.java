@@ -99,6 +99,8 @@ public class NodeListViewer extends JPanel {
                     if (reversed == null || reversed != model.isReversed()) {
                         reversed = model.isReversed();
                         columnModel.getColumn(0).setHeaderValue(reversed ? reversedText : nonReversedText);
+                        table.getTableHeader().setToolTipText(
+                                reversed ? tr("The nodes of this way are in reverse order") : null);
                         table.getTableHeader().repaint();
                     }
                 }

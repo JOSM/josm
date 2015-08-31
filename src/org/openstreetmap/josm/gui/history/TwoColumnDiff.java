@@ -34,6 +34,7 @@ class TwoColumnDiff {
             INSERTED(new Color(0xDD, 0xFF, 0xDD)),
             DELETED(new Color(255, 197, 197)),
             CHANGED(new Color(255, 234, 213)),
+            REVERSED(new Color(255, 255, 204)),
             SAME(new Color(234, 234, 234)),
             EMPTY(new Color(234, 234, 234));
 
@@ -79,10 +80,10 @@ class TwoColumnDiff {
         if (scriptReversed == null /* reference and current are identical */
                 || script != null && scriptReversed.deleted + scriptReversed.inserted < script.deleted + script.inserted) {
             this.referenceReversed = true;
-            twoColumnDiffFromScript(scriptReversed, referenceReversed, current);
+            twoColumnDiffFromScript(scriptReversed, referenceReversed, current, true);
         } else {
             this.referenceReversed = false;
-            twoColumnDiffFromScript(script, reference, current);
+            twoColumnDiffFromScript(script, reference, current, false);
         }
     }
 
@@ -90,7 +91,7 @@ class TwoColumnDiff {
      * The result from the diff algorithm is a "script" (a compressed description of the changes)
      * This method expands this script into a full two column description.
      */
-    private void twoColumnDiffFromScript(Diff.Change script, Object[] a, Object[] b) {
+    private void twoColumnDiffFromScript(Diff.Change script, Object[] a, Object[] b, final boolean reversed) {
         int ia = 0;
         int ib = 0;
 
@@ -98,11 +99,8 @@ class TwoColumnDiff {
             int deleted = script.deleted;
             int inserted = script.inserted;
             while (ia < script.line0 && ib < script.line1) {
-                Item cell = new Item(DiffItemType.SAME, a[ia]);
-                referenceDiff.add(cell);
-                currentDiff.add(cell);
-                ia++;
-                ib++;
+                referenceDiff.add(new Item(reversed ? DiffItemType.REVERSED : DiffItemType.SAME, a[ia++]));
+                currentDiff.add(new Item(DiffItemType.SAME, b[ib++]));
             }
 
             while (inserted > 0 || deleted > 0) {
@@ -122,7 +120,7 @@ class TwoColumnDiff {
             script = script.link;
         }
         while (ia < a.length && ib < b.length) {
-            referenceDiff.add(new Item(DiffItemType.SAME, a[ia++]));
+            referenceDiff.add(new Item(reversed ? DiffItemType.REVERSED : DiffItemType.SAME, a[ia++]));
             currentDiff.add(new Item(DiffItemType.SAME, b[ib++]));
         }
     }
