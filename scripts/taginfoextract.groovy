@@ -275,6 +275,7 @@ class taginfoextract {
 
     void run_external_presets() {
         init()
+        TaggingPresetReader.setLoadIcons(false)
         def sources = new TaggingPresetPreference.TaggingPresetSourceEditor().loadAndGetAvailableSources()
         def tags = []
         for (def source : sources) {

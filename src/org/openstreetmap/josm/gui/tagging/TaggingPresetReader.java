@@ -50,6 +50,7 @@ public final class TaggingPresetReader {
     }
 
     private static volatile File zipIcons = null;
+    private static volatile boolean loadIcons = true;
 
     /**
      * Returns the set of preset source URLs.
@@ -386,5 +387,19 @@ public final class TaggingPresetReader {
 
     public static File getZipIcons() {
         return zipIcons;
+    }
+
+    /**
+     * Returns true if icon images should be loaded.
+     */
+    public static boolean isLoadIcons() {
+        return loadIcons;
+    }
+
+    /**
+     * Sets whether icon images should be loaded.
+     */
+    public static void setLoadIcons(boolean loadIcons) {
+        TaggingPresetReader.loadIcons = loadIcons;
     }
 }
