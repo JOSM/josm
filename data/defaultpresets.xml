@@ -853,7 +853,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Roundabout -->
-        <item name="Ford" icon="presets/ford.png" type="node,way" preset_name_label="true">
+        <item name="Ford" icon="styles/standard/misc/ford.svg" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:ford"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:ford"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:ford"
@@ -864,7 +864,6 @@
             <key key="ford" value="yes" />
             <optional>
                 <text key="name" text="Name" />
-                <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item> <!-- Ford -->
     </group> <!-- Streets -->
