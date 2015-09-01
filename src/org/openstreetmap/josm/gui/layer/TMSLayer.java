@@ -9,6 +9,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.imagery.CachedAttributionBingAerialTileSource;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -66,7 +67,13 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
      */
     @Override
     protected AbstractTMSTileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
-        return getTileSourceStatic(info);
+        return getTileSourceStatic(info, new Runnable() {
+            @Override
+            public void run() {
+                Main.debug("Attribution loaded, running loadAllErrorTiles");
+                TMSLayer.this.loadAllErrorTiles(true);
+            }
+        });
     }
 
     /**
@@ -96,13 +103,30 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
      * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
     public static AbstractTMSTileSource getTileSourceStatic(ImageryInfo info) throws IllegalArgumentException {
+        return getTileSourceStatic(info, null);
+    }
+
+    /**
+     * Creates and returns a new TileSource instance depending on the {@link ImageryType}
+     * of the passed ImageryInfo object.
+     *
+     * If no appropriate TileSource is found, null is returned.
+     * Currently supported ImageryType are {@link ImageryType#TMS},
+     * {@link ImageryType#BING}, {@link ImageryType#SCANEX}.
+     *
+     * @param info imagery info
+     * @param attributionLoadedTask task to be run once attribution is loaded, might be null, if nothing special shall happen
+     * @return a new TileSource instance or null if no TileSource for the ImageryInfo/ImageryType could be found.
+     * @throws IllegalArgumentException if url from imagery info is null or invalid
+     */
+    public static AbstractTMSTileSource getTileSourceStatic(ImageryInfo info, Runnable attributionLoadedTask) throws IllegalArgumentException {
         if (info.getImageryType() == ImageryType.TMS) {
             TemplatedTMSTileSource.checkUrl(info.getUrl());
             TMSTileSource t = new TemplatedTMSTileSource(info);
             info.setAttribution(t);
             return t;
         } else if (info.getImageryType() == ImageryType.BING)
-            return new CachedAttributionBingAerialTileSource(info);
+            return new CachedAttributionBingAerialTileSource(info, attributionLoadedTask);
         else if (info.getImageryType() == ImageryType.SCANEX) {
             return new ScanexTileSource(info);
         }

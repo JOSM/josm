@@ -9,7 +9,9 @@ import java.util.Scanner;
 import java.util.concurrent.Callable;
 
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.Utils;
@@ -22,6 +24,8 @@ import org.xml.sax.InputSource;
  * @since 8526
  */
 public class CachedAttributionBingAerialTileSource extends BingAerialTileSource {
+    private Runnable attributionDownloadedTask;
+
     /**
      * Creates tile source
      * @param info ImageryInfo description of this tile source
@@ -29,6 +33,18 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
     public CachedAttributionBingAerialTileSource(ImageryInfo info) {
         super(info);
     }
+
+    /**
+     * Creates tile source
+     * @param info ImageryInfo description of this tile source
+     * @param attributionDownloadedTask runnable to be executed once attribution is loaded
+     */
+
+    public CachedAttributionBingAerialTileSource(TileSourceInfo info, Runnable attributionDownloadedTask) {
+        super(info);
+        this.attributionDownloadedTask = attributionDownloadedTask;
+    }
+
 
     class BingAttributionData extends CacheCustomContent<IOException> {
 
@@ -58,7 +74,12 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
                 while (true) {
                     try {
                         String xml = attributionLoader.updateIfRequiredString();
-                        return parseAttributionText(new InputSource(new StringReader((xml))));
+                        List<Attribution> ret = parseAttributionText(new InputSource(new StringReader((xml))));
+                        if (attributionDownloadedTask != null) {
+                            GuiHelper.runInEDT(attributionDownloadedTask);
+                            attributionDownloadedTask = null;
+                        }
+                        return ret;
                     } catch (IOException ex) {
                         Main.warn("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
                         Thread.sleep(waitTimeSec * 1000L);
