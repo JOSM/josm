@@ -208,7 +208,7 @@ public class DownloadDialog extends JDialog  {
 
         // -- help button
         SideButton btnHelp;
-        pnl.add(btnHelp = new SideButton(new ContextSensitiveHelpAction(ht("/Action/Download"))));
+        pnl.add(btnHelp = new SideButton(new ContextSensitiveHelpAction(getRootPane().getClientProperty("help").toString())));
         InputMapUtils.enableEnter(btnHelp);
 
         return pnl;
@@ -219,7 +219,17 @@ public class DownloadDialog extends JDialog  {
      * @param parent the parent component
      */
     public DownloadDialog(Component parent) {
+        this(parent, ht("/Action/Download"));
+    }
+
+    /**
+     * Constructs a new {@code DownloadDialog}.
+     * @param parent the parent component
+     * @param helpTopic the help topic to assign
+     */
+    public DownloadDialog(Component parent, String helpTopic) {
         super(JOptionPane.getFrameForComponent(parent), tr("Download"), ModalityType.DOCUMENT_MODAL);
+        HelpUtil.setHelpContext(getRootPane(), helpTopic);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(buildMainPanel(), BorderLayout.CENTER);
         getContentPane().add(buildButtonPanel(), BorderLayout.SOUTH);
@@ -240,7 +250,6 @@ public class DownloadDialog extends JDialog  {
                 }
             }
         });
-        HelpUtil.setHelpContext(getRootPane(), ht("/Action/Download"));
         addWindowListener(new WindowEventHandler());
         restoreSettings();
     }

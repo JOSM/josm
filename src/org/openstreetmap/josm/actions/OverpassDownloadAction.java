@@ -85,7 +85,7 @@ public class OverpassDownloadAction extends JosmAction {
         static final CollectionProperty OVERPASS_WIZARD_HISTORY = new CollectionProperty("download.overpass.wizard", new ArrayList<String>());
 
         private OverpassDownloadDialog(Component parent) {
-            super(parent);
+            super(parent, ht("/Action/OverpassDownload"));
             cbDownloadOsmData.setEnabled(false);
             cbDownloadOsmData.setSelected(false);
             cbDownloadGpxData.setVisible(false);
