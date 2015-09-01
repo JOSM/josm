@@ -878,7 +878,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         return new TileSet(topLeft, botRight, currentZoomLevel);
     }
 
-    private void loadAllTiles(boolean force) {
+    protected void loadAllTiles(boolean force) {
         TileSet ts = getVisibleTileSet();
 
         // if there is more than 18 tiles on screen in any direction, do not load all tiles!
@@ -889,7 +889,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         ts.loadAllTiles(force);
     }
 
-    private void loadAllErrorTiles(boolean force) {
+    protected void loadAllErrorTiles(boolean force) {
         TileSet ts = getVisibleTileSet();
         ts.loadAllErrorTiles(force);
     }
