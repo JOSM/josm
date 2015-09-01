@@ -152,10 +152,13 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     /**
      * Called from the XML parser to set the icon.
-     * This task is performed in the background in order to speedup startup.
+     * The loading task is performed in the background in order to speedup startup.
      */
     public void setIcon(final String iconName) {
         this.iconName = iconName;
+        if (!TaggingPresetReader.isLoadIcons()) {
+            return;
+        }
         File arch = TaggingPresetReader.getZipIcons();
         final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
         ImageProvider imgProv = new ImageProvider(iconName);
