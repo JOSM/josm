@@ -479,18 +479,13 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public Map<String, String> getKeys() {
-        final String[] keys = this.keys;
-        if (keys == null || keys.length == 0) {
-            return Collections.emptyMap();
-        } else if (keys.length == 2) {
-            return Collections.singletonMap(keys[0], keys[1]);
+        Map<String, String> result = new HashMap<>(Utils.hashMapInitialCapacity(keys.length / 2));
+        String[] keys = this.keys;
+        if (keys != null) {
+            for (int i = 0; i < keys.length; i += 2) {
+                result.put(keys[i], keys[i + 1]);
+            }
         }
-
-        final Map<String, String> result = new HashMap<>(Utils.hashMapInitialCapacity(keys.length / 2));
-        for (int i = 0; i < keys.length; i += 2) {
-            result.put(keys[i], keys[i + 1]);
-        }
-
         return result;
     }
 
