@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -50,7 +52,8 @@ public class OverpassDownloadAction extends JosmAction {
      */
     public OverpassDownloadAction() {
         super(tr("Download from Overpass API ..."), "download-overpass", tr("Download map data from Overpass API server."),
-                null, true, "overpassdownload/download", true);
+                Shortcut.registerShortcut("file:download-overpass", tr("File: {0}", tr("Download from Overpass API ...")), KeyEvent.VK_DOWN, Shortcut.ALT_SHIFT),
+                true, "overpassdownload/download", true);
         putValue("help", ht("/Action/OverpassDownload"));
     }
 
