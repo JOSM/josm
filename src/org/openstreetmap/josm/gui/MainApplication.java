@@ -15,7 +15,9 @@ import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ProxySelector;
+import java.net.Socket;
 import java.net.URL;
 import java.security.AllPermission;
 import java.security.CodeSource;
@@ -557,6 +559,10 @@ public class MainApplication extends Main {
                         for (InetAddress a : InetAddress.getAllByName("josm.openstreetmap.de")) {
                             if (a instanceof Inet6Address) {
                                 if (a.isReachable(1000)) {
+                                    /* be sure it REALLY works */
+                                    Socket s = new Socket();
+                                    s.connect(new InetSocketAddress(a, 80), 1000);
+                                    s.close();
                                     Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
                                     if (!wasv6) {
                                         Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4 after next restart."));
