@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -128,6 +129,7 @@ public class OverpassDownloadAction extends JosmAction {
             pnl.add(overpassWizard, GBC.eol().fill(GBC.HORIZONTAL));
 
             overpassQuery = new JTextArea("[timeout:15];", 8, 80);
+            overpassQuery.setFont(GuiHelper.getMonospacedFont(overpassQuery));
             JScrollPane scrollPane = new JScrollPane(overpassQuery);
             pnl.add(new JLabel(tr("Overpass query: ")), GBC.std().insets(5, 5, 5, 5));
             GBC gbc = GBC.eol().fill(GBC.HORIZONTAL);
