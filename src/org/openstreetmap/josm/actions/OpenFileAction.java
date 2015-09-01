@@ -109,7 +109,7 @@ public class OpenFileAction extends DiskAccessAction {
             for (final File file : files) {
                 if (file.exists()) {
                     this.files.add(file);
-                } else {
+                } else if (file.getParentFile() != null) {
                     // try to guess an extension using the specified fileFilter
                     final File[] matchingFiles = file.getParentFile().listFiles(new FilenameFilter() {
                         @Override
