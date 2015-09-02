@@ -20,7 +20,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
@@ -196,7 +195,8 @@ public class OverpassDownloadAction extends JosmAction {
             else {
                 String realQuery = completeOverpassQuery(overpassQuery);
                 try {
-                    return "interpreter?data=" + URLEncoder.encode(realQuery, "UTF-8") + "&bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
+                    return "interpreter?data=" + URLEncoder.encode(realQuery, "UTF-8")
+                            + "&bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
                 } catch (UnsupportedEncodingException e) {
                     throw new IllegalStateException();
                 }

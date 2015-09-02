@@ -45,7 +45,6 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
         this.attributionDownloadedTask = attributionDownloadedTask;
     }
 
-
     class BingAttributionData extends CacheCustomContent<IOException> {
 
         public BingAttributionData() {
