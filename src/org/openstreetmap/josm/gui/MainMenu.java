@@ -848,10 +848,12 @@ public class MainMenu extends JMenuBar {
                         helpMenu.getPreferredSize().height);
             }
         };
+        Shortcut searchFieldShortcut = Shortcut.registerShortcut("menu:search-field", tr("Search menu items"), KeyEvent.VK_R, Shortcut.MNEMONIC);
+        searchFieldShortcut.setFocusAccelerator(searchField);
         searchField.setEditable(true);
         searchField.setMaximumSize(new Dimension(200, helpMenu.getPreferredSize().height));
         searchField.setHint(tr("Search menu items"));
-        searchField.setToolTipText(tr("Search menu items"));
+        searchField.setToolTipText(Main.platform.makeTooltip(tr("Search menu items"), searchFieldShortcut));
         searchField.addKeyListener(new SearchFieldKeyListener());
         searchField.getDocument().addDocumentListener(new SearchFieldTextListener(this, searchField));
         return searchField;
