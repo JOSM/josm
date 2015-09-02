@@ -233,12 +233,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         if (tileLoader instanceof CachedTileLoader) {
             ((CachedTileLoader) tileLoader).clearCache(tileSource);
         }
-        // if we use TMSCachedTileLoader, we already cleared by tile source, this is needed
-        // to prevent removal of additional objects
-        if (!(tileLoader instanceof TMSCachedTileLoader)) {
-            tileCache.clear();
-        }
-
+        tileCache.clear();
     }
 
     /**
