@@ -365,6 +365,7 @@ class taginfoextract {
         Main.pref.enableSaveOnPut(false)
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"))
         Path tmpdir = Files.createTempDirectory(FileSystems.getDefault().getPath(base_dir), "pref")
+        tmpdir.toFile().deleteOnExit()
         System.setProperty("josm.home", tmpdir.toString())
 
         josm_svn_revision = Version.getInstance().getVersion()
