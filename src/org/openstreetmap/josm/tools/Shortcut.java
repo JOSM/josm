@@ -16,6 +16,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.JMenu;
 import javax.swing.KeyStroke;
+import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -211,6 +212,14 @@ public final class Shortcut {
     public void setMnemonic(AbstractButton button) {
         if (assignedModifier == getGroupModifier(MNEMONIC)  && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
             button.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
+        }
+    }
+    /**
+     * Sets the mnemonic key on a text component.
+     */
+    public void setFocusAccelerator(JTextComponent component) {
+        if (assignedModifier == getGroupModifier(MNEMONIC)  && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
+            component.setFocusAccelerator(KeyEvent.getKeyText(assignedKey).charAt(0));
         }
     }
     /**
