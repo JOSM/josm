@@ -512,3 +512,19 @@ relation[/^..$/][!to] {
   suggestAlternative: "payment:litecoin=yes";
   suggestAlternative: "...";
 }
+
+/* see #8717 */
+*[kp][highway=milestone],
+*[kp][railway=milestone],
+*[kp][waterway=milestone] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "distance";
+  fixChangeKey: "kp => distance";
+}
+*[pk][highway=milestone],
+*[pk][railway=milestone],
+*[pk][waterway=milestone] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "distance";
+  fixChangeKey: "pk => distance";
+}

@@ -156,6 +156,7 @@ public abstract class LabelCompositionStrategy {
             "name:" + LanguageInfo.getJOSMLocaleCode(),
             "name",
             "int_name",
+            "distance",
             "ref",
             "operator",
             "brand",
