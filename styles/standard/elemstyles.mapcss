@@ -665,9 +665,6 @@ node[highway=milestone] {
     set icon_z17;
     text: auto;
 }
-node[highway=milestone][distance] {
-    text: distance;
-}
 node[direction=clockwise] {
     icon-image: "vehicle/restriction/roundabout_left.png";
     set icon_z17;
@@ -3397,9 +3394,6 @@ node[railway=milestone] {
     icon-image: "vehicle/milestone.svg";
     set icon_z17;
     text: auto;
-}
-node[railway=milestone][distance] {
-    text: distance;
 }
 node[railway=rail], node[railway=tram], node[railway=light_rail],
 node[railway=subway], node[railway=preserved],
