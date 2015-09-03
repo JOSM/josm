@@ -114,7 +114,7 @@ public class ImageResource {
             }
             if (overlayInfo != null) {
                 for (ImageOverlay o : overlayInfo) {
-                    o.apply(bimg);
+                    o.process(bimg);
                 }
             }
             imgCache.put(dim, bimg);
@@ -138,7 +138,7 @@ public class ImageResource {
             bimg.getGraphics().drawImage(i, 0, 0, null);
             if (overlayInfo != null) {
                 for (ImageOverlay o : overlayInfo) {
-                    o.apply(bimg);
+                    o.process(bimg);
                 }
             }
             imgCache.put(dim, bimg);

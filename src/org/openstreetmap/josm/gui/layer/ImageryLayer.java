@@ -74,8 +74,6 @@ public abstract class ImageryLayer extends Layer {
     protected double dx = 0.0;
     protected double dy = 0.0;
 
-    protected int sharpenLevel;
-
     private final ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
 
     /**
@@ -92,7 +90,7 @@ public abstract class ImageryLayer extends Layer {
         if (icon == null) {
             icon = ImageProvider.get("imagery_small");
         }
-        this.sharpenLevel = PROP_SHARPEN_LEVEL.get();
+        addImageProcessor(createSharpener(PROP_SHARPEN_LEVEL.get()));
     }
 
     public double getPPD() {
@@ -237,31 +235,28 @@ public abstract class ImageryLayer extends Layer {
         return hasBookmarks ? subMenu : adjustMenuItem;
     }
 
-    public BufferedImage sharpenImage(BufferedImage img) {
-        if (sharpenLevel <= 0) return img;
-        int width = img.getWidth(null);
-        int height = img.getHeight(null);
-        BufferedImage tmp = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        tmp.getGraphics().drawImage(img, 0, 0, null);
-        Kernel kernel;
+    public ImageProcessor createSharpener(int sharpenLevel) {
+        final Kernel kernel;
         if (sharpenLevel == 1) {
-            kernel = new Kernel(3, 3, new float[] {-0.25f, -0.5f, -0.25f, -0.5f, 4, -0.5f, -0.25f, -0.5f, -0.25f});
+            kernel = new Kernel(3, 3, new float[]{-0.25f, -0.5f, -0.25f, -0.5f, 4, -0.5f, -0.25f, -0.5f, -0.25f});
+        } else if (sharpenLevel == 2) {
+            kernel = new Kernel(3, 3, new float[]{-0.5f, -1, -0.5f, -1, 7, -1, -0.5f, -1, -0.5f});
         } else {
-            kernel = new Kernel(3, 3, new float[] {-0.5f, -1, -0.5f, -1, 7, -1, -0.5f, -1, -0.5f});
+            return null;
         }
         BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
-        return op.filter(tmp, null);
+        return createImageProcessor(op, false);
     }
 
     /**
-     * This method adds the {@link ImageProcessor} to this Layer
+     * This method adds the {@link ImageProcessor} to this Layer if it is not {@code null}.
      *
      * @param processor that processes the image
      *
      * @return true if processor was added, false otherwise
      */
     public boolean addImageProcessor(ImageProcessor processor) {
-        return imageProcessors.add(processor);
+        return processor != null && imageProcessors.add(processor);
     }
 
     /**
@@ -273,6 +268,22 @@ public abstract class ImageryLayer extends Layer {
      */
     public boolean removeImageProcessor(ImageProcessor processor) {
         return imageProcessors.remove(processor);
+    }
+
+    /**
+     * Wraps a {@link BufferedImageOp} to be used as {@link ImageProcessor}.
+     * @param op the {@link BufferedImageOp}
+     * @param inPlace true to apply filter in place, i.e., not create a new {@link BufferedImage} for the result
+     *                (the {@code op} needs to support this!)
+     * @return the {@link ImageProcessor} wrapper
+     */
+    public static ImageProcessor createImageProcessor(final BufferedImageOp op, final boolean inPlace) {
+        return new ImageProcessor() {
+            @Override
+            public BufferedImage process(BufferedImage image) {
+                return op.filter(image, inPlace ? image : null);
+            }
+        };
     }
 
     /**

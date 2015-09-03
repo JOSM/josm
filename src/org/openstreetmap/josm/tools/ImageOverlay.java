@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import org.openstreetmap.josm.gui.layer.ImageProcessor;
+
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 
@@ -9,7 +11,7 @@ import javax.swing.ImageIcon;
 /** class to describe how image overlay
  * @since 8095
  */
-public class ImageOverlay {
+public class ImageOverlay implements ImageProcessor {
     /** the image resource to use as overlay */
     public ImageProvider image;
     /** offset of the image from left border, values between 0 and 1 */
@@ -64,7 +66,8 @@ public class ImageOverlay {
      * @return the modified image (same as argument)
      * @since 8095
      */
-    public BufferedImage apply(BufferedImage ground) {
+    @Override
+    public BufferedImage process(BufferedImage ground) {
         /* get base dimensions for calculation */
         int w = ground.getWidth();
         int h = ground.getHeight();
