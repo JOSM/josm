@@ -195,12 +195,16 @@ public class Test extends AbstractVisitor {
      * @param selection The primitives to be tested
      */
     public void visit(Collection<OsmPrimitive> selection) {
-        progressMonitor.setTicksCount(selection.size());
+        if (progressMonitor != null) {
+            progressMonitor.setTicksCount(selection.size());
+        }
         for (OsmPrimitive p : selection) {
             if (isPrimitiveUsable(p)) {
                 p.accept(this);
             }
-            progressMonitor.worked(1);
+            if (progressMonitor != null) {
+                progressMonitor.worked(1);
+            }
         }
     }
 
