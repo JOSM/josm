@@ -81,7 +81,7 @@ way[width][width !~ /^(([0-9]+\.?[0-9]*( [a-z]+)?)|([0-9]+\'([0-9]+\.?[0-9]*\")?
   assertNoMatch: "way maxwidth=7 ft";
 }
 *[maxweight][maxweight !~ /^(([0-9]+\.?[0-9]*( (t|kg|lbs))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/] {
-  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "maxweight");
+  throwWarning: tr("{0}: tonne is default; period is separator; if units, put space then unit", "maxweight");
   assertMatch: "way maxweight=something";
   assertMatch: "way maxweight=-5";
   assertNoMatch: "way maxweight=2";
@@ -105,6 +105,15 @@ way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|wa
   assertNoMatch: "way maxspeed=signals";
   assertNoMatch: "way maxspeed=none";
   assertNoMatch: "way maxspeed=variable";
+}
+
+*[distance][distance !~ /^(([0-9]+\.?[0-9]*( (km|mi|nmi))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/] {
+  throwWarning: tr("{0}: kilometers is default; period is separator; if units, put space then unit", "distance");
+  assertMatch: "way distance=something";
+  assertMatch: "way distance=-5";
+  assertNoMatch: "way distance=2";
+  assertNoMatch: "way distance=2.5";
+  assertNoMatch: "way distance=7 mi";
 }
 
 way[voltage][voltage =~ /(.*[A-Za-z].*)|.*,.*|.*( ).*/] {

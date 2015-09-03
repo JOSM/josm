@@ -1276,6 +1276,12 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=traffic_mirror" />
             <key key="highway" value="traffic_mirror" />
         </item> <!-- Traffic Mirror -->
+        <item name="Highway milestone" icon="styles/standard/vehicle/milestone.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=milestone" />
+            <key key="highway" value="milestone" />
+            <text key="distance" text="Distance (kilometers)" />
+            <text key="ref" text="Reference" />
+        </item> <!-- Highway Milestone -->
         <item name="Named Junction" name_context="junction=yes" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:junction=yes"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:junction=yes" />
@@ -2352,6 +2358,12 @@
             <key key="railway" value="switch" />
             <text key="ref" text="Reference" />
         </item> <!-- Railway Switch -->
+        <item name="Railway milestone" icon="styles/standard/vehicle/milestone.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=milestone" />
+            <key key="railway" value="milestone" />
+            <text key="distance" text="Distance (kilometers)" />
+            <text key="ref" text="Reference" />
+        </item> <!-- Railway Milestone -->
     </group> <!-- Railway -->
     <group name="Aerialway" icon="presets/aerialway.png">
         <item name="Cable Car" icon="presets/cable_car.png" type="way" preset_name_label="true">

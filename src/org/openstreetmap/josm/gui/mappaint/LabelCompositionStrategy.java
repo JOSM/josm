@@ -159,7 +159,8 @@ public abstract class LabelCompositionStrategy {
             "ref",
             "operator",
             "brand",
-            "addr:housenumber"
+            "addr:housenumber",
+            "distance"
         };
 
         /**
