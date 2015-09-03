@@ -207,9 +207,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             success = false;
             tile.setImage(null);
         }
-        if (sharpenLevel != 0 && success) {
-            tile.setImage(sharpenImage(tile.getImage()));
-        }
         tile.setLoaded(success);
         needRedraw = true;
         if (Main.map != null) {
