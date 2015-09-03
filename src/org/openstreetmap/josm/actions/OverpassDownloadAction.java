@@ -52,7 +52,9 @@ public class OverpassDownloadAction extends JosmAction {
      */
     public OverpassDownloadAction() {
         super(tr("Download from Overpass API ..."), "download-overpass", tr("Download map data from Overpass API server."),
+                // CHECKSTYLE.OFF: LineLength
                 Shortcut.registerShortcut("file:download-overpass", tr("File: {0}", tr("Download from Overpass API ...")), KeyEvent.VK_DOWN, Shortcut.ALT_SHIFT),
+                // CHECKSTYLE.ON: LineLength
                 true, "overpassdownload/download", true);
         putValue("help", ht("/Action/OverpassDownload"));
     }
