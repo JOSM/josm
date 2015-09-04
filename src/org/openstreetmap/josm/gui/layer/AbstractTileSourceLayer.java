@@ -244,6 +244,12 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         Main.map.repaint();
     }
 
+    @Override
+    public void setGamma(double gamma) {
+        super.setGamma(gamma);
+        redraw();
+    }
+
     /**
      * Marks layer as needing redraw on offset change
      */
