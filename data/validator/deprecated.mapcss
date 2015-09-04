@@ -528,3 +528,9 @@ relation[/^..$/][!to] {
   suggestAlternative: "distance";
   fixChangeKey: "pk => distance";
 }
+
+*[postcode] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "addr:postcode";
+  suggestAlternative: "postal_code";
+}

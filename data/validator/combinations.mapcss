@@ -205,11 +205,29 @@ way[waterway][bridge=yes] {
   throwWarning: tr("incomplete object: only {0} and {1}", "{0.key}", "{1.key}");
 }
 
-/* see #9811 */
+/* see #9811, #11491 */
 *[place][place!=farm][/^addr:/],
 *[boundary][/^addr:/],
-*[highway][/^addr:/][highway!=services][highway!=rest_area] {
+*[highway][/^addr:/][highway!=services][highway!=rest_area][!"addr:postcode"] {
   throwWarning: tr("{0} together with addr:*", "{0.key}");
+}
+*[!highway][postal_code]["addr:postcode"][postal_code=*"addr:postcode"] {
+  throwWarning: tr("{0} together with {1}", "{1.key}", "{2.key}");
+}
+*[!highway][postal_code]["addr:postcode"][postal_code!=*"addr:postcode"] {
+  throwWarning: tr("{0} together with {1} and conflicting values", "{1.key}", "{2.key}");
+}
+way[highway][postal_code]["addr:postcode"][postal_code=*"addr:postcode"] {
+  throwWarning: tr("{0} together with {1}", "{1.key}", "{2.key}");
+  fixRemove: "addr:postcode";
+}
+way[highway][postal_code]["addr:postcode"][postal_code!=*"addr:postcode"] {
+  throwWarning: tr("{0} together with {1} and conflicting values", "{1.key}", "{2.key}");
+}
+way[highway][!postal_code]["addr:postcode"] {
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{2.key}");
+  suggestAlternative: "postal_code";
+  fixChangeKey: "addr:postcode=>postal_code";
 }
 
 /* see #9195 */
