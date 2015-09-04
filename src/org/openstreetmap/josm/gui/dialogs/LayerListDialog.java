@@ -260,16 +260,6 @@ public class LayerListDialog extends ToggleDialog {
         adaptTo(layerOpacityAction, selectionModel);
         opacityButton = new SideButton(layerOpacityAction, false);
 
-        // -- merge layer action
-        MergeAction mergeLayerAction = new MergeAction();
-        adaptTo(mergeLayerAction, model);
-        adaptTo(mergeLayerAction, selectionModel);
-
-        // -- duplicate layer action
-        DuplicateAction duplicateLayerAction = new DuplicateAction();
-        adaptTo(duplicateLayerAction, model);
-        adaptTo(duplicateLayerAction, selectionModel);
-
         // -- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
@@ -291,16 +281,14 @@ public class LayerListDialog extends ToggleDialog {
         // Show/Activate layer on Enter key press
         InputMapUtils.addSpacebarAction(layerList, showHideLayerAction);
 
-        createLayout(layerList, true, Arrays.asList(new SideButton[] {
+        createLayout(layerList, true, Arrays.asList(
                 new SideButton(moveUpAction, false),
                 new SideButton(moveDownAction, false),
                 new SideButton(activateLayerAction, false),
                 new SideButton(showHideLayerAction, false),
                 opacityButton,
-                new SideButton(mergeLayerAction, false),
-                new SideButton(duplicateLayerAction, false),
                 new SideButton(deleteLayerAction, false)
-        }));
+        ));
 
         createVisibilityToggleShortcuts();
     }
@@ -1642,6 +1630,17 @@ public class LayerListDialog extends ToggleDialog {
      */
     public MergeAction createMergeLayerAction(Layer layer) {
         return new MergeAction(layer);
+    }
+
+    /**
+     * Creates a {@link DuplicateAction} for <code>layer</code> in the
+     * context of this {@link LayerListDialog}.
+     *
+     * @param layer the layer
+     * @return the action
+     */
+    public DuplicateAction createDuplicateLayerAction(Layer layer) {
+        return new DuplicateAction(layer);
     }
 
     /**
