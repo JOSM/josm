@@ -55,6 +55,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
@@ -70,6 +71,7 @@ import org.openstreetmap.josm.tools.MultikeyActionsHandler;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a toggle dialog which displays the list of layers. Actions allow to
@@ -112,6 +114,7 @@ public class LayerListDialog extends ToggleDialog {
     private LayerList layerList;
 
     private SideButton opacityButton;
+    private SideButton gammaButton;
 
     private ActivateLayerAction activateLayerAction;
     private ShowHideLayerAction showHideLayerAction;
@@ -260,6 +263,11 @@ public class LayerListDialog extends ToggleDialog {
         adaptTo(layerOpacityAction, selectionModel);
         opacityButton = new SideButton(layerOpacityAction, false);
 
+        // -- layer gamma action
+        LayerGammaAction layerGammaAction = new LayerGammaAction();
+        adaptTo(layerGammaAction, selectionModel);
+        gammaButton = new SideButton(layerGammaAction, false);
+
         // -- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
@@ -287,6 +295,7 @@ public class LayerListDialog extends ToggleDialog {
                 new SideButton(activateLayerAction, false),
                 new SideButton(showHideLayerAction, false),
                 opacityButton,
+                gammaButton,
                 new SideButton(deleteLayerAction, false)
         ));
 
@@ -512,12 +521,61 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
+     * Abstract action which allows to adjust a double value using a slider
+     */
+    public static abstract class AbstractLayerPropertySliderAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
+        protected final JPopupMenu popup;
+        protected final JSlider slider;
+        private final double factor;
+
+        public AbstractLayerPropertySliderAction(String name, final double factor) {
+            super(name);
+            this.factor = factor;
+            updateEnabledState();
+
+            popup = new JPopupMenu();
+            slider = new JSlider(JSlider.VERTICAL);
+            slider.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    setValue((double) slider.getValue() / factor);
+                }
+            });
+            popup.add(slider);
+
+        }
+
+        protected abstract void setValue(double value);
+
+        protected abstract double getValue();
+
+        protected abstract SideButton getCorrespondingSideButton();
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final SideButton sideButton = getCorrespondingSideButton();
+            slider.setValue((int) (getValue() * factor));
+            if (e.getSource() == sideButton) {
+                popup.show(sideButton, 0, sideButton.getHeight());
+            } else {
+                // Action can be trigger either by opacity button or by popup menu (in case toggle buttons are hidden).
+                // In that case, show it in the middle of screen (because opacityButton is not visible)
+                popup.show(Main.parent, Main.parent.getWidth() / 2, (Main.parent.getHeight() - popup.getHeight()) / 2);
+            }
+        }
+
+        @Override
+        public Component createMenuComponent() {
+            return new JMenuItem(this);
+        }
+
+    }
+
+    /**
      * Action which allows to change the opacity of one or more layers.
      */
-    public final class LayerOpacityAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
+    public final class LayerOpacityAction extends AbstractLayerPropertySliderAction {
         private transient Layer layer;
-        private JPopupMenu popup;
-        private JSlider slider = new JSlider(JSlider.VERTICAL);
 
         /**
          * Creates a {@link LayerOpacityAction} which allows to change the
@@ -528,7 +586,6 @@ public class LayerListDialog extends ToggleDialog {
          */
         public LayerOpacityAction(Layer layer) {
             this();
-            putValue(NAME, tr("Opacity"));
             CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;
             updateEnabledState();
@@ -540,22 +597,13 @@ public class LayerListDialog extends ToggleDialog {
          *
          */
         public LayerOpacityAction() {
-            putValue(NAME, tr("Opacity"));
+            super(tr("Opacity"), 100);
             putValue(SHORT_DESCRIPTION, tr("Adjust opacity of the layer."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "transparency"));
-            updateEnabledState();
-
-            popup = new JPopupMenu();
-            slider.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    setOpacity((double) slider.getValue()/100);
-                }
-            });
-            popup.add(slider);
         }
 
-        private void setOpacity(double value) {
+        @Override
+        protected void setValue(double value) {
             if (!isEnabled()) return;
             if (layer != null) {
                 layer.setOpacity(value);
@@ -566,7 +614,8 @@ public class LayerListDialog extends ToggleDialog {
             }
         }
 
-        private double getOpacity() {
+        @Override
+        protected double getValue() {
             if (layer != null)
                 return layer.getOpacity();
             else {
@@ -580,15 +629,8 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
-            slider.setValue((int) Math.round(getOpacity()*100));
-            if (e.getSource() == opacityButton) {
-                popup.show(opacityButton, 0, opacityButton.getHeight());
-            } else {
-                // Action can be trigger either by opacity button or by popup menu (in case toggle buttons are hidden).
-                // In that case, show it in the middle of screen (because opacityButton is not visible)
-                popup.show(Main.parent, Main.parent.getWidth() / 2, (Main.parent.getHeight() - popup.getHeight()) / 2);
-            }
+        protected SideButton getCorrespondingSideButton() {
+            return opacityButton;
         }
 
         @Override
@@ -601,23 +643,47 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         @Override
-        public Component createMenuComponent() {
-            return new JMenuItem(this);
+        public boolean supportLayers(List<Layer> layers) {
+            return true;
+        }
+    }
+
+    /**
+     * Action which allows to change the gamma of one imagery layer.
+     */
+    public final class LayerGammaAction extends AbstractLayerPropertySliderAction {
+
+        public LayerGammaAction() {
+            super(tr("Gamma"), 50);
+            putValue(SHORT_DESCRIPTION, tr("Adjust gamma value of the layer."));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "gamma"));
+        }
+
+        @Override
+        protected void setValue(double value) {
+            for (ImageryLayer imageryLayer : Utils.filteredCollection(model.getSelectedLayers(), ImageryLayer.class)) {
+                imageryLayer.setGamma(value);
+            }
+        }
+
+        @Override
+        protected double getValue() {
+            return Utils.filteredCollection(model.getSelectedLayers(), ImageryLayer.class).iterator().next().getGamma();
+        }
+
+        @Override
+        protected SideButton getCorrespondingSideButton() {
+            return gammaButton;
+        }
+
+        @Override
+        public void updateEnabledState() {
+            setEnabled(!Utils.filteredCollection(model.getSelectedLayers(), ImageryLayer.class).isEmpty());
         }
 
         @Override
         public boolean supportLayers(List<Layer> layers) {
-            return true;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof LayerOpacityAction;
-        }
-
-        @Override
-        public int hashCode() {
-            return getClass().hashCode();
+            return !Utils.filteredCollection(layers, ImageryLayer.class).isEmpty();
         }
     }
 
