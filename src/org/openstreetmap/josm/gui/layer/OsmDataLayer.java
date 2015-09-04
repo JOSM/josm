@@ -520,6 +520,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 LayerListDialog.getInstance().createDeleteLayerAction(),
                 SeparatorLayerAction.INSTANCE,
                 LayerListDialog.getInstance().createMergeLayerAction(this),
+                LayerListDialog.getInstance().createDuplicateLayerAction(this),
                 new LayerSaveAction(this),
                 new LayerSaveAsAction(this),
         }));
