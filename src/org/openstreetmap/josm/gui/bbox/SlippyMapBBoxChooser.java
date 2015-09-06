@@ -323,6 +323,15 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     }
 
     /**
+     * Enables or disables painting of the shrink/enlarge button
+     *
+     * @param visible {@code true} to enable painting of the shrink/enlarge button
+     */
+    public void setSizeButtonVisible(boolean visible) {
+        iSizeButton.setVisible(visible);
+    }
+
+    /**
      * Refreshes the tile sources
      * @since 6364
      */

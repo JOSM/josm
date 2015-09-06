@@ -29,6 +29,7 @@ public class MinimapDialog extends ToggleDialog implements NavigatableComponent.
     public MinimapDialog() {
         super(tr("Mini map"), "minimap", tr("Displays a small map of the current edit location"), null, 150);
         createLayout(slippyMap, false, Collections.<SideButton>emptyList());
+        slippyMap.setSizeButtonVisible(false);
         slippyMap.addPropertyChangeListener(BBoxChooser.BBOX_PROP, this);
     }
 
