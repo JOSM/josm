@@ -743,6 +743,18 @@
                 <check key="lit" text="Lit" />
             </optional>
         </item> <!-- Escape -->
+        <item name="Raceway" icon="styles/standard/sport/raceway.svg" type="way,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=raceway"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=raceway"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=raceway"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=raceway"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=raceway"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=raceway"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=raceway" />
+            <space />
+            <key key="highway" value="raceway" />
+            <text key="name" text="Name" />
+        </item> <!-- Raceway -->
         <item name="Road (Unknown Type)" icon="presets/way_unclassified.png" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=road"
@@ -5314,18 +5326,6 @@
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,track" values_context="racing" />
         </item> <!-- RC Car -->
-        <item name="Raceway" icon="styles/standard/sport/raceway.svg" type="way,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=raceway"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=raceway"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=raceway"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=raceway"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=raceway"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=raceway"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=raceway" />
-            <space />
-            <key key="highway" value="raceway" />
-            <text key="name" text="Name" />
-        </item> <!-- Raceway -->
     </group> <!-- Motorsport -->
   </group> <!-- Sports -->
   <group name="Man Made" icon="presets/works.png">
