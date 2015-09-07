@@ -294,7 +294,7 @@ public abstract class ImageryLayer extends Layer {
         @Override
         public BufferedImage process(BufferedImage image) {
             final LookupOp op = getOp(image.getRaster().getNumBands());
-            final BufferedImage to = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+            final BufferedImage to = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
             return op == null ? image : op.filter(image, to);
         }
     }
