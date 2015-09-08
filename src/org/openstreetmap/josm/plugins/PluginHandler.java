@@ -812,7 +812,7 @@ public final class PluginHandler {
         }
         try {
             ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask(monitor);
-            ExecutorService service = Executors.newSingleThreadExecutor();
+            ExecutorService service = Executors.newSingleThreadExecutor(Utils.newThreadFactory("plugin-loader-%d", Thread.NORM_PRIORITY));
             Future<?> future = service.submit(task);
             try {
                 future.get();
@@ -969,7 +969,7 @@ public final class PluginHandler {
         }
         try {
             monitor.beginTask("");
-            ExecutorService service = Executors.newSingleThreadExecutor();
+            ExecutorService service = Executors.newSingleThreadExecutor(Utils.newThreadFactory("plugin-updater-%d", Thread.NORM_PRIORITY));
 
             // try to download the plugin lists
             //

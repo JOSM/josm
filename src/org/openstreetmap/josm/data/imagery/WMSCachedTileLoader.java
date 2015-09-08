@@ -33,7 +33,7 @@ public class WMSCachedTileLoader extends TMSCachedTileLoader {
             int connectTimeout, int readTimeout, Map<String, String> headers) throws IOException {
 
         super(listener, cache, connectTimeout, readTimeout, headers);
-        setDownloadExecutor(TMSCachedTileLoader.getNewThreadPoolExecutor("WMS downloader", THREAD_LIMIT.get()));
+        setDownloadExecutor(TMSCachedTileLoader.getNewThreadPoolExecutor("WMS-downloader-%d", THREAD_LIMIT.get()));
     }
 
     @Override

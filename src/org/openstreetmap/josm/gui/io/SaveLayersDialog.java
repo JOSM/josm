@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class SaveLayersDialog extends JDialog implements TableModelListener {
@@ -444,7 +445,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         public SaveAndUploadTask(SaveLayersModel model, ProgressMonitor monitor) {
             this.model = model;
             this.monitor = monitor;
-            this.worker = Executors.newSingleThreadExecutor();
+            this.worker = Executors.newSingleThreadExecutor(Utils.newThreadFactory(getClass() + "-%d", Thread.NORM_PRIORITY));
         }
 
         protected void uploadLayers(List<SaveLayerInfo> toUpload) {

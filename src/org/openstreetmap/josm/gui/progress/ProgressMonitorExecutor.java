@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Executor that displays the progress monitor to the user.
@@ -15,9 +16,15 @@ import org.openstreetmap.josm.Main;
  */
 public class ProgressMonitorExecutor extends ThreadPoolExecutor {
 
-    public ProgressMonitorExecutor() {
+    /**
+     * Creates a new {@code ProgressMonitorExecutor}
+     * @param nameFormat see {@link Utils#newThreadFactory(String, int)}
+     * @param threadPriority see {@link Utils#newThreadFactory(String, int)}
+     */
+    public ProgressMonitorExecutor(final String nameFormat, final int threadPriority) {
         super(1, 1, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>());
+                new LinkedBlockingQueue<Runnable>(),
+                Utils.newThreadFactory(nameFormat, threadPriority));
     }
 
     @Override

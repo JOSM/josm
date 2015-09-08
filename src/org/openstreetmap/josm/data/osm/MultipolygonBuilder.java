@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class MultipolygonBuilder {
 
     private static final Pair<Integer, ExecutorService> THREAD_POOL =
-            Utils.newThreadPool("multipolygon_creation.numberOfThreads");
+            Utils.newThreadPool("multipolygon_creation.numberOfThreads", "multipolygon-builder-%d", Thread.NORM_PRIORITY);
 
     /**
      * Represents one polygon that consists of multiple ways.

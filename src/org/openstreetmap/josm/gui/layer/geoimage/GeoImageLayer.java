@@ -36,7 +36,6 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -94,14 +93,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     private int currentPhoto = -1;
 
     boolean useThumbs = false;
-    private ExecutorService thumbsLoaderExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            t.setPriority(Thread.MIN_PRIORITY);
-            return t;
-        }
-    });
+    private ExecutorService thumbsLoaderExecutor =
+            Executors.newSingleThreadExecutor(Utils.newThreadFactory("thumbnail-loader-%d", Thread.MIN_PRIORITY));
     private ThumbsLoader thumbsloader;
     private boolean thumbsLoaderRunning = false;
     volatile boolean thumbsLoaded = false;

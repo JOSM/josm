@@ -47,6 +47,7 @@ import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Panel for cache content management.
@@ -132,7 +133,8 @@ public class CacheContentsPanel extends JPanel {
 
     }
 
-    private final transient ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final transient ExecutorService executor =
+            Executors.newSingleThreadExecutor(Utils.newThreadFactory(getClass() + "-%d", Thread.NORM_PRIORITY));
 
     /**
      * Creates cache content panel

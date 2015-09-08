@@ -86,7 +86,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class StyledMapRenderer extends AbstractMapRenderer {
 
     private static final Pair<Integer, ExecutorService> THREAD_POOL =
-            Utils.newThreadPool("mappaint.StyledMapRenderer.style_creation.numberOfThreads");
+            Utils.newThreadPool("mappaint.StyledMapRenderer.style_creation.numberOfThreads", "styled-map-renderer-%d", Thread.NORM_PRIORITY);
 
     /**
      * Iterates over a list of Way Nodes and returns screen coordinates that

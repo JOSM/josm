@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Retrieves a set of {@link OsmPrimitive}s from an OSM server using the so called
@@ -335,13 +336,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         }
         progressMonitor.setTicksCount(ids.size());
         progressMonitor.setTicks(0);
-        // The complete set containg all primitives to fetch
+        // The complete set containing all primitives to fetch
         Set<Long> toFetch = new HashSet<>(ids);
         // Build a list of fetchers that will  download smaller sets containing only MAX_IDS_PER_REQUEST (200) primitives each.
         // we will run up to MAX_DOWNLOAD_THREADS concurrent fetchers.
         int threadsNumber = Main.pref.getInteger("osm.download.threads", OsmApi.MAX_DOWNLOAD_THREADS);
         threadsNumber = Math.min(Math.max(threadsNumber, 1), OsmApi.MAX_DOWNLOAD_THREADS);
-        Executor exec = Executors.newFixedThreadPool(threadsNumber);
+        Executor exec = Executors.newFixedThreadPool(threadsNumber, Utils.newThreadFactory(getClass() + "-%d", Thread.NORM_PRIORITY));
         CompletionService<FetchResult> ecs = new ExecutorCompletionService<>(exec);
         List<Future<FetchResult>> jobs = new ArrayList<>();
         while (!toFetch.isEmpty()) {
