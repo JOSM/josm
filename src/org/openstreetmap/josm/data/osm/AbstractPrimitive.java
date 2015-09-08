@@ -479,9 +479,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public Map<String, String> getKeys() {
-        final Map<String, String> result = new HashMap<>(
-                Utils.hashMapInitialCapacity(this.keys == null ? 0 : this.keys.length / 2));
         String[] keys = this.keys;
+        final Map<String, String> result = new HashMap<>(
+                Utils.hashMapInitialCapacity(keys == null ? 0 : keys.length / 2));
         if (keys != null) {
             for (int i = 0; i < keys.length; i += 2) {
                 result.put(keys[i], keys[i + 1]);
