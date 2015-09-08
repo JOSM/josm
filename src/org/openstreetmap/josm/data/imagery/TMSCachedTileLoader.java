@@ -138,6 +138,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
      * cancels all outstanding tasks in the queue. This rollbacks the state of the tiles in the queue
      * to loading = false / loaded = false
      */
+    @Override
     public void cancelOutstandingTasks() {
         for (Runnable r: downloadExecutor.getQueue()) {
             if (downloadExecutor.remove(r) && r instanceof TMSCachedTileLoaderJob) {
