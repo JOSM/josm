@@ -197,7 +197,8 @@ public class ImageProvider {
      */
     private static final Map<Image, Map<Long, ImageResource>> ROTATE_CACHE = new HashMap<>();
 
-    private static final ExecutorService IMAGE_FETCHER = Executors.newSingleThreadExecutor();
+    private static final ExecutorService IMAGE_FETCHER =
+            Executors.newSingleThreadExecutor(Utils.newThreadFactory("image-fetcher-%d", Thread.NORM_PRIORITY));
 
     /**
      * Callback interface for asynchronous image loading.

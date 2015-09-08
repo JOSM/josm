@@ -167,7 +167,7 @@ public abstract class Main {
      * calculations. The executed runnables are guaranteed to be executed separately
      * and sequential.
      */
-    public static final ExecutorService worker = new ProgressMonitorExecutor();
+    public static final ExecutorService worker = new ProgressMonitorExecutor("main-worker-%d", Thread.NORM_PRIORITY);
 
     /**
      * Global application preferences
@@ -624,8 +624,9 @@ public abstract class Main {
         });
 
         try {
-            for (Future<Void> i : Executors.newFixedThreadPool(
-                    Runtime.getRuntime().availableProcessors()).invokeAll(tasks)) {
+            final ExecutorService service = Executors.newFixedThreadPool(
+                    Runtime.getRuntime().availableProcessors(), Utils.newThreadFactory("main-init-%d", Thread.NORM_PRIORITY));
+            for (Future<Void> i : service.invokeAll(tasks)) {
                 i.get();
             }
         } catch (Exception ex) {

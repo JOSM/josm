@@ -29,6 +29,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.JosmPreferencesCredentialAgent;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Notifies user periodically of new received (unread) messages
@@ -45,7 +46,8 @@ public final class MessageNotifier {
     /** Property defining the update interval in minutes */
     public static final IntegerProperty PROP_INTERVAL = new IntegerProperty("message.notifier.interval", 5);
 
-    private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService EXECUTOR =
+            Executors.newSingleThreadScheduledExecutor(Utils.newThreadFactory("message-notifier-%d", Thread.NORM_PRIORITY));
 
     private static final Runnable WORKER = new Worker();
 

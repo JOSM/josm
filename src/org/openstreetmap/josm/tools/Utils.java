@@ -46,6 +46,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -1267,15 +1268,36 @@ public final class Utils {
     }
 
     /**
+     * Creates a new {@link ThreadFactory} which creates threads with names according to {@code nameFormat}.
+     * @param nameFormat a {@link String#format(String, Object...)} compatible name format; its first argument is a unique thread index
+     * @param threadPriority the priority of the created threads, see {@link Thread#setPriority(int)}
+     * @return a new {@link ThreadFactory}
+     */
+    public static ThreadFactory newThreadFactory(final String nameFormat, final int threadPriority) {
+        final String ignore = String.format(Locale.ENGLISH, nameFormat, 0);// fail fast
+        return new ThreadFactory() {
+            final AtomicLong count = new AtomicLong(0);
+            @Override
+            public Thread newThread(final Runnable runnable) {
+                final Thread thread = new Thread(runnable, String.format(Locale.ENGLISH, nameFormat, count.getAndIncrement()));
+                thread.setPriority(threadPriority);
+                return thread;
+            }
+        };
+    }
+
+    /**
      * Returns a pair containing the number of threads (n), and a thread pool (if n > 1) to perform
      * multi-thread computation in the context of the given preference key.
      * @param pref The preference key
+     * @param nameFormat see {@link #newThreadFactory(String, int)}
+     * @param threadPriority see {@link #newThreadFactory(String, int)}
      * @return a pair containing the number of threads (n), and a thread pool (if n > 1, null otherwise)
      * @since 7423
      */
-    public static Pair<Integer, ExecutorService> newThreadPool(String pref) {
+    public static Pair<Integer, ExecutorService> newThreadPool(String pref, String nameFormat, int threadPriority) {
         int noThreads = Main.pref.getInteger(pref, Runtime.getRuntime().availableProcessors());
-        ExecutorService pool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads);
+        ExecutorService pool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads, newThreadFactory(nameFormat, threadPriority));
         return new Pair<>(noThreads, pool);
     }
 
@@ -1425,20 +1447,5 @@ public final class Utils {
      */
     public static int hashMapInitialCapacity(int nEntries) {
         return hashMapInitialCapacity(nEntries, 0.75f);
-    }
-
-    /**
-     * @param name to be set for the threads
-     * @return Thread Factory returning named threads
-     */
-    public static ThreadFactory getNamedThreadFactory(final String name) {
-        return new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread t = Executors.defaultThreadFactory().newThread(r);
-                t.setName(name);
-                return t;
-            }
-        };
     }
 }

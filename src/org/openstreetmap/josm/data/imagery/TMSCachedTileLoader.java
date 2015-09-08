@@ -49,7 +49,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
      * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS
      * and for TMS imagery
      */
-    private static ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = getNewThreadPoolExecutor("TMS downloader");
+    private static ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = getNewThreadPoolExecutor("TMS-downloader-%d");
 
 
     private ThreadPoolExecutor downloadExecutor = DEFAULT_DOWNLOAD_JOB_DISPATCHER;
@@ -73,18 +73,18 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
     }
 
     /**
-     * @param name name of the threads
+     * @param nameFormat see {@link Utils#newThreadFactory(String, int)}
      * @param workers number of worker thread to keep
      * @return new ThreadPoolExecutor that will use a @see HostLimitQueue based queue
      */
-    public static ThreadPoolExecutor getNewThreadPoolExecutor(String name, int workers) {
+    public static ThreadPoolExecutor getNewThreadPoolExecutor(String nameFormat, int workers) {
         return new ThreadPoolExecutor(
                 workers, // keep the thread number constant
                 workers, // do not this number of threads
                 30, // keepalive for thread
                 TimeUnit.SECONDS,
                 new HostLimitQueue(HOST_LIMIT.get().intValue()),
-                Utils.getNamedThreadFactory(name)
+                Utils.newThreadFactory(nameFormat, Thread.NORM_PRIORITY)
                 );
     }
 

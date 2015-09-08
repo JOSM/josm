@@ -76,7 +76,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             TimeUnit.SECONDS,
             // make queue of LIFO type - so recently requested tiles will be loaded first (assuming that these are which user is waiting to see)
             new LinkedBlockingDeque<Runnable>(),
-            Utils.getNamedThreadFactory("JCS downloader")
+            Utils.newThreadFactory("JCS-downloader-%d", Thread.NORM_PRIORITY)
             );
 
 
