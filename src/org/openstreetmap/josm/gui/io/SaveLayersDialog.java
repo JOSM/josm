@@ -150,7 +150,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         ProgressMonitor monitor = new SwingRenderingProgressMonitor(pnlUploadLayers);
         monitor.beginTask(tr("Uploading and saving modified layers ..."));
         this.saveAndUploadTask = new SaveAndUploadTask(model, monitor);
-        new Thread(saveAndUploadTask).start();
+        new Thread(saveAndUploadTask, saveAndUploadTask.getClass().getName()).start();
     }
 
     protected void cancelSafeAndUploadTask() {
