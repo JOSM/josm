@@ -19,7 +19,7 @@ public class TileController {
 
     /**
      * retrieves a tile from the cache. If the tile is not present in the cache
-     * a load job is added to the working queue of {@link JobThread}.
+     * a load job is added to the working queue of {@link TileLoader}.
      *
      * @param tilex the X position of the tile
      * @param tiley the Y position of the tile
