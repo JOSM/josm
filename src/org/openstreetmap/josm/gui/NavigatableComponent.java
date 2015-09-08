@@ -544,7 +544,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             final double frames = milliseconds * fps / 1000;
             final EastNorth finalNewCenter = newCenter;
 
-            new Thread() {
+            new Thread("smooth-scroller") {
                 @Override
                 public void run() {
                     for (int i = 0; i < frames; i++) {

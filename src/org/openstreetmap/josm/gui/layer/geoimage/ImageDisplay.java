@@ -444,7 +444,7 @@ public class ImageDisplay extends JComponent {
         }
         repaint();
         if (file != null) {
-            new Thread(new LoadImageRunnable(file, orientation)).start();
+            new Thread(new LoadImageRunnable(file, orientation), LoadImageRunnable.class.getName()).start();
         }
     }
 

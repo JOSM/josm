@@ -156,7 +156,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                 public void run() {
                     doRealRun();
                 }
-            }).start();
+            }, getClass().getName()).start();
         } else {
             doRealRun();
         }

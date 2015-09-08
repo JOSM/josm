@@ -584,7 +584,7 @@ public class MainApplication extends Main {
                     }
                     Main.pref.put("validated.ipv6", hasv6);
                 }
-            }).start();
+            }, "IPv6-checker").start();
         }
     }
 
