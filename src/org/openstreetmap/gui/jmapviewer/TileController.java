@@ -1,7 +1,6 @@
 // License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
 
-import org.openstreetmap.gui.jmapviewer.JobDispatcher.JobThread;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -12,13 +11,10 @@ public class TileController {
     protected TileCache tileCache;
     protected TileSource tileSource;
 
-    protected JobDispatcher jobDispatcher;
-
     public TileController(TileSource source, TileCache tileCache, TileLoaderListener listener) {
         this.tileSource = source;
         this.tileLoader = new OsmTileLoader(listener);
         this.tileCache = tileCache;
-        this.jobDispatcher = JobDispatcher.getInstance();
     }
 
     /**
@@ -80,8 +76,9 @@ public class TileController {
 
     /**
      * Removes all jobs from the queue that are currently not being processed.
+     *
      */
     public void cancelOutstandingJobs() {
-        jobDispatcher.cancelOutstandingJobs();
+        tileLoader.cancelOutstandingTasks();
     }
 }

@@ -177,4 +177,9 @@ public class OsmTileLoader implements TileLoader {
     public String toString() {
         return getClass().getSimpleName();
     }
+
+    @Override
+    public void cancelOutstandingTasks() {
+        // intentionally left empty - OsmTileLoader doesn't maintain queue
+    }
 }
