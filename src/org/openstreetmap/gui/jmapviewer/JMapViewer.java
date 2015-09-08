@@ -102,17 +102,26 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * retrieving the tiles.
      */
     public JMapViewer() {
-        this(new MemoryTileCache(), 8);
+        this(new MemoryTileCache());
         new DefaultMapController(this);
     }
 
     /**
      * Creates a new {@link JMapViewer} instance.
      * @param tileCache The cache where to store tiles
-     * @param downloadThreadCount The number of parallel threads for retrieving the tiles
+     * @depraceted @param downloadThreadCount not used anymore
      */
+    @Deprecated
     public JMapViewer(TileCache tileCache, int downloadThreadCount) {
-        JobDispatcher.setMaxWorkers(downloadThreadCount);
+        this(tileCache);
+    }
+
+    /**
+     * Creates a new {@link JMapViewer} instance.
+     * @param tileCache The cache where to store tiles
+     *
+     */
+    public JMapViewer(TileCache tileCache) {
         tileSource = new OsmTileSource.Mapnik();
         tileController = new TileController(tileSource, tileCache, this);
         mapMarkerList = Collections.synchronizedList(new LinkedList<MapMarker>());

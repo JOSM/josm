@@ -20,4 +20,10 @@ public interface TileLoader {
      *          action.
      */
     TileJob createTileLoaderJob(Tile tile);
+
+    /**
+     * cancels all outstanding tasks in the queue. This should rollback the state of the tiles in the queue
+     * to loading = false / loaded = false
+     */
+    void cancelOutstandingTasks();
 }
