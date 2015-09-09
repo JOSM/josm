@@ -3,10 +3,10 @@ package org.openstreetmap.josm.data.osm.visitor.paint.relations;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -46,7 +46,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
     private final Collection<PolyData> selectedPolyData;
 
     private MultipolygonCache() {
-        this.cache = new HashMap<>();
+        this.cache = new ConcurrentHashMap<>(); // see ticket 11833
         this.selectedPolyData = new ArrayList<>();
         Main.addProjectionChangeListener(this);
         DataSet.addSelectionListener(this);
@@ -83,11 +83,11 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         if (nc != null && r != null) {
             Map<DataSet, Map<Relation, Multipolygon>> map1 = cache.get(nc);
             if (map1 == null) {
-                cache.put(nc, map1 = new HashMap<>());
+                cache.put(nc, map1 = new ConcurrentHashMap<>());
             }
             Map<Relation, Multipolygon> map2 = map1.get(r.getDataSet());
             if (map2 == null) {
-                map1.put(r.getDataSet(), map2 = new HashMap<>());
+                map1.put(r.getDataSet(), map2 = new ConcurrentHashMap<>());
             }
             multipolygon = map2.get(r);
             if (multipolygon == null || forceRefresh) {
