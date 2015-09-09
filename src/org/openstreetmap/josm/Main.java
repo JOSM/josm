@@ -629,6 +629,7 @@ public abstract class Main {
             for (Future<Void> i : service.invokeAll(tasks)) {
                 i.get();
             }
+            service.shutdown();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
