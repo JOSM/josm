@@ -30,17 +30,18 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * This is a visitor that can be used to loop over the keys/values of this primitive.
      *
      * @author Michael Zangl
-     * @since 8740
+     * @since 8742
      */
     public interface KeyValueVisitor {
 
         /**
          * This method gets called for every tag received.
          *
+         * @param primitive This primitive
          * @param key   The key
          * @param value The value
          */
-        void visitKeyValue(String key, String value);
+        void visitKeyValue(AbstractPrimitive primitive, String key, String value);
     }
 
     private static final AtomicLong idCounter = new AtomicLong(0);
@@ -513,13 +514,13 @@ public abstract class AbstractPrimitive implements IPrimitive {
      *
      * @param visitor The visitor to call.
      * @see #getKeys()
-     * @since 8740
+     * @since 8742
      */
     public void visitKeys(KeyValueVisitor visitor) {
         final String[] keys = this.keys;
         if (keys != null) {
             for (int i = 0; i < keys.length; i += 2) {
-                visitor.visitKeyValue(keys[i], keys[i + 1]);
+                visitor.visitKeyValue(this, keys[i], keys[i + 1]);
             }
         }
     }
