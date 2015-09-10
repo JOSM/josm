@@ -126,6 +126,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("openstreetbugs", tr("replaced by new {0} plugin", "notes")),
             new DeprecatedPlugin("nearclick", tr("no longer required")),
             new DeprecatedPlugin("notes", IN_CORE),
+            new DeprecatedPlugin("mirrored_download", IN_CORE),
         });
     }
 
