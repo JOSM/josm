@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.actions;
+package org.openstreetmap.josm.tools;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,7 +17,7 @@ import javax.script.ScriptException;
  * to build an Overpass QL from a {@link org.openstreetmap.josm.actions.search.SearchAction} like query.
  *
  * Requires a JavaScript {@link ScriptEngine}.
- * @since 8684
+ * @since 8744
  */
 public final class OverpassTurboQueryWizard {
 
