@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.actions;
+package org.openstreetmap.josm.tools;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

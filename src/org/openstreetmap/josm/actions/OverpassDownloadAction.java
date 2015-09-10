@@ -7,8 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,19 +23,16 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.DataSource;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
-import org.openstreetmap.josm.io.BoundingBoxDownloader;
-import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -133,7 +128,7 @@ public class OverpassDownloadAction extends JosmAction {
             pnl.add(buildQuery, GBC.std().insets(5, 5, 5, 5));
             pnl.add(overpassWizard, GBC.eol().fill(GBC.HORIZONTAL));
 
-            overpassQuery = new JosmTextArea("[timeout:15];", 8, 80);
+            overpassQuery = new JosmTextArea("", 8, 80);
             overpassQuery.setFont(GuiHelper.getMonospacedFont(overpassQuery));
             JScrollPane scrollPane = new JScrollPane(overpassQuery);
             pnl.add(new JLabel(tr("Overpass query: ")), GBC.std().insets(5, 5, 5, 5));
@@ -174,92 +169,4 @@ public class OverpassDownloadAction extends JosmAction {
 
     }
 
-    static class OverpassDownloadReader extends BoundingBoxDownloader {
-
-        final String overpassServer;
-        final String overpassQuery;
-
-        public OverpassDownloadReader(Bounds downloadArea, String overpassServer, String overpassQuery) {
-            super(downloadArea);
-            this.overpassServer = overpassServer;
-            this.overpassQuery = overpassQuery.trim();
-        }
-
-        @Override
-        protected String getBaseUrl() {
-            return overpassServer;
-        }
-
-        @Override
-        protected String getRequestForBbox(double lon1, double lat1, double lon2, double lat2) {
-            if (overpassQuery.isEmpty())
-                return super.getRequestForBbox(lon1, lat1, lon2, lat2);
-            else {
-                String realQuery = completeOverpassQuery(overpassQuery);
-                try {
-                    return "interpreter?data=" + URLEncoder.encode(realQuery, "UTF-8")
-                            + "&bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
-                } catch (UnsupportedEncodingException e) {
-                    throw new IllegalStateException();
-                }
-            }
-        }
-
-        private String completeOverpassQuery(String query) {
-            int firstColon = query.indexOf(";");
-            if (firstColon == -1) {
-                return "[bbox];" + query;
-            }
-            int bboxPos = query.indexOf("[bbox");
-            if (bboxPos > -1 && bboxPos < firstColon) {
-                return query;
-            }
-
-            int bracketCount = 0;
-            int pos = 0;
-            for (; pos < firstColon; ++pos) {
-                if (query.charAt(pos) == '[')
-                    ++bracketCount;
-                else if (query.charAt(pos) == '[')
-                    --bracketCount;
-                else if (bracketCount == 0) {
-                    if (!Character.isWhitespace(query.charAt(pos)))
-                        break;
-                }
-            }
-
-            if (pos < firstColon) {
-                // We start with a statement, not with declarations
-                return "[bbox];" + query;
-            }
-
-            // We start with declarations. Add just one more declaration in this case.
-            return "[bbox]" + query;
-        }
-
-        @Override
-        public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
-
-            DataSet ds = super.parseOsm(progressMonitor);
-
-            // add bounds if necessary (note that Overpass API does not return bounds in the response XML)
-            if (ds != null && ds.dataSources.isEmpty()) {
-                if (crosses180th) {
-                    Bounds bounds = new Bounds(lat1, lon1, lat2, 180.0);
-                    DataSource src = new DataSource(bounds, getBaseUrl());
-                    ds.dataSources.add(src);
-
-                    bounds = new Bounds(lat1, -180.0, lat2, lon2);
-                    src = new DataSource(bounds, getBaseUrl());
-                    ds.dataSources.add(src);
-                } else {
-                    Bounds bounds = new Bounds(lat1, lon1, lat2, lon2);
-                    DataSource src = new DataSource(bounds, getBaseUrl());
-                    ds.dataSources.add(src);
-                }
-            }
-
-            return ds;
-        }
-    }
 }
