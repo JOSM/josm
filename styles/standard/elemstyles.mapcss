@@ -2899,7 +2899,6 @@ area[tourism=viewpoint],
 area[tourism=theme_park],
 area[tourism=attraction],
 area[tourism=zoo],
-area[tourism=artwork],
 area[tourism=museum] {
     fill-color: tourism#e180a2;
 }
@@ -2927,6 +2926,9 @@ node[tourism=zoo] {
     icon-image: "leisure/zoo.png";
     set icon_z17;
     text: auto;
+}
+area[tourism=artwork]:closed {
+    fill-color: tourism#e180a2;
 }
 way[tourism=artwork] {
     width: 2;
