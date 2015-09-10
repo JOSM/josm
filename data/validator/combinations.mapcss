@@ -137,9 +137,9 @@ way[junction                   ][!highway][junction!=yes],
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
 }
 
-/* {0.tag} without {1.tag} (info level) see #11600 #11393*/
-*[highway=motorway][!oneway],
-*[highway=motorway_link][!oneway] {
+/* {0.tag} without {1.tag} (info level) see #11600 #11393 #11850 */
+*[highway=motorway][!oneway][junction!=roundabout],
+*[highway=motorway_link][!oneway][junction!=roundabout] {
   throwOther: tr("{0} without {1}", "{0.tag}", "{1.tag}");
 }
 
