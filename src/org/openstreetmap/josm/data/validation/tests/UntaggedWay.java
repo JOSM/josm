@@ -82,7 +82,7 @@ public class UntaggedWay extends Test {
                     && !"yes".equals(tags.get("noname"))) {
                 boolean isJunction = false;
                 boolean hasName = false;
-                for (String key : w.keySet()) {
+                for (String key : tags.keySet()) {
                     hasName = key.startsWith("name:") || key.endsWith("_name") || key.endsWith("_ref");
                     if (hasName) {
                         break;

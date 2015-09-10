@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -19,7 +20,7 @@ import org.openstreetmap.josm.data.validation.TestError;
  *
  * @author frsantos
  */
-public class UntaggedNode extends Test {
+public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisitor {
 
     protected static final int UNTAGGED_NODE_BLANK = 201;
     protected static final int UNTAGGED_NODE_FIXME = 202;
@@ -28,6 +29,7 @@ public class UntaggedNode extends Test {
     protected static final int UNTAGGED_NODE_WATCH = 205;
     protected static final int UNTAGGED_NODE_SOURCE = 206;
     protected static final int UNTAGGED_NODE_OTHER = 207;
+    protected static final String ERROR_MESSAGE = tr("Unconnected nodes without physical tags");
 
     /**
      * Constructor
@@ -49,48 +51,50 @@ public class UntaggedNode extends Test {
     @Override
     public void visit(Node n) {
         if (n.isUsable() && !n.isTagged() && n.getReferrers().isEmpty()) {
-            String errorMessage = tr("Unconnected nodes without physical tags");
+
             if (!n.hasKeys()) {
                 String msg = marktr("No tags");
-                errors.add(new TestError(this, Severity.WARNING, errorMessage, tr(msg), msg, UNTAGGED_NODE_BLANK, n));
+                errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr(msg), msg, UNTAGGED_NODE_BLANK, n));
                 return;
             }
-            for (Map.Entry<String, String> tag : n.getKeys().entrySet()) {
-                String key = tag.getKey();
-                if (contains(tag, "fixme") || contains(tag, "FIXME")) {
-                    /* translation note: don't translate quoted words */
-                    String msg = marktr("Has tag containing ''fixme'' or ''FIXME''");
-                    errors.add(new TestError(this, Severity.WARNING, errorMessage, tr(msg), msg, UNTAGGED_NODE_FIXME, n));
-                    return;
-                }
-
-                String msg = null;
-                int code = 0;
-                if (key.startsWith("note") || key.startsWith("comment") || key.startsWith("description")) {
-                    /* translation note: don't translate quoted words */
-                    msg = marktr("Has key ''note'' or ''comment'' or ''description''");
-                    code = UNTAGGED_NODE_NOTE;
-                } else if (key.startsWith("created_by") || key.startsWith("converted_by")) {
-                    /* translation note: don't translate quoted words */
-                    msg = marktr("Has key ''created_by'' or ''converted_by''");
-                    code = UNTAGGED_NODE_CREATED_BY;
-                } else if (key.startsWith("watch")) {
-                    /* translation note: don't translate quoted words */
-                    msg = marktr("Has key ''watch''");
-                    code = UNTAGGED_NODE_WATCH;
-                } else if (key.startsWith("source")) {
-                    /* translation note: don't translate quoted words */
-                    msg = marktr("Has key ''source''");
-                    code = UNTAGGED_NODE_SOURCE;
-                }
-                if (msg != null) {
-                    errors.add(new TestError(this, Severity.WARNING, errorMessage, tr(msg), msg, code, n));
-                    return;
-                }
-            }
-            // Does not happen, but just to be sure. Maybe definition of uninteresting tags changes in future.
-            errors.add(new TestError(this, Severity.WARNING, errorMessage, tr("Other"), "Other", UNTAGGED_NODE_OTHER, n));
+            n.visitKeys(this);
         }
+    }
+
+    @Override
+    public void visitKeyValue(AbstractPrimitive n, String key, String value) {
+        if (key.toLowerCase().contains("fixme") || value.toLowerCase().contains("fixme")) {
+            /* translation note: don't translate quoted words */
+            String msg = marktr("Has tag containing ''fixme'' or ''FIXME''");
+            errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr(msg), msg, UNTAGGED_NODE_FIXME, (OsmPrimitive) n));
+            return;
+        }
+
+        String msg = null;
+        int code = 0;
+        if (key.startsWith("note") || key.startsWith("comment") || key.startsWith("description")) {
+            /* translation note: don't translate quoted words */
+            msg = marktr("Has key ''note'' or ''comment'' or ''description''");
+            code = UNTAGGED_NODE_NOTE;
+        } else if (key.startsWith("created_by") || key.startsWith("converted_by")) {
+            /* translation note: don't translate quoted words */
+            msg = marktr("Has key ''created_by'' or ''converted_by''");
+            code = UNTAGGED_NODE_CREATED_BY;
+        } else if (key.startsWith("watch")) {
+            /* translation note: don't translate quoted words */
+            msg = marktr("Has key ''watch''");
+            code = UNTAGGED_NODE_WATCH;
+        } else if (key.startsWith("source")) {
+            /* translation note: don't translate quoted words */
+            msg = marktr("Has key ''source''");
+            code = UNTAGGED_NODE_SOURCE;
+        }
+        if (msg != null) {
+            errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr(msg), msg, code, (OsmPrimitive) n));
+            return;
+        }
+        // Does not happen, but just to be sure. Maybe definition of uninteresting tags changes in future.
+        errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr("Other"), "Other", UNTAGGED_NODE_OTHER, (OsmPrimitive) n));
     }
 
     private boolean contains(Map.Entry<String, String> tag, String s) {
