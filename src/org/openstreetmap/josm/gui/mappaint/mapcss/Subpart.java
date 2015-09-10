@@ -28,6 +28,11 @@ public interface Subpart {
         public String getId(Environment env) {
             return id;
         }
+
+        @Override
+        public String toString() {
+            return id;
+        }
     }
 
     /**
@@ -45,6 +50,11 @@ public interface Subpart {
         @Override
         public String getId(Environment env) {
             return Cascade.convertTo(id.evaluate(env), String.class);
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(id);
         }
     }
 }

@@ -105,6 +105,7 @@ public class MapCSSTagCheckerTest {
         final Collection<TestError> errors = test.getErrorsForPrimitive(p, false);
         assertThat(errors.size(), is(1));
         assertThat(errors.iterator().next().getMessage(), is("has alt_name but not name"));
+        assertThat(errors.iterator().next().getIgnoreSubGroup(), is("3000_*[.+_name][!name]"));
     }
 
     @Test
@@ -115,6 +116,7 @@ public class MapCSSTagCheckerTest {
         final Collection<TestError> errors = test.getErrorsForPrimitive(p, false);
         assertThat(errors.size(), is(1));
         assertThat(errors.iterator().next().getMessage(), is("footway used with foot=no"));
+        assertThat(errors.iterator().next().getIgnoreSubGroup(), is("3000_way[highway=footway][foot]"));
     }
 
     @Test

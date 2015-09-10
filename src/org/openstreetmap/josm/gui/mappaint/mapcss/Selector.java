@@ -655,7 +655,7 @@ public interface Selector {
         @Override
         public String toString() {
             return base + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range) + Utils.join("", conds)
-                    + (subpart != null ? "::" + subpart : "");
+                    + (subpart != null && subpart != Subpart.DEFAULT_SUBPART ? "::" + subpart : "");
         }
     }
 }
