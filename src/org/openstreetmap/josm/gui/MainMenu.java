@@ -913,7 +913,7 @@ public class MainMenu extends JMenuBar {
 
     protected void showAudioMenu(boolean showMenu) {
         if (showMenu && audioMenu == null) {
-            audioMenu = addMenu(/* I18N: mnemonic: U */ marktrc("Audio", "menu"), KeyEvent.VK_U, defaultMenuPos, ht("/Menu/Audio"));
+            audioMenu = addMenu(/* I18N: mnemonic: U */ marktrc("menu", "Audio"), KeyEvent.VK_U, defaultMenuPos, ht("/Menu/Audio"));
             add(audioMenu, audioPlayPause);
             add(audioMenu, audioNext);
             add(audioMenu, audioPrev);
