@@ -134,9 +134,15 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     public boolean showErrors;
 
     /**
+     * Offset between calculated zoom level and zoom level used to download and show tiles. Negative values will result in
+     * lower resolution of imagery useful in "retina" displays, positive values will result in higher resolution
+     */
+    public static final IntegerProperty ZOOM_OFFSET = new IntegerProperty(PREFERENCE_PREFIX + ".zoom_offset", 0);
+
+    /**
      * use fairly small memory cache, as cached objects are quite big, as they contain BufferedImages
      */
-    public static final IntegerProperty MEMORY_CACHE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + "cache.max_objects_ram", 200);
+    public static final IntegerProperty MEMORY_CACHE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + ".cache.max_objects_ram", (int)Math.max(200,  200 * Math.pow(4, ZOOM_OFFSET.get())));
 
     /*
      *  use MemoryTileCache instead of tileLoader JCS cache, as tileLoader caches only content (byte[] of image)
@@ -279,22 +285,21 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     protected int getBestZoom() {
         double factor = getScaleFactor(1); // check the ratio between area of tilesize at zoom 1 to current view
-        double result = Math.log(factor)/Math.log(2)/2+1;
+        double result = Math.log(factor)/Math.log(2)/2;
         /*
          * Math.log(factor)/Math.log(2) - gives log base 2 of factor
          * We divide result by 2, as factor contains ratio between areas. We could do Math.sqrt before log, or just divide log by 2
-         * In general, smaller zoom levels are more readable.  We prefer big,
-         * block, pixelated (but readable) map text to small, smeared,
-         * unreadable underzoomed text.  So, use .floor() instead of rounding
-         * to skew things a bit toward the lower zooms.
-         * Remember, that result here, should correspond to TMSLayer.paint(...)
-         * getScaleFactor(...) is supposed to be between 0.75 and 3
+         *
+         * ZOOM_OFFSET controls, whether we work with overzoomed or underzoomed tiles. Positive ZOOM_OFFSET
+         * is for working with underzoomed tiles (higher quality when working with aerial imagery), negative ZOOM_OFFSET
+         * is for working with overzoomed tiles (big, pixelated), which is good when working with high-dpi screens and/or
+         * maps as a imagery layer
          */
-        int intResult = (int) Math.floor(result);
-        if (intResult > getMaxZoomLvl())
-            return getMaxZoomLvl();
-        if (intResult < getMinZoomLvl())
-            return getMinZoomLvl();
+
+        int intResult = (int) Math.round(result + 1 + ZOOM_OFFSET.get() / 1.9);
+
+        intResult = Math.min(intResult, getMaxZoomLvl());
+        intResult = Math.max(intResult, getMinZoomLvl());
         return intResult;
     }
 
@@ -1191,7 +1196,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
 
         private boolean tooLarge() {
-            return this.tilesSpanned() > 10;
+            return this.tilesSpanned() > 20;
         }
 
         private boolean insane() {
@@ -1373,10 +1378,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
         int zoom = currentZoomLevel;
         if (autoZoom) {
-            double pixelScaling = getScaleFactor(zoom);
-            if (pixelScaling > 3 || pixelScaling < 0.7) {
-                zoom = getBestZoom();
-            }
+            zoom = getBestZoom();
         }
 
         DeepTileSet dts = new DeepTileSet(topLeft, botRight, getMinZoomLvl(), zoom);

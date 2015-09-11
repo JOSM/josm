@@ -19,6 +19,7 @@ import javax.swing.SpinnerNumberModel;
 
 import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
+import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -38,6 +39,7 @@ public class CommonSettingsPanel extends JPanel {
     private final JosmTextField tilecacheDir = new JosmTextField();
     private final JSpinner maxElementsOnDisk;
     private final JSpinner maxElementsInRam;
+    private final JSlider tilesZoom = new JSlider(-2, 2, 0);
 
 
     /**
@@ -98,6 +100,14 @@ public class CommonSettingsPanel extends JPanel {
         add(new JLabel(tr("Maximum number of objects in memory cache: ")), GBC.std());
         add(GBC.glue(5, 0), GBC.std());
         add(this.maxElementsInRam, GBC.eol());
+
+        this.tilesZoom.setPaintLabels(true);
+        this.tilesZoom.setMajorTickSpacing(2);
+        this.tilesZoom.setMinorTickSpacing(1);
+        this.tilesZoom.setPaintTicks(true);
+        add(new JLabel(tr("Tiles zoom offset:")));
+        add(GBC.glue(5, 0), GBC.std());
+        add(this.tilesZoom, GBC.eol());
     }
 
     /**
@@ -112,7 +122,7 @@ public class CommonSettingsPanel extends JPanel {
         this.tilecacheDir.setText(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
         this.maxElementsOnDisk.setValue(AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get());
         this.maxElementsInRam.setValue(AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get());
-
+        this.tilesZoom.setValue(AbstractTileSourceLayer.ZOOM_OFFSET.get());
     }
 
     /**
@@ -123,6 +133,7 @@ public class CommonSettingsPanel extends JPanel {
         ImageryLayer.PROP_FADE_AMOUNT.put(this.fadeAmount.getValue());
         ImageryLayer.PROP_FADE_COLOR.put(this.btnFadeColor.getBackground());
         ImageryLayer.PROP_SHARPEN_LEVEL.put(sharpen.getSelectedIndex());
+
         boolean restartRequired = false;
         if (!AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().equals(this.maxElementsOnDisk.getValue())) {
             AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.put((Integer) this.maxElementsOnDisk.getValue());
@@ -137,9 +148,14 @@ public class CommonSettingsPanel extends JPanel {
 
         if (!AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get().equals(this.maxElementsInRam.getValue())) {
             AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.put((Integer) this.maxElementsInRam.getValue());
+            restartRequired = true;
         }
 
-
+        if (!AbstractTileSourceLayer.ZOOM_OFFSET.get().equals(this.tilesZoom.getValue())) {
+            // TODO: make warning about too small MEMORY_CACHE_SIZE?
+            AbstractTileSourceLayer.ZOOM_OFFSET.put(this.tilesZoom.getValue());
+            restartRequired = true;
+        }
         return restartRequired;
     }
 }
