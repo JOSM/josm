@@ -9,10 +9,13 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A {@link TileLoader} implementation that loads tiles from OSM.
@@ -20,6 +23,10 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
  * @author Jan Peter Stotz
  */
 public class OsmTileLoader implements TileLoader {
+    private final static Executor jobDispatcher =
+            Executors.newSingleThreadExecutor(
+                    Utils.newThreadFactory("OsmTileLoader-%d", Thread.NORM_PRIORITY)
+                    );
 
     private final class OsmTileJob implements TileJob {
         private final Tile tile;
@@ -88,7 +95,7 @@ public class OsmTileLoader implements TileLoader {
         @Override
         public void submit(boolean force) {
             this.force = force;
-            run();
+            jobDispatcher.execute(this);
         }
     }
 
