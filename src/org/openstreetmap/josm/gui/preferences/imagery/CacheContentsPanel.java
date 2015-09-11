@@ -34,6 +34,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.engine.stats.behavior.ICacheStats;
@@ -141,33 +142,33 @@ public class CacheContentsPanel extends JPanel {
      */
     public CacheContentsPanel() {
         super(new GridBagLayout());
-        CacheAccess<String, BufferedImageCacheEntry> cache = TMSLayer.getCache();
-        add(
-                new JLabel(tr("TMS cache, total cache size: {0} bytes", getCacheSize(cache))),
-                GBC.eol().insets(5, 5, 0, 0)
-                );
-        add(
-                new JScrollPane(getTableForCache(cache)),
-                GBC.eol().fill(GBC.BOTH));
-
-        cache = WMSLayer.getCache();
-        add(
-                new JLabel(tr("WMS cache, total cache size: {0} bytes", getCacheSize(cache))),
-                GBC.eol().insets(5, 5, 0, 0));
-        add(
-                new JScrollPane(getTableForCache(cache)),
-                GBC.eol().fill(GBC.BOTH));
-
-        cache = WMTSLayer.getCache();
-        add(
-                new JLabel(tr("WMTS cache, total cache size: {0} bytes", getCacheSize(cache))),
-                GBC.eol().insets(5, 5, 0, 0));
-
-        add(
-                new JScrollPane(getTableForCache(cache)),
-                GBC.eol().fill(GBC.BOTH));
-
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                addToPanel(TMSLayer.getCache(), "TMS");
+                addToPanel(WMSLayer.getCache(), "WMS");
+                addToPanel(WMTSLayer.getCache(), "WMTS");
+            }
+        });
         executor.shutdown();
+    }
+
+    private void addToPanel(final CacheAccess<String, BufferedImageCacheEntry> cache, final String name) {
+        final Long cacheSize = getCacheSize(cache);
+        final TableModel tableModel = getTableModel(cache);
+
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                add(
+                        new JLabel(tr("{0} cache, total cache size: {1} bytes", name, cacheSize)),
+                        GBC.eol().insets(5, 5, 0, 0));
+
+                add(
+                        new JScrollPane(getTableForCache(cache, tableModel)),
+                        GBC.eol().fill(GBC.BOTH));
+            }
+        });
     }
 
     private Long getCacheSize(CacheAccess<String, BufferedImageCacheEntry> cache) {
@@ -186,7 +187,7 @@ public class CacheContentsPanel extends JPanel {
         return Long.valueOf(-1);
     }
 
-    private static Map<String, Integer> getCacheStats(CacheAccess<String, BufferedImageCacheEntry> cache) {
+    private static String[][] getCacheStats(CacheAccess<String, BufferedImageCacheEntry> cache) {
         Set<String> keySet = cache.getCacheControl().getKeySet();
         Map<String, int[]> temp = new ConcurrentHashMap<>(); // use int[] as a Object reference to int, gives better performance
         for (String key: keySet) {
@@ -203,55 +204,26 @@ public class CacheContentsPanel extends JPanel {
             }
         }
 
-        // convert to standard Map<String, Integer>
-        Map<String, Integer> ret = new ConcurrentHashMap<>();
+        List<Pair<String, Integer>> sortedStats = new ArrayList<>();
         for (Entry<String, int[]> e: temp.entrySet()) {
-            ret.put(e.getKey(), e.getValue()[0]);
+            sortedStats.add(new Pair<>(e.getKey(), e.getValue()[0]));
+        }
+        Collections.sort(sortedStats, new Comparator<Pair<String, Integer>>() {
+            @Override
+            public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
+                return -1 * o1.b.compareTo(o2.b);
+            }
+        });
+        String[][] ret = new String[sortedStats.size()][3];
+        int index = 0;
+        for(Pair<String, Integer> e: sortedStats) {
+            ret[index] = new String[]{e.a, e.b.toString(), tr("Clear")};
+            index++;
         }
         return ret;
     }
 
-    private void backgroundUpdateModel(final CacheAccess<String, BufferedImageCacheEntry> cache, final DefaultTableModel tableModel) {
-        // fetch statistics in background thread as this may take some time
-        executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                final List<Pair<String, Integer>> sortedStats = new ArrayList<>();
-                for (Entry<String, Integer> e: getCacheStats(cache).entrySet()) {
-                    sortedStats.add(new Pair<>(e.getKey(), e.getValue()));
-                }
-                Collections.sort(sortedStats, new Comparator<Pair<String, Integer>>() {
-                    @Override
-                    public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
-                        return -1 * o1.b.compareTo(o2.b);
-                    }
-                });
-                // once statistics are ready, update the model in EDT thread
-                GuiHelper.runInEDT(new Runnable() {
-                    @Override
-                    public void run() {
-                        tableModel.removeRow(0);
-                        for (Pair<String, Integer> e: sortedStats) {
-                            tableModel.addRow(new String[]{e.a, e.b.toString(), tr("Clear")});
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    private JTable getTableForCache(final CacheAccess<String, BufferedImageCacheEntry> cache) {
-        final DefaultTableModel tableModel = new DefaultTableModel(
-                new String[][]{{tr("Loading data"), tr("Please wait"), ""}},
-                new String[]{"Cache name", "Object Count", "Clear"}) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 2;
-            }
-        };
-
-        backgroundUpdateModel(cache, tableModel);
-
+    private JTable getTableForCache(final CacheAccess<String, BufferedImageCacheEntry> cache, final TableModel tableModel) {
         final JTable ret = new JTable(tableModel);
 
         ButtonColumn buttonColumn = new ButtonColumn(
@@ -267,5 +239,17 @@ public class CacheContentsPanel extends JPanel {
         tableColumn.setCellRenderer(buttonColumn);
         tableColumn.setCellEditor(buttonColumn);
         return ret;
+    }
+
+    private DefaultTableModel getTableModel(final CacheAccess<String, BufferedImageCacheEntry> cache) {
+        final DefaultTableModel tableModel = new DefaultTableModel(
+                getCacheStats(cache),
+                new String[]{"Cache name", "Object Count", "Clear"}) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 2;
+            }
+        };
+        return tableModel;
     }
 }
