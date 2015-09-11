@@ -388,7 +388,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V>
                 }
             }
         }
-        else if ( key instanceof GroupAttrName )
+        else if ( key instanceof GroupAttrName && ((GroupAttrName<?>)key).attrName == null)
         {
             // remove all keys of the same name hierarchy.
             for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator(); itr.hasNext(); )
