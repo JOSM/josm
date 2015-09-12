@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -22,9 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.AbstractTableModel;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -97,7 +99,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     private static class Layer {
         private String format;
         private String name;
-        private Map<String, TileMatrixSet> tileMatrixSetByCRS = new ConcurrentHashMap<>();
+        private TileMatrixSet tileMatrixSet;
         private String baseUrl;
         private String style;
     }
@@ -128,29 +130,61 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
 
     private static final class SelectLayerDialog extends ExtendedDialog {
         private final Layer[] layers;
-        private final JList<String> list;
+        private final JTable list;
 
         public SelectLayerDialog(Collection<Layer> layers) {
             super(Main.parent, tr("Select WMTS layer"), new String[]{tr("Add layers"), tr("Cancel")});
             this.layers = layers.toArray(new Layer[]{});
-            this.list = new JList<>(getLayerNames(layers));
+            //getLayersTable(layers, Main.getProjection())
+            this.list = new JTable(
+                    new AbstractTableModel() {
+                        @Override
+                        public Object getValueAt(int rowIndex, int columnIndex) {
+                            switch (columnIndex) {
+                            case 0:
+                                return SelectLayerDialog.this.layers[rowIndex].name;
+                            case 1:
+                                return SelectLayerDialog.this.layers[rowIndex].tileMatrixSet.crs;
+                            case 2:
+                                return SelectLayerDialog.this.layers[rowIndex].tileMatrixSet.identifier;
+                            default:
+                                throw new IllegalArgumentException();
+                            }
+                        }
+
+                        @Override
+                        public int getRowCount() {
+                            return SelectLayerDialog.this.layers.length;
+                        }
+
+                        @Override
+                        public int getColumnCount() {
+                            return 3;
+                        }
+                        @Override
+                        public String getColumnName(int column) {
+                            switch (column) {
+                            case 0: return tr("Layer name");
+                            case 1: return tr("Projection");
+                            case 2: return tr("Matrix set identifier");
+                            default:
+                                throw new IllegalArgumentException();
+                            }
+                        }
+                        @Override
+                        public boolean isCellEditable(int row, int column) { return false; }
+                    });
             this.list.setPreferredSize(new Dimension(400, 400));
             this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.list.setRowSelectionAllowed(true);
+            this.list.setColumnSelectionAllowed(false);
             JPanel panel = new JPanel(new GridBagLayout());
             panel.add(this.list, GBC.eol().fill());
             setContent(panel);
         }
 
-        private static String[] getLayerNames(Collection<Layer> layers) {
-            Collection<String> ret = new ArrayList<>();
-            for (Layer layer: layers) {
-                ret.add(layer.name);
-            }
-            return ret.toArray(new String[]{});
-        }
-
         public Layer getSelectedLayer() {
-            int index = list.getSelectedIndex();
+            int index = list.getSelectedRow();
             if (index < 0) {
                 return null; //nothing selected
             }
@@ -174,25 +208,27 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         super(info);
         this.baseUrl = normalizeCapabilitiesUrl(handleTemplate(info.getUrl()));
         this.layers = getCapabilities();
-        if (layers.size() > 1) {
-            final SelectLayerDialog layerSelection = new SelectLayerDialog(layers);
-            if (layerSelection.showDialog().getValue() == 1) {
-                this.currentLayer = layerSelection.getSelectedLayer();
-                // TODO: save layer information into ImageryInfo / ImageryPreferences?
-            }
-
-            if (this.currentLayer == null) {
-                // user canceled operation or did not choose any layer
-                throw new IllegalArgumentException(tr("No layer selected"));
-            }
-
-        } else if (layers.size() == 1) {
-            this.currentLayer = this.layers.iterator().next();
-        } else {
+        if (this.layers.isEmpty())
             throw new IllegalArgumentException(tr("No layers defined by getCapabilities document: {0}", info.getUrl()));
-        }
 
-        initProjection();
+        // Not needed ? initProjection();
+    }
+
+    private Layer userSelectLayer(Collection<Layer> layers) {
+        if (layers.size() == 1)
+            return layers.iterator().next();
+        Layer ret = null;
+
+        final SelectLayerDialog layerSelection = new SelectLayerDialog(layers);
+        if (layerSelection.showDialog().getValue() == 1) {
+            ret = layerSelection.getSelectedLayer();
+            // TODO: save layer information into ImageryInfo / ImageryPreferences?
+        }
+        if (ret == null) {
+            // user canceled operation or did not choose any layer
+            throw new IllegalArgumentException(tr("No layer selected"));
+        }
+        return ret;
     }
 
     private String handleTemplate(String url) {
@@ -238,7 +274,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
             NodeList layersNodeList = getByXpath(document, "/Capabilities/Contents/Layer");
             Map<String, TileMatrixSet> matrixSetById = parseMatrices(getByXpath(document, "/Capabilities/Contents/TileMatrixSet"));
             return parseLayer(layersNodeList, matrixSetById);
-
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -254,21 +289,23 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         Collection<Layer> ret = new ArrayList<>();
         for (int layerId = 0; layerId < nodeList.getLength(); layerId++) {
             Node layerNode = nodeList.item(layerId);
-            Layer layer = new Layer();
-            layer.format = getStringByXpath(layerNode, "Format");
-            layer.name = getStringByXpath(layerNode, "Identifier");
-            layer.baseUrl = getStringByXpath(layerNode, "ResourceURL[@resourceType='tile']/@template");
-            layer.style = getStringByXpath(layerNode, "Style[@isDefault='true']/Identifier");
-            if (layer.style == null) {
-                layer.style = "";
-            }
             NodeList tileMatrixSetLinks = getByXpath(layerNode, "TileMatrixSetLink");
+
+            // we add an layer for all matrix sets to allow user to choose, with which tileset he wants to work
             for (int tileMatrixId = 0; tileMatrixId < tileMatrixSetLinks.getLength(); tileMatrixId++) {
+                Layer layer = new Layer();
+                layer.format = getStringByXpath(layerNode, "Format");
+                layer.name = getStringByXpath(layerNode, "Identifier");
+                layer.baseUrl = getStringByXpath(layerNode, "ResourceURL[@resourceType='tile']/@template");
+                layer.style = getStringByXpath(layerNode, "Style[@isDefault='true']/Identifier");
+                if (layer.style == null) {
+                    layer.style = "";
+                }
                 Node tileMatrixLink = tileMatrixSetLinks.item(tileMatrixId);
                 TileMatrixSet tms = matrixSetById.get(getStringByXpath(tileMatrixLink, "TileMatrixSet"));
-                layer.tileMatrixSetByCRS.put(tms.crs, tms);
+                layer.tileMatrixSet = tms;
+                ret.add(layer);
             }
-            ret.add(layer);
         }
         return ret;
 
@@ -356,13 +393,30 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @param proj projection to be used by this TileSource
      */
     public void initProjection(Projection proj) {
-        this.currentTileMatrixSet = currentLayer.tileMatrixSetByCRS.get(proj.toCode());
-        if (this.currentTileMatrixSet == null) {
-            Main.warn("Unsupported CRS selected");
-            // take first, maybe it will work (if user sets custom projections, codes will not match)
-            this.currentTileMatrixSet = currentLayer.tileMatrixSetByCRS.values().iterator().next();
+        String layerName = null;
+        if (currentLayer != null) {
+            layerName = currentLayer.name;
         }
+        Collection<Layer> candidates = getLayers(layerName, proj.toCode());
+        if (!candidates.isEmpty()) {
+            Layer newLayer = userSelectLayer(candidates);
+            if (newLayer != null) {
+                this.currentTileMatrixSet = newLayer.tileMatrixSet;
+                this.currentLayer = newLayer;
+            }
+        }
+
         this.crsScale = getTileSize() * 0.28e-03 / proj.getMetersPerUnit();
+    }
+
+    private Collection<Layer> getLayers(String name, String projectionCode) {
+        Collection<Layer> ret = new ArrayList<>();
+        for (Layer layer: this.layers) {
+            if ((name == null || name.equals(layer.name)) && (projectionCode == null || projectionCode.equals(layer.tileMatrixSet.crs))) {
+                ret.add(layer);
+            }
+        }
+        return ret;
     }
 
     @Override
@@ -384,6 +438,10 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) {
         String url;
+        if (currentLayer == null) {
+            return "";
+        }
+
         switch (transferMode) {
         case KVP:
             url = baseUrl + URL_GET_ENCODING_PARAMS;
@@ -618,7 +676,19 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @return set of projection codes that this TileSource supports
      */
     public Set<String> getSupportedProjections() {
-        return this.currentLayer.tileMatrixSetByCRS.keySet();
+        Set<String> ret = new HashSet<>();
+        if (currentLayer == null) {
+            for(Layer layer: this.layers) {
+                ret.add(layer.tileMatrixSet.crs);
+            }
+        } else {
+            for(Layer layer: this.layers) {
+                if (currentLayer.name.equals(layer.name)) {
+                    ret.add(layer.tileMatrixSet.crs);
+                }
+            }
+        }
+        return ret;
     }
 
     private int getTileYMax(int zoom, Projection proj) {

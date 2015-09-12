@@ -25,6 +25,7 @@ public class WMTSTileSourceTest {
     private ImageryInfo testImageryORTO_PL = getImagery("test/data/wmts/getcapabilities-ORTO.xml");
     private ImageryInfo testImageryWIEN = getImagery("test/data/wmts/getCapabilities-wien.xml");
     private ImageryInfo testImageryWALLONIE = getImagery("test/data/wmts/WMTSCapabilities-Wallonie.xml");
+    private ImageryInfo testImageryOntario = getImagery("test/data/wmts/WMTSCapabilities-Ontario.xml");
 
     @BeforeClass
     public static void setUp() {
@@ -47,6 +48,7 @@ public class WMTSTileSourceTest {
     public void testPseudoMercator() throws MalformedURLException, IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryPSEUDO_MERCATOR);
+        testSource.initProjection();
 
         verifyMercatorTile(testSource, 0, 0, 1);
         verifyMercatorTile(testSource, 0, 0, 2);
@@ -77,6 +79,8 @@ public class WMTSTileSourceTest {
     public void testWALLONIE() throws MalformedURLException, IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWALLONIE);
+        testSource.initProjection();
+
         assertEquals("http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/"
                 + "MapServer/WMTS/tile/1.0.0/DONNEES_BASE_FOND_PLAN_ANNOTATIONS_2012_RW_NB/default/default028mm/5/1219/1063.png",
                 testSource.getTileUrl(6, 1063, 1219));
@@ -94,6 +98,8 @@ public class WMTSTileSourceTest {
     public void testWALLONIENoMatrixDimension() throws MalformedURLException, IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(getImagery("test/data/wmts/WMTSCapabilities-Wallonie-nomatrixdimension.xml"));
+        testSource.initProjection();
+
         Bounds wallonieBounds = new Bounds(
                 new LatLon(49.485372459967245, 2.840548314430268),
                 new LatLon(50.820959517561256, 6.427849693016202)
@@ -116,6 +122,7 @@ public class WMTSTileSourceTest {
     public void testWIEN() throws MalformedURLException, IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWIEN);
+        testSource.initProjection();
         int zoomOffset = 9;
 
         verifyMercatorTile(testSource, 0, 0, 1, zoomOffset);
@@ -157,6 +164,7 @@ public class WMTSTileSourceTest {
     public void testGeoportalTOPOPL() throws IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryTOPO_PL);
+        testSource.initProjection();
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 1);
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 2);
         verifyTile(new LatLon(51.1268639, 16.8731360), testSource, 1, 1, 2);
@@ -178,6 +186,7 @@ public class WMTSTileSourceTest {
     public void testGeoportalORTOPL4326() throws IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
+        testSource.initProjection();
         verifyTile(new LatLon(53.5993712684958, 19.560669777688176), testSource, 12412, 3941, 14);
         verifyTile(new LatLon(49.783096954497786, 22.79034127751704), testSource, 17714, 10206, 14);
     }
@@ -186,9 +195,21 @@ public class WMTSTileSourceTest {
     public void testGeoportalORTOPL2180() throws IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:2180"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
+        testSource.initProjection();
 
         verifyTile(new LatLon(53.59940948387726, 19.560544913270064), testSource, 6453, 3140, 14);
         verifyTile(new LatLon(49.782984840526055, 22.790064966993445), testSource, 9932, 9305, 14);
+    }
+
+    // disabled as this needs user action
+    // @Test
+    public void testTwoTileSetsForOneProjection() throws Exception {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        WMTSTileSource testSource = new WMTSTileSource(testImageryOntario);
+        testSource.initProjection();
+        verifyTile(new LatLon(45.4105023, -75.7153702), testSource, 303751, 375502, 12);
+        verifyTile(new LatLon(45.4601306, -75.7617187), testSource, 1186, 1466, 4);
+
     }
 
     private void verifyTile(LatLon expected, WMTSTileSource source, int x, int y, int z) {

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.layer;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.TileXY;
@@ -94,7 +95,8 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer {
 
     @Override
     public boolean isProjectionSupported(Projection proj) {
-        return ((WMTSTileSource) tileSource).getSupportedProjections().contains(proj.toCode());
+        Set<String> supportedProjections = ((WMTSTileSource) tileSource).getSupportedProjections();
+        return supportedProjections.contains(proj.toCode());
     }
 
     @Override
@@ -103,7 +105,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer {
         for (String e: ((WMTSTileSource) tileSource).getSupportedProjections()) {
             ret.append(e).append(", ");
         }
-        return ret.substring(0, ret.length()-2);
+        return ret.length() > 2 ? ret.substring(0, ret.length()-2) : ret.toString();
     }
 
     @Override
