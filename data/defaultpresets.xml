@@ -590,6 +590,7 @@
             <key key="highway" value="unclassified" />
             <optional>
                 <text key="name" text="Name" />
+                <check key="noname" text="Street has no name" disable_off="true" />
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
@@ -614,6 +615,7 @@
             <key key="highway" value="residential" />
             <text key="name" text="Name" />
             <optional>
+                <check key="noname" text="Street has no name" disable_off="true" />
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
