@@ -114,7 +114,8 @@ public class OpenFileAction extends DiskAccessAction {
                     final File[] matchingFiles = file.getParentFile().listFiles(new FilenameFilter() {
                         @Override
                         public boolean accept(File dir, String name) {
-                            return name.startsWith(file.getName()) && fileFilter.accept(new File(dir, name));
+                            return name.startsWith(file.getName())
+                                    && fileFilter != null && fileFilter.accept(new File(dir, name));
                         }
                     });
                     if (matchingFiles != null && matchingFiles.length == 1) {
