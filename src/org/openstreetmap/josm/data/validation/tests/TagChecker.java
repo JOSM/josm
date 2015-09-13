@@ -70,8 +70,8 @@ public class TagChecker extends TagTest {
     /** The config file of dictionary words */
     public static final String SPELL_FILE = "resource://data/validator/words.cfg";
 
-    /** The spell check key substitutions: the key should be substituted by the value */
-    private static volatile Map<String, String> spellCheckKeyData;
+    /** Normalized keys: the key should be substituted by the value if the key was not found in presets */
+    private static final Map<String, String> harmonizedKeys = new HashMap<>();
     /** The spell check preset values */
     private static volatile MultiMap<String, String> presetsValueData;
     /** The TagChecker data */
@@ -125,6 +125,7 @@ public class TagChecker extends TagTest {
     protected static final int LOW_CHAR_VALUE    = 1210;
     protected static final int LOW_CHAR_KEY      = 1211;
     protected static final int MISSPELLED_VALUE  = 1212;
+    protected static final int MISSPELLED_KEY    = 1213;
     /** 1250 and up is used by tagcheck */
 
     protected EditableList sourcesList;
@@ -160,8 +161,7 @@ public class TagChecker extends TagTest {
         ignoreDataEquals.clear();
         ignoreDataEndsWith.clear();
         ignoreDataKeyPair.clear();
-
-        spellCheckKeyData = new HashMap<>();
+        harmonizedKeys.clear();
 
         String errorSources = "";
         for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
@@ -228,7 +228,7 @@ public class TagChecker extends TagTest {
                     } else if (line.charAt(0) == '+') {
                         okValue = line.substring(1);
                     } else if (line.charAt(0) == '-' && okValue != null) {
-                        spellCheckKeyData.put(line.substring(1), okValue);
+                        harmonizedKeys.put(harmonizeKey(line.substring(1)), okValue);
                     } else {
                         Main.error(tr("Invalid spellcheck line: {0}", line));
                     }
@@ -290,6 +290,7 @@ public class TagChecker extends TagTest {
         if (ky.key != null && values != null) {
             try {
                 presetsValueData.putAll(ky.key, values);
+                harmonizedKeys.put(harmonizeKey(ky.key), ky.key);
             } catch (NullPointerException e) {
                 Main.error(p+": Unable to initialize "+ky);
             }
@@ -359,11 +360,6 @@ public class TagChecker extends TagTest {
                         tr(s, key), MessageFormat.format(s, key), EMPTY_VALUES, p));
                 withErrors.put(p, "EV");
             }
-            if (checkKeys && spellCheckKeyData.containsKey(key) && !withErrors.contains(p, "IPK")) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Invalid property key"),
-                        tr(s, key), MessageFormat.format(s, key), INVALID_KEY, p));
-                withErrors.put(p, "IPK");
-            }
             if (checkKeys && key != null && key.indexOf(' ') >= 0 && !withErrors.contains(p, "IPK")) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Invalid white space in property key"),
                         tr(s, key), MessageFormat.format(s, key), INVALID_KEY_SPACE, p));
@@ -411,13 +407,25 @@ public class TagChecker extends TagTest {
 
                 if (!ignore) {
                     if (!keyInPresets) {
-                        String i = marktr("Key ''{0}'' not in presets.");
-                        errors.add(new TestError(this, Severity.OTHER, tr("Presets do not contain property key"),
-                                tr(i, key), MessageFormat.format(i, key), INVALID_VALUE, p));
-                        withErrors.put(p, "UPK");
+                        String prettifiedKey = harmonizeKey(key);
+                        String fixedKey = harmonizedKeys.get(prettifiedKey);
+                        if (fixedKey != null && !"".equals(fixedKey)) {
+                            // misspelled preset key
+                            String i = marktr("Key ''{0}'' looks like ''{1}''.");
+                            errors.add(new FixableTestError(this, Severity.WARNING, tr("Misspelled property key"),
+                                    tr(i, key, fixedKey),
+                                    MessageFormat.format(i, key, fixedKey), MISSPELLED_KEY, p,
+                                    new ChangePropertyKeyCommand(p, key, fixedKey)));
+                            withErrors.put(p, "WPK");
+                        } else {
+                            String i = marktr("Key ''{0}'' not in presets.");
+                            errors.add(new TestError(this, Severity.OTHER, tr("Presets do not contain property key"),
+                                    tr(i, key), MessageFormat.format(i, key), INVALID_VALUE, p));
+                            withErrors.put(p, "UPK");
+                        }
                     } else if (!tagInPresets) {
                         // try to fix common typos and check again if value is still unknown
-                        String fixedValue = prettifyValue(prop.getValue());
+                        String fixedValue = harmonizeValue(prop.getValue());
                         Map<String, String> possibleValues = getPossibleValues(values);
                         if (possibleValues.containsKey(fixedValue)) {
                             fixedValue = possibleValues.get(fixedValue);
@@ -464,10 +472,13 @@ public class TagChecker extends TagTest {
         return map;
     }
 
-    private static String prettifyValue(String value) {
-        // convert to lower case, replace ' ' or '-' with '_'
+    private static String harmonizeKey(String key) {
+        key = key.toLowerCase(Locale.ENGLISH).replace('-', '_').replace(':', '_').replace(' ', '_');
+        return Utils.strip(key, "-_;:,");
+    }
+
+    private static String harmonizeValue(String value) {
         value = value.toLowerCase(Locale.ENGLISH).replace('-', '_').replace(' ', '_');
-        // remove trailing or leading special chars
         return Utils.strip(value, "-_;:,");
     }
 
@@ -611,11 +622,6 @@ public class TagChecker extends TagTest {
                         String evalue = entities.unescape(value);
                         if (!evalue.equals(value)) {
                             commands.add(new ChangePropertyCommand(p, key, evalue));
-                        } else {
-                            String replacementKey = spellCheckKeyData.get(key);
-                            if (replacementKey != null) {
-                                commands.add(new ChangePropertyKeyCommand(p, key, replacementKey));
-                            }
                         }
                     }
                 }
