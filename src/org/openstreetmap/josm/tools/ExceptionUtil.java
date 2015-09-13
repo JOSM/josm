@@ -235,7 +235,7 @@ public final class ExceptionUtil {
             return tr(
                     "<html>Uploading to the server <strong>failed</strong> because your current<br>"
                     + "dataset violates a precondition.<br>" + "The error message is:<br>" + "{0}" + "</html>",
-                    escapeReservedCharactersHTML(e.getMessage()));
+                    Utils.escapeReservedCharactersHTML(e.getMessage()));
         }
     }
 
@@ -423,7 +423,7 @@ public final class ExceptionUtil {
             msg = e.toString();
         }
         Main.error(e);
-        return escapeReservedCharactersHTML(msg);
+        return Utils.escapeReservedCharactersHTML(msg);
     }
 
     /**
@@ -690,7 +690,7 @@ public final class ExceptionUtil {
                 + "<strong>Downloading failed</strong> if you tried to download this object.<br>"
                 + "<br>"
                 + "The error message is:<br>" + "{0}"
-                + "</html>", escapeReservedCharactersHTML(e.getMessage()));
+                + "</html>", Utils.escapeReservedCharactersHTML(e.getMessage()));
     }
 
     /**
@@ -708,12 +708,4 @@ public final class ExceptionUtil {
         }
     }
 
-    /**
-     * Replaces some HTML reserved characters (&lt;, &gt; and &amp;) by their equivalent entity (&amp;lt;, &amp;gt; and &amp;amp;);
-     * @param s The unescaped string
-     * @return The escaped string
-     */
-    public static String escapeReservedCharactersHTML(String s) {
-        return s == null ? "" : s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-    }
 }
