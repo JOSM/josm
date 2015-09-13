@@ -129,4 +129,16 @@ public class UtilsTest {
         assertThat(Utils.getDurationString((long) (1.5 * 24 * 60 * 60 * 1000)), is("1 day 12 h"));
         assertThat(Utils.getDurationString((long) (8.5 * 24 * 60 * 60 * 1000)), is("8 days 12 h"));
     }
+
+    @Test
+    public void testEscapeReservedCharactersHTML() throws Exception {
+        assertThat(Utils.escapeReservedCharactersHTML("foo -> bar -> '&'"), is("foo -&gt; bar -&gt; '&amp;'"));
+    }
+
+    @Test
+    public void testRestrictStringLines() throws Exception {
+        assertThat(Utils.restrictStringLines("1\n2\n3", 2), is("1\n..."));
+        assertThat(Utils.restrictStringLines("1\n2\n3", 3), is("1\n2\n3"));
+        assertThat(Utils.restrictStringLines("1\n2\n3", 4), is("1\n2\n3"));
+    }
 }

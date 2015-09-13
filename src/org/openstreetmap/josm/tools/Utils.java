@@ -645,6 +645,15 @@ public final class Utils {
     }
 
     /**
+     * Replaces some HTML reserved characters (&lt;, &gt; and &amp;) by their equivalent entity (&amp;lt;, &amp;gt; and &amp;amp;);
+     * @param s The unescaped string
+     * @return The escaped string
+     */
+    public static String escapeReservedCharactersHTML(String s) {
+        return s == null ? "" : s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+    }
+
+    /**
      * Represents a function that can be applied to objects of {@code A} and
      * returns objects of {@code B}.
      * @param <A> class of input objects
@@ -1183,6 +1192,25 @@ public final class Utils {
             return s.substring(0, maxLength - 3) + "...";
         } else {
             return s;
+        }
+    }
+
+    /**
+     * If the string {@code s} is longer than {@code maxLines} lines, the string is cut and a "..." line is appended.
+     * @param s String to shorten
+     * @param maxLines maximum number of lines to keep (including including the "..." line)
+     * @return the shortened string
+     */
+    public static String restrictStringLines(String s, int maxLines) {
+        if (s == null) {
+            return null;
+        } else {
+            final List<String> lines = Arrays.asList(s.split("\\n"));
+            if (lines.size() > maxLines) {
+                return join("\n", lines.subList(0, maxLines - 1)) + "\n" + "...";
+            } else {
+                return s;
+            }
         }
     }
 
