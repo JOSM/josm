@@ -35,7 +35,7 @@ public class TagEditorPanel extends JPanel {
     /** the tag editor model */
     private TagEditorModel model;
     /** the tag table */
-    private TagTable tagTable;
+    private final TagTable tagTable;
 
     private PresetListPanel presetListPanel;
     private final transient PresetHandler presetHandler;
@@ -47,7 +47,6 @@ public class TagEditorPanel extends JPanel {
      */
     protected JPanel buildTagTableEditorPanel() {
         JPanel pnl = new JPanel();
-        tagTable = new TagTable(model);
         pnl.setLayout(new BorderLayout());
         pnl.add(new JScrollPane(tagTable), BorderLayout.CENTER);
         if (presetHandler != null) {
@@ -141,7 +140,7 @@ public class TagEditorPanel extends JPanel {
      * internally and can be retrieved with {@link #getModel()}.
      */
     public TagEditorPanel(PresetHandler presetHandler) {
-        this(null, presetHandler);
+        this(null, presetHandler, 0);
     }
 
     /**
@@ -149,13 +148,15 @@ public class TagEditorPanel extends JPanel {
      * {@code model} is null, a new model is created.
      *
      * @param model the tag editor model
+     * @param maxCharacters maximum number of characters allowed, 0 for unlimited
      */
-    public TagEditorPanel(TagEditorModel model, PresetHandler presetHandler) {
+    public TagEditorPanel(TagEditorModel model, PresetHandler presetHandler, final int maxCharacters) {
         this.model = model;
         this.presetHandler = presetHandler;
         if (this.model == null) {
             this.model = new TagEditorModel();
         }
+        this.tagTable = new TagTable(this.model, maxCharacters);
         build();
     }
 
