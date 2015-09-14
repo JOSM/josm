@@ -392,8 +392,9 @@ public class TagTable extends JTable  {
 
     /**
      * initialize the table
+     * @param maxCharacters maximum number of characters allowed for keys and values, 0 for unlimited
      */
-    protected final void init() {
+    protected final void init(final int maxCharacters) {
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         setRowSelectionAllowed(true);
         setColumnSelectionAllowed(true);
@@ -425,7 +426,7 @@ public class TagTable extends JTable  {
 
         // create the table cell editor and set it to key and value columns
         //
-        TagCellEditor tmpEditor = new TagCellEditor();
+        TagCellEditor tmpEditor = new TagCellEditor(maxCharacters);
         setRowHeight(tmpEditor.getEditor().getPreferredSize().height);
         setTagCellEditor(tmpEditor);
     }
@@ -434,11 +435,12 @@ public class TagTable extends JTable  {
      * Creates a new tag table
      *
      * @param model the tag editor model
+     * @param maxCharacters maximum number of characters allowed for keys and values, 0 for unlimited
      */
-    public TagTable(TagEditorModel model) {
+    public TagTable(TagEditorModel model, final int maxCharacters) {
         super(model, new TagTableColumnModel(model.getColumnSelectionModel()), model.getRowSelectionModel());
         this.model = model;
-        init();
+        init(maxCharacters);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class ChangesetTagsPanel extends JPanel implements PropertyChangeListener
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         model = new TagEditorModel();
-        TagTable tblTags = new TagTable(model);
+        TagTable tblTags = new TagTable(model, 0);
         tblTags.setEnabled(false);
         add(new JScrollPane(tblTags), BorderLayout.CENTER);
     }

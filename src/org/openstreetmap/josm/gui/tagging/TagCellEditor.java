@@ -29,9 +29,13 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
 
     /**
      * constructor
+     * @param maxCharacters maximum number of characters allowed, 0 for unlimited
      */
-    public TagCellEditor() {
+    public TagCellEditor(final int maxCharacters) {
         editor = new AutoCompletingTextField(0, false);
+        if (maxCharacters > 0) {
+            editor.setMaxChars(maxCharacters);
+        }
         editor.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
     }
 

@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class TagSettingsPanel extends JPanel implements TableModelListener {
 
     /** checkbox for selecting whether an atomic upload is to be used  */
-    private final TagEditorPanel pnlTagEditor = new TagEditorPanel(null);
+    private final TagEditorPanel pnlTagEditor = new TagEditorPanel(null, null, Changeset.MAX_CHANGESET_TAG_LENGTH);
     /** the model for the changeset comment */
     private final transient ChangesetCommentModel changesetCommentModel;
     private final transient ChangesetCommentModel changesetSourceModel;
