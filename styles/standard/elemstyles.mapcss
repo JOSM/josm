@@ -878,13 +878,17 @@ node[traffic_calming] {
     text: auto;
 }
 node[traffic_calming=chicane] {
-    icon-image: "vehicle/chicane.png";
+    icon-image: "vehicle/chicane.svg";
     set icon_z17;
     text: auto;
 }
-node[traffic_calming=choker],
-node[traffic_calming=cushion] {
-    icon-image: "vehicle/passing_place.png";
+node[traffic_calming=choker] {
+    icon-image: "vehicle/chocker.svg";
+    set icon_z17;
+    text: auto;
+}
+node[traffic_calming=island] {
+    icon-image: "vehicle/island.svg";
     set icon_z17;
     text: auto;
 }
