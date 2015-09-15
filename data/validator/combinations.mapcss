@@ -328,5 +328,5 @@ way["maxspeed:backward"][maxspeed][!"maxspeed:forward"] {
 /* see #11837 */
 way[layer][layer<0][bridge][bridge!=no][location!=underground][indoor!=yes][!tunnel],
 way[layer][layer>0][tunnel][tunnel!=no][location!=overground][indoor!=yes][!bridge] {
-  throwWarning: tr("Suspicious tag/value combination: {0} and {1}", "{2.tag}", "{0.tag}");
+  throwWarning: tr("Suspicious tag combination: {0} and {1}", "{2.tag}", "{0.tag}");
 }
