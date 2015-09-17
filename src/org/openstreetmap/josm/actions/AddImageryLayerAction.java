@@ -122,14 +122,21 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                     tree.getSelectedLayers(), (String) formats.getSelectedItem());
             Set<String> supportedCrs = new HashSet<>();
             boolean first = true;
+            StringBuilder layersString = new StringBuilder();
             for (LayerDetails layer: tree.getSelectedLayers()) {
                 if (first) {
                     supportedCrs.addAll(layer.getProjections());
                     first = false;
                 }
+                layersString.append(layer.name);
+                layersString.append(", ");
                 supportedCrs.retainAll(layer.getProjections());
             }
+
             ImageryInfo ret = new ImageryInfo(info.getName(), url, "wms", info.getEulaAcceptanceRequired(), info.getCookies());
+            if (layersString.length() > 2) {
+                ret.setName(ret.getName() + " " + layersString.substring(0, layersString.length() - 2));
+            }
             ret.setServerProjections(supportedCrs);
             return ret;
         } catch (MalformedURLException ex) {
