@@ -99,7 +99,8 @@ public class ThumbsLoader implements Runnable {
         final int w = img.getWidth(null);
         final int h = img.getHeight(null);
         final int hh, ww;
-        if (ExifReader.orientationSwitchesDimensions(entry.getExifOrientation())) {
+        final Integer exifOrientation = entry.getExifOrientation();
+        if (exifOrientation != null && ExifReader.orientationSwitchesDimensions(exifOrientation)) {
             ww = h;
             hh = w;
         } else {
@@ -113,9 +114,11 @@ public class ThumbsLoader implements Runnable {
         BufferedImage scaledBI = new BufferedImage(targetSize.width, targetSize.height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = scaledBI.createGraphics();
 
-        final AffineTransform restoreOrientation = ExifReader.getRestoreOrientationTransform(entry.getExifOrientation(), w, h);
         final AffineTransform scale = AffineTransform.getScaleInstance((double) targetSize.width / ww, (double) targetSize.height / hh);
-        scale.concatenate(restoreOrientation);
+        if (exifOrientation != null) {
+            final AffineTransform restoreOrientation = ExifReader.getRestoreOrientationTransform(exifOrientation, w, h);
+            scale.concatenate(restoreOrientation);
+        }
 
         while (!g.drawImage(img, scale, null)) {
             try {
