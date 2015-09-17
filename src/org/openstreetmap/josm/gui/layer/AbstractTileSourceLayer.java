@@ -142,7 +142,8 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     /**
      * use fairly small memory cache, as cached objects are quite big, as they contain BufferedImages
      */
-    public static final IntegerProperty MEMORY_CACHE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + ".cache.max_objects_ram", (int)Math.max(200,  200 * Math.pow(4, ZOOM_OFFSET.get())));
+    public static final IntegerProperty MEMORY_CACHE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + ".cache.max_objects_ram",
+            (int) Math.max(200,  200 * Math.pow(4, ZOOM_OFFSET.get())));
 
     /*
      *  use MemoryTileCache instead of tileLoader JCS cache, as tileLoader caches only content (byte[] of image)

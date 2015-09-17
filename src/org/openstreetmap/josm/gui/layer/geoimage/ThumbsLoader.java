@@ -37,7 +37,8 @@ public class ThumbsLoader implements Runnable {
         this.data = new ArrayList<>(layer.data);
         if (!cacheOff) {
             try {
-                cache = JCSCacheManager.getCache("geoimage-thumbnails", 0, 120, Main.pref.getCacheDirectory().getPath() + File.separator + "geoimage-thumbnails");
+                cache = JCSCacheManager.getCache("geoimage-thumbnails", 0, 120,
+                        Main.pref.getCacheDirectory().getPath() + File.separator + "geoimage-thumbnails");
             } catch (IOException e) {
                 Main.warn("Failed to initialize cache for geoimage-thumbnails");
                 Main.warn(e);
@@ -133,7 +134,7 @@ public class ThumbsLoader implements Runnable {
 
         if (!cacheOff && cache != null) {
             try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-                ImageIO.write(scaledBI,"png", output);
+                ImageIO.write(scaledBI, "png", output);
                 cache.put(cacheIdent, new BufferedImageCacheEntry(output.toByteArray()));
             } catch (IOException e) {
                 Main.warn("Failed to save geoimage thumb to cache");
@@ -143,5 +144,4 @@ public class ThumbsLoader implements Runnable {
 
         return scaledBI;
     }
-
 }
