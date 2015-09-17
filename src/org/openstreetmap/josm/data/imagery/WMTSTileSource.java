@@ -161,6 +161,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                         public int getColumnCount() {
                             return 3;
                         }
+
                         @Override
                         public String getColumnName(int column) {
                             switch (column) {
@@ -171,8 +172,11 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                                 throw new IllegalArgumentException();
                             }
                         }
+
                         @Override
-                        public boolean isCellEditable(int row, int column) { return false; }
+                        public boolean isCellEditable(int row, int column) {
+                            return false;
+                        }
                     });
             this.list.setPreferredSize(new Dimension(400, 400));
             this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -678,11 +682,11 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     public Set<String> getSupportedProjections() {
         Set<String> ret = new HashSet<>();
         if (currentLayer == null) {
-            for(Layer layer: this.layers) {
+            for (Layer layer: this.layers) {
                 ret.add(layer.tileMatrixSet.crs);
             }
         } else {
-            for(Layer layer: this.layers) {
+            for (Layer layer: this.layers) {
                 if (currentLayer.name.equals(layer.name)) {
                     ret.add(layer.tileMatrixSet.crs);
                 }

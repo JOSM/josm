@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
 import org.openstreetmap.josm.data.Bounds;

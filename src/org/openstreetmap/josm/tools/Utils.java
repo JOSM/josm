@@ -1302,7 +1302,7 @@ public final class Utils {
      * @return a new {@link ThreadFactory}
      */
     public static ThreadFactory newThreadFactory(final String nameFormat, final int threadPriority) {
-        final String ignore = String.format(Locale.ENGLISH, nameFormat, 0);// fail fast
+        final String ignore = String.format(Locale.ENGLISH, nameFormat, 0); // fail fast
         return new ThreadFactory() {
             final AtomicLong count = new AtomicLong(0);
             @Override

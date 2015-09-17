@@ -523,7 +523,7 @@ public class LayerListDialog extends ToggleDialog {
     /**
      * Abstract action which allows to adjust a double value using a slider
      */
-    public static abstract class AbstractLayerPropertySliderAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
+    public abstract static class AbstractLayerPropertySliderAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
         protected final JPopupMenu popup;
         protected final JSlider slider;
         private final double factor;
@@ -538,7 +538,7 @@ public class LayerListDialog extends ToggleDialog {
             slider.addChangeListener(new ChangeListener() {
                 @Override
                 public void stateChanged(ChangeEvent e) {
-                    setValue((double) slider.getValue() / factor);
+                    setValue(slider.getValue() / factor);
                 }
             });
             popup.add(slider);

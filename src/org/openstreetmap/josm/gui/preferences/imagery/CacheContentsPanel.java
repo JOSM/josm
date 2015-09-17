@@ -216,7 +216,7 @@ public class CacheContentsPanel extends JPanel {
         });
         String[][] ret = new String[sortedStats.size()][3];
         int index = 0;
-        for(Pair<String, Integer> e: sortedStats) {
+        for (Pair<String, Integer> e: sortedStats) {
             ret[index] = new String[]{e.a, e.b.toString(), tr("Clear")};
             index++;
         }

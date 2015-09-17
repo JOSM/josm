@@ -37,7 +37,8 @@ public class ThumbsLoader implements Runnable {
         this.data = new ArrayList<>(layer.data);
         if (!cacheOff) {
             try {
-                cache = JCSCacheManager.getCache("geoimage-thumbnails", 0, 120, Main.pref.getCacheDirectory().getPath() + File.separator + "geoimage-thumbnails");
+                cache = JCSCacheManager.getCache("geoimage-thumbnails", 0, 120,
+                        Main.pref.getCacheDirectory().getPath() + File.separator + "geoimage-thumbnails");
             } catch (IOException e) {
                 Main.warn("Failed to initialize cache for geoimage-thumbnails");
                 Main.warn(e);
@@ -98,7 +99,8 @@ public class ThumbsLoader implements Runnable {
         final int w = img.getWidth(null);
         final int h = img.getHeight(null);
         final int hh, ww;
-        if (ExifReader.orientationSwitchesDimensions(entry.getExifOrientation())) {
+        final Integer exifOrientation = entry.getExifOrientation();
+        if (exifOrientation != null && ExifReader.orientationSwitchesDimensions(exifOrientation)) {
             ww = h;
             hh = w;
         } else {
@@ -112,9 +114,11 @@ public class ThumbsLoader implements Runnable {
         BufferedImage scaledBI = new BufferedImage(targetSize.width, targetSize.height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = scaledBI.createGraphics();
 
-        final AffineTransform restoreOrientation = ExifReader.getRestoreOrientationTransform(entry.getExifOrientation(), w, h);
         final AffineTransform scale = AffineTransform.getScaleInstance((double) targetSize.width / ww, (double) targetSize.height / hh);
-        scale.concatenate(restoreOrientation);
+        if (exifOrientation != null) {
+            final AffineTransform restoreOrientation = ExifReader.getRestoreOrientationTransform(exifOrientation, w, h);
+            scale.concatenate(restoreOrientation);
+        }
 
         while (!g.drawImage(img, scale, null)) {
             try {
@@ -133,7 +137,7 @@ public class ThumbsLoader implements Runnable {
 
         if (!cacheOff && cache != null) {
             try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-                ImageIO.write(scaledBI,"png", output);
+                ImageIO.write(scaledBI, "png", output);
                 cache.put(cacheIdent, new BufferedImageCacheEntry(output.toByteArray()));
             } catch (IOException e) {
                 Main.warn("Failed to save geoimage thumb to cache");
@@ -143,5 +147,4 @@ public class ThumbsLoader implements Runnable {
 
         return scaledBI;
     }
-
 }
