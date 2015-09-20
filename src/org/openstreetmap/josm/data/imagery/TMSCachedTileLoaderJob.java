@@ -200,7 +200,9 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 case FAILURE:
                     tile.setError("Problem loading tile");
                     // no break intentional here
+                    break;
                 case CANCELED:
+                    tile.loadingCanceled();
                     // do nothing
                 }
             }
