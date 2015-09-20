@@ -434,4 +434,13 @@ public class Tile {
     public TileSource getTileSource() {
         return source;
     }
+
+    /**
+     * indicate that loading process for this tile has been canceled
+     */
+    public void loadingCanceled() {
+        loading = false;
+        loaded = false;
+    }
+
 }
