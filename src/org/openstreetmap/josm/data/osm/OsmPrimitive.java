@@ -788,7 +788,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         String reversedDirectionDefault = "oneway=\"-1\"";
 
         String directionDefault = "oneway? | (aerialway=* aerialway!=station) | "+
-                "waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | "+
+                "waterway=stream | waterway=river | waterway=canal | waterway=drain | "+
                 "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
                 "junction=roundabout | (highway=motorway & -oneway=no & -oneway=reversible) | "+
                 "(highway=motorway_link & -oneway=no & -oneway=reversible)";
