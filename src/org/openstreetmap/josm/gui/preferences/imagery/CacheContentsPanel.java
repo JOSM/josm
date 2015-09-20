@@ -244,7 +244,7 @@ public class CacheContentsPanel extends JPanel {
     private DefaultTableModel getTableModel(final CacheAccess<String, BufferedImageCacheEntry> cache) {
         final DefaultTableModel tableModel = new DefaultTableModel(
                 getCacheStats(cache),
-                new String[]{"Cache name", "Object Count", "Clear"}) {
+                new String[]{tr("Cache name"), tr("Object Count"), tr("Clear")}) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 2;
