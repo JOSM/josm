@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.gui.jmapviewer.TileXY;
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
@@ -124,9 +125,9 @@ public class TemplatedWMSTileSourceTest {
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         LatLon result = getTileLatLon(source, x, y, z);
-        LatLon expected = new LatLon(verifier.tileYToLat(y, z - 1), verifier.tileXToLon(x, z - 1));
-        assertEquals(expected.lat(), result.lat(), 1e-4);
-        assertEquals(expected.lon(), result.lon(), 1e-4);
+        ICoordinate expected = verifier.tileXYToLatLon(x, y, z - 1);
+        assertEquals(expected.getLat(), result.lat(), 1e-4);
+        assertEquals(expected.getLon(), result.lon(), 1e-4);
         //assertTrue("result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString(), result.equalsEpsilon(expected));
         LatLon tileCenter = new Bounds(result, getTileLatLon(source, x+1, y+1, z)).getCenter();
         TileXY backwardsResult = source.latLonToTileXY(tileCenter.toCoordinate(), z);
