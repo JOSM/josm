@@ -3897,7 +3897,6 @@ node[sport=badminton] {
 }
 area[sport=archery],
 area[sport=fishing],
-area[sport=safety_training],
 area[sport=model_aerodrome],
 area[sport=rc_car] {
     fill-color: sport#bde3cb;
@@ -3909,11 +3908,6 @@ node[sport=archery] {
 }
 node[sport=fishing] {
     icon-image: "sport/fishing.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=safety_training] {
-    icon-image: "sport/safety_training.png";
     set icon_z17;
     text: auto;
 }

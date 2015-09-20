@@ -5286,23 +5286,6 @@
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,track" values_context="racing" />
         </item> <!-- Motocross -->
-        <item name="Safety Training" icon="presets/safety_training.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=safety_training"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:sport"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:sport"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:sport"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:sport"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:sport"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:sport"
-                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:sport"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:sport"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:sport"
-                  tr.href="http://wiki.openstreetmap.org/wiki/Tr:Key:sport" />
-            <space />
-            <key key="sport" value="safety_training" />
-            <text key="name" text="Name" />
-            <combo key="leisure" text="Type" values="pitch,sports_centre,track" values_context="racing" />
-        </item> <!-- Safety Training -->
         <separator/>
         <item name="Model Aerodrome" icon="presets/plane.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=model_aerodrome" />
