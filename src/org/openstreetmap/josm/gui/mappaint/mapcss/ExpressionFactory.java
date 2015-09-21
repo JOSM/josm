@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
@@ -30,6 +31,7 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.io.XmlWriter;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Predicates;
@@ -374,6 +376,17 @@ public final class ExpressionFactory {
         }
 
         /**
+         * Joins a list of {@code values} into a single string with fields separated by {@code separator}.
+         * @param separator the separator
+         * @param values collection of objects
+         * @return assembled string
+         * @see Utils#join
+         */
+        public static String join_list(final String separator, final List<String> values) {
+            return Utils.join(separator, values);
+        }
+
+        /**
          * Returns the value of the property {@code key}, e.g., {@code prop("width")}.
          * @param env the environment
          * @param key the property key
@@ -443,6 +456,32 @@ public final class ExpressionFactory {
                 return null;
             }
             return env.parent.get(key);
+        }
+
+        /**
+         * Gets a list of all non-null values of the key {@code key} from the object's parent(s).
+         *
+         * The values are sorted according to {@link AlphanumComparator}.
+         * @param env the environment
+         * @param key the OSM key
+         * @return a list of non-null values of the key {@code key} from the object's parent(s)
+         */
+        public static List<String> parent_tags(final Environment env, String key) {
+            if (env.parent == null) {
+                if (env.osm != null) {
+                    final Collection<String> tags = new TreeSet<>(AlphanumComparator.getInstance());
+                    // we don't have a matched parent, so just search all referrers
+                    for (OsmPrimitive parent : env.osm.getReferrers()) {
+                        String value = parent.get(key);
+                        if (value != null) {
+                            tags.add(value);
+                        }
+                    }
+                    return new ArrayList<>(tags);
+                }
+                return Collections.emptyList();
+            }
+            return Collections.singletonList(env.parent.get(key));
         }
 
         /**
