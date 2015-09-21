@@ -127,6 +127,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("nearclick", tr("no longer required")),
             new DeprecatedPlugin("notes", IN_CORE),
             new DeprecatedPlugin("mirrored_download", IN_CORE),
+            new DeprecatedPlugin("imagerycache", IN_CORE),
         });
     }
 
