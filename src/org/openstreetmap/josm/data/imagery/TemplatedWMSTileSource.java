@@ -310,51 +310,6 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         return headers;
     }
 
-    @Override
-    public double lonToTileX(double lon, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double tileXToLon(int x, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double tileYToLat(int y, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double getDistance(double lat1, double lon1, double lat2, double lon2) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public int lonToX(double lon, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public int latToY(double lat, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double XToLon(int x, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double YToLat(int y, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double latToTileY(double lat, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
     /**
      * Checks if url is acceptable by this Tile Source
      * @param url URL to check

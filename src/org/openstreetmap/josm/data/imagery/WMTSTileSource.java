@@ -494,31 +494,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     }
 
     @Override
-    public int lonToX(double lon, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public int latToY(double lat, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double XToLon(int x, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double YToLat(int y, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double latToTileY(double lat, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
     public ICoordinate tileXYToLatLon(Tile tile) {
         return tileXYToLatLon(tile.getXtile(), tile.getYtile(), tile.getZoom());
     }
@@ -621,21 +596,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     }
 
     @Override
-    public double lonToTileX(double lon, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double tileXToLon(int x, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public double tileYToLat(int y, int zoom) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
     public Map<String, String> getHeaders() {
         return headers;
     }
@@ -652,7 +612,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     public String getTileId(int zoom, int tilex, int tiley) {
         return getTileUrl(zoom, tilex, tiley);
     }
-
 
     /**
      * Checks if url is acceptable by this Tile Source
