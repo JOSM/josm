@@ -680,13 +680,11 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 min = null;
                 max = null;
             } else {
-                int y1 = tileSource.latToY(bbox.getMinLat(), MAX_ZOOM);
-                int y2 = tileSource.latToY(bbox.getMaxLat(), MAX_ZOOM);
-                int x1 = tileSource.lonToX(bbox.getMinLon(), MAX_ZOOM);
-                int x2 = tileSource.lonToX(bbox.getMaxLon(), MAX_ZOOM);
+                Point p1 = tileSource.latLonToXY(bbox.getMinLat(), bbox.getMinLon(), MAX_ZOOM);
+                Point p2 = tileSource.latLonToXY(bbox.getMaxLat(), bbox.getMaxLon(), MAX_ZOOM);
 
-                min = new Point(Math.min(x1, x2), Math.min(y1, y2));
-                max = new Point(Math.max(x1, x2), Math.max(y1, y2));
+                min = new Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
+                max = new Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
             }
             repaint();
         }
