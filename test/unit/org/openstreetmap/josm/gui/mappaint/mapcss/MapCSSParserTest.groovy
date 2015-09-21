@@ -321,6 +321,33 @@ class MapCSSParserTest {
     }
 
     @Test
+    public void testParentTags() throws Exception {
+        def ds = new DataSet()
+        def n = new org.openstreetmap.josm.data.osm.Node(new LatLon(1, 2))
+        n.put("foo", "bar")
+        def w1 = new Way()
+        w1.put("ref", "x10")
+        def w2 = new Way()
+        w2.put("ref", "x2")
+        def w3 = new Way()
+        ds.addPrimitive(n)
+        ds.addPrimitive(w1)
+        ds.addPrimitive(w2)
+        ds.addPrimitive(w3)
+        w1.addNode(n)
+        w2.addNode(n)
+        w3.addNode(n)
+
+        MapCSSStyleSource source = new MapCSSStyleSource("node[foo=bar] {refs: join_list(\";\", parent_tags(\"ref\"));}")
+        source.loadStyleSource()
+        assert source.rules.size() == 1
+        def e = new Environment(n, new MultiCascade(), Environment.DEFAULT_LAYER, null)
+        assert source.rules.get(0).selector.matches(e)
+        source.rules.get(0).declaration.execute(e)
+        assert e.getCascade(Environment.DEFAULT_LAYER).get("refs", null, String.class) == "x2;x10"
+    }
+
+    @Test
     public void testSiblingSelectorInterpolation() throws Exception {
         def s1 = (Selector.ChildOrParentSelector) getParser(
                 "*[tag(\"addr:housenumber\") > child_tag(\"addr:housenumber\")][regexp_test(\"even|odd\", parent_tag(\"addr:interpolation\"))]" +
