@@ -11,7 +11,7 @@ import javax.xml.bind.DatatypeConverter;
 public class AbstractMapQuestTileSource extends AbstractOsmTileSource {
 
     // MapQuest logo in base64: http://developer.mapquest.com/content/osm/mq_logo.png
-    private static final String LOGO_BASE64 = 
+    private static final String LOGO_BASE64 =
             "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJl"+
             "YWR5ccllPAAAAZtJREFUeNpi/P//P0PPcYf/DGSAEssDjIzdx+zJ0gwDLMQqVBWyZVAStGRgBMK33x8wnH62"+
             "kngD+DmkGBwUshn42SXA/P8M/xg+/3rDcOPNPuIMMJeKAmv+8OMpw7ffHxikeLUZXBTzgez3DEzEGMDGzAmm"+
@@ -27,7 +27,7 @@ public class AbstractMapQuestTileSource extends AbstractOsmTileSource {
     protected static final String MAPQUEST_WEBSITE = "http://www.mapquest.com";
 
     private static final int NUMBER_OF_SERVERS = 4;
-    
+
     private int SERVER_NUM = 1;
 
     public AbstractMapQuestTileSource(String name, String base_url, String id) {
@@ -39,11 +39,6 @@ public class AbstractMapQuestTileSource extends AbstractOsmTileSource {
         String url = String.format(this.baseUrl, SERVER_NUM);
         SERVER_NUM = (SERVER_NUM % NUMBER_OF_SERVERS) + 1;
         return url;
-    }
-
-    @Override
-    public TileUpdate getTileUpdate() {
-        return TileUpdate.IfModifiedSince;
     }
 
     @Override

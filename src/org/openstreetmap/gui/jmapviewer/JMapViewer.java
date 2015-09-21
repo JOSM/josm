@@ -465,25 +465,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Calculates the position on the map of a given coordinate
      *
-     * @param lat Latitude
-     * @param offset Offset respect Latitude
-     * @param checkOutside check if the point is outside the displayed area
-     * @return Integer the radius in pixels
-     * @deprecated use {@link #getLatOffset(double, double, double, boolean)}
-     */
-    @Deprecated
-    public Integer getLatOffset(double lat, double offset, boolean checkOutside) {
-        int y = tileSource.latToY(lat + offset, zoom);
-        y -= center.y - getHeight() / 2;
-        if (checkOutside && (y < 0 || y > getHeight())) {
-            return null;
-        }
-        return y;
-    }
-
-    /**
-     * Calculates the position on the map of a given coordinate
-     *
      * @param marker MapMarker object that define the x,y coordinate
      * @param p coordinate
      * @return Integer the radius in pixels

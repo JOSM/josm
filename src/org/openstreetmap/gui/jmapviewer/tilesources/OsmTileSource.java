@@ -30,11 +30,6 @@ public class OsmTileSource {
             serverNum = (serverNum + 1) % SERVER.length;
             return url;
         }
-
-        @Override
-        public TileUpdate getTileUpdate() {
-            return TileUpdate.IfNoneMatch;
-        }
     }
 
     /**
@@ -65,11 +60,6 @@ public class OsmTileSource {
         @Override
         public int getMaxZoom() {
             return 18;
-        }
-
-        @Override
-        public TileUpdate getTileUpdate() {
-            return TileUpdate.LastModified;
         }
     }
 }

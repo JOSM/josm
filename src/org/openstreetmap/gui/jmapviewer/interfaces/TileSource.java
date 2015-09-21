@@ -17,34 +17,6 @@ import org.openstreetmap.gui.jmapviewer.TileXY;
 public interface TileSource extends Attributed {
 
     /**
-     * Specifies the different mechanisms for detecting updated tiles
-     * respectively only download newer tiles than those stored locally.
-     *
-     * <ul>
-     * <li>{@link #IfNoneMatch} Server provides ETag header entry for all tiles
-     * and <b>supports</b> conditional download via <code>If-None-Match</code>
-     * header entry.</li>
-     * <li>{@link #ETag} Server provides ETag header entry for all tiles but
-     * <b>does not support</b> conditional download via
-     * <code>If-None-Match</code> header entry.</li>
-     * <li>{@link #IfModifiedSince} Server provides Last-Modified header entry
-     * for all tiles and <b>supports</b> conditional download via
-     * <code>If-Modified-Since</code> header entry.</li>
-     * <li>{@link #LastModified} Server provides Last-Modified header entry for
-     * all tiles but <b>does not support</b> conditional download via
-     * <code>If-Modified-Since</code> header entry.</li>
-     * <li>{@link #None} The server does not support any of the listed
-     * mechanisms.</li>
-     * </ul>
-     *
-     * @deprecated not used anymore
-     */
-    @Deprecated
-    enum TileUpdate {
-        IfNoneMatch, ETag, IfModifiedSince, LastModified, None
-    }
-
-    /**
      * Specifies the maximum zoom value. The number of zoom levels is [0..
      * {@link #getMaxZoom()}].
      *
@@ -61,12 +33,6 @@ public interface TileSource extends Attributed {
      * @return minimum zoom value - usually 0
      */
     int getMinZoom();
-
-    /**
-     * @return The supported tile update mechanism
-     * @see TileUpdate
-     */
-    TileUpdate getTileUpdate();
 
     /**
      * A tile layer name as displayed to the user.
@@ -130,26 +96,6 @@ public interface TileSource extends Attributed {
     double getDistance(double la1, double lo1, double la2, double lo2);
 
     /**
-     * Transform longitude to pixelspace.
-     * @param aLongitude longitude
-     * @param aZoomlevel zoom level
-     * @return [0..2^Zoomlevel*TILE_SIZE[
-     * @deprecated use {@link #latLonToXY(double, double, int)} instead
-     */
-    @Deprecated
-    int lonToX(double aLongitude, int aZoomlevel);
-
-    /**
-     * Transforms latitude to pixelspace.
-     * @param aLat latitude
-     * @param aZoomlevel zoom level
-     * @return [0..2^Zoomlevel*TILE_SIZE[
-     * @deprecated use {@link #latLonToXY(double, double, int)} instead
-     */
-    @Deprecated
-    int latToY(double aLat, int aZoomlevel);
-
-    /**
      * @param lon longitude
      * @param lat latitude
      * @param zoom zoom level
@@ -163,26 +109,6 @@ public interface TileSource extends Attributed {
      * @return transforms longitude and latitude to pixel space (as if all tiles at specified zoom level where joined)
      */
     Point latLonToXY(ICoordinate point, int zoom);
-
-    /**
-     * Transforms pixel coordinate X to longitude
-     * @param aX X coordinate
-     * @param aZoomlevel zoom level
-     * @return ]-180..180[
-     * @deprecated use {@link #xyToLatLon(int, int, int)} instead
-     */
-    @Deprecated
-    double XToLon(int aX, int aZoomlevel);
-
-    /**
-     * Transforms pixel coordinate Y to latitude.
-     * @param aY Y coordinate
-     * @param aZoomlevel zoom level
-     * @return [MIN_LAT..MAX_LAT]
-     * @deprecated use {@link #xyToLatLon(int, int, int)} instead
-     */
-    @Deprecated
-    double YToLat(int aY, int aZoomlevel);
 
     /**
      * @param point point
@@ -201,26 +127,6 @@ public interface TileSource extends Attributed {
     ICoordinate xyToLatLon(int x, int y, int zoom);
 
     /**
-     * Transforms longitude to X tile coordinate.
-     * @param lon longitude
-     * @param zoom zoom level
-     * @return [0..2^Zoomlevel[
-     * @deprecated use {@link #latLonToTileXY(double, double, int)} instead
-     */
-    @Deprecated
-    double lonToTileX(double lon, int zoom);
-
-    /**
-     * Transforms latitude to Y tile coordinate.
-     * @param lat latitude
-     * @param zoom zoom level
-     * @return [0..2^Zoomlevel[
-     * @deprecated use {@link #latLonToTileXY(double, double, int)} instead
-     */
-    @Deprecated
-    double latToTileY(double lat, int zoom);
-
-    /**
      * @param lon longitude
      * @param lat latitude
      * @param zoom zoom level
@@ -235,26 +141,6 @@ public interface TileSource extends Attributed {
      * @return x and y tile indices
      */
     TileXY latLonToTileXY(ICoordinate point, int zoom);
-
-    /**
-     * Transforms tile X coordinate to longitude.
-     * @param x X coordinate
-     * @param zoom zoom level
-     * @return ]-180..180[
-     * @deprecated use {@link #tileXYToLatLon(int, int, int)} instead
-     */
-    @Deprecated
-    double tileXToLon(int x, int zoom);
-
-    /**
-     * Transforms tile Y coordinate to latitude.
-     * @param y Y coordinate
-     * @param zoom zoom level
-     * @return [MIN_LAT..MAX_LAT]
-     * @deprecated use {@link #tileXYToLatLon(int, int, int)} instead
-     */
-    @Deprecated
-    double tileYToLat(int y, int zoom);
 
     /**
      * @param xy X/Y coordinates

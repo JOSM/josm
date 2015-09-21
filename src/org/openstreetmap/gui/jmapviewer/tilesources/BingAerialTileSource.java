@@ -172,11 +172,6 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
     }
 
     @Override
-    public TileUpdate getTileUpdate() {
-        return TileUpdate.IfNoneMatch;
-    }
-
-    @Override
     public boolean requiresAttribution() {
         return true;
     }
