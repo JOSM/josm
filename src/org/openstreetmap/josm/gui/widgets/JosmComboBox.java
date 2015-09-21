@@ -107,7 +107,8 @@ public class JosmComboBox<E> extends JComboBox<E> {
             // Remind old prototype to restore it later
             E oldPrototype = getPrototypeDisplayValue();
             // Get internal JList to directly call the renderer
-            JList<E> list = getList();
+            @SuppressWarnings("rawtypes")
+            JList list = getList();
             try {
                 // Index to give to renderer
                 int i = 0;
@@ -116,6 +117,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
                         // With a "classic" renderer, we could call setPrototypeDisplayValue(value) + getPreferredSize()
                         // but not with TaggingPreset custom renderer that return a dummy height if index is equal to -1
                         // So we explicitely call the renderer by simulating a correct index for the current value
+                        @SuppressWarnings("unchecked")
                         Component c = getRenderer().getListCellRendererComponent(list, value, i, true, true);
                         if (c != null) {
                             // Get the real preferred size for the current value
@@ -138,7 +140,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
     }
 
     @SuppressWarnings("unchecked")
-    protected final JList<E> getList() {
+    protected final JList<Object> getList() {
         for (int i = 0; i < getUI().getAccessibleChildrenCount(this); i++) {
             Accessible child = getUI().getAccessibleChild(this, i);
             if (child instanceof ComboPopup) {
@@ -157,7 +159,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
             int maxsize = (screenHeight/getPreferredSize().height) / 2;
             // If possible, adjust the maximum number of items with the real height of items
             // It is not granted this works on every platform (tested OK on Windows)
-            JList<E> list = getList();
+            JList<Object> list = getList();
             if (list != null) {
                 if (!prototype.equals(list.getPrototypeCellValue())) {
                     list.setPrototypeCellValue(prototype);
