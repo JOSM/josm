@@ -22,9 +22,4 @@ public class TMSTileSource extends AbstractTMSTileSource {
     public int getMaxZoom() {
         return (maxZoom == 0) ? super.getMaxZoom() : maxZoom;
     }
-
-    @Override
-    public TileUpdate getTileUpdate() {
-        return TileUpdate.IfNoneMatch;
-    }
 }

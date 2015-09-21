@@ -92,29 +92,6 @@ public class ScanexTileSource extends TMSTileSource {
         return this.layer.getUri() + "&apikey=" + API_KEY + "&x=" + tilex + "&y=" + tiley + "&z=" + zoom;
     }
 
-    @Override
-    public int latToY(double lat, int zoom) {
-        return (int) (latToTileY(lat, zoom) * tileSize);
-    }
-
-    @Override
-    public double YToLat(int y, int zoom) {
-        return tileYToLat((double) y / tileSize, zoom);
-    }
-
-    @Override
-    public double latToTileY(double lat, int zoom) {
-        double tmp = Math.tan(Math.PI/4 * (1 + lat/90));
-        double pow = Math.pow(Math.tan(Math.PI/4 + Math.asin(E * Math.sin(Math.toRadians(lat)))/2), E);
-
-        return (EQUATOR/2 - (RADIUS_E * Math.log(tmp/pow))) * Math.pow(2.0, zoom) / EQUATOR;
-    }
-
-    @Override
-    public double tileYToLat(int y, int zoom) {
-        return tileYToLat((double) y, zoom);
-    }
-
     /*
      * To solve inverse formula latitude = f(y) we use
      * Newton's method. We cache previous calculated latitude,
