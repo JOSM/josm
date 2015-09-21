@@ -301,7 +301,7 @@ public class MultipolygonTest extends Test {
                     return;
                 }
             }
-            List<OsmPrimitive> newPrimitives = new ArrayList<>(primitives);
+            List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(primitives);
             newPrimitives.add(0, r);
             error.setPrimitives(newPrimitives);
         }

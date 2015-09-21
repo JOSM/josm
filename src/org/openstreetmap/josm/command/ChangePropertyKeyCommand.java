@@ -24,7 +24,7 @@ public class ChangePropertyKeyCommand extends Command {
     /**
      * All primitives, that are affected with this command.
      */
-    private final List<OsmPrimitive> objects;
+    private final List<? extends OsmPrimitive> objects;
     /**
      * The key that is subject to change.
      */

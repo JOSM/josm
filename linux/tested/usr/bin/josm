@@ -11,9 +11,11 @@ ARCH="`dpkg --print-architecture 2> /dev/null || true`"
 
 # If OpenJDK is only available headless, do not try it
 if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null ; then
+	JAVA9_CMDS="/usr/lib/jvm/java-9-openjdk/bin/java /usr/lib/jvm/java-9-openjdk-$ARCH/bin/java /usr/lib/jvm/java-9-oracle/bin/java"
 	JAVA8_CMDS="/usr/lib/jvm/java-8-openjdk/bin/java /usr/lib/jvm/java-8-openjdk-$ARCH/bin/java /usr/lib/jvm/java-8-oracle/bin/java"
 	JAVA7_CMDS="$JAVA_HOME/bin/java /usr/lib/jvm/java-7-openjdk/bin/java /usr/lib/jvm/java-7-openjdk-$ARCH/bin/java /usr/lib/jvm/java-7-oracle/bin/java"
 else
+	JAVA9_CMDS="/usr/lib/jvm/java-9-oracle/bin/java"
 	JAVA8_CMDS="/usr/lib/jvm/java-8-oracle/bin/java"
 	JAVA7_CMDS="$JAVA_HOME/bin/java /usr/lib/jvm/java-7-oracle/bin/java /usr/bin/java"
 fi
@@ -39,6 +41,18 @@ for jcmd in $JAVA7_CMDS; do
 done
 
 for jcmd in $JAVA7_CMDS; do
+    if [ -x "$jcmd" -a -z "${JAVACMD}" ]; then
+        JAVACMD="$jcmd"
+    fi
+done
+
+for jcmd in $JAVA9_CMDS; do
+	if [ "z$ALTERNATIVE_JDK" = "z`readlink -n -f $jcmd`" ] && [ -z "${JAVACMD}" ]; then
+        JAVACMD="$jcmd"
+    fi
+done
+
+for jcmd in $JAVA9_CMDS; do
     if [ -x "$jcmd" -a -z "${JAVACMD}" ]; then
         JAVACMD="$jcmd"
     fi

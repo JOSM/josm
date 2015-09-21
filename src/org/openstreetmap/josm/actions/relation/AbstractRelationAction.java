@@ -23,7 +23,7 @@ public abstract class AbstractRelationAction extends AbstractAction implements O
         if (primitives == null || primitives.isEmpty()) {
             return Collections.<Relation>emptySet();
         } else {
-            return new SubclassFilteredCollection<>(
+            return new SubclassFilteredCollection<OsmPrimitive, Relation>(
                     primitives, OsmPrimitive.relationPredicate);
         }
     }
