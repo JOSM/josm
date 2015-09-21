@@ -34,9 +34,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.jar.JarFile;
 
@@ -814,15 +811,10 @@ public final class PluginHandler {
         }
         try {
             ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask(monitor);
-            ExecutorService service = Executors.newSingleThreadExecutor(Utils.newThreadFactory("plugin-loader-%d", Thread.NORM_PRIORITY));
-            Future<?> future = service.submit(task);
             try {
-                future.get();
-            } catch (ExecutionException e) {
+                task.run();
+            } catch (RuntimeException e) {
                 Main.error(e);
-                return null;
-            } catch (InterruptedException e) {
-                Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while loading locally available plugin information");
                 return null;
             }
             Map<String, PluginInformation> ret = new HashMap<>();
@@ -971,7 +963,6 @@ public final class PluginHandler {
         }
         try {
             monitor.beginTask("");
-            ExecutorService service = Executors.newSingleThreadExecutor(Utils.newThreadFactory("plugin-updater-%d", Thread.NORM_PRIORITY));
 
             // try to download the plugin lists
             //
@@ -979,11 +970,10 @@ public final class PluginHandler {
                     monitor.createSubTaskMonitor(1, false),
                     Main.pref.getOnlinePluginSites(), displayErrMsg
             );
-            Future<?> future = service.submit(task1);
+            task1.run();
             List<PluginInformation> allPlugins = null;
 
             try {
-                future.get();
                 allPlugins = task1.getAvailablePlugins();
                 plugins = buildListOfPluginsToLoad(parent, monitor.createSubTaskMonitor(1, false));
                 // If only some plugins have to be updated, filter the list
@@ -1002,12 +992,9 @@ public final class PluginHandler {
                         }
                     }
                 }
-            } catch (ExecutionException e) {
-                Main.warn(tr("Failed to download plugin information list")+": ExecutionException");
+            } catch (RuntimeException e) {
+                Main.warn(tr("Failed to download plugin information list"));
                 Main.error(e);
-                // don't abort in case of error, continue with downloading plugins below
-            } catch (InterruptedException e) {
-                Main.warn(tr("Failed to download plugin information list")+": InterruptedException");
                 // don't abort in case of error, continue with downloading plugins below
             }
 
@@ -1047,15 +1034,10 @@ public final class PluginHandler {
                         tr("Update plugins")
                 );
 
-                future = service.submit(pluginDownloadTask);
                 try {
-                    future.get();
-                } catch (ExecutionException e) {
+                    pluginDownloadTask.run();
+                } catch (RuntimeException e) {
                     Main.error(e);
-                    alertFailedPluginUpdate(parent, pluginsToUpdate);
-                    return plugins;
-                } catch (InterruptedException e) {
-                    Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while updating plugins");
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
                 }
