@@ -1,5 +1,7 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint.mapcss;
+package org.openstreetmap.josm.gui.mappaint.mapcss
+
+import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 
 import static org.junit.Assert.*
 
@@ -120,7 +122,7 @@ class ChildOrParentSelectorTest {
     @Test
     public void matches_5() {
         def css = """
-           way <[role != "my_role"] relation {}
+           way <[role != "my_role"] relation {text: index();}
         """
         ChildOrParentSelector selector = parse(css)
         assert selector.type == Selector.ChildOrParentSelectorType.PARENT
@@ -138,9 +140,15 @@ class ChildOrParentSelectorTest {
         r.addMember(new RelationMember("my_role", w1))
         r.addMember(new RelationMember("my_role", w2))
         r.addMember(new RelationMember("another role", w3))
+        r.addMember(new RelationMember("yet another role", w3))
 
-        Environment e = new Environment(r)
+        Environment e = new Environment(r, new MultiCascade(), Environment.DEFAULT_LAYER, null)
         assert selector.matches(e)
+
+        MapCSSStyleSource source = new MapCSSStyleSource(css)
+        source.loadStyleSource()
+        source.rules[0].declaration.execute(e)
+        assert Float.valueOf(3f).equals(e.getCascade(Environment.DEFAULT_LAYER).get("text", null, Float.class))
     }
 
     @Test
