@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import java.io.InputStream;
+
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -76,6 +78,24 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
         // We start with declarations. Add just one more declaration in this case.
         return "[bbox]" + query;
+    }
+
+    @Override
+    protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason,
+                                            boolean uncompressAccordingToContentDisposition) throws OsmTransferException {
+        try {
+            return super.getInputStreamRaw(urlStr, progressMonitor, reason, uncompressAccordingToContentDisposition);
+        } catch (OsmApiException ex) {
+            final String errorIndicator = "Error</strong>: ";
+            if (ex.getMessage() != null && ex.getMessage().contains(errorIndicator)) {
+                final String errorPlusRest = ex.getMessage().split(errorIndicator)[1];
+                if (errorPlusRest != null) {
+                    final String error = errorPlusRest.split("</")[0];
+                    ex.setErrorHeader(error);
+                }
+            }
+            throw ex;
+        }
     }
 
     @Override
