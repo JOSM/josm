@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.InputStream;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -96,6 +98,11 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
             }
             throw ex;
         }
+    }
+
+    @Override
+    protected String getTaskName() {
+        return tr("Contacting Server...");
     }
 
     @Override
