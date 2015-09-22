@@ -125,6 +125,15 @@ public class BoundingBoxDownloader extends OsmServerReader {
         return "map?bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
     }
 
+    /**
+     * Parse the given input source and return the dataset.
+     *
+     * @see OsmReader#parseDataSet(InputStream, ProgressMonitor)
+     */
+    protected DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
+        return OsmReader.parseDataSet(source, progressMonitor);
+    }
+
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(getTaskName(), 10);
@@ -139,14 +148,14 @@ public class BoundingBoxDownloader extends OsmServerReader {
                         progressMonitor.createSubTaskMonitor(9, false))) {
                     if (in == null)
                         return null;
-                    ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                    ds = parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
                 }
 
                 try (InputStream in = getInputStream(getRequestForBbox(-180.0, lat1, lon2, lat2),
                         progressMonitor.createSubTaskMonitor(9, false))) {
                     if (in == null)
                         return null;
-                    ds2 = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                    ds2 = parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
                 }
                 if (ds2 == null)
                     return null;
@@ -158,7 +167,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                         progressMonitor.createSubTaskMonitor(9, false))) {
                     if (in == null)
                         return null;
-                    ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                    ds = parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
                 }
             }
             return ds;
