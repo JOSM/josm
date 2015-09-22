@@ -403,7 +403,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
         @Override
         public void update(Observable o, Object arg) {
-            setEnabled(model.hasCoordConflict() && !model.isDecidedCoord());
+            setEnabled(model.hasCoordConflict() && !model.isDecidedCoord() && model.getMyCoords() != null);
         }
     }
 
@@ -420,7 +420,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
         @Override
         public void update(Observable o, Object arg) {
-            setEnabled(model.hasCoordConflict() && !model.isDecidedCoord());
+            setEnabled(model.hasCoordConflict() && !model.isDecidedCoord() && model.getTheirCoords() != null);
         }
     }
 
