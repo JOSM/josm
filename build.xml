@@ -25,6 +25,10 @@
     <condition property="isWindows">
         <os family="Windows"/>
     </condition>
+    <!-- For Java9-specific stuff -->
+    <condition property="isJava9">
+        <equals arg1="${ant.java.version}" arg2="1.9" />
+    </condition>
 
     <!--
       ** Used by Eclipse ant builder for updating
@@ -418,7 +422,8 @@ Build-Date: ${build.tstamp}
             <html destdir="${test.dir}/report/jacoco"/>
         </jacoco:report>
     </target>
-    <target name="dist-optimized" depends="dist">
+    <!-- Proguard does not support Java 9 : http://sourceforge.net/p/proguard/bugs/551/ -->
+    <target name="dist-optimized" depends="dist" unless="isJava9">
         <taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar"/>
         <proguard>
         -injars dist/josm-custom.jar
