@@ -209,23 +209,31 @@ public class AutoCompletionManager implements DataSetListener {
     public static void cachePresets(Collection<TaggingPreset> presets) {
         for (final TaggingPreset p : presets) {
             for (TaggingPresetItem item : p.data) {
-                if (item instanceof TaggingPresetItems.KeyedItem) {
-                    TaggingPresetItems.KeyedItem ki = (TaggingPresetItems.KeyedItem) item;
-                    if (ki.key != null && ki.getValues() != null) {
-                        try {
-                            PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
-                        } catch (NullPointerException e) {
-                            Main.error(p+": Unable to cache "+ki);
-                        }
-                    }
-                } else if (item instanceof TaggingPresetItems.Roles) {
-                    TaggingPresetItems.Roles r = (TaggingPresetItems.Roles) item;
-                    for (TaggingPresetItems.Role i : r.roles) {
-                        if (i.key != null) {
-                            PRESET_ROLE_CACHE.add(i.key);
-                        }
-                    }
+                cachePresetItem(p, item);
+            }
+        }
+    }
+
+    protected static void cachePresetItem(TaggingPreset p, TaggingPresetItem item) {
+        if (item instanceof TaggingPresetItems.KeyedItem) {
+            TaggingPresetItems.KeyedItem ki = (TaggingPresetItems.KeyedItem) item;
+            if (ki.key != null && ki.getValues() != null) {
+                try {
+                    PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
+                } catch (NullPointerException e) {
+                    Main.error(p + ": Unable to cache " + ki);
                 }
+            }
+        } else if (item instanceof TaggingPresetItems.Roles) {
+            TaggingPresetItems.Roles r = (TaggingPresetItems.Roles) item;
+            for (TaggingPresetItems.Role i : r.roles) {
+                if (i.key != null) {
+                    PRESET_ROLE_CACHE.add(i.key);
+                }
+            }
+        } else if (item instanceof TaggingPresetItems.CheckGroup) {
+            for (TaggingPresetItems.KeyedItem check : ((TaggingPresetItems.CheckGroup) item).checks) {
+                cachePresetItem(p, check);
             }
         }
     }

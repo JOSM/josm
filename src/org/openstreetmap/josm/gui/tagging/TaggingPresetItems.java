@@ -852,6 +852,16 @@ public final class TaggingPresetItems {
         }
 
         @Override
+        Boolean matches(Map<String, String> tags) {
+            for (Check check : checks) {
+                if (Boolean.TRUE.equals(check.matches(tags))) {
+                    return true;
+                }
+            }
+            return null;
+        }
+
+        @Override
         public String toString() {
             return "CheckGroup [columns=" + columns + "]";
         }
