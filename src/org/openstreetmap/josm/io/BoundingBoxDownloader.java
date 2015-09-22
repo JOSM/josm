@@ -79,7 +79,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
     public GpxData parseRawGps(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask("", 1);
         try {
-            progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
+            progressMonitor.indeterminateSubTask(getTaskName());
             if (crosses180th) {
                 // API 0.6 does not support requests crossing the 180th meridian, so make two requests
                 GpxData result = downloadRawGps(new Bounds(lat1, lon1, lat2, 180.0), progressMonitor);
@@ -111,13 +111,23 @@ public class BoundingBoxDownloader extends OsmServerReader {
         }
     }
 
+    /**
+     * Returns the name of the download task to be displayed in the {@link ProgressMonitor}.
+     */
+    protected String getTaskName() {
+        return tr("Contacting OSM Server...");
+    }
+
+    /**
+     * Builds the request part for the bounding box.
+     */
     protected String getRequestForBbox(double lon1, double lat1, double lon2, double lat2) {
         return "map?bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
     }
 
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
-        progressMonitor.beginTask(tr("Contacting OSM Server..."), 10);
+        progressMonitor.beginTask(getTaskName(), 10);
         try {
             DataSet ds = null;
             progressMonitor.indeterminateSubTask(null);
