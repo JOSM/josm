@@ -361,6 +361,11 @@ public class SearchCompiler {
             else
                 return ret;
         }
+
+        @Override
+        public String toString() {
+            return key + "?";
+        }
     }
 
     /**
@@ -624,6 +629,11 @@ public class SearchCompiler {
                 compareResult = osm.get(key).compareTo(referenceValue);
             }
             return compareMode < 0 ? compareResult < 0 : compareMode > 0 ? compareResult > 0 : compareResult == 0;
+        }
+
+        @Override
+        public String toString() {
+            return key + (compareMode == -1 ? "<" : compareMode == +1 ? ">" : "") + referenceValue;
         }
     }
 
@@ -1347,6 +1357,11 @@ public class SearchCompiler {
             return Main.main.getCurrentDataSet() == null || Main.main.getCurrentDataSet().getDataSourceArea() == null
                     ? null : new Bounds(Main.main.getCurrentDataSet().getDataSourceArea().getBounds2D());
         }
+
+        @Override
+        public String toString() {
+            return all ? "allindownloadedarea" : "indownloadedarea";
+        }
     }
 
     /**
@@ -1364,6 +1379,11 @@ public class SearchCompiler {
                 return null;
             }
             return Main.map.mapView.getRealBounds();
+        }
+
+        @Override
+        public String toString() {
+            return all ? "allinview" : "inview";
         }
     }
 
@@ -1399,7 +1419,8 @@ public class SearchCompiler {
         if (!tokenizer.readIfEqual(Token.EOF))
             throw new ParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
         if (m == null)
-            return new Always();
+            m = new Always();
+        Main.debug("Parsed search expression is {0}", m);
         return m;
     }
 
