@@ -9,6 +9,7 @@ import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.OsmUtils
+import org.openstreetmap.josm.data.osm.Node
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
@@ -227,6 +228,33 @@ class MapCSSParserTest {
         assert c2.applies(new Environment(w2))
         w2.put("bar", "^[0-9]\$")
         assert !c2.applies(new Environment(w2))
+    }
+
+    @Test
+    public void testParentTag() throws Exception {
+        def c1 = getParser("way[foo] > node[tag(\"foo\")=parent_tag(\"foo\")] {}").child_selector()
+        def ds = new DataSet()
+        def w1 = new Way()
+        def w2 = new Way()
+        def n1 = new Node(new LatLon(1, 1))
+        def n2 = new Node(new LatLon(2, 2))
+        w1.put("foo", "123")
+        w2.put("foo", "123")
+        n1.put("foo", "123")
+        n2.put("foo", "0")
+        ds.addPrimitive(w1)
+        ds.addPrimitive(n1)
+        ds.addPrimitive(n2)
+        w1.addNode(n1)
+        w2.addNode(n2)
+        assert c1.matches(new Environment(n1))
+        assert !c1.matches(new Environment(n2))
+        assert !c1.matches(new Environment(w1))
+        assert !c1.matches(new Environment(w2))
+        n1.put("foo", "0")
+        assert !c1.matches(new Environment(n1))
+        n1.put("foo", "123")
+        assert c1.matches(new Environment(n1))
     }
 
     @Test
