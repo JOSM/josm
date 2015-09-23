@@ -6,11 +6,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.LatLonDialog;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -63,7 +65,11 @@ public final class AddNodeAction extends JosmAction {
         // add the node
         Main.main.undoRedo.add(new AddCommand(nnew));
         getCurrentDataSet().setSelected(nnew);
-        Main.map.mapView.repaint();
+        if (Main.map.mapView.getRealBounds().contains(nnew.getCoor())) {
+            Main.map.mapView.repaint();
+        } else {
+            AutoScaleAction.zoomTo(Collections.<OsmPrimitive>singleton(nnew));
+        }
     }
 
     @Override
