@@ -804,8 +804,9 @@ public class LayerListDialog extends ToggleDialog {
     /**
      * The action to merge the currently selected layer into another layer.
      */
-    public final class MergeAction extends AbstractAction implements IEnabledStateUpdating {
+    public final class MergeAction extends AbstractAction implements IEnabledStateUpdating, LayerAction, Layer.MultiLayerAction {
         private transient Layer layer;
+        private transient List<Layer> layers;
 
         /**
          * Constructs a new {@code MergeAction}.
@@ -813,17 +814,26 @@ public class LayerListDialog extends ToggleDialog {
          * @throws IllegalArgumentException if {@code layer} is null
          */
         public MergeAction(Layer layer) {
-            this();
+            this(layer, null);
             CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-            this.layer = layer;
-            putValue(NAME, tr("Merge"));
-            updateEnabledState();
+        }
+
+        /**
+         * Constructs a new {@code MergeAction}.
+         * @param layers the layer list
+         * @throws IllegalArgumentException if {@code layers} is null
+         */
+        public MergeAction(List<Layer> layers) {
+            this(null, layers);
+            CheckParameterUtil.ensureParameterNotNull(layers, "layers");
         }
 
         /**
          * Constructs a new {@code MergeAction}.
          */
-        public MergeAction() {
+        private MergeAction(Layer layer, List<Layer> layers) {
+            this.layer = layer;
+            this.layers = layers;
             putValue(NAME, tr("Merge"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "mergedown"));
             putValue(SHORT_DESCRIPTION, tr("Merge this layer into another layer"));
@@ -835,6 +845,8 @@ public class LayerListDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             if (layer != null) {
                 Main.main.menu.merge.merge(layer);
+            } else if (layers != null) {
+                Main.main.menu.merge.merge(layers);
             } else {
                 if (getModel().getSelectedLayers().size() == 1) {
                     Layer selectedLayer = getModel().getSelectedLayers().get(0);
@@ -845,14 +857,9 @@ public class LayerListDialog extends ToggleDialog {
             }
         }
 
-        protected boolean isActiveLayer(Layer layer) {
-            if (!Main.isDisplayingMapView()) return false;
-            return Main.map.mapView.getActiveLayer() == layer;
-        }
-
         @Override
         public void updateEnabledState() {
-            if (layer == null) {
+            if (layer == null && layers == null) {
                 if (getModel().getSelectedLayers().isEmpty()) {
                     setEnabled(false);
                 } else  if (getModel().getSelectedLayers().size() > 1) {
@@ -869,10 +876,32 @@ public class LayerListDialog extends ToggleDialog {
                     List<Layer> targets = getModel().getPossibleMergeTargets(selectedLayer);
                     setEnabled(!targets.isEmpty());
                 }
-            } else {
+            } else if (layer != null) {
                 List<Layer> targets = getModel().getPossibleMergeTargets(layer);
                 setEnabled(!targets.isEmpty());
+            } else {
+                setEnabled(supportLayers(layers));
             }
+        }
+
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            for (Layer l : layers) {
+                if (!(l instanceof OsmDataLayer)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public Component createMenuComponent() {
+            return new JMenuItem(this);
+        }
+
+        @Override
+        public MergeAction getMultiLayerAction(List<Layer> layers) {
+            return new MergeAction(layers);
         }
     }
 
