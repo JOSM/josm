@@ -176,6 +176,9 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      * Called in the worker thread to do the actual work. When any of the
      * exception is thrown, a message box will be displayed and closeDialog
      * is called. finish() is called in any case.
+     * @throws SAXException if a SAX error occurs
+     * @throws IOException if an I/O error occurs
+     * @throws OsmTransferException if a communication error with the OSM server occurs
      */
     protected abstract void realRun() throws SAXException, IOException, OsmTransferException;
 

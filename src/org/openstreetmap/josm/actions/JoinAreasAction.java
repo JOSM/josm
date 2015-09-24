@@ -527,6 +527,7 @@ public class JoinAreasAction extends JosmAction {
      * Will join two or more overlapping areas
      * @param areas list of areas to join
      * @return new area formed.
+     * @throws UserCancelException if user cancels the operation
      */
     private JoinAreasResult joinAreas(List<Multipolygon> areas) throws UserCancelException {
 
@@ -1193,6 +1194,7 @@ public class JoinAreasAction extends JosmAction {
      * Joins the lists of ways.
      * @param polygon The list of outer ways that belong to that multigon.
      * @return The newly created outer way
+     * @throws UserCancelException if user cancels the operation
      */
     private Multipolygon  joinPolygon(AssembledMultipolygon polygon) throws UserCancelException {
         Multipolygon result = new Multipolygon(joinWays(polygon.outerWay.ways));
@@ -1208,6 +1210,7 @@ public class JoinAreasAction extends JosmAction {
      * Joins the outer ways and deletes all short ways that can't be part of a multipolygon anyway.
      * @param ways The list of outer ways that belong to that multigon.
      * @return The newly created outer way
+     * @throws UserCancelException if user cancels the operation
      */
     private Way joinWays(List<WayInPolygon> ways) throws UserCancelException {
 
@@ -1236,6 +1239,7 @@ public class JoinAreasAction extends JosmAction {
      * Joins a list of ways (using CombineWayAction and ReverseWayAction as specified in WayInPath)
      * @param ways The list of ways to join and reverse
      * @return The newly created way
+     * @throws UserCancelException if user cancels the operation
      */
     private Way joinOrientedWays(List<WayInPolygon> ways) throws UserCancelException {
         if (ways.size() < 2)
