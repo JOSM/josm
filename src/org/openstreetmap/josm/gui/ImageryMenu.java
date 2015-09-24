@@ -107,7 +107,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
      * @param subMenu submenu in that contains plugin-managed additional imagery layers
      */
     public ImageryMenu(JMenu subMenu) {
-        super(tr("Imagery"));
+        super(trc("menu", "Imagery"));
         setupMenuScroller();
         MapView.addLayerChangeListener(this);
         // build dynamically
