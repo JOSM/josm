@@ -14,15 +14,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -44,6 +45,7 @@ import org.openstreetmap.josm.tools.Pair;
 public class ProjectionRegressionTest {
 
     private static final String PROJECTION_DATA_FILE = "data_nodist/projection-regression-test-data.csv";
+    private static final String PROJECTION_DATA_FILE_JAVA_9 = "data_nodist/projection-regression-test-data-java9.csv";
 
     private static class TestData {
         public String code;
@@ -52,7 +54,11 @@ public class ProjectionRegressionTest {
         public LatLon ll2;
     }
 
-    public static void main(String[] args) throws IOException, FileNotFoundException {
+    private static String getProjectionDataFile() {
+        return TestUtils.getJavaVersion() >= 1.9 ? PROJECTION_DATA_FILE_JAVA_9 : PROJECTION_DATA_FILE;
+    }
+
+    public static void main(String[] args) throws IOException {
         setUp();
 
         Map<String, Projection> supportedCodesMap = new HashMap<>();
@@ -61,7 +67,7 @@ public class ProjectionRegressionTest {
         }
 
         List<TestData> prevData = new ArrayList<>();
-        if (new File(PROJECTION_DATA_FILE).exists()) {
+        if (new File(getProjectionDataFile()).exists()) {
             prevData = readData();
         }
         Map<String, TestData> prevCodesMap = new HashMap<>();
@@ -69,7 +75,7 @@ public class ProjectionRegressionTest {
             prevCodesMap.put(data.code, data);
         }
 
-        Set<String> codesToWrite = new LinkedHashSet<>();
+        Set<String> codesToWrite = new TreeSet<>();
         for (TestData data : prevData) {
             if (supportedCodesMap.containsKey(data.code)) {
                 codesToWrite.add(data.code);
@@ -83,7 +89,7 @@ public class ProjectionRegressionTest {
 
         Random rand = new Random();
         try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(PROJECTION_DATA_FILE), StandardCharsets.UTF_8))) {
+                new FileOutputStream(getProjectionDataFile()), StandardCharsets.UTF_8))) {
             out.write("# Data for test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java\n");
             out.write("# Format: 1. Projection code; 2. lat/lon; 3. lat/lon projected -> east/north; 4. east/north (3.) inverse projected\n");
             for (String code : codesToWrite) {
@@ -107,7 +113,8 @@ public class ProjectionRegressionTest {
     }
 
     private static List<TestData> readData() throws IOException, FileNotFoundException {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(PROJECTION_DATA_FILE), StandardCharsets.UTF_8))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(getProjectionDataFile()),
+                StandardCharsets.UTF_8))) {
             List<TestData> result = new ArrayList<>();
             String line;
             while ((line = in.readLine()) != null) {

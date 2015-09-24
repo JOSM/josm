@@ -106,4 +106,15 @@ public final class TestUtils {
         .append("\nCompared\no2: ").append(o2).append("\no3: ").append(o3).append("\ngave: ").append(d)
         .toString();
     }
+
+    /**
+     * Returns the Java version as a double value.
+     * @return the Java version as a double value (1.7, 1.8, 1.9, etc.)
+     */
+    public static double getJavaVersion() {
+        String version = System.getProperty("java.version");
+        int pos = version.indexOf('.');
+        pos = version.indexOf('.', pos + 1);
+        return Double.parseDouble(version.substring(0, pos));
+    }
 }
