@@ -109,12 +109,12 @@ public final class AlignInCircleAction extends JosmAction {
      * All other nodes are uniformly distributed.
      *
      * Case 1: One unclosed way.
-     * --> allow action, and align selected way nodes
+     * --&gt; allow action, and align selected way nodes
      * If nodes contained by this way are selected, there are fix.
      * If nodes outside from the way are selected there are ignored.
      *
      * Case 2: One or more ways are selected and can be joined into a polygon
-     * --> allow action, and align selected ways nodes
+     * --&gt; allow action, and align selected ways nodes
      * If 1 node outside of way is selected, it became center
      * If 1 node outside and 1 node inside are selected there define center and radius
      * If no outside node and 2 inside nodes are selected those 2 nodes define diameter
@@ -123,7 +123,7 @@ public final class AlignInCircleAction extends JosmAction {
      * (first referrer is the selected way)
      *
      * Case 3: Only nodes are selected
-     * --> Align these nodes, all are fix
+     * --&gt; Align these nodes, all are fix
      */
     @Override
     public void actionPerformed(ActionEvent e) {

@@ -462,7 +462,7 @@ public final class PluginHandler {
     }
 
     /**
-     * Alerts the user if a plugin required by another plugin is missing, and offer to download them & restart JOSM
+     * Alerts the user if a plugin required by another plugin is missing, and offer to download them &amp; restart JOSM
      *
      * @param parent The parent Component used to display error popup
      * @param plugin the plugin

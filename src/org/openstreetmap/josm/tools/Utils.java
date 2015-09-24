@@ -1315,12 +1315,12 @@ public final class Utils {
     }
 
     /**
-     * Returns a pair containing the number of threads (n), and a thread pool (if n > 1) to perform
+     * Returns a pair containing the number of threads (n), and a thread pool (if n &gt; 1) to perform
      * multi-thread computation in the context of the given preference key.
      * @param pref The preference key
      * @param nameFormat see {@link #newThreadFactory(String, int)}
      * @param threadPriority see {@link #newThreadFactory(String, int)}
-     * @return a pair containing the number of threads (n), and a thread pool (if n > 1, null otherwise)
+     * @return a pair containing the number of threads (n), and a thread pool (if n &gt; 1, null otherwise)
      * @since 7423
      */
     public static Pair<Integer, ExecutorService> newThreadPool(String pref, String nameFormat, int threadPriority) {

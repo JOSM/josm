@@ -24,7 +24,7 @@ public final class Ellipsoid {
     public static final Ellipsoid AiryMod = Ellipsoid.create_a_b(6377340.189, 6356034.446);
 
     /**
-     * Australian National Spheroid (Australian Natl & S. Amer. 1969)
+     * Australian National Spheroid (Australian Natl &amp; S. Amer. 1969)
      * same as GRS67 Modified
      */
     public static final Ellipsoid AustSA = Ellipsoid.create_a_rf(6378160.0, 298.25);

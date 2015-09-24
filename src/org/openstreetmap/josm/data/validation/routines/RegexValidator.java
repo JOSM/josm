@@ -33,18 +33,18 @@ import java.util.regex.Pattern;
  * </pre>
  * <p>
  * <ul>
- *   <li>Validate <code>true</code> or <code>false</code>:</li>
+ *   <li>Validate <code>true</code> or <code>false</code>:
  *   <ul>
  *     <li><code>boolean valid = validator.isValid(value);</code></li>
- *   </ul>
- *   <li>Validate returning an aggregated String of the matched groups:</li>
+ *   </ul></li>
+ *   <li>Validate returning an aggregated String of the matched groups:
  *   <ul>
  *     <li><code>String result = validator.validate(value);</code></li>
- *   </ul>
- *   <li>Validate returning the matched groups:</li>
+ *   </ul></li>
+ *   <li>Validate returning the matched groups:
  *   <ul>
  *     <li><code>String[] result = validator.match(value);</code></li>
- *   </ul>
+ *   </ul></li>
  * </ul>
  * <p>
  * Cached instances pre-compile and re-use {@link Pattern}(s) - which according

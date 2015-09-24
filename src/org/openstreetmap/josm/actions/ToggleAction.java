@@ -119,6 +119,7 @@ public abstract class ToggleAction extends JosmAction {
      * This method will do nothing if the action event comes from a Swing component supporting the SELECTED_KEY property because
      * the component already set the selected state.
      * This method needs to be called especially if the action is associated with a keyboard shortcut to ensure correct selected state.
+     * @param e ActionEvent that trigerred the action
      * @see <a href="https://weblogs.java.net/blog/zixle/archive/2005/11/changes_to_acti.html">Changes to Actions in 1.6</a>
      * @see <a href="http://docs.oracle.com/javase/6/docs/api/javax/swing/Action.html">Interface Action</a>
      */

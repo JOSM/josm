@@ -52,7 +52,7 @@ public interface GpxConstants {
      *  Fractional seconds are allowed for millisecond timing in tracklogs. */
     String PT_TIME = "time";
 
-    /** Magnetic variation (in degrees) at the point. 0.0 <= value < 360.0 */
+    /** Magnetic variation (in degrees) at the point. 0.0 &lt;= value &lt; 360.0 */
     String PT_MAGVAR = "magvar";
 
     /** Height, in meters, of geoid (mean sea level) above WGS-84 earth ellipsoid. (NMEA GGA message) */
@@ -82,7 +82,7 @@ public interface GpxConstants {
     /** Number of seconds since last DGPS update. */
     String PT_AGEOFDGPSDATA = "ageofdgpsdata";
 
-    /** Represents a differential GPS station. 0 <= value <= 1023 */
+    /** Represents a differential GPS station. 0 &lt;= value &lt;= 1023 */
     String PT_DGPSID = "dgpsid";
 
     /**

@@ -189,6 +189,9 @@ public class CreateMultipolygonAction extends JosmAction {
 
     /**
      * Returns a {@link Pair} of the old multipolygon {@link Relation} (or null) and the newly created/modified multipolygon {@link Relation}.
+     * @param selectedWays selected ways
+     * @param selectedMultipolygonRelation selected multipolygon relation
+     * @return pair of old and new multipolygon relation
      */
     public static Pair<Relation, Relation> updateMultipolygonRelation(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
@@ -206,6 +209,9 @@ public class CreateMultipolygonAction extends JosmAction {
 
     /**
      * Returns a {@link Pair} null and the newly created/modified multipolygon {@link Relation}.
+     * @param selectedWays selected ways
+     * @param showNotif if {@code true}, shows a notification if an error occurs
+     * @return pair of null and new multipolygon relation
      */
     public static Pair<Relation, Relation> createMultipolygonRelation(Collection<Way> selectedWays, boolean showNotif) {
 
@@ -219,6 +225,9 @@ public class CreateMultipolygonAction extends JosmAction {
 
     /**
      * Returns a {@link Pair} of a multipolygon creating/modifying {@link Command} as well as the multipolygon {@link Relation}.
+     * @param selectedWays selected ways
+     * @param selectedMultipolygonRelation selected multipolygon relation
+     * @return pair of command and multipolygon relation
      */
     public static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> selectedWays,
             Relation selectedMultipolygonRelation) {
@@ -273,6 +282,7 @@ public class CreateMultipolygonAction extends JosmAction {
     /**
      * This method analyzes ways and creates multipolygon.
      * @param selectedWays list of selected ways
+     * @param showNotif if {@code true}, shows a notification if an error occurs
      * @return <code>null</code>, if there was a problem with the ways.
      */
     private static MultipolygonBuilder analyzeWays(Collection<Way> selectedWays, boolean showNotif) {
@@ -300,6 +310,7 @@ public class CreateMultipolygonAction extends JosmAction {
     /**
      * Builds a relation from polygon ways.
      * @param pol data storage class containing polygon information
+     * @param clone relation to clone, can be null
      * @return multipolygon relation
      */
     private static Relation createRelation(MultipolygonBuilder pol, Relation clone) {

@@ -209,9 +209,10 @@ public final class DistributeAction extends JosmAction {
      * The general algorithm here is to find the two selected nodes
      * that are furthest apart, and then to distribute all other selected
      * nodes along the straight line between these nodes.
+     * @param nodes nodes to distribute
      * @return Commands to execute to perform action
      */
-    private Collection<Command> distributeNodes(Collection<Node> nodes) {
+    private static Collection<Command> distributeNodes(Collection<Node> nodes) {
         // Find from the selected nodes two that are the furthest apart.
         // Let's call them A and B.
         double distance = 0;

@@ -178,7 +178,7 @@ public abstract class AbstractFileChooser {
     /**
      * Pops up an "Open File" file chooser dialog. Note that the
      * text that appears in the approve button is determined by
-     * the L&F.
+     * the L&amp;F.
      *
      * @param    parent  the parent component of the dialog,
      *                  can be <code>null</code>;
@@ -198,7 +198,7 @@ public abstract class AbstractFileChooser {
     /**
      * Pops up a "Save File" file chooser dialog. Note that the
      * text that appears in the approve button is determined by
-     * the L&F.
+     * the L&amp;F.
      *
      * @param    parent  the parent component of the dialog,
      *                  can be <code>null</code>;

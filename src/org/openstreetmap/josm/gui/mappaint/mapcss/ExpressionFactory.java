@@ -564,40 +564,40 @@ public final class ExpressionFactory {
         }
 
         /**
-         * Function associated to the logical ">=" operator.
+         * Function associated to the logical "&gt;=" operator.
          * @param a first value
          * @param b second value
-         * @return {@code true} if {@code a >= b}
+         * @return {@code true} if {@code a &gt;= b}
          */
         public static boolean greater_equal(float a, float b) {
             return a >= b;
         }
 
         /**
-         * Function associated to the logical "<=" operator.
+         * Function associated to the logical "&lt;=" operator.
          * @param a first value
          * @param b second value
-         * @return {@code true} if {@code a <= b}
+         * @return {@code true} if {@code a &lt;= b}
          */
         public static boolean less_equal(float a, float b) {
             return a <= b;
         }
 
         /**
-         * Function associated to the logical ">" operator.
+         * Function associated to the logical "&gt;" operator.
          * @param a first value
          * @param b second value
-         * @return {@code true} if {@code a > b}
+         * @return {@code true} if {@code a &gt; b}
          */
         public static boolean greater(float a, float b) {
             return a > b;
         }
 
         /**
-         * Function associated to the logical "<" operator.
+         * Function associated to the logical "&lt;" operator.
          * @param a first value
          * @param b second value
-         * @return {@code true} if {@code a < b}
+         * @return {@code true} if {@code a &lt; b}
          */
         public static boolean less(float a, float b) {
             return a < b;

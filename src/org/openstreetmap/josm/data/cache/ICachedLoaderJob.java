@@ -42,7 +42,7 @@ public interface ICachedLoaderJob<K> {
      * Submit job for background fetch, and listener will be fed with value object
      *
      * @param listener cache loader listener
-     * @param force true if the load should skip all the caches (local & remote)
+     * @param force true if the load should skip all the caches (local &amp; remote)
      * @throws IOException on failure from getUrl() call
      */
     void submit(ICachedLoaderListener listener, boolean force) throws IOException;
