@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
-import static org.openstreetmap.josm.tools.I18n.marktrc;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
@@ -329,7 +328,7 @@ public class MainMenu extends JMenuBar {
     /**
      * fileMenu contains I/O actions
      */
-    public final JMenu fileMenu = addMenu(/* I18N: mnemonic: F */ marktrc("menu", "File"), KeyEvent.VK_F, 0, ht("/Menu/File"));
+    public final JMenu fileMenu = addMenu("File", /* I18N: mnemonic: F */ trc("menu", "File"), KeyEvent.VK_F, 0, ht("/Menu/File"));
     /**
      * sessionMenu is a submenu of File menu containing all session actions
      */
@@ -337,36 +336,36 @@ public class MainMenu extends JMenuBar {
     /**
      * editMenu contains editing actions
      */
-    public final JMenu editMenu = addMenu(/* I18N: mnemonic: E */ marktrc("menu", "Edit"), KeyEvent.VK_E, 1, ht("/Menu/Edit"));
+    public final JMenu editMenu = addMenu("Edit", /* I18N: mnemonic: E */ trc("menu", "Edit"), KeyEvent.VK_E, 1, ht("/Menu/Edit"));
     /**
      * viewMenu contains display actions (zoom, map styles, etc.)
      */
-    public final JMenu viewMenu = addMenu(/* I18N: mnemonic: V */ marktrc("menu", "View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
+    public final JMenu viewMenu = addMenu("View", /* I18N: mnemonic: V */ trc("menu", "View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
     /**
      * toolsMenu contains different geometry manipulation actions from JOSM core (most used)
      * The plugins should use other menus
      */
-    public final JMenu toolsMenu = addMenu(/* I18N: mnemonic: T */ marktrc("menu", "Tools"), KeyEvent.VK_T, 3, ht("/Menu/Tools"));
+    public final JMenu toolsMenu = addMenu("Tools", /* I18N: mnemonic: T */ trc("menu", "Tools"), KeyEvent.VK_T, 3, ht("/Menu/Tools"));
     /**
      * moreToolsMenu contains geometry-related actions from all the plugins
      * @since 6082 (moved from Utilsplugin2)
      */
-    public final JMenu moreToolsMenu = addMenu(/* I18N: mnemonic: M */ marktrc("menu", "More tools"), KeyEvent.VK_M, 4, ht("/Menu/MoreTools"));
+    public final JMenu moreToolsMenu = addMenu("More tools", /* I18N: mnemonic: M */ trc("menu", "More tools"), KeyEvent.VK_M, 4, ht("/Menu/MoreTools"));
     /**
      * dataMenu contains plugin actions that are related to certain tagging schemes (addressing opening hours),
      * importing external data and using external web APIs
      * @since 6082
      */
-    public final JMenu dataMenu = addMenu(/* I18N: mnemonic: D */ marktrc("menu", "Data"), KeyEvent.VK_D, 5, ht("/Menu/Data"));
+    public final JMenu dataMenu = addMenu("Data", /* I18N: mnemonic: D */ trc("menu", "Data"), KeyEvent.VK_D, 5, ht("/Menu/Data"));
     /**
      * selectionMenu contains all actions related to selecting different objects
      * @since 6082 (moved from Utilsplugin2)
      */
-    public final JMenu selectionMenu = addMenu(/* I18N: mnemonic: N */ marktrc("menu", "Selection"), KeyEvent.VK_N, 6, ht("/Menu/Selection"));
+    public final JMenu selectionMenu = addMenu("Selection", /* I18N: mnemonic: N */ trc("menu", "Selection"), KeyEvent.VK_N, 6, ht("/Menu/Selection"));
     /**
      * presetsMenu contains presets actions (search, presets tree)
      */
-    public final JMenu presetsMenu = addMenu(/* I18N: mnemonic: P */ marktrc("menu", "Presets"), KeyEvent.VK_P, 7, ht("/Menu/Presets"));
+    public final JMenu presetsMenu = addMenu("Presets", /* I18N: mnemonic: P */ trc("menu", "Presets"), KeyEvent.VK_P, 7, ht("/Menu/Presets"));
     /**
      * submenu in Imagery menu that contains plugin-managed additional imagery layers
      * @since 6097
@@ -376,20 +375,20 @@ public class MainMenu extends JMenuBar {
      * imageryMenu contains all imagery-related actions
      */
     // CHECKSTYLE.OFF: LineLength
-    public final ImageryMenu imageryMenu = addMenu(new ImageryMenu(imagerySubMenu), /* I18N: mnemonic: I */ marktrc("menu", "Imagery"), KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
+    public final ImageryMenu imageryMenu = addMenu(new ImageryMenu(imagerySubMenu), /* I18N: mnemonic: I */ "Imagery", KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
     // CHECKSTYLE.ON: LineLength
     /**
      * gpsMenu contains all plugin actions that are related
      * to using GPS data, including opening, uploading and real-time tracking
      * @since 6082
      */
-    public final JMenu gpsMenu = addMenu(/* I18N: mnemonic: G */ marktrc("menu", "GPS"), KeyEvent.VK_G, 9, ht("/Menu/GPS"));
+    public final JMenu gpsMenu = addMenu("GPS", /* I18N: mnemonic: G */ trc("menu", "GPS"), KeyEvent.VK_G, 9, ht("/Menu/GPS"));
     /** the window menu is split into several groups. The first is for windows that can be opened from
      * this menu any time, e.g. the changeset editor. The second group is for toggle dialogs and the third
      * group is for currently open windows that cannot be toggled, e.g. relation editors. It's recommended
      * to use WINDOW_MENU_GROUP to determine the group integer.
      */
-    public final JMenu windowMenu = addMenu(/* I18N: mnemonic: W */ marktrc("menu", "Windows"), KeyEvent.VK_W, 10, ht("/Menu/Windows"));
+    public final JMenu windowMenu = addMenu("Windows", /* I18N: mnemonic: W */ trc("menu", "Windows"), KeyEvent.VK_W, 10, ht("/Menu/Windows"));
 
     /**
      * audioMenu contains all audio-related actions. Be careful, this menu is not guaranteed to be displayed at all
@@ -398,7 +397,7 @@ public class MainMenu extends JMenuBar {
     /**
      * helpMenu contains JOSM general actions (Help, About, etc.)
      */
-    public final JMenu helpMenu = addMenu(/* I18N: mnemonic: H */ marktrc("menu", "Help"), KeyEvent.VK_H, 11, ht("/Menu/Help"));
+    public final JMenu helpMenu = addMenu("Help", /* I18N: mnemonic: H */ trc("menu", "Help"), KeyEvent.VK_H, 11, ht("/Menu/Help"));
 
     private static final int defaultMenuPos = 11;
 
@@ -605,16 +604,45 @@ public class MainMenu extends JMenuBar {
         return i;
     }
 
+    /**
+     * @deprecated Use {@link #addMenu(String, String, int, int, String)} instead.
+     */
+    // Kept for compatibility with plugins
+    @Deprecated
     public JMenu addMenu(String name, int mnemonicKey, int position, String relativeHelpTopic) {
-        final JMenu menu = new JMenu(tr(name));
+        return addMenu(name, tr(name), mnemonicKey, position, relativeHelpTopic);
+    }
+
+    /**
+     * Creates a menu and adds it on the given position to the main menu.
+     *
+     * @param name              the untranslated name (used as identifier for shortcut registration)
+     * @param translatedName    the translated menu name (use {@code I18n.trc("menu", name)} to allow better internationalization
+     * @param mnemonicKey       the mnemonic key to register
+     * @param position          the position in the main menu
+     * @param relativeHelpTopic the relative help topic
+     * @return the newly created menu
+     */
+    public JMenu addMenu(String name, String translatedName, int mnemonicKey, int position, String relativeHelpTopic) {
+        final JMenu menu = new JMenu(translatedName);
         if (!GraphicsEnvironment.isHeadless()) {
             MenuScroller.setScrollerFor(menu);
         }
         return addMenu(menu, name, mnemonicKey, position, relativeHelpTopic);
     }
 
+    /**
+     * Adds the given menu on the given position to the main menu.
+     *
+     * @param menu              the menu to add
+     * @param name              the untranslated name (used as identifier for shortcut registration)
+     * @param mnemonicKey       the mnemonic key to register
+     * @param position          the position in the main menu
+     * @param relativeHelpTopic the relative help topic
+     * @return the given {@code }menu}
+     */
     public <T extends JMenu> T addMenu(T menu, String name, int mnemonicKey, int position, String relativeHelpTopic) {
-        Shortcut.registerShortcut("menu:" + name, tr("Menu: {0}", trc("menu", name)), mnemonicKey,
+        Shortcut.registerShortcut("menu:" + name, tr("Menu: {0}", getName()), mnemonicKey,
                 Shortcut.MNEMONIC).setMnemonic(menu);
         add(menu, position);
         menu.putClientProperty("help", relativeHelpTopic);
@@ -913,7 +941,7 @@ public class MainMenu extends JMenuBar {
 
     protected void showAudioMenu(boolean showMenu) {
         if (showMenu && audioMenu == null) {
-            audioMenu = addMenu(/* I18N: mnemonic: U */ marktrc("menu", "Audio"), KeyEvent.VK_U, defaultMenuPos, ht("/Menu/Audio"));
+            audioMenu = addMenu("Audio", /* I18N: mnemonic: U */ trc("menu", "Audio"), KeyEvent.VK_U, defaultMenuPos, ht("/Menu/Audio"));
             add(audioMenu, audioPlayPause);
             add(audioMenu, audioNext);
             add(audioMenu, audioPrev);
