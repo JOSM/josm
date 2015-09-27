@@ -317,6 +317,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 urlConn.addRequestProperty("If-None-Match", attributes.getEtag());
             }
 
+            log.log(Level.INFO, "GET {0} -> {1}", new Object[]{getUrl(), urlConn.getResponseCode()});
+
             // follow redirects
             for (int i = 0; i < 5; i++) {
                 if (urlConn.getResponseCode() == 302) {
