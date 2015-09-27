@@ -1135,18 +1135,18 @@ public abstract class Main {
      * The type of a command line parameter, to be used in switch statements.
      * @see #paramType
      */
-    private enum DownloadParamType { httpUrl, fileUrl, bounds, fileName }
+    enum DownloadParamType { httpUrl, fileUrl, bounds, fileName }
 
     /**
      * Guess the type of a parameter string specified on the command line with --download= or --downloadgps.
      * @param s A parameter string
      * @return The guessed parameter type
      */
-    private static DownloadParamType paramType(String s) {
+    static DownloadParamType paramType(String s) {
         if (s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
         if (s.startsWith("file:")) return DownloadParamType.fileUrl;
         String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
-        if (s.matches(coorPattern+"(,"+coorPattern+") {3}")) return DownloadParamType.bounds;
+        if (s.matches(coorPattern+"(,"+coorPattern+"){3}")) return DownloadParamType.bounds;
         // everything else must be a file name
         return DownloadParamType.fileName;
     }
