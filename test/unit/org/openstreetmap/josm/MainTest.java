@@ -9,7 +9,6 @@ import org.junit.Test;
 public class MainTest {
     @Test
     public void testParamType() throws Exception {
-        assertThat(Main.paramType("48.000,16.000,48.001,16.001"), is(Main.DownloadParamType.bounds));
-
+        assertThat(Main.DownloadParamType.paramType("48.000,16.000,48.001,16.001"), is(Main.DownloadParamType.bounds));
     }
 }
