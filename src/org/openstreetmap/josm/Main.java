@@ -56,6 +56,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
+import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
@@ -984,34 +985,7 @@ public abstract class Main {
         if (args.containsKey(Option.DOWNLOAD)) {
             List<File> fileList = new ArrayList<>();
             for (String s : args.get(Option.DOWNLOAD)) {
-                File f = null;
-                switch(paramType(s)) {
-                case httpUrl:
-                    downloadFromParamHttp(false, s);
-                    break;
-                case bounds:
-                    downloadFromParamBounds(false, s);
-                    break;
-                case fileUrl:
-                    try {
-                        f = new File(new URI(s));
-                    } catch (URISyntaxException e) {
-                        JOptionPane.showMessageDialog(
-                                Main.parent,
-                                tr("Ignoring malformed file URL: \"{0}\"", s),
-                                tr("Warning"),
-                                JOptionPane.WARNING_MESSAGE
-                                );
-                    }
-                    if (f != null) {
-                        fileList.add(f);
-                    }
-                    break;
-                case fileName:
-                    f = new File(s);
-                    fileList.add(f);
-                    break;
-                }
+                DownloadParamType.paramType(s).download(s, fileList);
             }
             if (!fileList.isEmpty()) {
                 OpenFileAction.openFiles(fileList, true);
@@ -1019,22 +993,7 @@ public abstract class Main {
         }
         if (args.containsKey(Option.DOWNLOADGPS)) {
             for (String s : args.get(Option.DOWNLOADGPS)) {
-                switch(paramType(s)) {
-                case httpUrl:
-                    downloadFromParamHttp(true, s);
-                    break;
-                case bounds:
-                    downloadFromParamBounds(true, s);
-                    break;
-                case fileUrl:
-                case fileName:
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                            );
-                }
+                DownloadParamType.paramType(s).downloadGps(s);
             }
         }
         if (args.containsKey(Option.SELECTION)) {
@@ -1135,54 +1094,112 @@ public abstract class Main {
      * The type of a command line parameter, to be used in switch statements.
      * @see #paramType
      */
-    enum DownloadParamType { httpUrl, fileUrl, bounds, fileName }
+    enum DownloadParamType {
+        httpUrl {
+            @Override
+            void download(String s, Collection<File> fileList) {
+                new OpenLocationAction().openUrl(false, s);
+            }
 
-    /**
-     * Guess the type of a parameter string specified on the command line with --download= or --downloadgps.
-     * @param s A parameter string
-     * @return The guessed parameter type
-     */
-    static DownloadParamType paramType(String s) {
-        if (s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
-        if (s.startsWith("file:")) return DownloadParamType.fileUrl;
-        String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
-        if (s.matches(coorPattern+"(,"+coorPattern+"){3}")) return DownloadParamType.bounds;
-        // everything else must be a file name
-        return DownloadParamType.fileName;
-    }
+            @Override
+            void downloadGps(String s) {
+                final Bounds b = OsmUrlToBounds.parse(s);
+                if (b == null) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("Ignoring malformed URL: \"{0}\"", s),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    return;
+                }
+                downloadFromParamBounds(true, b);
+            }
+        }, fileUrl {
+            @Override
+            void download(String s, Collection<File> fileList) {
+                File f = null;
+                try {
+                    f = new File(new URI(s));
+                } catch (URISyntaxException e) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("Ignoring malformed file URL: \"{0}\"", s),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                }
+                if (f != null) {
+                    fileList.add(f);
+                }
+            }
+        }, bounds {
 
-    /**
-     * Download area specified on the command line as OSM URL.
-     * @param rawGps Flag to download raw GPS tracks
-     * @param s The URL parameter
-     */
-    private static void downloadFromParamHttp(final boolean rawGps, String s) {
-        final Bounds b = OsmUrlToBounds.parse(s);
-        if (b == null) {
+            /**
+             * Download area specified on the command line as bounds string.
+             * @param rawGps Flag to download raw GPS tracks
+             * @param s The bounds parameter
+             */
+            private void downloadFromParamBounds(final boolean rawGps, String s) {
+                final StringTokenizer st = new StringTokenizer(s, ",");
+                if (st.countTokens() == 4) {
+                    Bounds b = new Bounds(
+                            new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())),
+                            new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()))
+                    );
+                    Main.downloadFromParamBounds(rawGps, b);
+                }
+            }
+
+            @Override
+            void download(String param, Collection<File> fileList) {
+                downloadFromParamBounds(false, param);
+            }
+
+            @Override
+            void downloadGps(String param) {
+                downloadFromParamBounds(true, param);
+            }
+        }, fileName {
+            @Override
+            void download(String s, Collection<File> fileList) {
+                fileList.add(new File(s));
+            }
+        };
+
+        /**
+         * Performs the download
+         * @param param represents the object to be downloaded
+         * @param fileList files which shall be opened, should be added to this collection
+         */
+        abstract void download(String param, Collection<File> fileList);
+
+        /**
+         * Performs the GPS download
+         * @param param represents the object to be downloaded
+         */
+        void downloadGps(String param) {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("Ignoring malformed URL: \"{0}\"", s),
+                    tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE
-                    );
-        } else {
-            downloadFromParamBounds(rawGps, b);
+            );
         }
-    }
 
-    /**
-     * Download area specified on the command line as bounds string.
-     * @param rawGps Flag to download raw GPS tracks
-     * @param s The bounds parameter
-     */
-    private static void downloadFromParamBounds(final boolean rawGps, String s) {
-        final StringTokenizer st = new StringTokenizer(s, ",");
-        if (st.countTokens() == 4) {
-            Bounds b = new Bounds(
-                    new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())),
-                    new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()))
-                    );
-            downloadFromParamBounds(rawGps, b);
+        /**
+         * Guess the type of a parameter string specified on the command line with --download= or --downloadgps.
+         *
+         * @param s A parameter string
+         * @return The guessed parameter type
+         */
+        static DownloadParamType paramType(String s) {
+            if (s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
+            if (s.startsWith("file:")) return DownloadParamType.fileUrl;
+            String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
+            if (s.matches(coorPattern + "(," + coorPattern + "){3}")) return DownloadParamType.bounds;
+            // everything else must be a file name
+            return DownloadParamType.fileName;
         }
     }
 
@@ -1190,8 +1207,6 @@ public abstract class Main {
      * Download area specified as Bounds value.
      * @param rawGps Flag to download raw GPS tracks
      * @param b The bounds value
-     * @see #downloadFromParamBounds(boolean, String)
-     * @see #downloadFromParamHttp
      */
     private static void downloadFromParamBounds(final boolean rawGps, Bounds b) {
         DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
