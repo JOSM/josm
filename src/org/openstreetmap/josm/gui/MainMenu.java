@@ -96,7 +96,6 @@ import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SearchNotesDownloadAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.SelectNonBranchingWaySequencesAction;
-import org.openstreetmap.josm.actions.SessionLoadAction;
 import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SimplifyWayAction;
@@ -133,7 +132,6 @@ import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchPrimitiveDialog;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -161,8 +159,6 @@ public class MainMenu extends JMenuBar {
     public final SaveAction save = SaveAction.getInstance();
     /** File / Save As... **/
     public final SaveAsAction saveAs = SaveAsAction.getInstance();
-    /** File / Session &gt; Load Session **/
-    public SessionLoadAction sessionLoad;
     /** File / Session &gt; Save Session As... **/
     public SessionSaveAsAction sessionSaveAs;
     /** File / Export to GPX... **/
@@ -329,10 +325,6 @@ public class MainMenu extends JMenuBar {
      * fileMenu contains I/O actions
      */
     public final JMenu fileMenu = addMenu("File", /* I18N: mnemonic: F */ trc("menu", "File"), KeyEvent.VK_F, 0, ht("/Menu/File"));
-    /**
-     * sessionMenu is a submenu of File menu containing all session actions
-     */
-    public final JMenu sessionMenu = new JMenu(tr("Session"));
     /**
      * editMenu contains editing actions
      */
@@ -664,14 +656,8 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, save);
         add(fileMenu, saveAs);
-        sessionMenu.setToolTipText(tr("Save and load the current session (list of layers, etc.)"));
-        sessionMenu.setIcon(new ImageProvider("session").setSize(ImageProvider.ImageSizes.MENU).get());
         sessionSaveAs = new SessionSaveAsAction();
-        sessionLoad = new SessionLoadAction();
-        add(sessionMenu, sessionSaveAs);
-        add(sessionMenu, sessionLoad);
-        fileMenu.add(sessionMenu);
-        ExpertToggleAction.addVisibilitySwitcher(sessionMenu);
+        ExpertToggleAction.addVisibilitySwitcher(fileMenu.add(sessionSaveAs));
         add(fileMenu, gpxExport, true);
         fileMenu.addSeparator();
         add(fileMenu, download);

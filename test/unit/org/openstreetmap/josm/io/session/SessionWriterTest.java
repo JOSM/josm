@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io.session;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -14,14 +15,16 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Unit tests for Session writing.
@@ -123,6 +126,12 @@ public class SessionWriterTest {
         return new MarkerLayer(gpx.data, "Marker layer name", gpx.getAssociatedFile(), gpx);
     }
 
+    private ImageryLayer createImageryLayer() {
+        ImageryLayer layer = new TMSLayer(new ImageryInfo("the name", "http://www.url.com/"));
+        layer.setOffset(12, 34);
+        return layer;
+    }
+
     /**
      * Tests to write an empty .jos file.
      * @throws IOException if any I/O error occurs
@@ -184,6 +193,12 @@ public class SessionWriterTest {
     @Test
     public void testWriteGpxAndMarkerJoz() throws IOException {
         GpxLayer gpx = createGpxLayer();
-        testWrite(Pair.toList(new Pair<Layer, Layer>(gpx, createMarkerLayer(gpx))), true);
+        testWrite(Arrays.asList(gpx, createMarkerLayer(gpx)), true);
+    }
+
+    @Test
+    public void testWriteImageryLayer() throws IOException {
+        final Layer layer = createImageryLayer();
+        testWrite(Collections.singletonList(layer), true);
     }
 }

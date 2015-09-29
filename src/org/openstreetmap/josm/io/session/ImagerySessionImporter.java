@@ -59,6 +59,9 @@ public class ImagerySessionImporter implements SessionLayerImporter {
                 tsLayer.showErrors = Boolean.valueOf(attributes.get("show-errors"));
             }
         }
+        if (attributes.containsKey("dx") && attributes.containsKey("dy")) {
+            layer.setOffset(Double.parseDouble(attributes.get("dx")), Double.parseDouble(attributes.get("dy")));
+        }
         return layer;
     }
 }

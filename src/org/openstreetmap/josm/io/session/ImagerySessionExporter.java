@@ -87,6 +87,8 @@ public class ImagerySessionExporter implements SessionLayerExporter {
             data.put("automatically-change-resolution", Boolean.toString(tsLayer.autoZoom));
             data.put("show-errors", Boolean.toString(tsLayer.showErrors));
         }
+        data.put("dx", String.valueOf(layer.getDx()));
+        data.put("dy", String.valueOf(layer.getDy()));
         for (Map.Entry<String, String> entry : data.entrySet()) {
             Element attrElem = support.createElement(entry.getKey());
             layerElem.appendChild(attrElem);

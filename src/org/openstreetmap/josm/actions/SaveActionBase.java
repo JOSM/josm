@@ -36,7 +36,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             return;
         boolean saved = doSave();
         if (saved) {
-            addToFileOpenHistory();
+            addToFileOpenHistory(file);
         }
     }
 
@@ -198,8 +198,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
         return true;
     }
 
-    protected void addToFileOpenHistory() {
-        String filepath;
+    static void addToFileOpenHistory(File file) {
+        final String filepath;
         try {
             filepath = file.getCanonicalPath();
         } catch (IOException ign) {

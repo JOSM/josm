@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<josm-session version="0.1">
+    <viewport>
+        <center lat="1" lon="1"/>
+        <scale meter-per-pixel="9"/>
+    </viewport>
+    <layers active="1">
+        <layer index="1" name="Bing aerial imagery" type="imagery" version="0.1" visible="true">
+            <name>Bing aerial imagery</name>
+            <id>Bing</id>
+            <type>bing</type>
+            <url>http://www.bing.com/maps/</url>
+            <max-zoom>22</max-zoom>
+            <automatic-downloading>true</automatic-downloading>
+            <automatically-change-resolution>true</automatically-change-resolution>
+            <show-errors>true</show-errors>
+            <dx>12.34</dx>
+            <dy>-56.78</dy>
+        </layer>
+    </layers>
+</josm-session>
