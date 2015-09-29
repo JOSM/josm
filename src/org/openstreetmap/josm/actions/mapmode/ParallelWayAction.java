@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -553,13 +554,10 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             getCurrentDataSet().setSelected(pWays.getWays());
             return true;
         } catch (IllegalArgumentException e) {
-            // TODO: Not ideal feedback. Maybe changing the cursor could be a good mechanism?
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("ParallelWayAction\n" +
-                            "The ways selected must form a simple branchless path"),
-                    tr("Make parallel way error"),
-                    JOptionPane.INFORMATION_MESSAGE);
+            new Notification(tr("ParallelWayAction\n" +
+                    "The ways selected must form a simple branchless path"))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .show();
             // The error dialog prevents us from getting the mouseReleased event
             resetMouseTrackingState();
             pWays = null;
