@@ -135,6 +135,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         SessionWriter sw = new SessionWriter(layersOut, active, exporters, dependencies, zip);
         try {
             sw.write(file);
+            SaveActionBase.addToFileOpenHistory(file);
         } catch (IOException ex) {
             Main.error(ex);
             HelpAwareOptionPane.showMessageDialogInEDT(
