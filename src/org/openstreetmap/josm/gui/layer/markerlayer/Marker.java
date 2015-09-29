@@ -14,7 +14,9 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -182,7 +184,7 @@ public class Marker implements TemplateEngineDataProvider {
     static {
         Marker.markerProducers.add(new MarkerProducers() {
             @Override
-            public Marker createMarker(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
+            public Collection<Marker> createMarkers(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
                 String uri = null;
                 // cheapest way to check whether "link" object exists and is a non-empty collection of GpxLink objects...
                 Collection<GpxLink> links = wpt.<GpxLink>getCollection(GpxConstants.META_LINKS);
@@ -206,14 +208,16 @@ public class Marker implements TemplateEngineDataProvider {
                 }
 
                 String urlStr = url == null ? "" : url.toString();
+                String symbolName = wpt.getString("symbol");
+                if (symbolName == null) {
+                    symbolName = wpt.getString(GpxConstants.PT_SYM);
+                }
+                // text marker is returned in every case, see #10208
+                final Marker marker = new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
                 if (url == null) {
-                    String symbolName = wpt.getString("symbol");
-                    if (symbolName == null) {
-                        symbolName = wpt.getString(GpxConstants.PT_SYM);
-                    }
-                    return new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
+                    return Collections.singleton(marker);
                 } else if (urlStr.endsWith(".wav")) {
-                    AudioMarker audioMarker = new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
+                    final AudioMarker audioMarker = new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
                     Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
                     if (exts != null && exts.containsKey("offset")) {
                         try {
@@ -222,11 +226,13 @@ public class Marker implements TemplateEngineDataProvider {
                             Main.warn(nfe);
                         }
                     }
-                    return audioMarker;
+                    return Arrays.asList(marker, audioMarker);
                 } else if (urlStr.endsWith(".png") || urlStr.endsWith(".jpg") || urlStr.endsWith(".jpeg") || urlStr.endsWith(".gif")) {
-                    return new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset);
+                    final ImageMarker imageMarker = new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset);
+                    return Arrays.asList(marker, imageMarker);
                 } else {
-                    return new WebMarker(wpt.getCoor(), url, parentLayer, time, offset);
+                    final WebMarker webMarker = new WebMarker(wpt.getCoor(), url, parentLayer, time, offset);
+                    return Arrays.asList(marker, webMarker);
                 }
             }
         });
@@ -245,11 +251,11 @@ public class Marker implements TemplateEngineDataProvider {
      *        the GPX file from which it was derived (if any).
      * @return a new Marker object
      */
-    public static Marker createMarker(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
+    public static Collection<Marker> createMarkers(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
         for (MarkerProducers maker : Marker.markerProducers) {
-            Marker marker = maker.createMarker(wpt, relativePath, parentLayer, time, offset);
-            if (marker != null)
-                return marker;
+            final Collection<Marker> markers = maker.createMarkers(wpt, relativePath, parentLayer, time, offset);
+            if (markers != null)
+                return markers;
         }
         return null;
     }
