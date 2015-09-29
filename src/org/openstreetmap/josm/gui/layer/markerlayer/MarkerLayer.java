@@ -128,9 +128,9 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             if (offset == null) {
                 offset = time - firstTime;
             }
-            Marker m = Marker.createMarker(wpt, indata.storageFile, this, time, offset);
-            if (m != null) {
-                data.add(m);
+            final Collection<Marker> markers = Marker.createMarkers(wpt, indata.storageFile, this, time, offset);
+            if (markers != null) {
+                data.addAll(markers);
             }
         }
     }
