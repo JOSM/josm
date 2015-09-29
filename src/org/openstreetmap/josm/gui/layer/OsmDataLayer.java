@@ -62,6 +62,7 @@ import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
@@ -559,7 +560,16 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     private static void waysToGpxData(Collection<Way> ways, GpxData gpxData, Set<Node> doneNodes) {
-        for (Way w : ways) {
+        /* When the dataset has been obtained from a gpx layer and now is being converted back,
+         * the ways have negative ids. The first created way corresponds to the first gpx segment,
+         * and has the highest id (i.e., closest to zero).
+         * Thus, sorting by OsmPrimitive#getUniqueId gives the original order.
+         * (Only works if the data layer has not been saved to and been loaded from an osm file before.)
+         */
+        final List<Way> sortedWays = new ArrayList<>(ways);
+        Collections.sort(sortedWays, new OsmPrimitiveComparator(true, false)); // sort by OsmPrimitive#getUniqueId ascending
+        Collections.reverse(sortedWays); // sort by OsmPrimitive#getUniqueId descending
+        for (Way w : sortedWays) {
             if (!w.isUsable()) {
                 continue;
             }
