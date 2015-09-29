@@ -82,6 +82,7 @@ import org.openstreetmap.josm.gui.io.AbstractIOTask;
 import org.openstreetmap.josm.gui.io.AbstractUploadDialog;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadLayerTask;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -729,7 +730,12 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Main.main.addLayer(new GpxLayer(toGpxData(), tr("Converted from: {0}", getName())));
+            final GpxData data = toGpxData();
+            final GpxLayer gpxLayer = new GpxLayer(data, tr("Converted from: {0}", getName()));
+            Main.main.addLayer(gpxLayer);
+            if (Main.pref.getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
+                Main.main.addLayer(new MarkerLayer(data, tr("Converted from: {0}", getName()), null, gpxLayer));
+            }
             Main.main.removeLayer(OsmDataLayer.this);
         }
     }
