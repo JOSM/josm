@@ -57,7 +57,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
      * Constructs a new {@code SessionSaveAsAction}.
      */
     public SessionSaveAsAction() {
-        super(tr("Save Session As..."), "save_as", tr("Save the current session to a new file."), null, true, "save_as-session", true);
+        super(tr("Save Session As..."), "session", tr("Save the current session to a new file."), null, true, "save_as-session", true);
         putValue("help", ht("/Action/SessionSaveAs"));
     }
 
