@@ -24,20 +24,94 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
-public class ConvertToDataLayerAction extends AbstractAction {
-    private final transient GpxLayer layer;
+/**
+ * An abstract action for a conversion from a {@code T} {@link Layer} to a {@link OsmDataLayer}.
+ * @param <T> the source layer class
+ */
+public abstract class ConvertToDataLayerAction<T extends Layer> extends AbstractAction {
+    protected final transient T layer;
 
-    public ConvertToDataLayerAction(final GpxLayer layer) {
+    protected ConvertToDataLayerAction(final T layer) {
         super(tr("Convert to data layer"), ImageProvider.get("converttoosm"));
         this.layer = layer;
         putValue("help", ht("/Action/ConvertToDataLayer"));
     }
+
+    /**
+     * Converts a {@link GpxLayer} to a {@link OsmDataLayer}.
+     */
+    public static class FromGpxLayer extends ConvertToDataLayerAction<GpxLayer> {
+
+        /**
+         * Creates a new {@code FromGpxLayer}.
+         * @param layer the source layer
+         */
+        public FromGpxLayer(GpxLayer layer) {
+            super(layer);
+        }
+
+        @Override
+        public DataSet convert() {
+            final DataSet ds = new DataSet();
+            for (GpxTrack trk : layer.data.tracks) {
+                for (GpxTrackSegment segment : trk.getSegments()) {
+                    List<Node> nodes = new ArrayList<>();
+                    for (WayPoint p : segment.getWayPoints()) {
+                        Node n = new Node(p.getCoor());
+                        String timestr = p.getString(GpxConstants.PT_TIME);
+                        if (timestr != null) {
+                            n.setTimestamp(DateUtils.fromString(timestr));
+                        }
+                        ds.addPrimitive(n);
+                        nodes.add(n);
+                    }
+                    Way w = new Way();
+                    w.setNodes(nodes);
+                    ds.addPrimitive(w);
+                }
+            }
+            return ds;
+        }
+    }
+
+    /**
+     * Converts a {@link MarkerLayer} to a {@link OsmDataLayer}.
+     */
+    public static class FromMarkerLayer extends ConvertToDataLayerAction<MarkerLayer> {
+
+        /**
+         * Converts a {@link MarkerLayer} to a {@link OsmDataLayer}.
+         */
+        public FromMarkerLayer(MarkerLayer layer) {
+            super(layer);
+        }
+
+        @Override
+        public DataSet convert() {
+            final DataSet ds = new DataSet();
+            for (Marker marker : layer.data) {
+                final Node node = new Node(marker.getCoor());
+                node.put("name", marker.getText());
+                ds.addPrimitive(node);
+            }
+            return ds;
+        }
+    }
+
+    /**
+     * Performs the conversion to a {@link DataSet}.
+     * @return the resulting dataset
+     */
+    public abstract DataSet convert();
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -52,25 +126,10 @@ public class ConvertToDataLayerAction extends AbstractAction {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, JOptionPane.OK_OPTION)) {
             return;
         }
-        DataSet ds = new DataSet();
-        for (GpxTrack trk : layer.data.tracks) {
-            for (GpxTrackSegment segment : trk.getSegments()) {
-                List<Node> nodes = new ArrayList<>();
-                for (WayPoint p : segment.getWayPoints()) {
-                    Node n = new Node(p.getCoor());
-                    String timestr = p.getString(GpxConstants.PT_TIME);
-                    if (timestr != null) {
-                        n.setTimestamp(DateUtils.fromString(timestr));
-                    }
-                    ds.addPrimitive(n);
-                    nodes.add(n);
-                }
-                Way w = new Way();
-                w.setNodes(nodes);
-                ds.addPrimitive(w);
-            }
-        }
-        Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", layer.getName()), layer.getAssociatedFile()));
-        Main.main.removeLayer(layer);
+        final DataSet ds = convert();
+        final OsmDataLayer layer = new OsmDataLayer(ds, tr("Converted from: {0}", this.layer.getName()), this.layer.getAssociatedFile());
+        layer.setUploadDiscouraged(true);
+        Main.main.addLayer(layer);
+        Main.main.removeLayer(this.layer);
     }
 }

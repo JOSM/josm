@@ -192,7 +192,7 @@ public class GpxLayer extends Layer {
                 new ImportImagesAction(this),
                 new ImportAudioAction(this),
                 new MarkersFromNamedPointsAction(this),
-                new ConvertToDataLayerAction(this),
+                new ConvertToDataLayerAction.FromGpxLayer(this),
                 new DownloadAlongTrackAction(data),
                 new DownloadWmsAlongTrackAction(data),
                 SeparatorLayerAction.INSTANCE,
