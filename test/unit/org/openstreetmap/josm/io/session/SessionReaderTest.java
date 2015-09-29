@@ -1,9 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.session;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -15,6 +17,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -110,5 +113,16 @@ public class SessionReaderTest {
         assertNotNull(marker);
         assertEquals(gpx.getName(), "GPX layer name");
         assertEquals(marker.getName(), "Marker layer name");
+    }
+
+    @Test
+    public void testReadImage() throws IOException, IllegalDataException {
+        final List<Layer> layers = testRead("bing.jos");
+        assertSame(layers.size(), 1);
+        assertTrue(layers.get(0) instanceof ImageryLayer);
+        final ImageryLayer image = (ImageryLayer) layers.get(0);
+        assertThat(image.getName(), is("Bing aerial imagery"));
+        assertEquals(image.getDx(), 12.34, 1e-9);
+        assertEquals(image.getDy(), -56.78, 1e-9);
     }
 }
