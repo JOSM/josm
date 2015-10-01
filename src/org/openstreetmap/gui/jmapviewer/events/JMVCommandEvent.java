@@ -11,7 +11,7 @@ import java.util.EventObject;
  *
  */
 public class JMVCommandEvent extends EventObject {
-    public static enum COMMAND {
+    public enum COMMAND {
         MOVE,
         ZOOM
     }

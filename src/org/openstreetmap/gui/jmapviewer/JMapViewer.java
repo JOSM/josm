@@ -81,7 +81,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     protected JButton zoomInButton;
     protected JButton zoomOutButton;
 
-    public static enum ZOOM_BUTTON_STYLE {
+    public enum ZOOM_BUTTON_STYLE {
         HORIZONTAL,
         VERTICAL
     }
