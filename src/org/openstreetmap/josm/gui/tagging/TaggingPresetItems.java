@@ -51,6 +51,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -203,7 +204,11 @@ public final class TaggingPresetItems {
 
         public void setMember_expression(String member_expression) throws SAXException {
             try {
-                this.memberExpression = SearchCompiler.compile(member_expression, true, true);
+                final SearchAction.SearchSetting searchSetting = new SearchAction.SearchSetting();
+                searchSetting.text = member_expression;
+                searchSetting.caseSensitive = true;
+                searchSetting.regexSearch = true;
+                this.memberExpression = SearchCompiler.compile(searchSetting);
             } catch (SearchCompiler.ParseError ex) {
                 throw new SAXException(tr("Illegal member expression: {0}", ex.getMessage()), ex);
             }

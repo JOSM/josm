@@ -1322,7 +1322,9 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                 sep = " OR ";
             }
 
-            SearchSetting ss = new SearchSetting(s.toString(), SearchMode.replace, true, false, false);
+            final SearchSetting ss = new SearchSetting();
+            ss.text = s.toString();
+            ss.caseSensitive = true;
             org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(ss);
         }
     }

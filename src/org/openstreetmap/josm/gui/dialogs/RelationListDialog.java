@@ -288,7 +288,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 try {
                     f.setBackground(UIManager.getColor("TextField.background"));
                     f.setToolTipText(tr("Relation list filter"));
-                    model.setFilter(SearchCompiler.compile(filter.getText(), false, false));
+                    model.setFilter(SearchCompiler.compile(filter.getText()));
                 } catch (SearchCompiler.ParseError ex) {
                     f.setBackground(new Color(255, 224, 224));
                     f.setToolTipText(ex.getMessage());

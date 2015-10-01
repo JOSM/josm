@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -46,24 +47,24 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
         importers = new ArrayList<>();
 
-        String[] importerNames = {
-                "org.openstreetmap.josm.io.OsmImporter",
-                "org.openstreetmap.josm.io.OsmGzipImporter",
-                "org.openstreetmap.josm.io.OsmZipImporter",
-                "org.openstreetmap.josm.io.OsmChangeImporter",
-                "org.openstreetmap.josm.io.GpxImporter",
-                "org.openstreetmap.josm.io.NMEAImporter",
-                "org.openstreetmap.josm.io.NoteImporter",
-                "org.openstreetmap.josm.io.OsmBzip2Importer",
-                "org.openstreetmap.josm.io.JpgImporter",
-                "org.openstreetmap.josm.io.WMSLayerImporter",
-                "org.openstreetmap.josm.io.AllFormatsImporter",
-                "org.openstreetmap.josm.io.session.SessionImporter"
-        };
+        final List<Class<? extends FileImporter>> importerNames = Arrays.asList(
+                org.openstreetmap.josm.io.OsmImporter.class,
+                org.openstreetmap.josm.io.OsmGzipImporter.class,
+                org.openstreetmap.josm.io.OsmZipImporter.class,
+                org.openstreetmap.josm.io.OsmChangeImporter.class,
+                org.openstreetmap.josm.io.GpxImporter.class,
+                org.openstreetmap.josm.io.NMEAImporter.class,
+                org.openstreetmap.josm.io.NoteImporter.class,
+                org.openstreetmap.josm.io.OsmBzip2Importer.class,
+                org.openstreetmap.josm.io.JpgImporter.class,
+                org.openstreetmap.josm.io.WMSLayerImporter.class,
+                org.openstreetmap.josm.io.AllFormatsImporter.class,
+                org.openstreetmap.josm.io.session.SessionImporter.class
+        );
 
-        for (String classname : importerNames) {
+        for (final Class<? extends FileImporter> importerClass : importerNames) {
             try {
-                FileImporter importer = (FileImporter) Class.forName(classname).newInstance();
+                FileImporter importer = importerClass.newInstance();
                 importers.add(importer);
                 MapView.addLayerChangeListener(importer);
             } catch (Exception e) {
@@ -91,19 +92,20 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
         exporters = new ArrayList<>();
 
-        String[] exporterNames = {
-                "org.openstreetmap.josm.io.GpxExporter",
-                "org.openstreetmap.josm.io.OsmExporter",
-                "org.openstreetmap.josm.io.OsmGzipExporter",
-                "org.openstreetmap.josm.io.OsmBzip2Exporter",
-                "org.openstreetmap.josm.io.GeoJSONExporter",
-                "org.openstreetmap.josm.io.WMSLayerExporter",
-                "org.openstreetmap.josm.io.NoteExporter"
-        };
+        final List<Class<? extends FileExporter>> exporterClasses = Arrays.asList(
+                org.openstreetmap.josm.io.GpxExporter.class,
+                org.openstreetmap.josm.io.OsmExporter.class,
+                org.openstreetmap.josm.io.OsmGzipExporter.class,
+                org.openstreetmap.josm.io.OsmBzip2Exporter.class,
+                org.openstreetmap.josm.io.GeoJSONExporter.CurrentProjection.class, // needs to be considered earlier than GeoJSONExporter
+                org.openstreetmap.josm.io.GeoJSONExporter.class,
+                org.openstreetmap.josm.io.WMSLayerExporter.class,
+                org.openstreetmap.josm.io.NoteExporter.class
+        );
 
-        for (String classname : exporterNames) {
+        for (final Class<? extends FileExporter> exporterClass : exporterClasses) {
             try {
-                FileExporter exporter = (FileExporter) Class.forName(classname).newInstance();
+                FileExporter exporter = exporterClass.newInstance();
                 exporters.add(exporter);
                 MapView.addLayerChangeListener(exporter);
             } catch (Exception e) {

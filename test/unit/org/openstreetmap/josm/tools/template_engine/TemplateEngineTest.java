@@ -60,7 +60,7 @@ public class TemplateEngineTest {
     }
 
     private static Match compile(String expression) throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError {
-        return SearchCompiler.compile(expression, false, false);
+        return SearchCompiler.compile(expression);
     }
 
     @Test

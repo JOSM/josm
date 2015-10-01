@@ -794,23 +794,23 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
                 "(highway=motorway_link & -oneway=no & -oneway=reversible)";
 
         try {
-            reversedDirectionKeys = SearchCompiler.compile(Main.pref.get("tags.reversed_direction", reversedDirectionDefault), false, false);
+            reversedDirectionKeys = SearchCompiler.compile(Main.pref.get("tags.reversed_direction", reversedDirectionDefault));
         } catch (ParseError e) {
             Main.error("Unable to compile pattern for tags.reversed_direction, trying default pattern: " + e.getMessage());
 
             try {
-                reversedDirectionKeys = SearchCompiler.compile(reversedDirectionDefault, false, false);
+                reversedDirectionKeys = SearchCompiler.compile(reversedDirectionDefault);
             } catch (ParseError e2) {
                 throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
             }
         }
         try {
-            directionKeys = SearchCompiler.compile(Main.pref.get("tags.direction", directionDefault), false, false);
+            directionKeys = SearchCompiler.compile(Main.pref.get("tags.direction", directionDefault));
         } catch (ParseError e) {
             Main.error("Unable to compile pattern for tags.direction, trying default pattern: " + e.getMessage());
 
             try {
-                directionKeys = SearchCompiler.compile(directionDefault, false, false);
+                directionKeys = SearchCompiler.compile(directionDefault);
             } catch (ParseError e2) {
                 throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
             }

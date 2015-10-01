@@ -663,7 +663,7 @@ public final class ExpressionFactory {
         public static Boolean JOSM_search(final Environment env, String searchStr) {
             Match m;
             try {
-                m = SearchCompiler.compile(searchStr, false, false);
+                m = SearchCompiler.compile(searchStr);
             } catch (ParseError ex) {
                 return null;
             }
