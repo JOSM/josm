@@ -39,6 +39,7 @@ public class Filter extends SearchSetting {
         }
         caseSensitive = e.case_sensitive;
         regexSearch = e.regex_search;
+        mapCSSSearch = e.mapCSS_search;
         enable = e.enable;
         hiding = e.hiding;
         inverted = e.inverted;
@@ -50,6 +51,7 @@ public class Filter extends SearchSetting {
         @pref @writeExplicitly public String mode = "add";
         @pref public boolean case_sensitive = false;
         @pref public boolean regex_search = false;
+        @pref public boolean mapCSS_search = false;
         @pref @writeExplicitly public boolean enable = true;
         @pref @writeExplicitly public boolean hiding = false;
         @pref @writeExplicitly public boolean inverted = false;
@@ -62,6 +64,7 @@ public class Filter extends SearchSetting {
         e.mode = mode.toString();
         e.case_sensitive = caseSensitive;
         e.regex_search = regexSearch;
+        e.mapCSS_search = mapCSSSearch;
         e.enable = enable;
         e.hiding = hiding;
         e.inverted = inverted;

@@ -27,6 +27,11 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
+import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
@@ -1423,10 +1428,27 @@ public class SearchCompiler {
      * @see #compile(String)
      */
     public static Match compile(SearchAction.SearchSetting setting) throws ParseError {
+        if (setting.mapCSSSearch) {
+            return compileMapCSS(setting.text);
+        }
         return new SearchCompiler(setting.caseSensitive, setting.regexSearch,
                 new PushbackTokenizer(
                         new PushbackReader(new StringReader(setting.text))))
                 .parse();
+    }
+
+    static Match compileMapCSS(String mapCSS) throws ParseError {
+        try {
+            final Selector selector = new MapCSSParser(new StringReader(mapCSS)).selector();
+            return new Match() {
+                @Override
+                public boolean match(OsmPrimitive osm) {
+                    return selector.matches(new Environment(osm));
+                }
+            };
+        } catch (ParseException e) {
+            throw new ParseError(tr("Failed to parse MapCSS selector"), e);
+        }
     }
 
     /**
