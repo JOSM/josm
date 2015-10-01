@@ -25,6 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
@@ -42,6 +43,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -376,7 +378,20 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return DIALOG_ANSWER_CANCEL;
 
         int answer = 1;
-        if (p.getComponentCount() != 0 && (sel.isEmpty() || p.hasElements)) {
+        boolean canCreateRelation = types == null || types.contains(TaggingPresetType.RELATION);
+        if (originalSelectionEmpty && !canCreateRelation) {
+            new Notification(
+                    tr("The preset <i>{0}</i> cannot be applied since nothing has been selected!", getLocaleName()))
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .show();
+            return DIALOG_ANSWER_CANCEL;
+        } else if (sel.isEmpty() && !canCreateRelation) {
+            new Notification(
+                    tr("The preset <i>{0}</i> cannot be applied since the selection is unsuitable!", getLocaleName()))
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .show();
+            return DIALOG_ANSWER_CANCEL;
+        } else if (p.getComponentCount() != 0 && (sel.isEmpty() || p.hasElements)) {
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
             if (sel.isEmpty()) {
                 if (originalSelectionEmpty) {
