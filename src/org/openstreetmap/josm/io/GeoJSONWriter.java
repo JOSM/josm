@@ -14,6 +14,7 @@ import javax.json.JsonWriter;
 import javax.json.stream.JsonGenerator;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
@@ -23,6 +24,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -30,15 +32,18 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  */
 public class GeoJSONWriter {
 
-    private OsmDataLayer layer;
+    private final OsmDataLayer layer;
+    private final Projection projection;
     private static final boolean skipEmptyNodes = true;
 
     /**
      * Constructs a new {@code GeoJSONWriter}.
      * @param layer The OSM data layer to save
+     * @param projection The projection to use for coordinates
      */
-    public GeoJSONWriter(OsmDataLayer layer) {
+    public GeoJSONWriter(OsmDataLayer layer, Projection projection) {
         this.layer = layer;
+        this.projection = projection;
     }
 
     /**
@@ -62,6 +67,7 @@ public class GeoJSONWriter {
         try (JsonWriter writer = Json.createWriterFactory(config).createWriter(stringWriter)) {
             JsonObjectBuilder object = Json.createObjectBuilder()
                     .add("type", "FeatureCollection")
+                    .add("crs", Json.createObjectBuilder().add("type", "name").add("name", projection.toCode()))
                     .add("generator", "JOSM");
             appendLayerBounds(layer.data, object);
             appendLayerFeatures(layer.data, object);
@@ -70,7 +76,7 @@ public class GeoJSONWriter {
         }
     }
 
-    private static class GeometryPrimitiveVisitor implements PrimitiveVisitor {
+    private class GeometryPrimitiveVisitor implements PrimitiveVisitor {
 
         private final JsonObjectBuilder geomObj;
 
@@ -83,7 +89,7 @@ public class GeoJSONWriter {
             geomObj.add("type", "Point");
             LatLon ll = n.getCoor();
             if (ll != null) {
-                geomObj.add("coordinates", getCoorArray(n.getCoor()));
+                geomObj.add("coordinates", getCoorArray(Json.createArrayBuilder(), n.getCoor()));
             }
         }
 
@@ -95,7 +101,7 @@ public class GeoJSONWriter {
                 for (Node n : ((Way) w).getNodes()) {
                     LatLon ll = n.getCoor();
                     if (ll != null) {
-                        array.add(getCoorArray(ll));
+                        array.add(getCoorArray(Json.createArrayBuilder(), ll));
                     }
                 }
                 geomObj.add("coordinates", array);
@@ -105,13 +111,17 @@ public class GeoJSONWriter {
         @Override
         public void visit(IRelation r) {
         }
-
-        private JsonArrayBuilder getCoorArray(LatLon c) {
-            return Json.createArrayBuilder().add(c.lon()).add(c.lat());
-        }
     }
 
-    protected static void appendPrimitive(OsmPrimitive p, JsonArrayBuilder array) {
+    private JsonArrayBuilder getCoorArray(JsonArrayBuilder builder, LatLon c) {
+        return getCoorArray(builder, projection.latlon2eastNorth(c));
+    }
+
+    private JsonArrayBuilder getCoorArray(JsonArrayBuilder builder, EastNorth c) {
+        return builder.add(c.getX()).add(c.getY());
+    }
+
+    protected void appendPrimitive(OsmPrimitive p, JsonArrayBuilder array) {
         if (p.isIncomplete()) {
             return;
         } else if (skipEmptyNodes && p instanceof Node && p.getKeys().isEmpty()) {
@@ -135,7 +145,7 @@ public class GeoJSONWriter {
                 .add("geometry", geomObj));
     }
 
-    protected static void appendLayerBounds(DataSet ds, JsonObjectBuilder object) {
+    protected void appendLayerBounds(DataSet ds, JsonObjectBuilder object) {
         if (ds != null) {
             Iterator<Bounds> it = ds.getDataSourceBounds().iterator();
             if (it.hasNext()) {
@@ -148,15 +158,16 @@ public class GeoJSONWriter {
         }
     }
 
-    protected static void appendBounds(Bounds b, JsonObjectBuilder object) {
+    protected void appendBounds(Bounds b, JsonObjectBuilder object) {
         if (b != null) {
-            object.add("bbox", Json.createArrayBuilder()
-                    .add(b.getMinLon()).add(b.getMinLat())
-                    .add(b.getMaxLon()).add(b.getMaxLat()));
+            JsonArrayBuilder builder = Json.createArrayBuilder();
+            getCoorArray(builder, b.getMin());
+            getCoorArray(builder, b.getMax());
+            object.add("bbox", builder);
         }
     }
 
-    protected static void appendLayerFeatures(DataSet ds, JsonObjectBuilder object) {
+    protected void appendLayerFeatures(DataSet ds, JsonObjectBuilder object) {
         JsonArrayBuilder array = Json.createArrayBuilder();
         if (ds != null) {
             for (Node n : ds.getNodes()) {
