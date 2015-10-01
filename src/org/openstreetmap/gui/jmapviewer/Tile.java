@@ -414,7 +414,6 @@ public class Tile {
      * indicate that loading process for this tile has started
      */
     public void initLoading() {
-        loaded = false;
         error = false;
         loading = true;
     }
