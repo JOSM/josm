@@ -195,7 +195,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             });
         } else if (args.containsKey("search") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             try {
-                final SearchCompiler.Match search = SearchCompiler.compile(args.get("search"), false, false);
+                final SearchCompiler.Match search = SearchCompiler.compile(args.get("search"));
                 Main.worker.submit(new Runnable() {
                     @Override
                     public void run() {

@@ -21,16 +21,13 @@ public class Filter extends SearchSetting {
      * Constructs a new {@code Filter}.
      */
     public Filter() {
-        super("", SearchMode.add, false, false, false);
-    }
-
-    public Filter(String text, SearchMode mode, boolean caseSensitive,
-            boolean regexSearch, boolean allElements) {
-        super(text, mode, caseSensitive, regexSearch, allElements);
+        super();
+        mode = SearchMode.add;
     }
 
     public Filter(FilterPreferenceEntry e) {
-        super(e.text, SearchMode.add, false, false, false);
+        this();
+        text = e.text;
         if ("replace".equals(e.mode)) {
             mode = SearchMode.replace;
         } else if ("add".equals(e.mode)) {

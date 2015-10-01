@@ -201,7 +201,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     public void setName_template_filter(String filter) throws SAXException {
         try {
-            this.nameTemplateFilter = SearchCompiler.compile(filter, false, false);
+            this.nameTemplateFilter = SearchCompiler.compile(filter);
         } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
             Main.error("Error while parsing" + filter + ": " + e.getMessage());
             throw new SAXException(e);

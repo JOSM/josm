@@ -1401,11 +1401,32 @@ public class SearchCompiler {
         }
     }
 
-    public static Match compile(String searchStr, boolean caseSensitive, boolean regexSearch) throws ParseError {
-        return new SearchCompiler(caseSensitive, regexSearch,
+    /**
+     * Compiles the search expression.
+     * @param searchStr the search expression
+     * @return a {@link Match} object for the expression
+     * @throws ParseError if an error has been encountered while compiling
+     * @see #compile(org.openstreetmap.josm.actions.search.SearchAction.SearchSetting)
+     */
+    public static Match compile(String searchStr) throws ParseError {
+        return new SearchCompiler(false, false,
                 new PushbackTokenizer(
                         new PushbackReader(new StringReader(searchStr))))
-        .parse();
+                .parse();
+    }
+
+    /**
+     * Compiles the search expression.
+     * @param setting the settings to use
+     * @return a {@link Match} object for the expression
+     * @throws ParseError if an error has been encountered while compiling
+     * @see #compile(String)
+     */
+    public static Match compile(SearchAction.SearchSetting setting) throws ParseError {
+        return new SearchCompiler(setting.caseSensitive, setting.regexSearch,
+                new PushbackTokenizer(
+                        new PushbackReader(new StringReader(setting.text))))
+                .parse();
     }
 
     /**

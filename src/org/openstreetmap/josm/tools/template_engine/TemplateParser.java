@@ -89,7 +89,7 @@ public class TemplateParser {
             } else {
                 try {
                     result.getEntries().add(new SearchExpressionCondition(
-                            SearchCompiler.compile(searchExpression.getText(), false, false), condition));
+                            SearchCompiler.compile(searchExpression.getText()), condition));
                 } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
                     throw new ParseError(searchExpression.getPosition(), e);
                 }
@@ -118,7 +118,7 @@ public class TemplateParser {
             throw new ParseError(tr("Expected search expression"));
         else {
             try {
-                Match match = SearchCompiler.compile(searchExpression.getText(), false, false);
+                Match match = SearchCompiler.compile(searchExpression.getText());
                 result = new ContextSwitchTemplate(match, template, searchExpression.getPosition());
             } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
                 throw new ParseError(searchExpression.getPosition(), e);

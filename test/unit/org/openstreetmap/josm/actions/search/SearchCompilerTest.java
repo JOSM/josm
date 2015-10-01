@@ -30,7 +30,7 @@ public class SearchCompilerTest {
 
     @Test
     public void testAny() throws Exception {
-        final SearchCompiler.Match c = SearchCompiler.compile("foo", false, false);
+        final SearchCompiler.Match c = SearchCompiler.compile("foo");
         Assert.assertTrue(c.match(newPrimitive("foobar", "true")));
         Assert.assertTrue(c.match(newPrimitive("name", "hello-foo-xy")));
         Assert.assertFalse(c.match(newPrimitive("name", "X")));
@@ -38,7 +38,7 @@ public class SearchCompilerTest {
 
     @Test
     public void testEquals() throws Exception {
-        final SearchCompiler.Match c = SearchCompiler.compile("foo=bar", false, false);
+        final SearchCompiler.Match c = SearchCompiler.compile("foo=bar");
         Assert.assertFalse(c.match(newPrimitive("foobar", "true")));
         Assert.assertTrue(c.match(newPrimitive("foo", "bar")));
         Assert.assertFalse(c.match(newPrimitive("fooX", "bar")));
@@ -47,22 +47,22 @@ public class SearchCompilerTest {
 
     @Test
     public void testCompare() throws Exception {
-        final SearchCompiler.Match c1 = SearchCompiler.compile("start_date>1950", false, false);
+        final SearchCompiler.Match c1 = SearchCompiler.compile("start_date>1950");
         Assert.assertTrue(c1.match(newPrimitive("start_date", "1950-01-01")));
         Assert.assertTrue(c1.match(newPrimitive("start_date", "1960")));
         Assert.assertFalse(c1.match(newPrimitive("start_date", "1950")));
         Assert.assertFalse(c1.match(newPrimitive("start_date", "1000")));
         Assert.assertTrue(c1.match(newPrimitive("start_date", "101010")));
-        final SearchCompiler.Match c2 = SearchCompiler.compile("start_date<1960", false, false);
+        final SearchCompiler.Match c2 = SearchCompiler.compile("start_date<1960");
         Assert.assertTrue(c2.match(newPrimitive("start_date", "1950-01-01")));
         Assert.assertFalse(c2.match(newPrimitive("start_date", "1960")));
         Assert.assertTrue(c2.match(newPrimitive("start_date", "1950")));
         Assert.assertTrue(c2.match(newPrimitive("start_date", "1000")));
         Assert.assertTrue(c2.match(newPrimitive("start_date", "200")));
-        final SearchCompiler.Match c3 = SearchCompiler.compile("name<I", false, false);
+        final SearchCompiler.Match c3 = SearchCompiler.compile("name<I");
         Assert.assertTrue(c3.match(newPrimitive("name", "Alpha")));
         Assert.assertFalse(c3.match(newPrimitive("name", "Sigma")));
-        final SearchCompiler.Match c4 = SearchCompiler.compile("\"start_date\"<1960", false, false);
+        final SearchCompiler.Match c4 = SearchCompiler.compile("\"start_date\"<1960");
         Assert.assertTrue(c4.match(newPrimitive("start_date", "1950-01-01")));
         Assert.assertFalse(c4.match(newPrimitive("start_date", "2000")));
 
@@ -82,19 +82,19 @@ public class SearchCompilerTest {
         way.addNode(node0);
         way.addNode(node1);
         way.addNode(node2);
-        Assert.assertFalse(SearchCompiler.compile("nth:2", false, false).match(node1));
-        Assert.assertTrue(SearchCompiler.compile("nth:1", false, false).match(node1));
-        Assert.assertFalse(SearchCompiler.compile("nth:0", false, false).match(node1));
-        Assert.assertTrue(SearchCompiler.compile("nth:0", false, false).match(node0));
-        Assert.assertTrue(SearchCompiler.compile("nth:2", false, false).match(node2));
-        Assert.assertTrue(SearchCompiler.compile("nth:-1", false, false).match(node2));
-        Assert.assertTrue(SearchCompiler.compile("nth:-2", false, false).match(node1));
-        Assert.assertTrue(SearchCompiler.compile("nth:-3", false, false).match(node0));
+        Assert.assertFalse(SearchCompiler.compile("nth:2").match(node1));
+        Assert.assertTrue(SearchCompiler.compile("nth:1").match(node1));
+        Assert.assertFalse(SearchCompiler.compile("nth:0").match(node1));
+        Assert.assertTrue(SearchCompiler.compile("nth:0").match(node0));
+        Assert.assertTrue(SearchCompiler.compile("nth:2").match(node2));
+        Assert.assertTrue(SearchCompiler.compile("nth:-1").match(node2));
+        Assert.assertTrue(SearchCompiler.compile("nth:-2").match(node1));
+        Assert.assertTrue(SearchCompiler.compile("nth:-3").match(node0));
     }
 
     @Test
     public void testNthParseNegative() throws Exception {
-        Assert.assertThat(SearchCompiler.compile("nth:-1", false, false).toString(), CoreMatchers.is("Nth{nth=-1, modulo=false}"));
+        Assert.assertThat(SearchCompiler.compile("nth:-1").toString(), CoreMatchers.is("Nth{nth=-1, modulo=false}"));
 
     }
 }
