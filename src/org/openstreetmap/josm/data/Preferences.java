@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
@@ -1484,16 +1485,18 @@ public class Preferences {
         // Workaround to fix a Java bug.
         // Force AWT toolkit to update its internal preferences (fix #6345).
         // This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
-        try {
-            Field field = Toolkit.class.getDeclaredField("resources");
-            field.setAccessible(true);
-            field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
-        } catch (Exception | InternalError e) {
-            // Ignore all exceptions, including internal error raised by Java 9 Jigsaw EA:
-            // java.lang.InternalError: legacy getBundle can't be used to find sun.awt.resources.awt in module java.desktop
-            // InternalError catch to remove when https://bugs.openjdk.java.net/browse/JI-9025152 is resolved
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
+        if (!GraphicsEnvironment.isHeadless()) {
+            try {
+                Field field = Toolkit.class.getDeclaredField("resources");
+                field.setAccessible(true);
+                field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
+            } catch (Exception | InternalError e) {
+                // Ignore all exceptions, including internal error raised by Java 9 Jigsaw EA:
+                // java.lang.InternalError: legacy getBundle can't be used to find sun.awt.resources.awt in module java.desktop
+                // InternalError catch to remove when https://bugs.openjdk.java.net/browse/JI-9025152 is resolved
+                if (Main.isTraceEnabled()) {
+                    Main.trace(e.getMessage());
+                }
             }
         }
         // Workaround to fix a Java "feature"
