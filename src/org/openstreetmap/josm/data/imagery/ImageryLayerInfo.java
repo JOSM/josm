@@ -237,6 +237,10 @@ public class ImageryLayerInfo {
     }
 
     private boolean isSimilar(ImageryInfo iiA, ImageryInfo iiB) {
+        if (iiA == null)
+            return false;
+        if (!iiA.getImageryType().equals(iiB.getImageryType()))
+            return false;
         if (iiA.getId() != null && iiB.getId() != null) return iiA.getId().equals(iiB.getId());
         return isSimilar(iiA.getUrl(), iiB.getUrl());
     }
