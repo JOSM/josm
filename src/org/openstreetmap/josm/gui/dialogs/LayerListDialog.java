@@ -863,14 +863,7 @@ public class LayerListDialog extends ToggleDialog {
                 if (getModel().getSelectedLayers().isEmpty()) {
                     setEnabled(false);
                 } else  if (getModel().getSelectedLayers().size() > 1) {
-                    Layer firstLayer = getModel().getSelectedLayers().get(0);
-                    for (Layer l: getModel().getSelectedLayers()) {
-                        if (l != firstLayer && (!l.isMergable(firstLayer) || !firstLayer.isMergable(l))) {
-                            setEnabled(false);
-                            return;
-                        }
-                    }
-                    setEnabled(true);
+                    setEnabled(supportLayers(getModel().getSelectedLayers()));
                 } else {
                     Layer selectedLayer = getModel().getSelectedLayers().get(0);
                     List<Layer> targets = getModel().getPossibleMergeTargets(selectedLayer);
@@ -886,12 +879,13 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public boolean supportLayers(List<Layer> layers) {
-            for (Layer l : layers) {
-                if (!(l instanceof OsmDataLayer)) {
-                    return false;
-                }
+            if (layers.size() < 1) {
+                return false;
+            } else {
+                final Layer firstLayer = layers.get(0);
+                final List<Layer> remainingLayers = layers.subList(1, layers.size());
+                return getModel().getPossibleMergeTargets(firstLayer).containsAll(remainingLayers);
             }
-            return true;
         }
 
         @Override
@@ -1503,9 +1497,10 @@ public class LayerListDialog extends ToggleDialog {
          */
         public List<Layer> getPossibleMergeTargets(Layer source) {
             List<Layer> targets = new ArrayList<>();
-            if (source == null)
+            if (source == null || !Main.isDisplayingMapView()) {
                 return targets;
-            for (Layer target : getLayers()) {
+            }
+            for (Layer target : Main.map.mapView.getAllLayersAsList()) {
                 if (source == target) {
                     continue;
                 }

@@ -94,10 +94,7 @@ public class MergeLayerAction extends AbstractMergeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Layer sourceLayer = Main.main.getEditLayer();
-        if (sourceLayer == null)
-            return;
-        merge(sourceLayer);
+        merge(getSourceLayer());
     }
 
     @Override
@@ -105,13 +102,19 @@ public class MergeLayerAction extends AbstractMergeAction {
         GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {
-                if (getEditLayer() == null) {
+                final Layer sourceLayer = getSourceLayer();
+                if (sourceLayer == null) {
                     setEnabled(false);
-                    return;
+                } else {
+                    final List<Layer> possibleMergeTargets = LayerListDialog.getInstance().getModel().getPossibleMergeTargets(sourceLayer);
+                    setEnabled(!possibleMergeTargets.isEmpty());
                 }
-                setEnabled(!LayerListDialog.getInstance().getModel().getPossibleMergeTargets(getEditLayer()).isEmpty());
             }
         });
+    }
+
+    protected Layer getSourceLayer() {
+        return Main.map != null ? Main.main.getActiveLayer() : null;
     }
 
     /**

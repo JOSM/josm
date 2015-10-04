@@ -334,6 +334,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         List<Action> entries = new ArrayList<>();
         entries.add(LayerListDialog.getInstance().createShowHideLayerAction());
         entries.add(LayerListDialog.getInstance().createDeleteLayerAction());
+        entries.add(LayerListDialog.getInstance().createMergeLayerAction(this));
         entries.add(new RenameLayerAction(null, this));
         entries.add(SeparatorLayerAction.INSTANCE);
         entries.add(new CorrelateGpxWithImages(this));

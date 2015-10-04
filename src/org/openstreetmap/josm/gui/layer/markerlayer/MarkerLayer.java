@@ -252,6 +252,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         components.add(LayerListDialog.getInstance().createShowHideLayerAction());
         components.add(new ShowHideMarkerText(this));
         components.add(LayerListDialog.getInstance().createDeleteLayerAction());
+        components.add(LayerListDialog.getInstance().createMergeLayerAction(this));
         components.add(SeparatorLayerAction.INSTANCE);
         components.add(new CustomizeColor(this));
         components.add(SeparatorLayerAction.INSTANCE);
