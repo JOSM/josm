@@ -10,6 +10,7 @@ import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -28,7 +29,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Environment;
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
@@ -1439,11 +1439,16 @@ public class SearchCompiler {
 
     static Match compileMapCSS(String mapCSS) throws ParseError {
         try {
-            final Selector selector = new MapCSSParser(new StringReader(mapCSS)).selector();
+            final List<Selector> selectors = new MapCSSParser(new StringReader(mapCSS)).selectors();
             return new Match() {
                 @Override
                 public boolean match(OsmPrimitive osm) {
-                    return selector.matches(new Environment(osm));
+                    for (Selector selector : selectors) {
+                        if (selector.matches(new Environment(osm))) {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             };
         } catch (ParseException e) {

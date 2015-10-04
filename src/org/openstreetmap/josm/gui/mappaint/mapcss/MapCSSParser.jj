@@ -603,9 +603,23 @@ void sheet(MapCSSStyleSource sheet):
 
 void rule():
 {
+    List<Selector> selectors;
+    Declaration decl;
+}
+{
+    selectors=selectors()
+    decl=declaration()
+    { 
+        for (Selector s : selectors) {
+            sheet.rules.add(new MapCSSRule(s, decl));
+        }
+    }
+}
+
+List<Selector> selectors():
+{
     List<Selector> selectors = new ArrayList<Selector>();
     Selector sel;
-    Declaration decl;
 }
 {
     sel=child_selector() { selectors.add(sel); }
@@ -613,12 +627,7 @@ void rule():
         <COMMA> w()
         sel=child_selector() { selectors.add(sel); }
     )*
-    decl=declaration()
-    { 
-        for (Selector s : selectors) {
-            sheet.rules.add(new MapCSSRule(s, decl));
-        }
-    }
+    { return selectors; }
 }
 
 Selector child_selector() :
