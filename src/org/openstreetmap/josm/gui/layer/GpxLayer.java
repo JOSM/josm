@@ -184,6 +184,7 @@ public class GpxLayer extends Layer {
         return new Action[] {
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
+                LayerListDialog.getInstance().createMergeLayerAction(this),
                 SeparatorLayerAction.INSTANCE,
                 new LayerSaveAction(this),
                 new LayerSaveAsAction(this),
