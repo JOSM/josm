@@ -248,10 +248,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         final JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
         JCheckBox allElements = new JCheckBox(tr("all objects"), initialValues.allElements);
         allElements.setToolTipText(tr("Also include incomplete and deleted objects in search."));
-        final JCheckBox regexSearch = new JCheckBox(tr("regular expression"), initialValues.regexSearch);
-        final JCheckBox mapCSSSearch = new JCheckBox(tr("MapCSS selector"), initialValues.mapCSSSearch);
+        final JRadioButton standardSearch = new JRadioButton(tr("standard"), !initialValues.regexSearch && !initialValues.mapCSSSearch);
+        final JRadioButton regexSearch = new JRadioButton(tr("regular expression"), initialValues.regexSearch);
+        final JRadioButton mapCSSSearch = new JRadioButton(tr("MapCSS selector"), initialValues.mapCSSSearch);
         final JCheckBox addOnToolbar = new JCheckBox(tr("add toolbar button"), false);
         final ButtonGroup bg2 = new ButtonGroup();
+        bg2.add(standardSearch);
         bg2.add(regexSearch);
         bg2.add(mapCSSSearch);
 
@@ -266,9 +268,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         left.add(caseSensitive, GBC.eol());
         if (Main.pref.getBoolean("expert", false)) {
             left.add(allElements, GBC.eol());
+            left.add(addOnToolbar, GBC.eop());
+            left.add(standardSearch, GBC.eol());
             left.add(regexSearch, GBC.eol());
             left.add(mapCSSSearch, GBC.eol());
-            left.add(addOnToolbar, GBC.eol());
         }
 
         final JPanel right;
