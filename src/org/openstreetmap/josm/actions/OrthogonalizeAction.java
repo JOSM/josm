@@ -191,7 +191,7 @@ public final class OrthogonalizeAction extends JosmAction {
             }
             new Notification(msg)
                     .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                    .setDuration(Notification.TIME_VERY_LONG)
+                    .setDuration(Notification.TIME_DEFAULT)
                     .show();
         }
     }
