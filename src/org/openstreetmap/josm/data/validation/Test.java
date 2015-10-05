@@ -199,6 +199,9 @@ public class Test extends AbstractVisitor {
             progressMonitor.setTicksCount(selection.size());
         }
         for (OsmPrimitive p : selection) {
+            if (isCanceled()) {
+                break;
+            }
             if (isPrimitiveUsable(p)) {
                 p.accept(this);
             }

@@ -885,12 +885,12 @@ public final class TaggingPresetItems {
         public String value_off = OsmUtils.falseval;
         /** whether the off value is disabled in the dialog, i.e., only unset or yes are provided */
         public boolean disable_off = false;
-        /** ticked on/off (default is "off") */
-        public boolean default_ = false; // only used for tagless objects
+        /** "on" or "off" or unset (default is unset) */
+        public String default_ = null; // only used for tagless objects
 
         private QuadStateCheckBox check;
         private QuadStateCheckBox.State initialState;
-        private boolean def;
+        private Boolean def;
 
         @Override
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
@@ -898,33 +898,32 @@ public final class TaggingPresetItems {
             // find out if our key is already used in the selection.
             final Usage usage = determineBooleanUsage(sel, key);
             final String oneValue = usage.values.isEmpty() ? null : usage.values.last();
-            def = default_;
+            def = "on".equals(default_) ? Boolean.TRUE : "off".equals(default_) ? Boolean.FALSE : null;
 
             if (locale_text == null) {
                 locale_text = getLocaleText(text, text_context, null);
             }
 
             if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
-                if (def && !PROP_FILL_DEFAULT.get()) {
+                if (def != null && !PROP_FILL_DEFAULT.get()) {
                     // default is set and filling default values feature is disabled - check if all primitives are untagged
                     for (OsmPrimitive s : sel) {
                         if (s.hasKeys()) {
-                            def = false;
+                            def = null;
                         }
                     }
                 }
 
                 // all selected objects share the same value which is either true or false or unset,
                 // we can display a standard check box.
-                initialState = value_on.equals(oneValue)
+                initialState = value_on.equals(oneValue) || Boolean.TRUE.equals(def)
                         ? QuadStateCheckBox.State.SELECTED
-                        : value_off.equals(oneValue)
+                        : value_off.equals(oneValue) || Boolean.FALSE.equals(def)
                         ? QuadStateCheckBox.State.NOT_SELECTED
-                        : def
-                        ? QuadStateCheckBox.State.SELECTED
                         : QuadStateCheckBox.State.UNSET;
+
             } else {
-                def = false;
+                def = null;
                 // the objects have different values, or one or more objects have something
                 // else than true/false. we display a quad-state check box
                 // in "partial" state.
@@ -948,7 +947,7 @@ public final class TaggingPresetItems {
         @Override
         public void addCommands(List<Tag> changedTags) {
             // if the user hasn't changed anything, don't create a command.
-            if (check.getState() == initialState && !def) return;
+            if (check.getState() == initialState && def == null) return;
 
             // otherwise change things according to the selected value.
             changedTags.add(new Tag(key,
