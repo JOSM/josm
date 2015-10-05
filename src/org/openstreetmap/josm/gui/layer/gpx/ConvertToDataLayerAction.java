@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,7 +128,8 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
             return;
         }
         final DataSet ds = convert();
-        final OsmDataLayer layer = new OsmDataLayer(ds, tr("Converted from: {0}", this.layer.getName()), this.layer.getAssociatedFile());
+        final OsmDataLayer layer = new OsmDataLayer(ds, tr("Converted from: {0}", this.layer.getName()), null);
+        layer.setAssociatedFile(new File(this.layer.getAssociatedFile().getParentFile(), this.layer.getAssociatedFile().getName() + ".osm"));
         layer.setUploadDiscouraged(true);
         Main.main.addLayer(layer);
         Main.main.removeLayer(this.layer);
