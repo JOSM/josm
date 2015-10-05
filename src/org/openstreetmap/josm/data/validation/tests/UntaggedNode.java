@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.openstreetmap.josm.command.Command;
@@ -37,15 +36,6 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
     public UntaggedNode() {
         super(tr("Untagged and unconnected nodes"),
                 tr("This test checks for untagged nodes that are not part of any way."));
-    }
-
-    @Override
-    public void visit(Collection<OsmPrimitive> selection) {
-        for (OsmPrimitive p : selection) {
-            if (p.isUsable() && p instanceof Node) {
-                p.accept(this);
-            }
-        }
     }
 
     @Override
