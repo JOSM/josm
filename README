@@ -110,7 +110,7 @@ This is an overview of the files and directories in the JOSM code repository:
 - test/                     automated software tests
     - data/                 resources used for some tests
     - functional/           functional tests (source code)
-    - lib/                  libraries needed for (some of) the tests
+    - lib/                  libraries needed for (some of) the tests, including JUnit
     - performance/          performance tests (source code)
     - unit/                 unit tests (source code)
 - tools/                    libraries and tools that help in the development process
