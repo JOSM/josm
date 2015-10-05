@@ -742,6 +742,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         public void actionPerformed(ActionEvent e) {
             final GpxData data = toGpxData();
             final GpxLayer gpxLayer = new GpxLayer(data, tr("Converted from: {0}", getName()));
+            gpxLayer.setAssociatedFile(new File(getAssociatedFile().getParentFile(), getAssociatedFile().getName() + ".gpx"));
             Main.main.addLayer(gpxLayer);
             if (Main.pref.getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
                 Main.main.addLayer(new MarkerLayer(data, tr("Converted from: {0}", getName()), null, gpxLayer));
