@@ -82,7 +82,7 @@ public class UploadNotesTask {
         private void processNoteComment(ProgressMonitor monitor, OsmApi api, Note note, NoteComment comment) {
             try {
                 if (updatedNotes.containsKey(note)) {
-                    // if note has been created earlier in this task, obtain its real id and not use the paceholder id
+                    // if note has been created earlier in this task, obtain its real id and not use the placeholder id
                     note = updatedNotes.get(note);
                 }
                 Note newNote;
