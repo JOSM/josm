@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss
 
-import org.openstreetmap.josm.gui.mappaint.MultiCascade;
-
-import static org.junit.Assert.*
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType
+import org.openstreetmap.josm.gui.mappaint.MultiCascade
+import org.openstreetmap.josm.io.OsmReader
 
 import java.util.logging.Logger
 
@@ -180,5 +180,13 @@ class ChildOrParentSelectorTest {
 
         e = new Environment(w3)
         assert selector.matches(e)
+    }
+
+    @Test
+    public void testContains() throws Exception {
+        def ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/amenity-in-amenity.osm"), null)
+        def css = parse("node[tag(\"amenity\") = parent_tag(\"amenity\")] ∈ *[amenity] {}")
+        assert css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.WAY)))
+        assert css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.RELATION)))
     }
 }
