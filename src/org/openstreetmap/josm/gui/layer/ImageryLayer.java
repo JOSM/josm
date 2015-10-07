@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
+import java.awt.Transparency;
 import java.awt.event.ActionEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
@@ -279,23 +280,24 @@ public abstract class ImageryLayer extends Layer {
             }
         }
 
-        private LookupOp getOp(int bands) {
-            if (gamma == 1) {
-                return null;
-            } else if (bands == 3) {
-                return op3;
-            } else if (bands == 4) {
-                return op4;
-            } else {
-                return null;
-            }
-        }
-
         @Override
         public BufferedImage process(BufferedImage image) {
-            final LookupOp op = getOp(image.getRaster().getNumBands());
-            final BufferedImage to = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-            return op == null ? image : op.filter(image, to);
+            if (gamma == 1) {
+                return image;
+            }
+            try {
+                final int bands = image.getRaster().getNumBands();
+                if (image.getType() != BufferedImage.TYPE_CUSTOM && bands == 3) {
+                    return op3.filter(image, null);
+                } else if (image.getType() != BufferedImage.TYPE_CUSTOM && bands == 4) {
+                    return op4.filter(image, null);
+                }
+            } catch (IllegalArgumentException ignore) {
+            }
+            final int type = image.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+            final BufferedImage to = new BufferedImage(image.getWidth(), image.getHeight(), type);
+            to.getGraphics().drawImage(image, 0, 0, null);
+            return process(to);
         }
     }
 
