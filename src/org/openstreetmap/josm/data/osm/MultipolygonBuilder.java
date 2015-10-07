@@ -98,7 +98,7 @@ public class MultipolygonBuilder {
 
         public List<JoinedPolygon> innerWays;
 
-        public PolygonLevel(JoinedPolygon pol, int level) {
+        PolygonLevel(JoinedPolygon pol, int level) {
             this.outerWay = pol;
             this.level = level;
             this.innerWays = new ArrayList<>();
@@ -344,7 +344,7 @@ public class MultipolygonBuilder {
         private final int to;
         private final List<PolygonLevel> output;
 
-        public Worker(List<JoinedPolygon> input, int from, int to, List<PolygonLevel> output) {
+        Worker(List<JoinedPolygon> input, int from, int to, List<PolygonLevel> output) {
             this.input = input;
             this.from = from;
             this.to = to;

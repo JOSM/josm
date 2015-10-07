@@ -55,7 +55,7 @@ public class UnclosedWays extends Test {
          * @param key The OSM key checked
          * @param engMessage The English message
          */
-        public UnclosedWaysCheck(int code, String key, String engMessage) {
+        UnclosedWaysCheck(int code, String key, String engMessage) {
             this(code, key, engMessage, Collections.<String>emptySet());
         }
 
@@ -66,7 +66,7 @@ public class UnclosedWays extends Test {
          * @param engMessage The English message
          * @param ignoredValues The ignored values.
          */
-        public UnclosedWaysCheck(int code, String key, String engMessage, Set<String> ignoredValues) {
+        UnclosedWaysCheck(int code, String key, String engMessage, Set<String> ignoredValues) {
             this(code, key, engMessage, ignoredValues, true);
         }
 
@@ -78,7 +78,7 @@ public class UnclosedWays extends Test {
          * @param specialValues The special values, to be ignored if ignore is set to true; to be considered only if ignore is set to false
          * @param ignore indicates if special values must be ignored or considered only
          */
-        public UnclosedWaysCheck(int code, String key, String engMessage, Set<String> specialValues, boolean ignore) {
+        UnclosedWaysCheck(int code, String key, String engMessage, Set<String> specialValues, boolean ignore) {
             this.code = code;
             this.key = key;
             this.engMessage = engMessage;
@@ -122,7 +122,7 @@ public class UnclosedWays extends Test {
          * @param key The OSM key checked
          * @param engMessage The English message
          */
-        public UnclosedWaysBooleanCheck(int code, String key, String engMessage) {
+        UnclosedWaysBooleanCheck(int code, String key, String engMessage) {
             super(code, key, engMessage);
         }
 

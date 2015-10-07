@@ -116,7 +116,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         /**
          * Constructs a new {@code RetrieveRequestTokenPanel}.
          */
-        public RetrieveRequestTokenPanel() {
+        RetrieveRequestTokenPanel() {
             build();
         }
 
@@ -213,7 +213,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         /**
          * Constructs a new {@code RetrieveAccessTokenPanel}.
          */
-        public RetrieveAccessTokenPanel() {
+        RetrieveAccessTokenPanel() {
             build();
         }
 
@@ -283,7 +283,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
          * Action to go back to step 1 in the process
          */
         class BackAction extends AbstractAction {
-            public BackAction() {
+            BackAction() {
                 putValue(NAME, tr("Back"));
                 putValue(SHORT_DESCRIPTION, tr("Go back to step 1/3"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
@@ -304,7 +304,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         /**
          * Constructs a new {@code ShowAccessTokenPanel}.
          */
-        public ShowAccessTokenPanel() {
+        ShowAccessTokenPanel() {
             build();
         }
 
@@ -361,7 +361,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
          * Action to go back to step 1 in the process
          */
         class RestartAction extends AbstractAction {
-            public RestartAction() {
+            RestartAction() {
                 putValue(NAME, tr("Restart"));
                 putValue(SHORT_DESCRIPTION, tr("Go back to step 1/3"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
@@ -383,7 +383,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      */
     class RetrieveRequestTokenAction extends AbstractAction{
 
-        public RetrieveRequestTokenAction() {
+        RetrieveRequestTokenAction() {
             putValue(NAME, tr("Retrieve Request Token"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve a Request Token"));
@@ -419,7 +419,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      */
     class RetrieveAccessTokenAction extends AbstractAction {
 
-        public RetrieveAccessTokenAction() {
+        RetrieveAccessTokenAction() {
             putValue(NAME, tr("Retrieve Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve an Access Token"));
@@ -456,7 +456,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      */
     class TestAccessTokenAction extends AbstractAction {
 
-        public TestAccessTokenAction() {
+        TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
             putValue(SHORT_DESCRIPTION, tr("Click to test the Access Token"));

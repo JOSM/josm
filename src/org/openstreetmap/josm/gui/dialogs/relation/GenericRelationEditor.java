@@ -826,7 +826,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class AddSelectedAtStartAction extends AddFromSelectionAction implements TableModelListener {
-        public AddSelectedAtStartAction() {
+        AddSelectedAtStartAction() {
             putValue(SHORT_DESCRIPTION,
                     tr("Add all objects selected in the current dataset before the first member"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copystartright"));
@@ -857,7 +857,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class AddSelectedAtEndAction extends AddFromSelectionAction implements TableModelListener {
-        public AddSelectedAtEndAction() {
+        AddSelectedAtEndAction() {
             putValue(SHORT_DESCRIPTION, tr("Add all objects selected in the current dataset after the last member"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyendright"));
             refreshEnabled();
@@ -890,7 +890,7 @@ public class GenericRelationEditor extends RelationEditor  {
         /**
          * Constructs a new {@code AddSelectedBeforeSelection}.
          */
-        public AddSelectedBeforeSelection() {
+        AddSelectedBeforeSelection() {
             putValue(SHORT_DESCRIPTION,
                     tr("Add all objects selected in the current dataset before the first selected member"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copybeforecurrentright"));
@@ -928,7 +928,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class AddSelectedAfterSelection extends AddFromSelectionAction implements TableModelListener, ListSelectionListener {
-        public AddSelectedAfterSelection() {
+        AddSelectedAfterSelection() {
             putValue(SHORT_DESCRIPTION,
                     tr("Add all objects selected in the current dataset after the last selected member"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyaftercurrentright"));
@@ -969,7 +969,7 @@ public class GenericRelationEditor extends RelationEditor  {
         /**
          * Constructs a new {@code RemoveSelectedAction}.
          */
-        public RemoveSelectedAction() {
+        RemoveSelectedAction() {
             putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected objects"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "deletemembers"));
             updateEnabledState();
@@ -1004,7 +1004,7 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      */
     class SelectedMembersForSelectionAction extends AbstractAction implements TableModelListener {
-        public SelectedMembersForSelectionAction() {
+        SelectedMembersForSelectionAction() {
             putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to objects in the current selection"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectmembers"));
             updateEnabledState();
@@ -1040,7 +1040,7 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      */
     class SelectPrimitivesForSelectedMembersAction extends AbstractAction implements ListSelectionListener {
-        public SelectPrimitivesForSelectedMembersAction() {
+        SelectPrimitivesForSelectedMembersAction() {
             putValue(SHORT_DESCRIPTION, tr("Select objects for selected relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectprimitives"));
             updateEnabledState();
@@ -1062,7 +1062,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class SortAction extends AbstractAction implements TableModelListener {
-        public SortAction() {
+        SortAction() {
             String tooltip = tr("Sort the relation members");
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
             putValue(NAME, tr("Sort"));
@@ -1089,7 +1089,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class SortBelowAction extends AbstractAction implements TableModelListener, ListSelectionListener {
-        public SortBelowAction() {
+        SortBelowAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort_below"));
             putValue(NAME, tr("Sort below"));
             putValue(SHORT_DESCRIPTION, tr("Sort the selected relation members and all members below"));
@@ -1117,7 +1117,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class ReverseAction extends AbstractAction implements TableModelListener {
-        public ReverseAction() {
+        ReverseAction() {
             putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "reverse"));
             putValue(NAME, tr("Reverse"));
@@ -1142,7 +1142,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class MoveUpAction extends AbstractAction implements ListSelectionListener {
-        public MoveUpAction() {
+        MoveUpAction() {
             String tooltip = tr("Move the currently selected members up");
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "moveup"));
             Shortcut sc = Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Up"),
@@ -1164,7 +1164,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class MoveDownAction extends AbstractAction implements ListSelectionListener {
-        public MoveDownAction() {
+        MoveDownAction() {
             String tooltip = tr("Move the currently selected members down");
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "movedown"));
             Shortcut sc = Shortcut.registerShortcut("relationeditor:movedown", tr("Relation Editor: Move Down"),
@@ -1186,7 +1186,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class RemoveAction extends AbstractAction implements ListSelectionListener {
-        public RemoveAction() {
+        RemoveAction() {
             String tooltip = tr("Remove the currently selected members from this relation");
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(NAME, tr("Remove"));
@@ -1209,7 +1209,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class DeleteCurrentRelationAction extends AbstractAction implements PropertyChangeListener{
-        public DeleteCurrentRelationAction() {
+        DeleteCurrentRelationAction() {
             putValue(SHORT_DESCRIPTION, tr("Delete the currently edited relation"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(NAME, tr("Delete"));
@@ -1321,13 +1321,13 @@ public class GenericRelationEditor extends RelationEditor  {
                     new ButtonSpec(
                             tr("Yes, create a conflict and close"),
                             ImageProvider.get("ok"),
-                            tr("Click to create a conflict and close this relation editor") ,
+                            tr("Click to create a conflict and close this relation editor"),
                             null /* no specific help topic */
                     ),
                     new ButtonSpec(
                             tr("No, continue editing"),
                             ImageProvider.get("cancel"),
-                            tr("Click to return to the relation editor and to resume relation editing") ,
+                            tr("Click to return to the relation editor and to resume relation editing"),
                             null /* no specific help topic */
                     )
             };
@@ -1364,7 +1364,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class ApplyAction extends SavingAction {
-        public ApplyAction() {
+        ApplyAction() {
             putValue(SHORT_DESCRIPTION, tr("Apply the current updates"));
             putValue(SMALL_ICON, ImageProvider.get("save"));
             putValue(NAME, tr("Apply"));
@@ -1398,7 +1398,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class OKAction extends SavingAction {
-        public OKAction() {
+        OKAction() {
             putValue(SHORT_DESCRIPTION, tr("Apply the updates and close the dialog"));
             putValue(SMALL_ICON, ImageProvider.get("ok"));
             putValue(NAME, tr("OK"));
@@ -1435,7 +1435,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class CancelAction extends SavingAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(SHORT_DESCRIPTION, tr("Cancel the updates and close the dialog"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
             putValue(NAME, tr("Cancel"));
@@ -1486,19 +1486,19 @@ public class GenericRelationEditor extends RelationEditor  {
                     new ButtonSpec(
                             tr("Yes, save the changes and close"),
                             ImageProvider.get("ok"),
-                            tr("Click to save the changes and close this relation editor") ,
+                            tr("Click to save the changes and close this relation editor"),
                             null /* no specific help topic */
                     ),
                     new ButtonSpec(
                             tr("No, discard the changes and close"),
                             ImageProvider.get("cancel"),
-                            tr("Click to discard the changes and close this relation editor") ,
+                            tr("Click to discard the changes and close this relation editor"),
                             null /* no specific help topic */
                     ),
                     new ButtonSpec(
                             tr("Cancel, continue editing"),
                             ImageProvider.get("cancel"),
-                            tr("Click to return to the relation editor and to resume relation editing") ,
+                            tr("Click to return to the relation editor and to resume relation editing"),
                             null /* no specific help topic */
                     )
             };
@@ -1519,7 +1519,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class AddTagAction extends AbstractAction {
-        public AddTagAction() {
+        AddTagAction() {
             putValue(SHORT_DESCRIPTION, tr("Add an empty tag"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
             setEnabled(true);
@@ -1532,7 +1532,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class DownloadIncompleteMembersAction extends AbstractAction implements TableModelListener {
-        public DownloadIncompleteMembersAction() {
+        DownloadIncompleteMembersAction() {
             String tooltip = tr("Download all incomplete members");
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincomplete"));
             putValue(NAME, tr("Download Members"));
@@ -1566,7 +1566,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener, TableModelListener{
-        public DownloadSelectedIncompleteMembersAction() {
+        DownloadSelectedIncompleteMembersAction() {
             putValue(SHORT_DESCRIPTION, tr("Download selected incomplete members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
             putValue(NAME, tr("Download Members"));
@@ -1603,7 +1603,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     class SetRoleAction extends AbstractAction implements ListSelectionListener, DocumentListener {
-        public SetRoleAction() {
+        SetRoleAction() {
             putValue(SHORT_DESCRIPTION, tr("Sets a role for the selected members"));
             putValue(SMALL_ICON, ImageProvider.get("apply"));
             putValue(NAME, tr("Apply Role"));
@@ -1683,7 +1683,7 @@ public class GenericRelationEditor extends RelationEditor  {
      * Creates a new relation with a copy of the current editor state.
      */
     class DuplicateRelationAction extends AbstractAction {
-        public DuplicateRelationAction() {
+        DuplicateRelationAction() {
             putValue(SHORT_DESCRIPTION, tr("Create a copy of this relation and open it in another editor window"));
             // FIXME provide an icon
             putValue(SMALL_ICON, ImageProvider.get("duplicate"));
@@ -1705,7 +1705,7 @@ public class GenericRelationEditor extends RelationEditor  {
      * Action for editing the currently selected relation.
      */
     class EditAction extends AbstractAction implements ListSelectionListener {
-        public EditAction() {
+        EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             refreshEnabled();

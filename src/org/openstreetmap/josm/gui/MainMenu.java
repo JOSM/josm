@@ -144,7 +144,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class MainMenu extends JMenuBar {
 
-    public static enum WINDOW_MENU_GROUP { ALWAYS, TOGGLE_DIALOG, VOLATILE }
+    public enum WINDOW_MENU_GROUP { ALWAYS, TOGGLE_DIALOG, VOLATILE }
 
     /* File menu */
     /** File / New Layer **/
@@ -342,6 +342,7 @@ public class MainMenu extends JMenuBar {
      * moreToolsMenu contains geometry-related actions from all the plugins
      * @since 6082 (moved from Utilsplugin2)
      */
+    // CHECKSTYLE.OFF: LineLength
     public final JMenu moreToolsMenu = addMenu("More tools", /* I18N: mnemonic: M */ trc("menu", "More tools"), KeyEvent.VK_M, 4, ht("/Menu/MoreTools"));
     /**
      * dataMenu contains plugin actions that are related to certain tagging schemes (addressing opening hours),
@@ -366,7 +367,6 @@ public class MainMenu extends JMenuBar {
     /**
      * imageryMenu contains all imagery-related actions
      */
-    // CHECKSTYLE.OFF: LineLength
     public final ImageryMenu imageryMenu = addMenu(new ImageryMenu(imagerySubMenu), /* I18N: mnemonic: I */ "Imagery", KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
     // CHECKSTYLE.ON: LineLength
     /**
@@ -947,7 +947,7 @@ public class MainMenu extends JMenuBar {
     static class PresetsMenuEnabler implements MapView.LayerChangeListener {
         private JMenu presetsMenu;
 
-        public PresetsMenuEnabler(JMenu presetsMenu) {
+        PresetsMenuEnabler(JMenu presetsMenu) {
             MapView.addLayerChangeListener(this);
             this.presetsMenu = presetsMenu;
         }
@@ -1016,7 +1016,7 @@ public class MainMenu extends JMenuBar {
         private final MainMenu mainMenu;
         private String currentSearchText = null;
 
-        public SearchFieldTextListener(MainMenu mainMenu, JTextField searchField) {
+        SearchFieldTextListener(MainMenu mainMenu, JTextField searchField) {
             this.mainMenu = mainMenu;
             this.searchField = searchField;
         }

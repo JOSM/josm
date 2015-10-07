@@ -24,7 +24,7 @@ public class AuthorizationProcedureComboBox extends JosmComboBox<AuthorizationPr
     }
 
     private static class AuthorisationProcedureCellRenderer extends JLabel implements ListCellRenderer<AuthorizationProcedure> {
-        public AuthorisationProcedureCellRenderer() {
+        AuthorisationProcedureCellRenderer() {
             setOpaque(true);
         }
 

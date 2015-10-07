@@ -247,7 +247,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
     static class OpenChangesetDialogAction extends AbstractAction {
         private Integer id;
 
-        public OpenChangesetDialogAction() {
+        OpenChangesetDialogAction() {
             super(tr("Changeset"), new ImageProvider("dialogs/changeset", "changesetmanager").resetMaxSize(new Dimension(16, 16)).get());
             putValue(SHORT_DESCRIPTION, tr("Opens the Changeset Manager window for the selected changesets"));
         }

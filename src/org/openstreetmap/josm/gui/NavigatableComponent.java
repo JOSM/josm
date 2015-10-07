@@ -634,7 +634,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         private final LatLon center;
         private final double scale;
 
-        public ZoomData(EastNorth center, double scale) {
+        ZoomData(EastNorth center, double scale) {
             this.center = Projections.inverseProject(center);
             this.scale = scale;
         }

@@ -153,7 +153,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     }
 
     class CloseAction extends AbstractAction {
-        public CloseAction() {
+        CloseAction() {
             putValue(NAME, tr("Close"));
             putValue(SHORT_DESCRIPTION, tr("Close the dialog"));
             putValue(SMALL_ICON, ImageProvider.get("ok"));
@@ -172,7 +172,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     }
 
     class ReloadAction extends AbstractAction {
-        public ReloadAction() {
+        ReloadAction() {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr("Reload the history from the server"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));

@@ -336,7 +336,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      * Starts the authorisation process
      */
     class RunAuthorisationAction extends AbstractAction implements DocumentListener{
-        public RunAuthorisationAction() {
+        RunAuthorisationAction() {
             putValue(NAME, tr("Authorize now"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
             putValue(SHORT_DESCRIPTION, tr("Click to redirect you to the authorization form on the JOSM web site"));
@@ -372,7 +372,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      * Action to go back to step 1 in the process
      */
     class BackAction extends AbstractAction {
-        public BackAction() {
+        BackAction() {
             putValue(NAME, tr("Back"));
             putValue(SHORT_DESCRIPTION, tr("Run the automatic authorization steps again"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
@@ -388,7 +388,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      * Action to test an access token.
      */
     class TestAccessTokenAction extends AbstractAction {
-        public TestAccessTokenAction() {
+        TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("logo"));
         }
@@ -405,7 +405,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     }
 
     private static class UserNameValidator extends AbstractTextComponentValidator {
-        public UserNameValidator(JTextComponent tc) {
+        UserNameValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -426,7 +426,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     private static class PasswordValidator extends AbstractTextComponentValidator {
 
-        public PasswordValidator(JTextComponent tc) {
+        PasswordValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -449,7 +449,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         private boolean canceled;
         private OsmOAuthAuthorizationClient authClient;
 
-        public FullyAutomaticAuthorisationTask(Component parent) {
+        FullyAutomaticAuthorisationTask(Component parent) {
             super(parent, tr("Authorize JOSM to access the OSM API"), false /* don't ignore exceptions */);
         }
 

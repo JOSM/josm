@@ -583,8 +583,8 @@ public final class ExceptionUtil {
         String message = tr("The OSM server ''{0}'' does not know about an object<br>"
                 + "you tried to read, update, or delete. Either the respective object<br>"
                 + "does not exist on the server or you are using an invalid URL to access<br>"
-                + "it. Please carefully check the server''s address ''{0}'' for typos."
-                , apiUrl);
+                + "it. Please carefully check the server''s address ''{0}'' for typos.",
+                apiUrl);
         Main.error(e);
         return "<html>" + message + "</html>";
     }

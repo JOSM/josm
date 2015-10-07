@@ -192,7 +192,7 @@ public class UploadSelectionAction extends JosmAction {
     static class UploadHullBuilder implements Visitor {
         private Set<OsmPrimitive> hull;
 
-        public UploadHullBuilder() {
+        UploadHullBuilder() {
             hull = new HashSet<>();
         }
 
@@ -268,7 +268,7 @@ public class UploadSelectionAction extends JosmAction {
          * @param layer the data layer for which a collection of selected primitives is uploaded
          * @param toUpload the collection of primitives to upload
          */
-        public DeletedParentsChecker(OsmDataLayer layer, Collection<OsmPrimitive> toUpload) {
+        DeletedParentsChecker(OsmDataLayer layer, Collection<OsmPrimitive> toUpload) {
             super(tr("Checking parents for deleted objects"));
             this.toUpload = toUpload;
             this.layer = layer;

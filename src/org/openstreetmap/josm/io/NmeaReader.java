@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public class NmeaReader {
 
     /** Handler for the different types that NMEA speaks. */
-    public static enum NMEA_TYPE {
+    public enum NMEA_TYPE {
 
         /** RMC = recommended minimum sentence C. */
         GPRMC("$GPRMC"),
@@ -57,7 +57,7 @@ public class NmeaReader {
     }
 
     // GPVTG
-    public static enum GPVTG {
+    public enum GPVTG {
         COURSE(1), COURSE_REF(2), // true course
         COURSE_M(3), COURSE_M_REF(4), // magnetic course
         SPEED_KN(5), SPEED_KN_UNIT(6), // speed in knots
@@ -72,7 +72,7 @@ public class NmeaReader {
     }
 
     // The following only applies to GPRMC
-    public static enum GPRMC {
+    public enum GPRMC {
         TIME(1),
         /** Warning from the receiver (A = data ok, V = warning) */
         RECEIVER_WARNING(2),
@@ -96,7 +96,7 @@ public class NmeaReader {
     }
 
     // The following only applies to GPGGA
-    public static enum GPGGA {
+    public enum GPGGA {
         TIME(1), LATITUDE(2), LATITUDE_NAME(3), LONGITUDE(4), LONGITUDE_NAME(5),
         /**
          * Quality (0 = invalid, 1 = GPS, 2 = DGPS, 6 = estimanted (@since NMEA
@@ -115,7 +115,7 @@ public class NmeaReader {
         }
     }
 
-    public static enum GPGSA {
+    public enum GPGSA {
         AUTOMATIC(1),
         FIX_TYPE(2), // 1 = not fixed, 2 = 2D fixed, 3 = 3D fixed)
         // PRN numbers for max 12 satellites

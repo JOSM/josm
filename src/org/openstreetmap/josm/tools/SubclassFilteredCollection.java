@@ -26,7 +26,7 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
         private final Iterator<? extends S> iterator;
         private S current;
 
-        public FilterIterator(Iterator<? extends S> iterator) {
+        FilterIterator(Iterator<? extends S> iterator) {
             this.iterator = iterator;
         }
 

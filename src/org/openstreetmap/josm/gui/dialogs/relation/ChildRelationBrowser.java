@@ -172,7 +172,7 @@ public class ChildRelationBrowser extends JPanel {
      *
      */
     class EditAction extends AbstractAction implements TreeSelectionListener {
-        public EditAction() {
+        EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             putValue(NAME, tr("Edit"));
@@ -217,7 +217,7 @@ public class ChildRelationBrowser extends JPanel {
      * Recursively.
      */
     class DownloadAllChildRelationsAction extends AbstractAction{
-        public DownloadAllChildRelationsAction() {
+        DownloadAllChildRelationsAction() {
             putValue(SHORT_DESCRIPTION, tr("Download all child relations (recursively)"));
             putValue(SMALL_ICON, ImageProvider.get("download"));
             putValue(NAME, tr("Download All Children"));
@@ -239,7 +239,7 @@ public class ChildRelationBrowser extends JPanel {
      * Action for downloading all selected relations
      */
     class DownloadSelectedAction extends AbstractAction implements TreeSelectionListener {
-        public DownloadSelectedAction() {
+        DownloadSelectedAction() {
             putValue(SHORT_DESCRIPTION, tr("Download selected relations"));
             // FIXME: replace with better icon
             //
@@ -282,7 +282,7 @@ public class ChildRelationBrowser extends JPanel {
         protected int conflictsCount;
         protected Exception lastException;
 
-        public DownloadTask(String title, Dialog parent) {
+        DownloadTask(String title, Dialog parent) {
             super(title, new PleaseWaitProgressMonitor(parent), false);
         }
 
@@ -331,7 +331,7 @@ public class ChildRelationBrowser extends JPanel {
         private final Stack<Relation> relationsToDownload;
         private final Set<Long> downloadedRelationIds;
 
-        public DownloadAllChildrenTask(Dialog parent, Relation r) {
+        DownloadAllChildrenTask(Dialog parent, Relation r) {
             super(tr("Download relation members"), parent);
             this.relation = r;
             relationsToDownload = new Stack<>();
@@ -442,7 +442,7 @@ public class ChildRelationBrowser extends JPanel {
     class DownloadRelationSetTask extends DownloadTask {
         private final Set<Relation> relations;
 
-        public DownloadRelationSetTask(Dialog parent, Set<Relation> relations) {
+        DownloadRelationSetTask(Dialog parent, Set<Relation> relations) {
             super(tr("Download relation members"), parent);
             this.relations = relations;
         }

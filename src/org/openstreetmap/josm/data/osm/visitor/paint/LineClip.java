@@ -37,7 +37,7 @@ public class LineClip {
         if (clipBounds == null) {
             return false;
         }
-        return cohenSutherland(p1.x, p1.y, p2.x, p2.y, clipBounds.x , clipBounds.y,
+        return cohenSutherland(p1.x, p1.y, p2.x, p2.y, clipBounds.x, clipBounds.y,
                 clipBounds.x + clipBounds.width, clipBounds.y + clipBounds.height);
     }
 

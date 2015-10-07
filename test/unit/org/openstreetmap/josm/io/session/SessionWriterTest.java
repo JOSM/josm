@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.MultiMap;
 public class SessionWriterTest {
 
     private static class OsmHeadlessJosExporter extends OsmDataSessionExporter {
-        public OsmHeadlessJosExporter(OsmDataLayer layer) {
+        OsmHeadlessJosExporter(OsmDataLayer layer) {
             super(layer);
         }
 
@@ -43,7 +43,7 @@ public class SessionWriterTest {
     }
 
     private static class OsmHeadlessJozExporter extends OsmDataSessionExporter {
-        public OsmHeadlessJozExporter(OsmDataLayer layer) {
+        OsmHeadlessJozExporter(OsmDataLayer layer) {
             super(layer);
         }
 
@@ -54,7 +54,7 @@ public class SessionWriterTest {
     }
 
     private static class GpxHeadlessJosExporter extends GpxTracksSessionExporter {
-        public GpxHeadlessJosExporter(GpxLayer layer) {
+        GpxHeadlessJosExporter(GpxLayer layer) {
             super(layer);
         }
 
@@ -65,7 +65,7 @@ public class SessionWriterTest {
     }
 
     private static class GpxHeadlessJozExporter extends GpxTracksSessionExporter {
-        public GpxHeadlessJozExporter(GpxLayer layer) {
+        GpxHeadlessJozExporter(GpxLayer layer) {
             super(layer);
         }
 

@@ -47,7 +47,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
 
     class BingAttributionData extends CacheCustomContent<IOException> {
 
-        public BingAttributionData() {
+        BingAttributionData() {
             super("bing.attribution.xml", CacheCustomContent.INTERVAL_HOURLY);
         }
 

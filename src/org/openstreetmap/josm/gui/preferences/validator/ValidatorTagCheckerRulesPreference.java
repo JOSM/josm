@@ -54,10 +54,10 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
             return ruleSourceProviders.add(provider);
         return false;
     }
-    
+
     static class TagCheckerRulesSourceEditor extends SourceEditor {
 
-        public TagCheckerRulesSourceEditor() {
+        TagCheckerRulesSourceEditor() {
             super(SourceType.TAGCHECKER_RULE, Main.getJOSMWebsite()+"/rules", ruleSourceProviders, false);
         }
 
@@ -121,7 +121,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
             return title != null ? title : super.getTitleForSourceEntry(entry);
         }
     }
-    
+
     /**
      * Helper class for validator tag checker rules preferences.
      */
@@ -142,7 +142,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
             List<ExtendedSourceEntry> def = new ArrayList<>();
-            
+
             addDefault(def, "addresses",    tr("Addresses"),           tr("Checks for errors on addresses"));
             addDefault(def, "combinations", tr("Tag combinations"),    tr("Checks for missing tag or suspicious combinations"));
             addDefault(def, "deprecated",   tr("Deprecated features"), tr("Checks for deprecated features"));
@@ -155,10 +155,10 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
             addDefault(def, "relation",     tr("Relations"),           tr("Checks for errors on relations"));
             addDefault(def, "unnecessary",  tr("Unnecessary tags"),    tr("Checks for unnecessary tags"));
             addDefault(def, "wikipedia",    tr("Wikipedia"),           tr("Checks for wrong wikipedia tags"));
-            
+
             return def;
         }
-        
+
         private void addDefault(List<ExtendedSourceEntry> defaults, String filename, String title, String description) {
             ExtendedSourceEntry i = new ExtendedSourceEntry(filename+".mapcss", "resource://data/validator/"+filename+".mapcss");
             i.title = title;
@@ -187,7 +187,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
     public void addGui(PreferenceTabbedPane gui) {
         final ValidatorPreference valPref = gui.getValidatorPreference();
         sources = new TagCheckerRulesSourceEditor();
-        
+
         valPref.addSubTab(this, tr("Tag checker rules"),
                 sources, tr("Choose Tag checker rules to enable"));
         sources.deferLoading(valPref, sources);

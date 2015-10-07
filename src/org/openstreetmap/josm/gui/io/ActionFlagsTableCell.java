@@ -49,7 +49,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
     /**
      * Constructs a new {@code ActionFlagsTableCell}.
      */
-    public ActionFlagsTableCell() {
+    ActionFlagsTableCell() {
         checkBoxes[0] = new JCheckBox(tr("Upload"));
         checkBoxes[1] = new JCheckBox(tr("Save"));
         setLayout(new GridBagLayout());

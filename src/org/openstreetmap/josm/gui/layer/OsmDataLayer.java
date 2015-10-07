@@ -824,7 +824,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     private class ConsistencyTestAction extends AbstractAction {
 
-        public ConsistencyTestAction() {
+        ConsistencyTestAction() {
             super(tr("Dataset consistency test"));
         }
 

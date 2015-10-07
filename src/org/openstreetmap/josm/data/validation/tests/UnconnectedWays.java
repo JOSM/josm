@@ -296,7 +296,7 @@ public abstract class UnconnectedWays extends Test {
         private final Node n1;
         private final Node n2;
 
-        public MyWaySegment(Way w, Node n1, Node n2) {
+        MyWaySegment(Way w, Node n1, Node n2) {
             this.w = w;
             String railway = w.get("railway");
             String highway = w.get("highway");

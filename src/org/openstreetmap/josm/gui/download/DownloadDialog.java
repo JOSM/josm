@@ -473,7 +473,7 @@ public class DownloadDialog extends JDialog  {
     }
 
     class CancelAction extends AbstractAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
             putValue(SHORT_DESCRIPTION, tr("Click to close the dialog and to abort downloading"));
@@ -491,7 +491,7 @@ public class DownloadDialog extends JDialog  {
     }
 
     class DownloadAction extends AbstractAction {
-        public DownloadAction() {
+        DownloadAction() {
             putValue(NAME, tr("Download"));
             putValue(SMALL_ICON, ImageProvider.get("download"));
             putValue(SHORT_DESCRIPTION, tr("Click to download the currently selected area"));

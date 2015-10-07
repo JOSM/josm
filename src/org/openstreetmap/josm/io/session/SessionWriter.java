@@ -51,12 +51,12 @@ public class SessionWriter {
     private static Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters = new HashMap<>();
 
     static {
-        registerSessionLayerExporter(OsmDataLayer.class , OsmDataSessionExporter.class);
-        registerSessionLayerExporter(TMSLayer.class , ImagerySessionExporter.class);
-        registerSessionLayerExporter(WMSLayer.class , ImagerySessionExporter.class);
-        registerSessionLayerExporter(WMTSLayer.class , ImagerySessionExporter.class);
-        registerSessionLayerExporter(GpxLayer.class , GpxTracksSessionExporter.class);
-        registerSessionLayerExporter(GeoImageLayer.class , GeoImageSessionExporter.class);
+        registerSessionLayerExporter(OsmDataLayer.class, OsmDataSessionExporter.class);
+        registerSessionLayerExporter(TMSLayer.class, ImagerySessionExporter.class);
+        registerSessionLayerExporter(WMSLayer.class, ImagerySessionExporter.class);
+        registerSessionLayerExporter(WMTSLayer.class, ImagerySessionExporter.class);
+        registerSessionLayerExporter(GpxLayer.class, GpxTracksSessionExporter.class);
+        registerSessionLayerExporter(GeoImageLayer.class, GeoImageSessionExporter.class);
         registerSessionLayerExporter(MarkerLayer.class, MarkerSessionExporter.class);
     }
 

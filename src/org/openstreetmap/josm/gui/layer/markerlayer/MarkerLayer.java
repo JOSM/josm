@@ -504,7 +504,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         /**
          * Constructs a new {@code SynchronizeAudio} action.
          */
-        public SynchronizeAudio() {
+        SynchronizeAudio() {
             super(tr("Synchronize Audio"), ImageProvider.get("audio-sync"));
             putValue("help", ht("/Action/SynchronizeAudio"));
         }
@@ -541,7 +541,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
     private class MoveAudio extends AbstractAction {
 
-        public MoveAudio() {
+        MoveAudio() {
             super(tr("Make Audio Marker at Play Head"), ImageProvider.get("addmarkers"));
             putValue("help", ht("/Action/MakeAudioMarkerAtPlayHead"));
         }
@@ -564,5 +564,4 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             Main.map.mapView.repaint();
         }
     }
-
 }

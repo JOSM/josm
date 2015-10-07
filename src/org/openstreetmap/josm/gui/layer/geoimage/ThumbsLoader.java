@@ -29,7 +29,7 @@ public class ThumbsLoader implements Runnable {
     private List<ImageEntry> data;
     private GeoImageLayer layer;
     private MediaTracker tracker;
-    private ICacheAccess<String , BufferedImageCacheEntry> cache;
+    private ICacheAccess<String, BufferedImageCacheEntry> cache;
     private boolean cacheOff = Main.pref.getBoolean("geoimage.noThumbnailCache", false);
 
     public ThumbsLoader(GeoImageLayer layer) {

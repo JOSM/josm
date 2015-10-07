@@ -119,14 +119,15 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             this.errorMessages.add(message);
         }
 
-        public Loader(Collection<File> selection, GpxLayer gpxLayer) {
+        Loader(Collection<File> selection, GpxLayer gpxLayer) {
             super(tr("Extracting GPS locations from EXIF"));
             this.selection = selection;
             this.gpxLayer = gpxLayer;
             errorMessages = new LinkedHashSet<>();
         }
 
-        @Override protected void realRun() throws IOException {
+        @Override
+        protected void realRun() throws IOException {
 
             progressMonitor.subTask(tr("Starting directory scan"));
             Collection<File> files = new ArrayList<>();

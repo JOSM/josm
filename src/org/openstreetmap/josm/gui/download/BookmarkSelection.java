@@ -175,7 +175,7 @@ public class BookmarkSelection implements DownloadSelection {
      *
      */
     class AddAction extends AbstractAction {
-        public AddAction() {
+        AddAction() {
             putValue(NAME, tr("Create bookmark"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "bookmark-new"));
             putValue(SHORT_DESCRIPTION, tr("Add a bookmark for the currently selected download area"));
@@ -211,7 +211,7 @@ public class BookmarkSelection implements DownloadSelection {
         /**
          * Constructs a new {@code RemoveAction}.
          */
-        public RemoveAction() {
+        RemoveAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(SHORT_DESCRIPTION, tr("Remove the currently selected bookmarks"));
             updateEnabledState();
@@ -242,7 +242,7 @@ public class BookmarkSelection implements DownloadSelection {
         /**
          * Constructs a new {@code RenameAction}.
          */
-        public RenameAction() {
+        RenameAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             putValue(SHORT_DESCRIPTION, tr("Rename the currently selected bookmark"));
             updateEnabledState();

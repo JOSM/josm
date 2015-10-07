@@ -54,7 +54,7 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class SaveLayersDialog extends JDialog implements TableModelListener {
-    public static enum UserAction {
+    public enum UserAction {
         /** save/upload layers was successful, proceed with operation */
         PROCEED,
         /** save/upload of layers was not successful or user canceled operation */
@@ -195,7 +195,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             add(lstLayers, gc);
         }
 
-        public LayerListWarningMessagePanel(String msg, List<SaveLayerInfo> infos) {
+        LayerListWarningMessagePanel(String msg, List<SaveLayerInfo> infos) {
             build();
             lblMessage.setText(msg);
             lstLayers.setListData(infos.toArray(new SaveLayerInfo[0]));
@@ -300,7 +300,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     }
 
     class CancelAction extends AbstractAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SHORT_DESCRIPTION, tr("Close this dialog and resume editing in JOSM"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
@@ -332,7 +332,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     }
 
     class DiscardAndProceedAction extends AbstractAction  implements PropertyChangeListener {
-        public DiscardAndProceedAction() {
+        DiscardAndProceedAction() {
             initForDiscardAndExit();
         }
 
@@ -374,7 +374,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         private final transient Image saveDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
         private final transient Image upldDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
 
-        public SaveAndProceedAction() {
+        SaveAndProceedAction() {
             // get disabled versions of icons
             new JLabel(ImageProvider.get("save")).getDisabledIcon().paintIcon(new JPanel(), saveDis.getGraphics(), 0, 0);
             new JLabel(ImageProvider.get("upload")).getDisabledIcon().paintIcon(new JPanel(), upldDis.getGraphics(), 0, 0);

@@ -195,17 +195,7 @@ public class Marker implements TemplateEngineDataProvider {
                     }
                 }
 
-                URL url = null;
-                if (uri != null) {
-                    try {
-                        url = new URL(uri);
-                    } catch (MalformedURLException e) {
-                        // Try a relative file:// url, if the link is not in an URL-compatible form
-                        if (relativePath != null) {
-                            url = Utils.fileToURL(new File(relativePath.getParentFile(), uri));
-                        }
-                    }
-                }
+                URL url = uriToUrl(uri, relativePath);
 
                 String urlStr = url == null ? "" : url.toString();
                 String symbolName = wpt.getString("symbol");
@@ -228,14 +218,27 @@ public class Marker implements TemplateEngineDataProvider {
                     }
                     return Arrays.asList(marker, audioMarker);
                 } else if (urlStr.endsWith(".png") || urlStr.endsWith(".jpg") || urlStr.endsWith(".jpeg") || urlStr.endsWith(".gif")) {
-                    final ImageMarker imageMarker = new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset);
-                    return Arrays.asList(marker, imageMarker);
+                    return Arrays.asList(marker, new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset));
                 } else {
-                    final WebMarker webMarker = new WebMarker(wpt.getCoor(), url, parentLayer, time, offset);
-                    return Arrays.asList(marker, webMarker);
+                    return Arrays.asList(marker, new WebMarker(wpt.getCoor(), url, parentLayer, time, offset));
                 }
             }
         });
+    }
+
+    private static URL uriToUrl(String uri, File relativePath) {
+        URL url = null;
+        if (uri != null) {
+            try {
+                url = new URL(uri);
+            } catch (MalformedURLException e) {
+                // Try a relative file:// url, if the link is not in an URL-compatible form
+                if (relativePath != null) {
+                    url = Utils.fileToURL(new File(relativePath.getParentFile(), uri));
+                }
+            }
+        }
+        return url;
     }
 
     /**

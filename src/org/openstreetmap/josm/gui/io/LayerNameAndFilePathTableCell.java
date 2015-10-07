@@ -45,7 +45,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     private File value;
 
     /** constructor that sets the default on each element **/
-    public LayerNameAndFilePathTableCell() {
+    LayerNameAndFilePathTableCell() {
         setLayout(new GridBagLayout());
 
         lblLayerName.setPreferredSize(new Dimension(lblLayerName.getPreferredSize().width, 19));
@@ -216,7 +216,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     }
 
     private class LaunchFileChooserAction extends AbstractAction {
-        public LaunchFileChooserAction() {
+        LaunchFileChooserAction() {
             putValue(NAME, "...");
             putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
         }

@@ -45,7 +45,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
 
         private final Class<? extends OsmPrimitive> c;
 
-        public FilterPredicate(Class<? extends OsmPrimitive> c) {
+        FilterPredicate(Class<? extends OsmPrimitive> c) {
             this.c = c;
         }
 

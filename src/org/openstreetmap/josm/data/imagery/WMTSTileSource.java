@@ -132,7 +132,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         private final Layer[] layers;
         private final JTable list;
 
-        public SelectLayerDialog(Collection<Layer> layers) {
+        SelectLayerDialog(Collection<Layer> layers) {
             super(Main.parent, tr("Select WMTS layer"), new String[]{tr("Add layers"), tr("Cancel")});
             this.layers = layers.toArray(new Layer[]{});
             //getLayersTable(layers, Main.getProjection())

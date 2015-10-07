@@ -295,7 +295,7 @@ public class MapPaintDialog extends ToggleDialog {
         /**
          * Constructs a new {@code MyCheckBoxRenderer}.
          */
-        public MyCheckBoxRenderer() {
+        MyCheckBoxRenderer() {
             setHorizontalAlignment(SwingConstants.CENTER);
             setVerticalAlignment(SwingConstants.CENTER);
         }
@@ -492,7 +492,7 @@ public class MapPaintDialog extends ToggleDialog {
             private boolean canceled;
             private boolean error;
 
-            public SaveToFileTask(StyleSource s, File file) {
+            SaveToFileTask(StyleSource s, File file) {
                 super(tr("Reloading style sources"));
                 this.s = s;
                 this.file = file;
@@ -535,7 +535,7 @@ public class MapPaintDialog extends ToggleDialog {
                             SourceEntry se = new SourceEntry(s);
                             se.url = file.getPath();
                             MapPaintStyles.addStyle(se);
-                            tblStyles.getSelectionModel().setSelectionInterval(model.getRowCount() - 1 , model.getRowCount() - 1);
+                            tblStyles.getSelectionModel().setSelectionInterval(model.getRowCount() - 1, model.getRowCount() - 1);
                             model.ensureSelectedIsVisible();
                         }
                     }

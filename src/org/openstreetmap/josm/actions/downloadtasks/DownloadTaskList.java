@@ -231,7 +231,7 @@ public class DownloadTaskList {
 
         private final boolean osmData;
 
-        public PostDownloadProcessor(boolean osmData) {
+        PostDownloadProcessor(boolean osmData) {
             this.osmData = osmData;
         }
 

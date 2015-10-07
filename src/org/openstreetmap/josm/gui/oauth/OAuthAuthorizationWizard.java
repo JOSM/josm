@@ -322,7 +322,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         /**
          * Constructs a new {@code CancelAction}.
          */
-        public CancelAction() {
+        CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
             putValue(SHORT_DESCRIPTION, tr("Close the dialog and cancel authorization"));
@@ -344,7 +344,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         /**
          * Constructs a new {@code AcceptAccessTokenAction}.
          */
-        public AcceptAccessTokenAction() {
+        AcceptAccessTokenAction() {
             putValue(NAME, tr("Accept Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("ok"));
             putValue(SHORT_DESCRIPTION, tr("Close the dialog and accept the Access Token"));

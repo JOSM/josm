@@ -203,7 +203,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     class ImageAction extends AbstractAction {
         private final String action;
 
-        public ImageAction(String action, ImageIcon icon, String toolTipText) {
+        ImageAction(String action, ImageIcon icon, String toolTipText) {
             this.action = action;
             putValue(SHORT_DESCRIPTION, toolTipText);
             putValue(SMALL_ICON, icon);

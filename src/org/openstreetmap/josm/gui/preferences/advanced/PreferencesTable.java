@@ -263,7 +263,7 @@ public class PreferencesTable extends JTable {
 
     private class AllSettingsTableModel extends DefaultTableModel {
 
-        public AllSettingsTableModel() {
+        AllSettingsTableModel() {
             setColumnIdentifiers(new String[]{tr("Key"), tr("Value")});
         }
 
@@ -346,7 +346,7 @@ public class PreferencesTable extends JTable {
     }
 
     private static class SettingCellEditor extends DefaultCellEditor {
-        public SettingCellEditor() {
+        SettingCellEditor() {
             super(new JosmTextField());
         }
 

@@ -30,7 +30,7 @@ public class ChangesetClosedException extends OsmTransferException {
      */
     public static final String ERROR_HEADER_PATTERN = "The changeset (\\d+) was closed at (.*)";
 
-    public static enum Source {
+    public enum Source {
         /**
          * The exception was thrown when a changeset was updated. This most likely means
          * that the changeset was closed before.

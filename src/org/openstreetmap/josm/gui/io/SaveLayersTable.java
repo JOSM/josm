@@ -10,7 +10,7 @@ import javax.swing.JTable;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
 
 class SaveLayersTable extends JTable implements PropertyChangeListener {
-    public SaveLayersTable(SaveLayersModel model) {
+    SaveLayersTable(SaveLayersModel model) {
         super(model, new SaveLayersTableColumnModel());
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         super.setRowHeight(39);

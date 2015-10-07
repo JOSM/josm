@@ -107,7 +107,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         private final DataSetListener listener;
         private final boolean consolidate;
 
-        public ListenerInfo(DataSetListener listener, boolean consolidate) {
+        ListenerInfo(DataSetListener listener, boolean consolidate) {
             this.listener = listener;
             this.consolidate = consolidate;
         }

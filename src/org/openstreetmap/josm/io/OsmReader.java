@@ -543,12 +543,12 @@ public class OsmReader extends AbstractReader {
 
     private static class OsmParsingException extends XMLStreamException {
 
-        public OsmParsingException(String msg, Location location) {
+        OsmParsingException(String msg, Location location) {
             super(msg); /* cannot use super(msg, location) because it messes with the message preventing localization */
             this.location = location;
         }
 
-        public OsmParsingException(String msg, Location location, Throwable th) {
+        OsmParsingException(String msg, Location location, Throwable th) {
             super(msg, th);
             this.location = location;
         }
@@ -579,7 +579,7 @@ public class OsmReader extends AbstractReader {
          * @param msg The error message
          * @param location The parser location
          */
-        public OsmParsingCanceledException(String msg, Location location) {
+        OsmParsingCanceledException(String msg, Location location) {
             super(msg, location);
         }
     }

@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class ChangesetDataSet {
 
-    public static enum ChangesetModificationType {
+    public enum ChangesetModificationType {
         CREATED,
         UPDATED,
         DELETED
@@ -155,7 +155,7 @@ public class ChangesetDataSet {
         private ChangesetModificationType modificationType;
         private HistoryOsmPrimitive primitive;
 
-        public DefaultChangesetDataSetEntry(ChangesetModificationType modificationType, HistoryOsmPrimitive primitive) {
+        DefaultChangesetDataSetEntry(ChangesetModificationType modificationType, HistoryOsmPrimitive primitive) {
             this.modificationType = modificationType;
             this.primitive = primitive;
         }
@@ -174,7 +174,7 @@ public class ChangesetDataSet {
     private class DefaultIterator implements Iterator<ChangesetDataSetEntry> {
         private Iterator<Entry<PrimitiveId, ChangesetModificationType>> typeIterator;
 
-        public DefaultIterator() {
+        DefaultIterator() {
             typeIterator = modificationTypes.entrySet().iterator();
         }
 

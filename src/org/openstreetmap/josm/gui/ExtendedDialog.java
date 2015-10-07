@@ -656,7 +656,7 @@ public class ExtendedDialog extends JDialog {
         /**
          * Constructs a new {@code HelpAction}.
          */
-        public HelpAction() {
+        HelpAction() {
             putValue(SHORT_DESCRIPTION, tr("Show help information"));
             putValue(NAME, tr("Help"));
             putValue(SMALL_ICON, ImageProvider.get("help"));

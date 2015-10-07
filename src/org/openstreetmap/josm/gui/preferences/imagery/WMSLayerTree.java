@@ -132,7 +132,7 @@ public class WMSLayerTree {
                     }
                 }
             }
-            layerTree.firePropertyChange("selectedLayers", /*dummy values*/ false , true);
+            layerTree.firePropertyChange("selectedLayers", /*dummy values*/ false, true);
         }
     }
 }

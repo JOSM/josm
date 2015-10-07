@@ -78,7 +78,7 @@ public class LanguagePreference implements SubPreferenceSetting {
     private static class LanguageComboBoxModel extends DefaultComboBoxModel<Locale> {
         private final List<Locale> data = new ArrayList<>();
 
-        public LanguageComboBoxModel() {
+        LanguageComboBoxModel() {
             data.add(0, null);
             data.addAll(Arrays.asList(I18n.getAvailableTranslations()));
         }
@@ -116,7 +116,7 @@ public class LanguagePreference implements SubPreferenceSetting {
         /**
          * Constructs a new {@code LanguageCellRenderer}.
          */
-        public LanguageCellRenderer() {
+        LanguageCellRenderer() {
             this.dispatch = new DefaultListCellRenderer();
         }
 

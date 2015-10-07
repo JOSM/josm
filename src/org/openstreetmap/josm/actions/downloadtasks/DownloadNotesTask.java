@@ -90,7 +90,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
         protected OsmServerReader reader;
         protected List<Note> notesData;
 
-        public DownloadTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
+        DownloadTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(tr("Downloading Notes"), progressMonitor, false);
             this.reader = reader;
         }
@@ -136,7 +136,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
 
     class DownloadBoundingBoxTask extends DownloadTask {
 
-        public DownloadBoundingBoxTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
+        DownloadBoundingBoxTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(reader, progressMonitor);
         }
 
@@ -172,7 +172,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
 
     class DownloadRawUrlTask extends DownloadTask {
 
-        public DownloadRawUrlTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
+        DownloadRawUrlTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(reader, progressMonitor);
         }
 
@@ -198,7 +198,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
 
     class DownloadBzip2RawUrlTask extends DownloadTask {
 
-        public DownloadBzip2RawUrlTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
+        DownloadBzip2RawUrlTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(reader, progressMonitor);
         }
 

@@ -195,7 +195,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         /**
          * Construct a new {@link EditorCellRenderer}.
          */
-        public EditorCellRenderer() {
+        EditorCellRenderer() {
             setOpaque(true);
         }
 

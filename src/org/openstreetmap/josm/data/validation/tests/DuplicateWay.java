@@ -41,7 +41,7 @@ public class DuplicateWay extends Test {
         private final List<LatLon> coor;
         private final Map<String, String> keys;
 
-        public WayPair(List<LatLon> coor, Map<String, String> keys) {
+        WayPair(List<LatLon> coor, Map<String, String> keys) {
             this.coor = coor;
             this.keys = keys;
         }
@@ -67,7 +67,7 @@ public class DuplicateWay extends Test {
     private static class WayPairNoTags {
         private final List<LatLon> coor;
 
-        public WayPairNoTags(List<LatLon> coor) {
+        WayPairNoTags(List<LatLon> coor) {
             this.coor = coor;
         }
 

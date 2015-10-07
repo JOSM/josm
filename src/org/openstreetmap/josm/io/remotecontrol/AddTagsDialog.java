@@ -58,7 +58,7 @@ public class AddTagsDialog extends ExtendedDialog {
     static class DeleteTagMarker {
         private int num;
 
-        public DeleteTagMarker(int num) {
+        DeleteTagMarker(int num) {
             this.num = num;
         }
 
@@ -75,7 +75,7 @@ public class AddTagsDialog extends ExtendedDialog {
         private final String tag;
         private final Map<String, Integer> valueCount;
 
-        public ExistingValues(String tag) {
+        ExistingValues(String tag) {
             this.tag = tag;
             this.valueCount = new HashMap<>();
         }
@@ -158,7 +158,7 @@ public class AddTagsDialog extends ExtendedDialog {
             tm.setValueAt(b, i, 0);
             tm.setValueAt(tags[i][0], i, 1);
             tm.setValueAt(tags[i][1].isEmpty() ? new DeleteTagMarker(count[i]) : tags[i][1], i, 2);
-            tm.setValueAt(old , i, 3);
+            tm.setValueAt(old, i, 3);
         }
 
         propertyTable = new JTable(tm) {
@@ -225,7 +225,7 @@ public class AddTagsDialog extends ExtendedDialog {
                         trustedSenders.remove(sender);
                 }
             });
-            tablePanel.add(c , GBC.eol().insets(20, 10, 0, 0));
+            tablePanel.add(c, GBC.eol().insets(20, 10, 0, 0));
         }
         setContent(tablePanel);
         setDefaultButton(2);

@@ -426,7 +426,7 @@ public class HelpBrowser extends JDialog {
     }
 
     class OpenInBrowserAction extends AbstractAction {
-        public OpenInBrowserAction() {
+        OpenInBrowserAction() {
             putValue(SHORT_DESCRIPTION, tr("Open the current help page in an external browser"));
             putValue(SMALL_ICON, ImageProvider.get("help", "internet"));
         }
@@ -441,7 +441,7 @@ public class HelpBrowser extends JDialog {
         /**
          * Constructs a new {@code EditAction}.
          */
-        public EditAction() {
+        EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the current help page"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
         }
@@ -473,7 +473,7 @@ public class HelpBrowser extends JDialog {
     }
 
     class ReloadAction extends AbstractAction {
-        public ReloadAction() {
+        ReloadAction() {
             putValue(SHORT_DESCRIPTION, tr("Reload the current help page"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
         }
@@ -487,7 +487,7 @@ public class HelpBrowser extends JDialog {
     static class BackAction extends AbstractAction implements Observer {
         private transient HelpBrowserHistory history;
 
-        public BackAction(HelpBrowserHistory history) {
+        BackAction(HelpBrowserHistory history) {
             this.history = history;
             history.addObserver(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the previous page"));
@@ -509,7 +509,7 @@ public class HelpBrowser extends JDialog {
     static class ForwardAction extends AbstractAction implements Observer {
         private transient HelpBrowserHistory history;
 
-        public ForwardAction(HelpBrowserHistory history) {
+        ForwardAction(HelpBrowserHistory history) {
             this.history = history;
             history.addObserver(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the next page"));
@@ -532,7 +532,7 @@ public class HelpBrowser extends JDialog {
         /**
          * Constructs a new {@code HomeAction}.
          */
-        public HomeAction() {
+        HomeAction() {
             putValue(SHORT_DESCRIPTION, tr("Go to the JOSM help home page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "home"));
         }

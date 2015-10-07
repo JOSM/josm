@@ -85,7 +85,7 @@ public class ReferringRelationsBrowser extends JPanel {
      *
      */
     class ReloadAction extends AbstractAction implements ListDataListener {
-        public ReloadAction() {
+        ReloadAction() {
             putValue(SHORT_DESCRIPTION, tr("Load parent relations"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
             putValue(NAME, tr("Reload"));
@@ -139,7 +139,7 @@ public class ReferringRelationsBrowser extends JPanel {
      *
      */
     class EditAction extends AbstractAction implements ListSelectionListener {
-        public EditAction() {
+        EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the currently selected relation"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             putValue(NAME, tr("Edit"));

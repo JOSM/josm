@@ -200,7 +200,7 @@ public class NodeListViewer extends JPanel {
         private final ZoomToNodeAction zoomToNodeAction;
         private final ShowHistoryAction showHistoryAction;
 
-        public NodeListPopupMenu() {
+        NodeListPopupMenu() {
             zoomToNodeAction = new ZoomToNodeAction();
             add(zoomToNodeAction);
             showHistoryAction = new ShowHistoryAction();
@@ -222,7 +222,7 @@ public class NodeListViewer extends JPanel {
         /**
          * Constructs a new {@code ZoomToNodeAction}.
          */
-        public ZoomToNodeAction() {
+        ZoomToNodeAction() {
             putValue(NAME, tr("Zoom to node"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to this node in the current data layer"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "zoomin"));
@@ -268,7 +268,7 @@ public class NodeListViewer extends JPanel {
         /**
          * Constructs a new {@code ShowHistoryAction}.
          */
-        public ShowHistoryAction() {
+        ShowHistoryAction() {
             putValue(NAME, tr("Show history"));
             putValue(SHORT_DESCRIPTION, tr("Open a history browser with the history of this node"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
@@ -318,11 +318,12 @@ public class NodeListViewer extends JPanel {
     }
 
     class InternalPopupMenuLauncher extends PopupMenuLauncher {
-        public InternalPopupMenuLauncher() {
+        InternalPopupMenuLauncher() {
             super(popupMenu);
         }
 
-        @Override protected int checkTableSelection(JTable table, Point p) {
+        @Override
+        protected int checkTableSelection(JTable table, Point p) {
             int row = super.checkTableSelection(table, p);
             popupMenu.prepare(primitiveIdAtRow(table.getModel(), row));
             return row;
@@ -333,7 +334,7 @@ public class NodeListViewer extends JPanel {
         private JTable table;
         private ShowHistoryAction showHistoryAction;
 
-        public DoubleClickAdapter(JTable table) {
+        DoubleClickAdapter(JTable table) {
             this.table = table;
             showHistoryAction = new ShowHistoryAction();
         }

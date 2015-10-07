@@ -40,16 +40,18 @@ public class ScrollViewport extends JPanel {
     private class ScrollViewPortMouseListener extends MouseAdapter {
         private int direction;
 
-        public ScrollViewPortMouseListener(int direction) {
+        ScrollViewPortMouseListener(int direction) {
             this.direction = direction;
         }
 
-        @Override public void mouseExited(MouseEvent arg0) {
+        @Override
+        public void mouseExited(MouseEvent arg0) {
             ScrollViewport.this.scrollDirection = NO_SCROLL;
             timer.stop();
         }
 
-        @Override public void mouseReleased(MouseEvent arg0) {
+        @Override
+        public void mouseReleased(MouseEvent arg0) {
             ScrollViewport.this.scrollDirection = NO_SCROLL;
             timer.stop();
         }

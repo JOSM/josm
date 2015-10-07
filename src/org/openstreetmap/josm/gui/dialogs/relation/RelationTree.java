@@ -108,7 +108,7 @@ public class RelationTree extends JTree {
         private DataSet ds;
         private TreePath path;
 
-        public RelationLoader(Dialog dialog, Relation relation, TreePath path) {
+        RelationLoader(Dialog dialog, Relation relation, TreePath path) {
             super(
                     tr("Load relation"),
                     new PleaseWaitProgressMonitor(

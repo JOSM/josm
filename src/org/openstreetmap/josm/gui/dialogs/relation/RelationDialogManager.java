@@ -46,7 +46,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
         public final Relation relation;
         public final OsmDataLayer layer;
 
-        public DialogContext(OsmDataLayer layer, Relation relation) {
+        DialogContext(OsmDataLayer layer, Relation relation) {
             this.layer = layer;
             this.relation = relation;
         }

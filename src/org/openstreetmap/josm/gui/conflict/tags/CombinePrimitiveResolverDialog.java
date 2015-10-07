@@ -405,7 +405,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
     class CancelAction extends AbstractAction {
 
-        public CancelAction() {
+        CancelAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel conflict resolution"));
             putValue(Action.NAME, tr("Cancel"));
             putValue(Action.SMALL_ICON, ImageProvider.get("", "cancel"));
@@ -464,7 +464,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     static class AutoAdjustingSplitPane extends JSplitPane implements PropertyChangeListener, HierarchyBoundsListener {
         private double dividerLocation;
 
-        public AutoAdjustingSplitPane(int newOrientation) {
+        AutoAdjustingSplitPane(int newOrientation) {
             super(newOrientation);
             addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, this);
             addHierarchyBoundsListener(this);

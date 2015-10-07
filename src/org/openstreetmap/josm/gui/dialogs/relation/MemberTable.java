@@ -230,7 +230,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
 
     private class SelectPreviousGapAction extends AbstractAction {
 
-        public SelectPreviousGapAction() {
+        SelectPreviousGapAction() {
             putValue(NAME, tr("Select previous Gap"));
             putValue(SHORT_DESCRIPTION, tr("Select the previous relation member which gives rise to a gap"));
         }
@@ -249,7 +249,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
 
     private class SelectNextGapAction extends AbstractAction {
 
-        public SelectNextGapAction() {
+        SelectNextGapAction() {
             putValue(NAME, tr("Select next Gap"));
             putValue(SHORT_DESCRIPTION, tr("Select the next relation member which gives rise to a gap"));
         }
@@ -271,7 +271,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         /**
          * Constructs a new {@code ZoomToGapAction}.
          */
-        public ZoomToGapAction() {
+        ZoomToGapAction() {
             putValue(NAME, tr("Zoom to Gap"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to the gap in the way sequence"));
             updateEnabledState();

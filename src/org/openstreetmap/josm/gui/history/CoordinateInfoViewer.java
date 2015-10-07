@@ -245,7 +245,7 @@ public class CoordinateInfoViewer extends JPanel {
          * @param model a model
          * @param role the role for this viewer.
          */
-        public LatLonViewer(HistoryBrowserModel model, PointInTimeType role) {
+        LatLonViewer(HistoryBrowserModel model, PointInTimeType role) {
             build();
             this.model = model;
             this.role = role;
@@ -296,7 +296,7 @@ public class CoordinateInfoViewer extends JPanel {
 
         private JLabel lblDistance;
 
-        public DistanceViewer(HistoryBrowserModel model) {
+        DistanceViewer(HistoryBrowserModel model) {
             super(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
         }
 

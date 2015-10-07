@@ -127,7 +127,7 @@ public class PrefJPanel extends JPanel {
         /**
          * Constructs a new {@code ScListModel}.
          */
-        public ScListModel() {
+        ScListModel() {
             data = Shortcut.listAll();
         }
 
@@ -156,7 +156,7 @@ public class PrefJPanel extends JPanel {
 
         private boolean name;
 
-        public ShortcutTableCellRenderer(boolean name) {
+        ShortcutTableCellRenderer(boolean name) {
             this.name = name;
         }
 
@@ -287,7 +287,7 @@ public class PrefJPanel extends JPanel {
     private class CbAction extends AbstractAction implements ListSelectionListener {
         private PrefJPanel panel;
 
-        public CbAction(PrefJPanel panel) {
+        CbAction(PrefJPanel panel) {
             this.panel = panel;
         }
 

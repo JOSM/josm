@@ -343,7 +343,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     private static class PresetDialog extends ExtendedDialog {
-        public PresetDialog(Component content, String title, ImageIcon icon, boolean disableApply, boolean showNewRelation) {
+        PresetDialog(Component content, String title, ImageIcon icon, boolean disableApply, boolean showNewRelation) {
             super(Main.parent, title,
                     showNewRelation ?
                             new String[] {tr("Apply Preset"), tr("New relation"), tr("Cancel")} :

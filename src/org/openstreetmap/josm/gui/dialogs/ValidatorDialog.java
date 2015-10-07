@@ -473,7 +473,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
      */
     class MouseEventHandler extends PopupMenuLauncher {
 
-        public MouseEventHandler() {
+        MouseEventHandler() {
             super(popupMenu);
         }
 
@@ -588,7 +588,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         private Collection<TestError> testErrors;
         private boolean canceled;
 
-        public FixTask(Collection<TestError> testErrors) {
+        FixTask(Collection<TestError> testErrors) {
             super(tr("Fixing errors ..."), false /* don't ignore exceptions */);
             this.testErrors = testErrors == null ? new ArrayList<TestError>() : testErrors;
         }

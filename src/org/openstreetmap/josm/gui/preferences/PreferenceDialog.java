@@ -139,7 +139,7 @@ public class PreferenceDialog extends JDialog {
     }
 
     class CancelAction extends AbstractAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
             putValue(SHORT_DESCRIPTION, tr("Close the preferences dialog and discard preference updates"));
@@ -158,7 +158,7 @@ public class PreferenceDialog extends JDialog {
     }
 
     class OKAction extends AbstractAction {
-        public OKAction() {
+        OKAction() {
             putValue(NAME, tr("OK"));
             putValue(SMALL_ICON, ImageProvider.get("ok"));
             putValue(SHORT_DESCRIPTION, tr("Save the preferences and close the dialog"));

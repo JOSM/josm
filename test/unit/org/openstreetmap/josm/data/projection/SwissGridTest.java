@@ -46,7 +46,7 @@ public class SwissGridTest {
         public LatLon ll;
         public EastNorth en;
 
-        public ProjData(String name, double lon, double lat, double h1, double x, double y, double h2) {
+        ProjData(String name, double lon, double lat, double h1, double x, double y, double h2) {
             this.name = name;
             ll = new LatLon(lat, lon);
             en = new EastNorth(x, y);

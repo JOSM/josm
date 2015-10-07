@@ -190,7 +190,7 @@ public class BoundingBoxSelection implements DownloadSelection {
     class LatValueChecker extends FocusAdapter implements ActionListener{
         private JosmTextField tfLatValue;
 
-        public LatValueChecker(JosmTextField tfLatValue) {
+        LatValueChecker(JosmTextField tfLatValue) {
             this.tfLatValue = tfLatValue;
         }
 
@@ -223,7 +223,7 @@ public class BoundingBoxSelection implements DownloadSelection {
     class LonValueChecker extends FocusAdapter implements ActionListener {
         private JosmTextField tfLonValue;
 
-        public LonValueChecker(JosmTextField tfLonValue) {
+        LonValueChecker(JosmTextField tfLonValue) {
             this.tfLonValue = tfLonValue;
         }
 
@@ -256,7 +256,7 @@ public class BoundingBoxSelection implements DownloadSelection {
     static class SelectAllOnFocusHandler extends FocusAdapter {
         private JTextComponent tfTarget;
 
-        public SelectAllOnFocusHandler(JTextComponent tfTarget) {
+        SelectAllOnFocusHandler(JTextComponent tfTarget) {
             this.tfTarget = tfTarget;
         }
 

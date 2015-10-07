@@ -210,7 +210,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         private final Object id;
         private final String text;
 
-        public StatusTextHistory(Object id, String text) {
+        StatusTextHistory(Object id, String text) {
             this.id = id;
             this.text = text;
         }
@@ -347,7 +347,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         private MapFrame parent;
 
-        public Collector(MapFrame parent) {
+        Collector(MapFrame parent) {
             this.parent = parent;
         }
 
@@ -750,7 +750,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             }
         });
 
-        public MapStatusPopupMenu() {
+        MapStatusPopupMenu() {
             for (final String key : new TreeSet<>(SystemOfMeasurement.ALL_SYSTEMS.keySet())) {
                 JCheckBoxMenuItem item = new JCheckBoxMenuItem(new AbstractAction(key) {
                     @Override

@@ -351,7 +351,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         /**
          * Constructs a new {@code MouseEventHandler}.
          */
-        public MouseEventHandler() {
+        MouseEventHandler() {
             super(popupMenu);
         }
 
@@ -373,7 +373,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         /**
          * Constructs a new {@code ConflictListModel}.
          */
-        public ConflictListModel() {
+        ConflictListModel() {
             listeners = new CopyOnWriteArrayList<>();
         }
 
@@ -430,7 +430,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     }
 
     class ResolveAction extends AbstractAction implements ListSelectionListener {
-        public ResolveAction() {
+        ResolveAction() {
             putValue(NAME, tr("Resolve"));
             putValue(SHORT_DESCRIPTION,  tr("Open a merge dialog of all selected items in the list above."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "conflict"));

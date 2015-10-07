@@ -41,7 +41,7 @@ class FallbackDateParser {
     /**
      * Creates a new instance.
      */
-    public FallbackDateParser() {
+    FallbackDateParser() {
         // Build a list of candidate date parsers.
         dateParsers = new ArrayList<>(formats.length);
         for (String format : formats) {

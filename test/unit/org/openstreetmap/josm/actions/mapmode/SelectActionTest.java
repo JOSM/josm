@@ -124,7 +124,7 @@ public class SelectActionTest {
     boolean nodesMerged;
 
     class SelectActionMock extends SelectAction {
-        public SelectActionMock(MapFrame mapFrame, DataSet dataSet, OsmDataLayer layer) {
+        SelectActionMock(MapFrame mapFrame, DataSet dataSet, OsmDataLayer layer) {
             super(mapFrame);
             try {
                 Field mv = SelectAction.class.getDeclaredField("mv");

@@ -80,7 +80,7 @@ public class GeoJSONWriter {
 
         private final JsonObjectBuilder geomObj;
 
-        public GeometryPrimitiveVisitor(JsonObjectBuilder geomObj) {
+        GeometryPrimitiveVisitor(JsonObjectBuilder geomObj) {
             this.geomObj = geomObj;
         }
 

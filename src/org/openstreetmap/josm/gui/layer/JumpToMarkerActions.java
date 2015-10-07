@@ -48,7 +48,7 @@ public final class JumpToMarkerActions {
         private final transient Shortcut multikeyShortcut;
         private transient WeakReference<Layer> lastLayer;
 
-        public JumpToMarker(JumpToMarkerLayer layer, Shortcut shortcut) {
+        JumpToMarker(JumpToMarkerLayer layer, Shortcut shortcut) {
             this.layer = (Layer) layer;
             this.multikeyShortcut = shortcut;
             this.multikeyShortcut.setAccelerator(this);

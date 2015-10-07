@@ -86,7 +86,7 @@ public abstract class Condition {
     /**
      * This is the operation that {@link KeyValueCondition} uses to match.
      */
-    public static enum Op {
+    public enum Op {
         /** The value equals the given reference. */
         EQ,
         /** The value does not equal the reference. */
@@ -169,7 +169,7 @@ public abstract class Condition {
     /**
      * Context, where the condition applies.
      */
-    public static enum Context {
+    public enum Context {
         /**
          * normal primitive selector, e.g. way[highway=residential]
          */
@@ -339,7 +339,7 @@ public abstract class Condition {
     /**
      * This defines how {@link KeyCondition} matches a given key.
      */
-    public static enum KeyMatchType {
+    public enum KeyMatchType {
         /**
          * The key needs to be equal to the given label.
          */

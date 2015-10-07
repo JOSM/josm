@@ -183,11 +183,11 @@ public class UploadSelectionDialog extends JDialog {
             setCellRenderer(new OsmPrimitivRenderer());
         }
 
-        public OsmPrimitiveList() {
+        OsmPrimitiveList() {
             this(new OsmPrimitiveListModel());
         }
 
-        public OsmPrimitiveList(OsmPrimitiveListModel model) {
+        OsmPrimitiveList(OsmPrimitiveListModel model) {
             super(model);
             init();
         }
@@ -256,7 +256,7 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     class CancelAction extends AbstractAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel uploading"));
             putValue(Action.NAME, tr("Cancel"));
             putValue(Action.SMALL_ICON, ImageProvider.get("", "cancel"));
@@ -274,7 +274,7 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     class ContinueAction extends AbstractAction implements ListSelectionListener {
-        public ContinueAction() {
+        ContinueAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Continue uploading"));
             putValue(Action.NAME, tr("Continue"));
             putValue(Action.SMALL_ICON, ImageProvider.get("", "upload"));

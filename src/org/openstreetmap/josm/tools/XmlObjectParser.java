@@ -48,7 +48,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
         private final String namespace;
 
-        public AddNamespaceFilter(String namespace) {
+        AddNamespaceFilter(String namespace) {
             this.namespace = namespace;
         }
 
@@ -59,9 +59,7 @@ public class XmlObjectParser implements Iterable<Object> {
             } else {
                 super.startElement(uri, localName, qName, atts);
             }
-
         }
-
     }
 
     private class Parser extends DefaultHandler {
@@ -189,7 +187,7 @@ public class XmlObjectParser implements Iterable<Object> {
         private final Map<String, Field> fields = new HashMap<>();
         private final Map<String, Method> methods = new HashMap<>();
 
-        public Entry(Class<?> klass, boolean onStart, boolean both) {
+        Entry(Class<?> klass, boolean onStart, boolean both) {
             this.klass = klass;
             this.onStart = onStart;
             this.both = both;

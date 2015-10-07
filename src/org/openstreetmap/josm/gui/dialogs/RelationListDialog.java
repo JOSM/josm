@@ -316,7 +316,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     class MouseEventHandler extends PopupMenuLauncher {
 
-        public MouseEventHandler() {
+        MouseEventHandler() {
             super(popupMenu);
         }
 
@@ -351,7 +351,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      *
      */
     static class NewAction extends AbstractAction implements LayerChangeListener{
-        public NewAction() {
+        NewAction() {
             putValue(SHORT_DESCRIPTION, tr("Create a new relation"));
             putValue(NAME, tr("New"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "addrelation"));
@@ -397,7 +397,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         private DefaultListSelectionModel selectionModel;
         private transient SearchCompiler.Match filter;
 
-        public RelationListModel(DefaultListSelectionModel selectionModel) {
+        RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
         }
 

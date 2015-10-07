@@ -59,7 +59,7 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
      * Updates the current changeset discussion from the OSM server
      */
     class UpdateChangesetDiscussionAction extends AbstractAction {
-        public UpdateChangesetDiscussionAction() {
+        UpdateChangesetDiscussionAction() {
             putValue(NAME, tr("Update changeset discussion"));
             putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Update the changeset discussion from the OSM server"));

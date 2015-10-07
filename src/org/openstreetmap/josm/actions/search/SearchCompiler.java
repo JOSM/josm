@@ -353,7 +353,7 @@ public class SearchCompiler {
         private final String key;
         private final boolean defaultValue;
 
-        public BooleanMatch(String key, boolean defaultValue) {
+        BooleanMatch(String key, boolean defaultValue) {
             this.key = key;
             this.defaultValue = defaultValue;
         }
@@ -434,11 +434,11 @@ public class SearchCompiler {
      * Matches objects with ID in the given range.
      */
     private static class Id extends RangeMatch {
-        public Id(Range range) {
+        Id(Range range) {
             super(range);
         }
 
-        public Id(PushbackTokenizer tokenizer) throws ParseError {
+        Id(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of primitive ids expected")));
         }
 
@@ -457,11 +457,11 @@ public class SearchCompiler {
      * Matches objects with a changeset ID in the given range.
      */
     private static class ChangesetId extends RangeMatch {
-        public ChangesetId(Range range) {
+        ChangesetId(Range range) {
             super(range);
         }
 
-        public ChangesetId(PushbackTokenizer tokenizer) throws ParseError {
+        ChangesetId(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of changeset ids expected")));
         }
 
@@ -480,11 +480,11 @@ public class SearchCompiler {
      * Matches objects with a version number in the given range.
      */
     private static class Version extends RangeMatch {
-        public Version(Range range) {
+        Version(Range range) {
             super(range);
         }
 
-        public Version(PushbackTokenizer tokenizer) throws ParseError {
+        Version(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of versions expected")));
         }
 
@@ -509,8 +509,8 @@ public class SearchCompiler {
         private final Pattern valuePattern;
         private final boolean caseSensitive;
 
-        public KeyValue(String key, String value, boolean regexSearch, boolean caseSensitive) throws ParseError {
-        this.caseSensitive = caseSensitive;
+        KeyValue(String key, String value, boolean regexSearch, boolean caseSensitive) throws ParseError {
+            this.caseSensitive = caseSensitive;
             if (regexSearch) {
                 int searchFlags = regexFlags(caseSensitive);
 
@@ -780,7 +780,7 @@ public class SearchCompiler {
         private final Pattern searchRegex;
         private final boolean caseSensitive;
 
-        public Any(String s, boolean regexSearch, boolean caseSensitive) throws ParseError {
+        Any(String s, boolean regexSearch, boolean caseSensitive) throws ParseError {
             s = Normalizer.normalize(s, Normalizer.Form.NFC);
             this.caseSensitive = caseSensitive;
             if (regexSearch) {
@@ -844,7 +844,7 @@ public class SearchCompiler {
     private static class ExactType extends Match {
         private final OsmPrimitiveType type;
 
-        public ExactType(String type) throws ParseError {
+        ExactType(String type) throws ParseError {
             this.type = OsmPrimitiveType.from(type);
             if (this.type == null)
                 throw new ParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation",
@@ -868,7 +868,7 @@ public class SearchCompiler {
     private static class UserMatch extends Match {
         private String user;
 
-        public UserMatch(String user) {
+        UserMatch(String user) {
             if ("anonymous".equals(user)) {
                 this.user = null;
             } else {
@@ -896,7 +896,7 @@ public class SearchCompiler {
     private static class RoleMatch extends Match {
         private String role;
 
-        public RoleMatch(String role) {
+        RoleMatch(String role) {
             if (role == null) {
                 this.role = "";
             } else {
@@ -934,7 +934,7 @@ public class SearchCompiler {
         private final int nth;
         private final boolean modulo;
 
-        public Nth(PushbackTokenizer tokenizer, boolean modulo) throws ParseError {
+        Nth(PushbackTokenizer tokenizer, boolean modulo) throws ParseError {
             this((int) tokenizer.readNumber(tr("Positive integer expected")), modulo);
         }
 
@@ -981,12 +981,12 @@ public class SearchCompiler {
         private final long min;
         private final long max;
 
-        public RangeMatch(long min, long max) {
+        RangeMatch(long min, long max) {
             this.min = Math.min(min, max);
             this.max = Math.max(min, max);
         }
 
-        public RangeMatch(Range range) {
+        RangeMatch(Range range) {
             this(range.getStart(), range.getEnd());
         }
 
@@ -1013,11 +1013,11 @@ public class SearchCompiler {
      * Matches ways with a number of nodes in given range
      */
     private static class NodeCountRange extends RangeMatch {
-        public NodeCountRange(Range range) {
+        NodeCountRange(Range range) {
             super(range);
         }
 
-        public NodeCountRange(PushbackTokenizer tokenizer) throws ParseError {
+        NodeCountRange(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1042,11 +1042,11 @@ public class SearchCompiler {
      * Matches objects with the number of referring/contained ways in the given range
      */
     private static class WayCountRange extends RangeMatch {
-        public WayCountRange(Range range) {
+        WayCountRange(Range range) {
             super(range);
         }
 
-        public WayCountRange(PushbackTokenizer tokenizer) throws ParseError {
+        WayCountRange(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1071,11 +1071,11 @@ public class SearchCompiler {
      * Matches objects with a number of tags in given range
      */
     private static class TagCountRange extends RangeMatch {
-        public TagCountRange(Range range) {
+        TagCountRange(Range range) {
             super(range);
         }
 
-        public TagCountRange(PushbackTokenizer tokenizer) throws ParseError {
+        TagCountRange(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1095,7 +1095,7 @@ public class SearchCompiler {
      */
     private static class TimestampRange extends RangeMatch {
 
-        public TimestampRange(long minCount, long maxCount) {
+        TimestampRange(long minCount, long maxCount) {
             super(minCount, maxCount);
         }
 
@@ -1265,11 +1265,11 @@ public class SearchCompiler {
      */
     private static class AreaSize extends RangeMatch {
 
-        public AreaSize(Range range) {
+        AreaSize(Range range) {
             super(range);
         }
 
-        public AreaSize(PushbackTokenizer tokenizer) throws ParseError {
+        AreaSize(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1292,11 +1292,11 @@ public class SearchCompiler {
      */
     private static class WayLength extends RangeMatch {
 
-        public WayLength(Range range) {
+        WayLength(Range range) {
             super(range);
         }
 
-        public WayLength(PushbackTokenizer tokenizer) throws ParseError {
+        WayLength(PushbackTokenizer tokenizer) throws ParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1324,7 +1324,7 @@ public class SearchCompiler {
         /**
          * @param all if true, all way nodes or relation members have to be within source area;if false, one suffices.
          */
-        public InArea(boolean all) {
+        InArea(boolean all) {
             this.all = all;
         }
 
@@ -1374,7 +1374,7 @@ public class SearchCompiler {
      */
     private static class InView extends InArea {
 
-        public InView(boolean all) {
+        InView(boolean all) {
             super(all);
         }
 

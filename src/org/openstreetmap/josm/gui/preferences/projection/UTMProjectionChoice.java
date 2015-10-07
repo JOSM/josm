@@ -50,7 +50,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
 
         public JRadioButton north, south;
 
-        public UTMPanel(String[] entries, int initialIndex, String label, ActionListener listener) {
+        UTMPanel(String[] entries, int initialIndex, String label, ActionListener listener) {
             super(entries, initialIndex, label, listener);
 
             north = new JRadioButton();

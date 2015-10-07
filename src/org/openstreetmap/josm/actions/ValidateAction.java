@@ -123,7 +123,7 @@ public class ValidateAction extends JosmAction {
          * @param validatedPrimitives the collection of primitives to validate.
          * @param formerValidatedPrimitives the last collection of primitives being validates. May be null.
          */
-        public ValidationTask(Collection<Test> tests, Collection<OsmPrimitive> validatedPrimitives,
+        ValidationTask(Collection<Test> tests, Collection<OsmPrimitive> validatedPrimitives,
                 Collection<OsmPrimitive> formerValidatedPrimitives) {
             super(tr("Validating"), false /*don't ignore exceptions */);
             this.validatedPrimitives  = validatedPrimitives;

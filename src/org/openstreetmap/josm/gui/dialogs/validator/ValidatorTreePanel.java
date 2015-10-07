@@ -50,7 +50,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
 
     private static final class GroupTreeNode extends DefaultMutableTreeNode {
 
-        public GroupTreeNode(Object userObject) {
+        GroupTreeNode(Object userObject) {
             super(userObject);
         }
 

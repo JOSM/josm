@@ -277,7 +277,7 @@ public class CredentialDialog extends JDialog {
             updateWarningLabel(apiUrl);
         }
 
-        public OsmApiCredentialsPanel(CredentialDialog owner) {
+        OsmApiCredentialsPanel(CredentialDialog owner) {
             super(owner);
             build();
         }
@@ -298,7 +298,7 @@ public class CredentialDialog extends JDialog {
             updateWarningLabel(host);
         }
 
-        public OtherHostCredentialsPanel(CredentialDialog owner, String host) {
+        OtherHostCredentialsPanel(CredentialDialog owner, String host) {
             super(owner);
             this.host = host;
             build();
@@ -320,7 +320,7 @@ public class CredentialDialog extends JDialog {
                     + "</html>");
         }
 
-        public HttpProxyCredentialsPanel(CredentialDialog owner) {
+        HttpProxyCredentialsPanel(CredentialDialog owner) {
             super(owner);
             build();
         }
@@ -348,7 +348,7 @@ public class CredentialDialog extends JDialog {
         protected JTextField currentTF;
         protected JTextField nextTF;
 
-        public TFKeyListener(CredentialDialog owner, JTextField currentTF, JTextField nextTF) {
+        TFKeyListener(CredentialDialog owner, JTextField currentTF, JTextField nextTF) {
             this.owner = owner;
             this.currentTF = currentTF;
             this.nextTF = nextTF;
@@ -381,7 +381,7 @@ public class CredentialDialog extends JDialog {
     }
 
     class OKAction extends AbstractAction {
-        public OKAction() {
+        OKAction() {
             putValue(NAME, tr("Authenticate"));
             putValue(SHORT_DESCRIPTION, tr("Authenticate with the supplied username and password"));
             putValue(SMALL_ICON, ImageProvider.get("ok"));
@@ -395,7 +395,7 @@ public class CredentialDialog extends JDialog {
     }
 
     class CancelAction extends AbstractAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SHORT_DESCRIPTION, tr("Cancel authentication"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));

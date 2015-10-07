@@ -18,7 +18,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
     private final MapView mv;
     private boolean preventChange = false;
 
-    public MapSlider(MapView mv) {
+    MapSlider(MapView mv) {
         super(35, 150);
         setOpaque(false);
         this.mv = mv;

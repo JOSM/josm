@@ -52,7 +52,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
          * Constructs a new {@code AutoCompletingComboBoxDocument}.
          * @param comboBox the combobox
          */
-        public AutoCompletingComboBoxDocument(final JosmComboBox<AutoCompletionListItem> comboBox) {
+        AutoCompletingComboBoxDocument(final JosmComboBox<AutoCompletionListItem> comboBox) {
             this.comboBox = comboBox;
         }
 

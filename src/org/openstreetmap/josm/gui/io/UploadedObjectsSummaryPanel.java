@@ -146,7 +146,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         /**
          * Constructs a new {@code PrimitiveList}.
          */
-        public PrimitiveList() {
+        PrimitiveList() {
             super(new PrimitiveListModel());
         }
 
@@ -164,11 +164,11 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         /**
          * Constructs a new {@code PrimitiveListModel}.
          */
-        public PrimitiveListModel() {
+        PrimitiveListModel() {
             primitives = new ArrayList<>();
         }
 
-        public PrimitiveListModel(List<OsmPrimitive> primitives) {
+        PrimitiveListModel(List<OsmPrimitive> primitives) {
             setPrimitives(primitives);
         }
 

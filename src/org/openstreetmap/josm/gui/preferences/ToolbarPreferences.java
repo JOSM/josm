@@ -643,7 +643,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
             private final List<ActionDefinition> actions;
 
-            public ActionTransferable(List<ActionDefinition> actions) {
+            ActionTransferable(List<ActionDefinition> actions) {
                 this.actions = actions;
             }
 

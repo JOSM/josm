@@ -105,7 +105,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
             private int ticks = 0;
             private Rectangle2D r = new Rectangle2D.Double();
 
-            public CalculateDownloadArea() {
+            CalculateDownloadArea() {
                 super(tr("Calculating Download Area"), displayProgress ? null : NullProgressMonitor.INSTANCE, false);
             }
 

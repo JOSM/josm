@@ -328,7 +328,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         /**
          * Constructs a new {@code DownloadAvailablePluginsAction}.
          */
-        public DownloadAvailablePluginsAction() {
+        DownloadAvailablePluginsAction() {
             putValue(NAME, tr("Download list"));
             putValue(SHORT_DESCRIPTION, tr("Download the list of available plugins"));
             putValue(SMALL_ICON, ImageProvider.get("download"));
@@ -364,7 +364,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
      * The action for updating the list of selected plugins
      */
     class UpdateSelectedPluginsAction extends AbstractAction {
-        public UpdateSelectedPluginsAction() {
+        UpdateSelectedPluginsAction() {
             putValue(NAME, tr("Update plugins"));
             putValue(SHORT_DESCRIPTION, tr("Update the selected plugins"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
@@ -466,7 +466,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
      *
      */
     class ConfigureSitesAction extends AbstractAction {
-        public ConfigureSitesAction() {
+        ConfigureSitesAction() {
             putValue(NAME, tr("Configure sites..."));
             putValue(SHORT_DESCRIPTION, tr("Configure the list of sites where plugins are downloaded from"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "settings"));
@@ -580,7 +580,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             add(buttons, GBC.eol());
         }
 
-        public PluginConfigurationSitesPanel() {
+        PluginConfigurationSitesPanel() {
             build();
         }
 

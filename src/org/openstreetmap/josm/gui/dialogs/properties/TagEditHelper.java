@@ -423,7 +423,7 @@ class TagEditHelper {
         protected AutoCompletingComboBox values;
         protected Component componentUnderMouse;
 
-        public AbstractTagsDialog(Component parent, String title, String[] buttonTexts) {
+        AbstractTagsDialog(Component parent, String title, String[] buttonTexts) {
             super(parent, title, buttonTexts);
             addMouseListener(new PopupMenuLauncher(popupMenu));
         }
@@ -540,7 +540,7 @@ class TagEditHelper {
         // Counter of added commands for possible undo
         private int commandCount;
 
-        public AddTagsDialog() {
+        AddTagsDialog() {
             super(Main.parent, tr("Add value?"), new String[] {tr("OK"), tr("Cancel")});
             setButtonIcons(new String[] {"ok", "cancel"});
             setCancelButton(2);

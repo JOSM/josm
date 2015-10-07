@@ -16,7 +16,7 @@ public class JCSCachedTileLoaderJobTest {
     private static class TestCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, CacheEntry> {
         private String url;
 
-        public TestCachedTileLoaderJob(String url) throws IOException {
+        TestCachedTileLoaderJob(String url) throws IOException {
             super(getCache(), 30000, 30000, null);
             this.url = url;
         }

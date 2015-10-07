@@ -23,7 +23,7 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
     /**
      * Constructs a new {@code UploadAndSaveProgressRenderer}.
      */
-    public UploadAndSaveProgressRenderer() {
+    UploadAndSaveProgressRenderer() {
         build();
         // initially not visible
         setVisible(false);

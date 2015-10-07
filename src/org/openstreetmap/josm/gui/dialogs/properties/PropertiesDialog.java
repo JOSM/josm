@@ -55,7 +55,6 @@ import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembers
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.actions.relation.SelectMembersAction;
 import org.openstreetmap.josm.actions.relation.SelectRelationAction;
-import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -893,7 +892,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
         private static final String DELETE_FROM_RELATION_PREF = "delete_from_relation";
 
-        public DeleteAction() {
+        DeleteAction() {
             super(tr("Delete"), /* ICON() */ "dialogs/delete", tr("Delete the selected key in all objects"),
                     Shortcut.registerShortcut("properties:delete", tr("Delete Tags"), KeyEvent.VK_D,
                             Shortcut.ALT_CTRL_SHIFT), false);
@@ -1001,7 +1000,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
      * Action handling add button press in properties dialog.
      */
     class AddAction extends JosmAction {
-        public AddAction() {
+        AddAction() {
             super(tr("Add"), /* ICON() */ "dialogs/add", tr("Add a new key/value pair to all objects"),
                     Shortcut.registerShortcut("properties:add", tr("Add Tag"), KeyEvent.VK_A,
                             Shortcut.ALT), false);
@@ -1018,7 +1017,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
      * Action handling edit button press in properties dialog.
      */
     class EditAction extends JosmAction implements ListSelectionListener {
-        public EditAction() {
+        EditAction() {
             super(tr("Edit"), /* ICON() */ "dialogs/edit", tr("Edit the value of the selected key for all objects"),
                     Shortcut.registerShortcut("properties:edit", tr("Edit Tags"), KeyEvent.VK_S,
                             Shortcut.ALT), false);
@@ -1053,7 +1052,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     }
 
     class HelpAction extends AbstractAction {
-        public HelpAction() {
+        HelpAction() {
             putValue(NAME, tr("Go to OSM wiki for tag help (F1)"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help for selected object"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
@@ -1154,7 +1153,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
         final StringProperty TAGINFO_URL_PROP = new StringProperty("taginfo.url", "https://taginfo.openstreetmap.org/");
 
-        public TaginfoAction() {
+        TaginfoAction() {
             super(tr("Go to Taginfo"), "dialogs/taginfo", tr("Launch browser with Taginfo statistics for selected object"), null, false);
         }
 
@@ -1183,7 +1182,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     }
 
     class PasteValueAction extends AbstractAction {
-        public PasteValueAction() {
+        PasteValueAction() {
             putValue(NAME, tr("Paste Value"));
             putValue(SHORT_DESCRIPTION, tr("Paste the value of the selected tag from clipboard"));
         }
@@ -1234,7 +1233,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         /**
          * Constructs a new {@code CopyValueAction}.
          */
-        public CopyValueAction() {
+        CopyValueAction() {
             putValue(NAME, tr("Copy Value"));
             putValue(SHORT_DESCRIPTION, tr("Copy the value of the selected tag to clipboard"));
         }
@@ -1248,7 +1247,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
     class CopyKeyValueAction extends AbstractCopyAction {
 
-        public CopyKeyValueAction() {
+        CopyKeyValueAction() {
             putValue(NAME, tr("Copy selected Key(s)/Value(s)"));
             putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tag(s) to clipboard"));
         }
@@ -1262,7 +1261,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
     class CopyAllKeyValueAction extends AbstractCopyAction {
 
-        public CopyAllKeyValueAction() {
+        CopyAllKeyValueAction() {
             putValue(NAME, tr("Copy all Keys/Values"));
             putValue(SHORT_DESCRIPTION, tr("Copy the key and value of all the tags to clipboard"));
         }
@@ -1280,7 +1279,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     class SearchAction extends AbstractAction {
         private final boolean sameType;
 
-        public SearchAction(boolean sameType) {
+        SearchAction(boolean sameType) {
             this.sameType = sameType;
             if (sameType) {
                 putValue(NAME, tr("Search Key/Value/Type"));

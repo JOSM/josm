@@ -61,7 +61,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
 
-    public static enum SearchMode {
+    public enum SearchMode {
         replace('R'), add('A'), remove('D'), in_selection('S');
 
         private final char code;
@@ -177,7 +177,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         private final HistoryComboBox hcb;
 
-        public SearchKeywordRow(HistoryComboBox hcb) {
+        SearchKeywordRow(HistoryComboBox hcb) {
             super(new FlowLayout(FlowLayout.LEFT));
             this.hcb = hcb;
         }
@@ -351,8 +351,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("basic examples"))
                 .addKeyword(tr("Baker Street"), null, tr("''Baker'' and ''Street'' in any key"))
-                .addKeyword(tr("\"Baker Street\""), "\"\"", tr("''Baker Street'' in any key"))
-                , GBC.eol());
+                .addKeyword(tr("\"Baker Street\""), "\"\"", tr("''Baker Street'' in any key")),
+                GBC.eol());
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("basics"))
                 .addKeyword("<i>key</i>:<i>valuefragment</i>", null,
@@ -366,16 +366,16 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("\"key\"=\"value\"", "\"\"=\"\"",
                         tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped " +
                            "by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."),
-                        "\"addr:street\"")
-                , GBC.eol());
+                        "\"addr:street\""),
+                GBC.eol());
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("combinators"))
                 .addKeyword("<i>expr</i> <i>expr</i>", null, tr("logical and (both expressions have to be satisfied)"))
                 .addKeyword("<i>expr</i> | <i>expr</i>", "| ", tr("logical or (at least one expression has to be satisfied)"))
                 .addKeyword("<i>expr</i> OR <i>expr</i>", "OR ", tr("logical or (at least one expression has to be satisfied)"))
                 .addKeyword("-<i>expr</i>", null, tr("logical not"))
-                .addKeyword("(<i>expr</i>)", "()", tr("use parenthesis to group expressions"))
-                , GBC.eol());
+                .addKeyword("(<i>expr</i>)", "()", tr("use parenthesis to group expressions")),
+                GBC.eol());
 
         if (Main.pref.getBoolean("expert", false)) {
             right.add(new SearchKeywordRow(hcbSearchString)
@@ -384,8 +384,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("type:way", "type:way ", tr("all ways"))
                 .addKeyword("type:relation", "type:relation ", tr("all relations"))
                 .addKeyword("closed", "closed ", tr("all closed ways"))
-                .addKeyword("untagged", "untagged ", tr("object without useful tags"))
-                , GBC.eol());
+                .addKeyword("untagged", "untagged ", tr("object without useful tags")),
+                GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("metadata"))
                 .addKeyword("user:", "user:", tr("objects changed by user", "user:anonymous"))
@@ -394,8 +394,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("changeset:", "changeset:", tr("objects with given changeset ID"),
                         "changeset:0 (objects without an assigned changeset)")
                 .addKeyword("timestamp:", "timestamp:", tr("objects with last modification timestamp within range"), "timestamp:2012/",
-                        "timestamp:2008/2011-02-04T12")
-                , GBC.eol());
+                        "timestamp:2008/2011-02-04T12"),
+                GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("properties"))
                 .addKeyword("nodes:<i>20-</i>", "nodes:", tr("ways with at least 20 nodes, or relations containing at least 20 nodes"))
@@ -403,15 +403,15 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("tags:<i>5-10</i>", "tags:", tr("objects having 5 to 10 tags"))
                 .addKeyword("role:", "role:", tr("objects with given role in a relation"))
                 .addKeyword("areasize:<i>-100</i>", "areasize:", tr("closed ways with an area of 100 m\u00b2"))
-                .addKeyword("waylength:<i>200-</i>", "waylength:", tr("ways with a length of 200 m or more"))
-                , GBC.eol());
+                .addKeyword("waylength:<i>200-</i>", "waylength:", tr("ways with a length of 200 m or more")),
+                GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("state"))
                 .addKeyword("modified", "modified ", tr("all modified objects"))
                 .addKeyword("new", "new ", tr("all new objects"))
                 .addKeyword("selected", "selected ", tr("all selected objects"))
-                .addKeyword("incomplete", "incomplete ", tr("all incomplete objects"))
-                , GBC.eol());
+                .addKeyword("incomplete", "incomplete ", tr("all incomplete objects")),
+                GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("related objects"))
                 .addKeyword("child <i>expr</i>", "child ", tr("all children of objects matching the expression"), "child building")
@@ -419,16 +419,16 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("nth:<i>7</i>", "nth: ",
                         tr("n-th member of relation and/or n-th node of way"), "nth:5 (child type:relation)", "nth:-1")
                 .addKeyword("nth%:<i>7</i>", "nth%: ",
-                        tr("every n-th member of relation and/or every n-th node of way"), "nth%:100 (child waterway)")
-                , GBC.eol());
+                        tr("every n-th member of relation and/or every n-th node of way"), "nth%:100 (child waterway)"),
+                GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("view"))
                 .addKeyword("inview", "inview ", tr("objects in current view"))
                 .addKeyword("allinview", "allinview ", tr("objects (and all its way nodes / relation members) in current view"))
                 .addKeyword("indownloadedarea", "indownloadedarea ", tr("objects in downloaded area"))
                 .addKeyword("allindownloadedarea", "allindownloadedarea ",
-                        tr("objects (and all its way nodes / relation members) in downloaded area"))
-                , GBC.eol());
+                        tr("objects (and all its way nodes / relation members) in downloaded area")),
+                GBC.eol());
         }
     }
 
