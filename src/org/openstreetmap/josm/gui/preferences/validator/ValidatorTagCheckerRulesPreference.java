@@ -24,6 +24,7 @@ import org.openstreetmap.josm.gui.preferences.SourceProvider;
 import org.openstreetmap.josm.gui.preferences.SourceType;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 
 /**
  * The general validator preferences, allowing to enable/disable tests.
@@ -112,6 +113,12 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
                 return marktr("Warning: illegal format of entry in rule list ''{0}''. Got ''{1}''");
             default: throw new AssertionError();
             }
+        }
+
+        @Override
+        protected String getTitleForSourceEntry(SourceEntry entry) {
+            final String title = MapPaintPreference.getTitleFromSourceEntry(entry);
+            return title != null ? title : super.getTitleForSourceEntry(entry);
         }
     }
     
