@@ -887,9 +887,11 @@ public abstract class SourceEditor extends JPanel {
                 if (canEnable) {
                     active = editEntryDialog.active();
                 }
-                activeSourcesModel.addSource(new SourceEntry(
+                final SourceEntry entry = new SourceEntry(
                         editEntryDialog.getURL(),
-                        null, editEntryDialog.getTitle(), active));
+                        null, editEntryDialog.getTitle(), active);
+                entry.title = getTitleForSourceEntry(entry);
+                activeSourcesModel.addSource(entry);
                 activeSourcesModel.fireTableDataChanged();
             }
         }
@@ -950,9 +952,7 @@ public abstract class SourceEditor extends JPanel {
             if (editEntryDialog.getValue() == 1) {
                 if (e.title != null || !"".equals(editEntryDialog.getTitle())) {
                     e.title = editEntryDialog.getTitle();
-                    if ("".equals(e.title)) {
-                        e.title = null;
-                    }
+                    e.title = getTitleForSourceEntry(e);
                 }
                 e.url = editEntryDialog.getURL();
                 if (canEnable) {
@@ -1655,5 +1655,9 @@ public abstract class SourceEditor extends JPanel {
                     }
                 }
                 );
+    }
+
+    protected String getTitleForSourceEntry(SourceEntry entry) {
+        return "".equals(entry.title) ? null : entry.title;
     }
 }
