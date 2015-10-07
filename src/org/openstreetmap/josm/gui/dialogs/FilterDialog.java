@@ -430,7 +430,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     private class HidingFilterAction extends AbstractFilterAction {
 
-        public HidingFilterAction() {
+        HidingFilterAction() {
             putValue(SHORT_DESCRIPTION, tr("Hiding filter"));
             HIDING_FILTER_SHORTCUT.setAccelerator(this);
         }
@@ -450,6 +450,5 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 filterModel.setValueAt(!lastFilter.hiding, filterModel.getFilters().indexOf(lastFilter), FilterTableModel.COL_HIDING);
             }
         }
-
     }
 }

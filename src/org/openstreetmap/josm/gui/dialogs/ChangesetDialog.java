@@ -292,7 +292,7 @@ public class ChangesetDialog extends ToggleDialog{
      */
     class SelectObjectsAction extends AbstractAction implements ListSelectionListener, ItemListener{
 
-        public SelectObjectsAction() {
+        SelectObjectsAction() {
             putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION, tr("Select all objects assigned to the currently selected changesets"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
@@ -345,7 +345,7 @@ public class ChangesetDialog extends ToggleDialog{
      *
      */
     class ReadChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener{
-        public ReadChangesetsAction() {
+        ReadChangesetsAction() {
             putValue(NAME, tr("Download"));
             putValue(SHORT_DESCRIPTION, tr("Download information about the selected changesets from the OSM server"));
             putValue(SMALL_ICON, ImageProvider.get("download"));
@@ -383,7 +383,7 @@ public class ChangesetDialog extends ToggleDialog{
      *
      */
     class CloseOpenChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener {
-        public CloseOpenChangesetsAction() {
+        CloseOpenChangesetsAction() {
             putValue(NAME, tr("Close open changesets"));
             putValue(SHORT_DESCRIPTION, tr("Closes the selected open changesets"));
             putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
@@ -418,7 +418,7 @@ public class ChangesetDialog extends ToggleDialog{
      *
      */
     class ShowChangesetInfoAction extends AbstractAction implements ListSelectionListener, ItemListener {
-        public ShowChangesetInfoAction() {
+        ShowChangesetInfoAction() {
             putValue(NAME, tr("Show info"));
             putValue(SHORT_DESCRIPTION, tr("Open a web page for each selected changeset"));
             putValue(SMALL_ICON, ImageProvider.get("help/internet"));
@@ -461,7 +461,7 @@ public class ChangesetDialog extends ToggleDialog{
      *
      */
     class LaunchChangesetManagerAction extends AbstractAction {
-        public LaunchChangesetManagerAction() {
+        LaunchChangesetManagerAction() {
             putValue(NAME, tr("Details"));
             putValue(SHORT_DESCRIPTION, tr("Opens the Changeset Manager window for the selected changesets"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "changesetmanager"));
@@ -560,7 +560,7 @@ public class ChangesetDialog extends ToggleDialog{
     }
 
     class ChangesetDialogPopup extends ListPopupMenu {
-        public ChangesetDialogPopup(JList<?> ... lists) {
+        ChangesetDialogPopup(JList<?> ... lists) {
             super(lists);
             add(selectObjectsAction);
             addSeparator();

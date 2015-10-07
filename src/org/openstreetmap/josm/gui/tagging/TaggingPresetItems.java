@@ -263,7 +263,7 @@ public final class TaggingPresetItems {
     /**
      * Enum denoting how a match (see {@link TaggingPresetItem#matches}) is performed.
      */
-    public static enum MatchType {
+    public enum MatchType {
 
         /** Neutral, i.e., do not consider this item for matching. */
         NONE("none"),
@@ -1434,7 +1434,7 @@ public final class TaggingPresetItems {
     private static class ConcatenatingJList extends JList<PresetListEntry> {
         private String delimiter;
 
-        public ConcatenatingJList(String del, PresetListEntry[] o) {
+        ConcatenatingJList(String del, PresetListEntry[] o) {
             super(o);
             delimiter = del;
         }

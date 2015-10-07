@@ -176,7 +176,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
 
     private static class AccessTokenKeyValidator extends AbstractTextComponentValidator {
 
-        public AccessTokenKeyValidator(JTextComponent tc) {
+        AccessTokenKeyValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -196,7 +196,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
     }
 
     private static class AccessTokenSecretValidator extends AbstractTextComponentValidator {
-        public AccessTokenSecretValidator(JTextComponent tc) {
+        AccessTokenSecretValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -245,7 +245,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
      * Action for testing an Access Token
      */
     class TestAccessTokenAction extends AbstractAction implements PropertyChangeListener {
-        public TestAccessTokenAction() {
+        TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
             putValue(SHORT_DESCRIPTION, tr("Click to test the Access Token"));

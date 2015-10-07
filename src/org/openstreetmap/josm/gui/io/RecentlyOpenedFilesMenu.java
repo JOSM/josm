@@ -80,7 +80,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
 
     private static class ClearAction extends AbstractAction {
 
-        public ClearAction() {
+        ClearAction() {
             super(tr("Clear"));
             putValue(SHORT_DESCRIPTION, tr("Clear the list of recently opened files"));
             putValue("help", ht("/Action/OpenRecent"));

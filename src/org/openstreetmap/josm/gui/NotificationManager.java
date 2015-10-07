@@ -82,7 +82,7 @@ class NotificationManager {
         return INSTANCE;
     }
 
-    public NotificationManager() {
+    NotificationManager() {
         queue = new LinkedList<>();
         hideTimer = new Timer(defaultNotificationTime, new HideEvent());
         hideTimer.setRepeats(false);
@@ -185,7 +185,7 @@ class NotificationManager {
 
         private JPanel innerPanel;
 
-        public NotificationPanel(Notification note) {
+        NotificationPanel(Notification note) {
             setVisible(false);
             build(note);
         }
@@ -309,7 +309,7 @@ class NotificationManager {
 
         class HideAction extends AbstractAction {
 
-            public HideAction() {
+            HideAction() {
                 putValue(SMALL_ICON, ImageProvider.get("misc", "grey_x"));
             }
 
@@ -344,7 +344,7 @@ class NotificationManager {
      */
     public static class RoundedPanel extends JPanel {
 
-        public RoundedPanel() {
+        RoundedPanel() {
             super();
             setOpaque(false);
         }

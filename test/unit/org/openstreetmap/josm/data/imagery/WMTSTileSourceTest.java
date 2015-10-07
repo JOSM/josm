@@ -228,7 +228,7 @@ public class WMTSTileSourceTest {
         LatLon result = new LatLon(testSource.tileXYToLatLon(x, y, z));
         LatLon expected = new LatLon(verifier.tileXYToLatLon(x, y, z + zoomOffset));
         //System.out.println(z + "/" + x + "/" + y + " - result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString());
-        assertEquals("Longitude" , expected.lon(), result.lon(), 1e-04);
+        assertEquals("Longitude", expected.lon(), result.lon(), 1e-04);
         assertEquals("Latitude", expected.lat(), result.lat(), 1e-04);
     }
 }

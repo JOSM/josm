@@ -72,7 +72,7 @@ public class TagTable extends JTable  {
      *
      */
     static class TagTableColumnModel extends DefaultTableColumnModel {
-        public TagTableColumnModel(DefaultListSelectionModel selectionModel) {
+        TagTableColumnModel(DefaultListSelectionModel selectionModel) {
             setSelectionModel(selectionModel);
             TableColumn col = null;
             TagCellRenderer renderer = new TagCellRenderer();
@@ -195,7 +195,7 @@ public class TagTable extends JTable  {
      */
     class DeleteAction extends RunnableAction implements ListSelectionListener {
 
-        public DeleteAction() {
+        DeleteAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(SHORT_DESCRIPTION, tr("Delete the selection in the tag table"));
             getSelectionModel().addListSelectionListener(this);
@@ -284,7 +284,7 @@ public class TagTable extends JTable  {
      *
      */
     class AddAction extends RunnableAction implements PropertyChangeListener{
-        public AddAction() {
+        AddAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
             putValue(SHORT_DESCRIPTION, tr("Add a new tag"));
             TagTable.this.addPropertyChangeListener(this);
@@ -319,7 +319,7 @@ public class TagTable extends JTable  {
      * Action to be run when the user wants to paste tags from buffer
      */
     class PasteAction extends RunnableAction implements PropertyChangeListener{
-        public PasteAction() {
+        PasteAction() {
             putValue(SMALL_ICON, ImageProvider.get("", "pastetags"));
             putValue(SHORT_DESCRIPTION, tr("Paste tags from buffer"));
             TagTable.this.addPropertyChangeListener(this);
@@ -617,7 +617,7 @@ public class TagTable extends JTable  {
     class CellEditorRemover implements PropertyChangeListener {
         private KeyboardFocusManager focusManager;
 
-        public CellEditorRemover(KeyboardFocusManager fm) {
+        CellEditorRemover(KeyboardFocusManager fm) {
             this.focusManager = fm;
         }
 

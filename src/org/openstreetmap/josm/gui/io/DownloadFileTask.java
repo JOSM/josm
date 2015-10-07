@@ -61,7 +61,7 @@ public class DownloadFileTask extends PleaseWaitRunnable{
          *         {@link #getCause()} method).  (A <tt>null</tt> value is
          *         permitted, and indicates that the cause is nonexistent or unknown.)
          */
-        public DownloadException(String message, Throwable cause) {
+        DownloadException(String message, Throwable cause) {
             super(message, cause);
         }
     }

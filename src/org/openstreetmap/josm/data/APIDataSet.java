@@ -275,7 +275,7 @@ public class APIDataSet {
         private List<Relation> uploadOrder;
         private final boolean newOrUndeleted;
 
-        public RelationUploadDependencyGraph(Collection<Relation> relations, boolean newOrUndeleted) {
+        RelationUploadDependencyGraph(Collection<Relation> relations, boolean newOrUndeleted) {
             this.newOrUndeleted = newOrUndeleted;
             build(relations);
         }

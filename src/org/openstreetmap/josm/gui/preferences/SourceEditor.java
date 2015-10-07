@@ -820,7 +820,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         class LaunchFileChooserAction extends AbstractAction {
-            public LaunchFileChooserAction() {
+            LaunchFileChooserAction() {
                 putValue(SMALL_ICON, ImageProvider.get("open"));
                 putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
             }
@@ -869,7 +869,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class NewActiveSourceAction extends AbstractAction {
-        public NewActiveSourceAction() {
+        NewActiveSourceAction() {
             putValue(NAME, tr("New"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.NEW_SOURCE_ENTRY_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
@@ -899,7 +899,7 @@ public abstract class SourceEditor extends JPanel {
 
     class RemoveActiveSourcesAction extends AbstractAction implements ListSelectionListener {
 
-        public RemoveActiveSourcesAction() {
+        RemoveActiveSourcesAction() {
             putValue(NAME, tr("Remove"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.REMOVE_SOURCE_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
@@ -922,7 +922,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class EditActiveSourceAction extends AbstractAction implements ListSelectionListener {
-        public EditActiveSourceAction() {
+        EditActiveSourceAction() {
             putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.EDIT_SOURCE_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
@@ -969,7 +969,7 @@ public abstract class SourceEditor extends JPanel {
     class MoveUpDownAction extends AbstractAction implements ListSelectionListener, TableModelListener {
         private final int increment;
 
-        public MoveUpDownAction(boolean isDown) {
+        MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
             putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));
             putValue(SHORT_DESCRIPTION, isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."));
@@ -997,7 +997,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class ActivateSourcesAction extends AbstractAction implements ListSelectionListener {
-        public ActivateSourcesAction() {
+        ActivateSourcesAction() {
             putValue(SHORT_DESCRIPTION, getStr(I18nString.ACTIVATE_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("preferences", "activate-right"));
             updateEnabledState();
@@ -1050,7 +1050,7 @@ public abstract class SourceEditor extends JPanel {
 
     class ResetAction extends AbstractAction {
 
-        public ResetAction() {
+        ResetAction() {
             putValue(NAME, tr("Reset"));
             putValue(SHORT_DESCRIPTION, tr("Reset to default"));
             putValue(SMALL_ICON, ImageProvider.get("preferences", "reset"));
@@ -1066,7 +1066,7 @@ public abstract class SourceEditor extends JPanel {
         private final String url;
         private final transient List<SourceProvider> sourceProviders;
 
-        public ReloadSourcesAction(String url, List<SourceProvider> sourceProviders) {
+        ReloadSourcesAction(String url, List<SourceProvider> sourceProviders) {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr(getStr(I18nString.RELOAD_ALL_AVAILABLE), url));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
@@ -1184,7 +1184,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class NewIconPathAction extends AbstractAction {
-        public NewIconPathAction() {
+        NewIconPathAction() {
             putValue(NAME, tr("New"));
             putValue(SHORT_DESCRIPTION, tr("Add a new icon path"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
@@ -1198,7 +1198,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class RemoveIconPathAction extends AbstractAction implements ListSelectionListener {
-        public RemoveIconPathAction() {
+        RemoveIconPathAction() {
             putValue(NAME, tr("Remove"));
             putValue(SHORT_DESCRIPTION, tr("Remove the selected icon paths"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
@@ -1221,7 +1221,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class EditIconPathAction extends AbstractAction implements ListSelectionListener {
-        public EditIconPathAction() {
+        EditIconPathAction() {
             putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, tr("Edit the selected icon path"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
@@ -1289,7 +1289,7 @@ public abstract class SourceEditor extends JPanel {
         private boolean canceled;
         private final List<ExtendedSourceEntry> sources = new ArrayList<>();
 
-        public SourceLoader(String url, List<SourceProvider> sourceProviders) {
+        SourceLoader(String url, List<SourceProvider> sourceProviders) {
             super(tr(getStr(I18nString.LOADING_SOURCES_FROM), url));
             this.url = url;
             this.sourceProviders = sourceProviders;
@@ -1477,7 +1477,7 @@ public abstract class SourceEditor extends JPanel {
                     );
         }
 
-        public FileOrUrlCellEditor(boolean isFile) {
+        FileOrUrlCellEditor(boolean isFile) {
             this.isFile = isFile;
             listeners = new CopyOnWriteArrayList<>();
             build();
@@ -1553,7 +1553,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         class LaunchFileChooserAction extends AbstractAction {
-            public LaunchFileChooserAction() {
+            LaunchFileChooserAction() {
                 putValue(NAME, "...");
                 putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
             }

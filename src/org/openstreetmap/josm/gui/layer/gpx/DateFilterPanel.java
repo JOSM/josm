@@ -72,7 +72,7 @@ public class DateFilterPanel extends JPanel {
         }
     };
 
-    private Timer t = new Timer(200 , new ActionListener() {
+    private Timer t = new Timer(200, new ActionListener() {
         @Override  public void actionPerformed(ActionEvent e) {
             applyFilter();
         }

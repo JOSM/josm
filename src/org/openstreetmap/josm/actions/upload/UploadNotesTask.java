@@ -47,7 +47,7 @@ public class UploadNotesTask {
          * @param title message for the user
          * @param monitor progress monitor
          */
-        public UploadTask(String title, ProgressMonitor monitor) {
+        UploadTask(String title, ProgressMonitor monitor) {
             super(title, monitor, false);
         }
 

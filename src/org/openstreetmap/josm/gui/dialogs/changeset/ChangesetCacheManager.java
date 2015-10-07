@@ -348,7 +348,7 @@ public class ChangesetCacheManager extends JFrame {
      * the cancel / close action
      */
     static class CancelAction extends AbstractAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(NAME, tr("Close"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
             putValue(SHORT_DESCRIPTION, tr("Close the dialog"));
@@ -368,7 +368,7 @@ public class ChangesetCacheManager extends JFrame {
      * The action to query and download changesets
      */
     class QueryAction extends AbstractAction {
-        public QueryAction() {
+        QueryAction() {
             putValue(NAME, tr("Query"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
             putValue(SHORT_DESCRIPTION, tr("Launch the dialog for querying changesets"));
@@ -399,7 +399,7 @@ public class ChangesetCacheManager extends JFrame {
      *
      */
     class RemoveFromCacheAction extends AbstractAction implements ListSelectionListener{
-        public RemoveFromCacheAction() {
+        RemoveFromCacheAction() {
             putValue(NAME, tr("Remove from cache"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(SHORT_DESCRIPTION, tr("Remove the selected changesets from the local cache"));
@@ -419,7 +419,6 @@ public class ChangesetCacheManager extends JFrame {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
-
         }
     }
 
@@ -428,7 +427,7 @@ public class ChangesetCacheManager extends JFrame {
      *
      */
     class CloseSelectedChangesetsAction extends AbstractAction implements ListSelectionListener{
-        public CloseSelectedChangesetsAction() {
+        CloseSelectedChangesetsAction() {
             putValue(NAME, tr("Close"));
             putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
             putValue(SHORT_DESCRIPTION, tr("Close the selected changesets"));
@@ -470,7 +469,7 @@ public class ChangesetCacheManager extends JFrame {
      *
      */
     class DownloadSelectedChangesetsAction extends AbstractAction implements ListSelectionListener{
-        public DownloadSelectedChangesetsAction() {
+        DownloadSelectedChangesetsAction() {
             putValue(NAME, tr("Update changeset"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "updatechangeset"));
             putValue(SHORT_DESCRIPTION, tr("Updates the selected changesets with current data from the OSM server"));
@@ -499,7 +498,7 @@ public class ChangesetCacheManager extends JFrame {
      *
      */
     class DownloadSelectedChangesetContentAction extends AbstractAction implements ListSelectionListener{
-        public DownloadSelectedChangesetContentAction() {
+        DownloadSelectedChangesetContentAction() {
             putValue(NAME, tr("Download changeset content"));
             putValue(SMALL_ICON, DOWNLOAD_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Download the content of the selected changesets from the server"));
@@ -537,7 +536,7 @@ public class ChangesetCacheManager extends JFrame {
     }
 
     class DownloadMyChangesets extends AbstractAction {
-        public DownloadMyChangesets() {
+        DownloadMyChangesets() {
             putValue(NAME, tr("My changesets"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangeset"));
             putValue(SHORT_DESCRIPTION, tr("Download my changesets from the OSM server (max. 100 changesets)"));
@@ -577,7 +576,7 @@ public class ChangesetCacheManager extends JFrame {
 
     class MouseEventHandler extends PopupMenuLauncher {
 
-        public MouseEventHandler() {
+        MouseEventHandler() {
             super(new ChangesetTablePopupMenu());
         }
 
@@ -590,7 +589,7 @@ public class ChangesetCacheManager extends JFrame {
     }
 
     class ChangesetTablePopupMenu extends JPopupMenu {
-        public ChangesetTablePopupMenu() {
+        ChangesetTablePopupMenu() {
             add(actRemoveFromCacheAction);
             add(actCloseSelectedChangesetsAction);
             add(actDownloadSelectedChangesets);

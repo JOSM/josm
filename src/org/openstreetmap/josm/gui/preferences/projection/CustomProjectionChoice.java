@@ -50,7 +50,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
         public JosmTextField input;
         private HistoryComboBox cbInput;
 
-        public PreferencePanel(String initialText, ActionListener listener) {
+        PreferencePanel(String initialText, ActionListener listener) {
             build(initialText, listener);
         }
 

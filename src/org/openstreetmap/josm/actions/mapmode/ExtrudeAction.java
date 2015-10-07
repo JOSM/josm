@@ -157,7 +157,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         public final EastNorth p2;
         public final boolean perpendicular;
 
-        public ReferenceSegment(EastNorth en, EastNorth p1, EastNorth p2, boolean perpendicular) {
+        ReferenceSegment(EastNorth en, EastNorth p1, EastNorth p2, boolean perpendicular) {
             this.en = en;
             this.p1 = p1;
             this.p2 = p2;
@@ -188,7 +188,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     private boolean ignoreNextKeyRelease;
 
     private class DualAlignChangeAction extends JosmAction {
-        public DualAlignChangeAction() {
+        DualAlignChangeAction() {
             super(tr("Dual alignment"), /* ICON() */ "mapmode/extrude/dualalign",
                     tr("Switch dual alignment mode while extruding"), null, false);
             putValue("help", ht("/Action/Extrude#DualAlign"));
@@ -1178,10 +1178,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             double linelength = Math.abs(widthpoint.getX()) + Math.abs(widthpoint.getY())
                     + Math.abs(heightpoint.getX()) + Math.abs(heightpoint.getY());
 
-            return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * linelength) , start.getY()
+            return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * linelength), start.getY()
                     + (unitvector.getY() * linelength)));
         } catch (NoninvertibleTransformException e) {
-            return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * 10) , start.getY()
+            return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * 10), start.getY()
                     + (unitvector.getY() * 10)));
         }
     }

@@ -72,7 +72,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
      * Grabs current MOTD from cache or webpage and parses it.
      */
     private static class MotdContent extends CacheCustomContent<IOException> {
-        public MotdContent() {
+        MotdContent() {
             super("motd.html", CacheCustomContent.INTERVAL_DAILY);
         }
 

@@ -154,7 +154,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
      * Action for canceling conflict resolution
      */
     class CancelAction extends AbstractAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel conflict resolution and close the dialog"));
             putValue(Action.NAME, tr("Cancel"));
             putValue(Action.SMALL_ICON, ImageProvider.get("", "cancel"));
@@ -171,7 +171,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
      * Action for canceling conflict resolution
      */
     static class HelpAction extends AbstractAction {
-        public HelpAction() {
+        HelpAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Show help information"));
             putValue(Action.NAME, tr("Help"));
             putValue(Action.SMALL_ICON, ImageProvider.get("help"));
@@ -189,7 +189,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
      *
      */
     class ApplyResolutionAction extends AbstractAction implements PropertyChangeListener {
-        public ApplyResolutionAction() {
+        ApplyResolutionAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Apply resolved conflicts and close the dialog"));
             putValue(Action.NAME, tr("Apply Resolution"));
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs", "conflict"));
@@ -212,8 +212,8 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
                                 + "are resolved.<br>"
                                 + "Click <strong>{0}</strong> to close anyway.<strong> Already<br>"
                                 + "resolved differences will not be applied.</strong><br>"
-                                + "Click <strong>{1}</strong> to return to resolving conflicts.</html>"
-                                , options[0].toString(), options[1].toString()
+                                + "Click <strong>{1}</strong> to return to resolving conflicts.</html>",
+                                options[0].toString(), options[1].toString()
                         ),
                         tr("Conflict not resolved completely"),
                         JOptionPane.YES_NO_OPTION,

@@ -75,7 +75,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
 
     private static class UserNameValidator extends AbstractTextComponentValidator {
 
-        public UserNameValidator(JTextComponent tc) {
+        UserNameValidator(JTextComponent tc) {
             super(tc);
         }
 

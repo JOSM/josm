@@ -137,7 +137,7 @@ public class ListListEditor extends ExtendedDialog {
     }
 
     class NewEntryAction extends AbstractAction {
-        public NewEntryAction() {
+        NewEntryAction() {
             putValue(NAME, tr("New"));
             putValue(SHORT_DESCRIPTION, tr("add entry"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
@@ -150,7 +150,7 @@ public class ListListEditor extends ExtendedDialog {
     }
 
     class RemoveEntryAction extends AbstractAction implements ListSelectionListener {
-        public RemoveEntryAction() {
+        RemoveEntryAction() {
             putValue(NAME, tr("Remove"));
             putValue(SHORT_DESCRIPTION, tr("Remove the selected entry"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));

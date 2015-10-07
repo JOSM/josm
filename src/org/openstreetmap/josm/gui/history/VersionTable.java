@@ -154,7 +154,7 @@ public class VersionTable extends JTable implements Observer{
         /**
          * Constructs a new {@code ChangesetInfoAction}.
          */
-        public ChangesetInfoAction() {
+        ChangesetInfoAction() {
             super(true);
             putValue(NAME, tr("Changeset info"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with information about the changeset"));
@@ -191,7 +191,7 @@ public class VersionTable extends JTable implements Observer{
         /**
          * Constructs a new {@code UserInfoAction}.
          */
-        public UserInfoAction() {
+        UserInfoAction() {
             super(true);
             putValue(NAME, tr("User info"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with information about the user"));
@@ -232,7 +232,7 @@ public class VersionTable extends JTable implements Observer{
         /**
          * Constructs a new {@code VersionTablePopupMenu}.
          */
-        public VersionTablePopupMenu() {
+        VersionTablePopupMenu() {
             super();
             build();
         }

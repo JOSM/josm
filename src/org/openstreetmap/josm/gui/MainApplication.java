@@ -593,7 +593,7 @@ public class MainApplication extends Main {
         private final Map<Option, Collection<String>> args;
         private final DefaultProxySelector proxySelector;
 
-        public GuiFinalizationWorker(Map<Option, Collection<String>> args, DefaultProxySelector proxySelector) {
+        GuiFinalizationWorker(Map<Option, Collection<String>> args, DefaultProxySelector proxySelector) {
             this.args = args;
             this.proxySelector = proxySelector;
         }

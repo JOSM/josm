@@ -611,7 +611,7 @@ public class TagEditorModel extends AbstractTableModel {
         private int colMin;
         private int colMax;
 
-        public SelectionStateMemento() {
+        SelectionStateMemento() {
             rowMin = rowSelectionModel.getMinSelectionIndex();
             rowMax = rowSelectionModel.getMaxSelectionIndex();
             colMin = colSelectionModel.getMinSelectionIndex();

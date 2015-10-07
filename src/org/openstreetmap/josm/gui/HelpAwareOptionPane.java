@@ -110,7 +110,7 @@ public final class HelpAwareOptionPane {
         private JOptionPane pane;
         private int value;
 
-        public DefaultAction(JDialog dialog, JOptionPane pane, int value) {
+        DefaultAction(JDialog dialog, JOptionPane pane, int value) {
             this.dialog = dialog;
             this.pane = pane;
             this.value = value;

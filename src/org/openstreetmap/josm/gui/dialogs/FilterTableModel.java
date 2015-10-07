@@ -348,7 +348,7 @@ public class FilterTableModel extends AbstractTableModel {
      * On screen display label
      */
     private static class OSDLabel extends JLabel {
-        public OSDLabel(String text) {
+        OSDLabel(String text) {
             super(text);
             setOpaque(true);
             setForeground(Color.black);

@@ -34,7 +34,7 @@ public class BasicChangesetQueryPanel extends JPanel {
     /**
      * Enumeration of basic, predefined queries
      */
-    private static enum BasicQuery {
+    private enum BasicQuery {
         MOST_RECENT_CHANGESETS,
         MY_OPEN_CHANGESETS,
         CHANGESETS_IN_MAP_VIEW;

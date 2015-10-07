@@ -87,7 +87,7 @@ public class RelationChecker extends Test {
         private final List<Role> roles;
         private final String name;
 
-        public RolePreset(List<Role> roles, String name) {
+        RolePreset(List<Role> roles, String name) {
             this.roles = roles;
             this.name = name;
         }

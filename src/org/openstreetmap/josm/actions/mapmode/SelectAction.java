@@ -83,7 +83,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     }
 
     // contains all possible cases the cursor can be in the SelectAction
-    private static enum SelectActionCursor {
+    private enum SelectActionCursor {
         rect("normal", /* ICON(cursor/modifier/) */ "selection"),
         rect_add("normal", /* ICON(cursor/modifier/) */ "select_add"),
         rect_rm("normal", /* ICON(cursor/modifier/) */ "select_remove"),

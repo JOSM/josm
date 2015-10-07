@@ -94,7 +94,7 @@ public class ImageProvider {
     /**
      * Position of an overlay icon
      */
-    public static enum OverlayPosition {
+    public enum OverlayPosition {
         /** North west */
         NORTHWEST,
         /** North east */
@@ -108,7 +108,7 @@ public class ImageProvider {
     /**
      * Supported image types
      */
-    public static enum ImageType {
+    public enum ImageType {
         /** Scalable vector graphics */
         SVG,
         /** Everything else, e.g. png, gif (must be supported by Java) */
@@ -119,7 +119,7 @@ public class ImageProvider {
      * Supported image sizes
      * @since 7687
      */
-    public static enum ImageSizes {
+    public enum ImageSizes {
         /** SMALL_ICON value of on Action */
         SMALLICON,
         /** LARGE_ICON_KEY value of on Action */
@@ -1074,7 +1074,7 @@ public class ImageProvider {
     private static class SAXReturnException extends SAXException {
         private final String result;
 
-        public SAXReturnException(String result) {
+        SAXReturnException(String result) {
             this.result = result;
         }
 

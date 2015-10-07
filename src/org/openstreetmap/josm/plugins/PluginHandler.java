@@ -1470,7 +1470,7 @@ public final class PluginHandler {
             cbDontShowAgain.setFont(cbDontShowAgain.getFont().deriveFont(Font.PLAIN));
         }
 
-        public UpdatePluginsMessagePanel() {
+        UpdatePluginsMessagePanel() {
             build();
         }
 

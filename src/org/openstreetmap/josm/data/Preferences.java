@@ -521,7 +521,7 @@ public class Preferences {
         private final Setting<?> oldValue;
         private final Setting<?> newValue;
 
-        public DefaultPreferenceChangeEvent(String key, Setting<?> oldValue, Setting<?> newValue) {
+        DefaultPreferenceChangeEvent(String key, Setting<?> oldValue, Setting<?> newValue) {
             this.key = key;
             this.oldValue = oldValue;
             this.newValue = newValue;
@@ -1720,7 +1720,7 @@ public class Preferences {
         private boolean noPassword;
         private String key;
 
-        public SettingToXml(StringBuilder b, boolean noPassword) {
+        SettingToXml(StringBuilder b, boolean noPassword) {
             this.b = b;
             this.noPassword = noPassword;
         }

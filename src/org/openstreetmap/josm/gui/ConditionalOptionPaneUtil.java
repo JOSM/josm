@@ -203,7 +203,7 @@ public final class ConditionalOptionPaneUtil {
     /**
      * An enum designating how long to not show this message again, i.e., for how long to store
      */
-    static enum NotShowAgain {
+    enum NotShowAgain {
         NO, OPERATION, SESSION, PERMANENT;
 
         /**
@@ -261,7 +261,7 @@ public final class ConditionalOptionPaneUtil {
          *                otherwise a JLabel with the string representation is added)
          * @param displayImmediateOption whether to provide "Do not show again (this session)"
          */
-        public MessagePanel(Object message, boolean displayImmediateOption) {
+        MessagePanel(Object message, boolean displayImmediateOption) {
             cbStandard.setSelected(true);
             ButtonGroup group = new ButtonGroup();
             group.add(cbShowPermanentDialog);

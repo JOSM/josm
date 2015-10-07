@@ -35,7 +35,7 @@ public class RelationNodeMap {
         public final Map<Integer, Set<Node>> ways = new TreeMap<>();
         public final boolean oneWay;
 
-        public NodesWays(boolean oneWay) {
+        NodesWays(boolean oneWay) {
             this.oneWay = oneWay;
         }
     }

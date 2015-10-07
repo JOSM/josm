@@ -109,7 +109,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
          */
         private int xPrev0, yPrev0;
 
-        public OffsetIterator(List<Node> nodes, double offset) {
+        OffsetIterator(List<Node> nodes, double offset) {
             this.nodes = nodes;
             this.offset = offset;
             idx = 0;
@@ -192,7 +192,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         private final OsmPrimitive osm;
         private final int flags;
 
-        public StyleRecord(ElemStyle style, OsmPrimitive osm, int flags) {
+        StyleRecord(ElemStyle style, OsmPrimitive osm, int flags) {
             this.style = style;
             this.osm = osm;
             this.flags = flags;
@@ -1562,7 +1562,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
          * @param to last index + 1
          * @param output the list of styles to which styles will be added
          */
-        public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output) {
+        ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output) {
             this.input = input;
             this.from = from;
             this.to = to;
@@ -1639,7 +1639,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         private final List<StyleRecord> allStyleElems;
 
-        public ConcurrentTasksHelper(List<StyleRecord> allStyleElems) {
+        ConcurrentTasksHelper(List<StyleRecord> allStyleElems) {
             this.allStyleElems = allStyleElems;
         }
 

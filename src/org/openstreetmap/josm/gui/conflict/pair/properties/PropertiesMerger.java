@@ -391,7 +391,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     }
 
     class KeepMyCoordinatesAction extends AbstractAction implements Observer {
-        public KeepMyCoordinatesAction() {
+        KeepMyCoordinatesAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeepmine"));
             putValue(Action.SHORT_DESCRIPTION, tr("Keep my coordinates"));
         }
@@ -408,7 +408,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     }
 
     class KeepTheirCoordinatesAction extends AbstractAction implements Observer {
-        public KeepTheirCoordinatesAction() {
+        KeepTheirCoordinatesAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeeptheir"));
             putValue(Action.SHORT_DESCRIPTION, tr("Keep their coordinates"));
         }
@@ -425,7 +425,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     }
 
     class UndecideCoordinateConflictAction extends AbstractAction implements Observer {
-        public UndecideCoordinateConflictAction() {
+        UndecideCoordinateConflictAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagundecide"));
             putValue(Action.SHORT_DESCRIPTION, tr("Undecide conflict between different coordinates"));
         }
@@ -442,7 +442,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     }
 
     class KeepMyDeletedStateAction extends AbstractAction implements Observer {
-        public KeepMyDeletedStateAction() {
+        KeepMyDeletedStateAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeepmine"));
             putValue(Action.SHORT_DESCRIPTION, tr("Keep my deleted state"));
         }
@@ -459,7 +459,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     }
 
     class KeepTheirDeletedStateAction extends AbstractAction implements Observer {
-        public KeepTheirDeletedStateAction() {
+        KeepTheirDeletedStateAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeeptheir"));
             putValue(Action.SHORT_DESCRIPTION, tr("Keep their deleted state"));
         }
@@ -476,7 +476,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     }
 
     class UndecideDeletedStateConflictAction extends AbstractAction implements Observer {
-        public UndecideDeletedStateConflictAction() {
+        UndecideDeletedStateConflictAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagundecide"));
             putValue(Action.SHORT_DESCRIPTION, tr("Undecide conflict between deleted state"));
         }

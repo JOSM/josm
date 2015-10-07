@@ -77,7 +77,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
      */
     class DownloadAction extends AbstractAction implements DocumentListener{
 
-        public DownloadAction() {
+        DownloadAction() {
             putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Download the changeset with the specified id, including the changeset content"));
             updateEnabledState();

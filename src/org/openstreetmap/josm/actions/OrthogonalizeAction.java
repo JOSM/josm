@@ -410,7 +410,7 @@ public final class OrthogonalizeAction extends JosmAction {
         // segments turned by 90 degrees
         public double heading;            // heading of segSum == approximate heading of the way
 
-        public WayData(Way pWay) {
+        WayData(Way pWay) {
             way = pWay;
             nNode = way.getNodes().size();
             nSeg = nNode - 1;

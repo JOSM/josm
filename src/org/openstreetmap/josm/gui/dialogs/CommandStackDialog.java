@@ -168,7 +168,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     private class UndoRedoSelectionListener implements TreeSelectionListener {
         private JTree source;
 
-        public UndoRedoSelectionListener(JTree source) {
+        UndoRedoSelectionListener(JTree source) {
             this.source = source;
         }
 
@@ -485,7 +485,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
     class MouseEventHandler extends PopupMenuLauncher {
 
-        public MouseEventHandler() {
+        MouseEventHandler() {
             super(new CommandStackPopup());
         }
 
@@ -498,7 +498,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     }
 
     private class CommandStackPopup extends JPopupMenu {
-        public CommandStackPopup() {
+        CommandStackPopup() {
             add(selectAction);
             add(selectAndZoomAction);
         }

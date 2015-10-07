@@ -332,7 +332,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);
         }
 
-        public TileGridInputPanel() {
+        TileGridInputPanel() {
             build();
         }
 
@@ -499,7 +499,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             add(new JPanel(), gc);
         }
 
-        public TileAddressInputPanel() {
+        TileAddressInputPanel() {
             setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             build();
         }
@@ -509,7 +509,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         }
 
         class ApplyTileAddressAction extends AbstractAction {
-            public ApplyTileAddressAction() {
+            ApplyTileAddressAction() {
                 putValue(SMALL_ICON, ImageProvider.get("apply"));
                 putValue(SHORT_DESCRIPTION, tr("Apply the tile address"));
             }
@@ -531,7 +531,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         private TileBounds tileBounds = null;
 
-        public TileAddressValidator(JTextComponent tc) {
+        TileAddressValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -590,7 +590,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         private int zoomLevel;
         private int tileIndex;
 
-        public TileCoordinateValidator(JTextComponent tc) {
+        TileCoordinateValidator(JTextComponent tc) {
             super(tc);
         }
 

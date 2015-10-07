@@ -130,7 +130,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         pane.addTab(tr("Imagery providers"), imageryProviders);
         pane.addTab(tr("Settings"), buildSettingsPanel());
         pane.addTab(tr("Offset bookmarks"), new OffsetBookmarksPanel(gui));
-        pane.addTab(tr("Cache contents") , new CacheContentsPanel());
+        pane.addTab(tr("Cache contents"), new CacheContentsPanel());
         loadSettings();
         p.add(pane, GBC.std().fill(GBC.BOTH));
     }
@@ -238,7 +238,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             private transient List<ImageryInfo> layers;
 
-            public ImageryURLTableCellRenderer(List<ImageryInfo> layers) {
+            ImageryURLTableCellRenderer(List<ImageryInfo> layers) {
                 this.layers = layers;
             }
 
@@ -479,7 +479,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             private final ImageryInfo.ImageryType type;
 
-            public NewEntryAction(ImageryInfo.ImageryType type) {
+            NewEntryAction(ImageryInfo.ImageryType type) {
                 putValue(NAME, type.toString());
                 putValue(SHORT_DESCRIPTION, tr("Add a new {0} entry by entering the URL", type.toString()));
                 String icon = /* ICON(dialogs/) */ "add";
@@ -541,7 +541,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             /**
              * Constructs a new {@code RemoveEntryAction}.
              */
-            public RemoveEntryAction() {
+            RemoveEntryAction() {
                 putValue(NAME, tr("Remove"));
                 putValue(SHORT_DESCRIPTION, tr("Remove entry"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
@@ -571,7 +571,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             /**
              * Constructs a new {@code ActivateAction}.
              */
-            public ActivateAction() {
+            ActivateAction() {
                 putValue(NAME, tr("Activate"));
                 putValue(SHORT_DESCRIPTION, tr("copy selected defaults"));
                 putValue(SMALL_ICON, ImageProvider.get("preferences", "activate-down"));
@@ -638,7 +638,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             /**
              * Constructs a new {@code ReloadAction}.
              */
-            public ReloadAction() {
+            ReloadAction() {
                 putValue(SHORT_DESCRIPTION, tr("reload defaults"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
             }
@@ -812,7 +812,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         /**
          * Constructs a new {@code OffsetBookmarksPanel}.
          */
-        public OffsetBookmarksPanel(final PreferenceTabbedPane gui) {
+        OffsetBookmarksPanel(final PreferenceTabbedPane gui) {
             super(new GridBagLayout());
             final JTable list = new JTable(model) {
                 @Override
@@ -871,7 +871,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             /**
              * Constructs a new {@code OffsetsBookmarksModel}.
              */
-            public OffsetsBookmarksModel() {
+            OffsetsBookmarksModel() {
                 setColumnIdentifiers(new String[] {tr("Projection"), tr("Layer"), tr("Name"), tr("Easting"), tr("Northing")});
             }
 

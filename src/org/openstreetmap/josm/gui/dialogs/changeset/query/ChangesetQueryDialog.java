@@ -157,7 +157,7 @@ public class ChangesetQueryDialog extends JDialog {
     }
 
     class QueryAction extends AbstractAction {
-        public QueryAction() {
+        QueryAction() {
             putValue(NAME, tr("Query"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
             putValue(SHORT_DESCRIPTION, tr("Query and download changesets"));
@@ -206,7 +206,7 @@ public class ChangesetQueryDialog extends JDialog {
 
     class CancelAction extends AbstractAction {
 
-        public CancelAction() {
+        CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
             putValue(SHORT_DESCRIPTION, tr("Close the dialog and abort querying of changesets"));

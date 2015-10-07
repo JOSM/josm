@@ -315,13 +315,13 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             addColumn(col);
         }
 
-        public RelationMemberTableColumnModel() {
+        RelationMemberTableColumnModel() {
             createColumns();
         }
     }
 
     class OKAction extends AbstractAction {
-        public OKAction() {
+        OKAction() {
             putValue(NAME, tr("OK"));
             putValue(SMALL_ICON, ImageProvider.get("ok"));
             putValue(SHORT_DESCRIPTION, tr("Click to close the dialog and remove the object from the relations"));
@@ -335,7 +335,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     }
 
     class CancelAction extends AbstractAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
             putValue(SHORT_DESCRIPTION, tr("Click to close the dialog and to abort deleting the objects"));

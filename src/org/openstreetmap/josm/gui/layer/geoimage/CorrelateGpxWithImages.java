@@ -212,7 +212,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         private GpxData data;
         private File file;
 
-        public GpxDataWrapper(String name, GpxData data, File file) {
+        GpxDataWrapper(String name, GpxData data, File file) {
             this.name = name;
             this.data = data;
             this.file = file;
@@ -778,7 +778,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private class StatusBarUpdater implements  DocumentListener, ItemListener, ActionListener {
         private boolean doRepaint;
 
-        public StatusBarUpdater(boolean doRepaint) {
+        StatusBarUpdater(boolean doRepaint) {
             this.doRepaint = doRepaint;
         }
 

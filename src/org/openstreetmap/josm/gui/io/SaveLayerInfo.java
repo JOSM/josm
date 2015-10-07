@@ -27,7 +27,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      * @param layer the layer. Must not be null.
      * @throws IllegalArgumentException if layer is null
      */
-    public SaveLayerInfo(AbstractModifiableLayer layer) {
+    SaveLayerInfo(AbstractModifiableLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         this.doCheckSaveConditions = true;

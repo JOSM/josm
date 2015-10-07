@@ -127,7 +127,7 @@ public interface Selector {
              * Constructor
              * @param e the environment against which we match
              */
-            public MatchingReferrerFinder(Environment e) {
+            MatchingReferrerFinder(Environment e) {
                 this.e = e;
             }
 
@@ -226,7 +226,7 @@ public interface Selector {
                 w.visitReferrers(innerVisitor);
             }
 
-            public MultipolygonOpenEndFinder(Environment e) {
+            MultipolygonOpenEndFinder(Environment e) {
                 super(e);
             }
 
@@ -244,7 +244,6 @@ public interface Selector {
                     }
                 }
             };
-
         }
 
         private final class CrossingFinder extends AbstractFinder {

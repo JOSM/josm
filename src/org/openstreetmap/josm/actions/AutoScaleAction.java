@@ -363,7 +363,7 @@ public class AutoScaleAction extends JosmAction {
         private ListSelectionListener conflictSelectionListener;
         private TreeSelectionListener validatorSelectionListener;
 
-        public MapFrameAdapter() {
+        MapFrameAdapter() {
             if ("conflict".equals(mode)) {
                 conflictSelectionListener = new ListSelectionListener() {
                     @Override

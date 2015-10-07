@@ -61,7 +61,7 @@ public class ImageDisplay extends JComponent {
         private File file;
         private int orientation;
 
-        public LoadImageRunnable(File file, Integer orientation) {
+        LoadImageRunnable(File file, Integer orientation) {
             this.file = file;
             this.orientation = orientation == null ? -1 : orientation;
         }

@@ -26,7 +26,7 @@ public class MapCSSStyleSourceFilterTest {
          * Create a new CSS generator.
          * @param generator A generator to get the keys from.
          */
-        public CssGenerator(KeyValueDataGenerator generator) {
+        CssGenerator(KeyValueDataGenerator generator) {
             this.generator = generator;
         }
 

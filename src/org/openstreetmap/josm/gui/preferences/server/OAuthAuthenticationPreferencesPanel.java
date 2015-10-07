@@ -182,7 +182,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         /**
          * Constructs a new {@code NotYetAuthorisedPanel}.
          */
-        public NotYetAuthorisedPanel() {
+        NotYetAuthorisedPanel() {
             build();
         }
 
@@ -304,7 +304,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         /**
          * Constructs a new {@code AlreadyAuthorisedPanel}.
          */
-        public AlreadyAuthorisedPanel() {
+        AlreadyAuthorisedPanel() {
             build();
             refreshView();
         }
@@ -314,7 +314,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      * Action to authorise the current user
      */
     private class AuthoriseNowAction extends AbstractAction {
-        public AuthoriseNowAction() {
+        AuthoriseNowAction() {
             putValue(NAME, tr("Authorize now"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
@@ -343,7 +343,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         /**
          * Constructs a new {@code RenewAuthorisationAction}.
          */
-        public RenewAuthorisationAction() {
+        RenewAuthorisationAction() {
             putValue(NAME, tr("New Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process and generate a new Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
@@ -373,7 +373,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         /**
          * Constructs a new {@code TestAuthorisationAction}.
          */
-        public TestAuthorisationAction() {
+        TestAuthorisationAction() {
             putValue(NAME, tr("Test Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click test access to the OSM server with the current access token"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));

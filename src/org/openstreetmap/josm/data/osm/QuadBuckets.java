@@ -85,7 +85,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         /**
          * Constructor for root node
          */
-        public QBLevel(final QuadBuckets<T> buckets) {
+        QBLevel(final QuadBuckets<T> buckets) {
             level = 0;
             index = 0;
             quad = 0;
@@ -94,7 +94,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             this.buckets = buckets;
         }
 
-        public QBLevel(QBLevel<T> parent, int parent_index, final QuadBuckets<T> buckets) {
+        QBLevel(QBLevel<T> parent, int parent_index, final QuadBuckets<T> buckets) {
             this.parent = parent;
             this.level = parent.level + 1;
             this.index = parent_index;
@@ -507,7 +507,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             return next;
         }
 
-        public QuadBucketIterator(QuadBuckets<T> qb) {
+        QuadBucketIterator(QuadBuckets<T> qb) {
             if (!qb.root.hasChildren() || qb.root.hasContent()) {
                 currentNode = qb.root;
             } else {

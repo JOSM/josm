@@ -101,7 +101,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         private GpxData rawData;
         private final boolean newLayer;
 
-        public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
+        DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(tr("Downloading GPS data"), progressMonitor, false);
             this.reader = reader;
             this.newLayer = newLayer;

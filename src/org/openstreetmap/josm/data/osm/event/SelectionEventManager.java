@@ -28,7 +28,7 @@ public class SelectionEventManager implements SelectionChangedListener {
     private static class ListenerInfo {
         private final SelectionChangedListener listener;
 
-        public ListenerInfo(SelectionChangedListener listener) {
+        ListenerInfo(SelectionChangedListener listener) {
             this.listener = listener;
         }
 

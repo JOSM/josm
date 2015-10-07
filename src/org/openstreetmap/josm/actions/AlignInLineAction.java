@@ -62,7 +62,7 @@ public final class AlignInLineAction extends JosmAction {
         /**
          * Create an InvalidSelection exception with default message
          */
-        public InvalidSelection() {
+        InvalidSelection() {
             super(tr("Please select at least three nodes."));
         }
 
@@ -70,7 +70,7 @@ public final class AlignInLineAction extends JosmAction {
          * Create an InvalidSelection exception with specific message
          * @param msg Message that will be display to the user
          */
-        public InvalidSelection(String msg) {
+        InvalidSelection(String msg) {
             super(msg);
         }
     }
@@ -355,7 +355,7 @@ public final class AlignInLineAction extends JosmAction {
          * @param last Other point of the line
          * @throws InvalidSelection if nodes have same coordinates
          */
-        public Line(Node first, Node last) throws InvalidSelection {
+        Line(Node first, Node last) throws InvalidSelection {
             xM = first.getEastNorth().getX();
             yM = first.getEastNorth().getY();
             double xB = last.getEastNorth().getX();
@@ -375,7 +375,7 @@ public final class AlignInLineAction extends JosmAction {
          * @param way Use extremity of this way to compute line equation
          * @throws InvalidSelection if nodes have same coordinates
          */
-        public Line(Way way) throws InvalidSelection {
+        Line(Way way) throws InvalidSelection {
             this(way.firstNode(), way.lastNode());
         }
 

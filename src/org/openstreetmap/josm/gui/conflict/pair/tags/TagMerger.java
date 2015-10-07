@@ -269,7 +269,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      *
      */
     class KeepMineAction extends AbstractAction implements ListSelectionListener {
-        public KeepMineAction() {
+        KeepMineAction() {
             ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagkeepmine");
             if (icon != null) {
                 putValue(Action.SMALL_ICON, icon);
@@ -301,7 +301,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      *
      */
     class KeepTheirAction extends AbstractAction implements ListSelectionListener {
-        public KeepTheirAction() {
+        KeepTheirAction() {
             ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagkeeptheir");
             if (icon != null) {
                 putValue(Action.SMALL_ICON, icon);
@@ -338,7 +338,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
     static class AdjustmentSynchronizer implements AdjustmentListener {
         private final Set<Adjustable> synchronizedAdjustables;
 
-        public AdjustmentSynchronizer() {
+        AdjustmentSynchronizer() {
             synchronizedAdjustables = new HashSet<>();
         }
 
@@ -399,7 +399,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      */
     class UndecideAction extends AbstractAction implements ListSelectionListener  {
 
-        public UndecideAction() {
+        UndecideAction() {
             ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagundecide");
             if (icon != null) {
                 putValue(Action.SMALL_ICON, icon);

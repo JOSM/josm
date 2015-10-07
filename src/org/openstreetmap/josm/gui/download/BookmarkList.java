@@ -197,7 +197,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         /**
          * Constructs a new {@code BookmarkCellRenderer}.
          */
-        public BookmarkCellRenderer() {
+        BookmarkCellRenderer() {
             setOpaque(true);
             setIcon(ImageProvider.get("dialogs", "bookmark"));
         }

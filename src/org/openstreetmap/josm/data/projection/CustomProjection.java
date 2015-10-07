@@ -55,7 +55,7 @@ public class CustomProjection extends AbstractProjection {
      * Proj4-like projection parameters. See <a href="https://trac.osgeo.org/proj/wiki/GenParms">reference</a>.
      * @since 7370 (public)
      */
-    public static enum Param {
+    public enum Param {
 
         /** False easting */
         x_0("x_0", true),

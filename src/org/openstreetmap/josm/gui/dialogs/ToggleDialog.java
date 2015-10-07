@@ -609,7 +609,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             /**
              * Constructs a new {@code DialogPopupMenu}.
              */
-            public DialogPopupMenu() {
+            DialogPopupMenu() {
                 alwaysShown.setSelected(buttonHiding == ButtonHidingType.ALWAYS_SHOWN);
                 dynamic.setSelected(buttonHiding == ButtonHidingType.DYNAMIC);
                 alwaysHidden.setSelected(buttonHiding == ButtonHidingType.ALWAYS_HIDDEN);
@@ -635,7 +635,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             /**
              * Constructs a new {@code MouseEventHandler}.
              */
-            public MouseEventHandler() {
+            MouseEventHandler() {
                 super(popupMenu);
             }
 
@@ -659,7 +659,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      *
      */
     private class DetachedDialog extends JDialog {
-        public DetachedDialog() {
+        DetachedDialog() {
             super(JOptionPane.getFrameForComponent(Main.parent));
             getContentPane().add(ToggleDialog.this);
             addWindowListener(new WindowAdapter() {

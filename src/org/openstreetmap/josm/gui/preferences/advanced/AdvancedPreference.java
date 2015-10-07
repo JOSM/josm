@@ -410,7 +410,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         private final File file;
         private final String type;
 
-        public ImportProfileAction(String name, File file, String type) {
+        ImportProfileAction(String name, File file, String type) {
             super(name);
             this.file = file;
             this.type = type;

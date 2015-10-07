@@ -84,7 +84,7 @@ public class JoinAreasAction extends JosmAction {
         public final Relation rel;
         public final String role;
 
-        public RelationRole(Relation rel, String role) {
+        RelationRole(Relation rel, String role) {
             this.rel = rel;
             this.role = role;
         }
@@ -196,7 +196,7 @@ public class JoinAreasAction extends JosmAction {
         private boolean lastWayReverse;
 
         /** Constructor */
-        public WayTraverser(Collection<WayInPolygon> ways) {
+        WayTraverser(Collection<WayInPolygon> ways) {
             availableWays = new HashSet<>(ways);
             lastWay = null;
         }
@@ -380,7 +380,7 @@ public class JoinAreasAction extends JosmAction {
         public final int level;
         public final AssembledMultipolygon pol;
 
-        public PolygonLevel(AssembledMultipolygon pol, int level) {
+        PolygonLevel(AssembledMultipolygon pol, int level) {
             this.pol = pol;
             this.level = level;
         }

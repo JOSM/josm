@@ -169,7 +169,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     class ValidateApiUrlAction extends AbstractAction implements DocumentListener {
         private String lastTestedUrl = null;
 
-        public ValidateApiUrlAction() {
+        ValidateApiUrlAction() {
             putValue(NAME, tr("Validate"));
             putValue(SHORT_DESCRIPTION, tr("Test the API URL"));
             updateEnabledState();
@@ -242,7 +242,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     }
 
     private static class ApiUrlValidator extends AbstractTextComponentValidator {
-        public ApiUrlValidator(JTextComponent tc) {
+        ApiUrlValidator(JTextComponent tc) {
             super(tc);
         }
 

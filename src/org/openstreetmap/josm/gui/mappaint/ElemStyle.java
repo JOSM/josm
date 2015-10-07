@@ -131,7 +131,7 @@ public abstract class ElemStyle implements StyleKeys {
         public int style;
         public int size;
 
-        public FontDescriptor(String name, int style, int size) {
+        FontDescriptor(String name, int style, int size) {
             this.name = name;
             this.style = style;
             this.size = size;

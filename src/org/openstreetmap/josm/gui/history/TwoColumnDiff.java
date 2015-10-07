@@ -48,7 +48,7 @@ class TwoColumnDiff {
             }
         }
 
-        public Item(DiffItemType state, Object value) {
+        Item(DiffItemType state, Object value) {
             this.state = state;
             this.value = state == DiffItemType.EMPTY ? null : value;
         }
@@ -63,7 +63,7 @@ class TwoColumnDiff {
     private Object[] current;
     boolean referenceReversed = false;
 
-    public TwoColumnDiff(Object[] reference, Object[] current) {
+    TwoColumnDiff(Object[] reference, Object[] current) {
         this.reference = Utils.copyArray(reference);
         this.current = Utils.copyArray(current);
         referenceDiff = new ArrayList<>();

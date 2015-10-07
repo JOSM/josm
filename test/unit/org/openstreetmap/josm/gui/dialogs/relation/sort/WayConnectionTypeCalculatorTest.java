@@ -91,7 +91,7 @@ public class WayConnectionTypeCalculatorTest {
     public void testAssociatedStreet() {
         Relation relation = getRelation("associatedStreet");
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(relation.getMembers()));
-        Assert.assertEquals("[NONE, I, I, I, NONE, I]" , actual);
+        Assert.assertEquals("[NONE, I, I, I, NONE, I]", actual);
         actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
         Assert.assertEquals("[FORWARD, FORWARD, I, I, I, I]", actual);
     }
@@ -105,6 +105,4 @@ public class WayConnectionTypeCalculatorTest {
         actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
         Assert.assertEquals("[BACKWARD, BACKWARD, BACKWARD, FPH FORWARD, FPH FORWARD, FPH FORWARD, FPH FORWARD]", actual);
     }
-
-
 }

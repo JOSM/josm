@@ -199,7 +199,7 @@ public class SelectionListDialog extends ToggleDialog  {
         private final HighlightHelper helper = new HighlightHelper();
         private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
 
-        public MouseEventHandler() {
+        MouseEventHandler() {
             super(popupMenu);
         }
 
@@ -292,7 +292,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /**
          * Constructs a new {@code SearchAction}.
          */
-        public SearchAction() {
+        SearchAction() {
             putValue(NAME, tr("Search"));
             putValue(SHORT_DESCRIPTION,   tr("Search for objects"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
@@ -323,7 +323,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /**
          * Constructs a new {@code SelectAction}.
          */
-        public SelectAction() {
+        SelectAction() {
             updateEnabledState();
         }
 
@@ -354,7 +354,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /**
          * Constructs a new {@code ShowHistoryAction}.
          */
-        public ShowHistoryAction() {
+        ShowHistoryAction() {
             putValue(NAME, tr("History"));
             putValue(SHORT_DESCRIPTION, tr("Display the history of the selected objects."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
@@ -394,7 +394,7 @@ public class SelectionListDialog extends ToggleDialog  {
      */
     class ZoomToJOSMSelectionAction extends AbstractAction implements ListDataListener {
 
-        public ZoomToJOSMSelectionAction() {
+        ZoomToJOSMSelectionAction() {
             putValue(NAME, tr("Zoom to selection"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to selection"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
@@ -435,7 +435,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /**
          * Constructs a new {@code ZoomToListSelection}.
          */
-        public ZoomToListSelection() {
+        ZoomToListSelection() {
             putValue(NAME, tr("Zoom to selected element(s)"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to selected element(s)"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
@@ -485,7 +485,7 @@ public class SelectionListDialog extends ToggleDialog  {
          * Constructor
          * @param selectionModel the selection model used in the list
          */
-        public SelectionListModel(DefaultListSelectionModel selectionModel) {
+        SelectionListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
         }
 

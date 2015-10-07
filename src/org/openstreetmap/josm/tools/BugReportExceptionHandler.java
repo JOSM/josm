@@ -132,7 +132,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
          * Constructs a new {@code BugReporterThread}.
          * @param t the exception
          */
-        public BugReporterThread(Throwable t) {
+        BugReporterThread(Throwable t) {
             super("Bug Reporter");
             this.e = t;
         }

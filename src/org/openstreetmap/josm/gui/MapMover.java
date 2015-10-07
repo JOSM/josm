@@ -37,7 +37,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     private final class ZoomerAction extends AbstractAction {
         private final String action;
 
-        public ZoomerAction(String action) {
+        ZoomerAction(String action) {
             this.action = action;
         }
 

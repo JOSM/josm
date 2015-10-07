@@ -84,7 +84,7 @@ public class PlaceSelection implements DownloadSelection {
         public final String thirdcol;
         public final String fourthcol;
 
-        public Server(String n, String u, String t, String f) {
+        Server(String n, String u, String t, String f) {
             name = n;
             url = u;
             thirdcol = t;
@@ -287,7 +287,7 @@ public class PlaceSelection implements DownloadSelection {
 
     class SearchAction extends AbstractAction implements DocumentListener {
 
-        public SearchAction() {
+        SearchAction() {
             putValue(NAME, tr("Search ..."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
             putValue(SHORT_DESCRIPTION, tr("Click to start searching for places"));
@@ -333,7 +333,7 @@ public class PlaceSelection implements DownloadSelection {
         private Server useserver;
         private Exception lastException;
 
-        public NameQueryTask(String searchExpression) {
+        NameQueryTask(String searchExpression) {
             super(tr("Querying name server"), false /* don't ignore exceptions */);
             this.searchExpression = searchExpression;
             useserver = (Server) server.getSelectedItem();
@@ -412,7 +412,7 @@ public class PlaceSelection implements DownloadSelection {
         private transient List<SearchResult> data;
         private transient ListSelectionModel selectionModel;
 
-        public NamedResultTableModel(ListSelectionModel selectionModel) {
+        NamedResultTableModel(ListSelectionModel selectionModel) {
             data = new ArrayList<>();
             this.selectionModel = selectionModel;
         }
@@ -496,7 +496,7 @@ public class PlaceSelection implements DownloadSelection {
             fireColumnMarginChanged();
         }
 
-        public NamedResultTableColumnModel() {
+        NamedResultTableColumnModel() {
             createColumns();
         }
     }
@@ -516,7 +516,7 @@ public class PlaceSelection implements DownloadSelection {
         /**
          * Constructs a new {@code NamedResultCellRenderer}.
          */
-        public NamedResultCellRenderer() {
+        NamedResultCellRenderer() {
             setOpaque(true);
             setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         }

@@ -27,7 +27,7 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
         /**
          * Constructs a new {@code RecommendedActionsTableCell}.
          */
-        public RecommendedActionsTableCell() {
+        RecommendedActionsTableCell() {
             pnlEmpty.setPreferredSize(new Dimension(1, 19));
             needsUpload.setPreferredSize(new Dimension(needsUpload.getPreferredSize().width, 19));
             needsSave.setPreferredSize(new Dimension(needsSave.getPreferredSize().width, 19));
@@ -71,7 +71,7 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
     /**
      * Constructs a new {@code SaveLayersTableColumnModel}.
      */
-    public SaveLayersTableColumnModel() {
+    SaveLayersTableColumnModel() {
         build();
     }
 

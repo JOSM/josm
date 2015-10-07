@@ -77,7 +77,7 @@ public class OpeningHourTest extends Test.TagTest {
         }
     }
 
-    static enum CheckMode {
+    enum CheckMode {
         TIME_RANGE(0), POINTS_IN_TIME(1), BOTH(2);
         private final int code;
 

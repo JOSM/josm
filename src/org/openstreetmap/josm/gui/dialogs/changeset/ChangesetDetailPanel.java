@@ -267,7 +267,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
      * The action for removing the currently selected changeset from the changeset cache
      */
     class RemoveFromCacheAction extends AbstractAction {
-        public RemoveFromCacheAction() {
+        RemoveFromCacheAction() {
             putValue(NAME, tr("Remove from cache"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(SHORT_DESCRIPTION, tr("Remove the changeset in the detail view panel from the local cache"));
@@ -290,7 +290,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
      *
      */
     class DownloadChangesetContentAction extends AbstractAction {
-        public DownloadChangesetContentAction() {
+        DownloadChangesetContentAction() {
             putValue(NAME, tr("Download content"));
             putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
@@ -327,7 +327,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
      *
      */
     class UpdateChangesetAction extends AbstractAction{
-        public UpdateChangesetAction() {
+        UpdateChangesetAction() {
             putValue(NAME, tr("Update changeset"));
             putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Update the changeset from the OSM server"));
@@ -356,7 +356,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
      */
     class SelectInCurrentLayerAction extends AbstractAction implements EditLayerChangeListener{
 
-        public SelectInCurrentLayerAction() {
+        SelectInCurrentLayerAction() {
             putValue(NAME, tr("Select in layer"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
             putValue(SHORT_DESCRIPTION, tr("Select the primitives in the content of this changeset in the current data layer"));
@@ -417,7 +417,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
      */
     class ZoomInCurrentLayerAction extends AbstractAction implements EditLayerChangeListener{
 
-        public ZoomInCurrentLayerAction() {
+        ZoomInCurrentLayerAction() {
             putValue(NAME, tr("Zoom to in layer"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to the objects in the content of this changeset in the current data layer"));

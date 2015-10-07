@@ -190,7 +190,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         /**
          * Constructs a new {@code ImageryOffsetDialog}.
          */
-        public ImageryOffsetDialog() {
+        ImageryOffsetDialog() {
             super(Main.parent,
                     tr("Adjust imagery offset"),
                     new String[] {tr("OK"), tr("Cancel")},

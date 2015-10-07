@@ -36,7 +36,7 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
     }
 
     private class LambertCC9CBPanel extends CBPanel {
-        public LambertCC9CBPanel(String[] entries, int initialIndex, String label, ActionListener listener) {
+        LambertCC9CBPanel(String[] entries, int initialIndex, String label, ActionListener listener) {
             super(entries, initialIndex, label, listener);
             this.add(new JLabel(ImageProvider.get("data/projection", "LambertCC9Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
             this.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));

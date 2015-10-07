@@ -191,7 +191,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
      *
      */
     class DownloadChangesetContentAction extends AbstractAction{
-        public DownloadChangesetContentAction() {
+        DownloadChangesetContentAction() {
             putValue(NAME, tr("Download content"));
             putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
@@ -224,7 +224,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     }
 
     class ChangesetContentTablePopupMenu extends JPopupMenu {
-        public ChangesetContentTablePopupMenu() {
+        ChangesetContentTablePopupMenu() {
             add(actDownloadContentAction);
             add(actShowHistory);
             add(new JSeparator());
@@ -268,7 +268,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             }
         }
 
-        public ShowHistoryAction() {
+        ShowHistoryAction() {
             putValue(NAME, tr("Show history"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
             putValue(SHORT_DESCRIPTION, tr("Download and show the history of the selected objects"));
@@ -318,7 +318,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     class SelectInCurrentLayerAction extends AbstractAction implements ListSelectionListener, EditLayerChangeListener{
 
-        public SelectInCurrentLayerAction() {
+        SelectInCurrentLayerAction() {
             putValue(NAME, tr("Select in layer"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
             putValue(SHORT_DESCRIPTION, tr("Select the corresponding primitives in the current data layer"));
@@ -368,7 +368,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     class ZoomInCurrentLayerAction extends AbstractAction implements ListSelectionListener, EditLayerChangeListener{
 
-        public ZoomInCurrentLayerAction() {
+        ZoomInCurrentLayerAction() {
             putValue(NAME, tr("Zoom to in layer"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to the corresponding objects in the current data layer"));
@@ -432,7 +432,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         }
 
-        public HeaderPanel() {
+        HeaderPanel() {
             build();
         }
 
@@ -442,7 +442,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         private class DownloadAction extends AbstractAction {
-            public DownloadAction() {
+            DownloadAction() {
                 putValue(NAME, tr("Download now"));
                 putValue(SHORT_DESCRIPTION, tr("Download the changeset content"));
                 putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);

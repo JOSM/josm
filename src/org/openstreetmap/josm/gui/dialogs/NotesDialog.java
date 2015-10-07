@@ -267,7 +267,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         /**
          * Constructs a new {@code NoteTableModel}.
          */
-        public NoteTableModel() {
+        NoteTableModel() {
             data = new ArrayList<>();
         }
 
@@ -302,7 +302,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         /**
          * Constructs a new {@code AddCommentAction}.
          */
-        public AddCommentAction() {
+        AddCommentAction() {
             putValue(SHORT_DESCRIPTION, tr("Add comment"));
             putValue(NAME, tr("Comment"));
             putValue(SMALL_ICON, ICON_COMMENT);
@@ -334,7 +334,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         /**
          * Constructs a new {@code CloseAction}.
          */
-        public CloseAction() {
+        CloseAction() {
             putValue(SHORT_DESCRIPTION, tr("Close note"));
             putValue(NAME, tr("Close"));
             putValue(SMALL_ICON, ICON_CLOSED);
@@ -359,7 +359,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         /**
          * Constructs a new {@code NewAction}.
          */
-        public NewAction() {
+        NewAction() {
             putValue(SHORT_DESCRIPTION, tr("Create a new note"));
             putValue(NAME, tr("Create"));
             putValue(SMALL_ICON, ICON_NEW);
@@ -379,7 +379,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         /**
          * Constructs a new {@code ReopenAction}.
          */
-        public ReopenAction() {
+        ReopenAction() {
             putValue(SHORT_DESCRIPTION, tr("Reopen note"));
             putValue(NAME, tr("Reopen"));
             putValue(SMALL_ICON, ICON_OPEN);
@@ -405,7 +405,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         /**
          * Constructs a new {@code SortAction}.
          */
-        public SortAction() {
+        SortAction() {
             putValue(SHORT_DESCRIPTION, tr("Sort notes"));
             putValue(NAME, tr("Sort"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));

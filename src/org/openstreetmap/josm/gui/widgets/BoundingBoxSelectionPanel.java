@@ -129,7 +129,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
             new LatitudeValidator(tc);
         }
 
-        public LatitudeValidator(JTextComponent tc) {
+        LatitudeValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -169,7 +169,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
             new LongitudeValidator(tc);
         }
 
-        public LongitudeValidator(JTextComponent tc) {
+        LongitudeValidator(JTextComponent tc) {
             super(tc);
         }
 

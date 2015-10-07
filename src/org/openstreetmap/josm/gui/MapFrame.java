@@ -547,7 +547,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         private JButton button;
         private transient Collection<? extends HideableButton> buttons;
 
-        public ListAllButtonsAction(Collection<? extends HideableButton> buttons) {
+        ListAllButtonsAction(Collection<? extends HideableButton> buttons) {
             this.buttons = buttons;
         }
 

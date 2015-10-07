@@ -154,7 +154,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
         private final long start;
         private String duration = "";
 
-        public MeasurableTask(String name) {
+        MeasurableTask(String name) {
             this.name = name;
             this.start = System.currentTimeMillis();
         }
@@ -380,7 +380,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
         /**
          * Constructs a new {@code SplashScreenProgressRenderer}.
          */
-        public SplashScreenProgressRenderer() {
+        SplashScreenProgressRenderer() {
             build();
         }
 

@@ -107,7 +107,7 @@ public class DuplicateRelation extends Test {
         /** Store relation information
          * @param members The list of relation members
          */
-        public RelationMembers(List<RelationMember> members) {
+        RelationMembers(List<RelationMember> members) {
             this.members = new ArrayList<>(members.size());
             for (RelationMember member : members) {
                 this.members.add(new RelMember(member));
@@ -140,7 +140,7 @@ public class DuplicateRelation extends Test {
          * @param members The list of relation members
          * @param keys The set of tags of the relation
          */
-        public RelationPair(List<RelationMember> members, Map<String, String> keys) {
+        RelationPair(List<RelationMember> members, Map<String, String> keys) {
             this.members = new RelationMembers(members);
             this.keys = keys;
         }

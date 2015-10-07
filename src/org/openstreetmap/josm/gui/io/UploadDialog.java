@@ -380,7 +380,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      *
      */
     class UploadAction extends AbstractAction {
-        public UploadAction() {
+        UploadAction() {
             putValue(NAME, tr("Upload Changes"));
             putValue(SMALL_ICON, ImageProvider.get("upload"));
             putValue(SHORT_DESCRIPTION, tr("Upload the changed primitives"));
@@ -503,7 +503,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      *
      */
     class CancelAction extends AbstractAction {
-        public CancelAction() {
+        CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
             putValue(SHORT_DESCRIPTION, tr("Cancel the upload and resume editing"));

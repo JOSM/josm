@@ -136,7 +136,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             @Override
             public void run() {
                 if (model.getRowCount() != 0) {
-                    setTitle(trn("{0} Author", "{0} Authors", model.getRowCount() , model.getRowCount()));
+                    setTitle(trn("{0} Author", "{0} Authors", model.getRowCount(), model.getRowCount()));
                 } else {
                     setTitle(tr("Authors"));
                 }
@@ -155,7 +155,11 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     }
 
     class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener{
-        public SelectUsersPrimitivesAction() {
+
+        /**
+         * Constructs a new {@code SelectUsersPrimitivesAction}.
+         */
+        SelectUsersPrimitivesAction() {
             putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION, tr("Select objects submitted by this user"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
@@ -188,7 +192,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      */
     class ShowUserInfoAction extends AbstractInfoAction implements ListSelectionListener {
 
-        public ShowUserInfoAction() {
+        ShowUserInfoAction() {
             super(false);
             putValue(NAME, tr("Show info"));
             putValue(SHORT_DESCRIPTION, tr("Launches a browser with information about the user"));
@@ -285,7 +289,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     static class UserTableModel extends DefaultTableModel {
         private transient List<UserInfo> data;
 
-        public UserTableModel() {
+        UserTableModel() {
             setColumnIdentifiers(new String[]{tr("Author"), tr("# Objects"), "%"});
             data = new ArrayList<>();
         }

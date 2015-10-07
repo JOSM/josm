@@ -65,7 +65,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         private final String b;
         private final Pattern pattern;
 
-        public StringSwitcher(String a, String b) {
+        StringSwitcher(String a, String b) {
             this.a = a;
             this.b = b;
             this.pattern = getPatternFor(a + "|" + b);

@@ -22,7 +22,7 @@ public class ToolbarPreferencesTest {
 
     private static class TestAction extends AbstractAction implements ParameterizedAction {
 
-        public TestAction() {
+        TestAction() {
             putValue("toolbar", "action");
         }
 

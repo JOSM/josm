@@ -427,7 +427,7 @@ public class MenuScroller {
 
     private class MenuScrollTimer extends Timer {
 
-        public MenuScrollTimer(final int increment, int interval) {
+        MenuScrollTimer(final int increment, int interval) {
             super(interval, new ActionListener() {
 
                 @Override
@@ -444,7 +444,7 @@ public class MenuScroller {
 
         private MenuScrollTimer timer;
 
-        public MenuScrollItem(MenuIcon icon, int increment) {
+        MenuScrollItem(MenuIcon icon, int increment) {
             setIcon(icon);
             setDisabledIcon(icon);
             timer = new MenuScrollTimer(increment, interval);
@@ -466,7 +466,7 @@ public class MenuScroller {
         }
     }
 
-    private static enum MenuIcon implements Icon {
+    private enum MenuIcon implements Icon {
 
         UP(9, 1, 9),
         DOWN(1, 9, 1);

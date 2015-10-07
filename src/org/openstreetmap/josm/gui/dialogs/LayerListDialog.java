@@ -124,7 +124,7 @@ public class LayerListDialog extends ToggleDialog {
     private final class ToggleLayerIndexVisibility extends AbstractAction {
         private int layerIndex = -1;
 
-        public ToggleLayerIndexVisibility(int layerIndex) {
+        ToggleLayerIndexVisibility(int layerIndex) {
             this.layerIndex = layerIndex;
         }
 
@@ -980,7 +980,7 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     private static class ActiveLayerCheckBox extends JCheckBox {
-        public ActiveLayerCheckBox() {
+        ActiveLayerCheckBox() {
             setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             ImageIcon blank = ImageProvider.get("dialogs/layerlist", "blank");
             ImageIcon active = ImageProvider.get("dialogs/layerlist", "active");
@@ -1000,7 +1000,7 @@ public class LayerListDialog extends ToggleDialog {
         /**
          * Constructs a new {@code LayerVisibleCheckBox}.
          */
-        public LayerVisibleCheckBox() {
+        LayerVisibleCheckBox() {
             setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
             iconEye = ImageProvider.get("dialogs/layerlist", "eye");
             iconEyeTranslucent = ImageProvider.get("dialogs/layerlist", "eye-translucent");
@@ -1036,7 +1036,7 @@ public class LayerListDialog extends ToggleDialog {
         /**
          * Constructs a new {@code ActiveLayerCellRenderer}.
          */
-        public ActiveLayerCellRenderer() {
+        ActiveLayerCellRenderer() {
             cb = new ActiveLayerCheckBox();
         }
 
@@ -1055,7 +1055,7 @@ public class LayerListDialog extends ToggleDialog {
         /**
          * Constructs a new {@code LayerVisibleCellRenderer}.
          */
-        public LayerVisibleCellRenderer() {
+        LayerVisibleCellRenderer() {
             this.cb = new LayerVisibleCheckBox();
         }
 
@@ -1071,7 +1071,7 @@ public class LayerListDialog extends ToggleDialog {
     private static class LayerVisibleCellEditor extends DefaultCellEditor {
         private final LayerVisibleCheckBox cb;
 
-        public LayerVisibleCellEditor(LayerVisibleCheckBox cb) {
+        LayerVisibleCellEditor(LayerVisibleCheckBox cb) {
             super(cb);
             this.cb = cb;
         }
@@ -1131,7 +1131,7 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     private static class LayerNameCellEditor extends DefaultCellEditor {
-        public LayerNameCellEditor(DisableShortcutsOnFocusGainedTextField tf) {
+        LayerNameCellEditor(DisableShortcutsOnFocusGainedTextField tf) {
             super(tf);
         }
 
@@ -1156,7 +1156,7 @@ public class LayerListDialog extends ToggleDialog {
      * The action to move up the currently selected entries in the list.
      */
     class MoveUpAction extends AbstractAction implements  IEnabledStateUpdating{
-        public MoveUpAction() {
+        MoveUpAction() {
             putValue(NAME, tr("Move up"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));
             putValue(SHORT_DESCRIPTION, tr("Move the selected layer one row up."));
@@ -1178,7 +1178,7 @@ public class LayerListDialog extends ToggleDialog {
      * The action to move down the currently selected entries in the list.
      */
     class MoveDownAction extends AbstractAction implements IEnabledStateUpdating {
-        public MoveDownAction() {
+        MoveDownAction() {
             putValue(NAME, tr("Move down"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "down"));
             putValue(SHORT_DESCRIPTION, tr("Move the selected layer one row down."));
@@ -1665,7 +1665,7 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     static class LayerList extends JTable {
-        public LayerList(TableModel dataModel) {
+        LayerList(TableModel dataModel) {
             super(dataModel);
         }
 

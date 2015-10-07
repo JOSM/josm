@@ -328,7 +328,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             bgRestrictions.add(rbOpenOnly);
         }
 
-        public OpenAndCloseStateRestrictionPanel() {
+        OpenAndCloseStateRestrictionPanel() {
             build();
         }
 
@@ -489,7 +489,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             bgUserRestrictions.add(rbRestrictToUserName);
         }
 
-        public UserRestrictionPanel() {
+        UserRestrictionPanel() {
             build();
         }
 
@@ -806,7 +806,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             rbClosedAfter.setSelected(true);
         }
 
-        public TimeRestrictionPanel() {
+        TimeRestrictionPanel() {
             build();
         }
 
@@ -927,7 +927,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     }
 
     private static class BBoxRestrictionPanel extends BoundingBoxSelectionPanel {
-        public BBoxRestrictionPanel() {
+        BBoxRestrictionPanel() {
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createEmptyBorder(3, 3, 3, 3),
                     BorderFactory.createCompoundBorder(
@@ -971,7 +971,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             return new UidInputFieldValidator(tc);
         }
 
-        public UidInputFieldValidator(JTextComponent tc) {
+        UidInputFieldValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -1018,7 +1018,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             return new UserNameInputValidator(tc);
         }
 
-        public UserNameInputValidator(JTextComponent tc) {
+        UserNameInputValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -1049,7 +1049,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             return new DateValidator(tc);
         }
 
-        public DateValidator(JTextComponent tc) {
+        DateValidator(JTextComponent tc) {
             super(tc);
         }
 
@@ -1116,7 +1116,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             return new TimeValidator(tc);
         }
 
-        public TimeValidator(JTextComponent tc) {
+        TimeValidator(JTextComponent tc) {
             super(tc);
         }
 

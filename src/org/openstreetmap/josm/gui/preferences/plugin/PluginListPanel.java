@@ -111,7 +111,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
     private class JPluginCheckBox extends JCheckBox {
         public final transient PluginInformation pi;
 
-        public JPluginCheckBox(final PluginInformation pi, boolean selected) {
+        JPluginCheckBox(final PluginInformation pi, boolean selected) {
             this.pi = pi;
             setSelected(selected);
             setToolTipText(formatCheckboxTooltipText(pi));
@@ -126,7 +126,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
     private class PluginCbActionListener implements ActionListener {
         private final JPluginCheckBox cb;
 
-        public PluginCbActionListener(JPluginCheckBox cb) {
+        PluginCbActionListener(JPluginCheckBox cb) {
             this.cb = cb;
         }
 

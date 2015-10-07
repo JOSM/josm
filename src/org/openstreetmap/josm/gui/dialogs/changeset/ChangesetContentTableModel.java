@@ -142,12 +142,12 @@ public class ChangesetContentTableModel extends AbstractTableModel {
         private final ChangesetModificationType modificationType;
         private final HistoryOsmPrimitive primitive;
 
-        public ChangesetContentEntry(ChangesetModificationType modificationType, HistoryOsmPrimitive primitive) {
+        ChangesetContentEntry(ChangesetModificationType modificationType, HistoryOsmPrimitive primitive) {
             this.modificationType = modificationType;
             this.primitive = primitive;
         }
 
-        public ChangesetContentEntry(ChangesetDataSetEntry entry) {
+        ChangesetContentEntry(ChangesetDataSetEntry entry) {
             this(entry.getModificationType(), entry.getPrimitive());
         }
 

@@ -54,7 +54,7 @@ public class OsmUrlToBoundsTest {
         public String url;
         public Bounds bounds;
 
-        public ParseTestItem(String url, Bounds bounds) {
+        ParseTestItem(String url, Bounds bounds) {
             this.url = url;
             this.bounds = bounds;
         }
@@ -78,5 +78,4 @@ public class OsmUrlToBoundsTest {
             Assert.assertEquals(item.url, item.bounds, bounds);
         }
     }
-
 }

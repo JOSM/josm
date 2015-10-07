@@ -265,6 +265,7 @@ public abstract class ImageryLayer extends Layer {
 
         /**
          * Returns the currently set gamma value.
+         * @return the currently set gamma value
          */
         public double getGamma() {
             return gamma;
@@ -272,6 +273,7 @@ public abstract class ImageryLayer extends Layer {
 
         /**
          * Sets a new gamma value, {@code 1} stands for no correction.
+         * @param gamma new gamma value
          */
         public void setGamma(double gamma) {
             this.gamma = gamma;
@@ -293,6 +295,9 @@ public abstract class ImageryLayer extends Layer {
                     return op4.filter(image, null);
                 }
             } catch (IllegalArgumentException ignore) {
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ignore.getMessage());
+                }
             }
             final int type = image.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
             final BufferedImage to = new BufferedImage(image.getWidth(), image.getHeight(), type);
@@ -303,6 +308,7 @@ public abstract class ImageryLayer extends Layer {
 
     /**
      * Returns the currently set gamma value.
+     * @return the currently set gamma value
      */
     public double getGamma() {
         return gammaImageProcessor.getGamma();
@@ -310,6 +316,7 @@ public abstract class ImageryLayer extends Layer {
 
     /**
      * Sets a new gamma value, {@code 1} stands for no correction.
+     * @param gamma new gamma value
      */
     public void setGamma(double gamma) {
         gammaImageProcessor.setGamma(gamma);
