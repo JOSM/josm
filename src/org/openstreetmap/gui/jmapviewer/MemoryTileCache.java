@@ -53,7 +53,7 @@ public class MemoryTileCache implements TileCache {
         CacheEntry entry = createCacheEntry(tile);
         hash.put(tile.getKey(), entry);
         lruTiles.addFirst(entry);
-        if (hash.size() > cacheSize) {
+        if (hash.size() > cacheSize || lruTiles.getElementCount() > cacheSize) {
             removeOldEntries();
         }
     }
