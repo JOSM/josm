@@ -31,8 +31,8 @@ import org.openstreetmap.josm.tools.MultiMap;
  */
 public class SessionWriterTest {
 
-    private static class OsmHeadlessJosExporter extends OsmDataSessionExporter {
-        OsmHeadlessJosExporter(OsmDataLayer layer) {
+    protected static final class OsmHeadlessJosExporter extends OsmDataSessionExporter {
+        public OsmHeadlessJosExporter(OsmDataLayer layer) {
             super(layer);
         }
 
@@ -42,8 +42,8 @@ public class SessionWriterTest {
         }
     }
 
-    private static class OsmHeadlessJozExporter extends OsmDataSessionExporter {
-        OsmHeadlessJozExporter(OsmDataLayer layer) {
+    protected static final class OsmHeadlessJozExporter extends OsmDataSessionExporter {
+        public OsmHeadlessJozExporter(OsmDataLayer layer) {
             super(layer);
         }
 
@@ -53,8 +53,8 @@ public class SessionWriterTest {
         }
     }
 
-    private static class GpxHeadlessJosExporter extends GpxTracksSessionExporter {
-        GpxHeadlessJosExporter(GpxLayer layer) {
+    protected static final class GpxHeadlessJosExporter extends GpxTracksSessionExporter {
+        public GpxHeadlessJosExporter(GpxLayer layer) {
             super(layer);
         }
 
@@ -64,8 +64,8 @@ public class SessionWriterTest {
         }
     }
 
-    private static class GpxHeadlessJozExporter extends GpxTracksSessionExporter {
-        GpxHeadlessJozExporter(GpxLayer layer) {
+    protected static final class GpxHeadlessJozExporter extends GpxTracksSessionExporter {
+        public GpxHeadlessJozExporter(GpxLayer layer) {
             super(layer);
         }
 
@@ -196,6 +196,10 @@ public class SessionWriterTest {
         testWrite(Arrays.asList(gpx, createMarkerLayer(gpx)), true);
     }
 
+    /**
+     * Tests to write a .joz file containing an imagery layer.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
     public void testWriteImageryLayer() throws IOException {
         final Layer layer = createImageryLayer();
