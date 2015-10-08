@@ -1458,7 +1458,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         highlightStep = Main.pref.getInteger("mappaint.highlight.step", 4);
     }
 
-    private Path2D.Double getPath(Way w) {
+    private static Path2D.Double getPath(Way w) {
         Path2D.Double path = new Path2D.Double();
         boolean initial = true;
         for (Node n : w.getNodes()) {

@@ -1109,7 +1109,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /**
      * Returns true if from1-to1 and from2-to2 vertors directions are opposite
      */
-    private boolean isOppositeDirection(EastNorth from1, EastNorth to1, EastNorth from2, EastNorth to2) {
+    private static boolean isOppositeDirection(EastNorth from1, EastNorth to1, EastNorth from2, EastNorth to2) {
         return (from1.getX()-to1.getX())*(from2.getX()-to2.getX())
               +(from1.getY()-to1.getY())*(from2.getY()-to2.getY()) < 0;
     }
