@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
@@ -612,26 +613,38 @@ public class SearchCompiler {
     public static class ValueComparison extends Match {
         private final String key;
         private final String referenceValue;
+        private final Double referenceNumber;
         private final int compareMode;
+        private static final Pattern ISO8601 = Pattern.compile("\\d+-\\d+-\\d+");
 
         public ValueComparison(String key, String referenceValue, int compareMode) {
             this.key = key;
             this.referenceValue = referenceValue;
+            Double v = null;
+            try {
+                v = Double.parseDouble(referenceValue);
+            } catch (NumberFormatException ignore) {
+            }
+            this.referenceNumber = v;
             this.compareMode = compareMode;
         }
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            int compareResult;
-            String currentValue = osm.get(key);
-            if (currentValue == null) return false;
-            try {
-                compareResult = Double.compare(
-                        Double.parseDouble(currentValue),
-                        Double.parseDouble(referenceValue)
-                );
-            } catch (NumberFormatException ignore) {
-                compareResult = osm.get(key).compareTo(referenceValue);
+            final String currentValue = osm.get(key);
+            final int compareResult;
+            if (currentValue == null) {
+                return false;
+            } else if (ISO8601.matcher(currentValue).matches() || ISO8601.matcher(referenceValue).matches()) {
+                compareResult = currentValue.compareTo(referenceValue);
+            } else if (referenceNumber != null) {
+                try {
+                    compareResult = Double.compare(Double.parseDouble(currentValue), referenceNumber);
+                } catch (NumberFormatException ignore) {
+                    return false;
+                }
+            } else {
+                compareResult = AlphanumComparator.getInstance().compare(currentValue, referenceValue);
             }
             return compareMode < 0 ? compareResult < 0 : compareMode > 0 ? compareResult > 0 : compareResult == 0;
         }
