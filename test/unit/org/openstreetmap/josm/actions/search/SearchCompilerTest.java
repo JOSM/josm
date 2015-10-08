@@ -53,19 +53,32 @@ public class SearchCompilerTest {
         Assert.assertFalse(c1.match(newPrimitive("start_date", "1950")));
         Assert.assertFalse(c1.match(newPrimitive("start_date", "1000")));
         Assert.assertTrue(c1.match(newPrimitive("start_date", "101010")));
+
         final SearchCompiler.Match c2 = SearchCompiler.compile("start_date<1960");
         Assert.assertTrue(c2.match(newPrimitive("start_date", "1950-01-01")));
         Assert.assertFalse(c2.match(newPrimitive("start_date", "1960")));
         Assert.assertTrue(c2.match(newPrimitive("start_date", "1950")));
         Assert.assertTrue(c2.match(newPrimitive("start_date", "1000")));
         Assert.assertTrue(c2.match(newPrimitive("start_date", "200")));
+
         final SearchCompiler.Match c3 = SearchCompiler.compile("name<I");
         Assert.assertTrue(c3.match(newPrimitive("name", "Alpha")));
         Assert.assertFalse(c3.match(newPrimitive("name", "Sigma")));
+
         final SearchCompiler.Match c4 = SearchCompiler.compile("\"start_date\"<1960");
         Assert.assertTrue(c4.match(newPrimitive("start_date", "1950-01-01")));
         Assert.assertFalse(c4.match(newPrimitive("start_date", "2000")));
 
+        final SearchCompiler.Match c5 = SearchCompiler.compile("height>180");
+        Assert.assertTrue(c5.match(newPrimitive("height", "200")));
+        Assert.assertTrue(c5.match(newPrimitive("height", "99999")));
+        Assert.assertFalse(c5.match(newPrimitive("height", "50")));
+        Assert.assertFalse(c5.match(newPrimitive("height", "-9999")));
+        Assert.assertFalse(c5.match(newPrimitive("height", "fixme")));
+
+        final SearchCompiler.Match c6 = SearchCompiler.compile("name>C");
+        Assert.assertTrue(c6.match(newPrimitive("name", "Delta")));
+        Assert.assertFalse(c6.match(newPrimitive("name", "Alpha")));
     }
 
     @Test
