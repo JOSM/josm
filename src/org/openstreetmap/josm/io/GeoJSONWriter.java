@@ -117,7 +117,7 @@ public class GeoJSONWriter {
         return getCoorArray(builder, projection.latlon2eastNorth(c));
     }
 
-    private JsonArrayBuilder getCoorArray(JsonArrayBuilder builder, EastNorth c) {
+    private static JsonArrayBuilder getCoorArray(JsonArrayBuilder builder, EastNorth c) {
         return builder.add(c.getX()).add(c.getY());
     }
 
