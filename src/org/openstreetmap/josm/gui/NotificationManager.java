@@ -70,7 +70,7 @@ class NotificationManager {
     private long displayTimeStart;
     private long elapsedTime;
 
-    private static NotificationManager INSTANCE = null;
+    private static NotificationManager INSTANCE;
 
     private static final Color PANEL_SEMITRANSPARENT = new Color(224, 236, 249, 230);
     private static final Color PANEL_OPAQUE = new Color(224, 236, 249);

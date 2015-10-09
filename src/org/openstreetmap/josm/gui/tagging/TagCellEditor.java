@@ -18,14 +18,14 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
  */
 public class TagCellEditor extends AbstractCellEditor implements TableCellEditor{
 
-    protected AutoCompletingTextField editor = null;
-    protected transient TagModel currentTag = null;
+    protected AutoCompletingTextField editor;
+    protected transient TagModel currentTag;
 
     /** the cache of auto completion items derived from the current JOSM data set */
-    protected transient AutoCompletionManager autocomplete = null;
+    protected transient AutoCompletionManager autocomplete;
 
     /** user input is matched against this list of auto completion items */
-    protected AutoCompletionList autoCompletionList = null;
+    protected AutoCompletionList autoCompletionList;
 
     /**
      * constructor

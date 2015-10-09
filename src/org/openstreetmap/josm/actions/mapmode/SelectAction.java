@@ -115,18 +115,18 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         }
     }
 
-    private boolean lassoMode = false;
+    private boolean lassoMode;
     public boolean repeatedKeySwitchLassoOption;
 
     // Cache previous mouse event (needed when only the modifier keys are
     // pressed but the mouse isn't moved)
-    private MouseEvent oldEvent = null;
+    private MouseEvent oldEvent;
 
-    private Mode mode = null;
+    private Mode mode;
     private final transient SelectionManager selectionManager;
-    private boolean cancelDrawMode = false;
+    private boolean cancelDrawMode;
     private boolean drawTargetHighlight;
-    private boolean didMouseDrag = false;
+    private boolean didMouseDrag;
     /**
      * The component this SelectAction is associated with.
      */
@@ -146,15 +146,15 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     /**
      * The time of the user mouse down event.
      */
-    private long mouseDownTime = 0;
+    private long mouseDownTime;
     /**
      * The pressed button of the user mouse down event.
      */
-    private int mouseDownButton = 0;
+    private int mouseDownButton;
     /**
      * The time of the user mouse down event.
      */
-    private long mouseReleaseTime = 0;
+    private long mouseReleaseTime;
     /**
      * The time which needs to pass between click and release before something
      * counts as a move, in milliseconds
@@ -165,7 +165,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * counts as a move, in pixels
      */
     private int initialMoveThreshold;
-    private boolean initialMoveThresholdExceeded = false;
+    private boolean initialMoveThresholdExceeded;
 
     /**
      * elements that have been highlighted in the previous iteration. Used
@@ -990,8 +990,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     private class CycleManager {
 
         private Collection<OsmPrimitive> cycleList = Collections.emptyList();
-        private boolean cyclePrims = false;
-        private OsmPrimitive cycleStart = null;
+        private boolean cyclePrims;
+        private OsmPrimitive cycleStart;
         private boolean waitForMouseUpParameter;
         private boolean multipleMatchesParameter;
         /**
@@ -1129,7 +1129,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     private class VirtualManager {
 
-        private Node virtualNode = null;
+        private Node virtualNode;
         private Collection<WaySegment> virtualWays = new LinkedList<>();
         private int nodeVirtualSize;
         private int virtualSnapDistSq2;

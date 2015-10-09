@@ -12,8 +12,8 @@ import org.openstreetmap.josm.io.XmlWriter;
  */
 public abstract class AbstractDownloadTask implements DownloadTask {
     private List<Object> errorMessages;
-    private boolean canceled = false;
-    private boolean failed = false;
+    private boolean canceled;
+    private boolean failed;
 
     public AbstractDownloadTask() {
         errorMessages = new ArrayList<>();

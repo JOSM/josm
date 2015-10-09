@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.ExifReader;
 public class ThumbsLoader implements Runnable {
     public static final int maxSize = 120;
     public static final int minSize = 22;
-    public volatile boolean stop = false;
+    public volatile boolean stop;
     private List<ImageEntry> data;
     private GeoImageLayer layer;
     private MediaTracker tracker;

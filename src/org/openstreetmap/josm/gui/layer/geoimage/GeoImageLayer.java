@@ -92,12 +92,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
     private int currentPhoto = -1;
 
-    boolean useThumbs = false;
+    boolean useThumbs;
     private ExecutorService thumbsLoaderExecutor =
             Executors.newSingleThreadExecutor(Utils.newThreadFactory("thumbnail-loader-%d", Thread.MIN_PRIORITY));
     private ThumbsLoader thumbsloader;
-    private boolean thumbsLoaderRunning = false;
-    volatile boolean thumbsLoaded = false;
+    private boolean thumbsLoaderRunning;
+    volatile boolean thumbsLoaded;
     private BufferedImage offscreenBuffer;
     boolean updateOffscreenBuffer = true;
 
@@ -108,7 +108,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
      */
     private static final class Loader extends PleaseWaitRunnable {
 
-        private boolean canceled = false;
+        private boolean canceled;
         private GeoImageLayer layer;
         private Collection<File> selection;
         private Set<String> loadedDirectories = new HashSet<>();
@@ -901,7 +901,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
     }
 
-    private static volatile List<MapMode> supportedMapModes = null;
+    private static volatile List<MapMode> supportedMapModes;
 
     /**
      * Registers a map mode for which the functionality of this layer should be available.
@@ -937,8 +937,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         return false;
     }
 
-    private MouseAdapter mouseAdapter = null;
-    private MapModeChangeListener mapModeListener = null;
+    private MouseAdapter mouseAdapter;
+    private MapModeChangeListener mapModeListener;
 
     @Override
     public void hookUpMapView() {

@@ -33,7 +33,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         this.parent = parent;
     }
 
-    public boolean initialized = false; // read only from outside
+    public boolean initialized; // read only from outside
 
     public void initialize(List<ToggleDialog> pAllDialogs) {
         if (initialized)

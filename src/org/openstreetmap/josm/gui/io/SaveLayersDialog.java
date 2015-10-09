@@ -91,7 +91,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
 
-    private JButton saveAndProceedActionButton = null;
+    private JButton saveAndProceedActionButton;
 
     /**
      * builds the button row

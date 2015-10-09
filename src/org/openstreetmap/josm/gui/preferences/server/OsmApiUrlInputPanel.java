@@ -167,7 +167,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     }
 
     class ValidateApiUrlAction extends AbstractAction implements DocumentListener {
-        private String lastTestedUrl = null;
+        private String lastTestedUrl;
 
         ValidateApiUrlAction() {
             putValue(NAME, tr("Validate"));

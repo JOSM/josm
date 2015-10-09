@@ -22,9 +22,9 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * GPS data includes the position, speed, elevation, time (e.g. as extracted from the GPS track).
      * The flag can used to decide for which image file the EXIF GPS data is (re-)written.
      */
-    private boolean isNewGpsData = false;
+    private boolean isNewGpsData;
     /** Temporary source of GPS time if not correlated with GPX track. */
-    private Date exifGpsTime = null;
+    private Date exifGpsTime;
     Image thumbnail;
 
     /**

@@ -39,8 +39,8 @@ public final class TextTagParser {
     }
 
     public static class TextAnalyzer {
-        private boolean quotesStarted = false;
-        private boolean esc = false;
+        private boolean quotesStarted;
+        private boolean esc;
         private StringBuilder s = new StringBuilder(200);
         private int pos;
         private String data;

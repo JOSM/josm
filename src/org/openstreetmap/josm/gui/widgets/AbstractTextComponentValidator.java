@@ -39,7 +39,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /** remembers whether the content of the text component is currently valid or not; null means,
      * we don't know yet
      */
-    private Boolean valid = null;
+    private Boolean valid;
     // remember the message
     private String msg;
 

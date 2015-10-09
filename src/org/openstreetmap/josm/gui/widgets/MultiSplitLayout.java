@@ -818,9 +818,9 @@ public class MultiSplitLayout implements LayoutManager {
      * Base class for the nodes that model a MultiSplitLayout.
      */
     public abstract static class Node {
-        private Split parent = null;
+        private Split parent;
         private Rectangle bounds = new Rectangle();
-        private double weight = 0.0;
+        private double weight;
 
         /**
          * Returns the Split parent of this Node, or null.

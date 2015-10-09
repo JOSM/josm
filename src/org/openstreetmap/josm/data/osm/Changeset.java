@@ -45,9 +45,9 @@ public final class Changeset implements Tagged {
     /** indicates whether this changeset is incomplete. For an incomplete changeset we only know its id */
     private boolean incomplete;
     /** the changeset content */
-    private ChangesetDataSet content = null;
+    private ChangesetDataSet content;
     /** the changeset discussion */
-    private List<ChangesetDiscussionComment> discussion = null;
+    private List<ChangesetDiscussionComment> discussion;
 
     /**
      * Creates a new changeset with id 0.

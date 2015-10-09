@@ -46,14 +46,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class DeleteAction extends MapMode implements ModifierListener {
     // Cache previous mouse event (needed when only the modifier keys are pressed but the mouse isn't moved)
-    private MouseEvent oldEvent = null;
+    private MouseEvent oldEvent;
 
     /**
      * elements that have been highlighted in the previous iteration. Used
      * to remove the highlight from them again as otherwise the whole data
      * set would have to be checked.
      */
-    private transient WaySegment oldHighlightedWaySegment = null;
+    private transient WaySegment oldHighlightedWaySegment;
 
     private static final HighlightHelper highlightHelper = new HighlightHelper();
     private boolean drawTargetHighlight;

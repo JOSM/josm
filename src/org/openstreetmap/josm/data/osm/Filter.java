@@ -14,8 +14,8 @@ public class Filter extends SearchSetting {
     private static final String version = "1";
 
     public boolean enable = true;
-    public boolean hiding = false;
-    public boolean inverted = false;
+    public boolean hiding;
+    public boolean inverted;
 
     /**
      * Constructs a new {@code Filter}.
@@ -47,14 +47,14 @@ public class Filter extends SearchSetting {
 
     public static class FilterPreferenceEntry {
         @pref @writeExplicitly public String version = "1";
-        @pref public String text = null;
+        @pref public String text;
         @pref @writeExplicitly public String mode = "add";
-        @pref public boolean case_sensitive = false;
-        @pref public boolean regex_search = false;
-        @pref public boolean mapCSS_search = false;
+        @pref public boolean case_sensitive;
+        @pref public boolean regex_search;
+        @pref public boolean mapCSS_search;
         @pref @writeExplicitly public boolean enable = true;
-        @pref @writeExplicitly public boolean hiding = false;
-        @pref @writeExplicitly public boolean inverted = false;
+        @pref @writeExplicitly public boolean hiding;
+        @pref @writeExplicitly public boolean inverted;
     }
 
     public FilterPreferenceEntry getPreferenceEntry() {

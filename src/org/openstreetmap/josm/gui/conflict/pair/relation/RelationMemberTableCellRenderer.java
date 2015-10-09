@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public  class RelationMemberTableCellRenderer extends JLabel implements TableCellRenderer {
-    private transient Border rowNumberBorder = null;
+    private transient Border rowNumberBorder;
 
     /**
      * constructor

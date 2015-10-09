@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.AlphanumComparator;
  */
 public class TestError implements Comparable<TestError>, DataSetListener {
     /** is this error on the ignore list */
-    private boolean ignored = false;
+    private boolean ignored;
     /** Severity */
     private Severity severity;
     /** The error message */

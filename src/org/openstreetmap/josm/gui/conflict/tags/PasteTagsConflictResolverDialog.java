@@ -61,7 +61,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     private transient Map<OsmPrimitiveType, TagConflictResolver> resolvers;
     private JTabbedPane tpResolvers;
     private Mode mode;
-    private boolean canceled = false;
+    private boolean canceled;
 
     private final ImageIcon iconResolved;
     private final ImageIcon iconUnresolved;

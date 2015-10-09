@@ -93,19 +93,19 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * An id of 0 means an unknown id. The object has not been uploaded yet to
      * know what id it will get.
      */
-    protected long id = 0;
+    protected long id;
 
     /**
      * User that last modified this primitive, as specified by the server.
      * Never changed by JOSM.
      */
-    protected User user = null;
+    protected User user;
 
     /**
      * Contains the version number as returned by the API. Needed to
      * ensure update consistency
      */
-    protected int version = 0;
+    protected int version;
 
     /**
      * The id of the changeset this primitive was last uploaded to.

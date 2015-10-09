@@ -108,8 +108,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     /** Property used to know if this layer has to be uploaded */
     public static final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 
-    private boolean requiresSaveToFile = false;
-    private boolean requiresUploadToServer = false;
+    private boolean requiresSaveToFile;
+    private boolean requiresUploadToServer;
     private boolean isChanged = true;
     private int highlightUpdateCount;
 
@@ -136,7 +136,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     /** the global counter for created data layers */
-    private static int dataLayerCounter = 0;
+    private static int dataLayerCounter;
 
     /**
      * Replies a new unique name for a data layer

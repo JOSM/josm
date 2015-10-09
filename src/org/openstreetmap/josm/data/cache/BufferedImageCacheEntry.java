@@ -16,11 +16,11 @@ import javax.imageio.ImageIO;
 public class BufferedImageCacheEntry extends CacheEntry {
     private static final long serialVersionUID = 1L; //version
     // transient to avoid serialization, volatile to avoid synchronization of whole getImage() method
-    private transient volatile BufferedImage img = null;
-    private transient volatile boolean writtenToDisk = false;
+    private transient volatile BufferedImage img;
+    private transient volatile boolean writtenToDisk;
     // we need to have separate control variable, to know, if we already tried to load the image, as img might be null
     // after we loaded image, as for example, when image file is malformed (eg. HTML file)
-    private transient volatile boolean imageLoaded = false;
+    private transient volatile boolean imageLoaded;
 
     /**
      *

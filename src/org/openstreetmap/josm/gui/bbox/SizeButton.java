@@ -19,12 +19,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class SizeButton extends JComponent {
 
-    private int x = 0;
-    private int y = 0;
+    private int x;
+    private int y;
 
     private ImageIcon enlargeImage;
     private ImageIcon shrinkImage;
-    private boolean isEnlarged = false;
+    private boolean isEnlarged;
     private final SlippyMapBBoxChooser slippyMapBBoxChooser;
 
     public SizeButton(SlippyMapBBoxChooser slippyMapBBoxChooser) {

@@ -26,7 +26,7 @@ public class NoteData {
     private long newNoteId = -1;
 
     private final Storage<Note> noteList;
-    private Note selectedNote = null;
+    private Note selectedNote;
     private Comparator<Note> comparator = DEFAULT_COMPARATOR;
 
     /**

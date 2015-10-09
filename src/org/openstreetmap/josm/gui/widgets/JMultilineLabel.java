@@ -20,8 +20,8 @@ import javax.swing.text.View;
  */
 public class JMultilineLabel extends JEditorPane {
     private int maxWidth = Integer.MAX_VALUE;
-    private Rectangle oldbounds = null;
-    private Dimension oldPreferred = null;
+    private Rectangle oldbounds;
+    private Dimension oldPreferred;
 
     /**
      * Constructs a normal label but adds HTML tags if not already done so.

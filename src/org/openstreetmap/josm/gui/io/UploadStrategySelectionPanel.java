@@ -60,7 +60,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     private JRadioButton rbUseMultipleChangesets;
     private JMultilineLabel lblMultiChangesetPoliciesHeader;
 
-    private long numUploadedObjects = 0;
+    private long numUploadedObjects;
 
     /**
      * Constructs a new {@code UploadStrategySelectionPanel}.

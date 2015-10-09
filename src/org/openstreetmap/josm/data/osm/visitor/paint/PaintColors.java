@@ -34,7 +34,7 @@ public enum PaintColors implements ColorKey {
     private final String name;
     private final Color defaultColor;
 
-    private static volatile Color backgroundColorCache = null;
+    private static volatile Color backgroundColorCache;
 
     private static final MapPaintSylesUpdateListener styleOverrideListener = new MapPaintSylesUpdateListener() {
 

@@ -91,7 +91,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
     private static List<GpxData> loadedGpxData = new ArrayList<>();
 
-    private transient GeoImageLayer yLayer = null;
+    private transient GeoImageLayer yLayer;
     private double timezone;
     private long delta;
 
@@ -236,7 +236,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private JLabel statusBarText;
 
     // remember the last number of matched photos
-    private int lastNumMatched = 0;
+    private int lastNumMatched;
 
     /** This class is called when the user doesn't find the GPX file he needs in the files that have
      * been loaded yet. It displays a FileChooser dialog to select the GPX file to be loaded.

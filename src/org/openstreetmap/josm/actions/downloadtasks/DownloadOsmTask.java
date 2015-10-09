@@ -46,7 +46,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     protected DataSet downloadedData;
     protected DownloadTask downloadTask;
 
-    protected String newLayerName = null;
+    protected String newLayerName;
 
     @Override
     public String[] getPatterns() {

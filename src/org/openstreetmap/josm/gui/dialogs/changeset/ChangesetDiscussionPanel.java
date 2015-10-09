@@ -39,7 +39,7 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
 
     private JTable table;
 
-    private transient Changeset current = null;
+    private transient Changeset current;
 
     protected JPanel buildActionButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));

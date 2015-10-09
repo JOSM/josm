@@ -122,7 +122,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer);
     }
 
-    public boolean viewportFollowing = false;
+    public boolean viewportFollowing;
 
     /**
      * the layer listeners
@@ -239,7 +239,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     /**
      * The play head marker: there is only one of these so it isn't in any specific layer
      */
-    public transient PlayHeadMarker playHeadMarker = null;
+    public transient PlayHeadMarker playHeadMarker;
 
     /**
      * The layer from the layers list that is currently active. Locked by {@link #layerLock}.
@@ -341,8 +341,8 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     }
 
     // remebered geometry of the component
-    private Dimension oldSize = null;
-    private Point oldLoc = null;
+    private Dimension oldSize;
+    private Point oldLoc;
 
     /**
      * Call this method to keep map position on screen during next repaint
@@ -534,7 +534,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         refreshTitle();
     }
 
-    private boolean virtualNodesEnabled = false;
+    private boolean virtualNodesEnabled;
 
     public void setVirtualNodesEnabled(boolean enabled) {
         if (virtualNodesEnabled != enabled) {

@@ -54,7 +54,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class JoinAreasAction extends JosmAction {
     // This will be used to commit commands and unite them into one large command sequence at the end
     private final LinkedList<Command> cmds = new LinkedList<>();
-    private int cmdsCount = 0;
+    private int cmdsCount;
     private final transient List<Relation> addedRelations = new LinkedList<>();
 
     /**

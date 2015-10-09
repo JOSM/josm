@@ -66,7 +66,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      */
     public static final String THEIR_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".theirPrimitive";
 
-    private JTabbedPane tabbedPane = null;
+    private JTabbedPane tabbedPane;
     private TagMerger tagMerger;
     private NodeListMerger nodeListMerger;
     private RelationMemberMerger relationMemberMerger;

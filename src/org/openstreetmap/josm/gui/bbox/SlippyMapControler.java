@@ -202,16 +202,16 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
         private double speedY = 1;
 
         /** The horizontal direction of movement, -1:left, 0:stop, 1:right */
-        private int directionX = 0;
+        private int directionX;
 
         /** The vertical direction of movement, -1:up, 0:stop, 1:down */
-        private int directionY = 0;
+        private int directionY;
 
         /**
          * Indicated if <code>moveTask</code> is currently enabled (periodically
          * executed via timer) or disabled
          */
-        protected boolean scheduled = false;
+        protected boolean scheduled;
 
         protected void setDirectionX(int directionX) {
             this.directionX = directionX;

@@ -22,9 +22,9 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 public class AudioMarker extends ButtonMarker {
 
     private URL audioUrl;
-    private static volatile AudioMarker recentlyPlayedMarker = null;
+    private static volatile AudioMarker recentlyPlayedMarker;
     public double syncOffset;
-    public boolean timeFromAudio = false; // as opposed to from the GPX track
+    public boolean timeFromAudio; // as opposed to from the GPX track
 
     public AudioMarker(LatLon ll, TemplateEngineDataProvider dataProvider, URL audioUrl, MarkerLayer parentLayer, double time, double offset) {
         super(ll, dataProvider, "speech", parentLayer, time, offset);
@@ -33,7 +33,8 @@ public class AudioMarker extends ButtonMarker {
         this.timeFromAudio = false;
     }
 
-    @Override public void actionPerformed(ActionEvent ev) {
+    @Override
+    public void actionPerformed(ActionEvent ev) {
         play();
     }
 

@@ -19,8 +19,8 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class TagCellRenderer extends JLabel implements TableCellRenderer  {
-    private Font fontStandard = null;
-    private Font fontItalic = null;
+    private Font fontStandard;
+    private Font fontItalic;
 
     /**
      * Constructs a new {@code TagCellRenderer}.

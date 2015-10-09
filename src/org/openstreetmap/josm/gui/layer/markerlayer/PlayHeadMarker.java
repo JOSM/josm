@@ -34,15 +34,15 @@ import org.openstreetmap.josm.tools.AudioPlayer;
  */
 public final class PlayHeadMarker extends Marker {
 
-    private Timer timer = null;
-    private double animationInterval = 0.0; // seconds
-    private static volatile PlayHeadMarker playHead = null;
-    private MapMode oldMode = null;
+    private Timer timer;
+    private double animationInterval; // seconds
+    private static volatile PlayHeadMarker playHead;
+    private MapMode oldMode;
     private LatLon oldCoor;
     private boolean enabled;
-    private boolean wasPlaying = false;
+    private boolean wasPlaying;
     private int dropTolerance; /* pixels */
-    private boolean jumpToMarker = false;
+    private boolean jumpToMarker;
 
     /**
      * Returns the unique instance of {@code PlayHeadMarker}.

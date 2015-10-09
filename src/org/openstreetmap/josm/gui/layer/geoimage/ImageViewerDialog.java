@@ -45,12 +45,12 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private static final String COMMAND_COPY_PATH = "copypath";
 
     private ImageDisplay imgDisplay = new ImageDisplay();
-    private boolean centerView = false;
+    private boolean centerView;
 
     // Only one instance of that class is present at one time
     private static volatile ImageViewerDialog dialog;
 
-    private boolean collapseButtonClicked = false;
+    private boolean collapseButtonClicked;
 
     static void newInstance() {
         dialog = new ImageViewerDialog();
@@ -275,8 +275,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         getInstance().btnNext.setEnabled(value);
     }
 
-    private transient GeoImageLayer currentLayer = null;
-    private transient ImageEntry currentEntry = null;
+    private transient GeoImageLayer currentLayer;
+    private transient ImageEntry currentEntry;
 
     public void displayImage(GeoImageLayer layer, ImageEntry entry) {
         boolean imageChanged;

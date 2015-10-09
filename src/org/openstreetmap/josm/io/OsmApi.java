@@ -80,7 +80,7 @@ public class OsmApi extends OsmConnection {
     // The collection of instantiated OSM APIs
     private static Map<String, OsmApi> instances = new HashMap<>();
 
-    private URL url = null;
+    private URL url;
 
     /**
      * Replies the {@link OsmApi} for a given server URL
@@ -119,13 +119,13 @@ public class OsmApi extends OsmConnection {
     private Changeset changeset;
 
     /** API version used for server communications */
-    private String version = null;
+    private String version;
 
     /** API capabilities */
-    private Capabilities capabilities = null;
+    private Capabilities capabilities;
 
     /** true if successfully initialized */
-    private boolean initialized = false;
+    private boolean initialized;
 
     /**
      * Constructs a new {@code OsmApi} for a specific server URL.

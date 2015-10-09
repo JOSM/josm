@@ -88,7 +88,7 @@ public class Storage<T> extends AbstractSet<T> {
     private T[] data;
     private int mask;
     private int size;
-    private volatile int modCount = 0;
+    private volatile int modCount;
     private double loadFactor = 0.6d;
     private static final int DEFAULT_CAPACITY = 16;
     private final boolean safeIterator;
@@ -458,7 +458,7 @@ public class Storage<T> extends AbstractSet<T> {
 
     private final class SafeReadonlyIter implements Iterator<T> {
         private final T[] data;
-        private int slot = 0;
+        private int slot;
 
         SafeReadonlyIter(T[] data) {
             this.data = data;
@@ -490,7 +490,7 @@ public class Storage<T> extends AbstractSet<T> {
 
     private final class Iter implements Iterator<T> {
         private final int mods;
-        private int slot = 0;
+        private int slot;
         private int removeSlot = -1;
 
         Iter() {

@@ -56,7 +56,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class TagTable extends JTable  {
     /** the table cell editor used by this table */
-    private TagCellEditor editor = null;
+    private TagCellEditor editor;
     private final TagEditorModel model;
     private Component nextFocusComponent;
 
@@ -366,13 +366,13 @@ public class TagTable extends JTable  {
     }
 
     /** the delete action */
-    private RunnableAction deleteAction = null;
+    private RunnableAction deleteAction;
 
     /** the add action */
-    private RunnableAction addAction = null;
+    private RunnableAction addAction;
 
     /** the tag paste action */
-    private RunnableAction pasteAction = null;
+    private RunnableAction pasteAction;
 
     /**
      *

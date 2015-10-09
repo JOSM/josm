@@ -248,7 +248,7 @@ public final class PluginHandler {
         }
     }
 
-    private static PluginDownloadTask pluginDownloadTask = null;
+    private static PluginDownloadTask pluginDownloadTask;
 
     public static Collection<ClassLoader> getResourceClassLoaders() {
         return Collections.unmodifiableCollection(sources);

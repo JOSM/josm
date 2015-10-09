@@ -216,12 +216,12 @@ public class NmeaReader {
         protected String pDate;
         protected WayPoint pWp;
 
-        protected int success = 0; // number of successfully parsed sentences
-        protected int malformed = 0;
-        protected int checksumErrors = 0;
-        protected int noChecksum = 0;
-        protected int unknown = 0;
-        protected int zeroCoord = 0;
+        protected int success; // number of successfully parsed sentences
+        protected int malformed;
+        protected int checksumErrors;
+        protected int noChecksum;
+        protected int unknown;
+        protected int zeroCoord;
     }
 
     // Parses split up sentences into WayPoints which are stored

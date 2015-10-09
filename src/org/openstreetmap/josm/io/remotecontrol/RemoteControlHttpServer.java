@@ -19,12 +19,12 @@ import org.openstreetmap.josm.Main;
 public class RemoteControlHttpServer extends Thread {
 
     /** The server socket */
-    private ServerSocket server = null;
+    private ServerSocket server;
 
     /** The server instance for IPv4 */
-    private static volatile RemoteControlHttpServer instance4 = null;
+    private static volatile RemoteControlHttpServer instance4;
     /** The server instance for IPv6 */
-    private static volatile RemoteControlHttpServer instance6 = null;
+    private static volatile RemoteControlHttpServer instance6;
 
     /**
      * Starts or restarts the HTTP server

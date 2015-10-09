@@ -68,10 +68,10 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
      * A list of markers.
      */
     public final List<Marker> data;
-    private boolean mousePressed = false;
-    public GpxLayer fromLayer = null;
+    private boolean mousePressed;
+    public GpxLayer fromLayer;
     private Marker currentMarker;
-    public AudioMarker syncAudioMarker = null;
+    public AudioMarker syncAudioMarker;
 
     /**
      * Constructs a new {@code MarkerLayer}.

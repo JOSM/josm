@@ -68,7 +68,7 @@ public class GpxReader implements GpxConstants {
 
         private StringBuffer accumulator = new StringBuffer();
 
-        private boolean nokiaSportsTrackerBug = false;
+        private boolean nokiaSportsTrackerBug;
 
         @Override
         public void startDocument() {

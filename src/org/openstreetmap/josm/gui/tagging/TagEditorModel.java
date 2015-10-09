@@ -37,7 +37,7 @@ public class TagEditorModel extends AbstractTableModel {
     protected final transient List<TagModel> tags = new ArrayList<>();
 
     /** indicates whether the model is dirty */
-    private boolean dirty =  false;
+    private boolean dirty;
     private final PropertyChangeSupport propChangeSupport = new PropertyChangeSupport(this);
 
     private DefaultListSelectionModel rowSelectionModel;

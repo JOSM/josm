@@ -14,7 +14,7 @@ import javax.swing.JDialog;
  */
 public abstract class AbstractUploadDialog extends JDialog {
 
-    private boolean canceled = false;
+    private boolean canceled;
 
     /**
      * Creates a dialog with an empty title and the specified modality and

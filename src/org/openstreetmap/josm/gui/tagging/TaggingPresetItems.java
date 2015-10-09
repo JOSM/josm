@@ -80,7 +80,7 @@ public final class TaggingPresetItems {
     private TaggingPresetItems() {
     }
 
-    private static int auto_increment_selected = 0;
+    private static int auto_increment_selected;
     /** Translatation of "&lt;different&gt;". Use in combo boxes to display en entry matching several different values. */
     public static final String DIFFERENT = tr("<different>");
 
@@ -188,8 +188,8 @@ public final class TaggingPresetItems {
         public String locale_text;
         public SearchCompiler.Match memberExpression;
 
-        public boolean required = false;
-        private long count = 0;
+        public boolean required;
+        private long count;
 
         public void setType(String types) throws SAXException {
             this.types = getType(types);
@@ -306,8 +306,8 @@ public final class TaggingPresetItems {
 
     public static class Usage {
         private SortedSet<String> values;
-        private boolean hadKeys = false;
-        private boolean hadEmpty = false;
+        private boolean hadKeys;
+        private boolean hadEmpty;
 
         public boolean hasUniqueValue() {
             return values.size() == 1 && !hadEmpty;
@@ -884,9 +884,9 @@ public final class TaggingPresetItems {
         /** the value to set when unchecked (default is "no") */
         public String value_off = OsmUtils.falseval;
         /** whether the off value is disabled in the dialog, i.e., only unset or yes are provided */
-        public boolean disable_off = false;
+        public boolean disable_off;
         /** "on" or "off" or unset (default is unset) */
-        public String default_ = null; // only used for tagless objects
+        public String default_; // only used for tagless objects
 
         private QuadStateCheckBox check;
         private QuadStateCheckBox.State initialState;
@@ -1009,7 +1009,7 @@ public final class TaggingPresetItems {
 
         protected JComponent component;
         protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<>();
-        private boolean initialized = false;
+        private boolean initialized;
         protected Usage usage;
         protected Object originalValue;
 

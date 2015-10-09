@@ -29,7 +29,7 @@ public abstract class AbstractCachedTileSourceLayer extends AbstractTileSourceLa
 
     private static final String PREFERENCE_PREFIX = "imagery.cache.";
 
-    private static volatile TileLoaderFactory loaderFactoryOverride = null;
+    private static volatile TileLoaderFactory loaderFactoryOverride;
 
     /**
      * how many object on disk should be stored for TMS region in MB. 500 MB is default value

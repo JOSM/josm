@@ -68,12 +68,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /**
      * If {@code true}, when extruding create new node(s) even if segments are parallel.
      */
-    private boolean alwaysCreateNodes = false;
+    private boolean alwaysCreateNodes;
     private boolean nodeDragWithoutCtrl;
 
-    private long mouseDownTime = 0;
-    private transient WaySegment selectedSegment = null;
-    private transient Node selectedNode = null;
+    private long mouseDownTime;
+    private transient WaySegment selectedSegment;
+    private transient Node selectedNode;
     private Color mainColor;
     private transient Stroke mainStroke;
 
@@ -179,7 +179,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /** Dual alignment reference segments */
     private transient ReferenceSegment dualAlignSegment1, dualAlignSegment2;
     /** {@code true}, if new segment was collapsed */
-    private boolean dualAlignSegmentCollapsed = false;
+    private boolean dualAlignSegmentCollapsed;
     // Dual alignment UI stuff
     private final DualAlignChangeAction dualAlignChangeAction;
     private final JCheckBoxMenuItem dualAlignCheckboxMenuItem;

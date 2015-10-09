@@ -40,7 +40,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     public static final int PROGRESS_BAR_MAX = 10000;
     private final Component dialogParent;
 
-    private int currentProgressValue = 0;
+    private int currentProgressValue;
     private String customText;
     private String title;
     private boolean indeterminate;

@@ -52,9 +52,9 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
     /** Reference to the task that download requested primitives */
     private DownloadPrimitivesTask mainTask;
     /** Flag indicated that user ask for cancel this task */
-    private boolean canceled = false;
+    private boolean canceled;
     /** Reference to the task currently running */
-    private PleaseWaitRunnable currentTask = null;
+    private PleaseWaitRunnable currentTask;
 
     /**
      * Constructor

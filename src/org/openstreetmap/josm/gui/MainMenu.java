@@ -385,7 +385,7 @@ public class MainMenu extends JMenuBar {
     /**
      * audioMenu contains all audio-related actions. Be careful, this menu is not guaranteed to be displayed at all
      */
-    public JMenu audioMenu = null;
+    public JMenu audioMenu;
     /**
      * helpMenu contains JOSM general actions (Help, About, etc.)
      */
@@ -401,7 +401,7 @@ public class MainMenu extends JMenuBar {
     public final TaggingPresetSearchAction presetSearchAction = new TaggingPresetSearchAction();
     public final TaggingPresetSearchPrimitiveDialog.Action presetSearchPrimitiveAction = new TaggingPresetSearchPrimitiveDialog.Action();
     public final DialogsToggleAction dialogsToggleAction = new DialogsToggleAction();
-    public FullscreenToggleAction fullscreenToggleAction = null;
+    public FullscreenToggleAction fullscreenToggleAction;
 
     /**
      * Popup menu to display menu items search result.
@@ -1014,7 +1014,7 @@ public class MainMenu extends JMenuBar {
     private class SearchFieldTextListener implements DocumentListener {
         private final JTextField searchField;
         private final MainMenu mainMenu;
-        private String currentSearchText = null;
+        private String currentSearchText;
 
         SearchFieldTextListener(MainMenu mainMenu, JTextField searchField) {
             this.mainMenu = mainMenu;

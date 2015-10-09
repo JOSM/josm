@@ -24,7 +24,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 
 public class TaggingPresetMenu extends TaggingPreset {
-    public JMenu menu = null; // set by TaggingPresets
+    public JMenu menu; // set by TaggingPresets
 
     private static class PresetTextComparator implements Comparator<JMenuItem>, Serializable {
         @Override

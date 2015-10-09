@@ -472,7 +472,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * Simple class to keep clickedTile within hookUpMapView
      */
     private static final class TileHolder {
-        private Tile t = null;
+        private Tile t;
 
         public Tile getTile() {
             return t;
@@ -1298,9 +1298,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     private static class TileSetInfo {
-        public boolean hasVisibleTiles = false;
-        public boolean hasOverzoomedTiles = false;
-        public boolean hasLoadingTiles = false;
+        public boolean hasVisibleTiles;
+        public boolean hasOverzoomedTiles;
+        public boolean hasLoadingTiles;
     }
 
     private static TileSetInfo getTileSetInfo(TileSet ts) {

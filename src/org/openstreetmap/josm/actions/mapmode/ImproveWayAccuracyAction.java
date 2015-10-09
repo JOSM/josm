@@ -64,11 +64,11 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     private static final long serialVersionUID = 42L;
 
     private transient Way targetWay;
-    private transient Node candidateNode = null;
-    private transient WaySegment candidateSegment = null;
+    private transient Node candidateNode;
+    private transient WaySegment candidateSegment;
 
-    private Point mousePos = null;
-    private boolean dragging = false;
+    private Point mousePos;
+    private boolean dragging;
 
     private final Cursor cursorSelect;
     private final Cursor cursorSelectHover;
@@ -85,7 +85,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     private transient Stroke deleteNodeStroke;
     private int dotSize;
 
-    private boolean selectionChangedBlocked = false;
+    private boolean selectionChangedBlocked;
 
     protected String oldModeHelpText;
 

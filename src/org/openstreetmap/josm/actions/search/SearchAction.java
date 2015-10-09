@@ -124,7 +124,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         return ret;
     }
 
-    private static volatile SearchSetting lastSearch = null;
+    private static volatile SearchSetting lastSearch;
 
     /**
      * Constructs a new {@code SearchAction}.

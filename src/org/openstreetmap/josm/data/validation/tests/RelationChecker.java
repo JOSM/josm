@@ -94,7 +94,7 @@ public class RelationChecker extends Test {
     }
 
     private static class RoleInfo {
-        private int total = 0;
+        private int total;
     }
 
     @Override

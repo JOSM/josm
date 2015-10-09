@@ -463,7 +463,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         private Set<NodePair> edges;
-        private int numUndirectedEges = 0;
+        private int numUndirectedEges;
         private Map<Node, List<NodePair>> successors;
         private Map<Node, List<NodePair>> predecessors;
 

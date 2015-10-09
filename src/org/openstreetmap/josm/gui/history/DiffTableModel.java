@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item.DiffItemType;
  */
 class DiffTableModel extends AbstractTableModel {
     private transient List<TwoColumnDiff.Item> rows = new ArrayList<>();
-    private boolean reversed = false;
+    private boolean reversed;
 
     public void setRows(List<TwoColumnDiff.Item> rows, boolean reversed) {
         this.rows = rows;

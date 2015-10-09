@@ -41,7 +41,7 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  */
 public class BoundingBoxSelection implements DownloadSelection {
 
-    private JosmTextField[] latlon = null;
+    private JosmTextField[] latlon;
     private final JosmTextArea tfOsmUrl = new JosmTextArea();
     private final JosmTextArea showUrl = new JosmTextArea();
     private DownloadDialog parent;

@@ -68,8 +68,8 @@ public class CachedFile {
     protected String httpAccept;
     protected CachingStrategy cachingStrategy;
 
-    protected File cacheFile = null;
-    protected boolean initialized = false;
+    protected File cacheFile;
+    protected boolean initialized;
 
     public static final long DEFAULT_MAXTIME = -1L;
     public static final long DAYS = 24*60*60; // factor to get caching time in days

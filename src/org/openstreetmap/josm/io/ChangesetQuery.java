@@ -35,20 +35,20 @@ public class ChangesetQuery {
     }
 
     /** the user id this query is restricted to. null, if no restriction to a user id applies */
-    private Integer uid = null;
+    private Integer uid;
     /** the user name this query is restricted to. null, if no restriction to a user name applies */
-    private String userName = null;
+    private String userName;
     /** the bounding box this query is restricted to. null, if no restriction to a bounding box applies */
-    private Bounds bounds = null;
+    private Bounds bounds;
 
-    private Date closedAfter = null;
-    private Date createdBefore = null;
+    private Date closedAfter;
+    private Date createdBefore;
     /** indicates whether only open changesets are queried. null, if no restrictions regarding open changesets apply */
-    private Boolean open = null;
+    private Boolean open;
     /** indicates whether only closed changesets are queried. null, if no restrictions regarding open changesets apply */
-    private Boolean closed = null;
+    private Boolean closed;
     /** a collection of changeset ids to query for */
-    private Collection<Long> changesetIds = null;
+    private Collection<Long> changesetIds;
 
     /**
      * Restricts the query to changesets owned by the user with id <code>uid</code>.

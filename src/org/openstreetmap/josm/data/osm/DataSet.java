@@ -120,7 +120,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
 
     private int highlightUpdateCount;
 
-    private boolean uploadDiscouraged = false;
+    private boolean uploadDiscouraged;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Object selectionLock = new Object();

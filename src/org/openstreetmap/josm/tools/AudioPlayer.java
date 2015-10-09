@@ -25,7 +25,7 @@ import org.openstreetmap.josm.Main;
  */
 public final class AudioPlayer extends Thread {
 
-    private static volatile AudioPlayer audioPlayer = null;
+    private static volatile AudioPlayer audioPlayer;
 
     private enum State { INITIALIZING, NOTPLAYING, PLAYING, PAUSED, INTERRUPTED }
 

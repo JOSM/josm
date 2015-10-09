@@ -37,7 +37,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
 
     private final LinkGeneral lg;
     private String content = "";
-    private boolean contentInitialized = false;
+    private boolean contentInitialized;
 
     private static final String STYLE = "<style type=\"text/css\">\n"
             + "body {font-family: sans-serif; font-weight: bold; }\n"

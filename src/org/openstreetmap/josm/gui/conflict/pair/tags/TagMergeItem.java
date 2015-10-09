@@ -16,9 +16,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class TagMergeItem {
 
-    private String key = null;
-    private String myTagValue = null;
-    private String theirTagValue = null;
+    private String key;
+    private String myTagValue;
+    private String theirTagValue;
     private MergeDecisionType mergeDecision = MergeDecisionType.UNDECIDED;
 
     /**

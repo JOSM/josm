@@ -37,7 +37,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Where the data will be stored
      */
-    private byte[] data = null;
+    private byte[] data;
 
     /**
      * The ident that identifies the stored file. Includes file-ending.

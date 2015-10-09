@@ -118,9 +118,9 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
     }
 
     /** the auto completion list user input is matched against */
-    protected AutoCompletionList autoCompletionList = null;
+    protected AutoCompletionList autoCompletionList;
     /** a string which should not be auto completed */
-    protected String noAutoCompletionString = null;
+    protected String noAutoCompletionString;
 
     @Override
     protected Document createDefaultModel() {

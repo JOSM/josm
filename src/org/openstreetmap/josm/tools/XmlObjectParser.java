@@ -231,7 +231,7 @@ public class XmlObjectParser implements Iterable<Object> {
      * The queue of already parsed items from the parsing thread.
      */
     private List<Object> queue = new LinkedList<>();
-    private Iterator<Object> queueIterator = null;
+    private Iterator<Object> queueIterator;
 
     /**
      * Constructs a new {@code XmlObjectParser}.

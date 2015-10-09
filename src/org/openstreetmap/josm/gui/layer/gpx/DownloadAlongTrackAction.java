@@ -101,8 +101,8 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
         class CalculateDownloadArea extends PleaseWaitRunnable {
 
             private Area a = new Area();
-            private boolean cancel = false;
-            private int ticks = 0;
+            private boolean cancel;
+            private int ticks;
             private Rectangle2D r = new Rectangle2D.Double();
 
             CalculateDownloadArea() {

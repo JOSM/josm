@@ -310,7 +310,7 @@ public final class Shortcut {
                                  KeyEvent.VK_F9, KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12};
 
     // bootstrap
-    private static boolean initdone = false;
+    private static boolean initdone;
     private static void doInit() {
         if (initdone) return;
         initdone = true;
