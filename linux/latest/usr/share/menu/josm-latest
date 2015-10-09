@@ -1,2 +1,0 @@
-?package(josm-latest): needs="X11" section="Applications/Science/Geoscience" title="JOSM (latest snapshot)" command="/usr/bin/josm-latest"\
-icon16x16="/usr/share/pixmaps/josm-latest-16.xpm" icon32x32="/usr/share/pixmaps/josm-latest-32.xpm"
