@@ -624,6 +624,9 @@ public class SearchCompiler {
             try {
                 v = Double.valueOf(referenceValue);
             } catch (NumberFormatException ignore) {
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ignore.getMessage());
+                }
             }
             this.referenceNumber = v;
             this.compareMode = compareMode;
