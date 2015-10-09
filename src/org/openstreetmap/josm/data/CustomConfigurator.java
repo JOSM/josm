@@ -320,7 +320,7 @@ public final class CustomConfigurator {
         }
     }
 
-    private static boolean busy = false;
+    private static boolean busy;
 
     public static void pluginOperation(String install, String uninstall, String delete)  {
         final List<String> installList = new ArrayList<>();

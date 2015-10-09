@@ -27,7 +27,7 @@ public class WMSLayerTree {
     private final DefaultTreeModel treeData = new DefaultTreeModel(treeRootNode);
     private final JTree layerTree = new JTree(treeData);
     private final List<WMSImagery.LayerDetails> selectedLayers = new LinkedList<>();
-    private boolean previouslyShownUnsupportedCrsError = false;
+    private boolean previouslyShownUnsupportedCrsError;
 
     /**
      * Returns the root node.

@@ -35,8 +35,8 @@ public class MapImage {
     public boolean autoRescale;
     public int width = -1;
     public int height = -1;
-    public int offsetX = 0;
-    public int offsetY = 0;
+    public int offsetX;
+    public int offsetY;
 
     private boolean temporary;
     private BufferedImage disabledImgCache;
@@ -53,7 +53,7 @@ public class MapImage {
 
     /**
      * Get the image associated with this MapImage object.
-     * 
+     *
      * @param disabled {@code} true to request disabled version, {@code false} for the standard version
      * @return the image
      */

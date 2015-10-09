@@ -42,8 +42,8 @@ public class ImportAudioAction extends AbstractAction {
     private final transient GpxLayer layer;
 
     private static class Markers {
-        public boolean timedMarkersOmitted = false;
-        public boolean untimedMarkersOmitted = false;
+        public boolean timedMarkersOmitted;
+        public boolean untimedMarkersOmitted;
     }
 
     /**

@@ -31,7 +31,7 @@ public abstract class CorrectionTable<T extends CorrectionTableModel<?>>
         }
     }
 
-    private static volatile BoldRenderer boldRenderer = null;
+    private static volatile BoldRenderer boldRenderer;
 
     protected CorrectionTable(T correctionTableModel) {
         super(correctionTableModel);

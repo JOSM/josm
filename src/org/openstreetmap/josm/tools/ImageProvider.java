@@ -183,7 +183,7 @@ public class ImageProvider {
     /** list of class loaders to take images from */
     protected Collection<ClassLoader> additionalClassLoaders;
     /** ordered list of overlay images */
-    protected List<ImageOverlay> overlayInfo = null;
+    protected List<ImageOverlay> overlayInfo;
 
     private static SVGUniverse svgUniverse;
 

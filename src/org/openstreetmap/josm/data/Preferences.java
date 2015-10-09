@@ -100,17 +100,17 @@ public class Preferences {
      * Do not access this variable directly!
      * @see #getPreferencesDirectory()
      */
-    private File preferencesDir = null;
+    private File preferencesDir;
 
     /**
      * Internal storage for the cache directory.
      */
-    private File cacheDir = null;
+    private File cacheDir;
 
     /**
      * Internal storage for the user data directory.
      */
-    private File userdataDir = null;
+    private File userdataDir;
 
     /**
      * Determines if preferences file is saved each time a property is changed.

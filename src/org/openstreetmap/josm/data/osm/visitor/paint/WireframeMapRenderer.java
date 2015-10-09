@@ -73,7 +73,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     protected int taggedNodeSize;
 
     /** Color cache to draw subsequent segments of same color as one <code>Path</code>. */
-    protected Color currentColor = null;
+    protected Color currentColor;
     /** Path store to draw subsequent segments of same color as one <code>Path</code>. */
     protected GeneralPath currentPath = new GeneralPath();
     /**

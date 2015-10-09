@@ -61,7 +61,7 @@ class TwoColumnDiff {
     public List<Item> currentDiff;
     private Object[] reference;
     private Object[] current;
-    boolean referenceReversed = false;
+    boolean referenceReversed;
 
     TwoColumnDiff(Object[] reference, Object[] current) {
         this.reference = Utils.copyArray(reference);

@@ -25,10 +25,10 @@ public abstract class AbstractProjection implements Projection {
     protected Ellipsoid ellps;
     protected Datum datum;
     protected Proj proj;
-    protected double x0 = 0.0;     /* false easting (in meters) */
-    protected double y0 = 0.0;     /* false northing (in meters) */
-    protected double lon0 = 0.0;   /* central meridian */
-    protected double k0 = 1.0;     /* general scale factor */
+    protected double x0;       /* false easting (in meters) */
+    protected double y0;       /* false northing (in meters) */
+    protected double lon0;     /* central meridian */
+    protected double k0 = 1.0; /* general scale factor */
 
     public final Ellipsoid getEllipsoid() {
         return ellps;

@@ -44,7 +44,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
 
     private static final String EDITABLE = "editable";
 
-    protected JTextComponent component = null;
+    protected JTextComponent component;
     protected boolean undoRedo;
     protected final UndoAction undoAction = new UndoAction();
     protected final RedoAction redoAction = new RedoAction();

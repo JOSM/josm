@@ -9,7 +9,7 @@ import java.util.Observable;
 public class HelpBrowserHistory extends Observable {
     private HelpBrowser browser;
     private List<String> history;
-    private int historyPos = 0;
+    private int historyPos;
 
     public HelpBrowserHistory(HelpBrowser browser) {
         this.browser = browser;

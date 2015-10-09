@@ -820,8 +820,8 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         private Set<OsmPrimitive> members = new HashSet<>();
         private List<Integer> position = new ArrayList<>();
         private Iterable<OsmPrimitive> selection;
-        private String positionString = null;
-        private String roleString = null;
+        private String positionString;
+        private String roleString;
 
         MemberInfo(Iterable<OsmPrimitive> selection) {
             this.selection = selection;

@@ -100,7 +100,7 @@ public class OpenFileAction extends DiskAccessAction {
         private final Set<String> failedAll = new HashSet<>();
         private final FileFilter fileFilter;
         private boolean canceled;
-        private boolean recordHistory = false;
+        private boolean recordHistory;
 
         public OpenFileTask(final List<File> files, final FileFilter fileFilter, final String title) {
             super(title, false /* don't ignore exception */);

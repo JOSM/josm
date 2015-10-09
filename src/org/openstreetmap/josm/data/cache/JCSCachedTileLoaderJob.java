@@ -88,8 +88,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     private ICacheAccess<K, V> cache;
     private ICacheElement<K, V> cacheElement;
-    protected V cacheData = null;
-    protected CacheEntryAttributes attributes = null;
+    protected V cacheData;
+    protected CacheEntryAttributes attributes;
 
     // HTTP connection parameters
     private int connectTimeout;
@@ -97,7 +97,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     private Map<String, String> headers;
     private ThreadPoolExecutor downloadJobExecutor;
     private Runnable finishTask;
-    private boolean force = false;
+    private boolean force;
 
     /**
      * @param cache cache instance that we will work on

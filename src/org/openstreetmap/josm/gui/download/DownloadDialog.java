@@ -74,7 +74,7 @@ public class DownloadDialog extends JDialog  {
     protected JCheckBox cbNewLayer;
     protected JCheckBox cbStartup;
     protected final JLabel sizeCheck = new JLabel();
-    protected transient Bounds currentBounds = null;
+    protected transient Bounds currentBounds;
     protected boolean canceled;
 
     protected JCheckBox cbDownloadOsmData;

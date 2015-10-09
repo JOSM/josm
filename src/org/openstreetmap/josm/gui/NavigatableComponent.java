@@ -188,8 +188,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     protected EastNorth center = calculateDefaultCenter();
 
     private final transient Object paintRequestLock = new Object();
-    private Rectangle paintRect = null;
-    private Polygon paintPoly = null;
+    private Rectangle paintRect;
+    private Polygon paintPoly;
 
     protected transient ViewportData initialViewport;
 

@@ -74,8 +74,8 @@ public abstract class ImageryLayer extends Layer {
 
     protected Icon icon;
 
-    protected double dx = 0.0;
-    protected double dy = 0.0;
+    protected double dx;
+    protected double dy;
 
     protected GammaImageProcessor gammaImageProcessor = new GammaImageProcessor();
 

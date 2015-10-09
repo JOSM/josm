@@ -37,7 +37,7 @@ public class TagMergeModel extends DefaultTableModel {
     /** the property change listeners */
     private final transient Set<PropertyChangeListener> listeners;
 
-    private int numUndecidedTags = 0;
+    private int numUndecidedTags;
 
     /**
      * Constructs a new {@code TagMergeModel}.

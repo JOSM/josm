@@ -26,7 +26,7 @@ public class SequenceCommand extends Command {
     private boolean sequenceComplete;
     private final String name;
     /** Determines if the sequence execution should continue after one of its commands fails. */
-    public boolean continueOnError = false;
+    public boolean continueOnError;
 
     /**
      * Create the command by specifying the list of commands to execute.

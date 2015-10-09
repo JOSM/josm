@@ -63,7 +63,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     private final SelectInCurrentLayerAction     actSelectInCurrentLayer     = new SelectInCurrentLayerAction();
     private final ZoomInCurrentLayerAction       actZoomInCurrentLayerAction = new ZoomInCurrentLayerAction();
 
-    private transient Changeset current = null;
+    private transient Changeset current;
 
     protected JPanel buildActionButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));

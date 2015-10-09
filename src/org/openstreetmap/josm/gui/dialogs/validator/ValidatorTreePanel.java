@@ -72,7 +72,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      * If {@link #filter} is not <code>null</code> only errors are displayed
      * that refer to one of the primitives in the filter.
      */
-    private transient Set<? extends OsmPrimitive> filter = null;
+    private transient Set<? extends OsmPrimitive> filter;
 
     /** a counter to check if tree has been rebuild */
     private int updateCount;

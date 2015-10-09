@@ -108,7 +108,7 @@ public final class MapRendererFactory {
     }
 
     private final List<Descriptor> descriptors = new ArrayList<>();
-    private Class<? extends AbstractMapRenderer> activeRenderer = null;
+    private Class<? extends AbstractMapRenderer> activeRenderer;
 
     private MapRendererFactory() {
         registerDefaultRenderers();

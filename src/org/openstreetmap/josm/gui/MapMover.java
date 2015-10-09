@@ -82,7 +82,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     private final NavigatableComponent nc;
     private final JPanel contentPane;
 
-    private boolean movementInPlace = false;
+    private boolean movementInPlace;
 
     /**
      * Constructs a new {@code MapMover}.

@@ -13,7 +13,7 @@ public abstract class Prototype {
 
     public int priority;
     public String code;
-    public Collection<XmlCondition> conditions = null;
+    public Collection<XmlCondition> conditions;
 
     public Prototype(Range range) {
         this.range = range;

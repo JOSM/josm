@@ -108,7 +108,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      * The layer should be handled as a background layer in automatic handling
      *
      */
-    private boolean background = false;
+    private boolean background;
 
     /**
      * The name of this layer.

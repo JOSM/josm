@@ -97,7 +97,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         "public_transport", ":LocationCode", "note", "?building"};
 
     /** the current list of tags used as naming tags in relations */
-    private static List<String> namingTagsForRelations =  null;
+    private static List<String> namingTagsForRelations;
 
     /**
      * Replies the list of naming tags used in relations. The list is given (in this order) by:

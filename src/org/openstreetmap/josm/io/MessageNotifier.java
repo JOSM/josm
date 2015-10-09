@@ -51,11 +51,11 @@ public final class MessageNotifier {
 
     private static final Runnable WORKER = new Worker();
 
-    private static volatile ScheduledFuture<?> task = null;
+    private static volatile ScheduledFuture<?> task;
 
     private static class Worker implements Runnable {
 
-        private int lastUnreadCount = 0;
+        private int lastUnreadCount;
 
         @Override
         public void run() {

@@ -95,8 +95,8 @@ public abstract class ElemStyle implements StyleKeys {
      * FIXME: cached preference values are not updated if the user changes them during
      * a JOSM session. Should have a listener listening to preference changes.
      */
-    private static volatile String DEFAULT_FONT_NAME = null;
-    private static volatile Float DEFAULT_FONT_SIZE = null;
+    private static volatile String DEFAULT_FONT_NAME;
+    private static volatile Float DEFAULT_FONT_SIZE;
     private static final Object lock = new Object();
 
     // thread save access (double-checked locking)

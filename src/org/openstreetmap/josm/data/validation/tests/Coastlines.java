@@ -37,7 +37,7 @@ public class Coastlines extends Test {
 
     private List<Way> coastlines;
 
-    private Area downloadedArea = null;
+    private Area downloadedArea;
 
     /**
      * Constructor

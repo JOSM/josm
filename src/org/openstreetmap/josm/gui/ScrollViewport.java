@@ -65,7 +65,7 @@ public class ScrollViewport extends JPanel {
     }
 
     private JViewport vp = new JViewport();
-    private JComponent component = null;
+    private JComponent component;
 
     private List<JButton> buttons = new ArrayList<>();
 

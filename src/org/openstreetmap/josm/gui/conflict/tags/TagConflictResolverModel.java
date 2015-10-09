@@ -27,8 +27,8 @@ public class TagConflictResolverModel extends DefaultTableModel {
     private transient Map<String, MultiValueResolutionDecision> decisions;
     private int numConflicts;
     private PropertyChangeSupport support;
-    private boolean showTagsWithConflictsOnly = false;
-    private boolean showTagsWithMultiValuesOnly = false;
+    private boolean showTagsWithConflictsOnly;
+    private boolean showTagsWithMultiValuesOnly;
 
     /**
      * Constructs a new {@code TagConflictResolverModel}.

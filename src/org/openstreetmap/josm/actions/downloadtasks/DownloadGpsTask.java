@@ -43,7 +43,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
     private static final String PATTERN_EXTERNAL_GPX_SCRIPT = "https?://.*exportgpx.*";
     private static final String PATTERN_EXTERNAL_GPX_FILE = "https?://.*/(.*\\.gpx)";
 
-    protected String newLayerName = null;
+    protected String newLayerName;
 
     @Override
     public String[] getPatterns() {

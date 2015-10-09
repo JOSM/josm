@@ -52,7 +52,7 @@ public class GpxDrawHelper {
     private static final double PHI = Math.toRadians(15);
 
     //// Variables used only to check cache validity
-    private boolean computeCacheInSync = false;
+    private boolean computeCacheInSync;
     private int computeCacheMaxLineLengthUsed;
     private Color computeCacheColorUsed;
     private boolean computeCacheColorDynamic;

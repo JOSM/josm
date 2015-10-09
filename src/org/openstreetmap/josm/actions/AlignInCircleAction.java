@@ -61,7 +61,7 @@ public final class AlignInCircleAction extends JosmAction {
         private double radius;
         private double angle;
         private EastNorth origin = new EastNorth(0, 0);
-        private double azimuth = 0;
+        private double azimuth;
 
         PolarCoor(double radius, double angle) {
             this(radius, angle, new EastNorth(0, 0), 0);

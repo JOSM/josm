@@ -11,9 +11,6 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.exception.OAuthException;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
@@ -22,6 +19,9 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.Base64;
 
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.exception.OAuthException;
+
 /**
  * Base class that handles common things like authentication for the reader and writer
  * to the osm server.
@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.Base64;
  * @author imi
  */
 public class OsmConnection {
-    protected boolean cancel = false;
+    protected boolean cancel;
     protected HttpURLConnection activeConnection;
     protected OAuthParameters oauthParameters;
 

@@ -61,8 +61,8 @@ fact =
  */
 public class SearchCompiler {
 
-    private boolean caseSensitive = false;
-    private boolean regexSearch = false;
+    private boolean caseSensitive;
+    private boolean regexSearch;
     private static String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
     private static String  rxErrorMsgNoPos = marktr("The regex \"{0}\" had a parse error, full error:\n\n{1}");
     private PushbackTokenizer tokenizer;

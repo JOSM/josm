@@ -527,7 +527,7 @@ public abstract class Main {
         }
     }
 
-    private static volatile InitStatusListener initListener = null;
+    private static volatile InitStatusListener initListener;
 
     public interface InitStatusListener {
 

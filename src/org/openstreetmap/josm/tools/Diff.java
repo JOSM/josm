@@ -106,11 +106,11 @@ public class Diff {
     /** When set to true, the comparison uses a heuristic to speed it up.
     With this heuristic, for files with a constant small density
     of changes, the algorithm is linear in the file size.  */
-    public boolean heuristic = false;
+    public boolean heuristic;
 
     /** When set to true, the algorithm returns a guarranteed minimal
       set of changes.  This makes things slower, sometimes much slower. */
-    public boolean noDiscards = false;
+    public boolean noDiscards;
 
     private int[] xvec, yvec; /* Vectors being compared. */
     private int[] fdiag;      /* Vector, indexed by diagonal, containing
@@ -375,7 +375,7 @@ public class Diff {
         filevec[1].discard_confusing_lines(filevec[0]);
     }
 
-    private boolean inhibit = false;
+    private boolean inhibit;
 
     /** Adjust inserts/deletes of blank lines to join changes
         as much as possible.

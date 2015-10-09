@@ -83,7 +83,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     private final transient PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
     /** Last selected element */
-    private DefaultMutableTreeNode lastSelectedNode = null;
+    private DefaultMutableTreeNode lastSelectedNode;
 
     private transient OsmDataLayer linkedLayer;
 

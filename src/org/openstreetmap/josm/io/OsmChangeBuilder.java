@@ -24,7 +24,7 @@ public class OsmChangeBuilder {
     private StringWriter swriter;
     private OsmWriter osmwriter;
     private String apiVersion = DEFAULT_API_VERSION;
-    private boolean prologWritten = false;
+    private boolean prologWritten;
 
     public OsmChangeBuilder(Changeset changeset) {
         this(changeset, null /* default api version */);

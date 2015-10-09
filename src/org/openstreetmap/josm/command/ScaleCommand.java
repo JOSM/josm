@@ -23,7 +23,7 @@ public class ScaleCommand extends TransformNodesCommand {
     /**
      * World position of the mouse when the user started the command.
      */
-    private EastNorth startEN = null;
+    private EastNorth startEN;
 
     /**
      * Creates a ScaleCommand.

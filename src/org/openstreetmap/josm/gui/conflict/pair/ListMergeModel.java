@@ -87,7 +87,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     protected EntriesSelectionModel mergedEntriesSelectionModel;
 
     private final Set<PropertyChangeListener> listeners;
-    private boolean isFrozen = false;
+    private boolean isFrozen;
     private final ComparePairListModel comparePairListModel;
 
     private DataSet myDataset;

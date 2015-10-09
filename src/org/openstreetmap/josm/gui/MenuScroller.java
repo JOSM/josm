@@ -49,7 +49,7 @@ public class MenuScroller {
     private final MouseWheelListener mouseWheelListener = new MouseScrollListener();
     private int interval;
     private int topFixedCount;
-    private int firstIndex = 0;
+    private int firstIndex;
 
     private static final int ARROW_ICON_HEIGHT = 10;
 

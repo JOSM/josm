@@ -102,7 +102,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         private final double offset;
         private int idx;
 
-        private Point prev = null;
+        private Point prev;
         /* 'prev0' is a point that has distance 'offset' from 'prev' and the
          * line from 'prev' to 'prev0' is perpendicular to the way segment from
          * 'prev' to the next point.

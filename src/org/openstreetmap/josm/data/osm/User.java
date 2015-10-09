@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class User {
 
-    private static long uidCounter = 0;
+    private static long uidCounter;
 
     /**
      * the map of known users
@@ -58,7 +58,7 @@ public final class User {
         return user;
     }
 
-    private static User lastUser = null;
+    private static User lastUser;
 
     /**
      * Creates a user known to the OSM server

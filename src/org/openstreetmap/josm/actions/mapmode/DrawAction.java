@@ -79,7 +79,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private final Cursor cursorJoinNode;
     private final Cursor cursorJoinWay;
 
-    private transient Node lastUsedNode = null;
+    private transient Node lastUsedNode;
     private double toleranceMultiplier;
 
     private transient Node mouseOnExistingNode;
@@ -93,7 +93,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     // repaint if there are changes.
     private transient Set<OsmPrimitive> newHighlights = new HashSet<>();
     private boolean drawHelperLine;
-    private boolean wayIsFinished = false;
+    private boolean wayIsFinished;
     private boolean drawTargetHighlight;
     private Point mousePos;
     private Point oldMousePos;

@@ -40,7 +40,7 @@ public class DefaultProxySelector extends ProxySelector {
      *
      * We therefore read the property at class loading time and remember it's value.
      */
-    private static boolean JVM_WILL_USE_SYSTEM_PROXIES = false;
+    private static boolean JVM_WILL_USE_SYSTEM_PROXIES;
     static {
         String v = System.getProperty("java.net.useSystemProxies");
         if (v != null && v.equals(Boolean.TRUE.toString())) {

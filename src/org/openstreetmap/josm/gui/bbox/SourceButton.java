@@ -39,7 +39,7 @@ public class SourceButton extends JComponent {
     private Dimension shownDimension;
     private Font font;
 
-    private boolean isEnlarged = false;
+    private boolean isEnlarged;
 
     private int currentMap;
     private final SlippyMapBBoxChooser slippyMapBBoxChooser;

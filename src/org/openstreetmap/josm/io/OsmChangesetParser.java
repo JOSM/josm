@@ -70,13 +70,13 @@ public final class OsmChangesetParser {
         }
 
         /** The current changeset */
-        private Changeset current = null;
+        private Changeset current;
 
         /** The current comment */
-        private ChangesetDiscussionComment comment = null;
+        private ChangesetDiscussionComment comment;
 
         /** The current comment text */
-        private StringBuilder text = null;
+        private StringBuilder text;
 
         protected void parseChangesetAttributes(Changeset cs, Attributes atts) throws XmlParsingException {
             // -- id

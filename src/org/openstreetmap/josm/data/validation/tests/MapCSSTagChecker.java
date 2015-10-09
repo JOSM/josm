@@ -240,7 +240,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<>();
         protected final Map<String, Boolean> assertions = new HashMap<>();
         protected final Set<String> setClassExpressions = new HashSet<>();
-        protected boolean deletion = false;
+        protected boolean deletion;
 
         TagCheck(GroupedMapCSSRule rule) {
             this.rule = rule;

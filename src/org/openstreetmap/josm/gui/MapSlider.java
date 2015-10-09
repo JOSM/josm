@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.help.Helpful;
 class MapSlider extends JSlider implements PropertyChangeListener, ChangeListener, Helpful {
 
     private final MapView mv;
-    private boolean preventChange = false;
+    private boolean preventChange;
 
     MapSlider(MapView mv) {
         super(35, 150);

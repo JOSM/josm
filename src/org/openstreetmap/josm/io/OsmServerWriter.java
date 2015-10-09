@@ -51,7 +51,7 @@ public class OsmServerWriter {
     }
 
     private OsmApi api = OsmApi.getOsmApi();
-    private boolean canceled = false;
+    private boolean canceled;
 
     private static final int MSECS_PER_SECOND = 1000;
     private static final int SECONDS_PER_MINUTE = 60;

@@ -49,7 +49,7 @@ public abstract class Plugin implements MapFrameListener {
      * (The actual implementation to request the info from a static variable
      * is a bit hacky, but it works).
      */
-    private PluginInformation info = null;
+    private PluginInformation info;
 
     /**
      * Creates the plugin

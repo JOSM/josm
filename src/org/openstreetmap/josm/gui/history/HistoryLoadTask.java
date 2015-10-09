@@ -49,11 +49,11 @@ import org.xml.sax.SAXException;
  */
 public class HistoryLoadTask extends PleaseWaitRunnable {
 
-    private boolean canceled = false;
-    private Exception lastException  = null;
+    private boolean canceled;
+    private Exception lastException;
     private Set<PrimitiveId> toLoad;
     private HistoryDataSet loadedData;
-    private OsmServerHistoryReader reader = null;
+    private OsmServerHistoryReader reader;
 
     /**
      * Constructs a new {@code HistoryLoadTask}.

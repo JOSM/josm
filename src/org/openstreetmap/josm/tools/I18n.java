@@ -170,8 +170,8 @@ public final class I18n {
         "OptionPane.noButtonText",
         "OptionPane.cancelButtonText"
     };
-    private static volatile Map<String, String> strings = null;
-    private static volatile Map<String, String[]> pstrings = null;
+    private static volatile Map<String, String> strings;
+    private static volatile Map<String, String[]> pstrings;
     private static Map<String, PluralMode> languages = new HashMap<>();
 
     /**

@@ -33,7 +33,7 @@ public class NTV2GridShiftFileWrapper {
 
     // CHECKSTYLE.ON: LineLength
 
-    private NTV2GridShiftFile instance = null;
+    private NTV2GridShiftFile instance;
     private String gridFileName;
 
     /**

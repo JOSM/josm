@@ -37,11 +37,11 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 public final class JCSCacheManager {
     private static final Logger LOG = FeatureAdapter.getLogger(JCSCacheManager.class.getCanonicalName());
 
-    private static volatile CompositeCacheManager cacheManager = null;
+    private static volatile CompositeCacheManager cacheManager;
     private static long maxObjectTTL        = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
     private static final AuxiliaryCacheFactory diskCacheFactory = new IndexedDiskCacheFactory();
-    private static FileLock cacheDirLock = null;
+    private static FileLock cacheDirLock;
 
     /**
      * default objects to be held in memory by JCS caches (per region)

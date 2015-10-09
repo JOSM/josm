@@ -275,7 +275,7 @@ public class Marker implements TemplateEngineDataProvider {
     private final String text;
 
     protected final ImageIcon symbol;
-    private BufferedImage redSymbol = null;
+    private BufferedImage redSymbol;
     public final MarkerLayer parentLayer;
     /** Absolute time of marker in seconds since epoch */
     public double time;
@@ -286,7 +286,7 @@ public class Marker implements TemplateEngineDataProvider {
     private int textVersion = -1;
     private CachedLatLon coor;
 
-    private boolean erroneous = false;
+    private boolean erroneous;
 
     public Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String iconName, MarkerLayer parentLayer,
             double time, double offset) {

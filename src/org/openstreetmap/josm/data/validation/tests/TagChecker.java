@@ -96,10 +96,10 @@ public class TagChecker extends TagTest {
     public static final String PREF_CHECK_COMPLEX_BEFORE_UPLOAD = PREF_CHECK_COMPLEX + "BeforeUpload";
     public static final String PREF_CHECK_FIXMES_BEFORE_UPLOAD = PREF_CHECK_FIXMES + "BeforeUpload";
 
-    protected boolean checkKeys = false;
-    protected boolean checkValues = false;
-    protected boolean checkComplex = false;
-    protected boolean checkFixmes = false;
+    protected boolean checkKeys;
+    protected boolean checkValues;
+    protected boolean checkComplex;
+    protected boolean checkFixmes;
 
     protected JCheckBox prefCheckKeys;
     protected JCheckBox prefCheckValues;
@@ -666,9 +666,9 @@ public class TagChecker extends TagTest {
             public Object tag;
             public Object value;
             public boolean noMatch;
-            public boolean tagAll = false;
-            public boolean valueAll = false;
-            public boolean valueBool = false;
+            public boolean tagAll;
+            public boolean valueAll;
+            public boolean valueBool;
 
             private Pattern getPattern(String str) throws PatternSyntaxException {
                 if (str.endsWith("/i"))

@@ -17,8 +17,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 public class ProgressInputStream extends InputStream {
 
     private final InputStream in;
-    private int readSoFar = 0;
-    private int lastDialogUpdate = 0;
+    private int readSoFar;
+    private int lastDialogUpdate;
     private boolean sizeKnown;
     private final URLConnection connection;
     private final ProgressMonitor progressMonitor;

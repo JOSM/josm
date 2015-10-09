@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  */
 public class BoundingBoxSelectionPanel extends JPanel {
 
-    private JosmTextField[] tfLatLon = null;
+    private JosmTextField[] tfLatLon;
     private final JosmTextField tfOsmUrl = new JosmTextField();
 
     protected void buildInputFields() {

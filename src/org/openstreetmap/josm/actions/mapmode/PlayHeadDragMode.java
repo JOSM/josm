@@ -19,10 +19,10 @@ import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
  */
 public class PlayHeadDragMode extends MapMode {
 
-    private boolean dragging = false;
-    private Point mousePos = null;
-    private Point mouseStart = null;
-    private transient PlayHeadMarker playHeadMarker = null;
+    private boolean dragging;
+    private Point mousePos;
+    private Point mouseStart;
+    private transient PlayHeadMarker playHeadMarker;
 
     /**
      * Constructs a new {@code PlayHeadDragMode}.

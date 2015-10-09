@@ -74,11 +74,11 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class ExtendedDialog extends JDialog {
     private final boolean disposeOnClose;
-    private volatile int result = 0;
+    private volatile int result;
     public static final int DialogClosedOtherwise = 0;
-    private boolean toggleable = false;
+    private boolean toggleable;
     private String rememberSizePref = "";
-    private transient WindowGeometry defaultWindowGeometry = null;
+    private transient WindowGeometry defaultWindowGeometry;
     private String togglePref = "";
     private int toggleValue = -1;
     private ConditionalOptionPaneUtil.MessagePanel togglePanel;
@@ -89,10 +89,10 @@ public class ExtendedDialog extends JDialog {
     private transient Icon[] bIcons;
     private Set<Integer> cancelButtonIdx = Collections.emptySet();
     private int defaultButtonIdx = 1;
-    protected JButton defaultButton = null;
+    protected JButton defaultButton;
     private transient Icon icon;
     private boolean modal;
-    private boolean focusOnDefaultButton = false;
+    private boolean focusOnDefaultButton;
 
     /** true, if the dialog should include a help button */
     private boolean showHelpButton;
@@ -303,7 +303,7 @@ public class ExtendedDialog extends JDialog {
         return result;
     }
 
-    private boolean setupDone = false;
+    private boolean setupDone;
 
     /**
      * This is called by {@link #showDialog()}.

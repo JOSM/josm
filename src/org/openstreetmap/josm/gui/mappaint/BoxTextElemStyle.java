@@ -179,7 +179,7 @@ public class BoxTextElemStyle extends ElemStyle {
      * FIXME: the cache isn't updated if the user changes the preference during a JOSM
      * session. There should be preference listener updating this cache.
      */
-    private static volatile Color DEFAULT_TEXT_COLOR = null;
+    private static volatile Color DEFAULT_TEXT_COLOR;
 
     private static void initDefaultParameters() {
         if (DEFAULT_TEXT_COLOR != null) return;

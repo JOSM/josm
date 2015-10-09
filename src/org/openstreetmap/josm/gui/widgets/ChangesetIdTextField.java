@@ -43,7 +43,7 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
      */
     public static class ChangesetIdValidator extends AbstractTextComponentValidator {
 
-        private int id = 0;
+        private int id;
 
         /**
          * Constructs a new {@link ChangesetIdValidator}

@@ -50,7 +50,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
      * data of the table model: The list of members and the cached WayConnectionType of each member.
      **/
     private transient List<RelationMember> members;
-    private transient List<WayConnectionType> connectionType = null;
+    private transient List<WayConnectionType> connectionType;
 
     private DefaultListSelectionModel listSelectionModel;
     private final CopyOnWriteArrayList<IMemberModelListener> listeners;

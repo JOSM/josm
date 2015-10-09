@@ -43,43 +43,43 @@ import org.openstreetmap.josm.tools.Utils;
 public class PluginInformation {
 
     /** The plugin jar file. */
-    public File file = null;
+    public File file;
     /** The plugin name. */
-    public String name = null;
+    public String name;
     /** The lowest JOSM version required by this plugin (from plugin list). **/
-    public int mainversion = 0;
+    public int mainversion;
     /** The lowest JOSM version required by this plugin (from locally available jar). **/
-    public int localmainversion = 0;
+    public int localmainversion;
     /** The plugin class name. */
-    public String className = null;
+    public String className;
     /** Determines if the plugin is an old version loaded for incompatibility with latest JOSM (from plugin list) */
-    public boolean oldmode = false;
+    public boolean oldmode;
     /** The list of required plugins, separated by ';' (from plugin list). */
-    public String requires = null;
+    public String requires;
     /** The list of required plugins, separated by ';' (from locally available jar). */
-    public String localrequires = null;
+    public String localrequires;
     /** The plugin link (for documentation). */
-    public String link = null;
+    public String link;
     /** The plugin description. */
-    public String description = null;
+    public String description;
     /** Determines if the plugin must be loaded early or not. */
-    public boolean early = false;
+    public boolean early;
     /** The plugin author. */
-    public String author = null;
+    public String author;
     /** The plugin stage, determining the loading sequence order of plugins. */
     public int stage = 50;
     /** The plugin version (from plugin list). **/
-    public String version = null;
+    public String version;
     /** The plugin version (from locally available jar). **/
-    public String localversion = null;
+    public String localversion;
     /** The plugin download link. */
-    public String downloadlink = null;
+    public String downloadlink;
     /** The plugin icon path inside jar. */
     public String iconPath;
     /** The plugin icon. */
     public ImageIcon icon;
     /** Plugin can be loaded at any time and not just at start. */
-    public boolean canloadatruntime = false;
+    public boolean canloadatruntime;
     /** The libraries referenced in Class-Path manifest attribute. */
     public List<URL> libraries = new LinkedList<>();
     /** All manifest attributes. */

@@ -196,7 +196,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     private double distValue;
 
     // Determines if angle panel is enabled or not
-    private boolean angleEnabled = false;
+    private boolean angleEnabled;
 
     /**
      * This is the thread that runs in the background and collects the information displayed.
@@ -339,7 +339,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          * Contains the labels that are currently shown in the information
          * popup
          */
-        private List<JLabel> popupLabels = null;
+        private List<JLabel> popupLabels;
         /**
          * The popup displayed to show additional information
          */

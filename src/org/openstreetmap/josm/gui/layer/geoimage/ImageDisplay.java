@@ -32,25 +32,25 @@ import org.openstreetmap.josm.tools.ExifReader;
 public class ImageDisplay extends JComponent {
 
     /** The file that is currently displayed */
-    private File file = null;
+    private File file;
 
     /** The image currently displayed */
-    private transient Image image = null;
+    private transient Image image;
 
     /** The image currently displayed */
-    private boolean errorLoading = false;
+    private boolean errorLoading;
 
     /** The rectangle (in image coordinates) of the image that is visible. This rectangle is calculated
      * each time the zoom is modified */
-    private Rectangle visibleRect = null;
+    private Rectangle visibleRect;
 
     /** When a selection is done, the rectangle of the selection (in image coordinates) */
-    private Rectangle selectedRect = null;
+    private Rectangle selectedRect;
 
     /** The tracker to load the images */
     private MediaTracker tracker = new MediaTracker(this);
 
-    private String osdText = null;
+    private String osdText;
 
     private static final int DRAG_BUTTON = Main.pref.getBoolean("geoimage.agpifo-style-drag-and-zoom", false) ? 1 : 3;
     private static final int ZOOM_BUTTON = DRAG_BUTTON == 1 ? 3 : 1;
@@ -135,9 +135,9 @@ public class ImageDisplay extends JComponent {
 
     private class ImgDisplayMouseListener implements MouseListener, MouseWheelListener, MouseMotionListener {
 
-        private boolean mouseIsDragging = false;
-        private long lastTimeForMousePoint = 0L;
-        private Point mousePointInImg = null;
+        private boolean mouseIsDragging;
+        private long lastTimeForMousePoint;
+        private Point mousePointInImg;
 
         /** Zoom in and out, trying to preserve the point of the image that was under the mouse cursor
          * at the same place */

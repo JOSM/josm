@@ -46,7 +46,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
      */
     class AutoCompletingComboBoxDocument extends PlainDocument {
         private final JosmComboBox<AutoCompletionListItem> comboBox;
-        private boolean selecting = false;
+        private boolean selecting;
 
         /**
          * Constructs a new {@code AutoCompletingComboBoxDocument}.

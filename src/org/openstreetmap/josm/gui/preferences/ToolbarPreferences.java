@@ -81,7 +81,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private final Action action;
         private String name = "";
         private String icon = "";
-        private ImageIcon ico = null;
+        private ImageIcon ico;
         private final Map<String, Object> parameters = new ConcurrentHashMap<>();
 
         public ActionDefinition(Action action) {

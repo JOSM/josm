@@ -28,8 +28,8 @@ public class AddPrimitivesCommand extends Command {
     private Collection<PrimitiveData> toSelect = new ArrayList<>();
 
     // only filled on undo
-    private List<OsmPrimitive> createdPrimitives = null;
-    private Collection<OsmPrimitive> createdPrimitivesToSelect = null;
+    private List<OsmPrimitive> createdPrimitives;
+    private Collection<OsmPrimitive> createdPrimitivesToSelect;
 
     /**
      * Constructs a new {@code AddPrimitivesCommand} to add data to the current edit layer.

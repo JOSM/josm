@@ -529,7 +529,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      */
     private static class TileAddressValidator extends AbstractTextComponentValidator {
 
-        private TileBounds tileBounds = null;
+        private TileBounds tileBounds;
 
         TileAddressValidator(JTextComponent tc) {
             super(tc);

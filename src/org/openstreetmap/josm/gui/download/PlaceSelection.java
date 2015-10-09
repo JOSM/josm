@@ -183,8 +183,8 @@ public class PlaceSelection implements DownloadSelection {
         public String description;
         public double lat;
         public double lon;
-        public int zoom = 0;
-        public Bounds bounds = null;
+        public int zoom;
+        public Bounds bounds;
 
         public Bounds getDownloadArea() {
             return bounds != null ? bounds : OsmUrlToBounds.positionToBounds(lat, lon, zoom);
@@ -197,9 +197,9 @@ public class PlaceSelection implements DownloadSelection {
      *
      */
     private static class NameFinderResultParser extends DefaultHandler {
-        private SearchResult currentResult = null;
-        private StringBuffer description = null;
-        private int depth = 0;
+        private SearchResult currentResult;
+        private StringBuffer description;
+        private int depth;
         private List<SearchResult> data = new LinkedList<>();
 
         /**
@@ -329,7 +329,7 @@ public class PlaceSelection implements DownloadSelection {
         private String searchExpression;
         private HttpURLConnection connection;
         private List<SearchResult> data;
-        private boolean canceled = false;
+        private boolean canceled;
         private Server useserver;
         private Exception lastException;
 
@@ -451,8 +451,8 @@ public class PlaceSelection implements DownloadSelection {
     }
 
     static class NamedResultTableColumnModel extends DefaultTableColumnModel {
-        private TableColumn col3 = null;
-        private TableColumn col4 = null;
+        private TableColumn col3;
+        private TableColumn col4;
         protected final void createColumns() {
             TableColumn col = null;
             NamedResultCellRenderer renderer = new NamedResultCellRenderer();

@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.Way;
  */
 public class BoundingXYVisitor extends AbstractVisitor {
 
-    private ProjectionBounds bounds = null;
+    private ProjectionBounds bounds;
 
     @Override
     public void visit(Node n) {

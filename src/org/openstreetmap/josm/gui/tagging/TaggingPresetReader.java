@@ -49,7 +49,7 @@ public final class TaggingPresetReader {
         // Hide default constructor for utils classes
     }
 
-    private static volatile File zipIcons = null;
+    private static volatile File zipIcons;
     private static volatile boolean loadIcons = true;
 
     /**
@@ -102,7 +102,7 @@ public final class TaggingPresetReader {
     }
 
     static class HashSetWithLast<E> extends LinkedHashSet<E> {
-        protected E last = null;
+        protected E last;
 
         @Override
         public boolean add(E e) {

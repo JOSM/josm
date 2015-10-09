@@ -36,12 +36,12 @@ public class Environment {
     /**
      * index of node in parent way or member in parent relation. Must be != null in LINK context.
      */
-    public Integer index = null;
+    public Integer index;
 
     /**
      * count of nodes in parent way or members in parent relation. Must be != null in LINK context.
      */
-    public Integer count = null;
+    public Integer count;
 
     /**
      * Creates a new uninitialized environment.

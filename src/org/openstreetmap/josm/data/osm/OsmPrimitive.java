@@ -290,7 +290,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /*----------
      * MAPPAINT
      *--------*/
-    public StyleCache mappaintStyle = null;
+    public StyleCache mappaintStyle;
     public int mappaintCacheIdx;
 
     /* This should not be called from outside. Fixing the UI to add relevant
@@ -652,9 +652,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * WORK IN PROGRESS, UNINTERESTING AND DIRECTION KEYS
      *--------------------------------------------------*/
 
-    private static volatile Collection<String> workinprogress = null;
-    private static volatile Collection<String> uninteresting = null;
-    private static volatile Collection<String> discardable = null;
+    private static volatile Collection<String> workinprogress;
+    private static volatile Collection<String> uninteresting;
+    private static volatile Collection<String> discardable;
 
     /**
      * Returns a list of "uninteresting" keys that do not make an object
@@ -776,8 +776,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return result;
     }
 
-    private static volatile Match directionKeys = null;
-    private static volatile Match reversedDirectionKeys = null;
+    private static volatile Match directionKeys;
+    private static volatile Match reversedDirectionKeys;
 
     /**
      * Contains a list of direction-dependent keys that make an object

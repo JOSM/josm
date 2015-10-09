@@ -84,7 +84,7 @@ public class MapCSSStyleSource extends StyleSource {
     public final MapCSSRuleIndex canvasRules = new MapCSSRuleIndex();       // rules to apply canvas properties
 
     private Color backgroundColorOverride;
-    private String css = null;
+    private String css;
     private ZipFile zipFile;
 
     /**

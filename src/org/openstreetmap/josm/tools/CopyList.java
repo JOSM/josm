@@ -147,7 +147,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
         /**
          * Index of element to be returned by subsequent call to next.
          */
-        private int cursor = 0;
+        private int cursor;
 
         /**
          * Index of element returned by most recent call to next or

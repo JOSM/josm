@@ -7,10 +7,10 @@ import java.util.List;
 public class TagModel {
 
     /** the name of the tag */
-    private String name = null;
+    private String name;
 
     /** the list of values */
-    private List<String> values = null;
+    private List<String> values;
 
     /**
      * constructor

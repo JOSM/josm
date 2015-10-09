@@ -24,12 +24,12 @@ public class RotateCommand extends TransformNodesCommand {
     /**
      * angle of rotation starting click to pivot
      */
-    private double startAngle = 0.0;
+    private double startAngle;
 
     /**
      * computed rotation angle between starting click and current mouse pos
      */
-    private double rotationAngle = 0.0;
+    private double rotationAngle;
 
     /**
      * Creates a RotateCommand.

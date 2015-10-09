@@ -39,8 +39,8 @@ public class ImageResource {
     /**
      * ordered list of overlay images
      */
-    protected List<ImageOverlay> overlayInfo = null;
-    private Image baseImage = null;
+    protected List<ImageOverlay> overlayInfo;
+    private Image baseImage;
 
     /**
      * Constructs a new {@code ImageResource} from an image.

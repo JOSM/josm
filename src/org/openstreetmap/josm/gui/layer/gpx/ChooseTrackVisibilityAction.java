@@ -183,7 +183,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         return t;
     }
 
-    private boolean noUpdates = false;
+    private boolean noUpdates;
 
     /** selects all rows (=tracks) in the table that are currently visible on the layer*/
     private void selectVisibleTracksInTable() {

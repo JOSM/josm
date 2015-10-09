@@ -154,7 +154,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
      * is set to true if this preference pane has been selected
      * by the user
      */
-    private boolean pluginPreferencesActivated = false;
+    private boolean pluginPreferencesActivated;
 
     protected JPanel buildSearchFieldPanel() {
         JPanel pnl  = new JPanel(new GridBagLayout());

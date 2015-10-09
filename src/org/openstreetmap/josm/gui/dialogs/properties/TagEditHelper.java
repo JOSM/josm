@@ -101,8 +101,8 @@ class TagEditHelper {
         }
     };
 
-    private String lastAddKey = null;
-    private String lastAddValue = null;
+    private String lastAddKey;
+    private String lastAddValue;
 
     public static final int DEFAULT_LRU_TAGS_NUMBER = 5;
     public static final int MAX_LRU_TAGS_NUMBER = 30;
