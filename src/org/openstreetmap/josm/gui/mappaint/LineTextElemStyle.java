@@ -55,6 +55,6 @@ public class LineTextElemStyle extends ElemStyle {
 
     @Override
     public String toString() {
-        return "LineTextElemStyle{" + super.toString() + "text=" + text + "}";
+        return "LineTextElemStyle{" + super.toString() + "text=" + text + '}';
     }
 }

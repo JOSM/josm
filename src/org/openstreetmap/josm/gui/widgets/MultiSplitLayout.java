@@ -1157,7 +1157,7 @@ public class MultiSplitLayout implements LayoutManager {
                 throwParseException(st, "invalid name");
             }
         } else {
-            throwParseException(st, "unrecognized attribute \"" + name + "\"");
+            throwParseException(st, "unrecognized attribute \"" + name + '\"');
         }
     }
 
@@ -1212,7 +1212,7 @@ public class MultiSplitLayout implements LayoutManager {
                     addSplitChild(parent, split);
                     parseSplit(st, split);
                 } else {
-                    throwParseException(st, "unrecognized node type '" + nodeType + "'");
+                    throwParseException(st, "unrecognized node type '" + nodeType + '\'');
                 }
             }
         }

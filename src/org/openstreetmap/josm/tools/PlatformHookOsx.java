@@ -294,11 +294,11 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         }
         result += name;
         if (sc != null && !sc.getKeyText().isEmpty()) {
-            result += " ";
+            result += ' ';
             if (canHtml) {
                 result += "<font size='-2'>";
             }
-            result += "("+sc.getKeyText()+")";
+            result += '('+sc.getKeyText()+')';
             if (canHtml) {
                 result += "</font>";
             }
@@ -322,7 +322,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
 
     @Override
     public String getOSDescription() {
-        return System.getProperty("os.name") + " " + System.getProperty("os.version");
+        return System.getProperty("os.name") + ' ' + System.getProperty("os.version");
     }
 
     @Override

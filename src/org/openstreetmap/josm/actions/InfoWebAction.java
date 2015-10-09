@@ -35,7 +35,7 @@ public class InfoWebAction extends AbstractInfoAction {
     protected String createInfoUrl(Object infoObject) {
         if (infoObject instanceof OsmPrimitive) {
             OsmPrimitive primitive = (OsmPrimitive) infoObject;
-            return Main.getBaseBrowseUrl() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.getId();
+            return Main.getBaseBrowseUrl() + '/' + OsmPrimitiveType.from(primitive).getAPIName() + '/' + primitive.getId();
         } else if (infoObject instanceof Note) {
             Note note = (Note) infoObject;
             return Main.getBaseBrowseUrl() + "/note/" + note.getId();

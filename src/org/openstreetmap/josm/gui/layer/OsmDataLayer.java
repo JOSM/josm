@@ -488,17 +488,17 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
         String nodeText = trn("{0} node", "{0} nodes", counter.nodes, counter.nodes);
         if (counter.deletedNodes > 0) {
-            nodeText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedNodes, counter.deletedNodes)+")";
+            nodeText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedNodes, counter.deletedNodes)+')';
         }
 
         String wayText = trn("{0} way", "{0} ways", counter.ways, counter.ways);
         if (counter.deletedWays > 0) {
-            wayText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedWays, counter.deletedWays)+")";
+            wayText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedWays, counter.deletedWays)+')';
         }
 
         String relationText = trn("{0} relation", "{0} relations", counter.relations, counter.relations);
         if (counter.deletedRelations > 0) {
-            relationText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedRelations, counter.deletedRelations)+")";
+            relationText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedRelations, counter.deletedRelations)+')';
         }
 
         p.add(new JLabel(tr("{0} consists of:", getName())), GBC.eol());

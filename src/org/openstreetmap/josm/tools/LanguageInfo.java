@@ -53,9 +53,9 @@ public final class LanguageInfo {
             return null;
         } else if (code.matches(".+@.+")) {
           return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1, 2)
-          + "-" + code.substring(3, 4).toUpperCase(Locale.ENGLISH) + code.substring(4) + ":";
+          + '-' + code.substring(3, 4).toUpperCase(Locale.ENGLISH) + code.substring(4) + ':';
         }
-        return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1) + ":";
+        return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1) + ':';
     }
 
     /**
@@ -155,10 +155,10 @@ public final class LanguageInfo {
      * @return the resulting locale
      */
     public static Locale getLocale(String localeName) {
-        int country = localeName.indexOf("_");
-        int variant = localeName.indexOf("@");
+        int country = localeName.indexOf('_');
+        int variant = localeName.indexOf('@');
         if (variant < 0 && country >= 0)
-            variant = localeName.indexOf("_", country+1);
+            variant = localeName.indexOf('_', country+1);
         Locale l;
         if (variant > 0 && country > 0) {
             l = new Locale(localeName.substring(0, country), localeName.substring(country+1, variant), localeName.substring(variant + 1));
@@ -197,8 +197,8 @@ public final class LanguageInfo {
      */
     public static String getLanguageCodeXML() {
         String code = getJOSMLocaleCode();
-        code = code.replace("@", "-");
-        return code+".";
+        code = code.replace('@', '-');
+        return code+'.';
     }
 
     /**
@@ -209,8 +209,8 @@ public final class LanguageInfo {
      */
     public static String getLanguageCodeManifest() {
         String code = getJOSMLocaleCode();
-        code = code.replace("@", "-");
-        return code+"_";
+        code = code.replace('@', '-');
+        return code+'_';
     }
 
     /**
@@ -238,11 +238,11 @@ public final class LanguageInfo {
             c = null;
         if (v != null && !v.isEmpty()) {
             if (c != null)
-                list.add(lang+"_"+c+"@"+v);
-            list.add(lang+"@"+v);
+                list.add(lang+'_'+c+'@'+v);
+            list.add(lang+'@'+v);
         }
         if (c != null)
-            list.add(lang+"_"+c);
+            list.add(lang+'_'+c);
         list.add(lang);
         return list;
     }

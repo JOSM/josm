@@ -274,7 +274,7 @@ public final class Node extends OsmPrimitive implements INode {
     @Override
     public String toString() {
         String coorDesc = isLatLonKnown() ? "lat="+lat+",lon="+lon : "";
-        return "{Node id=" + getUniqueId() + " version=" + getVersion() + " " + getFlagsAsString() + " "  + coorDesc+"}";
+        return "{Node id=" + getUniqueId() + " version=" + getVersion() + ' ' + getFlagsAsString() + ' '  + coorDesc+'}';
     }
 
     @Override

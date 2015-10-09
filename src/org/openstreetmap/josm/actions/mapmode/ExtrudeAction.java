@@ -166,7 +166,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
         @Override
         public String toString() {
-            return "ReferenceSegment[en=" + en + ", p1=" + p1 + ", p2=" + p2 + ", perp=" + perpendicular + "]";
+            return "ReferenceSegment[en=" + en + ", p1=" + p1 + ", p2=" + p2 + ", perp=" + perpendicular + ']';
         }
     }
 

@@ -90,7 +90,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             if (tsName == null) {
                 tsName = "";
             }
-            return tsName.replace(":", "_") + ":" + tileSource.getTileId(tile.getZoom(), tile.getXtile(), tile.getYtile());
+            return tsName.replace(':', '_') + ':' + tileSource.getTileId(tile.getZoom(), tile.getXtile(), tile.getYtile());
         }
         return null;
     }

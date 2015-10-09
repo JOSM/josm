@@ -120,9 +120,9 @@ public class WMSImagery {
                 getCapabilitiesUrl = new URL(serviceUrlStr);
                 final String getCapabilitiesQuery = "VERSION=1.1.1&SERVICE=WMS&REQUEST=GetCapabilities";
                 if (getCapabilitiesUrl.getQuery() == null) {
-                    getCapabilitiesUrl = new URL(serviceUrlStr + "?" + getCapabilitiesQuery);
+                    getCapabilitiesUrl = new URL(serviceUrlStr + '?' + getCapabilitiesQuery);
                 } else if (!getCapabilitiesUrl.getQuery().isEmpty() && !getCapabilitiesUrl.getQuery().endsWith("&")) {
-                    getCapabilitiesUrl = new URL(serviceUrlStr + "&" + getCapabilitiesQuery);
+                    getCapabilitiesUrl = new URL(serviceUrlStr + '&' + getCapabilitiesQuery);
                 } else {
                     getCapabilitiesUrl = new URL(serviceUrlStr + getCapabilitiesQuery);
                 }

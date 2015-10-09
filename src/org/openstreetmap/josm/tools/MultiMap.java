@@ -231,8 +231,8 @@ public class MultiMap<A, B> {
     public String toString() {
         List<String> entries = new ArrayList<>(map.size());
         for (Entry<A, Set<B>> entry : map.entrySet()) {
-            entries.add(entry.getKey() + "->{" + Utils.join(",", entry.getValue()) + "}");
+            entries.add(entry.getKey() + "->{" + Utils.join(",", entry.getValue()) + '}');
         }
-        return "(" + Utils.join(",", entries) + ")";
+        return '(' + Utils.join(",", entries) + ')';
     }
 }

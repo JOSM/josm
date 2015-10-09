@@ -59,7 +59,7 @@ public final class ShowStatusReportAction extends JosmAction {
 
     private static void shortenParam(ListIterator<String> it, String[] param, String source, String target) {
         if (source != null && target.length() < source.length() && param[1].startsWith(source)) {
-            it.set(param[0] + "=" + param[1].replace(source, target));
+            it.set(param[0] + '=' + param[1].replace(source, target));
         }
     }
 

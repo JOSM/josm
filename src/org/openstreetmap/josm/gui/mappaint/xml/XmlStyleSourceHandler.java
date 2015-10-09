@@ -51,11 +51,11 @@ public class XmlStyleSourceHandler extends DefaultHandler {
         int i = colString.indexOf('#');
         Color ret;
         if (i < 0) {
-            ret = Main.pref.getColor("mappaint."+style.getPrefName()+"."+colString, Color.red);
+            ret = Main.pref.getColor("mappaint."+style.getPrefName()+'.'+colString, Color.red);
         } else if (i == 0) {
             ret = ColorHelper.html2color(colString);
         } else {
-            ret = Main.pref.getColor("mappaint."+style.getPrefName()+"."+colString.substring(0, i),
+            ret = Main.pref.getColor("mappaint."+style.getPrefName()+'.'+colString.substring(0, i),
                     ColorHelper.html2color(colString.substring(i)));
         }
         return ret;
@@ -72,7 +72,7 @@ public class XmlStyleSourceHandler extends DefaultHandler {
     }
 
     private void error(String message) {
-        String warning = style.getDisplayString() + " (" + rule.cond.key + "=" + rule.cond.value + "): " + message;
+        String warning = style.getDisplayString() + " (" + rule.cond.key + '=' + rule.cond.value + "): " + message;
         Main.warn(warning);
         style.logError(new Exception(warning));
     }

@@ -69,7 +69,7 @@ public class WayConnectionType {
     public String toString() {
         return "[P "+linkPrev+" ;N "+linkNext+" ;D "+direction+" ;L "+isLoop+
                 " ;FP " + isOnewayLoopForwardPart+";BP " + isOnewayLoopBackwardPart+
-                ";OH " + isOnewayHead+";OT " + isOnewayTail+"]";
+                ";OH " + isOnewayHead+";OT " + isOnewayTail+']';
     }
 
     public String getToolTip() {

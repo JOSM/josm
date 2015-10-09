@@ -218,11 +218,13 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         }
     }
 
-    @Override public String getToolTipText() {
-        return data.size()+" "+trn("marker", "markers", data.size());
+    @Override
+    public String getToolTipText() {
+        return data.size()+' '+trn("marker", "markers", data.size());
     }
 
-    @Override public void mergeFrom(Layer from) {
+    @Override
+    public void mergeFrom(Layer from) {
         MarkerLayer layer = (MarkerLayer) from;
         data.addAll(layer.data);
         Collections.sort(data, new Comparator<Marker>() {

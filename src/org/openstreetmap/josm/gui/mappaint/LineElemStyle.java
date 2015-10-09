@@ -138,7 +138,7 @@ public class LineElemStyle extends ElemStyle {
             }
             if (widthTag != null) {
                 try {
-                    realWidth = Float.valueOf(widthTag);
+                    realWidth = Float.parseFloat(widthTag);
                 } catch (NumberFormatException nfe) {
                     Main.warn(nfe);
                 }

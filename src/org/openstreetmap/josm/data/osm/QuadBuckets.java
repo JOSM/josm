@@ -79,7 +79,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         @Override
         public String toString() {
-            return super.toString() + "[" + level + "]: " + bbox();
+            return super.toString() + '[' + level + "]: " + bbox();
         }
 
         /**
@@ -360,7 +360,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 return;
 
             if (!canRemove()) {
-                abort("attempt to remove non-empty child: " + this.content + " " + Arrays.toString(this.getChildren()));
+                abort("attempt to remove non-empty child: " + this.content + ' ' + Arrays.toString(this.getChildren()));
             }
 
             if (parent.nw == this) {

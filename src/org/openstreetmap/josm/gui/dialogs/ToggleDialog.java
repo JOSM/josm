@@ -351,7 +351,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         unfurlDialog();
     }
 
-
     /**
      * Hides the dialog
      */
@@ -360,7 +359,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         this.setVisible(false);
         windowMenuItem.setState(false);
         setIsShowing(false);
-        toggleAction.putValue("selected", false);
+        toggleAction.putValue("selected", Boolean.FALSE);
     }
 
     /**

@@ -94,7 +94,7 @@ public class OsmConnection {
         } else {
             String username = response.getUsername() == null ? "" : response.getUsername();
             String password = response.getPassword() == null ? "" : String.valueOf(response.getPassword());
-            token = username + ":" + password;
+            token = username + ':' + password;
             try {
                 ByteBuffer bytes = encoder.encode(CharBuffer.wrap(token));
                 con.addRequestProperty("Authorization", "Basic "+Base64.encode(bytes));

@@ -223,7 +223,7 @@ public abstract class RequestHandler {
             String value = args.get(key);
             if (value == null || value.isEmpty()) {
                 error = true;
-                Main.warn("'" + myCommand + "' remote control request must have '" + key + "' parameter");
+                Main.warn('\'' + myCommand + "' remote control request must have '" + key + "' parameter");
                 missingKeys.add(key);
             }
         }

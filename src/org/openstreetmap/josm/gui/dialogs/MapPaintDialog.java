@@ -654,7 +654,7 @@ public class MapPaintDialog extends ToggleDialog {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        txtSource.append(line + "\n");
+                        txtSource.append(line + '\n');
                     }
                 } finally {
                     s.closeSourceInputStream(is);

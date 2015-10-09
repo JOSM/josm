@@ -152,9 +152,9 @@ public class PlatformHookUnixoid implements PlatformHook {
         result += "<html>";
         result += name;
         if (sc != null && !sc.getKeyText().isEmpty()) {
-            result += " ";
+            result += ' ';
             result += "<font size='-2'>";
-            result += "("+sc.getKeyText()+")";
+            result += '('+sc.getKeyText()+')';
             result += "</font>";
         }
         return result + "&nbsp;</html>";
@@ -209,7 +209,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                     }
                     String version = Utils.execOutput(Arrays.asList(args));
                     if (version != null && !version.contains("not installed")) {
-                        return packageName + ":" + version;
+                        return packageName + ':' + version;
                     }
                 }
             }
@@ -335,7 +335,7 @@ public class PlatformHookUnixoid implements PlatformHook {
 
         @Override public String toString() {
             return "ReleaseInfo [path=" + path + ", descriptionField=" + descriptionField +
-                    ", idField=" + idField + ", releaseField=" + releaseField + "]";
+                    ", idField=" + idField + ", releaseField=" + releaseField + ']';
         }
 
         /**
@@ -371,7 +371,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                         }
                         // If no description has been found, try to rebuild it with "id" + "release" (i.e. "name" + "version")
                         if (result == null && id != null && release != null) {
-                            result = id + " " + release;
+                            result = id + ' ' + release;
                         }
                     } catch (IOException e) {
                         // Ignore
@@ -532,27 +532,27 @@ public class PlatformHookUnixoid implements PlatformHook {
                     if (prevValue != null && !prevValue.equals(value)) {
                         Main.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
                     }
-                    w.append(key + "=" + value + "\n");
+                    w.append(key + '=' + value + '\n');
                 }
                 w.append('\n');
                 for (FontEntry entry: extras) {
                     if ("".equals(entry.name) || "".equals(entry.file)) {
                         continue;
                     }
-                    String key = "filename." + entry.name.replace(" ", "_");
+                    String key = "filename." + entry.name.replace(' ', '_');
                     String value = entry.file;
                     String prevValue = props.getProperty(key);
                     if (prevValue != null && !prevValue.equals(value)) {
                         Main.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
                     }
-                    w.append(key + "=" + value + "\n");
+                    w.append(key + '=' + value + '\n');
                 }
                 w.append('\n');
                 String fallback = props.getProperty("sequence.fallback");
                 if (fallback != null) {
-                    w.append("sequence.fallback=" + fallback + "," + Utils.join(",", allCharSubsets) + "\n");
+                    w.append("sequence.fallback=" + fallback + ',' + Utils.join(",", allCharSubsets) + '\n');
                 } else {
-                    w.append("sequence.fallback=" + Utils.join(",", allCharSubsets) + "\n");
+                    w.append("sequence.fallback=" + Utils.join(",", allCharSubsets) + '\n');
                 }
             }
             Utils.updateSystemProperty("sun.awt.fontconfig", fontconfigFile.toString());

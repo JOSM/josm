@@ -88,7 +88,7 @@ public abstract class AddImageryPanel extends JPanel {
 
     protected static String sanitize(String s, ImageryType type) {
         String ret = s;
-        String imageryType = type.getTypeString() + ":";
+        String imageryType = type.getTypeString() + ':';
         if (ret.startsWith(imageryType)) {
             // remove ImageryType from URL
             ret = ret.substring(imageryType.length());

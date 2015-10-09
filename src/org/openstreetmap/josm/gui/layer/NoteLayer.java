@@ -179,7 +179,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public String getToolTipText() {
-        return noteData.getNotes().size() + " " + tr("Notes");
+        return noteData.getNotes().size() + ' ' + tr("Notes");
     }
 
     @Override

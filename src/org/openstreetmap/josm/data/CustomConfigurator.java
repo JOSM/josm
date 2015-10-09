@@ -465,7 +465,7 @@ public final class CustomConfigurator {
                 engine.eval("API={}; API.pref={}; API.fragments={};");
 
                 engine.eval("homeDir='"+normalizeDirName(Main.pref.getPreferencesDirectory().getAbsolutePath()) +"';");
-                engine.eval("josmVersion="+Version.getInstance().getVersion()+";");
+                engine.eval("josmVersion="+Version.getInstance().getVersion()+';');
                 String className = CustomConfigurator.class.getName();
                 engine.eval("API.messageBox="+className+".messageBox");
                 engine.eval("API.askText=function(text) { return String("+className+".askForText(text));}");
@@ -739,7 +739,7 @@ public final class CustomConfigurator {
         }
 
         private String normalizeDirName(String dir) {
-            String s = dir.replace("\\", "/");
+            String s = dir.replace('\\', '/');
             if (s.endsWith("/")) s = s.substring(0, s.length()-1);
             return s;
         }

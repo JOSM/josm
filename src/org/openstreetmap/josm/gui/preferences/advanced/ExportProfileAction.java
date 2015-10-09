@@ -80,7 +80,7 @@ public class ExportProfileAction extends AbstractAction {
             File sel = fc.getSelectedFile();
             if (!sel.getName().endsWith(".xml")) sel = new File(sel.getAbsolutePath()+".xml");
             if (!sel.getName().startsWith(schemaKey)) {
-                sel = new File(sel.getParentFile().getAbsolutePath()+"/"+schemaKey+"_"+sel.getName());
+                sel = new File(sel.getParentFile().getAbsolutePath()+'/'+schemaKey+'_'+sel.getName());
             }
             return sel;
         }

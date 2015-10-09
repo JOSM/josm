@@ -48,11 +48,11 @@ public class OffsetBookmark {
         this.projectionCode = array.get(0);
         this.layerName = array.get(1);
         this.name = array.get(2);
-        this.dx = Double.valueOf(array.get(3));
-        this.dy = Double.valueOf(array.get(4));
+        this.dx = Double.parseDouble(array.get(3));
+        this.dy = Double.parseDouble(array.get(4));
         if (array.size() >= 7) {
-            this.centerX = Double.valueOf(array.get(5));
-            this.centerY = Double.valueOf(array.get(6));
+            this.centerX = Double.parseDouble(array.get(5));
+            this.centerY = Double.parseDouble(array.get(6));
         }
         if (projectionCode == null) {
             Main.error(tr("Projection ''{0}'' is not found, bookmark ''{1}'' is not usable", projectionCode, name));

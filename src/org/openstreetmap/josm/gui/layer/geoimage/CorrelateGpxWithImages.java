@@ -299,7 +299,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     Main.error(x);
                     JOptionPane.showMessageDialog(
                             Main.parent,
-                            tr("Could not read \"{0}\"", sel.getName())+"\n"+x.getMessage(),
+                            tr("Could not read \"{0}\"", sel.getName())+'\n'+x.getMessage(),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
                     );
@@ -393,7 +393,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             gc.gridx = 2;
             gc.weightx = 0.2;
-            panelTf.add(new JLabel(" ["+dateFormat.toLocalizedPattern()+"]"), gc);
+            panelTf.add(new JLabel(" ["+dateFormat.toLocalizedPattern()+']'), gc);
 
             gc.gridx = 0;
             gc.gridy = 2;
@@ -510,7 +510,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     }
                     if (date != null) {
                         lbExifTime.setText(DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM).format(date));
-                        tfGpsTime.setText(DateUtils.getDateFormat(DateFormat.SHORT).format(date)+" ");
+                        tfGpsTime.setText(DateUtils.getDateFormat(DateFormat.SHORT).format(date)+' ');
                         tfGpsTime.setEnabled(true);
                     } else {
                         lbExifTime.setText(tr("No date"));
@@ -927,7 +927,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     ? (int) Math.floor(tz/2) + ":00"
                             : (int) Math.floor(tz/2) + ":30";
                     if (sldTimezone.getValue() < 0) {
-                        zone = "-" + zone;
+                        zone = '-' + zone;
                     }
 
                     lblTimezone.setText(tr("Timezone: {0}", zone));

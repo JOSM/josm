@@ -21,11 +21,11 @@ public class XmlCondition {
 
     public String getKey() {
         if (value != null)
-            return "n" + key + "=" + value;
+            return 'n' + key + '=' + value;
         else if (boolValue != null)
-            return "b" + key  + "=" + OsmUtils.getNamedOsmBoolean(boolValue);
+            return 'b' + key  + '=' + OsmUtils.getNamedOsmBoolean(boolValue);
         else
-            return "x" + key;
+            return 'x' + key;
     }
 
     public final void init() {
@@ -34,7 +34,7 @@ public class XmlCondition {
 
     @Override
     public String toString() {
-      return "Rule["+key+","+(boolValue != null ? "b="+boolValue : "v="+value)+"]";
+      return "Rule["+key+','+(boolValue != null ? "b="+boolValue : "v="+value)+']';
     }
 
     public void appendCode(StringBuilder sb) {

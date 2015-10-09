@@ -177,7 +177,7 @@ public class GpxReader implements GpxConstants {
                     currentLink = new GpxLink(atts.getValue("href"));
                     break;
                 case "email":
-                    data.put(META_AUTHOR_EMAIL, atts.getValue("id") + "@" + atts.getValue("domain"));
+                    data.put(META_AUTHOR_EMAIL, atts.getValue("id") + '@' + atts.getValue("domain"));
                 }
                 break;
             case trk:
@@ -548,7 +548,7 @@ public class GpxReader implements GpxConstants {
                 String message = e.getMessage();
                 if (e instanceof SAXParseException) {
                     SAXParseException spe = (SAXParseException) e;
-                    message += " " + tr("(at line {0}, column {1})", spe.getLineNumber(), spe.getColumnNumber());
+                    message += ' ' + tr("(at line {0}, column {1})", spe.getLineNumber(), spe.getColumnNumber());
                 }
                 Main.warn(message);
                 return false;

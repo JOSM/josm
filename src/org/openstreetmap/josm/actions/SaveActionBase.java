@@ -171,9 +171,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
             // No filefilter accepts current filename, add default extension
             String fn = file.getPath();
             if (ff instanceof ExtensionFileFilter) {
-                fn += "." + ((ExtensionFileFilter) ff).getDefaultExtension();
+                fn += '.' + ((ExtensionFileFilter) ff).getDefaultExtension();
             } else if (extension != null) {
-                fn += "." + extension;
+                fn += '.' + extension;
             }
             file = new File(fn);
             // Confirm overwrite, except for OSX native file dialogs which already ask for confirmation (see #11362)

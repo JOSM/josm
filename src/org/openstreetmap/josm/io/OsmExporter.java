@@ -85,7 +85,7 @@ public class OsmExporter extends FileExporter {
             // process of writing the file, we might just end up with
             // a truncated file.  That can destroy lots of work.
             if (file.exists()) {
-                tmpFile = new File(file.getPath() + "~");
+                tmpFile = new File(file.getPath() + '~');
                 Utils.copyFile(file, tmpFile);
             }
 

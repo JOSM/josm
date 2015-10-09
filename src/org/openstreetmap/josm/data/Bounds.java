@@ -261,15 +261,15 @@ public class Bounds {
         return new BBox(minLon, minLat, maxLon, maxLat);
     }
 
-    @Override public String toString() {
-        return "Bounds["+minLat+","+minLon+","+maxLat+","+maxLon+"]";
+    @Override
+    public String toString() {
+        return "Bounds["+minLat+','+minLon+','+maxLat+','+maxLon+']';
     }
 
     public String toShortString(DecimalFormat format) {
-        return
-        format.format(minLat) + " "
+        return format.format(minLat) + ' '
         + format.format(minLon) + " / "
-        + format.format(maxLat) + " "
+        + format.format(maxLat) + ' '
         + format.format(maxLon);
     }
 

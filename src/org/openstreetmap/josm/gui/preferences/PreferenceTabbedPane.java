@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -75,10 +76,10 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     private final class PluginDownloadAfterTask implements Runnable {
         private final PluginPreference preference;
         private final PluginDownloadTask task;
-        private final List<PluginInformation> toDownload;
+        private final Set<PluginInformation> toDownload;
 
         private PluginDownloadAfterTask(PluginPreference preference, PluginDownloadTask task,
-                List<PluginInformation> toDownload) {
+                Set<PluginInformation> toDownload) {
             this.preference = preference;
             this.task = task;
             this.toDownload = toDownload;
@@ -412,7 +413,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         // create a task for downloading plugins if the user has activated, yet not downloaded, new plugins
         //
         final PluginPreference preference = getPluginPreference();
-        final List<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
+        final Set<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
         final PluginDownloadTask task;
         if (toDownload != null && !toDownload.isEmpty()) {
             task = new PluginDownloadTask(this, toDownload, tr("Download plugins"));

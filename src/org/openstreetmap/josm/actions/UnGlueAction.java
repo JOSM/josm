@@ -134,15 +134,15 @@ public class UnGlueAction extends JosmAction {
         } else {
             errorTime = Notification.TIME_VERY_LONG;
             errMsg =
-                tr("The current selection cannot be used for unglueing.")+"\n"+
-                "\n"+
-                tr("Select either:")+"\n"+
-                tr("* One tagged node, or")+"\n"+
-                tr("* One node that is used by more than one way, or")+"\n"+
-                tr("* One node that is used by more than one way and one of those ways, or")+"\n"+
-                tr("* One way that has one or more nodes that are used by more than one way, or")+"\n"+
-                tr("* One way and one or more of its nodes that are used by more than one way.")+"\n"+
-                "\n"+
+                tr("The current selection cannot be used for unglueing.")+'\n'+
+                '\n'+
+                tr("Select either:")+'\n'+
+                tr("* One tagged node, or")+'\n'+
+                tr("* One node that is used by more than one way, or")+'\n'+
+                tr("* One node that is used by more than one way and one of those ways, or")+'\n'+
+                tr("* One way that has one or more nodes that are used by more than one way, or")+'\n'+
+                tr("* One way and one or more of its nodes that are used by more than one way.")+'\n'+
+                '\n'+
                 tr("Note: If a way is selected, this way will get fresh copies of the unglued\n"+
                         "nodes and the new nodes will be selected. Otherwise, all ways will get their\n"+
                 "own copy and all nodes will be selected.");

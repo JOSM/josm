@@ -104,7 +104,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
 
     @Override
     public void clearCache(TileSource source) {
-        this.cache.remove(source.getName() + ":");
+        this.cache.remove(source.getName() + ':');
     }
 
     @Override

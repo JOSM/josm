@@ -114,7 +114,7 @@ public class SessionLoadAction extends DiskAccessAction {
                 public void run() {
                     if (canceled) return;
                     if (!layers.isEmpty()) {
-                        Layer firstLayer = layers.iterator().next();
+                        Layer firstLayer = layers.get(0);
                         boolean noMap = Main.map == null;
                         if (noMap) {
                             Main.main.createMapFrame(firstLayer, viewport);

@@ -208,8 +208,8 @@ public final class MultikeyActionsHandler {
     }
 
     private String formatMenuText(KeyStroke keyStroke, String index, String description) {
-        String shortcutText = KeyEvent.getKeyModifiersText(keyStroke.getModifiers()) + "+"
-                + KeyEvent.getKeyText(keyStroke.getKeyCode()) + "," + index;
+        String shortcutText = KeyEvent.getKeyModifiersText(keyStroke.getModifiers()) + '+'
+                + KeyEvent.getKeyText(keyStroke.getKeyCode()) + ',' + index;
 
         return "<html><i>" + shortcutText + "</i>&nbsp;&nbsp;&nbsp;&nbsp;" + description;
     }

@@ -561,7 +561,7 @@ public class OsmReader extends AbstractReader {
             }
             if (getLocation() == null)
                 return msg;
-            msg += " " + tr("(at line {0}, column {1})", getLocation().getLineNumber(), getLocation().getColumnNumber());
+            msg += ' ' + tr("(at line {0}, column {1})", getLocation().getLineNumber(), getLocation().getColumnNumber());
             int offset = getLocation().getCharacterOffset();
             if (offset > -1) {
                 msg += ". "+ tr("{0} bytes have been read", offset);

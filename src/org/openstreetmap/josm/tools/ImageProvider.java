@@ -719,7 +719,7 @@ public class ImageProvider {
             if (subdir == null) {
                 subdir = "";
             } else if (!subdir.isEmpty() && !subdir.endsWith("/")) {
-                subdir += "/";
+                subdir += '/';
             }
             String[] extensions;
             if (name.indexOf('.') != -1) {
@@ -741,9 +741,9 @@ public class ImageProvider {
                     String cacheName = fullName;
                     /* cache separately */
                     if (dirs != null && !dirs.isEmpty()) {
-                        cacheName = "id:" + id + ":" + fullName;
+                        cacheName = "id:" + id + ':' + fullName;
                         if (archive != null) {
-                            cacheName += ":" + archive.getName();
+                            cacheName += ':' + archive.getName();
                         }
                     }
 
@@ -837,7 +837,7 @@ public class ImageProvider {
                 try {
                     bytes = Utils.decodeUrl(data).getBytes(StandardCharsets.UTF_8);
                 } catch (IllegalArgumentException ex) {
-                    Main.warn("Unable to decode URL data part: "+ex.getMessage() + " (" + data + ")");
+                    Main.warn("Unable to decode URL data part: "+ex.getMessage() + " (" + data + ')');
                     return null;
                 }
             }
@@ -897,7 +897,7 @@ public class ImageProvider {
                 }
             } else {
                 final String fn_md5 = Utils.md5Hex(fn);
-                url = b + fn_md5.substring(0, 1) + "/" + fn_md5.substring(0, 2) + "/" + fn;
+                url = b + fn_md5.substring(0, 1) + '/' + fn_md5.substring(0, 2) + "/" + fn;
             }
             result = getIfAvailableHttp(url, type);
             if (result != null) {
@@ -921,7 +921,7 @@ public class ImageProvider {
             if (inArchiveDir == null || ".".equals(inArchiveDir)) {
                 inArchiveDir = "";
             } else if (!inArchiveDir.isEmpty()) {
-                inArchiveDir += "/";
+                inArchiveDir += '/';
             }
             String entryName = inArchiveDir + fullName;
             ZipEntry entry = zipFile.getEntry(entryName);
@@ -1141,7 +1141,7 @@ public class ImageProvider {
                     .setMaxSize(ImageSizes.CURSOROVERLAY))).get();
         }
         if (GraphicsEnvironment.isHeadless()) {
-            Main.warn("Cursors are not available in headless mode. Returning null for '"+name+"'");
+            Main.warn("Cursors are not available in headless mode. Returning null for '"+name+'\'');
             return null;
         }
         return Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),

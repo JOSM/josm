@@ -80,7 +80,7 @@ public class AddNodeHandler extends RequestHandler {
     private void addNode(Map<String, String> args) {
 
         // Parse the arguments
-        Main.info("Adding node at (" + lat + ", " + lon + ")");
+        Main.info("Adding node at (" + lat + ", " + lon + ')');
 
         // Create a new node
         LatLon ll = new LatLon(lat, lon);
@@ -117,7 +117,7 @@ public class AddNodeHandler extends RequestHandler {
             lat = Double.parseDouble(args.get("lat"));
             lon = Double.parseDouble(args.get("lon"));
         } catch (NumberFormatException e) {
-            throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+")", e);
+            throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+')', e);
         }
         if (!Main.main.hasEditLayer()) {
              throw new RequestHandlerBadRequestException(tr("There is no layer opened to add node"));

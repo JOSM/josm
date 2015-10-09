@@ -150,7 +150,7 @@ public abstract class SourceEditor extends JPanel {
                 super.scrollRectToVisible(new Rectangle(0, aRect.y, aRect.width, aRect.height));
             }
         };
-        tblActiveSources.putClientProperty("terminateEditOnFocusLost", true);
+        tblActiveSources.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tblActiveSources.setSelectionModel(selectionModel);
         tblActiveSources.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tblActiveSources.setShowGrid(false);

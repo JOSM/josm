@@ -69,7 +69,7 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
 
         @Override
         public String toString() {
-            return "Declaration [instructions=" + instructions + ", idx=" + idx + "]";
+            return "Declaration [instructions=" + instructions + ", idx=" + idx + ']';
         }
     }
 

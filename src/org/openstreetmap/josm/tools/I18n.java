@@ -308,13 +308,13 @@ public final class I18n {
             text = text.substring(i+1);
         }
         if (strings != null) {
-            String trans = strings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
+            String trans = strings.get(ctx == null ? text : "_:"+ctx+'\n'+text);
             if (trans != null)
                 return trans;
         }
         if (pstrings != null) {
             i = pluralEval(1);
-            String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
+            String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+'\n'+text);
             if (trans != null && trans.length > i)
                 return trans[i];
         }
@@ -338,7 +338,7 @@ public final class I18n {
         }
         if (pstrings != null) {
             i = pluralEval(num);
-            String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
+            String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+'\n'+text);
             if (trans != null && trans.length > i)
                 return trans[i];
         }
@@ -352,7 +352,7 @@ public final class I18n {
     }
 
     private static URL getTranslationFile(String lang) {
-        return Main.class.getResource("/data/"+lang.replace("@", "-")+".lang");
+        return Main.class.getResource("/data/"+lang.replace('@', '-')+".lang");
     }
 
     /**

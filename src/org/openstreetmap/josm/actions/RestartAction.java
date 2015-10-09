@@ -157,7 +157,7 @@ public class RestartAction extends JosmAction {
             } else {
                 // else it's a .class, add the classpath and mainClass
                 cmd.add("-cp");
-                cmd.add("\"" + System.getProperty("java.class.path") + "\"");
+                cmd.add('"' + System.getProperty("java.class.path") + '"');
                 cmd.add(mainCommand[0]);
             }
             // add JNLP file.

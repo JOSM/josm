@@ -239,7 +239,7 @@ public class SimilarNamedWays extends Test {
 
         @Override
         public String toString() {
-            return "replaceAll(" + regExpr + ", " + replacement + ")";
+            return "replaceAll(" + regExpr + ", " + replacement + ')';
         }
     }
 
@@ -303,7 +303,7 @@ public class SimilarNamedWays extends Test {
 
         @Override
         public String toString() {
-            return "synonyms(" + replacement + ", " + Arrays.toString(words) + ")";
+            return "synonyms(" + replacement + ", " + Arrays.toString(words) + ')';
         }
     }
 }

@@ -150,7 +150,7 @@ public class LatLon extends Coordinate {
             sDegrees = Integer.toString(tDegree+1);
         }
 
-        return sDegrees + "\u00B0" + sMinutes + "\'" + sSeconds + "\"";
+        return sDegrees + '\u00B0' + sMinutes + '\'' + sSeconds + '\"';
     }
 
     /**
@@ -172,7 +172,7 @@ public class LatLon extends Coordinate {
             sDegrees = Integer.toString(tDegree+1);
         }
 
-        return sDegrees + "\u00B0" + sMinutes + "\'";
+        return sDegrees + '\u00B0' + sMinutes + '\'';
     }
 
     /**
@@ -324,7 +324,7 @@ public class LatLon extends Coordinate {
     public String toDisplayString() {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(5);
-        return "lat=" + nf.format(lat()) + "\u00B0, lon=" + nf.format(lon()) + "\u00B0";
+        return "lat=" + nf.format(lat()) + "\u00B0, lon=" + nf.format(lon()) + '\u00B0';
     }
 
     /**
@@ -369,8 +369,9 @@ public class LatLon extends Coordinate {
         return super.distanceSq(ll);
     }
 
-    @Override public String toString() {
-        return "LatLon[lat="+lat()+",lon="+lon()+"]";
+    @Override
+    public String toString() {
+        return "LatLon[lat="+lat()+",lon="+lon()+']';
     }
 
     /**

@@ -98,14 +98,14 @@ public class JosmEditorPane extends JEditorPane {
         JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
         final Font f = UIManager.getFont("Label.font");
         final StyleSheet ss = new StyleSheet();
-        ss.addRule((allBold ? "html" : "strong, b") + " {" + getFontRule(f) + "}");
+        ss.addRule((allBold ? "html" : "strong, b") + " {" + getFontRule(f) + '}');
         ss.addRule("a {text-decoration: underline; color: blue}");
-        ss.addRule("h1 {" + getFontRule(GuiHelper.getTitleFont()) + "}");
+        ss.addRule("h1 {" + getFontRule(GuiHelper.getTitleFont()) + '}');
         ss.addRule("ol {margin-left: 1cm; margin-top: 0.1cm; margin-bottom: 0.2cm; list-style-type: decimal}");
         ss.addRule("ul {margin-left: 1cm; margin-top: 0.1cm; margin-bottom: 0.2cm; list-style-type: disc}");
         if ("km".equals(LanguageInfo.getJOSMLocaleCode())) {
             // Fix rendering problem for Khmer script
-            ss.addRule("p {" + getFontRule(UIManager.getFont("Label.font")) + "}");
+            ss.addRule("p {" + getFontRule(UIManager.getFont("Label.font")) + '}');
         }
         kit.setStyleSheet(ss);
         pane.setEditorKit(kit);

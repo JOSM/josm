@@ -304,7 +304,7 @@ public final class PasteTagsAction extends JosmAction {
             String title2 = trn("to {0} object", "to {0} objects", selection.size(), selection.size());
             Main.main.undoRedo.add(
                     new SequenceCommand(
-                            title1 + " " + title2,
+                            title1 + ' ' + title2,
                             commands
                     ));
         }

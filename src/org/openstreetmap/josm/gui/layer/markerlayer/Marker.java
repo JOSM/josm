@@ -111,7 +111,7 @@ public class Marker implements TemplateEngineDataProvider {
         public static TemplateEntryProperty forMarker(String layerName) {
             String key = "draw.rawgps.layer.wpt.pattern";
             if (layerName != null) {
-                key += "." + layerName;
+                key += '.' + layerName;
             }
             TemplateEntryProperty result = CACHE.get(key);
             if (result == null) {
@@ -126,7 +126,7 @@ public class Marker implements TemplateEngineDataProvider {
         public static TemplateEntryProperty forAudioMarker(String layerName) {
             String key = "draw.rawgps.layer.audiowpt.pattern";
             if (layerName != null) {
-                key += "." + layerName;
+                key += '.' + layerName;
             }
             TemplateEntryProperty result = CACHE.get(key);
             if (result == null) {

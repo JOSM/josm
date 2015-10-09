@@ -62,7 +62,7 @@ public abstract class LabelCompositionStrategy {
 
         @Override
         public String toString() {
-            return "{"  + getClass().getSimpleName() + " defaultLabel=" + defaultLabel + "}";
+            return '{' + getClass().getSimpleName() + " defaultLabel=" + defaultLabel + '}';
         }
 
         @Override
@@ -118,7 +118,7 @@ public abstract class LabelCompositionStrategy {
 
         @Override
         public String toString() {
-            return "{" + getClass().getSimpleName() + " defaultLabelTag=" + defaultLabelTag + "}";
+            return '{' + getClass().getSimpleName() + " defaultLabelTag=" + defaultLabelTag + '}';
         }
 
         @Override
@@ -276,7 +276,7 @@ public abstract class LabelCompositionStrategy {
                     if (name == null) {
                         name = comp;
                     } else {
-                        name += " (" + comp + ")";
+                        name += " (" + comp + ')';
                     }
                     break;
                 }
@@ -292,7 +292,7 @@ public abstract class LabelCompositionStrategy {
 
         @Override
         public String toString() {
-            return "{" + getClass().getSimpleName() +"}";
+            return "{" + getClass().getSimpleName() +'}';
         }
     }
 }

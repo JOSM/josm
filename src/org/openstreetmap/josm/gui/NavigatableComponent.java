@@ -1437,8 +1437,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return A unique ID, as long as viewport dimensions are the same
      */
     public int getViewID() {
-        String x = center.east() + "_" + center.north() + "_" + scale + "_" +
-                getWidth() + "_" + getHeight() + "_" + getProjection().toString();
+        String x = center.east() + '_' + center.north() + '_' + scale + '_' +
+                getWidth() + '_' + getHeight() + '_' + getProjection().toString();
         CRC32 id = new CRC32();
         id.update(x.getBytes(StandardCharsets.UTF_8));
         return (int) id.getValue();

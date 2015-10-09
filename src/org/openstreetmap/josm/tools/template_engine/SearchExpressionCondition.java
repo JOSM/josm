@@ -25,6 +25,6 @@ public class SearchExpressionCondition implements TemplateEntry {
 
     @Override
     public String toString() {
-        return condition.toString() + " '" + text + "'";
+        return condition.toString() + " '" + text + '\'';
     }
 }

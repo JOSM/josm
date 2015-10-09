@@ -126,6 +126,6 @@ public class  Conflict<T extends OsmPrimitive> {
 
     @Override
     public String toString() {
-        return "Conflict [my=" + my + ", their=" + their + "]";
+        return "Conflict [my=" + my + ", their=" + their + ']';
     }
 }

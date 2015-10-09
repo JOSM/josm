@@ -99,7 +99,7 @@ public class GpxLayer extends Layer {
 
             if (earliestDate.equals(latestDate)) {
                 DateFormat tf = DateUtils.getTimeFormat(DateFormat.SHORT);
-                ts += earliestDate + " ";
+                ts += earliestDate + ' ';
                 ts += tf.format(bounds[0]) + " - " + tf.format(bounds[1]);
             } else {
                 DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);

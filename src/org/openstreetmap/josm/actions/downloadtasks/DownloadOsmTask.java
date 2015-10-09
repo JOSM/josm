@@ -362,7 +362,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             if (urlString.matches(PATTERN_OSM_API_URL)) {
                 // TODO: proper i18n after stabilization
                 Collection<String> items = new ArrayList<>();
-                items.add(tr("OSM Server URL:") + " " + url.getHost());
+                items.add(tr("OSM Server URL:") + ' ' + url.getHost());
                 items.add(tr("Command")+": "+url.getPath());
                 if (url.getQuery() != null) {
                     items.add(tr("Request details: {0}", url.getQuery().replaceAll(",\\s*", ", ")));

@@ -84,10 +84,10 @@ public class ChangePropertyKeyCommand extends Command {
         String text = tr("Replace \"{0}\" by \"{1}\" for", key, newKey);
         if (objects.size() == 1) {
             NameVisitor v = new NameVisitor();
-            objects.iterator().next().accept(v);
-            text += " "+tr(v.className)+" "+v.name;
+            objects.get(0).accept(v);
+            text += ' '+tr(v.className)+' '+v.name;
         } else {
-            text += " "+objects.size()+" "+trn("object", "objects", objects.size());
+            text += ' '+objects.size()+' '+trn("object", "objects", objects.size());
         }
         return text;
     }

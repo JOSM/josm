@@ -95,7 +95,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
         if (created_by == null || created_by.isEmpty()) {
             tags.put("created_by", agent);
         } else if (!created_by.contains(agent)) {
-            tags.put("created_by", created_by + ";" + agent);
+            tags.put("created_by", created_by + ';' + agent);
         }
         pnlTagEditor.getModel().initFromTags(tags);
     }

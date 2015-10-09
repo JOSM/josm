@@ -273,7 +273,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             minlon = LatLon.roundToOsmPrecision(Double.parseDouble(args.get("left")));
             maxlon = LatLon.roundToOsmPrecision(Double.parseDouble(args.get("right")));
         } catch (NumberFormatException e) {
-            throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+")", e);
+            throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+')', e);
         }
 
         // Current API 0.6 check: "The latitudes must be between -90 and 90"

@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.GBC;
 class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
     private static final Color colorError = new Color(255, 197, 197);
     private static final String separator = System.getProperty("file.separator");
-    private static final String ellipsis = "…" + separator;
+    private static final String ellipsis = '…' + separator;
 
     private final JLabel lblLayerName = new JLabel();
     private final JLabel lblFilename = new JLabel("");

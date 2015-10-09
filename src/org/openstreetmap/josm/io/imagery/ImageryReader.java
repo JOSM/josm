@@ -148,9 +148,9 @@ public class ImageryReader {
                 } else if ("bounds".equals(qName)) {
                     try {
                         bounds = new ImageryBounds(
-                                atts.getValue("min-lat") + "," +
-                                        atts.getValue("min-lon") + "," +
-                                        atts.getValue("max-lat") + "," +
+                                atts.getValue("min-lat") + ',' +
+                                        atts.getValue("min-lon") + ',' +
+                                        atts.getValue("max-lat") + ',' +
                                         atts.getValue("max-lon"), ",");
                     } catch (IllegalArgumentException e) {
                         break;

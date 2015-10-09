@@ -125,7 +125,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         @Override
         public String toString() {
-            return "GroupedMapCSSRule [selectors=" + selectors + ", declaration=" + declaration + "]";
+            return "GroupedMapCSSRule [selectors=" + selectors + ", declaration=" + declaration + ']';
         }
     }
 
@@ -300,11 +300,11 @@ public class MapCSSTagChecker extends Test.TagTest {
                     } else if ("suggestAlternative".equals(ai.key) && val != null) {
                         check.alternatives.add(val);
                     } else if ("assertMatch".equals(ai.key) && val != null) {
-                        check.assertions.put(val, true);
+                        check.assertions.put(val, Boolean.TRUE);
                     } else if ("assertNoMatch".equals(ai.key) && val != null) {
-                        check.assertions.put(val, false);
+                        check.assertions.put(val, Boolean.FALSE);
                     } else {
-                        throw new IllegalDataException("Cannot add instruction " + ai.key + ": " + ai.val + "!");
+                        throw new IllegalDataException("Cannot add instruction " + ai.key + ": " + ai.val + '!');
                     }
                 }
             }
@@ -618,7 +618,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         @Override
         public String toString() {
-            return "MapCSSTagCheckerAndRule [rule=" + rule + "]";
+            return "MapCSSTagCheckerAndRule [rule=" + rule + ']';
         }
     }
 

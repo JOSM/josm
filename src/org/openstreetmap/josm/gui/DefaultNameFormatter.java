@@ -357,7 +357,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             if (relationName == null) {
                 relationName = Long.toString(relation.getId());
             } else {
-                relationName = "\"" + relationName + "\"";
+                relationName = '\"' + relationName + '\"';
             }
             result.append(" (").append(relationName).append(", ");
         } else {
@@ -442,7 +442,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         String admin_level = relation.get("admin_level");
         if (admin_level != null) {
-            name += "["+admin_level+"]";
+            name += '['+admin_level+']';
         }
 
         for (NameFormatterHook hook: formatHooks) {
@@ -622,7 +622,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         /* note: length == 0 should no longer happen, but leave the bracket code
            nevertheless, who knows what future brings */
-        sb.append((sb.length() > 0) ? " ("+nodes+")" : nodes);
+        sb.append((sb.length() > 0) ? " ("+nodes+')' : nodes);
         decorateNameWithId(sb, way);
         return sb.toString();
     }
@@ -663,7 +663,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         if (nameTag == null) {
             sb.append(Long.toString(relation.getId())).append(", ");
         } else {
-            sb.append("\"").append(nameTag).append("\", ");
+            sb.append('\"').append(nameTag).append("\", ");
         }
 
         int mbno = relation.getNumMembers();

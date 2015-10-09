@@ -95,6 +95,14 @@ import org.xml.sax.SAXException;
  * @since 74
  */
 public class Preferences {
+
+    private static final String[] OBSOLETE_PREF_KEYS = {
+            "remote.control.host", // replaced by individual values for IPv4 and IPv6. To remove end of 2015
+            "osm.notes.enableDownload", // was used prior to r8071 when notes was an hidden feature. To remove end of 2015
+            "mappaint.style.migration.switchedToMapCSS", // was used prior to 8315 for MapCSS switch. To remove end of 2015
+            "mappaint.style.migration.changedXmlName" // was used prior to 8315 for MapCSS switch. To remove end of 2015
+    };
+
     /**
      * Internal storage for the preference directory.
      * Do not access this variable directly!
@@ -788,7 +796,7 @@ public class Preferences {
 
     public synchronized boolean getBoolean(final String key, final String specName, final boolean def) {
         boolean generic = getBoolean(key, def);
-        String skey = key+"."+specName;
+        String skey = key+'.'+specName;
         Setting<?> prop = settingsMap.get(skey);
         if (prop instanceof StringSetting)
             return Boolean.parseBoolean(((StringSetting) prop).getValue());
@@ -1076,7 +1084,7 @@ public class Preferences {
     }
 
     public synchronized int getInteger(String key, String specName, int def) {
-        String v = get(key+"."+specName);
+        String v = get(key+'.'+specName);
         if (v.isEmpty())
             v = get(key, Integer.toString(def));
         if (v.isEmpty())
@@ -1393,7 +1401,7 @@ public class Preferences {
                 Object defaultFieldValue = f.get(structPrototype);
                 if (fieldValue != null) {
                     if (f.getAnnotation(writeExplicitly.class) != null || !Objects.equals(fieldValue, defaultFieldValue)) {
-                        String key = f.getName().replace("_", "-");
+                        String key = f.getName().replace('_', '-');
                         if (fieldValue instanceof Map) {
                             hash.put(key, mapToJson((Map) fieldValue));
                         } else {
@@ -1419,7 +1427,7 @@ public class Preferences {
             Object value = null;
             Field f;
             try {
-                f = klass.getDeclaredField(key_value.getKey().replace("-", "_"));
+                f = klass.getDeclaredField(key_value.getKey().replace('-', '_'));
             } catch (NoSuchFieldException ex) {
                 continue;
             } catch (SecurityException ex) {
@@ -1836,13 +1844,7 @@ public class Preferences {
             }
         }
 
-        String[] obsolete = {
-                "remote.control.host", // replaced by individual values for IPv4 and IPv6. To remove end of 2015
-                "osm.notes.enableDownload", // was used prior to r8071 when notes was an hidden feature. To remove end of 2015
-                "mappaint.style.migration.switchedToMapCSS", // was used prior to 8315 for MapCSS switch. To remove end of 2015
-                "mappaint.style.migration.changedXmlName" // was used prior to 8315 for MapCSS switch. To remove end of 2015
-        };
-        for (String key : obsolete) {
+        for (String key : OBSOLETE_PREF_KEYS) {
             if (settingsMap.containsKey(key)) {
                 settingsMap.remove(key);
                 Main.info(tr("Preference setting {0} has been removed since it is no longer used.", key));

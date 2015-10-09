@@ -186,7 +186,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
 
     @Override
     public String getOSDescription() {
-        return Utils.strip(System.getProperty("os.name")) + " " +
+        return Utils.strip(System.getProperty("os.name")) + ' ' +
                 ((System.getenv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
     }
 

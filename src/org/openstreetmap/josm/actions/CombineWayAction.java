@@ -496,8 +496,8 @@ public class CombineWayAction extends JosmAction {
             if (successors.get(n).size() != 1) return false;
             if (predecessors.get(n) == null) return true;
             if (predecessors.get(n).size() == 1) {
-                NodePair p1 = successors.get(n).iterator().next();
-                NodePair p2 = predecessors.get(n).iterator().next();
+                NodePair p1 = successors.get(n).get(0);
+                NodePair p2 = predecessors.get(n).get(0);
                 return p1.equals(p2.swap());
             }
             return false;

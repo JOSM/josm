@@ -118,7 +118,7 @@ public class ColorPreference implements SubPreferenceSetting {
             String html = colorMap.get(value);
             Color color = ColorHelper.html2color(html);
             if (color == null) {
-                Main.warn("Unable to get color from '"+html+"' for color preference '"+value+"'");
+                Main.warn("Unable to get color from '"+html+"' for color preference '"+value+'\'');
             }
             row.add(value);
             row.add(color);

@@ -143,9 +143,9 @@ public class WikiReader {
                 // will render a thick  border around images inside an <a> element
                 b += line.replaceAll("<img ", "<img border=\"0\" ")
                          .replaceAll("<span class=\"icon\">.</span>", "")
-                         .replaceAll("href=\"/", "href=\"" + baseurl + "/")
+                         .replaceAll("href=\"/", "href=\"" + baseurl + '/')
                          .replaceAll(" />", ">")
-                         + "\n";
+                         + '\n';
             } else if (transl && line.contains("</div>")) {
                 transl = false;
             }

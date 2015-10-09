@@ -89,7 +89,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
 
         @Override
         public String toString() {
-            return "[Context: layer=" + layer.getName() + ",relation=" + relation.getId() + "]";
+            return "[Context: layer=" + layer.getName() + ",relation=" + relation.getId() + ']';
         }
     }
 

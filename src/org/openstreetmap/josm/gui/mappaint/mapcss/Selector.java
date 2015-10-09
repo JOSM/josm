@@ -431,7 +431,7 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return left + " " + (ChildOrParentSelectorType.PARENT.equals(type) ? "<" : ">") + link + " " + right;
+            return left + " " + (ChildOrParentSelectorType.PARENT.equals(type) ? '<' : '>') + link + ' ' + right;
         }
     }
 

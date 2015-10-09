@@ -215,7 +215,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                     " ("+tr("Rel.:{0} / Ways:{1} / Nodes:{2}",
                             conflicts.getRelationConflicts().size(),
                             conflicts.getWayConflicts().size(),
-                            conflicts.getNodeConflicts().size())+")");
+                            conflicts.getNodeConflicts().size())+')');
         } else {
             setTitle(tr("Conflict"));
         }

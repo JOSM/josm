@@ -93,6 +93,6 @@ public final class WaySegment implements Comparable<WaySegment> {
 
     @Override
     public String toString() {
-        return "WaySegment [way=" + way.getUniqueId() + ", lowerIndex=" + lowerIndex + "]";
+        return "WaySegment [way=" + way.getUniqueId() + ", lowerIndex=" + lowerIndex + ']';
     }
 }

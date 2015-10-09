@@ -266,7 +266,7 @@ public final class ExceptionUtil {
         String msg = null;
         if (header != null) {
             if (body != null && !header.equals(body)) {
-                msg = header + " (" + body + ")";
+                msg = header + " (" + body + ')';
             } else {
                 msg = header;
             }

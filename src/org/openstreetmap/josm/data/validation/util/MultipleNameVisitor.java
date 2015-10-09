@@ -62,7 +62,7 @@ public class MultipleNameVisitor extends NameVisitor {
         if (size <= 1) {
             displayName = name;
         } else {
-            displayName = size + " " + trn(multipleClassname, multiplePluralClassname, size);
+            displayName = size + ' ' + trn(multipleClassname, multiplePluralClassname, size);
             if (multipleName.length() > 0) {
                 if (multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH) {
                     displayName += ": " + multipleName;

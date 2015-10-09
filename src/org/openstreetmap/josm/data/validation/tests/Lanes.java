@@ -44,7 +44,7 @@ public class Lanes extends Test.TagTest {
 
     protected void checkNumberOfLanesByKey(final OsmPrimitive p, String lanesKey, String message) {
         final Collection<String> keysForPattern = new ArrayList<>(Utils.filter(p.keySet(),
-                Predicates.stringContainsPattern(Pattern.compile(":" + lanesKey + "$"))));
+                Predicates.stringContainsPattern(Pattern.compile(':' + lanesKey + '$'))));
         keysForPattern.removeAll(Arrays.asList(BLACKLIST));
         if (keysForPattern.isEmpty()) {
             // nothing to check

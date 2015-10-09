@@ -132,7 +132,7 @@ public class XmlObjectParser implements Iterable<Object> {
             CheckParameterUtil.ensureParameterNotNull(entry, "entry");
             if ("class".equals(fieldName) || "default".equals(fieldName) || "throw".equals(fieldName) ||
                     "new".equals(fieldName) || "null".equals(fieldName)) {
-                fieldName += "_";
+                fieldName += '_';
             }
             try {
                 Object c = current.peek();

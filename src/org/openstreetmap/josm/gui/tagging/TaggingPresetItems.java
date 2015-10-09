@@ -246,7 +246,7 @@ public final class TaggingPresetItems {
             if (locale_text == null) {
                 locale_text = getLocaleText(text, text_context, null);
             }
-            p.add(new JLabel(locale_text+":"), GBC.std().insets(0, 0, 10, 0));
+            p.add(new JLabel(locale_text+':'), GBC.std().insets(0, 0, 10, 0));
             p.add(new JLabel(key), GBC.std().insets(0, 0, 10, 0));
             p.add(new JLabel(cstring), types == null ? GBC.eol() : GBC.std().insets(0, 0, 10, 0));
             if (types != null) {
@@ -359,7 +359,7 @@ public final class TaggingPresetItems {
 
         @Override
         public String toString() {
-            return getClass().getSimpleName() + " [" + fieldsToString() + "]";
+            return getClass().getSimpleName() + " [" + fieldsToString() + ']';
         }
     }
 
@@ -582,7 +582,7 @@ public final class TaggingPresetItems {
         public String toString() {
             return "KeyedItem [key=" + key + ", text=" + text
                     + ", text_context=" + text_context + ", match=" + match
-                    + "]";
+                    + ']';
         }
     }
 
@@ -618,7 +618,7 @@ public final class TaggingPresetItems {
         public String toString() {
             return "Key [key=" + key + ", value=" + value + ", text=" + text
                     + ", text_context=" + text_context + ", match=" + match
-                    + "]";
+                    + ']';
         }
     }
 
@@ -645,7 +645,7 @@ public final class TaggingPresetItems {
             Usage usage = determineTextUsage(sel, key);
             AutoCompletingTextField textField = new AutoCompletingTextField();
             if (alternative_autocomplete_keys != null) {
-                initAutoCompletionField(textField, (key + "," + alternative_autocomplete_keys).split(","));
+                initAutoCompletionField(textField, (key + ',' + alternative_autocomplete_keys).split(","));
             } else {
                 initAutoCompletionField(textField, key);
             }
@@ -753,7 +753,7 @@ public final class TaggingPresetItems {
                 pnl.add(releasebutton, GBC.eol());
                 value = pnl;
             }
-            p.add(new JLabel(locale_text+":"), GBC.std().insets(0, 0, 10, 0));
+            p.add(new JLabel(locale_text+':'), GBC.std().insets(0, 0, 10, 0));
             p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
         }
@@ -860,7 +860,7 @@ public final class TaggingPresetItems {
         Boolean matches(Map<String, String> tags) {
             for (Check check : checks) {
                 if (Boolean.TRUE.equals(check.matches(tags))) {
-                    return true;
+                    return Boolean.TRUE;
                 }
             }
             return null;
@@ -868,7 +868,7 @@ public final class TaggingPresetItems {
 
         @Override
         public String toString() {
-            return "CheckGroup [columns=" + columns + "]";
+            return "CheckGroup [columns=" + columns + ']';
         }
     }
 
@@ -980,7 +980,7 @@ public final class TaggingPresetItems {
                     + "default_=" + default_ + ", "
                     + (check != null ? "check=" + check + ", " : "")
                     + (initialState != null ? "initialState=" + initialState
-                            + ", " : "") + "def=" + def + "]";
+                            + ", " : "") + "def=" + def + ']';
         }
     }
 

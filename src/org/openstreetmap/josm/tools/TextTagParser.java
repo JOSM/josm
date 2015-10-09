@@ -257,7 +257,7 @@ public final class TextTagParser {
             String key = entry.getKey();
             String value = entry.getValue();
             if (key.length() > MAX_KEY_LENGTH) {
-                r = warning(tr("Key is too long (max {0} characters):", MAX_KEY_LENGTH), key+"="+value, "tags.paste.keytoolong");
+                r = warning(tr("Key is too long (max {0} characters):", MAX_KEY_LENGTH), key+'='+value, "tags.paste.keytoolong");
                 if (r == 2 || r == 3) return false; if (r == 4) return true;
             }
             if (!key.matches(KEY_PATTERN)) {

@@ -98,6 +98,9 @@ public class DuplicateNode extends Test {
     protected static final int DUPLICATE_NODE_RAILWAY = 16;
     protected static final int DUPLICATE_NODE_WATERWAY = 17;
 
+    private static final String[] TYPES = {
+            "none", "highway", "railway", "waterway", "boundary", "power", "natural", "landuse", "building"};
+
     /** The map of potential duplicates.
      *
      * If there is exactly one node for a given pos, the map includes a pair &lt;pos, Node&gt;.
@@ -167,15 +170,14 @@ public class DuplicateNode extends Test {
         }
 
         Map<String, Boolean> typeMap = new HashMap<>();
-        String[] types = {"none", "highway", "railway", "waterway", "boundary", "power", "natural", "landuse", "building"};
 
         // check whether we have multiple nodes at the same position with the same tag set
         for (Iterator<Map<String, String>> it = mm.keySet().iterator(); it.hasNext();) {
             Map<String, String> tagSet = it.next();
             if (mm.get(tagSet).size() > 1) {
 
-                for (String type: types) {
-                    typeMap.put(type, false);
+                for (String type: TYPES) {
+                    typeMap.put(type, Boolean.FALSE);
                 }
 
                 for (OsmPrimitive p : mm.get(tagSet)) {
@@ -189,16 +191,15 @@ public class DuplicateNode extends Test {
                                 Map<String, String> keys = w.getKeys();
                                 for (String type: typeMap.keySet()) {
                                     if (keys.containsKey(type)) {
-                                        typeMap.put(type, true);
+                                        typeMap.put(type, Boolean.TRUE);
                                         typed = true;
                                     }
                                 }
                                 if (!typed) {
-                                    typeMap.put("none", true);
+                                    typeMap.put("none", Boolean.TRUE);
                                 }
                             }
                         }
-
                     }
                 }
 

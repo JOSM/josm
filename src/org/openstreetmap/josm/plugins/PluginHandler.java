@@ -1389,7 +1389,7 @@ public final class PluginHandler {
             PluginInformation pi = pp.getPluginInformation();
             pl.remove(pi.name);
             pl.add(pi.name + " (" + (pi.localversion != null && !pi.localversion.isEmpty()
-                    ? pi.localversion : "unknown") + ")");
+                    ? pi.localversion : "unknown") + ')');
         }
         Collections.sort(pl);
         if (!pl.isEmpty()) {

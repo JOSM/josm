@@ -473,6 +473,6 @@ public class WindowGeometry {
 
     @Override
     public String toString() {
-        return "WindowGeometry{topLeft="+topLeft+",extent="+extent+"}";
+        return "WindowGeometry{topLeft="+topLeft+",extent="+extent+'}';
     }
 }

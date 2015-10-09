@@ -237,7 +237,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         String key = "name:" + Locale.getDefault();
         if (get(key) != null)
             return get(key);
-        key = "name:" + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry();
+        key = "name:" + Locale.getDefault().getLanguage() + '_' + Locale.getDefault().getCountry();
         if (get(key) != null)
             return get(key);
         key = "name:" + Locale.getDefault().getLanguage();
@@ -277,6 +277,6 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
                 + (timestamp != null ? "timestamp=" + timestamp : "") + ", "
                 + (user != null ? "user=" + user + ", " : "") + "changesetId="
                 + changesetId
-                + "]";
+                + ']';
     }
 }

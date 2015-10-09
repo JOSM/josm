@@ -29,7 +29,7 @@ public class HistoryInfoWebAction extends AbstractInfoAction {
     protected  String createInfoUrl(Object infoObject) {
         if (infoObject instanceof OsmPrimitive) {
             OsmPrimitive primitive = (OsmPrimitive) infoObject;
-            return Main.getBaseBrowseUrl() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.getId() + "/history";
+            return Main.getBaseBrowseUrl() + '/' + OsmPrimitiveType.from(primitive).getAPIName() + '/' + primitive.getId() + "/history";
         } else {
             return null;
         }

@@ -54,7 +54,7 @@ public final class DefaultAuthenticator extends Authenticator {
             CredentialsAgentResponse response = CredentialsManager.getInstance().getCredentials(getRequestorType(), getRequestingHost(), tried);
             if (response == null || response.isCanceled())
                 return null;
-            credentialsTried.put(getRequestorType(), true);
+            credentialsTried.put(getRequestorType(), Boolean.TRUE);
             return new PasswordAuthentication(response.getUsername(), response.getPassword());
         } catch (CredentialsAgentException e) {
             Main.error(e);

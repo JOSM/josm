@@ -42,7 +42,7 @@ public class WebMarker extends ButtonMarker {
             setErroneous(true);
             new Notification(
                     "<b>" + tr("There was an error while trying to display the URL for this marker") + "</b><br>" +
-                                  tr("(URL was: ") + webUrl + ")" + "<br>" + error)
+                                  tr("(URL was: ") + webUrl + ')' + "<br>" + error)
                     .setIcon(JOptionPane.ERROR_MESSAGE)
                     .setDuration(Notification.TIME_LONG)
                     .show();

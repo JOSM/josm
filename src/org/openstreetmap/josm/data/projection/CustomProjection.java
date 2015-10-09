@@ -198,7 +198,7 @@ public class CustomProjection extends AbstractProjection {
                 if (zoneStr == null)
                     throw new ProjectionConfigurationException(tr("UTM projection (''+proj=utm'') requires ''+zone=...'' parameter."));
                 try {
-                    zone = Integer.parseInt(zoneStr);
+                    zone = Integer.valueOf(zoneStr);
                 } catch (NumberFormatException e) {
                     zone = null;
                 }

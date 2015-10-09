@@ -35,7 +35,7 @@ public class JpgImporter extends FileImporter {
      * @since 5438
      */
     public static final ExtensionFileFilter FILE_FILTER_WITH_FOLDERS = new ExtensionFileFilter(
-            "jpg,jpeg", "jpg", tr("Image Files") + " (*.jpg, "+ tr("folder")+")");
+            "jpg,jpeg", "jpg", tr("Image Files") + " (*.jpg, "+ tr("folder")+')');
 
     /**
      * Constructs a new {@code JpgImporter}.

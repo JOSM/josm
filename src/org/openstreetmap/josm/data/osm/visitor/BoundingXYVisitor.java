@@ -180,7 +180,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
 
     @Override
     public String toString() {
-        return "BoundingXYVisitor["+bounds+"]";
+        return "BoundingXYVisitor["+bounds+']';
     }
 
     public void computeBoundingBox(Collection<? extends OsmPrimitive> primitives) {
