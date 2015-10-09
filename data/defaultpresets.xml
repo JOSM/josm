@@ -4565,6 +4565,7 @@
             <text key="operator" text="Operator" />
             <text key="ref" text="Reference number" />
             <combo key="collection_times" text="Collection times" delimiter="|" values="Mo-Sa 09:00|Mo-Fr 17:30; Sa 12:00|Mo-Fr 15:00,19:00; Sa 15:10; Su 10:30" />
+            <combo key="post_box:type" text="Type" values="pillar,lamp,wall,meter" values_context="post_box" />
             <check key="drive_through" text="Drive through" />
         </item> <!-- Post Box -->
         <item name="Telephone" icon="presets/telephone.png" type="node" preset_name_label="true">
