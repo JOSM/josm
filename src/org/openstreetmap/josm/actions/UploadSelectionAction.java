@@ -7,10 +7,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Stack;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -320,7 +321,7 @@ public class UploadSelectionAction extends JosmAction {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                Stack<OsmPrimitive> toCheck = new Stack<>();
+                Deque<OsmPrimitive> toCheck = new ArrayDeque<>();
                 toCheck.addAll(getPrimitivesToCheckForParents());
                 Set<OsmPrimitive> checked = new HashSet<>();
                 while (!toCheck.isEmpty()) {

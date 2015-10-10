@@ -25,7 +25,7 @@ import java.awt.image.ShortLookupTable;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -404,7 +404,7 @@ public abstract class ImageryLayer extends Layer {
                 g.drawString(message, 5, (int) drawPosY);
             } else {
                 // Draw message on several lines
-                Map<TextAttribute, Object> map = new Hashtable<TextAttribute, Object>();
+                Map<TextAttribute, Object> map = new HashMap<TextAttribute, Object>();
                 map.put(TextAttribute.FAMILY, "Serif");
                 map.put(TextAttribute.SIZE, new Float(18.0));
                 AttributedString vanGogh = new AttributedString(message, map);

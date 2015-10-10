@@ -48,7 +48,7 @@ public class NoteReader {
     private class Parser extends DefaultHandler {
 
         private NoteParseMode parseMode;
-        private StringBuffer buffer = new StringBuffer();
+        private StringBuilder buffer = new StringBuilder();
         private Note thisNote;
         private long commentUid;
         private String commentUsername;

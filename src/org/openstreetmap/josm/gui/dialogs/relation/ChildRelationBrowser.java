@@ -11,11 +11,12 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -328,13 +329,13 @@ public class ChildRelationBrowser extends JPanel {
      */
     class DownloadAllChildrenTask extends DownloadTask {
         private final Relation relation;
-        private final Stack<Relation> relationsToDownload;
+        private final Deque<Relation> relationsToDownload;
         private final Set<Long> downloadedRelationIds;
 
         DownloadAllChildrenTask(Dialog parent, Relation r) {
             super(tr("Download relation members"), parent);
             this.relation = r;
-            relationsToDownload = new Stack<>();
+            relationsToDownload = new ArrayDeque<>();
             downloadedRelationIds = new HashSet<>();
             relationsToDownload.push(this.relation);
         }
