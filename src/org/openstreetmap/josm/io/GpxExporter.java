@@ -45,6 +45,20 @@ public class GpxExporter extends FileExporter implements GpxConstants {
     private static final String GPL_WARNING = "<html><font color='red' size='-2'>"
         + tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.") + "</html>";
 
+    private static final String[] LICENSES = {
+            "Creative Commons By-SA",
+            "Open Database License (ODbL)",
+            "public domain",
+            "GNU Lesser Public License (LGPL)",
+            "BSD License (MIT/X11)"};
+
+    private static final String[] URLS = {
+            "https://creativecommons.org/licenses/by-sa/3.0",
+            "http://opendatacommons.org/licenses/odbl/1.0",
+            "public domain",
+            "https://www.gnu.org/copyleft/lesser.html",
+            "http://www.opensource.org/licenses/bsd-license.php"};
+
     /**
      * Constructs a new {@code GpxExporter}.
      */
@@ -291,14 +305,8 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         predefined.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String[] licenses = {
-                        "Creative Commons By-SA",
-                        "Open Database License (ODbL)",
-                        "public domain",
-                        "GNU Lesser Public License (LGPL)",
-                        "BSD License (MIT/X11)"};
-                JList<String> l = new JList<>(licenses);
-                l.setVisibleRowCount(licenses.length);
+                JList<String> l = new JList<>(LICENSES);
+                l.setVisibleRowCount(LICENSES.length);
                 l.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 int answer = JOptionPane.showConfirmDialog(
                         Main.parent,
@@ -309,19 +317,13 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                 );
                 if (answer != JOptionPane.OK_OPTION || l.getSelectedIndex() == -1)
                     return;
-                final String[] urls = {
-                        "https://creativecommons.org/licenses/by-sa/3.0",
-                        "http://opendatacommons.org/licenses/odbl/1.0",
-                        "public domain",
-                        "https://www.gnu.org/copyleft/lesser.html",
-                        "http://www.opensource.org/licenses/bsd-license.php"};
                 String license = "";
                 for (int i : l.getSelectedIndices()) {
                     if (i == 2) {
                         license = "public domain";
                         break;
                     }
-                    license += license.isEmpty() ? urls[i] : ", "+urls[i];
+                    license += license.isEmpty() ? URLS[i] : ", "+URLS[i];
                 }
                 copyright.setText(license);
                 copyright.setCaretPosition(0);

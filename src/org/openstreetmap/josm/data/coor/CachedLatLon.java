@@ -62,6 +62,6 @@ public class CachedLatLon extends LatLon {
 
     @Override
     public String toString() {
-        return "CachedLatLon[lat="+lat()+",lon="+lon()+"]";
+        return "CachedLatLon[lat="+lat()+",lon="+lon()+']';
     }
 }

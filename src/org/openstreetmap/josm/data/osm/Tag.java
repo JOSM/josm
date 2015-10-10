@@ -111,13 +111,13 @@ public class Tag {
         if (x.length == 2) {
             return new Tag(x[0], x[1]);
         } else {
-            throw new IllegalArgumentException("'" + s + "' does not contain '='");
+            throw new IllegalArgumentException('\'' + s + "' does not contain '='");
         }
     }
 
     @Override
     public String toString() {
-        return key + "=" + value;
+        return key + '=' + value;
     }
 
     /**

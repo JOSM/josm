@@ -27,6 +27,6 @@ public class LiteralExpression implements Expression {
         if (literal instanceof float[]) {
             return Arrays.toString((float[]) literal);
         }
-        return "<" + literal + ">";
+        return "<" + literal + '>';
     }
 }

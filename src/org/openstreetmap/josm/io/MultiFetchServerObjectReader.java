@@ -350,7 +350,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         }
         // Run the fetchers
         for (int i = 0; i < jobs.size() && !isCanceled(); i++) {
-            progressMonitor.subTask(msg + "... " + progressMonitor.getTicks() + "/" + progressMonitor.getTicksCount());
+            progressMonitor.subTask(msg + "... " + progressMonitor.getTicks() + '/' + progressMonitor.getTicksCount());
             try {
                 FetchResult result = ecs.take().get();
                 if (result.missingPrimitives != null) {

@@ -299,7 +299,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             if (id != null) {
                 s += " id=" + id;
             }
-            s += "]";
+            s += ']';
             return s;
         }
     }
@@ -860,7 +860,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public String getExtendedUrl() {
         return imageryType.getTypeString() + (defaultMaxZoom != 0
-            ? "["+(defaultMinZoom != 0 ? defaultMinZoom+"," : "")+defaultMaxZoom+"]" : "") + ":" + url;
+            ? "["+(defaultMinZoom != 0 ? defaultMinZoom+',' : "")+defaultMaxZoom+"]" : "") + ':' + url;
     }
 
     public String getToolbarName() {
@@ -874,7 +874,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     public String getMenuName() {
         String res = name;
         if (pixelPerDegree != 0) {
-            res += " ("+pixelPerDegree+")";
+            res += " ("+pixelPerDegree+')';
         }
         return res;
     }

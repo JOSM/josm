@@ -172,7 +172,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
     private void resetState() {
         String newTitle;
         if (extraText != null) {
-            newTitle = taskTitle + " " + extraText;
+            newTitle = taskTitle + ' ' + extraText;
         } else {
             newTitle = taskTitle;
         }

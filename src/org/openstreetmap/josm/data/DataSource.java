@@ -70,7 +70,7 @@ public class DataSource {
 
     @Override
     public String toString() {
-        return "DataSource [bounds=" + bounds + ", origin=" + origin + "]";
+        return "DataSource [bounds=" + bounds + ", origin=" + origin + ']';
     }
 
     /**

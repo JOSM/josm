@@ -125,15 +125,15 @@ public class MainApplication extends Main {
                 tr("usage")+":\n"+
                 "\tjava -jar josm.jar <options>...\n\n"+
                 tr("options")+":\n"+
-                "\t--help|-h                                 "+tr("Show this help")+"\n"+
-                "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
-                "\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
-                "\t[--download=]<URL>                        "+tr("Download the location at the URL (with lat=x&lon=y&zoom=z)")+"\n"+
-                "\t[--download=]<filename>                   "+tr("Open a file (any file type that can be opened with File/Open)")+"\n"+
-                "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw GPS")+"\n"+
-                "\t--downloadgps=<URL>                       "+tr("Download the location at the URL (with lat=x&lon=y&zoom=z) as raw GPS")+"\n"+
-                "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
-                "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
+                "\t--help|-h                                 "+tr("Show this help")+'\n'+
+                "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+'\n'+
+                "\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+'\n'+
+                "\t[--download=]<URL>                        "+tr("Download the location at the URL (with lat=x&lon=y&zoom=z)")+'\n'+
+                "\t[--download=]<filename>                   "+tr("Open a file (any file type that can be opened with File/Open)")+'\n'+
+                "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw GPS")+'\n'+
+                "\t--downloadgps=<URL>                       "+tr("Download the location at the URL (with lat=x&lon=y&zoom=z) as raw GPS")+'\n'+
+                "\t--selection=<searchstring>                "+tr("Select with the given search")+'\n'+
+                "\t--[no-]maximize                           "+tr("Launch in maximized mode")+'\n'+
                 "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
                 "\t--load-preferences=<url-to-xml>           "+tr("Changes preferences according to the XML file")+"\n\n"+
                 "\t--set=<key>=<value>                       "+tr("Set preference key to value")+"\n\n"+
@@ -154,14 +154,14 @@ public class MainApplication extends Main {
                         "\t-Xmx...m\n\n"+
                         tr("examples")+":\n"+
                         "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
-                        "\tjava -jar josm.jar "+OsmUrlToBounds.getURL(43.2, 11.1, 13)+"\n"+
+                        "\tjava -jar josm.jar "+OsmUrlToBounds.getURL(43.2, 11.1, 13)+'\n'+
                         "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
                         "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
                         "\tjava -Djosm.pref=$XDG_CONFIG_HOME -Djosm.userdata=$XDG_DATA_HOME -Djosm.cache=$XDG_CACHE_HOME -jar josm.jar\n"+
                         "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
                         "\tjava -Xmx1024m -jar josm.jar\n\n"+
-                        tr("Parameters --download, --downloadgps, and --selection are processed in this order.")+"\n"+
-                        tr("Make sure you load some data if you use --selection.")+"\n"
+                        tr("Parameters --download, --downloadgps, and --selection are processed in this order.")+'\n'+
+                        tr("Make sure you load some data if you use --selection.")+'\n'
                 );
     }
 
@@ -211,7 +211,7 @@ public class MainApplication extends Main {
         private final boolean requiresArg;
 
         Option(boolean requiresArgument) {
-            this.name = name().toLowerCase(Locale.ENGLISH).replace("_", "-");
+            this.name = name().toLowerCase(Locale.ENGLISH).replace('_', '-');
             this.requiresArg = requiresArgument;
         }
 

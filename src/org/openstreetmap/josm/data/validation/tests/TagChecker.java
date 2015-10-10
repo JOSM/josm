@@ -240,7 +240,7 @@ public class TagChecker extends TagTest {
                     }
                 }
             } catch (IOException e) {
-                errorSources += source + "\n";
+                errorSources += source + '\n';
             }
         }
 

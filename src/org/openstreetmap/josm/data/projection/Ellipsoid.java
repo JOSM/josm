@@ -180,7 +180,7 @@ public final class Ellipsoid {
 
     @Override
     public String toString() {
-        return "Ellipsoid{a="+a+", b="+b+"}";
+        return "Ellipsoid{a="+a+", b="+b+'}';
     }
 
     /**

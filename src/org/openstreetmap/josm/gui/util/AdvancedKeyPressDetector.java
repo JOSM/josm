@@ -130,7 +130,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
                 if (isFocusInMainWindow()) {
                     for (KeyPressReleaseListener q: keyListeners) {
                         if (Main.isDebugEnabled()) {
-                            Main.debug(q+" => doKeyPressed("+e+")");
+                            Main.debug(q+" => doKeyPressed("+e+')');
                         }
                         q.doKeyPressed(e);
                     }
@@ -143,7 +143,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
                     if (isFocusInMainWindow()) {
                         for (KeyPressReleaseListener q: keyListeners) {
                             if (Main.isDebugEnabled()) {
-                                Main.debug(q+" => doKeyReleased("+e+")");
+                                Main.debug(q+" => doKeyReleased("+e+')');
                             }
                             q.doKeyReleased(e);
                         }

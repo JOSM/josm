@@ -105,7 +105,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
         GpxLayer gpxLayer = null;
         List<SessionReader.LayerDependency> deps = support.getLayerDependencies();
         if (!deps.isEmpty()) {
-            Layer layer = deps.iterator().next().getLayer();
+            Layer layer = deps.get(0).getLayer();
             if (layer instanceof GpxLayer) {
                 gpxLayer = (GpxLayer) layer;
             }

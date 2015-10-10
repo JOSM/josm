@@ -231,7 +231,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
             } else if (o instanceof Node) {
                 type = "n";
             }
-            strings.add(type + "_" + o.getId());
+            strings.add(type + '_' + o.getId());
         }
         for (String o : strings) {
             ignorestring.append(':').append(o);
@@ -242,7 +242,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     public String getIgnoreSubGroup() {
         String ignorestring = getIgnoreGroup();
         if (descriptionEn != null) {
-            ignorestring += "_" + descriptionEn;
+            ignorestring += '_' + descriptionEn;
         }
         return ignorestring;
     }
@@ -380,6 +380,6 @@ public class TestError implements Comparable<TestError>, DataSetListener {
 
     @Override
     public String toString() {
-        return "TestError [tester=" + tester + ", code=" + code + ", message=" + message + "]";
+        return "TestError [tester=" + tester + ", code=" + code + ", message=" + message + ']';
     }
 }

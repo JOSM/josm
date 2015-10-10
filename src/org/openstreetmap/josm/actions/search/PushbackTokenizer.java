@@ -33,7 +33,7 @@ public class PushbackTokenizer {
 
         @Override
         public String toString() {
-            return "Range [start=" + start + ", end=" + end + "]";
+            return "Range [start=" + start + ", end=" + end + ']';
         }
     }
 

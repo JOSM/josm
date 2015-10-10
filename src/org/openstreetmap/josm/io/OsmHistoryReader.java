@@ -39,7 +39,7 @@ public class OsmHistoryReader {
         protected String getCurrentPosition() {
             if (locator == null)
                 return "";
-            return "(" + locator.getLineNumber() + "," + locator.getColumnNumber() + ")";
+            return "(" + locator.getLineNumber() + ',' + locator.getColumnNumber() + ')';
         }
 
         @Override

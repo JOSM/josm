@@ -202,7 +202,7 @@ public class VersionTable extends JTable implements Observer{
         protected String createInfoUrl(Object infoObject) {
             if (infoObject instanceof HistoryOsmPrimitive) {
                 HistoryOsmPrimitive hp = (HistoryOsmPrimitive) infoObject;
-                return hp.getUser() == null ? null : Main.getBaseUserUrl() + "/" + hp.getUser().getName();
+                return hp.getUser() == null ? null : Main.getBaseUserUrl() + '/' + hp.getUser().getName();
             } else {
                 return null;
             }

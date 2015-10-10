@@ -187,7 +187,7 @@ public class AutoScaleAction extends JosmAction {
                 }
             }
         }
-        putValue("active", true);
+        putValue("active", Boolean.TRUE);
     }
 
     @Override

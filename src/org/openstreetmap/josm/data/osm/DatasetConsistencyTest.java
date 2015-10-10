@@ -36,7 +36,7 @@ public class DatasetConsistencyTest {
     private void printError(String type, String message, Object... args) {
         errorCount++;
         if (errorCount <= MAX_ERRORS) {
-            writer.println("[" + type + "] " + String.format(message, args));
+            writer.println('[' + type + "] " + String.format(message, args));
         }
     }
 
@@ -186,7 +186,7 @@ public class DatasetConsistencyTest {
     private void printElapsedTime(long startTime) {
         if (Main.isDebugEnabled()) {
             StackTraceElement item = Thread.currentThread().getStackTrace()[2];
-            String operation = getClass().getSimpleName() + "." + item.getMethodName();
+            String operation = getClass().getSimpleName() + '.' + item.getMethodName();
             long elapsedTime = System.currentTimeMillis() - startTime;
             Main.debug(tr("Test ''{0}'' completed in {1}",
                     operation, Utils.getDurationString(elapsedTime)));

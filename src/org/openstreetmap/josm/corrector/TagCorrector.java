@@ -83,7 +83,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 p.add(propertiesLabel, GBC.std());
 
                 final JLabel primitiveLabel = new JLabel(
-                        primitive.getDisplayName(DefaultNameFormatter.getInstance()) + ":",
+                        primitive.getDisplayName(DefaultNameFormatter.getInstance()) + ':',
                         ImageProvider.get(primitive.getDisplayType()),
                         JLabel.LEFT
                 );

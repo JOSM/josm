@@ -231,7 +231,7 @@ class TagEditHelper {
                 tr("Overwrite key"),
                 new String[]{tr("Replace"), tr("Cancel")});
         ed.setButtonIcons(new String[]{"purge", "cancel"});
-        ed.setContent(action+"\n"+ tr("The new key is already used, overwrite values?"));
+        ed.setContent(action+'\n'+ tr("The new key is already used, overwrite values?"));
         ed.setCancelButton(2);
         ed.toggleEnable(togglePref);
         ed.showDialog();
@@ -650,7 +650,7 @@ class TagEditHelper {
             if (sc != null) {
                 lines.add(code(sc.getKeyText()) + tr("to apply first suggestion"));
             }
-            lines.add(code(KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+"+"+KeyEvent.getKeyText(KeyEvent.VK_ENTER))
+            lines.add(code(KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+'+'+KeyEvent.getKeyText(KeyEvent.VK_ENTER))
                     +tr("to add without closing the dialog"));
             sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | KeyEvent.SHIFT_DOWN_MASK);
             if (sc != null) {
@@ -749,7 +749,7 @@ class TagEditHelper {
                         + "<style>td{" + color + "}</style>"
                         + "<table><tr>"
                         + "<td>" + count + ".</td>"
-                        + "<td style='border:1px solid gray'>" + XmlWriter.encode(t.toString(), true) + "<" +
+                        + "<td style='border:1px solid gray'>" + XmlWriter.encode(t.toString(), true) + '<' +
                         "/td></tr></table></html>");
                 tagLabel.setFont(tagLabel.getFont().deriveFont(Font.PLAIN));
                 if (action.isEnabled()) {

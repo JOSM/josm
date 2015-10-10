@@ -32,7 +32,7 @@ public class FeaturesHandler extends RequestHandler {
                } else {
                    buf.append(", ");
                }
-               String info = RequestProcessor.getHandlerInfoAsJSON("/"+s);
+               String info = RequestProcessor.getHandlerInfoAsJSON('/'+s);
                if (info != null) {
                    buf.append(info);
                } else {
@@ -47,7 +47,7 @@ public class FeaturesHandler extends RequestHandler {
         content = buf.toString();
         contentType = "application/json";
         if (args.containsKey("jsonp")) {
-            content = args.get("jsonp") + " && " + args.get("jsonp") + "(" + content + ")";
+            content = args.get("jsonp") + " && " + args.get("jsonp") + '(' + content + ')';
         }
     }
 

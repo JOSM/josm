@@ -101,7 +101,7 @@ public class InternetTags extends Test {
                     String domain = !protocol.isEmpty() ? v.substring(protocol.length(), v.length()) : v;
                     String ending = "";
                     if (domain.contains("/")) {
-                        int idx = domain.indexOf("/");
+                        int idx = domain.indexOf('/');
                         ending = domain.substring(idx, domain.length());
                         domain = domain.substring(0, idx);
                     }

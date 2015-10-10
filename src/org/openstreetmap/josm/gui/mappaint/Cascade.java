@@ -207,7 +207,7 @@ public final class Cascade implements Cloneable {
     public String toString() {
         StringBuilder res = new StringBuilder("Cascade{ ");
         for (Entry<String, Object> entry : prop.entrySet()) {
-            res.append(entry.getKey()+":");
+            res.append(entry.getKey()+':');
             Object val = entry.getValue();
             if (val instanceof float[]) {
                 res.append(Arrays.toString((float[]) val));

@@ -184,7 +184,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         } else {
             if (n.getCoor() != null) {
                 out.print(" lat='"+LatLon.cDdHighPecisionFormatter.format(n.getCoor().lat())+
-                          "' lon='"+LatLon.cDdHighPecisionFormatter.format(n.getCoor().lon())+"'");
+                          "' lon='"+LatLon.cDdHighPecisionFormatter.format(n.getCoor().lon())+'\'');
             }
             addTags(n, "node", true);
         }
@@ -225,25 +225,25 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
 
     public void visit(Changeset cs) {
         out.print("  <changeset ");
-        out.print(" id='"+cs.getId()+"'");
+        out.print(" id='"+cs.getId()+'\'');
         if (cs.getUser() != null) {
-            out.print(" user='"+cs.getUser().getName() +"'");
-            out.print(" uid='"+cs.getUser().getId() +"'");
+            out.print(" user='"+cs.getUser().getName() +'\'');
+            out.print(" uid='"+cs.getUser().getId() +'\'');
         }
         if (cs.getCreatedAt() != null) {
-            out.print(" created_at='"+DateUtils.fromDate(cs.getCreatedAt()) +"'");
+            out.print(" created_at='"+DateUtils.fromDate(cs.getCreatedAt()) +'\'');
         }
         if (cs.getClosedAt() != null) {
-            out.print(" closed_at='"+DateUtils.fromDate(cs.getClosedAt()) +"'");
+            out.print(" closed_at='"+DateUtils.fromDate(cs.getClosedAt()) +'\'');
         }
-        out.print(" open='"+ (cs.isOpen() ? "true" : "false") +"'");
+        out.print(" open='"+ (cs.isOpen() ? "true" : "false") +'\'');
         if (cs.getMin() != null) {
-            out.print(" min_lon='"+ cs.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES) +"'");
-            out.print(" min_lat='"+ cs.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES) +"'");
+            out.print(" min_lon='"+ cs.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES) +'\'');
+            out.print(" min_lat='"+ cs.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES) +'\'');
         }
         if (cs.getMax() != null) {
-            out.print(" max_lon='"+ cs.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES) +"'");
-            out.print(" max_lat='"+ cs.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES) +"'");
+            out.print(" max_lon='"+ cs.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES) +'\'');
+            out.print(" max_lat='"+ cs.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES) +'\'');
         }
         out.println(">");
         addTags(cs, "changeset", false); // also writes closing </changeset>
@@ -267,11 +267,11 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
                 out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
                         "' v='"+XmlWriter.encode(e.getValue())+ "' />");
             }
-            out.println("  </" + tagname + ">");
+            out.println("  </" + tagname + '>');
         } else if (tagOpen) {
             out.println(" />");
         } else {
-            out.println("  </" + tagname + ">");
+            out.println("  </" + tagname + '>');
         }
     }
 
@@ -282,7 +282,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     protected void addCommon(IPrimitive osm, String tagname) {
         out.print("  <"+tagname);
         if (osm.getUniqueId() != 0) {
-            out.print(" id='"+ osm.getUniqueId()+"'");
+            out.print(" id='"+ osm.getUniqueId()+'\'');
         } else
             throw new IllegalStateException(tr("Unexpected id 0 for osm primitive found"));
         if (!isOsmChange) {
@@ -294,31 +294,31 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
                     action = "modify";
                 }
                 if (action != null) {
-                    out.print(" action='"+action+"'");
+                    out.print(" action='"+action+'\'');
                 }
             }
             if (!osm.isTimestampEmpty()) {
-                out.print(" timestamp='"+DateUtils.fromTimestamp(osm.getRawTimestamp())+"'");
+                out.print(" timestamp='"+DateUtils.fromTimestamp(osm.getRawTimestamp())+'\'');
             }
             // user and visible added with 0.4 API
             if (osm.getUser() != null) {
                 if (osm.getUser().isLocalUser()) {
-                    out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+"'");
+                    out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+'\'');
                 } else if (osm.getUser().isOsmUser()) {
                     // uid added with 0.6
-                    out.print(" uid='"+ osm.getUser().getId()+"'");
-                    out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+"'");
+                    out.print(" uid='"+ osm.getUser().getId()+'\'');
+                    out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+'\'');
                 }
             }
-            out.print(" visible='"+osm.isVisible()+"'");
+            out.print(" visible='"+osm.isVisible()+'\'');
         }
         if (osm.getVersion() != 0) {
-            out.print(" version='"+osm.getVersion()+"'");
+            out.print(" version='"+osm.getVersion()+'\'');
         }
         if (this.changeset != null && this.changeset.getId() != 0) {
-            out.print(" changeset='"+this.changeset.getId()+"'");
+            out.print(" changeset='"+this.changeset.getId()+'\'');
         } else if (osm.getChangesetId() > 0 && !osm.isNew()) {
-            out.print(" changeset='"+osm.getChangesetId()+"'");
+            out.print(" changeset='"+osm.getChangesetId()+'\'');
         }
     }
 }

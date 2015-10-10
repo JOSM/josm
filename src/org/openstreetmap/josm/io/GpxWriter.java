@@ -134,7 +134,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
             if (attr.containsKey(META_AUTHOR_EMAIL)) {
                 String[] tmp = data.getString(META_AUTHOR_EMAIL).split("@");
                 if (tmp.length == 2) {
-                    inline("email", "id=\"" + tmp[0] + "\" domain=\""+tmp[1]+"\"");
+                    inline("email", "id=\"" + tmp[0] + "\" domain=\""+tmp[1]+'\"');
                 }
             }
             // write the author link
@@ -145,7 +145,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         // write the copyright details
         if (attr.containsKey(META_COPYRIGHT_LICENSE)
                 || attr.containsKey(META_COPYRIGHT_YEAR)) {
-            openAtt("copyright", "author=\""+ data.get(META_COPYRIGHT_AUTHOR) +"\"");
+            openAtt("copyright", "author=\""+ data.get(META_COPYRIGHT_AUTHOR) +'\"');
             if (attr.containsKey(META_COPYRIGHT_YEAR)) {
                 simpleTag("year", (String) data.get(META_COPYRIGHT_YEAR));
             }
@@ -170,7 +170,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         Bounds bounds = data.recalculateBounds();
         if (bounds != null) {
             String b = "minlat=\"" + bounds.getMinLat() + "\" minlon=\"" + bounds.getMinLon() +
-            "\" maxlat=\"" + bounds.getMaxLat() + "\" maxlon=\"" + bounds.getMaxLon() + "\"";
+            "\" maxlat=\"" + bounds.getMaxLat() + "\" maxlon=\"" + bounds.getMaxLon() + '\"';
             inline("bounds", b);
         }
 
@@ -221,22 +221,22 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     }
 
     private void open(String tag) {
-        out.print(indent + "<" + tag + ">");
+        out.print(indent + '<' + tag + '>');
         indent += "  ";
     }
 
     private void openAtt(String tag, String attributes) {
-        out.println(indent + "<" + tag + " " + attributes + ">");
+        out.println(indent + '<' + tag + ' ' + attributes + '>');
         indent += "  ";
     }
 
     private void inline(String tag, String attributes) {
-        out.println(indent + "<" + tag + " " + attributes + "/>");
+        out.println(indent + '<' + tag + ' ' + attributes + "/>");
     }
 
     private void close(String tag) {
         indent = indent.substring(2);
-        out.print(indent + "</" + tag + ">");
+        out.print(indent + "</" + tag + '>');
     }
 
     private void closeln(String tag) {
@@ -252,7 +252,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         if (content != null && !content.isEmpty()) {
             open(tag);
             out.print(encode(content));
-            out.println("</" + tag + ">");
+            out.println("</" + tag + '>');
             indent = indent.substring(2);
         }
     }
@@ -262,7 +262,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
      */
     private void gpxLink(GpxLink link) {
         if (link != null) {
-            openAtt("link", "href=\"" + link.uri + "\"");
+            openAtt("link", "href=\"" + link.uri + '\"');
             simpleTag("text", link.text);
             simpleTag("type", link.type);
             closeln("link");
@@ -289,7 +289,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         }
         if (pnt != null) {
             LatLon c = pnt.getCoor();
-            String coordAttr = "lat=\"" + c.lat() + "\" lon=\"" + c.lon() + "\"";
+            String coordAttr = "lat=\"" + c.lat() + "\" lon=\"" + c.lon() + '\"';
             if (pnt.attr.isEmpty()) {
                 inline(type, coordAttr);
             } else {

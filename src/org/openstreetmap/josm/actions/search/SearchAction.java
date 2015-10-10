@@ -206,7 +206,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     public void mouseClicked(MouseEvent e) {
                         try {
                             JTextComponent tf = (JTextComponent) hcb.getEditor().getEditorComponent();
-                            tf.getDocument().insertString(tf.getCaretPosition(), " " + insertText, null);
+                            tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
                         } catch (BadLocationException ex) {
                             throw new RuntimeException(ex.getMessage(), ex);
                         }
@@ -627,7 +627,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                             /*MapCSS search*/ trc("search", "CSS") : "";
             String all = allElements ? ", " +
                             /*all elements*/ trc("search", "A") : "";
-            return "\"" + text + "\" (" + cs + rx + css + all + ", " + mode + ")";
+            return '"' + text + "\" (" + cs + rx + css + all + ", " + mode + ')';
         }
 
         @Override

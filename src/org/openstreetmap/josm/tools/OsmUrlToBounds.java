@@ -117,7 +117,7 @@ public final class OsmUrlToBounds {
     private static double parseDouble(Map<String, String> map, String key) {
         if (map.containsKey(key))
             return Double.parseDouble(map.get(key));
-        return Double.parseDouble(map.get("m"+key));
+        return Double.parseDouble(map.get('m'+key));
     }
 
     private static final char[] SHORTLINK_CHARS = {
@@ -295,6 +295,6 @@ public final class OsmUrlToBounds {
         lat /= decimals;
         double lon = Math.round(dlon * decimals);
         lon /= decimals;
-        return Main.getOSMWebsite() + "/#map="+zoom+"/"+lat+"/"+lon;
+        return Main.getOSMWebsite() + "/#map="+zoom+'/'+lat+'/'+lon;
     }
 }

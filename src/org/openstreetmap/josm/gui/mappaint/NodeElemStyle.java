@@ -389,13 +389,13 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         StringBuilder s = new StringBuilder("NodeElemStyle{");
         s.append(super.toString());
         if (mapImage != null) {
-            s.append(" icon=[" + mapImage + "]");
+            s.append(" icon=[" + mapImage + ']');
         }
         if (symbol != null) {
-            s.append(" symbol=[" + symbol + "]");
+            s.append(" symbol=[" + symbol + ']');
         }
         if (mapImageAngle != null) {
-            s.append(" mapImageAngle=[" + mapImageAngle + "]");
+            s.append(" mapImageAngle=[" + mapImageAngle + ']');
         }
         s.append('}');
         return s.toString();

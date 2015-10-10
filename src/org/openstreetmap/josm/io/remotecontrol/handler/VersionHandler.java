@@ -22,7 +22,7 @@ public class VersionHandler extends RequestHandler {
         content = RequestProcessor.PROTOCOLVERSION;
         contentType = "application/json";
         if (args.containsKey("jsonp")) {
-            content = args.get("jsonp") + " && " + args.get("jsonp") + "(" + content + ")";
+            content = args.get("jsonp") + " && " + args.get("jsonp") + "(" + content + ')';
         }
     }
 

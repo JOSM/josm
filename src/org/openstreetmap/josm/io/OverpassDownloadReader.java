@@ -49,12 +49,12 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         else {
             String realQuery = completeOverpassQuery(overpassQuery);
             return "interpreter?data=" + Utils.encodeUrl(realQuery)
-                    + "&bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
+                    + "&bbox=" + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2;
         }
     }
 
     private String completeOverpassQuery(String query) {
-        int firstColon = query.indexOf(";");
+        int firstColon = query.indexOf(';');
         if (firstColon == -1) {
             return "[bbox];" + query;
         }

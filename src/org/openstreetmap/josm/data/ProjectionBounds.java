@@ -66,7 +66,7 @@ public class ProjectionBounds {
 
     @Override
     public String toString() {
-        return "ProjectionBounds["+minEast+","+minNorth+","+maxEast+","+maxNorth+"]";
+        return "ProjectionBounds["+minEast+","+minNorth+","+maxEast+","+maxNorth+']';
     }
 
     /**

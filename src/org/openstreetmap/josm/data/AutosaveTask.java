@@ -155,7 +155,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         Date now = new Date();
         while (true) {
             String filename = String.format("%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s",
-                    layer.layerFileName, now, index == 0 ? "" : "_" + index);
+                    layer.layerFileName, now, index == 0 ? "" : '_' + index);
             File result = new File(autosaveDir, filename+".osm");
             try {
                 if (result.createNewFile()) {

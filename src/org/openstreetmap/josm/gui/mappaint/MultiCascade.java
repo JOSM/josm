@@ -42,7 +42,7 @@ public class MultiCascade implements StyleKeys {
                 // Everything that is not on the default layer is assumed to
                 // be a modifier. Can be overridden in style definition.
                 if (!"default".equals(layer) && !"*".equals(layer)) {
-                    c.put(MODIFIER, true);
+                    c.put(MODIFIER, Boolean.TRUE);
                 }
             }
             layers.put(layer, c);

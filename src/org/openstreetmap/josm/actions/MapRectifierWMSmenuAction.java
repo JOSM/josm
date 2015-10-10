@@ -187,7 +187,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 // Just set the URL and hope everything works out
                 if (s.wmsUrl.isEmpty()) {
                     try {
-                        addWMSLayer(s.name + " (" + text + ")", text);
+                        addWMSLayer(s.name + " (" + text + ')', text);
                         break outer;
                     } catch (IllegalStateException ex) {
                         Main.error(ex.getMessage());
@@ -199,14 +199,14 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 if (m.find()) {
                     String id = m.group(1);
                     String newURL = s.wmsUrl.replaceAll("__s__", id);
-                    String title = s.name + " (" + id + ")";
+                    String title = s.name + " (" + id + ')';
                     addWMSLayer(title, newURL);
                     break outer;
                 }
                 // If not, look if it's a valid ID for the selected service
                 if (s.idValidator.matcher(text).matches()) {
                     String newURL = s.wmsUrl.replaceAll("__s__", text);
-                    String title = s.name + " (" + text + ")";
+                    String title = s.name + " (" + text + ')';
                     addWMSLayer(title, newURL);
                     break outer;
                 }

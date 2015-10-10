@@ -6,7 +6,7 @@ public class ProgressTaskId {
     private final String id;
 
     public ProgressTaskId(String component, String task) {
-        this.id = component + "." + task;
+        this.id = component + '.' + task;
     }
 
     public String getId() {
@@ -28,7 +28,5 @@ public class ProgressTaskId {
             return false;
         ProgressTaskId other = (ProgressTaskId) obj;
         return other.id.equals(id);
-
     }
-
 }

@@ -62,7 +62,7 @@ public final class ColorHelper {
     public static String color2html(Color col, boolean withAlpha) {
         if (col == null)
             return null;
-        String code = "#"+int2hex(col.getRed())+int2hex(col.getGreen())+int2hex(col.getBlue());
+        String code = '#'+int2hex(col.getRed())+int2hex(col.getGreen())+int2hex(col.getBlue());
         if (withAlpha) {
             int alpha = col.getAlpha();
             if (alpha < 255) {

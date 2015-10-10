@@ -454,18 +454,18 @@ public class SplitWayAction extends JosmAction {
                             if ((i_r - k >= 0) && relationMembers.get(i_r - k).isWay()) {
                                 Way w = relationMembers.get(i_r - k).getWay();
                                 if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
-                                    backwards = false;
+                                    backwards = Boolean.FALSE;
                                 } else if ((w.firstNode() == way.lastNode()) || w.lastNode() == way.lastNode()) {
-                                    backwards = true;
+                                    backwards = Boolean.TRUE;
                                 }
                                 break;
                             }
                             if ((i_r + k < relationMembers.size()) && relationMembers.get(i_r + k).isWay()) {
                                 Way w = relationMembers.get(i_r + k).getWay();
                                 if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
-                                    backwards = true;
+                                    backwards = Boolean.TRUE;
                                 } else if ((w.firstNode() == way.lastNode()) || w.lastNode() == way.lastNode()) {
-                                    backwards = false;
+                                    backwards = Boolean.FALSE;
                                 }
                                 break;
                             }

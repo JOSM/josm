@@ -1207,7 +1207,7 @@ public final class Utils {
         } else {
             final List<String> lines = Arrays.asList(s.split("\\n"));
             if (lines.size() > maxLines) {
-                return join("\n", lines.subList(0, maxLines - 1)) + "\n" + "...";
+                return join("\n", lines.subList(0, maxLines - 1)) + "\n...";
             } else {
                 return s;
             }
@@ -1340,7 +1340,7 @@ public final class Utils {
         if (value != null) {
             String old = System.setProperty(key, value);
             if (!key.toLowerCase(Locale.ENGLISH).contains("password")) {
-                Main.debug("System property '" + key + "' set to '" + value + "'. Old value was '" + old + "'");
+                Main.debug("System property '" + key + "' set to '" + value + "'. Old value was '" + old + '\'');
             } else {
                 Main.debug("System property '" + key + "' changed.");
             }
@@ -1396,7 +1396,7 @@ public final class Utils {
     public static boolean hasExtension(String filename, String... extensions) {
         String name = filename.toLowerCase(Locale.ENGLISH);
         for (String ext : extensions) {
-            if (name.endsWith("." + ext.toLowerCase(Locale.ENGLISH)))
+            if (name.endsWith('.' + ext.toLowerCase(Locale.ENGLISH)))
                 return true;
         }
         return false;

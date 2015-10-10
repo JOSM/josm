@@ -237,16 +237,16 @@ public class SystemOfMeasurement {
                 && a < (bValue*bValue) / (aValue*aValue)) || customAreaOnly)
             return formatText(area / areaCustomValue, areaCustomName, format);
         else if (!lowerOnly && a >= (bValue*bValue) / (aValue*aValue))
-            return formatText(area / (bValue * bValue), bName + "\u00b2", format);
+            return formatText(area / (bValue * bValue), bName + '\u00b2', format);
         else if (a < threshold)
-            return "< " + formatText(threshold, aName + "\u00b2", format);
+            return "< " + formatText(threshold, aName + '\u00b2', format);
         else
-            return formatText(a, aName + "\u00b2", format);
+            return formatText(a, aName + '\u00b2', format);
     }
 
     private static String formatText(double v, String unit, NumberFormat format) {
         if (format != null) {
-            return format.format(v) + " " + unit;
+            return format.format(v) + ' ' + unit;
         }
         return String.format(Locale.US, "%." + (v < 9.999999 ? 2 : 1) + "f %s", v, unit);
     }

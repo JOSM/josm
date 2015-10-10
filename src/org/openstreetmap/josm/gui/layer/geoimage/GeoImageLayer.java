@@ -375,7 +375,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
         return "<html>"
                 + trn("{0} image loaded.", "{0} images loaded.", n, n)
-                + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", tagged, tagged)
+                + ' ' + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", tagged, tagged)
                 + (newdata > 0 ? "<br>" + trn("{0} has updated GPS data.", "{0} have updated GPS data.", newdata, newdata) : "")
                 + "</html>";
     }

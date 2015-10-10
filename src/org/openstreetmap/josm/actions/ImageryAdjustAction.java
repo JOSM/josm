@@ -261,7 +261,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             // US locale to force decimal separator to be '.'
             try (Formatter us = new Formatter(Locale.US)) {
                 tOffset.setText(us.format(
-                    "%1." + precision + "f; %1." + precision + "f",
+                    "%1." + precision + "f; %1." + precision + 'f',
                     layer.getDx(), layer.getDy()).toString());
             }
         }

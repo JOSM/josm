@@ -270,7 +270,7 @@ public abstract class Condition {
 
         @Override
         public String toString() {
-            return "[" + k + "'" + op + "'" + v + "]";
+            return '[' + k + '\'' + op + '\'' + v + ']';
         }
     }
 
@@ -457,7 +457,7 @@ public abstract class Condition {
 
         @Override
         public String toString() {
-            return "[" + (negateResult ? "!" : "") + label + "]";
+            return '[' + (negateResult ? "!" : "") + label + ']';
         }
     }
 
@@ -478,7 +478,7 @@ public abstract class Condition {
 
         @Override
         public String toString() {
-            return (not ? "!" : "") + "." + id;
+            return (not ? "!" : "") + '.' + id;
         }
     }
 
@@ -628,7 +628,7 @@ public abstract class Condition {
 
         @Override
         public String toString() {
-            return (not ? "!" : "") + ":" + method.getName();
+            return (not ? "!" : "") + ':' + method.getName();
         }
     }
 
@@ -659,7 +659,7 @@ public abstract class Condition {
 
         @Override
         public String toString() {
-            return "[" + e + "]";
+            return "[" + e + ']';
         }
     }
 }

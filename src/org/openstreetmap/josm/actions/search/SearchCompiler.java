@@ -158,7 +158,7 @@ public class SearchCompiler {
                         return new Nth(tokenizer, true);
                     case "timestamp":
                         // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
-                        String rangeS = " " + tokenizer.readTextOrNumber() + " ";
+                        String rangeS = ' ' + tokenizer.readTextOrNumber() + ' ';
                         String[] rangeA = rangeS.split("/");
                         if (rangeA.length == 1) {
                             return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
@@ -370,7 +370,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return key + "?";
+            return key + '?';
         }
     }
 
@@ -606,7 +606,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return key + "=" + value;
+            return key + '=' + value;
         }
     }
 
@@ -622,8 +622,11 @@ public class SearchCompiler {
             this.referenceValue = referenceValue;
             Double v = null;
             try {
-                v = Double.parseDouble(referenceValue);
+                v = Double.valueOf(referenceValue);
             } catch (NumberFormatException ignore) {
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ignore.getMessage());
+                }
             }
             this.referenceNumber = v;
             this.compareMode = compareMode;
@@ -1018,7 +1021,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return getString() + "=" + min + "-" + max;
+            return getString() + '=' + min + '-' + max;
         }
     }
 
@@ -1243,7 +1246,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "parent(" + match + ")";
+            return "parent(" + match + ')';
         }
     }
 
@@ -1267,7 +1270,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "child(" + match + ")";
+            return "child(" + match + ')';
         }
     }
 

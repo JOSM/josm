@@ -210,7 +210,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
                 replacement = String.valueOf(getTileSize());
                 break;
             default:
-                replacement = "{" + matcher.group(1) + "}";
+                replacement = '{' + matcher.group(1) + '}';
             }
             matcher.appendReplacement(url, replacement);
         }

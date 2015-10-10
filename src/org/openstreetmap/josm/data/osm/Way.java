@@ -330,7 +330,7 @@ public final class Way extends OsmPrimitive implements IWay {
     @Override
     public String toString() {
         String nodesDesc = isIncomplete() ? "(incomplete)" : "nodes=" + Arrays.toString(nodes);
-        return "{Way id=" + getUniqueId() + " version=" + getVersion()+ " " + getFlagsAsString()  + " " + nodesDesc + "}";
+        return "{Way id=" + getUniqueId() + " version=" + getVersion()+ ' ' + getFlagsAsString() + ' ' + nodesDesc + '}';
     }
 
     @Override

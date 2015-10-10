@@ -959,7 +959,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 return tr("Release the mouse button to select the objects in the rectangle.");
             else if (mode == Mode.MOVE && (System.currentTimeMillis() - mouseDownTime >= initialMoveDelay)) {
                 final boolean canMerge = getCurrentDataSet() != null && !getCurrentDataSet().getSelectedNodes().isEmpty();
-                final String mergeHelp = canMerge ? " " + tr("Ctrl to merge with nearest node.") : "";
+                final String mergeHelp = canMerge ? ' ' + tr("Ctrl to merge with nearest node.") : "";
                 return tr("Release the mouse button to stop moving.") + mergeHelp;
             } else if (mode == Mode.ROTATE)
                 return tr("Release the mouse button to stop rotating.");

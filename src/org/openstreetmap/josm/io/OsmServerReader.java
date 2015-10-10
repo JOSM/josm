@@ -151,7 +151,7 @@ public abstract class OsmServerReader extends OsmConnection {
 
             try {
                 if (reason != null && !reason.isEmpty()) {
-                    Main.info("GET " + url + " (" + reason + ")");
+                    Main.info("GET " + url + " (" + reason + ')');
                 } else {
                     Main.info("GET " + url);
                 }

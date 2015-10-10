@@ -130,7 +130,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     class DataText {
         private static final String INDENT = "  ";
-        private static final String NL = "\n";
+        private static final char NL = '\n';
 
         private StringBuilder s = new StringBuilder();
 
@@ -363,7 +363,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 txtMappaint.append(tr("\n\nList of generated Styles:\n"));
                 StyleList sl = elemstyles.get(osm, scale, nc);
                 for (ElemStyle s : sl) {
-                    txtMappaint.append(" * ").append(s).append("\n");
+                    txtMappaint.append(" * ").append(s).append('\n');
                 }
                 txtMappaint.append("\n\n");
             }

@@ -1728,7 +1728,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 timeFinished = System.currentTimeMillis();
                 System.err.println("; phase 2 (draw): " + Utils.getDurationString(timeFinished - timePhase1) +
                     "; total: " + Utils.getDurationString(timeFinished - timeStart) +
-                    " (scale: " + circum + " zoom level: " + Selector.GeneralSelector.scale2level(circum) + ")");
+                    " (scale: " + circum + " zoom level: " + Selector.GeneralSelector.scale2level(circum) + ')');
             }
 
             drawVirtualNodes(data, bbox);

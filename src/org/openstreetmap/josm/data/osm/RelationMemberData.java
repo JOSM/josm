@@ -35,7 +35,7 @@ public class RelationMemberData implements PrimitiveId {
 
     @Override
     public String toString() {
-        return (memberType != null ? memberType.getAPIName() : "undefined") + " " + memberId;
+        return (memberType != null ? memberType.getAPIName() : "undefined") + ' ' + memberId;
     }
 
     /**

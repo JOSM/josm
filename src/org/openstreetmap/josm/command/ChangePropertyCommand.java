@@ -140,7 +140,7 @@ public class ChangePropertyCommand extends Command {
     public String getDescriptionText() {
         String text;
         if (objects.size() == 1 && tags.size() == 1) {
-            OsmPrimitive primitive = objects.iterator().next();
+            OsmPrimitive primitive = objects.get(0);
             String msg = "";
             Map.Entry<String, String> entry = tags.entrySet().iterator().next();
             if (entry.getValue() == null) {

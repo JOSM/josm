@@ -176,7 +176,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             String im = m.group(1);
             URL u = getClass().getResource(im);
             if (u != null) {
-                m.appendReplacement(sb, Matcher.quoteReplacement("src=\"" + u + "\""));
+                m.appendReplacement(sb, Matcher.quoteReplacement("src=\"" + u + '\"'));
             }
         }
         m.appendTail(sb);

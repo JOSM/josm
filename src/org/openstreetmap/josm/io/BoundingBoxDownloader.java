@@ -47,7 +47,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
     private GpxData downloadRawGps(Bounds b, ProgressMonitor progressMonitor) throws IOException, OsmTransferException, SAXException {
         boolean done = false;
         GpxData result = null;
-        String url = "trackpoints?bbox="+b.getMinLon()+","+b.getMinLat()+","+b.getMaxLon()+","+b.getMaxLat()+"&page=";
+        String url = "trackpoints?bbox="+b.getMinLon()+','+b.getMinLat()+','+b.getMaxLon()+','+b.getMaxLat()+"&page=";
         for (int i = 0; !done; ++i) {
             progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * 5000, (i + 1) * 5000));
             try (InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true))) {
@@ -122,7 +122,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
      * Builds the request part for the bounding box.
      */
     protected String getRequestForBbox(double lon1, double lat1, double lon2, double lat2) {
-        return "map?bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
+        return "map?bbox=" + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2;
     }
 
     /**
@@ -189,7 +189,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
         // see result_limit in https://github.com/openstreetmap/openstreetmap-website/blob/master/app/controllers/notes_controller.rb
         CheckParameterUtil.ensureThat(noteLimit <= 10000, "Requested note limit is over API hard limit of 10000.");
         CheckParameterUtil.ensureThat(daysClosed >= -1, "Requested note limit is less than -1.");
-        String url = "notes?limit=" + noteLimit + "&closed=" + daysClosed + "&bbox=" + lon1 + "," + lat1 + "," + lon2 + "," + lat2;
+        String url = "notes?limit=" + noteLimit + "&closed=" + daysClosed + "&bbox=" + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2;
         try {
             InputStream is = getInputStream(url, progressMonitor.createSubTaskMonitor(1, false));
             NoteReader reader = new NoteReader(is);

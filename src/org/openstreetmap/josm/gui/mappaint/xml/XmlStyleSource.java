@@ -161,13 +161,13 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
         for (String key : primitive.keySet()) {
             String val = primitive.get(key);
             IconPrototype p;
-            if ((p = icons.get("n" + key + "=" + val)) != null) {
+            if ((p = icons.get('n' + key + '=' + val)) != null) {
                 icon = update(icon, p, scale, mc);
             }
-            if ((p = icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null) {
+            if ((p = icons.get('b' + key + '=' + OsmUtils.getNamedOsmBoolean(val))) != null) {
                 icon = update(icon, p, scale, mc);
             }
-            if ((p = icons.get("x" + key)) != null) {
+            if ((p = icons.get('x' + key)) != null) {
                 icon = update(icon, p, scale, mc);
             }
         }
@@ -193,7 +193,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             AreaPrototype styleArea;
             LinePrototype styleLine;
             LinemodPrototype styleLinemod;
-            String idx = "n" + key + "=" + val;
+            String idx = 'n' + key + '=' + val;
             if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed) && !isNotArea) {
                 p.area = update(p.area, styleArea, scale, mc);
             }
@@ -208,7 +208,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
                     overlayMap.put(idx, styleLinemod);
                 }
             }
-            idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
+            idx = 'b' + key + '=' + OsmUtils.getNamedOsmBoolean(val);
             if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed) && !isNotArea) {
                 p.area = update(p.area, styleArea, scale, mc);
             }
@@ -223,7 +223,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
                     overlayMap.put(idx, styleLinemod);
                 }
             }
-            idx = "x" + key;
+            idx = 'x' + key;
             if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed) && !isNotArea) {
                 p.area = update(p.area, styleArea, scale, mc);
             }

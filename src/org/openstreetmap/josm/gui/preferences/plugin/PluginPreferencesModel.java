@@ -164,7 +164,7 @@ public class PluginPreferencesModel extends Observable {
     }
 
     /**
-     * Replies the list of plugin informations to display
+     * Replies the list of plugin informations to display.
      *
      * @return the list of plugin informations to display
      */
@@ -172,14 +172,13 @@ public class PluginPreferencesModel extends Observable {
         return displayedPlugins;
     }
 
-
     /**
-     * Replies the list of plugins waiting for update or download
+     * Replies the set of plugins waiting for update or download.
      *
-     * @return the list of plugins waiting for update or download
+     * @return the set of plugins waiting for update or download
      */
-    public List<PluginInformation> getPluginsScheduledForUpdateOrDownload() {
-        List<PluginInformation> ret = new ArrayList<>();
+    public Set<PluginInformation> getPluginsScheduledForUpdateOrDownload() {
+        Set<PluginInformation> ret = new HashSet<>();
         for (String plugin: pendingDownloads) {
             PluginInformation pi = getPluginInformation(plugin);
             if (pi == null) {

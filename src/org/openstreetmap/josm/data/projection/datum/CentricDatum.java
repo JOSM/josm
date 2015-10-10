@@ -26,6 +26,6 @@ public class CentricDatum extends AbstractDatum {
 
     @Override
     public String toString() {
-        return "CentricDatum{ellipsoid="+ellps+"}";
+        return "CentricDatum{ellipsoid="+ellps+'}';
     }
 }

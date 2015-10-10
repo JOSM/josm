@@ -105,7 +105,7 @@ public class ImportAudioAction extends AbstractAction {
                 names += file.getName();
             }
             if (names != null) {
-                names += ")";
+                names += ')';
             } else {
                 names = "";
             }

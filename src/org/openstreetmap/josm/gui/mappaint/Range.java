@@ -20,7 +20,7 @@ public class Range {
      */
     public Range(double lower, double upper) {
         if (lower < 0 || lower >= upper)
-            throw new IllegalArgumentException("Invalid range: "+lower+"-"+upper);
+            throw new IllegalArgumentException("Invalid range: "+lower+'-'+upper);
         this.lower = lower;
         this.upper = upper;
     }

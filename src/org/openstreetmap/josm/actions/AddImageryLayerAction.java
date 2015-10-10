@@ -135,7 +135,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
             ImageryInfo ret = new ImageryInfo(info.getName(), url, "wms", info.getEulaAcceptanceRequired(), info.getCookies());
             if (layersString.length() > 2) {
-                ret.setName(ret.getName() + " " + layersString.substring(0, layersString.length() - 2));
+                ret.setName(ret.getName() + ' ' + layersString.substring(0, layersString.length() - 2));
             }
             ret.setServerProjections(supportedCrs);
             return ret;

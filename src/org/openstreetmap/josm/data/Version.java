@@ -225,14 +225,14 @@ public class Version {
         int v = getVersion();
         String s = (v == JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);
         if (buildName != null) {
-            s += " " + buildName;
+            s += ' ' + buildName;
         }
         if (isLocalBuild() && v != JOSM_UNKNOWN_VERSION) {
             s += " SVN";
         }
-        String result = "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+")";
+        String result = "JOSM/1.5 ("+ s+' '+LanguageInfo.getJOSMLocaleCode()+")";
         if (includeOsDetails && Main.platform != null) {
-            result += " " + Main.platform.getOSDescription();
+            result += ' ' + Main.platform.getOSDescription();
         }
         return result;
     }

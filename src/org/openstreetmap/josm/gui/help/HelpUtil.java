@@ -126,7 +126,7 @@ public final class HelpUtil {
         String ret = LanguageInfo.getWikiLanguagePrefix(type);
         if (ret == null)
             return ret;
-        ret = "/" + ret + Main.pref.get("help.pathhelp", "/Help").replaceAll("^\\/+", ""); // remove leading /
+        ret = '/' + ret + Main.pref.get("help.pathhelp", "/Help").replaceAll("^\\/+", ""); // remove leading /
         return ret.replaceAll("\\/+", "\\/"); // collapse sequences of //
     }
 
@@ -145,7 +145,7 @@ public final class HelpUtil {
         String prefix = getHelpTopicPrefix(type);
         if (prefix == null || topic == null || topic.trim().isEmpty() || "/".equals(topic.trim()))
             return prefix;
-        prefix += "/" + topic;
+        prefix += '/' + topic;
         return prefix.replaceAll("\\/+", "\\/"); // collapse sequences of //
     }
 

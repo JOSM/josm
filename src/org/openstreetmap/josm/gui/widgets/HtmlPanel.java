@@ -36,7 +36,7 @@ public class HtmlPanel extends JPanel {
                 f.isBold() ? "bold" : "normal",
                         f.isItalic() ? "italic" : "normal"
         );
-        rule = "body {" + rule + "}";
+        rule = "body {" + rule + '}';
         rule = MessageFormat.format(
                 "font-family: ''{0}'';font-size: {1,number}pt; font-weight: {2}; font-style: {3}",
                 f.getName(),
@@ -44,7 +44,7 @@ public class HtmlPanel extends JPanel {
                 "bold",
                 f.isItalic() ? "italic" : "normal"
         );
-        rule = "strong {" + rule + "}";
+        rule = "strong {" + rule + '}';
         ss.addRule(rule);
         ss.addRule("a {text-decoration: underline; color: blue}");
         ss.addRule("ul {margin-left: 1cm; list-style-type: disc}");
