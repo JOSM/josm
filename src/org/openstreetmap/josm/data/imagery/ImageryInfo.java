@@ -295,12 +295,12 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
         @Override
         public String toString() {
-            String s = "ImageryPreferenceEntry [name=" + name;
+            StringBuilder s = new StringBuilder("ImageryPreferenceEntry [name=").append(name);
             if (id != null) {
-                s += " id=" + id;
+                s.append(" id=").append(id);
             }
-            s += ']';
-            return s;
+            s.append(']');
+            return s.toString();
         }
     }
 

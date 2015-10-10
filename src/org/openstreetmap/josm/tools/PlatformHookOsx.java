@@ -288,25 +288,25 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         if (lafid.contains("Mac") || lafid.contains("Aqua")) {
             canHtml = false;
         }
-        String result = "";
+        StringBuilder result = new StringBuilder();
         if (canHtml) {
-            result += "<html>";
+            result.append("<html>");
         }
-        result += name;
+        result.append(name);
         if (sc != null && !sc.getKeyText().isEmpty()) {
-            result += ' ';
+            result.append(' ');
             if (canHtml) {
-                result += "<font size='-2'>";
+                result.append("<font size='-2'>");
             }
-            result += '('+sc.getKeyText()+')';
+            result.append('(').append(sc.getKeyText()).append(')');
             if (canHtml) {
-                result += "</font>";
+                result.append("</font>");
             }
         }
         if (canHtml) {
-            result += "&nbsp;</html>";
+            result.append("&nbsp;</html>");
         }
-        return result;
+        return result.toString();
     }
 
     @Override

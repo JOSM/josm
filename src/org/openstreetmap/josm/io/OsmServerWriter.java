@@ -70,11 +70,11 @@ public class OsmServerWriter {
         long ms_left = (long) (uploads_left / uploads_per_ms);
         long minutes_left = ms_left / MSECS_PER_MINUTE;
         long seconds_left = (ms_left / MSECS_PER_SECOND) % SECONDS_PER_MINUTE;
-        String time_left_str = Long.toString(minutes_left) + ':';
+        StringBuilder time_left_str = new StringBuilder().append(minutes_left).append(':');
         if (seconds_left < 10) {
-            time_left_str += '0';
+            time_left_str.append('0');
         }
-        return time_left_str + Long.toString(seconds_left);
+        return time_left_str.append(seconds_left).toString();
     }
 
     /**
