@@ -130,8 +130,6 @@ public class TagChecker extends TagTest {
 
     protected EditableList sourcesList;
 
-    protected static final Entities entities = new Entities();
-
     private static final List<String> DEFAULT_SOURCES = Arrays.asList(/*DATA_FILE, */IGNORE_FILE, SPELL_FILE);
 
     /**
@@ -370,7 +368,7 @@ public class TagChecker extends TagTest {
                         tr(s, key), MessageFormat.format(s, key), INVALID_SPACE, p));
                 withErrors.put(p, "SPACE");
             }
-            if (checkValues && value != null && !value.equals(entities.unescape(value)) && !withErrors.contains(p, "HTML")) {
+            if (checkValues && value != null && !value.equals(Entities.unescape(value)) && !withErrors.contains(p, "HTML")) {
                 errors.add(new TestError(this, Severity.OTHER, tr("Property values contain HTML entity"),
                         tr(s, key), MessageFormat.format(s, key), INVALID_HTML, p));
                 withErrors.put(p, "HTML");
@@ -619,7 +617,7 @@ public class TagChecker extends TagTest {
                     } else if (key.startsWith(" ") || key.endsWith(" ")) {
                         commands.add(new ChangePropertyKeyCommand(p, key, Tag.removeWhiteSpaces(key)));
                     } else {
-                        String evalue = entities.unescape(value);
+                        String evalue = Entities.unescape(value);
                         if (!evalue.equals(value)) {
                             commands.add(new ChangePropertyCommand(p, key, evalue));
                         }

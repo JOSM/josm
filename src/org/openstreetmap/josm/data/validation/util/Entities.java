@@ -30,7 +30,7 @@ import java.util.Map;
  * @see <a href="http://www.w3.org/TR/html401/charset.html#h-5.3">HTML 4.01 Character References</a>
  * @see <a href="http://www.w3.org/TR/html401/charset.html#code-position">HTML 4.01 Code positions</a>
  */
-public class Entities {
+public final class Entities {
     private static final String[][] ARRAY = {
         /* BASIC */
         {"quot", "34"}, // " - double-quote
@@ -335,11 +335,15 @@ public class Entities {
 
     private static volatile Map<String, String> mapNameToValue;
 
-    public String unescape(String str) {
+    private Entities() {
+        // Private constructor for utilities classes
+    }
+
+    public static String unescape(String str) {
         int firstAmp = str.indexOf('&');
         if (firstAmp < 0)
             return str;
-        String res = str.substring(0, firstAmp);
+        StringBuilder res = new StringBuilder(str.substring(0, firstAmp));
         int len = str.length();
         for (int i = firstAmp; i < len; i++) {
             char c = str.charAt(i);
@@ -347,13 +351,13 @@ public class Entities {
                 int nextIdx = i + 1;
                 int semiColonIdx = str.indexOf(';', nextIdx);
                 if (semiColonIdx == -1) {
-                    res += c;
+                    res.append(c);
                     continue;
                 }
                 int amphersandIdx = str.indexOf('&', i + 1);
                 if (amphersandIdx != -1 && amphersandIdx < semiColonIdx) {
                     // Then the text looks like &...&...;
-                    res += c;
+                    res.append(c);
                     continue;
                 }
                 String entityContent = str.substring(nextIdx, semiColonIdx);
@@ -393,15 +397,15 @@ public class Entities {
                 }
 
                 if (entityValue == -1) {
-                    res += '&' + entityContent + ';';
+                    res.append('&').append(entityContent).append(';');
                 } else {
-                    res += (char) entityValue;
+                    res.append((char) entityValue);
                 }
                 i = semiColonIdx; // move index up to the semi-colon
             } else {
-                res += c;
+                res.append(c);
             }
         }
-        return res;
+        return res.toString();
     }
 }

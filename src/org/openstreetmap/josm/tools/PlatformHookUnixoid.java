@@ -148,16 +148,15 @@ public class PlatformHookUnixoid implements PlatformHook {
      */
     @Override
     public String makeTooltip(String name, Shortcut sc) {
-        String result = "";
-        result += "<html>";
-        result += name;
+        StringBuilder result = new StringBuilder();
+        result.append("<html>").append(name);
         if (sc != null && !sc.getKeyText().isEmpty()) {
-            result += ' ';
-            result += "<font size='-2'>";
-            result += '('+sc.getKeyText()+')';
-            result += "</font>";
+            result.append(' ')
+                  .append("<font size='-2'>")
+                  .append('(').append(sc.getKeyText()).append(')')
+                  .append("</font>");
         }
-        return result + "&nbsp;</html>";
+        return result.append("&nbsp;</html>").toString();
     }
 
     @Override
