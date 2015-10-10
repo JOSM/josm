@@ -15,7 +15,6 @@ import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -363,7 +362,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             updateEnabledState();
         }
 
-        protected void alertNoPrimitivesToSelect(Collection<OsmPrimitive> primitives) {
+        protected void alertNoPrimitivesToSelect() {
             HelpAwareOptionPane.showOptionDialog(
                     ChangesetDetailPanel.this,
                     tr("<html>None of the objects in the content of changeset {0} is available in the current<br>"
@@ -390,7 +389,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                 }
             }
             if (target.isEmpty()) {
-                alertNoPrimitivesToSelect(target);
+                alertNoPrimitivesToSelect();
                 return;
             }
             layer.data.setSelected(target);

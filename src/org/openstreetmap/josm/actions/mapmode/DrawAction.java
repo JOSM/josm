@@ -235,8 +235,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.keyDetector.addKeyListener(this);
         Main.map.keyDetector.addModifierListener(this);
         ignoreNextKeyRelease = true;
-        // would like to but haven't got mouse position yet:
-        // computeHelperLine(false, false, false);
     }
 
     private void readPreferences() {

@@ -214,8 +214,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         this.layers = getCapabilities();
         if (this.layers.isEmpty())
             throw new IllegalArgumentException(tr("No layers defined by getCapabilities document: {0}", info.getUrl()));
-
-        // Not needed ? initProjection();
     }
 
     private Layer userSelectLayer(Collection<Layer> layers) {
@@ -383,13 +381,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         XPath xpath = XPathFactory.newInstance().newXPath();
         XPathExpression expr = xpath.compile(xpathQuery);
         return expr.evaluate(document, returnType);
-    }
-
-    /**
-     * Initializes projection for this TileSource with current projection
-     */
-    protected void initProjection() {
-        initProjection(Main.getProjection());
     }
 
     /**

@@ -1223,7 +1223,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
         fireEvent(new ChangesetIdChangedEvent(this, Collections.singletonList(primitive), oldChangesetId, newChangesetId));
     }
 
-    void fireHighlightingChanged(OsmPrimitive primitive) {
+    void fireHighlightingChanged() {
         highlightUpdateCount++;
     }
 

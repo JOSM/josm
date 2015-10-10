@@ -959,12 +959,6 @@ public class LayerListDialog extends ToggleDialog {
             }
         }
 
-        protected boolean isActiveLayer(Layer layer) {
-            if (!Main.isDisplayingMapView())
-                return false;
-            return Main.map.mapView.getActiveLayer() == layer;
-        }
-
         @Override
         public void updateEnabledState() {
             if (layer == null) {
@@ -1147,7 +1141,7 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public void showMenu(MouseEvent evt) {
             Layer layer = getModel().getLayer(layerList.getSelectedRow());
-            menu = new LayerListPopup(getModel().getSelectedLayers(), layer);
+            menu = new LayerListPopup(getModel().getSelectedLayers());
             super.showMenu(evt);
         }
     }

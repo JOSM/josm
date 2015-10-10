@@ -314,10 +314,6 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             closeDialog();
         }
 
-        protected void cancelWhenInSaveAndUploadingMode() {
-            cancelSafeAndUploadTask();
-        }
-
         public void cancel() {
             switch(model.getMode()) {
             case EDITING_DATA: cancelWhenInEditingModel(); break;

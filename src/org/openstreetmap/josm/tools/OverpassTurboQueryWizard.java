@@ -47,7 +47,6 @@ public final class OverpassTurboQueryWizard {
 
         try (final Reader reader = new InputStreamReader(
                 getClass().getResourceAsStream("/data/overpass-turbo-ffs.js"), StandardCharsets.UTF_8)) {
-            //engine.eval("var turbo = {ffs: {noPresets: true}};");
             engine.eval("var console = {log: function(){}};");
             engine.eval(reader);
             engine.eval("var construct_query = turbo.ffs().construct_query;");

@@ -639,7 +639,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         if (isHighlighted() != highlighted) {
             updateFlags(FLAG_HIGHLIGHTED, highlighted);
             if (dataSet != null) {
-                dataSet.fireHighlightingChanged(this);
+                dataSet.fireHighlightingChanged();
             }
         }
     }

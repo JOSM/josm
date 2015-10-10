@@ -4,8 +4,6 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Map;
-
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
@@ -85,10 +83,6 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
         }
         // Does not happen, but just to be sure. Maybe definition of uninteresting tags changes in future.
         errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr("Other"), "Other", UNTAGGED_NODE_OTHER, (OsmPrimitive) n));
-    }
-
-    private boolean contains(Map.Entry<String, String> tag, String s) {
-        return tag.getKey().indexOf(s) != -1 || tag.getValue().indexOf(s) != -1;
     }
 
     @Override

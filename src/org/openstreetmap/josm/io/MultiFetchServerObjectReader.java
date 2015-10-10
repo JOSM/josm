@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -36,7 +35,6 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -98,30 +96,6 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         case WAY: ways.add(id.getUniqueId()); break;
         case RELATION: relations.add(id.getUniqueId()); break;
         }
-    }
-
-    /**
-     * remembers an {@link OsmPrimitive}'s id. <code>ds</code> must include
-     * an {@link OsmPrimitive} with id=<code>id</code>. The id will
-     * later we fetched as part of a Multi Get request.
-     *
-     * Ignore the id if it id &lt;= 0.
-     *
-     * @param ds  the dataset (must not be null)
-     * @param id  the primitive id
-     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
-     * {@link OsmPrimitiveType#RELATION RELATION}
-     * @throws IllegalArgumentException if ds is null
-     * @throws NoSuchElementException if ds does not include an {@link OsmPrimitive} with id=<code>id</code>
-     */
-    protected void remember(DataSet ds, long id, OsmPrimitiveType type) throws NoSuchElementException {
-        CheckParameterUtil.ensureParameterNotNull(ds, "ds");
-        if (id <= 0) return;
-        OsmPrimitive primitive = ds.getPrimitiveById(id, type);
-        if (primitive == null)
-            throw new NoSuchElementException(tr("No primitive with id {0} in local dataset. Cannot infer primitive type.", id));
-        remember(primitive.getPrimitiveId());
-        return;
     }
 
     /**

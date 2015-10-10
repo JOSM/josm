@@ -5,7 +5,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
@@ -451,22 +450,6 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             displaySegments(col);
         }
         drawSegment(currentPath, p1, p2, showDirection);
-    }
-
-    /**
-     * Checks if a polygon is visible in display.
-     *
-     * @param polygon The polygon to check.
-     * @return <code>true</code> if polygon is visible.
-     */
-    protected boolean isPolygonVisible(Polygon polygon) {
-        Rectangle bounds = polygon.getBounds();
-        if (bounds.width == 0 && bounds.height == 0) return false;
-        if (bounds.x > nc.getWidth()) return false;
-        if (bounds.y > nc.getHeight()) return false;
-        if (bounds.x + bounds.width < 0) return false;
-        if (bounds.y + bounds.height < 0) return false;
-        return true;
     }
 
     /**

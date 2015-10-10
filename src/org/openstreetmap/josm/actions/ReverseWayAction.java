@@ -126,17 +126,6 @@ public final class ReverseWayAction extends JosmAction {
         return new ReverseWayResult(wnew, corrCmds, new ChangeCommand(w, wnew));
     }
 
-    protected int getNumWaysInSelection() {
-        if (getCurrentDataSet() == null) return 0;
-        int ret = 0;
-        for (OsmPrimitive primitive : getCurrentDataSet().getSelected()) {
-            if (primitive instanceof Way) {
-                ret++;
-            }
-        }
-        return ret;
-    }
-
     @Override
     protected void updateEnabledState() {
         if (getCurrentDataSet() == null) {

@@ -139,10 +139,6 @@ public final class LanguageInfo {
      * @since 8232
      */
     public static String getDisplayName(Locale locale) {
-        /*String full = locale.toString();
-        if ("ca__valencia".equals(full))
-            return t_r_c("language", "Valencian");*/
-
         return locale.getDisplayName();
     }
 

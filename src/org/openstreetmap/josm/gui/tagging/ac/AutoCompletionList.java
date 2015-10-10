@@ -230,7 +230,6 @@ public class AutoCompletionList extends AbstractTableModel {
         filtered.clear();
         if (filter == null) {
             // Collections.copy throws an exception "Source does not fit in dest"
-            // Collections.copy(filtered, list);
             filtered.ensureCapacity(list.size());
             for (AutoCompletionListItem item: list) {
                 filtered.add(item);

@@ -66,7 +66,7 @@ public class LayerListPopup extends JPopupMenu {
         }
     }
 
-    public LayerListPopup(List<Layer> selectedLayers, final Layer layer) {
+    public LayerListPopup(List<Layer> selectedLayers) {
 
         List<Action> actions;
         if (selectedLayers.size() == 1) {

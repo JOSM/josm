@@ -37,14 +37,6 @@ public class ChangesetTagsPanel extends JPanel implements PropertyChangeListener
         build();
     }
 
-    protected void init(Changeset cs) {
-        if (cs == null) {
-            model.clear();
-            return;
-        }
-        model.initFromTags(cs.getKeys());
-    }
-
     /* ---------------------------------------------------------------------------- */
     /* interface PropertyChangeListener                                             */
     /* ---------------------------------------------------------------------------- */

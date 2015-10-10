@@ -177,7 +177,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
         tagEditorPanel.getModel().ensureOneTag();
 
-        JSplitPane pane = buildSplitPane(relation);
+        JSplitPane pane = buildSplitPane();
         pane.setPreferredSize(new Dimension(100, 100));
 
         JPanel pnl = new JPanel();
@@ -459,7 +459,7 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      * @return the split panel
      */
-    protected JSplitPane buildSplitPane(Relation relation) {
+    protected JSplitPane buildSplitPane() {
         final JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         pane.setTopComponent(buildTagEditorPanel());
         pane.setBottomComponent(buildMemberEditorPanel());
@@ -467,8 +467,7 @@ public class GenericRelationEditor extends RelationEditor  {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
-                // has to be called when the window is visible, otherwise
-                // no effect
+                // has to be called when the window is visible, otherwise no effect
                 pane.setDividerLocation(0.3);
             }
         });

@@ -47,7 +47,7 @@ public class ValidateAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        doValidate(ev, true);
+        doValidate(true);
     }
 
     /**
@@ -57,10 +57,9 @@ public class ValidateAction extends JosmAction {
      * is selected) are validated. If it is false, last selected items are
      * revalidated
      *
-     * @param ev The event
      * @param getSelectedItems If selected or last selected items must be validated
      */
-    public void doValidate(ActionEvent ev, boolean getSelectedItems) {
+    public void doValidate(boolean getSelectedItems) {
         if (Main.map == null || !Main.map.isVisible())
             return;
 

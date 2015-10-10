@@ -55,7 +55,7 @@ public final class PasteTagsAction extends JosmAction {
 
         private final Collection<PrimitiveData> source;
         private final Collection<OsmPrimitive> target;
-        private final List<Tag> commands = new ArrayList<>();
+        private final List<Tag> tags = new ArrayList<>();
 
         public TagPaster(Collection<PrimitiveData> source, Collection<OsmPrimitive> target) {
             this.source = source;
@@ -108,9 +108,9 @@ public final class PasteTagsAction extends JosmAction {
             return !getSourceTagsByType(type).isEmpty();
         }
 
-        protected void buildChangeCommand(Collection<? extends OsmPrimitive> selection, TagCollection tc) {
+        protected void buildTags(TagCollection tc) {
             for (String key : tc.getKeys()) {
-                commands.add(new Tag(key, tc.getValues(key).iterator().next()));
+                tags.add(new Tag(key, tc.getValues(key).iterator().next()));
             }
         }
 
@@ -160,12 +160,12 @@ public final class PasteTagsAction extends JosmAction {
                 dialog.setVisible(true);
                 if (dialog.isCanceled())
                     return;
-                buildChangeCommand(target, dialog.getResolution());
+                buildTags(dialog.getResolution());
             } else {
                 // no conflicts in the source tags to resolve. Just apply the tags
                 // to the target primitives
                 //
-                buildChangeCommand(target, tc);
+                buildTags(tc);
             }
         }
 
@@ -184,10 +184,9 @@ public final class PasteTagsAction extends JosmAction {
         /**
          * Replies true if this a heterogeneous source can be pasted without conflict to targets
          *
-         * @param targets the collection of target primitives
          * @return true if this a heterogeneous source can be pasted without conflicts to targets
          */
-        protected boolean canPasteFromHeterogeneousSourceWithoutConflict(Collection<OsmPrimitive> targets) {
+        protected boolean canPasteFromHeterogeneousSourceWithoutConflict() {
             for (OsmPrimitiveType type : OsmPrimitiveType.dataValues()) {
                 if (hasTargetPrimitives(type.getOsmClass())) {
                     TagCollection tc = TagCollection.unionOfAllPrimitives(getSourcePrimitivesByType(type));
@@ -199,14 +198,13 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         /**
-         * Pastes the tags in the current selection of the paste buffer to a set of target
-         * primitives.
+         * Pastes the tags in the current selection of the paste buffer to a set of target primitives.
          */
         protected void pasteFromHeterogeneousSource() {
-            if (canPasteFromHeterogeneousSourceWithoutConflict(target)) {
+            if (canPasteFromHeterogeneousSourceWithoutConflict()) {
                 for (OsmPrimitiveType type : OsmPrimitiveType.dataValues()) {
                     if (hasSourceTagsByType(type) && hasTargetPrimitives(type.getOsmClass())) {
-                        buildChangeCommand(target, getSourceTagsByType(type));
+                        buildTags(getSourceTagsByType(type));
                     }
                 }
             } else {
@@ -223,20 +221,20 @@ public final class PasteTagsAction extends JosmAction {
                     return;
                 for (OsmPrimitiveType type : OsmPrimitiveType.dataValues()) {
                     if (hasSourceTagsByType(type) && hasTargetPrimitives(type.getOsmClass())) {
-                        buildChangeCommand(OsmPrimitive.getFilteredList(target, type.getOsmClass()), dialog.getResolution(type));
+                        buildTags(dialog.getResolution(type));
                     }
                 }
             }
         }
 
         public List<Tag> execute() {
-            commands.clear();
+            tags.clear();
             if (isHeteogeneousSource()) {
                 pasteFromHeterogeneousSource();
             } else {
                 pasteFromHomogeneousSource();
             }
-            return commands;
+            return tags;
         }
 
     }

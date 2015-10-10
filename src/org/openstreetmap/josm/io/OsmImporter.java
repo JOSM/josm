@@ -15,7 +15,6 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
@@ -77,15 +76,6 @@ public class OsmImporter extends FileImporter {
             Main.error(e);
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()), e);
         }
-    }
-
-    /**
-     * Imports OSM data from stream
-     * @param in input stream
-     * @param associatedFile filename of data
-     */
-    protected void importData(InputStream in, final File associatedFile) throws IllegalDataException {
-        importData(in, associatedFile, NullProgressMonitor.INSTANCE);
     }
 
     /**

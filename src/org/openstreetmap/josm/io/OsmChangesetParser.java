@@ -78,7 +78,7 @@ public final class OsmChangesetParser {
         /** The current comment text */
         private StringBuilder text;
 
-        protected void parseChangesetAttributes(Changeset cs, Attributes atts) throws XmlParsingException {
+        protected void parseChangesetAttributes(Attributes atts) throws XmlParsingException {
             // -- id
             String value = atts.getValue("id");
             if (value == null) {
@@ -203,7 +203,7 @@ public final class OsmChangesetParser {
                 break;
             case "changeset":
                 current = new Changeset();
-                parseChangesetAttributes(current, atts);
+                parseChangesetAttributes(atts);
                 break;
             case "tag":
                 String key = atts.getValue("k");

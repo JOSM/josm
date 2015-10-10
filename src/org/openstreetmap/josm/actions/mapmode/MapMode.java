@@ -20,8 +20,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * As example scrolling the map is a MapMode, connecting Nodes to new Ways
  * is another.
  *
- * MapModes should register/deregister all necessary listeners on the map's view
- * control.
+ * MapModes should register/deregister all necessary listeners on the map's view control.
  */
 public abstract class MapMode extends JosmAction implements MouseListener, MouseMotionListener {
     protected final Cursor cursor;
@@ -31,6 +30,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
 
     /**
      * Constructor for mapmodes without an menu
+     * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
      */
     public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
         super(name, "mapmode/"+iconName, tooltip, shortcut, false);
@@ -40,6 +40,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
 
     /**
      * Constructor for mapmodes with an menu (no shortcut will be registered)
+     * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
      */
     public MapMode(String name, String iconName, String tooltip, MapFrame mapFrame, Cursor cursor) {
         putValue(NAME, name);
@@ -83,10 +84,15 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
         }
     }
 
-    // By default, all tools will work with all layers. Can be overwritten to require
-    // a special type of layer
+    /**
+     * Determines if layer {@code l} is supported by this map mode.
+     * By default, all tools will work with all layers.
+     * Can be overwritten to require a special type of layer
+     * @param l layer
+     * @return {@code true} if the layer is supported by this map mode
+     */
     public boolean layerIsSupported(Layer l) {
-        return true;
+        return l != null;
     }
 
     protected void updateKeyModifiers(InputEvent e) {

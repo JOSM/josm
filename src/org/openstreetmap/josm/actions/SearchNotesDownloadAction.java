@@ -80,7 +80,7 @@ public class SearchNotesDownloadAction extends JosmAction {
 
         try {
             final long id = Long.parseLong(searchTerm);
-            new DownloadNotesTask().download(false, id, null);
+            new DownloadNotesTask().download(id, null);
             return;
         } catch (NumberFormatException ignore) {
             if (Main.isTraceEnabled()) {

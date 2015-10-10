@@ -50,7 +50,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         }
     }
 
-    protected void renderRole(Item diffItem, int row, boolean isSelected) {
+    protected void renderRole(Item diffItem) {
         String text = "";
         Color bgColor = diffItem.state.getColor();
         RelationMemberData member = (RelationMemberData) diffItem.value;
@@ -60,7 +60,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         setBackground(bgColor);
     }
 
-    protected void renderPrimitive(Item diffItem, int row, boolean isSelected) {
+    protected void renderPrimitive(Item diffItem) {
         String text = "";
         Color bgColor = diffItem.state.getColor();
         RelationMemberData member = (RelationMemberData) diffItem.value;
@@ -86,17 +86,13 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         renderIcon((RelationMemberData) member.value);
         switch(column) {
         case 0:
-            renderRole(member, row, isSelected);
+            renderRole(member);
             break;
         case 1:
-            renderPrimitive(member, row, isSelected);
+            renderPrimitive(member);
             break;
         }
 
         return this;
-    }
-
-    protected DiffTableModel getRelationMemberTableModel(JTable table) {
-        return (DiffTableModel) table.getModel();
     }
 }
