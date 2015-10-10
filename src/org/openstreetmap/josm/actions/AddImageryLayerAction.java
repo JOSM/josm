@@ -153,23 +153,11 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         return null;
     }
 
-    protected boolean isLayerAlreadyPresent() {
-        if (Main.isDisplayingMapView()) {
-            for (ImageryLayer layer : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {
-                if (info.equals(layer.getInfo())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     @Override
     protected void updateEnabledState() {
         ImageryType type = info.getImageryType();
         // never enable blacklisted entries. Do not add same imagery layer twice (fix #2519)
-        if (info.isBlacklisted() /*|| isLayerAlreadyPresent()*/) {
-            // FIXME check disabled to allow several instances with different settings (see #7981)
+        if (info.isBlacklisted()) {
             setEnabled(false);
         } else if (type == ImageryType.TMS || type == ImageryType.BING || type == ImageryType.SCANEX) {
             setEnabled(true);
