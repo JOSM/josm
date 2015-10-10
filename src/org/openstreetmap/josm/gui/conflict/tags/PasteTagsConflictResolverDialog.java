@@ -362,12 +362,12 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
     private static final class StatisticsInfo {
         public int numTags;
-        public Map<OsmPrimitiveType, Integer> sourceInfo;
-        public Map<OsmPrimitiveType, Integer> targetInfo;
+        public final Map<OsmPrimitiveType, Integer> sourceInfo;
+        public final Map<OsmPrimitiveType, Integer> targetInfo;
 
         private StatisticsInfo() {
-            sourceInfo = new HashMap<>();
-            targetInfo = new HashMap<>();
+            sourceInfo = new EnumMap<>(OsmPrimitiveType.class);
+            targetInfo = new EnumMap<>(OsmPrimitiveType.class);
         }
     }
 

@@ -119,10 +119,10 @@ public class WikiReader {
         boolean inside = false;
         boolean transl = false;
         boolean skip = false;
-        String b = "";
-        String full = "";
+        StringBuilder b = new StringBuilder();
+        StringBuilder full = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
-            full += line;
+            full.append(line);
             if (line.contains("<div id=\"searchable\">")) {
                 inside = true;
             } else if (line.contains("<div class=\"wiki-toc trac-nav\"")) {
@@ -141,11 +141,11 @@ public class WikiReader {
             if (inside && !transl && !skip) {
                 // add a border="0" attribute to images, otherwise the internal help browser
                 // will render a thick  border around images inside an <a> element
-                b += line.replaceAll("<img ", "<img border=\"0\" ")
+                b.append(line.replaceAll("<img ", "<img border=\"0\" ")
                          .replaceAll("<span class=\"icon\">.</span>", "")
                          .replaceAll("href=\"/", "href=\"" + baseurl + '/')
-                         .replaceAll(" />", ">")
-                         + '\n';
+                         .replaceAll(" />", ">"))
+                         .append('\n');
             } else if (transl && line.contains("</div>")) {
                 transl = false;
             }
@@ -156,7 +156,7 @@ public class WikiReader {
         if (b.indexOf("      Describe ") >= 0
         || b.indexOf(" does not exist. You can create it here.</p>") >= 0)
             return "";
-        if (b.isEmpty())
+        if (b.length() == 0)
             b = full;
         return "<html><base href=\""+url.toExternalForm() +"\"> " + b + "</html>";
     }

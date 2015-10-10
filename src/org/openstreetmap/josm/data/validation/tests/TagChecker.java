@@ -161,7 +161,7 @@ public class TagChecker extends TagTest {
         ignoreDataKeyPair.clear();
         harmonizedKeys.clear();
 
-        String errorSources = "";
+        StringBuilder errorSources = new StringBuilder();
         for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
             try (
                 InputStream s = new CachedFile(source).getInputStream();
@@ -238,11 +238,11 @@ public class TagChecker extends TagTest {
                     }
                 }
             } catch (IOException e) {
-                errorSources += source + '\n';
+                errorSources.append(source).append('\n');
             }
         }
 
-        if (!errorSources.isEmpty())
+        if (errorSources.length() > 0)
             throw new IOException(tr("Could not access data file(s):\n{0}", errorSources));
     }
 
