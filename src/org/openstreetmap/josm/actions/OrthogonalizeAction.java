@@ -254,14 +254,13 @@ public final class OrthogonalizeAction extends JosmAction {
                 // find directions of the segments and make them consistent between different ways
                 wayDataList.get(0).calcDirections(Direction.RIGHT);
                 double refHeading = wayDataList.get(0).heading;
+                EastNorth totSum = new EastNorth(0., 0.);
                 for (WayData w : wayDataList) {
                     w.calcDirections(Direction.RIGHT);
                     int directionOffset = angleToDirectionChange(w.heading - refHeading, TOLERANCE2);
                     w.calcDirections(Direction.RIGHT.changeBy(directionOffset));
-                    if (angleToDirectionChange(refHeading - w.heading, TOLERANCE2) != 0) throw new RuntimeException();
-                }
-                EastNorth totSum = new EastNorth(0., 0.);
-                for (WayData w : wayDataList) {
+                    if (angleToDirectionChange(refHeading - w.heading, TOLERANCE2) != 0)
+                        throw new RuntimeException();
                     totSum = EN.sum(totSum, w.segSum);
                 }
                 headingAll = EN.polar(new EastNorth(0., 0.), totSum);
@@ -342,14 +341,12 @@ public final class OrthogonalizeAction extends JosmAction {
                         }
                     }
                 }
-                for (Node n : cs) {
-                    s.remove(n);
-                }
 
                 final Map<Node, Double> nC = (orientation == HORIZONTAL) ? nY : nX;
 
                 double average = 0;
                 for (Node n : cs) {
+                    s.remove(n);
                     average += nC.get(n).doubleValue();
                 }
                 average = average / cs.size();

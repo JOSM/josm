@@ -258,9 +258,6 @@ public class MapPaintPreference implements SubPreferenceSetting {
                         insertionIdx = i + 1;
                     }
                 }
-            }
-
-            for (SourceEntry def : defaults) {
                 knownDefaults.add(def.url);
             }
             Main.pref.putCollection("mappaint.style.known-defaults", knownDefaults);

@@ -651,8 +651,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             pruneSuccsAndReverse(is);
             for (int i : is) {
                 segSet.add(Pair.sort(new Pair<>(w.getNode(i), w.getNode(i+1))));
-            }
-            for (int i : is) {
                 wnew.addNode(i + 1, n);
             }
 
