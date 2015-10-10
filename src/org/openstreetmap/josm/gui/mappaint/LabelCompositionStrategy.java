@@ -262,26 +262,27 @@ public abstract class LabelCompositionStrategy {
         }
 
         private String getPrimitiveName(OsmPrimitive n) {
-            String name = null;
+            StringBuilder name = new StringBuilder();
             if (!n.hasKeys()) return null;
             for (String rn : nameTags) {
-                name = n.get(rn);
-                if (name != null) {
+                String val = n.get(rn);
+                if (val != null) {
+                    name.append(val);
                     break;
                 }
             }
             for (String rn : nameComplementTags) {
                 String comp = n.get(rn);
                 if (comp != null) {
-                    if (name == null) {
-                        name = comp;
+                    if (name.length() == 0) {
+                        name.append(comp);
                     } else {
-                        name += " (" + comp + ')';
+                        name.append(" (").append(comp).append(')');
                     }
                     break;
                 }
             }
-            return name;
+            return name.toString();
         }
 
         @Override

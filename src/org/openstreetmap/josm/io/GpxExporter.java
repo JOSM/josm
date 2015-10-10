@@ -317,15 +317,18 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                 );
                 if (answer != JOptionPane.OK_OPTION || l.getSelectedIndex() == -1)
                     return;
-                String license = "";
+                StringBuilder license = new StringBuilder();
                 for (int i : l.getSelectedIndices()) {
                     if (i == 2) {
-                        license = "public domain";
+                        license = new StringBuilder("public domain");
                         break;
                     }
-                    license += license.isEmpty() ? URLS[i] : ", "+URLS[i];
+                    if (license.length() > 0) {
+                        license.append(", ");
+                    }
+                    license.append(URLS[i]);
                 }
-                copyright.setText(license);
+                copyright.setText(license.toString());
                 copyright.setCaretPosition(0);
             }
         });
