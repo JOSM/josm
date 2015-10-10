@@ -1,17 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -308,7 +309,7 @@ public class APIDataSet {
             getChildren(relation).add(child);
         }
 
-        protected void visit(Stack<Relation> path, Relation current) throws CyclicUploadDependencyException {
+        protected void visit(Deque<Relation> path, Relation current) throws CyclicUploadDependencyException {
             if (path.contains(current)) {
                 path.push(current);
                 throw new CyclicUploadDependencyException(path);
@@ -327,7 +328,7 @@ public class APIDataSet {
         public List<Relation> computeUploadOrder() throws CyclicUploadDependencyException {
             visited = new HashSet<>();
             uploadOrder = new LinkedList<>();
-            Stack<Relation> path = new Stack<>();
+            Deque<Relation> path = new ArrayDeque<>();
             for (Relation relation: relations) {
                 visit(path, relation);
             }

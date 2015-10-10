@@ -117,7 +117,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
 
     @Override
     public String nameSupportedProjections() {
-        StringBuffer ret = new StringBuffer();
+        StringBuilder ret = new StringBuilder();
         for (String e: supportedProjections) {
             ret.append(e).append(", ");
         }

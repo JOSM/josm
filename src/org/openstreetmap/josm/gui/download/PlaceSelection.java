@@ -198,7 +198,7 @@ public class PlaceSelection implements DownloadSelection {
      */
     private static class NameFinderResultParser extends DefaultHandler {
         private SearchResult currentResult;
-        private StringBuffer description;
+        private StringBuilder description;
         private int depth;
         private List<SearchResult> data = new LinkedList<>();
 
@@ -225,7 +225,7 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult.zoom = Integer.parseInt(atts.getValue("zoom"));
                     data.add(currentResult);
                 } else if ("description".equals(qName) && (depth == 3)) {
-                    description = new StringBuffer();
+                    description = new StringBuilder();
                 } else if ("named".equals(qName) && (depth == 4)) {
                     // this is a "named" place in the nearest places list.
                     String info = atts.getValue("info");

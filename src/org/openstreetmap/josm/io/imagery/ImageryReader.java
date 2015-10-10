@@ -3,13 +3,14 @@ package org.openstreetmap.josm.io.imagery;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -69,9 +70,9 @@ public class ImageryReader {
     }
 
     private static class Parser extends DefaultHandler {
-        private StringBuffer accumulator = new StringBuffer();
+        private StringBuilder accumulator = new StringBuilder();
 
-        private Stack<State> states;
+        private Deque<State> states;
 
         private List<ImageryInfo> entries;
 
@@ -92,9 +93,9 @@ public class ImageryReader {
 
         @Override
         public void startDocument() {
-            accumulator = new StringBuffer();
+            accumulator = new StringBuilder();
             skipEntry = false;
-            states = new Stack<>();
+            states = new ArrayDeque<>();
             states.push(State.INIT);
             entries = new ArrayList<>();
             entry = null;

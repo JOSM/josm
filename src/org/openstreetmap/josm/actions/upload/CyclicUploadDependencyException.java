@@ -3,16 +3,15 @@ package org.openstreetmap.josm.actions.upload;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import org.openstreetmap.josm.data.osm.Relation;
 
 public class CyclicUploadDependencyException extends Exception {
-    private final Stack<Relation> cycle;
+    private final Deque<Relation> cycle;
 
-    public CyclicUploadDependencyException(Stack<Relation> cycle) {
+    public CyclicUploadDependencyException(Deque<Relation> cycle) {
         this.cycle = cycle;
     }
 
@@ -33,17 +32,17 @@ public class CyclicUploadDependencyException extends Exception {
         StringBuilder sb = new StringBuilder();
         sb.append(tr("Cyclic dependency between relations:"))
           .append('[');
-        for (int i = 0; i < cycle.size(); i++) {
-            if (i > 0) {
+        for (Relation r : cycle) {
+            if (sb.length() > 0) {
                 sb.append(',');
             }
-            sb.append(formatRelation(cycle.get(i)));
+            sb.append(formatRelation(r));
         }
         sb.append(']');
         return sb.toString();
     }
 
-    public List<Relation> getCyclicUploadDependency() {
-        return new ArrayList<>(cycle);
+    public Deque<Relation> getCyclicUploadDependency() {
+        return new ArrayDeque<>(cycle);
     }
 }
