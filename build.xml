@@ -21,10 +21,6 @@
     <condition property="clevel" value="${clevel}" else="9">
         <isset property="clevel"/>
     </condition>
-    <!-- For Windows-specific stuff -->
-    <condition property="isWindows">
-        <os family="Windows"/>
-    </condition>
     <!-- For Java9-specific stuff -->
     <condition property="isJava9">
         <equals arg1="${ant.java.version}" arg2="1.9" />
