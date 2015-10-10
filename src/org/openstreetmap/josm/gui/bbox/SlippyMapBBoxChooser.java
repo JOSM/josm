@@ -197,10 +197,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         return attribution.handleAttribution(p, click);
     }
 
-    protected Point getTopLeftCoordinates() {
-        return new Point(center.x - (getWidth() / 2), center.y - (getHeight() / 2));
-    }
-
     /**
      * Draw the map.
      */

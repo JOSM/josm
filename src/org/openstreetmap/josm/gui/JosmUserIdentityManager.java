@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Component;
 import java.text.MessageFormat;
 
 import org.openstreetmap.josm.Main;
@@ -64,7 +63,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
             if (OsmApi.isUsingOAuth() && OAuthAccessTokenHolder.getInstance().containsAccessToken() &&
                     !Main.isOffline(OnlineResource.OSM_API)) {
                 try {
-                    instance.initFromOAuth(Main.parent);
+                    instance.initFromOAuth();
                 } catch (Exception e) {
                     Main.error(e);
                     // Fall back to preferences if OAuth identification fails for any reason
@@ -210,11 +209,10 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
     /**
      * Initializes the user identity manager from OAuth request of user details.
      * This method should be called if {@code osm-server.auth-method} is set to {@code oauth}.
-     * @param parent component relative to which the {@link PleaseWaitDialog} is displayed.
      * @see #initFromPreferences
      * @since 5434
      */
-    public void initFromOAuth(Component parent) {
+    public void initFromOAuth() {
         try {
             UserInfo info = new OsmServerUserInfoReader().fetchUserInfo(NullProgressMonitor.INSTANCE);
             setFullyIdentified(info.getDisplayName(), info);
@@ -282,7 +280,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
             accessTokenSecretChanged = false;
             if (OsmApi.isUsingOAuth()) {
                 try {
-                    getInstance().initFromOAuth(Main.parent);
+                    getInstance().initFromOAuth();
                 } catch (Exception e) {
                     Main.error(e);
                 }

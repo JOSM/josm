@@ -266,7 +266,6 @@ public class Storage<T> extends AbstractSet<T> {
      * Additional mixing of hash
      */
     private int rehash(int h) {
-        //return 54435761*h;
         return 1103515245*h >> 2;
     }
 
@@ -360,18 +359,6 @@ public class Storage<T> extends AbstractSet<T> {
             }
         };
     }
-    /*
-    public static <O> Hash<O,O> identityHash() {
-        return new Hash<O,O>() {
-            public int getHashCode(O t) {
-                return System.identityHashCode(t);
-            }
-            public boolean equals(O t1, O t2) {
-                return t1 == t2;
-            }
-        };
-    }
-     */
 
     private final class FMap<K> implements Map<K, T> {
         private Hash<K, ? super T> fHash;

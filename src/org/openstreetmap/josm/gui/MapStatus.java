@@ -926,7 +926,6 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
     @Override
     public synchronized void addMouseListener(MouseListener ml) {
-        //super.addMouseListener(ml);
         lonText.addMouseListener(ml);
         latText.addMouseListener(ml);
     }

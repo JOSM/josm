@@ -37,7 +37,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
 
     private DownloadTask downloadTask;
 
-    public Future<?> download(boolean newLayer, long id, ProgressMonitor progressMonitor) {
+    public Future<?> download(long id, ProgressMonitor progressMonitor) {
         final String url = OsmApi.getOsmApi().getBaseUrl() + "notes/" + id;
         downloadTask = new DownloadRawUrlTask(new OsmServerLocationReader(url), progressMonitor);
         return Main.worker.submit(downloadTask);

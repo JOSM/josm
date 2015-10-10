@@ -17,7 +17,7 @@ public class DownloadNotesUrlIdTask extends DownloadNotesTask {
     public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
         final Matcher matcher = Pattern.compile(URL_ID_PATTERN).matcher(url);
         if (matcher.matches()) {
-            return download(newLayer, Long.parseLong(matcher.group(2)), null);
+            return download(Long.parseLong(matcher.group(2)), null);
         } else {
             throw new IllegalStateException("Failed to parse note id from " + url);
         }

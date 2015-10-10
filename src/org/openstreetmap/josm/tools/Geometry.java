@@ -343,7 +343,6 @@ public final class Geometry {
         // Convert line from (point, point) form to ax+by=c
         double a1 = p2.getY() - p1.getY();
         double b1 = p1.getX() - p2.getX();
-        // double c1 = 0;
 
         double a2 = p4.getY() - p3.getY();
         double b2 = p3.getX() - p4.getX();

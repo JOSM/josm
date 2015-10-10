@@ -74,7 +74,7 @@ public final class AudioPlayer extends Thread {
             result = Result.WAITING;
             interrupt();
             while (result == Result.WAITING) {
-                sleep(10); /* yield(); */
+                sleep(10);
             }
             if (result == Result.FAILED)
                 throw exception;
@@ -314,7 +314,6 @@ public final class AudioPlayer extends Thread {
                                 if (calibratedOffset > 0.0) {
                                     long bytesToSkip = (long) (calibratedOffset /* seconds (double) */ * bytesPerSecond);
                                     // skip doesn't seem to want to skip big chunks, so reduce it to smaller ones
-                                    // audioInputStream.skip(bytesToSkip);
                                     while (bytesToSkip > chunk) {
                                         nBytesRead = audioInputStream.skip(chunk);
                                         if (nBytesRead <= 0)

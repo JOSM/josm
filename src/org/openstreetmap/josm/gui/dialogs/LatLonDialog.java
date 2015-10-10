@@ -8,8 +8,6 @@ import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -232,31 +230,6 @@ public class LatLonDialog extends ExtendedDialog {
         tf.setBorder(UIManager.getBorder("TextField.border"));
         tf.setToolTipText(message);
         tf.setBackground(UIManager.getColor("TextField.background"));
-    }
-
-    protected Double parseDoubleFromUserInput(String input) {
-        if (input == null) return null;
-        // remove white space and an optional degree symbol
-        //
-        input = input.trim();
-        input = input.replaceAll(DEG, "");
-
-        // try to parse using the current locale
-        //
-        NumberFormat f = NumberFormat.getNumberInstance();
-        Number n = null;
-        ParsePosition pp = new ParsePosition(0);
-        n = f.parse(input, pp);
-        if (pp.getErrorIndex() >= 0 || pp.getIndex() < input.length()) {
-            // fall back - try to parse with the english locale
-            //
-            pp = new ParsePosition(0);
-            f = NumberFormat.getNumberInstance(Locale.ENGLISH);
-            n = f.parse(input, pp);
-            if (pp.getErrorIndex() >= 0 || pp.getIndex() < input.length())
-                return null;
-        }
-        return n == null ? null : n.doubleValue();
     }
 
     protected void parseLatLonUserInput() {

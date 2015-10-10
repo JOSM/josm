@@ -301,12 +301,11 @@ public class DeleteCommand extends Command {
      *    <li>it is untagged (see {@link Node#isTagged()}</li>
      *    <li>it is not referred to by other non-deleted primitives outside of  <code>primitivesToDelete</code></li>
      * </ul>
-     * @param layer  the layer in whose context primitives are deleted
      * @param primitivesToDelete  the primitives to delete
      * @return the collection of nodes referred to by primitives in <code>primitivesToDelete</code> which
      * can be deleted too
      */
-    protected static Collection<Node> computeNodesToDelete(OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
+    protected static Collection<Node> computeNodesToDelete(Collection<OsmPrimitive> primitivesToDelete) {
         Collection<Node> nodesToDelete = new HashSet<>();
         for (Way way : OsmPrimitive.getFilteredList(primitivesToDelete, Way.class)) {
             for (Node n : way.getNodes()) {
@@ -378,7 +377,7 @@ public class DeleteCommand extends Command {
 
         if (alsoDeleteNodesInWay) {
             // delete untagged nodes only referenced by primitives in primitivesToDelete, too
-            Collection<Node> nodesToDelete = computeNodesToDelete(layer, primitivesToDelete);
+            Collection<Node> nodesToDelete = computeNodesToDelete(primitivesToDelete);
             primitivesToDelete.addAll(nodesToDelete);
         }
 

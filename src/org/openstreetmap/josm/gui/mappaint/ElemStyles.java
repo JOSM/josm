@@ -43,7 +43,6 @@ public class ElemStyles {
      */
     public void clearCached() {
         // run in EDT to make sure this isn't called during rendering run
-        // {@link org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer#render}
         GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {

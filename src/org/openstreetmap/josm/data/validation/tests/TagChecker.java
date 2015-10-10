@@ -262,9 +262,6 @@ public class TagChecker extends TagTest {
                 presetsValueData.putVoid(a);
             }
             // TODO directionKeys are no longer in OsmPrimitive (search pattern is used instead)
-            /*  for (String a : OsmPrimitive.getDirectionKeys())
-                presetsValueData.add(a);
-             */
             for (String a : Main.pref.getCollection(ValidatorPreference.PREFIX + ".knownkeys",
                     Arrays.asList(new String[]{"is_in", "int_ref", "fixme", "population"}))) {
                 presetsValueData.putVoid(a);
@@ -703,7 +700,7 @@ public class TagChecker extends TagTest {
                 }
             }
 
-            public boolean match(OsmPrimitive osm, Map<String, String> keys) {
+            public boolean match(Map<String, String> keys) {
                 for (Entry<String, String> prop: keys.entrySet()) {
                     String key = prop.getKey();
                     String val = valueBool ? OsmUtils.getNamedOsmBoolean(prop.getValue()) : prop.getValue();
@@ -783,7 +780,7 @@ public class TagChecker extends TagTest {
                 return false;
 
             for (CheckerElement ce : data) {
-                if (!ce.match(osm, keys))
+                if (!ce.match(keys))
                     return false;
             }
             return true;

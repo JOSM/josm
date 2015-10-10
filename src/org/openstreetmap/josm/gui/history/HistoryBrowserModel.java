@@ -131,13 +131,6 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         return history;
     }
 
-    protected boolean hasNewNodes(Way way) {
-        for (Node n: way.getNodes()) {
-            if (n.isNew()) return true;
-        }
-        return false;
-    }
-
     protected boolean canShowAsLatest(OsmPrimitive primitive) {
         if (primitive == null) return false;
         if (primitive.isNew() || !primitive.isUsable()) return false;

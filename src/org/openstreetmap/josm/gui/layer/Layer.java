@@ -387,7 +387,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      * @return True if projection is supported for this layer
      */
     public boolean isProjectionSupported(Projection proj) {
-        return true;
+        return proj != null;
     }
 
     /**

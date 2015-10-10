@@ -513,7 +513,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         projectionChanged(null, Main.getProjection()); // check if projection is supported
         initTileSource(this.tileSource);
 
-        ;
         // keep them final here, so we avoid namespace clutter in the class
         final JPopupMenu tileOptionMenu = new JPopupMenu();
         final TileHolder clickedTileHolder = new TileHolder();

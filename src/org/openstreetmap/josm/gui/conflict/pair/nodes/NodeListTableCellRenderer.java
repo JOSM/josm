@@ -52,7 +52,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
      * @param node the node
      * @param isSelected true, if the current row is selected
      */
-    protected  void renderNode(ListMergeModel<Node>.EntriesTableModel model, Node node, int row, boolean isSelected) {
+    protected void renderNode(ListMergeModel<Node>.EntriesTableModel model, Node node, int row, boolean isSelected) {
         setIcon(icon);
         setBorder(null);
         if (model.getListMergeModel().isFrozen()) {
@@ -83,11 +83,10 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
 
     /**
      * render the row id
-     * @param model  the model
+     * @param model the model
      * @param row the row index
-     * @param isSelected true, if the current row is selected
      */
-    protected  void renderRowId(ListMergeModel<Node>.EntriesTableModel model, int row, boolean isSelected) {
+    protected void renderRowId(ListMergeModel<Node>.EntriesTableModel model, int row) {
         setIcon(null);
         setBorder(rowNumberBorder);
         if (model.getListMergeModel().isFrozen()) {
@@ -110,7 +109,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         } else {
             switch(column) {
             case 0:
-                renderRowId(getModel(table), row, isSelected);
+                renderRowId(getModel(table), row);
                 break;
             case 1:
                 renderNode(getModel(table), node, row, isSelected);

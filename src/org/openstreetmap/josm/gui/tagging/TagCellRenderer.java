@@ -68,10 +68,6 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
         setFont(fontStandard);
     }
 
-    protected TagEditorModel getModel(JTable table) {
-        return (TagEditorModel) table.getModel();
-    }
-
     /**
      * replies the cell renderer component for a specific cell
      *

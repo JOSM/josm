@@ -47,7 +47,7 @@ public class SelectionTableCellRenderer extends JLabel implements TableCellRende
         setToolTipText(null);
     }
 
-    protected void renderBackground(OsmPrimitive primitive, boolean isSelected) {
+    protected void renderBackground(OsmPrimitive primitive) {
         Color bgc = UIManager.getColor("Table.background");
         if (primitive != null && model != null && model.getNumMembersWithPrimitive(primitive) == 1) {
             bgc = BGCOLOR_SINGLE_ENTRY;
@@ -71,7 +71,7 @@ public class SelectionTableCellRenderer extends JLabel implements TableCellRende
         if (value == null)
             return this;
 
-        renderBackground((OsmPrimitive) value, isSelected);
+        renderBackground((OsmPrimitive) value);
         renderPrimitive((OsmPrimitive) value);
         return this;
     }

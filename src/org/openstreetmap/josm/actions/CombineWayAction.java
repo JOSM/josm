@@ -538,15 +538,6 @@ public class CombineWayAction extends JosmAction {
             }
         }
 
-        protected Node getStartNode() {
-            Set<Node> nodes = getNodes();
-            for (Node n: nodes) {
-                if (successors.get(n) != null && successors.get(n).size() == 1)
-                    return n;
-            }
-            return null;
-        }
-
         protected Set<Node> getTerminalNodes() {
             Set<Node> ret = new LinkedHashSet<>();
             for (Node n: getNodes()) {

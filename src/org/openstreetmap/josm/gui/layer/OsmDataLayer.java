@@ -441,8 +441,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override
     public boolean isMergable(final Layer other) {
-        // isUploadDiscouraged commented to allow merging between normal layers and discouraged layers with a warning (see #7684)
-        return other instanceof OsmDataLayer; // && (isUploadDiscouraged() == ((OsmDataLayer)other).isUploadDiscouraged());
+        // allow merging between normal layers and discouraged layers with a warning (see #7684)
+        return other instanceof OsmDataLayer;
     }
 
     @Override

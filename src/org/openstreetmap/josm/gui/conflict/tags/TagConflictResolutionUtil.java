@@ -67,7 +67,7 @@ public final class TagConflictResolutionUtil {
     public static void combineTigerTags(TagCollection tc) {
         for (String key: tc.getKeys()) {
             if (TigerUtils.isTigerTag(key)) {
-                tc.setUniqueForKey(key, TigerUtils.combineTags(key, tc.getValues(key)));
+                tc.setUniqueForKey(key, TigerUtils.combineTags(tc.getValues(key)));
             }
         }
     }

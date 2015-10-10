@@ -674,18 +674,6 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     }
 
     /**
-     * Replies true if the layer this model belongs to is equal to the active
-     * layer
-     *
-     * @return true if the layer this model belongs to is equal to the active
-     * layer
-     */
-    protected boolean isActiveLayer() {
-        if (!Main.isDisplayingMapView()) return false;
-        return Main.map.mapView.getActiveLayer() == layer;
-    }
-
-    /**
      * Sort the selected relation members by the way they are linked.
      */
     void sort() {

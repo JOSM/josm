@@ -232,7 +232,7 @@ public final class TaggingPresetItems {
                 return c != 0 ? c : 1;
         }
 
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p) {
             String cstring;
             if (count > 0 && !required) {
                 cstring = "0,"+count;
@@ -476,7 +476,7 @@ public final class TaggingPresetItems {
                 proles.add(new JLabel(tr("count")), GBC.std().insets(0, 0, 10, 0));
                 proles.add(new JLabel(tr("elements")), GBC.eol());
                 for (Role i : roles) {
-                    i.addToPanel(proles, sel);
+                    i.addToPanel(proles);
                 }
                 p.add(proles, GBC.eol());
             }

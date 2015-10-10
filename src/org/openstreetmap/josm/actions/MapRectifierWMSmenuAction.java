@@ -216,7 +216,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 break;
             }
 
-            // and display an error message. The while (true) ensures that the dialog pops up again
+            // and display an error message. The while loop ensures that the dialog pops up again
             JOptionPane.showMessageDialog(Main.parent,
                     tr("Couldn''t match the entered link or id to the selected service. Please try again."),
                     tr("No valid WMS URL or id"),

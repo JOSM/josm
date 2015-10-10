@@ -43,7 +43,6 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     private final Collection<PluginInformation> toUpdate = new LinkedList<>();
     private final Collection<PluginInformation> failed = new LinkedList<>();
     private final Collection<PluginInformation> downloaded = new LinkedList<>();
-    //private Exception lastException;
     private boolean canceled;
     private HttpURLConnection downloadConnection;
 

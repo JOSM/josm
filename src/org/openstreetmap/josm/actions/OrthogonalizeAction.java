@@ -454,22 +454,9 @@ public final class OrthogonalizeAction extends JosmAction {
                 } else if (segDirections[i] == Direction.DOWN) {
                     v = EN.diff(v, segment);
                 } else throw new IllegalStateException();
-                /**
-                 * When summing up the length of the sum vector should increase.
-                 * However, it is possible to construct ways, such that this assertion fails.
-                 * So only uncomment this for testing
-                 **/
-                //                if (segDirections[i].ordinal() % 2 == 0) {
-                //                    if (EN.abs(h) < lh) throw new AssertionError();
-                //                    lh = EN.abs(h);
-                //                } else {
-                //                    if (EN.abs(v) < lv) throw new AssertionError();
-                //                    lv = EN.abs(v);
-                //                }
             }
             // rotate the vertical vector by 90 degrees (clockwise) and add it to the horizontal vector
             segSum = EN.sum(h, new EastNorth(v.north(), -v.east()));
-            //            if (EN.abs(segSum) < lh) throw new AssertionError();
             this.heading = EN.polar(new EastNorth(0., 0.), segSum);
         }
     }

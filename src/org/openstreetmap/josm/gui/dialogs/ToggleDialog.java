@@ -838,13 +838,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      **/
 
     /**
-     * Change the Geometry of the detached dialog to better fit the content.
-     */
-    protected Rectangle getDetachedGeometry(Rectangle last) {
-        return last;
-    }
-
-    /**
      * Default size of the detached dialog.
      * Override this method to customize the initial dialog size.
      */
