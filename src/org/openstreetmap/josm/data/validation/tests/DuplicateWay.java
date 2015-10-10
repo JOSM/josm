@@ -252,15 +252,6 @@ public class DuplicateWay extends Test {
 
         long idToKeep = 0;
         Way wayToKeep = ways.iterator().next();
-        // Only one way will be kept - the one with lowest positive ID, if such exist
-        // or one "at random" if no such exists. Rest of the ways will be deleted
-        for (Way w: ways) {
-            if (!w.isNew() && (idToKeep == 0 || w.getId() < idToKeep)) {
-                idToKeep = w.getId();
-                wayToKeep = w;
-            }
-        }
-
         // Find the way that is member of one or more relations. (If any)
         Way wayWithRelations = null;
         List<Relation> relations = null;
@@ -271,6 +262,12 @@ public class DuplicateWay extends Test {
                     throw new AssertionError("Cannot fix duplicate Ways: More than one way is relation member.");
                 wayWithRelations = w;
                 relations = rel;
+            }
+            // Only one way will be kept - the one with lowest positive ID, if such exist
+            // or one "at random" if no such exists. Rest of the ways will be deleted
+            if (!w.isNew() && (idToKeep == 0 || w.getId() < idToKeep)) {
+                idToKeep = w.getId();
+                wayToKeep = w;
             }
         }
 

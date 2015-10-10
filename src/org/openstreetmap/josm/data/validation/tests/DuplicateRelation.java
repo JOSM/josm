@@ -242,15 +242,6 @@ public class DuplicateRelation extends Test {
 
         long idToKeep = 0;
         Relation relationToKeep = relFix.iterator().next();
-        // Only one relation will be kept - the one with lowest positive ID, if such exist
-        // or one "at random" if no such exists. Rest of the relations will be deleted
-        for (Relation w: relFix) {
-            if (!w.isNew() && (idToKeep == 0 || w.getId() < idToKeep)) {
-                idToKeep = w.getId();
-                relationToKeep = w;
-            }
-        }
-
         // Find the relation that is member of one or more relations. (If any)
         Relation relationWithRelations = null;
         List<Relation> relRef = null;
@@ -261,6 +252,12 @@ public class DuplicateRelation extends Test {
                     throw new AssertionError("Cannot fix duplicate relations: More than one relation is member of another relation.");
                 relationWithRelations = w;
                 relRef = rel;
+            }
+            // Only one relation will be kept - the one with lowest positive ID, if such exist
+            // or one "at random" if no such exists. Rest of the relations will be deleted
+            if (!w.isNew() && (idToKeep == 0 || w.getId() < idToKeep)) {
+                idToKeep = w.getId();
+                relationToKeep = w;
             }
         }
 

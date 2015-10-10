@@ -502,15 +502,8 @@ public class SessionReader {
                     Main.warn(ex);
                 }
             }
-        }
-        for (Entry<Integer, Layer> e : layersMap.entrySet()) {
-            Layer l = e.getValue();
-            if (l == null) {
-                continue;
-            }
-
-            l.setName(names.get(e.getKey()));
-            layers.add(l);
+            layer.setName(names.get(entry.getKey()));
+            layers.add(layer);
         }
     }
 
