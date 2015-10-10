@@ -68,7 +68,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         for (; pos < firstColon; ++pos) {
             if (query.charAt(pos) == '[')
                 ++bracketCount;
-            else if (query.charAt(pos) == '[')
+            else if (query.charAt(pos) == ']')
                 --bracketCount;
             else if (bracketCount == 0) {
                 if (!Character.isWhitespace(query.charAt(pos)))
