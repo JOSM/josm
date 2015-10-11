@@ -150,9 +150,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      *  and MemoryTileCache caches whole Tile. This gives huge performance improvement when a lot of tiles are visible
      *  in MapView (for example - when limiting min zoom in imagery)
      *
-     *  Use static instance so memory is shared between layers to prevent out of memory exceptions, when user is working with many layers
+     *  Use per-layer tileCache instance, as the more layers there are, the more tiles needs to be cached
      */
-    protected static TileCache tileCache = new MemoryTileCache(MEMORY_CACHE_SIZE.get());
+    protected TileCache tileCache; // initialized together with tileSource
     protected AbstractTMSTileSource tileSource;
     protected TileLoader tileLoader;
 
@@ -165,6 +165,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         setBackgroundLayer(true);
         this.setVisible(true);
         MapView.addZoomChangeListener(this);
+        this.tileSource = getTileSource(info);
+        if (this.tileSource == null) {
+            throw new IllegalArgumentException(tr("Failed to create tile source"));
+        }
     }
 
     protected abstract TileLoaderFactory getTileLoaderFactory();
@@ -206,6 +210,8 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
         if (tileLoader == null)
             tileLoader = new OsmTileLoader(this, headers);
+
+        tileCache = new MemoryTileCache(estimateTileCacheSize());
     }
 
     @Override
@@ -505,11 +511,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      */
     @Override
     public void hookUpMapView() {
-        this.tileSource = getTileSource(info);
-        if (this.tileSource == null) {
-            throw new IllegalArgumentException(tr("Failed to create tile source"));
-        }
-
+        super.hookUpMapView();
         projectionChanged(null, Main.getProjection()); // check if projection is supported
         initTileSource(this.tileSource);
 
@@ -659,6 +661,25 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         Main.map.repaint(500);
     }
 
+    @Override
+    protected long estimateMemoryUsage() {
+        return 4L * tileSource.getTileSize() * tileSource.getTileSize() * estimateTileCacheSize();
+    }
+
+    protected int estimateTileCacheSize() {
+        int height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        int width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        int tileSize = 256; // default tile size
+        if (tileSource != null) {
+            tileSize = tileSource.getTileSize();
+        }
+        // as we can see part of the tile at the top and at the bottom, use Math.ceil(...) + 1 to accommodate for that
+        int visibileTiles = (int) (Math.ceil( (double)height / tileSize + 1) * Math.ceil((double)width / tileSize + 1));
+        // add 10% for tiles from different zoom levels
+        return (int)Math.ceil(
+                Math.pow(2d, ZOOM_OFFSET.get()) * visibileTiles // use offset to decide, how many tiles are visible
+                * 2);
+    }
     /**
      * Checks zoom level against settings
      * @param maxZoomLvl zoom level to check
@@ -1509,9 +1530,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
             myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
             myDrawString(g, tr("Best zoom: {0}", getBestZoom()), 50, 185);
+            myDrawString(g, tr("Estimated cache size: {0}", estimateTileCacheSize()), 50, 200);
             if (tileLoader instanceof TMSCachedTileLoader) {
                 TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
-                int offset = 185;
+                int offset = 200;
                 for (String part: cachedTileLoader.getStats().split("\n")) {
                     myDrawString(g, tr("Cache stats: {0}", part), 50, offset += 15);
                 }
