@@ -63,10 +63,7 @@ public class MemoryTileCache implements TileCache {
         CacheEntry entry = hash.get(Tile.getTileKey(source, x, y, z));
         if (entry == null)
             return null;
-        // We don't care about placeholder tiles and hourglass image tiles, the
-        // important tiles are the loaded ones
-        if (entry.tile.isLoaded())
-            lruTiles.moveElementToFirstPos(entry);
+        lruTiles.moveElementToFirstPos(entry);
         return entry.tile;
     }
 

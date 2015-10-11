@@ -258,7 +258,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
             }
         }
         try {
-            return attributions.get(10, TimeUnit.MILLISECONDS);
+            return attributions.get(0, TimeUnit.MILLISECONDS);
         } catch (TimeoutException ex) {
             System.err.println("Bing: attribution data is not yet loaded.");
         } catch (ExecutionException ex) {
