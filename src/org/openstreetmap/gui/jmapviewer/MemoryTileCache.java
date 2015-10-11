@@ -51,10 +51,12 @@ public class MemoryTileCache implements TileCache {
     @Override
     public synchronized void addTile(Tile tile) {
         CacheEntry entry = createCacheEntry(tile);
-        hash.put(tile.getKey(), entry);
-        lruTiles.addFirst(entry);
-        if (hash.size() > cacheSize || lruTiles.getElementCount() > cacheSize) {
-            removeOldEntries();
+        if (hash.put(tile.getKey(), entry) == null) {
+            // only if hash hadn't had the element, add it to LRU
+            lruTiles.addFirst(entry);
+            if (hash.size() > cacheSize || lruTiles.getElementCount() > cacheSize) {
+                removeOldEntries();
+            }
         }
     }
 
