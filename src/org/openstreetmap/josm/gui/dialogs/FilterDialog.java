@@ -8,14 +8,13 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
@@ -291,7 +290,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     private Collection<OsmPrimitive> getAffectedPrimitives(Collection<? extends OsmPrimitive> primitives) {
         // Filters can use nested parent/child expression so complete tree is necessary
         Set<OsmPrimitive> result = new HashSet<>();
-        Deque<OsmPrimitive> stack = new ArrayDeque<>();
+        Stack<OsmPrimitive> stack = new Stack<>();
         stack.addAll(primitives);
 
         while (!stack.isEmpty()) {
