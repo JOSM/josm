@@ -7,17 +7,16 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
@@ -568,11 +567,11 @@ public class CombineWayAction extends JosmAction {
             return nodes;
         }
 
-        protected boolean isSpanningWay(Deque<NodePair> way) {
+        protected boolean isSpanningWay(Stack<NodePair> way) {
             return numUndirectedEges == way.size();
         }
 
-        protected List<Node> buildPathFromNodePairs(Deque<NodePair> path) {
+        protected List<Node> buildPathFromNodePairs(Stack<NodePair> path) {
             List<Node> ret = new LinkedList<>();
             for (NodePair pair: path) {
                 ret.add(pair.getA());
@@ -592,8 +591,8 @@ public class CombineWayAction extends JosmAction {
         protected List<Node> buildSpanningPath(Node startNode) {
             if (startNode == null)
                 return null;
-            Deque<NodePair> path = new ArrayDeque<>();
-            Deque<NodePair> nextPairs  = new ArrayDeque<>();
+            Stack<NodePair> path = new Stack<>();
+            Stack<NodePair> nextPairs  = new Stack<>();
             nextPairs.addAll(getOutboundPairs(startNode));
             while (!nextPairs.isEmpty()) {
                 NodePair cur = nextPairs.pop();

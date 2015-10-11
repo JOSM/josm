@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
@@ -68,8 +66,8 @@ public class RelationUploadOrderHook implements UploadHook {
      * @param e the cyclic dependency exception
      */
     protected void warnCyclicUploadDependency(CyclicUploadDependencyException e) {
-        Deque<Relation> dep = e.getCyclicUploadDependency();
-        Relation last = dep.getLast();
+        List<Relation> dep = e.getCyclicUploadDependency();
+        Relation last = dep.get(dep.size() -1);
         Iterator<Relation> it = dep.iterator();
         while (it.hasNext()) {
             if (it.next() != last) {
@@ -78,7 +76,7 @@ public class RelationUploadOrderHook implements UploadHook {
                 break;
             }
         }
-        JPanel pnl = buildWarningPanel(new ArrayList<>(dep));
+        JPanel pnl = buildWarningPanel(dep);
         ExtendedDialog dialog = new ExtendedDialog(
                 Main.parent,
                 tr("Cycling dependencies"),

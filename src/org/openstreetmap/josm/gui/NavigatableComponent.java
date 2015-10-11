@@ -10,18 +10,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.CRC32;
@@ -649,8 +648,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private Deque<ZoomData> zoomUndoBuffer = new ArrayDeque<>();
-    private Deque<ZoomData> zoomRedoBuffer = new ArrayDeque<>();
+    private Stack<ZoomData> zoomUndoBuffer = new Stack<>();
+    private Stack<ZoomData> zoomRedoBuffer = new Stack<>();
     private Date zoomTimestamp = new Date();
 
     private void pushZoomUndo(EastNorth center, double scale) {
