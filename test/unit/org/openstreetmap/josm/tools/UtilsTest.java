@@ -1,8 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -108,11 +107,11 @@ public class UtilsTest {
      */
     @Test
     public void testPositionListString() {
-        assertThat(Utils.getPositionListString(Arrays.asList(1)), is("1"));
-        assertThat(Utils.getPositionListString(Arrays.asList(1, 2, 3)), is("1-3"));
-        assertThat(Utils.getPositionListString(Arrays.asList(3, 1, 2)), is("1-3"));
-        assertThat(Utils.getPositionListString(Arrays.asList(1, 2, 3, 6, 7, 8)), is("1-3,6-8"));
-        assertThat(Utils.getPositionListString(Arrays.asList(1, 5, 2, 6, 7)), is("1-2,5-7"));
+        assertEquals("1", Utils.getPositionListString(Arrays.asList(1)));
+        assertEquals("1-3", Utils.getPositionListString(Arrays.asList(1, 2, 3)));
+        assertEquals("1-3", Utils.getPositionListString(Arrays.asList(3, 1, 2)));
+        assertEquals("1-3,6-8", Utils.getPositionListString(Arrays.asList(1, 2, 3, 6, 7, 8)));
+        assertEquals("1-2,5-7", Utils.getPositionListString(Arrays.asList(1, 5, 2, 6, 7)));
     }
 
     /**
@@ -121,24 +120,30 @@ public class UtilsTest {
     @Test
     public void testDurationString() {
         I18n.set("en");
-        assertThat(Utils.getDurationString(123), is("123 ms"));
-        assertThat(Utils.getDurationString(1234), is("1.2 s"));
-        assertThat(Utils.getDurationString(57 * 1000), is("57.0 s"));
-        assertThat(Utils.getDurationString(507 * 1000), is("8 min 27 s"));
-        assertThat(Utils.getDurationString((long) (8.4 * 60 * 60 * 1000)), is("8 h 24 min"));
-        assertThat(Utils.getDurationString((long) (1.5 * 24 * 60 * 60 * 1000)), is("1 day 12 h"));
-        assertThat(Utils.getDurationString((long) (8.5 * 24 * 60 * 60 * 1000)), is("8 days 12 h"));
+        assertEquals("123 ms", Utils.getDurationString(123));
+        assertEquals("1.2 s", Utils.getDurationString(1234));
+        assertEquals("57.0 s", Utils.getDurationString(57 * 1000));
+        assertEquals("8 min 27 s", Utils.getDurationString(507 * 1000));
+        assertEquals("8 h 24 min", Utils.getDurationString((long) (8.4 * 60 * 60 * 1000)));
+        assertEquals("1 day 12 h", Utils.getDurationString((long) (1.5 * 24 * 60 * 60 * 1000)));
+        assertEquals("8 days 12 h", Utils.getDurationString((long) (8.5 * 24 * 60 * 60 * 1000)));
     }
 
+    /**
+     * Test of {@link Utils#escapeReservedCharactersHTML} method.
+     */
     @Test
-    public void testEscapeReservedCharactersHTML() throws Exception {
-        assertThat(Utils.escapeReservedCharactersHTML("foo -> bar -> '&'"), is("foo -&gt; bar -&gt; '&amp;'"));
+    public void testEscapeReservedCharactersHTML() {
+        assertEquals("foo -&gt; bar -&gt; '&amp;'", Utils.escapeReservedCharactersHTML("foo -> bar -> '&'"));
     }
 
+    /**
+     * Test of {@link Utils#restrictStringLines} method.
+     */
     @Test
-    public void testRestrictStringLines() throws Exception {
-        assertThat(Utils.restrictStringLines("1\n2\n3", 2), is("1\n..."));
-        assertThat(Utils.restrictStringLines("1\n2\n3", 3), is("1\n2\n3"));
-        assertThat(Utils.restrictStringLines("1\n2\n3", 4), is("1\n2\n3"));
+    public void testRestrictStringLines() {
+        assertEquals("1\n...", Utils.restrictStringLines("1\n2\n3", 2));
+        assertEquals("1\n2\n3", Utils.restrictStringLines("1\n2\n3", 3));
+        assertEquals("1\n2\n3", Utils.restrictStringLines("1\n2\n3", 4));
     }
 }

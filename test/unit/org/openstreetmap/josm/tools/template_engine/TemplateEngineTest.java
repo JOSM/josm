@@ -16,6 +16,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.unitils.reflectionassert.ReflectionAssert;
 
+/**
+ * Unit tests of {@link TemplateParser} class.
+ */
 public class TemplateEngineTest {
 
     /**
@@ -285,5 +288,4 @@ public class TemplateEngineTest {
 
         Assert.assertEquals("child2", sb.toString());
     }
-
 }

@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * Unit tests for class {@link LatLon}.
+ */
 public class LatLonTest {
 
     public static final double[] SAMPLE_VALUES = new double[]{

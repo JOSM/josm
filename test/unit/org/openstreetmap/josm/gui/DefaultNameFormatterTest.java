@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,7 +28,6 @@ import org.xml.sax.SAXException;
 
 /**
  * Unit tests of {@link DefaultNameFormatter} class.
- *
  */
 public class DefaultNameFormatterTest {
 
@@ -88,15 +86,20 @@ public class DefaultNameFormatterTest {
      */
     @Test
     public void testRelationName() {
-        assertThat(getFormattedRelationName("X=Y"), is("relation (0, 0 members)"));
-        assertThat(getFormattedRelationName("name=Foo"), is("relation (\"Foo\", 0 members)"));
-        assertThat(getFormattedRelationName("type=route route=tram ref=123"), is("route (\"123\", 0 members)"));
-        assertThat(getFormattedRelationName("type=multipolygon building=yes"), is("multipolygon (\"building\", 0 members)"));
-        assertThat(getFormattedRelationName("type=multipolygon building=yes ref=123"), is("multipolygon (\"123\", 0 members)"));
-        assertThat(getFormattedRelationName("type=multipolygon building=yes addr:housenumber=123"),
-                is("multipolygon (\"building\", 0 members)"));
-        assertThat(getFormattedRelationName("type=multipolygon building=residential addr:housenumber=123"),
-                is("multipolygon (\"residential\", 0 members)"));
+        assertEquals("relation (0, 0 members)",
+                getFormattedRelationName("X=Y"));
+        assertEquals("relation (\"Foo\", 0 members)",
+                getFormattedRelationName("name=Foo"));
+        assertEquals("route (\"123\", 0 members)",
+                getFormattedRelationName("type=route route=tram ref=123"));
+        assertEquals("multipolygon (\"building\", 0 members)",
+                getFormattedRelationName("type=multipolygon building=yes"));
+        assertEquals("multipolygon (\"123\", 0 members)",
+                getFormattedRelationName("type=multipolygon building=yes ref=123"));
+        assertEquals("multipolygon (\"building\", 0 members)",
+                getFormattedRelationName("type=multipolygon building=yes addr:housenumber=123"));
+        assertEquals("multipolygon (\"residential\", 0 members)",
+                getFormattedRelationName("type=multipolygon building=residential addr:housenumber=123"));
     }
 
     /**
@@ -104,11 +107,10 @@ public class DefaultNameFormatterTest {
      */
     @Test
     public void testWayName() {
-        assertThat(getFormattedWayName("building=yes"), is("building (0 nodes)"));
-        assertThat(getFormattedWayName("building=yes addr:housenumber=123"), is("House number 123 (0 nodes)"));
-        assertThat(getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"),
-                is("House number 123 at FooStreet (0 nodes)"));
-        assertThat(getFormattedWayName("building=yes addr:housenumber=123 addr:housename=FooName"), is("House FooName (0 nodes)"));
+        assertEquals("building (0 nodes)", getFormattedWayName("building=yes"));
+        assertEquals("House number 123 (0 nodes)", getFormattedWayName("building=yes addr:housenumber=123"));
+        assertEquals("House number 123 at FooStreet (0 nodes)", getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"));
+        assertEquals("House FooName (0 nodes)", getFormattedWayName("building=yes addr:housenumber=123 addr:housename=FooName"));
     }
 
     static String getFormattedRelationName(String tagsString) {

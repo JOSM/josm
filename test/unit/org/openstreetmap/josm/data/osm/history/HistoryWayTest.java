@@ -13,6 +13,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 
+/**
+ * Unit tests for class {@link HistoryWay}.
+ */
 public class HistoryWayTest {
 
     @Test

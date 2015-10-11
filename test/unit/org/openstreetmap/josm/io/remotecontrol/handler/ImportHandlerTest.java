@@ -6,6 +6,9 @@ import static org.junit.Assert.assertThat;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
+/**
+ * Unit tests of {@link ImportHandler} class.
+ */
 public class ImportHandlerTest {
 
     @Test

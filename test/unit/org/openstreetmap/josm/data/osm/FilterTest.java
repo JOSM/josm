@@ -23,6 +23,9 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 
+/**
+ * Unit tests for class {@link Filter}.
+ */
 public class FilterTest {
 
     /**
@@ -34,7 +37,7 @@ public class FilterTest {
     }
 
     @Test
-    public void basic_test() throws ParseError {
+    public void basic() throws ParseError {
         DataSet ds = new DataSet();
         Node n1 = new Node(new LatLon(0, 0));
         n1.put("amenity", "parking");
@@ -62,7 +65,7 @@ public class FilterTest {
     }
 
     @Test
-    public void filter_test() throws ParseError, IllegalDataException, IOException {
+    public void filter() throws ParseError, IllegalDataException, IOException {
         for (int i : new int[] {1, 2, 3, 11, 12, 13, 14, 15}) {
             DataSet ds;
             try (InputStream is = new FileInputStream("data_nodist/filterTests.osm")) {

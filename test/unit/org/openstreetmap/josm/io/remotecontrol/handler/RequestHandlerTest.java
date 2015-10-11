@@ -1,8 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +10,9 @@ import java.util.Map;
 import org.junit.Test;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
+/**
+ * Unit tests of {@link RequestHandler} class.
+ */
 public class RequestHandlerTest {
 
     Map<String, String> getRequestParameter(String url) {
@@ -47,20 +49,19 @@ public class RequestHandlerTest {
         final Map<String, String> expected = new HashMap<>();
         expected.put("query", "a");
         expected.put("b", "=c");
-        assertThat(getRequestParameter("http://example.com/?query=a&b==c"),
-                is(expected));
+        assertEquals(expected, getRequestParameter("http://example.com/?query=a&b==c"));
     }
 
     @Test
     public void testRequestParameter12() {
-        assertThat(getRequestParameter("http://example.com/?query=a%26b==c"),
-                is(Collections.singletonMap("query", "a&b==c")));
+        assertEquals(Collections.singletonMap("query", "a&b==c"),
+                getRequestParameter("http://example.com/?query=a%26b==c"));
     }
 
     @Test
     public void testRequestParameter3() {
-        assertThat(getRequestParameter("http://example.com/blue+light%20blue?blue%2Blight+blue").keySet(),
-                is((Collections.singleton("blue+light blue"))));
+        assertEquals(Collections.singleton("blue+light blue"),
+                getRequestParameter("http://example.com/blue+light%20blue?blue%2Blight+blue").keySet());
     }
 
     /**
@@ -69,11 +70,10 @@ public class RequestHandlerTest {
      */
     @Test
     public void testRequestParameter4() {
-        assertThat(getRequestParameter(
+        assertEquals(Collections.singletonMap("/?:@-._~!$'()* ,;", "/?:@-._~!$'()* ,;=="), getRequestParameter(
                 // CHECKSTYLE.OFF: LineLength
-                "http://example.com/:@-._~!$&'()*+,=;:@-._~!$&'()*+,=:@-._~!$&'()*+,==?/?:@-._~!$'()*+,;=/?:@-._~!$'()*+,;==#/?:@-._~!$&'()*+,;="),
+                "http://example.com/:@-._~!$&'()*+,=;:@-._~!$&'()*+,=:@-._~!$&'()*+,==?/?:@-._~!$'()*+,;=/?:@-._~!$'()*+,;==#/?:@-._~!$&'()*+,;="));
                 // CHECKSTYLE.ON: LineLength
-                is(Collections.singletonMap("/?:@-._~!$'()* ,;", "/?:@-._~!$'()* ,;==")));
     }
 
     @Test
@@ -81,7 +81,6 @@ public class RequestHandlerTest {
         final Map<String, String> expected = new HashMap<>();
         expected.put("space", " ");
         expected.put("tab", "\t");
-        assertThat(getRequestParameter("http://example.com/?space=%20&tab=%09"),
-                is(expected));
+        assertEquals(expected, getRequestParameter("http://example.com/?space=%20&tab=%09"));
     }
 }

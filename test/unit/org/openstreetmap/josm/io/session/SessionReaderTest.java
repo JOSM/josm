@@ -1,11 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.session;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -121,7 +119,7 @@ public class SessionReaderTest {
         assertSame(layers.size(), 1);
         assertTrue(layers.get(0) instanceof ImageryLayer);
         final ImageryLayer image = (ImageryLayer) layers.get(0);
-        assertThat(image.getName(), is("Bing aerial imagery"));
+        assertEquals("Bing aerial imagery", image.getName());
         assertEquals(image.getDx(), 12.34, 1e-9);
         assertEquals(image.getDy(), -56.78, 1e-9);
     }

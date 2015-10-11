@@ -12,6 +12,9 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
+/**
+ * Unit tests for class {@link SearchCompiler}.
+ */
 public class SearchCompilerTest {
 
     /**
@@ -108,6 +111,5 @@ public class SearchCompilerTest {
     @Test
     public void testNthParseNegative() throws Exception {
         Assert.assertThat(SearchCompiler.compile("nth:-1").toString(), CoreMatchers.is("Nth{nth=-1, modulo=false}"));
-
     }
 }

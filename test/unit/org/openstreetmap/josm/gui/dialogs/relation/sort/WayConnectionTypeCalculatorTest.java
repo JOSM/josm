@@ -18,6 +18,9 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 
+/**
+ * Unit tests of {@link WayConnectionTypeCalculator} class.
+ */
 public class WayConnectionTypeCalculatorTest {
 
     private RelationSorter sorter = new RelationSorter();

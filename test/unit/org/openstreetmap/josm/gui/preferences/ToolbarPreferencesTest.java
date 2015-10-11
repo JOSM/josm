@@ -18,6 +18,9 @@ import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionDefinition;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 
+/**
+ * Unit tests of {@link ToolbarPreferences} class.
+ */
 public class ToolbarPreferencesTest {
 
     private static class TestAction extends AbstractAction implements ParameterizedAction {

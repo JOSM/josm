@@ -23,30 +23,20 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.tools.Predicate;
 
 /**
  * Unit tests for class {@link SelectAction}.
  */
 public class SelectActionTest {
 
-    public class MapViewMock extends MapView {
-        public OsmDataLayer layer;
-        public DataSet currentDataSet;
-
-        public Predicate<OsmPrimitive> isSelectablePredicate =
-                new Predicate<OsmPrimitive>() {
-                    @Override
-                    public boolean evaluate(OsmPrimitive prim) {
-                        return true;
-                    }
-                };
+    private class MapViewMock extends MapView {
+        private OsmDataLayer layer;
+        private DataSet currentDataSet;
 
         MapViewMock(DataSet dataSet, OsmDataLayer layer) {
             super(null, null);
@@ -64,12 +54,6 @@ public class SelectActionTest {
 
         @Override
         public void removeMouseListener(MouseListener ml) {}
-
-        public void addMouseMotionListener(MouseListener ml) {}
-
-        public void removeMouseMotionListener(MouseListener ml) {}
-
-        public void mvRepaint() {}
 
         @Override
         public void setVirtualNodesEnabled(boolean enabled) {}

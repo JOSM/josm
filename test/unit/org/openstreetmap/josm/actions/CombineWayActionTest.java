@@ -21,7 +21,7 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 
 /**
- * Unit tests for class CombineWayAction.
+ * Unit tests for class {@link CombineWayAction}.
  */
 public class CombineWayActionTest {
 
@@ -30,7 +30,7 @@ public class CombineWayActionTest {
      */
     @BeforeClass
     public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init(false);
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     /**

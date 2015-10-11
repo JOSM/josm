@@ -20,6 +20,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
+/**
+ * Unit tests for class {@link MergeSourceBuildingVisitor}.
+ */
 public class MergeSourceBuildingVisitorTest {
 
     protected OsmPrimitive lookupByName(Collection<? extends OsmPrimitive> primitives, String name) {

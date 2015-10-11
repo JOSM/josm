@@ -1,27 +1,31 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * Unit tests of {@link RotationAngle} class.
+ */
 public class RotationAngleTest {
 
+    private static final double EPSILON = 1e-11;
+
     @Test
-    public void testParseCardinal() throws Exception {
-        assertThat(RotationAngle.buildStaticRotation("south").getRotationAngle(null), is(Math.PI));
-        assertThat(RotationAngle.buildStaticRotation("s").getRotationAngle(null), is(Math.PI));
-        assertThat(RotationAngle.buildStaticRotation("northwest").getRotationAngle(null), is(Math.toRadians(315)));
+    public void testParseCardinal() {
+        assertEquals(Math.PI, RotationAngle.buildStaticRotation("south").getRotationAngle(null), EPSILON);
+        assertEquals(Math.PI, RotationAngle.buildStaticRotation("s").getRotationAngle(null), EPSILON);
+        assertEquals(Math.toRadians(315), RotationAngle.buildStaticRotation("northwest").getRotationAngle(null), EPSILON);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testParseFail() throws Exception {
+    public void testParseFail() {
         RotationAngle.buildStaticRotation("bad");
     }
 
     @Test(expected = NullPointerException.class)
-    public void testParseNull() throws Exception {
+    public void testParseNull() {
         RotationAngle.buildStaticRotation(null);
     }
 }

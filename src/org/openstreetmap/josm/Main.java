@@ -255,8 +255,8 @@ public abstract class Main {
     }
 
     /**
-     * Replies the first lines of last 10 error and warning messages, used for bug reports
-     * @return the first lines of last 10 error and warning messages
+     * Replies the first lines of last 5 error and warning messages, used for bug reports
+     * @return the first lines of last 5 error and warning messages
      * @since 7420
      */
     public static final Collection<String> getLastErrorAndWarnings() {

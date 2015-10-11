@@ -18,9 +18,12 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 
+/**
+ * Unit tests of {@link RelationSorter} class.
+ */
 public class RelationSorterTest {
 
-    private RelationSorter sorter = new RelationSorter();
+    private final RelationSorter sorter = new RelationSorter();
     private static DataSet testDataset;
 
     @BeforeClass
@@ -68,5 +71,4 @@ public class RelationSorterTest {
         String[] actual = getNames(sorter.sortMembers(getRelation("street").getMembers()));
         Assert.assertArrayEquals(new String[]{"t2w1", "t2w2", "t2n1", "t2n2", "t2n3", "t2n4", "playground", "tree"}, actual);
     }
-
 }

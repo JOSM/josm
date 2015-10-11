@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
- * Unit tests for class UnJoinNodeWayAction.
+ * Unit tests for class {@link UnJoinNodeWayAction}.
  */
 public final class UnJoinNodeWayActionTest {
 

@@ -22,6 +22,9 @@ import org.openstreetmap.josm.io.OsmReader;
 
 public class QuadBucketsTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();

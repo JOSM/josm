@@ -19,11 +19,14 @@ import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 
+/**
+ * Unit tests for class {@link TemplatedWMSTileSource}.
+ */
 public class TemplatedWMSTileSourceTest {
 
     private ImageryInfo testImageryWMS =  new ImageryInfo("test imagery", "http://localhost", "wms", null, null);
     private ImageryInfo testImageryTMS =  new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
-    //private TileSource testSource = new TemplatedWMSTileSource(testImageryWMS);
+
     /**
      * Setup test.
      */
@@ -51,7 +54,6 @@ public class TemplatedWMSTileSourceTest {
         verifyTileSquarness(source, 2270, 1323, 12);
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
-
     }
 
     @Test
@@ -106,7 +108,6 @@ public class TemplatedWMSTileSourceTest {
 
         verifyLocation(source, new LatLon(60, 18), 3);
         verifyLocation(source, new LatLon(60, 18));
-
     }
 
     @Test
@@ -119,7 +120,6 @@ public class TemplatedWMSTileSourceTest {
         verifyTileSquarness(source, 0, 1, 4);
         verifyLocation(source, new LatLon(60, 18.1), 3);
         verifyLocation(source, new LatLon(60, 18.1));
-
     }
 
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
@@ -128,7 +128,6 @@ public class TemplatedWMSTileSourceTest {
         ICoordinate expected = verifier.tileXYToLatLon(x, y, z - 1);
         assertEquals(expected.getLat(), result.lat(), 1e-4);
         assertEquals(expected.getLon(), result.lon(), 1e-4);
-        //assertTrue("result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString(), result.equalsEpsilon(expected));
         LatLon tileCenter = new Bounds(result, getTileLatLon(source, x+1, y+1, z)).getCenter();
         TileXY backwardsResult = source.latLonToTileXY(tileCenter.toCoordinate(), z);
         assertEquals(x, backwardsResult.getXIndex());

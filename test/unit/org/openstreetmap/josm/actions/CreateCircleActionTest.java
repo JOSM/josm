@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 
 /**
- * Unit tests for class CreateCircleAction.
+ * Unit tests for class {@link CreateCircleAction}.
  */
 public final class CreateCircleActionTest {
 
