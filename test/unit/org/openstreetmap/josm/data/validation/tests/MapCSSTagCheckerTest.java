@@ -1,10 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
@@ -32,7 +31,7 @@ import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 
 /**
- * JUnit Test of MapCSS TagChecker.
+ * JUnit Test of {@link MapCSSTagChecker}.
  */
 public class MapCSSTagCheckerTest {
 
@@ -52,7 +51,6 @@ public class MapCSSTagCheckerTest {
 
     @Test
     public void testNaturalMarsh() throws Exception {
-
         final List<MapCSSTagChecker.TagCheck> checks = MapCSSTagChecker.TagCheck.readMapCSS(new StringReader("" +
                 "*[natural=marsh] {\n" +
                 "   throwWarning: tr(\"{0}={1} is deprecated\", \"{0.key}\", tag(\"natural\"));\n" +
@@ -60,26 +58,25 @@ public class MapCSSTagCheckerTest {
                 "   fixAdd: \"natural=wetland\";\n" +
                 "   fixAdd: \"wetland=marsh\";\n" +
                 "}"));
-        assertThat(checks.size(), is(1));
+        assertEquals(1, checks.size());
         final MapCSSTagChecker.TagCheck check = checks.get(0);
-        assertThat(check, notNullValue());
-        assertThat(check.getDescription(null), is("{0.key}=null is deprecated"));
-        assertThat(check.fixCommands.get(0).toString(), is("fixRemove: {0.key}"));
-        assertThat(check.fixCommands.get(1).toString(), is("fixAdd: natural=wetland"));
-        assertThat(check.fixCommands.get(2).toString(), is("fixAdd: wetland=marsh"));
+        assertNotNull(check);
+        assertEquals("{0.key}=null is deprecated", check.getDescription(null));
+        assertEquals("fixRemove: {0.key}", check.fixCommands.get(0).toString());
+        assertEquals("fixAdd: natural=wetland", check.fixCommands.get(1).toString());
+        assertEquals("fixAdd: wetland=marsh", check.fixCommands.get(2).toString());
         final Node n1 = new Node();
         n1.put("natural", "marsh");
         assertTrue(check.evaluate(n1));
-        assertThat(check.getErrorForPrimitive(n1).getMessage(), is("natural=marsh is deprecated"));
-        assertThat(check.getErrorForPrimitive(n1).getSeverity(), is(Severity.WARNING));
-        assertThat(check.fixPrimitive(n1).getDescriptionText(), is("Sequence: Fix of natural=marsh is deprecated"));
-        assertThat(((ChangePropertyCommand) check.fixPrimitive(n1).getChildren().iterator().next()).getTags().toString(),
-                is("{natural=}"));
+        assertEquals("natural=marsh is deprecated", check.getErrorForPrimitive(n1).getMessage());
+        assertEquals(Severity.WARNING, check.getErrorForPrimitive(n1).getSeverity());
+        assertEquals("Sequence: Fix of natural=marsh is deprecated", check.fixPrimitive(n1).getDescriptionText());
+        assertEquals("{natural=}", ((ChangePropertyCommand) check.fixPrimitive(n1).getChildren().iterator().next()).getTags().toString());
         final Node n2 = new Node();
         n2.put("natural", "wood");
         assertFalse(check.evaluate(n2));
-        assertThat(MapCSSTagChecker.TagCheck.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}", null),
-                is("The key is natural and the value is marsh"));
+        assertEquals("The key is natural and the value is marsh",
+                MapCSSTagChecker.TagCheck.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}", null));
     }
 
     @Test
@@ -91,10 +88,10 @@ public class MapCSSTagCheckerTest {
                 "fixAdd: \"highway=construction\";\n" +
                 "}")).get(0);
         final Command command = check.fixPrimitive(p);
-        assertThat(command instanceof SequenceCommand, is(true));
+        assertTrue(command instanceof SequenceCommand);
         final Iterator<PseudoCommand> it = command.getChildren().iterator();
-        assertThat(it.next() instanceof ChangePropertyKeyCommand, is(true));
-        assertThat(it.next() instanceof ChangePropertyCommand, is(true));
+        assertTrue(it.next() instanceof ChangePropertyKeyCommand);
+        assertTrue(it.next() instanceof ChangePropertyCommand);
     }
 
     @Test
@@ -103,9 +100,9 @@ public class MapCSSTagCheckerTest {
                 "throwWarning: tr(\"has {0} but not {1}\", \"{0.key}\", \"{1.key}\");}");
         final OsmPrimitive p = OsmUtils.createPrimitive("way alt_name=Foo");
         final Collection<TestError> errors = test.getErrorsForPrimitive(p, false);
-        assertThat(errors.size(), is(1));
-        assertThat(errors.iterator().next().getMessage(), is("has alt_name but not name"));
-        assertThat(errors.iterator().next().getIgnoreSubGroup(), is("3000_*[.+_name][!name]"));
+        assertEquals(1, errors.size());
+        assertEquals("has alt_name but not name", errors.iterator().next().getMessage());
+        assertEquals("3000_*[.+_name][!name]", errors.iterator().next().getIgnoreSubGroup());
     }
 
     @Test
@@ -114,9 +111,9 @@ public class MapCSSTagCheckerTest {
                 "  throwWarning: tr(\"{0} used with {1}\", \"{0.value}\", \"{1.tag}\");}");
         final OsmPrimitive p = OsmUtils.createPrimitive("way highway=footway foot=no");
         final Collection<TestError> errors = test.getErrorsForPrimitive(p, false);
-        assertThat(errors.size(), is(1));
-        assertThat(errors.iterator().next().getMessage(), is("footway used with foot=no"));
-        assertThat(errors.iterator().next().getIgnoreSubGroup(), is("3000_way[highway=footway][foot]"));
+        assertEquals(1, errors.size());
+        assertEquals("footway used with foot=no", errors.iterator().next().getMessage());
+        assertEquals("3000_way[highway=footway][foot]", errors.iterator().next().getIgnoreSubGroup());
     }
 
     @Test
@@ -124,8 +121,8 @@ public class MapCSSTagCheckerTest {
         final MapCSSTagChecker test = buildTagChecker("" +
                 "@media (min-josm-version: 1) { *[foo] { throwWarning: \"!\"; } }\n" +
                 "@media (min-josm-version: 2147483647) { *[bar] { throwWarning: \"!\"; } }\n");
-        assertThat(test.getErrorsForPrimitive(OsmUtils.createPrimitive("way foo=1"), false).size(), is(1));
-        assertThat(test.getErrorsForPrimitive(OsmUtils.createPrimitive("way bar=1"), false).size(), is(0));
+        assertEquals(1, test.getErrorsForPrimitive(OsmUtils.createPrimitive("way foo=1"), false).size());
+        assertEquals(0, test.getErrorsForPrimitive(OsmUtils.createPrimitive("way bar=1"), false).size());
     }
 
     @Test

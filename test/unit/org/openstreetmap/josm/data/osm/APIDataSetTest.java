@@ -13,8 +13,14 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.APIDataSet;
 
+/**
+ * Unit tests for class {@link APIDataSet}.
+ */
 public class APIDataSetTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();

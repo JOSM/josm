@@ -11,6 +11,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 
+/**
+ * Unit tests for class {@link HistoryNode}.
+ */
 public class HistoryNodeTest {
 
     @Test

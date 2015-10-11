@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -106,19 +105,19 @@ public class NavigatableComponentTest {
         // zoomToFactor(double)
         component.zoomToFactor(0.5);
         assertEquals(initialScale / 2, component.getScale(), 0.00000001);
-        assertThat(component.getCenter(), is(center));
+        assertEquals(center, component.getCenter());
         component.zoomToFactor(2);
         assertEquals(initialScale, component.getScale(), 0.00000001);
-        assertThat(component.getCenter(), is(center));
+        assertEquals(center, component.getCenter());
 
         // zoomToFactor(EastNorth, double)
         EastNorth newCenter = new EastNorth(10, 20);
         component.zoomToFactor(newCenter, 0.5);
         assertEquals(initialScale / 2, component.getScale(), 0.00000001);
-        assertThat(component.getCenter(), is(newCenter));
+        assertEquals(newCenter, component.getCenter());
         component.zoomToFactor(newCenter, 2);
         assertEquals(initialScale, component.getScale(), 0.00000001);
-        assertThat(component.getCenter(), is(newCenter));
+        assertEquals(newCenter, component.getCenter());
     }
 
     /**

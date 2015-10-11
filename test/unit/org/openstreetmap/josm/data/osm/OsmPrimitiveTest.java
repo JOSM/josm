@@ -14,6 +14,9 @@ import org.openstreetmap.josm.data.projection.Projections;
 
 public class OsmPrimitiveTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();

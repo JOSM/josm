@@ -41,6 +41,9 @@ public class PropertiesMergeModelTest {
 
     PropertiesMergeModel model;
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();

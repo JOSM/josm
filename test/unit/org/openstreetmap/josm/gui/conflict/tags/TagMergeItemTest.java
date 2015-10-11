@@ -13,8 +13,14 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItem;
 
+/**
+ * Unit tests of {@link TagMergeItem} class.
+ */
 public class TagMergeItemTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();

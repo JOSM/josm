@@ -12,7 +12,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
+/**
+ * Unit tests for class {@link JCSCachedTileLoaderJob}.
+ */
 public class JCSCachedTileLoaderJobTest {
+
     private static class TestCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, CacheEntry> {
         private String url;
 
@@ -43,25 +47,20 @@ public class JCSCachedTileLoaderJobTest {
         protected CacheEntry createCacheEntry(byte[] content) {
             return new CacheEntry("dummy".getBytes());
         }
-
     }
 
     private static class Listener implements ICachedLoaderListener {
-        private CacheEntry data;
         private CacheEntryAttributes attributes;
-        private LoadResult result;
         private boolean ready;
 
         @Override
         public synchronized void loadingFinished(CacheEntry data, CacheEntryAttributes attributes, LoadResult result) {
-            this.data = data;
             this.attributes = attributes;
-            this.result = result;
             this.ready = true;
             this.notify();
         }
-
     }
+
     /**
      * Setup test.
      */
@@ -107,12 +106,9 @@ public class JCSCachedTileLoaderJobTest {
             }
         }
         assertEquals(responseCode, listener.attributes.getResponseCode());
-
     }
 
     private static TestCachedTileLoaderJob getStatusLoaderJob(int responseCode) throws IOException {
         return new TestCachedTileLoaderJob("http://httpstat.us/" + responseCode);
     }
-
 }
-

@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.tagging;
 
 import static org.CustomMatchers.hasSize;
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class TaggingPresetReaderTest {
                 return ((TaggingPresetItems.Key) x).key;
             }
         });
-        assertThat(keys.toString(), is("[A1, A2, A3, B1, B2, B3, C1, C2, C3]"));
+        assertEquals("[A1, A2, A3, B1, B2, B3, C1, C2, C3]", keys.toString());
     }
 
     /**

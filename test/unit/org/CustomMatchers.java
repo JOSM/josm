@@ -13,6 +13,9 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.Predicate;
 
+/**
+ * Custom matchers for unit tests.
+ */
 @Ignore("no test")
 public final class CustomMatchers {
 
@@ -20,6 +23,11 @@ public final class CustomMatchers {
         // Hide constructor for utility classes
     }
 
+    /**
+     * Matcher for a predicate.
+     * @param predicate the predicate
+     * @return matcher for a predicate
+     */
     public static <T> Matcher<? extends T> forPredicate(final Predicate<T> predicate) {
         return new TypeSafeMatcher<T>() {
 
@@ -35,6 +43,11 @@ public final class CustomMatchers {
         };
     }
 
+    /**
+     * Matcher for a collection of a given size.
+     * @param size of collection
+     * @return matcher for a collection of a given size
+     */
     public static Matcher<Collection<?>> hasSize(final int size) {
         return new TypeSafeMatcher<Collection<?>>() {
             @Override
@@ -49,6 +62,10 @@ public final class CustomMatchers {
         };
     }
 
+    /**
+     * Matcher for an empty collection.
+     * @return matcher for an empty collection
+     */
     public static Matcher<Collection<?>> isEmpty() {
         return new TypeSafeMatcher<Collection<?>>() {
             @Override
@@ -63,6 +80,11 @@ public final class CustomMatchers {
         };
     }
 
+    /**
+     * Matcher for a point at a given location.
+     * @param expected expected location
+     * @return matcher for a point at a given location
+     */
     public static Matcher<? super Point2D> is(final Point2D expected) {
         return new CustomTypeSafeMatcher<Point2D>("the same Point2D") {
             @Override
@@ -72,6 +94,11 @@ public final class CustomMatchers {
         };
     }
 
+    /**
+     * Matcher for a point at a given location.
+     * @param expected expected location
+     * @return matcher for a point at a given location
+     */
     public static Matcher<? super LatLon> is(final LatLon expected) {
         return new CustomTypeSafeMatcher<LatLon>("the same LatLon") {
             @Override
@@ -82,6 +109,11 @@ public final class CustomMatchers {
         };
     }
 
+    /**
+     * Matcher for a point at a given location.
+     * @param expected expected location
+     * @return matcher for a point at a given location
+     */
     public static Matcher<? super EastNorth> is(final EastNorth expected) {
         return new CustomTypeSafeMatcher<EastNorth>("the same EastNorth") {
             @Override
@@ -91,5 +123,4 @@ public final class CustomMatchers {
             }
         };
     }
-
 }

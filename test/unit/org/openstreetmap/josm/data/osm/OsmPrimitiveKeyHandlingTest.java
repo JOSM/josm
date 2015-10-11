@@ -14,10 +14,12 @@ import org.openstreetmap.josm.data.coor.LatLon;
 /**
  * Some unit test cases for basic tag management on {@link OsmPrimitive}. Uses
  * {@link Node} for the tests, {@link OsmPrimitive} is abstract.
- *
  */
 public class OsmPrimitiveKeyHandlingTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();

@@ -1,13 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
+/**
+ * Unit tests of {@link OverpassTurboQueryWizard} class.
+ */
 public class OverpassTurboQueryWizardTest {
 
     /**
@@ -20,9 +22,9 @@ public class OverpassTurboQueryWizardTest {
     }
 
     @Test
-    public void testKeyValue() throws Exception {
+    public void testKeyValue() {
         final String query = OverpassTurboQueryWizard.getInstance().constructQuery("amenity=drinking_water");
-        assertThat(query, is("" +
+        assertEquals("" +
                 "[timeout:25];\n" +
                 "// gather results\n" +
                 "(\n" +
@@ -34,11 +36,11 @@ public class OverpassTurboQueryWizardTest {
                 "// print results\n" +
                 "out meta;\n" +
                 ">;\n" +
-                "out meta;"));
+                "out meta;", query);
     }
 
     @Test(expected = OverpassTurboQueryWizard.ParseException.class)
-    public void testErroneous() throws Exception {
+    public void testErroneous() {
         OverpassTurboQueryWizard.getInstance().constructQuery("foo");
     }
 }

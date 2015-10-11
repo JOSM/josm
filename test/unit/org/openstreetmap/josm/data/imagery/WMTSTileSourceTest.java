@@ -17,6 +17,9 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
 
+/**
+ * Unit tests for class {@link WMTSTileSource}.
+ */
 public class WMTSTileSourceTest {
 
     private ImageryInfo testImageryTMS =  new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
@@ -27,6 +30,9 @@ public class WMTSTileSourceTest {
     private ImageryInfo testImageryWALLONIE = getImagery("test/data/wmts/WMTSCapabilities-Wallonie.xml");
     private ImageryInfo testImageryOntario = getImagery("test/data/wmts/WMTSCapabilities-Ontario.xml");
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();

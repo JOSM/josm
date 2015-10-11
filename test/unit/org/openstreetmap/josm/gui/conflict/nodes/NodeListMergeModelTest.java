@@ -31,6 +31,9 @@ public class NodeListMergeModelTest {
     private DatasetFactory my = new DatasetFactory();
     private DatasetFactory their = new DatasetFactory();
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();

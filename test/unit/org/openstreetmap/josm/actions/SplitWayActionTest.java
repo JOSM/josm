@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
- * Unit tests for class SplitWayAction.
+ * Unit tests for class {@link SplitWayAction}.
  */
 public final class SplitWayActionTest {
 

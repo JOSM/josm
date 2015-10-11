@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
- * Unit tests for class AlignInLineAction.
+ * Unit tests for class {@link AlignInLineAction}.
  */
 public final class AlignInLineActionTest {
 
