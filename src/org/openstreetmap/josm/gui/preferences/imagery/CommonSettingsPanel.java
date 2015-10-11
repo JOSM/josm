@@ -38,7 +38,6 @@ public class CommonSettingsPanel extends JPanel {
     private final JosmComboBox<String> sharpen;
     private final JosmTextField tilecacheDir = new JosmTextField();
     private final JSpinner maxElementsOnDisk;
-    private final JSpinner maxElementsInRam;
     private final JSlider tilesZoom = new JSlider(-2, 2, 0);
 
 
@@ -48,8 +47,6 @@ public class CommonSettingsPanel extends JPanel {
     public CommonSettingsPanel() {
         super(new GridBagLayout());
 
-        this.maxElementsInRam = new JSpinner(new SpinnerNumberModel(
-                AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get().intValue(), 0, Integer.MAX_VALUE, 1));
         this.maxElementsOnDisk = new JSpinner(new SpinnerNumberModel(
                 AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().intValue(), 0, Integer.MAX_VALUE, 1));
 
@@ -97,10 +94,6 @@ public class CommonSettingsPanel extends JPanel {
         add(GBC.glue(5, 0), GBC.std());
         add(this.maxElementsOnDisk, GBC.eol());
 
-        add(new JLabel(tr("Maximum number of objects in memory cache: ")), GBC.std());
-        add(GBC.glue(5, 0), GBC.std());
-        add(this.maxElementsInRam, GBC.eol());
-
         this.tilesZoom.setPaintLabels(true);
         this.tilesZoom.setMajorTickSpacing(2);
         this.tilesZoom.setMinorTickSpacing(1);
@@ -121,7 +114,6 @@ public class CommonSettingsPanel extends JPanel {
         this.sharpen.setSelectedIndex(Math.max(0, Math.min(2, ImageryLayer.PROP_SHARPEN_LEVEL.get())));
         this.tilecacheDir.setText(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
         this.maxElementsOnDisk.setValue(AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get());
-        this.maxElementsInRam.setValue(AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get());
         this.tilesZoom.setValue(AbstractTileSourceLayer.ZOOM_OFFSET.get());
     }
 
@@ -144,11 +136,6 @@ public class CommonSettingsPanel extends JPanel {
         if (!CachedTileLoaderFactory.PROP_TILECACHE_DIR.get().equals(this.tilecacheDir.getText())) {
             restartRequired = true;
             CachedTileLoaderFactory.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
-        }
-
-        if (!AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.get().equals(this.maxElementsInRam.getValue())) {
-            AbstractCachedTileSourceLayer.MEMORY_CACHE_SIZE.put((Integer) this.maxElementsInRam.getValue());
-            restartRequired = true;
         }
 
         if (!AbstractTileSourceLayer.ZOOM_OFFSET.get().equals(this.tilesZoom.getValue())) {

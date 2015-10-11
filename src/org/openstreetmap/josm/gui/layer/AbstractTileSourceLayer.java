@@ -139,12 +139,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      */
     public static final IntegerProperty ZOOM_OFFSET = new IntegerProperty(PREFERENCE_PREFIX + ".zoom_offset", 0);
 
-    /**
-     * use fairly small memory cache, as cached objects are quite big, as they contain BufferedImages
-     */
-    public static final IntegerProperty MEMORY_CACHE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + ".cache.max_objects_ram",
-            (int) Math.max(200,  200 * Math.pow(4, ZOOM_OFFSET.get())));
-
     /*
      *  use MemoryTileCache instead of tileLoader JCS cache, as tileLoader caches only content (byte[] of image)
      *  and MemoryTileCache caches whole Tile. This gives huge performance improvement when a lot of tiles are visible
@@ -879,7 +873,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * already in the cache.
      */
     private Tile getTile(int x, int y, int zoom) {
-        if (x < 0 || x >= tileSource.getTileXMax(zoom) || y < 0 || y >= tileSource.getTileYMax(zoom))
+        if (x < 0 || x > tileSource.getTileXMax(zoom) || y < 0 || y > tileSource.getTileYMax(zoom))
             return null;
         return tileCache.getTile(tileSource, x, y, zoom);
     }
