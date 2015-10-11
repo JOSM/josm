@@ -159,10 +159,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         setBackgroundLayer(true);
         this.setVisible(true);
         MapView.addZoomChangeListener(this);
-        this.tileSource = getTileSource(info);
-        if (this.tileSource == null) {
-            throw new IllegalArgumentException(tr("Failed to create tile source"));
-        }
     }
 
     protected abstract TileLoaderFactory getTileLoaderFactory();
@@ -505,6 +501,13 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      */
     @Override
     public void hookUpMapView() {
+        // this needs to be here and not in constructor to allow empty TileSource class construction
+        // using SessionWriter
+        this.tileSource = getTileSource(info);
+        if (this.tileSource == null) {
+            throw new IllegalArgumentException(tr("Failed to create tile source"));
+        }
+
         super.hookUpMapView();
         projectionChanged(null, Main.getProjection()); // check if projection is supported
         initTileSource(this.tileSource);
