@@ -671,9 +671,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             tileSize = tileSource.getTileSize();
         }
         // as we can see part of the tile at the top and at the bottom, use Math.ceil(...) + 1 to accommodate for that
-        int visibileTiles = (int) (Math.ceil( (double)height / tileSize + 1) * Math.ceil((double)width / tileSize + 1));
+        int visibileTiles = (int) (Math.ceil((double) height / tileSize + 1) * Math.ceil((double) width / tileSize + 1));
         // add 10% for tiles from different zoom levels
-        return (int)Math.ceil(
+        return (int) Math.ceil(
                 Math.pow(2d, ZOOM_OFFSET.get()) * visibileTiles // use offset to decide, how many tiles are visible
                 * 2);
     }
