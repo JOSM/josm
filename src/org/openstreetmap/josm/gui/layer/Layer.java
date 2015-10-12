@@ -154,9 +154,11 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
                 memoryBytesRequired += layer.estimateMemoryUsage();
             }
             if (memoryBytesRequired >  Runtime.getRuntime().maxMemory()) {
-                throw new IllegalArgumentException(tr("To add another layer you need to allocate at least {0,number,#}MB memory to JOSM using -Xmx{0,number,#}M "
+                throw new IllegalArgumentException(
+                        tr("To add another layer you need to allocate at least {0,number,#}MB memory to JOSM using -Xmx{0,number,#}M "
                         + "option (see http://forum.openstreetmap.org/viewtopic.php?id=25677).\n"
-                        + "Currently you have {1,number,#}MB memory allocated for JOSM", memoryBytesRequired / 1024 / 1024, Runtime.getRuntime().maxMemory() / 1024 / 1024));
+                        + "Currently you have {1,number,#}MB memory allocated for JOSM",
+                        memoryBytesRequired / 1024 / 1024, Runtime.getRuntime().maxMemory() / 1024 / 1024));
             }
         }
     }
