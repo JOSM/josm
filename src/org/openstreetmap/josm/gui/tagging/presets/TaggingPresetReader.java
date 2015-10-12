@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -25,6 +25,21 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
+import org.openstreetmap.josm.gui.tagging.presets.items.Check;
+import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
+import org.openstreetmap.josm.gui.tagging.presets.items.Combo;
+import org.openstreetmap.josm.gui.tagging.presets.items.ComboMultiSelect;
+import org.openstreetmap.josm.gui.tagging.presets.items.ItemSeparator;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
+import org.openstreetmap.josm.gui.tagging.presets.items.Label;
+import org.openstreetmap.josm.gui.tagging.presets.items.Link;
+import org.openstreetmap.josm.gui.tagging.presets.items.MultiSelect;
+import org.openstreetmap.josm.gui.tagging.presets.items.Optional;
+import org.openstreetmap.josm.gui.tagging.presets.items.PresetLink;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
+import org.openstreetmap.josm.gui.tagging.presets.items.Space;
+import org.openstreetmap.josm.gui.tagging.presets.items.Text;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.Predicates;
@@ -45,20 +60,8 @@ public final class TaggingPresetReader {
     public static final String PRESET_MIME_TYPES =
             "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
-    private TaggingPresetReader() {
-        // Hide default constructor for utils classes
-    }
-
     private static volatile File zipIcons;
     private static volatile boolean loadIcons = true;
-
-    /**
-     * Returns the set of preset source URLs.
-     * @return The set of preset source URLs.
-     */
-    public static Set<String> getPresetSources() {
-        return new TaggingPresetPreference.PresetPrefHelper().getActiveUrls();
-    }
 
     /**
      * Holds a reference to a chunk of items/objects.
@@ -76,31 +79,6 @@ public final class TaggingPresetReader {
         public String ref;
     }
 
-    private static XmlObjectParser buildParser() {
-        XmlObjectParser parser = new XmlObjectParser();
-        parser.mapOnStart("item", TaggingPreset.class);
-        parser.mapOnStart("separator", TaggingPresetSeparator.class);
-        parser.mapBoth("group", TaggingPresetMenu.class);
-        parser.map("text", TaggingPresetItems.Text.class);
-        parser.map("link", TaggingPresetItems.Link.class);
-        parser.map("preset_link", TaggingPresetItems.PresetLink.class);
-        parser.mapOnStart("optional", TaggingPresetItems.Optional.class);
-        parser.mapOnStart("roles", TaggingPresetItems.Roles.class);
-        parser.map("role", TaggingPresetItems.Role.class);
-        parser.map("checkgroup", TaggingPresetItems.CheckGroup.class);
-        parser.map("check", TaggingPresetItems.Check.class);
-        parser.map("combo", TaggingPresetItems.Combo.class);
-        parser.map("multiselect", TaggingPresetItems.MultiSelect.class);
-        parser.map("label", TaggingPresetItems.Label.class);
-        parser.map("space", TaggingPresetItems.Space.class);
-        parser.map("key", TaggingPresetItems.Key.class);
-        parser.map("list_entry", TaggingPresetItems.PresetListEntry.class);
-        parser.map("item_separator", TaggingPresetItems.ItemSeparator.class);
-        parser.mapBoth("chunk", Chunk.class);
-        parser.map("reference", Reference.class);
-        return parser;
-    }
-
     static class HashSetWithLast<E> extends LinkedHashSet<E> {
         protected E last;
 
@@ -116,6 +94,39 @@ public final class TaggingPresetReader {
         public E getLast() {
             return last;
         }
+    }
+
+    /**
+     * Returns the set of preset source URLs.
+     * @return The set of preset source URLs.
+     */
+    public static Set<String> getPresetSources() {
+        return new TaggingPresetPreference.PresetPrefHelper().getActiveUrls();
+    }
+
+    private static XmlObjectParser buildParser() {
+        XmlObjectParser parser = new XmlObjectParser();
+        parser.mapOnStart("item", TaggingPreset.class);
+        parser.mapOnStart("separator", TaggingPresetSeparator.class);
+        parser.mapBoth("group", TaggingPresetMenu.class);
+        parser.map("text", Text.class);
+        parser.map("link", Link.class);
+        parser.map("preset_link", PresetLink.class);
+        parser.mapOnStart("optional", Optional.class);
+        parser.mapOnStart("roles", Roles.class);
+        parser.map("role", Role.class);
+        parser.map("checkgroup", CheckGroup.class);
+        parser.map("check", Check.class);
+        parser.map("combo", Combo.class);
+        parser.map("multiselect", MultiSelect.class);
+        parser.map("label", Label.class);
+        parser.map("space", Space.class);
+        parser.map("key", Key.class);
+        parser.map("list_entry", ComboMultiSelect.PresetListEntry.class);
+        parser.map("item_separator", ItemSeparator.class);
+        parser.mapBoth("chunk", Chunk.class);
+        parser.map("reference", Reference.class);
+        return parser;
     }
 
     /**
@@ -144,9 +155,9 @@ public final class TaggingPresetReader {
         TaggingPresetMenu lastmenu = null;
         /** to detect end of reused {@code <group>} */
         TaggingPresetMenu lastmenuOriginal = null;
-        TaggingPresetItems.Roles lastrole = null;
-        final List<TaggingPresetItems.Check> checks = new LinkedList<>();
-        List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<>();
+        Roles lastrole = null;
+        final List<Check> checks = new LinkedList<>();
+        List<ComboMultiSelect.PresetListEntry> listEntries = new LinkedList<>();
         final Map<String, List<Object>> byId = new HashMap<>();
         final Deque<String> lastIds = new ArrayDeque<>();
         /** lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
@@ -237,27 +248,27 @@ public final class TaggingPresetReader {
                 lastrole = null;
             } else {
                 if (!all.isEmpty()) {
-                    if (o instanceof TaggingPresetItems.Roles) {
+                    if (o instanceof Roles) {
                         all.getLast().data.add((TaggingPresetItem) o);
                         if (all.getLast().roles != null) {
                             throw new SAXException(tr("Roles cannot appear more than once"));
                         }
-                        all.getLast().roles = (TaggingPresetItems.Roles) o;
-                        lastrole = (TaggingPresetItems.Roles) o;
-                    } else if (o instanceof TaggingPresetItems.Role) {
+                        all.getLast().roles = (Roles) o;
+                        lastrole = (Roles) o;
+                    } else if (o instanceof Role) {
                         if (lastrole == null)
                             throw new SAXException(tr("Preset role element without parent"));
-                        lastrole.roles.add((TaggingPresetItems.Role) o);
-                    } else if (o instanceof TaggingPresetItems.Check) {
-                        checks.add((TaggingPresetItems.Check) o);
-                    } else if (o instanceof TaggingPresetItems.PresetListEntry) {
-                        listEntries.add((TaggingPresetItems.PresetListEntry) o);
-                    } else if (o instanceof TaggingPresetItems.CheckGroup) {
+                        lastrole.roles.add((Role) o);
+                    } else if (o instanceof Check) {
+                        checks.add((Check) o);
+                    } else if (o instanceof ComboMultiSelect.PresetListEntry) {
+                        listEntries.add((ComboMultiSelect.PresetListEntry) o);
+                    } else if (o instanceof CheckGroup) {
                         all.getLast().data.add((TaggingPresetItem) o);
                         // Make sure list of checks is empty to avoid adding checks several times
                         // when used in chunks (fix #10801)
-                        ((TaggingPresetItems.CheckGroup) o).checks.clear();
-                        ((TaggingPresetItems.CheckGroup) o).checks.addAll(checks);
+                        ((CheckGroup) o).checks.clear();
+                        ((CheckGroup) o).checks.addAll(checks);
                         checks.clear();
                     } else {
                         if (!checks.isEmpty()) {
@@ -265,11 +276,11 @@ public final class TaggingPresetReader {
                             checks.clear();
                         }
                         all.getLast().data.add((TaggingPresetItem) o);
-                        if (o instanceof TaggingPresetItems.ComboMultiSelect) {
-                            ((TaggingPresetItems.ComboMultiSelect) o).addListEntries(listEntries);
-                        } else if (o instanceof TaggingPresetItems.Key) {
-                            if (((TaggingPresetItems.Key) o).value == null) {
-                                ((TaggingPresetItems.Key) o).value = ""; // Fix #8530
+                        if (o instanceof ComboMultiSelect) {
+                            ((ComboMultiSelect) o).addListEntries(listEntries);
+                        } else if (o instanceof Key) {
+                            if (((Key) o).value == null) {
+                                ((Key) o).value = ""; // Fix #8530
                             }
                         }
                         listEntries = new LinkedList<>();
@@ -401,5 +412,9 @@ public final class TaggingPresetReader {
      */
     public static void setLoadIcons(boolean loadIcons) {
         TaggingPresetReader.loadIcons = loadIcons;
+    }
+
+    private TaggingPresetReader() {
+        // Hide default constructor for utils classes
     }
 }

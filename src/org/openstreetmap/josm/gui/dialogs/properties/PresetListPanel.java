@@ -2,10 +2,10 @@
 package org.openstreetmap.josm.gui.dialogs.properties;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.tagging.PresetHandler;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
-import org.openstreetmap.josm.gui.tagging.PresetLabel;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetLabel;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.tools.GBC;
 
 import javax.swing.JLabel;
@@ -33,7 +33,7 @@ public class PresetListPanel extends JPanel {
      * Updates the preset list based on the {@code tags} and {@code types},
      * and associates an interaction with (matching) presets via {@code presetHandler}.
      */
-    public void updatePresets(final Collection<TaggingPresetType> types, final Map<String, String> tags, final PresetHandler presetHandler) {
+    public void updatePresets(final Collection<TaggingPresetType> types, final Map<String, String> tags, final TaggingPresetHandler presetHandler) {
 
         removeAll();
         if (types.isEmpty()) {
@@ -42,7 +42,7 @@ public class PresetListPanel extends JPanel {
         }
 
         for (final TaggingPreset t : TaggingPreset.getMatchingPresets(types, tags, true)) {
-            final JLabel lbl = new PresetLabel(t);
+            final JLabel lbl = new TaggingPresetLabel(t);
             lbl.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {

@@ -129,8 +129,8 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchPrimitiveDialog;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchAction;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchPrimitiveDialog;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.tools.Shortcut;
 

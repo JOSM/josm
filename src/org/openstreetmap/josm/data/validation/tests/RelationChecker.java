@@ -20,13 +20,13 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Key;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
-import org.openstreetmap.josm.gui.tagging.TaggingPresets;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.tools.Utils;
 
 /**

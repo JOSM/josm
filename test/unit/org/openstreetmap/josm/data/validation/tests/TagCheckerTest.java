@@ -12,7 +12,7 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.tagging.TaggingPresets;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 
 /**
  * JUnit Test of {@link TagChecker}.

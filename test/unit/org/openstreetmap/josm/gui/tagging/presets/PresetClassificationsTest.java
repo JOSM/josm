@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -17,15 +17,22 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector.PresetClassification;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector.PresetClassifications;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
+/**
+ * Unit tests of {@link PresetClassifications} class.
+ */
 public class PresetClassificationsTest {
 
-    static final TaggingPresetSelector.PresetClassifications classifications = new TaggingPresetSelector.PresetClassifications();
+    static final PresetClassifications classifications = new PresetClassifications();
 
     /**
      * Setup test.
+     * @throws SAXException if any XML error occurs
+     * @throws IOException if any I/O error occurs
      */
     @BeforeClass
     public static void setUp() throws IOException, SAXException {
@@ -34,22 +41,25 @@ public class PresetClassificationsTest {
         classifications.loadPresets(presets);
     }
 
-    private List<TaggingPresetSelector.PresetClassification> getMatchingPresets(String searchText, OsmPrimitive w) {
+    private List<PresetClassification> getMatchingPresets(String searchText, OsmPrimitive w) {
         return classifications.getMatchingPresets(searchText, true, true, EnumSet.of(TaggingPresetType.forPrimitive(w)),
                 Collections.singleton(w));
     }
 
     private List<String> getMatchingPresetNames(String searchText, OsmPrimitive w) {
-        return Utils.transform(getMatchingPresets(searchText, w), new Utils.Function<TaggingPresetSelector.PresetClassification, String>() {
+        return Utils.transform(getMatchingPresets(searchText, w), new Utils.Function<PresetClassification, String>() {
             @Override
-            public String apply(TaggingPresetSelector.PresetClassification x) {
+            public String apply(PresetClassification x) {
                 return x.preset.name;
             }
         });
     }
 
+    /**
+     * Test building preset.
+     */
     @Test
-    public void testBuilding() throws Exception {
+    public void testBuilding() {
         final Way w = new Way();
         final Node n1 = new Node();
         w.addNode(n1);
@@ -60,6 +70,9 @@ public class PresetClassificationsTest {
         assertTrue("closed way should match building preset", getMatchingPresetNames("building", w).contains("Building"));
     }
 
+    /**
+     * Test public transport tram relations presets.
+     */
     @Test
     public void testRelationsForTram() {
         final OsmPrimitive tram = OsmUtils.createPrimitive("way railway=tram");

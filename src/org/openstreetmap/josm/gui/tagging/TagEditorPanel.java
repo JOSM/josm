@@ -22,6 +22,8 @@ import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -38,7 +40,7 @@ public class TagEditorPanel extends JPanel {
     private final TagTable tagTable;
 
     private PresetListPanel presetListPanel;
-    private final transient PresetHandler presetHandler;
+    private final transient TaggingPresetHandler presetHandler;
 
     /**
      * builds the panel with the table for editing tags
@@ -139,7 +141,7 @@ public class TagEditorPanel extends JPanel {
      * Creates a new tag editor panel. The editor model is created
      * internally and can be retrieved with {@link #getModel()}.
      */
-    public TagEditorPanel(PresetHandler presetHandler) {
+    public TagEditorPanel(TaggingPresetHandler presetHandler) {
         this(null, presetHandler, 0);
     }
 
@@ -150,7 +152,7 @@ public class TagEditorPanel extends JPanel {
      * @param model the tag editor model
      * @param maxCharacters maximum number of characters allowed, 0 for unlimited
      */
-    public TagEditorPanel(TagEditorModel model, PresetHandler presetHandler, final int maxCharacters) {
+    public TagEditorPanel(TagEditorModel model, TaggingPresetHandler presetHandler, final int maxCharacters) {
         this.model = model;
         this.presetHandler = presetHandler;
         if (this.model == null) {

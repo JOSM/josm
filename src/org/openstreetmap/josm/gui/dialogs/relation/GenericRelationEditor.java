@@ -78,13 +78,13 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.PresetHandler;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -136,7 +136,7 @@ public class GenericRelationEditor extends RelationEditor  {
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(700, 650)));
 
-        final PresetHandler presetHandler = new PresetHandler() {
+        final TaggingPresetHandler presetHandler = new TaggingPresetHandler() {
 
             @Override
             public void updateTags(List<Tag> tags) {

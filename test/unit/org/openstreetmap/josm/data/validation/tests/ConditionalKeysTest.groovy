@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.data.validation.tests
 
 import org.openstreetmap.josm.JOSMFixture
-import org.openstreetmap.josm.gui.tagging.TaggingPresets
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 
 class ConditionalKeysTest extends GroovyTestCase {
 

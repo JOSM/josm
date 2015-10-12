@@ -20,10 +20,10 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.Severity;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 
 /**
  * JUnit Test of "Opening hours" validation test.
@@ -212,10 +212,10 @@ public class OpeningHourTestTest {
         final Set<Tag> values = new LinkedHashSet<>();
         for (final TaggingPreset p : presets) {
             for (final TaggingPresetItem i : p.data) {
-                if (i instanceof TaggingPresetItems.KeyedItem &&
-                        Arrays.asList("opening_hours", "service_times", "collection_times").contains(((TaggingPresetItems.KeyedItem) i).key)) {
-                    for (final String v : ((TaggingPresetItems.KeyedItem) i).getValues()) {
-                        values.add(new Tag(((TaggingPresetItems.KeyedItem) i).key, v));
+                if (i instanceof KeyedItem &&
+                        Arrays.asList("opening_hours", "service_times", "collection_times").contains(((KeyedItem) i).key)) {
+                    for (final String v : ((KeyedItem) i).getValues()) {
+                        values.add(new Tag(((KeyedItem) i).key, v));
                     }
                 }
             }

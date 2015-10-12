@@ -8,7 +8,7 @@ import org.openstreetmap.josm.data.osm.Relation
 import org.openstreetmap.josm.data.osm.RelationMember
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.data.validation.TestError
-import org.openstreetmap.josm.gui.tagging.TaggingPresets
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 
 class RelationCheckerTest extends GroovyTestCase {
 

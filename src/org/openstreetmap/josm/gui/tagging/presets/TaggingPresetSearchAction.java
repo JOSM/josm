@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
