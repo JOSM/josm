@@ -36,10 +36,11 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondit
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference
-import org.openstreetmap.josm.gui.tagging.TaggingPreset
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems
-import org.openstreetmap.josm.gui.tagging.TaggingPresetReader
-import org.openstreetmap.josm.gui.tagging.TaggingPresetType
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem.MatchType
 import org.openstreetmap.josm.io.CachedFile
 import org.openstreetmap.josm.tools.Utils
 
@@ -251,11 +252,11 @@ class taginfoextract {
     def convert_presets(Iterable<TaggingPreset> presets, String descriptionPrefix, boolean addImages) {
         def tags = []
         for (TaggingPreset preset : presets) {
-            for (TaggingPresetItems.KeyedItem item : Utils.filteredCollection(preset.data, TaggingPresetItems.KeyedItem.class)) {
+            for (KeyedItem item : Utils.filteredCollection(preset.data, KeyedItem.class)) {
                 def values
-                switch (TaggingPresetItems.MatchType.ofString(item.match)) {
-                    case TaggingPresetItems.MatchType.KEY_REQUIRED: values = item.getValues(); break;
-                    case TaggingPresetItems.MatchType.KEY_VALUE_REQUIRED: values = item.getValues(); break;
+                switch (MatchType.ofString(item.match)) {
+                    case MatchType.KEY_REQUIRED: values = item.getValues(); break;
+                    case MatchType.KEY_VALUE_REQUIRED: values = item.getValues(); break;
                     default: values = [];
                 }
                 for (String value : values) {
@@ -462,6 +463,4 @@ class taginfoextract {
             }
         }
     }
-
 }
-

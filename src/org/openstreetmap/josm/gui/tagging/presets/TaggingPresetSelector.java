@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -48,10 +48,11 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Key;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
+import org.openstreetmap.josm.gui.tagging.presets.items.ComboMultiSelect;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.Predicate;
@@ -124,7 +125,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     /**
      * Computes the match ration of a {@link TaggingPreset} wrt. a searchString.
      */
-    static class PresetClassification implements Comparable<PresetClassification> {
+    public static class PresetClassification implements Comparable<PresetClassification> {
         public final TaggingPreset preset;
         public int classification;
         public int favoriteIndex;
@@ -143,8 +144,8 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             for (TaggingPresetItem item: preset.data) {
                 if (item instanceof KeyedItem) {
                     tags.add(((KeyedItem) item).key);
-                    if (item instanceof TaggingPresetItems.ComboMultiSelect) {
-                        final TaggingPresetItems.ComboMultiSelect cms = (TaggingPresetItems.ComboMultiSelect) item;
+                    if (item instanceof ComboMultiSelect) {
+                        final ComboMultiSelect cms = (ComboMultiSelect) item;
                         if (Boolean.parseBoolean(cms.values_searchable)) {
                             tags.addAll(cms.getDisplayValues());
                         }
@@ -365,7 +366,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     /**
      * A collection of {@link PresetClassification}s with the functionality of filtering wrt. searchString.
      */
-    static class PresetClassifications implements Iterable<PresetClassification> {
+    public static class PresetClassifications implements Iterable<PresetClassification> {
 
         private final List<PresetClassification> classifications = new ArrayList<>();
 

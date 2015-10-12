@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,6 +16,8 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
 
     private static TaggingPresetNameTemplateList instance;
 
+    private final List<TaggingPreset> presetsWithPattern = new LinkedList<>();
+
     /**
      * Replies the unique instance.
      * @return the unique instance
@@ -27,8 +29,6 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
         }
         return instance;
     }
-
-    private final List<TaggingPreset> presetsWithPattern = new LinkedList<>();
 
     private TaggingPresetNameTemplateList() {
         buildPresetsWithPattern();

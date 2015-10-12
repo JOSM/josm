@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -18,13 +18,37 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A dialog that allows to select a preset and then selects all matching OSM objects.
- * @see org.openstreetmap.josm.gui.tagging.TaggingPresetSearchDialog
+ * @see org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchDialog
  */
 public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
 
+    private static TaggingPresetSearchPrimitiveDialog instance;
+
     private TaggingPresetSelector selector;
 
-    private static TaggingPresetSearchPrimitiveDialog instance;
+    /**
+     * An action executing {@link TaggingPresetSearchPrimitiveDialog}.
+     */
+    public static class Action extends JosmAction {
+
+        /**
+         * Constructs a new {@link TaggingPresetSearchPrimitiveDialog.Action}.
+         */
+        public Action() {
+            super(tr("Search for objects by preset"), "dialogs/search", tr("Show preset search dialog"),
+                    Shortcut.registerShortcut("preset:search-objects", tr("Search for objects by preset"), KeyEvent.VK_F3, Shortcut.SHIFT),
+                    false);
+            putValue("toolbar", "presets/search-objects");
+            Main.toolbar.register(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (Main.main.hasEditLayer()) {
+                TaggingPresetSearchPrimitiveDialog.getInstance().showDialog();
+            }
+        }
+    }
 
     /**
      * Returns the unique instance of {@code TaggingPresetSearchPrimitiveDialog}.
@@ -68,29 +92,4 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
             }
         }
     }
-
-    /**
-     * An action executing {@link TaggingPresetSearchPrimitiveDialog}.
-     */
-    public static class Action extends JosmAction {
-
-        /**
-         * Constructs a new {@link TaggingPresetSearchPrimitiveDialog.Action}.
-         */
-        public Action() {
-            super(tr("Search for objects by preset"), "dialogs/search", tr("Show preset search dialog"),
-                    Shortcut.registerShortcut("preset:search-objects", tr("Search for objects by preset"), KeyEvent.VK_F3, Shortcut.SHIFT),
-                    false);
-            putValue("toolbar", "presets/search-objects");
-            Main.toolbar.register(this);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (Main.main.hasEditLayer()) {
-                TaggingPresetSearchPrimitiveDialog.getInstance().showDialog();
-            }
-        }
-    }
-
 }

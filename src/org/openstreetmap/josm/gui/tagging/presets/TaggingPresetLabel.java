@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 import java.awt.Cursor;
 import java.awt.Font;
@@ -10,7 +10,7 @@ import java.util.Collections;
 
 import javax.swing.JLabel;
 
-public class PresetLabel extends JLabel {
+public class TaggingPresetLabel extends JLabel {
 
     protected final TaggingPreset t;
 
@@ -18,7 +18,7 @@ public class PresetLabel extends JLabel {
      * Constructs a new {@code PresetLabel}.
      * @param t the tagging preset
      */
-    public PresetLabel(TaggingPreset t) {
+    public TaggingPresetLabel(TaggingPreset t) {
         super(t.getName() + " …");
         setIcon(t.getIcon());
         addMouseListener(new PresetLabelMouseListener(this));

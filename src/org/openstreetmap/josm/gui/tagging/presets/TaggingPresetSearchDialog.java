@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -16,9 +16,9 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
  */
 public final class TaggingPresetSearchDialog extends ExtendedDialog {
 
-    private TaggingPresetSelector selector;
-
     private static TaggingPresetSearchDialog instance;
+
+    private TaggingPresetSelector selector;
 
     /**
      * Returns the unique instance of {@code TaggingPresetSearchDialog}.

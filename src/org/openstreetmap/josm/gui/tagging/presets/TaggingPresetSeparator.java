@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 /**
  * Class used to represent a {@link javax.swing.JSeparator} inside tagging preset menu.

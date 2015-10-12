@@ -1,0 +1,134 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.tagging.presets;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.xml.sax.SAXException;
+
+/**
+ * Class that represents single part of a preset - one field or text label that is shown to user
+ * @since 6068
+ */
+public abstract class TaggingPresetItem {
+
+    // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
+    private static final Map<String, Set<TaggingPresetType>> TYPE_CACHE = new LinkedHashMap<>(16, 1.1f, true);
+
+    protected void initAutoCompletionField(AutoCompletingTextField field, String... key) {
+        initAutoCompletionField(field, Arrays.asList(key));
+    }
+
+    protected void initAutoCompletionField(AutoCompletingTextField field, List<String> keys) {
+        if (Main.main == null) return;
+        OsmDataLayer layer = Main.main.getEditLayer();
+        if (layer == null) {
+            return;
+        }
+        AutoCompletionList list = new AutoCompletionList();
+        layer.data.getAutoCompletionManager().populateWithTagValues(list, keys);
+        field.setAutoCompletionList(list);
+    }
+
+    /**
+     * Called by {@link TaggingPreset#createPanel} during tagging preset panel creation.
+     * All components defining this tagging preset item must be added to given panel.
+     *
+     * @param p The panel where components must be added
+     * @param sel The related selected OSM primitives
+     * @param presetInitiallyMatches Whether this {@link TaggingPreset} already matched before applying,
+     *                               i.e. whether the map feature already existed on the primitive.
+     * @return {@code true} if this item adds semantic tagging elements, {@code false} otherwise.
+     */
+    protected abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches);
+
+    /**
+     * Adds the new tags to apply to selected OSM primitives when the preset holding this item is applied.
+     * @param changedTags The list of changed tags to modify if needed
+     */
+    protected abstract void addCommands(List<Tag> changedTags);
+
+    /**
+     * Tests whether the tags match this item.
+     * Note that for a match, at least one positive and no negative is required.
+     * @param tags the tags of an {@link OsmPrimitive}
+     * @return {@code true} if matches (positive), {@code null} if neutral, {@code false} if mismatches (negative).
+     */
+    protected Boolean matches(Map<String, String> tags) {
+        return null;
+    }
+
+    protected static Set<TaggingPresetType> getType(String types) throws SAXException {
+        if (types == null || types.isEmpty()) {
+            throw new SAXException(tr("Unknown type: {0}", types));
+        }
+        if (TYPE_CACHE.containsKey(types))
+            return TYPE_CACHE.get(types);
+        Set<TaggingPresetType> result = EnumSet.noneOf(TaggingPresetType.class);
+        for (String type : Arrays.asList(types.split(","))) {
+            try {
+                TaggingPresetType presetType = TaggingPresetType.fromString(type);
+                result.add(presetType);
+            } catch (IllegalArgumentException e) {
+                throw new SAXException(tr("Unknown type: {0}", type), e);
+            }
+        }
+        TYPE_CACHE.put(types, result);
+        return result;
+    }
+
+    protected static String fixPresetString(String s) {
+        return s == null ? s : s.replaceAll("'", "''");
+    }
+
+    protected static String getLocaleText(String text, String text_context, String defaultText) {
+        if (text == null) {
+            return defaultText;
+        } else if (text_context != null) {
+            return trc(text_context, fixPresetString(text));
+        } else {
+            return tr(fixPresetString(text));
+        }
+    }
+
+    protected static Integer parseInteger(String str) {
+        if (str == null || str.isEmpty())
+            return null;
+        try {
+            return Integer.valueOf(str);
+        } catch (Exception e) {
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    protected static ImageIcon loadImageIcon(String iconName, File zipIcons, Integer maxSize) {
+        final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
+        ImageProvider imgProv = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true);
+        if (maxSize != null) {
+            imgProv.setMaxSize(maxSize);
+        }
+        return imgProv.get();
+    }
+}

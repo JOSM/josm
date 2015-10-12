@@ -27,10 +27,12 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -215,8 +217,8 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     protected static void cachePresetItem(TaggingPreset p, TaggingPresetItem item) {
-        if (item instanceof TaggingPresetItems.KeyedItem) {
-            TaggingPresetItems.KeyedItem ki = (TaggingPresetItems.KeyedItem) item;
+        if (item instanceof KeyedItem) {
+            KeyedItem ki = (KeyedItem) item;
             if (ki.key != null && ki.getValues() != null) {
                 try {
                     PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
@@ -224,15 +226,15 @@ public class AutoCompletionManager implements DataSetListener {
                     Main.error(p + ": Unable to cache " + ki);
                 }
             }
-        } else if (item instanceof TaggingPresetItems.Roles) {
-            TaggingPresetItems.Roles r = (TaggingPresetItems.Roles) item;
-            for (TaggingPresetItems.Role i : r.roles) {
+        } else if (item instanceof Roles) {
+            Roles r = (Roles) item;
+            for (Role i : r.roles) {
                 if (i.key != null) {
                     PRESET_ROLE_CACHE.add(i.key);
                 }
             }
-        } else if (item instanceof TaggingPresetItems.CheckGroup) {
-            for (TaggingPresetItems.KeyedItem check : ((TaggingPresetItems.CheckGroup) item).checks) {
+        } else if (item instanceof CheckGroup) {
+            for (KeyedItem check : ((CheckGroup) item).checks) {
                 cachePresetItem(p, check);
             }
         }

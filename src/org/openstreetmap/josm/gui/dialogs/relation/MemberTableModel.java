@@ -38,9 +38,9 @@ import org.openstreetmap.josm.gui.dialogs.relation.sort.RelationSorter;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionTypeCalculator;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.PresetHandler;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
 public class MemberTableModel extends AbstractTableModel
@@ -55,7 +55,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     private DefaultListSelectionModel listSelectionModel;
     private final CopyOnWriteArrayList<IMemberModelListener> listeners;
     private final transient OsmDataLayer layer;
-    private final transient PresetHandler presetHandler;
+    private final transient TaggingPresetHandler presetHandler;
 
     private final transient WayConnectionTypeCalculator wayConnectionTypeCalculator = new WayConnectionTypeCalculator();
     private final transient RelationSorter relationSorter = new RelationSorter();
@@ -63,7 +63,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     /**
      * constructor
      */
-    public MemberTableModel(OsmDataLayer layer, PresetHandler presetHandler) {
+    public MemberTableModel(OsmDataLayer layer, TaggingPresetHandler presetHandler) {
         members = new ArrayList<>();
         listeners = new CopyOnWriteArrayList<>();
         this.layer = layer;

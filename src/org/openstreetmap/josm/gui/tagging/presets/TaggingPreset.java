@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging;
+package org.openstreetmap.josm.gui.tagging.presets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
@@ -47,10 +47,14 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Link;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.PresetLink;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
+import org.openstreetmap.josm.gui.tagging.presets.items.Label;
+import org.openstreetmap.josm.gui.tagging.presets.items.Link;
+import org.openstreetmap.josm.gui.tagging.presets.items.Optional;
+import org.openstreetmap.josm.gui.tagging.presets.items.PresetLink;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
+import org.openstreetmap.josm.gui.tagging.presets.items.Space;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -76,13 +80,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public static final int DIALOG_ANSWER_NEW_RELATION = 2;
     public static final int DIALOG_ANSWER_CANCEL = 3;
 
+    public static final String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
+
     public TaggingPresetMenu group;
     public String name;
     public String iconName;
     public String name_context;
     public String locale_name;
     public boolean preset_name_label;
-    public static final String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
 
     /**
      * The types as preparsed collection.
@@ -92,6 +97,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public transient Roles roles;
     public transient TemplateEntry nameTemplate;
     public transient Match nameTemplateFilter;
+
+    /**
+     * True whenever the original selection given into createSelection was empty
+     */
+    private boolean originalSelectionEmpty;
 
     /**
      * Create an empty tagging preset. This will not have any items and
@@ -117,9 +127,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String getLocaleName() {
         if (locale_name == null) {
             if (name_context != null) {
-                locale_name = trc(name_context, TaggingPresetItems.fixPresetString(name));
+                locale_name = trc(name_context, TaggingPresetItem.fixPresetString(name));
             } else {
-                locale_name = tr(TaggingPresetItems.fixPresetString(name));
+                locale_name = tr(TaggingPresetItem.fixPresetString(name));
             }
         }
         return locale_name;
@@ -189,7 +199,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * Called from the XML parser to set the types this preset affects.
      */
     public void setType(String types) throws SAXException {
-        this.types = TaggingPresetItems.getType(types);
+        this.types = TaggingPresetItem.getType(types);
     }
 
     public void setName_template(String pattern) throws SAXException {
@@ -234,7 +244,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(pp, GBC.eol());
         }
         if (preset_name_label) {
-            TaggingPresetItems.Label.addLabel(p, getIcon(), getName());
+            Label.addLabel(p, getIcon(), getName());
         }
 
         boolean presetInitiallyMatches = !selected.isEmpty() && Utils.forAll(selected, this);
@@ -278,7 +288,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     public boolean isShowable() {
         for (TaggingPresetItem i : data) {
-            if (!(i instanceof TaggingPresetItems.Optional || i instanceof TaggingPresetItems.Space || i instanceof TaggingPresetItems.Key))
+            if (!(i instanceof Optional || i instanceof Space || i instanceof Key))
                 return true;
         }
         return false;
@@ -409,11 +419,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         else
             return answer;
     }
-
-    /**
-     * True whenever the original selection given into createSelection was empty
-     */
-    private boolean originalSelectionEmpty;
 
     /**
      * Removes all unsuitable OsmPrimitives from the given list
