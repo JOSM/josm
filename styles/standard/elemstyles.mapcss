@@ -1738,6 +1738,7 @@ area[shop=bookmaker],
 area[shop=lottery],
 area[shop=shopping_centre],
 area[shop=pet],
+area[shop=photo],
 area[shop=ticket],
 area[shop=interior_decoration],
 area[shop=car_parts],
@@ -2072,6 +2073,11 @@ node[shop=shopping_centre] {
 }
 node[shop=pet] {
     icon-image: "shop/pet.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=photo] {
+    icon-image: "shop/photo.svg";
     set icon_z17;
     text: auto;
 }
