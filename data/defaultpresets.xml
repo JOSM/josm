@@ -3348,6 +3348,23 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Alpine Hut -->
+        <item name="Wilderness Hut" icon="styles/standard/accommodation/wilderness_hut_blue.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=wilderness_hut" />
+            <space />
+            <key key="tourism" value="wilderness_hut" />
+            <reference ref="name_operator" />
+            <combo key="access" text="Access rights" values="yes,permissive,customers,private" />
+            <text key="capacity" text="Capacity" />
+            <reference ref="fee" />
+            <check key="toilets" text="Toilets" />
+            <check key="shower" text="Shower" />
+            <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
+            <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
+            <text key="ele" text="Elevation" />
+            <text key="description" text="Closer Description" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Wilderness Hut -->
         <separator/>
         <item name="Caravan Site/RV Park" icon="styles/standard/accommodation/camping/caravan.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=caravan_site"
