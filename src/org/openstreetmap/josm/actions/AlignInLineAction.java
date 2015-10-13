@@ -81,7 +81,7 @@ public final class AlignInLineAction extends JosmAction {
      * @param nodes Nodes to be aligned.
      * @return A array of two nodes.
      */
-    private Node[] nodePairFurthestApart(List<Node> nodes) {
+    private static Node[] nodePairFurthestApart(List<Node> nodes) {
         // Detect if selected nodes are on the same way.
 
         // Get ways passing though all selected nodes.
@@ -133,7 +133,7 @@ public final class AlignInLineAction extends JosmAction {
      * @param nodes List of nodes to analyze.
      * @return An array containing the two most distant nodes.
      */
-    private Node[] nodeFurthestAppart(List<Node> nodes) {
+    private static Node[] nodeFurthestAppart(List<Node> nodes) {
         Node node1 = null, node2 = null;
         double minSqDistance = 0;
         int nb;
@@ -213,7 +213,7 @@ public final class AlignInLineAction extends JosmAction {
      * @return Command that perform action.
      * @throws InvalidSelection If the nodes have same coordinates.
      */
-    private Command alignOnlyNodes(List<Node> nodes) throws InvalidSelection {
+    private static Command alignOnlyNodes(List<Node> nodes) throws InvalidSelection {
         // Choose nodes used as anchor points for projection.
         Node[] anchors = nodePairFurthestApart(nodes);
         Collection<Command> cmds = new ArrayList<>(nodes.size());
@@ -231,7 +231,7 @@ public final class AlignInLineAction extends JosmAction {
      * @return Command that perform action
      * @throws InvalidSelection if a polygon is selected, or if a node is used by 3 or more ways
      */
-    private Command alignMultiWay(Collection<Way> ways) throws InvalidSelection {
+    private static Command alignMultiWay(Collection<Way> ways) throws InvalidSelection {
         // Collect all nodes and compute line equation
         Set<Node> nodes = new HashSet<>();
         Map<Way, Line> lines = new HashMap<>();
@@ -269,7 +269,7 @@ public final class AlignInLineAction extends JosmAction {
      * @return List of useful lines
      * @throws InvalidSelection if a node got more than 4 neighbours (self-crossing way)
      */
-    private List<Line> getInvolvedLines(Node node, List<Way> refWays) throws InvalidSelection {
+    private static List<Line> getInvolvedLines(Node node, List<Way> refWays) throws InvalidSelection {
         List<Line> lines = new ArrayList<>();
         List<Node> neighbors = new ArrayList<>();
         for (Way way: refWays) {
@@ -326,7 +326,7 @@ public final class AlignInLineAction extends JosmAction {
      * @return Command that perform action
      * @throws InvalidSelection if more than 2 lines
      */
-    private Command alignSingleNode(Node node, List<Line> lines) throws InvalidSelection {
+    private static Command alignSingleNode(Node node, List<Line> lines) throws InvalidSelection {
         if (lines.size() == 1)
             return lines.get(0).projectionCommand(node);
         else if (lines.size() == 2)

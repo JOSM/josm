@@ -367,7 +367,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         }
     }
 
-    private void selectionAreaChanged() {
+    private static void selectionAreaChanged() {
         // Trigger a redraw of the map view.
         // A nicer way would be to provide change events for the temporary layer.
         Main.map.mapView.repaint();
@@ -435,7 +435,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         return selection;
     }
 
-    private Polygon rectToPolygon(Rectangle r) {
+    private static Polygon rectToPolygon(Rectangle r) {
         Polygon poly = new Polygon();
 
         poly.addPoint(r.x, r.y);

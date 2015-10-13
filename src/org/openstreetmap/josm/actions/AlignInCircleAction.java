@@ -290,7 +290,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @param ways Ways from witch nodes are selected
      * @return List of nodes with more than one referrer
      */
-    private List<Node> collectNodesWithExternReferers(List<Way> ways) {
+    private static List<Node> collectNodesWithExternReferers(List<Way> ways) {
         List<Node> withReferrers = new ArrayList<>();
         for (Way w: ways) {
             for (Node n: w.getNodes()) {
@@ -307,7 +307,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @param ways List of ways to be joined
      * @return Nodes anticlockwise ordered
      */
-    private List<Node> collectNodesAnticlockwise(List<Way> ways) {
+    private static List<Node> collectNodesAnticlockwise(List<Way> ways) {
         List<Node> nodes = new ArrayList<>();
         Node firstNode = ways.get(0).firstNode();
         Node lastNode = null;
@@ -354,7 +354,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @param nodes Nodes to check
      * @return true if action can be done
      */
-    private boolean actionAllowed(Collection<Node> nodes) {
+    private static boolean actionAllowed(Collection<Node> nodes) {
         boolean outside = false;
         for (Node n: nodes) {
             if (n.isOutsideDownloadArea()) {

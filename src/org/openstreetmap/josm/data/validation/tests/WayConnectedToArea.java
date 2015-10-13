@@ -83,7 +83,7 @@ public class WayConnectedToArea extends Test {
         }
     }
 
-    private boolean isArea(OsmPrimitive p) {
+    private static boolean isArea(OsmPrimitive p) {
         return (p.hasKey("landuse") || p.hasKey("natural"))
                 && ElemStyles.hasAreaElemStyle(p, false);
     }

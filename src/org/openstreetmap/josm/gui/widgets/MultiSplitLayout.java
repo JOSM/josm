@@ -311,7 +311,7 @@ public class MultiSplitLayout implements LayoutManager {
         }
     }
 
-    private Dimension sizeWithInsets(Container parent, Dimension size) {
+    private static Dimension sizeWithInsets(Container parent, Dimension size) {
         Insets insets = parent.getInsets();
         int width = size.width + insets.left + insets.right;
         int height = size.height + insets.top + insets.bottom;
@@ -330,13 +330,13 @@ public class MultiSplitLayout implements LayoutManager {
         return sizeWithInsets(parent, size);
     }
 
-    private Rectangle boundsWithYandHeight(Rectangle bounds, double y, double height) {
+    private static Rectangle boundsWithYandHeight(Rectangle bounds, double y, double height) {
         Rectangle r = new Rectangle();
         r.setBounds((int) (bounds.getX()), (int) y, (int) (bounds.getWidth()), (int) height);
         return r;
     }
 
-    private Rectangle boundsWithXandWidth(Rectangle bounds, double x, double width) {
+    private static Rectangle boundsWithXandWidth(Rectangle bounds, double x, double width) {
         Rectangle r = new Rectangle();
         r.setBounds((int) x, (int) (bounds.getY()), (int) width, (int) (bounds.getHeight()));
         return r;

@@ -85,7 +85,7 @@ public final class CopyAction extends JosmAction {
         setEnabled(selection != null && !selection.isEmpty());
     }
 
-    private boolean isEmptySelection() {
+    private static boolean isEmptySelection() {
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(

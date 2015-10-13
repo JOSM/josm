@@ -60,7 +60,7 @@ public class InvalidXmlCharacterFilter extends Reader {
         reader.close();
     }
 
-    private char filter(char in) {
+    private static char filter(char in) {
         if (in < 0x20 && INVALID_CHARS[in]) {
             if (firstWarning) {
                 Main.warn("Invalid xml character encountered: '"+in+"'.");

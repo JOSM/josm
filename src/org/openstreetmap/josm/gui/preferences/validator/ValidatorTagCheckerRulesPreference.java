@@ -159,7 +159,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
             return def;
         }
 
-        private void addDefault(List<ExtendedSourceEntry> defaults, String filename, String title, String description) {
+        private static void addDefault(List<ExtendedSourceEntry> defaults, String filename, String title, String description) {
             ExtendedSourceEntry i = new ExtendedSourceEntry(filename+".mapcss", "resource://data/validator/"+filename+".mapcss");
             i.title = title;
             i.description = description;

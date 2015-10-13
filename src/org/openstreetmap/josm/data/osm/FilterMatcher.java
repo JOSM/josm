@@ -135,7 +135,7 @@ public class FilterMatcher {
      * @return when hidden is true, returns whether the primitive is hidden
      * when hidden is false, returns whether the primitive is disabled or hidden
      */
-    private boolean isFiltered(OsmPrimitive primitive, boolean hidden) {
+    private static boolean isFiltered(OsmPrimitive primitive, boolean hidden) {
         return hidden ? primitive.isDisabledAndHidden() : primitive.isDisabled();
     }
 
@@ -146,7 +146,7 @@ public class FilterMatcher {
      * @param hidden the level where the check is performed
      * @return true, if at least one non-inverted filter applies to the primitive
      */
-    private boolean isFilterExplicit(OsmPrimitive primitive, boolean hidden) {
+    private static boolean isFilterExplicit(OsmPrimitive primitive, boolean hidden) {
         return hidden ? primitive.getHiddenType() : primitive.getDisabledType();
     }
 
@@ -161,7 +161,7 @@ public class FilterMatcher {
      * parameter <code>hidden</code> and
      * (c) at least one of the parent ways is explicitly filtered
      */
-    private boolean allParentWaysFiltered(OsmPrimitive primitive, boolean hidden) {
+    private static boolean allParentWaysFiltered(OsmPrimitive primitive, boolean hidden) {
         List<OsmPrimitive> refs = primitive.getReferrers();
         boolean isExplicit = false;
         for (OsmPrimitive p: refs) {
@@ -174,7 +174,7 @@ public class FilterMatcher {
         return isExplicit;
     }
 
-    private boolean oneParentWayNotFiltered(OsmPrimitive primitive, boolean hidden) {
+    private static boolean oneParentWayNotFiltered(OsmPrimitive primitive, boolean hidden) {
         List<OsmPrimitive> refs = primitive.getReferrers();
         for (OsmPrimitive p: refs) {
             if (p instanceof Way && !isFiltered(p, hidden))
@@ -184,7 +184,7 @@ public class FilterMatcher {
         return false;
     }
 
-    private boolean allParentMultipolygonsFiltered(OsmPrimitive primitive, boolean hidden) {
+    private static boolean allParentMultipolygonsFiltered(OsmPrimitive primitive, boolean hidden) {
         boolean isExplicit = false;
         for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(
                 primitive.getReferrers(), OsmPrimitive.multipolygonPredicate)) {
@@ -195,7 +195,7 @@ public class FilterMatcher {
         return isExplicit;
     }
 
-    private boolean oneParentMultipolygonNotFiltered(OsmPrimitive primitive, boolean hidden) {
+    private static boolean oneParentMultipolygonNotFiltered(OsmPrimitive primitive, boolean hidden) {
         for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(
                 primitive.getReferrers(), OsmPrimitive.multipolygonPredicate)) {
             if (!isFiltered(r, hidden))
@@ -204,7 +204,7 @@ public class FilterMatcher {
         return false;
     }
 
-    private FilterType test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
+    private static FilterType test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
 
         if (primitive.isIncomplete())
             return FilterType.NOT_FILTERED;

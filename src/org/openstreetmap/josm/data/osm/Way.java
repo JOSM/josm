@@ -80,7 +80,7 @@ public final class Way extends OsmPrimitive implements IWay {
     /**
      * Prevent directly following identical nodes in ways.
      */
-    private List<Node> removeDouble(List<Node> nodes) {
+    private static List<Node> removeDouble(List<Node> nodes) {
         Node last = null;
         int count = nodes.size();
         for (int i = 0; i < count && count > 2;) {

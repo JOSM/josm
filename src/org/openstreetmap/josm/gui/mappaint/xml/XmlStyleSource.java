@@ -140,7 +140,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
      * @param scale ignored if null, otherwise checks if scale is within the range of candidate
      * @param mc side effect: update the valid region for the current MultiCascade
      */
-    private boolean requiresUpdate(Prototype current, Prototype candidate, Double scale, MultiCascade mc) {
+    private static boolean requiresUpdate(Prototype current, Prototype candidate, Double scale, MultiCascade mc) {
         if (current == null || candidate.priority >= current.priority) {
             if (scale == null)
                 return true;

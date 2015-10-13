@@ -190,7 +190,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         }
     }
 
-    private void setDotted(Graphics g) {
+    private static void setDotted(Graphics g) {
         ((Graphics2D) g).setStroke(new BasicStroke(
                 1f,
                 BasicStroke.CAP_BUTT,
@@ -200,7 +200,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
                 0f));
     }
 
-    private void unsetDotted(Graphics g) {
+    private static void unsetDotted(Graphics g) {
         ((Graphics2D) g).setStroke(new BasicStroke());
     }
 }

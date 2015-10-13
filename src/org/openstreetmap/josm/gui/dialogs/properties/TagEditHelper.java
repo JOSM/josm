@@ -225,7 +225,7 @@ class TagEditHelper {
      * @param togglePref  The preference to save the checkbox state to
      * @return {@code true} if the user accepts to overwrite key, {@code false} otherwise
      */
-    private boolean warnOverwriteKey(String action, String togglePref) {
+    private static boolean warnOverwriteKey(String action, String togglePref) {
         ExtendedDialog ed = new ExtendedDialog(
                 Main.parent,
                 tr("Overwrite key"),

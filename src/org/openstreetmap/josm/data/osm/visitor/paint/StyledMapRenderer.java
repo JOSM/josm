@@ -362,7 +362,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return buildPolygon(center, radius, sides, 0.0);
     }
 
-    private Polygon buildPolygon(Point center, int radius, int sides, double rotation) {
+    private static Polygon buildPolygon(Point center, int radius, int sides, double rotation) {
         Polygon polygon = new Polygon();
         for (int i = 0; i < sides; i++) {
             double angle = ((2 * Math.PI / sides) * i) - rotation;
@@ -1499,7 +1499,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return showNames;
     }
 
-    private double[] pointAt(double t, Polygon poly, double pathLength) {
+    private static double[] pointAt(double t, Polygon poly, double pathLength) {
         double totalLen = t * pathLength;
         double curLen = 0;
         long dx, dy;

@@ -265,7 +265,7 @@ public class Storage<T> extends AbstractSet<T> {
     /**
      * Additional mixing of hash
      */
-    private int rehash(int h) {
+    private static int rehash(int h) {
         return 1103515245*h >> 2;
     }
 

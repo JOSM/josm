@@ -32,7 +32,7 @@ public class ImportImagesAction extends AbstractAction {
         putValue("help", ht("/Action/ImportImages"));
     }
 
-    private void warnCantImportIntoServerLayer(GpxLayer layer) {
+    private static void warnCantImportIntoServerLayer(GpxLayer layer) {
         String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"+
                 "Because its way points do not include a timestamp we cannot correlate them with images.</html>",
                 layer.getName());
@@ -40,7 +40,7 @@ public class ImportImagesAction extends AbstractAction {
                 JOptionPane.WARNING_MESSAGE, ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer"));
     }
 
-    private void addRecursiveFiles(List<File> files, File[] sel) {
+    private static void addRecursiveFiles(List<File> files, File[] sel) {
         for (File f : sel) {
             if (f.isDirectory()) {
                 addRecursiveFiles(files, f.listFiles());

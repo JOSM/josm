@@ -787,7 +787,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             }
         }
 
-        private User getCurrentUser() {
+        private static User getCurrentUser() {
             UserInfo info = JosmUserIdentityManager.getInstance().getUserInfo();
             return info == null ? User.getAnonymous() : User.createOsmUser(info.getId(), info.getDisplayName());
         }

@@ -171,7 +171,7 @@ public class CacheContentsPanel extends JPanel {
         });
     }
 
-    private Long getCacheSize(CacheAccess<String, BufferedImageCacheEntry> cache) {
+    private static Long getCacheSize(CacheAccess<String, BufferedImageCacheEntry> cache) {
         ICacheStats stats = cache.getStatistics();
         for (IStats cacheStats: stats.getAuxiliaryCacheStats()) {
             for (IStatElement<?> statElement: cacheStats.getStatElements()) {
@@ -241,7 +241,7 @@ public class CacheContentsPanel extends JPanel {
         return ret;
     }
 
-    private DefaultTableModel getTableModel(final CacheAccess<String, BufferedImageCacheEntry> cache) {
+    private static DefaultTableModel getTableModel(final CacheAccess<String, BufferedImageCacheEntry> cache) {
         final DefaultTableModel tableModel = new DefaultTableModel(
                 getCacheStats(cache),
                 new String[]{tr("Cache name"), tr("Object Count"), tr("Clear")}) {

@@ -421,7 +421,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         return s.toString();
     }
 
-    private String getSort(StyleSource s) {
+    private static String getSort(StyleSource s) {
         if (s instanceof XmlStyleSource) {
             return tr("xml");
         } else if (s instanceof MapCSSStyleSource) {

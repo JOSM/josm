@@ -302,7 +302,7 @@ public class WMSImagery {
         return new LayerDetails(name, ident, crsList, josmSupportsThisLayer, bounds, childLayers);
     }
 
-    private boolean isProjSupported(String crs) {
+    private static boolean isProjSupported(String crs) {
         for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
             if (pc.getPreferencesFromCode(crs) != null) return true;
         }

@@ -117,7 +117,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
-    private String getFileName(String layerName, int index) {
+    private static String getFileName(String layerName, int index) {
         String result = layerName;
         for (char illegalCharacter : ILLEGAL_CHARACTERS) {
             result = result.replaceAll(Pattern.quote(String.valueOf(illegalCharacter)),

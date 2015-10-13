@@ -962,7 +962,7 @@ public class JoinAreasAction extends JosmAction {
      * @param splitNodes the places where to cut.
      * @return list of node paths to produce.
      */
-    private List<List<Node>> buildNodeChunks(Way way, Collection<Node> splitNodes) {
+    private static List<List<Node>> buildNodeChunks(Way way, Collection<Node> splitNodes) {
         List<List<Node>> result = new ArrayList<>();
         List<Node> curList = new ArrayList<>();
 

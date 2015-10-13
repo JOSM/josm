@@ -968,7 +968,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
         return result;
     }
 
-    private void deleteWay(Way way) {
+    private static void deleteWay(Way way) {
         way.setNodes(null);
         way.setDeleted(true);
     }
@@ -1098,7 +1098,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
         }
     }
 
-    private void reindexRelation(Relation relation) {
+    private static void reindexRelation(Relation relation) {
         BBox before = relation.getBBox();
         relation.updatePosition();
         if (!before.equals(relation.getBBox())) {

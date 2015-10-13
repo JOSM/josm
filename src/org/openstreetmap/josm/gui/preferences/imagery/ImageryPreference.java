@@ -98,7 +98,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         addSettingsSection(p, name, section, GBC.eol());
     }
 
-    private void addSettingsSection(final JPanel p, String name, JPanel section, GBC gbc) {
+    private static void addSettingsSection(final JPanel p, String name, JPanel section, GBC gbc) {
         final JLabel lbl = new JLabel(name);
         lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
         lbl.setLabelFor(section);

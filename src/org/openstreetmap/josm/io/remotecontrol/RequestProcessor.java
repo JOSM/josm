@@ -353,7 +353,7 @@ public class RequestProcessor extends Thread {
      * @throws IOException
      *             When error
      */
-    private void sendHeader(Writer out, String status, String contentType,
+    private static void sendHeader(Writer out, String status, String contentType,
             boolean endHeaders) throws IOException {
         out.write("HTTP/1.1 " + status + "\r\n");
         Date now = new Date();

@@ -201,7 +201,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         }
     }
 
-    private void dispatchEvent(AbstractDatasetChangedEvent event, Relation r, Collection<Map<Relation, Multipolygon>> maps) {
+    private static void dispatchEvent(AbstractDatasetChangedEvent event, Relation r, Collection<Map<Relation, Multipolygon>> maps) {
         for (Map<Relation, Multipolygon> map : maps) {
             Multipolygon m = map.get(r);
             if (m != null) {
@@ -216,7 +216,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         }
     }
 
-    private void removeMultipolygonFrom(Relation r, Collection<Map<Relation, Multipolygon>> maps) {
+    private static void removeMultipolygonFrom(Relation r, Collection<Map<Relation, Multipolygon>> maps) {
         for (Map<Relation, Multipolygon> map : maps) {
             map.remove(r);
         }

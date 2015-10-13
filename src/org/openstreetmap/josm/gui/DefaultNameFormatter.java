@@ -421,7 +421,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return relationComparator;
     }
 
-    private String getRelationTypeName(IRelation relation) {
+    private static String getRelationTypeName(IRelation relation) {
         String name = trc("Relation type", relation.get("type"));
         if (name == null) {
             name = (relation.get("public_transport") != null) ? tr("public transport") : null;
@@ -454,7 +454,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return name;
     }
 
-    private String getNameTagValue(IRelation relation, String nameTag) {
+    private static String getNameTagValue(IRelation relation, String nameTag) {
         if ("name".equals(nameTag)) {
             if (Main.pref.getBoolean("osm-primitives.localize-name", true))
                 return relation.getLocalName();
@@ -508,7 +508,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return buildDefaultToolTip(primitive.getId(), primitive.getKeys());
     }
 
-    private String buildDefaultToolTip(long id, Map<String, String> tags) {
+    private static String buildDefaultToolTip(long id, Map<String, String> tags) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html><strong>id</strong>=")
           .append(id)

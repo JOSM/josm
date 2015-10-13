@@ -683,7 +683,7 @@ public abstract class SourceEditor extends JPanel {
             return title == null ? simpleFileName : title;
         }
 
-        private void appendRow(StringBuilder s, String th, String td) {
+        private static void appendRow(StringBuilder s, String th, String td) {
             s.append("<tr><th>").append(th).append("</th><td>").append(td).append("</td</tr>");
         }
 
@@ -1425,7 +1425,7 @@ public abstract class SourceEditor extends JPanel {
                     fromSourceEntry((SourceEntry) value), isSelected, hasFocus, row, column);
         }
 
-        private String fromSourceEntry(SourceEntry entry) {
+        private static String fromSourceEntry(SourceEntry entry) {
             if (entry == null)
                 return null;
             StringBuilder s = new StringBuilder("<html><b>");

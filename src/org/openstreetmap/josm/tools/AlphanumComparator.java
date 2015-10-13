@@ -63,7 +63,7 @@ public final class AlphanumComparator implements Comparator<String>, Serializabl
      * Length of string is passed in for improved efficiency (only need to
      * calculate it once) *
      */
-    private String getChunk(String s, int slength, int marker) {
+    private static String getChunk(String s, int slength, int marker) {
         StringBuilder chunk = new StringBuilder();
         char c = s.charAt(marker);
         chunk.append(c);

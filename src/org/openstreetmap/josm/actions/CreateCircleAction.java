@@ -247,7 +247,7 @@ public final class CreateCircleAction extends JosmAction {
      * @param nodes Nodes list to be ordered.
      * @return Modified nodes list ordered according hand traffic.
      */
-    private List<Node> orderNodesByTrafficHand(List<Node> nodes) {
+    private static List<Node> orderNodesByTrafficHand(List<Node> nodes) {
         boolean rightHandTraffic = true;
         for (Node n: nodes) {
             if (!RightAndLefthandTraffic.isRightHandTraffic(n.getCoor())) {
@@ -267,7 +267,7 @@ public final class CreateCircleAction extends JosmAction {
      * @param way Way used to determine direction.
      * @return Modified nodes list with same direction as way.
      */
-    private List<Node> orderNodesByWay(List<Node> nodes, Way way) {
+    private static List<Node> orderNodesByWay(List<Node> nodes, Way way) {
         List<Node> wayNodes = way.getNodes();
         if (!way.isClosed()) {
             wayNodes.add(wayNodes.get(0));

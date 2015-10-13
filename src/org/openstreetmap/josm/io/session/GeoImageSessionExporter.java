@@ -123,9 +123,9 @@ public class GeoImageSessionExporter implements SessionLayerExporter {
         return layerElem;
     }
 
-    private void addAttr(String name, String value, Element element, SessionWriter.ExportSupport support) {
-            Element attrElem = support.createElement(name);
-            attrElem.appendChild(support.createTextNode(value));
-            element.appendChild(attrElem);
+    private static void addAttr(String name, String value, Element element, SessionWriter.ExportSupport support) {
+        Element attrElem = support.createElement(name);
+        attrElem.appendChild(support.createTextNode(value));
+        element.appendChild(attrElem);
     }
 }

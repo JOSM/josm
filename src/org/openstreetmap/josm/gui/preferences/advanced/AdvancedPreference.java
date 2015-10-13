@@ -194,7 +194,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         allData = prepareData(loaded, orig, defaults);
     }
 
-    private File[] askUserForCustomSettingsFiles(boolean saveFileFlag, String title) {
+    private static File[] askUserForCustomSettingsFiles(boolean saveFileFlag, String title) {
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File f) {

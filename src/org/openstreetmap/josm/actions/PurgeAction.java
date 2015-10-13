@@ -309,7 +309,8 @@ public class PurgeAction extends JosmAction {
         setEnabled(selection != null && !selection.isEmpty());
     }
 
-    private boolean hasOnlyIncompleteMembers(Relation r, Collection<OsmPrimitive> toPurge, Collection<? extends OsmPrimitive> moreToPurge) {
+    private static boolean hasOnlyIncompleteMembers(
+            Relation r, Collection<OsmPrimitive> toPurge, Collection<? extends OsmPrimitive> moreToPurge) {
         for (RelationMember m : r.getMembers()) {
             if (!m.getMember().isIncomplete() && !toPurge.contains(m.getMember()) && !moreToPurge.contains(m.getMember()))
                 return false;

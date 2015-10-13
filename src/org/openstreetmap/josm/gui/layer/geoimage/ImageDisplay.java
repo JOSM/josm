@@ -558,7 +558,7 @@ public class ImageDisplay extends JComponent {
                 visibleRect.y + ((yComp - drawRect.y) * visibleRect.height) / drawRect.height);
     }
 
-    private Point getCenterImgCoord(Rectangle visibleRect) {
+    private static Point getCenterImgCoord(Rectangle visibleRect) {
         return new Point(visibleRect.x + visibleRect.width / 2,
                 visibleRect.y + visibleRect.height / 2);
     }
@@ -629,7 +629,7 @@ public class ImageDisplay extends JComponent {
         repaint();
     }
 
-    private void checkVisibleRectPos(Image image, Rectangle visibleRect) {
+    private static void checkVisibleRectPos(Image image, Rectangle visibleRect) {
         if (visibleRect.x < 0) {
             visibleRect.x = 0;
         }
@@ -644,7 +644,7 @@ public class ImageDisplay extends JComponent {
         }
     }
 
-    private void checkVisibleRectSize(Image image, Rectangle visibleRect) {
+    private static void checkVisibleRectSize(Image image, Rectangle visibleRect) {
         if (visibleRect.width > image.getWidth(null)) {
             visibleRect.width = image.getWidth(null);
         }

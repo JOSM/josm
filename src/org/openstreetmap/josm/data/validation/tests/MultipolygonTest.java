@@ -90,7 +90,7 @@ public class MultipolygonTest extends Test {
         super.endTest();
     }
 
-    private GeneralPath createPath(List<Node> nodes) {
+    private static GeneralPath createPath(List<Node> nodes) {
         GeneralPath result = new GeneralPath();
         result.moveTo((float) nodes.get(0).getCoor().lat(), (float) nodes.get(0).getCoor().lon());
         for (int i = 1; i < nodes.size(); i++) {
@@ -108,7 +108,7 @@ public class MultipolygonTest extends Test {
         return result;
     }
 
-    private Intersection getPolygonIntersection(GeneralPath outer, List<Node> inner) {
+    private static Intersection getPolygonIntersection(GeneralPath outer, List<Node> inner) {
         boolean inside = false;
         boolean outside = false;
 
@@ -291,7 +291,7 @@ public class MultipolygonTest extends Test {
         }
     }
 
-    private void addRelationIfNeeded(TestError error, Relation r) {
+    private static void addRelationIfNeeded(TestError error, Relation r) {
         // Fix #8212 : if the error references only incomplete primitives,
         // add multipolygon in order to let user select something and fix the error
         Collection<? extends OsmPrimitive> primitives = error.getPrimitives();

@@ -908,7 +908,7 @@ public class MainMenu extends JMenuBar {
      * @param textToFind The text to find
      * @param result resulting list ofmenu items
      */
-    private void findMenuItems(final JMenu menu, final String textToFind, final List<JMenuItem> result) {
+    private static void findMenuItems(final JMenu menu, final String textToFind, final List<JMenuItem> result) {
         for (int i = 0; i < menu.getItemCount(); i++) {
             JMenuItem menuItem = menu.getItem(i);
             if (menuItem == null) continue;

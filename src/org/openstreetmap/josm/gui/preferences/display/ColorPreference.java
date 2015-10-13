@@ -142,7 +142,7 @@ public class ColorPreference implements SubPreferenceSetting {
         return colorMap;
     }
 
-    private String getName(String o) {
+    private static String getName(String o) {
         return Main.pref.getColorName(o);
     }
 
@@ -261,7 +261,7 @@ public class ColorPreference implements SubPreferenceSetting {
     /**
      * Add all missing color entries.
      */
-    private void fixColorPrefixes() {
+    private static void fixColorPrefixes() {
         PaintColors.getColors();
         ConflictColors.getColors();
         Severity.getColors();

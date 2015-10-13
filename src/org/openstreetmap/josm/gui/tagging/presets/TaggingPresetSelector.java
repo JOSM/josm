@@ -161,7 +161,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             }
         }
 
-        private int isMatching(Collection<String> values, String[] searchString) {
+        private static int isMatching(Collection<String> values, String[] searchString) {
             int sum = 0;
             for (String word: searchString) {
                 boolean found = false;

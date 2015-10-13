@@ -616,7 +616,7 @@ public class MainApplication extends Main {
             DownloadDialog.autostartIfNeeded();
         }
 
-        private void handleAutosave() {
+        private static void handleAutosave() {
             if (AutosaveTask.PROP_AUTOSAVE_ENABLED.get()) {
                 AutosaveTask autosaveTask = new AutosaveTask();
                 List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();

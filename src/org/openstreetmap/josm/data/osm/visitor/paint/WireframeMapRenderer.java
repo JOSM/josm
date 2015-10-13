@@ -275,7 +275,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         }
     }
 
-    private boolean isNodeTagged(Node n) {
+    private static boolean isNodeTagged(Node n) {
         return n.isTagged() || n.isAnnotated();
     }
 

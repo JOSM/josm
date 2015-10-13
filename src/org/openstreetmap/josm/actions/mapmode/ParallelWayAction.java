@@ -361,7 +361,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         mv.repaint();
     }
 
-    private void removeWayHighlighting(Collection<Way> ways) {
+    private static void removeWayHighlighting(Collection<Way> ways) {
         if (ways == null)
             return;
         for (Way w : ways) {
@@ -565,11 +565,11 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         }
     }
 
-    private String prefKey(String subKey) {
+    private static String prefKey(String subKey) {
         return "edit.make-parallel-way-action." + subKey;
     }
 
-    private String getStringPref(String subKey, String def) {
+    private static String getStringPref(String subKey, String def) {
         return Main.pref.get(prefKey(subKey), def);
     }
 
