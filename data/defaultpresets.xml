@@ -4529,9 +4529,14 @@
             <space />
             <key key="amenity" value="toilets" />
             <combo key="access" text="Access rights" values="public,permissive,customers" />
-            <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
-            <combo key="toilets:disposal" text="Type" values="flush,pitlatrine,chemical,bucket" />
             <optional>
+                <checkgroup columns="3">
+                    <check key="female" text="Female" />
+                    <check key="male" text="Male" />
+                    <check key="unisex" text="Unisex" />
+                </checkgroup>
+                <combo key="toilets:disposal" text="Type" values="flush,pitlatrine,chemical,bucket" />
+                <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
                 <text key="description" text="Description" />
                 <reference ref="fee" />
                 <text key="operator" text="Operator" />
@@ -8352,8 +8357,8 @@
                   vi.href="http://wiki.openstreetmap.org/wiki/Vi:Key:addr" />
             <space />
             <text key="addr:housenumber" text="House number" match="key" auto_increment="-2,-1,+1,+2" />
+            <text key="addr:street" text="Street name" use_last_as_default="force" match="key" alternative_autocomplete_keys="name" />
             <optional>
-                <text key="addr:street" text="Street name" use_last_as_default="force" match="key" alternative_autocomplete_keys="name" />
                 <text key="addr:place" text="Place name" use_last_as_default="force" match="key" alternative_autocomplete_keys="name" />
                 <text key="addr:city" text="City name" use_last_as_default="force" match="key" />
                 <text key="addr:postcode" text="Post code" use_last_as_default="force" match="key" />
