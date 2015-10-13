@@ -4529,9 +4529,14 @@
             <space />
             <key key="amenity" value="toilets" />
             <combo key="access" text="Access rights" values="public,permissive,customers" />
-            <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
-            <combo key="toilets:disposal" text="Type" values="flush,pitlatrine,chemical,bucket" />
             <optional>
+                <checkgroup columns="3">
+                    <check key="female" text="Female" />
+                    <check key="male" text="Male" />
+                    <check key="unisex" text="Unisex" />
+                </checkgroup>
+                <combo key="toilets:disposal" text="Type" values="flush,pitlatrine,chemical,bucket" />
+                <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
                 <text key="description" text="Description" />
                 <reference ref="fee" />
                 <text key="operator" text="Operator" />
