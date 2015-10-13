@@ -44,12 +44,12 @@ public class ModifiersSpec {
         return match(alt, knownAlt) && match(shift, knownShift) && match(ctrl, knownCtrl);
     }
 
-    private boolean match(final int a, final int knownValue) {
+    private static boolean match(final int a, final int knownValue) {
         assert knownValue == ON | knownValue == OFF;
         return a == knownValue || a == UNKNOWN;
     }
 
-    private boolean match(final int a, final boolean knownValue) {
+    private static boolean match(final int a, final boolean knownValue) {
         return a == (knownValue ? ON : OFF) || a == UNKNOWN;
     }
     // does java have built in 3-state support?

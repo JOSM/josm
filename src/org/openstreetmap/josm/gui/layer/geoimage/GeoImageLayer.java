@@ -443,7 +443,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         thumbsLoaded &= l.thumbsLoaded;
     }
 
-    private Dimension scaledDimension(Image thumb) {
+    private static Dimension scaledDimension(Image thumb) {
         final double d = Main.map.mapView.getDist100Pixel();
         final double size = 10 /*meter*/;     /* size of the photo on the map */
         double s = size * 100 /*px*/ / d;

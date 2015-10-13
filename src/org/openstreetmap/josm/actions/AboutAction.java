@@ -110,7 +110,7 @@ public class AboutAction extends JosmAction {
                 new ImageIcon(ImageProvider.get("logo.svg").getImage().getScaledInstance(256, 258, Image.SCALE_SMOOTH)));
     }
 
-    private JScrollPane createScrollPane(JosmTextArea area) {
+    private static JScrollPane createScrollPane(JosmTextArea area) {
         area.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         area.setOpaque(false);
         JScrollPane sp = new JScrollPane(area);

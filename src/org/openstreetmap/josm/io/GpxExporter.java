@@ -26,7 +26,6 @@ import javax.swing.ListSelectionModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -172,7 +171,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         } else if (layer instanceof GpxLayer) {
             gpxData = ((GpxLayer) layer).data;
         } else {
-            gpxData = OsmDataLayer.toGpxData(getCurrentDataSet(), file);
+            gpxData = OsmDataLayer.toGpxData(Main.main.getCurrentDataSet(), file);
         }
 
         // add author and copyright details to the gpx data
@@ -335,14 +334,5 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
         authorActionListener.actionPerformed(null);
         authorNameListener.keyReleased(null);
-    }
-
-    /**
-     * Replies the current dataset
-     *
-     * @return the current dataset. null, if no current dataset exists
-     */
-    private DataSet getCurrentDataSet() {
-        return Main.main.getCurrentDataSet();
     }
 }

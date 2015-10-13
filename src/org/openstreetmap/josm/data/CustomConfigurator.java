@@ -613,7 +613,7 @@ public final class CustomConfigurator {
             processDownloadOperation(address, path, dir, "true".equals(mkdir), "true".equals(unzip));
         }
 
-        private void processPluginInstallElement(Element elem) {
+        private static void processPluginInstallElement(Element elem) {
             String install = elem.getAttribute("install");
             String uninstall = elem.getAttribute("remove");
             String delete = elem.getAttribute("delete");
@@ -738,7 +738,7 @@ public final class CustomConfigurator {
             return tmpPref;
         }
 
-        private String normalizeDirName(String dir) {
+        private static String normalizeDirName(String dir) {
             String s = dir.replace('\\', '/');
             if (s.endsWith("/")) s = s.substring(0, s.length()-1);
             return s;

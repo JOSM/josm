@@ -76,7 +76,7 @@ public class Multipolygon {
             innerExactRoles.add("inner");
         }
 
-        private void setNormalized(Collection<String> literals, List<String> target) {
+        private static void setNormalized(Collection<String> literals, List<String> target) {
             target.clear();
             for (String l: literals) {
                 if (l == null) {

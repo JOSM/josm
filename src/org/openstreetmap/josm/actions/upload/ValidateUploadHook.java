@@ -108,7 +108,7 @@ public class ValidateUploadHook implements UploadHook {
      * @return <code>true</code>, if the upload should continue. <code>false</code>
      *          if the user requested cancel.
      */
-    private boolean displayErrorScreen(List<TestError> errors) {
+    private static boolean displayErrorScreen(List<TestError> errors) {
         JPanel p = new JPanel(new GridBagLayout());
         ValidatorTreePanel errorPanel = new ValidatorTreePanel(errors);
         errorPanel.expandAll();

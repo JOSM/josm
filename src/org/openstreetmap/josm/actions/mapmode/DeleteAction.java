@@ -168,7 +168,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
     /**
      * removes any highlighting that may have been set beforehand.
      */
-    private void removeHighlighting() {
+    private static void removeHighlighting() {
         highlightHelper.clear();
         DataSet ds = getCurrentDataSet();
         if (ds != null) {

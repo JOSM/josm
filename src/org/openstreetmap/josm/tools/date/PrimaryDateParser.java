@@ -39,7 +39,7 @@ public class PrimaryDateParser {
         calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
     }
 
-    private boolean isDateInShortStandardFormat(String date) {
+    private static boolean isDateInShortStandardFormat(String date) {
         char[] dateChars;
         // We can only parse the date if it is in a very specific format.
         // eg. 2007-09-23T08:25:43Z
@@ -106,7 +106,7 @@ public class PrimaryDateParser {
         return true;
     }
 
-    private boolean isDateInLongStandardFormat(String date) {
+    private static boolean isDateInLongStandardFormat(String date) {
         char[] dateChars;
         // We can only parse the date if it is in a very specific format.
         // eg. 2007-09-23T08:25:43.000Z

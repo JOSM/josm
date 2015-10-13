@@ -308,7 +308,7 @@ public class MapCSSStyleSource extends StyleSource {
             return key;
         }
 
-        private boolean conditionRequiresKeyPresence(KeyMatchType matchType) {
+        private static boolean conditionRequiresKeyPresence(KeyMatchType matchType) {
             return matchType != KeyMatchType.REGEX;
         }
 

@@ -771,7 +771,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         return true;
     }
 
-    private boolean doesImpactStatusLine(Collection<Node> affectedNodes, Collection<Way> selectedWays) {
+    private static boolean doesImpactStatusLine(Collection<Node> affectedNodes, Collection<Way> selectedWays) {
         for (Way w : selectedWays) {
             for (Node n : w.getNodes()) {
                 if (affectedNodes.contains(n)) {
@@ -797,7 +797,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     /**
      * Obtain command in undoRedo stack to "continue" when dragging
      */
-    private Command getLastCommand() {
+    private static Command getLastCommand() {
         Command c = !Main.main.undoRedo.commands.isEmpty()
                 ? Main.main.undoRedo.commands.getLast() : null;
         if (c instanceof SequenceCommand) {

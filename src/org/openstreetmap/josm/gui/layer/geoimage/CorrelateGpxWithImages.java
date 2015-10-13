@@ -1272,7 +1272,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return ret;
     }
 
-    private int getLastIndexOfListBefore(List<ImageEntry> images, long searchedTime) {
+    private static int getLastIndexOfListBefore(List<ImageEntry> images, long searchedTime) {
         int lstSize = images.size();
 
         // No photos or the first photo taken is later than the search period
@@ -1306,7 +1306,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return endIndex;
     }
 
-    private String formatTimezone(double timezone) {
+    private static String formatTimezone(double timezone) {
         StringBuilder ret = new StringBuilder();
 
         if (timezone < 0) {
@@ -1325,7 +1325,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return ret.toString();
     }
 
-    private double parseTimezone(String timezone) throws ParseException {
+    private static double parseTimezone(String timezone) throws ParseException {
 
         if (timezone.isEmpty())
             return 0;
@@ -1396,7 +1396,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             return (h + m / 60.0) * (sgnTimezone == '-' ? -1 : 1);
     }
 
-    private long parseOffset(String offset) throws ParseException {
+    private static long parseOffset(String offset) throws ParseException {
         String error = tr("Error while parsing offset.\nExpected format: {0}", "number");
 
         if (!offset.isEmpty()) {

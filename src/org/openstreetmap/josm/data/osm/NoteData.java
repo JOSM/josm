@@ -278,7 +278,7 @@ public class NoteData {
         }
     }
 
-    private User getCurrentUser() {
+    private static User getCurrentUser() {
         JosmUserIdentityManager userMgr = JosmUserIdentityManager.getInstance();
         return User.createOsmUser(userMgr.getUserId(), userMgr.getUserName());
     }

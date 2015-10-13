@@ -209,7 +209,7 @@ public abstract class OsmServerReader extends OsmConnection {
         }
     }
 
-    private InputStream fixEncoding(InputStream stream, String encoding) throws IOException {
+    private static InputStream fixEncoding(InputStream stream, String encoding) throws IOException {
         if ("gzip".equalsIgnoreCase(encoding)) {
             stream = new GZIPInputStream(stream);
         } else if ("deflate".equalsIgnoreCase(encoding)) {

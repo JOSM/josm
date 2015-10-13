@@ -232,7 +232,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
      * @throws IllegalStateException if imagery time is neither HTML nor WMS
      * @see WMSLayer#checkGrabberType
      */
-    private void addWMSLayer(String title, String url) {
+    private static void addWMSLayer(String title, String url) {
         WMSLayer layer = new WMSLayer(new ImageryInfo(title, url));
         Main.main.addLayer(layer);
     }

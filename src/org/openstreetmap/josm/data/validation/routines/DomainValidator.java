@@ -217,7 +217,7 @@ public final class DomainValidator extends AbstractValidator {
         return Arrays.binarySearch(LOCAL_TLDS, chompLeadingDot(iTld.toLowerCase(Locale.ENGLISH))) >= 0;
     }
 
-    private String chompLeadingDot(String str) {
+    private static String chompLeadingDot(String str) {
         if (str.startsWith(".")) {
             return str.substring(1);
         } else {

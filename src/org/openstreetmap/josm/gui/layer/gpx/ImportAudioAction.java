@@ -56,7 +56,7 @@ public class ImportAudioAction extends AbstractAction {
         putValue("help", ht("/Action/ImportAudio"));
     }
 
-    private void warnCantImportIntoServerLayer(GpxLayer layer) {
+    private static void warnCantImportIntoServerLayer(GpxLayer layer) {
         String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>" +
                 "Because its way points do not include a timestamp we cannot correlate them with audio data.</html>",
                 layer.getName());

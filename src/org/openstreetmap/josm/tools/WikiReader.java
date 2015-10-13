@@ -105,7 +105,7 @@ public class WikiReader {
         }
     }
 
-    private String readNormal(BufferedReader in, boolean html) throws IOException {
+    private static String readNormal(BufferedReader in, boolean html) throws IOException {
         StringBuilder b = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (!line.contains("[[TranslatedPages]]")) {

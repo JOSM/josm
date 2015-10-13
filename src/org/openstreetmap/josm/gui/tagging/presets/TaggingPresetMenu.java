@@ -64,7 +64,7 @@ public class TaggingPresetMenu extends TaggingPreset {
         putValue("toolbar", "tagginggroup_" + getRawName());
     }
 
-    private Component copyMenuComponent(Component menuComponent) {
+    private static Component copyMenuComponent(Component menuComponent) {
         if (menuComponent instanceof JMenu) {
             JMenu menu = (JMenu) menuComponent;
             JMenu result = new JMenu(menu.getAction());

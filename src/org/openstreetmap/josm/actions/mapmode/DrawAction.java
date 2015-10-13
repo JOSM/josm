@@ -830,7 +830,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // status bar was filled by snapHelper
     }
 
-    private void showStatusInfo(double angle, double hdg, double distance, boolean activeFlag) {
+    private static void showStatusInfo(double angle, double hdg, double distance, boolean activeFlag) {
         Main.map.statusLine.setAngle(angle);
         Main.map.statusLine.activateAnglePanel(activeFlag);
         Main.map.statusLine.setHeading(hdg);

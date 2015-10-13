@@ -560,7 +560,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * Inserts node into nearby segment.
      * @param e current mouse point
      */
-    private void addNewNode(MouseEvent e) {
+    private static void addNewNode(MouseEvent e) {
         // Should maybe do the same as in DrawAction and fetch all nearby segments?
         WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
         if (ws != null) {

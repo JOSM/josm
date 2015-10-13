@@ -567,7 +567,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         setTitle(tr("Upload to ''{0}''", url));
     }
 
-    private String getLastChangesetTagFromHistory(String historyKey, List<String> def) {
+    private static String getLastChangesetTagFromHistory(String historyKey, List<String> def) {
         Collection<String> history = Main.pref.getCollection(historyKey, def);
         int age = (int) (System.currentTimeMillis() / 1000 - Main.pref.getInteger(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0));
         if (age < Main.pref.getInteger(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, 4 * 3600 * 1000) && history != null && !history.isEmpty()) {

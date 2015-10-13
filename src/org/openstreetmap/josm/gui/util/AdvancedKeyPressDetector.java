@@ -197,7 +197,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         }
     }
 
-    private boolean isFocusInMainWindow() {
+    private static boolean isFocusInMainWindow() {
         Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
         return focused != null && SwingUtilities.getWindowAncestor(focused) instanceof JFrame;
     }

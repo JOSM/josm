@@ -53,7 +53,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         }
     }
 
-    private String completeOverpassQuery(String query) {
+    private static String completeOverpassQuery(String query) {
         int firstColon = query.indexOf(';');
         if (firstColon == -1) {
             return "[bbox];" + query;

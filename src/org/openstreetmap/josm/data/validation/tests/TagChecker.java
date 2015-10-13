@@ -296,7 +296,7 @@ public class TagChecker extends TagTest {
      * Checks given string (key or value) if it contains characters with code below 0x20 (either newline or some other special characters)
      * @param s string to check
      */
-    private boolean containsLow(String s) {
+    private static boolean containsLow(String s) {
         if (s == null)
             return false;
         for (int i = 0; i < s.length(); i++) {
@@ -453,7 +453,7 @@ public class TagChecker extends TagTest {
         }
     }
 
-    private Map<String, String> getPossibleValues(Set<String> values) {
+    private static Map<String, String> getPossibleValues(Set<String> values) {
         // generate a map with common typos
         Map<String, String> map = new HashMap<>();
         if (values != null) {
@@ -665,7 +665,7 @@ public class TagChecker extends TagTest {
             public boolean valueAll;
             public boolean valueBool;
 
-            private Pattern getPattern(String str) throws PatternSyntaxException {
+            private static Pattern getPattern(String str) throws PatternSyntaxException {
                 if (str.endsWith("/i"))
                     return Pattern.compile(str.substring(1, str.length()-2), Pattern.CASE_INSENSITIVE);
                 if (str.endsWith("/"))

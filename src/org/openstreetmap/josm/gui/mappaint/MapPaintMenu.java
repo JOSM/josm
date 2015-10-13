@@ -68,7 +68,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
             setEnabled(Main.isDisplayingMapView() && (Main.main.hasEditLayer() || mapHasGpxorMarkerLayer()));
         }
 
-        private boolean mapHasGpxorMarkerLayer() {
+        private static boolean mapHasGpxorMarkerLayer() {
             for (Layer layer : Main.map.mapView.getAllLayers()) {
                 if (layer instanceof GpxLayer || layer instanceof MarkerLayer) {
                     return true;

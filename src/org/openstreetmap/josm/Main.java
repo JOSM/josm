@@ -1264,7 +1264,7 @@ public abstract class Main {
         public void componentShown(ComponentEvent e) {
         }
 
-        private void handleComponentEvent(ComponentEvent e) {
+        private static void handleComponentEvent(ComponentEvent e) {
             Component c = e.getComponent();
             if (c instanceof JFrame && c.isVisible()) {
                 if (Main.windowState == JFrame.NORMAL) {

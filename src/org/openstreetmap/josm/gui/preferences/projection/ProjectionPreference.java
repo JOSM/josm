@@ -470,7 +470,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         return pc;
     }
 
-    private Collection<String> getSubprojectionPreference(ProjectionChoice pc) {
+    private static Collection<String> getSubprojectionPreference(ProjectionChoice pc) {
         return Main.pref.getCollection("projection.sub."+pc.getId(), null);
     }
 

@@ -688,7 +688,7 @@ public class Preferences {
         return cacheDir;
     }
 
-    private void addPossibleResourceDir(Set<String> locations, String s) {
+    private static void addPossibleResourceDir(Set<String> locations, String s) {
         if (s != null) {
             if (!s.endsWith(File.separator)) {
                 s += File.separator;
@@ -866,7 +866,7 @@ public class Preferences {
         setCorrectPermissions(backupFile);
     }
 
-    private void setCorrectPermissions(File file) {
+    private static void setCorrectPermissions(File file) {
         if (!file.setReadable(false, false) && Main.isDebugEnabled()) {
             Main.debug(tr("Unable to set file non-readable {0}", file.getAbsolutePath()));
         }
@@ -1336,7 +1336,7 @@ public class Preferences {
         return putListOfStructs(key, serializeListOfStructs(val, klass));
     }
 
-    private <T> Collection<Map<String, String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
+    private static <T> Collection<Map<String, String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
         if (l == null)
             return null;
         Collection<Map<String, String>> vals = new ArrayList<>();

@@ -148,7 +148,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
         }
     }
 
-    private void readBytes(InputStream in, byte[] b) throws IOException {
+    private static void readBytes(InputStream in, byte[] b) throws IOException {
         if (in.read(b) < b.length) {
             Main.error("Failed to read expected amount of bytes ("+ b.length +") from stream");
         }
@@ -208,7 +208,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @param y Latitude factor
      * @return interpolated value
      */
-    private double interpolate(float a, float b, float c, float d, double x, double y) {
+    private static double interpolate(float a, float b, float c, float d, double x, double y) {
         return a + (((double) b - (double) a) * x) + (((double) c - (double) a) * y) +
         (((double) a + (double) d - b - c) * x * y);
     }

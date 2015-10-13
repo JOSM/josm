@@ -111,7 +111,7 @@ public final class DistributeAction extends JosmAction {
      * @param nodes Selected nodes
      * @return true in this case
      */
-    private boolean checkDistributeWay(Collection<Way> ways, Collection<Node> nodes) {
+    private static boolean checkDistributeWay(Collection<Way> ways, Collection<Node> nodes) {
         if (ways.size() == 1 && nodes.size() <= 2) {
             Way w = ways.iterator().next();
             Set<Node> unduplicated = new HashSet<>(w.getNodes());
@@ -136,7 +136,7 @@ public final class DistributeAction extends JosmAction {
      * @param nodes Selected nodes, at most two nodes.
      * @return Collection of command to be executed.
      */
-    private Collection<Command> distributeWay(Collection<Way> ways,
+    private static Collection<Command> distributeWay(Collection<Way> ways,
                                               Collection<Node> nodes) {
         Way w = ways.iterator().next();
         Collection<Command> cmds = new LinkedList<>();
@@ -200,7 +200,7 @@ public final class DistributeAction extends JosmAction {
      * @param nodes Selected nodes
      * @return true in this case
      */
-    private Boolean checkDistributeNodes(Collection<Way> ways, Collection<Node> nodes) {
+    private static Boolean checkDistributeNodes(Collection<Way> ways, Collection<Node> nodes) {
         return ways.isEmpty() && nodes.size() >= 3;
     }
 
@@ -283,7 +283,7 @@ public final class DistributeAction extends JosmAction {
      * @param col Collection of nodes to check
      * @return Set of nodes without coordinates
      */
-    private Set<Node> removeNodesWithoutCoordinates(Collection<Node> col) {
+    private static Set<Node> removeNodesWithoutCoordinates(Collection<Node> col) {
         Set<Node> result = new HashSet<>();
         for (Iterator<Node> it = col.iterator(); it.hasNext();) {
             Node n = it.next();

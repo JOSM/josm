@@ -206,7 +206,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return Main.main.getCurrentDataSet();
     }
 
-    private EastNorth calculateDefaultCenter() {
+    private static EastNorth calculateDefaultCenter() {
         Bounds b = DownloadDialog.getSavedDownloadBounds();
         if (b == null) {
             b = Main.getProjection().getWorldBoundsLatLon();

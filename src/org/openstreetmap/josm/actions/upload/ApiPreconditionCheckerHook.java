@@ -49,7 +49,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
         return true;
     }
 
-    private boolean checkMaxNodes(Collection<OsmPrimitive> primitives, long maxNodes) {
+    private static boolean checkMaxNodes(Collection<OsmPrimitive> primitives, long maxNodes) {
         for (OsmPrimitive osmPrimitive : primitives) {
             for (String key: osmPrimitive.keySet()) {
                 String value = osmPrimitive.get(key);
