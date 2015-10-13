@@ -7266,6 +7266,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Pet -->
+        <item name="Photo" icon="styles/standard/shop/photo.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=photo" />
+            <space />
+            <key key="shop" value="photo" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Photo -->
         <item name="Funeral Directors" icon="styles/standard/shop/funeral_directors.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=funeral_directors"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=funeral_directors"
