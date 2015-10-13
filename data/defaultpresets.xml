@@ -4837,6 +4837,15 @@
             <combo key="fire_hydrant:pressure" text="Pressure (in bar)" values="5,6,8,suction" />
             <text key="fire_hydrant:count" text="Count" />
         </item> <!-- Fire Hydrant -->
+        <item name="Compressed Air" icon="styles/standard/vehicle/compressed_air.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=compressed_air" />
+            <space />
+            <key key="amenity" value="compressed_air" />
+            <reference ref="name_ref" />
+            <text key="operator" text="Operator" />
+            <reference ref="fee" />
+            <multiselect key="valves" text="Valves" values="dunlop;schrader;sclaverand;regina" display_values="Dunlop (Woods);Schrader;Sclaverand (Presta);Regina" values_searchable="true" />
+        </item> <!-- Compressed Air -->
         <separator/>
         <item name="Advertising Column" icon="styles/standard/leisure/advertising_column.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:advertising=column"

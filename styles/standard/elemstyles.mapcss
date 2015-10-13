@@ -2741,6 +2741,11 @@ node[emergency=fire_hydrant] {
     set icon_z17;
     text: auto;
 }
+node[amenity=compressed_air] {
+    icon-image: "vehicle/compressed_air.svg";
+    set icon_z17;
+    text: auto;
+}
 area[amenity=shelter],
 area[amenity=marketplace],
 area[amenity=wlan] {
