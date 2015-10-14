@@ -44,6 +44,9 @@ public class RequestHandlerTest {
         return req.args;
     }
 
+    /**
+     * Test request parameter - case 1
+     */
     @Test
     public void testRequestParameter1() {
         final Map<String, String> expected = new HashMap<>();
@@ -52,12 +55,18 @@ public class RequestHandlerTest {
         assertEquals(expected, getRequestParameter("http://example.com/?query=a&b==c"));
     }
 
+    /**
+     * Test request parameter - case 2
+     */
     @Test
-    public void testRequestParameter12() {
+    public void testRequestParameter2() {
         assertEquals(Collections.singletonMap("query", "a&b==c"),
                 getRequestParameter("http://example.com/?query=a%26b==c"));
     }
 
+    /**
+     * Test request parameter - case 3
+     */
     @Test
     public void testRequestParameter3() {
         assertEquals(Collections.singleton("blue+light blue"),
@@ -65,6 +74,7 @@ public class RequestHandlerTest {
     }
 
     /**
+     * Test request parameter - case 4
      * @see <a href="http://blog.lunatech.com/2009/02/03/what-every-web-developer-must-know-about-url-encoding">
      *      What every web developer must know about URL encoding</a>
      */
@@ -76,6 +86,9 @@ public class RequestHandlerTest {
                 // CHECKSTYLE.ON: LineLength
     }
 
+    /**
+     * Test request parameter - case 5
+     */
     @Test
     public void testRequestParameter5() {
         final Map<String, String> expected = new HashMap<>();

@@ -113,6 +113,11 @@ public class SessionReaderTest {
         assertEquals(marker.getName(), "Marker layer name");
     }
 
+    /**
+     * Tests to read a .jos file containing Bing imagery.
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException is the test file is considered as invalid
+     */
     @Test
     public void testReadImage() throws IOException, IllegalDataException {
         final List<Layer> layers = testRead("bing.jos");

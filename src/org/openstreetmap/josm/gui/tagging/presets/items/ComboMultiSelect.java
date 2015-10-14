@@ -98,6 +98,8 @@ public abstract class ComboMultiSelect extends KeyedItem {
     public String values_context;
     /** Disabled internationalisation for value to avoid mistakes, see #11696 */
     public boolean values_no_i18n;
+    /** Whether to sort the values, defaults to true. */
+    public boolean values_sort = true;
     public String display_values;
     /** The localized version of {@link #display_values}. */
     public String locale_display_values;
@@ -424,7 +426,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             entries.add(e);
         }
 
-        if (Main.pref.getBoolean("taggingpreset.sortvalues", true)) {
+        if (Main.pref.getBoolean("taggingpreset.sortvalues", true) && values_sort) {
             Collections.sort(entries);
         }
 

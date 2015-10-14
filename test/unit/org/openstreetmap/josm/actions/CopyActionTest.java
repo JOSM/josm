@@ -25,14 +25,20 @@ public class CopyActionTest {
         JOSMFixture.createUnitTestFixture().init();
     }
 
+    /**
+     * Test of {@link CopyAction#getCopyString} method for a single way.
+     */
     @Test
-    public void testCopyStringWay() throws Exception {
+    public void testCopyStringWay() {
         final Way way = new Way(123L);
         assertEquals("way 123", CopyAction.getCopyString(Collections.singleton(way)));
     }
 
+    /**
+     * Test of {@link CopyAction#getCopyString} method for a way and a relation.
+     */
     @Test
-    public void testCopyStringWayRelation() throws Exception {
+    public void testCopyStringWayRelation() {
         final Way way = new Way(123L);
         final Relation relation = new Relation(456);
         assertEquals("way 123,relation 456", CopyAction.getCopyString(Arrays.asList(way, relation)));
