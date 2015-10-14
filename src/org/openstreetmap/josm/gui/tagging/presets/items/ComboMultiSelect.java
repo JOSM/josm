@@ -96,6 +96,8 @@ public abstract class ComboMultiSelect extends KeyedItem {
     public String values_from;
     /** The context used for translating {@link #values} */
     public String values_context;
+    /** Disabled internationalisation for value to avoid mistakes, see #11696 */
+    public boolean values_no_i18n;
     public String display_values;
     /** The localized version of {@link #display_values}. */
     public String locale_display_values;
@@ -386,8 +388,11 @@ public abstract class ComboMultiSelect extends KeyedItem {
             value_array = splitEscaped(delChar, values);
         }
 
-        final String displ = Utils.firstNonNull(locale_display_values, display_values);
-        String[] display_array = displ == null ? value_array : splitEscaped(delChar, displ);
+        String[] display_array = value_array;
+        if (!values_no_i18n) {
+            final String displ = Utils.firstNonNull(locale_display_values, display_values);
+            display_array = displ == null ? value_array : splitEscaped(delChar, displ);
+        }
 
         final String descr = Utils.firstNonNull(locale_short_descriptions, short_descriptions);
         String[] short_descriptions_array = descr == null ? null : splitEscaped(delChar, descr);
@@ -407,7 +412,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         final List<PresetListEntry> entries = new ArrayList<>(value_array.length);
         for (int i = 0; i < value_array.length; i++) {
             final PresetListEntry e = new PresetListEntry(value_array[i]);
-            e.locale_display_value = locale_display_values != null
+            e.locale_display_value = locale_display_values != null || values_no_i18n
                     ? display_array[i]
                     : trc(values_context, fixPresetString(display_array[i]));
             if (short_descriptions_array != null) {

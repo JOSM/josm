@@ -119,7 +119,7 @@
         <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 09:30,11:00|Sa,Su,PH 09:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
     </chunk>
     <chunk id="oh">
-        <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00, Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+        <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00, Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" values_no_i18n="true" />
     </chunk>
     <chunk id="wheelchair">
         <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
@@ -4586,7 +4586,7 @@
             <key key="amenity" value="post_box" />
             <text key="operator" text="Operator" />
             <text key="ref" text="Reference number" />
-            <combo key="collection_times" text="Collection times" delimiter="|" values="Mo-Sa 09:00|Mo-Fr 17:30; Sa 12:00|Mo-Fr 15:00,19:00; Sa 15:10; Su 10:30" />
+            <combo key="collection_times" text="Collection times" delimiter="|" values="Mo-Sa 09:00|Mo-Fr 17:30; Sa 12:00|Mo-Fr 15:00,19:00; Sa 15:10; Su 10:30" values_no_i18n="true" />
             <combo key="post_box:type" text="Type" values="pillar,lamp,wall,meter" values_context="post_box" />
             <check key="drive_through" text="Drive through" />
         </item> <!-- Post Box -->
@@ -4769,7 +4769,7 @@
             <combo key="access" text="Access" values="yes,public,customers,no" />
             <reference ref="fee" />
             <text key="operator" text="Operator" />
-            <combo key="opening_hours" text="Operation times" values="24/7" />
+            <combo key="opening_hours" text="Operation times" values="24/7" values_no_i18n="true" />
         </item> <!-- Sanitary Dump Station -->
         <separator/>
         <item name="Bench" icon="presets/bench.png" type="node,way" preset_name_label="true">
@@ -5706,7 +5706,7 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=street_lamp" />
             <space />
             <key key="highway" value="street_lamp" />
-            <combo key="opening_hours" text="Operation times" values="Mo-Fr 22:00-05:00" />
+            <combo key="opening_hours" text="Operation times" values="Mo-Fr 22:00-05:00" values_no_i18n="true" />
         </item> <!-- Street Lamp -->
         <item name="Monitoring Station" icon="presets/monitoring_station.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=monitoring_station"
