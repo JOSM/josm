@@ -203,6 +203,7 @@
 		<attribute name="values" type="string" />
 		<attribute name="values_from" type="string" />
 		<attribute name="values_context" type="string" />
+		<attribute name="values_no_i18n" type="boolean" />
 		<attribute name="display_values" type="string" />
 		<attribute name="values_searchable" type="boolean" />
 		<attribute name="default" type="string" />

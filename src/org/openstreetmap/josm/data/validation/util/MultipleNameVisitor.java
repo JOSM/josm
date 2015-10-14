@@ -62,14 +62,16 @@ public class MultipleNameVisitor extends NameVisitor {
         if (size <= 1) {
             displayName = name;
         } else {
-            displayName = size + ' ' + trn(multipleClassname, multiplePluralClassname, size);
+            StringBuilder sb = new StringBuilder().append(size).append(' ').append(trn(multipleClassname, multiplePluralClassname, size));
             if (multipleName.length() > 0) {
+                sb.append(": ");
                 if (multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH) {
-                    displayName += ": " + multipleName;
+                    sb.append(multipleName);
                 } else {
-                    displayName += ": " + multipleName.substring(0, MULTIPLE_NAME_MAX_LENGTH) + "...";
+                    sb.append(multipleName.substring(0, MULTIPLE_NAME_MAX_LENGTH)).append("...");
                 }
             }
+            displayName = sb.toString();
         }
     }
 

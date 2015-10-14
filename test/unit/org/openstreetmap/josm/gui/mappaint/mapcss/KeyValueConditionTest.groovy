@@ -1,18 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.junit.Assert.*
-
 import org.junit.*
 import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.Node
+import org.openstreetmap.josm.data.osm.OsmUtils
 import org.openstreetmap.josm.data.osm.Relation
 import org.openstreetmap.josm.data.osm.RelationMember
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Op
+import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
 
 
 class KeyValueConditionTest {
@@ -84,5 +84,20 @@ class KeyValueConditionTest {
 
         cond = Condition.createKeyValueCondition("role", "another_role", Op.NEQ, Context.LINK, false)
         assert cond.applies(e)
+    }
+
+    @Test
+    public void testKeyRegexValueRegex() throws Exception {
+        def selPos = new MapCSSParser(new StringReader("*[/^source/ =~ /.*,.*/]")).selector()
+        def selNeg = new MapCSSParser(new StringReader("*[/^source/ !~ /.*,.*/]")).selector()
+        assert !selPos.matches(new Environment(OsmUtils.createPrimitive("way foo=bar")))
+        assert selPos.matches(new Environment(OsmUtils.createPrimitive("way source=1,2")))
+        assert selPos.matches(new Environment(OsmUtils.createPrimitive("way source_foo_bar=1,2")))
+        assert !selPos.matches(new Environment(OsmUtils.createPrimitive("way source=1")))
+        assert !selPos.matches(new Environment(OsmUtils.createPrimitive("way source=1")))
+        assert !selNeg.matches(new Environment(OsmUtils.createPrimitive("way source=1,2")))
+        assert !selNeg.matches(new Environment(OsmUtils.createPrimitive("way foo=bar source=1,2")))
+        assert selNeg.matches(new Environment(OsmUtils.createPrimitive("way foo=bar source=baz")))
+        assert selNeg.matches(new Environment(OsmUtils.createPrimitive("way foo=bar src=1,2")))
     }
 }
