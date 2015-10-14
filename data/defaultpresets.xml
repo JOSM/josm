@@ -17,7 +17,7 @@
     </chunk>
     <chunk id="surface_smoothness">
         <reference ref="surface" />
-        <combo key="smoothness" text="Smoothness" values_searchable="true">
+        <combo key="smoothness" text="Smoothness" values_searchable="true" values_sort="false">
             <list_entry value="excellent" short_description="Thin Rollers: rollerblade, skateboard" />
             <list_entry value="good" short_description="Thin Wheels: racing bike" />
             <list_entry value="intermediate" short_description="Wheels: city bike, wheelchair, scooter" />
