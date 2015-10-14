@@ -21,6 +21,9 @@ public class OverpassTurboQueryWizardTest {
         OverpassTurboQueryWizard.getInstance();
     }
 
+    /**
+     * Test key=value.
+     */
     @Test
     public void testKeyValue() {
         final String query = OverpassTurboQueryWizard.getInstance().constructQuery("amenity=drinking_water");
@@ -39,6 +42,9 @@ public class OverpassTurboQueryWizardTest {
                 "out meta;", query);
     }
 
+    /**
+     * Test erroneous value.
+     */
     @Test(expected = OverpassTurboQueryWizard.ParseException.class)
     public void testErroneous() {
         OverpassTurboQueryWizard.getInstance().constructQuery("foo");

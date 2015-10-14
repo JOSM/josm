@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.awt.geom.Area;
 import java.lang.reflect.Field;
@@ -49,6 +50,8 @@ public final class CreateCircleActionTest {
      *
      * I don't know why, but in other tests there are no problem to add selected primitives
      * but in this case there is a problem with an even listener of selection change.
+     * @param p primitive
+     * @param ds data set
      */
     public void addSelected(OsmPrimitive p, DataSet ds) {
         try {
@@ -59,7 +62,7 @@ public final class CreateCircleActionTest {
             method.invoke(ds, Collections.singleton(p), false);
         } catch (Exception e) {
             e.printStackTrace();
-            assertTrue("Can't add OsmPrimitive to dataset", false);
+            fail("Can't add OsmPrimitive to dataset: " + e.getMessage());
         }
     }
 
@@ -161,7 +164,7 @@ public final class CreateCircleActionTest {
             rlCache.set(null, new GeoPropertyIndex<Boolean>(trafficHand, 24));
         } catch (Exception e) {
             e.printStackTrace();
-            assertTrue("Impossible to mock left/right hand database", false);
+            fail("Impossible to mock left/right hand database: " + e.getMessage());
         }
 
         CreateCircleAction action = new CreateCircleAction();

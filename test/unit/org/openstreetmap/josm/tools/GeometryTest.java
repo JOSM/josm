@@ -20,6 +20,9 @@ public class GeometryTest {
         JOSMFixture.createUnitTestFixture().init();
     }
 
+    /**
+     * Test of {@link Geometry#getLineLineIntersection} method.
+     */
     @Test
     public void testLineLineIntersection() {
         EastNorth p1 = new EastNorth(-9477809.106349014, 1.5392960539974203E7);

@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -111,42 +110,42 @@ public class RemoteControlTest {
 
     /**
      * Tests that sending an HTTP request without command results in HTTP 400, with all available commands in error message.
-     * @throws IOException if an I/O error occurs
-     * @throws MalformedURLException if HTTP URL is invalid
      */
     @Test
-    public void testHttpListOfCommands() throws MalformedURLException, IOException {
+    public void testHttpListOfCommands() {
         testListOfCommands(httpBase);
     }
 
     /**
      * Tests that sending an HTTPS request without command results in HTTP 400, with all available commands in error message.
-     * @throws IOException if an I/O error occurs
-     * @throws MalformedURLException if HTTPS URL is invalid
      */
     @Test
-    public void testHttpsListOfCommands() throws MalformedURLException, IOException {
+    public void testHttpsListOfCommands() {
         testListOfCommands(httpsBase);
     }
 
-    private void testListOfCommands(String url) throws MalformedURLException, IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.connect();
-        assertEquals(connection.getResponseCode(), HttpURLConnection.HTTP_BAD_REQUEST);
-        try (InputStream is = connection.getErrorStream()) {
-            // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes
-            StringBuilder responseBody = new StringBuilder();
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                String s;
-                while ((s = in.readLine()) != null) {
-                    responseBody.append(s);
-                    responseBody.append("\n");
+    private void testListOfCommands(String url) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.connect();
+            assertEquals(connection.getResponseCode(), HttpURLConnection.HTTP_BAD_REQUEST);
+            try (InputStream is = connection.getErrorStream()) {
+                // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes
+                StringBuilder responseBody = new StringBuilder();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                    String s;
+                    while ((s = in.readLine()) != null) {
+                        responseBody.append(s);
+                        responseBody.append("\n");
+                    }
                 }
+                assert responseBody.toString().contains(RequestProcessor.getUsageAsHtml());
+            } catch (IllegalAccessException | InstantiationException e) {
+                e.printStackTrace();
+                fail(e.getMessage());
             }
-            assert responseBody.toString().contains(RequestProcessor.getUsageAsHtml());
-        } catch (IllegalAccessException e) {
-            fail(e.getMessage());
-        } catch (InstantiationException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
             fail(e.getMessage());
         }
     }

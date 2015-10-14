@@ -41,7 +41,7 @@ public final class SplitWayActionTest {
      * see #11184
      */
     @Test
-    public void test11184() throws Exception {
+    public void testTicket11184() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
