@@ -21,9 +21,9 @@ public class InvalidXmlCharacterFilter extends Reader {
 
     private Reader reader;
 
-    public static boolean firstWarning = true;
+    private static boolean firstWarning = true;
 
-    public static final boolean[] INVALID_CHARS;
+    private static final boolean[] INVALID_CHARS;
 
     static {
         INVALID_CHARS = new boolean[0x20];

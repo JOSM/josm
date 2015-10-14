@@ -41,7 +41,7 @@ public class UntaggedWay extends Test {
     private Set<Way> waysUsedInRelations;
 
     /** Ways that must have a name */
-    public static final Set<String> NAMED_WAYS = new HashSet<>();
+    protected static final Set<String> NAMED_WAYS = new HashSet<>();
     static {
         NAMED_WAYS.add("motorway");
         NAMED_WAYS.add("trunk");
@@ -53,7 +53,7 @@ public class UntaggedWay extends Test {
     }
 
     /** Whitelist of roles allowed to reference an untagged way */
-    public static final Set<String> WHITELIST = new HashSet<>();
+    protected static final Set<String> WHITELIST = new HashSet<>();
     static {
         WHITELIST.add("outer");
         WHITELIST.add("inner");

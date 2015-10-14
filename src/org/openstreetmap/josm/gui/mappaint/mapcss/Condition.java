@@ -118,7 +118,7 @@ public abstract class Condition {
          /** The value needs to contain the reference string. */
         CONTAINS;
 
-        public static final Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
+        protected static final Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
 
         /**
          * Evaluates a value against a reference string.
@@ -282,7 +282,7 @@ public abstract class Condition {
     public static class KeyValueRegexpCondition extends KeyValueCondition {
 
         public final Pattern pattern;
-        public static final Set<Op> SUPPORTED_OPS = EnumSet.of(Op.REGEX, Op.NREGEX);
+        protected static final Set<Op> SUPPORTED_OPS = EnumSet.of(Op.REGEX, Op.NREGEX);
 
         public KeyValueRegexpCondition(String k, String v, Op op, boolean considerValAsKey) {
             super(k, v, op, considerValAsKey);
