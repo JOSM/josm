@@ -21,7 +21,7 @@ public final class FontsManager {
     /**
      * List of fonts embedded into JOSM jar.
      */
-    public static final Collection<String> INCLUDED_FONTS = Arrays.asList(
+    private static final Collection<String> INCLUDED_FONTS = Arrays.asList(
             "DroidSans.ttf",
             "DroidSans-Bold.ttf"
     );

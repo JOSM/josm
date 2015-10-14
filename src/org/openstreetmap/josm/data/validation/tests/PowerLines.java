@@ -36,13 +36,13 @@ public class PowerLines extends Test {
     protected static final int POWER_LINES = 2501;
 
     /** Values for {@code power} key interpreted as power lines */
-    public static final Collection<String> POWER_LINE_TAGS = Arrays.asList("line", "minor_line");
+    protected static final Collection<String> POWER_LINE_TAGS = Arrays.asList("line", "minor_line");
     /** Values for {@code power} key interpreted as power towers */
-    public static final Collection<String> POWER_TOWER_TAGS = Arrays.asList("tower", "pole");
+    protected static final Collection<String> POWER_TOWER_TAGS = Arrays.asList("tower", "pole");
     /** Values for {@code power} key interpreted as power stations */
-    public static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "substation", "plant", "generator");
+    protected static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "substation", "plant", "generator");
     /** Values for {@code power} key interpreted as allowed power items */
-    public static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear");
+    protected static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear");
 
     private final Map<Way, String> towerPoleTagMap = new HashMap<>();
 

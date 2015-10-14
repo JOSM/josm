@@ -78,7 +78,7 @@ public final class PluginHandler {
     /**
      * Deprecated plugins that are removed on start
      */
-    public static final Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
+    protected static final Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
     static {
         String IN_CORE = tr("integrated into main program");
 
