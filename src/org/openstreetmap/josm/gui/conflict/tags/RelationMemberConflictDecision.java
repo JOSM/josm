@@ -114,4 +114,9 @@ public class RelationMemberConflictDecision {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return originalPrimitive.getPrimitiveId() + " at index " + pos + " with role " + role + " in " + relation.getUniqueId() + " => " + decision;
+    }
 }
