@@ -754,11 +754,16 @@ Condition simple_key_value_condition(Context context) :
     String val;
     float f;
     int i;
+    Condition.KeyMatchType matchType = null;;
     Condition.Op op;
     boolean considerValAsKey = false;
 }
 {
-    key=tag_key() s()
+    (
+        key = regex() s() { matchType = Condition.KeyMatchType.REGEX; }
+    |
+        key=tag_key() s()
+    )
     (
         LOOKAHEAD(3)
             (
@@ -806,7 +811,9 @@ Condition simple_key_value_condition(Context context) :
             s()
             f=float_() { val=Float.toString(f); }
     )
-    { return Condition.createKeyValueCondition(key, val, op, context, considerValAsKey); }
+    { return Condition.KeyMatchType.REGEX == matchType
+            ? Condition.createRegexpKeyRegexpValueCondition(key, val, op)
+            : Condition.createKeyValueCondition(key, val, op, context, considerValAsKey); }
 }
 
 Condition class_or_pseudoclass(Context context) :

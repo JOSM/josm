@@ -7,6 +7,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -53,6 +54,10 @@ public abstract class Condition {
 
         default: throw new AssertionError();
         }
+    }
+
+    public static Condition createRegexpKeyRegexpValueCondition(String k, String v, Op op) {
+        return new RegexpKeyValueRegexpCondition(k, v, op);
     }
 
     public static Condition createKeyCondition(String k, boolean not, KeyMatchType matchType, Context context) {
@@ -286,16 +291,40 @@ public abstract class Condition {
             this.pattern = Pattern.compile(v);
         }
 
+        protected boolean matches(Environment env) {
+            final String value = env.osm.get(k);
+            return value != null && pattern.matcher(value).find();
+        }
+
         @Override
         public boolean applies(Environment env) {
-            final String value = env.osm.get(k);
             if (Op.REGEX.equals(op)) {
-                return value != null && pattern.matcher(value).find();
+                return matches(env);
             } else if (Op.NREGEX.equals(op)) {
-                return value == null || !pattern.matcher(value).find();
+                return !matches(env);
             } else {
                 throw new IllegalStateException();
             }
+        }
+    }
+
+    public static class RegexpKeyValueRegexpCondition extends KeyValueRegexpCondition {
+
+        public final Pattern keyPattern;
+
+        public RegexpKeyValueRegexpCondition(String k, String v, Op op) {
+            super(k, v, op, false);
+            this.keyPattern = Pattern.compile(k);
+        }
+
+        @Override
+        protected boolean matches(Environment env) {
+            for (Map.Entry<String,String> kv: env.osm.getKeys().entrySet()) {
+                if (keyPattern.matcher(kv.getKey()).find() && pattern.matcher(kv.getValue()).find()) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
