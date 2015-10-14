@@ -5,10 +5,15 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -19,6 +24,8 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This model manages a list of conflicting relation members.
@@ -33,6 +40,8 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     protected final transient List<RelationMemberConflictDecision> decisions;
     /** the collection of relations for which we manage conflicts */
     protected transient Collection<Relation> relations;
+    /** the collection of primitives for which we manage conflicts */
+    protected transient Collection<? extends OsmPrimitive> primitives;
     /** the number of conflicts */
     private int numConflicts;
     private final PropertyChangeSupport support;
@@ -150,7 +159,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      */
     public void populate(Collection<Relation> relations, Collection<? extends OsmPrimitive> memberPrimitives) {
         decisions.clear();
-        relations = relations == null ? new LinkedList<Relation>() : relations;
+        relations = relations == null ? Collections.<Relation>emptyList() : relations;
         memberPrimitives = memberPrimitives == null ? new LinkedList<OsmPrimitive>() : memberPrimitives;
         for (Relation r : relations) {
             for (OsmPrimitive p: memberPrimitives) {
@@ -158,6 +167,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
             }
         }
         this.relations = relations;
+        this.primitives = memberPrimitives;
         refresh();
     }
 
@@ -171,11 +181,91 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         references = references == null ? new LinkedList<RelationToChildReference>() : references;
         decisions.clear();
         this.relations = new HashSet<>(references.size());
+        final Collection<OsmPrimitive> primitives = new HashSet<>();
         for (RelationToChildReference reference: references) {
             decisions.add(new RelationMemberConflictDecision(reference.getParent(), reference.getPosition()));
             relations.add(reference.getParent());
+            primitives.add(reference.getChild());
         }
+        this.primitives = primitives;
         refresh();
+    }
+
+    /**
+     * Prepare the default decisions for the current model.
+     *
+     * Keep/delete decisions are made if every member has the same role and the members are in consecutive order within the relation.
+     * For multiple occurrences those conditions are tested stepwise for each occurrence.
+     */
+    public void prepareDefaultRelationDecisions() {
+
+        for (final Relation relation : relations) {
+            final Map<OsmPrimitive, List<RelationMemberConflictDecision>> decisionsByPrimitive = new LinkedHashMap<>(primitives.size(), 1);
+            for (final RelationMemberConflictDecision decision : decisions) {
+                if (decision.getRelation() == relation) {
+                    final OsmPrimitive primitive = decision.getOriginalPrimitive();
+                    if (!decisionsByPrimitive.containsKey(primitive)) {
+                        decisionsByPrimitive.put(primitive, new ArrayList<RelationMemberConflictDecision>());
+                    }
+                    decisionsByPrimitive.get(primitive).add(decision);
+                }
+            }
+
+            //noinspection StatementWithEmptyBody
+            if (!decisionsByPrimitive.keySet().containsAll(primitives)) {
+                // some primitives are not part of the relation, leave undecided
+            } else {
+                final Collection<Iterator<RelationMemberConflictDecision>> iterators = new ArrayList<>(primitives.size());
+                for (final Collection<RelationMemberConflictDecision> i : decisionsByPrimitive.values()) {
+                    iterators.add(i.iterator());
+                }
+                while (Utils.forAll(iterators, new Predicate<Iterator<RelationMemberConflictDecision>>() {
+                    @Override
+                    public boolean evaluate(Iterator<RelationMemberConflictDecision> it) {
+                        return it.hasNext();
+                    }
+                })) {
+                    final List<RelationMemberConflictDecision> decisions = new ArrayList<>();
+                    final Collection<String> roles = new HashSet<>();
+                    final Collection<Integer> indices = new TreeSet<>();
+                    for (Iterator<RelationMemberConflictDecision> it : iterators) {
+                        final RelationMemberConflictDecision decision = it.next();
+                        decisions.add(decision);
+                        roles.add(decision.getRole());
+                        indices.add(decision.getPos());
+                    }
+                    if (roles.size() != 1) {
+                        // roles to not patch, leave undecided
+                        continue;
+                    } else if (!isCollectionOfConsecutiveNumbers(indices)) {
+                        // not consecutive members in relation, leave undecided
+                        continue;
+                    }
+                    decisions.get(0).decide(RelationMemberConflictDecisionType.KEEP);
+                    for (RelationMemberConflictDecision decision : decisions.subList(1, decisions.size())) {
+                        decision.decide(RelationMemberConflictDecisionType.REMOVE);
+                    }
+                }
+            }
+        }
+
+        refresh();
+    }
+
+    static boolean isCollectionOfConsecutiveNumbers(Collection<Integer> numbers) {
+        if (numbers.isEmpty()) {
+            return true;
+        }
+        final Iterator<Integer> it = numbers.iterator();
+        Integer previousValue = it.next();
+        while (it.hasNext()) {
+            final Integer i = it.next();
+            if (previousValue + 1 != i) {
+                return false;
+            }
+            previousValue = i;
+        }
+        return true;
     }
 
     /**
@@ -194,7 +284,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * @return the number of decisions managed by this model
      */
     public int getNumDecisions() {
-        return decisions == null ? 0 : decisions.size();
+        return decisions == null /* accessed via super constructor */ ? 0 : decisions.size();
     }
 
     /**

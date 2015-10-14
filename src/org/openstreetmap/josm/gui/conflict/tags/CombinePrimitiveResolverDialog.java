@@ -17,11 +17,8 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -50,8 +47,6 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.Utils.Function;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -297,48 +292,12 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         return cmds;
     }
 
-    protected void prepareDefaultTagDecisions() {
-        getTagConflictResolverModel().prepareDefaultTagDecisions();
-    }
-
-    protected void prepareDefaultRelationDecisions() {
-        final RelationMemberConflictResolverModel model = getRelationMemberConflictResolverModel();
-        final Map<Relation, Integer> numberOfKeepResolutions = new HashMap<>();
-        final MultiMap<OsmPrimitive, Relation> resolvedRelationsPerPrimitive = new MultiMap<>();
-
-        for (int i = 0; i < model.getNumDecisions(); i++) {
-            final RelationMemberConflictDecision decision = model.getDecision(i);
-            final Relation r = decision.getRelation();
-            final OsmPrimitive p = decision.getOriginalPrimitive();
-            if (!numberOfKeepResolutions.containsKey(r)) {
-                decision.decide(RelationMemberConflictDecisionType.KEEP);
-                numberOfKeepResolutions.put(r, 1);
-                resolvedRelationsPerPrimitive.put(p, r);
-                continue;
-            }
-
-            final Integer keepResolutions = numberOfKeepResolutions.get(r);
-            final Collection<Relation> resolvedRelations = Utils.firstNonNull(
-                    resolvedRelationsPerPrimitive.get(p), Collections.<Relation>emptyList());
-            if (keepResolutions <= Utils.filter(resolvedRelations, Predicates.equalTo(r)).size()) {
-                // old relation contains one primitive more often than the current resolution => keep the current member
-                decision.decide(RelationMemberConflictDecisionType.KEEP);
-                numberOfKeepResolutions.put(r, keepResolutions + 1);
-                resolvedRelationsPerPrimitive.put(p, r);
-            } else {
-                decision.decide(RelationMemberConflictDecisionType.REMOVE);
-                resolvedRelationsPerPrimitive.put(p, r);
-            }
-        }
-        model.refresh();
-    }
-
     /**
      * Prepares the default decisions for populated tag and relation membership conflicts.
      */
     public void prepareDefaultDecisions() {
-        prepareDefaultTagDecisions();
-        prepareDefaultRelationDecisions();
+        getTagConflictResolverModel().prepareDefaultTagDecisions();
+        getRelationMemberConflictResolverModel().prepareDefaultRelationDecisions();
     }
 
     protected JPanel buildEmptyConflictsPanel() {
