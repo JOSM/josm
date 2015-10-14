@@ -319,7 +319,7 @@ public abstract class Condition {
 
         @Override
         protected boolean matches(Environment env) {
-            for (Map.Entry<String,String> kv: env.osm.getKeys().entrySet()) {
+            for (Map.Entry<String, String> kv: env.osm.getKeys().entrySet()) {
                 if (keyPattern.matcher(kv.getKey()).find() && pattern.matcher(kv.getValue()).find()) {
                     return true;
                 }
