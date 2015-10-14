@@ -1,8 +1,8 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.tags;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -15,13 +15,15 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
 public class RelationMemberConflictResolverModelTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();
@@ -61,11 +63,11 @@ public class RelationMemberConflictResolverModelTest {
         model.populate(Collections.singleton(r), ways.subList(0, 2));
         model.prepareDefaultRelationDecisions();
         assertTrue(model.isResolvedCompletely());
-        assertThat(model.getDecision(0).getDecision(), is(RelationMemberConflictDecisionType.KEEP));
-        assertThat(model.getDecision(0).getOriginalPrimitive(), is((OsmPrimitive) ways.get(0)));
-        assertThat(model.getDecision(0).getRole(), is("foo"));
-        assertThat(model.getDecision(1).getDecision(), is(RelationMemberConflictDecisionType.REMOVE));
-        assertThat(model.getDecision(1).getOriginalPrimitive(), is((OsmPrimitive) ways.get(1)));
+        assertEquals(RelationMemberConflictDecisionType.KEEP, model.getDecision(0).getDecision());
+        assertEquals(ways.get(0), model.getDecision(0).getOriginalPrimitive());
+        assertEquals("foo", model.getDecision(0).getRole());
+        assertEquals(RelationMemberConflictDecisionType.REMOVE, model.getDecision(1).getDecision());
+        assertEquals(ways.get(1), model.getDecision(1).getOriginalPrimitive());
     }
 
     @Test
@@ -108,13 +110,13 @@ public class RelationMemberConflictResolverModelTest {
         model.populate(Collections.singleton(r), ways.subList(0, 2));
         model.prepareDefaultRelationDecisions();
         assertTrue(model.isResolvedCompletely());
-        assertThat(model.getDecision(0).getDecision(), is(RelationMemberConflictDecisionType.KEEP));
-        assertThat(model.getDecision(0).getOriginalPrimitive(), is((OsmPrimitive) ways.get(0)));
-        assertThat(model.getDecision(0).getRole(), is("foo"));
-        assertThat(model.getDecision(1).getDecision(), is(RelationMemberConflictDecisionType.KEEP));
-        assertThat(model.getDecision(1).getOriginalPrimitive(), is((OsmPrimitive) ways.get(0)));
-        assertThat(model.getDecision(1).getRole(), is("bar"));
-        assertThat(model.getDecision(2).getDecision(), is(RelationMemberConflictDecisionType.REMOVE));
-        assertThat(model.getDecision(3).getDecision(), is(RelationMemberConflictDecisionType.REMOVE));
+        assertEquals(RelationMemberConflictDecisionType.KEEP, model.getDecision(0).getDecision());
+        assertEquals(ways.get(0), model.getDecision(0).getOriginalPrimitive());
+        assertEquals("foo", model.getDecision(0).getRole());
+        assertEquals(RelationMemberConflictDecisionType.KEEP, model.getDecision(1).getDecision());
+        assertEquals(ways.get(0), model.getDecision(1).getOriginalPrimitive());
+        assertEquals("bar", model.getDecision(1).getRole());
+        assertEquals(RelationMemberConflictDecisionType.REMOVE, model.getDecision(2).getDecision());
+        assertEquals(RelationMemberConflictDecisionType.REMOVE, model.getDecision(3).getDecision());
     }
 }
