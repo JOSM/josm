@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions.search;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -43,12 +44,13 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
-import org.openstreetmap.josm.tools.Property;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -464,93 +466,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         search(s);
     }
 
-    public static int getSelection(SearchSetting s, Collection<OsmPrimitive> sel, Predicate<OsmPrimitive> p) {
-        int foundMatches = 0;
-        try {
-            SearchCompiler.Match matcher = SearchCompiler.compile(s);
-
-            if (s.mode == SearchMode.replace) {
-                sel.clear();
-            } else if (s.mode == SearchMode.in_selection) {
-                foundMatches = sel.size();
-            }
-
-            Collection<OsmPrimitive> all;
-            if (s.allElements) {
-                all = Main.main.getCurrentDataSet().allPrimitives();
-            } else {
-                all = Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives();
-            }
-
-            for (OsmPrimitive osm : all) {
-                if (s.mode == SearchMode.replace) {
-                    if (matcher.match(osm)) {
-                        sel.add(osm);
-                        ++foundMatches;
-                    }
-                } else if (s.mode == SearchMode.add && !p.evaluate(osm) && matcher.match(osm)) {
-                    sel.add(osm);
-                    ++foundMatches;
-                } else if (s.mode == SearchMode.remove && p.evaluate(osm) && matcher.match(osm)) {
-                    sel.remove(osm);
-                    ++foundMatches;
-                } else if (s.mode == SearchMode.in_selection && p.evaluate(osm) && !matcher.match(osm)) {
-                    sel.remove(osm);
-                    --foundMatches;
-                }
-            }
-        } catch (SearchCompiler.ParseError e) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    e.getMessage(),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-
-            );
-        }
-        return foundMatches;
-    }
-
     /**
-     * Version of getSelection that is customized for filter, but should also work in other context.
+     * Performs the search specified by the search string {@code search} and the search mode {@code mode}.
      *
-     * @param s the search settings
-     * @param all the collection of all the primitives that should be considered
-     * @param p the property that should be set/unset if something is found
+     * @param search the search string to use
+     * @param mode the search mode to use
      */
-    public static void getSelection(SearchSetting s, Collection<OsmPrimitive> all, Property<OsmPrimitive, Boolean> p) {
-        try {
-            if (s instanceof Filter && ((Filter) s).inverted) {
-                s = new SearchSetting(s);
-                s.text = String.format("-(%s)", s.text);
-            }
-            SearchCompiler.Match matcher = SearchCompiler.compile(s);
-
-            for (OsmPrimitive osm : all) {
-                if (s.mode == SearchMode.replace) {
-                    if (matcher.match(osm)) {
-                        p.set(osm, Boolean.TRUE);
-                    } else {
-                        p.set(osm, Boolean.FALSE);
-                    }
-                } else if (s.mode == SearchMode.add && !p.get(osm) && matcher.match(osm)) {
-                    p.set(osm, Boolean.TRUE);
-                } else if (s.mode == SearchMode.remove && p.get(osm) && matcher.match(osm)) {
-                    p.set(osm, Boolean.FALSE);
-                } else if (s.mode == SearchMode.in_selection && p.get(osm) && !matcher.match(osm)) {
-                    p.set(osm, Boolean.FALSE);
-                }
-            }
-        } catch (SearchCompiler.ParseError e) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    e.getMessage(),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    }
-
     public static void search(String search, SearchMode mode) {
         final SearchSetting searchSetting = new SearchSetting();
         searchSetting.text = search;
@@ -558,38 +479,126 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         search(searchSetting);
     }
 
-    public static void search(SearchSetting s) {
+    static void search(SearchSetting s) {
+        SearchTask.newSearchTask(s).run();
+    }
 
-        final DataSet ds = Main.main.getCurrentDataSet();
-        Collection<OsmPrimitive> sel = new HashSet<>(ds.getAllSelected());
-        int foundMatches = getSelection(s, sel, new Predicate<OsmPrimitive>() {
-            @Override
-            public boolean evaluate(OsmPrimitive o) {
-                return ds.isSelected(o);
+    static class SearchTask extends PleaseWaitRunnable {
+        private final DataSet ds;
+        private final SearchSetting setting;
+        private final Collection<OsmPrimitive> selection;
+        private final Predicate<OsmPrimitive> predicate;
+        private boolean canceled;
+        private int foundMatches;
+
+        private SearchTask(DataSet ds, SearchSetting setting, Collection<OsmPrimitive> selection, Predicate<OsmPrimitive> predicate) {
+            super(tr("Searching"));
+            this.ds = ds;
+            this.setting = setting;
+            this.selection = selection;
+            this.predicate = predicate;
+        }
+
+        static SearchTask newSearchTask(SearchSetting setting) {
+            final DataSet ds = Main.main.getCurrentDataSet();
+            final Collection<OsmPrimitive> selection = new HashSet<>(ds.getAllSelected());
+            return new SearchTask(ds, setting, selection, new Predicate<OsmPrimitive>() {
+                @Override
+                public boolean evaluate(OsmPrimitive o) {
+                    return ds.isSelected(o);
+                }
+            });
+        }
+
+        @Override
+        protected void cancel() {
+            this.canceled = true;
+        }
+
+        @Override
+        protected void realRun() {
+            try {
+                foundMatches = 0;
+                SearchCompiler.Match matcher = SearchCompiler.compile(setting);
+
+                if (setting.mode == SearchMode.replace) {
+                    selection.clear();
+                } else if (setting.mode == SearchMode.in_selection) {
+                    foundMatches = selection.size();
+                }
+
+                Collection<OsmPrimitive> all;
+                if (setting.allElements) {
+                    all = Main.main.getCurrentDataSet().allPrimitives();
+                } else {
+                    all = Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives();
+                }
+                final ProgressMonitor subMonitor = getProgressMonitor().createSubTaskMonitor(all.size(), false);
+                subMonitor.beginTask(trn("Searching in {0} object", "Searching in {0} objects", all.size(), all.size()));
+
+                for (OsmPrimitive osm : all) {
+                    if (canceled) {
+                        return;
+                    }
+                    if (setting.mode == SearchMode.replace) {
+                        if (matcher.match(osm)) {
+                            selection.add(osm);
+                            ++foundMatches;
+                        }
+                    } else if (setting.mode == SearchMode.add && !predicate.evaluate(osm) && matcher.match(osm)) {
+                        selection.add(osm);
+                        ++foundMatches;
+                    } else if (setting.mode == SearchMode.remove && predicate.evaluate(osm) && matcher.match(osm)) {
+                        selection.remove(osm);
+                        ++foundMatches;
+                    } else if (setting.mode == SearchMode.in_selection && predicate.evaluate(osm) && !matcher.match(osm)) {
+                        selection.remove(osm);
+                        --foundMatches;
+                    }
+                    subMonitor.worked(1);
+                }
+                subMonitor.finishTask();
+            } catch (SearchCompiler.ParseError e) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        e.getMessage(),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+
+                );
             }
-        });
-        ds.setSelected(sel);
-        if (foundMatches == 0) {
-            String msg = null;
-            final String text = Utils.shortenString(s.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY);
-            if (s.mode == SearchMode.replace) {
-                msg = tr("No match found for ''{0}''", text);
-            } else if (s.mode == SearchMode.add) {
-                msg = tr("Nothing added to selection by searching for ''{0}''", text);
-            } else if (s.mode == SearchMode.remove) {
-                msg = tr("Nothing removed from selection by searching for ''{0}''", text);
-            } else if (s.mode == SearchMode.in_selection) {
-                msg = tr("Nothing found in selection by searching for ''{0}''", text);
+        }
+
+        @Override
+        protected void finish() {
+            if (canceled) {
+                return;
             }
-            Main.map.statusLine.setHelpText(msg);
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    msg,
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-        } else {
-            Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
+            ds.setSelected(selection);
+            if (foundMatches == 0) {
+                final String msg;
+                final String text = Utils.shortenString(setting.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY);
+                if (setting.mode == SearchMode.replace) {
+                    msg = tr("No match found for ''{0}''", text);
+                } else if (setting.mode == SearchMode.add) {
+                    msg = tr("Nothing added to selection by searching for ''{0}''", text);
+                } else if (setting.mode == SearchMode.remove) {
+                    msg = tr("Nothing removed from selection by searching for ''{0}''", text);
+                } else if (setting.mode == SearchMode.in_selection) {
+                    msg = tr("Nothing found in selection by searching for ''{0}''", text);
+                } else {
+                    msg = null;
+                }
+                Main.map.statusLine.setHelpText(msg);
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        msg,
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
+            } else {
+                Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
+            }
         }
     }
 
