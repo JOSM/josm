@@ -3543,38 +3543,6 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Bar -->
-        <item name="Night Club" icon="styles/standard/leisure/discoball.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nightclub"
-                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=nightclub"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=nightclub"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=nightclub"
-                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=nightclub"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=nightclub"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=nightclub"
-                  ro.href="http://wiki.openstreetmap.org/wiki/Ro:Tag:amenity=nightclub"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=nightclub" />
-            <space />
-            <key key="amenity" value="nightclub" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <space />
-            <reference ref="internet_smoking" />
-            <space />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Night Club -->
-        <item name="Strip Club" icon="styles/standard/leisure/nightclub.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=stripclub"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=stripclub"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=stripclub"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=stripclub"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=stripclub" />
-            <space />
-            <key key="amenity" value="stripclub" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <space />
-            <reference ref="internet_smoking" />
-            <space />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Strip Club -->
     </group> <!-- Food+Drinks -->
     <group name="Tourism" icon="presets/sightseeing.png">
         <item name="Attraction" icon="presets/sightseeing.png" type="node,closedway" preset_name_label="true">
@@ -3830,35 +3798,6 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Horse Riding -->
-        <item name="Casino" icon="styles/standard/leisure/casino.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=casino"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=casino"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=casino"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=casino" />
-            <space />
-            <key key="amenity" value="casino" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <space />
-            <reference ref="internet_smoking" />
-            <space />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Casino -->
-        <item name="Brothel" icon="styles/standard/leisure/stripclub.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=brothel"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=brothel"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=brothel"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=brothel"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=brothel"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=brothel"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=brothel" />
-            <space />
-            <key key="amenity" value="brothel" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <space />
-            <reference ref="internet_smoking" />
-            <space />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Brothel -->
         <separator/>
         <item name="Playground" icon="styles/standard/leisure/playground.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=playground"
@@ -3939,6 +3878,68 @@
             <key key="leisure" value="swimming_pool" />
             <key key="access" value="private" />
         </item> <!-- Private Swimming Pool -->
+        <separator/>
+        <item name="Night Club" icon="styles/standard/leisure/discoball.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nightclub"
+                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=nightclub"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=nightclub"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=nightclub"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=nightclub"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=nightclub"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=nightclub"
+                  ro.href="http://wiki.openstreetmap.org/wiki/Ro:Tag:amenity=nightclub"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=nightclub" />
+            <space />
+            <key key="amenity" value="nightclub" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <space />
+            <reference ref="internet_smoking" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Night Club -->
+        <item name="Casino" icon="styles/standard/leisure/casino.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=casino"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=casino"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=casino"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=casino" />
+            <space />
+            <key key="amenity" value="casino" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <space />
+            <reference ref="internet_smoking" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Casino -->
+        <item name="Strip Club" icon="styles/standard/leisure/nightclub.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=stripclub"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=stripclub"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=stripclub"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=stripclub"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=stripclub" />
+            <space />
+            <key key="amenity" value="stripclub" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <space />
+            <reference ref="internet_smoking" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Strip Club -->
+        <item name="Brothel" icon="styles/standard/leisure/stripclub.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=brothel"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=brothel"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=brothel"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=brothel"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=brothel"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=brothel"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=brothel" />
+            <space />
+            <key key="amenity" value="brothel" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <space />
+            <reference ref="internet_smoking" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Brothel -->
     </group> <!-- Leisure -->
     <group name="Culture" icon="presets/theater.png">
         <item name="Museum" icon="styles/standard/sightseeing/museum.svg" type="node,closedway" preset_name_label="true">
