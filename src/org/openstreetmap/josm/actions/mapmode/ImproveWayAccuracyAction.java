@@ -444,9 +444,12 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                 List<OsmPrimitive> referrers = candidateNode.getReferrers();
                 List<Way> ways = OsmPrimitive.getFilteredList(referrers, Way.class);
                 if (referrers.size() != 1 || ways.size() != 1) {
-                    JOptionPane.showMessageDialog(Main.parent,
-                            tr("Cannot delete node that is referenced by multiple objects"),
-                            tr("Error"), JOptionPane.ERROR_MESSAGE);
+                    // detach node from way
+                    final Way newWay = new Way(targetWay);
+                    final List<Node> nodes = newWay.getNodes();
+                    nodes.remove(candidateNode);
+                    newWay.setNodes(nodes);
+                    Main.main.undoRedo.add(new ChangeCommand(targetWay, newWay));
                 } else if (candidateNode.isTagged()) {
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("Cannot delete node that has tags"),
