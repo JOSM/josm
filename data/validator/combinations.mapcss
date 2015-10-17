@@ -168,11 +168,11 @@ way[junction                   ][!highway][junction!=yes],
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.key}");
 }
 
-/* {0.tag} together with {1.key}, see #9389 */
-*[oneway=yes][/:backward/],
-*[oneway=yes][/:forward/],
-*[oneway=-1 ][/:backward/],
-*[oneway=-1 ][/:forward/] {
+/* {0.tag} together with {1.key}, see #9389, #11977 */
+*[oneway=yes][/:backward/][!"traffic_sign:backward"],
+*[oneway=yes][/:forward/][!"traffic_sign:forward"],
+*[oneway=-1 ][/:backward/][!"traffic_sign:backward"],
+*[oneway=-1 ][/:forward/][!"traffic_sign:forward"] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.key}");
 }
 
