@@ -6996,7 +6996,7 @@
             <reference ref="link_contact_address_payment" />
         </item> <!-- Ticket -->
     </group> <!-- Printed Material -->
-    <group name="For the body" icon="D:/Stefan/OSM/TestNew/01.svg">
+    <group name="For the body" icon="styles/standard/shop/body.svg">
         <item name="Chemist" icon="styles/standard/shop/chemist.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=chemist"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=chemist"
