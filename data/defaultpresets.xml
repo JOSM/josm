@@ -6996,33 +6996,7 @@
             <reference ref="link_contact_address_payment" />
         </item> <!-- Ticket -->
     </group> <!-- Printed Material -->
-    <group name="Other" icon="styles/standard/shop/mall.png">
-        <item name="Department Store" icon="styles/standard/shop/mall.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=department_store"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=department_store"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=department_store"
-                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:shop=department_store"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=department_store"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=department_store"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=department_store" />
-            <space />
-            <key key="shop" value="department_store" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Department Store -->
-        <item name="Mall" icon="styles/standard/shop/mall.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=mall"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=mall"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=mall"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=mall"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=mall"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=mall" />
-            <space />
-            <key key="shop" value="mall" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Mall -->
-        <separator/>
+    <group name="For the body" icon="D:/Stefan/OSM/TestNew/01.svg">
         <item name="Chemist" icon="styles/standard/shop/chemist.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=chemist"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=chemist"
@@ -7113,23 +7087,6 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Jewellery -->
-        <item name="Gift/Souvenir" icon="presets/present.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=gift"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=gift"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=gift"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=gift"
-                  ko.href="http://wiki.openstreetmap.org/wiki/Ko:Tag:shop=gift"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=gift"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=gift" />
-            <space />
-            <key key="shop" value="gift" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <optional>
-                <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" />
-                <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
-            </optional>
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Gift/Souvenir -->
         <item name="Erotic" icon="presets/erotic.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=erotic"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=erotic"
@@ -7140,6 +7097,33 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Erotic -->
+    </group> <!-- For the body -->
+    <group name="Other" icon="styles/standard/shop/mall.png">
+        <item name="Department Store" icon="styles/standard/shop/mall.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=department_store"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=department_store"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=department_store"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:shop=department_store"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=department_store"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=department_store"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=department_store" />
+            <space />
+            <key key="shop" value="department_store" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Department Store -->
+        <item name="Mall" icon="styles/standard/shop/mall.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=mall"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=mall"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=mall"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=mall"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=mall"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=mall" />
+            <space />
+            <key key="shop" value="mall" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Mall -->
         <separator/>
         <item name="Florist" icon="styles/standard/shop/florist.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=florist"
@@ -7234,6 +7218,23 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Toys -->
+        <item name="Gift/Souvenir" icon="presets/present.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=gift"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=gift"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=gift"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=gift"
+                  ko.href="http://wiki.openstreetmap.org/wiki/Ko:Tag:shop=gift"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=gift"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=gift" />
+            <space />
+            <key key="shop" value="gift" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <optional>
+                <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" />
+                <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
+            </optional>
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Gift/Souvenir -->
         <item name="Variety Store" icon="presets/variety_store.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=variety_store"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=variety_store"
