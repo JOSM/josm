@@ -108,7 +108,7 @@ public class SearchCompiler {
         private Collection<String> keywords = Arrays.asList("id", "version",
                 "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
-                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%");
+                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole", "isRole");
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
@@ -156,6 +156,10 @@ public class SearchCompiler {
                         return new Nth(tokenizer, false);
                     case "nth%":
                         return new Nth(tokenizer, true);
+                    case "hasRole":
+                        return new HasRole(tokenizer);
+                    case "isRole":
+                        return new IsRole(tokenizer);
                     case "timestamp":
                         // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
                         String rangeS = ' ' + tokenizer.readTextOrNumber() + ' ';
@@ -1123,6 +1127,48 @@ public class SearchCompiler {
         @Override
         protected String getString() {
             return "timestamp";
+        }
+    }
+
+    /**
+     * Matches relations with a member of the given role
+     */
+    private static class HasRole extends Match {
+        private final String role;
+
+        HasRole(PushbackTokenizer tokenizer) {
+            role = tokenizer.readTextOrNumber();
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            return osm instanceof Relation && ((Relation) osm).getMemberRoles().contains(role);
+        }
+    }
+
+    /**
+     * Matches object which are part of a relation with the given role
+     */
+    private static class IsRole extends Match {
+        private final String role;
+
+        IsRole(PushbackTokenizer tokenizer) {
+            role = tokenizer.readTextOrNumber();
+        }
+
+        @Override
+        public boolean match(final OsmPrimitive osm) {
+            for (final OsmPrimitive ref : osm.getReferrers()) {
+                if (ref instanceof Relation && Utils.exists(((Relation) ref).getMembers(), new Predicate<RelationMember>() {
+                    @Override
+                    public boolean evaluate(RelationMember object) {
+                        return osm.equals(object.getMember()) && role.equals(object.getRole());
+                    }
+                })) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
