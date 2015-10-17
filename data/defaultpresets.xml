@@ -4548,9 +4548,9 @@
             <combo key="access" text="Access rights" values="public,permissive,customers" />
             <optional>
                 <checkgroup columns="3">
-                    <check key="female" text="Female" />
-                    <check key="male" text="Male" />
-                    <check key="unisex" text="Unisex" />
+                    <check key="female" text="Female" text_context="restroom" />
+                    <check key="male" text="Male" text_context="restroom" />
+                    <check key="unisex" text="Unisex" text_context="restroom" />
                 </checkgroup>
                 <combo key="toilets:disposal" text="Type" values="flush,pitlatrine,chemical,bucket" />
                 <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
