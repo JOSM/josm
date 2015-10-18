@@ -42,6 +42,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class AutoScaleAction extends JosmAction {
 
+    /**
+     * A list of things we can zoom to. The zoom target is given depending on the mode.
+     */
     public static final Collection<String> MODES = Collections.unmodifiableList(Arrays.asList(
         marktr(/* ICON(dialogs/autoscale/) */ "data"),
         marktr(/* ICON(dialogs/autoscale/) */ "layer"),
@@ -52,6 +55,9 @@ public class AutoScaleAction extends JosmAction {
         marktr(/* ICON(dialogs/autoscale/) */ "previous"),
         marktr(/* ICON(dialogs/autoscale/) */ "next")));
 
+    /**
+     * One of {@link #MODES}. Defines what we are zooming to.
+     */
     private final String mode;
 
     protected transient ZoomChangeAdapter zoomChangeAdapter;
@@ -82,10 +88,14 @@ public class AutoScaleAction extends JosmAction {
         zoomTo(sel);
     }
 
+    /**
+     * Zooms the view to display the given set of primitives.
+     * @param sel The primitives to zoom to, e.g. the current selection.
+     */
     public static void zoomTo(Collection<OsmPrimitive> sel) {
         BoundingXYVisitor bboxCalculator = new BoundingXYVisitor();
         bboxCalculator.computeBoundingBox(sel);
-        // increase bbox by 0.001 degrees on each side. this is required
+        // increase bbox. This is required
         // especially if the bbox contains one single node, but helpful
         // in most other cases as well.
         bboxCalculator.enlargeBoundingBox();
@@ -94,6 +104,10 @@ public class AutoScaleAction extends JosmAction {
         }
     }
 
+    /**
+     * Performs the auto scale operation of the given mode without the need to create a new action.
+     * @param mode One of {@link #MODES}.
+     */
     public static void autoScale(String mode) {
         new AutoScaleAction(mode, false).autoScale();
     }
@@ -171,6 +185,9 @@ public class AutoScaleAction extends JosmAction {
         installAdapters();
     }
 
+    /**
+     * Performs this auto scale operation for the mode this action is in.
+     */
     public void autoScale() {
         if (Main.isDisplayingMapView()) {
             switch (mode) {
