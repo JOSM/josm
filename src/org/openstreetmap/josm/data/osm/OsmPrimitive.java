@@ -725,6 +725,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
                             "yh:STRUCTURE",
                             "yh:TOTYUMONO",
                             "yh:TYPE",
+                            "yh:WIDTH",
                             "yh:WIDTH_RANK"
                         ));
         }

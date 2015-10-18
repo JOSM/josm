@@ -485,7 +485,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         SearchTask.newSearchTask(s).run();
     }
 
-    static class SearchTask extends PleaseWaitRunnable {
+    static final class SearchTask extends PleaseWaitRunnable {
         private final DataSet ds;
         private final SearchSetting setting;
         private final Collection<OsmPrimitive> selection;

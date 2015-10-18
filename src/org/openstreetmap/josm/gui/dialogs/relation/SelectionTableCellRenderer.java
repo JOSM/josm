@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Rectangle;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -57,8 +58,8 @@ public class SelectionTableCellRenderer extends JLabel implements TableCellRende
         setBackground(bgc);
     }
 
-    protected void renderPrimitive(OsmPrimitive primitive) {
-        setIcon(ImageProvider.get(primitive.getDisplayType()));
+    protected void renderPrimitive(OsmPrimitive primitive, Rectangle cellSize) {
+        setIcon(ImageProvider.getPadded(primitive, cellSize));
         setText(primitive.getDisplayName(DefaultNameFormatter.getInstance()));
         setToolTipText(DefaultNameFormatter.getInstance().buildDefaultToolTip(primitive));
     }
@@ -71,8 +72,10 @@ public class SelectionTableCellRenderer extends JLabel implements TableCellRende
         if (value == null)
             return this;
 
+        Rectangle cellSize = table.getCellRect(row, column, false);
+
         renderBackground((OsmPrimitive) value);
-        renderPrimitive((OsmPrimitive) value);
+        renderPrimitive((OsmPrimitive) value, cellSize);
         return this;
     }
 
