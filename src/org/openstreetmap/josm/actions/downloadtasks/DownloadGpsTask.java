@@ -145,11 +145,15 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         private <L extends Layer> L addOrMergeLayer(L layer, L mergeLayer) {
             if (layer == null) return null;
             if (newLayer || mergeLayer == null) {
-                Main.main.addLayer(layer);
+                if (Main.main != null) {
+                    Main.main.addLayer(layer);
+                }
                 return layer;
             } else {
                 mergeLayer.mergeFrom(layer);
-                Main.map.repaint();
+                if (Main.map != null) {
+                    Main.map.repaint();
+                }
                 return mergeLayer;
             }
         }
@@ -178,7 +182,8 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             return null;
         }
 
-        @Override protected void cancel() {
+        @Override
+        protected void cancel() {
             setCanceled(true);
             if (reader != null) {
                 reader.cancel();
