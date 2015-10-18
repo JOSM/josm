@@ -108,7 +108,7 @@ public class SearchCompiler {
         private Collection<String> keywords = Arrays.asList("id", "version",
                 "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
-                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole", "isRole");
+                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole");
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
