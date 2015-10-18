@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
-import java.awt.GridLayout;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -230,9 +231,9 @@ public class SplitWayAction extends JosmAction {
             this.list.setSelectedValue(wayToKeep, true);
 
             setButtonIcons(new String[]{"ok", "cancel"});
-            final JPanel pane = new JPanel(new GridLayout(2, 1));
-            pane.add(new JLabel(getTitle()));
-            pane.add(list);
+            final JPanel pane = new JPanel(new GridBagLayout());
+            pane.add(new JLabel(getTitle()), GBC.eol().fill(GBC.HORIZONTAL));
+            pane.add(list, GBC.eop().fill(GBC.HORIZONTAL));
             setContent(pane);
         }
 
@@ -257,7 +258,10 @@ public class SplitWayAction extends JosmAction {
                 @Override
                 public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                     final Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                    ((JLabel) c).setText(tr("Segment {0}: {1}", index + 1, DefaultNameFormatter.getInstance().format((Way) value)));
+                    final String name = DefaultNameFormatter.getInstance().format((Way) value);
+                    // get rid of id from DefaultNameFormatter.decorateNameWithId()
+                    final String nameWithoutId = name.replaceAll(" \\[id: -?\\d+\\]$", "");
+                    ((JLabel) c).setText(tr("Segment {0}: {1}", index + 1, nameWithoutId));
                     return c;
                 }
             });
