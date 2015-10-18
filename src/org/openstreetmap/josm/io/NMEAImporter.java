@@ -4,7 +4,6 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -30,8 +29,8 @@ public class NMEAImporter extends FileImporter {
     /**
      * The NMEA file filter (*.nmea *.nme *.nma *.log *.txt files).
      */
-    public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
-            "nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files") + " (*.nmea *.nme *.nma *.log *.txt)");
+    public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
+            "nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files"));
 
     /**
      * Constructs a new {@code NMEAImporter}.
@@ -43,7 +42,7 @@ public class NMEAImporter extends FileImporter {
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
         final String fn = file.getName();
-        try (InputStream fis = new FileInputStream(file)) {
+        try (InputStream fis = Compression.getUncompressedFileInputStream(file)) {
             final NmeaReader r = new NmeaReader(fis);
             if (r.getNumberOfCoordinates() > 0) {
                 r.data.storageFile = file;

@@ -4,8 +4,10 @@ package org.openstreetmap.josm.actions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ServiceConfigurationError;
@@ -275,6 +277,29 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         this.extensions = extension;
         this.defaultExtension = defaultExtension;
         this.description = description;
+    }
+
+    /**
+     * Construct an extension file filter with the extensions supported by {@link org.openstreetmap.josm.io.Compression}
+     * automatically added to the {@code extensions}. The specified {@code extensions} will be added to the description
+     * in the form {@code old-description (*.ext1, *.ext2)}.
+     * @param extensions The comma-separated list of file extensions
+     * @param defaultExtension The default extension
+     * @param description A short textual description of the file type without supported extensions in parentheses
+     * @return The constructed filter
+     */
+    public static ExtensionFileFilter newFilterWithArchiveExtensions(String extensions, String defaultExtension, String description) {
+        final Collection<String> extensionsPlusArchive = new LinkedHashSet<>();
+        final Collection<String> extensionsForDescription = new LinkedHashSet<>();
+        for (String e : extensions.split(",")) {
+            extensionsPlusArchive.add(e);
+            extensionsPlusArchive.add(e + ".gz");
+            extensionsPlusArchive.add(e + ".bz2");
+            extensionsForDescription.add("*." + e);
+            // intentionally do not add [e].gz and [e].bz2 to extensionsForDescription in order to avoid long texts
+        }
+        return new ExtensionFileFilter(Utils.join(",", extensionsPlusArchive), defaultExtension,
+                description + " (" + Utils.join(", ", extensionsForDescription) + ")");
     }
 
     /**
