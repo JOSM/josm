@@ -158,8 +158,6 @@ public class SearchCompiler {
                         return new Nth(tokenizer, true);
                     case "hasRole":
                         return new HasRole(tokenizer);
-                    case "isRole":
-                        return new IsRole(tokenizer);
                     case "timestamp":
                         // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
                         String rangeS = ' ' + tokenizer.readTextOrNumber() + ' ';
@@ -1143,32 +1141,6 @@ public class SearchCompiler {
         @Override
         public boolean match(OsmPrimitive osm) {
             return osm instanceof Relation && ((Relation) osm).getMemberRoles().contains(role);
-        }
-    }
-
-    /**
-     * Matches object which are part of a relation with the given role
-     */
-    private static class IsRole extends Match {
-        private final String role;
-
-        IsRole(PushbackTokenizer tokenizer) {
-            role = tokenizer.readTextOrNumber();
-        }
-
-        @Override
-        public boolean match(final OsmPrimitive osm) {
-            for (final OsmPrimitive ref : osm.getReferrers()) {
-                if (ref instanceof Relation && Utils.exists(((Relation) ref).getMembers(), new Predicate<RelationMember>() {
-                    @Override
-                    public boolean evaluate(RelationMember object) {
-                        return osm.equals(object.getMember()) && role.equals(object.getRole());
-                    }
-                })) {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 

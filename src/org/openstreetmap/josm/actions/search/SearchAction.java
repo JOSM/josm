@@ -419,7 +419,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("child <i>expr</i>", "child ", tr("all children of objects matching the expression"), "child building")
                 .addKeyword("parent <i>expr</i>", "parent ", tr("all parents of objects matching the expression"), "parent bus_stop")
                 .addKeyword("hasRole:<i>stop</i>", "hasRole:", tr("relation containing a member of role <i>stop</i>"))
-                .addKeyword("isRole:<i>stop</i>", "isRole:", tr("objects being part of a relation as role <i>stop</i>"))
+                .addKeyword("role:<i>stop</i>", "role:", tr("objects being part of a relation as role <i>stop</i>"))
                 .addKeyword("nth:<i>7</i>", "nth:",
                         tr("n-th member of relation and/or n-th node of way"), "nth:5 (child type:relation)", "nth:-1")
                 .addKeyword("nth%:<i>7</i>", "nth%:",
