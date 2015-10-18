@@ -244,7 +244,8 @@ public class SplitWayAction extends JosmAction {
                 public void valueChanged(ListSelectionEvent e) {
                     final Way selected = list.getSelectedValue();
                     if (Main.isDisplayingMapView() && selected != null) {
-                        final List<WaySegment> segments = Utils.transform(selected.getNodes().subList(0, selected.getNodesCount() - 1), new Utils.Function<Node, WaySegment>() {
+                        final List<WaySegment> segments = Utils.transform(selected.getNodes().subList(0, selected.getNodesCount() - 1),
+                                new Utils.Function<Node, WaySegment>() {
                             @Override
                             public WaySegment apply(Node x) {
                                 return new WaySegment(selectedWay, selectedWay.getNodes().indexOf(x));
