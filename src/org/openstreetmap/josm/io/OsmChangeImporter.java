@@ -19,8 +19,8 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public class OsmChangeImporter extends FileImporter {
 
-    public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
-            "osc,osc.bz2,osc.bz,osc.gz", "osc", tr("OsmChange File") + " (*.osc *.osc.bz2 *.osc.bz *.osc.gz)");
+    public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
+            "osc", "osc", tr("OsmChange File"), true);
 
     /**
      * Constructs a new {@code OsmChangeImporter}.

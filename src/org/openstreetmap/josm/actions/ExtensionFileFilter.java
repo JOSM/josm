@@ -286,9 +286,11 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @param extensions The comma-separated list of file extensions
      * @param defaultExtension The default extension
      * @param description A short textual description of the file type without supported extensions in parentheses
+     * @param addArchiveExtensionsToDescription Whether to also add the archive extensions to the description
      * @return The constructed filter
      */
-    public static ExtensionFileFilter newFilterWithArchiveExtensions(String extensions, String defaultExtension, String description) {
+    public static ExtensionFileFilter newFilterWithArchiveExtensions(
+            String extensions, String defaultExtension, String description, boolean addArchiveExtensionsToDescription) {
         final Collection<String> extensionsPlusArchive = new LinkedHashSet<>();
         final Collection<String> extensionsForDescription = new LinkedHashSet<>();
         for (String e : extensions.split(",")) {
@@ -296,7 +298,10 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
             extensionsPlusArchive.add(e + ".gz");
             extensionsPlusArchive.add(e + ".bz2");
             extensionsForDescription.add("*." + e);
-            // intentionally do not add [e].gz and [e].bz2 to extensionsForDescription in order to avoid long texts
+            if (addArchiveExtensionsToDescription) {
+                extensionsForDescription.add("*." + e + ".gz");
+                extensionsForDescription.add("*." + e + ".bz2");
+            }
         }
         return new ExtensionFileFilter(Utils.join(",", extensionsPlusArchive), defaultExtension,
                 description + " (" + Utils.join(", ", extensionsForDescription) + ")");
