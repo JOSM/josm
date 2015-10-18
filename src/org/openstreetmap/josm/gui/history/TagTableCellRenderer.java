@@ -1,11 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -30,11 +27,9 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         String text = key;
         Color bgColor = UIManager.getColor("Table.background");
         Color fgColor = UIManager.getColor("Table.foreground");
-        Font font = UIManager.getFont("Table.font");
         if (!model.hasTag(key)) {
-            text = tr("not present");
+            text = "";
             bgColor = BGCOLOR_DIFFERENCE;
-            font = font.deriveFont(Font.ITALIC);
         } else if (!model.oppositeHasTag(key)) {
             bgColor = BGCOLOR_DIFFERENCE;
         }
@@ -47,18 +42,14 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         setToolTipText(text);
         setBackground(bgColor);
         setForeground(fgColor);
-        setFont(font);
     }
 
     protected void renderValue(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected) {
         String text = "";
         Color bgColor = UIManager.getColor("Table.background");
         Color fgColor = UIManager.getColor("Table.foreground");
-        Font font = UIManager.getFont("Table.font");
         if (!model.hasTag(key)) {
-            text = tr("not present");
             bgColor = BGCOLOR_DIFFERENCE;
-            font = font.deriveFont(Font.ITALIC);
         } else {
             text = model.getValue(key);
             if (!model.hasSameValueAsOpposite(key)) {
@@ -74,7 +65,6 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         setToolTipText(text);
         setBackground(bgColor);
         setForeground(fgColor);
-        setFont(font);
     }
 
     @Override
