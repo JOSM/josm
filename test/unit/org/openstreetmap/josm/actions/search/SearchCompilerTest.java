@@ -15,9 +15,11 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
 
@@ -323,5 +325,57 @@ public class SearchCompilerTest {
             assertFalse(p.toString(), p.isNew());
             sc.match(p, false);
         }
+    }
+
+    /**
+     * Search for node objects.
+     * @throws ParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testTypeNode() throws ParseError {
+        final SearchContext sc = new SearchContext("type:node");
+        for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.n2, sc.w1, sc.w2, sc.r1, sc.r2}) {
+            sc.match(p, OsmPrimitiveType.NODE.equals(p.getType()));
+        }
+    }
+
+    /**
+     * Search for way objects.
+     * @throws ParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testTypeWay() throws ParseError {
+        final SearchContext sc = new SearchContext("type:way");
+        for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.n2, sc.w1, sc.w2, sc.r1, sc.r2}) {
+            sc.match(p, OsmPrimitiveType.WAY.equals(p.getType()));
+        }
+    }
+
+    /**
+     * Search for relation objects.
+     * @throws ParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testTypeRelation() throws ParseError {
+        final SearchContext sc = new SearchContext("type:relation");
+        for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.n2, sc.w1, sc.w2, sc.r1, sc.r2}) {
+            sc.match(p, OsmPrimitiveType.RELATION.equals(p.getType()));
+        }
+    }
+
+    /**
+     * Search for users.
+     * @throws ParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testUser() throws ParseError {
+        final SearchContext foobar = new SearchContext("user:foobar");
+        foobar.n1.setUser(User.createLocalUser("foobar"));
+        foobar.match(foobar.n1, true);
+        foobar.match(foobar.n2, false);
+        final SearchContext anonymous = new SearchContext("user:anonymous");
+        anonymous.n1.setUser(User.createLocalUser("foobar"));
+        anonymous.match(anonymous.n1, false);
+        anonymous.match(anonymous.n2, true);
     }
 }

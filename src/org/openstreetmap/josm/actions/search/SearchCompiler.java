@@ -105,7 +105,7 @@ public class SearchCompiler {
     }
 
     public class CoreSimpleMatchFactory implements SimpleMatchFactory {
-        private Collection<String> keywords = Arrays.asList("id", "version",
+        private Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
                 "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
                 "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole");
@@ -140,6 +140,12 @@ public class SearchCompiler {
                         return new Id(tokenizer);
                     case "version":
                         return new Version(tokenizer);
+                    case "type":
+                        return new ExactType(tokenizer.readTextOrNumber());
+                    case "user":
+                        return new UserMatch(tokenizer.readTextOrNumber());
+                    case "role":
+                        return new RoleMatch(tokenizer.readTextOrNumber());
                     case "changeset":
                         return new ChangesetId(tokenizer);
                     case "nodes":
@@ -1582,7 +1588,8 @@ public class SearchCompiler {
                     return unaryFactory.get(key, parseFactor(), tokenizer);
 
                 // key:value form where value is a string (may be OSM key search)
-                return parseKV(key, tokenizer.readTextOrNumber());
+                final String value = tokenizer.readTextOrNumber();
+                return new KeyValue(key, value != null ? value : "", regexSearch, caseSensitive);
             } else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
                 return new BooleanMatch(key, false);
             else {
@@ -1607,22 +1614,6 @@ public class SearchCompiler {
             throw new ParseError(errorMessage);
         else
             return fact;
-    }
-
-    private Match parseKV(String key, String value) throws ParseError {
-        if (value == null) {
-            value = "";
-        }
-        switch(key) {
-        case "type":
-            return new ExactType(value);
-        case "user":
-            return new UserMatch(value);
-        case "role":
-            return new RoleMatch(value);
-        default:
-            return new KeyValue(key, value, regexSearch, caseSensitive);
-        }
     }
 
     private static int regexFlags(boolean caseSensitive) {
