@@ -30,7 +30,7 @@ public class NMEAImporter extends FileImporter {
      * The NMEA file filter (*.nmea *.nme *.nma *.log *.txt files).
      */
     public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
-            "nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files"));
+            "nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files"), false);
 
     /**
      * Constructs a new {@code NMEAImporter}.

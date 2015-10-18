@@ -17,13 +17,13 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.xml.sax.SAXException;
 
 /**
- * File importer that reads note dump files (*.osn and .osn.bz2)
+ * File importer that reads note dump files (*.osn, .osn.gz and .osn.bz2)
  * @since 7538
  */
 public class NoteImporter extends FileImporter {
 
-    private static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
-            "osn,osn.bz2", "osn", tr("Note Files") + " (*.osn *.osn.bz2)");
+    private static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
+            "osn", "osn", tr("Note Files"), true);
 
     /** Create an importer for note dump files */
     public NoteImporter() {

@@ -27,8 +27,8 @@ public class GpxImporter extends FileImporter {
     /**
      * The GPX file filter (*.gpx and *.gpx.gz files).
      */
-    public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
-            "gpx,gpx.gz,gpx.bz2", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz, *.gpx.bz2)");
+    public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
+            "gpx", "gpx", tr("GPX Files"), true);
 
     /**
      * Utility class containing imported GPX and marker layers, and a task to run after they are added to MapView.
