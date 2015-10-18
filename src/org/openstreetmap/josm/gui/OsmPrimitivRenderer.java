@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.Component;
+import java.awt.Rectangle;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -66,13 +67,15 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      * Internal method that stuffs information into the rendering component
      * provided that it's a kind of JLabel.
      * @param def the rendering component
-     * @param value the OsmPrimtive to render
+     * @param value the OsmPrimitive to render
      * @return the modified rendering component
      */
     private Component renderer(Component def, OsmPrimitive value) {
         if (value != null && def instanceof JLabel) {
             ((JLabel) def).setText(getComponentText(value));
-            ImageIcon icon = ImageProvider.get(value.getDisplayType());
+            ImageIcon icon = ImageProvider.getPadded(value,
+                // Height of component no yet known, assume the default 16px.
+                new Rectangle(16, 16));
             if (icon != null) {
                 ((JLabel) def).setIcon(icon);
             } else {
@@ -87,7 +90,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      * Internal method that stuffs information into the rendering component
      * provided that it's a kind of JLabel.
      * @param def the rendering component
-     * @param value the HistoryOsmPrimtive to render
+     * @param value the HistoryOsmPrimitive to render
      * @return the modified rendering component
      */
     private Component renderer(Component def, HistoryOsmPrimitive value) {

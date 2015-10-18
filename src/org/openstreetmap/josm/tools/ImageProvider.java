@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
@@ -55,7 +56,14 @@ import javax.swing.ImageIcon;
 import javax.xml.bind.DatatypeConverter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.mappaint.ElemStyle;
+import org.openstreetmap.josm.gui.mappaint.MapImage;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
+import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.w3c.dom.Element;
@@ -1265,6 +1273,57 @@ public class ImageProvider {
     public static ImageIcon get(OsmPrimitiveType type) {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         return get("data", type.getAPIName());
+    }
+
+    /**
+     * @param primitive Object for which an icon shall be fetched. The icon is chosen based on tags.
+     * @param iconSize Target size of icon. Icon is padded if required.
+     * @return Icon for {@code primitive} that fits in cell.
+     * @since 8903
+     */
+    public static ImageIcon getPadded(OsmPrimitive primitive, Rectangle iconSize) {
+        // Check if the current styles have special icon for tagged nodes.
+        if (primitive instanceof org.openstreetmap.josm.data.osm.Node) {
+            Pair<StyleList, Range> nodeStyles = MapPaintStyles.getStyles().generateStyles(primitive, 100, false);
+            for (ElemStyle style : nodeStyles.a) {
+                if (style instanceof NodeElemStyle) {
+                    NodeElemStyle nodeStyle = (NodeElemStyle) style;
+                    MapImage icon = nodeStyle.mapImage;
+                    if (icon != null) {
+                        int backgroundWidth = iconSize.height;
+                        int backgroundHeight = iconSize.height;
+                        int iconWidth = icon.getWidth();
+                        int iconHeight = icon.getHeight();
+                        BufferedImage image = new BufferedImage(backgroundWidth, backgroundHeight,
+                                BufferedImage.TYPE_INT_ARGB);
+                        double scaleFactor = Math.min(backgroundWidth / (double) iconWidth, backgroundHeight
+                                / (double) iconHeight);
+                        BufferedImage iconImage = icon.getImage(false);
+                        Image scaledIcon;
+                        final int scaledWidth;
+                        final int scaledHeight;
+                        if (scaleFactor < 1) {
+                            // Scale icon such that it fits on background.
+                            scaledWidth = (int) (iconWidth * scaleFactor);
+                            scaledHeight = (int) (iconHeight * scaleFactor);
+                            scaledIcon = iconImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+                        } else {
+                            // Use original size, don't upscale.
+                            scaledWidth = iconWidth;
+                            scaledHeight = iconHeight;
+                            scaledIcon = iconImage;
+                        }
+                        image.getGraphics().drawImage(scaledIcon, (backgroundWidth - scaledWidth) / 2,
+                                (backgroundHeight - scaledHeight) / 2, null);
+
+                        return new ImageIcon(image);
+                    }
+                }
+            }
+        }
+
+        // Use generic default icon.
+        return ImageProvider.get(primitive.getDisplayType());
     }
 
     /**
