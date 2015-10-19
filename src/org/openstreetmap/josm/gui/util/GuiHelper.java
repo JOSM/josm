@@ -359,7 +359,7 @@ public final class GuiHelper {
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
             Object value = UIManager.get(key);
-            if (value != null && value instanceof FontUIResource) {
+            if (value instanceof FontUIResource) {
                 FontUIResource fui = (FontUIResource) value;
                 UIManager.put(key, new FontUIResource(name, fui.getStyle(), fui.getSize()));
             }

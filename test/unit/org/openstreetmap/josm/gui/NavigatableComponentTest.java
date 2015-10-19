@@ -34,7 +34,7 @@ public class NavigatableComponentTest {
      * Setup test.
      */
     @BeforeClass
-    public static void setUp() {
+    public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
 
@@ -42,7 +42,7 @@ public class NavigatableComponentTest {
      * Create a new, fresh {@link NavigatableComponent}
      */
     @Before
-    public void setup() {
+    public void setUp() {
         component = new NavigatableComponent();
         component.setBounds(new Rectangle(WIDTH, HEIGHT));
         // wait for the event to be propagated.

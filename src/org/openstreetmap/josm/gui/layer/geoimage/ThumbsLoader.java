@@ -50,12 +50,12 @@ public class ThumbsLoader implements Runnable {
     public void run() {
         Main.debug("Load Thumbnails");
         tracker = new MediaTracker(Main.map.mapView);
-        for (int i = 0; i < data.size(); i++) {
+        for (ImageEntry entry : data) {
             if (stop) return;
 
             // Do not load thumbnails that were loaded before.
-            if (data.get(i).thumbnail == null) {
-                data.get(i).thumbnail = loadThumb(data.get(i));
+            if (entry.thumbnail == null) {
+                entry.thumbnail = loadThumb(entry);
 
                 if (Main.isDisplayingMapView()) {
                     layer.updateOffscreenBuffer = true;
