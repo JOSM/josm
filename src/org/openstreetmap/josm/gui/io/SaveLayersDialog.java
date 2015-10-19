@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -49,6 +48,7 @@ import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -100,18 +100,18 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
      */
     protected JPanel buildButtonRow() {
         JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
+        pnl.setLayout(new GridBagLayout());
 
         saveAndProceedAction = new SaveAndProceedAction();
         model.addPropertyChangeListener(saveAndProceedAction);
-        pnl.add(saveAndProceedActionButton = new JButton(saveAndProceedAction));
+        pnl.add(saveAndProceedActionButton = new JButton(saveAndProceedAction), GBC.std().insets(5, 5, 5, 5).fill(GBC.HORIZONTAL));
 
         discardAndProceedAction = new DiscardAndProceedAction();
         model.addPropertyChangeListener(discardAndProceedAction);
-        pnl.add(new JButton(discardAndProceedAction));
+        pnl.add(new JButton(discardAndProceedAction), GBC.std().insets(0, 0, 5, 0).fill(GBC.HORIZONTAL));
 
         cancelAction = new CancelAction();
-        pnl.add(new JButton(cancelAction));
+        pnl.add(new JButton(cancelAction), GBC.std().insets(0, 0, 5, 0).fill(GBC.HORIZONTAL));
 
         JPanel pnl2 = new JPanel();
         pnl2.setLayout(new BorderLayout());
