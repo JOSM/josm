@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
     /** the conflict to resolve */
-    private Conflict<Way> conflict;
+    private final Conflict<Way> conflict;
 
     /** the list of merged nodes. This becomes the list of news of my way after the
      *  command is executed

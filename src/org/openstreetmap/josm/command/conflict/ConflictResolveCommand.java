@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  */
 public abstract class ConflictResolveCommand extends Command {
     /** the list of resolved conflicts */
-    private ConflictCollection resolvedConflicts;
+    private final ConflictCollection resolvedConflicts;
 
     /**
      * Constructs a new {@code ConflictResolveCommand} in the context of the current edit layer, if any.

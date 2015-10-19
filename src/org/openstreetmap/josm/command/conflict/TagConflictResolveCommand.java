@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class TagConflictResolveCommand extends ConflictResolveCommand {
     /** the conflict to resolve */
-    private Conflict<? extends OsmPrimitive> conflict;
+    private final Conflict<? extends OsmPrimitive> conflict;
 
     /** the list of merge decisions, represented as {@link TagMergeItem}s */
     private final List<TagMergeItem> mergeItems;

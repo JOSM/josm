@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class VersionConflictResolveCommand extends ConflictResolveCommand {
 
     /** the conflict to resolve */
-    private Conflict<? extends OsmPrimitive> conflict;
+    private final Conflict<? extends OsmPrimitive> conflict;
 
     /**
      * constructor
