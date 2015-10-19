@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
@@ -9,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.data.osm.DataSet;
 
 /**
  * Unit tests for class {@link DownloadOsmTask}.
@@ -51,5 +53,9 @@ public class DownloadOsmTaskTest {
     public void testDownloadExternalFile() throws InterruptedException, ExecutionException {
         DownloadOsmTask task = new DownloadOsmTask();
         task.loadUrl(false, REMOTE_FILE, null).get();
+        DataSet ds = task.getDownloadedData();
+        assertNotNull(ds);
+        assertFalse(ds.getNodes().isEmpty());
+        assertFalse(ds.getWays().isEmpty());
     }
 }

@@ -8,12 +8,14 @@ import org.openstreetmap.josm.io.XmlWriter;
 
 /**
  * Common abstract implementation of other download tasks
+ * @param <T> The downloaded data type
  * @since 2322
  */
-public abstract class AbstractDownloadTask implements DownloadTask {
+public abstract class AbstractDownloadTask<T> implements DownloadTask {
     private List<Object> errorMessages;
     private boolean canceled;
     private boolean failed;
+    protected T downloadedData;
 
     public AbstractDownloadTask() {
         errorMessages = new ArrayList<>();
@@ -35,12 +37,24 @@ public abstract class AbstractDownloadTask implements DownloadTask {
         this.failed = failed;
     }
 
-    protected void rememberErrorMessage(String message) {
+    protected final void rememberErrorMessage(String message) {
         errorMessages.add(message);
     }
 
-    protected void rememberException(Exception exception) {
+    protected final void rememberException(Exception exception) {
         errorMessages.add(exception);
+    }
+
+    protected final void rememberDownloadedData(T data) {
+        this.downloadedData = data;
+    }
+
+    /**
+     * Replies the downloaded data.
+     * @return The downloaded data.
+     */
+    public final T getDownloadedData() {
+        return downloadedData;
     }
 
     @Override

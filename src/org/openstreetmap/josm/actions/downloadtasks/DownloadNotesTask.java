@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.notes.Note;
+import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
@@ -26,7 +27,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
 /** Task for downloading notes */
-public class DownloadNotesTask extends AbstractDownloadTask {
+public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
 
     private static final String PATTERN_API_URL = "https?://.*/api/0.6/notes.*";
     private static final String PATTERN_DUMP_FILE = "https?://.*/(.*\\.osn(.bz2)?)";
@@ -37,6 +38,12 @@ public class DownloadNotesTask extends AbstractDownloadTask {
 
     private DownloadTask downloadTask;
 
+    /**
+     * Download a specific note by its id.
+     * @param id Note identifier
+     * @param progressMonitor progress monitor
+     * @return the future representing the asynchronous task
+     */
     public Future<?> download(long id, ProgressMonitor progressMonitor) {
         final String url = OsmApi.getOsmApi().getBaseUrl() + "notes/" + id;
         downloadTask = new DownloadRawUrlTask(new OsmServerLocationReader(url), progressMonitor);
@@ -97,6 +104,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
 
         @Override
         protected void finish() {
+            rememberDownloadedData(new NoteData(notesData));
             if (isCanceled() || isFailed()) {
                 return;
             }

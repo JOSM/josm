@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
@@ -9,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.data.gpx.GpxData;
 
 /**
  * Unit tests for class {@link DownloadGpsTask}.
@@ -50,5 +52,9 @@ public class DownloadGpsTaskTest {
     public void testDownloadExternalFile() throws InterruptedException, ExecutionException {
         DownloadGpsTask task = new DownloadGpsTask();
         task.loadUrl(false, REMOTE_FILE, null).get();
+        GpxData data = task.getDownloadedData();
+        assertNotNull(data);
+        assertFalse(data.waypoints.isEmpty());
+        assertFalse(data.tracks.isEmpty());
     }
 }

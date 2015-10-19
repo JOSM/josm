@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
 /**
  * Task allowing to download GPS data.
  */
-public class DownloadGpsTask extends AbstractDownloadTask {
+public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
     private DownloadTask downloadTask;
 
@@ -127,6 +127,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
         @Override
         protected void finish() {
+            rememberDownloadedData(rawData);
             if (isCanceled() || isFailed())
                 return;
             if (rawData == null)
