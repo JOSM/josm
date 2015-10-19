@@ -88,6 +88,7 @@ import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
@@ -245,7 +246,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * @return background color for downloaded areas. Black by default
      */
     public static Color getBackgroundColor() {
-        return Main.pref.getColor(marktr("background"), Color.BLACK);
+        return Main.pref != null ? Main.pref.getColor(marktr("background"), Color.BLACK) : Color.BLACK;
     }
 
     /**
@@ -253,7 +254,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * @return background color for non-downloaded areas. Yellow by default
      */
     public static Color getOutsideColor() {
-        return Main.pref.getColor(marktr("outside downloaded area"), Color.YELLOW);
+        return Main.pref != null ? Main.pref.getColor(marktr("outside downloaded area"), Color.YELLOW) : Color.YELLOW;
     }
 
     /**
@@ -280,6 +281,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      */
     public OsmDataLayer(final DataSet data, final String name, final File associatedFile) {
         super(name);
+        CheckParameterUtil.ensureParameterNotNull(data, "data");
         this.data = data;
         this.setAssociatedFile(associatedFile);
         conflicts = new ConflictCollection();
