@@ -11,7 +11,6 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -33,7 +32,7 @@ public class ConflictAddCommandTest {
     @Test
     public void testExecuteUndoCommand() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), null, null);
-        Conflict<OsmPrimitive> conflict = new Conflict<>(null, null);
+        Conflict<Node> conflict = new Conflict<>(new Node(), new Node());
         ConflictAddCommand cmd = new ConflictAddCommand(layer, conflict);
         assertTrue(cmd.executeCommand());
         assertFalse(layer.getConflicts().isEmpty());
