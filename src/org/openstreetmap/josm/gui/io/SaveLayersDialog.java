@@ -41,6 +41,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
@@ -66,6 +67,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     private UploadAndSaveProgressRenderer pnlUploadLayers;
 
     private SaveAndProceedAction saveAndProceedAction;
+    private SaveSessionAction saveSessionAction;
     private DiscardAndProceedAction discardAndProceedAction;
     private CancelAction cancelAction;
     private transient SaveAndUploadTask saveAndUploadTask;
@@ -104,14 +106,17 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         saveAndProceedAction = new SaveAndProceedAction();
         model.addPropertyChangeListener(saveAndProceedAction);
-        pnl.add(saveAndProceedActionButton = new JButton(saveAndProceedAction), GBC.std().insets(5, 5, 5, 5).fill(GBC.HORIZONTAL));
+        pnl.add(saveAndProceedActionButton = new JButton(saveAndProceedAction), GBC.std(0, 0).insets(5, 5, 0, 0).fill(GBC.HORIZONTAL));
+
+        saveSessionAction = new SaveSessionAction();
+        pnl.add(new JButton(saveSessionAction), GBC.std(1, 0).insets(5, 5, 5, 0). fill(GBC.HORIZONTAL));
 
         discardAndProceedAction = new DiscardAndProceedAction();
         model.addPropertyChangeListener(discardAndProceedAction);
-        pnl.add(new JButton(discardAndProceedAction), GBC.std().insets(0, 0, 5, 0).fill(GBC.HORIZONTAL));
+        pnl.add(new JButton(discardAndProceedAction), GBC.std(0, 1).insets(5, 5, 0, 5).fill(GBC.HORIZONTAL));
 
         cancelAction = new CancelAction();
-        pnl.add(new JButton(cancelAction), GBC.std().insets(0, 0, 5, 0).fill(GBC.HORIZONTAL));
+        pnl.add(new JButton(cancelAction), GBC.std(1, 1).insets(5, 5, 5, 5). fill(GBC.HORIZONTAL));
 
         JPanel pnl2 = new JPanel();
         pnl2.setLayout(new BorderLayout());
@@ -358,6 +363,18 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 case EDITING_DATA: setEnabled(true); break;
                 case UPLOADING_AND_SAVING: setEnabled(false); break;
                 }
+            }
+        }
+    }
+
+    class SaveSessionAction extends SessionSaveAsAction {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                saveSession();
+                setUserAction(UserAction.PROCEED);
+                closeDialog();
+            } catch (CancelException ignore) {
             }
         }
     }

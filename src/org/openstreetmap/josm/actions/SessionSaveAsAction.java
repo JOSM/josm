@@ -63,13 +63,34 @@ public class SessionSaveAsAction extends DiskAccessAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        try {
+            saveSession();
+        } catch (CancelException ignore) {
+        }
+    }
+
+    /**
+     * Denotes that the user has cancelled the save process.
+     * @since 8913
+     */
+    public static class CancelException extends Exception {
+    }
+
+    /**
+     * Attempts to save the session.
+     * @throws CancelException when the user has cancelled the save process.
+     * @since 8913
+     */
+    public void saveSession() throws CancelException {
         if (!isEnabled()) {
             return;
         }
 
         SessionSaveAsDialog dlg = new SessionSaveAsDialog();
         dlg.showDialog();
-        if (dlg.getValue() != 1) return;
+        if (dlg.getValue() != 1) {
+            throw new CancelException();
+        }
 
         boolean zipRequired = false;
         for (Layer l : layers) {
@@ -92,8 +113,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
                     JFileChooser.FILES_ONLY, "lastDirectory");
         }
 
-        if (fc == null)
-            return;
+        if (fc == null) {
+            throw new CancelException();
+        }
 
         File file = fc.getSelectedFile();
         String fn = file.getName();
@@ -115,8 +137,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
         }
         if (fn.indexOf('.') == -1) {
             file = new File(file.getPath() + (zip ? ".joz" : ".jos"));
-            if (!SaveActionBase.confirmOverwrite(file))
-                return;
+            if (!SaveActionBase.confirmOverwrite(file)) {
+                throw new CancelException();
+            }
         }
 
         List<Layer> layersOut = new ArrayList<>();
