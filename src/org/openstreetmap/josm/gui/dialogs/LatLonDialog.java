@@ -279,8 +279,14 @@ public class LatLonDialog extends ExtendedDialog {
 
     @Override
     public void setVisible(boolean visible) {
+        final String preferenceKey = getClass().getName() + ".geometry";
         if (visible) {
-            WindowGeometry.centerInWindow(Main.parent, getSize()).applySafe(this);
+            new WindowGeometry(
+                    preferenceKey,
+                    WindowGeometry.centerInWindow(getParent(), getSize())
+            ).applySafe(this);
+        } else {
+            new WindowGeometry(this).remember(preferenceKey);
         }
         super.setVisible(visible);
     }
