@@ -15,9 +15,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
 
-	/**
-	 * Constructs a new {@code MemberTableMemberCellRenderer}.
-	 */
+    /**
+     * Constructs a new {@code MemberTableMemberCellRenderer}.
+     */
     public MemberTableMemberCellRenderer() {
         super();
     }

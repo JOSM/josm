@@ -349,7 +349,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         private MapFrame parent;
 
-        private BlockingQueue<MouseState> incommingMouseState = new LinkedBlockingQueue<>();
+        private final BlockingQueue<MouseState> incomingMouseState = new LinkedBlockingQueue<>();
 
         private Point lastMousePos;
 
@@ -366,7 +366,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             try {
                 for (;;) {
                     try {
-                        final MouseState ms = incommingMouseState.take();
+                        final MouseState ms = incomingMouseState.take();
                         if (parent != Main.map)
                             return; // exit, if new parent.
 
@@ -650,15 +650,13 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          * @param modifiers The new modifiers.
          */
         public synchronized void updateMousePosition(Point mousePos, int modifiers) {
-            MouseState ms = new MouseState();
-            if (mousePos == null) {
-                ms.mousePos = lastMousePos;
-            } else {
+            if (mousePos != null) {
                 lastMousePos = mousePos;
             }
+            MouseState ms = new MouseState(lastMousePos, modifiers);
             // remove mouse states that are in the queue. Our mouse state is newer.
-            incommingMouseState.clear();
-            incommingMouseState.offer(ms);
+            incomingMouseState.clear();
+            incomingMouseState.offer(ms);
         }
     }
 
@@ -666,9 +664,14 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      * Everything, the collector is interested of. Access must be synchronized.
      * @author imi
      */
-    static class MouseState {
-        private Point mousePos;
-        private int modifiers;
+    private static class MouseState {
+        private final Point mousePos;
+        private final int modifiers;
+
+        MouseState(Point mousePos, int modifiers) {
+            this.mousePos = mousePos;
+            this.modifiers = modifiers;
+        }
     }
 
     private transient AWTEventListener awtListener = new AWTEventListener() {
