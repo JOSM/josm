@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  * Open the download dialog and download the data.
  * Run in the worker thread.
  */
-public class DownloadOsmTask extends AbstractDownloadTask {
+public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
     protected static final String PATTERN_OSM_API_URL           = "https?://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
     protected static final String PATTERN_OVERPASS_API_URL      = "https?://.*/interpreter\\?data=.*";
@@ -43,7 +43,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     protected static final String PATTERN_EXTERNAL_OSM_FILE     = "https?://.*/.*\\.osm";
 
     protected Bounds currentBounds;
-    protected DataSet downloadedData;
     protected DownloadTask downloadTask;
 
     protected String newLayerName;
@@ -65,18 +64,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         } else {
             return super.getTitle();
         }
-    }
-
-    protected void rememberDownloadedData(DataSet ds) {
-        this.downloadedData = ds;
-    }
-
-    /**
-     * Replies the {@link DataSet} containing the downloaded OSM data.
-     * @return The {@link DataSet} containing the downloaded OSM data.
-     */
-    public DataSet getDownloadedData() {
-        return downloadedData;
     }
 
     @Override
