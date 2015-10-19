@@ -44,19 +44,6 @@ public class EastNorth extends Coordinate {
     }
 
     /**
-     * Subtracts the coordinates of this EastNorth instance from the other one.
-     * <p>
-     * This produces result = en2 - this.
-     * @param en2 The instance to subtract this one from.
-     * @return The new EastNorth position.
-     * @deprecated use {@code subtract} on the other EastNorth instead
-     */
-    @Deprecated
-    public EastNorth sub(EastNorth en2) {
-        return en2.subtract(this);
-    }
-
-    /**
      * Subtracts an east/north value from this point.
      * @param other The other value to subtract from this.
      * @return A point with the new coordinates.

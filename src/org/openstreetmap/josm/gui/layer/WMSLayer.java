@@ -139,17 +139,6 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
         }
     }
 
-    /**
-     * Checks that WMS layer is a grabber-compatible one (HTML or WMS).
-     * @throws IllegalStateException if imagery time is neither HTML nor WMS
-     * @since 8068
-     * @deprecated not implemented anymore
-     */
-    @Deprecated
-    public void checkGrabberType() {
-        // not implemented
-    }
-
     @Override
     protected Class<? extends TileLoader> getTileLoaderClass() {
         return WMSCachedTileLoader.class;
