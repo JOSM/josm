@@ -121,29 +121,52 @@ public final class GBC extends GridBagConstraints {
         return new Box.Filler(new Dimension(x, y), new Dimension(x, y), new Dimension(maxx, maxy));
     }
 
-    public GBC grid(int x, int y) {
-        gridx = x;
-        gridy = y;
+    /**
+     * Sets the constraint's {@code gridx}, {@code gridy}.
+     * @return This constraint for chaining.
+     * @see #gridx
+     * @see #gridy
+     */
+    public GBC grid(int gridx, int gridy) {
+        this.gridx = gridx;
+        this.gridy = gridy;
         return this;
     }
 
-    public GBC span(int width, int height) {
-        gridwidth = width;
-        gridheight = height;
+    /**
+     * Sets the constraint's {@code gridwidth}, {@code gridheight}.
+     * @return This constraint for chaining.
+     * @see #gridwidth
+     * @see #gridheight
+     */
+    public GBC span(int gridwidth, int gridheight) {
+        this.gridwidth = gridwidth;
+        this.gridheight = gridheight;
         return this;
     }
 
-    public GBC span(int width) {
-        gridwidth = width;
+    /**
+     * Sets the constraint's {@code gridwidth}.
+     * @return This constraint for chaining.
+     * @see #gridwidth
+     */
+    public GBC span(int gridwidth) {
+        this.gridwidth = gridwidth;
         return this;
     }
 
-    public static GBC std(int x, int y) {
-        GBC c = new GBC();
-        c.anchor = WEST;
-        c.gridx = x;
-        c.gridy = y;
-        return c;
+    /**
+     * Create a standard constraint with the {@code gridx}, {@code gridy} set.
+     *
+     * Is equivalent to {@code std().grid(gridx, gridy)}
+     * @return A standard constraint.
+     * @see #std()
+     * @see #grid(int, int)
+     * @see #gridx
+     * @see #gridy
+     */
+    public static GBC std(int gridx, int gridy) {
+        return std().grid(gridx, gridy);
     }
 
 }
