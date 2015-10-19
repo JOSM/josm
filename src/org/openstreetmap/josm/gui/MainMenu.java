@@ -597,15 +597,6 @@ public class MainMenu extends JMenuBar {
     }
 
     /**
-     * @deprecated Use {@link #addMenu(String, String, int, int, String)} instead.
-     */
-    // Kept for compatibility with plugins
-    @Deprecated
-    public JMenu addMenu(String name, int mnemonicKey, int position, String relativeHelpTopic) {
-        return addMenu(name, tr(name), mnemonicKey, position, relativeHelpTopic);
-    }
-
-    /**
      * Creates a menu and adds it on the given position to the main menu.
      *
      * @param name              the untranslated name (used as identifier for shortcut registration)
