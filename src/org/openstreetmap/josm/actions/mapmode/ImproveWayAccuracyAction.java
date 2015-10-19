@@ -373,7 +373,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
             // Checking if the new coordinate is outside of the world
             if (mv.getLatLon(mousePos.x, mousePos.y).isOutSideWorld()) {
                 JOptionPane.showMessageDialog(Main.parent,
-                        tr("Cannot place a node outside of the world."),
+                        tr("Cannot add a node outside of the world."),
                         tr("Warning"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
