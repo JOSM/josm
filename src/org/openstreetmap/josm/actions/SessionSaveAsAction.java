@@ -66,6 +66,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
         try {
             saveSession();
         } catch (CancelException ignore) {
+            if (Main.isTraceEnabled()) {
+                Main.trace(ignore.getMessage());
+            }
         }
     }
 

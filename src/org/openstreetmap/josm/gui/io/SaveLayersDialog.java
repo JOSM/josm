@@ -109,14 +109,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         pnl.add(saveAndProceedActionButton = new JButton(saveAndProceedAction), GBC.std(0, 0).insets(5, 5, 0, 0).fill(GBC.HORIZONTAL));
 
         saveSessionAction = new SaveSessionAction();
-        pnl.add(new JButton(saveSessionAction), GBC.std(1, 0).insets(5, 5, 5, 0). fill(GBC.HORIZONTAL));
+        pnl.add(new JButton(saveSessionAction), GBC.std(1, 0).insets(5, 5, 5, 0).fill(GBC.HORIZONTAL));
 
         discardAndProceedAction = new DiscardAndProceedAction();
         model.addPropertyChangeListener(discardAndProceedAction);
         pnl.add(new JButton(discardAndProceedAction), GBC.std(0, 1).insets(5, 5, 0, 5).fill(GBC.HORIZONTAL));
 
         cancelAction = new CancelAction();
-        pnl.add(new JButton(cancelAction), GBC.std(1, 1).insets(5, 5, 5, 5). fill(GBC.HORIZONTAL));
+        pnl.add(new JButton(cancelAction), GBC.std(1, 1).insets(5, 5, 5, 5).fill(GBC.HORIZONTAL));
 
         JPanel pnl2 = new JPanel();
         pnl2.setLayout(new BorderLayout());
@@ -375,6 +375,9 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 setUserAction(UserAction.PROCEED);
                 closeDialog();
             } catch (CancelException ignore) {
+                if (Main.isTraceEnabled()) {
+                    Main.trace(ignore.getMessage());
+                }
             }
         }
     }
