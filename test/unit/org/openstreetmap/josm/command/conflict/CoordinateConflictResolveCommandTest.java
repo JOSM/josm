@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command.conflict;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -41,9 +42,9 @@ public class CoordinateConflictResolveCommandTest {
         Conflict<Node> conflict = createConflict();
         CoordinateConflictResolveCommand cmd = new CoordinateConflictResolveCommand(conflict, MergeDecisionType.KEEP_MINE);
         assertTrue(cmd.executeCommand());
-        assertTrue(LatLon.ZERO.equals(conflict.getMy().getCoor()));
+        assertEquals(LatLon.ZERO, conflict.getMy().getCoor());
         cmd.undoCommand();
-        assertTrue(LatLon.ZERO.equals(conflict.getMy().getCoor()));
+        assertEquals(LatLon.ZERO, conflict.getMy().getCoor());
     }
 
     /**
@@ -54,9 +55,9 @@ public class CoordinateConflictResolveCommandTest {
         Conflict<Node> conflict = createConflict();
         CoordinateConflictResolveCommand cmd = new CoordinateConflictResolveCommand(conflict, MergeDecisionType.KEEP_THEIR);
         assertTrue(cmd.executeCommand());
-        assertTrue(conflict.getTheir().getCoor().equals(conflict.getMy().getCoor()));
+        assertEquals(conflict.getTheir().getCoor(), conflict.getMy().getCoor());
         cmd.undoCommand();
-        //assertTrue(LatLon.ZERO.equals(conflict.getMy().getCoor())); // FIXME it does not work
+        //assertEquals(LatLon.ZERO, conflict.getMy().getCoor()); // FIXME it does not work
     }
 
     /**
