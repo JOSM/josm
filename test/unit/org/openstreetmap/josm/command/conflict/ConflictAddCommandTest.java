@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -23,7 +24,8 @@ public class ConflictAddCommandTest {
      */
     @BeforeClass
     public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
+        JOSMFixture.createUnitTestFixture().init(true);
+        Main.map.mapView.addLayer(new OsmDataLayer(new DataSet(), null, null));
     }
 
     /**
@@ -31,7 +33,7 @@ public class ConflictAddCommandTest {
      */
     @Test
     public void testExecuteUndoCommand() {
-        OsmDataLayer layer = new OsmDataLayer(new DataSet(), null, null);
+        OsmDataLayer layer = Main.map.mapView.getEditLayer();
         Conflict<Node> conflict = new Conflict<>(new Node(), new Node());
         ConflictAddCommand cmd = new ConflictAddCommand(layer, conflict);
         assertTrue(cmd.executeCommand());
@@ -47,7 +49,7 @@ public class ConflictAddCommandTest {
      */
     @Test
     public void testGetDescriptionIcon() {
-        OsmDataLayer layer = new OsmDataLayer(new DataSet(), null, null);
+        OsmDataLayer layer = Main.map.mapView.getEditLayer();
         Conflict<Node> conflict = new Conflict<>(new Node(), new Node());
         assertNotNull(new ConflictAddCommand(layer, conflict).getDescriptionIcon());
     }
