@@ -20,12 +20,12 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayNoTagCorrector;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
-import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 
 public final class ReverseWayAction extends JosmAction {

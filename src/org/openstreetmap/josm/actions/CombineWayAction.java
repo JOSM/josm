@@ -26,7 +26,6 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
-import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagCollection;
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.UserCancelException;
 
 /**
  * Combines multiple ways into one.

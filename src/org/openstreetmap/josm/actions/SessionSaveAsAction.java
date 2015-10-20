@@ -40,6 +40,7 @@ import org.openstreetmap.josm.io.session.SessionLayerExporter;
 import org.openstreetmap.josm.io.session.SessionWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -65,7 +66,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
     public void actionPerformed(ActionEvent e) {
         try {
             saveSession();
-        } catch (CancelException ignore) {
+        } catch (UserCancelException ignore) {
             if (Main.isTraceEnabled()) {
                 Main.trace(ignore.getMessage());
             }
@@ -73,18 +74,11 @@ public class SessionSaveAsAction extends DiskAccessAction {
     }
 
     /**
-     * Denotes that the user has cancelled the save process.
-     * @since 8913
-     */
-    public static class CancelException extends Exception {
-    }
-
-    /**
      * Attempts to save the session.
-     * @throws CancelException when the user has cancelled the save process.
+     * @throws UserCancelException when the user has cancelled the save process.
      * @since 8913
      */
-    public void saveSession() throws CancelException {
+    public void saveSession() throws UserCancelException {
         if (!isEnabled()) {
             return;
         }
@@ -92,7 +86,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         SessionSaveAsDialog dlg = new SessionSaveAsDialog();
         dlg.showDialog();
         if (dlg.getValue() != 1) {
-            throw new CancelException();
+            throw new UserCancelException();
         }
 
         boolean zipRequired = false;
@@ -117,7 +111,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         }
 
         if (fc == null) {
-            throw new CancelException();
+            throw new UserCancelException();
         }
 
         File file = fc.getSelectedFile();
@@ -141,7 +135,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         if (fn.indexOf('.') == -1) {
             file = new File(file.getPath() + (zip ? ".joz" : ".jos"));
             if (!SaveActionBase.confirmOverwrite(file)) {
-                throw new CancelException();
+                throw new UserCancelException();
             }
         }
 

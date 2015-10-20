@@ -29,7 +29,6 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -45,6 +44,7 @@ import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**

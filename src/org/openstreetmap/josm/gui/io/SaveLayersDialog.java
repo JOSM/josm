@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -374,7 +375,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 saveSession();
                 setUserAction(UserAction.PROCEED);
                 closeDialog();
-            } catch (CancelException ignore) {
+            } catch (UserCancelException ignore) {
                 if (Main.isTraceEnabled()) {
                     Main.trace(ignore.getMessage());
                 }
