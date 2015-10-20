@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Task allowing to download JOSM session (*.jos, *.joz file).
  * @since 6215
  */
-public class DownloadSessionTask extends AbstractDownloadTask {
+public class DownloadSessionTask extends AbstractDownloadTask<Object> {
 
     private static final String PATTERN_SESSION =  "https?://.*/.*\\.jo(s|z)";
 
