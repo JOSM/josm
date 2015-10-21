@@ -224,17 +224,9 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     }
 
     /**
-     * A list of all layers currently loaded. Locked by {@link #layerLock}.
+     * A list of all layers currently loaded.
      */
     private final transient List<Layer> layers = new ArrayList<>();
-
-    /**
-     * This lock manages concurrent access to {@link #layers},
-     * {@link #editLayer} and {@link #activeLayer}.
-     * <p>
-     * The read lock is always held while those fields are read or while layer change listeners are fired.
-     */
-    //private final ReentrantReadWriteLock layerLock = new ReentrantReadWriteLock();
 
     /**
      * The play head marker: there is only one of these so it isn't in any specific layer
@@ -242,12 +234,12 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     public transient PlayHeadMarker playHeadMarker;
 
     /**
-     * The layer from the layers list that is currently active. Locked by {@link #layerLock}.
+     * The layer from the layers list that is currently active.
      */
     private transient Layer activeLayer;
 
     /**
-     * The edit layer is the current active data layer. Locked by {@link #layerLock}.
+     * The edit layer is the current active data layer.
      */
     private transient OsmDataLayer editLayer;
 
@@ -875,7 +867,6 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     /**
      * Sets the active edit layer.
      * <p>
-     * You must own a write {@link #layerLock} when calling this method.
      * @param layersList A list to select that layer from.
      * @return A list of change listeners that should be fired using {@link #onActiveEditLayerChanged(Layer, OsmDataLayer, EnumSet)}
      */
