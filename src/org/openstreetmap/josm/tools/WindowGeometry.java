@@ -357,7 +357,7 @@ public class WindowGeometry {
      * @see <a href="https://josm.openstreetmap.de/ticket/9699">JOSM-9699</a>
      * @see <a href="https://bugs.launchpad.net/ubuntu/+source/openjdk-7/+bug/1171563">Ubuntu-1171563</a>
      * @see <a href="http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1669">IcedTea-1669</a>
-     * @see <a href="https://bugs.openjdk.java.net/browse/JI-9010334">JI-9010334</a>
+     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8034224">JDK-8034224</a>
      */
     protected static boolean isBugInMaximumWindowBounds(Rectangle maxbounds) {
         return maxbounds.width <= 0 || maxbounds.height <= 0;
