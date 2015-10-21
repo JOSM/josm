@@ -230,7 +230,6 @@ public class MapRectifierWMSmenuAction extends JosmAction {
      * @param title Name of the layer as it will shop up in the layer manager
      * @param url URL to the WMS server
      * @throws IllegalStateException if imagery time is neither HTML nor WMS
-     * @see WMSLayer#checkGrabberType
      */
     private static void addWMSLayer(String title, String url) {
         WMSLayer layer = new WMSLayer(new ImageryInfo(title, url));
