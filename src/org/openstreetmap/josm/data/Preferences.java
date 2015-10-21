@@ -1501,7 +1501,7 @@ public class Preferences {
             } catch (Exception | InternalError e) {
                 // Ignore all exceptions, including internal error raised by Java 9 Jigsaw EA:
                 // java.lang.InternalError: legacy getBundle can't be used to find sun.awt.resources.awt in module java.desktop
-                // InternalError catch to remove when https://bugs.openjdk.java.net/browse/JI-9025152 is resolved
+                // InternalError catch to remove when https://bugs.openjdk.java.net/browse/JDK-8136804 is resolved
                 if (Main.isTraceEnabled()) {
                     Main.trace(e.getMessage());
                 }
@@ -1516,6 +1516,7 @@ public class Preferences {
         // Force Java 7 to use old sorting algorithm of Arrays.sort (fix #8712).
         // See Oracle bug database: https://bugs.openjdk.java.net/browse/JDK-7075600
         // and https://bugs.openjdk.java.net/browse/JDK-6923200
+        // The bug seems to have been fixed in Java 8, to remove during transition
         if (getBoolean("jdk.Arrays.useLegacyMergeSort", !Version.getInstance().isLocalBuild())) {
             Utils.updateSystemProperty("java.util.Arrays.useLegacyMergeSort", "true");
         }

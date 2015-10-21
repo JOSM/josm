@@ -935,6 +935,7 @@ public final class Utils {
      *         {@link Character#isWhitespace(char)} and {@link Character#isSpaceChar(char)}.
      * @see <a href="http://closingbraces.net/2008/11/11/javastringtrim/">Java’s String.trim has a strange idea of whitespace</a>
      * @see <a href="https://bugs.openjdk.java.net/browse/JDK-4080617">JDK bug 4080617</a>
+     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-7190385">JDK bug 7190385</a>
      * @since 5772
      */
     public static String strip(final String str) {
