@@ -61,6 +61,15 @@ import org.openstreetmap.josm.Main;
   */
 public class PlatformHookWindows extends PlatformHookUnixoid implements PlatformHook {
 
+    @Override
+    public void startupHook() {
+        // Invite users to install Java 8 if they are still with Java 7
+        String version = System.getProperty("java.version");
+        if (version != null && version.startsWith("1.7")) {
+            askUpdateJava(version);
+        }
+    }
+
     private static final byte[] INSECURE_PUBLIC_KEY = new byte[] {
         0x30, (byte) 0x82, 0x1, 0x22, 0x30, 0xd, 0x6, 0x9, 0x2a, (byte) 0x86, 0x48,
         (byte) 0x86, (byte) 0xf7, 0xd, 0x1, 0x1, 0x1, 0x5, 0x0, 0x3, (byte) 0x82, 0x1, 0xf, 0x0,
