@@ -127,30 +127,31 @@ public class Diff {
     /** Snakes bigger than this are considered "big". */
     private static final int SNAKE_LIMIT = 20;
 
-    /** Find the midpoint of the shortest edit script for a specified
-     portion of the two files.
-
-     We scan from the beginnings of the files, and simultaneously from the ends,
-     doing a breadth-first search through the space of edit-sequence.
-     When the two searches meet, we have found the midpoint of the shortest
-     edit sequence.
-
-     The value returned is the number of the diagonal on which the midpoint lies.
-     The diagonal number equals the number of inserted lines minus the number
-     of deleted lines (counting only lines before the midpoint).
-     The edit cost is stored into COST; this is the total number of
-     lines inserted or deleted (counting only lines before the midpoint).
-
-     This function assumes that the first lines of the specified portions
-     of the two files do not match, and likewise that the last lines do not
-     match.  The caller must trim matching lines from the beginning and end
-     of the portions it is going to specify.
-
-     Note that if we return the "wrong" diagonal value, or if
-     the value of bdiag at that diagonal is "wrong",
-     the worst this can do is cause suboptimal diff output.
-     It cannot cause incorrect diff output.  */
-
+    /**
+     * Find the midpoint of the shortest edit script for a specified
+     * portion of the two files.
+     *
+     * We scan from the beginnings of the files, and simultaneously from the ends,
+     * doing a breadth-first search through the space of edit-sequence.
+     * When the two searches meet, we have found the midpoint of the shortest
+     * edit sequence.
+     *
+     * The value returned is the number of the diagonal on which the midpoint lies.
+     * The diagonal number equals the number of inserted lines minus the number
+     * of deleted lines (counting only lines before the midpoint).
+     * The edit cost is stored into COST; this is the total number of
+     * lines inserted or deleted (counting only lines before the midpoint).
+     *
+     * This function assumes that the first lines of the specified portions
+     * of the two files do not match, and likewise that the last lines do not
+     * match.  The caller must trim matching lines from the beginning and end
+     * of the portions it is going to specify.
+     *
+     * Note that if we return the "wrong" diagonal value, or if
+     * the value of bdiag at that diagonal is "wrong",
+     * the worst this can do is cause suboptimal diff output.
+     * It cannot cause incorrect diff output.
+     */
     private int diag(int xoff, int xlim, int yoff, int ylim) {
         final int[] fd = fdiag; // Give the compiler a chance.
         final int[] bd = bdiag; // Additional help for the compiler.
@@ -475,8 +476,7 @@ public class Diff {
     forwardScript = new ForwardScript(),
     reverseScript = new ReverseScript();
 
-    /** Report the differences of two files.  DEPTH is the current directory
-        depth. */
+    /** Report the differences of two files. DEPTH is the current directory depth. */
     public final Change diff_2(final boolean reverse) {
         return diff(reverse ? reverseScript : forwardScript);
     }

@@ -91,6 +91,7 @@ public abstract class Plugin implements MapFrameListener {
     /**
      * Called in the preferences dialog to create a preferences page for the plugin,
      * if any available.
+     * @return the preferences dialog, or {@code null}
      */
     public PreferenceSetting getPreferenceSetting() {
         return null;
@@ -140,6 +141,7 @@ public abstract class Plugin implements MapFrameListener {
      *   getPluginResourceClassLoader().getResource("resources/pluginProperties.properties");
      *
      * (Note the missing leading "/".)
+     * @return a class loader for loading resources from the plugin jar
      */
     public ClassLoader getPluginResourceClassLoader() {
         File pluginDir = Main.pref.getPluginsDirectory();
