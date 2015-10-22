@@ -195,6 +195,9 @@ public class SessionReader {
          *
          * Returns null if the URI points to a file inside the zip archive.
          * In this case, inZipPath will be set to the corresponding path.
+         * @param uriStr the URI as string
+         * @return the resulting File
+         * @throws IOException if any I/O error occurs
          */
         public File getFile(String uriStr) throws IOException {
             inZipPath = null;

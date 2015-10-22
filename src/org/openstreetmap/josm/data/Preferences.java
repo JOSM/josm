@@ -836,6 +836,7 @@ public class Preferences {
 
     /**
      * Called after every put. In case of a problem, do nothing but output the error in log.
+     * @throws IOException if any I/O error occurs
      */
     public void save() throws IOException {
         /* currently unused, but may help to fix configuration issues in future */

@@ -141,6 +141,7 @@ public class SessionWriter {
          * @param zipPath the path inside the zip archive, e.g. "layers/03/data.xml"
          * @return the OutputStream you can write to. Never close the returned
          * output stream, but make sure to flush buffers.
+         * @throws IOException if any I/O error occurs
          */
         public OutputStream getOutputStreamZip(String zipPath) throws IOException {
             if (!isZip()) throw new RuntimeException();

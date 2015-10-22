@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -129,6 +130,7 @@ public class OsmServerBackreferenceReaderTest {
      *
      * @param ds the data set
      * @throws OsmTransferException if something goes wrong
+     * @throws CyclicUploadDependencyException if a cyclic dependency is detected
      */
     public static void createDataSetOnServer(APIDataSet ds) throws OsmTransferException, CyclicUploadDependencyException {
         logger.info("creating data set on the server ...");
@@ -143,8 +145,13 @@ public class OsmServerBackreferenceReaderTest {
 
     static DataSet testDataSet;
 
+    /**
+     * Setup test.
+     * @throws OsmTransferException if something goes wrong
+     * @throws CyclicUploadDependencyException if a cyclic dependency is detected
+     */
     @BeforeClass
-    public static void init() throws OsmTransferException, CyclicUploadDependencyException {
+    public static void setUpBeforeClass() throws OsmTransferException, CyclicUploadDependencyException {
         logger.info("initializing ...");
 
         JOSMFixture.createFunctionalTestFixture().init();
@@ -194,9 +201,12 @@ public class OsmServerBackreferenceReaderTest {
 
     /**
      * Setup test.
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if an error was found while parsing the OSM data
+     * @throws FileNotFoundException if the dataset file cannot be found
      */
     @Before
-    public void setUp() throws IOException, IllegalDataException {
+    public void setUp() throws IOException, IllegalDataException, FileNotFoundException {
         File f = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();

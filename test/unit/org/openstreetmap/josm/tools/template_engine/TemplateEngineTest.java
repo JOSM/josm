@@ -29,12 +29,20 @@ public class TemplateEngineTest {
         JOSMFixture.createUnitTestFixture().init();
     }
 
+    /**
+     * Test to parse an empty string.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
     public void testEmpty() throws ParseError {
         TemplateParser parser = new TemplateParser("");
         ReflectionAssert.assertReflectionEquals(new StaticText(""), parser.parse());
     }
 
+    /**
+     * Test to parse a variable.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
     public void testVariable() throws ParseError {
         TemplateParser parser = new TemplateParser("abc{var}\\{ef\\$\\{g");
@@ -42,6 +50,10 @@ public class TemplateEngineTest {
                 new Variable("var"), new StaticText("{ef${g")), parser.parse());
     }
 
+    /**
+     * Test to parse a condition with whitespaces.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
     public void testConditionWhitespace() throws ParseError {
         TemplateParser parser = new TemplateParser("?{ '{name} {desc}' | '{name}' | '{desc}'    }");
@@ -52,6 +64,10 @@ public class TemplateEngineTest {
         ReflectionAssert.assertReflectionEquals(condition, parser.parse());
     }
 
+    /**
+     * Test to parse a condition without whitespace.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
     public void testConditionNoWhitespace() throws ParseError {
         TemplateParser parser = new TemplateParser("?{'{name} {desc}'|'{name}'|'{desc}'}");
@@ -62,12 +78,17 @@ public class TemplateEngineTest {
         ReflectionAssert.assertReflectionEquals(condition, parser.parse());
     }
 
-    private static Match compile(String expression) throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError {
+    private static Match compile(String expression) throws SearchCompiler.ParseError {
         return SearchCompiler.compile(expression);
     }
 
+    /**
+     * Test to parse a search expression condition.
+     * @throws ParseError if the template cannot be parsed
+     * @throws SearchCompiler.ParseError if an error has been encountered while compiling
+     */
     @Test
-    public void testConditionSearchExpression() throws Exception {
+    public void testConditionSearchExpression() throws ParseError, SearchCompiler.ParseError {
         TemplateParser parser = new TemplateParser("?{ admin_level = 2 'NUTS 1' | admin_level = 4 'NUTS 2' |  '{admin_level}'}");
         Condition condition = new Condition();
         condition.getEntries().add(new SearchExpressionCondition(compile("admin_level = 2"), new StaticText("NUTS 1")));
@@ -107,8 +128,12 @@ public class TemplateEngineTest {
         }
     };
 
+    /**
+     * Test to fill a template.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
-    public void testFilling() throws Exception {
+    public void testFilling() throws ParseError {
         TemplateParser parser = new TemplateParser("{name} u{unknown}u i{number}i");
         TemplateEntry entry = parser.parse();
         StringBuilder sb = new StringBuilder();
@@ -116,8 +141,12 @@ public class TemplateEngineTest {
         Assert.assertEquals("waypointName uu i10i", sb.toString());
     }
 
+    /**
+     * Test to parse a search expression.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
-    public void testFillingSearchExpression() throws Exception {
+    public void testFillingSearchExpression() throws ParseError {
         TemplateParser parser = new TemplateParser("?{ admin_level = 2 'NUTS 1' | admin_level = 4 'NUTS 2' |  '{admin_level}'}");
         TemplateEntry templateEntry = parser.parse();
 
@@ -133,8 +162,12 @@ public class TemplateEngineTest {
         Assert.assertEquals("5", sb.toString());
     }
 
+    /**
+     * Test to print all.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
-    public void testPrintAll() throws Exception {
+    public void testPrintAll() throws ParseError {
         TemplateParser parser = new TemplateParser("{special:everything}");
         TemplateEntry entry = parser.parse();
         StringBuilder sb = new StringBuilder();
@@ -142,8 +175,12 @@ public class TemplateEngineTest {
         Assert.assertEquals("name=waypointName, number=10", sb.toString());
     }
 
+    /**
+     * Test to print on several lines.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
-    public void testPrintMultiline() throws Exception {
+    public void testPrintMultiline() throws ParseError {
         TemplateParser parser = new TemplateParser("{name}\\n{number}");
         TemplateEntry entry = parser.parse();
         StringBuilder sb = new StringBuilder();
@@ -151,8 +188,12 @@ public class TemplateEngineTest {
         Assert.assertEquals("waypointName\n10", sb.toString());
     }
 
+    /**
+     * Test to print special variables.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
-    public void testSpecialVariable() throws Exception {
+    public void testSpecialVariable() throws ParseError {
         TemplateParser parser = new TemplateParser("{name}u{special:localName}u{special:special:key}");
         TemplateEntry templateEntry = parser.parse();
 
@@ -168,8 +209,12 @@ public class TemplateEngineTest {
         //TODO
     }
 
+    /**
+     * Test to switch context.
+     * @throws ParseError if the template cannot be parsed
+     */
     @Test
-    public void testSwitchContext() throws Exception {
+    public void testSwitchContext() throws ParseError {
         TemplateParser parser = new TemplateParser("!{parent() type=parent2 '{name}'}");
         DatasetFactory ds = new DatasetFactory();
         Relation parent1 = ds.addRelation(1);
@@ -207,7 +252,6 @@ public class TemplateEngineTest {
         child2.put("type", "type2");
         parent1.addMember(new RelationMember("", child2));
         parent2.addMember(new RelationMember("", child2));
-
 
         StringBuilder sb = new StringBuilder();
         TemplateEntry entry = parser.parse();

@@ -876,7 +876,12 @@ public class OsmApi extends OsmConnection {
         return parseSingleNote(response);
     }
 
-    /** Method for parsing API responses for operations on individual notes */
+    /**
+     * Method for parsing API responses for operations on individual notes
+     * @param xml the API response as XML data
+     * @return the resulting Note
+     * @throws OsmTransferException if the API response cannot be parsed
+     */
     private Note parseSingleNote(String xml) throws OsmTransferException {
         try {
             List<Note> newNotes = new NoteReader(xml).parse();

@@ -83,6 +83,7 @@ public class OsmImporter extends FileImporter {
      * @param in input stream
      * @param associatedFile filename of data (layer name will be generated from name of file)
      * @param pm handler for progress monitoring and canceling
+     * @throws IllegalDataException if an error was found while parsing the OSM data
      */
     protected void importData(InputStream in, final File associatedFile, ProgressMonitor pm) throws IllegalDataException {
         final OsmImporterData data = loadLayer(in, associatedFile,
@@ -111,6 +112,7 @@ public class OsmImporter extends FileImporter {
      * @param associatedFile filename of data (can be <code>null</code> if the stream does not come from a file)
      * @param layerName name of generated layer
      * @param progressMonitor handler for progress monitoring and canceling
+     * @throws IllegalDataException if an error was found while parsing the OSM data
      */
     public OsmImporterData loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor)
             throws IllegalDataException {

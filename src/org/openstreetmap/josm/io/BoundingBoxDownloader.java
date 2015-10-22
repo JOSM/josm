@@ -127,6 +127,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
 
     /**
      * Parse the given input source and return the dataset.
+     * @throws IllegalDataException if an error was found while parsing the OSM data
      *
      * @see OsmReader#parseDataSet(InputStream, ProgressMonitor)
      */
