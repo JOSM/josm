@@ -88,6 +88,10 @@ public class ProjectionBounds {
         return new EastNorth(maxEast, maxNorth);
     }
 
+    /**
+     * Determines if the bounds area is not null
+     * @return {@code true} if the area is not null
+     */
     public boolean hasExtend() {
         return !Utils.equalsEpsilon(minEast, maxEast) || !Utils.equalsEpsilon(minNorth, maxNorth);
     }

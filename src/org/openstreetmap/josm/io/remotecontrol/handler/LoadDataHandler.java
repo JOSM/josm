@@ -59,9 +59,9 @@ public class LoadDataHandler extends RequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        final String data = Utils.encodeUrl("<osm version='0.6'><node id='-1' lat='1' lon='2' /></osm>");
         return new String[]{
-                "/load_data?layer_name=extra_layer&new_layer=true&data=" + data};
+                "/load_data?layer_name=extra_layer&new_layer=true&data=" +
+                    Utils.encodeUrl("<osm version='0.6'><node id='-1' lat='1' lon='2' /></osm>")};
     }
 
     @Override
@@ -100,8 +100,14 @@ public class LoadDataHandler extends RequestHandler {
 
         protected final String layerName;
 
+        /**
+         * Constructs a new {@code LoadDataTask}.
+         * @param newLayer if {@code true}, force download to a new layer
+         * @param dataSet data set
+         * @param layerName layer name
+         */
         public LoadDataTask(boolean newLayer, DataSet dataSet, String layerName) {
-            super(newLayer, tr("Loading data"), false);
+            super(newLayer, tr("Loading data"), false, true);
             this.dataSet = dataSet;
             this.layerName = layerName;
         }

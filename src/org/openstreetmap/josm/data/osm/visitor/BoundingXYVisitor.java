@@ -47,6 +47,10 @@ public class BoundingXYVisitor extends AbstractVisitor {
         }
     }
 
+    /**
+     * Visiting call for bounds.
+     * @param b bounds
+     */
     public void visit(Bounds b) {
         if (b != null) {
             visit(b.getMin());
@@ -54,6 +58,10 @@ public class BoundingXYVisitor extends AbstractVisitor {
         }
     }
 
+    /**
+     * Visiting call for projection bounds.
+     * @param b projection bounds
+     */
     public void visit(ProjectionBounds b) {
         if (b != null) {
             visit(b.getMin());
@@ -61,6 +69,10 @@ public class BoundingXYVisitor extends AbstractVisitor {
         }
     }
 
+    /**
+     * Visiting call for lat/lon.
+     * @param latlon lat/lon
+     */
     public void visit(LatLon latlon) {
         if (latlon != null) {
             if (latlon instanceof CachedLatLon) {
@@ -71,6 +83,10 @@ public class BoundingXYVisitor extends AbstractVisitor {
         }
     }
 
+    /**
+     * Visiting call for east/north.
+     * @param eastNorth east/north
+     */
     public void visit(EastNorth eastNorth) {
         if (eastNorth != null) {
             if (bounds == null) {
@@ -81,6 +97,11 @@ public class BoundingXYVisitor extends AbstractVisitor {
         }
     }
 
+    /**
+     * Determines if the visitor has a non null bounds area.
+     * @return {@code true} if the visitor has a non null bounds area
+     * @see ProjectionBounds#hasExtend
+     */
     public boolean hasExtend() {
         return bounds != null && bounds.hasExtend();
     }
@@ -173,9 +194,9 @@ public class BoundingXYVisitor extends AbstractVisitor {
         if (bounds == null)
             return;
         // convert size from meters to east/north units
-        double en_size = size * Main.map.mapView.getScale() / Main.map.mapView.getDist100Pixel() * 100;
-        visit(bounds.getMin().add(-en_size/2, -en_size/2));
-        visit(bounds.getMax().add(+en_size/2, +en_size/2));
+        double enSize = size * Main.map.mapView.getScale() / Main.map.mapView.getDist100Pixel() * 100;
+        visit(bounds.getMin().add(-enSize/2, -enSize/2));
+        visit(bounds.getMax().add(+enSize/2, +enSize/2));
     }
 
     @Override
@@ -183,6 +204,10 @@ public class BoundingXYVisitor extends AbstractVisitor {
         return "BoundingXYVisitor["+bounds+']';
     }
 
+    /**
+     * Compute the bounding box of a collection of primitives.
+     * @param primitives the collection of primitives
+     */
     public void computeBoundingBox(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null) return;
         for (OsmPrimitive p: primitives) {
