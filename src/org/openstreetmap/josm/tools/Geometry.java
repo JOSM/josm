@@ -875,6 +875,10 @@ public final class Geometry {
     /**
      * Tests if the {@code node} is inside the multipolygon {@code multiPolygon}. The nullable argument
      * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
+     * @param node node
+     * @param multiPolygon multipolygon
+     * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
+     * @return {@code true} if the node is inside the multipolygon
      */
     public static boolean isNodeInsideMultiPolygon(Node node, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
         return isPolygonInsideMultiPolygon(Collections.singletonList(node), multiPolygon, isOuterWayAMatch);
@@ -885,6 +889,10 @@ public final class Geometry {
      * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
      * <p>
      * If {@code nodes} contains exactly one element, then it is checked whether that one node is inside the multipolygon.
+     * @param nodes nodes forming the polygon
+     * @param multiPolygon multipolygon
+     * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
+     * @return {@code true} if the polygon formed by nodes is inside the multipolygon
      */
     public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
         // Extract outer/inner members from multipolygon

@@ -87,7 +87,10 @@ public final class Utils {
     private static char[] DEFAULT_STRIP = {'\u200B', '\uFEFF'};
 
     /**
-     * Tests whether {@code predicate} applies to at least one elements from {@code collection}.
+     * Tests whether {@code predicate} applies to at least one element from {@code collection}.
+     * @param collection the collection
+     * @param predicate the predicate
+     * @return {@code true} if {@code predicate} applies to at least one element from {@code collection}
      */
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
@@ -99,6 +102,9 @@ public final class Utils {
 
     /**
      * Tests whether {@code predicate} applies to all elements from {@code collection}.
+     * @param collection the collection
+     * @param predicate the predicate
+     * @return {@code true} if {@code predicate} applies to all elements from {@code collection}
      */
     public static <T> boolean forAll(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         return !exists(collection, Predicates.not(predicate));
@@ -151,6 +157,9 @@ public final class Utils {
     /**
      * Filter a collection by (sub)class.
      * This is an efficient read-only implementation.
+     * @param collection the collection
+     * @param klass the (sub)class
+     * @return a read-only filtered collection
      */
     public static <S, T extends S> SubclassFilteredCollection<S, T> filteredCollection(Collection<S> collection, final Class<T> klass) {
         return new SubclassFilteredCollection<>(collection, new Predicate<S>() {
@@ -280,6 +289,8 @@ public final class Utils {
     /**
      * convert Color to String
      * (Color.toString() omits alpha value)
+     * @param c the color
+     * @return the String representation, including alpha
      */
     public static String toString(Color c) {
         if (c == null)
@@ -307,6 +318,8 @@ public final class Utils {
     /**
      * convert integer range 0..255 to float range 0 &lt;= x &lt;= 1
      * when dealing with colors and color alpha value
+     * @param val integer value
+     * @return corresponding float value in range 0 &lt;= x &lt;= 1
      */
     public static Float color_int2float(Integer val) {
         if (val == null)

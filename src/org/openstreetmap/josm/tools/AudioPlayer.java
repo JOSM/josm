@@ -122,7 +122,7 @@ public final class AudioPlayer extends Thread {
      * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void play(URL url) throws Exception {
-        AudioPlayer.get().command.play(url, 0.0, 1.0);
+        AudioPlayer.getInstance().command.play(url, 0.0, 1.0);
     }
 
     /**
@@ -132,7 +132,7 @@ public final class AudioPlayer extends Thread {
      * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void play(URL url, double seconds) throws Exception {
-        AudioPlayer.get().command.play(url, seconds, 1.0);
+        AudioPlayer.getInstance().command.play(url, seconds, 1.0);
     }
 
     /**
@@ -143,7 +143,7 @@ public final class AudioPlayer extends Thread {
      * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void play(URL url, double seconds, double speed) throws Exception {
-        AudioPlayer.get().command.play(url, seconds, speed);
+        AudioPlayer.getInstance().command.play(url, seconds, speed);
     }
 
     /**
@@ -151,7 +151,7 @@ public final class AudioPlayer extends Thread {
      * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void pause() throws Exception {
-        AudioPlayer.get().command.pause();
+        AudioPlayer.getInstance().command.pause();
     }
 
     /**
@@ -159,7 +159,7 @@ public final class AudioPlayer extends Thread {
      * @return url - could be null
      */
     public static URL url() {
-        return AudioPlayer.get().playingUrl;
+        return AudioPlayer.getInstance().playingUrl;
     }
 
     /**
@@ -167,7 +167,7 @@ public final class AudioPlayer extends Thread {
      * @return boolean whether or not paused
      */
     public static boolean paused() {
-        return AudioPlayer.get().state == State.PAUSED;
+        return AudioPlayer.getInstance().state == State.PAUSED;
     }
 
     /**
@@ -175,7 +175,7 @@ public final class AudioPlayer extends Thread {
      * @return boolean whether or not playing
      */
     public static boolean playing() {
-        return AudioPlayer.get().state == State.PLAYING;
+        return AudioPlayer.getInstance().state == State.PLAYING;
     }
 
     /**
@@ -183,7 +183,7 @@ public final class AudioPlayer extends Thread {
      * @return double seconds
      */
     public static double position() {
-        return AudioPlayer.get().position;
+        return AudioPlayer.getInstance().position;
     }
 
     /**
@@ -191,20 +191,22 @@ public final class AudioPlayer extends Thread {
      * @return double, speed multiplier
      */
     public static double speed() {
-        return AudioPlayer.get().speed;
+        return AudioPlayer.getInstance().speed;
     }
 
     /**
-     *  gets the singleton object, and if this is the first time, creates it along with
-     *  the thread to support audio
+     * Returns the singleton object, and if this is the first time, creates it along with
+     * the thread to support audio
+     * @return the unique instance
      */
-    private static AudioPlayer get() {
+    private static AudioPlayer getInstance() {
         if (audioPlayer != null)
             return audioPlayer;
         try {
             audioPlayer = new AudioPlayer();
             return audioPlayer;
         } catch (Exception ex) {
+            Main.error(ex);
             return null;
         }
     }

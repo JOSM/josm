@@ -952,6 +952,7 @@ public final class PluginHandler {
      * @param pluginsWanted the collection of plugins to update. Updates all plugins if {@code null}
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      * @param displayErrMsg if {@code true}, a blocking error message is displayed in case of I/O exception.
+     * @return the list of plugins to load
      * @throws IllegalArgumentException if plugins is null
      */
     public static Collection<PluginInformation> updatePlugins(Component parent,

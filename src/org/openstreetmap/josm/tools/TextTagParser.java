@@ -54,8 +54,9 @@ public final class TextTagParser {
 
         /**
          * Read tags from "Free format"
+         * @return map of tags
          */
-        Map<String, String>  getFreeParsedTags() {
+        private Map<String, String> getFreeParsedTags() {
             String k, v;
             Map<String, String> tags = new HashMap<>();
 
@@ -167,6 +168,7 @@ public final class TextTagParser {
      * @param splitRegex - text is splitted into parts with this delimiter
      * @param tagRegex - each part is matched against this regex
      * @param unescapeTextInQuotes - if true, matched tag and value will be analyzed more thoroughly
+     * @return map of tags
      */
     public static Map<String, String> readTagsByRegexp(String text, String splitRegex, String tagRegex, boolean unescapeTextInQuotes) {
          String[] lines = text.split(splitRegex);
