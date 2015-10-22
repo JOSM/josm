@@ -14,13 +14,18 @@ import org.openstreetmap.josm.tools.Utils;
  * Determines how an icon is to be rotated depending on the primitive to displayed.
  */
 public abstract class RotationAngle {
+
     /**
      * Calculates the rotation angle depending on the primitive to displayed.
+     * @param p primitive
+     * @return rotation angle
      */
     public abstract double getRotationAngle(OsmPrimitive p);
 
     /**
      * Always returns the fixed {@code angle}.
+     * @param angle angle
+     * @return rotation angle
      */
     public static RotationAngle buildStaticRotation(final double angle) {
         return new RotationAngle() {
@@ -38,6 +43,8 @@ public abstract class RotationAngle {
 
     /**
      * Parses the rotation angle from the specified {@code string}.
+     * @param string angle as string
+     * @return rotation angle
      */
     public static RotationAngle buildStaticRotation(final String string) {
         try {
@@ -88,6 +95,7 @@ public abstract class RotationAngle {
 
     /**
      * Computes the angle depending on the referencing way segment, or {@code 0} if none exists.
+     * @return rotation angle
      */
     public static RotationAngle buildWayDirectionRotation() {
         return new RotationAngle() {

@@ -350,6 +350,9 @@ public class CachedFile {
      * Get preference key to store the location and age of the cached file.
      * 2 resources that point to the same url, but that are to be stored in different
      * directories will not share a cache file.
+     * @param url URL
+     * @param destDir destination directory
+     * @return Preference key
      */
     private static String getPrefKey(URL url, String destDir) {
         StringBuilder prefKey = new StringBuilder("mirror.");

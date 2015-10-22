@@ -133,6 +133,7 @@ public interface ProgressMonitor {
      * Creates subtasks monitor.
      * @param ticks Number of work units that should be done when subtask finishes
      * @param internal If true then subtask can't modify task title/custom text
+     * @return subtasks monitor
      */
     ProgressMonitor createSubTaskMonitor(int ticks, boolean internal);
 

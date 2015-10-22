@@ -95,6 +95,7 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
     /**
      * Provide the text for a checkbox that offers to save the
      * username and password that has been entered by the user.
+     * @return checkbox text
      */
     public abstract String getSaveUsernameAndPasswordCheckboxText();
 }
