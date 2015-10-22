@@ -199,6 +199,9 @@ public abstract class RequestHandler {
     }
 
     /**
+     * Returns the request parameters.
+     * @param uri URI as string
+     * @return map of request parameters
      * @see <a href="http://blog.lunatech.com/2009/02/03/what-every-web-developer-must-know-about-url-encoding">
      *      What every web developer must know about URL encoding</a>
      */

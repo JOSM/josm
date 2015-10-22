@@ -22,6 +22,7 @@ public class HighlightHelper {
     /**
      * Highlight and remember given primitives
      * @param prims - primitives to highlight/unhighlight
+     * @return {@code true} if a repaint is needed
      */
     public boolean highlight(Collection<? extends OsmPrimitive> prims) {
         return highlight(prims, false);
@@ -31,6 +32,7 @@ public class HighlightHelper {
      * Highlight and remember given primitives
      * @param prims - primitives to highlight/unhighlight
      * @param only - remove previous highlighting
+     * @return {@code true} if a repaint is needed
      */
     public boolean highlight(Collection<? extends OsmPrimitive> prims, boolean only) {
         boolean needsRepaint = false;
@@ -55,6 +57,7 @@ public class HighlightHelper {
     /**
      * Highlight and remember given primitives, forgetting previously highlighted by this instance
      * @param prims - primitives to highlight/unhighlight
+     * @return {@code true} if a repaint is needed
      */
     public boolean highlightOnly(Collection<? extends OsmPrimitive> prims) {
         return highlight(prims, true);
@@ -63,6 +66,7 @@ public class HighlightHelper {
     /**
      * Highlight and remember given primitive, forgetting previously highlighted by this instance
      * @param p - primitives to highlight/unhighlight
+     * @return {@code true} if a repaint is needed
      */
     public boolean highlightOnly(OsmPrimitive p) {
         return highlight(Collections.singleton(p), true);
@@ -72,6 +76,7 @@ public class HighlightHelper {
      * Highlight and remember given primitive
      * @param p - primitive to highlight/unhighlight
      * @param flag - true to highlight
+     * @return {@code true} if a repaint is needed
      */
     public boolean setHighlight(OsmPrimitive p, boolean flag) {
         return setHighlight(p, flag, new HashSet<Relation>());

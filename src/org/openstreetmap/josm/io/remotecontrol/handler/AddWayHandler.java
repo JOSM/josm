@@ -119,7 +119,9 @@ public class AddWayHandler extends RequestHandler {
     }
 
     /**
-     * Find the node with almost the same ccords in dataset or in already added nodes
+     * Find the node with almost the same coords in dataset or in already added nodes
+     * @param ll coordinates
+     * @return node with almost the same coords
      * @since 5845
      */
     Node findOrCreateNode(LatLon ll,  List<Command> commands) {

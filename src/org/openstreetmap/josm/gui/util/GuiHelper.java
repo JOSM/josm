@@ -315,6 +315,7 @@ public final class GuiHelper {
 
     /**
      * Gets the font used to display JOSM title in about dialog and splash screen.
+     * @return title font
      * @since 5797
      */
     public static Font getTitleFont() {

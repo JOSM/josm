@@ -112,6 +112,7 @@ public class OsmImporter extends FileImporter {
      * @param associatedFile filename of data (can be <code>null</code> if the stream does not come from a file)
      * @param layerName name of generated layer
      * @param progressMonitor handler for progress monitoring and canceling
+     * @return Utility class containing imported OSM layer, and a task to run after it is added to MapView
      * @throws IllegalDataException if an error was found while parsing the OSM data
      */
     public OsmImporterData loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor)

@@ -113,6 +113,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
 
     /**
      * Returns the name of the download task to be displayed in the {@link ProgressMonitor}.
+     * @return task name
      */
     protected String getTaskName() {
         return tr("Contacting OSM Server...");
@@ -120,6 +121,11 @@ public class BoundingBoxDownloader extends OsmServerReader {
 
     /**
      * Builds the request part for the bounding box.
+     * @param lon1 left
+     * @param lat1 bottom
+     * @param lon2 right
+     * @param lat2 top
+     * @return "map?bbox=left,bottom,right,top"
      */
     protected String getRequestForBbox(double lon1, double lat1, double lon2, double lat2) {
         return "map?bbox=" + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2;
@@ -127,6 +133,9 @@ public class BoundingBoxDownloader extends OsmServerReader {
 
     /**
      * Parse the given input source and return the dataset.
+     * @param source input stream
+     * @param progressMonitor progress monitor
+     * @return dataset
      * @throws IllegalDataException if an error was found while parsing the OSM data
      *
      * @see OsmReader#parseDataSet(InputStream, ProgressMonitor)

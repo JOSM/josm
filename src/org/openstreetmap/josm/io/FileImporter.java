@@ -141,6 +141,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
      * If multiple files (with multiple file formats) are selected,
      * they are opened in the order of their priorities.
      * Highest priority comes first.
+     * @return priority
      */
     public double getPriority() {
         return 0;

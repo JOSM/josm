@@ -53,6 +53,8 @@ public enum Compression {
 
     /**
      * Returns an un-compressing {@link InputStream} for {@code in}.
+     * @param in raw input stream
+     * @return un-compressing input stream
      *
      * @throws IOException if any I/O error occurs
      */
@@ -72,7 +74,8 @@ public enum Compression {
 
     /**
      * Returns an un-compressing {@link InputStream} for the {@link File} {@code file}.
-     *
+     * @param file file
+     * @return un-compressing input stream
      * @throws IOException if any I/O error occurs
      */
     @SuppressWarnings("resource")
@@ -82,6 +85,8 @@ public enum Compression {
 
     /**
      * Returns an un-compressing {@link InputStream} for the {@link URL} {@code url}.
+     * @param url URL
+     * @return un-compressing input stream
      *
      * @throws IOException if any I/O error occurs
      */
@@ -91,6 +96,8 @@ public enum Compression {
 
     /**
      * Returns a compressing {@link OutputStream} for {@code out}.
+     * @param out raw output stream
+     * @return compressing output stream
      *
      * @throws IOException if any I/O error occurs
      */
@@ -110,6 +117,8 @@ public enum Compression {
 
     /**
      * Returns a compressing {@link OutputStream} for the {@link File} {@code file}.
+     * @param file file
+     * @return compressing output stream
      *
      * @throws IOException if any I/O error occurs
      */

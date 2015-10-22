@@ -157,6 +157,7 @@ public class QuadStateCheckBox extends JCheckBox {
          * but not armed, PARTIAL state when the checkbox is
          * selected and armed (grey) and NOT_SELECTED when the
          * checkbox is deselected.
+         * @return current state
          */
         private State getState() {
             if (isSelected() && !isArmed()) {

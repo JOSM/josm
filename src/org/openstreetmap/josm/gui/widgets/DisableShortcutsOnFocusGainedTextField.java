@@ -157,6 +157,8 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
 
     /**
      * Returns true if the given shortcut has no modifier and is not an actions key.
+     * @param ks key stroke
+     * @return {@code true} if the given shortcut has to be disabled
      * @see KeyEvent#isActionKey()
      */
     protected boolean hasToBeDisabled(KeyStroke ks) {

@@ -43,14 +43,14 @@ public interface CredentialsAgent {
     void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException;
 
     /**
-     *
+     * Returns the credentials needed to to access host.
      * @param requestorType the type of service. {@link RequestorType#SERVER} for the OSM API server, {@link RequestorType#PROXY}
      * for a proxy server
      * @param host the hostname for these credentials
      * @param noSuccessWithLastResponse true, if the last request with the supplied credentials failed; false otherwise.
      * If true, implementations of this interface are advised to prompt the user for new credentials.
+     * @return the credentials
      * @throws CredentialsAgentException if a problem occurs in a implementation of this interface
-
      */
     CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse)
             throws CredentialsAgentException;
@@ -72,11 +72,10 @@ public interface CredentialsAgent {
      */
     void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException;
 
-
     /**
      * Provide a Panel that is shown below the API password / username fields
      * in the JOSM Preferences. (E.g. a warning that password is saved unencrypted.)
+     * @return Panel
      */
     Component getPreferencesDecorationPanel();
-
 }

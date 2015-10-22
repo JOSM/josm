@@ -42,6 +42,7 @@ public class XmlWriter implements Closeable {
      * a Java bug that renders
      *     new JLabel("&lt;html&gt;&amp;apos;&lt;/html&gt;")
      * literally as 6 character string, see #7558)
+     * @return XML1.0 string
      */
     public static String encode(String unencoded, boolean keepApos) {
         StringBuilder buffer = null;
