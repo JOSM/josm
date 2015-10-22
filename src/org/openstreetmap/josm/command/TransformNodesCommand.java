@@ -118,6 +118,7 @@ public abstract class TransformNodesCommand extends Command {
 
     /**
      * Get the nodes with the current transformation applied.
+     * @return nodes with the current transformation applied
      */
     public Collection<Node> getTransformedNodes() {
         return nodes;
@@ -126,6 +127,7 @@ public abstract class TransformNodesCommand extends Command {
     /**
      * Get the center of the nodes under modification.
      * It's just the barycenter.
+     * @return center east/north of the nodes under modification
      * @see org.openstreetmap.josm.tools.Geometry#getCentroid(java.util.List)
      */
     public EastNorth getNodesCenter() {

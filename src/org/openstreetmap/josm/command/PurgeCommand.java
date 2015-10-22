@@ -141,6 +141,7 @@ public class PurgeCommand extends Command {
     /**
      * Sorts a collection of primitives such that for each object
      * its referrers come later in the sorted collection.
+     * @return sorted list
      */
     public static List<OsmPrimitive> topoSort(Collection<OsmPrimitive> sel) {
         Set<OsmPrimitive> in = new HashSet<>(sel);

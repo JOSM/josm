@@ -219,7 +219,7 @@ public abstract class Command extends PseudoCommand {
 
     /**
      * Replies the layer this command is (or was) applied to.
-     *
+     * @return the layer this command is (or was) applied to
      */
     protected OsmDataLayer getLayer() {
         return layer;
@@ -240,7 +240,8 @@ public abstract class Command extends PseudoCommand {
     /**
      * Return the primitives that take part in this command.
      */
-    @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+    @Override
+    public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
         return cloneMap.keySet();
     }
 

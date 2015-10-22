@@ -162,8 +162,9 @@ public class UploadAction extends JosmAction{
     }
 
     /**
-     * returns true if the user wants to cancel, false if they
-     * want to continue
+     * Warn user about discouraged upload, propose to cancel operation.
+     * @param layer incriminated layer
+     * @return true if the user wants to cancel, false if they want to continue
      */
     public static boolean warnUploadDiscouraged(AbstractModifiableLayer layer) {
         return GuiHelper.warnUser(tr("Upload discouraged"),

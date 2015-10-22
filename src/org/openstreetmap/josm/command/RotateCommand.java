@@ -46,7 +46,8 @@ public class RotateCommand extends TransformNodesCommand {
     }
 
     /**
-     * Get angle between the horizontal axis and the line formed by the pivot and give points.
+     * Get angle between the horizontal axis and the line formed by the pivot and given point.
+     * @return angle between the horizontal axis and the line formed by the pivot and given point
      **/
     protected final double getAngle(EastNorth currentEN) {
         if (pivot == null)

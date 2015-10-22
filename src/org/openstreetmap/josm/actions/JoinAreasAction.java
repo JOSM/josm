@@ -258,7 +258,8 @@ public class JoinAreasAction extends JosmAction {
         }
 
         /**
-         * Oriented angle (N1N2, N1N3) in range [0; 2*Math.PI[
+         * Returns oriented angle (N1N2, N1N3) in range [0; 2*Math.PI[
+         * @return oriented angle (N1N2, N1N3) in range [0; 2*Math.PI[
          */
         private static double getAngle(Node N1, Node N2, Node N3) {
             EastNorth en1 = N1.getEastNorth();
@@ -587,11 +588,10 @@ public class JoinAreasAction extends JosmAction {
 
         // Find boundary ways
         List<Way> discardedWays = new ArrayList<>();
-        List<AssembledPolygon> bounadries = findBoundaryPolygons(preparedWays, discardedWays);
+        List<AssembledPolygon> boundaries = findBoundaryPolygons(preparedWays, discardedWays);
 
         //find polygons
-        List<AssembledMultipolygon> preparedPolygons = findPolygons(bounadries);
-
+        List<AssembledMultipolygon> preparedPolygons = findPolygons(boundaries);
 
         //assemble final polygons
         List<Multipolygon> polygons = new ArrayList<>();

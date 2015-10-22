@@ -240,6 +240,8 @@ public class SearchCompiler {
 
         /**
          * Tests whether one of the primitives matches.
+         * @param primitives primitives
+         * @return {@code true} if one of the primitives matches, {@code false} otherwise
          */
         protected boolean existsMatch(Collection<? extends OsmPrimitive> primitives) {
             for (OsmPrimitive p : primitives) {
@@ -251,6 +253,8 @@ public class SearchCompiler {
 
         /**
          * Tests whether all primitives match.
+         * @param primitives primitives
+         * @return {@code true} if all primitives match, {@code false} otherwise
          */
         protected boolean forallMatch(Collection<? extends OsmPrimitive> primitives) {
             for (OsmPrimitive p : primitives) {

@@ -198,6 +198,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Collect groups of ways with common nodes in order to orthogonalize each group separately.
+     * @return groups of ways with common nodes
      */
     private static List<List<WayData>> buildGroups(List<WayData> wayDataList) {
         List<List<WayData>> groups = new ArrayList<>();
@@ -244,6 +245,7 @@ public final class OrthogonalizeAction extends JosmAction {
      *      the mean value of their y-Coordinates.
      *      - The same for vertical segments.
      *  5. Rotate back.
+     * @return list of commands to perform
      * @throws InvalidUserInputException if selected ways have an angle different from 90 or 180 degrees
      **/
     private static Collection<Command> orthogonalize(List<WayData> wayDataList, List<Node> headingNodes) throws InvalidUserInputException {
@@ -474,6 +476,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Make sure angle (up to 2*Pi) is in interval [ 0, 2*Pi ).
+     * @return correct angle
      */
     private static double standard_angle_0_to_2PI(double a) {
         while (a >= 2 * Math.PI) {
@@ -487,6 +490,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Make sure angle (up to 2*Pi) is in interval ( -Pi, Pi ].
+     * @return correct angle
      */
     private static double standard_angle_mPI_to_PI(double a) {
         while (a > Math.PI) {
@@ -508,6 +512,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
         /**
          * Rotate counter-clock-wise.
+         * @return new east/north
          */
         public static EastNorth rotateCC(EastNorth pivot, EastNorth en, double angle) {
             double cosPhi = Math.cos(angle);
@@ -534,7 +539,8 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Recognize angle to be approximately 0, 90, 180 or 270 degrees.
-     * returns an integral value, corresponding to a counter clockwise turn:
+     * returns an integral value, corresponding to a counter clockwise turn.
+     * @return an integral value, corresponding to a counter clockwise turn
      * @throws RejectedAngleException in case of invalid angle
      */
     private static int angleToDirectionChange(double a, double deltaMax) throws RejectedAngleException {
