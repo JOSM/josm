@@ -224,6 +224,7 @@ public class UnGlueAction extends JosmAction {
      *
      * The way will be put into the object variable "selectedWay", the
      * node into "selectedNode".
+     * @return true if either one node is selected or one node and one way are selected and the node is part of the way
      */
     private boolean checkSelection(Collection<? extends OsmPrimitive> selection) {
 
@@ -259,6 +260,7 @@ public class UnGlueAction extends JosmAction {
      *
      * The way will be put into the object variable "selectedWay", the
      * nodes into "selectedNodes".
+     * @return true if one way and any number of nodes that are part of that way are selected
      */
     private boolean checkSelection2(Collection<? extends OsmPrimitive> selection) {
         if (selection.isEmpty())
@@ -301,6 +303,7 @@ public class UnGlueAction extends JosmAction {
      * <li>the add-node command will be put into the parameter cmds.</li>
      * <li>the changed way will be returned and must be put into cmds by the caller!</li>
      * </ul>
+     * @return new way
      */
     private static Way modifyWay(Node originalNode, Way w, List<Command> cmds, List<Node> newNodes) {
         // clone the node for the way

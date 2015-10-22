@@ -63,8 +63,9 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         /**
-         * Replies true if the source for tag pasting is heterogeneous, i.e. if it doesn't consist of
+         * Determines if the source for tag pasting is heterogeneous, i.e. if it doesn't consist of
          * {@link OsmPrimitive}s of exactly one type
+         * @return true if the source for tag pasting is heterogeneous
          */
         protected boolean isHeteogeneousSource() {
             int count = 0;

@@ -66,8 +66,8 @@ public class SplitWayAction extends JosmAction {
     public static class SplitWayResult {
         private final Command command;
         private final List<? extends PrimitiveId> newSelection;
-        private Way originalWay;
-        private List<Way> newWays;
+        private final Way originalWay;
+        private final List<Way> newWays;
 
         /**
          * @param command The command to be performed to split the way (which is saved for later retrieval with {@link #getCommand})

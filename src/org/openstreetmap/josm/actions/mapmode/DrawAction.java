@@ -154,7 +154,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     /**
-     * Checks if a map redraw is required and does so if needed. Also updates the status bar
+     * Checks if a map redraw is required and does so if needed. Also updates the status bar.
+     * @return true if a repaint is needed
      */
     private boolean redrawIfRequired() {
         updateStatusLine();
@@ -1102,7 +1103,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     /**
      * Removes target highlighting from primitives. Issues repaint if required.
-     * Returns true if a repaint has been issued.
+     * @return true if a repaint has been issued.
      */
     private boolean removeHighlighting() {
         newHighlights = new HashSet<>();
@@ -1234,6 +1235,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * For this case, this method returns the current way as selection,
      * to work around this issue.
      * Otherwise the normal selection of the current data layer is returned.
+     * @return selected primitives, while draw action is in progress
      */
     public Collection<OsmPrimitive> getInProgressSelection() {
         DataSet ds = getCurrentDataSet();

@@ -685,9 +685,10 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         }
     }
 
-    /** returns true whenever elements have been grabbed and moved (i.e. the initial
-     * thresholds have been exceeded) and is still in progress (i.e. mouse button
-     * still pressed)
+    /**
+     * Determines whenever elements have been grabbed and moved (i.e. the initial
+     * thresholds have been exceeded) and is still in progress (i.e. mouse button still pressed)
+     * @return true if a drag is in progress
      */
     private boolean dragInProgress() {
         return didMouseDrag && startingDraggingPos != null;
@@ -796,6 +797,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     /**
      * Obtain command in undoRedo stack to "continue" when dragging
+     * @return last command
      */
     private static Command getLastCommand() {
         Command c = !Main.main.undoRedo.commands.isEmpty()
@@ -900,6 +902,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     /**
      * Tries to find a node to merge to when in move-merge mode for the current mouse
      * position. Either returns the node or null, if no suitable one is nearby.
+     * @return node to merge to, or null
      */
     private Node findNodeToMergeTo(Point p) {
         Collection<Node> target = mv.getNearestNodes(p,
