@@ -112,6 +112,7 @@ public final class ConditionalOptionPaneUtil {
      * @param defaultOption the default option; only meaningful if options is used; can be null
      *
      * @return the option selected by user. {@link JOptionPane#CLOSED_OPTION} if the dialog was closed.
+     * @throws HeadlessException if <code>GraphicsEnvironment.isHeadless</code> returns <code>true</code>
      */
     public static int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType,
             int messageType, Object[] options, Object defaultOption) throws HeadlessException {
@@ -152,6 +153,7 @@ public final class ConditionalOptionPaneUtil {
      *
      *
      * @return true, if the selected option is equal to <code>trueOption</code>, otherwise false.
+     * @throws HeadlessException if <code>GraphicsEnvironment.isHeadless</code> returns <code>true</code>
      *
      * @see JOptionPane#INFORMATION_MESSAGE
      * @see JOptionPane#WARNING_MESSAGE

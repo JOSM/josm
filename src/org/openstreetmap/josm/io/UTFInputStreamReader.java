@@ -15,6 +15,7 @@ public final class UTFInputStreamReader extends InputStreamReader {
     /**
      * Creates a new {@link InputStreamReader} from the {@link InputStream} with UTF-8 as default encoding.
      * @return A reader with the correct encoding. Starts to read after the BOM.
+     * @throws IOException if any I/O error occurs
      * @see #create(java.io.InputStream, String)
      */
     public static UTFInputStreamReader create(InputStream input) throws IOException {
@@ -25,6 +26,7 @@ public final class UTFInputStreamReader extends InputStreamReader {
      * Creates a new {@link InputStreamReader} from the {@link InputStream}.
      * @param defaultEncoding Used, when no BOM was recognized. Can be null.
      * @return A reader with the correct encoding. Starts to read after the BOM.
+     * @throws IOException if any I/O error occurs
      */
     public static UTFInputStreamReader create(InputStream input, String defaultEncoding) throws IOException {
         byte[] bom = new byte[4];

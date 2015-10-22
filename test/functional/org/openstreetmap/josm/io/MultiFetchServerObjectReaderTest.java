@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -173,9 +174,12 @@ public class MultiFetchServerObjectReaderTest {
 
     /**
      * Setup test.
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if an error was found while parsing the OSM data
+     * @throws FileNotFoundException if the dataset file cannot be found
      */
     @Before
-    public void setUp() throws IOException, IllegalDataException {
+    public void setUp() throws IOException, IllegalDataException, FileNotFoundException {
         File f = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();

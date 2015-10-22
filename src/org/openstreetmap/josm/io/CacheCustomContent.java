@@ -59,6 +59,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * inheriting class and should use a worker if it has a long wall time as the function is
      * executed in the current thread.
      * @return the data to cache
+     * @throws T a {@link Throwable}
      */
     protected abstract byte[] updateData() throws T;
 
@@ -174,6 +175,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
 
     /**
      * Tries to load the data using the given ident from disk. If this fails, data will be updated, unless run in offline mode
+     * @throws T a {@link Throwable}
      */
     private void loadFromDisk() throws T {
         try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(path))) {

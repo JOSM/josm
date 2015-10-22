@@ -397,6 +397,7 @@ public class OsmReader extends AbstractReader {
      *
      * This is basically the same code as parseUnknown(), except for the warnings, which
      * are displayed for inner elements and not at top level.
+     * @throws XMLStreamException if there is an error processing the underlying XML source
      */
     private void jumpToEnd(boolean printWarning) throws XMLStreamException {
         while (true) {
@@ -429,6 +430,7 @@ public class OsmReader extends AbstractReader {
 
     /**
      * Read out the common attributes and put them into current OsmPrimitive.
+     * @throws XMLStreamException if there is an error processing the underlying XML source
      */
     private void readCommon(PrimitiveData current) throws XMLStreamException {
         current.setId(getLong("id"));

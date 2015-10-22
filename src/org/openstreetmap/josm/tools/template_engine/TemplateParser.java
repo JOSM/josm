@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.template_engine;
 
-
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
@@ -14,13 +13,19 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.Token;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.TokenType;
 
-
+/**
+ * Template parser.
+ */
 public class TemplateParser {
     private final Tokenizer tokenizer;
 
     private static final Collection<TokenType> EXPRESSION_END_TOKENS = Arrays.asList(TokenType.EOF);
     private static final Collection<TokenType> CONDITION_WITH_APOSTROPHES_END_TOKENS = Arrays.asList(TokenType.APOSTROPHE);
 
+    /**
+     * Constructs a new {@code TemplateParser}.
+     * @param template template to parse
+     */
     public TemplateParser(String template) {
         this.tokenizer = new Tokenizer(template);
     }
@@ -33,6 +38,11 @@ public class TemplateParser {
             return token;
     }
 
+    /**
+     * Parse the template.
+     * @return the resulting template entry
+     * @throws ParseError if the template cannot be parsed
+     */
     public TemplateEntry parse() throws ParseError {
         return parseExpression(EXPRESSION_END_TOKENS);
     }
@@ -90,7 +100,7 @@ public class TemplateParser {
                 try {
                     result.getEntries().add(new SearchExpressionCondition(
                             SearchCompiler.compile(searchExpression.getText()), condition));
-                } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
+                } catch (SearchCompiler.ParseError e) {
                     throw new ParseError(searchExpression.getPosition(), e);
                 }
             }
@@ -120,7 +130,7 @@ public class TemplateParser {
             try {
                 Match match = SearchCompiler.compile(searchExpression.getText());
                 result = new ContextSwitchTemplate(match, template, searchExpression.getPosition());
-            } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
+            } catch (SearchCompiler.ParseError e) {
                 throw new ParseError(searchExpression.getPosition(), e);
             }
         }
@@ -128,5 +138,4 @@ public class TemplateParser {
         check(TokenType.END);
         return result;
     }
-
 }

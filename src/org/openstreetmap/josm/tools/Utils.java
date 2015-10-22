@@ -221,7 +221,10 @@ public final class Utils {
     }
 
     /**
-     * return the modulus in the range [0, n)
+     * Return the modulus in the range [0, n)
+     * @param a dividend
+     * @param n divisor
+     * @return modulo (remainder of the Euclidian division of a by n)
      */
     public static int mod(int a, int n) {
         if (n <= 0)

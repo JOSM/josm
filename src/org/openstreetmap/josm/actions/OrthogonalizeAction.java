@@ -244,7 +244,7 @@ public final class OrthogonalizeAction extends JosmAction {
      *      the mean value of their y-Coordinates.
      *      - The same for vertical segments.
      *  5. Rotate back.
-     *
+     * @throws InvalidUserInputException if selected ways have an angle different from 90 or 180 degrees
      **/
     private static Collection<Command> orthogonalize(List<WayData> wayDataList, List<Node> headingNodes) throws InvalidUserInputException {
         // find average heading
@@ -535,6 +535,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Recognize angle to be approximately 0, 90, 180 or 270 degrees.
      * returns an integral value, corresponding to a counter clockwise turn:
+     * @throws RejectedAngleException in case of invalid angle
      */
     private static int angleToDirectionChange(double a, double deltaMax) throws RejectedAngleException {
         a = standard_angle_mPI_to_PI(a);

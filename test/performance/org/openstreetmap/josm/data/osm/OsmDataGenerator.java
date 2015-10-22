@@ -110,6 +110,7 @@ public final class OsmDataGenerator {
 
         /**
          * Create a random node and add it to the dataset.
+         * @param ds the data set
          * @return a random node
          */
         protected Node createRandomNode(DataSet ds) {

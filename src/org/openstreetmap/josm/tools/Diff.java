@@ -82,9 +82,7 @@ import java.util.Map;
     GNU General Public License</a>
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
  */
-
 public class Diff {
 
     /** Prepare to find differences between two arrays.  Each element of
@@ -93,6 +91,8 @@ public class Diff {
       are no longer needed for computing the differences.  They will
       be needed again later to print the results of the comparison as
       an edit script, if desired.
+     * @param a first array
+     * @param b second array
      */
     public Diff(Object[] a, Object[] b) {
         Map<Object, Integer> h = new HashMap<>(a.length + b.length);

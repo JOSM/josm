@@ -929,8 +929,10 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * This is a method splits way into smaller parts, using the prepared nodes list as split points.
+     * This is a method that splits way into smaller parts, using the prepared nodes list as split points.
      * Uses {@link SplitWayAction#splitWay} for the heavy lifting.
+     * @param way way to split
+     * @param nodes split points
      * @return list of split ways (or original ways if no splitting is done).
      */
     private List<Way> splitWayOnNodes(Way way, Set<Node> nodes) {
@@ -1141,6 +1143,7 @@ public class JoinAreasAction extends JosmAction {
     /**
      * This method checks if polygons have several touching parts and splits them in several polygons.
      * @param polygons the polygons to process.
+     * @return the resulting list of polygons
      */
     public static List<AssembledPolygon> fixTouchingPolygons(List<AssembledPolygon> polygons) {
         List<AssembledPolygon> newPolygons = new ArrayList<>();

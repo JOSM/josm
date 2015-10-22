@@ -133,10 +133,12 @@ public class RemoteControlHttpsServer extends Thread {
      * @param days how many days from now the Certificate is valid for
      * @param algorithm the signing algorithm, eg "SHA256withRSA"
      * @param san SubjectAlternativeName extension (optional)
+     * @return the self-signed X.509 Certificate
+     * @throws GeneralSecurityException if any security error occurs
+     * @throws IOException if any I/O error occurs
      */
     private static X509Certificate generateCertificate(String dn, KeyPair pair, int days, String algorithm, String san)
             throws GeneralSecurityException, IOException {
-        PrivateKey privkey = pair.getPrivate();
         X509CertInfo info = new X509CertInfo();
         Date from = new Date();
         Date to = new Date(from.getTime() + days * 86400000L);
@@ -192,6 +194,7 @@ public class RemoteControlHttpsServer extends Thread {
         info.set(X509CertInfo.EXTENSIONS, ext);
 
         // Sign the cert to identify the algorithm that's used.
+        PrivateKey privkey = pair.getPrivate();
         X509CertImpl cert = new X509CertImpl(info);
         cert.sign(privkey, algorithm);
 
