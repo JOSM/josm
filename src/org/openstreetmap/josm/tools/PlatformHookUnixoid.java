@@ -401,24 +401,25 @@ public class PlatformHookUnixoid implements PlatformHook {
                 ExtendedDialog ed = new ExtendedDialog(
                         Main.parent,
                         tr("Outdated Java version"),
-                        new String[]{tr("Update Java"), tr("Cancel")});
+                        new String[]{tr("OK"), tr("Update Java"), tr("Cancel")});
                 // Check if the dialog has not already been permanently hidden by user
                 if (!ed.toggleEnable("askUpdateJava8").toggleCheckState()) {
-                    ed.setButtonIcons(new String[]{"java", "cancel"}).setCancelButton(2);
+                    ed.setButtonIcons(new String[]{"ok", "java", "cancel"}).setCancelButton(3);
                     ed.setMinimumSize(new Dimension(480, 300));
                     ed.setIcon(JOptionPane.WARNING_MESSAGE);
-                    String content = tr("You are running version {0} of Java.", "<b>"+version+"</b>")+"<br><br>";
+                    StringBuilder content = new StringBuilder(tr("You are running version {0} of Java.", "<b>"+version+"</b>"))
+                            .append("<br><br>");
                     if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor")) && !isOpenJDK()) {
-                        content += "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
-                                "Oracle", tr("April 2015"))+"</b><br><br>";
+                        content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
+                                "Oracle", tr("April 2015"))).append("</b><br><br>");
                     }
-                    content += "<b>" +
-                            tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "8")
-                            + "</b><br><br>" +
-                            tr("Would you like to update now ?");
-                    ed.setContent(content);
+                    content.append("<b>")
+                           .append(tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "8"))
+                           .append("</b><br><br>")
+                           .append(tr("Would you like to update now ?"));
+                    ed.setContent(content.toString());
 
-                    if (ed.showDialog().getValue() == 1) {
+                    if (ed.showDialog().getValue() == 2) {
                         try {
                             openUrl(url);
                         } catch (IOException e) {
