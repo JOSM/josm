@@ -82,6 +82,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     public static final String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
 
+    /** Prefix of preset icon loading failure error message */
+    public static final String PRESET_ICON_ERROR_MSG_PREFIX = "Could not get presets icon ";
+
     public TaggingPresetMenu group;
     public String name;
     public String iconName;
@@ -165,6 +168,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     /**
      * Called from the XML parser to set the icon.
      * The loading task is performed in the background in order to speedup startup.
+     * @param iconName icon name
      */
     public void setIcon(final String iconName) {
         this.iconName = iconName;
@@ -189,7 +193,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         }
                     });
                 } else {
-                    Main.warn("Could not get presets icon " + iconName);
+                    Main.warn(PRESET_ICON_ERROR_MSG_PREFIX + iconName);
                 }
             }
         });

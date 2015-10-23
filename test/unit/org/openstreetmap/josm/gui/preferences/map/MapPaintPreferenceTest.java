@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences.validator;
+package org.openstreetmap.josm.gui.preferences.map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -11,15 +11,14 @@ import java.util.Collection;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
-import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 
 /**
- * Unit tests of {@link ValidatorTagCheckerRulesPreference} class.
+ * Unit tests of {@link MapPaintPreference} class.
  */
-public class ValidatorTagCheckerRulesPreferenceTest {
+public class MapPaintPreferenceTest {
 
     /**
      * Setup test.
@@ -30,23 +29,21 @@ public class ValidatorTagCheckerRulesPreferenceTest {
     }
 
     /**
-     * Test that available tag checker rules are valid.
+     * Test that available map paint styles are valid.
      * @throws IOException if any I/O error occurs
      * @throws ParseException if the config file does not match MapCSS syntax
      */
     @Test
-    public void testValidityOfAvailableRules() throws ParseException, IOException {
-        Collection<ExtendedSourceEntry> sources = new ValidatorTagCheckerRulesPreference.TagCheckerRulesSourceEditor()
+    public void testValidityOfAvailableStyles() throws ParseException, IOException {
+        Collection<ExtendedSourceEntry> sources = new MapPaintPreference.MapPaintSourceEditor()
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());
         Collection<Throwable> allErrors = new ArrayList<>();
-        MapCSSTagChecker tagChecker = new MapCSSTagChecker();
         for (ExtendedSourceEntry source : sources) {
             System.out.print(source.url);
-            ParseResult result = tagChecker.addMapCSS(source.url);
-            assertFalse(result.parseChecks.isEmpty());
-            System.out.println(result.parseErrors.isEmpty() ? " => OK" : " => KO");
-            allErrors.addAll(result.parseErrors);
+            Collection<Throwable> errors = MapPaintStyles.addStyle(source);
+            System.out.println(errors.isEmpty() ? " => OK" : " => KO");
+            allErrors.addAll(errors);
         }
         assertTrue(allErrors.isEmpty());
     }
