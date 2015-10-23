@@ -446,8 +446,9 @@ public abstract class SourceEditor extends JPanel {
 
     /**
      * Synchronously loads available sources and returns the parsed list.
+     * @return list of available sources
      */
-    Collection<ExtendedSourceEntry> loadAndGetAvailableSources() {
+    public final Collection<ExtendedSourceEntry> loadAndGetAvailableSources() {
         try {
             final SourceLoader loader = new SourceLoader(availableSourcesUrl, sourceProviders);
             loader.realRun();
@@ -465,6 +466,9 @@ public abstract class SourceEditor extends JPanel {
         Main.worker.submit(new SourceLoader(url, sourceProviders));
     }
 
+    /**
+     * Performs the initial loading of source providers. Does nothing if already done.
+     */
     public void initiallyLoadAvailableSources() {
         if (!sourcesInitiallyLoaded) {
             reloadAvailableSources(availableSourcesUrl, sourceProviders);
