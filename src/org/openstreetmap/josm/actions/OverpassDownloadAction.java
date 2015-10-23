@@ -10,6 +10,8 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +22,8 @@ import java.util.LinkedList;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -82,16 +86,45 @@ public class OverpassDownloadAction extends JosmAction {
         }
     }
 
-    static final class OverpassDownloadDialog extends DownloadDialog {
+    private static final class DisableActionsFocusListener implements FocusListener {
 
-        protected HistoryComboBox overpassServer;
-        protected HistoryComboBox overpassWizard;
-        protected JosmTextArea overpassQuery;
+        private final ActionMap actionMap;
+
+        private DisableActionsFocusListener(ActionMap actionMap) {
+            this.actionMap = actionMap;
+        }
+
+        @Override
+        public void focusGained(FocusEvent e) {
+            enableActions(false);
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            enableActions(true);
+        }
+
+        private void enableActions(boolean enabled) {
+            for (Object key : actionMap.allKeys()) {
+                Action action = actionMap.get(key);
+                if (action != null) {
+                    action.setEnabled(enabled);
+                }
+            }
+        }
+    }
+
+    private static final class OverpassDownloadDialog extends DownloadDialog {
+
+        private HistoryComboBox overpassServer;
+        private HistoryComboBox overpassWizard;
+        private JosmTextArea overpassQuery;
         private static OverpassDownloadDialog instance;
-        static final StringProperty OVERPASS_SERVER = new StringProperty("download.overpass.server", "http://overpass-api.de/api/");
-        static final CollectionProperty OVERPASS_SERVER_HISTORY = new CollectionProperty("download.overpass.servers",
+        private static final StringProperty OVERPASS_SERVER = new StringProperty("download.overpass.server", "http://overpass-api.de/api/");
+        private static final CollectionProperty OVERPASS_SERVER_HISTORY = new CollectionProperty("download.overpass.servers",
                 Arrays.asList("http://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
-        static final CollectionProperty OVERPASS_WIZARD_HISTORY = new CollectionProperty("download.overpass.wizard", new ArrayList<String>());
+        private static final CollectionProperty OVERPASS_WIZARD_HISTORY = new CollectionProperty("download.overpass.wizard",
+                new ArrayList<String>());
 
         private OverpassDownloadDialog(Component parent) {
             super(parent, ht("/Action/OverpassDownload"));
@@ -112,11 +145,15 @@ public class OverpassDownloadAction extends JosmAction {
         @Override
         protected void buildMainPanelAboveDownloadSelections(JPanel pnl) {
 
+            DisableActionsFocusListener disableActionsFocusListener =
+                    new DisableActionsFocusListener(slippyMapChooser.getNavigationComponentActionMap());
+
             pnl.add(new JLabel(), GBC.eol()); // needed for the invisible checkboxes cbDownloadGpxData, cbDownloadNotes
 
             final String tooltip = tr("Builds an Overpass query using the Overpass Turbo query wizard");
             overpassWizard = new HistoryComboBox();
             overpassWizard.setToolTipText(tooltip);
+            overpassWizard.getEditor().getEditorComponent().addFocusListener(disableActionsFocusListener);
             final JButton buildQuery = new JButton(tr("Build query"));
             buildQuery.addActionListener(new AbstractAction() {
                 @Override
@@ -142,6 +179,7 @@ public class OverpassDownloadAction extends JosmAction {
 
             overpassQuery = new JosmTextArea("", 8, 80);
             overpassQuery.setFont(GuiHelper.getMonospacedFont(overpassQuery));
+            overpassQuery.addFocusListener(disableActionsFocusListener);
             JScrollPane scrollPane = new JScrollPane(overpassQuery);
             final JPanel pane = new JPanel(new BorderLayout());
             final BasicArrowButton arrowButton = new BasicArrowButton(BasicArrowButton.SOUTH);
@@ -159,9 +197,9 @@ public class OverpassDownloadAction extends JosmAction {
             pnl.add(pane, gbc);
 
             overpassServer = new HistoryComboBox();
+            overpassServer.getEditor().getEditorComponent().addFocusListener(disableActionsFocusListener);
             pnl.add(new JLabel(tr("Overpass server: ")), GBC.std().insets(5, 5, 5, 5));
             pnl.add(overpassServer, GBC.eol().fill(GBC.HORIZONTAL));
-
         }
 
         public String getOverpassServer() {
