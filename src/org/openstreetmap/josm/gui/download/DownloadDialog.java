@@ -116,10 +116,11 @@ public class DownloadDialog extends JDialog  {
         cbDownloadNotes.getModel().addChangeListener(checkboxChangeListener);
         pnl.add(cbDownloadNotes, GBC.eol().insets(50, 5, 1, 5));
 
+        // must be created before hook
+        slippyMapChooser = new SlippyMapChooser();
+
         // hook for subclasses
         buildMainPanelAboveDownloadSelections(pnl);
-
-        slippyMapChooser = new SlippyMapChooser();
 
         // predefined download selections
         downloadSelections.add(slippyMapChooser);

@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.ActionMap;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -15,15 +16,15 @@ import org.openstreetmap.josm.gui.bbox.BBoxChooser;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 
 /**
- * JComponent that displays the slippy map tiles
+ * JComponent that displays the slippy map tiles.
  *
  * @author Tim Haussmann
- *
+ * @since 1390
  */
 public class SlippyMapChooser extends JPanel implements DownloadSelection, PropertyChangeListener {
 
     private DownloadDialog iGui;
-    private SlippyMapBBoxChooser pnlSlippyMapBBoxChooser;
+    private final SlippyMapBBoxChooser pnlSlippyMapBBoxChooser;
     // standard dimension
     private Dimension iDownloadDialogDimension;
 
@@ -85,5 +86,14 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
         if (pnlSlippyMapBBoxChooser != null) {
             pnlSlippyMapBBoxChooser.refreshTileSources();
         }
+    }
+
+    /**
+     * Returns the action map of the underlying navigation component.
+     * @return the action map of the underlying navigation component
+     * @since 8932
+     */
+    public final ActionMap getNavigationComponentActionMap() {
+        return pnlSlippyMapBBoxChooser.getActionMap();
     }
 }
