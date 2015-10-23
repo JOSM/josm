@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 
@@ -45,20 +46,22 @@ public class MapCSSTagCheckerTest {
 
     static MapCSSTagChecker buildTagChecker(String css) throws ParseException {
         final MapCSSTagChecker test = new MapCSSTagChecker();
-        test.checks.putAll("test", TagCheck.readMapCSS(new StringReader(css)));
+        test.checks.putAll("test", TagCheck.readMapCSS(new StringReader(css)).parseChecks);
         return test;
     }
 
     @Test
     public void testNaturalMarsh() throws Exception {
-        final List<MapCSSTagChecker.TagCheck> checks = MapCSSTagChecker.TagCheck.readMapCSS(new StringReader("" +
+        ParseResult result = MapCSSTagChecker.TagCheck.readMapCSS(new StringReader("" +
                 "*[natural=marsh] {\n" +
                 "   throwWarning: tr(\"{0}={1} is deprecated\", \"{0.key}\", tag(\"natural\"));\n" +
                 "   fixRemove: \"{0.key}\";\n" +
                 "   fixAdd: \"natural=wetland\";\n" +
                 "   fixAdd: \"wetland=marsh\";\n" +
                 "}"));
+        final List<MapCSSTagChecker.TagCheck> checks = result.parseChecks;
         assertEquals(1, checks.size());
+        assertTrue(result.parseErrors.isEmpty());
         final MapCSSTagChecker.TagCheck check = checks.get(0);
         assertNotNull(check);
         assertEquals("{0.key}=null is deprecated", check.getDescription(null));
@@ -86,7 +89,7 @@ public class MapCSSTagCheckerTest {
                 "throwError: \"error\";" +
                 "fixChangeKey: \"highway => construction\";\n" +
                 "fixAdd: \"highway=construction\";\n" +
-                "}")).get(0);
+                "}")).parseChecks.get(0);
         final Command command = check.fixPrimitive(p);
         assertTrue(command instanceof SequenceCommand);
         final Iterator<PseudoCommand> it = command.getChildren().iterator();

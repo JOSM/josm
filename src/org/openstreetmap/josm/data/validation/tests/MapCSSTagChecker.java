@@ -233,7 +233,28 @@ public class MapCSSTagChecker extends Test.TagTest {
 
     final MultiMap<String, TagCheck> checks = new MultiMap<>();
 
-    static class TagCheck implements Predicate<OsmPrimitive> {
+    /**
+     * Result of {@link TagCheck#readMapCSS}
+     * @since 8936
+     */
+    public static class ParseResult {
+        /** Checks successfully parsed */
+        public final List<TagCheck> parseChecks;
+        /** Errors that occured during parsing */
+        public final Collection<Throwable> parseErrors;
+
+        /**
+         * Constructs a new {@code ParseResult}.
+         * @param parseChecks Checks successfully parsed
+         * @param parseErrors Errors that occured during parsing
+         */
+        public ParseResult(List<TagCheck> parseChecks, Collection<Throwable> parseErrors) {
+            this.parseChecks = parseChecks;
+            this.parseErrors = parseErrors;
+        }
+    }
+
+    public static class TagCheck implements Predicate<OsmPrimitive> {
         protected final GroupedMapCSSRule rule;
         protected final List<FixCommand> fixCommands = new ArrayList<>();
         protected final List<String> alternatives = new ArrayList<>();
@@ -319,7 +340,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             return check;
         }
 
-        static List<TagCheck> readMapCSS(Reader css) throws ParseException {
+        static ParseResult readMapCSS(Reader css) throws ParseException {
             CheckParameterUtil.ensureParameterNotNull(css, "css");
 
             final MapCSSStyleSource source = new MapCSSStyleSource("");
@@ -328,7 +349,8 @@ public class MapCSSTagChecker extends Test.TagTest {
             css = new StringReader(preprocessor.pp_root(source));
             final MapCSSParser parser = new MapCSSParser(css, MapCSSParser.LexicalState.DEFAULT);
             parser.sheet(source);
-            assert source.getErrors().isEmpty();
+            Collection<Throwable> parseErrors = source.getErrors();
+            assert parseErrors.isEmpty();
             // Ignore "meta" rule(s) from external rules of JOSM wiki
             removeMetaRules(source);
             // group rules with common declaration block
@@ -342,16 +364,17 @@ public class MapCSSTagChecker extends Test.TagTest {
                     g.get(rule.declaration).add(rule.selector);
                 }
             }
-            List<TagCheck> result = new ArrayList<>();
+            List<TagCheck> parseChecks = new ArrayList<>();
             for (Map.Entry<Declaration, List<Selector>> map : g.entrySet()) {
                 try {
-                    result.add(TagCheck.ofMapCSSRule(
+                    parseChecks.add(TagCheck.ofMapCSSRule(
                             new GroupedMapCSSRule(map.getValue(), map.getKey())));
                 } catch (IllegalDataException e) {
                     Main.error("Cannot add MapCss rule: "+e.getMessage());
+                    parseErrors.add(e);
                 }
             }
-            return result;
+            return new ParseResult(parseChecks, parseErrors);
         }
 
         private static void removeMetaRules(MapCSSStyleSource source) {
@@ -668,25 +691,28 @@ public class MapCSSTagChecker extends Test.TagTest {
     /**
      * Adds a new MapCSS config file from the given URL.
      * @param url The unique URL of the MapCSS config file
+     * @return List of tag checks and parsing errors, or null
      * @throws ParseException if the config file does not match MapCSS syntax
      * @throws IOException if any I/O error occurs
      * @since 7275
      */
-    public synchronized void addMapCSS(String url) throws ParseException, IOException {
+    public synchronized ParseResult addMapCSS(String url) throws ParseException, IOException {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         CachedFile cache = new CachedFile(url);
         InputStream zip = cache.findZipEntryInputStream("validator.mapcss", "");
+        ParseResult result;
         try (InputStream s = zip != null ? zip : cache.getInputStream()) {
-            List<TagCheck> tagchecks = TagCheck.readMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
+            result = TagCheck.readMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
             checks.remove(url);
-            checks.putAll(url, tagchecks);
+            checks.putAll(url, result.parseChecks);
             // Check assertions, useful for development of local files
             if (Main.pref.getBoolean("validator.check_assert_local_rules", false) && Utils.isLocalUrl(url)) {
-                for (String msg : checkAsserts(tagchecks)) {
+                for (String msg : checkAsserts(result.parseChecks)) {
                     Main.warn(msg);
                 }
             }
         }
+        return result;
     }
 
     @Override
