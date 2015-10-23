@@ -1410,7 +1410,7 @@ public final class Utils {
      * @since 8404
      */
     public static boolean hasExtension(String filename, String... extensions) {
-        String name = filename.toLowerCase(Locale.ENGLISH);
+        String name = filename.toLowerCase(Locale.ENGLISH).replace("?format=raw", "");
         for (String ext : extensions) {
             if (name.endsWith('.' + ext.toLowerCase(Locale.ENGLISH)))
                 return true;

@@ -1,17 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import javax.swing.text.ViewFactory;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 /**
  * A subclass of {@link HTMLEditorKit} that fixes an uncommon design choice that shares the set stylesheet between all instances.
  * This class stores a single stylesheet per instance, as it should have be done by Sun in the first place.
+ * Moreover it allows to display SVG images.
  * @since 6040
  */
 public class JosmHTMLEditorKit extends HTMLEditorKit {
 
-    protected StyleSheet ss = super.getStyleSheet();
+    /** Shared factory for creating HTML Views. */
+    private static final ViewFactory FACTORY = new JosmHTMLFactory();
+
+    private StyleSheet ss = super.getStyleSheet();
 
     /**
      * Set the set of styles to be used to render the various HTML elements.
@@ -40,5 +45,10 @@ public class JosmHTMLEditorKit extends HTMLEditorKit {
     @Override
     public StyleSheet getStyleSheet() {
         return ss;
+    }
+
+    @Override
+    public ViewFactory getViewFactory() {
+        return FACTORY;
     }
 }
