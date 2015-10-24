@@ -231,6 +231,12 @@ public final class PluginHandler {
     public static final Collection<PluginProxy> pluginList = new LinkedList<>();
 
     /**
+     * All exceptions that occured during plugin loading
+     * @since 8938
+     */
+    public static final Map<String, Exception> pluginLoadingExceptions = new HashMap<>();
+
+    /**
      * Global plugin ClassLoader.
      */
     private static DynamicURLClassLoader pluginClassLoader;
@@ -278,7 +284,7 @@ public final class PluginHandler {
 
         // notify user about removed deprecated plugins
         //
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(32);
         sb.append("<html>")
           .append(trn(
                 "The following plugin is no longer necessary and has been deactivated:",
@@ -307,6 +313,7 @@ public final class PluginHandler {
      * of plugins in the preferences, if necessary.
      *
      * Asks the user for every unmaintained plugin whether it should be removed.
+     * @param parent The parent Component used to display warning popup
      *
      * @param plugins the collection of plugins
      */
@@ -315,7 +322,7 @@ public final class PluginHandler {
             if (!plugins.contains(unmaintained)) {
                 continue;
             }
-            String msg =  tr("<html>Loading of the plugin \"{0}\" was requested."
+            String msg = tr("<html>Loading of the plugin \"{0}\" was requested."
                     + "<br>This plugin is no longer developed and very likely will produce errors."
                     +"<br>It should be disabled.<br>Delete from preferences?</html>", unmaintained);
             if (confirmDisablePlugin(parent, msg, unmaintained)) {
@@ -701,12 +708,14 @@ public final class PluginHandler {
             }
             msg = null;
         } catch (PluginException e) {
+            pluginLoadingExceptions.put(plugin.name, e);
             Main.error(e);
             if (e.getCause() instanceof ClassNotFoundException) {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", plugin.name, plugin.className);
             }
         }  catch (Exception e) {
+            pluginLoadingExceptions.put(plugin.name, e);
             Main.error(e);
         }
         if (msg != null && confirmDisablePlugin(parent, msg, plugin.name)) {
@@ -1446,6 +1455,20 @@ public final class PluginHandler {
             pluginTab.add(description, GBC.eop().fill(GBC.HORIZONTAL));
         }
         return pluginTab;
+    }
+
+    /**
+     * Returns the set of deprecated and unmaintained plugins.
+     * @return set of deprecated and unmaintained plugins names.
+     * @since 8938
+     */
+    public static Set<String> getDeprecatedAndUnmaintainedPlugins() {
+        Set<String> result = new HashSet<>(DEPRECATED_PLUGINS.size() + UNMAINTAINED_PLUGINS.length);
+        for (DeprecatedPlugin dp : DEPRECATED_PLUGINS) {
+            result.add(dp.name);
+        }
+        result.addAll(Arrays.asList(UNMAINTAINED_PLUGINS));
+        return result;
     }
 
     private static class UpdatePluginsMessagePanel extends JPanel {

@@ -161,7 +161,9 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
         getProgressMonitor().setTicksCount(toUpdate.size());
         for (PluginInformation d : toUpdate) {
             if (canceled) return;
-            progressMonitor.subTask(tr("Downloading Plugin {0}...", d.name));
+            String message = tr("Downloading Plugin {0}...", d.name);
+            Main.info(message);
+            progressMonitor.subTask(message);
             progressMonitor.worked(1);
             File pluginFile = new File(pluginDir, d.name + ".jar.new");
             try {
