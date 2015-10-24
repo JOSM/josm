@@ -179,8 +179,7 @@ public class PluginInformation {
 
     /**
      * Updates the plugin information of this plugin information object with the
-     * plugin information in a plugin information object retrieved from a plugin
-     * jar.
+     * plugin information in a plugin information object retrieved from a plugin jar.
      *
      * @param other the plugin information object retrieved from the jar file
      * @since 5601
@@ -195,6 +194,7 @@ public class PluginInformation {
         this.canloadatruntime = other.canloadatruntime;
         this.libraries = other.libraries;
         this.stage = other.stage;
+        this.file = other.file;
     }
 
     private void scanManifest(Manifest manifest, boolean oldcheck) {

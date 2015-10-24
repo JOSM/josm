@@ -126,6 +126,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("notes", IN_CORE),
             new DeprecatedPlugin("mirrored_download", IN_CORE),
             new DeprecatedPlugin("ImageryCache", IN_CORE),
+            new DeprecatedPlugin("commons-imaging", tr("replaced by new {0} plugin", "apache-commons")),
         });
     }
 
