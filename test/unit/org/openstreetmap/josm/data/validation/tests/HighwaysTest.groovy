@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.validation.tests
 import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
+import org.openstreetmap.josm.data.osm.Node
 import org.openstreetmap.josm.data.osm.Way
 
 class HighwaysTest extends GroovyTestCase {
@@ -16,12 +17,12 @@ class HighwaysTest extends GroovyTestCase {
     public static Way createTestSetting(String highway, String highwayLink) {
         def ds = new DataSet()
 
-        def n00 = new org.openstreetmap.josm.data.osm.Node(new LatLon(0, 0))
-        def n10 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1, 0))
-        def n20 = new org.openstreetmap.josm.data.osm.Node(new LatLon(2, 0))
-        def n01 = new org.openstreetmap.josm.data.osm.Node(new LatLon(0, 1))
-        def n11 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1, 1))
-        def n21 = new org.openstreetmap.josm.data.osm.Node(new LatLon(2, 1))
+        def n00 = new Node(new LatLon(0, 0))
+        def n10 = new Node(new LatLon(1, 0))
+        def n20 = new Node(new LatLon(2, 0))
+        def n01 = new Node(new LatLon(0, 1))
+        def n11 = new Node(new LatLon(1, 1))
+        def n21 = new Node(new LatLon(2, 1))
 
         ds.addPrimitive(n00)
         ds.addPrimitive(n10)
@@ -59,5 +60,18 @@ class HighwaysTest extends GroovyTestCase {
         assert !Highways.isHighwayLinkOkay(createTestSetting("secondary", "primary_link"))
         assert !Highways.isHighwayLinkOkay(createTestSetting("secondary", "tertiary_link"))
         assert Highways.isHighwayLinkOkay(createTestSetting("residential", "residential"))
+    }
+
+    void testSourceMaxSpeedUnitedKingdom() {
+        def link = createTestSetting("primary", "primary")
+        link.put("maxspeed", "60 mph")
+        link.put("source:maxspeed", "UK:nsl_single")
+        def test = new Highways()
+        test.visit(link)
+        assert test.errors.size() == 1
+        def error = test.errors.get(0)
+        assert error.isFixable()
+        assert error.getFix().executeCommand()
+        assert "GB:nsl_single".equals(link.get("source:maxspeed"))
     }
 }
