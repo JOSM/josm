@@ -16,7 +16,7 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -105,8 +105,10 @@ public class ChangePropertyCommand extends Command {
         }
     }
 
-    @Override public boolean executeCommand() {
-        Main.main.getCurrentDataSet().beginUpdate();
+    @Override
+    public boolean executeCommand() {
+        final DataSet dataSet = objects.get(0).getDataSet();
+        dataSet.beginUpdate();
         try {
             super.executeCommand(); // save old
 
@@ -128,11 +130,12 @@ public class ChangePropertyCommand extends Command {
             }
             return true;
         } finally {
-            Main.main.getCurrentDataSet().endUpdate();
+            dataSet.endUpdate();
         }
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         modified.addAll(objects);
     }
 

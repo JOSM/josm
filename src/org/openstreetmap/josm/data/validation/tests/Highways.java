@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -38,6 +39,8 @@ public class Highways extends Test {
     protected static final int SOURCE_MAXSPEED_CONTEXT_MISMATCH_VS_MAXSPEED = 2705;
     protected static final int SOURCE_MAXSPEED_CONTEXT_MISMATCH_VS_HIGHWAY = 2706;
     protected static final int SOURCE_WRONG_LINK = 2707;
+
+    protected static final String SOURCE_MAXSPEED = "source:maxspeed";
 
     /**
      * Classified highways in order of importance
@@ -91,7 +94,7 @@ public class Highways extends Test {
              && n.isReferredByWays(2)) {
                 testMissingPedestrianCrossing(n);
             }
-            if (n.hasKey("source:maxspeed")) {
+            if (n.hasKey(SOURCE_MAXSPEED)) {
                 // Check maxspeed but not context against highway for nodes
                 // as maxspeed is not set on highways here but on signs, speed cameras, etc.
                 testSourceMaxspeed(n, false);
@@ -106,7 +109,7 @@ public class Highways extends Test {
                     && w.hasKey("junction") && "roundabout".equals(w.get("junction"))) {
                 testWrongRoundabout(w);
             }
-            if (w.hasKey("source:maxspeed")) {
+            if (w.hasKey(SOURCE_MAXSPEED)) {
                 // Check maxspeed, including context against highway
                 testSourceMaxspeed(w, true);
             }
@@ -239,14 +242,20 @@ public class Highways extends Test {
     }
 
     private void testSourceMaxspeed(OsmPrimitive p, boolean testContextHighway) {
-        String value = p.get("source:maxspeed");
+        String value = p.get(SOURCE_MAXSPEED);
         if (value.matches("[A-Z]{2}:.+")) {
             int index = value.indexOf(':');
             // Check country
             String country = value.substring(0, index);
             if (!ISO_COUNTRIES.contains(country)) {
-                errors.add(new TestError(this, Severity.WARNING,
-                        tr("Unknown country code: {0}", country), SOURCE_MAXSPEED_UNKNOWN_COUNTRY_CODE, p));
+                if ("UK".equals(country)) {
+                    errors.add(new FixableTestError(this, Severity.WARNING,
+                            tr("Unknown country code: {0}", country), SOURCE_MAXSPEED_UNKNOWN_COUNTRY_CODE, p,
+                            new ChangePropertyCommand(p, SOURCE_MAXSPEED, value.replace("UK:", "GB:"))));
+                } else {
+                    errors.add(new TestError(this, Severity.WARNING,
+                            tr("Unknown country code: {0}", country), SOURCE_MAXSPEED_UNKNOWN_COUNTRY_CODE, p));
+                }
             }
             // Check context
             String context = value.substring(index+1);
