@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -1098,16 +1099,19 @@ public final class PluginHandler {
                         null /* no specific help context */
                 )
         };
-        int ret = HelpAwareOptionPane.showOptionDialog(
-                parent,
-                reason,
-                tr("Disable plugin"),
-                JOptionPane.WARNING_MESSAGE,
-                null,
-                options,
-                options[0],
-                null // FIXME: add help topic
-        );
+        int ret = -1;
+        if (!GraphicsEnvironment.isHeadless()) {
+            ret = HelpAwareOptionPane.showOptionDialog(
+                    parent,
+                    reason,
+                    tr("Disable plugin"),
+                    JOptionPane.WARNING_MESSAGE,
+                    null,
+                    options,
+                    options[0],
+                    null // FIXME: add help topic
+            );
+        }
         return ret == 0;
     }
 

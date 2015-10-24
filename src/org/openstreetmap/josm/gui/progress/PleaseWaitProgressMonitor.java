@@ -173,6 +173,9 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             @Override
             public void run() {
                 Main.currentProgressMonitor = PleaseWaitProgressMonitor.this;
+                if (GraphicsEnvironment.isHeadless()) {
+                    return;
+                }
                 if (dialogParent != null && dialog == null) {
                     dialog = new PleaseWaitDialog(dialogParent);
                 } else

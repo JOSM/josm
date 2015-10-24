@@ -391,7 +391,9 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     protected void askUpdateJava(String version) {
-        askUpdateJava(version, "https://www.java.com/download");
+        if (!GraphicsEnvironment.isHeadless()) {
+            askUpdateJava(version, "https://www.java.com/download");
+        }
     }
 
     protected void askUpdateJava(final String version, final String url) {
