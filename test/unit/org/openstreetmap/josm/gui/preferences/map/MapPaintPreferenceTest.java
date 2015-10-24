@@ -5,8 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,13 +39,15 @@ public class MapPaintPreferenceTest {
         Collection<ExtendedSourceEntry> sources = new MapPaintPreference.MapPaintSourceEditor()
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());
-        Collection<Throwable> allErrors = new ArrayList<>();
+        Map<String, Collection<Throwable>> allErrors = new HashMap<>();
         for (ExtendedSourceEntry source : sources) {
             System.out.print(source.url);
             Collection<Throwable> errors = MapPaintStyles.addStyle(source);
             System.out.println(errors.isEmpty() ? " => OK" : " => KO");
-            allErrors.addAll(errors);
+            if (!errors.isEmpty()) {
+                allErrors.put(source.url, errors);
+            }
         }
-        assertTrue(allErrors.isEmpty());
+        assertTrue(allErrors.toString(), allErrors.isEmpty());
     }
 }
