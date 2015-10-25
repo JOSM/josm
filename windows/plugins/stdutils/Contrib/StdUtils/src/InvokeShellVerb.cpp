@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // StdUtils plug-in for NSIS
-// Copyright (C) 2004-2014 LoRd_MuldeR <MuldeR2@GMX.de>
+// Copyright (C) 2004-2015 LoRd_MuldeR <MuldeR2@GMX.de>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -26,115 +26,82 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "InvokeShellVerb.h"
-#include "ComUtils.h"
-#include "WinUtils.h"
-#include "msvc_utils.h"
+#include "ShellDispatch.h"
+#include "nsis_tchar.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
 typedef struct
 {
-	const TCHAR *pcDirectoryName;
-	const TCHAR *pcFileName;
-	DWORD uiVerbId;
-	int returnValue;
+	const DWORD uiVerbId;
+	const TCHAR *const pcDirectoryName;
+	const TCHAR *const pcFileName;
 }
-threadParam_t;
+invoke_shellverb_param_t;
 
-static const WCHAR *shell32 = L"shell32.dll";
+static const WCHAR *shell32 = L"shell32";
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static unsigned __stdcall MyInvokeShellVerb_ThreadHelperProc(void* pArguments)
+static bool MyInvokeShellVerb_LoadResStr(const WCHAR *const libFile, const DWORD &id, wchar_t *const buffer, const size_t &buffSize)
 {
-	HRESULT hr = CoInitialize(NULL);
-	if((hr == S_OK) || (hr == S_FALSE))
-	{
-		if(threadParam_t *params = (threadParam_t*) pArguments)
-		{
-			params->returnValue = MyInvokeShellVerb(params->pcDirectoryName, params->pcFileName, params->uiVerbId, false);
-		}
-		DispatchPendingMessages(1000); //Required to avoid potential deadlock or crash on CoUninitialize() !!!
-		CoUninitialize();
-	}
-	else
-	{
-		if(threadParam_t *params = (threadParam_t*) pArguments)
-		{
-			params->returnValue = -3;
-		}
-	}
-
-	return EXIT_SUCCESS;
-}
-
-static int MyInvokeShellVerb_ShellDispatchProc(const TCHAR *pcDirectoryName, const TCHAR *pcFileName, const DWORD uiVerbId)
-{
-	int iSuccess = 0;
+	memset(buffer, 0, sizeof(WCHAR) * buffSize);
 
 	bool bUnloadDll = false;
-	HMODULE hShellDll = GetModuleHandleW(shell32); 
-	if(hShellDll == NULL)
+	HMODULE hMod = GetModuleHandleW(libFile); 
+	if(hMod == NULL)
 	{
 		bUnloadDll = true;
-		hShellDll = LoadLibraryW(shell32);
-		if(hShellDll == NULL)
+		hMod = LoadLibraryW(libFile);
+		if(hMod == NULL)
 		{
-			iSuccess = -3;
-			return iSuccess;
+			return false;
 		}
 	}
 
-	WCHAR pcVerbName[128];
-	memset(pcVerbName, 0, sizeof(WCHAR) * 128);
-	
-	if(LoadStringW(hShellDll, uiVerbId, pcVerbName, 128) < 1)
+	bool success = false;
+	if(LoadStringW(hMod, id, buffer, buffSize) > 0)
 	{
-		if(bUnloadDll)
-		{
-			FreeLibrary(hShellDll);
-			hShellDll = NULL;
-		}
-		iSuccess = -3;
-		return iSuccess;
+		success = true;
 	}
 
 	if(bUnloadDll)
 	{
-		FreeLibrary(hShellDll);
-		hShellDll = NULL;
+		FreeLibrary(hMod);
+		hMod = NULL;
+	}
+
+	return success;
+}
+
+static int MyInvokeShellVerb_HandlerProc(IShellDispatch2 *const dispatch, const void *const data)
+{
+	int iSuccess = INVOKE_SHELLVERB_FAILED;
+	const invoke_shellverb_param_t *const param = (const invoke_shellverb_param_t*) data;
+
+	WCHAR pcVerbName[256];
+	if(!MyInvokeShellVerb_LoadResStr(shell32, param->uiVerbId, pcVerbName, 256))
+	{
+		return (iSuccess = INVOKE_SHELLVERB_NOT_FOUND);
 	}
 
 	// ----------------------------------- //
 
-	IShellDispatch *pShellDispatch = NULL;
 	Folder *pFolder = NULL; FolderItem *pItem = NULL;
-	
-	HRESULT hr = CoCreateInstance(CLSID_Shell, NULL, CLSCTX_INPROC_SERVER, IID_IShellDispatch, (void**)&pShellDispatch);
-	if(FAILED(hr) || (pShellDispatch ==  NULL))
-	{
-		iSuccess = -3;
-		return iSuccess;
-	}
 
-	variant_t vaDirectory(pcDirectoryName);
-	hr = pShellDispatch->NameSpace(vaDirectory, &pFolder);
+	variant_t vaDirectory(param->pcDirectoryName);
+	HRESULT hr = dispatch->NameSpace(vaDirectory, &pFolder);
 	if(FAILED(hr) || (pFolder == NULL))
 	{
-		iSuccess = -3;
-		RELEASE_OBJ(pShellDispatch);
-		return iSuccess;
+		return (iSuccess = INVOKE_SHELLVERB_NOT_FOUND);
 	}
 
-	RELEASE_OBJ(pShellDispatch);
-
-	variant_t vaFileName(pcFileName);
+	variant_t vaFileName(param->pcFileName);
 	hr = pFolder->ParseName(vaFileName, &pItem);
 	if(FAILED(hr) || (pItem == NULL))
 	{
-		iSuccess = -3;
 		RELEASE_OBJ(pFolder);
-		return iSuccess;
+		return (iSuccess = INVOKE_SHELLVERB_NOT_FOUND);
 	}
 
 	RELEASE_OBJ(pFolder);
@@ -147,7 +114,6 @@ static int MyInvokeShellVerb_ShellDispatchProc(const TCHAR *pcDirectoryName, con
 	hr = pItem->Verbs(&pVerbs);
 	if(FAILED(hr) || (pVerbs == NULL))
 	{
-		iSuccess = -3;
 		RELEASE_OBJ(pItem);
 		return iSuccess;
 	}
@@ -157,7 +123,6 @@ static int MyInvokeShellVerb_ShellDispatchProc(const TCHAR *pcDirectoryName, con
 	hr = pVerbs->get_Count(&iVerbCount);
 	if(FAILED(hr) || (iVerbCount < 1))
 	{
-		iSuccess = -3;
 		RELEASE_OBJ(pVerbs);
 		return iSuccess;
 	}
@@ -190,12 +155,17 @@ static int MyInvokeShellVerb_ShellDispatchProc(const TCHAR *pcDirectoryName, con
 			hr = pCurrentVerb->DoIt();
 			if(!FAILED(hr))
 			{
-				iSuccess = 1;
+				iSuccess = INVOKE_SHELLVERB_SUCCESS;
 			}
 		}
 
 		SysFreeString(pcCurrentVerbName);
 		RELEASE_OBJ(pCurrentVerb);
+
+		if(iSuccess == INVOKE_SHELLVERB_SUCCESS)
+		{
+			break; /*succeeded*/
+		}
 	}
 
 	RELEASE_OBJ(pVerbs);
@@ -205,9 +175,22 @@ static int MyInvokeShellVerb_ShellDispatchProc(const TCHAR *pcDirectoryName, con
 	return iSuccess;
 }
 
-int MyInvokeShellVerb(const TCHAR *pcDirectoryName, const TCHAR *pcFileName, const DWORD uiVerbId, const bool threaded)
+int MyInvokeShellVerb(const TCHAR *const pcDirectoryName, const TCHAR *const pcFileName, const DWORD uiVerbId, const bool threaded)
 {
-	int iSuccess = -1;
+	int iSuccess = INVOKE_SHELLVERB_FAILED;
+
+	if(TCHAR *const path = (TCHAR*) calloc(_tcsclen(pcDirectoryName) + _tcsclen(pcFileName) + 3, sizeof(TCHAR)))
+	{
+		_tcscat(path, pcDirectoryName);
+		_tcscat(path, _T("\\"));
+		_tcscat(path, pcFileName);
+		const bool fileExists = FILE_EXISTS(path);
+		free(path);
+		if(!fileExists)
+		{
+			return (iSuccess = INVOKE_SHELLVERB_NOT_FOUND);
+		}
+	}
 
 	OSVERSIONINFO osVersion;
 	memset(&osVersion, 0, sizeof(OSVERSIONINFO));
@@ -217,30 +200,12 @@ int MyInvokeShellVerb(const TCHAR *pcDirectoryName, const TCHAR *pcFileName, con
 	{
 		if((osVersion.dwPlatformId == VER_PLATFORM_WIN32_NT) && ((osVersion.dwMajorVersion > 6) || ((osVersion.dwMajorVersion == 6) && (osVersion.dwMinorVersion >= 1))))
 		{
-			if(threaded)
-			{
-				threadParam_t threadParams = {pcDirectoryName, pcFileName, uiVerbId, 0};
-				HANDLE hThread = (HANDLE) _beginthreadex(NULL, 0, MyInvokeShellVerb_ThreadHelperProc, &threadParams, 0, NULL);
-				if(VALID_HANDLE(hThread))
-				{
-					DWORD status = WaitForSingleObject(hThread, 30000);
-					if(status == WAIT_OBJECT_0)
-					{
-						iSuccess = threadParams.returnValue;
-					}
-					else if(status == WAIT_TIMEOUT)
-					{
-						iSuccess = -2;
-						TerminateThread(hThread, EXIT_FAILURE);
-					}
-					CloseHandle(hThread);
-					return iSuccess;
-				}
-			}
-			else
-			{
-				iSuccess = MyInvokeShellVerb_ShellDispatchProc(pcDirectoryName, pcFileName, uiVerbId);
-			}
+			invoke_shellverb_param_t params = { uiVerbId, pcDirectoryName, pcFileName };
+			iSuccess = MyShellDispatch(MyInvokeShellVerb_HandlerProc, &params, threaded);
+		}
+		else
+		{
+			iSuccess = INVOKE_SHELLVERB_UNSUPPORTED;
 		}
 	}
 

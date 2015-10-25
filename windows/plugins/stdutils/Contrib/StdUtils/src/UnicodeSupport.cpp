@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // StdUtils plug-in for NSIS
-// Copyright (C) 2004-2014 LoRd_MuldeR <MuldeR2@GMX.de>
+// Copyright (C) 2004-2015 LoRd_MuldeR <MuldeR2@GMX.de>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,11 @@
 
 #include <Windows.h>
 
-wchar_t *ansi_to_utf16(const char *input)
+//-----------------------------------------------------------------------------
+// CHARSET CONVERSION FUNCTIONS
+//-----------------------------------------------------------------------------
+
+wchar_t *ansi_to_utf16(const char *const input)
 {
 	wchar_t *Buffer;
 	int BuffSize, Result;
@@ -35,7 +39,7 @@ wchar_t *ansi_to_utf16(const char *input)
 	return NULL;
 }
 
-wchar_t *utf8_to_utf16(const char *input)
+wchar_t *utf8_to_utf16(const char *const input)
 {
 	wchar_t *Buffer;
 	int BuffSize, Result;
@@ -49,48 +53,92 @@ wchar_t *utf8_to_utf16(const char *input)
 	return NULL;
 }
 
-inline static bool is_whitespace(const char c)
+char *utf16_to_utf8(const wchar_t *const input)
 {
-	return (c == ' ') || (c == '\t') || (c == '\n') || (c == '\r');
+	char *Buffer;
+	int BuffSize, Result;
+	BuffSize = WideCharToMultiByte(CP_UTF8, 0, input, -1, NULL, 0, NULL, NULL);
+	if(BuffSize > 0)
+	{
+		Buffer = new char[BuffSize];
+		Result = WideCharToMultiByte(CP_UTF8, 0, input, -1, Buffer, BuffSize, NULL, NULL);
+		return ((Result > 0) && (Result <= BuffSize)) ? Buffer : NULL;
+	}
+	return NULL;
 }
 
-inline static bool is_whitespace(const wchar_t c)
+//-----------------------------------------------------------------------------
+// TRIM FUNCTIONS (ANSI)
+//-----------------------------------------------------------------------------
+
+inline bool str_whitespace(const char c)
 {
-	return (c == L' ') || (c == L'\t') || (c == L'\n') || (c == L'\r');
+	return (c) && (iscntrl(c) || isspace(c));	//return (c == ' ') || (c == '\t') || (c == '\n') || (c == '\r');
 }
 
-char *strtrim(char* input, bool trim_left, bool trim_right)
+const char *strtrim_left(const char *const input)
 {
 	size_t left = 0;
-
-	if(trim_right && (input[0] != '\0'))
+	if(input[0] != L'\0')
 	{
-		size_t right = strlen(input) - 1;
-		while((right > 0) && is_whitespace(input[right])) input[right--] = '\0';
-		if(is_whitespace(input[right])) input[right] = '\0';
+		while(str_whitespace(input[left])) left++;
 	}
-	if(trim_left && (input[0] != '\0'))
-	{
-		while(is_whitespace(input[left])) left++;
-	}
-
 	return &input[left];
 }
 
-wchar_t *wcstrim(wchar_t* input, bool trim_left, bool trim_right)
+char *strtrim_right(char *const input)
+{
+	if(input[0] != L'\0')
+	{
+		size_t right = strlen(input);
+		while(right > 0)
+		{
+			if(!str_whitespace(input[--right])) break;
+			input[right] = L'\0';
+		}
+	}
+	return input;
+}
+
+char *strtrim(char *const input)
+{
+	return strtrim_right((char*)strtrim_left(input));
+}
+
+//-----------------------------------------------------------------------------
+// TRIM FUNCTIONS (UNICODE)
+//-----------------------------------------------------------------------------
+
+inline bool wcs_whitespace(const wchar_t c)
+{
+	return (c) && (iswcntrl(c) || iswspace(c));	//return (c == L' ') || (c == L'\t') || (c == L'\n') || (c == L'\r');
+}
+
+const wchar_t *wcstrim_left(const wchar_t *const input)
 {
 	size_t left = 0;
-
-	if(trim_right && (input[0] != L'\0'))
+	if(input[0] != L'\0')
 	{
-		size_t right = wcslen(input) - 1;
-		while((right > 0) && is_whitespace(input[right])) input[right--] = L'\0';
-		if(is_whitespace(input[right])) input[right] = L'\0';
+		while(wcs_whitespace(input[left])) left++;
 	}
-	if(trim_left && (input[0] != L'\0'))
-	{
-		while(is_whitespace(input[left])) left++;
-	}
-
 	return &input[left];
+}
+
+wchar_t *wcstrim_right(wchar_t *const input)
+{
+	if(input[0] != L'\0')
+	{
+		size_t right = wcslen(input);
+		while(right > 0)
+		{
+			if(!wcs_whitespace(input[--right])) break;
+			input[right] = L'\0';
+		}
+	}
+	return input;
+}
+
+wchar_t *wcstrim(wchar_t *const input)
+{
+	return wcstrim_right((wchar_t*)wcstrim_left(input));
 }

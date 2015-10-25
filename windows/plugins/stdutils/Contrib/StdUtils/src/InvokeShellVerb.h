@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // StdUtils plug-in for NSIS
-// Copyright (C) 2004-2014 LoRd_MuldeR <MuldeR2@GMX.de>
+// Copyright (C) 2004-2015 LoRd_MuldeR <MuldeR2@GMX.de>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -23,4 +23,14 @@
 #include <Windows.h>
 #endif
 
-int MyInvokeShellVerb(const TCHAR *pcDirectoryName, const TCHAR *pcFileName, const DWORD uiVerbId, const bool threaded = true);
+typedef enum
+{
+	INVOKE_SHELLVERB_SUCCESS     = 0,
+	INVOKE_SHELLVERB_FAILED      = 1,
+	INVOKE_SHELLVERB_TIMEOUT     = 2,
+	INVOKE_SHELLVERB_UNSUPPORTED = 3,
+	INVOKE_SHELLVERB_NOT_FOUND   = 4
+}
+invoke_shellverb_err_t;
+
+int MyInvokeShellVerb(const TCHAR *const pcDirectoryName, const TCHAR *const pcFileName, const DWORD uiVerbId, const bool threaded = true);
