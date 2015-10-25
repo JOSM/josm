@@ -452,7 +452,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public static Command createCommand(Collection<OsmPrimitive> sel, List<Tag> changedTags) {
         List<Command> cmds = new ArrayList<>();
         for (Tag tag: changedTags) {
-            cmds.add(new ChangePropertyCommand(sel, tag.getKey(), tag.getValue()));
+            ChangePropertyCommand cmd = new ChangePropertyCommand(sel, tag.getKey(), tag.getValue());
+            if (cmd.getObjectsNumber() > 0) {
+                cmds.add(cmd);
+            }
         }
 
         if (cmds.isEmpty())

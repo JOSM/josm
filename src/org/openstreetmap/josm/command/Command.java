@@ -239,6 +239,7 @@ public abstract class Command extends PseudoCommand {
 
     /**
      * Return the primitives that take part in this command.
+     * The collection is computed during execution.
      */
     @Override
     public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {

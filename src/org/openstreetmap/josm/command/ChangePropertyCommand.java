@@ -27,12 +27,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * adding and modify of values and keys.
  *
  * @author imi
+ * @since 24
  */
 public class ChangePropertyCommand extends Command {
     /**
      * All primitives that are affected with this command.
      */
-    private final List<OsmPrimitive> objects;
+    private final List<OsmPrimitive> objects = new LinkedList<>();
+
     /**
      * Key and value pairs. If value is <code>null</code>, delete all key references with the given
      * key. Otherwise, change the tags of all objects to the given value or create keys of
@@ -47,7 +49,6 @@ public class ChangePropertyCommand extends Command {
      * @param tags the tags to set
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, Map<String, String> tags) {
-        this.objects = new LinkedList<>();
         this.tags = tags;
         init(objects);
     }
@@ -60,7 +61,6 @@ public class ChangePropertyCommand extends Command {
      * @param value the value of the key to set
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, String key, String value) {
-        this.objects = new LinkedList<>();
         this.tags = new HashMap<>(1);
         this.tags.put(key, value);
         init(objects);
@@ -107,6 +107,8 @@ public class ChangePropertyCommand extends Command {
 
     @Override
     public boolean executeCommand() {
+        if (objects.isEmpty())
+            return true;
         final DataSet dataSet = objects.get(0).getDataSet();
         dataSet.beginUpdate();
         try {
@@ -196,7 +198,8 @@ public class ChangePropertyCommand extends Command {
         return ImageProvider.get("data", "key");
     }
 
-    @Override public Collection<PseudoCommand> getChildren() {
+    @Override
+    public Collection<PseudoCommand> getChildren() {
         if (objects.size() == 1)
             return null;
         List<PseudoCommand> children = new ArrayList<>();
@@ -217,6 +220,16 @@ public class ChangePropertyCommand extends Command {
             });
         }
         return children;
+    }
+
+    /**
+     * Returns the number of objects that will effectively be modified, before the command is executed.
+     * @return the number of objects that will effectively be modified (can be 0)
+     * @see Command#getParticipatingPrimitives()
+     * @since 8945
+     */
+    public final int getObjectsNumber() {
+        return objects.size();
     }
 
     /**
