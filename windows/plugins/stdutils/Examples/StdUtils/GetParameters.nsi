@@ -16,23 +16,39 @@ RequestExecutionLevel user
 ShowInstDetails show
 
 Section
-	${StdUtils.GetParameter} $R0 "Foobar" "<N/A>"
+	${StdUtils.TestParameter} $R0 "Foobar"
+	StrCmp "$R0" "true" 0 +3
+	DetailPrint 'Command-line parameter /Foobar is specified!'
+	Goto +2
+	DetailPrint 'Command-line parameter /Foobar is *not* specified!'
 	
-	StrCmp "$R0" "<N/A>" 0 +3
-	DetailPrint "Parameter /Foobar is *not* specified!"
-	Goto Finished
+	${StdUtils.GetParameter} $R0 "Foobar" "<MyDefault>"
+	DetailPrint 'Value of command-line parameter /Foobar is: "$R0"'
 	
-	StrCmp "$R0" "" 0 +3 ;'Installer.exe [...] /Foobar'
-	DetailPrint "Parameter /Foobar specified without a value." 
-	Goto Finished
+	DetailPrint "----"
+SectionEnd
 
-	;'Installer.exe /Foobar=Foo' or 'Installer.exe "/Foobar=Foo Bar"'
-	${StdUtils.TrimStr} $R0
-	DetailPrint "Value of parameter /Foobar is: '$R0'"
-	
-	Finished:
+Section
+	StrCpy $R0 0                                    #Init counter to zero
+	${StdUtils.ParameterCnt} $R1                    #Get number of command-line tokens
+	IntCmp $R1 0 0 0 LoopNext                       #Any tokens available?
+	DetailPrint 'No command-line tokens!'           #Print some info
+	Goto LoopExit                                   #Exit
+LoopNext:
+	${StdUtils.ParameterStr} $R2 $R0                #Read next command-line token
+	DetailPrint 'Command-line token #$R0 is "$R2"'  #Print command-line token
+	IntOp $R0 $R0 + 1                               #counter += 1
+	IntCmp $R0 $R1 0 LoopNext                       #Loop while more tokens available
+LoopExit:
+	DetailPrint "----"
+SectionEnd
+
+Section
 	${StdUtils.GetAllParameters} $R0 0
 	DetailPrint "Complete command-line: '$R0'"
+
 	${StdUtils.GetAllParameters} $R0 1
 	DetailPrint "Truncated command-line: '$R0'"
+	
+	DetailPrint "----"
 SectionEnd

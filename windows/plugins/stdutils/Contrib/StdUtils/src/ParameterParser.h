@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // StdUtils plug-in for NSIS
-// Copyright (C) 2004-2014 LoRd_MuldeR <MuldeR2@GMX.de>
+// Copyright (C) 2004-2015 LoRd_MuldeR <MuldeR2@GMX.de>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -19,5 +19,10 @@
 // http://www.gnu.org/licenses/lgpl-2.1.txt
 ///////////////////////////////////////////////////////////////////////////////
 
-bool parse_commandline(const TCHAR *arg_name, TCHAR *dest_buff, size_t dest_size);
-const TCHAR *get_commandline_arguments(void);
+#pragma once
+
+bool commandline_get_arg(const TCHAR *const arg_name, TCHAR *const dest_buff, const size_t dest_size);
+int  commandline_get_cnt(void);
+bool commandline_get_raw(const int index, TCHAR *const dest_buff, const size_t dest_size);
+
+const TCHAR *commandline_get_all(void);

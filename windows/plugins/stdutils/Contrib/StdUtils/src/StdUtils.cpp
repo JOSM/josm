@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // StdUtils plug-in for NSIS
-// Copyright (C) 2004-2014 LoRd_MuldeR <MuldeR2@GMX.de>
+// Copyright (C) 2004-2015 LoRd_MuldeR <MuldeR2@GMX.de>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -26,29 +26,36 @@
 #include "UnicodeSupport.h"
 #include "DetectOsVersion.h"
 #include "WinUtils.h"
+#include "FileUtils.h"
+#include "HashUtils.h"
+#include "TimerUtils.h"
+#include "CleanUp.h"
 
+//External
 bool g_bStdUtilsVerbose = false;
+RTL_CRITICAL_SECTION g_pStdUtilsMutex;
+HINSTANCE g_StdUtilsInstance = NULL;
 
-static HANDLE g_hInstance;
-static RTL_CRITICAL_SECTION g_mutex;
-static bool g_bCallbackRegistred;
+//Global
+static volatile bool g_bCallbackRegistred = false;
 
 ///////////////////////////////////////////////////////////////////////////////
 // DLL MAIN
 ///////////////////////////////////////////////////////////////////////////////
 
-BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-	if(ul_reason_for_call == DLL_PROCESS_ATTACH)
+	if(fdwReason == DLL_PROCESS_ATTACH)
 	{
-		InitializeCriticalSection(&g_mutex);
-		g_hInstance = hInst;
+		InitializeCriticalSection(&g_pStdUtilsMutex);
 		g_bCallbackRegistred = false;
 		g_bStdUtilsVerbose = false;
+		g_StdUtilsInstance = hinstDLL;
 	}
-	else if(ul_reason_for_call == DLL_PROCESS_DETACH)
+	else if(fdwReason == DLL_PROCESS_DETACH)
 	{
-		DeleteCriticalSection(&g_mutex);
+		cleanup_execute_tasks();
+		DeleteCriticalSection(&g_pStdUtilsMutex);
 	}
 	return TRUE;
 }
@@ -98,7 +105,7 @@ static unsigned __int64 getFileTime(void)
 NSISFUNC(Time)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	long t = time(NULL);
 	pushint(t);
 }
@@ -106,7 +113,7 @@ NSISFUNC(Time)
 NSISFUNC(GetMinutes)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	unsigned __int64 ftime = getFileTime() / FTIME_MINUTE;
 	pushint(static_cast<int>(ftime));
 }
@@ -114,7 +121,7 @@ NSISFUNC(GetMinutes)
 NSISFUNC(GetHours)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	unsigned __int64 ftime = getFileTime() / FTIME_HOUR;
 	pushint(static_cast<int>(ftime));
 }
@@ -122,7 +129,7 @@ NSISFUNC(GetHours)
 NSISFUNC(GetDays)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	unsigned __int64 ftime = getFileTime() / FTIME_DAY;
 	pushint(static_cast<int>(ftime));
 }
@@ -136,7 +143,7 @@ NSISFUNC(GetDays)
 NSISFUNC(Rand)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	unsigned int r = next_rand() % static_cast<unsigned int>(INT_MAX);
 	pushint(r);
 }
@@ -144,7 +151,7 @@ NSISFUNC(Rand)
 NSISFUNC(RandMax)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	int m = abs(popint()) + 1;
 	unsigned int r = next_rand() % static_cast<unsigned int>(m);
 	pushint(r);
@@ -153,7 +160,7 @@ NSISFUNC(RandMax)
 NSISFUNC(RandMinMax)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	int max = popint();
 	int min = popint();
 	
@@ -171,7 +178,7 @@ NSISFUNC(RandMinMax)
 NSISFUNC(RandList)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	int count = popint();
 	int max = popint() + 1;
 	int done = 0;
@@ -219,7 +226,7 @@ NSISFUNC(RandList)
 NSISFUNC(FormatStr)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(fmt, g_stringsize);
 	MAKESTR(out, g_stringsize);
 
@@ -239,7 +246,7 @@ NSISFUNC(FormatStr)
 NSISFUNC(FormatStr2)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(fmt, g_stringsize);
 	MAKESTR(out, g_stringsize);
 
@@ -260,7 +267,7 @@ NSISFUNC(FormatStr2)
 NSISFUNC(FormatStr3)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(fmt, g_stringsize);
 	MAKESTR(out, g_stringsize);
 
@@ -284,7 +291,7 @@ NSISFUNC(FormatStr3)
 NSISFUNC(ScanStr)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(in, g_stringsize);
 	MAKESTR(fmt, g_stringsize);
 
@@ -306,7 +313,7 @@ NSISFUNC(ScanStr)
 NSISFUNC(ScanStr2)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(in, g_stringsize);
 	MAKESTR(fmt, g_stringsize);
 
@@ -338,7 +345,7 @@ NSISFUNC(ScanStr2)
 NSISFUNC(ScanStr3)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(in, g_stringsize);
 	MAKESTR(fmt, g_stringsize);
 
@@ -380,7 +387,7 @@ NSISFUNC(ScanStr3)
 NSISFUNC(TrimStr)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(str, g_stringsize);
 	
 	popstringn(str, 0);
@@ -392,11 +399,11 @@ NSISFUNC(TrimStr)
 NSISFUNC(TrimStrLeft)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(str, g_stringsize);
 	
 	popstringn(str, 0);
-	pushstring(STRTRIM(str, true, false));
+	pushstring(STRTRIM_LEFT(str));
 
 	delete [] str;
 }
@@ -404,11 +411,11 @@ NSISFUNC(TrimStrLeft)
 NSISFUNC(TrimStrRight)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(str, g_stringsize);
 	
 	popstringn(str, 0);
-	pushstring(STRTRIM(str, false, true));
+	pushstring(STRTRIM_RIGHT(str));
 
 	delete [] str;
 }
@@ -418,7 +425,7 @@ NSISFUNC(TrimStrRight)
 NSISFUNC(RevStr)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(str, g_stringsize);
 	
 	popstringn(str, 0);
@@ -440,13 +447,114 @@ NSISFUNC(RevStr)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+NSISFUNC(ValidFileName)
+{
+	static const TCHAR *const RESERVED = T("<>:\"/\\|?*");
+
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+	MAKESTR(str, g_stringsize);
+
+	popstringn(str, 0);
+
+	bool flag = true;
+	TCHAR last = 0x0;
+
+	if(!str[0])
+	{
+		flag = false;
+		goto exit209;
+	}
+
+	for(size_t i = 0; str[i]; i++)
+	{
+		if(ISCNTRL(str[i]))
+		{
+			flag = false;
+			goto exit209;
+		}
+		for(size_t j = 0; RESERVED[j]; j++)
+		{
+			if(str[i] == RESERVED[j])
+			{
+				flag = false;
+				goto exit209;
+			}
+		}
+		last = str[i];
+	}
+
+	if((last == T(' ')) || (last == T('.')))
+	{
+		flag = false;
+	}
+
+exit209:
+	pushstring(flag ? T("ok") : T("invalid"));
+	delete [] str;
+}
+
+NSISFUNC(ValidPathSpec)
+{
+	static const TCHAR *const RESERVED = T("<>\"|?*");
+
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+	MAKESTR(str, g_stringsize);
+
+	popstringn(str, 0);
+
+	bool flag = true;
+	TCHAR last = 0x0;
+
+	if(!str[0])
+	{
+		flag = false;
+		goto exit209;
+	}
+
+	for(size_t i = 0; str[i]; i++)
+	{
+		if(ISCNTRL(str[i]))
+		{
+			flag = false;
+			goto exit209;
+		}
+		for(size_t j = 0; RESERVED[j]; j++)
+		{
+			if(str[i] == RESERVED[j])
+			{
+				flag = false;
+				goto exit209;
+			}
+		}
+		if(((i == 0) && (!ISALPHA(str[i]))) || ((i == 1) && (str[i] != T(':'))) || ((i != 1) && (str[i] == T(':'))) || ((i == 2) && (str[i] != T('/')) && (str[i] != T('\\'))))
+		{
+			flag = false;
+			goto exit209;
+		}
+		last = str[i];
+	}
+
+	if((last == T(' ')) || (last == T('.')))
+	{
+		flag = false;
+	}
+
+exit209:
+	pushstring(flag ? T("ok") : T("invalid"));
+	delete [] str;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SHELL FILE FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////
 
 NSISFUNC(SHFileMove)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(from, g_stringsize);
 	MAKESTR(dest, g_stringsize);
 
@@ -482,7 +590,7 @@ NSISFUNC(SHFileMove)
 NSISFUNC(SHFileCopy)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(from, g_stringsize);
 	MAKESTR(dest, g_stringsize);
 
@@ -516,13 +624,43 @@ NSISFUNC(SHFileCopy)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// APPEND TO FILE
+///////////////////////////////////////////////////////////////////////////////
+
+NSISFUNC(AppendToFile)
+{
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+	MAKESTR(from, g_stringsize);
+	MAKESTR(dest, g_stringsize);
+
+	const DWORD maxlen = static_cast<DWORD>(MAX_VAL(0, popint()));
+	const DWORD offset = static_cast<DWORD>(MAX_VAL(0, popint()));
+	popstringn(dest, 0);
+	popstringn(from, 0);
+	
+	unsigned long long bytesCopied = 0;
+	if(AppendToFile(from, dest, offset, maxlen, &bytesCopied))
+	{
+		pushint(static_cast<int>(MIN_VAL(bytesCopied, static_cast<unsigned long long>(INT_MAX))));
+	}
+	else
+	{
+		pushstring(T("error"));
+	}
+
+	delete [] from;
+	delete [] dest;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // EXEC SHELL AS USER
 ///////////////////////////////////////////////////////////////////////////////
 
 NSISFUNC(ExecShellAsUser)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(file, g_stringsize);
 	MAKESTR(verb, g_stringsize);
 	MAKESTR(args, g_stringsize);
@@ -548,19 +686,22 @@ NSISFUNC(ExecShellAsUser)
 	
 	switch(result)
 	{
-	case SHELLEXECASUSER_ERROR_SUCCESS:
+	case SHELL_EXEC_AS_USER_SUCCESS:
 		pushstring(T("ok"));
 		break;
-	case SHELLEXECASUSER_ERROR_FALLBACK:
-		pushstring(T("fallback"));
-		break;
-	case SHELLEXECASUSER_ERROR_FAILED:
+	case SHELL_EXEC_AS_USER_FAILED:
 		pushstring(T("error"));
 		break;
-	case SHELLEXECASUSER_ERROR_TIMEOUT:
+	case SHELL_EXEC_AS_USER_TIMEOUT:
 		pushstring(T("timeout"));
 		break;
-	case SHELLEXECASUSER_ERROR_NOTFOUND:
+	case SHELL_EXEC_AS_USER_UNSUPPORTED:
+		pushstring(T("unsupported"));
+		break;
+	case SHELL_EXEC_AS_USER_FALLBACK:
+		pushstring(T("fallback"));
+		break;
+	case SHELL_EXEC_AS_USER_NOT_FOUND:
 		pushstring(T("not_found"));
 		break;
 	default:
@@ -580,7 +721,7 @@ NSISFUNC(ExecShellAsUser)
 NSISFUNC(InvokeShellVerb)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(path, g_stringsize);
 	MAKESTR(file, g_stringsize);
 
@@ -603,20 +744,20 @@ NSISFUNC(InvokeShellVerb)
 	
 	switch(result)
 	{
-	case 1:
+	case INVOKE_SHELLVERB_SUCCESS:
 		pushstring(T("ok"));
 		break;
-	case 0:
-		pushstring(T("not_found"));
+	case INVOKE_SHELLVERB_FAILED:
+		pushstring(T("error"));
 		break;
-	case -1:
-		pushstring(T("unsupported"));
-		break;
-	case -2:
+	case INVOKE_SHELLVERB_TIMEOUT:
 		pushstring(T("timeout"));
 		break;
-	case -3:
-		pushstring(T("error"));
+	case INVOKE_SHELLVERB_UNSUPPORTED:
+		pushstring(T("unsupported"));
+		break;
+	case INVOKE_SHELLVERB_NOT_FOUND:
+		pushstring(T("not_found"));
 		break;
 	default:
 		pushstring(T("unknown"));
@@ -634,7 +775,7 @@ NSISFUNC(InvokeShellVerb)
 NSISFUNC(ExecShellWaitEx)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(file, g_stringsize);
 	MAKESTR(verb, g_stringsize);
 	MAKESTR(args, g_stringsize);
@@ -682,7 +823,7 @@ NSISFUNC(ExecShellWaitEx)
 NSISFUNC(WaitForProcEx)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(temp, g_stringsize);
 	popstringn(temp, 0);
 
@@ -724,25 +865,71 @@ NSISFUNC(WaitForProcEx)
 NSISFUNC(GetParameter)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(aval, g_stringsize);
 	MAKESTR(name, g_stringsize);
 
 	popstringn(aval, 0);
 	popstringn(name, 0);
-	parse_commandline(name, aval, g_stringsize);
-	pushstring(aval);
+	commandline_get_arg(STRTRIM(name), aval, g_stringsize);
+	pushstring(STRTRIM(aval));
 
 	delete [] aval;
 	delete [] name;
 }
 
+NSISFUNC(TestParameter)
+{
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+	MAKESTR(name, g_stringsize);
+
+	popstringn(name, 0);
+	pushstring(commandline_get_arg(STRTRIM(name), NULL, 0) ? T("true") : T("false"));
+
+	delete [] name;
+}
+
+NSISFUNC(ParameterStr)
+{
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+	MAKESTR(value, g_stringsize);
+
+	const int index = popint();
+	if(commandline_get_raw(index, value, g_stringsize))
+	{
+		pushstring(STRTRIM(value));
+	}
+	else
+	{
+		pushstring(T("error"));
+	}
+
+	delete [] value;
+}
+
+NSISFUNC(ParameterCnt)
+{
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+
+	const int index = commandline_get_cnt();
+	if(index >= 0)
+	{
+		pushint(index);
+		return;
+	}
+
+	pushstring(T("error"));
+}
+
 NSISFUNC(GetAllParameters)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	int truncate = popint();
-	const TCHAR *cmd = get_commandline_arguments();
+	const TCHAR *cmd = commandline_get_all();
 
 	if((STRLEN(cmd) < g_stringsize) || truncate)
 	{
@@ -761,7 +948,7 @@ NSISFUNC(GetAllParameters)
 NSISFUNC(GetRealOsVersion)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 
 	bool flag;
 	unsigned int version[3];
@@ -783,7 +970,7 @@ NSISFUNC(GetRealOsVersion)
 NSISFUNC(GetRealOsBuildNo)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 
 	bool flag;
 	unsigned int buildNumber;
@@ -801,7 +988,7 @@ NSISFUNC(GetRealOsBuildNo)
 NSISFUNC(VerifyRealOsVersion)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 
 	bool flag;
 	unsigned int expectedVersion[3];
@@ -838,7 +1025,7 @@ NSISFUNC(VerifyRealOsVersion)
 NSISFUNC(VerifyRealOsBuildNo)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 
 	bool flag;
 	unsigned int expectedBuildNo;
@@ -869,7 +1056,7 @@ NSISFUNC(VerifyRealOsBuildNo)
 NSISFUNC(GetRealOsName)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 
 	bool flag;
 	unsigned int detectedVersion[3];
@@ -886,7 +1073,7 @@ NSISFUNC(GetRealOsName)
 NSISFUNC(GetOsEdition)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 
 	bool isServerEdition;
 	if(!get_os_server_edition(isServerEdition))
@@ -899,20 +1086,173 @@ NSISFUNC(GetOsEdition)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// HASH COMPUTATION
+///////////////////////////////////////////////////////////////////////////////
+
+static int GetHashType(const TCHAR *const type)
+{
+	static const struct
+	{
+		const TCHAR *const name;
+		const int id;
+	}
+	HASH_ALGO_MAPPING[] =
+	{
+		{ T("CRC-32"),     STD_HASHTYPE_CRC_32   },
+		{ T("MD5-128"),    STD_HASHTYPE_MD5_128  },
+		{ T("SHA1-160"),   STD_HASHTYPE_SHA1_160 },
+		{ T("SHA2-224"),   STD_HASHTYPE_SHA2_224 },
+		{ T("SHA2-256"),   STD_HASHTYPE_SHA2_256 },
+		{ T("SHA2-384"),   STD_HASHTYPE_SHA2_384 },
+		{ T("SHA2-512"),   STD_HASHTYPE_SHA2_512 },
+		{ T("SHA3-224"),   STD_HASHTYPE_SHA3_224 },
+		{ T("SHA3-256"),   STD_HASHTYPE_SHA3_256 },
+		{ T("SHA3-384"),   STD_HASHTYPE_SHA3_384 },
+		{ T("SHA3-512"),   STD_HASHTYPE_SHA3_512 },
+		{ T("BLAKE2-224"), STD_HASHTYPE_BLK2_224 },
+		{ T("BLAKE2-256"), STD_HASHTYPE_BLK2_256 },
+		{ T("BLAKE2-384"), STD_HASHTYPE_BLK2_384 },
+		{ T("BLAKE2-512"), STD_HASHTYPE_BLK2_512 },
+		{ NULL, -1 }
+	};
+
+	for(size_t i = 0; HASH_ALGO_MAPPING[i].name; i++)
+	{
+		if(STRICMP(type, HASH_ALGO_MAPPING[i].name) == 0)
+		{
+			return HASH_ALGO_MAPPING[i].id;
+		}
+	}
+
+	if(g_bStdUtilsVerbose)
+	{
+		MessageBox(NULL, T("And invalid hash function has been specified!"), T("StdUtils::GetHashType"), MB_TOPMOST | MB_ICONSTOP);
+	}
+
+	return -1;
+}
+
+NSISFUNC(HashFile)
+{
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+	MAKESTR(file, g_stringsize);
+	MAKESTR(temp, g_stringsize);
+
+	popstringn(file, 0);
+	popstringn(temp, 0);
+
+	const int hashType = GetHashType(STRTRIM(temp));
+	if(hashType >= 0)
+	{
+		if(ComputeHash_FromFile(hashType, file, temp, g_stringsize))
+		{
+			pushstring(temp);
+		}
+		else
+		{
+			pushstring(T("error"));
+		}
+	}
+	else
+	{
+		pushstring(T("invalid"));
+	}
+
+	delete [] file;
+	delete [] temp;
+}
+
+NSISFUNC(HashText)
+{
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+	MAKESTR(temp, g_stringsize);
+	MAKESTR(text, g_stringsize);
+
+	popstringn(text, 0);
+	popstringn(temp, 0);
+
+	const int hashType = GetHashType(STRTRIM(temp));
+	if(hashType >= 0)
+	{
+		if(ComputeHash_FromText(hashType, text, temp, g_stringsize))
+		{
+			pushstring(temp);
+		}
+		else
+		{
+			pushstring(T("error"));
+		}
+	}
+	else
+	{
+		pushstring(T("invalid"));
+	}
+
+	delete [] text;
+	delete [] temp;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CREATE/DESTROY TIMER
+///////////////////////////////////////////////////////////////////////////////
+
+NSISFUNC(TimerCreate)
+{
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+
+	const int interval = popint();
+	const int procAddress = popint();
+
+	UINT_PTR id;
+	if(timer_create(procAddress, interval, hWndParent, extra, id))
+	{
+		TCHAR out[32];
+		SNPRINTF(out, 32, T("TimerId:%08X"), id);
+		pushstring(out);
+	}
+	else
+	{
+		pushstring(T("error"));
+	}
+}
+
+NSISFUNC(TimerDestroy)
+{
+	EXDLL_INIT();
+	REGSITER_CALLBACK(g_StdUtilsInstance);
+	MAKESTR(temp, g_stringsize);
+
+	popstringn(temp, 0);
+	UINT_PTR id;
+	bool success = false;
+
+	if(SSCANF(temp, T("TimerId:%X"), &id) == 1)
+	{
+		success = timer_destroy(id);
+	}
+
+	pushstring(success ? T("ok") : T("error"));
+	delete [] temp;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // FOR DEBUGGING
 ///////////////////////////////////////////////////////////////////////////////
 
 NSISFUNC(EnableVerboseMode)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	g_bStdUtilsVerbose = true;
 }
 
 NSISFUNC(DisableVerboseMode)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	g_bStdUtilsVerbose = false;
 }
 
@@ -926,7 +1266,7 @@ static const TCHAR *dllVerString = T(DLL_VERSION_STRING);
 NSISFUNC(GetLibVersion)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 	pushstring(dllTimeStamp);
 	pushstring(dllVerString);
 }
@@ -936,5 +1276,5 @@ NSISFUNC(GetLibVersion)
 NSISFUNC(Dummy)
 {
 	EXDLL_INIT();
-	REGSITER_CALLBACK(g_hInstance);
+	REGSITER_CALLBACK(g_StdUtilsInstance);
 }
