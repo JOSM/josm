@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.HierarchyBoundsListener;
 import java.awt.event.HierarchyEvent;
@@ -493,31 +494,34 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             }
         }
 
-        // Build conflict resolution dialog
-        final CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
-
-        dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues());
-        dialog.getRelationMemberConflictResolverModel().populate(parentRelations, primitives);
-        dialog.prepareDefaultDecisions();
-
-        // Ensure a proper title is displayed instead of a previous target (fix #7925)
-        if (targetPrimitives.size() == 1) {
-            dialog.setTargetPrimitive(targetPrimitives.iterator().next());
-        } else {
-            dialog.setTargetPrimitive(null);
-        }
-
-        // Resolve tag conflicts if necessary
-        if (!dialog.isResolvedCompletely()) {
-            dialog.setVisible(true);
-            if (dialog.isCanceled()) {
-                throw new UserCancelException();
-            }
-        }
         List<Command> cmds = new LinkedList<>();
-        for (OsmPrimitive i : targetPrimitives) {
-            dialog.setTargetPrimitive(i);
-            cmds.addAll(dialog.buildResolutionCommands());
+
+        if (!GraphicsEnvironment.isHeadless()) {
+            // Build conflict resolution dialog
+            final CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
+
+            dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues());
+            dialog.getRelationMemberConflictResolverModel().populate(parentRelations, primitives);
+            dialog.prepareDefaultDecisions();
+
+            // Ensure a proper title is displayed instead of a previous target (fix #7925)
+            if (targetPrimitives.size() == 1) {
+                dialog.setTargetPrimitive(targetPrimitives.iterator().next());
+            } else {
+                dialog.setTargetPrimitive(null);
+            }
+
+            // Resolve tag conflicts if necessary
+            if (!dialog.isResolvedCompletely()) {
+                dialog.setVisible(true);
+                if (dialog.isCanceled()) {
+                    throw new UserCancelException();
+                }
+            }
+            for (OsmPrimitive i : targetPrimitives) {
+                dialog.setTargetPrimitive(i);
+                cmds.addAll(dialog.buildResolutionCommands());
+            }
         }
         return cmds;
     }
