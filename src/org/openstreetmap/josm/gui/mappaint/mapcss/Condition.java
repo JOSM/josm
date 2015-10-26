@@ -549,7 +549,7 @@ public abstract class Condition {
          * @see Node#isConnectionNode()
          */
         static boolean connection(Environment e) {
-            return e.osm instanceof Node && ((Node) e.osm).isConnectionNode();
+            return e.osm instanceof Node && e.osm.getDataSet() != null && ((Node) e.osm).isConnectionNode();
         }
 
         /**
