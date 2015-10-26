@@ -6,11 +6,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.awt.Cursor;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.Point2D;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,71 +22,12 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * Unit tests for class {@link SelectAction}.
  */
 public class SelectActionTest {
-
-    private class MapViewMock extends MapView {
-        private OsmDataLayer layer;
-        private DataSet currentDataSet;
-
-        MapViewMock(DataSet dataSet, OsmDataLayer layer) {
-            super(null, null);
-            this.layer = layer;
-            this.currentDataSet = dataSet;
-        }
-
-        @Override
-        public EastNorth getEastNorth(int x, int y) {
-            return new EastNorth(x, y);
-        }
-
-        @Override
-        public void addMouseListener(MouseListener ml) {}
-
-        @Override
-        public void removeMouseListener(MouseListener ml) {}
-
-        @Override
-        public void setVirtualNodesEnabled(boolean enabled) {}
-
-        @Override
-        public void setNewCursor(Cursor cursor, Object reference) {}
-
-        @Override
-        public void setNewCursor(int cursor, Object reference) {}
-
-        @Override
-        public boolean isActiveLayerVisible() {
-            return true;
-        }
-
-        @Override
-        public void requestClearRect() {}
-
-        @Override
-        public Point2D getPoint2D(EastNorth p) {
-            return new Point2D.Double(p.getX(), p.getY());
-        }
-
-        @Override
-        public void setActiveLayer(Layer layer) {}
-
-        @Override
-        public Layer getActiveLayer() {
-            return layer;
-        }
-
-        @Override
-        protected DataSet getCurrentDataSet() {
-            return currentDataSet;
-        }
-    }
 
     /**
      * Override some configuration variables without change in preferences.xml
@@ -133,7 +71,7 @@ public class SelectActionTest {
      * Setup test.
      */
     @BeforeClass
-    public static void setUp() {
+    public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
