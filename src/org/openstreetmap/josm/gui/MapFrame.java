@@ -140,11 +140,11 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     // Map modes
     public final SelectAction mapModeSelect;
+    public final DrawAction mapModeDraw;
+    public final ZoomAction mapModeZoom;
     public LassoModeAction mapModeSelectLasso;
 
     private final transient Map<Layer, MapMode> lastMapMode = new HashMap<>();
-    private final MapMode mapModeDraw;
-    private final MapMode mapModeZoom;
 
     /**
      * The status line below the map
