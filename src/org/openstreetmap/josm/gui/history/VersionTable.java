@@ -310,7 +310,10 @@ public class VersionTable extends JTable implements Observer{
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
                 int row, int column) {
-            String v = value.toString();
+            String v = "";
+            if (value != null) {
+                v = value.toString();
+            }
             setText(v);
             return this;
         }
