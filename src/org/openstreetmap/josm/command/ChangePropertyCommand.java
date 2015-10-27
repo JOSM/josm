@@ -110,7 +110,9 @@ public class ChangePropertyCommand extends Command {
         if (objects.isEmpty())
             return true;
         final DataSet dataSet = objects.get(0).getDataSet();
-        dataSet.beginUpdate();
+        if (dataSet != null) {
+            dataSet.beginUpdate();
+        }
         try {
             super.executeCommand(); // save old
 
@@ -132,7 +134,9 @@ public class ChangePropertyCommand extends Command {
             }
             return true;
         } finally {
-            dataSet.endUpdate();
+            if (dataSet != null) {
+                dataSet.endUpdate();
+            }
         }
     }
 
