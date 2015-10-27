@@ -198,7 +198,7 @@ public class SplitWayAction extends JosmAction {
             final List<Way> newWays = createNewWaysFromChunks(selectedWay, wayChunks);
             final Way wayToKeep = Strategy.keepLongestChunk().determineWayToKeep(newWays);
 
-            if (ExpertToggleAction.isExpert() && !selectedWay.isNew()) {
+            if (ExpertToggleAction.isExpert() && !selectedWay.isNew() && Main.pref.getBoolean("splitway.segment-selection-dialog", true)) {
                 final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(selectedWay, newWays, wayToKeep, sel);
                 dialog.setModal(false);
                 dialog.showDialog();
