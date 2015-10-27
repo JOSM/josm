@@ -214,7 +214,8 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     }
 
     /**
-     * Sets the ignore state for this error
+     * Returns the ignore state for this error.
+     * @return the ignore state for this error
      */
     public String getIgnoreState() {
         Collection<String> strings = new TreeSet<>();

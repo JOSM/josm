@@ -68,7 +68,11 @@ public class SideButton extends JButton implements Destroyable {
         }
     }
 
-    /** scales the given image proportionally so that the height is "iconHeight" **/
+    /**
+     * Scales the given image proportionally so that the height is "iconHeight"
+     * @param im original image
+     * @return scaled image
+     */
     private static ImageIcon getScaledImage(Image im) {
         int newWidth = im.getWidth(null) *  iconHeight / im.getHeight(null);
         return new ImageIcon(im.getScaledInstance(newWidth, iconHeight, Image.SCALE_SMOOTH));

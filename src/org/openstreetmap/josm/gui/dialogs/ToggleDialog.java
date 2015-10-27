@@ -832,14 +832,15 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         return button;
     }
 
-    /***
+    /*
      * The following methods are intended to be overridden, in order to customize
      * the toggle dialog behavior.
-     **/
+     */
 
     /**
-     * Default size of the detached dialog.
+     * Returns the default size of the detached dialog.
      * Override this method to customize the initial dialog size.
+     * @return the default size of the detached dialog
      */
     protected Dimension getDefaultDetachedSize() {
         return new Dimension(dialogsPanel.getWidth(), preferredHeight);

@@ -273,7 +273,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * Adapter for layer change events
      *
      */
-    private class LayerChangeAdapter implements MapView.LayerChangeListener {
+    protected class LayerChangeAdapter implements MapView.LayerChangeListener {
         private void updateEnabledStateInEDT() {
             GuiHelper.runInEDT(new Runnable() {
                 @Override public void run() {
@@ -301,7 +301,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     /**
      * Adapter for selection change events
      */
-    private class SelectionChangeAdapter implements SelectionChangedListener {
+    protected class SelectionChangeAdapter implements SelectionChangedListener {
         @Override
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             updateEnabledState(newSelection);

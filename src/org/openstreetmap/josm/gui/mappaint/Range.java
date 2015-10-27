@@ -31,6 +31,9 @@ public class Range {
 
     /**
      * provides the intersection of 2 overlapping ranges
+     * @param a first range
+     * @param b second range
+     * @return intersection of {@code a} and {@code b}
      */
     public static Range cut(Range a, Range b) {
         if (b.lower >= a.upper || b.upper <= a.lower)

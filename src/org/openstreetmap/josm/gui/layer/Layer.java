@@ -173,6 +173,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     /**
      * Return a representative small image for this layer. The image must not
      * be larger than 64 pixel in any dimension.
+     * @return layer icon
      */
     public abstract Icon getIcon();
 
@@ -181,6 +182,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      * @param ignoreCustom Custom color should return null, as no default color
      *      is used. When this is true, then even for custom coloring the base
      *      color is returned - mainly for layer internal use.
+     * @return layer color
      */
     public Color getColor(boolean ignoreCustom) {
         return null;
@@ -224,8 +226,8 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      * menu component than JMenuItem or when it supports multiple layers. Actions that support multiple layers should also
      * have correct equals implementation.
      *
-     * Use SeparatorLayerAction.INSTANCE instead of new JSeparator
-     *
+     * Use {@link SeparatorLayerAction#INSTANCE} instead of new JSeparator
+     * @return menu actions for this layer
      */
     public abstract Action[] getMenuEntries();
 

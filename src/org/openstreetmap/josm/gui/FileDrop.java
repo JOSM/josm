@@ -33,7 +33,6 @@ import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction;
-import org.openstreetmap.josm.gui.FileDrop.TransferableObject;
 
 // CHECKSTYLE.OFF: HideUtilityClassConstructor
 
@@ -226,7 +225,11 @@ public class FileDrop {
         }
     }
 
-    /** Determine if the dragged data is a file list. */
+    /**
+     * Determines if the dragged data is a file list.
+     * @param evt the drag event
+     * @return {@code true} if the dragged data is a file list
+     */
     private static boolean isDragOk(final DropTargetDragEvent evt) {
         boolean ok = false;
 

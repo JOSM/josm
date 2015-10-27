@@ -392,16 +392,19 @@ public abstract class SourceEditor extends JPanel {
 
     /**
      * Load the list of source entries that the user has configured.
+     * @return list of source entries that the user has configured
      */
     public abstract Collection<? extends SourceEntry> getInitialSourcesList();
 
     /**
      * Load the list of configured icon paths.
+     * @return list of configured icon paths
      */
     public abstract Collection<String> getInitialIconPathsList();
 
     /**
      * Get the default list of entries (used when resetting the list).
+     * @return default list of entries
      */
     public abstract Collection<ExtendedSourceEntry> getDefault();
 

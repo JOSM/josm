@@ -519,6 +519,8 @@ public abstract class Condition {
 
         /**
          * {@code closed} tests whether the way is closed or the relation is a closed multipolygon
+         * @param e MapCSS environment
+         * @return {@code true} if the way is closed or the relation is a closed multipolygon
          */
         static boolean closed(Environment e) {
             if (e.osm instanceof Way && ((Way) e.osm).isClosed())
@@ -530,7 +532,9 @@ public abstract class Condition {
 
         /**
          * {@code :modified} tests whether the object has been modified.
-         * @see OsmPrimitive#isModified() ()
+         * @param e MapCSS environment
+         * @return {@code true} if the object has been modified
+         * @see OsmPrimitive#isModified()
          */
         static boolean modified(Environment e) {
             return e.osm.isModified() || e.osm.isNewOrUndeleted();
@@ -538,6 +542,8 @@ public abstract class Condition {
 
         /**
          * {@code ;new} tests whether the object is new.
+         * @param e MapCSS environment
+         * @return {@code true} if the object is new
          * @see OsmPrimitive#isNew()
          */
         static boolean _new(Environment e) {
@@ -546,6 +552,8 @@ public abstract class Condition {
 
         /**
          * {@code :connection} tests whether the object is a connection node.
+         * @param e MapCSS environment
+         * @return {@code true} if the object is a connection node
          * @see Node#isConnectionNode()
          */
         static boolean connection(Environment e) {
@@ -554,6 +562,8 @@ public abstract class Condition {
 
         /**
          * {@code :tagged} tests whether the object is tagged.
+         * @param e MapCSS environment
+         * @return {@code true} if the object is tagged
          * @see OsmPrimitive#isTagged()
          */
         static boolean tagged(Environment e) {
@@ -562,6 +572,8 @@ public abstract class Condition {
 
         /**
          * {@code :same-tags} tests whether the object has the same tags as its child/parent.
+         * @param e MapCSS environment
+         * @return {@code true} if the object has the same tags as its child/parent
          * @see OsmPrimitive#hasSameInterestingTags(OsmPrimitive)
          */
         static boolean sameTags(Environment e) {
@@ -570,6 +582,8 @@ public abstract class Condition {
 
         /**
          * {@code :area-style} tests whether the object has an area style. This is useful for validators.
+         * @param e MapCSS environment
+         * @return {@code true} if the object has an area style
          * @see ElemStyles#hasAreaElemStyle(OsmPrimitive, boolean)
          */
         static boolean areaStyle(Environment e) {
@@ -579,6 +593,8 @@ public abstract class Condition {
 
         /**
          * {@code unconnected}: tests whether the object is a unconnected node.
+         * @param e MapCSS environment
+         * @return {@code true} if the object is a unconnected node
          */
         static boolean unconnected(Environment e) {
             return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
@@ -586,6 +602,8 @@ public abstract class Condition {
 
         /**
          * {@code righthandtraffic} checks if there is right-hand traffic at the current location.
+         * @param e MapCSS environment
+         * @return {@code true} if there is right-hand traffic at the current location
          * @see ExpressionFactory.Functions#is_right_hand_traffic(Environment)
          */
         static boolean righthandtraffic(Environment e) {
@@ -594,6 +612,8 @@ public abstract class Condition {
 
         /**
          * {@code unclosed-multipolygon} tests whether the object is an unclosed multipolygon.
+         * @param e MapCSS environment
+         * @return {@code true} if the object is an unclosed multipolygon
          */
         static boolean unclosed_multipolygon(Environment e) {
             return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() &&
@@ -605,6 +625,8 @@ public abstract class Condition {
 
         /**
          * {@code in-downloaded-area} tests whether the object is within source area ("downloaded area").
+         * @param e MapCSS environment
+         * @return {@code true} if the object is within source area ("downloaded area")
          * @see InDataSourceArea
          */
         static boolean inDownloadedArea(Environment e) {

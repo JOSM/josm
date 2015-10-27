@@ -15,6 +15,7 @@ public interface PreferenceSetting {
     /**
      * Called when OK is pressed to save the setting in the preferences file.
      * Return true when restart is required.
+     * @return {@code true} if restart is required
      */
     boolean ok();
 
