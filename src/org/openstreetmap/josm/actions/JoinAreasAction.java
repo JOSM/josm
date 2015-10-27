@@ -941,7 +941,8 @@ public class JoinAreasAction extends JosmAction {
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
 
         if (chunks.size() > 1) {
-            SplitWayResult split = SplitWayAction.splitWay(getEditLayer(), way, chunks, Collections.<OsmPrimitive>emptyList());
+            SplitWayResult split = SplitWayAction.splitWay(getEditLayer(), way, chunks,
+                    Collections.<OsmPrimitive>emptyList(), SplitWayAction.Strategy.keepFirstChunk());
 
             //execute the command, we need the results
             cmds.add(split.getCommand());

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -744,7 +745,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         public void actionPerformed(ActionEvent e) {
             final GpxData data = toGpxData();
             final GpxLayer gpxLayer = new GpxLayer(data, tr("Converted from: {0}", getName()));
-            gpxLayer.setAssociatedFile(new File(getAssociatedFile().getParentFile(), getAssociatedFile().getName() + ".gpx"));
+            final String filename = getAssociatedFile().getName().replaceAll(Pattern.quote(".gpx.osm") + "$", "") + ".gpx";
+            gpxLayer.setAssociatedFile(new File(getAssociatedFile().getParentFile(), filename));
             Main.main.addLayer(gpxLayer);
             if (Main.pref.getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
                 Main.main.addLayer(new MarkerLayer(data, tr("Converted from: {0}", getName()), null, gpxLayer));
