@@ -433,19 +433,20 @@ public final class Shortcut {
     // and now the workhorse. same parameters as above, just one more
     private static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, Integer modifier) {
         doInit();
-        Integer defaultModifier = findModifier(requestedGroup, modifier);
         if (shortcuts.containsKey(shortText)) { // a re-register? maybe a sc already read from the preferences?
             Shortcut sc = shortcuts.get(shortText);
             sc.setLongText(longText); // or set by the platformHook, in this case the original longText doesn't match the real action
             sc.saveDefault();
             return sc;
         }
+        Integer defaultModifier = findModifier(requestedGroup, modifier);
         Shortcut conflict = findShortcut(requestedKey, defaultModifier);
         if (conflict != null) {
             if (Main.isPlatformOsx()) {
                 // Try to reassign Meta to Ctrl
                 int newmodifier = findNewOsxModifier(requestedGroup);
                 if (findShortcut(requestedKey, newmodifier) == null) {
+                    Main.info("Reassigning OSX shortcut '" + shortText + "' from Meta to Ctrl because of conflict with " + conflict);
                     return reassignShortcut(shortText, longText, requestedKey, conflict, requestedGroup, requestedKey, newmodifier);
                 }
             }
@@ -453,6 +454,8 @@ public final class Shortcut {
                 for (int k : keys) {
                     int newmodifier = getGroupModifier(m);
                     if (findShortcut(k, newmodifier) == null) {
+                        Main.info("Reassigning shortcut '" + shortText + "' from " + modifier + " to " + newmodifier +
+                                " because of conflict with " + conflict);
                         return reassignShortcut(shortText, longText, requestedKey, conflict, m, k, newmodifier);
                     }
                 }
