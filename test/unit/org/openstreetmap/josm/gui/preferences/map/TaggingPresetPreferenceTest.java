@@ -40,6 +40,9 @@ public class TaggingPresetPreferenceTest {
         Collection<ExtendedSourceEntry> sources = new TaggingPresetPreference.TaggingPresetSourceEditor()
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());
+        // Double traditional timeouts to avoid random problems
+        Main.pref.putInteger("socket.timeout.connect", 30);
+        Main.pref.putInteger("socket.timeout.read", 60);
         Collection<Throwable> allErrors = new ArrayList<>();
         Set<String> allMessages = new HashSet<>();
         for (ExtendedSourceEntry source : sources) {
