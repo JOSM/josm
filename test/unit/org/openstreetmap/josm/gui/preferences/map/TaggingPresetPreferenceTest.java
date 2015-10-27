@@ -44,7 +44,7 @@ public class TaggingPresetPreferenceTest {
         Collection<Throwable> allErrors = new ArrayList<>();
         Set<String> allMessages = new HashSet<>();
         for (ExtendedSourceEntry source : sources) {
-            System.out.print(source.url);
+            System.out.println(source.url);
             try {
                 Collection<TaggingPreset> presets = TaggingPresetReader.readAll(source.url, true);
                 assertFalse(presets.isEmpty());

@@ -41,7 +41,7 @@ public class MapPaintPreferenceTest {
         assertFalse(sources.isEmpty());
         Map<String, Collection<Throwable>> allErrors = new HashMap<>();
         for (ExtendedSourceEntry source : sources) {
-            System.out.print(source.url);
+            System.out.println(source.url);
             Collection<Throwable> errors = MapPaintStyles.addStyle(source);
             System.out.println(errors.isEmpty() ? " => OK" : " => KO");
             if (!errors.isEmpty()) {
