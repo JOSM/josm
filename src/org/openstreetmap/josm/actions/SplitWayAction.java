@@ -198,7 +198,7 @@ public class SplitWayAction extends JosmAction {
             final List<Way> newWays = createNewWaysFromChunks(selectedWay, wayChunks);
             final Way wayToKeep = Strategy.keepLongestChunk().determineWayToKeep(newWays);
 
-            if (ExpertToggleAction.isExpert() && !selectedWay.isNew()) {
+            if (ExpertToggleAction.isExpert() && !selectedWay.isNew() && Main.pref.getBoolean("splitway.segment-selection-dialog", true)) {
                 final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(selectedWay, newWays, wayToKeep, sel);
                 dialog.setModal(false);
                 dialog.showDialog();
@@ -261,7 +261,9 @@ public class SplitWayAction extends JosmAction {
                     final Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                     final String name = DefaultNameFormatter.getInstance().format((Way) value);
                     // get rid of id from DefaultNameFormatter.decorateNameWithId()
-                    final String nameWithoutId = name.replaceAll(" \\[id: -?\\d+\\]$", "");
+                    final String nameWithoutId = name
+                            .replace(tr(" [id: {0}]", ((Way) value).getId()), "")
+                            .replace(tr(" [id: {0}]", ((Way) value).getUniqueId()), "");
                     ((JLabel) c).setText(tr("Segment {0}: {1}", index + 1, nameWithoutId));
                     return c;
                 }
