@@ -196,7 +196,7 @@ public class SplitWayAction extends JosmAction {
             sel.addAll(selectedRelations);
 
             final List<Way> newWays = createNewWaysFromChunks(selectedWay, wayChunks);
-            final Way wayToKeep = determineWayToKeep(newWays);
+            final Way wayToKeep = Strategy.keepLongestChunk().determineWayToKeep(newWays);
 
             if (ExpertToggleAction.isExpert() && !selectedWay.isNew()) {
                 final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(selectedWay, newWays, wayToKeep, sel);
@@ -296,19 +296,51 @@ public class SplitWayAction extends JosmAction {
     }
 
     /**
-     * Determines which way chunk should reuse the old id and its history. Selects the one with the highest node count.
-     * @param wayChunks the way chunks
-     * @return the way to keep
+     * Determines which way chunk should reuse the old id and its history
+     *
+     * @since 8954
      */
-    protected static Way determineWayToKeep(Iterable<Way> wayChunks) {
-        Way wayToKeep = null;
-        for (Way i : wayChunks) {
-            if (wayToKeep == null || i.getNodesCount() > wayToKeep.getNodesCount()) {
-                wayToKeep = i;
-            }
+    public static abstract class Strategy {
+
+        /**
+         * Determines which way chunk should reuse the old id and its history.
+         *
+         * @param wayChunks the way chunks
+         * @return the way to keep
+         */
+        public abstract Way determineWayToKeep(Iterable<Way> wayChunks);
+
+        /**
+         * Returns a strategy which selects the way chunk with the highest node count to keep.
+         */
+        public static Strategy keepLongestChunk() {
+            return new Strategy() {
+                @Override
+                public Way determineWayToKeep(Iterable<Way> wayChunks) {
+                    Way wayToKeep = null;
+                    for (Way i : wayChunks) {
+                        if (wayToKeep == null || i.getNodesCount() > wayToKeep.getNodesCount()) {
+                            wayToKeep = i;
+                        }
+                    }
+                    return wayToKeep;
+                }
+            };
         }
-        return wayToKeep;
+
+        /**
+         * Returns a strategy which selects the first way chunk.
+         */
+        public static Strategy keepFirstChunk() {
+            return new Strategy() {
+                @Override
+                public Way determineWayToKeep(Iterable<Way> wayChunks) {
+                    return wayChunks.iterator().next();
+                }
+            };
+        }
     }
+
 
     /**
      * Determine which ways to split.
@@ -482,6 +514,29 @@ public class SplitWayAction extends JosmAction {
      */
     public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks,
             Collection<? extends OsmPrimitive> selection) {
+        return splitWay(layer, way, wayChunks, selection, Strategy.keepLongestChunk());
+    }
+
+    /**
+     * Splits the way {@code way} into chunks of {@code wayChunks} and replies
+     * the result of this process in an instance of {@link SplitWayResult}.
+     * The {@link org.openstreetmap.josm.actions.SplitWayAction.Strategy} is used to determine which
+     * way chunk should reuse the old id and its history.
+     *
+     * Note that changes are not applied to the data yet. You have to
+     * submit the command in {@link SplitWayResult#getCommand()} first,
+     * i.e. {@code Main.main.undoredo.add(result.getCommand())}.
+     *
+     * @param layer the layer which the way belongs to. Must not be null.
+     * @param way the way to split. Must not be null.
+     * @param wayChunks the list of way chunks into the way is split. Must not be null.
+     * @param selection The list of currently selected primitives
+     * @param splitStrategy The strategy used to determine which way chunk should reuse the old id and its history
+     * @return the result from the split operation
+     * @since 8954
+     */
+    public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks,
+            Collection<? extends OsmPrimitive> selection, Strategy splitStrategy) {
         // build a list of commands, and also a new selection list
         final List<OsmPrimitive> newSelection = new ArrayList<>(selection.size() + wayChunks.size());
         newSelection.addAll(selection);
@@ -490,7 +545,7 @@ public class SplitWayAction extends JosmAction {
         final List<Way> newWays = createNewWaysFromChunks(way, wayChunks);
 
         // Determine which part reuses the existing way
-        final Way wayToKeep = determineWayToKeep(newWays);
+        final Way wayToKeep = splitStrategy.determineWayToKeep(newWays);
 
         return doSplitWay(layer, way, wayToKeep, newWays, newSelection);
     }
