@@ -195,7 +195,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         }
                     });
                 } else {
-                    Main.warn(PRESET_ICON_ERROR_MSG_PREFIX + iconName);
+                    Main.warn(TaggingPreset.this + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
                 }
             }
         });
