@@ -264,6 +264,14 @@ public abstract class Main {
     }
 
     /**
+     * Clears the list of last error and warning messages.
+     * @since 8959
+     */
+    public static void clearLastErrorAndWarnings() {
+        ERRORS_AND_WARNINGS.clear();
+    }
+
+    /**
      * Prints an error message if logging is on.
      * @param msg The message to print.
      * @since 6248
