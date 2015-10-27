@@ -136,7 +136,8 @@ public class MapImage {
     }
 
     /**
-     * Returns true, if image is not completely loaded and getImage() returns a temporary image.
+     * Determines if image is not completely loaded and {@code getImage()} returns a temporary image.
+     * @return {@code true} if image is not completely loaded and getImage() returns a temporary image
      */
     public boolean isTemporary() {
         return temporary;

@@ -295,6 +295,7 @@ public class TagChecker extends TagTest {
     /**
      * Checks given string (key or value) if it contains characters with code below 0x20 (either newline or some other special characters)
      * @param s string to check
+     * @return {@code true} if {@code s} contains characters with code below 0x20
      */
     private static boolean containsLow(String s) {
         if (s == null)

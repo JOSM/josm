@@ -90,6 +90,7 @@ public final class TaggingPresetReader {
 
         /**
          * Returns the last inserted element.
+         * @return the last inserted element
          */
         public E getLast() {
             return last;
@@ -401,7 +402,8 @@ public final class TaggingPresetReader {
     }
 
     /**
-     * Returns true if icon images should be loaded.
+     * Determines if icon images should be loaded.
+     * @return {@code true} if icon images should be loaded
      */
     public static boolean isLoadIcons() {
         return loadIcons;
@@ -409,6 +411,7 @@ public final class TaggingPresetReader {
 
     /**
      * Sets whether icon images should be loaded.
+     * @param loadIcons {@code true} if icon images should be loaded
      */
     public static void setLoadIcons(boolean loadIcons) {
         TaggingPresetReader.loadIcons = loadIcons;

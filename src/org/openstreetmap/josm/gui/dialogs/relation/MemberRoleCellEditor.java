@@ -51,7 +51,10 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
         return editor.getText();
     }
 
-    /** Returns the edit field for this cell editor. */
+    /**
+     * Returns the edit field for this cell editor.
+     * @return the edit field for this cell editor
+     */
     public AutoCompletingTextField getEditor() {
         return editor;
     }

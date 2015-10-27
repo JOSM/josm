@@ -136,6 +136,8 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         /**
          * Returns a HTML representation for this task.
+         * @param sb a {@code StringBuilder} used to build the HTML code
+         * @return {@code sb}
          */
         public abstract StringBuilder toHtml(StringBuilder sb);
 

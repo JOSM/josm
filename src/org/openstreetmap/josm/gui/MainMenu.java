@@ -845,6 +845,7 @@ public class MainMenu extends JMenuBar {
 
     /**
      * Create search field.
+     * @return the search field
      */
     private DisableShortcutsOnFocusGainedTextField createSearchField() {
         DisableShortcutsOnFocusGainedTextField searchField = new DisableShortcutsOnFocusGainedTextField() {

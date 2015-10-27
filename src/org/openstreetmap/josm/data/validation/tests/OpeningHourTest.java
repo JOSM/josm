@@ -225,6 +225,9 @@ public class OpeningHourTest extends Test.TagTest {
 
     /**
      * Translates and shortens the error/warning message.
+     * @param key OSM key
+     * @param o error/warnign message
+     * @return translated/shortened error/warnign message
      */
     private String getErrorMessage(String key, Object o) {
         String msg = o.toString().trim()

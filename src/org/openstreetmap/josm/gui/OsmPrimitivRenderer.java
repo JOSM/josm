@@ -103,14 +103,20 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
     }
 
     /**
-     * Can be overridden to customize the Text
+     * Returns the text representing an OSM primitive in a component.
+     * Can be overridden to customize the text
+     * @param value OSM primitive
+     * @return text representing the OSM primitive
      */
     protected String getComponentText(OsmPrimitive value) {
         return value.getDisplayName(DefaultNameFormatter.getInstance());
     }
 
     /**
+     * Returns the text representing an OSM primitive in a tooltip.
      * Can be overridden to customize the ToolTipText
+     * @param value OSM primitive
+     * @return text representing the OSM primitive
      */
     protected String getComponentToolTipText(OsmPrimitive value) {
         return formatter.buildDefaultToolTip(value);

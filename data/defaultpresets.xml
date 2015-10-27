@@ -1210,6 +1210,7 @@
         </item> <!-- Mini-Roundabout -->
         <item name="Pedestrian Crossing" icon="styles/standard/vehicle/crossing.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:crossing"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:crossing"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:crossing"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:crossing"
@@ -1653,6 +1654,7 @@
     <group name="Passageways" icon="presets/tunnel.png">
         <item name="Tunnel" icon="presets/tunnel.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:tunnel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:tunnel"
@@ -1694,6 +1696,7 @@
         </item> <!-- Building Passage -->
         <item name="Arcade" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:covered"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:covered"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:covered"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:covered"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Key:covered"
@@ -2453,7 +2456,8 @@
             </optional>
         </item> <!-- Mixed Lift -->
         <item name="Drag Lift" icon="presets/drag_lift.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=drag_lift" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=drag_lift"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:aerialway=drag_lift" />
             <space />
             <combo key="aerialway" text="Type" values="drag_lift,t-bar,j-bar,platter,rope_tow" display_values="drag_lift (general type - use only if exact type (see values below) is unknown),t-bar,j-bar,platter,rope_tow" match="keyvalue" />
             <reference ref="name_ref" />
@@ -8698,6 +8702,7 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Mountain_biking"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Mountain_biking"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Mountain_biking"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Mountain_biking"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Mountain_biking"
                   no.href="http://wiki.openstreetmap.org/wiki/No:Mountain_biking"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Mountain_biking" />

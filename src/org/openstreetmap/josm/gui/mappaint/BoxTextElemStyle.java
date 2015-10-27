@@ -34,14 +34,16 @@ public class BoxTextElemStyle extends ElemStyle {
         }
 
         /**
-         * The box
+         * Returns the box.
+         * @return the box
          */
         public Rectangle getBox() {
             return box;
         }
 
         /**
-         * True, if the box can change in future calls of the BoxProvider get() method
+         * Determines if the box can change in future calls of the {@link BoxProvider#get()} method
+         * @return {@code true} if the box can change in future calls of the {@code BoxProvider#get()} method
          */
         public boolean isTemporary() {
             return temporary;
@@ -51,6 +53,10 @@ public class BoxTextElemStyle extends ElemStyle {
     public static class SimpleBoxProvider implements BoxProvider {
         private Rectangle box;
 
+        /**
+         * Constructs a new {@code SimpleBoxProvider}.
+         * @param box the box
+         */
         public SimpleBoxProvider(Rectangle box) {
             this.box = box;
         }

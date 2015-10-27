@@ -300,7 +300,7 @@ public class SplitWayAction extends JosmAction {
      *
      * @since 8954
      */
-    public static abstract class Strategy {
+    public abstract static class Strategy {
 
         /**
          * Determines which way chunk should reuse the old id and its history.
