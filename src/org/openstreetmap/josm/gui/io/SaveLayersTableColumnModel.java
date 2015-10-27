@@ -40,27 +40,29 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
             SaveLayerInfo info = (SaveLayerInfo) value;
             StringBuilder sb = new StringBuilder(24);
             sb.append("<html>");
-            if (info.getLayer().requiresUploadToServer() && !info.getLayer().isUploadDiscouraged()) {
-                panel.add(needsUpload, defaultCellStyle);
-                sb.append(tr("Layer ''{0}'' has modifications which should be uploaded to the server.", info.getName()));
+            if (info != null) {
+                if (info.getLayer().requiresUploadToServer() && !info.getLayer().isUploadDiscouraged()) {
+                    panel.add(needsUpload, defaultCellStyle);
+                    sb.append(tr("Layer ''{0}'' has modifications which should be uploaded to the server.", info.getName()));
 
-            } else {
-                panel.add(pnlEmpty, defaultCellStyle);
-                if (info.getLayer().requiresUploadToServer()) {
-                    sb.append(tr("Layer ''{0}'' has modifications which are discouraged to be uploaded.", info.getName()));
                 } else {
-                    sb.append(tr("Layer ''{0}'' has no modifications to be uploaded.", info.getName()));
+                    panel.add(pnlEmpty, defaultCellStyle);
+                    if (info.getLayer().requiresUploadToServer()) {
+                        sb.append(tr("Layer ''{0}'' has modifications which are discouraged to be uploaded.", info.getName()));
+                    } else {
+                        sb.append(tr("Layer ''{0}'' has no modifications to be uploaded.", info.getName()));
+                    }
                 }
-            }
-            sb.append("<br/>");
+                sb.append("<br/>");
 
-            if (info.getLayer().requiresSaveToFile()) {
-                panel.add(needsSave, defaultCellStyle);
-                sb.append(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.",
-                        info.getName(), info.getFile().toString()));
-            } else {
-                panel.add(pnlEmpty, defaultCellStyle);
-                sb.append(tr("Layer ''{0}'' has no modifications to be saved.", info.getName()));
+                if (info.getLayer().requiresSaveToFile()) {
+                    panel.add(needsSave, defaultCellStyle);
+                    sb.append(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.",
+                            info.getName(), info.getFile().toString()));
+                } else {
+                    panel.add(pnlEmpty, defaultCellStyle);
+                    sb.append(tr("Layer ''{0}'' has no modifications to be saved.", info.getName()));
+                }
             }
             sb.append("</html>");
             panel.setToolTipText(sb.toString());
