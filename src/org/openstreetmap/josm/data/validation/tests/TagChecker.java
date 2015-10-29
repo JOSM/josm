@@ -405,7 +405,7 @@ public class TagChecker extends TagTest {
                     if (!keyInPresets) {
                         String prettifiedKey = harmonizeKey(key);
                         String fixedKey = harmonizedKeys.get(prettifiedKey);
-                        if (fixedKey != null && !"".equals(fixedKey)) {
+                        if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
                             // misspelled preset key
                             String i = marktr("Key ''{0}'' looks like ''{1}''.");
                             errors.add(new FixableTestError(this, Severity.WARNING, tr("Misspelled property key"),
