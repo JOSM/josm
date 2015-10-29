@@ -566,6 +566,7 @@ public class SplitWayAction extends JosmAction {
         if (!newSelection.contains(way)) {
             newSelection.add(way);
         }
+        final int indexOfWayToKeep = newWays.indexOf(wayToKeep);
         newWays.remove(wayToKeep);
 
         for (Way wayToAdd : newWays) {
@@ -676,10 +677,21 @@ public class SplitWayAction extends JosmAction {
                         }
 
                         int j = i_c;
-                        for (Way wayToAdd : newWays) {
+                        final List<Way> waysToAddBefore = newWays.subList(0, indexOfWayToKeep);
+                        for (Way wayToAdd : waysToAddBefore) {
                             RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
                             j++;
-                            if ((backwards != null) && backwards) {
+                            if (Boolean.TRUE.equals(backwards)) {
+                                c.addMember(i_c + 1, em);
+                            } else {
+                                c.addMember(j - 1, em);
+                            }
+                        }
+                        final List<Way> waysToAddAfter = newWays.subList(indexOfWayToKeep, newWays.size());
+                        for (Way wayToAdd : waysToAddAfter) {
+                            RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
+                            j++;
+                            if (Boolean.TRUE.equals(backwards)) {
                                 c.addMember(i_c, em);
                             } else {
                                 c.addMember(j, em);
