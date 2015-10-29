@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.html.ImageView;
@@ -126,7 +127,8 @@ public class JosmImageView extends ImageView {
         if (src != null) {
             String urlStr = src.toExternalForm();
             if (urlStr.endsWith(".svg") || urlStr.endsWith(".svg?format=raw")) {
-                imageField.set(this, new ImageProvider(urlStr).get().getImage());
+                ImageIcon imgIcon = new ImageProvider(urlStr).setOptional(true).get();
+                imageField.set(this, imgIcon != null ? imgIcon.getImage() : null);
             } else {
                 Method loadImage = ImageView.class.getDeclaredMethod("loadImage");
                 loadImage.setAccessible(true);
