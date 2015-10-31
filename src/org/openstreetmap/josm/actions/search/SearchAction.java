@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
@@ -227,8 +228,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         //
         JLabel label = new JLabel(initialValues instanceof Filter ? tr("Filter string:") : tr("Search string:"));
         final HistoryComboBox hcbSearchString = new HistoryComboBox();
+        final String tooltip = tr("Enter the search expression");
         hcbSearchString.setText(initialValues.text);
-        hcbSearchString.setToolTipText(tr("Enter the search expression"));
+        hcbSearchString.setToolTipText(tooltip);
         // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         //
         List<String> searchExpressionHistory = getSearchExpressionHistory();
@@ -279,6 +281,34 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         final JPanel right;
         right = new JPanel(new GridBagLayout());
         buildHints(right, hcbSearchString);
+
+        final JTextComponent editorComponent = (JTextComponent) hcbSearchString.getEditor().getEditorComponent();
+        editorComponent.getDocument().addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
+
+            @Override
+            public void validate() {
+                if (!isValid()) {
+                    feedbackInvalid(tr("Invalid search expression"));
+                } else {
+                    feedbackValid(tooltip);
+                }
+            }
+
+            @Override
+            public boolean isValid() {
+                try {
+                    SearchSetting ss = new SearchSetting();
+                    ss.text = hcbSearchString.getText();
+                    ss.caseSensitive = caseSensitive.isSelected();
+                    ss.regexSearch = regexSearch.isSelected();
+                    ss.mapCSSSearch = mapCSSSearch.isSelected();
+                    SearchCompiler.compile(ss);
+                    return true;
+                } catch (ParseError e) {
+                    return false;
+                }
+            }
+        });
 
         final JPanel p = new JPanel(new GridBagLayout());
         p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
@@ -618,6 +648,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         public SearchSetting() {
         }
 
+        /**
+         * Constructs a new {@code SearchSetting} from an existing one.
+         * @param original original search settings
+         */
         public SearchSetting(SearchSetting original) {
             text = original.text;
             mode = original.mode;
