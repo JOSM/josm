@@ -634,7 +634,9 @@ public class SearchCompiler {
             this.referenceValue = referenceValue;
             Double v = null;
             try {
-                v = Double.valueOf(referenceValue);
+                if (referenceValue != null) {
+                    v = Double.valueOf(referenceValue);
+                }
             } catch (NumberFormatException ignore) {
                 if (Main.isTraceEnabled()) {
                     Main.trace(ignore.getMessage());
