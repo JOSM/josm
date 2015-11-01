@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
@@ -147,7 +149,8 @@ public abstract class LabelCompositionStrategy {
         }
     }
 
-    public static class DeriveLabelFromNameTagsCompositionStrategy extends LabelCompositionStrategy {
+    public static class DeriveLabelFromNameTagsCompositionStrategy
+        extends LabelCompositionStrategy implements PreferenceChangedListener {
 
         /**
          * The list of default name tags from which a label candidate is derived.
@@ -175,11 +178,6 @@ public abstract class LabelCompositionStrategy {
 
         /**
          * <p>Creates the strategy and initializes its name tags from the preferences.</p>
-         *
-         * <p><strong>Note:</strong> If the list of name tags in the preferences changes, strategy instances
-         * are not notified. It's up to the client to listen to preference changes and
-         * invoke {@link #initNameTagsFromPreferences()} accordingly.</p>
-         *
          */
         public DeriveLabelFromNameTagsCompositionStrategy() {
             initNameTagsFromPreferences();
@@ -294,6 +292,13 @@ public abstract class LabelCompositionStrategy {
         @Override
         public String toString() {
             return "{" + getClass().getSimpleName() +'}';
+        }
+
+        @Override
+        public void preferenceChanged(PreferenceChangeEvent e) {
+            if (e.getKey() != null && e.getKey().startsWith("mappaint.name")) {
+                initNameTagsFromPreferences();
+            }
         }
     }
 }
