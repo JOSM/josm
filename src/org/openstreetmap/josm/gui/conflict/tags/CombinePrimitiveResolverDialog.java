@@ -78,8 +78,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * You should also set the target primitive which other primitives (ways or nodes) are
  * merged to, see {@link #setTargetPrimitive(OsmPrimitive)}.
  *
- * After the dialog is closed use {@link #isCanceled()} to check whether the user canceled
- * the dialog. If it wasn't canceled you may build a collection of {@link Command} objects
+ * After the dialog is closed use {@link #isApplied()} to check whether the dialog has been
+ * applied. If it was applied you may build a collection of {@link Command} objects
  * which reflect the conflict resolution decisions the user made in the dialog:
  * see {@link #buildResolutionCommands()}
  */
@@ -109,7 +109,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     private AutoAdjustingSplitPane spTagConflictTypes;
     private TagConflictResolver pnlTagConflictResolver;
     protected RelationMemberConflictResolver pnlRelationMemberConflictResolver;
-    private boolean canceled;
+    private boolean applied;
     private JPanel pnlButtons;
     protected transient OsmPrimitive targetPrimitive;
 
@@ -337,16 +337,16 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         pnlRelationMemberConflictResolver.prepareForEditing();
     }
 
-    protected void setCanceled(boolean canceled) {
-        this.canceled = canceled;
+    protected void setApplied(boolean applied) {
+        this.applied = applied;
     }
 
     /**
-     * Determines if this dialog has been cancelled.
-     * @return true if this dialog has been cancelled, false otherwise.
+     * Determines if this dialog has been closed with "Apply".
+     * @return true if this dialog has been closed with "Apply", false otherwise.
      */
-    public boolean isCanceled() {
-        return canceled;
+    public boolean isApplied() {
+        return applied;
     }
 
     @Override
@@ -355,7 +355,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             prepareGUIBeforeConflictResolutionStarts();
             new WindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(Main.parent,
                     new Dimension(600, 400))).applySafe(this);
-            setCanceled(false);
+            setApplied(false);
             btnApply.requestFocusInWindow();
         } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
@@ -374,7 +374,6 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            setCanceled(true);
             setVisible(false);
         }
     }
@@ -390,6 +389,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
+            setApplied(true);
             setVisible(false);
             pnlTagConflictResolver.rememberPreferences();
         }
@@ -514,7 +514,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             // Resolve tag conflicts if necessary
             if (!dialog.isResolvedCompletely()) {
                 dialog.setVisible(true);
-                if (dialog.isCanceled()) {
+                if (!dialog.isApplied()) {
                     throw new UserCancelException();
                 }
             }
