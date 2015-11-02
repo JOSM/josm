@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -105,18 +106,18 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     protected void updateMessage() {
         int numObjectsToDelete = model.getNumObjectsToDelete();
         int numParentRelations = model.getNumParentRelations();
-        String msg;
-        if (numObjectsToDelete == 1 && numParentRelations == 1) {
-            msg = tr("<html>Please confirm to remove <strong>1 object</strong> from <strong>1 relation</strong>.</html>");
-        } else if (numObjectsToDelete == 1 && numParentRelations > 1) {
-            msg = tr("<html>Please confirm to remove <strong>1 object</strong> from <strong>{0} relations</strong>.</html>",
-                    numParentRelations);
-        } else if (numObjectsToDelete > 1 && numParentRelations == 1) {
-            msg = tr("<html>Please confirm to remove <strong>1 object</strong> from <strong>{0} relations</strong>.</html>",
-                    numParentRelations);
+        @I18n.QuirkyPluralString
+        final String msg;
+        if (numParentRelations == 1) {
+            msg = trn(
+                    "<html>Please confirm to remove <strong>{0} object</strong> from <strong>1 relation</strong>.</html>",
+                    "<html>Please confirm to remove <strong>{0} objects</strong> from <strong>1 relation</strong>.</html>",
+                    numObjectsToDelete, numObjectsToDelete);
         } else {
-            msg = tr("<html>Please confirm to remove <strong>{0} objects</strong> from <strong>{1} relations</strong>.</html>",
-                    numObjectsToDelete, numParentRelations);
+            msg = trn(
+                    "<html>Please confirm to remove <strong>{0} object</strong> from <strong>{1} relations</strong>.</html>",
+                    "<html>Please confirm to remove <strong>{0} objects</strong> from <strong>{1} relations</strong>.</html>",
+                    numObjectsToDelete, numObjectsToDelete, numParentRelations);
         }
         htmlPanel.getEditorPane().setText(msg);
         invalidate();

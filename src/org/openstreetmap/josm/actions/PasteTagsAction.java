@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.TextTagParser;
 import org.openstreetmap.josm.tools.Utils;
@@ -301,9 +302,11 @@ public final class PasteTagsAction extends JosmAction {
         if (!commands.isEmpty()) {
             String title1 = trn("Pasting {0} tag", "Pasting {0} tags", commands.size(), commands.size());
             String title2 = trn("to {0} object", "to {0} objects", selection.size(), selection.size());
+            @I18n.QuirkyPluralString
+            final String title = title1 + ' ' + title2;
             Main.main.undoRedo.add(
                     new SequenceCommand(
-                            title1 + ' ' + title2,
+                            title,
                             commands
                     ));
         }

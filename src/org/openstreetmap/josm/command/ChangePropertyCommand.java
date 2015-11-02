@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -147,7 +148,8 @@ public class ChangePropertyCommand extends Command {
 
     @Override
     public String getDescriptionText() {
-        String text;
+        @I18n.QuirkyPluralString
+        final String text;
         if (objects.size() == 1 && tags.size() == 1) {
             OsmPrimitive primitive = objects.get(0);
             String msg = "";
