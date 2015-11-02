@@ -608,7 +608,7 @@ public class ExtendedDialog extends JDialog {
      * This function checks the state of the "Do not show again" checkbox and
      * writes the corresponding pref.
      */
-    private void toggleSaveState() {
+    protected void toggleSaveState() {
         if (!toggleable ||
                 togglePanel == null ||
                 cancelButtonIdx.contains(result) ||
