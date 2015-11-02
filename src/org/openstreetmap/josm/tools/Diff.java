@@ -569,6 +569,14 @@ public class Diff {
             this.link = old;
         }
 
+        /**
+         * Returns the number of insertions and deletions of this change as well as
+         * (recursively) the changes linked via {@link #link}.
+         */
+        public int getTotalNumberOfChanges() {
+            return inserted + deleted + (link != null ? link.getTotalNumberOfChanges() : 0);
+        }
+
         @Override
         public String toString() {
             String s = String.format("%d -%d +%d %d", line0, deleted, inserted, line1);
