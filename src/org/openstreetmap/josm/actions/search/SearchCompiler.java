@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
@@ -232,11 +233,26 @@ public class SearchCompiler {
     }
 
     /**
-     * Base class for all search operators.
+     * Base class for all search criteria. If the criterion only depends on an object's tags,
+     * inherit from {@link org.openstreetmap.josm.actions.search.SearchCompiler.TaggedMatch}.
      */
     public abstract static class Match implements Predicate<OsmPrimitive> {
 
+        /**
+         * Tests whether the primitive matches this criterion.
+         * @param osm the primitive to test
+         * @return true if the primitive matches this criterion
+         */
         public abstract boolean match(OsmPrimitive osm);
+
+        /**
+         * Tests whether the tagged object matches this criterion.
+         * @param tagged the tagged object to test
+         * @return true if the tagged object matches this criterion
+         */
+        public boolean match(Tagged tagged) {
+            return false;
+        }
 
         /**
          * Tests whether one of the primitives matches.
@@ -267,6 +283,17 @@ public class SearchCompiler {
         @Override
         public final boolean evaluate(OsmPrimitive object) {
             return match(object);
+        }
+    }
+
+    public abstract static class TaggedMatch extends Match {
+
+        @Override
+        public abstract boolean match(Tagged tags);
+
+        @Override
+        public final boolean match(OsmPrimitive osm) {
+            return match((Tagged) osm);
         }
     }
 
@@ -317,11 +344,11 @@ public class SearchCompiler {
     /**
      * Matches every OsmPrimitive.
      */
-    public static class Always extends Match {
+    public static class Always extends TaggedMatch {
         /** The unique instance/ */
         public static final Always INSTANCE = new Always();
         @Override
-        public boolean match(OsmPrimitive osm) {
+        public boolean match(Tagged osm) {
             return true;
         }
     }
@@ -329,9 +356,9 @@ public class SearchCompiler {
     /**
      * Never matches any OsmPrimitive.
      */
-    public static class Never extends Match {
+    public static class Never extends TaggedMatch {
         @Override
-        public boolean match(OsmPrimitive osm) {
+        public boolean match(Tagged osm) {
             return false;
         }
     }
@@ -350,6 +377,11 @@ public class SearchCompiler {
         }
 
         @Override
+        public boolean match(Tagged osm) {
+            return !match.match(osm);
+        }
+
+        @Override
         public String toString() {
             return "!" + match;
         }
@@ -362,7 +394,7 @@ public class SearchCompiler {
     /**
      * Matches if the value of the corresponding key is ''yes'', ''true'', ''1'' or ''on''.
      */
-    private static class BooleanMatch extends Match {
+    private static class BooleanMatch extends TaggedMatch {
         private final String key;
         private final boolean defaultValue;
 
@@ -372,7 +404,7 @@ public class SearchCompiler {
         }
 
         @Override
-        public boolean match(OsmPrimitive osm) {
+        public boolean match(Tagged osm) {
             Boolean ret = OsmUtils.getOsmBoolean(osm.get(key));
             if (ret == null)
                 return defaultValue;
@@ -400,6 +432,11 @@ public class SearchCompiler {
         }
 
         @Override
+        public boolean match(Tagged osm) {
+            return lhs.match(osm) && rhs.match(osm);
+        }
+
+        @Override
         public String toString() {
             return lhs + " && " + rhs;
         }
@@ -419,6 +456,11 @@ public class SearchCompiler {
         }
 
         @Override
+        public boolean match(Tagged osm) {
+            return lhs.match(osm) || rhs.match(osm);
+        }
+
+        @Override
         public String toString() {
             return lhs + " || " + rhs;
         }
@@ -434,6 +476,11 @@ public class SearchCompiler {
 
         @Override
         public boolean match(OsmPrimitive osm) {
+            return lhs.match(osm) ^ rhs.match(osm);
+        }
+
+        @Override
+        public boolean match(Tagged osm) {
             return lhs.match(osm) ^ rhs.match(osm);
         }
 
@@ -515,7 +562,7 @@ public class SearchCompiler {
     /**
      * Matches objects with the given key-value pair.
      */
-    private static class KeyValue extends Match {
+    private static class KeyValue extends TaggedMatch {
         private final String key;
         private final Pattern keyPattern;
         private final String value;
@@ -558,7 +605,7 @@ public class SearchCompiler {
         }
 
         @Override
-        public boolean match(OsmPrimitive osm) {
+        public boolean match(Tagged osm) {
 
             if (keyPattern != null) {
                 if (!osm.hasKeys())
@@ -588,8 +635,8 @@ public class SearchCompiler {
             } else {
                 String mv = null;
 
-                if ("timestamp".equals(key)) {
-                    mv = DateUtils.fromTimestamp(osm.getRawTimestamp());
+                if ("timestamp".equals(key) && osm instanceof OsmPrimitive) {
+                    mv = DateUtils.fromTimestamp(((OsmPrimitive) osm).getRawTimestamp());
                 } else {
                     mv = osm.get(key);
                     if (!caseSensitive && mv == null) {
@@ -622,7 +669,7 @@ public class SearchCompiler {
         }
     }
 
-    public static class ValueComparison extends Match {
+    public static class ValueComparison extends TaggedMatch {
         private final String key;
         private final String referenceValue;
         private final Double referenceNumber;
@@ -647,7 +694,7 @@ public class SearchCompiler {
         }
 
         @Override
-        public boolean match(OsmPrimitive osm) {
+        public boolean match(Tagged osm) {
             final String currentValue = osm.get(key);
             final int compareResult;
             if (currentValue == null) {
@@ -675,7 +722,7 @@ public class SearchCompiler {
     /**
      * Matches objects with the exact given key-value pair.
      */
-    public static class ExactKeyValue extends Match {
+    public static class ExactKeyValue extends TaggedMatch {
 
         private enum Mode {
             ANY, ANY_KEY, ANY_VALUE, EXACT, NONE, MISSING_KEY,
@@ -748,7 +795,7 @@ public class SearchCompiler {
         }
 
         @Override
-        public boolean match(OsmPrimitive osm) {
+        public boolean match(Tagged osm) {
 
             if (!osm.hasKeys())
                 return mode == Mode.NONE;
@@ -805,7 +852,7 @@ public class SearchCompiler {
     /**
      * Match a string in any tags (key or value), with optional regex and case insensitivity.
      */
-    private static class Any extends Match {
+    private static class Any extends TaggedMatch {
         private final String search;
         private final Pattern searchRegex;
         private final boolean caseSensitive;
@@ -832,8 +879,8 @@ public class SearchCompiler {
         }
 
         @Override
-        public boolean match(OsmPrimitive osm) {
-            if (!osm.hasKeys() && osm.getUser() == null)
+        public boolean match(Tagged osm) {
+            if (!osm.hasKeys())
                 return search.isEmpty();
 
             for (String key: osm.keySet()) {

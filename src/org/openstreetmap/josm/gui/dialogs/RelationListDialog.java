@@ -4,11 +4,12 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,9 +29,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -69,6 +67,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
+import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -282,33 +281,11 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     private JosmTextField  setupFilter() {
         final JosmTextField f = new DisableShortcutsOnFocusGainedTextField();
         f.setToolTipText(tr("Relation list filter"));
-        f.getDocument().addDocumentListener(new DocumentListener() {
-
-            private void setFilter() {
-                try {
-                    f.setBackground(UIManager.getColor("TextField.background"));
-                    f.setToolTipText(tr("Relation list filter"));
-                    model.setFilter(SearchCompiler.compile(filter.getText()));
-                } catch (SearchCompiler.ParseError ex) {
-                    f.setBackground(new Color(255, 224, 224));
-                    f.setToolTipText(ex.getMessage());
-                    model.setFilter(new SearchCompiler.Always());
-                }
-            }
-
+        final CompileSearchTextDecorator decorator = CompileSearchTextDecorator.decorate(f);
+        f.addPropertyChangeListener("filter", new PropertyChangeListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                setFilter();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                setFilter();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                setFilter();
+            public void propertyChange(PropertyChangeEvent evt) {
+                model.setFilter(decorator.getMatch());
             }
         });
         return f;
