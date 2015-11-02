@@ -33,9 +33,16 @@
         <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
     </chunk>
     <chunk id="highway_base">
-        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3"/>
-        <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3"/>
-        <text key="maxspeed" text="Max. speed (km/h)"/>
+        <space />
+        <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
+        <combo key="lanes:forward" text="Lanes in way direction" values="1,2,3,4,5" length="3" />
+        <combo key="lanes:backward" text="Lanes opposed to way direction" values="1,2,3,4,5" length="3" />
+        <space />
+        <text key="maxspeed" text="Max. speed (km/h)" />
+        <text key="maxspeed:forward" text="Max. speed in way direction" />
+        <text key="maxspeed:backward" text="Max. speed opposed to way direction" />
+        <space />
+        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
         <reference ref="surface_smoothness" />
     </chunk>
     <chunk id="highway_yesno_incline">
@@ -307,7 +314,11 @@
         <optional>
             <text key="name" text="Name" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="1" length="3" />
+            <space />
             <text key="maxspeed" text="Max. speed (km/h)" />
+            <text key="maxspeed:forward" text="Max. speed in way direction" />
+            <text key="maxspeed:backward" text="Max. speed opposed to way direction" />
+            <space />
             <text key="maxweight" text="Max. weight (tonnes)" />
             <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             <text key="width" text="Width (meters)" />
@@ -641,8 +652,8 @@
             <combo key="vehicle" text="Vehicle access" values="yes,no,destination" default="no" />
             <text key="maxspeed" text="Max. speed (km/h)" default="30" />
             <optional>
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
-                <combo key="lanes" text="Lanes" values="1,2,3,4,5" />
                 <reference ref="surface_smoothness" />
                 <check key="oneway" text="Oneway" />
                 <check key="oneway:bicycle" text="Oneway for bicycle" />
@@ -666,8 +677,8 @@
             <key key="highway" value="living_street" />
             <text key="name" text="Name" />
             <optional>
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
@@ -689,7 +700,6 @@
             <text key="name" text="Name" />
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-                <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
                 <reference ref="surface_smoothness" />
                 <check key="area" text="Area" />
                 <reference ref="highway_yesno_incline" />
@@ -842,7 +852,10 @@
             <combo key="hov" text="High-occupancy vehicles (hov)" values="yes,official,designated,destination,permissive,private,no" match="key" />
             <combo key="psv" text="Public Service Vehicles (psv)" values="yes,official,designated,destination,permissive,private,no" match="key" />
             <combo key="tourist_bus" text="Tourist buses" values="yes,no" match="key" />
+            <space />
             <text key="maxspeed" text="Max. speed (km/h)" />
+            <text key="maxspeed:forward" text="Max. speed in way direction" />
+            <text key="maxspeed:backward" text="Max. speed opposed to way direction" />
             <text key="minspeed" text="Min. speed (km/h)" match="key" />
             <text key="maxweight" text="Max. weight (tonnes)" match="key" />
             <text key="maxaxleload" text="Max. axleload (tonnes)" match="key" />
@@ -1670,7 +1683,11 @@
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" />
                 <text key="width" text="Width (meters)" />
                 <text key="maxheight" text="Max. height (meters)" />
+                <space />
                 <text key="maxspeed" text="Max. speed (km/h)" />
+                <text key="maxspeed:forward" text="Max. speed in way direction" />
+                <text key="maxspeed:backward" text="Max. speed opposed to way direction" />
+                <space />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="toll" text="Toll" />
             </optional>
