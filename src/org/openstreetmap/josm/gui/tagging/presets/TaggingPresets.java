@@ -11,6 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 
 /**
@@ -70,6 +71,11 @@ public final class TaggingPresets {
                     JMenuItem mi = new JMenuItem(p);
                     mi.setText(p.getLocaleName());
                     m.add(mi);
+                }
+            }
+            for (JMenu submenu : submenus.values()) {
+                if (submenu.getItemCount() >= Main.pref.getInteger("taggingpreset.min-elements-for-scroller", 15)) {
+                    MenuScroller.setScrollerFor(submenu);
                 }
             }
         }
