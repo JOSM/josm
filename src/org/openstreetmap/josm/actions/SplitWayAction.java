@@ -198,15 +198,18 @@ public class SplitWayAction extends JosmAction {
             final List<Way> newWays = createNewWaysFromChunks(selectedWay, wayChunks);
             final Way wayToKeep = Strategy.keepLongestChunk().determineWayToKeep(newWays);
 
-            if (ExpertToggleAction.isExpert() && !selectedWay.isNew() && Main.pref.getBoolean("splitway.segment-selection-dialog", true)) {
+            if (ExpertToggleAction.isExpert() && !selectedWay.isNew()) {
                 final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(selectedWay, newWays, wayToKeep, sel);
-                dialog.setModal(false);
-                dialog.showDialog();
-            } else {
-                final SplitWayResult result = doSplitWay(getEditLayer(), selectedWay, wayToKeep, newWays, sel);
-                Main.main.undoRedo.add(result.getCommand());
-                getCurrentDataSet().setSelected(result.getNewSelection());
+                dialog.toggleEnable("way.split.segment-selection-dialog");
+                if (!dialog.toggleCheckState()) {
+                    dialog.setModal(false);
+                    dialog.showDialog();
+                    return; // splitting is performed in SegmentToKeepSelectionDialog.buttonAction()
+                }
             }
+            final SplitWayResult result = doSplitWay(getEditLayer(), selectedWay, wayToKeep, newWays, sel);
+            Main.main.undoRedo.add(result.getCommand());
+            getCurrentDataSet().setSelected(result.getNewSelection());
         }
     }
 
@@ -227,7 +230,6 @@ public class SplitWayAction extends JosmAction {
             this.newWays = newWays;
             this.selection = selection;
             this.list = new JList<>(newWays.toArray(new Way[newWays.size()]));
-            buildList();
             this.list.setSelectedValue(wayToKeep, true);
 
             setButtonIcons(new String[]{"ok", "cancel"});
@@ -237,7 +239,7 @@ public class SplitWayAction extends JosmAction {
             setContent(pane);
         }
 
-        private void buildList() {
+        private void configureList() {
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             list.addListSelectionListener(new ListSelectionListener() {
                 @Override
@@ -279,6 +281,7 @@ public class SplitWayAction extends JosmAction {
         public void setVisible(boolean visible) {
             super.setVisible(visible);
             if (visible) {
+                configureList(); // not in constructor to not highlight segments unless dialog is shown
                 list.setSelectedIndex(list.getSelectedIndex()); // highlight way segments
             } else {
                 setHighlightedWaySegments(Collections.<WaySegment>emptyList());
@@ -288,6 +291,7 @@ public class SplitWayAction extends JosmAction {
         @Override
         protected void buttonAction(int buttonIndex, ActionEvent evt) {
             super.buttonAction(buttonIndex, evt);
+            toggleSaveState(); // necessary since #showDialog() does not handle it due to the non-modal dialog
             if (getValue() == 1) {
                 final Way wayToKeep = list.getSelectedValue();
                 final SplitWayResult result = doSplitWay(getEditLayer(), selectedWay, wayToKeep, newWays, selection);
