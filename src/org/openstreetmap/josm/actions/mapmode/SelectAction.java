@@ -858,13 +858,12 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     }
 
     static class ConfirmMoveDialog extends ExtendedDialog {
-        public ConfirmMoveDialog() {
+        ConfirmMoveDialog() {
             super(Main.parent,
                     tr("Move elements"),
                     new String[]{tr("Move them"), tr("Undo move")});
             setButtonIcons(new String[]{"reorder", "cancel"});
             setCancelButton(2);
-
         }
     }
 

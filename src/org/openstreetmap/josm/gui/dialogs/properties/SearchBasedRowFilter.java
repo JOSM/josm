@@ -25,7 +25,7 @@ class SearchBasedRowFilter extends RowFilter<TableModel, Integer> {
      * Constructs a new {@code SearchBasedRowFilter} with the given filter.
      * @param filter the filter used to match tags
      */
-    public SearchBasedRowFilter(SearchCompiler.Match filter) {
+    SearchBasedRowFilter(SearchCompiler.Match filter) {
         this.filter = filter;
     }
 
@@ -40,7 +40,7 @@ class SearchBasedRowFilter extends RowFilter<TableModel, Integer> {
         private final String key;
         private final String value;
 
-        public OneKeyValue(String key, String value) {
+        OneKeyValue(String key, String value) {
             this.key = key;
             this.value = value;
         }
