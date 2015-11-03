@@ -14,7 +14,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler;
  * Decorates a text component with an execution to the search compiler. Afterwards, a {@code "filter"} property change
  * will be fired and the compiled search can be accessed with {@link #getMatch()}.
  */
-public class CompileSearchTextDecorator implements DocumentListener {
+public final class CompileSearchTextDecorator implements DocumentListener {
 
     private final JTextComponent textComponent;
     private final String originalToolTipText;
