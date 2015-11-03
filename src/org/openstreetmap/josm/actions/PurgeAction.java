@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -201,19 +202,25 @@ public class PurgeAction extends JosmAction {
             }
         }
 
-        ExtendedDialog confirmDlg = new ExtendedDialog(Main.parent, tr("Confirm Purging"), new String[] {tr("Purge"), tr("Cancel")});
-        confirmDlg.setContent(buildPanel(modified), false);
-        confirmDlg.setButtonIcons(new String[] {"ok", "cancel"});
+        boolean clearUndoRedo = false;
 
-        int answer = confirmDlg.showDialog().getValue();
-        if (answer != 1)
-            return;
+        if (!GraphicsEnvironment.isHeadless()) {
+            ExtendedDialog confirmDlg = new ExtendedDialog(Main.parent, tr("Confirm Purging"),
+                    new String[] {tr("Purge"), tr("Cancel")});
+            confirmDlg.setContent(buildPanel(modified), false);
+            confirmDlg.setButtonIcons(new String[] {"ok", "cancel"});
 
-        Main.pref.put("purge.clear_undo_redo", cbClearUndoRedo.isSelected());
+            int answer = confirmDlg.showDialog().getValue();
+            if (answer != 1)
+                return;
+
+            clearUndoRedo = cbClearUndoRedo.isSelected();
+            Main.pref.put("purge.clear_undo_redo", clearUndoRedo);
+        }
 
         Main.main.undoRedo.add(new PurgeCommand(Main.main.getEditLayer(), toPurgeChecked, makeIncomplete));
 
-        if (cbClearUndoRedo.isSelected()) {
+        if (clearUndoRedo) {
             Main.main.undoRedo.clean();
             getCurrentDataSet().clearSelectionHistory();
         }
