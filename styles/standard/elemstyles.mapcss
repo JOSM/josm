@@ -44,6 +44,12 @@ setting::alt_turn_icons {
   default: false;
 }
 
+setting::place_fill_colour {
+  type: boolean;
+  label: tr("Display fill colour of areas with place=*");
+  default: false;
+}
+
 /*********************/
 /* turn restrictions */
 /*********************/
@@ -4430,22 +4436,22 @@ node["openGeoDB:location"=locality] {
     text-halo-color: white;
     text-halo-radius: 1;
 }
-area[place=continent],
-area[place=country],
-area[place=state],
-area[place=region],
-area[place=county],
-area[place=city],
-area[place=town],
-area[place=village],
-area[place=hamlet],
-area[place=farm],
-area[place=isolated_dwelling],
-area[place=neighbourhood],
-area[place=suburb],
-area[place=locality],
-area[place=island],
-area[place=islet] {
+area[setting("place_fill_colour")][place=continent],
+area[setting("place_fill_colour")][place=country],
+area[setting("place_fill_colour")][place=state],
+area[setting("place_fill_colour")][place=region],
+area[setting("place_fill_colour")][place=county],
+area[setting("place_fill_colour")][place=city],
+area[setting("place_fill_colour")][place=town],
+area[setting("place_fill_colour")][place=village],
+area[setting("place_fill_colour")][place=hamlet],
+area[setting("place_fill_colour")][place=farm],
+area[setting("place_fill_colour")][place=isolated_dwelling],
+area[setting("place_fill_colour")][place=neighbourhood],
+area[setting("place_fill_colour")][place=suburb],
+area[setting("place_fill_colour")][place=locality],
+area[setting("place_fill_colour")][place=island],
+area[setting("place_fill_colour")][place=islet] {
     fill-color: place#8de3cb;
 }
 node[place=continent],
