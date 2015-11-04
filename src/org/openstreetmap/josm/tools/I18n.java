@@ -41,6 +41,8 @@ public final class I18n {
     /**
      * This annotates strings which do not permit a clean i18n. This is mostly due to strings
      * containing two nouns which can occur in singular or plural form.
+     * <br>
+     * No behaviour is associated with this annotation.
      */
     @Retention(RetentionPolicy.SOURCE)
     public @interface QuirkyPluralString {
