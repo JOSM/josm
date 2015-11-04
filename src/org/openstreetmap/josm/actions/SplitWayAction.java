@@ -47,7 +47,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Splits a way into multiple ways (all identical except for their node list).
@@ -247,14 +246,15 @@ public class SplitWayAction extends JosmAction {
                 @Override
                 public void valueChanged(ListSelectionEvent e) {
                     final Way selected = list.getSelectedValue();
-                    if (Main.isDisplayingMapView() && selected != null) {
-                        final List<WaySegment> segments = Utils.transform(selected.getNodes().subList(0, selected.getNodesCount() - 1),
-                                new Utils.Function<Node, WaySegment>() {
-                            @Override
-                            public WaySegment apply(Node x) {
-                                return new WaySegment(selectedWay, selectedWay.getNodes().indexOf(x));
-                            }
-                        });
+                    if (Main.isDisplayingMapView() && selected != null && selected.getNodesCount() > 1) {
+                        final Collection<WaySegment> segments = new ArrayList<>(selected.getNodesCount() - 1);
+                        final Iterator<Node> it = selected.getNodes().iterator();
+                        Node previousNode = it.next();
+                        while (it.hasNext()) {
+                            final Node node = it.next();
+                            segments.add(WaySegment.forNodePair(selectedWay, previousNode, node));
+                            previousNode = node;
+                        }
                         setHighlightedWaySegments(segments);
                     }
                 }
