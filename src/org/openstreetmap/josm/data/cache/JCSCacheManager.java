@@ -5,12 +5,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileLock;
-import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
@@ -75,9 +75,11 @@ public final class JCSCacheManager {
         jcsLog.setUseParentHandlers(false);
         // we need a separate handler from Main's, as we downgrade LEVEL.INFO to DEBUG level
         jcsLog.addHandler(new Handler() {
+            final SimpleFormatter formatter = new SimpleFormatter();
+
             @Override
             public void publish(LogRecord record) {
-                String msg = MessageFormat.format(record.getMessage(), record.getParameters());
+                String msg = formatter.formatMessage(record);
                 if (record.getLevel().intValue() >= Level.SEVERE.intValue()) {
                     Main.error(msg);
                 } else if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
