@@ -1149,7 +1149,9 @@ public class ImageProvider {
                     .setMaxSize(ImageSizes.CURSOROVERLAY))).get();
         }
         if (GraphicsEnvironment.isHeadless()) {
-            Main.warn("Cursors are not available in headless mode. Returning null for '"+name+'\'');
+            if (Main.isDebugEnabled()) {
+                Main.debug("Cursors are not available in headless mode. Returning null for '"+name+'\'');
+            }
             return null;
         }
         return Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
