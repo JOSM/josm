@@ -46,6 +46,22 @@ public final class WaySegment implements Comparable<WaySegment> {
     }
 
     /**
+     * Determines and returns the way segment for the given way and node pair.
+     * @throws IllegalArgumentException if the node pair is not part of way
+     */
+    public static WaySegment forNodePair(Way way, Node first, Node second) {
+        int endIndex = way.getNodesCount() - 1;
+        while (endIndex > 0) {
+            final int indexOfFirst = way.getNodes().subList(0, endIndex).lastIndexOf(first);
+            if (second.equals(way.getNode(indexOfFirst + 1))) {
+                return new WaySegment(way, indexOfFirst);
+            }
+            endIndex--;
+        }
+        throw new IllegalArgumentException("Node pair is not part of way!");
+    }
+
+    /**
      * Returns this way segment as complete way.
      * @return the way segment as {@code Way}
      */
