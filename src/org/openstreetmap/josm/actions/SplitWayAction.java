@@ -221,6 +221,7 @@ public class SplitWayAction extends JosmAction {
         final List<Way> newWays;
         final JList<Way> list;
         final List<OsmPrimitive> selection;
+        final Way wayToKeep;
 
         SegmentToKeepSelectionDialog(Way selectedWay, List<Way> newWays, Way wayToKeep, List<OsmPrimitive> selection) {
             super(Main.parent, tr("Which way segment should reuse the history of {0}?", selectedWay.getId()),
@@ -229,8 +230,9 @@ public class SplitWayAction extends JosmAction {
             this.selectedWay = selectedWay;
             this.newWays = newWays;
             this.selection = selection;
+            this.wayToKeep = wayToKeep;
             this.list = new JList<>(newWays.toArray(new Way[newWays.size()]));
-            this.list.setSelectedValue(wayToKeep, true);
+            configureList();
 
             setButtonIcons(new String[]{"ok", "cancel"});
             final JPanel pane = new JPanel(new GridBagLayout());
@@ -281,8 +283,7 @@ public class SplitWayAction extends JosmAction {
         public void setVisible(boolean visible) {
             super.setVisible(visible);
             if (visible) {
-                configureList(); // not in constructor to not highlight segments unless dialog is shown
-                list.setSelectedIndex(list.getSelectedIndex()); // highlight way segments
+                list.setSelectedValue(wayToKeep, true);
             } else {
                 setHighlightedWaySegments(Collections.<WaySegment>emptyList());
             }
