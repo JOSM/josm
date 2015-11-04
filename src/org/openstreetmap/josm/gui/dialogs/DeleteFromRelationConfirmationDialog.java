@@ -106,19 +106,16 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     protected void updateMessage() {
         int numObjectsToDelete = model.getNumObjectsToDelete();
         int numParentRelations = model.getNumParentRelations();
+        final String msg1 = trn(
+                "Please confirm to remove <strong>{0} object</strong>.",
+                "Please confirm to remove <strong>{0} objects</strong>.",
+                numObjectsToDelete, numObjectsToDelete);
+        final String msg2 = trn(
+                "{0} relation is affected.",
+                "{0} relations are affected.",
+                numParentRelations, numParentRelations);
         @I18n.QuirkyPluralString
-        final String msg;
-        if (numParentRelations == 1) {
-            msg = trn(
-                    "<html>Please confirm to remove <strong>{0} object</strong> from <strong>1 relation</strong>.</html>",
-                    "<html>Please confirm to remove <strong>{0} objects</strong> from <strong>1 relation</strong>.</html>",
-                    numObjectsToDelete, numObjectsToDelete);
-        } else {
-            msg = trn(
-                    "<html>Please confirm to remove <strong>{0} object</strong> from <strong>{1} relations</strong>.</html>",
-                    "<html>Please confirm to remove <strong>{0} objects</strong> from <strong>{1} relations</strong>.</html>",
-                    numObjectsToDelete, numObjectsToDelete, numParentRelations);
-        }
+        final String msg = "<html>" + msg1 + " " + msg2 + "</html>";
         htmlPanel.getEditorPane().setText(msg);
         invalidate();
     }
