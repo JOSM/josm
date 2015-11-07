@@ -25,7 +25,6 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.text.Bidi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1247,37 +1246,31 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             tStart = t2;
         }
 
-        FontRenderContext frc = g.getFontRenderContext();
-        char[] chars = name.toCharArray();
-        int dirFlag = Bidi.DIRECTION_LEFT_TO_RIGHT;
-        if (Bidi.requiresBidi(chars, 0, chars.length)) {
-            Bidi bd = new Bidi(name, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
-            if (bd.isRightToLeft()) {
-                dirFlag = Bidi.DIRECTION_RIGHT_TO_LEFT;
-            }
-        }
-        // only works for text that is completely left-to-right or completely right-to-left, not bi-directional text
-        GlyphVector gv = text.font.layoutGlyphVector(frc, chars, 0, chars.length, dirFlag);
-
-        for (int i = 0; i < gv.getNumGlyphs(); ++i) {
-            Rectangle2D rect = gv.getGlyphLogicalBounds(i).getBounds2D();
-            double t = tStart + offsetSign * (rect.getX() + rect.getWidth()/2) / pathLength;
-            double[] p = pointAt(t, poly, pathLength);
-            if (p != null) {
-                AffineTransform trfm = AffineTransform.getTranslateInstance(p[0] - rect.getX(), p[1]);
-                trfm.rotate(p[2]+angleOffset);
-                double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
-                trfm.translate(-rect.getWidth()/2, off);
-                if (isGlyphVectorDoubleTranslationBug(text.font)) {
-                    // scale the translation components by one half
-                    AffineTransform tmp = AffineTransform.getTranslateInstance(-0.5 * trfm.getTranslateX(), -0.5 * trfm.getTranslateY());
-                    tmp.concatenate(trfm);
-                    trfm = tmp;
+        List<GlyphVector> gvs = Utils.getGlyphVectorsBidi(name, text.font, g.getFontRenderContext());
+        double gvOffset = 0;
+        for (GlyphVector gv : gvs) {
+            double gvWidth = gv.getLogicalBounds().getBounds2D().getWidth();
+            for (int i = 0; i < gv.getNumGlyphs(); ++i) {
+                Rectangle2D rect = gv.getGlyphLogicalBounds(i).getBounds2D();
+                double t = tStart + offsetSign * (gvOffset + rect.getX() + rect.getWidth()/2) / pathLength;
+                double[] p = pointAt(t, poly, pathLength);
+                if (p != null) {
+                    AffineTransform trfm = AffineTransform.getTranslateInstance(p[0] - rect.getX(), p[1]);
+                    trfm.rotate(p[2]+angleOffset);
+                    double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
+                    trfm.translate(-rect.getWidth()/2, off);
+                    if (isGlyphVectorDoubleTranslationBug(text.font)) {
+                        // scale the translation components by one half
+                        AffineTransform tmp = AffineTransform.getTranslateInstance(-0.5 * trfm.getTranslateX(), -0.5 * trfm.getTranslateY());
+                        tmp.concatenate(trfm);
+                        trfm = tmp;
+                    }
+                    gv.setGlyphTransform(i, trfm);
                 }
-                gv.setGlyphTransform(i, trfm);
             }
+            displayText(gv, null, 0, 0, way.isDisabled(), text);
+            gvOffset += gvWidth;
         }
-        displayText(gv, null, 0, 0, way.isDisabled(), text);
     }
 
     /**

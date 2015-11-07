@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -12,6 +13,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -33,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.Bidi;
 import java.text.MessageFormat;
 import java.util.AbstractCollection;
 import java.util.AbstractList;
@@ -1492,4 +1496,49 @@ public final class Utils {
     public static int hashMapInitialCapacity(int nEntries) {
         return hashMapInitialCapacity(nEntries, 0.75f);
     }
+
+    /**
+     * Utility class to save a string along with its rendering direction
+     * (left-to-right or right-to-left).
+     */
+    private static class DirectionString {
+        public int direction;
+        public String str;
+
+        public DirectionString(int direction, String str) {
+            this.direction = direction;
+            this.str = str;
+        }
+    }
+
+    /**
+     * Convert a string to a list of {@link GlyphVector}s. The string may contain
+     * bi-directional text. The result will be in correct visual order.
+     * Each element of the resulting list corresponds to one section of the
+     * string with consistent writing direction (left-to-right or right-to-left).
+     *
+     * @param string the string to render
+     * @param font the font
+     * @param frc a FontRenderContext object
+     * @return a list of GlyphVectors
+     */
+    public static List<GlyphVector> getGlyphVectorsBidi(String string, Font font, FontRenderContext frc) {
+        List<GlyphVector> gvs = new ArrayList<>();
+        Bidi bidi = new Bidi(string, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+        byte[] levels = new byte[bidi.getRunCount()];
+        DirectionString[] dirStrings = new DirectionString[levels.length];
+        for (int i = 0; i < levels.length; ++i) {
+            levels[i] = (byte) bidi.getRunLevel(i);
+            String substr = string.substring(bidi.getRunStart(i), bidi.getRunLimit(i));
+            int dir = levels[i] % 2 == 0 ? Bidi.DIRECTION_LEFT_TO_RIGHT : Bidi.DIRECTION_RIGHT_TO_LEFT;
+            dirStrings[i] = new DirectionString(dir, substr);
+        }
+        Bidi.reorderVisually(levels, 0, dirStrings, 0, levels.length);
+        for (int i = 0; i < dirStrings.length; ++i) {
+            char[] chars = dirStrings[i].str.toCharArray();
+            gvs.add(font.layoutGlyphVector(frc, chars, 0, chars.length, dirStrings[i].direction));
+        }
+        return gvs;
+    }
+
 }
