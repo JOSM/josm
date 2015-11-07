@@ -1502,10 +1502,10 @@ public final class Utils {
      * (left-to-right or right-to-left).
      */
     private static class DirectionString {
-        public int direction;
-        public String str;
+        public final int direction;
+        public final String str;
 
-        public DirectionString(int direction, String str) {
+        DirectionString(int direction, String str) {
             this.direction = direction;
             this.str = str;
         }

@@ -42,7 +42,7 @@ public class WaySegmentTest {
             Assert.assertEquals(WaySegment.forNodePair(w, n3, n4).lowerIndex, 5);
             throw new IllegalStateException("Expecting IllegalArgumentException");
         } catch (IllegalArgumentException expected) {
-            // expected
+            System.out.println("Expected exception: " + expected.getMessage());
         }
     }
 }
