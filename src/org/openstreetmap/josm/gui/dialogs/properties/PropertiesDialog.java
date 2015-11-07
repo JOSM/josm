@@ -97,6 +97,7 @@ import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -306,6 +307,20 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         tagTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
         tagTable.getColumnModel().getColumn(1).setCellRenderer(cellRenderer);
         tagTable.setRowSorter(tagRowSorter);
+
+        tagRowSorter.setComparator(0, AlphanumComparator.getInstance());
+        tagRowSorter.setComparator(1, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                if (o1 instanceof Map && o2 instanceof Map) {
+                    final String v1 = ((Map) o1).size() == 1 ? (String) ((Map) o1).keySet().iterator().next() : tr("<different>");
+                    final String v2 = ((Map) o2).size() == 1 ? (String) ((Map) o2).keySet().iterator().next() : tr("<different>");
+                    return AlphanumComparator.getInstance().compare(v1, v2);
+                } else {
+                    return AlphanumComparator.getInstance().compare(String.valueOf(o1), String.valueOf(o2));
+                }
+            }
+        });
     }
 
     private void buildMembershipTable() {
