@@ -107,7 +107,7 @@ public class RelationSorter {
         public List<RelationMember> sortMembers(List<RelationMember> list) {
             final Map<String, RelationMember> platformByName = new HashMap<>();
             for (RelationMember i : list) {
-                if ("platform".equals(i.getRole())) {
+                if (i.getRole().startsWith("platform")) {
                     final RelationMember old = platformByName.put(getStopName(i.getMember()), i);
                     if (old != null) {
                         // Platform with same name present. Stop to avoid damaging complicated relations.
@@ -118,7 +118,7 @@ public class RelationSorter {
             }
             final List<RelationMember> sorted = new ArrayList<>(list.size());
             for (RelationMember i : list) {
-                if ("stop".equals(i.getRole())) {
+                if (i.getRole().startsWith("stop")) {
                     sorted.add(i);
                     final RelationMember platform = platformByName.remove(getStopName(i.getMember()));
                     if (platform != null) {
