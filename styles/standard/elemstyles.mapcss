@@ -542,7 +542,7 @@ way[highway=road] {
     width: 2;
     casing-width: 0.5;
     casing-color: #ff9696;
-    color: #770000;
+    color: highway_road#770000;
 }
 way[highway=track][area?], relation[type=multipolygon][highway=track] {
     fill-color: highway_track#6e541c;
@@ -593,6 +593,7 @@ way[highway=path][bicycle=designated],
 way[highway=path][bicycle=official] {
     width: 1;
     color: bicycle#b100ff;
+    set cyclecolor;
 }
 way[highway=path][foot=designated],
 way[highway=path][foot=official] {
@@ -603,6 +604,7 @@ way[highway=path][bicycle=designated][foot=designated],
 way[highway=path][bicycle=official][foot=official] {
     width: 1;
     color: bicycle#b100ff;
+    set cyclecolor;
     dashes: 14,14;
     dashes-background-color: foot#00ff00;
 }
@@ -611,6 +613,7 @@ way[highway=path][bicycle=designated][foot=yes],
 way[highway=path][bicycle=official][foot=yes] {
     width: 1;
     color: bicycle#b100ff;
+    set cyclecolor;
     dashes: 21,7;
     dashes-background-color: foot#00ff00;
 }
@@ -4706,9 +4709,19 @@ way|z17-[highway^=tertiary][setting("highway_labels")],
 way|z17-[highway=unclassified][setting("highway_labels")],
 way|z17-[highway=residential][setting("highway_labels")],
 way|z17-[highway=living_street][setting("highway_labels")],
+way|z17-[highway=escape][setting("highway_labels")],
 way|z17-[highway=pedestrian][!area?][setting("highway_labels")],
+way|z17-[highway=steps][setting("highway_labels")],
+way|z17-[highway=footway][setting("highway_labels")],
+way|z17-[highway=path][setting("highway_labels")],
 way|z17-[highway=service][setting("highway_labels")],
-way|z17-[highway=track][setting("highway_labels")] {
+way|z17-[highway=track][setting("highway_labels")],
+way|z17-[highway=cycleway][setting("highway_labels")],
+way|z17-[highway=bridleway][setting("highway_labels")],
+way|z17-[highway=bus_guideway][setting("highway_labels")],
+way|z17-[highway=raceway][setting("highway_labels")],
+way|z17-[highway=construction][setting("highway_labels")],
+way|z17-[highway=road][setting("highway_labels")] {
     text: auto;
     text-color: black;
     font-size: 9;
@@ -4733,10 +4746,14 @@ way|z17-[highway^=tertiary][setting("highway_labels")] {
 }
 way|z17-[highway=unclassified][setting("highway_labels")],
 way|z17-[highway=residential][setting("highway_labels")],
-way|z17-[highway=living_street][setting("highway_labels")] {
+way|z17-[highway=living_street][setting("highway_labels")],
+way|z17-[highway=escape][setting("highway_labels")] {
     text-halo-color: street#c0c0c0;
 }
-way[highway=pedestrian][!area?][setting("highway_labels")] {
+way|z17-[highway=pedestrian][!area?][setting("highway_labels")],
+way|z17-[highway=steps][setting("highway_labels")],
+way|z17-[highway=footway][setting("highway_labels")],
+way|z17-[highway=path][setting("highway_labels")] {
     text-halo-color: foot#00ff00;
 }
 way|z17-[highway=service][setting("highway_labels")] {
@@ -4744,6 +4761,25 @@ way|z17-[highway=service][setting("highway_labels")] {
 }
 way|z17-[highway=track][setting("highway_labels")] {
     text-halo-color: highway_track#6e541c;
+}
+way|z17-[highway=cycleway][setting("highway_labels")],
+way|z17-[highway=path][setting("highway_labels")].cyclecolor {
+    text-halo-color: bicycle#b100ff;
+}
+way|z17-[highway=bridleway][setting("highway_labels")] {
+    text-halo-color: horse#a18559;
+}
+way|z17-[highway=bus_guideway][setting("highway_labels")] {
+    text-halo-color: rail#404040;
+}
+way|z17-[highway=raceway][setting("highway_labels")] {
+    text-halo-color: raceway#ff80ff;
+}
+way|z17-[highway=construction][setting("highway_labels")] {
+    text-halo-color: construction#ffff00;
+}
+way|z17-[highway=road][setting("highway_labels")] {
+    text-halo-color: highway_road#770000;
 }
 way|z18[highway][setting("highway_labels")] {
     font-size: 10;
