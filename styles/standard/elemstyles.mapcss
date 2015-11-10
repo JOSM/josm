@@ -4781,6 +4781,12 @@ way|z17-[highway=construction][setting("highway_labels")] {
 way|z17-[highway=road][setting("highway_labels")] {
     text-halo-color: highway_road#770000;
 }
+way|z17-[highway][railway=platform][setting("highway_labels")] {
+    text-halo-color: rail#404040;
+}
+way|z17-[highway][public_transport=platform][setting("highway_labels")] {
+    text-halo-color: service#809bc0;
+}
 way|z18[highway][setting("highway_labels")] {
     font-size: 10;
 }
