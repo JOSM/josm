@@ -132,8 +132,7 @@ way[junction                   ][!highway][junction!=yes],
 
 /* {0.key} without {1.key} or {2.tag} */
 *[smoothness                   ][!highway][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking)$/],
-*[segregated                   ][!highway][railway!=crossing],
-*[boat                         ][!waterway][natural!=water] {
+*[segregated                   ][!highway][railway!=crossing] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
 }
 
@@ -149,7 +148,8 @@ way[junction                   ][!highway][junction!=yes],
 }
 
 /* {0.key} without {1.key}, {2.tag} or {3.tag} */
-*[intermittent                 ][!waterway][natural!~/^(water|spring)$/][ford!=yes] {
+*[intermittent                 ][!waterway][natural!~/^(water|spring)$/][ford!=yes],
+*[boat                         ][!waterway][natural!=water][landuse!=basin] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.tag}", "{3.tag}");
 }
 
