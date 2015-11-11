@@ -1445,6 +1445,34 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasing);
 
+        Object textAntialiasing;
+        switch (Main.pref.get("mappaint.text-antialiasing", "default")) {
+            case "on":
+                textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
+                break;
+            case "off":
+                textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_OFF;
+                break;
+            case "gasp":
+                textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_GASP;
+                break;
+            case "lcd-hrgb":
+                textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB;
+                break;
+            case "lcd-hbgr":
+                textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HBGR;
+                break;
+            case "lcd-vrgb":
+                textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VRGB;
+                break;
+            case "lcd-vbgr":
+                textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_VBGR;
+                break;
+            default:
+                textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT;
+        }
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialiasing);
+
         highlightLineWidth = Main.pref.getInteger("mappaint.highlight.width", 4);
         highlightPointRadius = Main.pref.getInteger("mappaint.highlight.radius", 7);
         widerHighlight = Main.pref.getInteger("mappaint.highlight.bigger-increment", 5);
