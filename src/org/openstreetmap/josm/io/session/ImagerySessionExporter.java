@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
 import org.w3c.dom.Element;
@@ -42,6 +43,10 @@ public class ImagerySessionExporter implements SessionLayerExporter {
     }
 
     public ImagerySessionExporter(WMSLayer layer) {
+        this((ImageryLayer) layer);
+    }
+
+    public ImagerySessionExporter(WMTSLayer layer) {
         this((ImageryLayer) layer);
     }
 
