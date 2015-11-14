@@ -450,7 +450,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, boolean disabled, TextElement text) {
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent, boolean disabled, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
 
@@ -461,7 +461,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.33f));
                 }
                 g.setColor(color);
-                g.fill(area);
+                if (extent == null) {
+                    g.fill(area);
+                } else {
+                    Shape clip = g.getClip();
+                    g.clip(area);
+                    g.setStroke(new BasicStroke(2 * extent));
+                    g.draw(area);
+                    g.setClip(clip);
+                }
             } else {
                 TexturePaint texture = new TexturePaint(fillImage.getImage(disabled),
                         new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
@@ -558,10 +566,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param r The multipolygon relation
      * @param color The color to fill the area with.
      * @param fillImage The image to fill the area with. Overrides color.
+     * @param extent if not null, area will be filled partially; specifies, how
+     * far to fill from the boundary towards the center of the area;
+     * if null, area will be filled completely
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
-    public void drawArea(Relation r, Color color, MapImage fillImage, boolean disabled, TextElement text) {
+    public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, boolean disabled, TextElement text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
@@ -571,7 +582,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
                 drawArea(r, p,
                         pd.selected ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
-                                fillImage, disabled, text);
+                        fillImage, extent, disabled, text);
             }
         }
     }
@@ -581,11 +592,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param w The way.
      * @param color The color to fill the area with.
      * @param fillImage The image to fill the area with. Overrides color.
+     * @param extent if not null, area will be filled partially; specifies, how
+     * far to fill from the boundary towards the center of the area;
+     * if null, area will be filled completely
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
-    public void drawArea(Way w, Color color, MapImage fillImage, boolean disabled, TextElement text) {
-        drawArea(w, getPath(w), color, fillImage, disabled, text);
+    public void drawArea(Way w, Color color, MapImage fillImage, Float extent, boolean disabled, TextElement text) {
+        drawArea(w, getPath(w), color, fillImage, extent, disabled, text);
     }
 
     public void drawBoxText(Node n, BoxTextElemStyle bs) {

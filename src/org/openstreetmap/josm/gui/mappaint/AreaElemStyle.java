@@ -24,11 +24,13 @@ public class AreaElemStyle extends ElemStyle {
     public Color color;
     public MapImage fillImage;
     public TextElement text;
+    public Float extent;
 
-    protected AreaElemStyle(Cascade c, Color color, MapImage fillImage, TextElement text) {
+    protected AreaElemStyle(Cascade c, Color color, MapImage fillImage, Float extent, TextElement text) {
         super(c, 1f);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.color = color;
+        this.extent = extent;
         this.fillImage = fillImage;
         this.text = text;
     }
@@ -37,6 +39,7 @@ public class AreaElemStyle extends ElemStyle {
         final Cascade c = env.mc.getCascade(env.layer);
         MapImage fillImage = null;
         Color color = null;
+        Float extent = null;
 
         IconReference iconRef = c.get(FILL_IMAGE, null, IconReference.class);
         if (iconRef != null) {
@@ -68,6 +71,7 @@ public class AreaElemStyle extends ElemStyle {
                     alpha = pAlpha;
                 }
                 color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+                extent = c.get(FILL_EXTENT, null, float.class);
             }
         }
 
@@ -78,7 +82,7 @@ public class AreaElemStyle extends ElemStyle {
         }
 
         if (color != null)
-            return new AreaElemStyle(c, color, fillImage, text);
+            return new AreaElemStyle(c, color, fillImage, extent, text);
         else
             return null;
     }
@@ -95,12 +99,12 @@ public class AreaElemStyle extends ElemStyle {
                     myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
                 }
             }
-            painter.drawArea((Way) osm, myColor, fillImage, painter.isInactiveMode() || osm.isDisabled(), text);
+            painter.drawArea((Way) osm, myColor, fillImage, extent, painter.isInactiveMode() || osm.isDisabled(), text);
         } else if (osm instanceof Relation) {
             if (color != null && (selected || outermember)) {
                 myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
             }
-            painter.drawArea((Relation) osm, myColor, fillImage, painter.isInactiveMode() || osm.isDisabled(), text);
+            painter.drawArea((Relation) osm, myColor, fillImage, extent, painter.isInactiveMode() || osm.isDisabled(), text);
         }
     }
 
@@ -116,6 +120,8 @@ public class AreaElemStyle extends ElemStyle {
             return false;
         if (!Objects.equals(color, other.color))
             return false;
+        if (extent != other.extent)
+            return false;
         if (!Objects.equals(text, other.text))
             return false;
         return true;
@@ -125,6 +131,7 @@ public class AreaElemStyle extends ElemStyle {
     public int hashCode() {
         int hash = 3;
         hash = 61 * hash + color.hashCode();
+        hash = 61 * hash + (extent != null ? Float.floatToIntBits(extent) : 0);
         hash = 61 * hash + (fillImage != null ? fillImage.hashCode() : 0);
         hash = 61 * hash + (text != null ? text.hashCode() : 0);
         return hash;
