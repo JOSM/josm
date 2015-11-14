@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -25,7 +24,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Wrapper class that bridges between JCS cache and Tile Loaders
  *
  */
-public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCache {
+public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
 
     protected final ICacheAccess<String, BufferedImageCacheEntry> cache;
     protected final int connectTimeout;
@@ -105,26 +104,6 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader, TileCa
     @Override
     public void clearCache(TileSource source) {
         this.cache.remove(source.getName() + ':');
-    }
-
-    @Override
-    public Tile getTile(TileSource source, int x, int y, int z) {
-        return createTileLoaderJob(new Tile(source, x, y, z)).getTile();
-    }
-
-    @Override
-    public void addTile(Tile tile) {
-        createTileLoaderJob(tile).getTile();
-    }
-
-    @Override
-    public int getTileCount() {
-        return 0;
-    }
-
-    @Override
-    public void clear() {
-        cache.clear();
     }
 
     /**

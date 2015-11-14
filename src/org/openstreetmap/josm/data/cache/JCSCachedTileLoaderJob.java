@@ -173,6 +173,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
         if (first || force) {
             // submit all jobs to separate thread, so calling thread is not blocked with IO when loading from disk
+            log.log(Level.FINE, "JCS - Submitting job for execution for url: {0}", getUrlNoException());
             downloadJobExecutor.execute(this);
         }
     }
@@ -220,6 +221,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         final Thread currentThread = Thread.currentThread();
         final String oldName = currentThread.getName();
         currentThread.setName("JCS Downloading: " + getUrlNoException());
+        log.log(Level.FINE, "JCS - starting fetch of url: {0} ", getUrlNoException());
         ensureCacheElement();
         try {
             // try to fetch from cache
