@@ -47,4 +47,10 @@ public interface TileCache {
      * Clears the cache deleting all tiles from memory.
      */
     void clear();
+
+    /**
+     * Size of the cache.
+     * @return maximum number of tiles in cache
+     */
+    int getCacheSize();
 }

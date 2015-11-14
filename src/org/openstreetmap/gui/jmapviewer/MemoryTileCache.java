@@ -102,6 +102,7 @@ public class MemoryTileCache implements TileCache {
         return hash.size();
     }
 
+    @Override
     public synchronized int getCacheSize() {
         return cacheSize;
     }
