@@ -9,6 +9,7 @@ public interface StyleKeys {
     String DASHES_BACKGROUND_OPACITY = "dashes-background-opacity";
     String DASHES_OFFSET = "dashes-offset";
     String FILL_COLOR = "fill-color";
+    String FILL_EXTENT = "fill-extent";
     String FILL_IMAGE = "fill-image";
     String FILL_OPACITY = "fill-opacity";
     String FONT_FAMILY = "font-family";
