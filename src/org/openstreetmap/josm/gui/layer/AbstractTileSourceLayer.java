@@ -1214,11 +1214,11 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
 
         private boolean tooLarge() {
-            return this.tilesSpanned() > 20;
+            return insane() || this.tilesSpanned() > 20;
         }
 
         private boolean insane() {
-            return this.tilesSpanned() > 100;
+            return size() > tileCache.getCacheSize();
         }
 
         private double tilesSpanned() {

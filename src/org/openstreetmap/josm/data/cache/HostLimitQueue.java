@@ -53,7 +53,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
                     if (remove(job)) {
                         return job;
                     } else {
-                        // we have acquired the semaphore, but we didn't manage to remove it, as someone else did
+                        // we have acquired the semaphore, but we didn't manage to remove job, as someone else did
                         // release the semaphore and look for another candidate
                         releaseSemaphore(job);
                     }
@@ -66,7 +66,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
                             Main.debug(e.getMessage());
                         }
                     }
-                    Main.debug("TMS - Queuing job {0} because host limit reached", url);
+                    Main.debug("TMS - Skipping job {0} because host limit reached", url);
                 }
             }
         }
