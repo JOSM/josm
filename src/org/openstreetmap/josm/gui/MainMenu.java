@@ -740,6 +740,9 @@ public class MainMenu extends JMenuBar {
         add(viewMenu, historyinfo);
         add(viewMenu, historyinfoweb);
         viewMenu.addSeparator();
+        viewMenu.add(new PreferenceToggleAction(tr("Main toolbar"),
+                tr("Toggles the visibility of the main toolbar (i.e., the horizontal toolbar)"),
+                "toolbar.visible", true).getCheckbox());
         viewMenu.add(new PreferenceToggleAction(tr("Edit toolbar"),
                 tr("Toggles the visibility of the edit toolbar (i.e., the vertical tool)"),
                 "sidetoolbar.visible", true).getCheckbox());
