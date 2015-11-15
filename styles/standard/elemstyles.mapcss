@@ -1495,11 +1495,51 @@ node[man_made=cutline] {
 /* office tags */
 /***************/
 
-area[office=company],
-area[office=government] {
+node[office=accountant],
+node[office=administrative],
+node[office=advertising_agency],
+node[office=architect],
+node[office=association],
+node[office=company],
+node[office=educational_institution],
+node[office=employment_agency],
+node[office=estate_agent],
+node[office=foundation],
+node[office=government],
+node[office=insurance],
+node[office=it],
+node[office=lawyer],
+node[office=newspaper],
+node[office=ngo],
+node[office=notary],
+node[office=political_party],
+node[office=religion],
+node[office=research],
+node[office=tax_advisor],
+node[office=telecommunication] {
     fill-color: office#de5696;
 }
-node[office=company] {
+node[office=accountant],
+node[office=administrative],
+node[office=advertising_agency],
+node[office=architect],
+node[office=association],
+node[office=company],
+node[office=educational_institution],
+node[office=employment_agency],
+node[office=estate_agent],
+node[office=foundation],
+node[office=insurance],
+node[office=it],
+node[office=lawyer],
+node[office=newspaper],
+node[office=ngo],
+node[office=notary],
+node[office=political_party],
+node[office=religion],
+node[office=research],
+node[office=tax_advisor],
+node[office=telecommunication] {
     icon-image: "icons/office_blue.png";
     set icon_z17;
     text: auto;
