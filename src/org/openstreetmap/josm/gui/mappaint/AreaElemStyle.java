@@ -71,7 +71,6 @@ public class AreaElemStyle extends ElemStyle {
                     alpha = pAlpha;
                 }
                 color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-                extent = c.get(FILL_EXTENT, null, float.class);
             }
         }
 
@@ -80,6 +79,8 @@ public class AreaElemStyle extends ElemStyle {
         if (textPos == null || "center".equals(textPos.val)) {
             text = TextElement.create(env, PaintColors.AREA_TEXT.get(), true);
         }
+
+        extent = c.get(FILL_EXTENT, null, float.class);
 
         if (color != null)
             return new AreaElemStyle(c, color, fillImage, extent, text);
