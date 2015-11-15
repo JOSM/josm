@@ -56,9 +56,11 @@ public class DialogsToggleAction extends ToggleAction {
             boolean selected = isSelected();
             Main.map.setDialogsPanelVisible(selected);
             Main.map.statusLine.setVisible(selected || Main.pref.getBoolean("statusbar.always-visible", true));
-            Main.toolbar.control.setVisible(selected || Main.pref.getBoolean("toolbar.always-visible", true));
             Main.main.menu.setVisible(selected || Main.pref.getBoolean("menu.always-visible", true));
-            // sideToolBar listens to preference changes, use it here
+            // Toolbars listen to preference changes, use it here
+            if (!Main.pref.getBoolean("toolbar.always-visible", true)) {
+                Main.pref.put("toolbar.visible", selected);
+            }
             if (!Main.pref.getBoolean("sidetoolbar.always-visible", true)) {
                 Main.pref.put("sidetoolbar.visible", selected);
             }

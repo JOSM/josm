@@ -68,6 +68,8 @@ import org.openstreetmap.josm.actions.AdaptableAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -482,7 +484,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     private final DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode(tr("Actions"));
 
-    public JToolBar control = new JToolBar();
+    public final JToolBar control = new JToolBar();
     private final Map<Object, ActionDefinition> buttonActions = new ConcurrentHashMap<>(30);
 
     @Override
@@ -899,6 +901,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     public ToolbarPreferences() {
         control.setFloatable(false);
         control.setComponentPopupMenu(popupMenu);
+        Main.pref.addPreferenceChangeListener(new PreferenceChangedListener() {
+            @Override
+            public void preferenceChanged(PreferenceChangeEvent e) {
+                if ("toolbar.visible".equals(e.getKey())) {
+                    refreshToolbarControl();
+                }
+            }
+        });
     }
 
     private void loadAction(DefaultMutableTreeNode node, MenuElement menu) {
@@ -1064,8 +1074,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 b.setFocusTraversalKeysEnabled(!unregisterTab);
             }
         }
+
+        boolean visible = Main.pref.getBoolean("toolbar.visible", true);
+
         control.setFocusTraversalKeysEnabled(!unregisterTab);
-        control.setVisible(control.getComponentCount() != 0);
+        control.setVisible(visible && control.getComponentCount() != 0);
         control.repaint();
     }
 
