@@ -4615,11 +4615,10 @@ node[place=farm] {
     text-halo-radius: 1;
     z-index: 2.1;
 }
-node[place=locality] {
+node|z15-[place=locality],
+node|z-14[place=locality][!setting("hide_icons")] {
     icon-image: "place/locality.png";
-    set icon_z0;
     text: auto;
-    set text_z0;
     font-size: 10;
     font-weight: bold;
     text-color:black;
@@ -4680,9 +4679,10 @@ way["tiger:reviewed"=no]::core_tiger {
 
 /*
 Summary of different zoom levels:
-  (any zoom)    place=* and a few natural icons with their text is shown
+  (any zoom)    place=* (except locality) and a few natural icons with their text is shown
   |z-15         untagged way nodes are hidden completely
-  |z16-         fixme=* and note=* symbols
+  |z15          place=locality icon
+  |z16-         fixme=* and note=* symbols; place=locality text
   |z17-         normal POI icons (without text),
                 street name along highway=* ways
   |z18-         text for normal POI icons is shown
@@ -4738,6 +4738,9 @@ relation|z-16[type=restriction][setting("hide_icons")] {
 }
 node|z-17[setting("hide_icons")]!.text_z0 {
     text: none;
+}
+node|z16-17[setting("hide_icons")][place=locality] {
+    text: auto;
 }
 
 node|z19,area|z19   { font-size: 9; }
