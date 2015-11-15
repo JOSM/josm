@@ -860,7 +860,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public String getExtendedUrl() {
         return imageryType.getTypeString() + (defaultMaxZoom != 0
-            ? "["+(defaultMinZoom != 0 ? defaultMinZoom+',' : "")+defaultMaxZoom+"]" : "") + ':' + url;
+            ? "["+(defaultMinZoom != 0 ? Integer.toString(defaultMinZoom) + ',' : "")+defaultMaxZoom+"]" : "") + ':' + url;
     }
 
     public String getToolbarName() {
