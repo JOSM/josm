@@ -478,7 +478,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (!Utils.equalsEpsilon(alpha, 1f)) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
                 }
-                g.fill(area);
+                if (extent == null) {
+                    g.fill(area);
+                } else {
+                    Shape clip = g.getClip();
+                    BasicStroke stroke = new BasicStroke(2 * extent);
+                    g.clip(stroke.createStrokedShape(area));
+                    g.fill(area);
+                    g.setClip(clip);
+                }
                 g.setPaintMode();
             }
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasing);
