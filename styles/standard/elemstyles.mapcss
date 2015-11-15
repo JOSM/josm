@@ -50,6 +50,12 @@ setting::place_fill_colour {
   default: false;
 }
 
+setting::partial_fill {
+  type: boolean;
+  label: tr("Areas are drawn with fill only around their inner edges");
+  default: true;
+}
+
 /*********************/
 /* turn restrictions */
 /*********************/
@@ -4795,6 +4801,14 @@ way|z19[highway][setting("highway_labels")] {
 }
 way|z20-[highway][setting("highway_labels")] {
     font-size: 12;
+}
+
+/*************/
+/* Area fill */
+/*************/
+
+area[setting("partial_fill")] {
+    fill-extent: 25;
 }
 
 /* "deprecated" tags 
