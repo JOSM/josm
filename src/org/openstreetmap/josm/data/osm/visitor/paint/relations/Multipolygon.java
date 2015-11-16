@@ -229,9 +229,6 @@ public class Multipolygon {
                     }
                 }
             }
-            if (!initial) { // fix #7593
-                poly.closePath();
-            }
             for (PolyData inner : inners) {
                 appendInner(inner.poly);
             }
