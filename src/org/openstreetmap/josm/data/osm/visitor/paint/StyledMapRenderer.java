@@ -466,7 +466,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 } else {
                     Shape clip = g.getClip();
                     g.clip(area);
-                    g.setStroke(new BasicStroke(2 * extent));
+                    g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                     g.draw(area);
                     g.setClip(clip);
                 }
@@ -482,7 +482,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     g.fill(area);
                 } else {
                     Shape clip = g.getClip();
-                    BasicStroke stroke = new BasicStroke(2 * extent);
+                    BasicStroke stroke = new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
                     g.clip(stroke.createStrokedShape(area));
                     g.fill(area);
                     g.setClip(clip);
