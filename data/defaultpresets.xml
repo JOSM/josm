@@ -8210,6 +8210,7 @@
             <space />
             <key key="landuse" value="farmland" />
             <text key="name" text="Name" />
+            <combo key="crop" text="Crop" values="corn,grass,rice,wheat,hop" values_context="crop" />
         </item> <!-- Farmland -->
         <item name="Meadow" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=meadow"
