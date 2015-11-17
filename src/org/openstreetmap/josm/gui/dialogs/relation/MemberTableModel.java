@@ -38,9 +38,10 @@ import org.openstreetmap.josm.gui.dialogs.relation.sort.RelationSorter;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionTypeCalculator;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
 public class MemberTableModel extends AbstractTableModel
@@ -104,7 +105,11 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     public void dataChanged(DataChangedEvent event) {
         // just trigger a repaint - the display name of the relation members may have changed
         Collection<RelationMember> sel = getSelectedMembers();
-        fireTableDataChanged();
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            public void run() {
+                fireTableDataChanged();
+            }
+        });
         setSelectedMembers(sel);
     }
 
