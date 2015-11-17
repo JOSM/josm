@@ -3,11 +3,16 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -16,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
@@ -56,7 +62,7 @@ public class AboutAction extends JosmAction {
 
         JosmTextArea readme = new JosmTextArea();
         readme.setEditable(false);
-        readme.setText(Version.loadResourceFile(Main.class.getResource("/README")));
+        setTextFromResourceFile(readme, "/README");
         readme.setCaretPosition(0);
 
         JosmTextArea revision = new JosmTextArea();
@@ -66,12 +72,12 @@ public class AboutAction extends JosmAction {
 
         JosmTextArea contribution = new JosmTextArea();
         contribution.setEditable(false);
-        contribution.setText(Version.loadResourceFile(Main.class.getResource("/CONTRIBUTION")));
+        setTextFromResourceFile(contribution, "/CONTRIBUTION");
         contribution.setCaretPosition(0);
 
         JosmTextArea license = new JosmTextArea();
         license.setEditable(false);
-        license.setText(Version.loadResourceFile(Main.class.getResource("/LICENSE")));
+        setTextFromResourceFile(license, "/LICENSE");
         license.setCaretPosition(0);
 
         JPanel info = new JPanel(new GridBagLayout());
@@ -108,6 +114,37 @@ public class AboutAction extends JosmAction {
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
         JOptionPane.showMessageDialog(Main.parent, panel, tr("About JOSM..."), JOptionPane.INFORMATION_MESSAGE,
                 new ImageIcon(ImageProvider.get("logo.svg").getImage().getScaledInstance(256, 258, Image.SCALE_SMOOTH)));
+    }
+
+    /**
+     * Reads the contents of the resource file that is described by the {@code filePath}-attribute and puts that text
+     * into the {@link JTextArea} given by the {@code ta}-attribute.
+     * @param ta the {@link JTextArea} to put the files contents into
+     * @param filePath the path where the resource file to read resides
+     */
+    private void setTextFromResourceFile(JTextArea ta, String filePath) {
+        InputStream is = getClass().getResourceAsStream(filePath);
+        if (is == null) {
+            displayErrorMessage(ta, tr("Failed to locate resource ''{0}''.", filePath));
+        } else {
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    ta.append(line+'\n');
+                }
+                br.close();
+            } catch (IOException e) {
+                Main.warn(e);
+                displayErrorMessage(ta, tr("Failed to load resource ''{0}'', error is {1}.", filePath, e.toString()));
+            }
+        }
+    }
+
+    private static void displayErrorMessage(JTextArea ta, String msg) {
+        Main.warn(msg);
+        ta.setForeground(new Color(200, 0, 0));
+        ta.setText(msg);
     }
 
     private static JScrollPane createScrollPane(JosmTextArea area) {

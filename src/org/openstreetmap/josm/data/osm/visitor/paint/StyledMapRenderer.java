@@ -450,7 +450,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent, boolean disabled, TextElement text) {
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent,
+            boolean disabled, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
 
