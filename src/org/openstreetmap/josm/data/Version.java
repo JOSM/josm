@@ -3,18 +3,13 @@ package org.openstreetmap.josm.data;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Properties;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.LanguageInfo;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Provides basic information about the currently used JOSM build.
@@ -26,30 +21,6 @@ public class Version {
 
     /** the unique instance */
     private static Version instance;
-
-    /**
-     * Load the specified resource as string.
-     *
-     * @param resource the resource url to load
-     * @return  the content of the resource file; null, if an error occurred
-     */
-    public static String loadResourceFile(URL resource) {
-        if (resource == null) return null;
-        String s = null;
-        try {
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader in = Utils.openURLReader(resource)) {
-                for (String line = in.readLine(); line != null; line = in.readLine()) {
-                    sb.append(line).append('\n');
-                }
-            }
-            s = sb.toString();
-        } catch (IOException e) {
-            Main.error(tr("Failed to load resource ''{0}'', error is {1}.", resource.toString(), e.toString()));
-            Main.error(e);
-        }
-        return s;
-    }
 
     /**
      * Replies the unique instance of the version information
@@ -70,31 +41,12 @@ public class Version {
     private String buildName;
     private boolean isLocalBuild;
 
-    protected Map<String, String> parseManifestStyleFormattedString(String content) {
-        Map<String, String> properties = new HashMap<>();
-        if (content == null) return properties;
-        Pattern p = Pattern.compile("^([^:]+):(.*)$");
-        for (String line: content.split("\n")) {
-            if (line == null || line.trim().isEmpty()) {
-                continue;
-            }
-            if (line.matches("^\\s*#.*$")) {
-                continue;
-            }
-            Matcher m = p.matcher(line);
-            if (m.matches()) {
-                properties.put(m.group(1), m.group(2));
-            }
-        }
-        return properties;
-    }
-
     /**
      * Initializes the version infos from the revision resource file
      *
-     * @param revisionInfo the revision info loaded from a revision resource file
+     * @param revisionInfo the revision info from a revision resource file as InputStream
      */
-    protected void initFromRevisionInfo(String revisionInfo) {
+    protected void initFromRevisionInfo(InputStream revisionInfo) {
         if (revisionInfo == null) {
             this.releaseDescription = tr("UNKNOWN");
             this.version = JOSM_UNKNOWN_VERSION;
@@ -102,8 +54,14 @@ public class Version {
             return;
         }
 
-        Map<String, String> properties = parseManifestStyleFormattedString(revisionInfo);
-        String value = properties.get("Revision");
+        Properties properties = new Properties();
+        try {
+            properties.load(revisionInfo);
+            revisionInfo.close();
+        } catch (IOException e) {
+            Main.warn(tr("Error reading revision info from revision file: {0}", e.getMessage()));
+        }
+        String value = properties.getProperty("Revision");
         if (value != null) {
             value = value.trim();
             try {
@@ -118,15 +76,15 @@ public class Version {
 
         // the last changed data
         //
-        time = properties.get("Last Changed Date");
+        time = properties.getProperty("Last Changed Date");
         if (time == null) {
-            time = properties.get("Build-Date");
+            time = properties.getProperty("Build-Date");
         }
 
         // is this a local build ?
         //
         isLocalBuild = false;
-        value = properties.get("Is-Local-Build");
+        value = properties.getProperty("Is-Local-Build");
         if (value != null && "true".equalsIgnoreCase(value.trim()))  {
             isLocalBuild = true;
         }
@@ -134,7 +92,7 @@ public class Version {
         // is this a specific build ?
         //
         buildName = null;
-        value = properties.get("Build-Name");
+        value = properties.getProperty("Build-Name");
         if (value != null && !value.trim().isEmpty())  {
             buildName = value.trim();
         }
@@ -142,7 +100,7 @@ public class Version {
         // the revision info
         //
         StringBuilder sb = new StringBuilder();
-        for (Entry<String, String> property: properties.entrySet()) {
+        for (Entry<Object, Object> property: properties.entrySet()) {
             sb.append(property.getKey()).append(':').append(property.getValue()).append('\n');
         }
         releaseDescription = sb.toString();
@@ -152,14 +110,14 @@ public class Version {
      * Initializes version info
      */
     public void init() {
-        URL u = Main.class.getResource("/REVISION");
-        if (u == null) {
+        InputStream stream = Main.class.getResourceAsStream("/REVISION");
+        if (stream == null) {
             Main.warn(tr("The revision file ''/REVISION'' is missing."));
             version = 0;
             releaseDescription = "";
             return;
         }
-        initFromRevisionInfo(loadResourceFile(u));
+        initFromRevisionInfo(stream);
     }
 
     /**
