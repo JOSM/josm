@@ -5818,6 +5818,8 @@
             <space />
             <key key="man_made" value="survey_point" />
             <text key="name" text="Name" />
+            <text key="ref" text="Reference" />
+            <text key="ele" text="Elevation" />
         </item> <!-- Survey Point -->
         <item name="Surveillance Camera" icon="presets/surveillance.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=surveillance"
