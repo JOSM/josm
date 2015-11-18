@@ -2,8 +2,10 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -11,6 +13,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 
@@ -66,5 +69,21 @@ public class TagCheckerTest {
         assertEquals(1, errors.size());
         assertEquals("Presets do not contain property value", errors.get(0).getMessage());
         assertEquals("Value 'forrest' for key 'landuse' not in presets.", errors.get(0).getDescription());
+    }
+
+    /**
+     * Checks that tags specifically ignored are effectively not in internal presets.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testIgnoredTagsNotInPresets() throws IOException {
+        List<String> errors = new ArrayList<>();
+        new TagChecker().initialize();
+        for (Tag tag : TagChecker.getIgnoredTags()) {
+            if (TagChecker.isTagInPresets(tag.getKey(), tag.getValue())) {
+                errors.add(tag.toString());
+            }
+        }
+        assertTrue(errors.toString(), errors.isEmpty());
     }
 }
