@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -21,6 +22,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Range;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -1421,15 +1423,23 @@ public class SearchCompiler {
             this.all = all;
         }
 
-        protected abstract Bounds getBounds();
+        protected abstract Collection<Bounds> getBounds();
 
         @Override
         public boolean match(OsmPrimitive osm) {
             if (!osm.isUsable())
                 return false;
             else if (osm instanceof Node) {
-                Bounds bounds = getBounds();
-                return bounds != null && bounds.contains(((Node) osm).getCoor());
+                Collection<Bounds> allBounds = getBounds();
+                if (allBounds != null) {
+                    LatLon coor = ((Node) osm).getCoor();
+                    for (Bounds bounds: allBounds) {
+                        if (bounds.contains(coor)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             } else if (osm instanceof Way) {
                 Collection<Node> nodes = ((Way) osm).getNodes();
                 return all ? forallMatch(nodes) : existsMatch(nodes);
@@ -1446,14 +1456,18 @@ public class SearchCompiler {
      */
     public static class InDataSourceArea extends InArea {
 
+        /**
+         * Constructs a new {@code InDataSourceArea}.
+         * @param all if true, all way nodes or relation members have to be within source area; if false, one suffices.
+         */
         public InDataSourceArea(boolean all) {
             super(all);
         }
 
         @Override
-        protected Bounds getBounds() {
+        protected Collection<Bounds> getBounds() {
             return Main.main.getCurrentDataSet() == null || Main.main.getCurrentDataSet().getDataSourceArea() == null
-                    ? null : new Bounds(Main.main.getCurrentDataSet().getDataSourceArea().getBounds2D());
+                    ? null : Main.main.getCurrentDataSet().getDataSourceBounds();
         }
 
         @Override
@@ -1472,11 +1486,11 @@ public class SearchCompiler {
         }
 
         @Override
-        protected Bounds getBounds() {
+        protected Collection<Bounds> getBounds() {
             if (!Main.isDisplayingMapView()) {
                 return null;
             }
-            return Main.map.mapView.getRealBounds();
+            return Collections.singleton(Main.map.mapView.getRealBounds());
         }
 
         @Override
