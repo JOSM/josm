@@ -7869,7 +7869,7 @@
             <reference ref="name_wikipedia" />
             <text key="ele" text="Elevation" />
         </item> <!-- Saddle -->
-        <item name="Glacier" icon="presets/glacier.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Glacier" icon="presets/glacier.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=glacier"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=glacier"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=glacier"

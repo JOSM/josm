@@ -4021,12 +4021,6 @@ node[natural=peak][tourism=viewpoint] {
 area[natural=glacier] {
     fill-color: glacier#ffffff;
 }
-node[natural=glacier] {
-    icon-image: "misc/landmark/glacier_small.png";
-    set icon_z0;
-    text: auto;
-    set text_z0;
-}
 node[natural=volcano] {
     icon-image: "misc/landmark/volcano_small.png";
     set icon_z0;
@@ -4154,6 +4148,7 @@ node[natural=tree][type=palm] {
     set icon_z17;
     text: auto;
 }
+node[natural=glacier],
 node[natural=scree],
 node[natural=scrub],
 node[natural=fell],
