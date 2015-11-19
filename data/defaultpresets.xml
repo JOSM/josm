@@ -328,6 +328,7 @@
     <chunk id="waterway">
         <reference ref="name_layer" />
         <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+        <check key="tidal" text="In the tidal range" disable_off="true" />
         <combo key="tunnel" text="Tunnel" values="culvert,yes" />
         <text key="width" text="Width (meters)" />
     </chunk>
@@ -1997,6 +1998,7 @@
             <combo key="water" text="Water Body" values="canal,lake,lagoon,oxbow,pond,reservoir,river" match="key" values_searchable="true" />
             <check key="salt" text="Salt Water" disable_off="true" />
             <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+            <check key="tidal" text="In the tidal range" disable_off="true" />
             <text key="wikipedia" text="Wikipedia" />
             <reference ref="water_access" />
         </item> <!-- Water -->
@@ -2028,6 +2030,7 @@
             <key key="waterway" value="riverbank" />
             <text key="name" text="Name" />
             <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+            <check key="tidal" text="In the tidal range" disable_off="true" />
         </item> <!-- Riverbank -->
         <separator/>
         <item name="Wetland" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
