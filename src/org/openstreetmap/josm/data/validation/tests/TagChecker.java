@@ -79,7 +79,7 @@ public class TagChecker extends TagTest {
     private static final List<String> ignoreDataStartsWith = new ArrayList<>();
     private static final List<String> ignoreDataEquals = new ArrayList<>();
     private static final List<String> ignoreDataEndsWith = new ArrayList<>();
-    private static final List<IgnoreKeyPair> ignoreDataKeyPair = new ArrayList<>();
+    private static final List<Tag> ignoreDataTag = new ArrayList<>();
 
     /** The preferences prefix */
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + TagChecker.class.getSimpleName();
@@ -158,7 +158,7 @@ public class TagChecker extends TagTest {
         ignoreDataStartsWith.clear();
         ignoreDataEquals.clear();
         ignoreDataEndsWith.clear();
-        ignoreDataKeyPair.clear();
+        ignoreDataTag.clear();
         harmonizedKeys.clear();
 
         StringBuilder errorSources = new StringBuilder();
@@ -206,11 +206,7 @@ public class TagChecker extends TagTest {
                             ignoreDataEndsWith.add(line);
                             break;
                         case "K:":
-                            IgnoreKeyPair tmp = new IgnoreKeyPair();
-                            int mid = line.indexOf('=');
-                            tmp.key = line.substring(0, mid);
-                            tmp.value = line.substring(mid+1);
-                            ignoreDataKeyPair.add(tmp);
+                            ignoreDataTag.add(Tag.ofString(line));
                         }
                     } else if (tagcheckerfile) {
                         if (!line.isEmpty()) {
@@ -308,6 +304,74 @@ public class TagChecker extends TagTest {
     }
 
     /**
+     * Determines if the given key is in internal presets.
+     * @param key key
+     * @return {@code true} if the given key is in internal presets
+     * @since 9023
+     */
+    public static boolean isKeyInPresets(String key) {
+        return presetsValueData.get(key) != null;
+    }
+
+    /**
+     * Determines if the given tag is in internal presets.
+     * @param key key
+     * @param value value
+     * @return {@code true} if the given tag is in internal presets
+     * @since 9023
+     */
+    public static boolean isTagInPresets(String key, String value) {
+        final Set<String> values = presetsValueData.get(key);
+        return values != null && (values.isEmpty() || values.contains(value));
+    }
+
+    /**
+     * Returns the list of ignored tags.
+     * @return the list of ignored tags
+     * @since 9023
+     */
+    public static List<Tag> getIgnoredTags() {
+        return new ArrayList<>(ignoreDataTag);
+    }
+
+    /**
+     * Determines if the given tag is ignored for checks "key/tag not in presets".
+     * @param key key
+     * @param value value
+     * @return {@code true} if the given tag is ignored
+     * @since 9023
+     */
+    public static boolean isTagIgnored(String key, String value) {
+        boolean tagInPresets = isTagInPresets(key, value);
+        boolean ignore = false;
+
+        for (String a : ignoreDataStartsWith) {
+            if (key.startsWith(a)) {
+                ignore = true;
+            }
+        }
+        for (String a : ignoreDataEquals) {
+            if (key.equals(a)) {
+                ignore = true;
+            }
+        }
+        for (String a : ignoreDataEndsWith) {
+            if (key.endsWith(a)) {
+                ignore = true;
+            }
+        }
+
+        if (!tagInPresets) {
+            for (Tag a : ignoreDataTag) {
+                if (key.equals(a.getKey()) && value.equals(a.getValue())) {
+                    ignore = true;
+                }
+            }
+        }
+        return ignore;
+    }
+
+    /**
      * Checks the primitive tags
      * @param p The primitive to check
      */
@@ -372,37 +436,8 @@ public class TagChecker extends TagTest {
                 withErrors.put(p, "HTML");
             }
             if (checkValues && key != null && value != null && !value.isEmpty() && presetsValueData != null) {
-                final Set<String> values = presetsValueData.get(key);
-                final boolean keyInPresets = values != null;
-                final boolean tagInPresets = values != null && (values.isEmpty() || values.contains(prop.getValue()));
-
-                boolean ignore = false;
-                for (String a : ignoreDataStartsWith) {
-                    if (key.startsWith(a)) {
-                        ignore = true;
-                    }
-                }
-                for (String a : ignoreDataEquals) {
-                    if (key.equals(a)) {
-                        ignore = true;
-                    }
-                }
-                for (String a : ignoreDataEndsWith) {
-                    if (key.endsWith(a)) {
-                        ignore = true;
-                    }
-                }
-
-                if (!tagInPresets) {
-                    for (IgnoreKeyPair a : ignoreDataKeyPair) {
-                        if (key.equals(a.key) && value.equals(a.value)) {
-                            ignore = true;
-                        }
-                    }
-                }
-
-                if (!ignore) {
-                    if (!keyInPresets) {
+                if (!isTagIgnored(key, value)) {
+                    if (!isKeyInPresets(key)) {
                         String prettifiedKey = harmonizeKey(key);
                         String fixedKey = harmonizedKeys.get(prettifiedKey);
                         if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
@@ -419,10 +454,10 @@ public class TagChecker extends TagTest {
                                     tr(i, key), MessageFormat.format(i, key), INVALID_VALUE, p));
                             withErrors.put(p, "UPK");
                         }
-                    } else if (!tagInPresets) {
+                    } else if (!isTagInPresets(key, value)) {
                         // try to fix common typos and check again if value is still unknown
                         String fixedValue = harmonizeValue(prop.getValue());
-                        Map<String, String> possibleValues = getPossibleValues(values);
+                        Map<String, String> possibleValues = getPossibleValues(presetsValueData.get(key));
                         if (possibleValues.containsKey(fixedValue)) {
                             fixedValue = possibleValues.get(fixedValue);
                             // misspelled preset value
@@ -641,11 +676,6 @@ public class TagChecker extends TagTest {
         }
 
         return false;
-    }
-
-    protected static class IgnoreKeyPair {
-        public String key;
-        public String value;
     }
 
     protected static class CheckerData {
