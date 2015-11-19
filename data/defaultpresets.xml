@@ -69,7 +69,7 @@
         <combo key="sidewalk" text="Sidewalk" values="both,left,right,no" values_context="sidewalk" />
     </chunk>
     <chunk id="railway_service">
-        <combo key="service" text="Service type" values="yard,siding,spur" />
+        <combo key="service" text="Service type" values="yard,siding,spur,crossover" />
     </chunk>
     <chunk id="railway_electrified">
         <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
