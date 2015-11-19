@@ -2185,6 +2185,8 @@
             <space />
             <key key="man_made" value="pier" />
             <text key="name" text="Name" />
+            <combo key="mooring" text="Mooring" values="yes,no,private,commercial" />
+            <check key="floating" text="Floating" />
         </item> <!-- Pier -->
         <item name="Lock Gate" icon="presets/lock_gate.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=lock_gate"
