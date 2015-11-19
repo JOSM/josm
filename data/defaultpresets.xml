@@ -378,6 +378,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
                 <text key="width" text="Width (meters)" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="bridge" text="Bridge" disable_off="true" />
@@ -404,6 +405,7 @@
             <optional>
                 <reference ref="highway_base" />
                 <text key="width" text="Width (meters)" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="bridge" text="Bridge" disable_off="true" />
@@ -437,6 +439,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
                 <text key="width" text="Width (meters)" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="motorroad" text="Motorroad" default="on" />
@@ -459,6 +462,7 @@
             <optional>
                 <reference ref="highway_base" />
                 <text key="width" text="Width (meters)" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="motorroad" text="Motorroad" default="on" />
@@ -494,6 +498,7 @@
                 <reference ref="highway_base" />
                 <check key="motorroad" text="Motorroad" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Primary -->
@@ -510,6 +515,7 @@
                 <reference ref="highway_base" />
                 <check key="motorroad" text="Motorroad" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Primary Link -->
@@ -534,6 +540,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Secondary -->
@@ -549,6 +556,7 @@
             <optional>
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Secondary Link -->
@@ -574,6 +582,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Tertiary -->
@@ -611,6 +620,7 @@
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <check key="passing_places" text="Passing Places" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
