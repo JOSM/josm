@@ -229,6 +229,9 @@ public class Multipolygon {
                     }
                 }
             }
+            if (nodes.size() >= 3 && nodes.get(0) == nodes.get(nodes.size() - 1)) {
+                poly.closePath();
+            }
             for (PolyData inner : inners) {
                 appendInner(inner.poly);
             }
