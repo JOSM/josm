@@ -3478,6 +3478,7 @@
             <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;sushi;steak_house" values_searchable="true" />
             <check key="microbrewery" text="Microbrewery" />
             <check key="outdoor_seating" text="Outdoor seating" />
+            <combo key="takeaway" text="Takeaway" values="yes,no,only" />
             <reference ref="oh_wheelchair" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
@@ -3498,6 +3499,7 @@
             <reference ref="name_operator" />
             <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese,french,sandwich,sushi,fish_and_chips,chicken" />
             <check key="outdoor_seating" text="Outdoor seating" />
+            <combo key="takeaway" text="Takeaway" values="yes,no,only" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3514,6 +3516,7 @@
             <key key="amenity" value="food_court" />
             <reference ref="name_operator" />
             <check key="outdoor_seating" text="Outdoor seating" />
+            <combo key="takeaway" text="Takeaway" values="yes,no,only" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3537,6 +3540,7 @@
             <reference ref="name_operator" />
             <combo key="cuisine" text="Cuisine" values="ice_cream" />
             <check key="outdoor_seating" text="Outdoor seating" />
+            <combo key="takeaway" text="Takeaway" values="yes,no,only" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3556,6 +3560,7 @@
             <reference ref="name_operator" />
             <check key="microbrewery" text="Microbrewery" />
             <check key="outdoor_seating" text="Outdoor seating" />
+            <combo key="takeaway" text="Takeaway" values="yes,no,only" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
