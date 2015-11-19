@@ -1516,6 +1516,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
             }
         }
+        if (w.isClosed()) {
+            path.closePath();
+        }
         return path;
     }
 
