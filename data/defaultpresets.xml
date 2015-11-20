@@ -1516,6 +1516,7 @@
                   zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:barrier=wall" />
             <key key="barrier" value="wall" />
             <reference ref="optional_height" />
+            <combo key="wall" text="Type" values="dry_stone,noise_barrier" />
         </item> <!-- Wall -->
         <item name="City Wall" icon="presets/city_wall.png" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=city_wall"
