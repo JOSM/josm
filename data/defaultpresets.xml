@@ -1294,7 +1294,7 @@
             <key key="highway" value="turning_loop" />
         </item> <!-- Turning Loop -->
         <item name="City Limit" icon="presets/citylimit.png" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:traffic_sign=city_limit"
+            <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_sign"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_sign"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_sign"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_sign"
@@ -1305,6 +1305,18 @@
             <key key="traffic_sign" value="city_limit" />
             <text key="name" text="Name" />
             <text key="alt_name" text="Second Name" />
+        </item> <!-- City Limit -->
+        <item name="Speed Limit" icon="styles/standard/vehicle/restriction/speed.png" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_sign"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_sign"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_sign"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_sign"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_sign"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_sign"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:traffic_sign" />
+            <space />
+            <key key="traffic_sign" value="maxspeed" />
+            <text key="maxspeed" text="Max. speed (km/h)" />
         </item> <!-- City Limit -->
         <item name="Speed Camera" icon="presets/speed_camera.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=speed_camera"
