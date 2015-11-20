@@ -160,7 +160,7 @@
     </chunk>
     <chunk id="internet_smoking">
         <reference ref="internet" />
-        <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" />
+        <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,outside,no" />
     </chunk>
     <chunk id="optional_height">
         <optional>
