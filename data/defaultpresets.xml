@@ -344,6 +344,13 @@
             <combo key="canoe" text="Canoe" values="yes,designated,destination,delivery,permissive,private,no" />
         </optional>
     </chunk>
+    <chunk id="operator_substance">
+        <text key="operator" text="Operator" />
+        <combo key="substance" text="Substance" values="water,gas,heat,oil,sewage" />
+    </chunk>
+    <chunk id="support">
+        <combo key="support" text="Support" values="pole,wall_mounted,billboard,ground" values_context="mounting/support" />
+    </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact_address">
     <preset_link preset_name="Contact (Common Schema)" />
@@ -1317,7 +1324,7 @@
             <space />
             <key key="traffic_sign" value="maxspeed" />
             <text key="maxspeed" text="Max. speed (km/h)" />
-        </item> <!-- City Limit -->
+        </item> <!-- Speed Limit -->
         <item name="Speed Camera" icon="presets/speed_camera.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=speed_camera"
                   az.href="http://wiki.openstreetmap.org/wiki/Az:Tag:highway=speed_camera"
@@ -4741,7 +4748,7 @@
             <key key="amenity" value="clock" />
             <optional>
                 <combo key="display" text="Display" values="analog,digital,sundial,unorthodox" />
-                <combo key="support" text="Support" values="pole,wall_mounted,billboard,ground" values_context="mounting/support" />
+                <reference ref="support" />
                 <combo key="visibility" text="Visibility/readability" values="house,street,area" display_values="house (up to 5m),street (up to 20m),area (more than 20m)" />
                 <check key="date" text="Shows current date" />
                 <check key="thermometer" text="Shows temperature" />
@@ -5631,10 +5638,17 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=pipeline" />
             <space />
             <key key="man_made" value="pipeline" />
-            <text key="operator" text="Operator" />
-            <combo key="type" text="Type" values="water,gas,heat,oil,sewage" />
+            <reference ref="operator_substance" />
             <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" />
         </item> <!-- Pipeline -->
+        <item name="Pipeline Marker" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:pipeline=marker" />
+            <space />
+            <key key="pipeline" value="marker" />
+            <text key="ref" text="Reference" />
+            <reference ref="operator_substance" />
+            <reference ref="support" />
+        </item> <!-- Pipeline Marker -->
         <item name="Crane" icon="presets/crane.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=crane"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=crane"

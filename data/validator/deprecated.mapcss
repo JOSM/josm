@@ -541,3 +541,10 @@ relation[/^..$/][!to] {
   fixRemove: "water";
   fixAdd: "intermittent=yes";
 }
+
+*[type][man_made=pipeline],
+*[type][pipeline=marker] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "substance";
+  fixChangeKey: "type => substance";
+}
