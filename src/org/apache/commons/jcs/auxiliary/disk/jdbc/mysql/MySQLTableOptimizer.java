@@ -19,18 +19,19 @@ package org.apache.commons.jcs.auxiliary.disk.jdbc.mysql;
  * under the License.
  */
 
-import org.apache.commons.jcs.auxiliary.disk.jdbc.JDBCDiskCachePoolAccess;
-import org.apache.commons.jcs.auxiliary.disk.jdbc.TableState;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.sql.DataSource;
+
+import org.apache.commons.jcs.auxiliary.disk.jdbc.TableState;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
- * The MySQL Table Optimizer can optimize MySQL tables. It knows how to optimize for MySQL datbases
+ * The MySQL Table Optimizer can optimize MySQL tables. It knows how to optimize for MySQL databases
  * in particular and how to repair the table if it is corrupted in the process.
  * <p>
  * We will probably be able to abstract out a generic optimizer interface from this class in the
@@ -43,8 +44,8 @@ public class MySQLTableOptimizer
     /** The logger */
     private static final Log log = LogFactory.getLog( MySQLTableOptimizer.class );
 
-    /** The pool */
-    private JDBCDiskCachePoolAccess poolAccess = null;
+    /** The data source */
+    private DataSource dataSource = null;
 
     /** The name of the table. */
     private String tableName = null;
@@ -57,16 +58,14 @@ public class MySQLTableOptimizer
      * <p>
      * @param attributes
      * @param tableState We mark the table status as optimizing when this is happening.
-     * @param poolAccess access to the database
+     * @param dataSource access to the database
      */
-    public MySQLTableOptimizer( MySQLDiskCacheAttributes attributes, TableState tableState,
-                                JDBCDiskCachePoolAccess poolAccess )
+    public MySQLTableOptimizer( MySQLDiskCacheAttributes attributes, TableState tableState, DataSource dataSource )
     {
         setTableName( attributes.getTableName() );
 
         this.tableState = tableState;
-
-        this.poolAccess = poolAccess;
+        this.dataSource = dataSource;
     }
 
     /**
@@ -137,7 +136,7 @@ public class MySQLTableOptimizer
             Connection con;
             try
             {
-                con = poolAccess.getConnection();
+                con = dataSource.getConnection();
             }
             catch ( SQLException e )
             {
@@ -172,7 +171,7 @@ public class MySQLTableOptimizer
 
                         if ( "error".equals( status ) )
                         {
-                            log.warn( "Optimization was in erorr.  Will attempt to repair the table.  Message: "
+                            log.warn( "Optimization was in error. Will attempt to repair the table. Message: "
                                 + message );
 
                             // try to repair the table.
@@ -263,7 +262,7 @@ public class MySQLTableOptimizer
     }
 
     /**
-     * This is called if the optimizatio is in error.
+     * This is called if the optimization is in error.
      * <p>
      * It looks for "OK" in response. If it find "OK" as a message in any result set row, it returns
      * true. Otherwise we assume that the repair failed.

@@ -24,10 +24,12 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.jdbc.JDBCDiskCacheFactory;
-import org.apache.commons.jcs.auxiliary.disk.jdbc.JDBCDiskCachePoolAccess;
 import org.apache.commons.jcs.auxiliary.disk.jdbc.TableState;
+import org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory.DataSourceFactory;
 import org.apache.commons.jcs.auxiliary.disk.jdbc.mysql.util.ScheduleParser;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
@@ -49,12 +51,12 @@ public class MySQLDiskCacheFactory
     /**
      * This factory method should create an instance of the mysqlcache.
      * <p>
-     * @param rawAttr
-     * @param compositeCacheManager
-     * @param cacheEventLogger
-     * @param elementSerializer
-     * @return MySQLDiskCache
-     * @throws SQLException if the creation of the cache instance fails
+     * @param rawAttr specific cache configuration attributes
+     * @param compositeCacheManager the global cache manager
+     * @param cacheEventLogger a specific logger for cache events
+     * @param elementSerializer a serializer for cache elements
+     * @return MySQLDiskCache the cache instance
+     * @throws SQLException if the cache instance could not be created
      */
     @Override
     public <K, V> MySQLDiskCache<K, V> createCache( AuxiliaryCacheAttributes rawAttr,
@@ -64,14 +66,15 @@ public class MySQLDiskCacheFactory
     {
         MySQLDiskCacheAttributes cattr = (MySQLDiskCacheAttributes) rawAttr;
         TableState tableState = getTableState( cattr.getTableName() );
+        DataSourceFactory dsFactory = getDataSourceFactory(cattr, compositeCacheManager.getConfigurationProperties());
 
-        MySQLDiskCache<K, V> cache = new MySQLDiskCache<K, V>( cattr, tableState, compositeCacheManager );
+        MySQLDiskCache<K, V> cache = new MySQLDiskCache<K, V>( cattr, dsFactory, tableState, compositeCacheManager );
         cache.setCacheEventLogger( cacheEventLogger );
         cache.setElementSerializer( elementSerializer );
 
         // create a shrinker if we need it.
         createShrinkerWhenNeeded( cattr, cache );
-        scheduleOptimizations( cattr, tableState, cache.getPoolAccess() );
+        scheduleOptimizations( cattr, tableState, cache.getDataSource() );
 
         return cache;
 
@@ -82,9 +85,9 @@ public class MySQLDiskCacheFactory
      * <p>
      * @param attributes configuration properties.
      * @param tableState for noting optimization in progress, etc.
-     * @param poolAccess access to the pool
+     * @param ds the DataSource
      */
-    protected void scheduleOptimizations( MySQLDiskCacheAttributes attributes, TableState tableState, JDBCDiskCachePoolAccess poolAccess  )
+    protected void scheduleOptimizations( MySQLDiskCacheAttributes attributes, TableState tableState, DataSource ds  )
     {
         if ( attributes != null )
         {
@@ -96,7 +99,7 @@ public class MySQLDiskCacheFactory
                         + "] on schedule [" + attributes.getOptimizationSchedule() + "]" );
                 }
 
-                MySQLTableOptimizer optimizer = new MySQLTableOptimizer( attributes, tableState, poolAccess );
+                MySQLTableOptimizer optimizer = new MySQLTableOptimizer( attributes, tableState, ds );
 
                 // loop through the dates.
                 try

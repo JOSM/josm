@@ -19,6 +19,14 @@ package org.apache.commons.jcs.engine.control;
  * under the License.
  */
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
+
 import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheConfigurator;
@@ -35,14 +43,6 @@ import org.apache.commons.jcs.utils.config.OptionConverter;
 import org.apache.commons.jcs.utils.config.PropertySetter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
 
 /**
  * This class configures JCS based on a properties object.
@@ -135,7 +135,7 @@ public class CompositeCacheConfigurator
             }
         }
 
-        // If we reach here, then the config file is alright.
+        // If we reach here, then the config file is all right.
         doConfigure( props );
     }
 
@@ -555,6 +555,12 @@ public class CompositeCacheConfigurator
                 }
 
                 auxFac.setName( auxName );
+
+                if ( auxFac instanceof IRequireScheduler)
+                {
+                	((IRequireScheduler)auxFac).setScheduledExecutorService(compositeCacheManager.getScheduledExecutorService());
+                }
+
                 auxFac.initialize();
 
                 compositeCacheManager.registryFacPut( auxFac );

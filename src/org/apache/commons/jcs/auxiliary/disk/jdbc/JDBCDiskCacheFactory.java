@@ -20,28 +20,33 @@ package org.apache.commons.jcs.auxiliary.disk.jdbc;
  */
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executors;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheFactory;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
+import org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory.DataSourceFactory;
+import org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory.JndiDataSourceFactory;
+import org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory.SharedPoolDataSourceFactory;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
+import org.apache.commons.jcs.engine.behavior.IRequireScheduler;
 import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
-import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
+import org.apache.commons.jcs.utils.config.PropertySetter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * This factory should create mysql disk caches.
+ * This factory should create JDBC auxiliary caches.
  * <p>
  * @author Aaron Smuts
  */
 public class JDBCDiskCacheFactory
     extends AbstractAuxiliaryCacheFactory
+    implements IRequireScheduler
 {
     /** The logger */
     private static final Log log = LogFactory.getLog( JDBCDiskCacheFactory.class );
@@ -50,25 +55,34 @@ public class JDBCDiskCacheFactory
      * A map of TableState objects to table names. Each cache has a table state object, which is
      * used to determine if any long processes such as deletes or optimizations are running.
      */
-    private Map<String, TableState> tableStates;
+    private ConcurrentMap<String, TableState> tableStates;
 
-    /** The background scheduler, one for all regions. */
-    protected ScheduledExecutorService scheduler; // TODO this is not accessed in a threadsafe way. Perhaps use IODH idiom?
+    /** The background scheduler, one for all regions. Injected by the configurator */
+    protected ScheduledExecutorService scheduler;
 
     /**
      * A map of table name to shrinker threads. This allows each table to have a different setting.
      * It assumes that there is only one jdbc disk cache auxiliary defined per table.
      */
-    private Map<String, ShrinkerThread> shrinkerThreadMap;
+    private ConcurrentMap<String, ShrinkerThread> shrinkerThreadMap;
+
+    /** Pool name to DataSourceFactories */
+    private ConcurrentMap<String, DataSourceFactory> dsFactories;
+
+    /** props prefix */
+    protected static final String POOL_CONFIGURATION_PREFIX = "jcs.jdbcconnectionpool.";
+
+    /** .attributes */
+    protected static final String ATTRIBUTE_PREFIX = ".attributes";
 
     /**
      * This factory method should create an instance of the jdbc cache.
      * <p>
-     * @param rawAttr
-     * @param compositeCacheManager
-     * @param cacheEventLogger
-     * @param elementSerializer
-     * @return JDBCDiskCache
+     * @param rawAttr specific cache configuration attributes
+     * @param compositeCacheManager the global cache manager
+     * @param cacheEventLogger a specific logger for cache events
+     * @param elementSerializer a serializer for cache elements
+     * @return JDBCDiskCache the cache instance
      * @throws SQLException if the cache instance could not be created
      */
     @Override
@@ -79,8 +93,9 @@ public class JDBCDiskCacheFactory
     {
         JDBCDiskCacheAttributes cattr = (JDBCDiskCacheAttributes) rawAttr;
         TableState tableState = getTableState( cattr.getTableName() );
+        DataSourceFactory dsFactory = getDataSourceFactory(cattr, compositeCacheManager.getConfigurationProperties());
 
-        JDBCDiskCache<K, V> cache = new JDBCDiskCache<K, V>( cattr, tableState, compositeCacheManager );
+        JDBCDiskCache<K, V> cache = new JDBCDiskCache<K, V>( cattr, dsFactory, tableState, compositeCacheManager );
         cache.setCacheEventLogger( cacheEventLogger );
         cache.setElementSerializer( elementSerializer );
 
@@ -97,8 +112,9 @@ public class JDBCDiskCacheFactory
     public void initialize()
     {
         super.initialize();
-        this.tableStates = new HashMap<String, TableState>();
-        this.shrinkerThreadMap = new HashMap<String, ShrinkerThread>();
+        this.tableStates = new ConcurrentHashMap<String, TableState>();
+        this.shrinkerThreadMap = new ConcurrentHashMap<String, ShrinkerThread>();
+        this.dsFactories = new ConcurrentHashMap<String, DataSourceFactory>();
     }
 
     /**
@@ -107,11 +123,22 @@ public class JDBCDiskCacheFactory
     @Override
     public void dispose()
     {
-        if (this.scheduler != null)
+        this.tableStates.clear();
+
+        for (DataSourceFactory dsFactory : this.dsFactories.values())
         {
-            this.scheduler.shutdownNow();
-            this.scheduler = null;
+        	try
+        	{
+				dsFactory.close();
+			}
+        	catch (SQLException e)
+        	{
+        		log.error("Could not close data source factory " + dsFactory.getName(), e);
+			}
         }
+
+        this.dsFactories.clear();
+        this.shrinkerThreadMap.clear();
         super.dispose();
     }
 
@@ -123,30 +150,33 @@ public class JDBCDiskCacheFactory
      */
     protected TableState getTableState(String tableName)
     {
-        TableState tableState = tableStates.get( tableName );
+    	TableState newTableState = new TableState( tableName );
+        TableState tableState = tableStates.putIfAbsent( tableName, newTableState );
 
         if ( tableState == null )
         {
-            tableState = new TableState( tableName );
-            tableStates.put(tableName, tableState);
+            tableState = newTableState;
         }
 
         return tableState;
     }
 
     /**
-     * Get the scheduler service (lazily loaded)
+	 * @see org.apache.commons.jcs.engine.behavior.IRequireScheduler#setScheduledExecutorService(java.util.concurrent.ScheduledExecutorService)
+	 */
+	@Override
+	public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutor)
+	{
+		this.scheduler = scheduledExecutor;
+	}
+
+	/**
+     * Get the scheduler service
      *
      * @return the scheduler
      */
     protected ScheduledExecutorService getScheduledExecutorService()
     {
-        if ( scheduler == null )
-        {
-            scheduler = Executors.newScheduledThreadPool(2,
-                    new DaemonThreadFactory("JCS-JDBCDiskCacheManager-", Thread.MIN_PRIORITY));
-        }
-
         return scheduler;
     }
 
@@ -162,11 +192,12 @@ public class JDBCDiskCacheFactory
         if ( cattr.isUseDiskShrinker() )
         {
             ScheduledExecutorService shrinkerService = getScheduledExecutorService();
-            ShrinkerThread shrinkerThread = shrinkerThreadMap.get( cattr.getTableName() );
+            ShrinkerThread newShrinkerThread = new ShrinkerThread();
+            ShrinkerThread shrinkerThread = shrinkerThreadMap.putIfAbsent( cattr.getTableName(), newShrinkerThread );
+
             if ( shrinkerThread == null )
             {
-                shrinkerThread = new ShrinkerThread();
-                shrinkerThreadMap.put( cattr.getTableName(), shrinkerThread );
+            	shrinkerThread = newShrinkerThread;
 
                 long intervalMillis = Math.max( 999, cattr.getShrinkerIntervalSeconds() * 1000 );
                 if ( log.isInfoEnabled() )
@@ -176,7 +207,70 @@ public class JDBCDiskCacheFactory
                 }
                 shrinkerService.scheduleAtFixedRate(shrinkerThread, 0, intervalMillis, TimeUnit.MILLISECONDS);
             }
+
             shrinkerThread.addDiskCacheToShrinkList( raf );
         }
+    }
+
+    /**
+     * manages the DataSourceFactories.
+     * <p>
+     * @param cattr the cache configuration
+     * @param configProps the configuration properties object
+     * @return a DataSourceFactory
+     * @throws SQLException if a database access error occurs
+     */
+    protected DataSourceFactory getDataSourceFactory( JDBCDiskCacheAttributes cattr,
+                                                      Properties configProps ) throws SQLException
+    {
+    	String poolName = null;
+
+    	if (cattr.getConnectionPoolName() == null)
+    	{
+    		poolName = cattr.getCacheName() + "." + JDBCDiskCacheAttributes.DEFAULT_POOL_NAME;
+        }
+        else
+        {
+            poolName = cattr.getConnectionPoolName();
+        }
+
+    	synchronized (this.dsFactories)
+    	{
+	    	DataSourceFactory dsFactory = this.dsFactories.get(poolName);
+
+	    	if (dsFactory == null)
+	    	{
+	        	JDBCDiskCacheAttributes dsConfig = null;
+
+	        	if (cattr.getConnectionPoolName() == null)
+	        	{
+	        		dsConfig = cattr;
+	            }
+	            else
+	            {
+	                dsConfig = new JDBCDiskCacheAttributes();
+	                String dsConfigAttributePrefix = POOL_CONFIGURATION_PREFIX + poolName + ATTRIBUTE_PREFIX;
+	                PropertySetter.setProperties( dsConfig,
+	                		configProps,
+	                		dsConfigAttributePrefix + "." );
+
+	                dsConfig.setConnectionPoolName(poolName);
+	            }
+
+		        if ( dsConfig.getJndiPath() != null )
+		        {
+		        	dsFactory = new JndiDataSourceFactory();
+		        }
+		        else
+		        {
+		            dsFactory = new SharedPoolDataSourceFactory();
+		        }
+
+	        	dsFactory.initialize(dsConfig);
+	    		this.dsFactories.put(poolName, dsFactory);
+	    	}
+
+	    	return dsFactory;
+    	}
     }
 }

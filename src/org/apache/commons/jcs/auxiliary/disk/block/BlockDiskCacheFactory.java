@@ -57,9 +57,8 @@ public class BlockDiskCacheFactory
             log.debug( "Creating DiskCache for attributes = " + idca );
         }
 
-        BlockDiskCache<K, V> cache = new BlockDiskCache<K, V>( idca );
+        BlockDiskCache<K, V> cache = new BlockDiskCache<K, V>( idca, elementSerializer );
         cache.setCacheEventLogger( cacheEventLogger );
-        cache.setElementSerializer( elementSerializer );
 
         return cache;
     }

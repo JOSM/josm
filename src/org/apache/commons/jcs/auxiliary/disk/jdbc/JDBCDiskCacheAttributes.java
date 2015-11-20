@@ -50,6 +50,12 @@ public class JDBCDiskCacheAttributes
     /** The driver */
     private String driverClassName;
 
+    /** The JNDI path. */
+    private String jndiPath;
+
+    /** The time between two JNDI lookups */
+    private long jndiTTL = 0L;
+
     /** The table name */
     private String tableName = DEFAULT_TABLE_NAME;
 
@@ -69,7 +75,10 @@ public class JDBCDiskCacheAttributes
     private int shrinkerIntervalSeconds = DEFAULT_SHRINKER_INTERVAL_SECONDS;
 
     /** Should we remove expired in the background. */
-    private boolean UseDiskShrinker = true;
+    private boolean useDiskShrinker = true;
+
+    /** The default Pool Name to which the connection pool will be keyed. */
+    public static final String DEFAULT_POOL_NAME = "jcs";
 
     /**
      * If a pool name is supplied, the manager will attempt to load it. It should be configured in a
@@ -167,6 +176,38 @@ public class JDBCDiskCacheAttributes
     }
 
     /**
+	 * @return the jndiPath
+	 */
+	public String getJndiPath()
+	{
+		return jndiPath;
+	}
+
+	/**
+	 * @param jndiPath the jndiPath to set
+	 */
+	public void setJndiPath(String jndiPath)
+	{
+		this.jndiPath = jndiPath;
+	}
+
+	/**
+	 * @return the jndiTTL
+	 */
+	public long getJndiTTL()
+	{
+		return jndiTTL;
+	}
+
+	/**
+	 * @param jndiTTL the jndiTTL to set
+	 */
+	public void setJndiTTL(long jndiTTL)
+	{
+		this.jndiTTL = jndiTTL;
+	}
+
+	/**
      * @param tableName The tableName to set.
      */
     public void setTableName( String tableName )
@@ -238,7 +279,7 @@ public class JDBCDiskCacheAttributes
      */
     public void setUseDiskShrinker( boolean useDiskShrinker )
     {
-        UseDiskShrinker = useDiskShrinker;
+        this.useDiskShrinker = useDiskShrinker;
     }
 
     /**
@@ -246,7 +287,7 @@ public class JDBCDiskCacheAttributes
      */
     public boolean isUseDiskShrinker()
     {
-        return UseDiskShrinker;
+        return useDiskShrinker;
     }
 
     /**
@@ -284,7 +325,7 @@ public class JDBCDiskCacheAttributes
         buf.append( "\n MaxActive [" + getMaxActive() + "]" );
         buf.append( "\n AllowRemoveAll [" + isAllowRemoveAll() + "]" );
         buf.append( "\n ShrinkerIntervalSeconds [" + getShrinkerIntervalSeconds() + "]" );
-        buf.append( "\n UseDiskShrinker [" + isUseDiskShrinker() + "]" );
+        buf.append( "\n useDiskShrinker [" + isUseDiskShrinker() + "]" );
         return buf.toString();
     }
 }

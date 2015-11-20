@@ -29,9 +29,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache;
+import org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory.DataSourceFactory;
 import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
@@ -88,19 +92,19 @@ public class JDBCDiskCache<K, V>
     private JDBCDiskCacheAttributes jdbcDiskCacheAttributes;
 
     /** # of times update was called */
-    private int updateCount = 0;
+    private AtomicInteger updateCount = new AtomicInteger(0);
 
     /** # of times get was called */
-    private int getCount = 0;
+    private AtomicInteger getCount = new AtomicInteger(0);
 
     /** # of times getMatching was called */
-    private int getMatchingCount = 0;
+    private AtomicInteger getMatchingCount = new AtomicInteger(0);
 
     /** if count % interval == 0 then log */
     private static final int LOG_INTERVAL = 100;
 
     /** db connection pool */
-    private JDBCDiskCachePoolAccess poolAccess = null;
+    private DataSourceFactory dsFactory = null;
 
     /** tracks optimization */
     private TableState tableState;
@@ -109,13 +113,13 @@ public class JDBCDiskCache<K, V>
      * Constructs a JDBC Disk Cache for the provided cache attributes. The table state object is
      * used to mark deletions.
      * <p>
-     * @param cattr
-     * @param tableState
-     * @param compositeCacheManager
-     * @throws SQLException if the pool access could not be set up
+     * @param cattr the configuration object for this cache
+     * @param dsFactory the DataSourceFactory for this cache
+     * @param tableState an object to track table operations
+     * @param compositeCacheManager the global cache manager
      */
-    public JDBCDiskCache( JDBCDiskCacheAttributes cattr, TableState tableState,
-                          ICompositeCacheManager compositeCacheManager ) throws SQLException
+    public JDBCDiskCache( JDBCDiskCacheAttributes cattr, DataSourceFactory dsFactory, TableState tableState,
+                          ICompositeCacheManager compositeCacheManager )
     {
         super( cattr );
 
@@ -128,36 +132,10 @@ public class JDBCDiskCache<K, V>
         }
 
         // This initializes the pool access.
-        this.poolAccess = initializePoolAccess( cattr, compositeCacheManager );
+        this.dsFactory = dsFactory;
 
         // Initialization finished successfully, so set alive to true.
         alive = true;
-    }
-
-    /**
-     * Registers the driver and creates a poolAccess class.
-     * <p>
-     * @param cattr
-     * @param compositeCacheManager
-     * @return JDBCDiskCachePoolAccess for testing
-     * @throws SQLException if a database access error occurs
-     */
-    protected JDBCDiskCachePoolAccess initializePoolAccess( JDBCDiskCacheAttributes cattr,
-                                                            ICompositeCacheManager compositeCacheManager ) throws SQLException
-    {
-        JDBCDiskCachePoolAccess poolAccess1 = null;
-        if ( cattr.getConnectionPoolName() != null )
-        {
-            JDBCDiskCachePoolAccessManager manager = JDBCDiskCachePoolAccessManager.getInstance();
-            poolAccess1 = manager.getJDBCDiskCachePoolAccess(
-                    cattr.getConnectionPoolName(),
-                    compositeCacheManager.getConfigurationProperties() );
-        }
-        else
-        {
-            poolAccess1 = JDBCDiskCachePoolAccessManager.createPoolAccess( cattr );
-        }
-        return poolAccess1;
     }
 
     /**
@@ -170,7 +148,7 @@ public class JDBCDiskCache<K, V>
     @Override
     protected void processUpdate( ICacheElement<K, V> ce )
     {
-        incrementUpdateCount();
+    	updateCount.incrementAndGet();
 
         if ( log.isDebugEnabled() )
         {
@@ -180,7 +158,7 @@ public class JDBCDiskCache<K, V>
         Connection con;
         try
         {
-            con = getPoolAccess().getConnection();
+            con = getDataSource().getConnection();
         }
         catch ( SQLException e )
         {
@@ -223,7 +201,7 @@ public class JDBCDiskCache<K, V>
 
         if ( log.isInfoEnabled() )
         {
-            if ( updateCount % LOG_INTERVAL == 0 )
+            if ( updateCount.get() % LOG_INTERVAL == 0 )
             {
                 // TODO make a log stats method
                 log.info( "Update Count [" + updateCount + "]" );
@@ -247,7 +225,7 @@ public class JDBCDiskCache<K, V>
         // First do a query to determine if the element already exists
         if ( this.getJdbcDiskCacheAttributes().isTestBeforeInsert() )
         {
-            exists = doesElementExist( ce );
+            exists = doesElementExist( ce, con );
         }
 
         // If it doesn't exist, insert it, otherwise update
@@ -320,7 +298,7 @@ public class JDBCDiskCache<K, V>
             // see if it exists, if we didn't already
             if ( !exists && !this.getJdbcDiskCacheAttributes().isTestBeforeInsert() )
             {
-                exists = doesElementExist( ce );
+                exists = doesElementExist( ce, con );
             }
         }
         return exists;
@@ -372,24 +350,13 @@ public class JDBCDiskCache<K, V>
     /**
      * Does an element exist for this key?
      * <p>
-     * @param ce
+     * @param ce the cache element
+     * @param con a database connection
      * @return boolean
      */
-    protected boolean doesElementExist( ICacheElement<K, V> ce )
+    protected boolean doesElementExist( ICacheElement<K, V> ce, Connection con )
     {
         boolean exists = false;
-
-        Connection con;
-        try
-        {
-            con = getPoolAccess().getConnection();
-        }
-        catch ( SQLException e )
-        {
-            log.error( "Problem getting connection.", e );
-            return exists;
-        }
-
         PreparedStatement psSelect = null;
         try
         {
@@ -432,15 +399,6 @@ public class JDBCDiskCache<K, V>
             {
                 log.error( "Problem closing statement.", e1 );
             }
-
-            try
-            {
-                con.close();
-            }
-            catch ( SQLException e )
-            {
-                log.error( "Problem closing connection.", e );
-            }
         }
 
         return exists;
@@ -456,7 +414,7 @@ public class JDBCDiskCache<K, V>
     @Override
     protected ICacheElement<K, V> processGet( K key )
     {
-        incrementGetCount();
+    	getCount.incrementAndGet();
 
         if ( log.isDebugEnabled() )
         {
@@ -477,7 +435,7 @@ public class JDBCDiskCache<K, V>
             String selectString = "select ELEMENT from " + getJdbcDiskCacheAttributes().getTableName()
                 + " where REGION = ? and CACHE_KEY = ?";
 
-            Connection con = getPoolAccess().getConnection();
+            Connection con = getDataSource().getConnection();
             try
             {
                 PreparedStatement psSelect = null;
@@ -542,7 +500,7 @@ public class JDBCDiskCache<K, V>
 
         if ( log.isInfoEnabled() )
         {
-            if ( getCount % LOG_INTERVAL == 0 )
+            if ( getCount.get() % LOG_INTERVAL == 0 )
             {
                 // TODO make a log stats method
                 log.info( "Get Count [" + getCount + "]" );
@@ -561,7 +519,7 @@ public class JDBCDiskCache<K, V>
     @Override
     protected Map<K, ICacheElement<K, V>> processGetMatching( String pattern )
     {
-        incrementGetMatchingCount();
+    	getMatchingCount.incrementAndGet();
 
         if ( log.isDebugEnabled() )
         {
@@ -581,7 +539,7 @@ public class JDBCDiskCache<K, V>
             String selectString = "select CACHE_KEY, ELEMENT from " + getJdbcDiskCacheAttributes().getTableName()
                 + " where REGION = ? and CACHE_KEY like ?";
 
-            Connection con = getPoolAccess().getConnection();
+            Connection con = getDataSource().getConnection();
             try
             {
                 PreparedStatement psSelect = null;
@@ -648,7 +606,7 @@ public class JDBCDiskCache<K, V>
 
         if ( log.isInfoEnabled() )
         {
-            if ( getMatchingCount % LOG_INTERVAL == 0 )
+            if ( getMatchingCount.get() % LOG_INTERVAL == 0 )
             {
                 // TODO make a log stats method
                 log.info( "Get Matching Count [" + getMatchingCount + "]" );
@@ -698,7 +656,7 @@ public class JDBCDiskCache<K, V>
                     + " where REGION = ? and CACHE_KEY like ?";
                 partial = true;
             }
-            Connection con = getPoolAccess().getConnection();
+            Connection con = getDataSource().getConnection();
             PreparedStatement psSelect = null;
             try
             {
@@ -759,7 +717,7 @@ public class JDBCDiskCache<K, V>
             try
             {
                 String sql = "delete from " + getJdbcDiskCacheAttributes().getTableName() + " where REGION = ?";
-                Connection con = getPoolAccess().getConnection();
+                Connection con = getDataSource().getConnection();
                 PreparedStatement psDelete = null;
                 try
                 {
@@ -828,7 +786,7 @@ public class JDBCDiskCache<K, V>
             String sql = "delete from " + getJdbcDiskCacheAttributes().getTableName()
                 + " where IS_ETERNAL = ? and REGION = ? and ? > SYSTEM_EXPIRE_TIME_SECONDS";
 
-            Connection con = getPoolAccess().getConnection();
+            Connection con = getDataSource().getConnection();
             PreparedStatement psDelete = null;
             try
             {
@@ -896,9 +854,9 @@ public class JDBCDiskCache<K, V>
         {
             try
             {
-                getPoolAccess().shutdownDriver();
+            	dsFactory.close();
             }
-            catch ( Exception e )
+            catch ( SQLException e )
             {
                 log.error( "Problem shutting down.", e );
             }
@@ -923,20 +881,17 @@ public class JDBCDiskCache<K, V>
         String selectString = "select count(*) from " + getJdbcDiskCacheAttributes().getTableName()
             + " where REGION = ?";
 
-        final JDBCDiskCachePoolAccess pool = getPoolAccess();
-        if (pool == null) {
-            return size;
-        }
         Connection con;
         try
         {
-            con = pool.getConnection();
+            con = getDataSource().getConnection();
         }
-        catch ( SQLException e1 )
+        catch ( SQLException e )
         {
-            log.error( "Problem getting connection.", e1 );
+            log.error( "Problem getting connection.", e );
             return size;
         }
+
         try
         {
             PreparedStatement psSelect = null;
@@ -1018,24 +973,6 @@ public class JDBCDiskCache<K, V>
         return elementSerializer;
     }
 
-    /** safely increment */
-    private synchronized void incrementUpdateCount()
-    {
-        updateCount++;
-    }
-
-    /** safely increment */
-    private synchronized void incrementGetCount()
-    {
-        getCount++;
-    }
-
-    /** safely increment */
-    private synchronized void incrementGetMatchingCount()
-    {
-        getMatchingCount++;
-    }
-
     /**
      * @param jdbcDiskCacheAttributes The jdbcDiskCacheAttributes to set.
      */
@@ -1074,20 +1011,10 @@ public class JDBCDiskCache<K, V>
 
         List<IStatElement<?>> elems = stats.getStatElements();
 
-        elems.add(new StatElement<Integer>( "Update Count", Integer.valueOf(updateCount) ) );
-        elems.add(new StatElement<Integer>( "Get Count", Integer.valueOf(getCount) ) );
-        elems.add(new StatElement<Integer>( "Get Matching Count", Integer.valueOf(getMatchingCount) ) );
-
-        final JDBCDiskCachePoolAccess pool = getPoolAccess();
-
-        elems.add(new StatElement<Integer>( "Size",
-                Integer.valueOf(pool != null ? getSize() : -1) ) );
-        elems.add(new StatElement<Integer>( "Active DB Connections",
-                Integer.valueOf(pool != null ? pool.getNumActiveInPool() : -1) ) );
-        elems.add(new StatElement<Integer>( "Idle DB Connections",
-                Integer.valueOf(pool != null ? pool.getNumIdleInPool() : -1) ) );
-        elems.add(new StatElement<String>( "DB URL",
-                pool != null ? pool.getPoolUrl() : getJdbcDiskCacheAttributes().getUrl()) );
+        elems.add(new StatElement<AtomicInteger>( "Update Count", updateCount ) );
+        elems.add(new StatElement<AtomicInteger>( "Get Count", getCount ) );
+        elems.add(new StatElement<AtomicInteger>( "Get Matching Count", getMatchingCount ) );
+        elems.add(new StatElement<String>( "DB URL", getJdbcDiskCacheAttributes().getUrl()) );
 
         stats.setStatElements( elems );
 
@@ -1138,11 +1065,12 @@ public class JDBCDiskCache<K, V>
 
     /**
      * Public so managers can access it.
-     * @return the poolAccess
+     * @return the dsFactory
+     * @throws SQLException if getting a data source fails
      */
-    public JDBCDiskCachePoolAccess getPoolAccess()
+    public DataSource getDataSource() throws SQLException
     {
-        return poolAccess;
+        return dsFactory.getDataSource();
     }
 
     /**

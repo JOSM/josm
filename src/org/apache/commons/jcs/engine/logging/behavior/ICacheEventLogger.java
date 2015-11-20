@@ -28,6 +28,7 @@ package org.apache.commons.jcs.engine.logging.behavior;
  */
 public interface ICacheEventLogger
 {
+	// TODO: Use enum
     /** ICache update */
     String UPDATE_EVENT = "update";
 
