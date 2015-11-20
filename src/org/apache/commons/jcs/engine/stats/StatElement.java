@@ -98,7 +98,7 @@ public class StatElement<V>
     public String toString()
     {
         StringBuilder buf = new StringBuilder();
-        buf.append( name + " = " + data );
+        buf.append( name ).append(" = ").append( data );
         return buf.toString();
     }
 }

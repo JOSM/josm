@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.commons.jcs.auxiliary.disk.jdbc.JDBCDiskCache;
 import org.apache.commons.jcs.auxiliary.disk.jdbc.TableState;
+import org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory.DataSourceFactory;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.logging.Log;
@@ -50,14 +51,16 @@ public class MySQLDiskCache<K, V>
      * Delegates to the super and makes use of the MySQL specific parameters used for scheduled
      * optimization.
      * <p>
-     * @param attributes
-     * @param tableState
-     * @param compositeCacheManager
+     * @param attributes the configuration object for this cache
+     * @param dsFactory the DataSourceFactory for this cache
+     * @param tableState an object to track table operations
+     * @param compositeCacheManager the global cache manager
      * @throws SQLException if the pool access could not be set up
      */
-    public MySQLDiskCache( MySQLDiskCacheAttributes attributes, TableState tableState, ICompositeCacheManager compositeCacheManager ) throws SQLException
+    public MySQLDiskCache( MySQLDiskCacheAttributes attributes, DataSourceFactory dsFactory,
+    		TableState tableState, ICompositeCacheManager compositeCacheManager ) throws SQLException
     {
-        super( attributes, tableState, compositeCacheManager );
+        super( attributes, dsFactory, tableState, compositeCacheManager );
 
         mySQLDiskCacheAttributes = attributes;
 
