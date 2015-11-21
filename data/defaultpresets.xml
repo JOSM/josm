@@ -351,6 +351,15 @@
     <chunk id="support">
         <combo key="support" text="Support" values="pole,wall_mounted,billboard,ground" values_context="mounting/support" />
     </chunk>
+    <chunk id="aerodrome">
+        <key key="aeroway" value="aerodrome" match="keyvalue" />
+        <text key="name" text="Name" />
+        <optional>
+            <text key="iata" text="IATA" />
+            <text key="icao" text="ICAO" />
+            <text key="wikipedia" text="Wikipedia" />
+        </optional>
+    </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact_address">
     <preset_link preset_name="Contact (Common Schema)" />
@@ -3198,13 +3207,7 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:aeroway=aerodrome"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:aeroway=aerodrome" />
             <space />
-            <key key="aeroway" value="aerodrome" />
-            <text key="name" text="Name" />
-            <optional>
-                <text key="iata" text="IATA" />
-                <text key="icao" text="ICAO" />
-                <text key="wikipedia" text="Wikipedia" />
-            </optional>
+            <reference ref="aerodrome" />
         </item> <!-- Airport Ground -->
         <separator/>
         <item name="Runway" icon="presets/runway.png" type="way,closedway" preset_name_label="true">
@@ -5943,6 +5946,32 @@
             </optional>
         </item> <!-- Bridge outline -->
     </group> <!-- Bridges -->
+    <group name="Military" icon="presets/military.png">
+        <item name="Airfield" icon="styles/standard/transport/airport/airfield.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:military=airfield" />
+            <space />
+            <key key="military" value="airfield" match="keyvalue!" />
+            <reference ref="aerodrome" />
+        </item>
+        <item name="Barracks" type="closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:military=barracks" />
+            <space />
+            <key key="military" value="barracks" />
+        </item>
+        <item name="Bunker" icon="styles/standard/misc/landmark/bunker.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:military=bunker" />
+            <space />
+            <key key="military" value="bunker" />
+            <combo key="bunker_type" text="Type" values="pillbox,munitions,hardened_aircraft_shelter" match="key" />
+            <text key="name" text="Name" />
+            <check key="historic" text="Historic" />
+        </item>
+        <item name="Range" icon="styles/standard/misc/landmark/range.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:military=range" />
+            <space />
+            <key key="military" value="range" />
+        </item>
+    </group> <!-- Military -->
     <group name="Power" icon="presets/power.png">
         <item name="Power Plant" icon="icons/power_station.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=plant"
