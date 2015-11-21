@@ -552,5 +552,5 @@ relation[/^..$/][!to] {
 *[landuse=farm] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "landuse=farmland";
-  fixAdd: "landuse=farmland";
+  suggestAlternative: "landuse=farmyard";
 }

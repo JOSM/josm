@@ -1309,7 +1309,7 @@
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=turning_loop" />
             <key key="highway" value="turning_loop" />
         </item> <!-- Turning Loop -->
-        <item name="City Limit" icon="presets/citylimit.png" type="node" preset_name_label="true">
+        <item name="City Limit Sign" icon="presets/citylimit.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_sign"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_sign"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_sign"
@@ -1322,7 +1322,7 @@
             <text key="name" text="Name" />
             <text key="alt_name" text="Second Name" />
         </item> <!-- City Limit -->
-        <item name="Speed Limit" icon="styles/standard/vehicle/restriction/speed.png" type="node" preset_name_label="true">
+        <item name="Speed Limit Sign" icon="styles/standard/vehicle/restriction/speed.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_sign"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_sign"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_sign"
@@ -5946,7 +5946,7 @@
             </optional>
         </item> <!-- Bridge outline -->
     </group> <!-- Bridges -->
-    <group name="Military" icon="presets/military.png">
+    <group name="Military" name_context="preset group" icon="presets/military.png">
         <item name="Airfield" icon="styles/standard/transport/airport/airfield.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:military=airfield" />
             <space />
