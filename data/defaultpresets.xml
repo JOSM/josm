@@ -5955,7 +5955,7 @@
             <key key="military" value="airfield" match="keyvalue!" />
             <reference ref="aerodrome" />
         </item>
-        <item name="Barracks" type="closedway" preset_name_label="true">
+        <item name="Barracks" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:military=barracks" />
             <space />
             <key key="military" value="barracks" />
