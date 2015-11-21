@@ -5641,10 +5641,12 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=pipeline" />
             <space />
             <key key="man_made" value="pipeline" />
+            <text key="name" text="Name" />
+            <text key="ref" text="Reference" />
             <reference ref="operator_substance" />
             <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" />
         </item> <!-- Pipeline -->
-        <item name="Pipeline Marker" type="node" preset_name_label="true">
+        <item name="Pipeline Marker" icon="styles/standard/misc/pipeline_marker.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:pipeline=marker" />
             <space />
             <key key="pipeline" value="marker" />
