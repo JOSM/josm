@@ -548,3 +548,9 @@ relation[/^..$/][!to] {
   suggestAlternative: "substance";
   fixChangeKey: "type => substance";
 }
+
+*[landuse=farm] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "landuse=farmland";
+  fixAdd: "landuse=farmland";
+}
