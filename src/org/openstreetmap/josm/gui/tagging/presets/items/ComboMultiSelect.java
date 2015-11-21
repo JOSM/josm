@@ -402,12 +402,14 @@ public abstract class ComboMultiSelect extends KeyedItem {
         if (display_array.length != value_array.length) {
             Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''",
                             key, text));
+            Main.error(tr("Detailed information: {0} <> {1}", Arrays.toString(display_array), Arrays.toString(value_array)));
             display_array = value_array;
         }
 
         if (short_descriptions_array != null && short_descriptions_array.length != value_array.length) {
             Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''",
                             key, text));
+            Main.error(tr("Detailed information: {0} <> {1}", Arrays.toString(short_descriptions_array), Arrays.toString(value_array)));
             short_descriptions_array = null;
         }
 
