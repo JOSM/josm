@@ -175,7 +175,7 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertNoMatch: "node amenity=cinema screen=8";
 }
 *[admin_level][admin_level !~ /^(1|2|3|4|5|6|7|8|9|10|11|12)$/] {
-  throwWarning: tr("unusual value of {0}", "admin_level");
+  throwWarning: tr("unusual value of {0}", "{1.key}");
   assertMatch: "node admin_level=0";
   assertMatch: "node admin_level=-1";
   assertMatch: "node admin_level=13";
