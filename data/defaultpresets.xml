@@ -5633,27 +5633,6 @@
                 <reference ref="name_operator" />
             </optional>
         </item> <!-- Bunker Silo -->
-        <item name="Pipeline" icon="presets/path.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=pipeline"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pipeline"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=pipeline"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=pipeline" />
-            <space />
-            <key key="man_made" value="pipeline" />
-            <text key="name" text="Name" />
-            <text key="ref" text="Reference" />
-            <reference ref="operator_substance" />
-            <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" />
-        </item> <!-- Pipeline -->
-        <item name="Pipeline Marker" icon="styles/standard/misc/pipeline_marker.svg" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:pipeline=marker" />
-            <space />
-            <key key="pipeline" value="marker" />
-            <text key="ref" text="Reference" />
-            <reference ref="operator_substance" />
-            <reference ref="support" />
-        </item> <!-- Pipeline Marker -->
         <item name="Crane" icon="presets/crane.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=crane"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=crane"
@@ -5709,6 +5688,35 @@
             <space />
             <key key="man_made" value="embankment" />
         </item> <!-- Embankment -->
+        <separator/>
+        <item name="Pipeline" icon="presets/path.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=pipeline"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pipeline"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=pipeline"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=pipeline" />
+            <space />
+            <key key="man_made" value="pipeline" />
+            <text key="name" text="Name" />
+            <text key="ref" text="Reference" />
+            <reference ref="operator_substance" />
+            <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" />
+        </item> <!-- Pipeline -->
+        <item name="Pipeline Marker" icon="styles/standard/misc/pipeline_marker.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:pipeline=marker" />
+            <space />
+            <key key="pipeline" value="marker" />
+            <text key="ref" text="Reference" />
+            <reference ref="operator_substance" />
+            <reference ref="support" />
+        </item> <!-- Pipeline Marker -->
+        <item name="Pipeline Valve" icon="styles/standard/misc/valve.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:pipeline=valve" />
+            <space />
+            <key key="pipeline" value="valve" />
+            <text key="ref" text="Reference" />
+            <reference ref="operator_substance" />
+        </item> <!-- Pipeline Valve -->
         <separator/>
         <item name="Water Tower" icon="styles/standard/misc/landmark/water_tower.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=water_tower"
