@@ -1400,6 +1400,11 @@ way[man_made=pipeline] {
     width: 2;
     color: pipeline#660000;
 }
+node[pipeline=marker] {
+    icon-image: "misc/pipeline_marker.svg";
+    set icon_z17;
+    text: auto;
+}
 node[man_made=breakwater],
 node[man_made=groyne],
 node[man_made=embankment],
@@ -3512,7 +3517,7 @@ area[aeroway=aerodrome] {
     width: 2;
     dashes: 9,9;
 }
-node[aeroway=aerodrome] {
+node[aeroway=aerodrome][military!=airfield] {
     icon-image: "transport/airport.png";
     set icon_z17;
     text: auto;
