@@ -596,11 +596,19 @@ public final class Geometry {
                 p2 = oldPoint;
             }
 
-            //test if the line is crossed and if so invert the inside flag.
-            if ((newPoint.getEastNorth().getY() < point.getEastNorth().getY()) == (point.getEastNorth().getY() <= oldPoint.getEastNorth().getY())
-                    && (point.getEastNorth().getX() - p1.getEastNorth().getX()) * (p2.getEastNorth().getY() - p1.getEastNorth().getY())
-                    < (p2.getEastNorth().getX() - p1.getEastNorth().getX()) * (point.getEastNorth().getY() - p1.getEastNorth().getY())) {
-                inside = !inside;
+            EastNorth pEN = point.getEastNorth();
+            EastNorth opEN = oldPoint.getEastNorth();
+            EastNorth npEN = newPoint.getEastNorth();
+            EastNorth p1EN = p1.getEastNorth();
+            EastNorth p2EN = p2.getEastNorth();
+
+            if (pEN != null && opEN != null && npEN != null && p1EN != null && p2EN != null) {
+                //test if the line is crossed and if so invert the inside flag.
+                if ((npEN.getY() < pEN.getY()) == (pEN.getY() <= opEN.getY())
+                        && (pEN.getX() - p1EN.getX()) * (p2EN.getY() - p1EN.getY())
+                        < (p2EN.getX() - p1EN.getX()) * (pEN.getY() - p1EN.getY())) {
+                    inside = !inside;
+                }
             }
 
             oldPoint = newPoint;
