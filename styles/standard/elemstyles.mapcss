@@ -53,7 +53,7 @@ setting::place_fill_colour {
 setting::partial_fill {
   type: boolean;
   label: tr("Areas are drawn with fill only around their inner edges");
-  default: true;
+  default: false;
 }
 
 /*********************/
