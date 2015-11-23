@@ -75,7 +75,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
     /**
      * Downloads the single changeset from the OSM API
      */
-    class DownloadAction extends AbstractAction implements DocumentListener{
+    class DownloadAction extends AbstractAction implements DocumentListener {
 
         DownloadAction() {
             putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);

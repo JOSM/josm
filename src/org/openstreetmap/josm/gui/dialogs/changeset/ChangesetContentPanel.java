@@ -190,7 +190,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
      * Downloads/Updates the content of the changeset
      *
      */
-    class DownloadChangesetContentAction extends AbstractAction{
+    class DownloadChangesetContentAction extends AbstractAction {
         DownloadChangesetContentAction() {
             putValue(NAME, tr("Download content"));
             putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
@@ -316,7 +316,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
     }
 
-    class SelectInCurrentLayerAction extends AbstractAction implements ListSelectionListener, EditLayerChangeListener{
+    class SelectInCurrentLayerAction extends AbstractAction implements ListSelectionListener, EditLayerChangeListener {
 
         SelectInCurrentLayerAction() {
             putValue(NAME, tr("Select in layer"));
@@ -366,7 +366,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
     }
 
-    class ZoomInCurrentLayerAction extends AbstractAction implements ListSelectionListener, EditLayerChangeListener{
+    class ZoomInCurrentLayerAction extends AbstractAction implements ListSelectionListener, EditLayerChangeListener {
 
         ZoomInCurrentLayerAction() {
             putValue(NAME, tr("Zoom to in layer"));

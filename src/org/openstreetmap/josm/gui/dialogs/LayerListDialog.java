@@ -692,7 +692,7 @@ public class LayerListDialog extends ToggleDialog {
      */
 
     public final class ActivateLayerAction extends AbstractAction
-    implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction{
+    implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction {
         private transient Layer layer;
         private transient Shortcut multikeyShortcut;
 
@@ -1149,7 +1149,7 @@ public class LayerListDialog extends ToggleDialog {
     /**
      * The action to move up the currently selected entries in the list.
      */
-    class MoveUpAction extends AbstractAction implements  IEnabledStateUpdating{
+    class MoveUpAction extends AbstractAction implements  IEnabledStateUpdating {
         MoveUpAction() {
             putValue(NAME, tr("Move up"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));

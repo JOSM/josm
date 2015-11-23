@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
-public class TagConflictResolverColumnModel extends DefaultTableColumnModel{
+public class TagConflictResolverColumnModel extends DefaultTableColumnModel {
 
     protected final void createColumns() {
         TableColumn col = null;

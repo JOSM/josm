@@ -43,6 +43,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
     public interface NavigationListener {
         /** Call when need to go to next row */
         void gotoNextDecision();
+
         /** Call when need to go to previous row */
         void gotoPreviousDecision();
     }

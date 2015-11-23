@@ -327,7 +327,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      * The action for creating a new relation
      *
      */
-    static class NewAction extends AbstractAction implements LayerChangeListener{
+    static class NewAction extends AbstractAction implements LayerChangeListener {
         NewAction() {
             putValue(SHORT_DESCRIPTION, tr("Create a new relation"));
             putValue(NAME, tr("New"));

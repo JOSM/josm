@@ -325,7 +325,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
      * Updates the current changeset from the OSM server
      *
      */
-    class UpdateChangesetAction extends AbstractAction{
+    class UpdateChangesetAction extends AbstractAction {
         UpdateChangesetAction() {
             putValue(NAME, tr("Update changeset"));
             putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
@@ -353,7 +353,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
      * data layer.
      *
      */
-    class SelectInCurrentLayerAction extends AbstractAction implements EditLayerChangeListener{
+    class SelectInCurrentLayerAction extends AbstractAction implements EditLayerChangeListener {
 
         SelectInCurrentLayerAction() {
             putValue(NAME, tr("Select in layer"));
@@ -414,7 +414,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
      * data layer.
      *
      */
-    class ZoomInCurrentLayerAction extends AbstractAction implements EditLayerChangeListener{
+    class ZoomInCurrentLayerAction extends AbstractAction implements EditLayerChangeListener {
 
         ZoomInCurrentLayerAction() {
             putValue(NAME, tr("Zoom to in layer"));

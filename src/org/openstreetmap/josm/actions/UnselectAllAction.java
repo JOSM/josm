@@ -11,6 +11,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class UnselectAllAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code UnselectAllAction}.
+     */
     public UnselectAllAction() {
         super(tr("Unselect All"), "unselectall", tr("Unselect all objects."),
             Shortcut.registerShortcut("edit:unselectall", tr("Edit: {0}",
@@ -25,9 +28,9 @@ public class UnselectAllAction extends JosmAction {
             return;
         getCurrentDataSet().setSelected();
     }
+
     /**
      * Refreshes the enabled state
-     *
      */
     @Override
     protected void updateEnabledState() {

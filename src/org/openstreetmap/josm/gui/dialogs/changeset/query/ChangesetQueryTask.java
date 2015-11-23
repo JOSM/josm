@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
  * Asynchronous task to send a changeset query to the OSM API.
  * @since 2689
  */
-public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetDownloadTask{
+public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetDownloadTask {
 
     /** the changeset query */
     private ChangesetQuery query;

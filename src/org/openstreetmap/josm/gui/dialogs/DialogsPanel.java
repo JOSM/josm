@@ -98,6 +98,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         /*  INVISIBLE_TO_COLLAPSED,    does not happen */
         ELEMENT_SHRINKS         /* else. (Remaining elements have more space.) */
     }
+
     /**
      * Reconstruct the view, if the configurations of dialogs has changed.
      * @param action what happened, so the reconstruction is necessary

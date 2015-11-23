@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Projections;
 
 @Ignore
-public class PropertiesMergerTest extends JFrame{
+public class PropertiesMergerTest extends JFrame {
 
     private PropertiesMerger merger;
 

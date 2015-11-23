@@ -23,7 +23,12 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     private final CancelHandler cancelHandler;
 
-    protected enum State {INIT, IN_TASK, IN_SUBTASK, FINISHED}
+    protected enum State {
+        INIT,
+        IN_TASK,
+        IN_SUBTASK,
+        FINISHED
+    }
 
     protected State state = State.INIT;
 

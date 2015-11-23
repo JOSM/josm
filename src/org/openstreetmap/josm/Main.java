@@ -1451,9 +1451,9 @@ public abstract class Main {
          * Called when the user activates a window of another application.
          */
         void toOtherApplication();
+
         /**
-         * Called when the user comes from a window of another application
-         * back to JOSM.
+         * Called when the user comes from a window of another application back to JOSM.
          */
         void fromOtherApplication();
     }

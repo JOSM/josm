@@ -216,7 +216,7 @@ public class ChildRelationBrowser extends JPanel {
      * Action for downloading all child relations for a given parent relation.
      * Recursively.
      */
-    class DownloadAllChildRelationsAction extends AbstractAction{
+    class DownloadAllChildRelationsAction extends AbstractAction {
         DownloadAllChildRelationsAction() {
             putValue(SHORT_DESCRIPTION, tr("Download all child relations (recursively)"));
             putValue(SMALL_ICON, ImageProvider.get("download"));

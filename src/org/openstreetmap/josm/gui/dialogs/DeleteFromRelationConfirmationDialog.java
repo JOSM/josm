@@ -273,7 +273,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
     }
 
-    private static class RelationMemberTableColumnModel extends DefaultTableColumnModel{
+    private static class RelationMemberTableColumnModel extends DefaultTableColumnModel {
 
         protected final void createColumns() {
             TableColumn col = null;

@@ -688,6 +688,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             mapModeChangeListeners.addIfAbsent(listener);
         }
     }
+
     /**
      * Removes a mapMode change listener
      *

@@ -137,6 +137,7 @@ public abstract class RelationEditor extends ExtendedDialog {
             setTitle(tr("Edit relation #{0} in layer ''{1}''", relation.getId(), layer.getName()));
         }
     }
+
     /**
      * Replies the currently edited relation
      *

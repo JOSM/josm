@@ -653,6 +653,7 @@ public final class ExpressionFactory {
         public static boolean not_equal(Object a, Object b) {
             return !equal(a, b);
         }
+
         /**
          * Determines whether the JOSM search with {@code searchStr} applies to the object.
          * @param env the environment

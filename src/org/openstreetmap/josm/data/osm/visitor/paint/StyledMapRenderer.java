@@ -933,6 +933,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             w -= highlightStep;
         }
     }
+
     /**
      * highlights a given point by drawing a rounded rectangle around it. Give the
      * size of the object you want to be highlighted, width is added automatically.

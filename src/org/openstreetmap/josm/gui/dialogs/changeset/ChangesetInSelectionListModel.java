@@ -10,11 +10,12 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-public class ChangesetInSelectionListModel extends ChangesetListModel implements SelectionChangedListener, EditLayerChangeListener{
+public class ChangesetInSelectionListModel extends ChangesetListModel implements SelectionChangedListener, EditLayerChangeListener {
 
     public ChangesetInSelectionListModel(DefaultListSelectionModel selectionModel) {
         super(selectionModel);
     }
+
     /* ---------------------------------------------------------------------------- */
     /* Interface SelectionChangeListener                                            */
     /* ---------------------------------------------------------------------------- */

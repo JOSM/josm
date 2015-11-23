@@ -72,7 +72,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  * the current data layer being assigned to a specific changeset.
  *
  */
-public class ChangesetDialog extends ToggleDialog{
+public class ChangesetDialog extends ToggleDialog {
     private ChangesetInSelectionListModel inSelectionModel;
     private ChangesetsInActiveDataLayerListModel inActiveDataLayerModel;
     private JList<Changeset> lstInSelection;
@@ -290,7 +290,7 @@ public class ChangesetDialog extends ToggleDialog{
     /**
      * Selects objects for the currently selected changesets.
      */
-    class SelectObjectsAction extends AbstractAction implements ListSelectionListener, ItemListener{
+    class SelectObjectsAction extends AbstractAction implements ListSelectionListener, ItemListener {
 
         SelectObjectsAction() {
             putValue(NAME, tr("Select"));
@@ -344,7 +344,7 @@ public class ChangesetDialog extends ToggleDialog{
      * Downloads selected changesets
      *
      */
-    class ReadChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener{
+    class ReadChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener {
         ReadChangesetsAction() {
             putValue(NAME, tr("Download"));
             putValue(SHORT_DESCRIPTION, tr("Download information about the selected changesets from the OSM server"));

@@ -7,7 +7,7 @@ import java.awt.event.FocusEvent;
 
 import javax.swing.text.JTextComponent;
 
-public class SelectAllOnFocusGainedDecorator extends FocusAdapter{
+public class SelectAllOnFocusGainedDecorator extends FocusAdapter {
 
     public static void decorate(JTextComponent tc) {
         if (tc == null) return;

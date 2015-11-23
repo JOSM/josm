@@ -483,6 +483,7 @@ public class CachedFile {
             throws MalformedURLException, IOException {
         return connectFollowingRedirect(downloadUrl, httpAccept, ifModifiedSince, null);
     }
+
     /**
      * Opens a connection for downloading a resource.
      * <p>

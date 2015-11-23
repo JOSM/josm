@@ -15,7 +15,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-public class SelectionTableModel extends AbstractTableModel implements SelectionChangedListener, MapView.LayerChangeListener{
+public class SelectionTableModel extends AbstractTableModel implements SelectionChangedListener, MapView.LayerChangeListener {
 
     /** this selection table model only displays selected primitives in this layer */
     private transient OsmDataLayer layer;

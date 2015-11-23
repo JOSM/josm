@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
  * and {@link #getFailedPlugins()} replies the list of failed plugins.
  *
  */
-public class PluginDownloadTask extends PleaseWaitRunnable{
+public class PluginDownloadTask extends PleaseWaitRunnable {
 
     /**
      * The accepted MIME types sent in the HTTP Accept header.

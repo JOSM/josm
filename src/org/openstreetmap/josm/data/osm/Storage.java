@@ -127,6 +127,7 @@ public class Storage<T> extends AbstractSet<T> {
     public Storage(Hash<? super T, ? super T> ha, int capacity) {
         this(ha, capacity, false);
     }
+
     /**
      * constructor
      * @param ha hash

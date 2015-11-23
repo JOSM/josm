@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * RelationDialogManager keeps track of the open relation editors.
  *
  */
-public class RelationDialogManager extends WindowAdapter implements MapView.LayerChangeListener{
+public class RelationDialogManager extends WindowAdapter implements MapView.LayerChangeListener {
 
     /** keeps track of open relation editors */
     private static RelationDialogManager relationDialogManager;
@@ -102,6 +102,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     public RelationDialogManager() {
         openDialogs = new HashMap<>();
     }
+
     /**
      * Register the relation editor for a relation managed by a
      * {@link OsmDataLayer}.

@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Adjust the position of an imagery layer.
  * @since 3715
  */
-public class ImageryAdjustAction extends MapMode implements MouseListener, MouseMotionListener, AWTEventListener{
+public class ImageryAdjustAction extends MapMode implements MouseListener, MouseMotionListener, AWTEventListener {
     private static volatile ImageryOffsetDialog offsetDialog;
     private static Cursor cursor = ImageProvider.getCursor("normal", "move");
 

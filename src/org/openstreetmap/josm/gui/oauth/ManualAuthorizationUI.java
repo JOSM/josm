@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @since 2746
  */
-public class ManualAuthorizationUI extends AbstractAuthorizationUI{
+public class ManualAuthorizationUI extends AbstractAuthorizationUI {
 
     private JosmTextField tfAccessTokenKey;
     private transient AccessTokenKeyValidator valAccessTokenKey;

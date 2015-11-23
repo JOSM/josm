@@ -60,6 +60,7 @@ public class TagEditorModel extends AbstractTableModel {
         this.rowSelectionModel = new DefaultListSelectionModel();
         this.colSelectionModel  = new DefaultListSelectionModel();
     }
+
     /**
      * Creates a new tag editor model.
      *
@@ -300,6 +301,7 @@ public class TagEditorModel extends AbstractTableModel {
             setDirty(true);
         }
     }
+
     /**
      * deletes the tags given by tagIndices
      *

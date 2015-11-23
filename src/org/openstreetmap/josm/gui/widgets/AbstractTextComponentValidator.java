@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  *
  */
-public abstract class AbstractTextComponentValidator implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener{
+public abstract class AbstractTextComponentValidator implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener {
     private static final Border ERROR_BORDER = BorderFactory.createLineBorder(Color.RED, 1);
     private static final Color ERROR_BACKGROUND =  new Color(255, 224, 224);
 

@@ -46,7 +46,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *   whether the changeset should be closed after the next upload</li>
  * </ul>
  */
-public class ChangesetManagementPanel extends JPanel implements ListDataListener{
+public class ChangesetManagementPanel extends JPanel implements ListDataListener {
     public static final String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
     public static final String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
 
@@ -316,7 +316,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
      * Closes the currently selected changeset
      *
      */
-    class CloseChangesetAction extends AbstractAction implements ItemListener{
+    class CloseChangesetAction extends AbstractAction implements ItemListener {
         CloseChangesetAction() {
             putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
             putValue(SHORT_DESCRIPTION, tr("Close the currently selected open changeset"));

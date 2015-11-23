@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * of a {@link OsmPrimitive}.
  * @since 1709
  */
-public class VersionInfoPanel extends JPanel implements Observer{
+public class VersionInfoPanel extends JPanel implements Observer {
     private PointInTimeType pointInTimeType;
     private transient HistoryBrowserModel model;
     private JMultilineLabel lblInfo;

@@ -98,10 +98,10 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
          */
         IN_EDT,
         /**
-         * Fire in event dispatch thread. If more than one event arrived when event queue is checked, merged them to
-         * one event
+         * Fire in event dispatch thread. If more than one event arrived when event queue is checked, merged them to one event
          */
-        IN_EDT_CONSOLIDATED}
+        IN_EDT_CONSOLIDATED
+    }
 
     private static class ListenerInfo {
         private final DataSetListener listener;

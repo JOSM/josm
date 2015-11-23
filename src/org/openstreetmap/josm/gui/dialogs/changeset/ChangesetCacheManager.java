@@ -398,7 +398,7 @@ public class ChangesetCacheManager extends JFrame {
      * Removes the selected changesets from the local changeset cache
      *
      */
-    class RemoveFromCacheAction extends AbstractAction implements ListSelectionListener{
+    class RemoveFromCacheAction extends AbstractAction implements ListSelectionListener {
         RemoveFromCacheAction() {
             putValue(NAME, tr("Remove from cache"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
@@ -426,7 +426,7 @@ public class ChangesetCacheManager extends JFrame {
      * Closes the selected changesets
      *
      */
-    class CloseSelectedChangesetsAction extends AbstractAction implements ListSelectionListener{
+    class CloseSelectedChangesetsAction extends AbstractAction implements ListSelectionListener {
         CloseSelectedChangesetsAction() {
             putValue(NAME, tr("Close"));
             putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
@@ -468,7 +468,7 @@ public class ChangesetCacheManager extends JFrame {
      * Downloads the selected changesets
      *
      */
-    class DownloadSelectedChangesetsAction extends AbstractAction implements ListSelectionListener{
+    class DownloadSelectedChangesetsAction extends AbstractAction implements ListSelectionListener {
         DownloadSelectedChangesetsAction() {
             putValue(NAME, tr("Update changeset"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "updatechangeset"));
@@ -497,7 +497,7 @@ public class ChangesetCacheManager extends JFrame {
      * Downloads the content of selected changesets from the OSM server
      *
      */
-    class DownloadSelectedChangesetContentAction extends AbstractAction implements ListSelectionListener{
+    class DownloadSelectedChangesetContentAction extends AbstractAction implements ListSelectionListener {
         DownloadSelectedChangesetContentAction() {
             putValue(NAME, tr("Download changeset content"));
             putValue(SMALL_ICON, DOWNLOAD_CONTENT_ICON);

@@ -189,6 +189,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
         }
         return null;
     }
+
     /**
      * Replies the conflict for the {@link OsmPrimitive} <code>their</code>, null
      * if no such conflict exists.

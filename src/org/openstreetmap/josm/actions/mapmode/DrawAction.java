@@ -1055,6 +1055,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         }
     }
+
     /**
      * Takes the data from computeHelperLine to determine which ways/nodes should be highlighted
      * (if feature enabled). Also sets the target cursor if appropriate. It adds the to-be-

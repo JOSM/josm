@@ -48,7 +48,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * </ul>
  *
  */
-public final class JosmUserIdentityManager implements PreferenceChangedListener{
+public final class JosmUserIdentityManager implements PreferenceChangedListener {
 
     private static JosmUserIdentityManager instance;
 
