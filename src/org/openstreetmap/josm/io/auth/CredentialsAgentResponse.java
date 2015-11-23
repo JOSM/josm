@@ -25,6 +25,7 @@ public class CredentialsAgentResponse {
     public String getUsername() {
         return username;
     }
+
     /**
      * Sets the user name
      * @param username The user name
@@ -32,6 +33,7 @@ public class CredentialsAgentResponse {
     public void setUsername(String username) {
         this.username = username;
     }
+
     /**
      * Replies the password
      * @return The password in plain text
@@ -39,6 +41,7 @@ public class CredentialsAgentResponse {
     public char[] getPassword() {
         return password;
     }
+
     /**
      * Sets the password
      * @param password The password in plain text
@@ -46,6 +49,7 @@ public class CredentialsAgentResponse {
     public void setPassword(char[] password) {
         this.password = Utils.copyArray(password);
     }
+
     /**
      * Determines if authentication request has been canceled by user
      * @return true if authentication request has been canceled by user, false otherwise
@@ -53,6 +57,7 @@ public class CredentialsAgentResponse {
     public boolean isCanceled() {
         return canceled;
     }
+
     /**
      * Sets the cancelation status (authentication request canceled by user)
      * @param canceled the cancelation status (authentication request canceled by user)
@@ -60,6 +65,7 @@ public class CredentialsAgentResponse {
     public void setCanceled(boolean canceled) {
         this.canceled = canceled;
     }
+
     /**
      * Determines if authentication credentials should be saved
      * @return true if authentication credentials should be saved, false otherwise
@@ -67,6 +73,7 @@ public class CredentialsAgentResponse {
     public boolean isSaveCredentials() {
         return saveCredentials;
     }
+
     /**
      * Sets the saving status (authentication credentials to save)
      * @param saveCredentials the saving status (authentication credentials to save)

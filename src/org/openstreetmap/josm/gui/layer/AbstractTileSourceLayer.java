@@ -496,6 +496,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
 
     }
+
     /**
      * Creates popup menu items and binds to mouse actions
      */
@@ -677,6 +678,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 Math.pow(2d, ZOOM_OFFSET.get()) * visibileTiles // use offset to decide, how many tiles are visible
                 * 2);
     }
+
     /**
      * Checks zoom level against settings
      * @param maxZoomLvl zoom level to check

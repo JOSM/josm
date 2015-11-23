@@ -946,6 +946,7 @@ public class MainMenu extends JMenuBar {
             MapView.addLayerChangeListener(this);
             this.presetsMenu = presetsMenu;
         }
+
         /**
          * Refreshes the enabled state
          */

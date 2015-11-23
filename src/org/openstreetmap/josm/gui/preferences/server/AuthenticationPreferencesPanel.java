@@ -27,7 +27,7 @@ import org.openstreetmap.josm.io.auth.CredentialsManager;
  * parameters.
  *
  */
-public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel implements PropertyChangeListener{
+public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel implements PropertyChangeListener {
 
     /** indicates whether we use basic authentication */
     private JRadioButton rbBasicAuthentication;

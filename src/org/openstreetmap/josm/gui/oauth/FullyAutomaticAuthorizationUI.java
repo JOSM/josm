@@ -335,7 +335,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Starts the authorisation process
      */
-    class RunAuthorisationAction extends AbstractAction implements DocumentListener{
+    class RunAuthorisationAction extends AbstractAction implements DocumentListener {
         RunAuthorisationAction() {
             putValue(NAME, tr("Authorize now"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));

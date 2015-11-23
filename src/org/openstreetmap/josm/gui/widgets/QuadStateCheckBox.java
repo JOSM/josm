@@ -172,6 +172,7 @@ public class QuadStateCheckBox extends JCheckBox {
                 return State.UNSET;
             }
         }
+
         /** Rotate to the next allowed state.*/
         private void nextState() {
             State current = getState();

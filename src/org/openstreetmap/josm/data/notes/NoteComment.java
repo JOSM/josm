@@ -23,7 +23,12 @@ public class NoteComment {
      * Every comment has an associated action. Some comments are just comments
      * while others indicate the note being opened, closed or reopened
      */
-    public enum Action {opened, closed, reopened, commented}
+    public enum Action {
+        opened,
+        closed,
+        reopened,
+        commented
+    }
 
     /**
      * @param createDate The time at which this comment was added

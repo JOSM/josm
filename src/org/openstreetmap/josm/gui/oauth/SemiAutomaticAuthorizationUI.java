@@ -381,7 +381,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Action for retrieving a request token
      */
-    class RetrieveRequestTokenAction extends AbstractAction{
+    class RetrieveRequestTokenAction extends AbstractAction {
 
         RetrieveRequestTokenAction() {
             putValue(NAME, tr("Retrieve Request Token"));

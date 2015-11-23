@@ -122,26 +122,27 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     }
 
     private transient ListSelectionListener highlighterListener = new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent lse) {
-                if (Main.isDisplayingMapView()) {
-                    Collection<RelationMember> sel = getMemberTableModel().getSelectedMembers();
-                    final List<OsmPrimitive> toHighlight = new ArrayList<>();
-                    for (RelationMember r: sel) {
-                        if (r.getMember().isUsable()) {
-                            toHighlight.add(r.getMember());
+        @Override
+        public void valueChanged(ListSelectionEvent lse) {
+            if (Main.isDisplayingMapView()) {
+                Collection<RelationMember> sel = getMemberTableModel().getSelectedMembers();
+                final List<OsmPrimitive> toHighlight = new ArrayList<>();
+                for (RelationMember r: sel) {
+                    if (r.getMember().isUsable()) {
+                        toHighlight.add(r.getMember());
+                    }
+                }
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Main.isDisplayingMapView() && highlightHelper.highlightOnly(toHighlight)) {
+                            Main.map.mapView.repaint();
                         }
                     }
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (Main.isDisplayingMapView() && highlightHelper.highlightOnly(toHighlight)) {
-                                Main.map.mapView.repaint();
-                            }
-                        }
-                    });
-                }
-            }};
+                });
+            }
+        }
+    };
 
     private void initHighlighting() {
         highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);

@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  * of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
  * @since 1709
  */
-public class VersionTable extends JTable implements Observer{
+public class VersionTable extends JTable implements Observer {
     private VersionTablePopupMenu popupMenu;
     private final transient HistoryBrowserModel model;
 

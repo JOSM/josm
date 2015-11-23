@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
  * </pre>
  *
  */
-public class ParentRelationLoadingTask extends PleaseWaitRunnable{
+public class ParentRelationLoadingTask extends PleaseWaitRunnable {
     private boolean canceled;
     private Exception lastException;
     private DataSet referrers;

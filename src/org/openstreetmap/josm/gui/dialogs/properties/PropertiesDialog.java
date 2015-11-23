@@ -707,11 +707,12 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
         List<Relation> sortedRelations = new ArrayList<>(roles.keySet());
         Collections.sort(sortedRelations, new Comparator<Relation>() {
-            @Override public int compare(Relation o1, Relation o2) {
+            @Override
+            public int compare(Relation o1, Relation o2) {
                 int comp = Boolean.valueOf(o1.isDisabledAndHidden()).compareTo(o2.isDisabledAndHidden());
                 return comp != 0 ? comp : DefaultNameFormatter.getInstance().getRelationComparator().compare(o1, o2);
-            }}
-                );
+            }
+        });
 
         for (Relation r: sortedRelations) {
             membershipData.addRow(new Object[]{r, roles.get(r)});

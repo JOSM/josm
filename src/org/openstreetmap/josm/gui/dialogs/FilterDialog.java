@@ -149,7 +149,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 if (filter != null) {
                     filterModel.addFilter(filter);
                 }
-            }});
+            }
+        });
         SideButton editButton = new SideButton(new AbstractAction() {
             {
                 putValue(NAME, tr("Edit"));

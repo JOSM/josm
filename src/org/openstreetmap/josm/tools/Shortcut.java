@@ -207,6 +207,7 @@ public final class Shortcut {
             menu.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
         }
     }
+
     /**
      * use this to set a buttons's mnemonic
      */
@@ -215,6 +216,7 @@ public final class Shortcut {
             button.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
         }
     }
+
     /**
      * Sets the mnemonic key on a text component.
      */
@@ -223,6 +225,7 @@ public final class Shortcut {
             component.setFocusAccelerator(KeyEvent.getKeyText(assignedKey).charAt(0));
         }
     }
+
     /**
      * use this to set a actions's accelerator
      */

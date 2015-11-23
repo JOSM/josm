@@ -356,6 +356,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             toggleDualAlign();
         }
     }
+
     /**
      * Toggles dual alignment mode.
      */

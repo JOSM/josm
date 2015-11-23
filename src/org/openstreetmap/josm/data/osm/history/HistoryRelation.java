@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * OSM data.
  *
  */
-public class HistoryRelation extends HistoryOsmPrimitive{
+public class HistoryRelation extends HistoryOsmPrimitive {
 
     private List<RelationMemberData> members = new ArrayList<>();
 

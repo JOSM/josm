@@ -42,7 +42,12 @@ public final class Geometry {
         // Hide default constructor for utils classes
     }
 
-    public enum PolygonIntersection {FIRST_INSIDE_SECOND, SECOND_INSIDE_FIRST, OUTSIDE, CROSSING}
+    public enum PolygonIntersection {
+        FIRST_INSIDE_SECOND,
+        SECOND_INSIDE_FIRST,
+        OUTSIDE,
+        CROSSING
+    }
 
     /**
      * Will find all intersection and add nodes there for list of given ways.

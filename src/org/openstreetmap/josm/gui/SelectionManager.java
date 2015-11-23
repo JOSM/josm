@@ -180,6 +180,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         });
         eventSource.addTemporaryLayer(selectionHintLayer);
     }
+
     /**
      * Unregister itself from the given event source and hide the selection hint layer.
      *

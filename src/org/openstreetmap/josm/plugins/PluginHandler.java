@@ -1163,7 +1163,8 @@ public final class PluginHandler {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".jar.new");
-            }});
+            }
+        });
         if (files == null)
             return;
 

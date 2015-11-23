@@ -82,8 +82,8 @@ import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -1207,7 +1207,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    class DeleteCurrentRelationAction extends AbstractAction implements PropertyChangeListener{
+    class DeleteCurrentRelationAction extends AbstractAction implements PropertyChangeListener {
         DeleteCurrentRelationAction() {
             putValue(SHORT_DESCRIPTION, tr("Delete the currently edited relation"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
@@ -1564,7 +1564,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener, TableModelListener{
+    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener, TableModelListener {
         DownloadSelectedIncompleteMembersAction() {
             putValue(SHORT_DESCRIPTION, tr("Download selected incomplete members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));

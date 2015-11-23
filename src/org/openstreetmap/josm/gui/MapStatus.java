@@ -494,7 +494,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                @Override
                public void run() {
                     staticPopup.hide();
-                }});
+                }
+            });
         }
 
         /**
@@ -518,10 +519,11 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             } else {
                 // There is no old popup
                 EventQueue.invokeLater(new Runnable() {
-                     @Override
-                     public void run() {
-                         staticPopup.show();
-                     }});
+                    @Override
+                    public void run() {
+                        staticPopup.show();
+                    }
+                });
             }
             this.popupLabels = lbls;
             this.popup = newPopup;

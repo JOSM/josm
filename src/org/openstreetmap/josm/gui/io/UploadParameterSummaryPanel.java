@@ -20,7 +20,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 // FIXME this class should extend HtmlPanel instead (duplicated code in here)
-public class UploadParameterSummaryPanel extends JPanel implements HyperlinkListener, PropertyChangeListener{
+public class UploadParameterSummaryPanel extends JPanel implements HyperlinkListener, PropertyChangeListener {
     private transient UploadStrategySpecification spec = new UploadStrategySpecification();
     private int numObjects;
     private JMultilineLabel jepMessage;

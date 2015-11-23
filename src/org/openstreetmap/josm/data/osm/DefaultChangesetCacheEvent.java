@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DefaultChangesetCacheEvent implements ChangesetCacheEvent{
+public class DefaultChangesetCacheEvent implements ChangesetCacheEvent {
 
     private final Set<Changeset> added;
     private final Set<Changeset> modified;

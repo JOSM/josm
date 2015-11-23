@@ -343,7 +343,7 @@ public class CredentialDialog extends JDialog {
      *   If current text field is not empty, but the next one is (or just contains a sequence of spaces), focuses the next text field.
      *   If both text fields contain characters, submits the form by calling owner's {@link OKAction}.
      */
-    private static class TFKeyListener implements KeyListener{
+    private static class TFKeyListener implements KeyListener {
         protected CredentialDialog owner; // owner Dependency Injection to call OKAction
         protected JTextField currentTF;
         protected JTextField nextTF;

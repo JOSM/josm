@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
  * Asynchronous task for downloading and unpacking arbitrary file lists
  * Shows progress bar when downloading
  */
-public class DownloadFileTask extends PleaseWaitRunnable{
+public class DownloadFileTask extends PleaseWaitRunnable {
     private final String address;
     private final File file;
     private final boolean mkdir;

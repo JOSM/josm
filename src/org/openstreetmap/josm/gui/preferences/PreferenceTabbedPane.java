@@ -321,7 +321,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             @Override
             public boolean identify(TabPreferenceSetting tps, Object name) {
                 return name != null && tps != null && tps.getIconName() != null && name.equals(tps.getIconName());
-            }}, name);
+            }
+        }, name);
     }
 
     public void selectTabByPref(Class<? extends TabPreferenceSetting> clazz) {
@@ -329,7 +330,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             @Override
             public boolean identify(TabPreferenceSetting tps, Object clazz) {
                 return tps.getClass().isAssignableFrom((Class<?>) clazz);
-            }}, clazz);
+            }
+        }, clazz);
     }
 
     public boolean selectSubTabByPref(Class<? extends SubPreferenceSetting> clazz) {
@@ -341,7 +343,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                     @Override
                     public boolean identify(TabPreferenceSetting tps, Object unused) {
                         return tps.equals(tab);
-                    }}, null);
+                    }
+                }, null);
                 return tab.selectSubTab(sub);
             }
         }

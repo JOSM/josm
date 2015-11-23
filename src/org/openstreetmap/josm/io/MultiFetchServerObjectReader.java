@@ -55,7 +55,7 @@ import org.openstreetmap.josm.tools.Utils;
  *    }
  * </pre>
  */
-public class MultiFetchServerObjectReader extends OsmServerReader{
+public class MultiFetchServerObjectReader extends OsmServerReader {
     /**
      * the max. number of primitives retrieved in one step. Assuming IDs with 7 digits,
      * this leads to a max. request URL of ~ 1600 Bytes ((7 digits +  1 Separator) * 200),

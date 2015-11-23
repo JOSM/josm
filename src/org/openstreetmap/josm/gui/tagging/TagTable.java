@@ -281,9 +281,8 @@ public class TagTable extends JTable  {
     /**
      * Action to be run when the user adds a new tag.
      *
-     *
      */
-    class AddAction extends RunnableAction implements PropertyChangeListener{
+    class AddAction extends RunnableAction implements PropertyChangeListener {
         AddAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
             putValue(SHORT_DESCRIPTION, tr("Add a new tag"));
@@ -315,10 +314,10 @@ public class TagTable extends JTable  {
         }
     }
 
-     /**
+    /**
      * Action to be run when the user wants to paste tags from buffer
      */
-    class PasteAction extends RunnableAction implements PropertyChangeListener{
+    class PasteAction extends RunnableAction implements PropertyChangeListener {
         PasteAction() {
             putValue(SMALL_ICON, ImageProvider.get("", "pastetags"));
             putValue(SHORT_DESCRIPTION, tr("Paste tags from buffer"));

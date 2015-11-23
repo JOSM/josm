@@ -17,18 +17,21 @@ public interface Visitor {
      * @param n The node to inspect.
      */
     void visit(Node n);
+
     /**
      * Visiting call for lines.
      * @param w The way to inspect.
      * @since 64
      */
     void visit(Way w);
+
     /**
      * Visiting call for relations.
      * @param r The relation to inspect.
      * @since 343
      */
     void visit(Relation r);
+
     /**
      * Visiting call for changesets.
      * @param cs The changeset to inspect.

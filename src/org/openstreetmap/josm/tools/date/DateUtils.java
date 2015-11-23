@@ -251,6 +251,7 @@ public final class DateUtils {
             return DateFormat.getTimeInstance(timeStyle, Locale.getDefault());
         }
     }
+
     /**
      * Formats a time to be displayed to current user, based on user preferences.
      * @param time The time to display. Must not be {@code null}

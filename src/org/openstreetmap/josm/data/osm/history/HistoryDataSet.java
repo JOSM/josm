@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * A data set holding histories of OSM primitives.
  * @since 1670
  */
-public class HistoryDataSet implements LayerChangeListener{
+public class HistoryDataSet implements LayerChangeListener {
     /** the unique instance */
     private static HistoryDataSet historyDataSet;
 

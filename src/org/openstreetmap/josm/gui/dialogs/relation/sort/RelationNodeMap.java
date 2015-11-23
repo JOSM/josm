@@ -30,7 +30,7 @@ import org.openstreetmap.josm.data.osm.Way;
  */
 public class RelationNodeMap {
 
-    private static class NodesWays{
+    private static class NodesWays {
         public final Map<Node, Set<Integer>> nodes = new TreeMap<>();
         public final Map<Integer, Set<Node>> ways = new TreeMap<>();
         public final boolean oneWay;

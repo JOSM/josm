@@ -207,7 +207,7 @@ public class BookmarkSelection implements DownloadSelection {
         }
     }
 
-    class RemoveAction extends AbstractAction implements ListSelectionListener{
+    class RemoveAction extends AbstractAction implements ListSelectionListener {
         /**
          * Constructs a new {@code RemoveAction}.
          */

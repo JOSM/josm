@@ -114,7 +114,8 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                     noteData.setSelectedNote(displayList.getSelectedValue());
                 }
                 updateButtonStates();
-            }});
+            }
+        });
         displayList.addMouseListener(new MouseAdapter() {
             //center view on selected note on double click
             @Override

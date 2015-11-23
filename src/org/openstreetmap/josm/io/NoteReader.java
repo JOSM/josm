@@ -39,7 +39,10 @@ public class NoteReader {
      * while the other is used to generate the notes dump file. The parser
      * needs to know which one it is handling.
      */
-    private enum NoteParseMode {API, DUMP}
+    private enum NoteParseMode {
+        API,
+        DUMP
+    }
 
     /**
      * SAX handler to read note information from its XML representation.

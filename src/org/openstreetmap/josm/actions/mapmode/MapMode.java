@@ -74,6 +74,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     public String getModeHelpText() {
         return "";
     }
+
     /**
      * Call selectMapMode(this) on the parent mapFrame.
      */

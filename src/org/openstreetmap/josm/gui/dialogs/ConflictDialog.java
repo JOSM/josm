@@ -62,7 +62,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * dialog on the right of the main frame.
  *
  */
-public final class ConflictDialog extends ToggleDialog implements MapView.EditLayerChangeListener, IConflictListener, SelectionChangedListener{
+public final class ConflictDialog extends ToggleDialog implements MapView.EditLayerChangeListener, IConflictListener, SelectionChangedListener {
 
     /**
      * Replies the color used to paint conflicts.

@@ -92,7 +92,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
                 }
 
                 @Override
-                public final boolean isValid() {
+                public boolean isValid() {
                     try {
                         CustomProjection test = new CustomProjection();
                         test.update(input.getText());
@@ -109,7 +109,6 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
                     valStatus.setVisible(true);
                     return true;
                 }
-
             };
 
             JButton btnCheck = new JButton(tr("Validate"));

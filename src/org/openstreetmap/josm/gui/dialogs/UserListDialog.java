@@ -154,7 +154,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
     }
 
-    class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener{
+    class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener {
 
         /**
          * Constructs a new {@code SelectUsersPrimitivesAction}.

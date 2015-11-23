@@ -68,7 +68,8 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
             @Override
             public boolean evaluate(Relation r) {
                 return r.hasIncompleteMembers();
-            }});
+            }
+        });
         this.incompleteMembers = buildSetOfIncompleteMembers(relations);
         updateEnabledState();
     }

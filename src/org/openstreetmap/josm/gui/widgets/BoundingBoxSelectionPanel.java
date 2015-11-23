@@ -163,7 +163,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
         }
     }
 
-    private static class LongitudeValidator extends AbstractTextComponentValidator{
+    private static class LongitudeValidator extends AbstractTextComponentValidator {
 
         public static void decorate(JTextComponent tc) {
             new LongitudeValidator(tc);

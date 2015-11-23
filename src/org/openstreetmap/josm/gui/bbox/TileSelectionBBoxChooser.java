@@ -79,7 +79,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *    f.setVisible(true);
  * </pre>
  */
-public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
+public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
 
     /** the current bounding box */
     private transient Bounds bbox;
@@ -216,7 +216,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * when the user successfully enters a valid tile grid specification.
      *
      */
-    private static class TileGridInputPanel extends JPanel implements PropertyChangeListener{
+    private static class TileGridInputPanel extends JPanel implements PropertyChangeListener {
         public static final String TILE_BOUNDS_PROP = TileGridInputPanel.class.getName() + ".tileBounds";
 
         private JosmTextField tfMaxY;

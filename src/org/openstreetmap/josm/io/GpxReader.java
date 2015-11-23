@@ -43,7 +43,19 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class GpxReader implements GpxConstants {
 
-    private enum State { init, gpx, metadata, wpt, rte, trk, ext, author, link, trkseg, copyright}
+    private enum State {
+        init,
+        gpx,
+        metadata,
+        wpt,
+        rte,
+        trk,
+        ext,
+        author,
+        link,
+        trkseg,
+        copyright
+    }
 
     private String version;
     /** The resulting gpx data */

@@ -162,7 +162,8 @@ public class DownloadDialog extends JDialog  {
             @Override
             public void actionPerformed(ActionEvent e) {
                  Main.pref.put("download.autorun", cbStartup.isSelected());
-            }});
+            }
+        });
 
         pnl.add(cbNewLayer, GBC.std().anchor(GBC.WEST).insets(5, 5, 5, 5));
         pnl.add(cbStartup, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));

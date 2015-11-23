@@ -187,7 +187,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         tf.setToolTipText(null);
     }
 
-    class LatValueChecker extends FocusAdapter implements ActionListener{
+    class LatValueChecker extends FocusAdapter implements ActionListener {
         private JosmTextField tfLatValue;
 
         LatValueChecker(JosmTextField tfLatValue) {

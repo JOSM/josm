@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.oauth.OsmPrivileges;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 
-public class OsmPrivilegesPanel extends VerticallyScrollablePanel{
+public class OsmPrivilegesPanel extends VerticallyScrollablePanel {
 
     private JCheckBox cbWriteApi;
     private JCheckBox cbWriteGpx;

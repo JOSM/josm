@@ -189,7 +189,11 @@ public class Multipolygon {
     }
 
     public static class PolyData {
-        public enum Intersection {INSIDE, OUTSIDE, CROSSING}
+        public enum Intersection {
+            INSIDE,
+            OUTSIDE,
+            CROSSING
+        }
 
         private final Path2D.Double poly;
         public boolean selected;

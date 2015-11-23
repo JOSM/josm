@@ -264,10 +264,11 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
             // XML style is not bundled anymore
             list.remove(Utils.find(list, new Predicate<SourceEntry>() {
-                        @Override
-                        public boolean evaluate(SourceEntry se) {
-                            return "resource://styles/standard/elemstyles.xml".equals(se.url);
-                        }}));
+                            @Override
+                            public boolean evaluate(SourceEntry se) {
+                                return "resource://styles/standard/elemstyles.xml".equals(se.url);
+                            }
+                        }));
 
             return changed;
         }

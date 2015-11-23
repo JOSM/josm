@@ -31,6 +31,7 @@ public class GeoPropertyIndex<T> {
          * @return property value at that point. Must not be null.
          */
         T get(LatLon ll);
+
         /**
          * Look up the property for a coordinate rectangle.
          * @param box the rectangle

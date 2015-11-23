@@ -421,7 +421,10 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     /**
      * undo / redo switch to reduce duplicate code
      */
-    protected enum UndoRedoType {UNDO, REDO}
+    protected enum UndoRedoType {
+        UNDO,
+        REDO
+    }
 
     /**
      * Action to undo or redo all commands up to (and including) the seleced item.

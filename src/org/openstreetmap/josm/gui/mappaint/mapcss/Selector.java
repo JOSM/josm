@@ -120,7 +120,7 @@ public interface Selector {
          * referrer was found.</p>
          *
          */
-        private  class MatchingReferrerFinder extends AbstractVisitor{
+        private class MatchingReferrerFinder extends AbstractVisitor {
             private Environment e;
 
             /**

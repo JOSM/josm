@@ -35,7 +35,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * about a given {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
  *
  */
-public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListener{
+public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListener {
 
     /** the embedded browser */
     private HistoryBrowser browser;

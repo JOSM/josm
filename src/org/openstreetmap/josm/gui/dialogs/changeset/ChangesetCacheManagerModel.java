@@ -24,7 +24,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  * This is the model for the changeset cache manager dialog.
  *
  */
-public class ChangesetCacheManagerModel extends AbstractTableModel implements ChangesetCacheListener{
+public class ChangesetCacheManagerModel extends AbstractTableModel implements ChangesetCacheListener {
 
     /** the name of the property for the currently selected changeset in the detail view */
     public static final String CHANGESET_IN_DETAIL_VIEW_PROP = ChangesetCacheManagerModel.class.getName() + ".changesetInDetailView";

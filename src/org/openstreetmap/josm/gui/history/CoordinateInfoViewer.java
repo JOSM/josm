@@ -166,7 +166,7 @@ public class CoordinateInfoViewer extends JPanel {
      * {@link HistoryNode}.
      *
      */
-    private static class LatLonViewer extends JPanel implements Observer{
+    private static class LatLonViewer extends JPanel implements Observer {
 
         private JLabel lblLat;
         private JLabel lblLon;

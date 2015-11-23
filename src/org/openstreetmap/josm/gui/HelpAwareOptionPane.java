@@ -281,8 +281,8 @@ public final class HelpAwareOptionPane {
             public void actionPerformed(ActionEvent e) {
                 pane.setValue(JOptionPane.CLOSED_OPTION);
                 dialog.setVisible(false);
-            }}
-        );
+            }
+        });
 
         if (options != null) {
             for (int i = 0; i < options.length; i++) {

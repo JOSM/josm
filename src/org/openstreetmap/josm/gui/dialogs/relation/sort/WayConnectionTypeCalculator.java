@@ -212,6 +212,7 @@ public class WayConnectionTypeCalculator {
     private Direction determineDirection(int ref_i, Direction ref_direction, int k) {
         return determineDirection(ref_i, ref_direction, k, false);
     }
+
     /**
      * Determines the direction of way k with respect to the way ref_i.
      * The way ref_i is assumed to have the direction ref_direction and

@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
  * updates the global {@link ChangesetCache}.
  *
  */
-public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements ChangesetDownloadTask{
+public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements ChangesetDownloadTask {
 
     /**
      * Builds a download task from for a collection of changesets.

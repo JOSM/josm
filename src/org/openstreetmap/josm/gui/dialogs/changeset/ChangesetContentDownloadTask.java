@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
  * changesets.
  *
  */
-public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements ChangesetDownloadTask{
+public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements ChangesetDownloadTask {
 
     /** the list of changeset ids to download */
     private final List<Integer> toDownload = new ArrayList<>();
