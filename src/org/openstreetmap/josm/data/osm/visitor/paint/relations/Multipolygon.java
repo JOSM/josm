@@ -360,6 +360,14 @@ public class Multipolygon {
                 resetNodes(event.getDataset());
             }
         }
+
+        public boolean isClosed() {
+            if (nodes.size() < 3 || nodes.get(0) != nodes.get(nodes.size() - 1)) return false;
+            for (PolyData inner : inners) {
+                if (!inner.isClosed()) return false;
+            }
+            return true;
+        }
     }
 
     private final List<Way> innerWays = new ArrayList<>();

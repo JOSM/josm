@@ -332,6 +332,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private boolean showNames;
     private boolean showIcons;
     private boolean isOutlineOnly;
+    private boolean isUnclosedAreaHighlight;
+    private double unclosedAreaHighlightWidth;
 
     private Font orderFont;
 
@@ -450,7 +452,25 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent,
+    /**
+     * Worker function for drawing areas.
+     * 
+     * @param osm the primitive
+     * @param path the path object for the area that should be drawn; in case
+     * of multipolygons, this can path can be a complex shape with one outer
+     * polygon and one or more inner polygons
+     * @param color The color to fill the area with.
+     * @param fillImage The image to fill the area with. Overrides color.
+     * @param extent if not null, area will be filled partially; specifies, how
+     * far to fill from the boundary towards the center of the area;
+     * if null, area will be filled completely
+     * @param unClosedHighlight true, if the fact that the way / multipolygon is not
+     * properly closed should be highlighted; this parameter is only used
+     * for partial fill ({@code extent != null}), otherwise it is ignored 
+     * @param disabled If this should be drawn with a special disabled style.
+     * @param text The text to write on the area.
+     */
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent, boolean unClosedHighlight,
             boolean disabled, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
@@ -465,11 +485,17 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (extent == null) {
                     g.fill(area);
                 } else {
-                    Shape clip = g.getClip();
-                    g.clip(area);
-                    g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-                    g.draw(area);
-                    g.setClip(clip);
+                    if (unClosedHighlight) {
+                        g.setStroke(new BasicStroke((int)(unclosedAreaHighlightWidth / 100 * extent),
+                                BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                        g.draw(area);
+                    } else {
+                        Shape clip = g.getClip();
+                        g.clip(area);
+                        g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                        g.draw(area);
+                        g.setClip(clip);
+                    }
                 }
             } else {
                 TexturePaint texture = new TexturePaint(fillImage.getImage(disabled),
@@ -482,11 +508,17 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (extent == null) {
                     g.fill(area);
                 } else {
-                    Shape clip = g.getClip();
-                    BasicStroke stroke = new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                    g.clip(stroke.createStrokedShape(area));
-                    g.fill(area);
-                    g.setClip(clip);
+                    if (unClosedHighlight) {
+                        g.setStroke(new BasicStroke((int)(unclosedAreaHighlightWidth / 100 * extent),
+                                BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                        g.draw(area);
+                    } else {
+                        Shape clip = g.getClip();
+                        BasicStroke stroke = new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+                        g.clip(stroke.createStrokedShape(area));
+                        g.fill(area);
+                        g.setClip(clip);
+                    }
                 }
                 g.setPaintMode();
             }
@@ -591,7 +623,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
                 drawArea(r, p,
                         pd.selected ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
-                        fillImage, extent, disabled, text);
+                        fillImage, extent,
+                        isUnclosedAreaHighlight && extent != null && !pd.isClosed(),
+                        disabled, text);
             }
         }
     }
@@ -608,7 +642,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param text The text to write on the area.
      */
     public void drawArea(Way w, Color color, MapImage fillImage, Float extent, boolean disabled, TextElement text) {
-        drawArea(w, getPath(w), color, fillImage, extent, disabled, text);
+        drawArea(w, getPath(w), color, fillImage, extent, isUnclosedAreaHighlight && !w.isClosed(), disabled, text);
     }
 
     public void drawBoxText(Node n, BoxTextElemStyle bs) {
@@ -1463,6 +1497,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         showNames = paintSettings.getShowNamesDistance() > circum;
         showIcons = paintSettings.getShowIconsDistance() > circum;
         isOutlineOnly = paintSettings.isOutlineOnly();
+        isUnclosedAreaHighlight = paintSettings.isUnclosedAreaHighlight();
+        unclosedAreaHighlightWidth = paintSettings.getUnclosedAreaHighlightWidth();
         orderFont = new Font(Main.pref.get("mappaint.font", "Droid Sans"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
 
         antialiasing = Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
