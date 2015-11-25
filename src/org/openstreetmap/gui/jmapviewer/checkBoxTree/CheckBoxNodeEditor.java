@@ -19,7 +19,7 @@ import javax.swing.tree.TreePath;
  * 
  * @author galo
  */
-public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor{
+public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
     /** SerialVersionUID */
     private static final long serialVersionUID = -8921320784224636657L;
 
