@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Vincent Privat
  */
-public interface MapPolygon extends MapObject{
+public interface MapPolygon extends MapObject {
 
     /**
      * @return Latitude/Longitude of each point of polygon

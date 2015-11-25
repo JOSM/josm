@@ -17,7 +17,7 @@ import javax.swing.tree.TreeCellRenderer;
  * 
  * @author galo
  */
-public class CheckBoxNodeRenderer implements TreeCellRenderer{
+public class CheckBoxNodeRenderer implements TreeCellRenderer {
 
     private final CheckBoxNodePanel panel = new CheckBoxNodePanel();
     private final DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();

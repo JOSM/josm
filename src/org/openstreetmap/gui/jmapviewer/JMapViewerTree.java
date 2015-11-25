@@ -25,7 +25,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapObject;
  * Tree of layers for JMapViewer component
  * @author galo
  */
-public class JMapViewerTree extends JPanel{
+public class JMapViewerTree extends JPanel {
     /** Serial Version UID */
     private static final long serialVersionUID = 3050203054402323972L;
 
@@ -94,7 +94,7 @@ public class JMapViewerTree extends JPanel{
         } else if (layer.isVisibleTexts()) popup.add(menuItemHide);
         else popup.add(menuItemShow);
 
-        menuItemShow.addActionListener(new ActionListener(){
+        menuItemShow.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 setVisibleTexts(layer, true);
@@ -102,7 +102,7 @@ public class JMapViewerTree extends JPanel{
                 map.repaint();
             }
         });
-        menuItemHide.addActionListener(new ActionListener(){
+        menuItemHide.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 setVisibleTexts(layer, false);

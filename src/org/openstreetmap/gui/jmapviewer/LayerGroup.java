@@ -3,7 +3,7 @@ package org.openstreetmap.gui.jmapviewer;
 
 import java.util.List;
 
-public class LayerGroup extends AbstractLayer{
+public class LayerGroup extends AbstractLayer {
     private List<AbstractLayer> layers;
 
     public LayerGroup(String name) {

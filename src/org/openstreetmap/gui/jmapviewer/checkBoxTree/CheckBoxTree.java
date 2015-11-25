@@ -23,7 +23,7 @@ import org.openstreetmap.gui.jmapviewer.LayerGroup;
  *
  * @author galo
  */
-public class CheckBoxTree extends JTree{
+public class CheckBoxTree extends JTree {
     /** Serial Version UID */
     private static final long serialVersionUID = 6943401106938034256L;
 
