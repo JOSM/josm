@@ -44,12 +44,13 @@ import org.apache.commons.logging.LogFactory;
 /**
  * This is responsible for storing the keys.
  * <p>
+ *
  * @author Aaron Smuts
  */
 public class BlockDiskKeyStore<K>
 {
     /** The logger */
-    private static final Log log = LogFactory.getLog( BlockDiskKeyStore.class );
+    private static final Log log = LogFactory.getLog(BlockDiskKeyStore.class);
 
     /** Attributes governing the behavior of the block disk cache. */
     private final BlockDiskCacheAttributes blockDiskCacheAttributes;
@@ -79,35 +80,36 @@ public class BlockDiskKeyStore<K>
     /**
      * Set the configuration options.
      * <p>
+     *
      * @param cacheAttributes
-     * @param blockDiskCache used for freeing
+     * @param blockDiskCache
+     *            used for freeing
      */
-    public BlockDiskKeyStore( BlockDiskCacheAttributes cacheAttributes,
-            BlockDiskCache<K, ?> blockDiskCache)
+    public BlockDiskKeyStore(BlockDiskCacheAttributes cacheAttributes, BlockDiskCache<K, ?> blockDiskCache)
     {
         this.blockDiskCacheAttributes = cacheAttributes;
         this.logCacheName = "Region [" + this.blockDiskCacheAttributes.getCacheName() + "] ";
         this.fileName = this.blockDiskCacheAttributes.getCacheName();
         this.maxKeySize = cacheAttributes.getMaxKeySize();
         this.blockDiskCache = blockDiskCache;
-        this.diskLimitType  = cacheAttributes.getDiskLimitType();
+        this.diskLimitType = cacheAttributes.getDiskLimitType();
         this.blockSize = cacheAttributes.getBlockSizeBytes();
 
         File rootDirectory = cacheAttributes.getDiskPath();
 
-        if ( log.isInfoEnabled() )
+        if (log.isInfoEnabled())
         {
-            log.info( logCacheName + "Cache file root directory [" + rootDirectory + "]" );
+            log.info(logCacheName + "Cache file root directory [" + rootDirectory + "]");
         }
 
-        this.keyFile = new File( rootDirectory, fileName + ".key" );
+        this.keyFile = new File(rootDirectory, fileName + ".key");
 
-        if ( log.isInfoEnabled() )
+        if (log.isInfoEnabled())
         {
-            log.info( logCacheName + "Key File [" + this.keyFile.getAbsolutePath() + "]" );
+            log.info(logCacheName + "Key File [" + this.keyFile.getAbsolutePath() + "]");
         }
 
-        if ( keyFile.length() > 0 )
+        if (keyFile.length() > 0)
         {
             loadKeys();
             // TODO verify somehow
@@ -128,27 +130,26 @@ public class BlockDiskKeyStore<K>
         {
             ElapsedTimer timer = new ElapsedTimer();
             int numKeys = keyHash.size();
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Saving keys to [" + this.keyFile.getAbsolutePath() + "], key count ["
-                    + numKeys + "]" );
+                log.info(logCacheName + "Saving keys to [" + this.keyFile.getAbsolutePath() + "], key count [" + numKeys + "]");
             }
 
             synchronized (keyFile)
             {
-                FileOutputStream fos = new FileOutputStream( keyFile );
-                BufferedOutputStream bos = new BufferedOutputStream( fos, 65536 );
-                ObjectOutputStream oos = new ObjectOutputStream( bos );
+                FileOutputStream fos = new FileOutputStream(keyFile);
+                BufferedOutputStream bos = new BufferedOutputStream(fos, 65536);
+                ObjectOutputStream oos = new ObjectOutputStream(bos);
                 try
                 {
                     // don't need to synchronize, since the underlying collection makes a copy
                     for (Map.Entry<K, int[]> entry : keyHash.entrySet())
                     {
                         BlockDiskElementDescriptor<K> descriptor = new BlockDiskElementDescriptor<K>();
-                        descriptor.setKey( entry.getKey() );
-                        descriptor.setBlocks( entry.getValue() );
+                        descriptor.setKey(entry.getKey());
+                        descriptor.setBlocks(entry.getValue());
                         // stream these out in the loop.
-                        oos.writeObject( descriptor );
+                        oos.writeUnshared(descriptor);
                     }
                 }
                 finally
@@ -158,15 +159,15 @@ public class BlockDiskKeyStore<K>
                 }
             }
 
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Finished saving keys. It took " + timer.getElapsedTimeString() + " to store "
-                    + numKeys + " keys.  Key file length [" + keyFile.length() + "]" );
+                log.info(logCacheName + "Finished saving keys. It took " + timer.getElapsedTimeString() + " to store " + numKeys
+                    + " keys.  Key file length [" + keyFile.length() + "]");
             }
         }
-        catch ( IOException e )
+        catch (IOException e)
         {
-            log.error( logCacheName + "Problem storing keys.", e );
+            log.error(logCacheName + "Problem storing keys.", e);
         }
     }
 
@@ -180,7 +181,6 @@ public class BlockDiskKeyStore<K>
             clearMemoryMap();
             saveKeys();
         }
-
     }
 
     /**
@@ -197,16 +197,19 @@ public class BlockDiskKeyStore<K>
     private void initKeyMap()
     {
         keyHash = null;
-        if ( maxKeySize >= 0 )
+        if (maxKeySize >= 0)
         {
-            if (this.diskLimitType.equals(DiskLimitType.SIZE)) {
-                keyHash = new LRUMapSizeLimited(maxKeySize);
-            } else {
-                keyHash = new LRUMapCountLimited( maxKeySize );
-            }
-            if ( log.isInfoEnabled() )
+            if (this.diskLimitType == DiskLimitType.SIZE)
             {
-                log.info( logCacheName + "Set maxKeySize to: '" + maxKeySize + "'" );
+                keyHash = new LRUMapSizeLimited(maxKeySize);
+            }
+            else
+            {
+                keyHash = new LRUMapCountLimited(maxKeySize);
+            }
+            if (log.isInfoEnabled())
+            {
+                log.info(logCacheName + "Set maxKeySize to: '" + maxKeySize + "'");
             }
         }
         else
@@ -214,9 +217,9 @@ public class BlockDiskKeyStore<K>
             // If no max size, use a plain map for memory and processing efficiency.
             keyHash = new HashMap<K, int[]>();
             // keyHash = Collections.synchronizedMap( new HashMap() );
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Set maxKeySize to unlimited'" );
+                log.info(logCacheName + "Set maxKeySize to unlimited'");
             }
         }
     }
@@ -227,9 +230,9 @@ public class BlockDiskKeyStore<K>
      */
     protected void loadKeys()
     {
-        if ( log.isInfoEnabled() )
+        if (log.isInfoEnabled())
         {
-            log.info( logCacheName + "Loading keys for " + keyFile.toString() );
+            log.info(logCacheName + "Loading keys for " + keyFile.toString());
         }
 
         try
@@ -241,22 +244,23 @@ public class BlockDiskKeyStore<K>
 
             synchronized (keyFile)
             {
-                FileInputStream fis = new FileInputStream( keyFile );
-                BufferedInputStream bis = new BufferedInputStream( fis );
-                ObjectInputStream ois = new ObjectInputStreamClassLoaderAware( bis , null);
+                FileInputStream fis = new FileInputStream(keyFile);
+                BufferedInputStream bis = new BufferedInputStream(fis, 65536);
+                ObjectInputStream ois = new ObjectInputStreamClassLoaderAware(bis, null);
                 try
                 {
-                    while ( true )
+                    while (true)
                     {
-                        @SuppressWarnings("unchecked") // Need to cast from Object
+                        @SuppressWarnings("unchecked")
+                        // Need to cast from Object
                         BlockDiskElementDescriptor<K> descriptor = (BlockDiskElementDescriptor<K>) ois.readObject();
-                        if ( descriptor != null )
+                        if (descriptor != null)
                         {
-                            keys.put( descriptor.getKey(), descriptor.getBlocks() );
+                            keys.put(descriptor.getKey(), descriptor.getBlocks());
                         }
                     }
                 }
-                catch ( EOFException eof )
+                catch (EOFException eof)
                 {
                     // nothing
                 }
@@ -266,31 +270,32 @@ public class BlockDiskKeyStore<K>
                 }
             }
 
-            if ( !keys.isEmpty() )
+            if (!keys.isEmpty())
             {
-                keyHash.putAll( keys );
+                keyHash.putAll(keys);
 
-                if ( log.isDebugEnabled() )
+                if (log.isDebugEnabled())
                 {
-                    log.debug( logCacheName + "Found " + keys.size() + " in keys file." );
+                    log.debug(logCacheName + "Found " + keys.size() + " in keys file.");
                 }
 
-                if ( log.isInfoEnabled() )
+                if (log.isInfoEnabled())
                 {
-                    log.info( logCacheName + "Loaded keys from [" + fileName + "], key count: " + keyHash.size()
-                        + "; up to " + maxKeySize + " will be available." );
+                    log.info(logCacheName + "Loaded keys from [" + fileName + "], key count: " + keyHash.size() + "; up to "
+                        + maxKeySize + " will be available.");
                 }
             }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( logCacheName + "Problem loading keys for file " + fileName, e );
+            log.error(logCacheName + "Problem loading keys for file " + fileName, e);
         }
     }
 
     /**
      * Gets the entry set.
      * <p>
+     *
      * @return entry set.
      */
     public Set<Map.Entry<K, int[]>> entrySet()
@@ -301,6 +306,7 @@ public class BlockDiskKeyStore<K>
     /**
      * Gets the key set.
      * <p>
+     *
      * @return key set.
      */
     public Set<K> keySet()
@@ -311,6 +317,7 @@ public class BlockDiskKeyStore<K>
     /**
      * Gets the size of the key hash.
      * <p>
+     *
      * @return the number of keys.
      */
     public int size()
@@ -321,91 +328,123 @@ public class BlockDiskKeyStore<K>
     /**
      * gets the object for the key.
      * <p>
+     *
      * @param key
      * @return Object
      */
-    public int[] get( K key )
+    public int[] get(K key)
     {
-        return this.keyHash.get( key );
+        return this.keyHash.get(key);
     }
 
     /**
      * Puts a int[] in the keyStore.
      * <p>
+     *
      * @param key
      * @param value
      */
-    public void put( K key, int[] value )
+    public void put(K key, int[] value)
     {
-        this.keyHash.put( key, value );
+        this.keyHash.put(key, value);
     }
 
     /**
      * Remove by key.
      * <p>
+     *
      * @param key
      * @return BlockDiskElementDescriptor if it was present, else null
      */
-    public int[] remove( K key )
+    public int[] remove(K key)
     {
-        return this.keyHash.remove( key );
+        return this.keyHash.remove(key);
     }
-
 
     /**
      * Class for recycling and lru. This implements the LRU size overflow callback, so we can mark the
      * blocks as free.
      */
-
-    public class LRUMapSizeLimited
-    	extends AbstractLRUMap<K, int[]>
-
+    public class LRUMapSizeLimited extends AbstractLRUMap<K, int[]>
     {
         /**
          * <code>tag</code> tells us which map we are working on.
          */
-        public String tag = "orig-lru-size";
+        public final String tag = "orig-lru-size";
+
         // size of the content in kB
-        private AtomicInteger contentSize = new AtomicInteger();
-        private int maxSize = -1;
+        private AtomicInteger contentSize;
+        private int maxSize;
+
         /**
          * Default
          */
         public LRUMapSizeLimited()
         {
-            super();
+            this(-1);
         }
 
         /**
-         * @param maxKeySize
+         * @param maxSize maximum cache size in kB
          */
-        public LRUMapSizeLimited( int maxKeySize )
+        public LRUMapSizeLimited(int maxSize)
         {
             super();
-            this.maxSize = maxKeySize;
+            this.maxSize = maxSize;
+            this.contentSize = new AtomicInteger(0);
+        }
+
+        // keep the content size in kB, so 2^31 kB is reasonable value
+        private void subLengthFromCacheSize(int[] value)
+        {
+            contentSize.addAndGet(value.length * blockSize / -1024 - 1);
+        }
+
+        // keep the content size in kB, so 2^31 kB is reasonable value
+        private void addLengthToCacheSize(int[] value)
+        {
+            contentSize.addAndGet(value.length * blockSize / 1024 + 1);
         }
 
         @Override
-        public int[] put(K key, int[] value) {
-            try {
-                return super.put(key, value);
-            } finally {
-                // keep the content size in kB, so 2^31 kB is reasonable value
-                contentSize.addAndGet((int) Math.ceil(value.length * blockSize / 1024.0));
+        public int[] put(K key, int[] value)
+        {
+            int[] oldValue = null;
+
+            try
+            {
+                oldValue = super.put(key, value);
             }
+            finally
+            {
+                if (value != null)
+                {
+                    addLengthToCacheSize(value);
+                }
+                if (oldValue != null)
+                {
+                    subLengthFromCacheSize(oldValue);
+                }
+            }
+
+            return oldValue;
         }
 
         @Override
-        public int[] remove(Object key ) {
+        public int[] remove(Object key)
+        {
             int[] value = null;
 
-            try {
+            try
+            {
                 value = super.remove(key);
                 return value;
-            } finally {
-                if (value != null) {
-                    // keep the content size in kB, so 2^31 kB is reasonable value
-                    contentSize.addAndGet((int) ((Math.ceil(value.length * blockSize / 1024.0)) * -1));
+            }
+            finally
+            {
+                if (value != null)
+                {
+                    subLengthFromCacheSize(value);
                 }
             }
         }
@@ -414,57 +453,65 @@ public class BlockDiskKeyStore<K>
          * This is called when the may key size is reached. The least recently used item will be
          * passed here. We will store the position and size of the spot on disk in the recycle bin.
          * <p>
+         *
          * @param key
          * @param value
          */
         @Override
-        protected void processRemovedLRU( K key, int[] value )
+        protected void processRemovedLRU(K key, int[] value)
         {
-            blockDiskCache.freeBlocks( value );
-            if ( log.isDebugEnabled() )
+            blockDiskCache.freeBlocks(value);
+            if (log.isDebugEnabled())
             {
-                log.debug( logCacheName + "Removing key: [" + key + "] from key store." );
-                log.debug( logCacheName + "Key store size: [" + super.size() + "]." );
+                log.debug(logCacheName + "Removing key: [" + key + "] from key store.");
+                log.debug(logCacheName + "Key store size: [" + super.size() + "].");
+            }
+
+            if (value != null)
+            {
+                subLengthFromCacheSize(value);
             }
         }
+
         @Override
-        protected boolean shouldRemove() {
-            return maxSize > 0 && contentSize.intValue() > maxSize && this.size() > 1;
+        protected boolean shouldRemove()
+        {
+            return maxSize > 0 && contentSize.get() > maxSize && this.size() > 1;
         }
     }
+
     /**
      * Class for recycling and lru. This implements the LRU overflow callback, so we can mark the
      * blocks as free.
      */
-    public class LRUMapCountLimited
-    extends LRUMap<K, int[]>
-    // implements Serializable
+    public class LRUMapCountLimited extends LRUMap<K, int[]>
     {
         /**
          * <code>tag</code> tells us which map we are working on.
          */
-        public String tag = "orig-lru-count";
+        public final String tag = "orig-lru-count";
 
-        public LRUMapCountLimited(int maxKeySize) {
+        public LRUMapCountLimited(int maxKeySize)
+        {
             super(maxKeySize);
         }
-
 
         /**
          * This is called when the may key size is reached. The least recently used item will be
          * passed here. We will store the position and size of the spot on disk in the recycle bin.
          * <p>
+         *
          * @param key
          * @param value
          */
         @Override
-        protected void processRemovedLRU( K key, int[] value )
+        protected void processRemovedLRU(K key, int[] value)
         {
-            blockDiskCache.freeBlocks( value );
-            if ( log.isDebugEnabled() )
+            blockDiskCache.freeBlocks(value);
+            if (log.isDebugEnabled())
             {
-                log.debug( logCacheName + "Removing key: [" + key + "] from key store." );
-                log.debug( logCacheName + "Key store size: [" + super.size() + "]." );
+                log.debug(logCacheName + "Removing key: [" + key + "] from key store.");
+                log.debug(logCacheName + "Key store size: [" + super.size() + "].");
             }
         }
     }

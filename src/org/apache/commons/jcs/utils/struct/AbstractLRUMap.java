@@ -88,15 +88,14 @@ public abstract class AbstractLRUMap<K, V>
     {
         list = new DoubleLinkedList<LRUElementDescriptor<K, V>>();
 
-        // normal hshtable is faster for
+        // normal hashtable is faster for
         // sequential keys.
         map = new ConcurrentHashMap<K, LRUElementDescriptor<K, V>>();
-        // map = new ConcurrentHashMap();
     }
 
 
     /**
-     * This simply returned the number of elements in the map.
+     * This simply returns the number of elements in the map.
      * <p>
      * @see java.util.Map#size()
      */
@@ -229,9 +228,9 @@ public abstract class AbstractLRUMap<K, V>
     }
 
     /**
-     * This gets an element out of the map without adjusting it's posisiton in the LRU. In other
+     * This gets an element out of the map without adjusting it's position in the LRU. In other
      * words, this does not count as being used. If the element is the last item in the list, it
-     * will still be the last itme in the list.
+     * will still be the last time in the list.
      * <p>
      * @param key
      * @return Object
@@ -325,8 +324,7 @@ public abstract class AbstractLRUMap<K, V>
 
         if (shouldRemove())
         {
-            final boolean debugEnabled = log.isDebugEnabled();
-            if (debugEnabled)
+            if (log.isDebugEnabled())
             {
                 log.debug( "In memory limit reached, removing least recently used." );
             }
@@ -640,9 +638,8 @@ public abstract class AbstractLRUMap<K, V>
         lock.lock();
         try
         {
-            // todo, we should return a defensive copy
+            // TODO we should return a defensive copy
             Set<Map.Entry<K, LRUElementDescriptor<K, V>>> entries = map.entrySet();
-
             Set<Map.Entry<K, V>> unWrapped = new HashSet<Map.Entry<K, V>>();
 
             for (Map.Entry<K, LRUElementDescriptor<K, V>> pre : entries) {

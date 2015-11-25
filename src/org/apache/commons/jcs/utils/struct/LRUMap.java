@@ -25,36 +25,42 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author Wiktor Niesiobędzki
  *
- * Simple LRUMap implementation that keeps the number of the objects below or equal maxObjects
+ *         Simple LRUMap implementation that keeps the number of the objects below or equal maxObjects
  *
  * @param <K>
  * @param <V>
  */
-public class LRUMap<K, V> extends AbstractLRUMap<K, V> {
+public class LRUMap<K, V> extends AbstractLRUMap<K, V>
+{
 
     /** if the max is less than 0, there is no limit! */
     int maxObjects = -1;
     AtomicInteger counter = new AtomicInteger(0);
 
-    public LRUMap() {
+    public LRUMap()
+    {
         super();
     }
 
     /**
      *
-     * @param maxObjects maximum number to keep in the map
+     * @param maxObjects
+     *            maximum number to keep in the map
      */
-    public LRUMap(int maxObjects) {
+    public LRUMap(int maxObjects)
+    {
         super();
         this.maxObjects = maxObjects;
     }
 
     @Override
-    public boolean shouldRemove() {
-    	return maxObjects > 0 && this.size() > maxObjects; 
+    public boolean shouldRemove()
+    {
+        return maxObjects > 0 && this.size() > maxObjects;
     }
 
-    public Object getMaxCounter() {
-		return maxObjects;
-	}
+    public Object getMaxCounter()
+    {
+        return maxObjects;
+    }
 }

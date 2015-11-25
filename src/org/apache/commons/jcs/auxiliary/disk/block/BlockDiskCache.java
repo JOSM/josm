@@ -125,11 +125,13 @@ public class BlockDiskCache<K, V>
             if ( this.blockDiskCacheAttributes.getBlockSizeBytes() > 0 )
             {
                 this.dataFile = new BlockDisk( new File( rootDirectory, fileName + ".data" ),
-                                               this.blockDiskCacheAttributes.getBlockSizeBytes() );
+                                               this.blockDiskCacheAttributes.getBlockSizeBytes(),
+                                               getElementSerializer() );
             }
             else
             {
-                this.dataFile = new BlockDisk( new File( rootDirectory, fileName + ".data" ), getElementSerializer() );
+                this.dataFile = new BlockDisk( new File( rootDirectory, fileName + ".data" ),
+                                               getElementSerializer() );
             }
 
             keyStore = new BlockDiskKeyStore<K>( this.blockDiskCacheAttributes, this );
