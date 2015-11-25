@@ -52,6 +52,11 @@ public final class MapPaintSettings implements PreferenceChangedListener {
     private boolean unclosedAreaHighlight;
     /** Preference: width of unclosed area highlight */
     private double unclosedAreaHighlightWidth;
+    /** Preference: parameter to avoid partial fill on small area objects:
+     * If more than a certain percentage of the total area would be filled by 
+     * partial fill, then fill this area completely (avoiding narrow gap in the
+     * center) */
+    private double partialFillThreshold;
     /** Color Preference for selected objects */
     private Color selectedColor;
     private Color relationSelectedColor;
@@ -111,6 +116,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         outlineOnly = Main.pref.getBoolean("draw.data.area_outline_only", false);
         unclosedAreaHighlight = Main.pref.getBoolean("draw.unclosed_area_partial_fill_highlight", true);
         unclosedAreaHighlightWidth = Main.pref.getDouble("draw.unclosed_area_partial_fill_highlight.width", 80);
+        partialFillThreshold = Main.pref.getDouble("draw.area.partial_fill_threshold", 50);
     }
 
     @Override
@@ -362,10 +368,22 @@ public final class MapPaintSettings implements PreferenceChangedListener {
     }
 
     /**
-     * Returns the width of unclosed area highlight
+     * Returns the width of unclosed area highlight.
      * @return the width of unclosed area highlight
      */
     public double getUnclosedAreaHighlightWidth() {
         return unclosedAreaHighlightWidth;
+    }
+
+    /**
+     * Returns the partial fill threshold.
+     * This parameter is used to avoid partial fill on small area objects:
+     * If more than a certain percentage of the total area would be filled by 
+     * partial fill, then fill this area completely (avoiding narrow gap in the
+     * center)
+     * @return the partial fill threshold
+     */
+    public double getPartialFillThreshold() {
+        return partialFillThreshold;
     }
 }
