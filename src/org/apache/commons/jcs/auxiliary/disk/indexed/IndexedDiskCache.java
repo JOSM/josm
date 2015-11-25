@@ -19,6 +19,24 @@ package org.apache.commons.jcs.auxiliary.disk.indexed;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache;
 import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes.DiskLimitType;
@@ -40,34 +58,15 @@ import org.apache.commons.jcs.utils.timing.ElapsedTimer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 /**
  * Disk cache that uses a RandomAccessFile with keys stored in memory. The maximum number of keys
  * stored in memory is configurable. The disk cache tries to recycle spots on disk to limit file
  * expansion.
  */
-public class IndexedDiskCache<K, V>
-    extends AbstractDiskCache<K, V>
+public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
 {
     /** The logger */
-    private static final Log log = LogFactory.getLog( IndexedDiskCache.class );
+    private static final Log log = LogFactory.getLog(IndexedDiskCache.class);
 
     /** Cache name used in log messages */
     protected final String logCacheName;
@@ -115,8 +114,7 @@ public class IndexedDiskCache<K, V>
     private boolean queueInput = false;
 
     /** list where puts made during optimization are made */
-    private final LinkedList<IndexedDiskElementDescriptor> queuedPutList =
-        new LinkedList<IndexedDiskElementDescriptor>();
+    private final LinkedList<IndexedDiskElementDescriptor> queuedPutList = new LinkedList<IndexedDiskElementDescriptor>();
 
     /** RECYLCE BIN -- array of empty spots */
     private SortedPreferentialArray<IndexedDiskElementDescriptor> recycle;
@@ -147,24 +145,27 @@ public class IndexedDiskCache<K, V>
     /**
      * Constructor for the DiskCache object.
      * <p>
+     *
      * @param cacheAttributes
      */
-    public IndexedDiskCache( IndexedDiskCacheAttributes cacheAttributes )
+    public IndexedDiskCache(IndexedDiskCacheAttributes cacheAttributes)
     {
-        this( cacheAttributes, null );
+        this(cacheAttributes, null);
     }
 
     /**
      * Constructor for the DiskCache object.
      * <p>
+     *
      * @param cattr
-     * @param elementSerializer used if supplied, the super's super will not set a null
+     * @param elementSerializer
+     *            used if supplied, the super's super will not set a null
      */
-    public IndexedDiskCache( IndexedDiskCacheAttributes cattr, IElementSerializer elementSerializer )
+    public IndexedDiskCache(IndexedDiskCacheAttributes cattr, IElementSerializer elementSerializer)
     {
-        super( cattr );
+        super(cattr);
 
-        setElementSerializer( elementSerializer );
+        setElementSerializer(elementSerializer);
 
         this.cattr = cattr;
         this.maxKeySize = cattr.getMaxKeySize();
@@ -177,44 +178,46 @@ public class IndexedDiskCache<K, V>
 
         try
         {
-            initializeFileSystem( cattr );
+            initializeFileSystem(cattr);
 
-            initializeKeysAndData( cattr );
+            initializeKeysAndData(cattr);
 
             initializeRecycleBin();
 
             // Initialization finished successfully, so set alive to true.
             alive = true;
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Indexed Disk Cache is alive." );
+                log.info(logCacheName + "Indexed Disk Cache is alive.");
             }
 
             // TODO: Should we improve detection of whether or not the file should be optimized.
-            if ( isRealTimeOptimizationEnabled && keyHash.size() > 0 )
+            if (isRealTimeOptimizationEnabled && keyHash.size() > 0)
             {
                 // Kick off a real time optimization, in case we didn't do a final optimization.
                 doOptimizeRealTime();
             }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( logCacheName + "Failure initializing for fileName: " + fileName + " and directory: "
-                + this.rafDir.getAbsolutePath(), e );
+            log.error(
+                logCacheName + "Failure initializing for fileName: " + fileName + " and directory: "
+                    + this.rafDir.getAbsolutePath(), e);
         }
     }
 
     /**
      * Tries to create the root directory if it does not already exist.
      * <p>
+     *
      * @param cattr
      */
-    private void initializeFileSystem( IndexedDiskCacheAttributes cattr )
+    private void initializeFileSystem(IndexedDiskCacheAttributes cattr)
     {
         this.rafDir = cattr.getDiskPath();
-        if ( log.isInfoEnabled() )
+        if (log.isInfoEnabled())
         {
-            log.info( logCacheName + "Cache file root directory: " + rafDir );
+            log.info(logCacheName + "Cache file root directory: " + rafDir);
         }
     }
 
@@ -223,26 +226,27 @@ public class IndexedDiskCache<K, V>
      * <p>
      * Loads any keys if they are present and ClearDiskOnStartup is false.
      * <p>
+     *
      * @param cattr
      * @throws FileNotFoundException
      * @throws IOException
      * @throws InterruptedException
      */
-    private void initializeKeysAndData( IndexedDiskCacheAttributes cattr )
-        throws FileNotFoundException, IOException, InterruptedException
+    private void initializeKeysAndData(IndexedDiskCacheAttributes cattr) throws FileNotFoundException, IOException,
+        InterruptedException
     {
-        this.dataFile = new IndexedDisk( new File( rafDir, fileName + ".data" ), getElementSerializer() );
-        this.keyFile = new IndexedDisk( new File( rafDir, fileName + ".key" ), getElementSerializer() );
+        this.dataFile = new IndexedDisk(new File(rafDir, fileName + ".data"), getElementSerializer());
+        this.keyFile = new IndexedDisk(new File(rafDir, fileName + ".key"), getElementSerializer());
 
-        if ( cattr.isClearDiskOnStartup() )
+        if (cattr.isClearDiskOnStartup())
         {
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "ClearDiskOnStartup is set to true.  Ingnoring any persisted data." );
+                log.info(logCacheName + "ClearDiskOnStartup is set to true.  Ingnoring any persisted data.");
             }
             initializeEmptyStore();
         }
-        else if ( keyFile.length() > 0 )
+        else if (keyFile.length() > 0)
         {
             // If the key file has contents, try to initialize the keys
             // from it. In no keys are loaded reset the data file.
@@ -259,14 +263,14 @@ public class IndexedDiskCache<K, V>
     /**
      * Initializes an empty disk cache.
      * <p>
+     *
      * @throws IOException
      */
-    private void initializeEmptyStore()
-        throws IOException
+    private void initializeEmptyStore() throws IOException
     {
         initializeKeyMap();
 
-        if ( dataFile.length() > 0 )
+        if (dataFile.length() > 0)
         {
             dataFile.reset();
         }
@@ -276,27 +280,27 @@ public class IndexedDiskCache<K, V>
      * Loads any persisted data and checks for consistency. If there is a consistency issue, the
      * files are cleared.
      * <p>
+     *
      * @throws InterruptedException
      * @throws IOException
      */
-    private void initializeStoreFromPersistedData()
-        throws InterruptedException, IOException
+    private void initializeStoreFromPersistedData() throws InterruptedException, IOException
     {
         loadKeys();
 
-        if ( keyHash.size() == 0 )
+        if (keyHash.size() == 0)
         {
             dataFile.reset();
         }
         else
         {
-            boolean isOk = checkKeyDataConsistency( false );
-            if ( !isOk )
+            boolean isOk = checkKeyDataConsistency(false);
+            if (!isOk)
             {
                 keyHash.clear();
                 keyFile.reset();
                 dataFile.reset();
-                log.warn( logCacheName + "Corruption detected.  Reseting data and keys files." );
+                log.warn(logCacheName + "Corruption detected.  Reseting data and keys files.");
             }
             else
             {
@@ -312,14 +316,14 @@ public class IndexedDiskCache<K, V>
      * Loads the keys from the .key file. The keys are stored in a HashMap on disk. This is
      * converted into a LRUMap.
      * <p>
+     *
      * @throws InterruptedException
      */
-    protected void loadKeys()
-        throws InterruptedException
+    protected void loadKeys() throws InterruptedException
     {
-        if ( log.isDebugEnabled() )
+        if (log.isDebugEnabled())
         {
-            log.debug( logCacheName + "Loading keys for " + keyFile.toString() );
+            log.debug(logCacheName + "Loading keys for " + keyFile.toString());
         }
 
         storageLock.writeLock().lock();
@@ -329,34 +333,33 @@ public class IndexedDiskCache<K, V>
             // create a key map to use.
             initializeKeyMap();
 
-            HashMap<K, IndexedDiskElementDescriptor> keys =
-                keyFile.readObject( new IndexedDiskElementDescriptor( 0, (int) keyFile.length()
-                - IndexedDisk.HEADER_SIZE_BYTES ) );
+            HashMap<K, IndexedDiskElementDescriptor> keys = keyFile.readObject(new IndexedDiskElementDescriptor(0, (int) keyFile
+                .length() - IndexedDisk.HEADER_SIZE_BYTES));
 
-            if ( keys != null )
+            if (keys != null)
             {
-                if ( log.isDebugEnabled() )
+                if (log.isDebugEnabled())
                 {
-                    log.debug( logCacheName + "Found " + keys.size() + " in keys file." );
+                    log.debug(logCacheName + "Found " + keys.size() + " in keys file.");
                 }
 
-                keyHash.putAll( keys );
+                keyHash.putAll(keys);
 
-                if ( log.isInfoEnabled() )
+                if (log.isInfoEnabled())
                 {
-                    log.info( logCacheName + "Loaded keys from [" + fileName + "], key count: " + keyHash.size()
-                        + "; up to " + maxKeySize + " will be available." );
+                    log.info(logCacheName + "Loaded keys from [" + fileName + "], key count: " + keyHash.size() + "; up to "
+                        + maxKeySize + " will be available.");
                 }
             }
 
-            if ( log.isDebugEnabled() )
+            if (log.isDebugEnabled())
             {
-                dump( false );
+                dump(false);
             }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( logCacheName + "Problem loading keys for file " + fileName, e );
+            log.error(logCacheName + "Problem loading keys for file " + fileName, e);
         }
         finally
         {
@@ -369,14 +372,16 @@ public class IndexedDiskCache<K, V>
      * positions in the keys exceed the file length.
      * <p>
      * The caller should take the appropriate action if the keys and data are not consistent.
-     * @param checkForDedOverlaps if <code>true</code>, do a more thorough check by checking for
+     *
+     * @param checkForDedOverlaps
+     *            if <code>true</code>, do a more thorough check by checking for
      *            data overlap
      * @return <code>true</code> if the test passes
      */
-    private boolean checkKeyDataConsistency( boolean checkForDedOverlaps )
+    private boolean checkKeyDataConsistency(boolean checkForDedOverlaps)
     {
         ElapsedTimer timer = new ElapsedTimer();
-        log.debug( logCacheName + "Performing inital consistency check" );
+        log.debug(logCacheName + "Performing inital consistency check");
 
         boolean isOk = true;
         long fileLength = 0;
@@ -390,29 +395,28 @@ public class IndexedDiskCache<K, V>
 
                 isOk = ded.pos + IndexedDisk.HEADER_SIZE_BYTES + ded.len <= fileLength;
 
-                if ( !isOk )
+                if (!isOk)
                 {
-                    log.warn( logCacheName + "The dataFile is corrupted!" + "\n raf.length() = " + fileLength
-                        + "\n ded.pos = " + ded.pos );
+                    log.warn(logCacheName + "The dataFile is corrupted!" + "\n raf.length() = " + fileLength + "\n ded.pos = "
+                        + ded.pos);
                     break;
                 }
             }
 
-            if ( isOk && checkForDedOverlaps )
+            if (isOk && checkForDedOverlaps)
             {
-                isOk = checkForDedOverlaps( createPositionSortedDescriptorList() );
+                isOk = checkForDedOverlaps(createPositionSortedDescriptorList());
             }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( e );
+            log.error(e);
             isOk = false;
         }
 
-        if ( log.isInfoEnabled() )
+        if (log.isInfoEnabled())
         {
-            log.info( logCacheName + "Finished inital consistency check, isOk = " + isOk + " in "
-                + timer.getElapsedTimeString() );
+            log.info(logCacheName + "Finished inital consistency check, isOk = " + isOk + " in " + timer.getElapsedTimeString());
         }
 
         return isOk;
@@ -423,20 +427,21 @@ public class IndexedDiskCache<K, V>
      * <p>
      * The total length of an item is IndexedDisk.RECORD_HEADER + ded.len.
      * <p>
+     *
      * @param sortedDescriptors
      * @return false if there are overlaps.
      */
-    protected boolean checkForDedOverlaps( IndexedDiskElementDescriptor[] sortedDescriptors )
+    protected boolean checkForDedOverlaps(IndexedDiskElementDescriptor[] sortedDescriptors)
     {
         long start = System.currentTimeMillis();
         boolean isOk = true;
         long expectedNextPos = 0;
-        for ( int i = 0; i < sortedDescriptors.length; i++ )
+        for (int i = 0; i < sortedDescriptors.length; i++)
         {
             IndexedDiskElementDescriptor ded = sortedDescriptors[i];
-            if ( expectedNextPos > ded.pos )
+            if (expectedNextPos > ded.pos)
             {
-                log.error( logCacheName + "Corrupt file: overlapping deds " + ded );
+                log.error(logCacheName + "Corrupt file: overlapping deds " + ded);
                 isOk = false;
                 break;
             }
@@ -446,9 +451,9 @@ public class IndexedDiskCache<K, V>
             }
         }
         long end = System.currentTimeMillis();
-        if ( log.isDebugEnabled() )
+        if (log.isDebugEnabled())
         {
-            log.debug( logCacheName + "Check for DED overlaps took " + ( end - start ) + " ms." );
+            log.debug(logCacheName + "Check for DED overlaps took " + (end - start) + " ms.");
         }
 
         return isOk;
@@ -461,30 +466,29 @@ public class IndexedDiskCache<K, V>
     {
         try
         {
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Saving keys to: " + fileName + ", key count: " + keyHash.size() );
+                log.info(logCacheName + "Saving keys to: " + fileName + ", key count: " + keyHash.size());
             }
 
             keyFile.reset();
 
-            HashMap<K, IndexedDiskElementDescriptor> keys =
-                new HashMap<K, IndexedDiskElementDescriptor>();
-            keys.putAll( keyHash );
+            HashMap<K, IndexedDiskElementDescriptor> keys = new HashMap<K, IndexedDiskElementDescriptor>();
+            keys.putAll(keyHash);
 
-            if ( keys.size() > 0 )
+            if (keys.size() > 0)
             {
-                keyFile.writeObject( keys, 0 );
+                keyFile.writeObject(keys, 0);
             }
 
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Finished saving keys." );
+                log.info(logCacheName + "Finished saving keys.");
             }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( logCacheName + "Problem storing keys.", e );
+            log.error(logCacheName + "Problem storing keys.", e);
         }
     }
 
@@ -492,20 +496,22 @@ public class IndexedDiskCache<K, V>
      * Update the disk cache. Called from the Queue. Makes sure the Item has not been retrieved from
      * purgatory while in queue for disk. Remove items from purgatory when they go to disk.
      * <p>
-     * @param ce The ICacheElement<K, V> to put to disk.
+     *
+     * @param ce
+     *            The ICacheElement<K, V> to put to disk.
      */
     @Override
-    protected void processUpdate( ICacheElement<K, V> ce )
+    protected void processUpdate(ICacheElement<K, V> ce)
     {
-        if ( !alive )
+        if (!alive)
         {
-            log.error( logCacheName + "No longer alive; aborting put of key = " + ce.getKey() );
+            log.error(logCacheName + "No longer alive; aborting put of key = " + ce.getKey());
             return;
         }
 
-        if ( log.isDebugEnabled() )
+        if (log.isDebugEnabled())
         {
-            log.debug( logCacheName + "Storing element on disk, key: " + ce.getKey() );
+            log.debug(logCacheName + "Storing element on disk, key: " + ce.getKey());
         }
 
         IndexedDiskElementDescriptor ded = null;
@@ -515,17 +521,17 @@ public class IndexedDiskCache<K, V>
 
         try
         {
-            byte[] data = getElementSerializer().serialize( ce );
+            byte[] data = getElementSerializer().serialize(ce);
 
             // make sure this only locks for one particular cache region
             storageLock.writeLock().lock();
             try
             {
-                old = keyHash.get( ce.getKey() );
+                old = keyHash.get(ce.getKey());
 
                 // Item with the same key already exists in file.
                 // Try to reuse the location if possible.
-                if ( old != null && data.length <= old.len )
+                if (old != null && data.length <= old.len)
                 {
                     // Reuse the old ded. The defrag relies on ded updates by reference, not
                     // replacement.
@@ -535,93 +541,93 @@ public class IndexedDiskCache<K, V>
                 else
                 {
                     // we need this to compare in the recycle bin
-                    ded = new IndexedDiskElementDescriptor( dataFile.length(), data.length );
+                    ded = new IndexedDiskElementDescriptor(dataFile.length(), data.length);
 
-                    if ( doRecycle )
+                    if (doRecycle)
                     {
-                        IndexedDiskElementDescriptor rep = recycle
-                            .takeNearestLargerOrEqual( ded );
-                        if ( rep != null )
+                        IndexedDiskElementDescriptor rep = recycle.takeNearestLargerOrEqual(ded);
+                        if (rep != null)
                         {
                             ded = rep;
                             ded.len = data.length;
                             recycleCnt++;
-                            this.adjustBytesFree( ded, false );
-                            if ( log.isDebugEnabled() )
+                            this.adjustBytesFree(ded, false);
+                            if (log.isDebugEnabled())
                             {
-                                log.debug( logCacheName + "using recycled ded " + ded.pos + " rep.len = " + rep.len
-                                    + " ded.len = " + ded.len );
+                                log.debug(logCacheName + "using recycled ded " + ded.pos + " rep.len = " + rep.len + " ded.len = "
+                                    + ded.len);
                             }
                         }
                     }
 
                     // Put it in the map
-                    keyHash.put( ce.getKey(), ded );
+                    keyHash.put(ce.getKey(), ded);
 
-                    if ( queueInput )
+                    if (queueInput)
                     {
-                        queuedPutList.add( ded );
-                        if ( log.isDebugEnabled() )
+                        queuedPutList.add(ded);
+                        if (log.isDebugEnabled())
                         {
-                            log.debug( logCacheName + "added to queued put list." + queuedPutList.size() );
+                            log.debug(logCacheName + "added to queued put list." + queuedPutList.size());
                         }
                     }
 
                     // add the old slot to the recycle bin
-                    if ( old != null )
+                    if (old != null)
                     {
-                        addToRecycleBin( old );
+                        addToRecycleBin(old);
                     }
                 }
 
-                dataFile.write( ded, data );
+                dataFile.write(ded, data);
             }
             finally
             {
                 storageLock.writeLock().unlock();
             }
 
-            if ( log.isDebugEnabled() )
+            if (log.isDebugEnabled())
             {
-                log.debug( logCacheName + "Put to file: " + fileName + ", key: " + ce.getKey() + ", position: "
-                    + ded.pos + ", size: " + ded.len );
+                log.debug(logCacheName + "Put to file: " + fileName + ", key: " + ce.getKey() + ", position: " + ded.pos
+                    + ", size: " + ded.len);
             }
         }
-        catch ( ConcurrentModificationException cme )
+        catch (ConcurrentModificationException cme)
         {
             // do nothing, this means it has gone back to memory mid
             // serialization
-            if ( log.isDebugEnabled() )
+            if (log.isDebugEnabled())
             {
                 // this shouldn't be possible
-                log.debug( logCacheName + "Caught ConcurrentModificationException." + cme );
+                log.debug(logCacheName + "Caught ConcurrentModificationException." + cme);
             }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( logCacheName + "Failure updating element, key: " + ce.getKey() + " old: " + old, e );
+            log.error(logCacheName + "Failure updating element, key: " + ce.getKey() + " old: " + old, e);
         }
     }
 
     /**
      * Gets the key, then goes to disk to get the object.
      * <p>
+     *
      * @param key
      * @return ICacheElement<K, V> or null
      * @see AbstractDiskCache#doGet
      */
     @Override
-    protected ICacheElement<K, V> processGet( K key )
+    protected ICacheElement<K, V> processGet(K key)
     {
-        if ( !alive )
+        if (!alive)
         {
-            log.error( logCacheName + "No longer alive so returning null for key = " + key );
+            log.error(logCacheName + "No longer alive so returning null for key = " + key);
             return null;
         }
 
-        if ( log.isDebugEnabled() )
+        if (log.isDebugEnabled())
         {
-            log.debug( logCacheName + "Trying to get from disk: " + key );
+            log.debug(logCacheName + "Trying to get from disk: " + key);
         }
 
         ICacheElement<K, V> object = null;
@@ -630,26 +636,26 @@ public class IndexedDiskCache<K, V>
             storageLock.readLock().lock();
             try
             {
-                object = readElement( key );
+                object = readElement(key);
             }
             finally
             {
                 storageLock.readLock().unlock();
             }
 
-            if ( object != null )
+            if (object != null)
             {
                 hitCount.incrementAndGet();
             }
         }
-        catch ( IOException ioe )
+        catch (IOException ioe)
         {
-            log.error( logCacheName + "Failure getting from disk, key = " + key, ioe );
+            log.error(logCacheName + "Failure getting from disk, key = " + key, ioe);
             reset();
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( logCacheName + "Failure getting from disk, key = " + key, e );
+            log.error(logCacheName + "Failure getting from disk, key = " + key, e);
         }
         return object;
     }
@@ -657,12 +663,13 @@ public class IndexedDiskCache<K, V>
     /**
      * Gets matching items from the cache.
      * <p>
+     *
      * @param pattern
      * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
      *         data in cache matching keys
      */
     @Override
-    public Map<K, ICacheElement<K, V>> processGetMatching( String pattern )
+    public Map<K, ICacheElement<K, V>> processGetMatching(String pattern)
     {
         Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
         try
@@ -678,20 +685,20 @@ public class IndexedDiskCache<K, V>
                 storageLock.readLock().unlock();
             }
 
-            Set<K> matchingKeys = getKeyMatcher().getMatchingKeysFromArray( pattern, keyArray );
+            Set<K> matchingKeys = getKeyMatcher().getMatchingKeysFromArray(pattern, keyArray);
 
             for (K key : matchingKeys)
             {
-                ICacheElement<K, V> element = processGet( key );
-                if ( element != null )
+                ICacheElement<K, V> element = processGet(key);
+                if (element != null)
                 {
-                    elements.put( key, element );
+                    elements.put(key, element);
                 }
             }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( logCacheName + "Failure getting matching from disk, pattern = " + pattern, e );
+            log.error(logCacheName + "Failure getting matching from disk, pattern = " + pattern, e);
         }
         return elements;
     }
@@ -699,38 +706,38 @@ public class IndexedDiskCache<K, V>
     /**
      * Reads the item from disk.
      * <p>
+     *
      * @param key
      * @return ICacheElement
      * @throws IOException
      */
-    private ICacheElement<K, V> readElement( K key )
-        throws IOException
+    private ICacheElement<K, V> readElement(K key) throws IOException
     {
         ICacheElement<K, V> object = null;
 
-        IndexedDiskElementDescriptor ded = keyHash.get( key );
+        IndexedDiskElementDescriptor ded = keyHash.get(key);
 
-        if ( ded != null )
+        if (ded != null)
         {
-            if ( log.isDebugEnabled() )
+            if (log.isDebugEnabled())
             {
-                log.debug( logCacheName + "Found on disk, key: " + key );
+                log.debug(logCacheName + "Found on disk, key: " + key);
             }
             try
             {
-                ICacheElement<K, V> readObject = dataFile.readObject( ded );
+                ICacheElement<K, V> readObject = dataFile.readObject(ded);
                 object = readObject;
                 // TODO consider checking key equality and throwing if there is a failure
             }
-            catch ( IOException e )
+            catch (IOException e)
             {
-                log.error( logCacheName + "IO Exception, Problem reading object from file", e );
+                log.error(logCacheName + "IO Exception, Problem reading object from file", e);
                 throw e;
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
-                log.error( logCacheName + "Exception, Problem reading object from file", e );
-                throw new IOException( logCacheName + "Problem reading object from disk. " + e.getMessage() );
+                log.error(logCacheName + "Exception, Problem reading object from file", e);
+                throw new IOException(logCacheName + "Problem reading object from disk. " + e.getMessage());
             }
         }
 
@@ -740,6 +747,7 @@ public class IndexedDiskCache<K, V>
     /**
      * Return the keys in this cache.
      * <p>
+     *
      * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#getKeySet()
      */
     @Override
@@ -765,19 +773,20 @@ public class IndexedDiskCache<K, V>
      * Returns true if the removal was successful; or false if there is nothing to remove. Current
      * implementation always result in a disk orphan.
      * <p>
+     *
      * @return true if at least one item was removed.
      * @param key
      */
     @Override
-    protected boolean processRemove( K key )
+    protected boolean processRemove(K key)
     {
-        if ( !alive )
+        if (!alive)
         {
-            log.error( logCacheName + "No longer alive so returning false for key = " + key );
+            log.error(logCacheName + "No longer alive so returning false for key = " + key);
             return false;
         }
 
-        if ( key == null )
+        if (key == null)
         {
             return false;
         }
@@ -788,22 +797,22 @@ public class IndexedDiskCache<K, V>
         {
             storageLock.writeLock().lock();
 
-            if ( key instanceof String && key.toString().endsWith( CacheConstants.NAME_COMPONENT_DELIMITER ) )
+            if (key instanceof String && key.toString().endsWith(CacheConstants.NAME_COMPONENT_DELIMITER))
             {
-                removed = performPartialKeyRemoval( (String) key );
+                removed = performPartialKeyRemoval((String) key);
             }
-            else if ( key instanceof GroupAttrName && ((GroupAttrName<?>)key).attrName == null )
+            else if (key instanceof GroupAttrName && ((GroupAttrName<?>) key).attrName == null)
             {
-                removed = performGroupRemoval( ((GroupAttrName<?>)key).groupId );
+                removed = performGroupRemoval(((GroupAttrName<?>) key).groupId);
             }
             else
             {
-                removed = performSingleKeyRemoval( key );
+                removed = performSingleKeyRemoval(key);
             }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( logCacheName + "Problem removing element.", e );
+            log.error(logCacheName + "Problem removing element.", e);
             reset = true;
         }
         finally
@@ -811,14 +820,14 @@ public class IndexedDiskCache<K, V>
             storageLock.writeLock().unlock();
         }
 
-        if ( reset )
+        if (reset)
         {
             reset();
         }
 
         // this increments the remove count.
         // there is no reason to call this if an item was not removed.
-        if ( removed )
+        if (removed)
         {
             doOptimizeRealTime();
         }
@@ -832,10 +841,11 @@ public class IndexedDiskCache<K, V>
      * <p>
      * This operates under a lock obtained in doRemove().
      * <p>
+     *
      * @param key
      * @return true if there was a match
      */
-    private boolean performPartialKeyRemoval( String key )
+    private boolean performPartialKeyRemoval(String key)
     {
         boolean removed = false;
 
@@ -844,9 +854,9 @@ public class IndexedDiskCache<K, V>
 
         for (K k : keyHash.keySet())
         {
-            if ( k instanceof String && k.toString().startsWith( key.toString() ) )
+            if (k instanceof String && k.toString().startsWith(key.toString()))
             {
-                itemsToRemove.add( k );
+                itemsToRemove.add(k);
             }
         }
 
@@ -855,7 +865,7 @@ public class IndexedDiskCache<K, V>
         {
             // Don't add to recycle bin here
             // https://issues.apache.org/jira/browse/JCS-67
-            performSingleKeyRemoval( fullKey );
+            performSingleKeyRemoval(fullKey);
             removed = true;
             // TODO this needs to update the remove count separately
         }
@@ -869,10 +879,11 @@ public class IndexedDiskCache<K, V>
      * <p>
      * This operates under a lock obtained in doRemove().
      * <p>
+     *
      * @param key
      * @return true if an element was removed
      */
-    private boolean performGroupRemoval( GroupId key )
+    private boolean performGroupRemoval(GroupId key)
     {
         boolean removed = false;
 
@@ -882,9 +893,9 @@ public class IndexedDiskCache<K, V>
         // remove all keys of the same name hierarchy.
         for (K k : keyHash.keySet())
         {
-            if ( k instanceof GroupAttrName && ( (GroupAttrName<?>) k ).groupId.equals( key ) )
+            if (k instanceof GroupAttrName && ((GroupAttrName<?>) k).groupId.equals(key))
             {
-                itemsToRemove.add( k );
+                itemsToRemove.add(k);
             }
         }
 
@@ -893,7 +904,7 @@ public class IndexedDiskCache<K, V>
         {
             // Don't add to recycle bin here
             // https://issues.apache.org/jira/browse/JCS-67
-            performSingleKeyRemoval( fullKey );
+            performSingleKeyRemoval(fullKey);
             removed = true;
             // TODO this needs to update the remove count separately
         }
@@ -906,20 +917,21 @@ public class IndexedDiskCache<K, V>
      * <p>
      * This operates under a lock obtained in doRemove().
      * <p>
+     *
      * @param key
      * @return true if an item was removed.
      */
-    private boolean performSingleKeyRemoval( K key )
+    private boolean performSingleKeyRemoval(K key)
     {
         boolean removed;
         // remove single item.
-        IndexedDiskElementDescriptor ded = keyHash.remove( key );
+        IndexedDiskElementDescriptor ded = keyHash.remove(key);
         removed = ded != null;
-        addToRecycleBin( ded );
+        addToRecycleBin(ded);
 
-        if ( log.isDebugEnabled() )
+        if (log.isDebugEnabled())
         {
-            log.debug( logCacheName + "Disk removal: Removed from key hash, key [" + key + "] removed = " + removed );
+            log.debug(logCacheName + "Disk removal: Removed from key hash, key [" + key + "] removed = " + removed);
         }
         return removed;
     }
@@ -930,19 +942,19 @@ public class IndexedDiskCache<K, V>
     @Override
     public void processRemoveAll()
     {
-        ICacheEvent<String> cacheEvent = createICacheEvent( cacheName, "all", ICacheEventLogger.REMOVEALL_EVENT );
+        ICacheEvent<String> cacheEvent = createICacheEvent(cacheName, "all", ICacheEventLogger.REMOVEALL_EVENT);
         try
         {
             reset();
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( logCacheName + "Problem removing all.", e );
+            log.error(logCacheName + "Problem removing all.", e);
             reset();
         }
         finally
         {
-            logICacheEvent( cacheEvent );
+            logICacheEvent(cacheEvent);
         }
     }
 
@@ -953,47 +965,47 @@ public class IndexedDiskCache<K, V>
      */
     private void reset()
     {
-        if ( log.isWarnEnabled() )
+        if (log.isWarnEnabled())
         {
-            log.warn( logCacheName + "Reseting cache" );
+            log.warn(logCacheName + "Reseting cache");
         }
 
         try
         {
             storageLock.writeLock().lock();
 
-            if ( dataFile != null )
+            if (dataFile != null)
             {
                 dataFile.close();
             }
-            File dataFileTemp = new File( rafDir, fileName + ".data" );
+            File dataFileTemp = new File(rafDir, fileName + ".data");
             boolean result = dataFileTemp.delete();
             if (!result && log.isDebugEnabled())
             {
                 log.debug("Could not delete file " + dataFileTemp);
             }
 
-            if ( keyFile != null )
+            if (keyFile != null)
             {
                 keyFile.close();
             }
-            File keyFileTemp = new File( rafDir, fileName + ".key" );
+            File keyFileTemp = new File(rafDir, fileName + ".key");
             result = keyFileTemp.delete();
             if (!result && log.isDebugEnabled())
             {
                 log.debug("Could not delete file " + keyFileTemp);
             }
 
-            dataFile = new IndexedDisk( new File( rafDir, fileName + ".data" ), getElementSerializer() );
-            keyFile = new IndexedDisk( new File( rafDir, fileName + ".key" ), getElementSerializer() );
+            dataFile = new IndexedDisk(new File(rafDir, fileName + ".data"), getElementSerializer());
+            keyFile = new IndexedDisk(new File(rafDir, fileName + ".key"), getElementSerializer());
 
             initializeRecycleBin();
 
             initializeKeyMap();
         }
-        catch ( IOException e )
+        catch (IOException e)
         {
-            log.error( logCacheName + "Failure reseting state", e );
+            log.error(logCacheName + "Failure reseting state", e);
         }
         finally
         {
@@ -1008,10 +1020,10 @@ public class IndexedDiskCache<K, V>
     private void initializeRecycleBin()
     {
         int recycleBinSize = cattr.getMaxRecycleBinSize() >= 0 ? cattr.getMaxRecycleBinSize() : 0;
-        recycle = new SortedPreferentialArray<IndexedDiskElementDescriptor>( recycleBinSize );
-        if ( log.isDebugEnabled() )
+        recycle = new SortedPreferentialArray<IndexedDiskElementDescriptor>(recycleBinSize);
+        if (log.isDebugEnabled())
         {
-            log.debug( logCacheName + "Set recycle max Size to MaxRecycleBinSize: '" + recycleBinSize + "'" );
+            log.debug(logCacheName + "Set recycle max Size to MaxRecycleBinSize: '" + recycleBinSize + "'");
         }
     }
 
@@ -1021,17 +1033,20 @@ public class IndexedDiskCache<K, V>
     private void initializeKeyMap()
     {
         keyHash = null;
-        if ( maxKeySize >= 0 )
+        if (maxKeySize >= 0)
         {
-            if (this.diskLimitType.equals(DiskLimitType.COUNT)) {
-                keyHash = new LRUMapCountLimited( maxKeySize );
-            } else {
+            if (this.diskLimitType.equals(DiskLimitType.COUNT))
+            {
+                keyHash = new LRUMapCountLimited(maxKeySize);
+            }
+            else
+            {
                 keyHash = new LRUMapSizeLimited(maxKeySize);
             }
 
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Set maxKeySize to: '" + maxKeySize + "'" );
+                log.info(logCacheName + "Set maxKeySize to: '" + maxKeySize + "'");
             }
         }
         else
@@ -1039,9 +1054,9 @@ public class IndexedDiskCache<K, V>
             // If no max size, use a plain map for memory and processing efficiency.
             keyHash = new HashMap<K, IndexedDiskElementDescriptor>();
             // keyHash = Collections.synchronizedMap( new HashMap() );
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Set maxKeySize to unlimited'" );
+                log.info(logCacheName + "Set maxKeySize to unlimited'");
             }
         }
     }
@@ -1055,7 +1070,7 @@ public class IndexedDiskCache<K, V>
     @Override
     public void processDispose()
     {
-        ICacheEvent<String> cacheEvent = createICacheEvent( cacheName, "none", ICacheEventLogger.DISPOSE_EVENT );
+        ICacheEvent<String> cacheEvent = createICacheEvent(cacheName, "none", ICacheEventLogger.DISPOSE_EVENT);
         try
         {
             Runnable disR = new Runnable()
@@ -1066,21 +1081,21 @@ public class IndexedDiskCache<K, V>
                     disposeInternal();
                 }
             };
-            Thread t = new Thread( disR, "IndexedDiskCache-DisposalThread" );
+            Thread t = new Thread(disR, "IndexedDiskCache-DisposalThread");
             t.start();
             // wait up to 60 seconds for dispose and then quit if not done.
             try
             {
-                t.join( 60 * 1000 );
+                t.join(60 * 1000);
             }
-            catch ( InterruptedException ex )
+            catch (InterruptedException ex)
             {
-                log.error( logCacheName + "Interrupted while waiting for disposal thread to finish.", ex );
+                log.error(logCacheName + "Interrupted while waiting for disposal thread to finish.", ex);
             }
         }
         finally
         {
-            logICacheEvent( cacheEvent );
+            logICacheEvent(cacheEvent);
         }
     }
 
@@ -1089,9 +1104,9 @@ public class IndexedDiskCache<K, V>
      */
     protected void disposeInternal()
     {
-        if ( !alive )
+        if (!alive)
         {
-            log.error( logCacheName + "Not alive and dispose was called, filename: " + fileName );
+            log.error(logCacheName + "Not alive and dispose was called, filename: " + fileName);
             return;
         }
 
@@ -1099,23 +1114,23 @@ public class IndexedDiskCache<K, V>
         alive = false;
 
         Thread optimizationThread = currentOptimizationThread;
-        if ( isRealTimeOptimizationEnabled && optimizationThread != null )
+        if (isRealTimeOptimizationEnabled && optimizationThread != null)
         {
             // Join with the current optimization thread.
-            if ( log.isDebugEnabled() )
+            if (log.isDebugEnabled())
             {
-                log.debug( logCacheName + "In dispose, optimization already " + "in progress; waiting for completion." );
+                log.debug(logCacheName + "In dispose, optimization already " + "in progress; waiting for completion.");
             }
             try
             {
                 optimizationThread.join();
             }
-            catch ( InterruptedException e )
+            catch (InterruptedException e)
             {
-                log.error( logCacheName + "Unable to join current optimization thread.", e );
+                log.error(logCacheName + "Unable to join current optimization thread.", e);
             }
         }
-        else if ( isShutdownOptimizationEnabled && this.getBytesFree() > 0 )
+        else if (isShutdownOptimizationEnabled && this.getBytesFree() > 0)
         {
             optimizeFile();
         }
@@ -1124,23 +1139,23 @@ public class IndexedDiskCache<K, V>
 
         try
         {
-            if ( log.isDebugEnabled() )
+            if (log.isDebugEnabled())
             {
-                log.debug( logCacheName + "Closing files, base filename: " + fileName );
+                log.debug(logCacheName + "Closing files, base filename: " + fileName);
             }
             dataFile.close();
             dataFile = null;
             keyFile.close();
             keyFile = null;
         }
-        catch ( IOException e )
+        catch (IOException e)
         {
-            log.error( logCacheName + "Failure closing files in dispose, filename: " + fileName, e );
+            log.error(logCacheName + "Failure closing files in dispose, filename: " + fileName, e);
         }
 
-        if ( log.isInfoEnabled() )
+        if (log.isInfoEnabled())
         {
-            log.info( logCacheName + "Shutdown complete." );
+            log.info(logCacheName + "Shutdown complete.");
         }
     }
 
@@ -1148,28 +1163,28 @@ public class IndexedDiskCache<K, V>
      * Add descriptor to recycle bin if it is not null. Adds the length of the item to the bytes
      * free.
      * <p>
-     * This is called in three places: (1) When an item is removed. All item removals funnel down to
-     * the removeSingleItem method. (2) When an item on disk is updated with a value that will not
-     * fit in the previous slot. (3) When the max key size is reached, the freed slot will be added.
+     * This is called in three places: (1) When an item is removed. All item removals funnel down to the removeSingleItem method.
+     * (2) When an item on disk is updated with a value that will not fit in the previous slot. (3) When the max key size is
+     * reached, the freed slot will be added.
      * <p>
-     * The recylebin is not a set. If a slot it added twice, it will result in the wrong data being
-     * returned.
+     * The recylebin is not a set. If a slot it added twice, it will result in the wrong data being returned.
      * <p>
+     *
      * @param ded
      */
-    protected void addToRecycleBin( IndexedDiskElementDescriptor ded )
+    protected void addToRecycleBin(IndexedDiskElementDescriptor ded)
     {
         // reuse the spot
-        if ( ded != null )
+        if (ded != null)
         {
-            this.adjustBytesFree( ded, true );
+            this.adjustBytesFree(ded, true);
 
-            if ( doRecycle )
+            if (doRecycle)
             {
-                recycle.add( ded );
-                if ( log.isDebugEnabled() )
+                recycle.add(ded);
+                if (log.isDebugEnabled())
                 {
-                    log.debug( logCacheName + "recycled ded" + ded );
+                    log.debug(logCacheName + "recycled ded" + ded);
                 }
 
             }
@@ -1181,25 +1196,25 @@ public class IndexedDiskCache<K, V>
      */
     protected void doOptimizeRealTime()
     {
-        if ( isRealTimeOptimizationEnabled && !isOptimizing && removeCount++ >= cattr.getOptimizeAtRemoveCount() )
+        if (isRealTimeOptimizationEnabled && !isOptimizing && removeCount++ >= cattr.getOptimizeAtRemoveCount())
         {
             isOptimizing = true;
 
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Optimizing file. removeCount [" + removeCount + "] OptimizeAtRemoveCount ["
-                    + cattr.getOptimizeAtRemoveCount() + "]" );
+                log.info(logCacheName + "Optimizing file. removeCount [" + removeCount + "] OptimizeAtRemoveCount ["
+                    + cattr.getOptimizeAtRemoveCount() + "]");
             }
 
-            if ( currentOptimizationThread == null )
+            if (currentOptimizationThread == null)
             {
                 storageLock.writeLock().lock();
 
                 try
                 {
-                    if ( currentOptimizationThread == null )
+                    if (currentOptimizationThread == null)
                     {
-                        currentOptimizationThread = new Thread( new Runnable()
+                        currentOptimizationThread = new Thread(new Runnable()
                         {
                             @Override
                             public void run()
@@ -1208,7 +1223,7 @@ public class IndexedDiskCache<K, V>
 
                                 currentOptimizationThread = null;
                             }
-                        }, "IndexedDiskCache-OptimizationThread" );
+                        }, "IndexedDiskCache-OptimizationThread");
                     }
                 }
                 finally
@@ -1216,7 +1231,7 @@ public class IndexedDiskCache<K, V>
                     storageLock.writeLock().unlock();
                 }
 
-                if ( currentOptimizationThread != null )
+                if (currentOptimizationThread != null)
                 {
                     currentOptimizationThread.start();
                 }
@@ -1227,26 +1242,30 @@ public class IndexedDiskCache<K, V>
     /**
      * File optimization is handled by this method. It works as follows:
      * <ol>
-     * <li>Shutdown recycling and turn on queuing of puts. </li> <li>Take a snapshot of the current
-     * descriptors. If there are any removes, ignore them, as they will be compacted during the next
-     * optimization.</li> <li>Optimize the snapshot. For each descriptor:
+     * <li>Shutdown recycling and turn on queuing of puts.</li>
+     * <li>Take a snapshot of the current descriptors. If there are any removes, ignore them, as they will be compacted during the
+     * next optimization.</li>
+     * <li>Optimize the snapshot. For each descriptor:
      * <ol>
-     * <li>Obtain the write-lock.</li> <li>Shift the element on the disk, in order to compact out
-     * the free space. </li> <li>Release the write-lock. This allows elements to still be accessible
-     * during optimization.</li>
+     * <li>Obtain the write-lock.</li>
+     * <li>Shift the element on the disk, in order to compact out the free space.</li>
+     * <li>Release the write-lock. This allows elements to still be accessible during optimization.</li>
      * </ol>
-     * </li> <li>Obtain the write-lock.</li> <li>All queued puts are made at the end of the file.
-     * Optimize these under a single write-lock.</li> <li>Truncate the file.</li> <li>Release the
-     * write-lock. </li> <li>Restore system to standard operation.</li>
+     * </li>
+     * <li>Obtain the write-lock.</li>
+     * <li>All queued puts are made at the end of the file. Optimize these under a single write-lock.</li>
+     * <li>Truncate the file.</li>
+     * <li>Release the write-lock.</li>
+     * <li>Restore system to standard operation.</li>
      * </ol>
      */
     protected void optimizeFile()
     {
         ElapsedTimer timer = new ElapsedTimer();
         timesOptimized++;
-        if ( log.isInfoEnabled() )
+        if (log.isInfoEnabled())
         {
-            log.info( logCacheName + "Beginning Optimization #" + timesOptimized );
+            log.info(logCacheName + "Beginning Optimization #" + timesOptimized);
         }
 
         // CREATE SNAPSHOT
@@ -1269,7 +1288,7 @@ public class IndexedDiskCache<K, V>
 
         // Defrag the file outside of the write lock. This allows a move to be made,
         // and yet have the element still accessible for reading or writing.
-        long expectedNextPos = defragFile( defragList, 0 );
+        long expectedNextPos = defragFile(defragList, 0);
 
         // ADD THE QUEUED ITEMS to the end and then truncate
         storageLock.writeLock().lock();
@@ -1278,22 +1297,22 @@ public class IndexedDiskCache<K, V>
         {
             try
             {
-                if ( !queuedPutList.isEmpty() )
+                if (!queuedPutList.isEmpty())
                 {
                     // This is perhaps unnecessary, but the list might not be as sorted as we think.
                     defragList = new IndexedDiskElementDescriptor[queuedPutList.size()];
-                    queuedPutList.toArray( defragList );
-                    Arrays.sort( defragList, new PositionComparator() );
+                    queuedPutList.toArray(defragList);
+                    Arrays.sort(defragList, new PositionComparator());
 
                     // pack them at the end
-                    expectedNextPos = defragFile( defragList, expectedNextPos );
+                    expectedNextPos = defragFile(defragList, expectedNextPos);
                 }
                 // TRUNCATE THE FILE
-                dataFile.truncate( expectedNextPos );
+                dataFile.truncate(expectedNextPos);
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
-                log.error( logCacheName + "Error optimizing queued puts.", e );
+                log.error(logCacheName + "Error optimizing queued puts.", e);
             }
 
             // RESTORE NORMAL OPERATION
@@ -1311,10 +1330,9 @@ public class IndexedDiskCache<K, V>
             storageLock.writeLock().unlock();
         }
 
-        if ( log.isInfoEnabled() )
+        if (log.isInfoEnabled())
         {
-            log.info( logCacheName + "Finished #" + timesOptimized + " Optimization took "
-                + timer.getElapsedTimeString() );
+            log.info(logCacheName + "Finished #" + timesOptimized + " Optimization took " + timer.getElapsedTimeString());
         }
     }
 
@@ -1323,11 +1341,14 @@ public class IndexedDiskCache<K, V>
      * forward). If there were no gaps the resulting file would be the same size as the previous
      * file. This must be supplied an ordered defragList.
      * <p>
-     * @param defragList sorted list of descriptors for optimization
-     * @param startingPos the start position in the file
+     *
+     * @param defragList
+     *            sorted list of descriptors for optimization
+     * @param startingPos
+     *            the start position in the file
      * @return this is the potential new file end
      */
-    private long defragFile( IndexedDiskElementDescriptor[] defragList, long startingPos )
+    private long defragFile(IndexedDiskElementDescriptor[] defragList, long startingPos)
     {
         ElapsedTimer timer = new ElapsedTimer();
         long preFileSize = 0;
@@ -1338,14 +1359,14 @@ public class IndexedDiskCache<K, V>
             preFileSize = this.dataFile.length();
             // find the first gap in the disk and start defragging.
             expectedNextPos = startingPos;
-            for ( int i = 0; i < defragList.length; i++ )
+            for (int i = 0; i < defragList.length; i++)
             {
                 storageLock.writeLock().lock();
                 try
                 {
-                    if ( expectedNextPos != defragList[i].pos )
+                    if (expectedNextPos != defragList[i].pos)
                     {
-                        dataFile.move( defragList[i], expectedNextPos );
+                        dataFile.move(defragList[i], expectedNextPos);
                     }
                     expectedNextPos = defragList[i].pos + IndexedDisk.HEADER_SIZE_BYTES + defragList[i].len;
                 }
@@ -1360,17 +1381,16 @@ public class IndexedDiskCache<K, V>
             // this is the potential new file end
             return expectedNextPos;
         }
-        catch ( IOException e )
+        catch (IOException e)
         {
-            log.error( logCacheName + "Error occurred during defragmentation.", e );
+            log.error(logCacheName + "Error occurred during defragmentation.", e);
         }
         finally
         {
-            if ( log.isInfoEnabled() )
+            if (log.isInfoEnabled())
             {
-                log.info( logCacheName + "Defragmentation took " + timer.getElapsedTimeString()
-                    + ". File Size (before=" + preFileSize + ") (after=" + postFileSize + ") (truncating to "
-                    + expectedNextPos + ")" );
+                log.info(logCacheName + "Defragmentation took " + timer.getElapsedTimeString() + ". File Size (before="
+                    + preFileSize + ") (after=" + postFileSize + ") (truncating to " + expectedNextPos + ")");
             }
         }
 
@@ -1383,19 +1403,20 @@ public class IndexedDiskCache<K, V>
      * <p>
      * TODO fix values() method on the LRU map.
      * <p>
+     *
      * @return IndexedDiskElementDescriptor[]
      */
     private IndexedDiskElementDescriptor[] createPositionSortedDescriptorList()
     {
         IndexedDiskElementDescriptor[] defragList = new IndexedDiskElementDescriptor[keyHash.size()];
         Iterator<Map.Entry<K, IndexedDiskElementDescriptor>> iterator = keyHash.entrySet().iterator();
-        for ( int i = 0; iterator.hasNext(); i++ )
+        for (int i = 0; iterator.hasNext(); i++)
         {
             Map.Entry<K, IndexedDiskElementDescriptor> next = iterator.next();
             defragList[i] = next.getValue();
         }
 
-        Arrays.sort( defragList, new PositionComparator() );
+        Arrays.sort(defragList, new PositionComparator());
 
         return defragList;
     }
@@ -1403,6 +1424,7 @@ public class IndexedDiskCache<K, V>
     /**
      * Returns the current cache size.
      * <p>
+     *
      * @return The size value
      */
     @Override
@@ -1414,6 +1436,7 @@ public class IndexedDiskCache<K, V>
     /**
      * Returns the size of the recyclebin in number of elements.
      * <p>
+     *
      * @return The number of items in the bin.
      */
     protected int getRecyleBinSize()
@@ -1424,6 +1447,7 @@ public class IndexedDiskCache<K, V>
     /**
      * Returns the number of times we have used spots from the recycle bin.
      * <p>
+     *
      * @return The number of spots used.
      */
     protected int getRecyleCount()
@@ -1435,6 +1459,7 @@ public class IndexedDiskCache<K, V>
      * Returns the number of bytes that are free. When an item is removed, its length is recorded.
      * When a spot is used form the recycle bin, the length of the item stored is recorded.
      * <p>
+     *
      * @return The number bytes free on the disk file.
      */
     protected synchronized long getBytesFree()
@@ -1453,16 +1478,17 @@ public class IndexedDiskCache<K, V>
     /**
      * To subtract you can pass in false for add..
      * <p>
+     *
      * @param ded
      * @param add
      */
-    private synchronized void adjustBytesFree( IndexedDiskElementDescriptor ded, boolean add )
+    private synchronized void adjustBytesFree(IndexedDiskElementDescriptor ded, boolean add)
     {
-        if ( ded != null )
+        if (ded != null)
         {
             int amount = ded.len + IndexedDisk.HEADER_SIZE_BYTES;
 
-            if ( add )
+            if (add)
             {
                 this.bytesFree += amount;
             }
@@ -1476,11 +1502,11 @@ public class IndexedDiskCache<K, V>
     /**
      * This is for debugging and testing.
      * <p>
+     *
      * @return the length of the data file.
      * @throws IOException
      */
-    protected long getDataFileSize()
-        throws IOException
+    protected long getDataFileSize() throws IOException
     {
         long size = 0;
 
@@ -1488,7 +1514,7 @@ public class IndexedDiskCache<K, V>
 
         try
         {
-            if ( dataFile != null )
+            if (dataFile != null)
             {
                 size = dataFile.length();
             }
@@ -1506,27 +1532,29 @@ public class IndexedDiskCache<K, V>
      */
     public void dump()
     {
-        dump( true );
+        dump(true);
     }
 
     /**
      * For debugging.
      * <p>
-     * @param dumpValues A boolean indicating if values should be dumped.
+     *
+     * @param dumpValues
+     *            A boolean indicating if values should be dumped.
      */
-    public void dump( boolean dumpValues )
+    public void dump(boolean dumpValues)
     {
-        if ( log.isDebugEnabled() )
+        if (log.isDebugEnabled())
         {
-            log.debug( logCacheName + "[dump] Number of keys: " + keyHash.size() );
+            log.debug(logCacheName + "[dump] Number of keys: " + keyHash.size());
 
             for (Map.Entry<K, IndexedDiskElementDescriptor> e : keyHash.entrySet())
             {
                 K key = e.getKey();
                 IndexedDiskElementDescriptor ded = e.getValue();
 
-                log.debug( logCacheName + "[dump] Disk element, key: " + key + ", pos: " + ded.pos + ", ded.len"
-                    + ded.len + ( dumpValues ? ", val: " + get( key ) : "" ) );
+                log.debug(logCacheName + "[dump] Disk element, key: " + key + ", pos: " + ded.pos + ", ded.len" + ded.len
+                    + (dumpValues ? ", val: " + get(key) : ""));
             }
         }
     }
@@ -1543,6 +1571,7 @@ public class IndexedDiskCache<K, V>
     /**
      * Gets basic stats for the disk cache.
      * <p>
+     *
      * @return String
      */
     @Override
@@ -1555,42 +1584,42 @@ public class IndexedDiskCache<K, V>
      * Returns info about the disk cache.
      * <p>
      * (non-Javadoc)
+     *
      * @see org.apache.commons.jcs.auxiliary.AuxiliaryCache#getStatistics()
      */
     @Override
     public synchronized IStats getStatistics()
     {
         IStats stats = new Stats();
-        stats.setTypeName( "Indexed Disk Cache" );
+        stats.setTypeName("Indexed Disk Cache");
 
         ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
 
-        elems.add(new StatElement<Boolean>( "Is Alive", Boolean.valueOf(alive) ) );
-        elems.add(new StatElement<Integer>( "Key Map Size",
-                Integer.valueOf(this.keyHash != null ? this.keyHash.size() : -1) ) );
+        elems.add(new StatElement<Boolean>("Is Alive", Boolean.valueOf(alive)));
+        elems.add(new StatElement<Integer>("Key Map Size", Integer.valueOf(this.keyHash != null ? this.keyHash.size() : -1)));
         try
         {
-            elems.add(new StatElement<Long>( "Data File Length",
-                    Long.valueOf(this.dataFile != null ? this.dataFile.length() : -1L) ) );
+            elems
+                .add(new StatElement<Long>("Data File Length", Long.valueOf(this.dataFile != null ? this.dataFile.length() : -1L)));
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
-            log.error( e );
+            log.error(e);
         }
-        elems.add(new StatElement<Integer>( "Max Key Size", this.maxKeySize));
-        elems.add(new StatElement<Integer>( "Hit Count", Integer.valueOf(this.hitCount.get()) ) );
-        elems.add(new StatElement<Long>( "Bytes Free", Long.valueOf(this.bytesFree) ) );
-        elems.add(new StatElement<Integer>( "Optimize Operation Count", Integer.valueOf(this.removeCount) ) );
-        elems.add(new StatElement<Integer>( "Times Optimized", Integer.valueOf(this.timesOptimized) ) );
-        elems.add(new StatElement<Integer>( "Recycle Count", Integer.valueOf(this.recycleCnt) ) );
-        elems.add(new StatElement<Integer>( "Recycle Bin Size", Integer.valueOf(this.recycle.size()) ) );
-        elems.add(new StatElement<Integer>( "Startup Size", Integer.valueOf(this.startupSize) ) );
+        elems.add(new StatElement<Integer>("Max Key Size", this.maxKeySize));
+        elems.add(new StatElement<Integer>("Hit Count", Integer.valueOf(this.hitCount.get())));
+        elems.add(new StatElement<Long>("Bytes Free", Long.valueOf(this.bytesFree)));
+        elems.add(new StatElement<Integer>("Optimize Operation Count", Integer.valueOf(this.removeCount)));
+        elems.add(new StatElement<Integer>("Times Optimized", Integer.valueOf(this.timesOptimized)));
+        elems.add(new StatElement<Integer>("Recycle Count", Integer.valueOf(this.recycleCnt)));
+        elems.add(new StatElement<Integer>("Recycle Bin Size", Integer.valueOf(this.recycle.size())));
+        elems.add(new StatElement<Integer>("Startup Size", Integer.valueOf(this.startupSize)));
 
         // get the stats from the super too
         IStats sStats = super.getStatistics();
         elems.addAll(sStats.getStatElements());
 
-        stats.setStatElements( elems );
+        stats.setStatElements(elems);
 
         return stats;
     }
@@ -1598,6 +1627,7 @@ public class IndexedDiskCache<K, V>
     /**
      * This is exposed for testing.
      * <p>
+     *
      * @return Returns the timesOptimized.
      */
     protected int getTimesOptimized()
@@ -1608,6 +1638,7 @@ public class IndexedDiskCache<K, V>
     /**
      * This is used by the event logging.
      * <p>
+     *
      * @return the location of the disk, either path or ip.
      */
     @Override
@@ -1620,8 +1651,7 @@ public class IndexedDiskCache<K, V>
      * Compares IndexedDiskElementDescriptor based on their position.
      * <p>
      */
-    protected static final class PositionComparator
-        implements Comparator<IndexedDiskElementDescriptor>, Serializable
+    protected static final class PositionComparator implements Comparator<IndexedDiskElementDescriptor>, Serializable
     {
         /** serialVersionUID */
         private static final long serialVersionUID = -8387365338590814113L;
@@ -1629,19 +1659,20 @@ public class IndexedDiskCache<K, V>
         /**
          * Compares two descriptors based on position.
          * <p>
+         *
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
         @Override
-        public int compare( IndexedDiskElementDescriptor o1, IndexedDiskElementDescriptor o2 )
+        public int compare(IndexedDiskElementDescriptor o1, IndexedDiskElementDescriptor o2)
         {
             IndexedDiskElementDescriptor ded1 = o1;
             IndexedDiskElementDescriptor ded2 = o2;
 
-            if ( ded1.pos < ded2.pos )
+            if (ded1.pos < ded2.pos)
             {
                 return -1;
             }
-            else if ( ded1.pos == ded2.pos )
+            else if (ded1.pos == ded2.pos)
             {
                 return 0;
             }
@@ -1656,54 +1687,87 @@ public class IndexedDiskCache<K, V>
      * Class for recycling and lru. This implements the LRU overflow callback, so we can add items
      * to the recycle bin. This class counts the size element to decide, when to throw away an element
      */
-    public class LRUMapSizeLimited
-        extends AbstractLRUMap<K, IndexedDiskElementDescriptor>
+    public class LRUMapSizeLimited extends AbstractLRUMap<K, IndexedDiskElementDescriptor>
     {
         /**
          * <code>tag</code> tells us which map we are working on.
          */
         public String tag = "orig";
+
         // size of the content in kB
-        private AtomicInteger contentSize = new AtomicInteger();
-        private int maxSize = -1;
+        private AtomicInteger contentSize;
+        private int maxSize;
+
         /**
          * Default
          */
         public LRUMapSizeLimited()
         {
-            super();
+            this(-1);
         }
 
         /**
          * @param maxKeySize
          */
-        public LRUMapSizeLimited( int maxKeySize )
+        public LRUMapSizeLimited(int maxKeySize)
         {
             super();
             this.maxSize = maxKeySize;
+            this.contentSize = new AtomicInteger(0);
+        }
+
+        // keep the content size in kB, so 2^31 kB is reasonable value
+        private void subLengthFromCacheSize(IndexedDiskElementDescriptor value)
+        {
+            contentSize.addAndGet((value.len + IndexedDisk.HEADER_SIZE_BYTES) / -1024 - 1);
+        }
+
+        // keep the content size in kB, so 2^31 kB is reasonable value
+        private void addLengthToCacheSize(IndexedDiskElementDescriptor value)
+        {
+            contentSize.addAndGet((value.len + IndexedDisk.HEADER_SIZE_BYTES) / 1024 + 1);
         }
 
         @Override
-        public IndexedDiskElementDescriptor put(K key, IndexedDiskElementDescriptor value) {
-            try {
-                return super.put(key, value);
-            } finally {
-                // keep the content size in kB, so 2^31 kB is reasonable value
-                contentSize.addAndGet((int) Math.ceil((value.len + IndexedDisk.HEADER_SIZE_BYTES) / 1024.0));
+        public IndexedDiskElementDescriptor put(K key, IndexedDiskElementDescriptor value)
+        {
+            IndexedDiskElementDescriptor oldValue = null;
+
+            try
+            {
+                oldValue = super.put(key, value);
             }
+            finally
+            {
+                // keep the content size in kB, so 2^31 kB is reasonable value
+                if (value != null)
+                {
+                    addLengthToCacheSize(value);
+                }
+                if (oldValue != null)
+                {
+                    subLengthFromCacheSize(oldValue);
+                }
+            }
+
+            return oldValue;
         }
 
         @Override
-        public IndexedDiskElementDescriptor remove(Object key ) {
+        public IndexedDiskElementDescriptor remove(Object key)
+        {
             IndexedDiskElementDescriptor value = null;
 
-            try {
+            try
+            {
                 value = super.remove(key);
                 return value;
-            } finally {
-                if (value != null) {
-                    // keep the content size in kB, so 2^31 kB is reasonable value
-                    contentSize.addAndGet((int) ((Math.ceil((value.len + IndexedDisk.HEADER_SIZE_BYTES) / 1024.0)) * -1));
+            }
+            finally
+            {
+                if (value != null)
+                {
+                    subLengthFromCacheSize(value);
                 }
             }
         }
@@ -1712,29 +1776,33 @@ public class IndexedDiskCache<K, V>
          * This is called when the may key size is reached. The least recently used item will be
          * passed here. We will store the position and size of the spot on disk in the recycle bin.
          * <p>
+         *
          * @param key
          * @param value
          */
         @Override
-        protected void processRemovedLRU(K key, IndexedDiskElementDescriptor value )
+        protected void processRemovedLRU(K key, IndexedDiskElementDescriptor value)
         {
-            if (value != null) {
-                // keep the content size in kB, so 2^31 kB is reasonable value
-                contentSize.addAndGet((int) ((Math.ceil(value.len / 1024.0)) * -1));
-            }
-            addToRecycleBin( value );
-            if ( log.isDebugEnabled() )
+            if (value != null)
             {
-                log.debug( logCacheName + "Removing key: [" + key + "] from key store." );
-                log.debug( logCacheName + "Key store size: [" + this.size() + "]." );
+                subLengthFromCacheSize(value);
+            }
+
+            addToRecycleBin(value);
+
+            if (log.isDebugEnabled())
+            {
+                log.debug(logCacheName + "Removing key: [" + key + "] from key store.");
+                log.debug(logCacheName + "Key store size: [" + this.size() + "].");
             }
 
             doOptimizeRealTime();
         }
 
         @Override
-        protected boolean shouldRemove() {
-            return maxSize > 0 && contentSize.intValue() > maxSize && this.size() > 0;
+        protected boolean shouldRemove()
+        {
+            return maxSize > 0 && contentSize.get() > maxSize && this.size() > 0;
         }
     }
 
@@ -1743,28 +1811,30 @@ public class IndexedDiskCache<K, V>
      * to the recycle bin. This class counts the elements to decide, when to throw away an element
      */
 
-    public class LRUMapCountLimited
-    extends LRUMap<K, IndexedDiskElementDescriptor>
+    public class LRUMapCountLimited extends LRUMap<K, IndexedDiskElementDescriptor>
     // implements Serializable
     {
-        public LRUMapCountLimited(int maxKeySize) {
+        public LRUMapCountLimited(int maxKeySize)
+        {
             super(maxKeySize);
         }
+
         /**
          * This is called when the may key size is reached. The least recently used item will be
          * passed here. We will store the position and size of the spot on disk in the recycle bin.
          * <p>
+         *
          * @param key
          * @param value
          */
         @Override
-        protected void processRemovedLRU(K key, IndexedDiskElementDescriptor value )
+        protected void processRemovedLRU(K key, IndexedDiskElementDescriptor value)
         {
-            addToRecycleBin( value );
-            if ( log.isDebugEnabled() )
+            addToRecycleBin(value);
+            if (log.isDebugEnabled())
             {
-                log.debug( logCacheName + "Removing key: [" + key + "] from key store." );
-                log.debug( logCacheName + "Key store size: [" + this.size() + "]." );
+                log.debug(logCacheName + "Removing key: [" + key + "] from key store.");
+                log.debug(logCacheName + "Key store size: [" + this.size() + "].");
             }
 
             doOptimizeRealTime();
