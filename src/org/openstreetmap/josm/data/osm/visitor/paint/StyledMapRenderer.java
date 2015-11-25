@@ -74,6 +74,8 @@ import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.tools.CompositeList;
+import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
@@ -334,6 +336,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private boolean isOutlineOnly;
     private boolean isUnclosedAreaHighlight;
     private double unclosedAreaHighlightWidth;
+    private double partialFillThreshold;
 
     private Font orderFont;
 
@@ -464,13 +467,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extent if not null, area will be filled partially; specifies, how
      * far to fill from the boundary towards the center of the area;
      * if null, area will be filled completely
-     * @param unClosedHighlight true, if the fact that the way / multipolygon is not
+     * @param unclosedHighlight true, if the fact that the way / multipolygon is not
      * properly closed should be highlighted; this parameter is only used
      * for partial fill ({@code extent != null}), otherwise it is ignored 
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent, boolean unClosedHighlight,
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent, boolean unclosedHighlight,
             boolean disabled, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
@@ -485,7 +488,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (extent == null) {
                     g.fill(area);
                 } else {
-                    if (unClosedHighlight) {
+                    if (unclosedHighlight) {
                         g.setStroke(new BasicStroke((int)(unclosedAreaHighlightWidth / 100 * extent),
                                 BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                         g.draw(area);
@@ -508,7 +511,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (extent == null) {
                     g.fill(area);
                 } else {
-                    if (unClosedHighlight) {
+                    if (unclosedHighlight) {
                         g.setStroke(new BasicStroke((int)(unclosedAreaHighlightWidth / 100 * extent),
                                 BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                         g.draw(area);
@@ -621,11 +624,22 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (!isAreaVisible(p)) {
                     continue;
                 }
+                boolean unclosedHighlight = false;
+                if (extent != null) {
+                    if (pd.isClosed()) {
+                        AreaAndPerimeter ap = pd.getAreaAndPerimeter();
+                        // if partial fill would only leave a small gap in the center ...
+                        if (ap.getPerimeter() * extent * circum / 100 > partialFillThreshold / 100 * ap.getArea()) {
+                            // ... turn it off and fill completely
+                            extent = null;
+                        }
+                    } else {
+                        unclosedHighlight = isUnclosedAreaHighlight;
+                    }
+                }
                 drawArea(r, p,
                         pd.selected ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
-                        fillImage, extent,
-                        isUnclosedAreaHighlight && extent != null && !pd.isClosed(),
-                        disabled, text);
+                        fillImage, extent, unclosedHighlight, disabled, text);
             }
         }
     }
@@ -642,6 +656,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param text The text to write on the area.
      */
     public void drawArea(Way w, Color color, MapImage fillImage, Float extent, boolean disabled, TextElement text) {
+        if (extent != null && w.isClosed()) {
+            AreaAndPerimeter ap = Geometry.getAreaAndPerimeter(w.getNodes());
+            // if partial fill would only leave a small gap in the center ...
+            if (ap.getPerimeter() * extent * circum / 100 > partialFillThreshold / 100 * ap.getArea()) {
+                // ... turn it off and fill completely
+                extent = null;
+            }
+        }
         drawArea(w, getPath(w), color, fillImage, extent, isUnclosedAreaHighlight && !w.isClosed(), disabled, text);
     }
 
@@ -1499,6 +1521,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         isOutlineOnly = paintSettings.isOutlineOnly();
         isUnclosedAreaHighlight = paintSettings.isUnclosedAreaHighlight();
         unclosedAreaHighlightWidth = paintSettings.getUnclosedAreaHighlightWidth();
+        partialFillThreshold = paintSettings.getPartialFillThreshold();
         orderFont = new Font(Main.pref.get("mappaint.font", "Droid Sans"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
 
         antialiasing = Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
