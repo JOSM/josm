@@ -138,7 +138,6 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
             if (answer == JOptionPane.YES_OPTION) {
                 for (Entry<OsmPrimitive, List<TagCorrection>> entry : tagCorrectionsMap.entrySet()) {
-                    List<TagCorrection> tagCorrections = entry.getValue();
                     OsmPrimitive primitive = entry.getKey();
 
                     // create the clone
@@ -157,6 +156,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     Set<String> keysChanged = new HashSet<>();
 
                     // apply all changes to this clone
+                    List<TagCorrection> tagCorrections = entry.getValue();
                     for (int i = 0; i < tagCorrections.size(); i++) {
                         if (tagTableMap.get(primitive).getCorrectionTableModel().getApply(i)) {
                             TagCorrection tagCorrection = tagCorrections.get(i);

@@ -66,13 +66,12 @@ public class WindowGeometry {
      * @return the geometry object
      */
     public static WindowGeometry centerInWindow(Component reference, Dimension extent) {
-        Window parentWindow = null;
         while (reference != null && !(reference instanceof Window)) {
             reference = reference.getParent();
         }
         if (reference == null)
             return new WindowGeometry(new Point(0, 0), extent);
-        parentWindow = (Window) reference;
+        Window parentWindow = (Window) reference;
         Point topLeft = new Point(
                 Math.max(0, (parentWindow.getSize().width - extent.width) /2),
                 Math.max(0, (parentWindow.getSize().height - extent.height) /2)

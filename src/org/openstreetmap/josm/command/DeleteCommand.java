@@ -373,8 +373,6 @@ public class DeleteCommand extends Command {
         if (!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete))
             return null;
 
-        Collection<Way> waysToBeChanged = new HashSet<>();
-
         if (alsoDeleteNodesInWay) {
             // delete untagged nodes only referenced by primitives in primitivesToDelete, too
             Collection<Node> nodesToDelete = computeNodesToDelete(primitivesToDelete);
@@ -385,7 +383,7 @@ public class DeleteCommand extends Command {
                 primitivesToDelete, Utils.filteredCollection(primitivesToDelete, Way.class)))
             return null;
 
-        waysToBeChanged.addAll(OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Way.class));
+        Collection<Way> waysToBeChanged = new HashSet<>(OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Way.class));
 
         Collection<Command> cmds = new LinkedList<>();
         for (Way w : waysToBeChanged) {

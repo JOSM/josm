@@ -313,8 +313,6 @@ public class MergeNodesAction extends JosmAction {
 
         try {
             TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
-            List<Command> resultion = CombinePrimitiveResolverDialog.launchIfNecessary(nodeTags, nodes, Collections.singleton(targetNode));
-            List<Command> cmds = new LinkedList<>();
 
             // the nodes we will have to delete
             //
@@ -323,14 +321,11 @@ public class MergeNodesAction extends JosmAction {
 
             // fix the ways referring to at least one of the merged nodes
             //
-            Collection<Way> waysToDelete = new HashSet<>();
-            List<Command> wayFixCommands = fixParentWays(
-                    nodesToDelete,
-                    targetNode);
+            List<Command> wayFixCommands = fixParentWays(nodesToDelete, targetNode);
             if (wayFixCommands == null) {
                 return null;
             }
-            cmds.addAll(wayFixCommands);
+            List<Command> cmds = new LinkedList<>(wayFixCommands);
 
             // build the commands
             //
@@ -342,12 +337,9 @@ public class MergeNodesAction extends JosmAction {
                     cmds.add(new ChangeCommand(targetNode, newTargetNode));
                 }
             }
-            cmds.addAll(resultion);
+            cmds.addAll(CombinePrimitiveResolverDialog.launchIfNecessary(nodeTags, nodes, Collections.singleton(targetNode)));
             if (!nodesToDelete.isEmpty()) {
                 cmds.add(new DeleteCommand(nodesToDelete));
-            }
-            if (!waysToDelete.isEmpty()) {
-                cmds.add(new DeleteCommand(waysToDelete));
             }
             return new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
                     trn("Merge {0} node", "Merge {0} nodes", nodes.size(), nodes.size()), cmds);

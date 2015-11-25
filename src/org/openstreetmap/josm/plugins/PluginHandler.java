@@ -379,21 +379,6 @@ public final class PluginHandler {
         }
         if (message == null) return false;
 
-        ButtonSpec[] options = new ButtonSpec[] {
-                new ButtonSpec(
-                        tr("Update plugins"),
-                        ImageProvider.get("dialogs", "refresh"),
-                        tr("Click to update the activated plugins"),
-                        null /* no specific help context */
-                ),
-                new ButtonSpec(
-                        tr("Skip update"),
-                        ImageProvider.get("cancel"),
-                        tr("Click to skip updating the activated plugins"),
-                        null /* no specific help context */
-                )
-        };
-
         UpdatePluginsMessagePanel pnlMessage = new UpdatePluginsMessagePanel();
         pnlMessage.setMessage(message);
         pnlMessage.initDontShowAgain(togglePreferenceKey);
@@ -424,6 +409,21 @@ public final class PluginHandler {
         default:
             Main.warn(tr("Unexpected value ''{0}'' for preference ''{1}''. Assuming value ''ask''.", policy, togglePreferenceKey));
         }
+
+        ButtonSpec[] options = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Update plugins"),
+                        ImageProvider.get("dialogs", "refresh"),
+                        tr("Click to update the activated plugins"),
+                        null /* no specific help context */
+                ),
+                new ButtonSpec(
+                        tr("Skip update"),
+                        ImageProvider.get("cancel"),
+                        tr("Click to skip updating the activated plugins"),
+                        null /* no specific help context */
+                )
+        };
 
         int ret = HelpAwareOptionPane.showOptionDialog(
                 parent,

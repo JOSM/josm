@@ -136,8 +136,6 @@ public class SplitWayAction extends JosmAction {
 
         List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
         List<Way> selectedWays = OsmPrimitive.getFilteredList(selection, Way.class);
-        List<Relation> selectedRelations =
-            OsmPrimitive.getFilteredList(selection, Relation.class);
         List<Way> applicableWays = getApplicableWays(selectedWays, selectedNodes);
 
         if (applicableWays == null) {
@@ -190,6 +188,8 @@ public class SplitWayAction extends JosmAction {
         final Way selectedWay = applicableWays.get(0);
         final List<List<Node>> wayChunks = buildSplitChunks(selectedWay, selectedNodes);
         if (wayChunks != null) {
+            List<Relation> selectedRelations =
+                    OsmPrimitive.getFilteredList(selection, Relation.class);
             final List<OsmPrimitive> sel = new ArrayList<>(selectedWays.size() + selectedRelations.size());
             sel.addAll(selectedWays);
             sel.addAll(selectedRelations);

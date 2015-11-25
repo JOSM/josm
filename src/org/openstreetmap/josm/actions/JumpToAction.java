@@ -96,8 +96,6 @@ public class JumpToAction extends JosmAction {
         lon.setText(Double.toString(curPos.lon()));
 
         double dist = mv.getDist100Pixel();
-        double zoomFactor = 1/dist;
-
         zm.setText(Long.toString(Math.round(dist*100)/100));
         updateUrl(true);
 
@@ -160,6 +158,7 @@ public class JumpToAction extends JosmAction {
             }
         }
 
+        double zoomFactor = 1/dist;
         mv.zoomToFactor(mv.getProjection().latlon2eastNorth(ll), zoomFactor * zoomLvl);
     }
 

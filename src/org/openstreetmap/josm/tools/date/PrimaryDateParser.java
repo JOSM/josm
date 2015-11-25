@@ -40,7 +40,6 @@ public class PrimaryDateParser {
     }
 
     private static boolean isDateInShortStandardFormat(String date) {
-        char[] dateChars;
         // We can only parse the date if it is in a very specific format.
         // eg. 2007-09-23T08:25:43Z
 
@@ -48,7 +47,7 @@ public class PrimaryDateParser {
             return false;
         }
 
-        dateChars = date.toCharArray();
+        char[] dateChars = date.toCharArray();
 
         // Make sure any fixed characters are in the correct place.
         if (dateChars[4] != '-') {
@@ -107,7 +106,6 @@ public class PrimaryDateParser {
     }
 
     private static boolean isDateInLongStandardFormat(String date) {
-        char[] dateChars;
         // We can only parse the date if it is in a very specific format.
         // eg. 2007-09-23T08:25:43.000Z
 
@@ -115,7 +113,7 @@ public class PrimaryDateParser {
             return false;
         }
 
-        dateChars = date.toCharArray();
+        char[] dateChars = date.toCharArray();
 
         // Make sure any fixed characters are in the correct place.
         if (dateChars[4] != '-') {

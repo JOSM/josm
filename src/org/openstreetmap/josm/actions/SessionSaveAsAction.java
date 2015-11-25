@@ -229,7 +229,6 @@ public class SessionSaveAsAction extends DiskAccessAction {
         }
 
         protected final Component build() {
-            JPanel p = new JPanel(new GridBagLayout());
             JPanel ip = new JPanel(new GridBagLayout());
             for (Layer layer : layers) {
                 JPanel wrapper = new JPanel(new GridBagLayout());
@@ -248,6 +247,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             ip.add(GBC.glue(0, 1), GBC.eol().fill(GBC.VERTICAL));
             JScrollPane sp = new JScrollPane(ip);
             sp.setBorder(BorderFactory.createEmptyBorder());
+            JPanel p = new JPanel(new GridBagLayout());
             p.add(sp, GBC.eol().fill());
             final JTabbedPane tabs = new JTabbedPane();
             tabs.addTab(tr("Layers"), p);

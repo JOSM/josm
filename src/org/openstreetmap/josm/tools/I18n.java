@@ -582,7 +582,6 @@ public final class I18n {
                         break;
                     }
                     String[] enstrings = new String[ennum];
-                    String[] trstrings = new String[trnum];
                     for (int i = 0; i < ennum; ++i) {
                         int val = ens.read(enlen);
                         if (val != 2) /* file corrupt */
@@ -596,6 +595,7 @@ public final class I18n {
                             return false;
                         enstrings[i] = new String(str, 0, val, StandardCharsets.UTF_8);
                     }
+                    String[] trstrings = new String[trnum];
                     for (int i = 0; i < trnum; ++i) {
                         int val = trs.read(trlen);
                         if (val != 2) /* file corrupt */
