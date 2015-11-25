@@ -835,7 +835,6 @@ public class ImageProvider {
     private static ImageResource getIfAvailableDataUrl(String url) {
         Matcher m = dataUrlPattern.matcher(url);
         if (m.matches()) {
-            String mediatype = m.group(1);
             String base64 = m.group(2);
             String data = m.group(3);
             byte[] bytes;
@@ -849,6 +848,7 @@ public class ImageProvider {
                     return null;
                 }
             }
+            String mediatype = m.group(1);
             if ("image/svg+xml".equals(mediatype)) {
                 String s = new String(bytes, StandardCharsets.UTF_8);
                 SVGDiagram svg = null;

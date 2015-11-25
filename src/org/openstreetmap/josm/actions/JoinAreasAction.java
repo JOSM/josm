@@ -767,8 +767,6 @@ public class JoinAreasAction extends JosmAction {
      */
     private List<WayInPolygon> markWayInsideSide(List<Way> parts, boolean isInner) {
 
-        List<WayInPolygon> result = new ArrayList<>();
-
         //prepare next map
         Map<Way, Way> nextWayMap = new HashMap<>();
 
@@ -853,6 +851,7 @@ public class JoinAreasAction extends JosmAction {
 
         Way curWay = topWay;
         boolean curWayInsideToTheRight = wayClockwise ^ isInner;
+        List<WayInPolygon> result = new ArrayList<>();
 
         //iterate till full circle is reached
         while (true) {

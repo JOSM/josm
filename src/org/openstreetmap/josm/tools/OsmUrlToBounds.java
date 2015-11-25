@@ -92,13 +92,13 @@ public final class OsmUrlToBounds {
             return null;
         }
         int zoom;
-        double lat, lon;
         try {
             zoom = Integer.parseInt(parts[0]);
         } catch (NumberFormatException e) {
             Main.warn(tr("URL does not contain valid {0}", tr("zoom")), e);
             return null;
         }
+        double lat, lon;
         try {
             lat = Double.parseDouble(parts[1]);
         } catch (NumberFormatException e) {

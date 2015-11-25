@@ -393,11 +393,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         DataSet ds = getCurrentDataSet();
         Collection<OsmPrimitive> selection = new ArrayList<>(ds.getSelected());
-        Collection<Command> cmds = new LinkedList<>();
-        Collection<OsmPrimitive> newSelection = new LinkedList<>(ds.getSelected());
 
-        List<Way> reuseWays = new ArrayList<>(),
-                replacedWays = new ArrayList<>();
         boolean newNode = false;
         Node n = null;
 
@@ -450,6 +446,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
             snapHelper.unsetFixedMode();
         }
+
+        Collection<Command> cmds = new LinkedList<>();
+        Collection<OsmPrimitive> newSelection = new LinkedList<>(ds.getSelected());
+        List<Way> reuseWays = new ArrayList<>();
+        List<Way> replacedWays = new ArrayList<>();
 
         if (newNode) {
             if (n.getCoor().isOutSideWorld()) {
@@ -768,7 +769,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * mouseReleased() (FIXME).
      */
     private void computeHelperLine() {
-        MapView mv = Main.map.mapView;
         if (mousePos == null) {
             // Don't draw the line.
             currentMouseEastNorth = null;
@@ -778,6 +778,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
+        MapView mv = Main.map.mapView;
         Node currentMouseNode = null;
         mouseOnExistingNode = null;
         mouseOnExistingWays = new HashSet<>();
@@ -1270,9 +1271,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         @Override
         public void actionPerformed(ActionEvent e) {
             Main.main.undoRedo.undo();
-            Node n = null;
             Command lastCmd = Main.main.undoRedo.commands.peekLast();
             if (lastCmd == null) return;
+            Node n = null;
             for (OsmPrimitive p: lastCmd.getParticipatingPrimitives()) {
                 if (p instanceof Node) {
                     if (n == null) {

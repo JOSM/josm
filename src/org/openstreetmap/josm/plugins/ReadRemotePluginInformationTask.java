@@ -314,7 +314,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         if (sites == null) return;
         getProgressMonitor().setTicksCount(sites.size() * 3);
-        File pluginDir = Main.pref.getPluginsDirectory();
 
         // collect old cache files and remove if no longer in use
         List<File> siteCacheFiles = new LinkedList<>();
@@ -333,6 +332,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             }
         }
 
+        File pluginDir = Main.pref.getPluginsDirectory();
         for (String site: sites) {
             String printsite = site.replaceAll("%<(.*)>", "");
             getProgressMonitor().subTask(tr("Processing plugin list from site ''{0}''", printsite));

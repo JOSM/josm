@@ -199,8 +199,6 @@ public class PurgeCommand extends Command {
           */
         @SuppressWarnings({ "unchecked", "rawtypes" })
         Set<Relation> inR = (Set) in;
-        Set<Relation> childlessR = new HashSet<>();
-        List<Relation> outR = new ArrayList<>(inR.size());
 
         Map<Relation, Integer> numChilds = new HashMap<>();
 
@@ -218,12 +216,14 @@ public class PurgeCommand extends Command {
                 }
             }
         }
+        Set<Relation> childlessR = new HashSet<>();
         for (Relation r : inR) {
             if (numChilds.get(r).equals(0)) {
                 childlessR.add(r);
             }
         }
 
+        List<Relation> outR = new ArrayList<>(inR.size());
         while (!childlessR.isEmpty()) {
             // Identify one childless Relation and
             // let it virtually die. This makes other

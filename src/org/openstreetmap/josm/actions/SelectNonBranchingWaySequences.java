@@ -135,22 +135,18 @@ public class SelectNonBranchingWaySequences {
      * @param data the data set in which to extend the selection
      */
     public void extend(DataSet data) {
-        Collection<OsmPrimitive> currentSelection;
-        Collection<OsmPrimitive> selection;
-        boolean selectionChanged = false;
-        Way way;
-
         if (!canExtend())
             return;
 
-        currentSelection = data.getSelected();
+        Collection<OsmPrimitive> currentSelection = data.getSelected();
 
-        way = findWay(currentSelection);
+        Way way = findWay(currentSelection);
 
         if (way == null)
             return;
 
-        selection = new LinkedList<>();
+        boolean selectionChanged = false;
+        Collection<OsmPrimitive> selection = new LinkedList<>();
         for (OsmPrimitive primitive : currentSelection) {
             selection.add(primitive);
         }

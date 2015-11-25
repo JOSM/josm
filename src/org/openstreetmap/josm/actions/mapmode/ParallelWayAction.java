@@ -392,7 +392,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         // Setting this after the check above means we tolerate clicks with some movement
         mouseHasBeenDragged = true;
 
-        Point p = e.getPoint();
         if (mode == Mode.normal) {
             // Should we ensure that the copyTags modifiers are still valid?
 
@@ -406,6 +405,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         }
 
         // Calculate distance to the reference line
+        Point p = e.getPoint();
         EastNorth enp = mv.getEastNorth((int) p.getX(), (int) p.getY());
         EastNorth nearestPointOnRefLine = Geometry.closestPointToLine(referenceSegment.getFirstNode().getEastNorth(),
                 referenceSegment.getSecondNode().getEastNorth(), enp);

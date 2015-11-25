@@ -140,7 +140,6 @@ public class CreateMultipolygonAction extends JosmAction {
         }
 
         final Collection<Way> selectedWays = Main.main.getCurrentDataSet().getSelectedWays();
-        final Collection<Relation> selectedRelations = Main.main.getCurrentDataSet().getSelectedRelations();
 
         if (selectedWays.isEmpty()) {
             // Sometimes it make sense creating multipoly of only one way (so it will form outer way)
@@ -153,6 +152,7 @@ public class CreateMultipolygonAction extends JosmAction {
             return;
         }
 
+        final Collection<Relation> selectedRelations = Main.main.getCurrentDataSet().getSelectedRelations();
         final Relation multipolygonRelation = update
                 ? getSelectedMultipolygonRelation(selectedWays, selectedRelations)
                 : null;

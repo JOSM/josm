@@ -1101,8 +1101,6 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
          * @return the next element of cycle list
          */
         private Collection<OsmPrimitive> cyclePrims() {
-            OsmPrimitive nxt = null;
-
             if (cycleList.size() <= 1) {
                 // no real cycling, just return one-element collection with nearest primitive in it
                 return cycleList;
@@ -1111,7 +1109,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
             DataSet ds = getCurrentDataSet();
             OsmPrimitive first = cycleList.iterator().next(), foundInDS = null;
-            nxt = first;
+            OsmPrimitive nxt = first;
 
             if (cyclePrims && shift) {
                 for (Iterator<OsmPrimitive> i = cycleList.iterator(); i.hasNext();) {

@@ -351,12 +351,13 @@ public final class Geometry {
 
         double a2 = p4.getY() - p3.getY();
         double b2 = p3.getX() - p4.getX();
-        double c2 = (p4.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p3.getX() - p1.getX()) * (p4.getY() - p1.getY());
 
         // Solve the equations
         double det = a1 * b2 - a2 * b1;
         if (det == 0)
             return null; // Lines are parallel
+
+        double c2 = (p4.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p3.getX() - p1.getX()) * (p4.getY() - p1.getY());
 
         return new EastNorth(b1 * c2 / det + p1.getX(), -a1 * c2 / det + p1.getY());
     }
@@ -572,15 +573,15 @@ public final class Geometry {
         if (polygonNodes.size() < 2)
             return false;
 
-        boolean inside = false;
-        Node p1, p2;
-
         //iterate each side of the polygon, start with the last segment
         Node oldPoint = polygonNodes.get(polygonNodes.size() - 1);
 
         if (!oldPoint.isLatLonKnown()) {
             return false;
         }
+
+        boolean inside = false;
+        Node p1, p2;
 
         for (Node newPoint : polygonNodes) {
             //skip duplicate points
@@ -707,11 +708,11 @@ public final class Geometry {
      * @see #isClockwise(Way)
      */
     public static boolean isClockwise(List<Node> nodes) {
-        double area2 = 0.;
         int nodesCount = nodes.size();
         if (nodesCount < 3 || nodes.get(0) != nodes.get(nodesCount - 1)) {
             throw new IllegalArgumentException("Way must be closed to check orientation.");
         }
+        double area2 = 0.;
 
         for (int node = 1; node <= /*sic! consider last-first as well*/ nodesCount; node++) {
             LatLon coorPrev = nodes.get(node - 1).getCoor();

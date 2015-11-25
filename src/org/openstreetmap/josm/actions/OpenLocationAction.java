@@ -188,7 +188,6 @@ public class OpenLocationAction extends JosmAction {
      * @param url The URL to open
      */
     public void openUrl(boolean newLayer, final String url) {
-        PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
         Collection<DownloadTask> tasks = findDownloadTasks(url, false);
 
         if (tasks.size() > 1) {
@@ -198,6 +197,8 @@ public class OpenLocationAction extends JosmAction {
             return;
         }
 
+        PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
+
         for (final DownloadTask task : tasks) {
             try {
                 Future<?> future = task.loadUrl(newLayer, url, monitor);
@@ -206,7 +207,6 @@ public class OpenLocationAction extends JosmAction {
                 Main.error(e);
             }
         }
-
     }
 
     /**
