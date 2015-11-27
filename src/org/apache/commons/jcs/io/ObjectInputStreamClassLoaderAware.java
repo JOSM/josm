@@ -26,6 +26,10 @@ import java.lang.reflect.Proxy;
 
 public class ObjectInputStreamClassLoaderAware extends ObjectInputStream
 {
+    private static final BlacklistClassResolver BLACKLIST_CLASSES = new BlacklistClassResolver(System.getProperty(
+        "jcs.BlacklistClassResolver",
+        "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan").split(" *, *"));
+
     private final ClassLoader classLoader;
 
     public ObjectInputStreamClassLoaderAware(final InputStream in, final ClassLoader classLoader) throws IOException
@@ -37,7 +41,7 @@ public class ObjectInputStreamClassLoaderAware extends ObjectInputStream
     @Override
     protected Class<?> resolveClass(final ObjectStreamClass desc) throws ClassNotFoundException
     {
-        return Class.forName(desc.getName(), false, classLoader);
+        return Class.forName(BLACKLIST_CLASSES.check(desc.getName()), false, classLoader);
     }
 
     @Override
@@ -59,4 +63,22 @@ public class ObjectInputStreamClassLoaderAware extends ObjectInputStream
         }
     }
 
+    private static final class BlacklistClassResolver {
+        private final String[] blacklist;
+
+        protected BlacklistClassResolver(final String[] blacklist) {
+            this.blacklist = blacklist;
+        }
+
+        public final String check(final String name) {
+            if (blacklist != null) {
+                for (final String white : blacklist) {
+                    if (name.startsWith(white)) {
+                        throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading.");
+                    }
+                }
+            }
+            return name;
+        }
+    }
 }
