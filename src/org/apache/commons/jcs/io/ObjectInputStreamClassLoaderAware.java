@@ -24,61 +24,72 @@ import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Proxy;
 
-public class ObjectInputStreamClassLoaderAware extends ObjectInputStream
-{
-    private static final BlacklistClassResolver BLACKLIST_CLASSES = new BlacklistClassResolver(System.getProperty(
-        "jcs.BlacklistClassResolver",
-        "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan").split(" *, *"));
-
+public class ObjectInputStreamClassLoaderAware extends ObjectInputStream {
     private final ClassLoader classLoader;
 
-    public ObjectInputStreamClassLoaderAware(final InputStream in, final ClassLoader classLoader) throws IOException
-    {
+    public ObjectInputStreamClassLoaderAware(final InputStream in, final ClassLoader classLoader) throws IOException {
         super(in);
         this.classLoader = classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
     }
 
     @Override
-    protected Class<?> resolveClass(final ObjectStreamClass desc) throws ClassNotFoundException
-    {
-        return Class.forName(BLACKLIST_CLASSES.check(desc.getName()), false, classLoader);
+    protected Class<?> resolveClass(final ObjectStreamClass desc) throws ClassNotFoundException {
+        return Class.forName(BlacklistClassResolver.DEFAULT.check(desc.getName()), false, classLoader);
     }
 
     @Override
-    protected Class resolveProxyClass(final String[] interfaces) throws IOException, ClassNotFoundException
-    {
+    protected Class resolveProxyClass(final String[] interfaces) throws IOException, ClassNotFoundException {
         final Class[] cinterfaces = new Class[interfaces.length];
-        for (int i = 0; i < interfaces.length; i++)
-        {
+        for (int i = 0; i < interfaces.length; i++) {
             cinterfaces[i] = Class.forName(interfaces[i], false, classLoader);
         }
 
-        try
-        {
+        try {
             return Proxy.getProxyClass(classLoader, cinterfaces);
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             throw new ClassNotFoundException(null, e);
         }
     }
 
-    private static final class BlacklistClassResolver {
-        private final String[] blacklist;
+    private static class BlacklistClassResolver {
+        private static final BlacklistClassResolver DEFAULT = new BlacklistClassResolver(
+            toArray(System.getProperty(
+                "jcs.serialization.class.blacklist",
+                "org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan")),
+            toArray(System.getProperty("jcs.serialization.class.whitelist")));
 
-        protected BlacklistClassResolver(final String[] blacklist) {
+        private final String[] blacklist;
+        private final String[] whitelist;
+
+        protected BlacklistClassResolver(final String[] blacklist, final String[] whitelist) {
+            this.whitelist = whitelist;
             this.blacklist = blacklist;
         }
 
+        protected boolean isBlacklisted(final String name) {
+            return (whitelist != null && !contains(whitelist, name)) || contains(blacklist, name);
+        }
+
         public final String check(final String name) {
-            if (blacklist != null) {
-                for (final String white : blacklist) {
+            if (isBlacklisted(name)) {
+                throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading.");
+            }
+            return name;
+        }
+
+        private static String[] toArray(final String property) {
+            return property == null ? null : property.split(" *, *");
+        }
+
+        private static boolean contains(final String[] list, String name) {
+            if (list != null) {
+                for (final String white : list) {
                     if (name.startsWith(white)) {
-                        throw new SecurityException(name + " is not whitelisted as deserialisable, prevented before loading.");
+                        return true;
                     }
                 }
             }
-            return name;
+            return false;
         }
     }
 }
