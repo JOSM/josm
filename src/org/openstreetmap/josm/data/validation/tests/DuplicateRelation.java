@@ -38,10 +38,10 @@ public class DuplicateRelation extends Test {
      */
     public static class RelMember {
         /** Role of the relation member */
-        private String role;
+        private final String role;
 
         /** Type of the relation member */
-        private OsmPrimitiveType type;
+        private final OsmPrimitiveType type;
 
         /** Tags of the relation member */
         private Map<String, String> tags;
@@ -102,7 +102,7 @@ public class DuplicateRelation extends Test {
      */
     private static class RelationMembers {
         /** List of member objects of the relation */
-        private List<RelMember> members;
+        private final List<RelMember> members;
 
         /** Store relation information
          * @param members The list of relation members
@@ -132,9 +132,9 @@ public class DuplicateRelation extends Test {
      */
     private static class RelationPair {
         /** Member objects of the relation */
-        private RelationMembers members;
+        private final RelationMembers members;
         /** Tags of the relation */
-        private Map<String, String> keys;
+        private final Map<String, String> keys;
 
         /** Store relation information
          * @param members The list of relation members

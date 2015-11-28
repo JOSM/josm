@@ -24,7 +24,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
     // The relation to be changed
     private final Relation relation;
     // Position of the member
-    private int position = -1;
+    private final int position;
     // The new role
     private final String newRole;
     // The old role

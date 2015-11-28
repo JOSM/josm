@@ -43,8 +43,8 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 6053
  */
 public class DownloadTaskList {
-    private List<DownloadTask> tasks = new LinkedList<>();
-    private List<Future<?>> taskFutures = new LinkedList<>();
+    private final List<DownloadTask> tasks = new LinkedList<>();
+    private final List<Future<?>> taskFutures = new LinkedList<>();
     private ProgressMonitor progressMonitor;
 
     private void addDownloadTask(DownloadTask dt, Rectangle2D td, int i, int n) {

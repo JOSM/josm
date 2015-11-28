@@ -20,8 +20,8 @@ import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 public class PostDownloadHandler implements Runnable {
-    private DownloadTask task;
-    private List<Future<?>> futures;
+    private final DownloadTask task;
+    private final List<Future<?>> futures;
 
     /**
      * constructor

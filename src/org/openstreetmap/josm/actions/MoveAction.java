@@ -28,7 +28,7 @@ public class MoveAction extends JosmAction {
 
     public enum Direction { UP, LEFT, RIGHT, DOWN }
 
-    private Direction myDirection;
+    private final Direction myDirection;
 
     // any better idea?
     private static String calltosupermustbefirststatementinconstructortext(Direction dir) {

@@ -97,7 +97,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
     }
 
     class DownloadTask extends PleaseWaitRunnable {
-        private OsmServerReader reader;
+        private final OsmServerReader reader;
         private GpxData rawData;
         private final boolean newLayer;
 

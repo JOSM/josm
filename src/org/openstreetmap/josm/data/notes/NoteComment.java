@@ -11,10 +11,10 @@ import org.openstreetmap.josm.data.osm.User;
  */
 public class NoteComment {
 
-    private String text;
-    private User user;
-    private Date commentTimestamp;
-    private Action action;
+    private final String text;
+    private final User user;
+    private final Date commentTimestamp;
+    private final Action action;
 
     //not currently used. I'm planning on using this to keep track of new actions that need to be uploaded
     private boolean isNew;

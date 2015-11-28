@@ -6,7 +6,7 @@ package org.openstreetmap.josm.data.projection.proj;
  */
 public class ClassProjFactory implements ProjFactory {
 
-    private Class<? extends Proj> projClass;
+    private final Class<? extends Proj> projClass;
 
     public ClassProjFactory(Class<? extends Proj> projClass) {
         this.projClass = projClass;

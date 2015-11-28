@@ -35,7 +35,7 @@ public class History {
     }
 
     /** the list of object snapshots */
-    private List<HistoryOsmPrimitive> versions;
+    private final List<HistoryOsmPrimitive> versions;
     /** the object id */
     private final long id;
     /** the object type */

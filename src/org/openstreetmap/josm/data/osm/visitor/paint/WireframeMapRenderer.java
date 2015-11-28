@@ -89,7 +89,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     private static final double sinPHI = Math.sin(PHI);
 
     /** Helper variable for {@link #visit(Relation)} */
-    private Stroke relatedWayStroke = new BasicStroke(
+    private final Stroke relatedWayStroke = new BasicStroke(
             4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
 
     /**

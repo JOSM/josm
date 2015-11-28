@@ -258,8 +258,8 @@ public class UploadSelectionAction extends JosmAction {
     class DeletedParentsChecker extends PleaseWaitRunnable {
         private boolean canceled;
         private Exception lastException;
-        private Collection<OsmPrimitive> toUpload;
-        private OsmDataLayer layer;
+        private final Collection<OsmPrimitive> toUpload;
+        private final OsmDataLayer layer;
         private OsmServerBackreferenceReader reader;
 
         /**

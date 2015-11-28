@@ -41,7 +41,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private static final Logger LOG = FeatureAdapter.getLogger(TMSCachedTileLoaderJob.class.getCanonicalName());
     private static final long MAXIMUM_EXPIRES = 30 /*days*/ * 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/;
     private static final long MINIMUM_EXPIRES = 1 /*hour*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/;
-    private Tile tile;
+    private final Tile tile;
     private volatile URL url;
 
     // we need another deduplication of Tile Loader listeners, as for each submit, new TMSCachedTileLoaderJob was created

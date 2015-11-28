@@ -1726,8 +1726,8 @@ public class Preferences {
     }
 
     private class SettingToXml implements SettingVisitor {
-        private StringBuilder b;
-        private boolean noPassword;
+        private final StringBuilder b;
+        private final boolean noPassword;
         private String key;
 
         SettingToXml(StringBuilder b, boolean noPassword) {

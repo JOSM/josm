@@ -101,8 +101,8 @@ public final class CreateCircleAction extends JosmAction {
      * Class designed to create a couple between a node and its angle relative to the center of the circle.
      */
     private static class PolarNode {
-        private double a;
-        private Node node;
+        private final double a;
+        private final Node node;
 
         PolarNode(EastNorth center, Node n) {
             EastNorth pt = n.getEastNorth();

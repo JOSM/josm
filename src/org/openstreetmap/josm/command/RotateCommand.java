@@ -19,12 +19,12 @@ public class RotateCommand extends TransformNodesCommand {
     /**
      * Pivot point
      */
-    private EastNorth pivot;
+    private final EastNorth pivot;
 
     /**
      * angle of rotation starting click to pivot
      */
-    private double startAngle;
+    private final double startAngle;
 
     /**
      * computed rotation angle between starting click and current mouse pos

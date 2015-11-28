@@ -40,22 +40,22 @@ public class NTV2SubGrid implements Cloneable, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String subGridName;
-    private String parentSubGridName;
-    private String created;
-    private String updated;
-    private double minLat;
-    private double maxLat;
-    private double minLon;
-    private double maxLon;
-    private double latInterval;
-    private double lonInterval;
-    private int nodeCount;
+    private final String subGridName;
+    private final String parentSubGridName;
+    private final String created;
+    private final String updated;
+    private final double minLat;
+    private final double maxLat;
+    private final double minLon;
+    private final double maxLon;
+    private final double latInterval;
+    private final double lonInterval;
+    private final int nodeCount;
 
-    private int lonColumnCount;
-    private int latRowCount;
-    private float[] latShift;
-    private float[] lonShift;
+    private final int lonColumnCount;
+    private final int latRowCount;
+    private final float[] latShift;
+    private final float[] lonShift;
     private float[] latAccuracy;
     private float[] lonAccuracy;
 

@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
 
-    private transient NoteData noteData;
+    private final transient NoteData noteData;
 
     /**
      * Construct a new map mode.

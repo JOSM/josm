@@ -111,8 +111,8 @@ public class ValidateAction extends JosmAction {
      */
     static class ValidationTask extends PleaseWaitRunnable {
         private Collection<Test> tests;
-        private Collection<OsmPrimitive> validatedPrimitives;
-        private Collection<OsmPrimitive> formerValidatedPrimitives;
+        private final Collection<OsmPrimitive> validatedPrimitives;
+        private final Collection<OsmPrimitive> formerValidatedPrimitives;
         private boolean canceled;
         private List<TestError> errors;
 

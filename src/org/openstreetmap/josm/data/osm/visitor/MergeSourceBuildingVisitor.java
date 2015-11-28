@@ -31,9 +31,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public class MergeSourceBuildingVisitor extends AbstractVisitor {
-    private DataSet selectionBase;
-    private DataSet hull;
-    private Map<OsmPrimitive, PrimitiveData> mappedPrimitives;
+    private final DataSet selectionBase;
+    private final DataSet hull;
+    private final Map<OsmPrimitive, PrimitiveData> mappedPrimitives;
 
     /**
      * Creates the visitor. The visitor starts to build the "hull" from
