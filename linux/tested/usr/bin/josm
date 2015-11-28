@@ -2,10 +2,8 @@
 # Simple wrapper script used to start JOSM in Debian
 set -e
 
-# First, the alternative (if known to work) or users preference as defined by $JAVA_HOME. Next, use OpenJDK or Oracle's proprietary JDK.
+# First, users preference as defined by $JAVA_HOME. Next, use OpenJDK or Oracle's proprietary JDK.
 # Override to a specific one using $JAVACMD
-ALTERNATIVE_JDK="`readlink -n -f /etc/alternatives/java`"
-
 # Let's get the current architecture -- needed for multiarchified Java
 ARCH="`dpkg --print-architecture 2> /dev/null || true`"
 
@@ -23,15 +21,6 @@ else
 fi
 
 JAVA_OPTS="-Djosm.restart=true -Djava.net.useSystemProxies=true $JAVA_OPTS"
-
-if [ -z "${JAVACMD}" ]; then
-    for jcmd in $JAVA_CMDS; do
-        if [ "z$ALTERNATIVE_JDK" = "z`readlink -n -f $jcmd`" ] && [ -z "${JAVACMD}" ]; then
-            JAVACMD="$jcmd"
-            break
-        fi
-    done
-fi
 
 if [ -z "${JAVACMD}" ]; then
     for jcmd in $JAVA_CMDS; do
