@@ -41,10 +41,10 @@ public class RelationToChildReference {
         return references;
     }
 
-    private Relation parent;
-    private int position;
-    private String role;
-    private OsmPrimitive child;
+    private final Relation parent;
+    private final int position;
+    private final String role;
+    private final OsmPrimitive child;
 
     public RelationToChildReference(Relation parent, int position, String role, OsmPrimitive child) {
         this.parent = parent;

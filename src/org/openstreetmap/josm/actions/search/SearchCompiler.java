@@ -64,11 +64,11 @@ fact =
  */
 public class SearchCompiler {
 
-    private boolean caseSensitive;
-    private boolean regexSearch;
+    private final boolean caseSensitive;
+    private final boolean regexSearch;
     private static String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
     private static String  rxErrorMsgNoPos = marktr("The regex \"{0}\" had a parse error, full error:\n\n{1}");
-    private PushbackTokenizer tokenizer;
+    private final PushbackTokenizer tokenizer;
     private static Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<>();
     private static Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<>();
     private static Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<>();
@@ -108,7 +108,7 @@ public class SearchCompiler {
     }
 
     public class CoreSimpleMatchFactory implements SimpleMatchFactory {
-        private Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
+        private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
                 "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
                 "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole");

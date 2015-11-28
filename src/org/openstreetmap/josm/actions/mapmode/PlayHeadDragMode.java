@@ -22,7 +22,7 @@ public class PlayHeadDragMode extends MapMode {
     private boolean dragging;
     private Point mousePos;
     private Point mouseStart;
-    private transient PlayHeadMarker playHeadMarker;
+    private final transient PlayHeadMarker playHeadMarker;
 
     /**
      * Constructs a new {@code PlayHeadDragMode}.

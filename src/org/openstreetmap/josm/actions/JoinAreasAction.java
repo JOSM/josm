@@ -189,7 +189,7 @@ public class JoinAreasAction extends JosmAction {
     private static class WayTraverser {
 
         /** Set of {@link WayInPolygon} to be joined by walk algorithm */
-        private Set<WayInPolygon> availableWays;
+        private final Set<WayInPolygon> availableWays;
         /** Current state of walk algorithm */
         private WayInPolygon lastWay;
         /** Direction of current way */

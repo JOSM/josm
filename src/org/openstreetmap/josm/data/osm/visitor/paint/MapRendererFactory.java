@@ -59,9 +59,9 @@ public final class MapRendererFactory {
     }
 
     public static class Descriptor {
-        private Class<? extends AbstractMapRenderer> renderer;
-        private String displayName;
-        private String description;
+        private final Class<? extends AbstractMapRenderer> renderer;
+        private final String displayName;
+        private final String description;
 
         public Descriptor(Class<? extends AbstractMapRenderer> renderer, String displayName, String description) {
             this.renderer = renderer;

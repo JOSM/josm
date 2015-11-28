@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
-import oauth.signpost.OAuthConsumer;
-
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+
+import oauth.signpost.OAuthConsumer;
 
 public class OAuthToken {
 
@@ -17,8 +17,8 @@ public class OAuthToken {
         return new OAuthToken(consumer.getToken(), consumer.getTokenSecret());
     }
 
-    private String key;
-    private String secret;
+    private final String key;
+    private final String secret;
 
     /**
      * Creates a new token

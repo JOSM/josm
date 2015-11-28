@@ -1407,7 +1407,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         private JCheckBoxMenuItem checkBox;
 
-        private MouseListener anglePopupListener = new PopupMenuLauncher(new AnglePopupMenu()) {
+        private final MouseListener anglePopupListener = new PopupMenuLauncher(new AnglePopupMenu()) {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);

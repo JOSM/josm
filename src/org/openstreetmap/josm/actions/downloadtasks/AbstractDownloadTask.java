@@ -12,7 +12,7 @@ import org.openstreetmap.josm.io.XmlWriter;
  * @since 2322
  */
 public abstract class AbstractDownloadTask<T> implements DownloadTask {
-    private List<Object> errorMessages;
+    private final List<Object> errorMessages;
     private boolean canceled;
     private boolean failed;
     protected T downloadedData;

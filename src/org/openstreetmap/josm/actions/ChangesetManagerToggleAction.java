@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 2685
  */
 public class ChangesetManagerToggleAction extends ToggleAction {
-    private transient WindowListener changesetCacheManagerClosedHandler;
+    private final transient WindowListener changesetCacheManagerClosedHandler;
 
     /**
      * Constructs a new {@code ChangesetManagerToggleAction}.

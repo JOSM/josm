@@ -232,10 +232,10 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
         this.uploadDiscouraged = uploadDiscouraged;
     }
 
-    /*
+    /**
      * Holding bin for changeset tag information, to be applied when or if this is ever uploaded.
      */
-    private Map<String, String> changeSetTags = new HashMap<>();
+    private final Map<String, String> changeSetTags = new HashMap<>();
 
     /**
      * Replies the set of changeset tags to be applied when or if this is ever uploaded.

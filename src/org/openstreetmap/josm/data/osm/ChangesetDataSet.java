@@ -152,8 +152,8 @@ public class ChangesetDataSet {
     }
 
     private static class DefaultChangesetDataSetEntry implements ChangesetDataSetEntry {
-        private ChangesetModificationType modificationType;
-        private HistoryOsmPrimitive primitive;
+        private final ChangesetModificationType modificationType;
+        private final HistoryOsmPrimitive primitive;
 
         DefaultChangesetDataSetEntry(ChangesetModificationType modificationType, HistoryOsmPrimitive primitive) {
             this.modificationType = modificationType;
@@ -172,7 +172,7 @@ public class ChangesetDataSet {
     }
 
     private class DefaultIterator implements Iterator<ChangesetDataSetEntry> {
-        private Iterator<Entry<PrimitiveId, ChangesetModificationType>> typeIterator;
+        private final Iterator<Entry<PrimitiveId, ChangesetModificationType>> typeIterator;
 
         DefaultIterator() {
             typeIterator = modificationTypes.entrySet().iterator();

@@ -29,7 +29,7 @@ public class FixDataHook implements UploadHook {
     /**
      * List of checks to run on data
      */
-    private List<FixData> deprecated = new LinkedList<>();
+    private final List<FixData> deprecated = new LinkedList<>();
 
     /**
      * Constructor for data initialization
@@ -106,9 +106,9 @@ public class FixDataHook implements UploadHook {
      */
     public static class FixDataKey implements FixData {
         /** key of wrong data */
-        private String oldKey;
+        private final String oldKey;
         /** key of correct data */
-        private String newKey;
+        private final String newKey;
 
         /**
          * Setup key check for wrong spelled keys
@@ -140,13 +140,13 @@ public class FixDataHook implements UploadHook {
      */
     public static class FixDataTag implements FixData {
         /** key of wrong data */
-        private String oldKey;
+        private final String oldKey;
         /** value of wrong data */
-        private String oldValue;
+        private final String oldValue;
         /** key of correct data */
-        private String newKey;
+        private final String newKey;
         /** value of correct data */
-        private String newValue;
+        private final String newValue;
 
         /**
          * Setup key check for wrong spelled keys

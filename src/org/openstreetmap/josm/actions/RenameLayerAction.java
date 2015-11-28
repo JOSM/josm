@@ -27,8 +27,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class RenameLayerAction extends AbstractAction {
 
-    private File file;
-    private transient Layer layer;
+    private final File file;
+    private final transient Layer layer;
 
     /**
      * @param file The file of the original location of this layer.

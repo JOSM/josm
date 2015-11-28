@@ -180,7 +180,7 @@ public class JoinNodeWayAction extends JosmAction {
         private static final long serialVersionUID = 1L;
 
         private final EastNorth refPoint;
-        private EastNorth refPoint2;
+        private final EastNorth refPoint2;
         private final boolean projectToSegment;
 
         NodeDistanceToRefNodeComparator(Node referenceNode, Node referenceNode2, boolean projectFirst) {

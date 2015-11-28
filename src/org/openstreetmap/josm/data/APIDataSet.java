@@ -269,7 +269,7 @@ public class APIDataSet {
      *
      */
     private static class RelationUploadDependencyGraph {
-        private Map<Relation, Set<Relation>> children = new HashMap<>();
+        private final Map<Relation, Set<Relation>> children = new HashMap<>();
         private Collection<Relation> relations;
         private Set<Relation> visited = new HashSet<>();
         private List<Relation> uploadOrder;

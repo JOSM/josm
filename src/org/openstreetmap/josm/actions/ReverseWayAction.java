@@ -31,9 +31,9 @@ import org.openstreetmap.josm.tools.Utils;
 public final class ReverseWayAction extends JosmAction {
 
     public static class ReverseWayResult {
-        private Way newWay;
-        private Collection<Command> tagCorrectionCommands;
-        private Command reverseCommand;
+        private final Way newWay;
+        private final Collection<Command> tagCorrectionCommands;
+        private final Command reverseCommand;
 
         public ReverseWayResult(Way newWay, Collection<Command> tagCorrectionCommands, Command reverseCommand) {
             this.newWay = newWay;

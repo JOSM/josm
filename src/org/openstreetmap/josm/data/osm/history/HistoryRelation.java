@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class HistoryRelation extends HistoryOsmPrimitive {
 
-    private List<RelationMemberData> members = new ArrayList<>();
+    private final List<RelationMemberData> members = new ArrayList<>();
 
     /**
      * constructor

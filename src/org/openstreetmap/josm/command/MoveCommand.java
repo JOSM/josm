@@ -50,7 +50,7 @@ public class MoveCommand extends Command {
     /**
      * List of all old states of the objects.
      */
-    private List<OldNodeState> oldState = new LinkedList<>();
+    private final List<OldNodeState> oldState = new LinkedList<>();
 
     /**
      * Constructs a new {@code MoveCommand} to move a primitive.

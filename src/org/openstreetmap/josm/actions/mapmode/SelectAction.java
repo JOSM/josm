@@ -1019,8 +1019,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         this.lassoMode = lassoMode;
     }
 
-    private transient CycleManager cycleManager = new CycleManager();
-    private transient VirtualManager virtualManager = new VirtualManager();
+    private final transient CycleManager cycleManager = new CycleManager();
+    private final transient VirtualManager virtualManager = new VirtualManager();
 
     private class CycleManager {
 

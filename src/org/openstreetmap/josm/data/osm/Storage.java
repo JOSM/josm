@@ -89,7 +89,7 @@ public class Storage<T> extends AbstractSet<T> {
     private int mask;
     private int size;
     private volatile int modCount;
-    private double loadFactor = 0.6d;
+    private final double loadFactor = 0.6d;
     private static final int DEFAULT_CAPACITY = 16;
     private final boolean safeIterator;
     private boolean arrayCopyNecessary;
@@ -362,7 +362,7 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     private final class FMap<K> implements Map<K, T> {
-        private Hash<K, ? super T> fHash;
+        private final Hash<K, ? super T> fHash;
 
         private FMap(Hash<K, ? super T> h) {
             fHash = h;

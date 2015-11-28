@@ -40,7 +40,7 @@ public class SimilarNamedWays extends Test {
     /** The already detected errors */
     private MultiMap<Way, Way> errorWays;
 
-    private List<NormalizeRule> rules = new ArrayList<NormalizeRule>();
+    private final List<NormalizeRule> rules = new ArrayList<NormalizeRule>();
 
     /**
      * Constructor
