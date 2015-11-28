@@ -457,7 +457,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     /**
      * Worker function for drawing areas.
-     * 
+     *
      * @param osm the primitive
      * @param path the path object for the area that should be drawn; in case
      * of multipolygons, this can path can be a complex shape with one outer
@@ -469,7 +469,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * if null, area will be filled completely
      * @param unclosedHighlight true, if the fact that the way / multipolygon is not
      * properly closed should be highlighted; this parameter is only used
-     * for partial fill ({@code extent != null}), otherwise it is ignored 
+     * for partial fill ({@code extent != null}), otherwise it is ignored
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
@@ -489,7 +489,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     g.fill(area);
                 } else {
                     if (unclosedHighlight) {
-                        g.setStroke(new BasicStroke((int)(unclosedAreaHighlightWidth / 100 * extent),
+                        g.setStroke(new BasicStroke((int) (unclosedAreaHighlightWidth / 100 * extent),
                                 BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                         g.draw(area);
                     } else {
@@ -512,7 +512,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     g.fill(area);
                 } else {
                     if (unclosedHighlight) {
-                        g.setStroke(new BasicStroke((int)(unclosedAreaHighlightWidth / 100 * extent),
+                        g.setStroke(new BasicStroke((int) (unclosedAreaHighlightWidth / 100 * extent),
                                 BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                         g.draw(area);
                     } else {
