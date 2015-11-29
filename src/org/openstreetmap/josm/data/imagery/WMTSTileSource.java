@@ -307,7 +307,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @return collection of layers within contents with properly linked TileMatrixSets
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    private static final Collection<Layer> parseContents(XMLStreamReader reader) throws XMLStreamException {
+    private static Collection<Layer> parseContents(XMLStreamReader reader) throws XMLStreamException {
         Map<String, TileMatrixSet> matrixSetById = new ConcurrentHashMap<>();
         Collection<Layer> layers = new ArrayList<>();
         for (int event = reader.getEventType();
@@ -342,7 +342,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @return Layer object, with tileMatrixSetLinks and no tileMatrixSet attribute set.
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    private static final Layer parseLayer(XMLStreamReader reader) throws XMLStreamException {
+    private static Layer parseLayer(XMLStreamReader reader) throws XMLStreamException {
         Layer layer = new Layer();
 
         for (int event = reader.getEventType();
@@ -382,7 +382,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @return TileMatrixSetLink identifier
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    private static final String praseTileMatrixSetLink(XMLStreamReader reader) throws XMLStreamException {
+    private static String praseTileMatrixSetLink(XMLStreamReader reader) throws XMLStreamException {
         String ret = null;
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT &&
@@ -401,7 +401,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @return TileMatrixSet object
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    private static final TileMatrixSet parseTileMatrixSet(XMLStreamReader reader) throws XMLStreamException {
+    private static TileMatrixSet parseTileMatrixSet(XMLStreamReader reader) throws XMLStreamException {
         TileMatrixSet matrixSet = new TileMatrixSet();
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "TileMatrixSet").equals(reader.getName()));
@@ -428,7 +428,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @return TileMatrix object
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    private static final TileMatrix parseTileMatrix(XMLStreamReader reader, String matrixCrs) throws XMLStreamException {
+    private static TileMatrix parseTileMatrix(XMLStreamReader reader, String matrixCrs) throws XMLStreamException {
         Projection matrixProj = Projections.getProjectionByCode(matrixCrs);
         TileMatrix ret = new TileMatrix();
 
@@ -508,7 +508,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @return TransferMode coded in this section
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    private static final TransferMode getTransferMode(XMLStreamReader reader) throws XMLStreamException {
+    private static TransferMode getTransferMode(XMLStreamReader reader) throws XMLStreamException {
         QName GET_QNAME = new QName(OWS_NS_URL, "Get");
 
         Utils.ensure(GET_QNAME.equals(reader.getName()), "WMTS Parser state invalid. Expected element %s, got %s",
@@ -538,7 +538,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @return true if tag was found, false otherwise
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    private static final boolean moveReaderToTag(XMLStreamReader reader, QName[] tags) throws XMLStreamException {
+    private static boolean moveReaderToTag(XMLStreamReader reader, QName[] tags) throws XMLStreamException {
         QName stopTag = reader.getName();
         int currentLevel = 0;
         QName searchTag = tags[currentLevel];
@@ -581,13 +581,13 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         return false;
     }
 
-    private static final String normalizeCapabilitiesUrl(String url) throws MalformedURLException {
+    private static String normalizeCapabilitiesUrl(String url) throws MalformedURLException {
         URL inUrl = new URL(url);
         URL ret = new URL(inUrl.getProtocol(), inUrl.getHost(), inUrl.getPort(), inUrl.getFile());
         return ret.toExternalForm();
     }
 
-    private static final String crsToCode(String crsIdentifier) {
+    private static String crsToCode(String crsIdentifier) {
         if (crsIdentifier.startsWith("urn:ogc:def:crs:")) {
             return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*):.*:(.*)$", "$1:$2");
         }
