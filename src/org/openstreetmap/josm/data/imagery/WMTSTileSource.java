@@ -27,16 +27,10 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -54,9 +48,6 @@ import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Tile Source handling WMS providers
@@ -73,6 +64,10 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     private static final String[] ALL_PATTERNS = {
         PATTERN_HEADER,
     };
+
+    private static final String OWS_NS_URL = "http://www.opengis.net/ows/1.1";
+    private static final String WMTS_NS_URL = "http://www.opengis.net/wmts/1.0";
+    private static final String XLINK_NS_URL = "http://www.w3.org/1999/xlink";
 
     private static class TileMatrix {
         private String identifier;
@@ -94,14 +89,40 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         }); // sorted by zoom level
         private String crs;
         private String identifier;
+
+        TileMatrixSet(TileMatrixSet tileMatrixSet) {
+            if (tileMatrixSet != null) {
+                tileMatrix = new TreeSet<>(tileMatrixSet.tileMatrix);
+                crs = tileMatrixSet.crs;
+                identifier = tileMatrixSet.identifier;
+            }
+        }
+
+        TileMatrixSet() {
+        }
+
     }
 
     private static class Layer {
+        Layer(Layer l) {
+            if (l != null) {
+                format = l.format;
+                name = l.name;
+                baseUrl = l.baseUrl;
+                style = l.style;
+                tileMatrixSet = new TileMatrixSet(l.tileMatrixSet);
+            }
+        }
+
+        Layer() {
+        }
+
         private String format;
         private String name;
         private TileMatrixSet tileMatrixSet;
         private String baseUrl;
         private String style;
+        public Collection<String> tileMatrixSetLinks = new ArrayList<>();
     }
 
     private enum TransferMode {
@@ -246,141 +267,331 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     }
 
     private Collection<Layer> getCapabilities() throws IOException {
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-        builderFactory.setValidating(false);
-        builderFactory.setNamespaceAware(false);
-        try {
-            builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        } catch (ParserConfigurationException e) {
-            //this should not happen
-            throw new IllegalArgumentException(e);
-        }
-        DocumentBuilder builder = null;
+        XMLInputFactory factory = XMLInputFactory.newFactory();
         InputStream in = new CachedFile(baseUrl).
                 setHttpHeaders(headers).
                 setMaxAge(7 * CachedFile.DAYS).
                 setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince).
                 getInputStream();
         try {
-            builder = builderFactory.newDocumentBuilder();
             byte[] data = Utils.readBytesFromStream(in);
             if (data == null || data.length == 0) {
                 throw new IllegalArgumentException("Could not read data from: " + baseUrl);
             }
-            Document document = builder.parse(new ByteArrayInputStream(data));
-            Node getTileOperation = getByXpath(document,
-                    "/Capabilities/OperationsMetadata/Operation[@name=\"GetTile\"]/DCP/HTTP/Get").item(0);
-            this.baseUrl = getStringByXpath(getTileOperation, "@href");
-            this.transferMode = TransferMode.fromString(getStringByXpath(getTileOperation,
-                    "Constraint[@name=\"GetEncoding\"]/AllowedValues/Value"));
-            NodeList layersNodeList = getByXpath(document, "/Capabilities/Contents/Layer");
-            Map<String, TileMatrixSet> matrixSetById = parseMatrices(getByXpath(document, "/Capabilities/Contents/TileMatrixSet"));
-            return parseLayer(layersNodeList, matrixSetById);
+            XMLStreamReader reader = factory.createXMLStreamReader(
+                    new ByteArrayInputStream(data)
+                    );
+
+            Collection<Layer> ret = null;
+            for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
+                if (event == XMLStreamReader.START_ELEMENT) {
+                    if (new QName(OWS_NS_URL, "OperationsMetadata").equals(reader.getName())) {
+                        parseOperationMetadata(reader);
+                    }
+
+                    if (new QName(WMTS_NS_URL, "Contents").equals(reader.getName())) {
+                        ret = parseContents(reader);
+                    }
+                }
+            }
+            return ret;
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
     }
 
-    private static String normalizeCapabilitiesUrl(String url) throws MalformedURLException {
+    /**
+     * Parse Contents tag. Renturns when reader reaches Contents closing tag
+     *
+     * @param reader StAX reader instance
+     * @return collection of layers within contents with properly linked TileMatrixSets
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private static final Collection<Layer> parseContents(XMLStreamReader reader) throws XMLStreamException {
+        Map<String, TileMatrixSet> matrixSetById = new ConcurrentHashMap<>();
+        Collection<Layer> layers = new ArrayList<>();
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "Contents").equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.START_ELEMENT) {
+                if (new QName(WMTS_NS_URL, "Layer").equals(reader.getName())) {
+                    layers.add(parseLayer(reader));
+                }
+                if (new QName(WMTS_NS_URL, "TileMatrixSet").equals(reader.getName())) {
+                    TileMatrixSet entry = parseTileMatrixSet(reader);
+                    matrixSetById.put(entry.identifier, entry);
+                }
+            }
+        }
+        Collection<Layer> ret = new ArrayList<>();
+        // link layers to matrix sets
+        for (Layer l: layers) {
+            for (String tileMatrixId: l.tileMatrixSetLinks) {
+                Layer newLayer = new Layer(l); // create a new layer object for each tile matrix set supported
+                newLayer.tileMatrixSet = matrixSetById.get(tileMatrixId);
+                ret.add(newLayer);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Parse Layer tag. Returns when reader will reach Layer closing tag
+     *
+     * @param reader StAX reader instance
+     * @return Layer object, with tileMatrixSetLinks and no tileMatrixSet attribute set.
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private static final Layer parseLayer(XMLStreamReader reader) throws XMLStreamException {
+        Layer layer = new Layer();
+
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "Layer").equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.START_ELEMENT) {
+                if (new QName(WMTS_NS_URL, "Format").equals(reader.getName())) {
+                    layer.format = reader.getElementText();
+                }
+                if (new QName(OWS_NS_URL, "Identifier").equals(reader.getName())) {
+                    layer.name = reader.getElementText();
+                }
+                if (new QName(WMTS_NS_URL, "ResourceURL").equals(reader.getName()) &&
+                        "tile".equals(reader.getAttributeValue("", "resourceType"))) {
+                    layer.baseUrl = reader.getAttributeValue("", "template");
+                }
+                if (new QName(WMTS_NS_URL, "Style").equals(reader.getName()) &&
+                        "true".equals(reader.getAttributeValue("", "isDefault")) &&
+                        moveReaderToTag(reader, new QName[] {new QName(OWS_NS_URL, "Identifier")})) {
+                    layer.style = reader.getElementText();
+                }
+                if (new QName(WMTS_NS_URL, "TileMatrixSetLink").equals(reader.getName())) {
+                    layer.tileMatrixSetLinks.add(praseTileMatrixSetLink(reader));
+                }
+            }
+        }
+        if (layer.style == null) {
+            layer.style = "";
+        }
+        return layer;
+    }
+
+    /**
+     * Gets TileMatrixSetLink value. Returns when reader is on TileMatrixSetLink closing tag
+     *
+     * @param reader StAX reader instance
+     * @return TileMatrixSetLink identifier
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private static final String praseTileMatrixSetLink(XMLStreamReader reader) throws XMLStreamException {
+        String ret = null;
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT &&
+                        new QName(WMTS_NS_URL, "TileMatrixSetLink").equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.START_ELEMENT && new QName(WMTS_NS_URL, "TileMatrixSet").equals(reader.getName())) {
+                ret = reader.getElementText();
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Parses TileMatrixSet section. Returns when reader is on TileMatrixSet closing tag
+     * @param reader StAX reader instance
+     * @return TileMatrixSet object
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private static final TileMatrixSet parseTileMatrixSet(XMLStreamReader reader) throws XMLStreamException {
+        TileMatrixSet matrixSet = new TileMatrixSet();
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "TileMatrixSet").equals(reader.getName()));
+                event = reader.next()) {
+                    if (event == XMLStreamReader.START_ELEMENT) {
+                        if (new QName(OWS_NS_URL, "Identifier").equals(reader.getName())) {
+                            matrixSet.identifier = reader.getElementText();
+                        }
+                        if (new QName(OWS_NS_URL, "SupportedCRS").equals(reader.getName())) {
+                            matrixSet.crs = crsToCode(reader.getElementText());
+                        }
+                        if (new QName(WMTS_NS_URL, "TileMatrix").equals(reader.getName())) {
+                            matrixSet.tileMatrix.add(parseTileMatrix(reader, matrixSet.crs));
+                        }
+                    }
+        }
+        return matrixSet;
+    }
+
+    /**
+     * Parses TileMatrix section. Returns when reader is on TileMatrix closing tag.
+     * @param reader StAX reader instance
+     * @param matrixCrs projection used by this matrix
+     * @return TileMatrix object
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private static final TileMatrix parseTileMatrix(XMLStreamReader reader, String matrixCrs) throws XMLStreamException {
+        Projection matrixProj = Projections.getProjectionByCode(matrixCrs);
+        TileMatrix ret = new TileMatrix();
+
+        if (matrixProj == null) {
+            // use current projection if none found. Maybe user is using custom string
+            matrixProj = Main.getProjection();
+        }
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "TileMatrix").equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.START_ELEMENT) {
+                if (new QName(OWS_NS_URL, "Identifier").equals(reader.getName())) {
+                    ret.identifier = reader.getElementText();
+                }
+                if (new QName(WMTS_NS_URL, "ScaleDenominator").equals(reader.getName())) {
+                    ret.scaleDenominator = Double.parseDouble(reader.getElementText());
+                }
+                if (new QName(WMTS_NS_URL, "TopLeftCorner").equals(reader.getName())) {
+                    String[] topLeftCorner = reader.getElementText().split(" ");
+                    if (matrixProj.switchXY()) {
+                        ret.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[1]), Double.parseDouble(topLeftCorner[0]));
+                    } else {
+                        ret.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[0]), Double.parseDouble(topLeftCorner[1]));
+                    }
+                }
+                if (new QName(WMTS_NS_URL, "TileHeight").equals(reader.getName())) {
+                    ret.tileHeight = Integer.parseInt(reader.getElementText());
+                }
+                if (new QName(WMTS_NS_URL, "TileWidth").equals(reader.getName())) {
+                    ret.tileWidth = Integer.parseInt(reader.getElementText());
+                }
+                if (new QName(WMTS_NS_URL, "MatrixHeight").equals(reader.getName())) {
+                    ret.matrixHeight = Integer.parseInt(reader.getElementText());
+                }
+                if (new QName(WMTS_NS_URL, "MatrixWidth").equals(reader.getName())) {
+                    ret.matrixWidth = Integer.parseInt(reader.getElementText());
+                }
+            }
+        }
+        if (ret.tileHeight != ret.tileWidth) {
+            throw new AssertionError(tr("Only square tiles are supported. {0}x{1} returned by server for TileMatrix identifier {2}",
+                    ret.tileHeight, ret.tileWidth, ret.identifier));
+        }
+        return ret;
+    }
+
+    /**
+     * Parses OperationMetadata section. Returns when reader is on OperationsMetadata closing tag.
+     * Sets this.baseUrl and this.transferMode
+     *
+     * @param reader StAX reader instance
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private void parseOperationMetadata(XMLStreamReader reader) throws XMLStreamException {
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT &&
+                        new QName(OWS_NS_URL, "OperationsMetadata").equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.START_ELEMENT) {
+                if (new QName(OWS_NS_URL, "Operation").equals(reader.getName()) && "GetTile".equals(reader.getAttributeValue("", "name")) &&
+                        moveReaderToTag(reader, new QName[]{
+                                new QName(OWS_NS_URL, "DCP"),
+                                new QName(OWS_NS_URL, "HTTP"),
+                                new QName(OWS_NS_URL, "Get"),
+
+                        })) {
+                    this.baseUrl = reader.getAttributeValue(XLINK_NS_URL, "href");
+                    this.transferMode = getTransferMode(reader);
+                }
+            }
+        }
+    }
+
+    /**
+     * Parses Operation[@name='GetTile']/DCP/HTTP/Get section. Returns when reader is on Get closing tag.
+     * @param reader StAX reader instance
+     * @return TransferMode coded in this section
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private static final TransferMode getTransferMode(XMLStreamReader reader) throws XMLStreamException {
+        QName GET_QNAME = new QName(OWS_NS_URL, "Get");
+
+        Utils.ensure(GET_QNAME.equals(reader.getName()), "WMTS Parser state invalid. Expected element %s, got %s",
+                GET_QNAME, reader.getName());
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && GET_QNAME.equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.START_ELEMENT && new QName(OWS_NS_URL, "Constraint").equals(reader.getName())) {
+                if ("GetEncoding".equals(reader.getAttributeValue("", "name"))) {
+                    moveReaderToTag(reader, new QName[]{
+                            new QName(OWS_NS_URL, "AllowedValues"),
+                            new QName(OWS_NS_URL, "Value")
+                    });
+                    return TransferMode.fromString(reader.getElementText());
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Moves reader to first occurrence of the structure equivalent of Xpath tags[0]/tags[1]../tags[n]. If fails to find
+     * moves the reader to the closing tag of current tag
+     *
+     * @param reader StAX reader instance
+     * @param tags array of tags
+     * @return true if tag was found, false otherwise
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private static final boolean moveReaderToTag(XMLStreamReader reader, QName[] tags) throws XMLStreamException {
+        QName stopTag = reader.getName();
+        int currentLevel = 0;
+        QName searchTag = tags[currentLevel];
+        QName parentTag = null;
+        QName skipTag = null;
+
+        for (int event = 0; //skip current element, so we will not skip it as a whole
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && stopTag.equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.END_ELEMENT && skipTag != null && skipTag.equals(reader.getName())) {
+                skipTag = null;
+            }
+            if (skipTag == null) {
+                if (event == XMLStreamReader.START_ELEMENT) {
+                    if (searchTag.equals(reader.getName())) {
+                        currentLevel += 1;
+                        if (currentLevel >= tags.length) {
+                            return true; // found!
+                        }
+                        parentTag = searchTag;
+                        searchTag = tags[currentLevel];
+                    } else {
+                        skipTag = reader.getName();
+                    }
+                }
+
+                if (event == XMLStreamReader.END_ELEMENT) {
+                    if (parentTag != null && parentTag.equals(reader.getName())) {
+                        currentLevel -= 1;
+                        searchTag = parentTag;
+                        if (currentLevel >= 0) {
+                            parentTag = tags[currentLevel];
+                        } else {
+                            parentTag = null;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static final String normalizeCapabilitiesUrl(String url) throws MalformedURLException {
         URL inUrl = new URL(url);
         URL ret = new URL(inUrl.getProtocol(), inUrl.getHost(), inUrl.getPort(), inUrl.getFile());
         return ret.toExternalForm();
     }
 
-    private Collection<Layer> parseLayer(NodeList nodeList, Map<String, TileMatrixSet> matrixSetById) throws XPathExpressionException {
-        Collection<Layer> ret = new ArrayList<>();
-        for (int layerId = 0; layerId < nodeList.getLength(); layerId++) {
-            Node layerNode = nodeList.item(layerId);
-            NodeList tileMatrixSetLinks = getByXpath(layerNode, "TileMatrixSetLink");
-
-            // we add an layer for all matrix sets to allow user to choose, with which tileset he wants to work
-            for (int tileMatrixId = 0; tileMatrixId < tileMatrixSetLinks.getLength(); tileMatrixId++) {
-                Layer layer = new Layer();
-                layer.format = getStringByXpath(layerNode, "Format");
-                layer.name = getStringByXpath(layerNode, "Identifier");
-                layer.baseUrl = getStringByXpath(layerNode, "ResourceURL[@resourceType='tile']/@template");
-                layer.style = getStringByXpath(layerNode, "Style[@isDefault='true']/Identifier");
-                if (layer.style == null) {
-                    layer.style = "";
-                }
-                Node tileMatrixLink = tileMatrixSetLinks.item(tileMatrixId);
-                TileMatrixSet tms = matrixSetById.get(getStringByXpath(tileMatrixLink, "TileMatrixSet"));
-                layer.tileMatrixSet = tms;
-                ret.add(layer);
-            }
-        }
-        return ret;
-
-    }
-
-    private Map<String, TileMatrixSet> parseMatrices(NodeList nodeList) throws XPathExpressionException {
-        Map<String, TileMatrixSet> ret = new ConcurrentHashMap<>();
-        for (int matrixSetId = 0; matrixSetId < nodeList.getLength(); matrixSetId++) {
-            Node matrixSetNode = nodeList.item(matrixSetId);
-            TileMatrixSet matrixSet = new TileMatrixSet();
-            matrixSet.identifier = getStringByXpath(matrixSetNode, "Identifier");
-            matrixSet.crs = crsToCode(getStringByXpath(matrixSetNode, "SupportedCRS"));
-            NodeList tileMatrixList = getByXpath(matrixSetNode, "TileMatrix");
-            Projection matrixProj = Projections.getProjectionByCode(matrixSet.crs);
-            if (matrixProj == null) {
-                // use current projection if none found. Maybe user is using custom string
-                matrixProj = Main.getProjection();
-            }
-            for (int matrixId = 0; matrixId < tileMatrixList.getLength(); matrixId++) {
-                Node tileMatrixNode = tileMatrixList.item(matrixId);
-                TileMatrix tileMatrix = new TileMatrix();
-                tileMatrix.identifier = getStringByXpath(tileMatrixNode, "Identifier");
-                tileMatrix.scaleDenominator = Double.parseDouble(getStringByXpath(tileMatrixNode, "ScaleDenominator"));
-                String[] topLeftCorner = getStringByXpath(tileMatrixNode, "TopLeftCorner").split(" ");
-
-                if (matrixProj.switchXY()) {
-                    tileMatrix.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[1]), Double.parseDouble(topLeftCorner[0]));
-                } else {
-                    tileMatrix.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[0]), Double.parseDouble(topLeftCorner[1]));
-                }
-                tileMatrix.tileHeight = Integer.parseInt(getStringByXpath(tileMatrixNode, "TileHeight"));
-                tileMatrix.tileWidth = Integer.parseInt(getStringByXpath(tileMatrixNode, "TileHeight"));
-                tileMatrix.matrixWidth = getOptionalIntegerByXpath(tileMatrixNode, "MatrixWidth");
-                tileMatrix.matrixHeight = getOptionalIntegerByXpath(tileMatrixNode, "MatrixHeight");
-                if (tileMatrix.tileHeight != tileMatrix.tileWidth) {
-                    throw new AssertionError(tr("Only square tiles are supported. {0}x{1} returned by server for TileMatrix identifier {2}",
-                            tileMatrix.tileHeight, tileMatrix.tileWidth, tileMatrix.identifier));
-                }
-
-                matrixSet.tileMatrix.add(tileMatrix);
-            }
-            ret.put(matrixSet.identifier, matrixSet);
-        }
-        return ret;
-    }
-
-    private static String crsToCode(String crsIdentifier) {
+    private static final String crsToCode(String crsIdentifier) {
         if (crsIdentifier.startsWith("urn:ogc:def:crs:")) {
             return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*):.*:(.*)$", "$1:$2");
         }
         return crsIdentifier;
-    }
-
-    private static int getOptionalIntegerByXpath(Node document, String xpathQuery) throws XPathExpressionException {
-        String ret = getStringByXpath(document, xpathQuery);
-        if (ret == null || "".equals(ret)) {
-            return -1;
-        }
-        return Integer.parseInt(ret);
-    }
-
-    private static String getStringByXpath(Node document, String xpathQuery) throws XPathExpressionException {
-        return (String) getByXpath(document, xpathQuery, XPathConstants.STRING);
-    }
-
-    private static NodeList getByXpath(Node document, String xpathQuery) throws XPathExpressionException {
-        return (NodeList) getByXpath(document, xpathQuery, XPathConstants.NODESET);
-    }
-
-    private static Object getByXpath(Node document, String xpathQuery, QName returnType) throws XPathExpressionException {
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile(xpathQuery);
-        return expr.evaluate(document, returnType);
     }
 
     /**
