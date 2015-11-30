@@ -301,7 +301,8 @@ public class MultipolygonTest extends Test {
                     return;
                 }
             }
-            List<OsmPrimitive> newPrimitives = new ArrayList<>(primitives);
+            // Diamond operator does not work with Java 9 here
+            List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(primitives);
             newPrimitives.add(0, r);
             error.setPrimitives(newPrimitives);
         }
