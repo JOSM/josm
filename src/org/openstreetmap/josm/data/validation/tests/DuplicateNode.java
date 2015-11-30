@@ -381,7 +381,8 @@ public class DuplicateNode extends Test {
     @Override
     public Command fixError(TestError testError) {
         if (!isFixable(testError)) return null;
-        Collection<OsmPrimitive> sel = new LinkedList<>(testError.getPrimitives());
+        // Diamond operator does not work with Java 9 here
+        Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>(testError.getPrimitives());
         Set<Node> nodes = new LinkedHashSet<>(OsmPrimitive.getFilteredList(sel, Node.class));
 
         // Filter nodes that have already been deleted (see #5764 and #5773)
