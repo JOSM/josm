@@ -19,11 +19,11 @@ package org.apache.commons.jcs.engine.memory.lru;
  * under the License.
  */
 
+import java.io.IOException;
+
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.memory.AbstractDoubleLinkedListMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
-
-import java.io.IOException;
 
 /**
  * A fast reference management system. The least recently used items move to the end of the list and

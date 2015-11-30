@@ -19,18 +19,17 @@ package org.apache.commons.jcs.engine.memory.mru;
  * under the License.
  */
 
+import java.io.IOException;
+
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.memory.AbstractDoubleLinkedListMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
-
-import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * The most recently used items move to the front of the list and get spooled to disk if the cache
  * hub is configured to use a disk cache.
  */
-public class MRUMemoryCache<K extends Serializable, V extends Serializable>
+public class MRUMemoryCache<K, V>
     extends AbstractDoubleLinkedListMemoryCache<K, V>
 {
     /**
