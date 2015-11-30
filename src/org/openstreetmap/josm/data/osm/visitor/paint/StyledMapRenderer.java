@@ -287,6 +287,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     private double circum;
+    private double scale;
 
     private MapPaintSettings paintSettings;
 
@@ -629,7 +630,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     if (pd.isClosed()) {
                         AreaAndPerimeter ap = pd.getAreaAndPerimeter();
                         // if partial fill would only leave a small gap in the center ...
-                        if (ap.getPerimeter() * extent * circum / 100 > partialFillThreshold / 100 * ap.getArea()) {
+                        if (ap.getPerimeter() * extent * scale > partialFillThreshold / 100 * ap.getArea()) {
                             // ... turn it off and fill completely
                             extent = null;
                         }
@@ -659,7 +660,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (extent != null && w.isClosed()) {
             AreaAndPerimeter ap = Geometry.getAreaAndPerimeter(w.getNodes());
             // if partial fill would only leave a small gap in the center ...
-            if (ap.getPerimeter() * extent * circum / 100 > partialFillThreshold / 100 * ap.getArea()) {
+            if (ap.getPerimeter() * extent * scale > partialFillThreshold / 100 * ap.getArea()) {
                 // ... turn it off and fill completely
                 extent = null;
             }
@@ -1512,6 +1513,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         paintSettings = MapPaintSettings.INSTANCE;
 
         circum = nc.getDist100Pixel();
+        scale = nc.getScale();
 
         leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic", false);
 

@@ -116,7 +116,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         outlineOnly = Main.pref.getBoolean("draw.data.area_outline_only", false);
         unclosedAreaHighlight = Main.pref.getBoolean("draw.unclosed_area_partial_fill_highlight", false);
         unclosedAreaHighlightWidth = Main.pref.getDouble("draw.unclosed_area_partial_fill_highlight.width", 80);
-        partialFillThreshold = Main.pref.getDouble("draw.area.partial_fill_threshold", 50);
+        partialFillThreshold = Main.pref.getDouble("draw.area.partial_fill_threshold", 70);
     }
 
     @Override
