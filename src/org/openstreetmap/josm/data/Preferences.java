@@ -787,7 +787,7 @@ public class Preferences {
 
     public synchronized boolean getBoolean(final String key) {
         String s = get(key, null);
-        return s == null ? false : Boolean.parseBoolean(s);
+        return s != null && Boolean.parseBoolean(s);
     }
 
     public synchronized boolean getBoolean(final String key, final boolean def) {

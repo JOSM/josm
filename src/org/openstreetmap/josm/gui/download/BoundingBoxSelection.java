@@ -153,7 +153,7 @@ public class BoundingBoxSelection implements DownloadSelection {
     private boolean parseURL(DownloadDialog gui) {
         Bounds b = OsmUrlToBounds.parse(tfOsmUrl.getText());
         if (b == null) return false;
-        gui.boundingBoxChanged(b, BoundingBoxSelection.this);
+        gui.boundingBoxChanged(b, this);
         updateBboxFields(b);
         updateUrl(b);
         return true;

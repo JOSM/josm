@@ -1114,7 +1114,7 @@ public class MultiSplitLayout implements LayoutManager {
          */
         public final boolean isVertical() {
             Split parent = parent_get();
-            return (parent != null) ? parent.isRowLayout() : false;
+            return parent != null && parent.isRowLayout();
         }
 
         /**

@@ -791,7 +791,7 @@ public abstract class SourceEditor extends JPanel {
             }
 
             if (canEnable) {
-                cbActive = new JCheckBox(tr("active"), e != null ? e.active : true);
+                cbActive = new JCheckBox(tr("active"), e == null || e.active);
                 p.add(cbActive, GBC.eol().insets(15, 0, 5, 0));
             }
             setButtonIcons(new String[] {"ok", "cancel"});

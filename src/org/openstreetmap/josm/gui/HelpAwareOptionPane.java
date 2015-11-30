@@ -101,7 +101,7 @@ public final class HelpAwareOptionPane {
         }
 
         private boolean addChangeListener(ChangeListener listener) {
-            return listener != null ? listeners.add(listener) : false;
+            return listener != null && listeners.add(listener);
         }
     }
 

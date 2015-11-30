@@ -65,7 +65,7 @@ public class RelationTree extends JTree {
      * @return the parent dialog; null, if there is no parent dialog
      */
     protected Dialog getParentDialog() {
-        Component c = RelationTree.this;
+        Component c = this;
         while (c != null && !(c instanceof Dialog)) {
             c = c.getParent();
         }

@@ -148,7 +148,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
                 )
         };
         int ret = HelpAwareOptionPane.showOptionDialog(
-                AdvancedOAuthPropertiesPanel.this,
+                this,
                 tr(
                         "<html>JOSM is about to reset the OAuth settings to default values.<br>"
                         + "The current custom settings are not saved.</html>"

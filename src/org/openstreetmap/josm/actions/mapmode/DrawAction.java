@@ -1547,7 +1547,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 } else {
                     nearestAngle = getNearestAngle(angle);
                     if (getAngleDelta(nearestAngle, angle) < snapAngleTolerance) {
-                        active = (customBaseHeading >= 0) ? true : Math.abs(nearestAngle - 180) > 1e-3;
+                        active = customBaseHeading >= 0 || Math.abs(nearestAngle - 180) > 1e-3;
                         // if angle is to previous segment, exclude 180 degrees
                         lastAngle = nearestAngle;
                     } else {

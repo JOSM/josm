@@ -338,7 +338,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         for (PreferenceSetting setting : settings) {
             if (clazz.isInstance(setting)) {
                 final SubPreferenceSetting sub = (SubPreferenceSetting) setting;
-                final TabPreferenceSetting tab = sub.getTabPreferenceSetting(PreferenceTabbedPane.this);
+                final TabPreferenceSetting tab = sub.getTabPreferenceSetting(this);
                 selectTabBy(new TabIdentifier() {
                     @Override
                     public boolean identify(TabPreferenceSetting tps, Object unused) {
