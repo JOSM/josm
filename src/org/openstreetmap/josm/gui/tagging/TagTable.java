@@ -338,7 +338,7 @@ public class TagTable extends JTable  {
                         Collections.<OsmPrimitive>singletonList(relation));
                 model.updateTags(tagPaster.execute());
             } else {
-                // Paste tags from arbitrary text
+                 // Paste tags from arbitrary text
                  Map<String, String> tags = TextTagParser.readTagsFromText(buf);
                  if (tags == null || tags.isEmpty()) {
                     TextTagParser.showBadBufferMessage(ht("/Action/PasteTags"));

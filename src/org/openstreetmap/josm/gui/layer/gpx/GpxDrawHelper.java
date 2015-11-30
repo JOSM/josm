@@ -301,7 +301,7 @@ public class GpxDrawHelper {
                 if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
                     continue;
                 }
-                 // now we are sure some color will be assigned
+                // now we are sure some color will be assigned
                 Color color = null;
 
                 if (colored == ColorMode.HDOP) {

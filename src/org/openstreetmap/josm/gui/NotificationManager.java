@@ -56,8 +56,7 @@ class NotificationManager {
 
     private Timer hideTimer; // started when message is shown, responsible for hiding the message
     private Timer pauseTimer; // makes sure, there is a small pause between two consecutive messages
-    private Timer unfreezeDelayTimer; // tiny delay before resuming the timer when mouse cursor
-                                      // is moved off the panel
+    private Timer unfreezeDelayTimer; // tiny delay before resuming the timer when mouse cursor is moved off the panel
     private boolean running;
 
     private Notification currentNotification;

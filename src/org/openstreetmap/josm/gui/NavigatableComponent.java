@@ -990,7 +990,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return (ntsel != null && useSelected) ? ntsel : wayseg;
     }
 
-     /**
+    /**
      * The *result* depends on the current map selection state IF use_selected is true.
      *
      * @param p the point for which to search the nearest segment.

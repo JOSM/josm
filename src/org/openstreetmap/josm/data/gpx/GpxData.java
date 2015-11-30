@@ -229,7 +229,7 @@ public class GpxData extends WithAttributes implements Data {
         return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000))};
     }
 
-     /**
+    /**
      * Makes a WayPoint at the projection of point P onto the track providing P is less than
      * tolerance away from the track
      *

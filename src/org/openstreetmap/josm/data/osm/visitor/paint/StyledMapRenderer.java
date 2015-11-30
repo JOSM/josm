@@ -792,8 +792,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         g.drawImage(pattern.getImage(disabled), 0, dy1, (int) segmentLength, dy2,
                                 (int) (repeat - pos), 0,
                                 (int) (repeat - pos + segmentLength), imgHeight, null);
-                    // rest of the image fits fully on the current segment
                     } else {
+                        // rest of the image fits fully on the current segment
                         g.drawImage(pattern.getImage(disabled), 0, dy1, (int) (pos - spacing), dy2,
                                 (int) (repeat - pos), 0, imgWidth, imgHeight, null);
                     }

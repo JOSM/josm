@@ -544,7 +544,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         return f;
     }
 
-     /**
+    /**
      * This simply fires up an {@link RelationEditor} for the relation shown; everything else
      * is the editor's business.
      *

@@ -383,7 +383,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         return needsRepaint;
     }
 
-     /**
+    /**
      * Look, whether any object is selected. If not, select the nearest node.
      * If there are no nodes in the dataset, do nothing.
      *
@@ -1105,7 +1105,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 // no real cycling, just return one-element collection with nearest primitive in it
                 return cycleList;
             }
-//          updateKeyModifiers(e); // already called before !
+            // updateKeyModifiers() already called before!
 
             DataSet ds = getCurrentDataSet();
             OsmPrimitive first = cycleList.iterator().next(), foundInDS = null;
