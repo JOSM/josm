@@ -72,11 +72,11 @@ public class NoteReader {
             switch(qName) {
             case "osm":
                 parseMode = NoteParseMode.API;
-                notes = new ArrayList<Note>(100);
+                notes = new ArrayList<>(100);
                 return;
             case "osm-notes":
                 parseMode = NoteParseMode.DUMP;
-                notes = new ArrayList<Note>(10000);
+                notes = new ArrayList<>(10000);
                 return;
             }
 

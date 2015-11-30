@@ -177,7 +177,7 @@ public class OsmServerLocationReader extends OsmServerReader {
         public List<Note> parse() throws OsmTransferException, IllegalDataException, IOException, SAXException {
             in = getInputStream(url, progressMonitor.createSubTaskMonitor(1, true));
             if (in == null) {
-                return new ArrayList<Note>();
+                return new ArrayList<>();
             }
             progressMonitor.subTask(tr("Downloading OSM notes..."));
             NoteReader reader = new NoteReader(compression.getUncompressedInputStream(in));

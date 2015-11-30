@@ -404,7 +404,7 @@ public abstract class ImageryLayer extends Layer {
                 g.drawString(message, 5, (int) drawPosY);
             } else {
                 // Draw message on several lines
-                Map<TextAttribute, Object> map = new HashMap<TextAttribute, Object>();
+                Map<TextAttribute, Object> map = new HashMap<>();
                 map.put(TextAttribute.FAMILY, "Serif");
                 map.put(TextAttribute.SIZE, new Float(18.0));
                 AttributedString vanGogh = new AttributedString(message, map);

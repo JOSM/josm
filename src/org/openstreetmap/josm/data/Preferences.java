@@ -1823,10 +1823,10 @@ public class Preferences {
             for (String key: new String[]{"mappaint.style.entries", "taggingpreset.entries"}) {
                 Collection<Map<String, String>> data = getListOfStructs(key, (Collection<Map<String, String>>) null);
                 if (data != null) {
-                    List<Map<String, String>> newlist = new ArrayList<Map<String, String>>();
+                    List<Map<String, String>> newlist = new ArrayList<>();
                     boolean modified = false;
                     for (Map<String, String> map : data) {
-                         Map<String, String> newmap = new LinkedHashMap<String, String>();
+                         Map<String, String> newmap = new LinkedHashMap<>();
                          for (Entry<String, String> entry : map.entrySet()) {
                              String val = entry.getValue();
                              String mkey = entry.getKey();

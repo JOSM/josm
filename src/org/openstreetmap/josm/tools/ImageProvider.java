@@ -330,7 +330,7 @@ public class ImageProvider {
      */
     public ImageProvider addOverlay(ImageOverlay overlay) {
         if (overlayInfo == null) {
-            overlayInfo = new LinkedList<ImageOverlay>();
+            overlayInfo = new LinkedList<>();
         }
         overlayInfo.add(overlay);
         return this;

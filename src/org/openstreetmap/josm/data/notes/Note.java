@@ -20,7 +20,7 @@ public class Note {
     private Date createdAt;
     private Date closedAt;
     private State state;
-    private List<NoteComment> comments = new ArrayList<NoteComment>();
+    private List<NoteComment> comments = new ArrayList<>();
 
     /**
      * Create a note with a given location

@@ -367,7 +367,7 @@ public class DeleteCommand extends Command {
         if (selection == null || selection.isEmpty())
             return null;
 
-        Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
+        Set<OsmPrimitive> primitivesToDelete = new HashSet<>(selection);
 
         Collection<Relation> relationsToDelete = Utils.filteredCollection(primitivesToDelete, Relation.class);
         if (!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete))

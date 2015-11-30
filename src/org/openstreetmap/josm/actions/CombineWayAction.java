@@ -187,10 +187,10 @@ public class CombineWayAction extends JosmAction {
         cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
         cmds.addAll(resolution);
         cmds.add(new DeleteCommand(deletedWays));
-        final SequenceCommand sequenceCommand = new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
+        final Command sequenceCommand = new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
                 trn("Combine {0} way", "Combine {0} ways", ways.size(), ways.size()), cmds);
 
-        return new Pair<Way, Command>(targetWay, sequenceCommand);
+        return new Pair<>(targetWay, sequenceCommand);
     }
 
     @Override
