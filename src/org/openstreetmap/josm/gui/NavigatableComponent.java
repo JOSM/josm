@@ -214,13 +214,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * @return Returns the center point. A copy is returned, so users cannot
-     *      change the center by accessing the return value. Use zoomTo instead.
+     * Returns the current center of the viewport.
+     * 
+     * (Use {@link #zoomTo(EastNorth)} to the change the center.)
+     * 
+     * @return the current center of the viewport
      */
     public EastNorth getCenter() {
         return center;
     }
 
+    /**
+     * Returns the current scale.
+     * 
+     * In east/north units per pixel.
+     * 
+     * @return the current scale
+     */
     public double getScale() {
         return scale;
     }
