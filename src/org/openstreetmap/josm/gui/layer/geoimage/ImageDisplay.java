@@ -601,9 +601,9 @@ public class ImageDisplay extends JComponent {
         Rectangle visibleRect;
 
         synchronized (this) {
-            file = ImageDisplay.this.file;
-            image = ImageDisplay.this.image;
-            visibleRect = ImageDisplay.this.visibleRect;
+            file = this.file;
+            image = this.image;
+            visibleRect = this.visibleRect;
         }
 
         if (image == null)

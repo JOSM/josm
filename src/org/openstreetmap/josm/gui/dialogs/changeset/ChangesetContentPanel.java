@@ -174,7 +174,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     private void alertNoPrimitivesTo(Collection<HistoryOsmPrimitive> primitives, String title, String helpTopic) {
         HelpAwareOptionPane.showOptionDialog(
-                ChangesetContentPanel.this,
+                this,
                 trn("<html>The selected object is not available in the current<br>"
                         + "edit layer ''{0}''.</html>",
                         "<html>None of the selected objects is available in the current<br>"

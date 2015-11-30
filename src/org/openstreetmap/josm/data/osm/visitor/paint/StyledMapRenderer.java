@@ -1824,7 +1824,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 r.style.paintPrimitive(
                         r.osm,
                         paintSettings,
-                        StyledMapRenderer.this,
+                        this,
                         (r.flags & FLAG_SELECTED) != 0,
                         (r.flags & FLAG_OUTERMEMBER_OF_SELECTED) != 0,
                         (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
