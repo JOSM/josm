@@ -21,7 +21,7 @@ import org.openstreetmap.josm.Main;
  */
 public class CacheEntryAttributes extends ElementAttributes {
     private static final long serialVersionUID = 1L; //version
-    private final Map<String, String> attrs = new ConcurrentHashMap<String, String>(RESERVED_KEYS.size());
+    private final Map<String, String> attrs = new ConcurrentHashMap<>(RESERVED_KEYS.size());
     private static final String NO_TILE_AT_ZOOM = "noTileAtZoom";
     private static final String ETAG = "Etag";
     private static final String LAST_MODIFICATION = "lastModification";

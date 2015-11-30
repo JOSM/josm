@@ -168,7 +168,7 @@ public final class JCSCacheManager {
                 throw new RuntimeException(e);
             }
         }
-        return new CacheAccess<K, V>(cc);
+        return new CacheAccess<>(cc);
     }
 
     /**

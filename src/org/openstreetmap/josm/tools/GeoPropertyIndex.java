@@ -56,7 +56,7 @@ public class GeoPropertyIndex<T> {
     public GeoPropertyIndex(GeoProperty<T> geoProp, int maxLevel) {
         this.geoProp = geoProp;
         this.maxLevel = maxLevel;
-        this.root = new GPLevel<T>(0, new BBox(-180, -90, 180, 90), null, this);
+        this.root = new GPLevel<>(0, new BBox(-180, -90, 180, 90), null, this);
         this.lastLevelUsed = root;
     }
 

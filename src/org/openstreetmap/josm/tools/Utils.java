@@ -140,7 +140,7 @@ public final class Utils {
     }
 
     public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
-        return new FilteredCollection<T>(collection, predicate);
+        return new FilteredCollection<>(collection, predicate);
     }
 
     /**

@@ -130,7 +130,7 @@ public final class GuiHelper {
                 return null;
             }
         } else {
-            FutureTask<V> task = new FutureTask<V>(callable);
+            FutureTask<V> task = new FutureTask<>(callable);
             SwingUtilities.invokeLater(task);
             try {
                 return task.get();

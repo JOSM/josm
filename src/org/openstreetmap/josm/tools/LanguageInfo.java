@@ -224,7 +224,7 @@ public final class LanguageInfo {
      * @since 8283
      */
     public static Collection<String> getLanguageCodes(Locale l) {
-        Collection<String> list = new LinkedList<String>();
+        Collection<String> list = new LinkedList<>();
         if (l == null)
             l = Locale.getDefault();
         String lang = l.getLanguage();

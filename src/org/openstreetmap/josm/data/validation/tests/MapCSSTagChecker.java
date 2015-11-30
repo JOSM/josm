@@ -582,7 +582,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @since 7881
          */
         public Set<TagCheck> getTagCheckDependencies(Collection<TagCheck> schecks) {
-            Set<TagCheck> result = new HashSet<MapCSSTagChecker.TagCheck>();
+            Set<TagCheck> result = new HashSet<>();
             Set<String> classes = getClassesIds();
             if (schecks != null && !classes.isEmpty()) {
                 for (TagCheck tc : schecks) {
@@ -769,7 +769,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
                 final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey());
                 // Build minimal ordered list of checks to run to test the assertion
-                List<Set<TagCheck>> checksToRun = new ArrayList<Set<TagCheck>>();
+                List<Set<TagCheck>> checksToRun = new ArrayList<>();
                 Set<TagCheck> checkDependencies = check.getTagCheckDependencies(schecks);
                 if (!checkDependencies.isEmpty()) {
                     checksToRun.add(checkDependencies);

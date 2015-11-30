@@ -882,7 +882,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         initialN2en = selectedSegment.getSecondNode().getEastNorth();
 
         // add direction perpendicular to the selected segment
-        possibleMoveDirections = new ArrayList<ReferenceSegment>();
+        possibleMoveDirections = new ArrayList<>();
         possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
                 initialN1en.getY() - initialN2en.getY(),
                 initialN2en.getX() - initialN1en.getX()

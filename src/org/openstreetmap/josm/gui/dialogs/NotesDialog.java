@@ -104,7 +104,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     private void buildDialog() {
         model = new NoteTableModel();
-        displayList = new JList<Note>(model);
+        displayList = new JList<>(model);
         displayList.setCellRenderer(new NoteRenderer());
         displayList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         displayList.addListSelectionListener(new ListSelectionListener() {

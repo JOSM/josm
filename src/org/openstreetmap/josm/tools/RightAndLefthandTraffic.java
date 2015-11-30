@@ -79,6 +79,6 @@ public final class RightAndLefthandTraffic {
         } catch (IOException | IllegalDataException ex) {
             throw new RuntimeException(ex);
         }
-        rlCache = new GeoPropertyIndex<Boolean>(new RLTrafficGeoProperty(), 24);
+        rlCache = new GeoPropertyIndex<>(new RLTrafficGeoProperty(), 24);
     }
 }
