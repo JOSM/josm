@@ -113,8 +113,8 @@ public final class ShowStatusReportAction extends JosmAction {
                     // Hide some parameters for privacy concerns
                     if (param[0].toLowerCase(Locale.ENGLISH).startsWith("-dproxy")) {
                         it.set(param[0]+"=xxx");
-                    // Shorten some parameters for readability concerns
                     } else {
+                        // Shorten some parameters for readability concerns
                         shortenParam(it, param, envJavaHome, envJavaHomeAlt);
                         shortenParam(it, param, propJavaHome, propJavaHomeAlt);
                     }

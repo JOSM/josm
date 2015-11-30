@@ -98,13 +98,12 @@ public class FeaturesPanel extends JPanel {
             if (enabled) {
                 MessageNotifier.start();
             }
-        // Even if they have not changed,
         } else {
-            // notifier should be stopped if user is no more identified enough
+            // Even if they have not changed, notifier should be stopped if user is no more identified enough
             if (!MessageNotifier.isUserEnoughIdentified()) {
                 MessageNotifier.stop();
-            // or restarted if user is again identified and notifier was enabled in preferences
             } else if (enabled && !MessageNotifier.isRunning()) {
+                // or restarted if user is again identified and notifier was enabled in preferences
                 MessageNotifier.start();
             }
         }

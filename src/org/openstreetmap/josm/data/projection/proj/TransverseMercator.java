@@ -182,7 +182,7 @@ public class TransverseMercator implements Proj {
         double x8poly = 1385.0 + 3633.0 * tf2 + 4095.0 * tf4 + 1575 * (tf4 * tf2);
 
         return new double[] {
-                /* Calculate latitude */
+                        /* Calculate latitude */
                         phif + x2frac * x2poly * (x * x)
                         + x4frac * x4poly * pow(x, 4.0)
                         + x6frac * x6poly * pow(x, 6.0)

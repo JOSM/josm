@@ -346,8 +346,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     @Override
     public Collection<FontEntry> getAdditionalFonts() {
         Collection<FontEntry> def = new ArrayList<>();
-        def.add(new FontEntry("devanagari", "", "")); // just include in fallback list
-                                                      // font already defined in template
+        def.add(new FontEntry("devanagari", "", "")); // just include in fallback list font already defined in template
 
         // Windows scripts: https://msdn.microsoft.com/en-us/goglobal/bb688099.aspx
         // IE default fonts: https://msdn.microsoft.com/en-us/library/ie/dn467844(v=vs.85).aspx

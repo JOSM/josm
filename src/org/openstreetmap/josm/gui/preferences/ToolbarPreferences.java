@@ -410,16 +410,16 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private JMenuItem remove = new JMenuItem(new AbstractAction(tr("Remove from toolbar")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                                Collection<String> t = new LinkedList<>(getToolString());
-                                ActionParser parser = new ActionParser(null);
-                                // get text definition of current action
+                Collection<String> t = new LinkedList<>(getToolString());
+                ActionParser parser = new ActionParser(null);
+                // get text definition of current action
                 String res = parser.saveAction(act);
-                                // remove the button from toolbar preferences
-                                t.remove(res);
-                                Main.pref.putCollection("toolbar", t);
-                                Main.toolbar.refreshToolbarControl();
-                            }
-                });
+                // remove the button from toolbar preferences
+                t.remove(res);
+                Main.pref.putCollection("toolbar", t);
+                Main.toolbar.refreshToolbarControl();
+            }
+        });
 
         private JMenuItem configure = new JMenuItem(new AbstractAction(tr("Configure toolbar")) {
             @Override

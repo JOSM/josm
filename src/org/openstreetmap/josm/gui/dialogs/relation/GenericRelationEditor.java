@@ -1120,8 +1120,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "reverse"));
             putValue(NAME, tr("Reverse"));
-        //  Shortcut.register Shortcut("relationeditor:reverse", tr("Relation Editor: Reverse"),
-        //      KeyEvent.VK_END, Shortcut.ALT)
+        //  Shortcut.register Shortcut("relationeditor:reverse", tr("Relation Editor: Reverse"), KeyEvent.VK_END, Shortcut.ALT)
             updateEnabledState();
         }
 
@@ -1569,8 +1568,7 @@ public class GenericRelationEditor extends RelationEditor  {
             putValue(SHORT_DESCRIPTION, tr("Download selected incomplete members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
             putValue(NAME, tr("Download Members"));
-        //  Shortcut.register Shortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
-        //      KeyEvent.VK_K, Shortcut.ALT)
+        //  Shortcut.register Shortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"), KeyEvent.VK_K, Shortcut.ALT)
             updateEnabledState();
         }
 

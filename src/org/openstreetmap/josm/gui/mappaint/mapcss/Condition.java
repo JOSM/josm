@@ -115,7 +115,7 @@ public abstract class Condition {
         BEGINS_WITH,
         /** The value needs to end with the reference string. */
         ENDS_WITH,
-         /** The value needs to contain the reference string. */
+        /** The value needs to contain the reference string. */
         CONTAINS;
 
         protected static final Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
