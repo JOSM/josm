@@ -147,7 +147,7 @@ public class MultiMap<A, B> {
      */
     public boolean contains(A key, B value) {
         Set<B> values = get(key);
-        return (values == null) ? false : values.contains(value);
+        return values != null && values.contains(value);
     }
 
     /**
