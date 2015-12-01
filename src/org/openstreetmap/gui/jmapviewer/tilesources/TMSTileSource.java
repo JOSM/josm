@@ -1,7 +1,6 @@
 // License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
-
 public class TMSTileSource extends AbstractTMSTileSource {
 
     protected int maxZoom;
