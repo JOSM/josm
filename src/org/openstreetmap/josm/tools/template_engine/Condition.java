@@ -4,7 +4,6 @@ package org.openstreetmap.josm.tools.template_engine;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Condition implements TemplateEntry {
 
     private final List<TemplateEntry> entries = new ArrayList<>();

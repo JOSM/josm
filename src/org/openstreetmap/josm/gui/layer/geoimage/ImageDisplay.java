@@ -28,7 +28,6 @@ import javax.swing.JComponent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ExifReader;
 
-
 public class ImageDisplay extends JComponent {
 
     /** The file that is currently displayed */

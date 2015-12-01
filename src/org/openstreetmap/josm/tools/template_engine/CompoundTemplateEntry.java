@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.template_engine;
 
-
 public final class CompoundTemplateEntry implements TemplateEntry {
 
     public static TemplateEntry fromArray(TemplateEntry... entry) {

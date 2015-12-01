@@ -55,7 +55,6 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
-
 public class SearchAction extends JosmAction implements ParameterizedAction {
 
     public static final int DEFAULT_SEARCH_HISTORY_SIZE = 15;
