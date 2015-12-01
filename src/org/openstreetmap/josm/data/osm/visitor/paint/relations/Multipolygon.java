@@ -297,6 +297,10 @@ public class Multipolygon {
             return nodes;
         }
 
+        public List<PolyData> getInners() {
+            return inners;
+        }
+
         private void resetNodes(DataSet dataSet) {
             if (!nodes.isEmpty()) {
                 DataSet ds = dataSet;
