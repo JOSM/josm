@@ -468,13 +468,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extent if not null, area will be filled partially; specifies, how
      * far to fill from the boundary towards the center of the area;
      * if null, area will be filled completely
+     * @param pfClip clipping area for partial fill
      * @param unclosedHighlight true, if the fact that the way / multipolygon is not
      * properly closed should be highlighted; this parameter is only used
      * for partial fill ({@code extent != null}), otherwise it is ignored
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent, boolean unclosedHighlight,
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent, Path2D.Double pfClip, boolean unclosedHighlight,
             boolean disabled, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
@@ -494,11 +495,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                                 BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                         g.draw(area);
                     } else {
-                        Shape clip = g.getClip();
-                        g.clip(area);
+                        Shape oldClip = g.getClip();
+                        Shape clip = area;
+                        if (pfClip != null) {
+                            clip = pfClip.createTransformedShape(nc.getAffineTransform());
+                        }
+                        g.clip(clip);
                         g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                         g.draw(area);
-                        g.setClip(clip);
+                        g.setClip(oldClip);
                     }
                 }
             } else {
@@ -517,11 +522,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                                 BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                         g.draw(area);
                     } else {
-                        Shape clip = g.getClip();
+                        Shape oldClip = g.getClip();
                         BasicStroke stroke = new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
                         g.clip(stroke.createStrokedShape(area));
-                        g.fill(area);
-                        g.setClip(clip);
+                        Shape fill = area;
+                        if (pfClip != null) {
+                            fill = pfClip.createTransformedShape(nc.getAffineTransform());
+                        }
+                        g.fill(fill);
+                        g.setClip(oldClip);
                     }
                 }
                 g.setPaintMode();
@@ -622,6 +631,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
                 Path2D.Double p = pd.get();
+                Path2D.Double pfClip = null;
                 if (!isAreaVisible(p)) {
                     continue;
                 }
@@ -636,11 +646,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         }
                     } else {
                         unclosedHighlight = isUnclosedAreaHighlight;
+                        pfClip = getPFClip(pd, extent * scale);
                     }
                 }
                 drawArea(r, p,
                         pd.selected ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
-                        fillImage, extent, unclosedHighlight, disabled, text);
+                        fillImage, extent, pfClip, unclosedHighlight, disabled, text);
             }
         }
     }
@@ -657,15 +668,20 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param text The text to write on the area.
      */
     public void drawArea(Way w, Color color, MapImage fillImage, Float extent, boolean disabled, TextElement text) {
-        if (extent != null && w.isClosed()) {
-            AreaAndPerimeter ap = Geometry.getAreaAndPerimeter(w.getNodes());
-            // if partial fill would only leave a small gap in the center ...
-            if (ap.getPerimeter() * extent * scale > partialFillThreshold / 100 * ap.getArea()) {
-                // ... turn it off and fill completely
-                extent = null;
+        Path2D.Double pfClip = null;
+        if (extent != null) {
+            if (w.isClosed()) {
+                AreaAndPerimeter ap = Geometry.getAreaAndPerimeter(w.getNodes());
+                // if partial fill would only leave a small gap in the center ...
+                if (ap.getPerimeter() * extent * scale > partialFillThreshold / 100 * ap.getArea()) {
+                    // ... turn it off and fill completely
+                    extent = null;
+                }
+            } else {
+                pfClip = getPFClip(w, extent * scale);
             }
         }
-        drawArea(w, getPath(w), color, fillImage, extent, isUnclosedAreaHighlight && !w.isClosed(), disabled, text);
+        drawArea(w, getPath(w), color, fillImage, extent, pfClip, isUnclosedAreaHighlight && !w.isClosed(), disabled, text);
     }
 
     public void drawBoxText(Node n, BoxTextElemStyle bs) {
@@ -1582,6 +1598,73 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             path.closePath();
         }
         return path;
+    }
+
+    private static Path2D.Double getPFClip(Way w, double extent) {
+        Path2D.Double clip = new Path2D.Double();
+        buildPFClip(clip, w.getNodes(), extent);
+        return clip;
+    }
+
+    private static Path2D.Double getPFClip(PolyData pd, double extent) {
+        Path2D.Double clip = new Path2D.Double();
+        clip.setWindingRule(Path2D.WIND_EVEN_ODD);
+        buildPFClip(clip, pd.getNodes(), extent);
+        for (PolyData pdInner : pd.getInners()) {
+            buildPFClip(clip, pdInner.getNodes(), extent);
+        }
+        return clip;
+    }
+
+    private static void buildPFClip(Path2D.Double clip, List<Node> nodes, double extent) {
+        boolean initial = true;
+        for (Node n : nodes) {
+            EastNorth p = n.getEastNorth();
+            if (p != null) {
+                if (initial) {
+                    clip.moveTo(p.getX(), p.getY());
+                    initial = false;
+                } else {
+                    clip.lineTo(p.getX(), p.getY());
+                }
+            }
+        }
+        if (nodes.size() >= 3) {
+            EastNorth fst = nodes.get(0).getEastNorth();
+            EastNorth snd = nodes.get(1).getEastNorth();
+            EastNorth lst = nodes.get(nodes.size() - 1).getEastNorth();
+            EastNorth lbo = nodes.get(nodes.size() - 2).getEastNorth();
+
+            EastNorth cLst = getPFDisplacedEndPoint(lbo, lst, fst, extent);
+            EastNorth cFst = getPFDisplacedEndPoint(snd, fst, cLst != null ? cLst : lst, extent);
+            if (cLst == null && cFst != null) {
+                cLst = getPFDisplacedEndPoint(lbo, lst, cFst, extent);
+            }
+            if (cLst != null) {
+                clip.lineTo(cLst.getX(), cLst.getY());
+            }
+            if (cFst != null) {
+                clip.lineTo(cFst.getX(), cFst.getY());
+            }
+        }
+    }
+
+    private static EastNorth getPFDisplacedEndPoint(EastNorth p1, EastNorth p2, EastNorth p3, double extent) {
+        double dx1 = p2.getX() - p1.getX();
+        double dy1 = p2.getY() - p1.getY();
+        double dx2 = p3.getX() - p2.getX();
+        double dy2 = p3.getY() - p2.getY();
+        if (dx1 * dx2 + dy1 * dy2 < 0) {
+            double len = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+            double dxm = - dy1 * extent / len;
+            double dym = dx1 * extent / len;
+            if (dx1 * dy2 - dx2 * dy1 < 0) {
+                dxm = -dxm;
+                dym = -dym;
+            }
+            return new EastNorth(p2.getX() + dxm, p2.getY() + dym);
+        }
+        return null;
     }
 
     private boolean isAreaVisible(Path2D.Double area) {
