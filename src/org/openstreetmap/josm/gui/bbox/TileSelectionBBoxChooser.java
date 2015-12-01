@@ -228,7 +228,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
         private transient TileCoordinateValidator valMaxX;
         private transient TileCoordinateValidator valMinX;
         private JSpinner spZoomLevel;
-        private transient TileBoundsBuilder tileBoundsBuilder = new TileBoundsBuilder();
+        private final transient TileBoundsBuilder tileBoundsBuilder = new TileBoundsBuilder();
         private boolean doFireTileBoundChanged = true;
 
         protected JPanel buildTextPanel() {

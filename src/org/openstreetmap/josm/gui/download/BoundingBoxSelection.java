@@ -175,7 +175,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         showUrl.setText(OsmUrlToBounds.getURL(area));
     }
 
-    private Border errorBorder = BorderFactory.createLineBorder(Color.RED, 1);
+    private final Border errorBorder = BorderFactory.createLineBorder(Color.RED, 1);
 
     protected void setErrorMessage(JosmTextField tf, String msg) {
         tf.setBorder(errorBorder);
@@ -188,7 +188,7 @@ public class BoundingBoxSelection implements DownloadSelection {
     }
 
     class LatValueChecker extends FocusAdapter implements ActionListener {
-        private JosmTextField tfLatValue;
+        private final JosmTextField tfLatValue;
 
         LatValueChecker(JosmTextField tfLatValue) {
             this.tfLatValue = tfLatValue;
@@ -221,7 +221,7 @@ public class BoundingBoxSelection implements DownloadSelection {
     }
 
     class LonValueChecker extends FocusAdapter implements ActionListener {
-        private JosmTextField tfLonValue;
+        private final JosmTextField tfLonValue;
 
         LonValueChecker(JosmTextField tfLonValue) {
             this.tfLonValue = tfLonValue;
@@ -254,7 +254,7 @@ public class BoundingBoxSelection implements DownloadSelection {
     }
 
     static class SelectAllOnFocusHandler extends FocusAdapter {
-        private JTextComponent tfTarget;
+        private final JTextComponent tfTarget;
 
         SelectAllOnFocusHandler(JTextComponent tfTarget) {
             this.tfTarget = tfTarget;

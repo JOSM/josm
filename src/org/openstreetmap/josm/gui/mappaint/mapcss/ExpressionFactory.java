@@ -966,7 +966,7 @@ public final class ExpressionFactory {
      */
     public static class CondOperator implements Expression {
 
-        private Expression condition, firstOption, secondOption;
+        private final Expression condition, firstOption, secondOption;
 
         /**
          * Constructs a new {@code CondOperator}.
@@ -995,7 +995,7 @@ public final class ExpressionFactory {
      */
     public static class AndOperator implements Expression {
 
-        private List<Expression> args;
+        private final List<Expression> args;
 
         /**
          * Constructs a new {@code AndOperator}.
@@ -1022,7 +1022,7 @@ public final class ExpressionFactory {
      */
     public static class OrOperator implements Expression {
 
-        private List<Expression> args;
+        private final List<Expression> args;
 
         /**
          * Constructs a new {@code OrOperator}.
@@ -1054,7 +1054,7 @@ public final class ExpressionFactory {
      */
     public static class LengthFunction implements Expression {
 
-        private Expression arg;
+        private final Expression arg;
 
         /**
          * Constructs a new {@code LengthFunction}.

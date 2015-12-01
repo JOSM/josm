@@ -16,18 +16,18 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XmlStyleSourceHandler extends DefaultHandler {
     private boolean inDoc, inRule, inCondition, inLine, inLineMod, inIcon, inArea, inScaleMax, inScaleMin;
     private boolean hadLine, hadLineMod, hadIcon, hadArea;
-    private RuleElem rule = new RuleElem();
+    private final RuleElem rule = new RuleElem();
 
-    private XmlStyleSource style;
+    private final XmlStyleSource style;
 
     static class RuleElem {
-        private XmlCondition cond = new XmlCondition();
+        private final XmlCondition cond = new XmlCondition();
         private Collection<XmlCondition> conditions;
         private double scaleMax;
         private double scaleMin;
-        private LinePrototype line = new LinePrototype();
-        private LinemodPrototype linemod = new LinemodPrototype();
-        private AreaPrototype area = new AreaPrototype();
+        private final LinePrototype line = new LinePrototype();
+        private final LinemodPrototype linemod = new LinemodPrototype();
+        private final AreaPrototype area = new AreaPrototype();
         private IconPrototype icon = new IconPrototype();
         public void init() {
             conditions = null;

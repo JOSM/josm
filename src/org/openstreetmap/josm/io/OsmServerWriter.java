@@ -50,7 +50,7 @@ public class OsmServerWriter {
         }
     }
 
-    private OsmApi api = OsmApi.getOsmApi();
+    private final OsmApi api = OsmApi.getOsmApi();
     private boolean canceled;
 
     private static final int MSECS_PER_SECOND = 1000;

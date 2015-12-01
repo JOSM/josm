@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
  */
 public class ButtonMarker extends Marker {
 
-    private Rectangle buttonRectangle;
+    private final Rectangle buttonRectangle;
 
     public ButtonMarker(LatLon ll, String buttonImage, MarkerLayer parentLayer, double time, double offset) {
         super(ll, "", buttonImage, parentLayer, time, offset);

@@ -94,7 +94,7 @@ class TagEditHelper {
     private String changedKey;
     private String objKey;
 
-    private Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
+    private final Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
         @Override
         public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
             return String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
@@ -243,7 +243,7 @@ class TagEditHelper {
         private final String key;
         private final transient Map<String, Integer> m;
 
-        private transient Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
+        private final transient Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
                 @Override
                 public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
                     boolean c1 = m.containsKey(o1.getValue());
@@ -535,7 +535,7 @@ class TagEditHelper {
     }
 
     class AddTagsDialog extends AbstractTagsDialog {
-        private List<JosmAction> recentTagsActions = new ArrayList<>();
+        private final List<JosmAction> recentTagsActions = new ArrayList<>();
 
         // Counter of added commands for possible undo
         private int commandCount;

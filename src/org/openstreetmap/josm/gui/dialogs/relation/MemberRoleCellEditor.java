@@ -14,12 +14,12 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 public class MemberRoleCellEditor extends AbstractCellEditor implements TableCellEditor {
-    private AutoCompletingTextField editor;
+    private final AutoCompletingTextField editor;
     private final transient DataSet ds;
     private final transient Relation relation;
 
     /** user input is matched against this list of auto completion items */
-    private AutoCompletionList autoCompletionList;
+    private final AutoCompletionList autoCompletionList;
 
     /**
      * Constructs a new {@code MemberRoleCellEditor}.

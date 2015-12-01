@@ -26,9 +26,9 @@ public class RetrieveRequestTokenTask extends PleaseWaitRunnable {
 
     private boolean canceled;
     private OAuthToken requestToken;
-    private OAuthParameters parameters;
+    private final OAuthParameters parameters;
     private OsmOAuthAuthorizationClient client;
-    private Component parent;
+    private final Component parent;
 
     /**
      * Creates the task

@@ -22,8 +22,8 @@ public class SizeButton extends JComponent {
     private int x;
     private int y;
 
-    private ImageIcon enlargeImage;
-    private ImageIcon shrinkImage;
+    private final ImageIcon enlargeImage;
+    private final ImageIcon shrinkImage;
     private boolean isEnlarged;
     private final SlippyMapBBoxChooser slippyMapBBoxChooser;
 

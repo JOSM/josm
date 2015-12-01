@@ -26,8 +26,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * </pre>
  */
 public class SaveLayerTask extends AbstractIOTask {
-    private SaveLayerInfo layerInfo;
-    private ProgressMonitor parentMonitor;
+    private final SaveLayerInfo layerInfo;
+    private final ProgressMonitor parentMonitor;
 
     /**
      *

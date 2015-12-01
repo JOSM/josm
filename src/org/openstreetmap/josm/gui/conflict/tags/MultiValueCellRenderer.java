@@ -24,10 +24,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class MultiValueCellRenderer extends JLabel implements TableCellRenderer {
 
-    private ImageIcon iconDecided;
-    private ImageIcon iconUndecided;
-    private DefaultComboBoxModel<Object> model;
-    private JosmComboBox<Object> cbDecisionRenderer;
+    private final ImageIcon iconDecided;
+    private final ImageIcon iconUndecided;
+    private final DefaultComboBoxModel<Object> model;
+    private final JosmComboBox<Object> cbDecisionRenderer;
 
     /**
      * Constructs a new {@code MultiValueCellRenderer}.

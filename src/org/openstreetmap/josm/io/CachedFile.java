@@ -74,7 +74,7 @@ public class CachedFile {
     public static final long DEFAULT_MAXTIME = -1L;
     public static final long DAYS = 24*60*60; // factor to get caching time in days
 
-    private Map<String, String> httpHeaders = new ConcurrentHashMap<>();
+    private final Map<String, String> httpHeaders = new ConcurrentHashMap<>();
 
     /**
      * Constructs a CachedFile object from a given filename, URL or internal resource.

@@ -54,13 +54,13 @@ public class LafPreference implements SubPreferenceSetting {
      */
     private JosmComboBox<LookAndFeelInfo> lafCombo;
     JPanel panel;
-    private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
-    private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
-    private JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
-    private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
-    private JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
-    private JCheckBox isoDates = new JCheckBox(tr("Display ISO dates"));
-    private JCheckBox nativeFileChoosers = new JCheckBox(tr("Use native file choosers (nicer, but do not support file filters)"));
+    private final JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
+    private final JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
+    private final JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
+    private final JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
+    private final JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
+    private final JCheckBox isoDates = new JCheckBox(tr("Display ISO dates"));
+    private final JCheckBox nativeFileChoosers = new JCheckBox(tr("Use native file choosers (nicer, but do not support file filters)"));
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {

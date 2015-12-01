@@ -121,7 +121,7 @@ public interface Selector {
          *
          */
         private class MatchingReferrerFinder extends AbstractVisitor {
-            private Environment e;
+            private final Environment e;
 
             /**
              * Constructor

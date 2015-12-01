@@ -9,9 +9,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * @since 6021
  */
 public class PrefEntry implements Comparable<PrefEntry> {
-    private String key;
+    private final String key;
     private Setting<?> value;
-    private Setting<?> defaultValue;
+    private final Setting<?> defaultValue;
     private boolean isDefault;
     private boolean changed;
 

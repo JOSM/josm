@@ -71,7 +71,7 @@ import sun.security.x509.X509CertInfo;
 public class RemoteControlHttpsServer extends Thread {
 
     /** The server socket */
-    private ServerSocket server;
+    private final ServerSocket server;
 
     /** The server instance for IPv4 */
     private static volatile RemoteControlHttpsServer instance4;

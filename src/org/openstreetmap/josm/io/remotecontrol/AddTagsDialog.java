@@ -56,7 +56,7 @@ public class AddTagsDialog extends ExtendedDialog {
      * Class for displaying "delete from ... objects" in the table
      */
     static class DeleteTagMarker {
-        private int num;
+        private final int num;
 
         DeleteTagMarker(int num) {
             this.num = num;

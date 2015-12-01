@@ -24,7 +24,7 @@ public class SaveLayersModel extends DefaultTableModel {
 
     private transient List<SaveLayerInfo> layerInfo;
     private Mode mode;
-    private PropertyChangeSupport support;
+    private final PropertyChangeSupport support;
 
     // keep in sync with how the columns are ordered in SaveLayersTableColumnModel#build
     private static final int columnFilename = 0;

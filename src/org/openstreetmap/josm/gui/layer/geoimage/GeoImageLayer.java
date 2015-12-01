@@ -87,13 +87,13 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     List<ImageEntry> data;
     GpxLayer gpxLayer;
 
-    private Icon icon = ImageProvider.get("dialogs/geoimage/photo-marker");
-    private Icon selectedIcon = ImageProvider.get("dialogs/geoimage/photo-marker-selected");
+    private final Icon icon = ImageProvider.get("dialogs/geoimage/photo-marker");
+    private final Icon selectedIcon = ImageProvider.get("dialogs/geoimage/photo-marker-selected");
 
     private int currentPhoto = -1;
 
     boolean useThumbs;
-    private ExecutorService thumbsLoaderExecutor =
+    private final ExecutorService thumbsLoaderExecutor =
             Executors.newSingleThreadExecutor(Utils.newThreadFactory("thumbnail-loader-%d", Thread.MIN_PRIORITY));
     private ThumbsLoader thumbsloader;
     private boolean thumbsLoaderRunning;
@@ -110,10 +110,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
         private boolean canceled;
         private GeoImageLayer layer;
-        private Collection<File> selection;
-        private Set<String> loadedDirectories = new HashSet<>();
-        private Set<String> errorMessages;
-        private GpxLayer gpxLayer;
+        private final Collection<File> selection;
+        private final Set<String> loadedDirectories = new HashSet<>();
+        private final Set<String> errorMessages;
+        private final GpxLayer gpxLayer;
 
         protected void rememberError(String message) {
             this.errorMessages.add(message);

@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class MultiCascade implements StyleKeys {
 
-    private Map<String, Cascade> layers;
+    private final Map<String, Cascade> layers;
     public Range range;
 
     /**

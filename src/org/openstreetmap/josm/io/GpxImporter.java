@@ -37,15 +37,15 @@ public class GpxImporter extends FileImporter {
         /**
          * The imported GPX layer. May be null if no GPX data.
          */
-        private GpxLayer gpxLayer;
+        private final GpxLayer gpxLayer;
         /**
          * The imported marker layer. May be null if no marker.
          */
-        private MarkerLayer markerLayer;
+        private final MarkerLayer markerLayer;
         /**
          * The task to run after GPX and/or marker layer has been added to MapView.
          */
-        private Runnable postLayerTask;
+        private final Runnable postLayerTask;
 
         public GpxImporterData(GpxLayer gpxLayer, MarkerLayer markerLayer, Runnable postLayerTask) {
             this.gpxLayer = gpxLayer;

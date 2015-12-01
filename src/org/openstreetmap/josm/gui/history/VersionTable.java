@@ -264,7 +264,7 @@ public class VersionTable extends JTable implements Observer {
 
     public static class RadioButtonEditor extends DefaultCellEditor implements ItemListener {
 
-        private JRadioButton btn;
+        private final JRadioButton btn;
 
         /**
          * Constructs a new {@code RadioButtonEditor}.

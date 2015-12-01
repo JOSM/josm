@@ -39,21 +39,21 @@ public class DrawingPreference implements SubPreferenceSetting {
     }
 
     private GPXSettingsPanel gpxPanel;
-    private JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
-    private JCheckBox headArrow = new JCheckBox(tr("Only on the head of a way."));
-    private JCheckBox onewayArrow = new JCheckBox(tr("Draw oneway arrows."));
-    private JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
-    private JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
-    private JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
-    private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
-    private JCheckBox discardableKeys = new JCheckBox(tr("Display discardable keys"));
+    private final JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
+    private final JCheckBox headArrow = new JCheckBox(tr("Only on the head of a way."));
+    private final JCheckBox onewayArrow = new JCheckBox(tr("Draw oneway arrows."));
+    private final JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
+    private final JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
+    private final JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
+    private final JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
+    private final JCheckBox discardableKeys = new JCheckBox(tr("Display discardable keys"));
 
     // Options that affect performance
-    private JCheckBox useHighlighting = new JCheckBox(tr("Highlight target ways and nodes"));
-    private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
-    private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
-    private JCheckBox useWireframeAntialiasing = new JCheckBox(tr("Smooth map graphics in wireframe mode (antialiasing)"));
-    private JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
+    private final JCheckBox useHighlighting = new JCheckBox(tr("Highlight target ways and nodes"));
+    private final JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
+    private final JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
+    private final JCheckBox useWireframeAntialiasing = new JCheckBox(tr("Smooth map graphics in wireframe mode (antialiasing)"));
+    private final JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {

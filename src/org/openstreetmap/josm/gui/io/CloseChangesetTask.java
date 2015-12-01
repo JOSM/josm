@@ -25,8 +25,8 @@ import org.xml.sax.SAXException;
 public class CloseChangesetTask extends PleaseWaitRunnable {
     private boolean canceled;
     private Exception lastException;
-    private Collection<Changeset> changesets;
-    private List<Changeset> closedChangesets;
+    private final Collection<Changeset> changesets;
+    private final List<Changeset> closedChangesets;
 
     /**
      * Closes all changesets in <code>changesets</code> if they are not null, if they

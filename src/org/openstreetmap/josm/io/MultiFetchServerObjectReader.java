@@ -64,11 +64,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      */
     private static final int MAX_IDS_PER_REQUEST = 200;
 
-    private Set<Long> nodes;
-    private Set<Long> ways;
-    private Set<Long> relations;
+    private final Set<Long> nodes;
+    private final Set<Long> ways;
+    private final Set<Long> relations;
     private Set<PrimitiveId> missingPrimitives;
-    private DataSet outputDataSet;
+    private final DataSet outputDataSet;
 
     /**
      * Constructs a {@code MultiFetchServerObjectReader}.

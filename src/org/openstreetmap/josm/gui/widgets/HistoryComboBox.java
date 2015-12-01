@@ -9,7 +9,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 
 public class HistoryComboBox extends AutoCompletingComboBox {
-    private ComboBoxHistory model;
+    private final ComboBoxHistory model;
 
     public static final int DEFAULT_SEARCH_HISTORY_SIZE = 15;
 

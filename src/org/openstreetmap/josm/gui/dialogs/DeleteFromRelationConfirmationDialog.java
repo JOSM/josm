@@ -187,7 +187,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
      *
      */
     public static class RelationMemberTableModel extends DefaultTableModel {
-        private transient List<RelationToChildReference> data;
+        private final transient List<RelationToChildReference> data;
 
         /**
          * Constructs a new {@code RelationMemberTableModel}.

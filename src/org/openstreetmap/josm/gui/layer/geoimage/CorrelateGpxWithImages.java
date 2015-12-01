@@ -91,7 +91,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
     private static List<GpxData> loadedGpxData = new ArrayList<>();
 
-    private transient GeoImageLayer yLayer;
+    private final transient GeoImageLayer yLayer;
     private double timezone;
     private long delta;
 
@@ -208,9 +208,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private static class GpxDataWrapper {
-        private String name;
-        private GpxData data;
-        private File file;
+        private final String name;
+        private final GpxData data;
+        private final File file;
 
         GpxDataWrapper(String name, GpxData data, File file) {
             this.name = name;
@@ -225,7 +225,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private ExtendedDialog syncDialog;
-    private transient List<GpxDataWrapper> gpxLst = new ArrayList<>();
+    private final transient List<GpxDataWrapper> gpxLst = new ArrayList<>();
     private JPanel outerPanel;
     private JosmComboBox<GpxDataWrapper> cbGpx;
     private JosmTextField tfTimezone;
@@ -772,11 +772,11 @@ public class CorrelateGpxWithImages extends AbstractAction {
         syncDialog.showDialog();
     }
 
-    private transient StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
-    private transient StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
+    private final transient StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
+    private final transient StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
 
     private class StatusBarUpdater implements  DocumentListener, ItemListener, ActionListener {
-        private boolean doRepaint;
+        private final boolean doRepaint;
 
         StatusBarUpdater(boolean doRepaint) {
             this.doRepaint = doRepaint;
@@ -849,7 +849,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
-    private transient RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
+    private final transient RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
 
     private class RepaintTheMapListener implements FocusListener {
         @Override

@@ -170,8 +170,8 @@ public class CoordinateInfoViewer extends JPanel {
 
         private JLabel lblLat;
         private JLabel lblLon;
-        private transient HistoryBrowserModel model;
-        private PointInTimeType role;
+        private final transient HistoryBrowserModel model;
+        private final PointInTimeType role;
 
         protected LatLon coord;
         protected LatLon oppositeCoord;

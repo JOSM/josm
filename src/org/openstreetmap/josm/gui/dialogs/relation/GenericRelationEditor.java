@@ -97,17 +97,17 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class GenericRelationEditor extends RelationEditor  {
     /** the tag table and its model */
-    private TagEditorPanel tagEditorPanel;
-    private ReferringRelationsBrowser referrerBrowser;
-    private ReferringRelationsBrowserModel referrerModel;
+    private final TagEditorPanel tagEditorPanel;
+    private final ReferringRelationsBrowser referrerBrowser;
+    private final ReferringRelationsBrowserModel referrerModel;
 
     /** the member table */
     private MemberTable memberTable;
-    private MemberTableModel memberTableModel;
+    private final MemberTableModel memberTableModel;
 
     /** the model for the selection table */
     private SelectionTable selectionTable;
-    private SelectionTableModel selectionTableModel;
+    private final SelectionTableModel selectionTableModel;
 
     private AutoCompletingTextField tfRole;
 

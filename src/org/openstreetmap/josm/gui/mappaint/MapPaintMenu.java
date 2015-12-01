@@ -30,7 +30,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
     private static class MapPaintAction extends JosmAction {
 
         private transient StyleSource style;
-        private JCheckBoxMenuItem button;
+        private final JCheckBoxMenuItem button;
 
         MapPaintAction(StyleSource style) {
             super(style.getDisplayString(), style.getIconProvider(),

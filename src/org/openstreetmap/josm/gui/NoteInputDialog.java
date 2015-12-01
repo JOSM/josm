@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class NoteInputDialog extends ExtendedDialog {
 
-    private JosmTextArea textArea = new JosmTextArea();
+    private final JosmTextArea textArea = new JosmTextArea();
 
     /**
      * Construct the dialog with a title and button text. A cancel button is

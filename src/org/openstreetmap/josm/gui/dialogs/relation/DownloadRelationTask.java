@@ -29,8 +29,8 @@ import org.xml.sax.SAXException;
 public class DownloadRelationTask extends PleaseWaitRunnable {
     private boolean canceled;
     private Exception lastException;
-    private Collection<Relation> relations;
-    private OsmDataLayer layer;
+    private final Collection<Relation> relations;
+    private final OsmDataLayer layer;
     private OsmServerObjectReader objectReader;
 
     /**

@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
-    private Map<String, PluginInformation> availablePlugins;
+    private final Map<String, PluginInformation> availablePlugins;
     private boolean canceled;
 
     /**

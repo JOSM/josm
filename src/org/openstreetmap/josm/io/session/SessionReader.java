@@ -89,7 +89,7 @@ public class SessionReader {
     private ZipFile zipFile;
     private List<Layer> layers = new ArrayList<>();
     private int active = -1;
-    private List<Runnable> postLoadTasks = new ArrayList<>();
+    private final List<Runnable> postLoadTasks = new ArrayList<>();
     private ViewportData viewport;
 
     /**
@@ -125,9 +125,9 @@ public class SessionReader {
 
     public class ImportSupport {
 
-        private String layerName;
-        private int layerIndex;
-        private List<LayerDependency> layerDependencies;
+        private final String layerName;
+        private final int layerIndex;
+        private final List<LayerDependency> layerDependencies;
 
         public ImportSupport(String layerName, int layerIndex, List<LayerDependency> layerDependencies) {
             this.layerName = layerName;
@@ -272,9 +272,9 @@ public class SessionReader {
     }
 
     public static class LayerDependency {
-        private Integer index;
-        private Layer layer;
-        private SessionLayerImporter importer;
+        private final Integer index;
+        private final Layer layer;
+        private final SessionLayerImporter importer;
 
         public LayerDependency(Integer index, Layer layer, SessionLayerImporter importer) {
             this.index = index;

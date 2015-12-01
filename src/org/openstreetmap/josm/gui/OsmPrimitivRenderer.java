@@ -27,17 +27,17 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author Frederik Ramm
  */
 public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, TableCellRenderer {
-    private DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
+    private final DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
 
     /**
      * Default list cell renderer - delegate for ListCellRenderer operation
      */
-    private DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
+    private final DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
 
     /**
      * Default table cell renderer - delegate for TableCellRenderer operation
      */
-    private DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
+    private final DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
 
     /**
      * Adapter method supporting the ListCellRenderer interface.

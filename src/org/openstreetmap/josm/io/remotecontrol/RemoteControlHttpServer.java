@@ -19,7 +19,7 @@ import org.openstreetmap.josm.Main;
 public class RemoteControlHttpServer extends Thread {
 
     /** The server socket */
-    private ServerSocket server;
+    private final ServerSocket server;
 
     /** The server instance for IPv4 */
     private static volatile RemoteControlHttpServer instance4;
@@ -100,7 +100,7 @@ public class RemoteControlHttpServer extends Thread {
                 @SuppressWarnings("resource")
                 Socket request = server.accept();
                 RequestProcessor.processRequest(request);
-            } catch (SocketException se) {  
+            } catch (SocketException se) {
                 if (!server.isClosed()) {
                     Main.error(se);
                 } else {

@@ -126,10 +126,9 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     private final NavigatableComponent nc;
     /**
-     * Whether the selection rectangle must obtain the aspect ratio of the
-     * drawComponent.
+     * Whether the selection rectangle must obtain the aspect ratio of the drawComponent.
      */
-    private boolean aspectRatio;
+    private final boolean aspectRatio;
 
     /**
      * <code>true</code> if we should paint a lasso instead of a rectangle.
@@ -138,7 +137,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     /**
      * The polygon to store the selection outline if {@link #lassoMode} is used.
      */
-    private Polygon lasso = new Polygon();
+    private final Polygon lasso = new Polygon();
 
     /**
      * The result of the last selection.

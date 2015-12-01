@@ -204,7 +204,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      * This is the thread that runs in the background and collects the information displayed.
      * It gets destroyed by destroy() when the MapFrame itself is destroyed.
      */
-    private transient Thread thread;
+    private final transient Thread thread;
 
     private final transient List<StatusTextHistory> statusText = new ArrayList<>();
 
@@ -347,7 +347,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          */
         private Popup popup;
 
-        private MapFrame parent;
+        private final MapFrame parent;
 
         private final BlockingQueue<MouseState> incomingMouseState = new LinkedBlockingQueue<>();
 
@@ -676,7 +676,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         }
     }
 
-    private transient AWTEventListener awtListener = new AWTEventListener() {
+    private final transient AWTEventListener awtListener = new AWTEventListener() {
          @Override
          public void eventDispatched(AWTEvent event) {
             if (event instanceof InputEvent &&
@@ -693,7 +693,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         }
     };
 
-    private transient MouseMotionListener mouseMotionListener = new MouseMotionListener() {
+    private final transient MouseMotionListener mouseMotionListener = new MouseMotionListener() {
         @Override
         public void mouseMoved(MouseEvent e) {
             synchronized (collector) {
@@ -707,7 +707,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         }
     };
 
-    private transient KeyAdapter keyAdapter = new KeyAdapter() {
+    private final transient KeyAdapter keyAdapter = new KeyAdapter() {
         @Override public void keyPressed(KeyEvent e) {
             synchronized (collector) {
                 collector.updateMousePosition(null, e.getModifiersEx());

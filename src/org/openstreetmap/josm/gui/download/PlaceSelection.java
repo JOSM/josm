@@ -200,7 +200,7 @@ public class PlaceSelection implements DownloadSelection {
         private SearchResult currentResult;
         private StringBuilder description;
         private int depth;
-        private List<SearchResult> data = new LinkedList<>();
+        private final List<SearchResult> data = new LinkedList<>();
 
         /**
          * Detect starting elements.
@@ -326,11 +326,11 @@ public class PlaceSelection implements DownloadSelection {
 
     class NameQueryTask extends PleaseWaitRunnable {
 
-        private String searchExpression;
+        private final String searchExpression;
         private HttpURLConnection connection;
         private List<SearchResult> data;
         private boolean canceled;
-        private Server useserver;
+        private final Server useserver;
         private Exception lastException;
 
         NameQueryTask(String searchExpression) {
@@ -410,7 +410,7 @@ public class PlaceSelection implements DownloadSelection {
 
     static class NamedResultTableModel extends DefaultTableModel {
         private transient List<SearchResult> data;
-        private transient ListSelectionModel selectionModel;
+        private final transient ListSelectionModel selectionModel;
 
         NamedResultTableModel(ListSelectionModel selectionModel) {
             data = new ArrayList<>();

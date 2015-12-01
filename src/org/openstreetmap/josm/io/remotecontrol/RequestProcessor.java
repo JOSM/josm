@@ -55,7 +55,7 @@ public class RequestProcessor extends Thread {
         "}, \"application\": \"JOSM RemoteControl\"}";
 
     /** The socket this processor listens on */
-    private Socket request;
+    private final Socket request;
 
     /**
      * Collection of request handlers.

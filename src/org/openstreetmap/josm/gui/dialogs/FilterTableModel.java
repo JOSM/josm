@@ -365,7 +365,7 @@ public class FilterTableModel extends AbstractTableModel {
         }
     }
 
-    private OSDLabel lblOSD = new OSDLabel("");
+    private final OSDLabel lblOSD = new OSDLabel("");
 
     public void drawOSDText(Graphics2D g) {
         String message = "<html>" + tr("<h2>Filter active</h2>");

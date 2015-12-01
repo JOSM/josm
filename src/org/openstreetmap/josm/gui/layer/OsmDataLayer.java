@@ -231,7 +231,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     /**
      * the collection of conflicts detected in this layer
      */
-    private ConflictCollection conflicts;
+    private final ConflictCollection conflicts;
 
     /**
      * a paint texture for non-downloaded area

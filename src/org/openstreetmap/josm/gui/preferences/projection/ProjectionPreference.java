@@ -271,15 +271,15 @@ public class ProjectionPreference implements SubPreferenceSetting {
      * Panel.
      */
     private JPanel projSubPrefPanel;
-    private JPanel projSubPrefPanelWrapper = new JPanel(new GridBagLayout());
+    private final JPanel projSubPrefPanelWrapper = new JPanel(new GridBagLayout());
 
     private JLabel projectionCodeLabel;
     private Component projectionCodeGlue;
-    private JLabel projectionCode = new JLabel();
+    private final JLabel projectionCode = new JLabel();
     private JLabel projectionNameLabel;
     private Component projectionNameGlue;
-    private JLabel projectionName = new JLabel();
-    private JLabel bounds = new JLabel();
+    private final JLabel projectionName = new JLabel();
+    private final JLabel bounds = new JLabel();
 
     /**
      * This is the panel holding all projection preferences

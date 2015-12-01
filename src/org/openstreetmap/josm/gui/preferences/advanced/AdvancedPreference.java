@@ -67,7 +67,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
 
     private List<PrefEntry> allData;
-    private List<PrefEntry> displayData = new ArrayList<>();
+    private final List<PrefEntry> displayData = new ArrayList<>();
     private JosmTextField txtFilter;
     private PreferencesTable table;
 
@@ -276,7 +276,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         applyFilter();
     }
 
-    private Comparator<PrefEntry> customComparator = new Comparator<PrefEntry>() {
+    private final Comparator<PrefEntry> customComparator = new Comparator<PrefEntry>() {
         @Override
         public int compare(PrefEntry o1, PrefEntry o2) {
             if (o1.isChanged() && !o2.isChanged()) return -1;
@@ -320,7 +320,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         return data;
     }
 
-    private Map<String, String> profileTypes = new LinkedHashMap<>();
+    private final Map<String, String> profileTypes = new LinkedHashMap<>();
 
     private JPopupMenu buildPopupMenu() {
         JPopupMenu menu = new JPopupMenu();

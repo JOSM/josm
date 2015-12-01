@@ -62,21 +62,21 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     private final JTree undoTree = new JTree(undoTreeModel);
     private final JTree redoTree = new JTree(redoTreeModel);
 
-    private transient UndoRedoSelectionListener undoSelectionListener;
-    private transient UndoRedoSelectionListener redoSelectionListener;
+    private final transient UndoRedoSelectionListener undoSelectionListener;
+    private final transient UndoRedoSelectionListener redoSelectionListener;
 
-    private JScrollPane scrollPane;
-    private JSeparator separator = new JSeparator();
+    private final JScrollPane scrollPane;
+    private final JSeparator separator = new JSeparator();
     // only visible, if separator is the top most component
-    private Component spacer = Box.createRigidArea(new Dimension(0, 3));
+    private final Component spacer = Box.createRigidArea(new Dimension(0, 3));
 
     // last operation is remembered to select the next undo/redo entry in the list
     // after undo/redo command
     private UndoRedoType lastOperation = UndoRedoType.UNDO;
 
     // Actions for context menu and Enter key
-    private SelectAction selectAction = new SelectAction();
-    private SelectAndZoomAction selectAndZoomAction = new SelectAndZoomAction();
+    private final SelectAction selectAction = new SelectAction();
+    private final SelectAndZoomAction selectAndZoomAction = new SelectAndZoomAction();
 
     /**
      * Constructs a new {@code CommandStackDialog}.
@@ -166,7 +166,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      * it behaves as if it was one component.
      */
     private class UndoRedoSelectionListener implements TreeSelectionListener {
-        private JTree source;
+        private final JTree source;
 
         UndoRedoSelectionListener(JTree source) {
             this.source = source;
@@ -246,7 +246,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     /**
      * Simple listener setup to update the button enabled state when the side dialog shows.
      */
-    private transient Set<IEnabledStateUpdating> showNotifyListener = new LinkedHashSet<>();
+    private final transient Set<IEnabledStateUpdating> showNotifyListener = new LinkedHashSet<>();
 
     private void addShowNotifyListener(IEnabledStateUpdating listener) {
         showNotifyListener.add(listener);
@@ -430,29 +430,25 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      * Action to undo or redo all commands up to (and including) the seleced item.
      */
     protected class UndoRedoAction extends AbstractAction implements IEnabledStateUpdating {
-        private UndoRedoType type;
-        private JTree tree;
+        private final UndoRedoType type;
+        private final JTree tree;
 
         /**
          * constructor
          * @param type decide whether it is an undo action or a redo action
          */
         public UndoRedoAction(UndoRedoType type) {
-            super();
             this.type = type;
-            switch (type) {
-            case UNDO:
+            if (UndoRedoType.UNDO == type) {
                 tree = undoTree;
                 putValue(NAME, tr("Undo"));
                 putValue(SHORT_DESCRIPTION, tr("Undo the selected and all later commands"));
                 putValue(SMALL_ICON, ImageProvider.get("undo"));
-                break;
-            case REDO:
+            } else {
                 tree = redoTree;
                 putValue(NAME, tr("Redo"));
                 putValue(SHORT_DESCRIPTION, tr("Redo the selected and all earlier commands"));
                 putValue(SMALL_ICON, ImageProvider.get("redo"));
-                break;
             }
         }
 

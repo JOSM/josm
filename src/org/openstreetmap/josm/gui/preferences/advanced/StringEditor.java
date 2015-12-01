@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class StringEditor extends ExtendedDialog {
 
-    private transient PrefEntry entry;
+    private final transient PrefEntry entry;
     private JosmTextField tvalue;
 
     /**

@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 public class RelationMemberConflictDecisionRenderer extends JLabel
 implements TableCellRenderer, ListCellRenderer<RelationMemberConflictDecisionType> {
 
-    private JosmComboBox<RelationMemberConflictDecisionType> cbDecisionTypes;
+    private final JosmComboBox<RelationMemberConflictDecisionType> cbDecisionTypes;
 
     protected void resetTableRenderer() {
         setOpaque(true);

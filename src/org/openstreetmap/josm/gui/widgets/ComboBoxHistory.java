@@ -11,9 +11,9 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 
 public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> implements Iterable<AutoCompletionListItem> {
 
-    private int maxSize = 10;
+    private final int maxSize;
 
-    private transient List<HistoryChangedListener> listeners = new ArrayList<>();
+    private final transient List<HistoryChangedListener> listeners = new ArrayList<>();
 
     public ComboBoxHistory(int size) {
         maxSize = size;

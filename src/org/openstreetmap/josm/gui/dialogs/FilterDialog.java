@@ -57,10 +57,10 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     private JTable userTable;
-    private FilterTableModel filterModel = new FilterTableModel();
+    private final FilterTableModel filterModel = new FilterTableModel();
 
-    private EnableFilterAction enableFilterAction;
-    private HidingFilterAction hidingFilterAction;
+    private final EnableFilterAction enableFilterAction;
+    private final HidingFilterAction hidingFilterAction;
 
     /**
      * Constructs a new {@code FilterDialog}

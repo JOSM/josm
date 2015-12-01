@@ -31,7 +31,7 @@ public final class MultikeyActionsHandler {
     private static final long DIALOG_DELAY = 1000;
     private static final String STATUS_BAR_ID = "multikeyShortcut";
 
-    private Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<>();
+    private final Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<>();
 
     private final class ShowLayersPopupWorker implements Runnable {
         private final MyAction action;
@@ -187,7 +187,7 @@ public final class MultikeyActionsHandler {
 
     private long lastTimestamp;
     private MyAction lastAction;
-    private Timer timer;
+    private final Timer timer;
 
     private MultikeyActionsHandler() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new MyKeyEventDispatcher());

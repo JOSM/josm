@@ -47,7 +47,7 @@ public abstract class LabelCompositionStrategy {
     public abstract String compose(OsmPrimitive primitive);
 
     public static class StaticLabelCompositionStrategy extends LabelCompositionStrategy {
-        private String defaultLabel;
+        private final String defaultLabel;
 
         public StaticLabelCompositionStrategy(String defaultLabel) {
             this.defaultLabel = defaultLabel;
@@ -95,7 +95,7 @@ public abstract class LabelCompositionStrategy {
 
     public static class TagLookupCompositionStrategy extends LabelCompositionStrategy {
 
-        private String defaultLabelTag;
+        private final String defaultLabelTag;
 
         public TagLookupCompositionStrategy(String defaultLabelTag) {
             if (defaultLabelTag != null) {

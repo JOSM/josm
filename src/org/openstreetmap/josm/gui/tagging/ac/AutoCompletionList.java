@@ -32,13 +32,13 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class AutoCompletionList extends AbstractTableModel {
 
     /** the bare list of AutoCompletionItems */
-    private transient List<AutoCompletionListItem> list;
+    private final transient List<AutoCompletionListItem> list;
     /**  the filtered list of AutoCompletionItems */
-    private transient ArrayList<AutoCompletionListItem> filtered;
+    private final transient ArrayList<AutoCompletionListItem> filtered;
     /** the filter expression */
     private String filter;
     /** map from value to priority */
-    private transient Map<String, AutoCompletionListItem> valutToItemMap;
+    private final transient Map<String, AutoCompletionListItem> valutToItemMap;
 
     /**
      * constructor

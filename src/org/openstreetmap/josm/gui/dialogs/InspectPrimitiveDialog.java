@@ -132,7 +132,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         private static final String INDENT = "  ";
         private static final char NL = '\n';
 
-        private StringBuilder s = new StringBuilder();
+        private final StringBuilder s = new StringBuilder();
 
         private DataText add(String title, String... values) {
             s.append(INDENT).append(title);

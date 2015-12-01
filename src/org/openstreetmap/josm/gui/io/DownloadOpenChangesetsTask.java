@@ -33,7 +33,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     private OsmServerChangesetReader reader;
     private List<Changeset> changesets;
     private Exception lastException;
-    private Component parent;
+    private final Component parent;
 
     /**
      * Constructs the task

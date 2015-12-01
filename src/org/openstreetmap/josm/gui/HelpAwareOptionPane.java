@@ -106,9 +106,9 @@ public final class HelpAwareOptionPane {
     }
 
     private static class DefaultAction extends AbstractAction {
-        private JDialog dialog;
-        private JOptionPane pane;
-        private int value;
+        private final JDialog dialog;
+        private final JOptionPane pane;
+        private final int value;
 
         DefaultAction(JDialog dialog, JOptionPane pane, int value) {
             this.dialog = dialog;

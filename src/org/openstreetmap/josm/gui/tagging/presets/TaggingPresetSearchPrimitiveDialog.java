@@ -24,7 +24,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
 
     private static TaggingPresetSearchPrimitiveDialog instance;
 
-    private TaggingPresetSelector selector;
+    private final TaggingPresetSelector selector;
 
     /**
      * An action executing {@link TaggingPresetSearchPrimitiveDialog}.

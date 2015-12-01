@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 public class SelectionTable extends JTable {
 
-    private SelectionTableModel model;
+    private final SelectionTableModel model;
     private MemberTableModel memberTableModel;
 
     protected void build() {

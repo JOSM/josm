@@ -41,12 +41,12 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class UploadLayerTask extends AbstractIOTask implements Runnable {
     private OsmServerWriter writer;
-    private OsmDataLayer layer;
-    private ProgressMonitor monitor;
-    private Changeset changeset;
+    private final OsmDataLayer layer;
+    private final ProgressMonitor monitor;
+    private final Changeset changeset;
     private Collection<OsmPrimitive> toUpload;
-    private Set<IPrimitive> processedPrimitives;
-    private UploadStrategySpecification strategy;
+    private final Set<IPrimitive> processedPrimitives;
+    private final UploadStrategySpecification strategy;
 
     /**
      * Creates the upload task

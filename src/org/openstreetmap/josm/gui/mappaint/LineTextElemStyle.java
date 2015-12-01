@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 
 public class LineTextElemStyle extends ElemStyle {
 
-    private TextElement text;
+    private final TextElement text;
 
     protected LineTextElemStyle(Cascade c, TextElement text) {
         super(c, 4.9f);

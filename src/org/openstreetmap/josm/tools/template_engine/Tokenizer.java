@@ -49,7 +49,7 @@ public class Tokenizer {
     private int c;
     private int index;
     private Token currentToken;
-    private StringBuilder text = new StringBuilder();
+    private final StringBuilder text = new StringBuilder();
 
     public Tokenizer(String template) {
         this.template = template;

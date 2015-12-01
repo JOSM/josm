@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Observable;
 
 public class HelpBrowserHistory extends Observable {
-    private HelpBrowser browser;
+    private final HelpBrowser browser;
     private List<String> history;
     private int historyPos;
 

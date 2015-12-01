@@ -492,7 +492,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     private final class SideToolbarPopupMenu extends JPopupMenu {
         private static final int staticMenuEntryCount = 2;
-        private JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide toolbar")) {
+        private final JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide toolbar")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
@@ -546,7 +546,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     class ListAllButtonsAction extends AbstractAction {
 
         private JButton button;
-        private transient Collection<? extends HideableButton> buttons;
+        private final transient Collection<? extends HideableButton> buttons;
 
         ListAllButtonsAction(Collection<? extends HideableButton> buttons) {
             this.buttons = buttons;

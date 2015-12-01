@@ -19,7 +19,7 @@ import org.openstreetmap.josm.Main;
  */
 public class InvalidXmlCharacterFilter extends Reader {
 
-    private Reader reader;
+    private final Reader reader;
 
     private static boolean firstWarning = true;
 

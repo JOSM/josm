@@ -174,7 +174,7 @@ public abstract class ImageryLayer extends Layer {
     }
 
     class ApplyOffsetAction extends AbstractAction {
-        private transient OffsetBookmark b;
+        private final transient OffsetBookmark b;
 
         ApplyOffsetAction(OffsetBookmark b) {
             super(b.name);
@@ -260,8 +260,10 @@ public abstract class ImageryLayer extends Layer {
     public static class GammaImageProcessor implements ImageProcessor {
         private double gamma = 1;
         final short[] gammaChange = new short[256];
-        private LookupOp op3 = new LookupOp(new ShortLookupTable(0, new short[][]{gammaChange, gammaChange, gammaChange}), null);
-        private LookupOp op4 = new LookupOp(new ShortLookupTable(0, new short[][]{gammaChange, gammaChange, gammaChange, gammaChange}), null);
+        private final LookupOp op3 = new LookupOp(
+                new ShortLookupTable(0, new short[][]{gammaChange, gammaChange, gammaChange}), null);
+        private final LookupOp op4 = new LookupOp(
+                new ShortLookupTable(0, new short[][]{gammaChange, gammaChange, gammaChange, gammaChange}), null);
 
         /**
          * Returns the currently set gamma value.

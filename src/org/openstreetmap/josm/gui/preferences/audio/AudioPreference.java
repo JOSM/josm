@@ -37,21 +37,21 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
         super(/* ICON(preferences/) */ "audio", tr("Audio Settings"), tr("Settings for the audio player and audio markers."));
     }
 
-    private JCheckBox audioMenuVisible = new JCheckBox(tr("Display the Audio menu."));
-    private JCheckBox markerButtonLabels = new JCheckBox(tr("Label audio (and image and web) markers."));
-    private JCheckBox markerAudioTraceVisible = new JCheckBox(tr("Display live audio trace."));
+    private final JCheckBox audioMenuVisible = new JCheckBox(tr("Display the Audio menu."));
+    private final JCheckBox markerButtonLabels = new JCheckBox(tr("Label audio (and image and web) markers."));
+    private final JCheckBox markerAudioTraceVisible = new JCheckBox(tr("Display live audio trace."));
 
     // various methods of making markers on import audio
-    private JCheckBox audioMarkersFromExplicitWaypoints = new JCheckBox(tr("Explicit waypoints with valid timestamps."));
-    private JCheckBox audioMarkersFromUntimedWaypoints = new JCheckBox(tr("Explicit waypoints with time estimated from track position."));
-    private JCheckBox audioMarkersFromNamedTrackpoints = new JCheckBox(tr("Named trackpoints."));
-    private JCheckBox audioMarkersFromWavTimestamps = new JCheckBox(tr("Modified times (time stamps) of audio files."));
-    private JCheckBox audioMarkersFromStart = new JCheckBox(tr("Start of track (will always do this if no other markers available)."));
+    private final JCheckBox audioMarkersFromExplicitWaypoints = new JCheckBox(tr("Explicit waypoints with valid timestamps."));
+    private final JCheckBox audioMarkersFromUntimedWaypoints = new JCheckBox(tr("Explicit waypoints with time estimated from track position."));
+    private final JCheckBox audioMarkersFromNamedTrackpoints = new JCheckBox(tr("Named trackpoints."));
+    private final JCheckBox audioMarkersFromWavTimestamps = new JCheckBox(tr("Modified times (time stamps) of audio files."));
+    private final JCheckBox audioMarkersFromStart = new JCheckBox(tr("Start of track (will always do this if no other markers available)."));
 
-    private JosmTextField audioLeadIn = new JosmTextField(8);
-    private JosmTextField audioForwardBackAmount = new JosmTextField(8);
-    private JosmTextField audioFastForwardMultiplier = new JosmTextField(8);
-    private JosmTextField audioCalibration = new JosmTextField(8);
+    private final JosmTextField audioLeadIn = new JosmTextField(8);
+    private final JosmTextField audioForwardBackAmount = new JosmTextField(8);
+    private final JosmTextField audioFastForwardMultiplier = new JosmTextField(8);
+    private final JosmTextField audioCalibration = new JosmTextField(8);
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {

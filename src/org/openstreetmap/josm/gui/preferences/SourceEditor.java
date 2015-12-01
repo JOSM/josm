@@ -480,8 +480,8 @@ public abstract class SourceEditor extends JPanel {
     }
 
     protected static class AvailableSourcesListModel extends DefaultListModel<ExtendedSourceEntry> {
-        private transient List<ExtendedSourceEntry> data;
-        private DefaultListSelectionModel selectionModel;
+        private final transient List<ExtendedSourceEntry> data;
+        private final DefaultListSelectionModel selectionModel;
 
         public AvailableSourcesListModel(DefaultListSelectionModel selectionModel) {
             data = new ArrayList<>();
@@ -533,7 +533,7 @@ public abstract class SourceEditor extends JPanel {
 
     protected class ActiveSourcesModel extends AbstractTableModel {
         private transient List<SourceEntry> data;
-        private DefaultListSelectionModel selectionModel;
+        private final DefaultListSelectionModel selectionModel;
 
         public ActiveSourcesModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
@@ -763,8 +763,8 @@ public abstract class SourceEditor extends JPanel {
 
     protected class EditSourceEntryDialog extends ExtendedDialog {
 
-        private JosmTextField tfTitle;
-        private JosmTextField tfURL;
+        private final JosmTextField tfTitle;
+        private final JosmTextField tfURL;
         private JCheckBox cbActive;
 
         public EditSourceEntryDialog(Component parent, String title, SourceEntry e) {
@@ -1090,8 +1090,8 @@ public abstract class SourceEditor extends JPanel {
     }
 
     protected static class IconPathTableModel extends AbstractTableModel {
-        private List<String> data;
-        private DefaultListSelectionModel selectionModel;
+        private final List<String> data;
+        private final DefaultListSelectionModel selectionModel;
 
         public IconPathTableModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
@@ -1450,9 +1450,9 @@ public abstract class SourceEditor extends JPanel {
 
     class FileOrUrlCellEditor extends JPanel implements TableCellEditor {
         private JosmTextField tfFileName;
-        private CopyOnWriteArrayList<CellEditorListener> listeners;
+        private final CopyOnWriteArrayList<CellEditorListener> listeners;
         private String value;
-        private boolean isFile;
+        private final boolean isFile;
 
         /**
          * build the GUI

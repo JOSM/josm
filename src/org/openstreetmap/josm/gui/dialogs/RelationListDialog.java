@@ -116,7 +116,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
 
     private final transient HighlightHelper highlightHelper = new HighlightHelper();
-    private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
+    private final boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
 
     /**
      * Constructs <code>RelationListDialog</code>
@@ -371,7 +371,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     private class RelationListModel extends AbstractListModel<Relation> {
         private final transient List<Relation> relations = new ArrayList<>();
         private transient List<Relation> filteredRelations;
-        private DefaultListSelectionModel selectionModel;
+        private final DefaultListSelectionModel selectionModel;
         private transient SearchCompiler.Match filter;
 
         RelationListModel(DefaultListSelectionModel selectionModel) {

@@ -111,8 +111,8 @@ public class SessionWriter {
      * when doing the export.
      */
     public class ExportSupport {
-        private Document doc;
-        private int layerIndex;
+        private final Document doc;
+        private final int layerIndex;
 
         public ExportSupport(Document doc, int layerIndex) {
             this.doc = doc;

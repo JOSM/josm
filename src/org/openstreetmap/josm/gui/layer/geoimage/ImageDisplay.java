@@ -48,7 +48,7 @@ public class ImageDisplay extends JComponent {
     private Rectangle selectedRect;
 
     /** The tracker to load the images */
-    private MediaTracker tracker = new MediaTracker(this);
+    private final MediaTracker tracker = new MediaTracker(this);
 
     private String osdText;
 
@@ -58,8 +58,8 @@ public class ImageDisplay extends JComponent {
     /** The thread that reads the images. */
     private class LoadImageRunnable implements Runnable {
 
-        private File file;
-        private int orientation;
+        private final File file;
+        private final int orientation;
 
         LoadImageRunnable(File file, Integer orientation) {
             this.file = file;

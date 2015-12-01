@@ -863,7 +863,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     }
 
     static class MemberInfo {
-        private List<RelationMember> role = new ArrayList<>();
+        private final List<RelationMember> role = new ArrayList<>();
         private Set<OsmPrimitive> members = new HashSet<>();
         private List<Integer> position = new ArrayList<>();
         private Iterable<OsmPrimitive> selection;

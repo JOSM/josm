@@ -134,14 +134,14 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         this.windowTitle = windowTitle;
     }
 
-    private ActionListener cancelListener = new ActionListener() {
+    private final ActionListener cancelListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             cancel();
         }
     };
 
-    private ActionListener inBackgroundListener = new ActionListener() {
+    private final ActionListener inBackgroundListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             isInBackground = true;
@@ -153,7 +153,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         }
     };
 
-    private WindowListener windowListener = new WindowAdapter() {
+    private final WindowListener windowListener = new WindowAdapter() {
         @Override public void windowClosing(WindowEvent e) {
             cancel();
         }

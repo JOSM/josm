@@ -32,7 +32,7 @@ public class PluginPreferencesModel extends Observable {
     private final List<PluginInformation> displayedPlugins = new ArrayList<>();
     private final Map<PluginInformation, Boolean> selectedPluginsMap = new HashMap<>();
     // plugins that still require an update/download
-    private Set<String> pendingDownloads = new HashSet<>();
+    private final Set<String> pendingDownloads = new HashSet<>();
 
     /**
      * Constructs a new {@code PluginPreferencesModel}.

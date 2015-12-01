@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class StyleSource extends SourceEntry {
 
-    private List<Throwable> errors = new ArrayList<>();
+    private final List<Throwable> errors = new ArrayList<>();
     public File zipIcons;
 
     /** image provider returning the icon for this style */

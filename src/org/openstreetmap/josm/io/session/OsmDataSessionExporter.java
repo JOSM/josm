@@ -47,7 +47,7 @@ import org.w3c.dom.Element;
 
 public class OsmDataSessionExporter implements SessionLayerExporter {
 
-    private OsmDataLayer layer;
+    private final OsmDataLayer layer;
     private JRadioButton link, include;
     private JCheckBox export;
 

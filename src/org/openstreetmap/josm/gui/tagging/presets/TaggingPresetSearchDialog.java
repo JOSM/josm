@@ -18,7 +18,7 @@ public final class TaggingPresetSearchDialog extends ExtendedDialog {
 
     private static TaggingPresetSearchDialog instance;
 
-    private TaggingPresetSelector selector;
+    private final TaggingPresetSelector selector;
 
     /**
      * Returns the unique instance of {@code TaggingPresetSearchDialog}.

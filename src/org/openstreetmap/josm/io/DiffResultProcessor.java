@@ -42,15 +42,15 @@ public class DiffResultProcessor  {
      * mapping from old id to new id and version, the result of parsing the diff result
      * replied by the server
      */
-    private Map<PrimitiveId, DiffResultEntry> diffResults = new HashMap<>();
+    private final Map<PrimitiveId, DiffResultEntry> diffResults = new HashMap<>();
     /**
      * the set of processed primitives *after* the new id, the new version and the new changeset id is set
      */
-    private Set<OsmPrimitive> processed;
+    private final Set<OsmPrimitive> processed;
     /**
      * the collection of primitives being uploaded
      */
-    private Collection<? extends OsmPrimitive> primitives;
+    private final Collection<? extends OsmPrimitive> primitives;
 
     /**
      * Creates a diff result reader

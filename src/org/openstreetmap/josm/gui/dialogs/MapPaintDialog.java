@@ -486,8 +486,8 @@ public class MapPaintDialog extends ToggleDialog {
         }
 
         private class SaveToFileTask extends PleaseWaitRunnable {
-            private StyleSource s;
-            private File file;
+            private final StyleSource s;
+            private final File file;
 
             private boolean canceled;
             private boolean error;

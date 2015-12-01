@@ -64,7 +64,7 @@ public class DefaultProxySelector extends ProxySelector {
     private ProxyPolicy proxyPolicy;
     private InetSocketAddress httpProxySocketAddress;
     private InetSocketAddress socksProxySocketAddress;
-    private ProxySelector delegate;
+    private final ProxySelector delegate;
 
     private final Set<String> errorResources = new HashSet<>();
     private final Set<String> errorMessages = new HashSet<>();

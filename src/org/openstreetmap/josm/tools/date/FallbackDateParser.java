@@ -35,7 +35,7 @@ class FallbackDateParser {
         "yyyy:MM:dd HH:mm:ss"
     };
 
-    private List<DateFormat> dateParsers;
+    private final List<DateFormat> dateParsers;
     private int activeDateParser;
 
     /**

@@ -58,7 +58,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     private transient Relation relationSnapshot;
 
     /** the data layer the relation belongs to */
-    private transient OsmDataLayer layer;
+    private final transient OsmDataLayer layer;
 
     /**
      * This is a factory method that creates an appropriate RelationEditor

@@ -49,11 +49,11 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         public JosmTextField filter;
         private ProjectionCodeListModel model;
         public JList<String> selectionList;
-        private List<String> data;
-        private List<String> filteredData;
+        private final List<String> data;
+        private final List<String> filteredData;
         private static final String DEFAULT_CODE = "EPSG:3857";
         private String lastCode = DEFAULT_CODE;
-        private transient ActionListener listener;
+        private final transient ActionListener listener;
 
         CodeSelectionPanel(String initialCode, ActionListener listener) {
             this.listener = listener;
