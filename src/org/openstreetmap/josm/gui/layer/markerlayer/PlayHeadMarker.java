@@ -39,7 +39,7 @@ public final class PlayHeadMarker extends Marker {
     private static volatile PlayHeadMarker playHead;
     private MapMode oldMode;
     private LatLon oldCoor;
-    private boolean enabled;
+    private final boolean enabled;
     private boolean wasPlaying;
     private int dropTolerance; /* pixels */
     private boolean jumpToMarker;

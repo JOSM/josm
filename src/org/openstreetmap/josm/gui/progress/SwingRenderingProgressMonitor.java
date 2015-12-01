@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     private static final int PROGRESS_BAR_MAX = 100;
     private int currentProgressValue;
-    private ProgressRenderer delegate;
+    private final ProgressRenderer delegate;
 
     /**
      *

@@ -30,7 +30,7 @@ import org.xml.sax.SAXParseException;
  */
 public class OsmChangesetContentParser {
 
-    private InputSource source;
+    private final InputSource source;
     private final ChangesetDataSet data = new ChangesetDataSet();
 
     private class Parser extends AbstractParser {

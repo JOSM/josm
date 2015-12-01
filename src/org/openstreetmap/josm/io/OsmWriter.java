@@ -38,7 +38,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
 
     public static final String DEFAULT_API_VERSION = "0.6";
 
-    private boolean osmConform;
+    private final boolean osmConform;
     private boolean withBody = true;
     private boolean isOsmChange;
     private String version;

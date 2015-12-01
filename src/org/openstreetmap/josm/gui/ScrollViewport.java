@@ -38,7 +38,7 @@ public class ScrollViewport extends JPanel {
     public static final int ALL_DIRECTION = HORIZONTAL_DIRECTION | VERTICAL_DIRECTION;
 
     private class ScrollViewPortMouseListener extends MouseAdapter {
-        private int direction;
+        private final int direction;
 
         ScrollViewPortMouseListener(int direction) {
             this.direction = direction;
@@ -64,12 +64,12 @@ public class ScrollViewport extends JPanel {
 
     }
 
-    private JViewport vp = new JViewport();
+    private final JViewport vp = new JViewport();
     private JComponent component;
 
-    private List<JButton> buttons = new ArrayList<>();
+    private final List<JButton> buttons = new ArrayList<>();
 
-    private Timer timer = new Timer(100, new ActionListener() {
+    private final Timer timer = new Timer(100, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             ScrollViewport.this.scroll();

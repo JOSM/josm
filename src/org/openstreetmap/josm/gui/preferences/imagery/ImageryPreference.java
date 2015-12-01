@@ -236,7 +236,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
          */
         private static class ImageryURLTableCellRenderer extends DefaultTableCellRenderer {
 
-            private transient List<ImageryInfo> layers;
+            private final transient List<ImageryInfo> layers;
 
             ImageryURLTableCellRenderer(List<ImageryInfo> layers) {
                 this.layers = layers;
@@ -806,8 +806,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     static class OffsetBookmarksPanel extends JPanel {
-        private transient List<OffsetBookmark> bookmarks = OffsetBookmark.allBookmarks;
-        private OffsetsBookmarksModel model = new OffsetsBookmarksModel();
+        private final transient List<OffsetBookmark> bookmarks = OffsetBookmark.allBookmarks;
+        private final OffsetsBookmarksModel model = new OffsetsBookmarksModel();
 
         /**
          * Constructs a new {@code OffsetBookmarksPanel}.

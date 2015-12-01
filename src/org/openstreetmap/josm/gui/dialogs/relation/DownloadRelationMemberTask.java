@@ -34,8 +34,8 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     private boolean canceled;
     private Exception lastException;
     private final Set<Relation> parents = new HashSet<>();
-    private Collection<OsmPrimitive> children;
-    private OsmDataLayer curLayer;
+    private final Collection<OsmPrimitive> children;
+    private final OsmDataLayer curLayer;
     private MultiFetchServerObjectReader objectReader;
 
     public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer, Dialog dialog) {

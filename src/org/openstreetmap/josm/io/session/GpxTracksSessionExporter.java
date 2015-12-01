@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
 
 public class GpxTracksSessionExporter implements SessionLayerExporter {
 
-    private GpxLayer layer;
+    private final GpxLayer layer;
     private JRadioButton link, include;
     private JCheckBox export;
 

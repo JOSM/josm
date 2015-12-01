@@ -66,7 +66,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
      * Class to format a length according to SystemOfMesurement.
      */
     private static final class TrackLength {
-        private double value;
+        private final double value;
 
         /**
          * Constructs a new {@code TrackLength} object with a given length.

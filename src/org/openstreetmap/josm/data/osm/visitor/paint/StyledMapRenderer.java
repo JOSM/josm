@@ -475,8 +475,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent, Path2D.Double pfClip, boolean unclosedHighlight,
-            boolean disabled, TextElement text) {
+    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, Float extent, Path2D.Double pfClip,
+            boolean unclosedHighlight, boolean disabled, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
 
@@ -1656,7 +1656,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         double dy2 = p3.getY() - p2.getY();
         if (dx1 * dx2 + dy1 * dy2 < 0) {
             double len = Math.sqrt(dx1 * dx1 + dy1 * dy1);
-            double dxm = - dy1 * extent / len;
+            double dxm = -dy1 * extent / len;
             double dym = dx1 * extent / len;
             if (dx1 * dy2 - dx2 * dy1 < 0) {
                 dxm = -dxm;

@@ -104,9 +104,9 @@ public class RelationTree extends JTree {
     class RelationLoader extends PleaseWaitRunnable {
         private boolean canceled;
         private Exception lastException;
-        private Relation relation;
+        private final Relation relation;
         private DataSet ds;
-        private TreePath path;
+        private final TreePath path;
 
         RelationLoader(Dialog dialog, Relation relation, TreePath path) {
             super(

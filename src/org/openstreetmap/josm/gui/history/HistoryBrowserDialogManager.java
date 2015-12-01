@@ -49,7 +49,7 @@ public final class HistoryBrowserDialogManager implements MapView.LayerChangeLis
         return instance;
     }
 
-    private Map<Long, HistoryBrowserDialog> dialogs;
+    private final Map<Long, HistoryBrowserDialog> dialogs;
 
     protected HistoryBrowserDialogManager() {
         dialogs = new HashMap<>();

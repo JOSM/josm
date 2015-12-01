@@ -22,10 +22,10 @@ import org.openstreetmap.josm.gui.widgets.DateEditorWithSlider;
 import org.openstreetmap.josm.tools.GBC;
 
 public class DateFilterPanel extends JPanel {
-    private DateEditorWithSlider dateFrom = new DateEditorWithSlider(tr("From"));
-    private DateEditorWithSlider dateTo = new DateEditorWithSlider(tr("To"));
-    private JCheckBox noTimestampCb  = new JCheckBox(tr("No timestamp"));
-    private transient GpxLayer layer;
+    private final DateEditorWithSlider dateFrom = new DateEditorWithSlider(tr("From"));
+    private final DateEditorWithSlider dateTo = new DateEditorWithSlider(tr("To"));
+    private final JCheckBox noTimestampCb  = new JCheckBox(tr("No timestamp"));
+    private final transient GpxLayer layer;
 
     private transient ActionListener filterAppliedListener;
 
@@ -66,13 +66,13 @@ public class DateFilterPanel extends JPanel {
         noTimestampCb.addChangeListener(changeListener);
     }
 
-    private transient ChangeListener changeListener = new ChangeListener() {
+    private final transient ChangeListener changeListener = new ChangeListener() {
         @Override public void stateChanged(ChangeEvent e) {
             if (isEnabled()) applyFilterWithDelay();
         }
     };
 
-    private Timer t = new Timer(200, new ActionListener() {
+    private final Timer t = new Timer(200, new ActionListener() {
         @Override  public void actionPerformed(ActionEvent e) {
             applyFilter();
         }

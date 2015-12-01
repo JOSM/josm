@@ -39,7 +39,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
     private final JCheckBox[] checkBoxes = new JCheckBox[2];
     private final transient CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
 
-    private transient ActionListener al = new ActionListener() {
+    private final transient ActionListener al = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             cellEditorSupport.fireEditingStopped();

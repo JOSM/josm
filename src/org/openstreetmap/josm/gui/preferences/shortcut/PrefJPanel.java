@@ -54,7 +54,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class PrefJPanel extends JPanel {
 
     // table of shortcuts
-    private AbstractTableModel model;
+    private final AbstractTableModel model;
     // this are the display(!) texts for the checkboxes. Let the JVM do the i18n for us <g>.
     // Ok, there's a real reason for this: The JVM should know best how the keys are labelled
     // on the physical keyboard. What language pack is installed in JOSM is completely
@@ -94,17 +94,17 @@ public class PrefJPanel extends JPanel {
         return list;
     }
 
-    private JCheckBox cbAlt = new JCheckBox();
-    private JCheckBox cbCtrl = new JCheckBox();
-    private JCheckBox cbMeta = new JCheckBox();
-    private JCheckBox cbShift = new JCheckBox();
-    private JCheckBox cbDefault = new JCheckBox();
-    private JCheckBox cbDisable = new JCheckBox();
-    private JosmComboBox<String> tfKey = new JosmComboBox<>();
+    private final JCheckBox cbAlt = new JCheckBox();
+    private final JCheckBox cbCtrl = new JCheckBox();
+    private final JCheckBox cbMeta = new JCheckBox();
+    private final JCheckBox cbShift = new JCheckBox();
+    private final JCheckBox cbDefault = new JCheckBox();
+    private final JCheckBox cbDisable = new JCheckBox();
+    private final JosmComboBox<String> tfKey = new JosmComboBox<>();
 
-    private JTable shortcutTable = new JTable();
+    private final JTable shortcutTable = new JTable();
 
-    private JosmTextField filterField = new JosmTextField();
+    private final JosmTextField filterField = new JosmTextField();
 
     /** Creates new form prefJPanel */
     public PrefJPanel() {
@@ -122,7 +122,7 @@ public class PrefJPanel extends JPanel {
 
     private static class ScListModel extends AbstractTableModel {
         private final String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
-        private transient List<Shortcut> data;
+        private final transient List<Shortcut> data;
 
         /**
          * Constructs a new {@code ScListModel}.
@@ -154,7 +154,7 @@ public class PrefJPanel extends JPanel {
 
     private class ShortcutTableCellRenderer extends DefaultTableCellRenderer {
 
-        private boolean name;
+        private final boolean name;
 
         ShortcutTableCellRenderer(boolean name) {
             this.name = name;
@@ -285,7 +285,7 @@ public class PrefJPanel extends JPanel {
     // even have some duplicated code. Feel free to refactor, If you have
     // more expirience with GUI coding than I have.
     private class CbAction extends AbstractAction implements ListSelectionListener {
-        private PrefJPanel panel;
+        private final PrefJPanel panel;
 
         CbAction(PrefJPanel panel) {
             this.panel = panel;

@@ -406,7 +406,7 @@ public class MainMenu extends JMenuBar {
     /**
      * Popup menu to display menu items search result.
      */
-    private JPopupMenu searchResultsMenu = new JPopupMenu();
+    private final JPopupMenu searchResultsMenu = new JPopupMenu();
 
     /** this menu listener hides unnecessary JSeparators in a menu list but does not remove them.
      * If at a later time the separators are required, they will be made visible again. Intended
@@ -940,7 +940,7 @@ public class MainMenu extends JMenuBar {
     }
 
     static class PresetsMenuEnabler implements MapView.LayerChangeListener {
-        private JMenu presetsMenu;
+        private final JMenu presetsMenu;
 
         PresetsMenuEnabler(JMenu presetsMenu) {
             MapView.addLayerChangeListener(this);

@@ -138,7 +138,7 @@ public class Marker implements TemplateEngineDataProvider {
             return result;
         }
 
-        private TemplateEntryProperty parent;
+        private final TemplateEntryProperty parent;
 
         private TemplateEntryProperty(String key, String defaultValue, TemplateEntryProperty parent) {
             super(key, defaultValue);

@@ -9,7 +9,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 public class CancelHandler {
 
     private boolean isCanceled;
-    private List<CancelListener> listeners = new ArrayList<>();
+    private final List<CancelListener> listeners = new ArrayList<>();
 
     public synchronized void cancel() {
         if (!isCanceled) {

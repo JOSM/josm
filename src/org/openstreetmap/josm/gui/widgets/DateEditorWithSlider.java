@@ -27,14 +27,14 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @since 5815
  */
 public class DateEditorWithSlider extends JPanel {
-    private JSpinner spinner;
-    private JSlider slider;
+    private final JSpinner spinner;
+    private final JSlider slider;
     private Date dateMin;
     private Date dateMax;
     private static final int MAX_SLIDER = 300;
     private boolean watchSlider = true;
 
-    private transient List<ChangeListener> listeners = new ArrayList<>();
+    private final transient List<ChangeListener> listeners = new ArrayList<>();
 
     /**
      * Constructs a new {@code DateEditorWithSlider} with a given label

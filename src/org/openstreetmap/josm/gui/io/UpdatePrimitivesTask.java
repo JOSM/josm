@@ -33,8 +33,8 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
     private DataSet ds;
     private boolean canceled;
     private Exception lastException;
-    private Collection<? extends OsmPrimitive> toUpdate;
-    private OsmDataLayer layer;
+    private final Collection<? extends OsmPrimitive> toUpdate;
+    private final OsmDataLayer layer;
     private MultiFetchServerObjectReader multiObjectReader;
     private OsmServerObjectReader objectReader;
 

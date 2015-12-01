@@ -27,7 +27,7 @@ public class ImageResource {
     /**
      * Caches the image data for resized versions of the same image.
      */
-    private Map<Dimension, Image> imgCache = new HashMap<>();
+    private final Map<Dimension, Image> imgCache = new HashMap<>();
     /**
      * SVG diagram information in case of SVG vector image.
      */

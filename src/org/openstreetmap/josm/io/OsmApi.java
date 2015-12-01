@@ -113,7 +113,7 @@ public class OsmApi extends OsmConnection {
     }
 
     /** Server URL */
-    private String serverUrl;
+    private final String serverUrl;
 
     /** Object describing current changeset */
     private Changeset changeset;
@@ -164,8 +164,8 @@ public class OsmApi extends OsmConnection {
 
         private static final String CAPABILITIES = "capabilities";
 
-        private ProgressMonitor monitor;
-        private boolean fastFail;
+        private final ProgressMonitor monitor;
+        private final boolean fastFail;
 
         CapabilitiesCache(ProgressMonitor monitor, boolean fastFail) {
             super(CAPABILITIES + getBaseUrl().hashCode(), CacheCustomContent.INTERVAL_WEEKLY);

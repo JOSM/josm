@@ -44,7 +44,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private static final String COMMAND_LAST = "last";
     private static final String COMMAND_COPY_PATH = "copypath";
 
-    private ImageDisplay imgDisplay = new ImageDisplay();
+    private final ImageDisplay imgDisplay = new ImageDisplay();
     private boolean centerView;
 
     // Only one instance of that class is present at one time

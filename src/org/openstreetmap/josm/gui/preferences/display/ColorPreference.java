@@ -66,7 +66,7 @@ public class ColorPreference implements SubPreferenceSetting {
 
     private DefaultTableModel tableModel;
     private JTable colors;
-    private List<String> del = new ArrayList<>();
+    private final List<String> del = new ArrayList<>();
 
     private JButton colorEdit;
     private JButton defaultSet;

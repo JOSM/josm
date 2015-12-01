@@ -118,7 +118,7 @@ public class HelpBrowser extends JDialog {
     /** the currently displayed URL */
     private String url;
 
-    private transient HelpContentReader reader;
+    private final transient HelpContentReader reader;
 
     private static final JosmAction focusAction = new JosmAction(tr("JOSM Help Browser"), "help", "", null, false, false) {
         @Override
@@ -485,7 +485,7 @@ public class HelpBrowser extends JDialog {
     }
 
     static class BackAction extends AbstractAction implements Observer {
-        private transient HelpBrowserHistory history;
+        private final transient HelpBrowserHistory history;
 
         BackAction(HelpBrowserHistory history) {
             this.history = history;
@@ -507,7 +507,7 @@ public class HelpBrowser extends JDialog {
     }
 
     static class ForwardAction extends AbstractAction implements Observer {
-        private transient HelpBrowserHistory history;
+        private final transient HelpBrowserHistory history;
 
         ForwardAction(HelpBrowserHistory history) {
             this.history = history;

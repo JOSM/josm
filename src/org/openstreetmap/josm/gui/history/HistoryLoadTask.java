@@ -51,7 +51,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     private boolean canceled;
     private Exception lastException;
-    private Set<PrimitiveId> toLoad;
+    private final Set<PrimitiveId> toLoad;
     private HistoryDataSet loadedData;
     private OsmServerHistoryReader reader;
 

@@ -11,9 +11,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class RelationMemberConflictDecision {
 
-    private Relation relation;
-    private int pos;
-    private OsmPrimitive originalPrimitive;
+    private final Relation relation;
+    private final int pos;
+    private final OsmPrimitive originalPrimitive;
     private String role;
     private RelationMemberConflictDecisionType decision;
 

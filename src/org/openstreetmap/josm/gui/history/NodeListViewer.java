@@ -331,8 +331,8 @@ public class NodeListViewer extends JPanel {
     }
 
     static class DoubleClickAdapter extends MouseAdapter {
-        private JTable table;
-        private ShowHistoryAction showHistoryAction;
+        private final JTable table;
+        private final ShowHistoryAction showHistoryAction;
 
         DoubleClickAdapter(JTable table) {
             this.table = table;

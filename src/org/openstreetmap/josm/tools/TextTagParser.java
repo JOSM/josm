@@ -41,10 +41,10 @@ public final class TextTagParser {
     public static class TextAnalyzer {
         private boolean quotesStarted;
         private boolean esc;
-        private StringBuilder s = new StringBuilder(200);
+        private final StringBuilder s = new StringBuilder(200);
         private int pos;
-        private String data;
-        private int n;
+        private final String data;
+        private final int n;
 
         public TextAnalyzer(String text) {
             pos = 0;

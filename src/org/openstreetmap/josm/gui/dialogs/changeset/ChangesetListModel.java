@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.osm.Storage;
 public class ChangesetListModel extends DefaultListModel<Changeset> implements ChangesetCacheListener {
     private final transient List<Changeset> data = new ArrayList<>();
     private final transient Storage<Changeset> shownChangesets = new Storage<>(true);
-    private DefaultListSelectionModel selectionModel;
+    private final DefaultListSelectionModel selectionModel;
 
     public ChangesetListModel(DefaultListSelectionModel selectionModel) {
         this.selectionModel = selectionModel;

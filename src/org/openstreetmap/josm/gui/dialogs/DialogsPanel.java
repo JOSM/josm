@@ -25,7 +25,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
     /**
      * Panels that are added to the multisplitpane.
      */
-    private List<JPanel> panels = new ArrayList<>();
+    private final List<JPanel> panels = new ArrayList<>();
 
     private final JSplitPane parent;
 

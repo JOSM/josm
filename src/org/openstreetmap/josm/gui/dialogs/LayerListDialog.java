@@ -108,21 +108,21 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /** the model for the layer list */
-    private LayerListModel model;
+    private final LayerListModel model;
 
     /** the list of layers (technically its a JTable, but appears like a list) */
-    private LayerList layerList;
+    private final LayerList layerList;
 
-    private SideButton opacityButton;
-    private SideButton gammaButton;
+    private final SideButton opacityButton;
+    private final SideButton gammaButton;
 
-    private ActivateLayerAction activateLayerAction;
-    private ShowHideLayerAction showHideLayerAction;
+    private final ActivateLayerAction activateLayerAction;
+    private final ShowHideLayerAction showHideLayerAction;
 
     //TODO This duplicates ShowHide actions functionality
     /** stores which layer index to toggle and executes the ShowHide action if the layer is present */
     private final class ToggleLayerIndexVisibility extends AbstractAction {
-        private int layerIndex = -1;
+        private final int layerIndex;
 
         ToggleLayerIndexVisibility(int layerIndex) {
             this.layerIndex = layerIndex;
@@ -439,7 +439,7 @@ public class LayerListDialog extends ToggleDialog {
     public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction, MultikeyShortcutAction {
 
         private transient WeakReference<Layer> lastLayer;
-        private transient Shortcut multikeyShortcut;
+        private final transient Shortcut multikeyShortcut;
 
         /**
          * Creates a {@link ShowHideLayerAction} which will toggle the visibility of
@@ -1225,8 +1225,8 @@ public class LayerListDialog extends ToggleDialog {
      */
     public final class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
         /** manages list selection state*/
-        private DefaultListSelectionModel selectionModel;
-        private CopyOnWriteArrayList<LayerListModelListener> listeners;
+        private final DefaultListSelectionModel selectionModel;
+        private final CopyOnWriteArrayList<LayerListModelListener> listeners;
 
         /**
          * constructor

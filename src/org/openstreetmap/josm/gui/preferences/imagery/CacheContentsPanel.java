@@ -67,7 +67,7 @@ public class CacheContentsPanel extends JPanel {
     private static final class ButtonColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
         private final Action action;
         private final JButton renderButton;
-        private JButton editButton;
+        private final JButton editButton;
         private Object editorValue;
 
         private ButtonColumn(Action action) {

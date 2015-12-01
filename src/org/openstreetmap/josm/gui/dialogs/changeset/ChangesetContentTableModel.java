@@ -24,7 +24,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 public class ChangesetContentTableModel extends AbstractTableModel {
 
     private final transient List<ChangesetContentEntry> data = new ArrayList<>();
-    private DefaultListSelectionModel selectionModel;
+    private final DefaultListSelectionModel selectionModel;
 
     public ChangesetContentTableModel(DefaultListSelectionModel selectionModel) {
         this.selectionModel = selectionModel;

@@ -61,7 +61,7 @@ public class CredentialsManager implements CredentialsAgent {
     /**
      * The credentials agent doing the real stuff
      */
-    private CredentialsAgent delegate;
+    private final CredentialsAgent delegate;
 
     /**
      * Constructs a new {@code CredentialsManager}.

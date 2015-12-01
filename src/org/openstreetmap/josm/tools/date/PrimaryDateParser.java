@@ -19,8 +19,8 @@ import javax.xml.datatype.DatatypeFactory;
  */
 public class PrimaryDateParser {
     private DatatypeFactory datatypeFactory;
-    private FallbackDateParser fallbackDateParser;
-    private Calendar calendar;
+    private final FallbackDateParser fallbackDateParser;
+    private final Calendar calendar;
 
     /**
      * Creates a new instance.

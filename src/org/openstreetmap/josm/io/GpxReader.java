@@ -60,7 +60,7 @@ public class GpxReader implements GpxConstants {
     private String version;
     /** The resulting gpx data */
     private GpxData gpxData;
-    private InputSource inputSource;
+    private final InputSource inputSource;
 
     private class Parser extends DefaultHandler {
 

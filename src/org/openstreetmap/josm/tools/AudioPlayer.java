@@ -35,8 +35,8 @@ public final class AudioPlayer extends Thread {
 
     private State state;
     private URL playingUrl;
-    private double leadIn; // seconds
-    private double calibration; // ratio of purported duration of samples to true duration
+    private final double leadIn; // seconds
+    private final double calibration; // ratio of purported duration of samples to true duration
     private double position; // seconds
     private double bytesPerSecond;
     private static long chunk = 4000; /* bytes */
@@ -113,7 +113,7 @@ public final class AudioPlayer extends Thread {
         }
     }
 
-    private Execute command;
+    private final Execute command;
 
     /**
      * Plays a WAV audio file from the beginning. See also the variant which doesn't

@@ -48,7 +48,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
 
     private static final String CACHE_REGION_NAME = "WMS";
 
-    private Set<String> supportedProjections;
+    private final Set<String> supportedProjections;
 
     /**
      * Constructs a new {@code WMSLayer}.

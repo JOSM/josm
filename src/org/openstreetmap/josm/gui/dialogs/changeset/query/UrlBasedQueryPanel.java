@@ -28,7 +28,6 @@ import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-
 public class UrlBasedQueryPanel extends JPanel {
 
     private JosmTextField tfUrl;

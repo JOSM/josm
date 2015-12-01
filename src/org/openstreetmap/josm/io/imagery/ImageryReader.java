@@ -29,7 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ImageryReader {
 
-    private String source;
+    private final String source;
 
     private enum State {
         INIT,               // initial state, should always be at the bottom of the stack

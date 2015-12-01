@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 
 public class MarkerSessionExporter implements SessionLayerExporter {
 
-    private MarkerLayer layer;
+    private final MarkerLayer layer;
     private JCheckBox export;
 
     public MarkerSessionExporter(MarkerLayer layer) {

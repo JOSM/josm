@@ -231,7 +231,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     private static class NoteRenderer implements ListCellRenderer<Note> {
 
-        private DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
+        private final DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
         private final DateFormat dateFormat = DateUtils.getDateTimeFormat(DateFormat.MEDIUM, DateFormat.SHORT);
 
         @Override
@@ -263,7 +263,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     }
 
     class NoteTableModel extends AbstractListModel<Note> {
-        private transient List<Note> data;
+        private final transient List<Note> data;
 
         /**
          * Constructs a new {@code NoteTableModel}.

@@ -41,7 +41,7 @@ import org.openstreetmap.josm.tools.GBC;
  * @since 6021
  */
 public class PreferencesTable extends JTable {
-    private AllSettingsTableModel model;
+    private final AllSettingsTableModel model;
     private final transient List<PrefEntry> displayData;
 
     /**
@@ -297,12 +297,12 @@ public class PreferencesTable extends JTable {
     }
 
     private static class SettingCellRenderer extends DefaultTableCellRenderer {
-        private Color backgroundColor = Main.pref.getUIColor("Table.background");
-        private Color changedColor = Main.pref.getColor(
+        private final Color backgroundColor = Main.pref.getUIColor("Table.background");
+        private final Color changedColor = Main.pref.getColor(
                          marktr("Advanced Background: Changed"),
                          new Color(200, 255, 200));
-        private Color foregroundColor = Main.pref.getUIColor("Table.foreground");
-        private Color nonDefaultColor = Main.pref.getColor(
+        private final Color foregroundColor = Main.pref.getUIColor("Table.foreground");
+        private final Color nonDefaultColor = Main.pref.getColor(
                             marktr("Advanced Background: NonDefault"),
                             new Color(255, 255, 200));
 

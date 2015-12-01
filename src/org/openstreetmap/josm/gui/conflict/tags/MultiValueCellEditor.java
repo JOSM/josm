@@ -49,9 +49,9 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
     }
 
     /** the combo box used as editor */
-    private JosmComboBox<Object> editor;
-    private DefaultComboBoxModel<Object> editorModel;
-    private CopyOnWriteArrayList<NavigationListener> listeners;
+    private final JosmComboBox<Object> editor;
+    private final DefaultComboBoxModel<Object> editorModel;
+    private final CopyOnWriteArrayList<NavigationListener> listeners;
 
     /**
      * Adds a navigation listener.

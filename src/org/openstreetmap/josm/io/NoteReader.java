@@ -31,7 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class NoteReader {
 
-    private InputSource inputSource;
+    private final InputSource inputSource;
     private List<Note> parsedNotes;
 
     /**
@@ -51,7 +51,7 @@ public class NoteReader {
     private class Parser extends DefaultHandler {
 
         private NoteParseMode parseMode;
-        private StringBuilder buffer = new StringBuilder();
+        private final StringBuilder buffer = new StringBuilder();
         private Note thisNote;
         private long commentUid;
         private String commentUsername;

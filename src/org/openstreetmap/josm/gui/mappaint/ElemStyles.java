@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 public class ElemStyles {
-    private List<StyleSource> styleSources;
+    private final List<StyleSource> styleSources;
     private boolean drawMultipolygon;
 
     private int cacheIdx = 1;

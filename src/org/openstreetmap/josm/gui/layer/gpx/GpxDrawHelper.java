@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.ColorScale;
  * @since 7319
  */
 public class GpxDrawHelper {
-    private GpxData data;
+    private final GpxData data;
 
     // draw lines between points belonging to different segments
     private boolean forceLines;

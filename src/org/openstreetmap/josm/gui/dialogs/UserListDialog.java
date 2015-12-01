@@ -287,7 +287,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      *
      */
     static class UserTableModel extends DefaultTableModel {
-        private transient List<UserInfo> data;
+        private final transient List<UserInfo> data;
 
         UserTableModel() {
             setColumnIdentifiers(new String[]{tr("Author"), tr("# Objects"), "%"});

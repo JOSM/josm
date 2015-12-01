@@ -40,8 +40,8 @@ public class TagEditorModel extends AbstractTableModel {
     private boolean dirty;
     private final PropertyChangeSupport propChangeSupport = new PropertyChangeSupport(this);
 
-    private DefaultListSelectionModel rowSelectionModel;
-    private DefaultListSelectionModel colSelectionModel;
+    private final DefaultListSelectionModel rowSelectionModel;
+    private final DefaultListSelectionModel colSelectionModel;
 
     /**
      * Creates a new tag editor model. Internally allocates two selection models
@@ -608,10 +608,10 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     class SelectionStateMemento {
-        private int rowMin;
-        private int rowMax;
-        private int colMin;
-        private int colMax;
+        private final int rowMin;
+        private final int rowMax;
+        private final int colMin;
+        private final int colMax;
 
         SelectionStateMemento() {
             rowMin = rowSelectionModel.getMinSelectionIndex();

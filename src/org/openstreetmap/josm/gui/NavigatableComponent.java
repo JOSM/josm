@@ -215,9 +215,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Returns the current center of the viewport.
-     * 
+     *
      * (Use {@link #zoomTo(EastNorth)} to the change the center.)
-     * 
+     *
      * @return the current center of the viewport
      */
     public EastNorth getCenter() {
@@ -226,9 +226,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Returns the current scale.
-     * 
+     *
      * In east/north units per pixel.
-     * 
+     *
      * @return the current scale
      */
     public double getScale() {
@@ -601,8 +601,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private Stack<ZoomData> zoomUndoBuffer = new Stack<>();
-    private Stack<ZoomData> zoomRedoBuffer = new Stack<>();
+    private final Stack<ZoomData> zoomUndoBuffer = new Stack<>();
+    private final Stack<ZoomData> zoomRedoBuffer = new Stack<>();
     private Date zoomTimestamp = new Date();
 
     private void pushZoomUndo(EastNorth center, double scale) {

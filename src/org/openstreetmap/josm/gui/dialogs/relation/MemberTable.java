@@ -44,7 +44,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
 
     /** the additional actions in popup menu */
     private ZoomToGapAction zoomToGap;
-    private transient HighlightHelper highlightHelper = new HighlightHelper();
+    private final transient HighlightHelper highlightHelper = new HighlightHelper();
     private boolean highlightEnabled;
 
     /**

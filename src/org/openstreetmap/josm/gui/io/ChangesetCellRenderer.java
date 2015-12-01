@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @since 2115
  */
 public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Changeset> {
-    private ImageIcon icon;
+    private final ImageIcon icon;
 
     /**
      * Constructs a new {@code ChangesetCellRenderer}.

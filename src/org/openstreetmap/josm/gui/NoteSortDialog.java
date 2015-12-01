@@ -21,10 +21,10 @@ import org.openstreetmap.josm.data.osm.NoteData;
  */
 public class NoteSortDialog extends ExtendedDialog {
 
-    private JRadioButton defaultSort = new JRadioButton(tr("Default (open, closed, new)"));
-    private JRadioButton userSort = new JRadioButton(tr("Username"));
-    private JRadioButton dateSort = new JRadioButton(tr("Created date"));
-    private JRadioButton lastActionSort = new JRadioButton(tr("Last change date"));
+    private final JRadioButton defaultSort = new JRadioButton(tr("Default (open, closed, new)"));
+    private final JRadioButton userSort = new JRadioButton(tr("Username"));
+    private final JRadioButton dateSort = new JRadioButton(tr("Created date"));
+    private final JRadioButton lastActionSort = new JRadioButton(tr("Last change date"));
 
     /**
      * Construct a new dialog. The constructor automatically adds a "Cancel" button.

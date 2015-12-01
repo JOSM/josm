@@ -44,12 +44,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class UploadPrimitivesTask extends AbstractUploadTask {
     private boolean uploadCanceled;
     private Exception lastException;
-    private APIDataSet toUpload;
+    private final APIDataSet toUpload;
     private OsmServerWriter writer;
-    private OsmDataLayer layer;
+    private final OsmDataLayer layer;
     private Changeset changeset;
-    private Set<IPrimitive> processedPrimitives;
-    private UploadStrategySpecification strategy;
+    private final Set<IPrimitive> processedPrimitives;
+    private final UploadStrategySpecification strategy;
 
     /**
      * Creates the task

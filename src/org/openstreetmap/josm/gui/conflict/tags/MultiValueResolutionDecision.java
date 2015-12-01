@@ -25,7 +25,7 @@ public class MultiValueResolutionDecision {
     /** the type of decision */
     private MultiValueDecisionType type;
     /** the collection of tags for which a decision is needed */
-    private TagCollection tags;
+    private final TagCollection tags;
     /** the selected value if {@link #type} is {@link MultiValueDecisionType#KEEP_ONE} */
     private String value;
 

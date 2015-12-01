@@ -12,9 +12,6 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.exception.OAuthException;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
@@ -32,6 +29,9 @@ import org.openstreetmap.josm.tools.XmlParsingException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.exception.OAuthException;
+
 /**
  * Checks whether an OSM API server can be accessed with a specific Access Token.
  *
@@ -40,11 +40,11 @@ import org.xml.sax.SAXException;
  *
  */
 public class TestAccessTokenTask extends PleaseWaitRunnable {
-    private OAuthToken token;
-    private OAuthParameters oauthParameters;
+    private final OAuthToken token;
+    private final OAuthParameters oauthParameters;
     private boolean canceled;
-    private Component parent;
-    private String apiUrl;
+    private final Component parent;
+    private final String apiUrl;
     private HttpURLConnection connection;
 
     /**

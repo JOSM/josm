@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /** the modifiable layer */
-    private AbstractModifiableLayer layer;
+    private final AbstractModifiableLayer layer;
     private boolean doCheckSaveConditions;
     private boolean doSaveToFile;
     private boolean doUploadToServer;

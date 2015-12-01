@@ -442,7 +442,7 @@ public class MenuScroller {
     private class MenuScrollItem extends JMenuItem
             implements ChangeListener {
 
-        private MenuScrollTimer timer;
+        private final MenuScrollTimer timer;
 
         MenuScrollItem(MenuIcon icon, int increment) {
             setIcon(icon);

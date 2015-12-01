@@ -123,7 +123,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     public int currentZoomLevel;
     private boolean needRedraw;
 
-    private AttributionSupport attribution = new AttributionSupport();
+    private final AttributionSupport attribution = new AttributionSupport();
 
     // needed public access for session exporter
     /** if layers changes automatically, when user zooms in */
@@ -480,7 +480,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     private class BooleanButtonModel extends DefaultButtonModel {
-        private Field field;
+        private final Field field;
 
         BooleanButtonModel(Field field) {
             this.field = field;
@@ -1626,7 +1626,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     public class PrecacheTask implements TileLoaderListener {
         private final ProgressMonitor progressMonitor;
         private int totalCount;
-        private AtomicInteger processedCount = new AtomicInteger(0);
+        private final AtomicInteger processedCount = new AtomicInteger(0);
         private final TileLoader tileLoader;
 
         /**

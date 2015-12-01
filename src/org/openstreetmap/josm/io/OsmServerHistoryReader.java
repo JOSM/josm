@@ -18,8 +18,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class OsmServerHistoryReader extends OsmServerReader {
 
-    private OsmPrimitiveType primitiveType;
-    private long id;
+    private final OsmPrimitiveType primitiveType;
+    private final long id;
 
     /**
      * constructor

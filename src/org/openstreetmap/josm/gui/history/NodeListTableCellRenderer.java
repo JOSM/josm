@@ -18,7 +18,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
 
     public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
 
-    private ImageIcon nodeIcon;
+    private final ImageIcon nodeIcon;
 
     /**
      * Constructs a new {@code NodeListTableCellRenderer}.

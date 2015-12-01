@@ -13,7 +13,7 @@ import javax.swing.event.ListSelectionListener;
  */
 public class ListPopupMenu extends JPopupMenu {
 
-    private JList<?>[] lists;
+    private final JList<?>[] lists;
 
     public ListPopupMenu(JList<?> ... lists) {
         this.lists = lists;

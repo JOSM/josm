@@ -26,7 +26,7 @@ import org.openstreetmap.josm.Main;
 public class TagConflictResolver extends JPanel {
 
     /** the model for the tag conflict resolver */
-    private TagConflictResolverModel model;
+    private final TagConflictResolverModel model;
     /** selects whether only tags with conflicts are displayed */
     private JCheckBox cbShowTagsWithConflictsOnly;
     private JCheckBox cbShowTagsWithMultiValuesOnly;

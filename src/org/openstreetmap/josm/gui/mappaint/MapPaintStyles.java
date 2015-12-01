@@ -342,7 +342,7 @@ public final class MapPaintStyles {
 
     public static class MapPaintStyleLoader extends PleaseWaitRunnable {
         private boolean canceled;
-        private Collection<StyleSource> sources;
+        private final Collection<StyleSource> sources;
 
         public MapPaintStyleLoader(Collection<StyleSource> sources) {
             super(tr("Reloading style sources"));

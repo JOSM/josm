@@ -169,7 +169,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     private class MoveXAction extends AbstractAction {
 
-        private int direction;
+        private final int direction;
 
         MoveXAction(int direction) {
             this.direction = direction;
@@ -183,7 +183,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     private class MoveYAction extends AbstractAction {
 
-        private int direction;
+        private final int direction;
 
         MoveYAction(int direction) {
             this.direction = direction;

@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public abstract class OsmServerReader extends OsmConnection {
-    private OsmApi api = OsmApi.getOsmApi();
+    private final OsmApi api = OsmApi.getOsmApi();
     private boolean doAuthenticate;
     protected boolean gpxParsedProperly;
 

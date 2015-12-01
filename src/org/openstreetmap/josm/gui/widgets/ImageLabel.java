@@ -17,8 +17,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 5965
  */
 public class ImageLabel extends JPanel {
-    private JLabel tf;
-    private int charCount;
+    private final JLabel tf;
+    private final int charCount;
 
     /**
      * Constructs a new {@code ImageLabel}.

@@ -25,8 +25,8 @@ public class BoxTextElemStyle extends ElemStyle {
     }
 
     public static class BoxProviderResult {
-        private Rectangle box;
-        private boolean temporary;
+        private final Rectangle box;
+        private final boolean temporary;
 
         public BoxProviderResult(Rectangle box, boolean temporary) {
             this.box = box;
@@ -51,7 +51,7 @@ public class BoxTextElemStyle extends ElemStyle {
     }
 
     public static class SimpleBoxProvider implements BoxProvider {
-        private Rectangle box;
+        private final Rectangle box;
 
         /**
          * Constructs a new {@code SimpleBoxProvider}.

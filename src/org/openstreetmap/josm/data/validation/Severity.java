@@ -65,6 +65,4 @@ public enum Severity {
     public Color getColor() {
         return color;
     }
-
-
 }

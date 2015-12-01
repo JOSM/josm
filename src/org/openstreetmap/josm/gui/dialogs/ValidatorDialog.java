@@ -71,13 +71,13 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     public ValidatorTreePanel tree;
 
     /** The fix button */
-    private SideButton fixButton;
+    private final SideButton fixButton;
     /** The ignore button */
-    private SideButton ignoreButton;
+    private final SideButton ignoreButton;
     /** The select button */
-    private SideButton selectButton;
+    private final SideButton selectButton;
     /** The lookup button */
-    private SideButton lookupButton;
+    private final SideButton lookupButton;
 
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final transient PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
@@ -585,7 +585,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
      *
      */
     class FixTask extends PleaseWaitRunnable {
-        private Collection<TestError> testErrors;
+        private final Collection<TestError> testErrors;
         private boolean canceled;
 
         FixTask(Collection<TestError> testErrors) {

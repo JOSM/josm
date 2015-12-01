@@ -1106,7 +1106,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         }
     }
 
-    private transient SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener() {
+    private final transient SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener() {
         @Override
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             repaint();

@@ -22,7 +22,7 @@ public class RelationTreeCellRenderer extends JLabel implements TreeCellRenderer
     public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
 
     /** the relation icon */
-    private ImageIcon icon;
+    private final ImageIcon icon;
 
     /**
      * constructor

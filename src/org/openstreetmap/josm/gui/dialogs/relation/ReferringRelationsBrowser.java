@@ -36,8 +36,8 @@ public class ReferringRelationsBrowser extends JPanel {
 
     /** the list of relations */
     private JList<Relation> referrers;
-    private ReferringRelationsBrowserModel model;
-    private transient OsmDataLayer layer;
+    private final ReferringRelationsBrowserModel model;
+    private final transient OsmDataLayer layer;
     private JCheckBox cbReadFull;
     private EditAction editAction;
 

@@ -197,7 +197,7 @@ public class SelectionListDialog extends ToggleDialog  {
      */
     class MouseEventHandler extends PopupMenuLauncher {
         private final HighlightHelper helper = new HighlightHelper();
-        private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
+        private final boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
 
         MouseEventHandler() {
             super(popupMenu);
@@ -479,7 +479,7 @@ public class SelectionListDialog extends ToggleDialog  {
         // Variable to store history from currentDataSet()
         private LinkedList<Collection<? extends OsmPrimitive>> history;
         private final transient List<OsmPrimitive> selection = new ArrayList<>();
-        private DefaultListSelectionModel selectionModel;
+        private final DefaultListSelectionModel selectionModel;
 
         /**
          * Constructor

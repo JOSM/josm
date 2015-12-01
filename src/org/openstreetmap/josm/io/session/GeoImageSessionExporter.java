@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
 
 public class GeoImageSessionExporter implements SessionLayerExporter {
 
-    private GeoImageLayer layer;
+    private final GeoImageLayer layer;
 
     public GeoImageSessionExporter(GeoImageLayer layer) {
         this.layer = layer;

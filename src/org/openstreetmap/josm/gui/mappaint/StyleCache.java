@@ -46,7 +46,7 @@ public final class StyleCache {
      * List of Styles, immutable
      */
     public static class StyleList implements Iterable<ElemStyle> {
-        private List<ElemStyle> lst;
+        private final List<ElemStyle> lst;
 
         /**
          * Constructs a new {@code StyleList}.

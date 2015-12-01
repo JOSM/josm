@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import org.openstreetmap.josm.gui.layer.ImageProcessor;
-
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
+
+import org.openstreetmap.josm.gui.layer.ImageProcessor;
 
 /** class to describe how image overlay
  * @since 8095
@@ -15,13 +15,13 @@ public class ImageOverlay implements ImageProcessor {
     /** the image resource to use as overlay */
     public ImageProvider image;
     /** offset of the image from left border, values between 0 and 1 */
-    private double offsetLeft;
+    private final double offsetLeft;
     /** offset of the image from top border, values between 0 and 1 */
-    private double offsetRight;
+    private final double offsetRight;
     /** offset of the image from right border, values between 0 and 1*/
-    private double offsetTop;
+    private final double offsetTop;
     /** offset of the image from bottom border, values between 0 and 1 */
-    private double offsetBottom;
+    private final double offsetBottom;
 
     /**
      * Create an overlay info. All values are relative sizes between 0 and 1. Size of the image

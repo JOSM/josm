@@ -54,10 +54,10 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
     private boolean canceled;
     private Exception lastException;
     private DataSet referrers;
-    private boolean full;
-    private OsmDataLayer layer;
-    private Relation child;
-    private List<Relation> parents;
+    private final boolean full;
+    private final OsmDataLayer layer;
+    private final Relation child;
+    private final List<Relation> parents;
     private Runnable continuation;
 
     /**
