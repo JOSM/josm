@@ -360,6 +360,12 @@
             <text key="wikipedia" text="Wikipedia" />
         </optional>
     </chunk>
+    <chunk id="car_brands">
+    <multiselect key="brand" text="Car brand" values="Alfa Romeo;Aston Martin;Audi;Bentley;BMW;Buick;Cadillac;Chevrolet;Chrysler;Citroën;Dacia;Daewoo;Daihatsu;Dodge;Ferrari;Fiat;Ford;GMC;Great Wall;Holden;Honda;Hyundai;Infiniti;Isuzu;Jaguar;Jeep;Kia;Lada;Lancia;Land Rover;Lexus;Lincoln;Lotus;Maserati;Mazda;Mercedes-Benz;Mini;Mitsubishi;Nissan;Opel;Peugeot;Renault;Saab;Seat;Škoda;Smart;SsangYong;Subaru;Suzuki;Toyota;Vauxhall;Volkswagen;Volvo" />
+  </chunk>
+  <chunk id="motorcycle_brands">
+    <multiselect key="brand" text="Motorcycle brand" values="Aprillia;BMW;Ducati;Gilera;Harley-Davidson;Honda;Kawasaki;KTM;Kymco;Piaggio;Peugeot;Piaggio;Suzuki;Triumph;Vespa;Yamaha" />
+  </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact_address">
     <preset_link preset_name="Contact (Common Schema)" />
@@ -2740,7 +2746,8 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=car" />
             <space />
             <key key="shop" value="car" />
-            <reference ref="name_brand_operator_oh_wheelchair" />
+            <reference ref="car_brands" />
+            <reference ref="name_operator_oh_wheelchair" />
             <combo key="second_hand" text="Second hand" values="only,yes,no" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Car Dealer -->
@@ -2753,7 +2760,8 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=car_repair" />
             <space />
             <key key="shop" value="car_repair" />
-            <reference ref="name_brand_operator_oh_wheelchair" />
+            <reference ref="car_brands" />
+            <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Repair -->
         <item name="Parts" icon="styles/standard/vehicle/car_parts.svg" type="node,closedway" preset_name_label="true">
@@ -2762,7 +2770,8 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=car_parts" />
             <space />
             <key key="shop" value="car_parts" />
-            <reference ref="name_brand_operator_oh_wheelchair" />
+            <reference ref="car_brands" />
+            <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Parts -->
         <item name="Tires" icon="presets/tyres.png" type="node,closedway" preset_name_label="true">
@@ -2830,7 +2839,7 @@
             <space />
             <key key="shop" value="motorcycle" />
             <text key="name" text="Name" />
-            <combo key="brand" text="Brand" values="independent" />
+            <reference ref="motorcycle_brands" />
             <text key="operator" text="Operator" />
             <reference ref="oh_wheelchair" />
             <combo key="second_hand" text="Second hand" values="only,yes,no" />
@@ -5522,6 +5531,7 @@
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <text key="height" text="Height (meters)" />
+            <preset_link preset_name="Addresses" />
         </item> <!-- Building -->
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:building"
@@ -5542,6 +5552,7 @@
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <text key="height" text="Height (meters)" />
+            <preset_link preset_name="Addresses" />
         </item> <!-- Residential Building -->
             <item name="Building part" icon="styles/standard/misc/landmark/building.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:building:part"
