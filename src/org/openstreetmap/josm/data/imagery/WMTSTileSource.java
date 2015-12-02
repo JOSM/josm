@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
@@ -24,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
@@ -199,12 +199,11 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                             return false;
                         }
                     });
-            this.list.setPreferredSize(new Dimension(400, 400));
             this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             this.list.setRowSelectionAllowed(true);
             this.list.setColumnSelectionAllowed(false);
             JPanel panel = new JPanel(new GridBagLayout());
-            panel.add(this.list, GBC.eol().fill());
+            panel.add(new JScrollPane(this.list), GBC.eol().fill());
             setContent(panel);
         }
 
