@@ -370,7 +370,7 @@ public class BlockDiskKeyStore<K>
         /**
          * <code>tag</code> tells us which map we are working on.
          */
-        public final String tag = "orig-lru-size";
+        public final static String TAG = "orig-lru-size";
 
         // size of the content in kB
         private AtomicInteger contentSize;
@@ -489,7 +489,7 @@ public class BlockDiskKeyStore<K>
         /**
          * <code>tag</code> tells us which map we are working on.
          */
-        public final String tag = "orig-lru-count";
+        public final static String TAG = "orig-lru-count";
 
         public LRUMapCountLimited(int maxKeySize)
         {

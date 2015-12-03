@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheFactory;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
@@ -68,6 +69,9 @@ public class JDBCDiskCacheFactory
 
     /** Pool name to DataSourceFactories */
     private ConcurrentMap<String, DataSourceFactory> dsFactories;
+
+    /** Lock to allow lengthy initialization of DataSourceFactories */
+    private ReentrantLock dsFactoryLock;
 
     /** props prefix */
     protected static final String POOL_CONFIGURATION_PREFIX = "jcs.jdbcconnectionpool.";
@@ -115,6 +119,7 @@ public class JDBCDiskCacheFactory
         this.tableStates = new ConcurrentHashMap<String, TableState>();
         this.shrinkerThreadMap = new ConcurrentHashMap<String, ShrinkerThread>();
         this.dsFactories = new ConcurrentHashMap<String, DataSourceFactory>();
+        this.dsFactoryLock = new ReentrantLock();
     }
 
     /**
@@ -234,43 +239,56 @@ public class JDBCDiskCacheFactory
             poolName = cattr.getConnectionPoolName();
         }
 
-    	synchronized (this.dsFactories)
+
+    	DataSourceFactory dsFactory = this.dsFactories.get(poolName);
+
+    	if (dsFactory == null)
     	{
-	    	DataSourceFactory dsFactory = this.dsFactories.get(poolName);
+            dsFactoryLock.lock();
 
-	    	if (dsFactory == null)
-	    	{
-	        	JDBCDiskCacheAttributes dsConfig = null;
+            try
+            {
+                // double check
+                dsFactory = this.dsFactories.get(poolName);
 
-	        	if (cattr.getConnectionPoolName() == null)
-	        	{
-	        		dsConfig = cattr;
-	            }
-	            else
-	            {
-	                dsConfig = new JDBCDiskCacheAttributes();
-	                String dsConfigAttributePrefix = POOL_CONFIGURATION_PREFIX + poolName + ATTRIBUTE_PREFIX;
-	                PropertySetter.setProperties( dsConfig,
-	                		configProps,
-	                		dsConfigAttributePrefix + "." );
+                if (dsFactory == null)
+                {
+                	JDBCDiskCacheAttributes dsConfig = null;
 
-	                dsConfig.setConnectionPoolName(poolName);
-	            }
+                	if (cattr.getConnectionPoolName() == null)
+                	{
+                		dsConfig = cattr;
+                    }
+                    else
+                    {
+                        dsConfig = new JDBCDiskCacheAttributes();
+                        String dsConfigAttributePrefix = POOL_CONFIGURATION_PREFIX + poolName + ATTRIBUTE_PREFIX;
+                        PropertySetter.setProperties( dsConfig,
+                        		configProps,
+                        		dsConfigAttributePrefix + "." );
 
-		        if ( dsConfig.getJndiPath() != null )
-		        {
-		        	dsFactory = new JndiDataSourceFactory();
-		        }
-		        else
-		        {
-		            dsFactory = new SharedPoolDataSourceFactory();
-		        }
+                        dsConfig.setConnectionPoolName(poolName);
+                    }
 
-	        	dsFactory.initialize(dsConfig);
-	    		this.dsFactories.put(poolName, dsFactory);
-	    	}
+        	        if ( dsConfig.getJndiPath() != null )
+        	        {
+        	        	dsFactory = new JndiDataSourceFactory();
+        	        }
+        	        else
+        	        {
+        	            dsFactory = new SharedPoolDataSourceFactory();
+        	        }
 
-	    	return dsFactory;
+                	dsFactory.initialize(dsConfig);
+            		this.dsFactories.put(poolName, dsFactory);
+                }
+            }
+            finally
+            {
+                dsFactoryLock.unlock();
+            }
     	}
+
+    	return dsFactory;
     }
 }

@@ -700,24 +700,26 @@ public class BlockDiskCache<K, V>
         elems.add(new StatElement<Boolean>( "Is Alive", Boolean.valueOf(alive) ) );
         elems.add(new StatElement<Integer>( "Key Map Size", Integer.valueOf(this.keyStore.size()) ) );
 
-        try
+        if (this.dataFile != null)
         {
-            elems.add(new StatElement<Long>( "Data File Length",
-                    Long.valueOf(this.dataFile != null ? this.dataFile.length() : -1L) ) );
-        }
-        catch ( IOException e )
-        {
-            log.error( e );
-        }
+            try
+            {
+                elems.add(new StatElement<Long>( "Data File Length", Long.valueOf(this.dataFile.length()) ) );
+            }
+            catch ( IOException e )
+            {
+                log.error( e );
+            }
 
-        elems.add(new StatElement<Integer>( "Block Size Bytes",
-                Integer.valueOf(this.dataFile.getBlockSizeBytes()) ) );
-        elems.add(new StatElement<Integer>( "Number Of Blocks",
-                Integer.valueOf(this.dataFile.getNumberOfBlocks()) ) );
-        elems.add(new StatElement<Long>( "Average Put Size Bytes",
-                Long.valueOf(this.dataFile.getAveragePutSizeBytes()) ) );
-        elems.add(new StatElement<Integer>( "Empty Blocks",
-                Integer.valueOf(this.dataFile.getEmptyBlocks()) ) );
+            elems.add(new StatElement<Integer>( "Block Size Bytes",
+                    Integer.valueOf(this.dataFile.getBlockSizeBytes()) ) );
+            elems.add(new StatElement<Integer>( "Number Of Blocks",
+                    Integer.valueOf(this.dataFile.getNumberOfBlocks()) ) );
+            elems.add(new StatElement<Long>( "Average Put Size Bytes",
+                    Long.valueOf(this.dataFile.getAveragePutSizeBytes()) ) );
+            elems.add(new StatElement<Integer>( "Empty Blocks",
+                    Integer.valueOf(this.dataFile.getEmptyBlocks()) ) );
+        }
 
         // get the stats from the super too
         IStats sStats = super.getStatistics();

@@ -19,10 +19,16 @@ package org.apache.commons.jcs.engine.memory;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.commons.jcs.engine.CacheStatus;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
-import org.apache.commons.jcs.engine.behavior.IElementAttributes;
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.memory.behavior.IMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
@@ -30,13 +36,6 @@ import org.apache.commons.jcs.engine.stats.Stats;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This base includes some common code for memory caches.
@@ -51,19 +50,13 @@ public abstract class AbstractMemoryCache<K, V>
     private static final Log log = LogFactory.getLog( AbstractMemoryCache.class );
 
     /** The region name. This defines a namespace of sorts. */
-    protected String cacheName; // TODO privatise (mainly seems to be used externally for debugging)
-
-    /** Map where items are stored by key.  This is created by the concrete child class. */
-    public Map<K, MemoryElementDescriptor<K, V>> map;// TODO privatise
-
-    /** Region Elemental Attributes, used as a default and copied for each item. */
-    public IElementAttributes elementAttributes;// TODO privatise
+    private String cacheName;
 
     /** Cache Attributes.  Regions settings. */
-    public ICompositeCacheAttributes cacheAttributes;// TODO privatise
+    private ICompositeCacheAttributes cacheAttributes;
 
     /** The cache region this store is associated with */
-    public CompositeCache<K, V> cache;// TODO privatise
+    private CompositeCache<K, V> cache;
 
     /** status */
     private CacheStatus status;
@@ -72,6 +65,9 @@ public abstract class AbstractMemoryCache<K, V>
     protected int chunkSize;
 
     protected final Lock lock = new ReentrantLock();
+
+    /** Map where items are stored by key.  This is created by the concrete child class. */
+    protected Map<K, MemoryElementDescriptor<K, V>> map;// TODO privatise
 
     /**
      * For post reflection creation initialization

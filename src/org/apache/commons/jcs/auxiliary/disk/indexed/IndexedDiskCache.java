@@ -1692,7 +1692,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
         /**
          * <code>tag</code> tells us which map we are working on.
          */
-        public String tag = "orig";
+        public static final String TAG = "orig";
 
         // size of the content in kB
         private AtomicInteger contentSize;

@@ -252,6 +252,8 @@ public class JDBCDiskCache<K, V>
     private boolean insertRow( ICacheElement<K, V> ce, Connection con, byte[] element )
     {
         boolean exists = false;
+        PreparedStatement psInsert = null;
+
         try
         {
             String sqlI = "insert into "
@@ -259,7 +261,7 @@ public class JDBCDiskCache<K, V>
                 + " (CACHE_KEY, REGION, ELEMENT, MAX_LIFE_SECONDS, IS_ETERNAL, CREATE_TIME, UPDATE_TIME_SECONDS, SYSTEM_EXPIRE_TIME_SECONDS) "
                 + " values (?, ?, ?, ?, ?, ?, ?, ?)";
 
-            PreparedStatement psInsert = con.prepareStatement( sqlI );
+            psInsert = con.prepareStatement( sqlI );
             psInsert.setString( 1, (String) ce.getKey() );
             psInsert.setString( 2, this.getCacheName() );
             psInsert.setBytes( 3, element );
@@ -282,7 +284,6 @@ public class JDBCDiskCache<K, V>
             psInsert.setLong( 8, expireTime );
 
             psInsert.execute();
-            psInsert.close();
         }
         catch ( SQLException e )
         {
@@ -301,6 +302,21 @@ public class JDBCDiskCache<K, V>
                 exists = doesElementExist( ce, con );
             }
         }
+        finally
+        {
+            if (psInsert != null)
+            {
+                try
+                {
+                    psInsert.close();
+                }
+                catch (SQLException e)
+                {
+                    log.error( "Problem closing statement.", e );
+                }
+            }
+        }
+
         return exists;
     }
 
@@ -314,12 +330,14 @@ public class JDBCDiskCache<K, V>
     private void updateRow( ICacheElement<K, V> ce, Connection con, byte[] element )
     {
         String sqlU = null;
+        PreparedStatement psUpdate = null;
+
         try
         {
             sqlU = "update " + getJdbcDiskCacheAttributes().getTableName()
                 + " set ELEMENT  = ?, CREATE_TIME = ?, UPDATE_TIME_SECONDS = ?, " + " SYSTEM_EXPIRE_TIME_SECONDS = ? "
                 + " where CACHE_KEY = ? and REGION = ?";
-            PreparedStatement psUpdate = con.prepareStatement( sqlU );
+            psUpdate = con.prepareStatement( sqlU );
             psUpdate.setBytes( 1, element );
 
             Timestamp createTime = new Timestamp( ce.getElementAttributes().getCreateTime() );
@@ -334,7 +352,6 @@ public class JDBCDiskCache<K, V>
             psUpdate.setString( 5, (String) ce.getKey() );
             psUpdate.setString( 6, this.getCacheName() );
             psUpdate.execute();
-            psUpdate.close();
 
             if ( log.isDebugEnabled() )
             {
@@ -344,6 +361,20 @@ public class JDBCDiskCache<K, V>
         catch ( SQLException e2 )
         {
             log.error( "e2 sql [" + sqlU + "] Exception: ", e2 );
+        }
+        finally
+        {
+            if (psUpdate != null)
+            {
+                try
+                {
+                    psUpdate.close();
+                }
+                catch (SQLException e)
+                {
+                    log.error( "Problem closing statement.", e );
+                }
+            }
         }
     }
 
@@ -358,6 +389,8 @@ public class JDBCDiskCache<K, V>
     {
         boolean exists = false;
         PreparedStatement psSelect = null;
+        ResultSet rs = null;
+
         try
         {
             // don't select the element, since we want this to be fast.
@@ -368,7 +401,7 @@ public class JDBCDiskCache<K, V>
             psSelect.setString( 1, this.getCacheName() );
             psSelect.setString( 2, (String) ce.getKey() );
 
-            ResultSet rs = psSelect.executeQuery();
+            rs = psSelect.executeQuery();
 
             if ( rs.next() )
             {
@@ -379,8 +412,6 @@ public class JDBCDiskCache<K, V>
             {
                 log.debug( "[" + ce.getKey() + "] existing status is " + exists );
             }
-
-            rs.close();
         }
         catch ( SQLException e )
         {
@@ -390,14 +421,25 @@ public class JDBCDiskCache<K, V>
         {
             try
             {
+                if ( rs != null )
+                {
+                    rs.close();
+                }
+            }
+            catch ( SQLException e )
+            {
+                log.error( "Problem closing result set.", e );
+            }
+            try
+            {
                 if ( psSelect != null )
                 {
                     psSelect.close();
                 }
             }
-            catch ( SQLException e1 )
+            catch ( SQLException e )
             {
-                log.error( "Problem closing statement.", e1 );
+                log.error( "Problem closing statement.", e );
             }
         }
 
@@ -439,6 +481,7 @@ public class JDBCDiskCache<K, V>
             try
             {
                 PreparedStatement psSelect = null;
+
                 try
                 {
                     psSelect = con.prepareStatement( selectString );
@@ -446,6 +489,7 @@ public class JDBCDiskCache<K, V>
                     psSelect.setString( 2, key.toString() );
 
                     ResultSet rs = psSelect.executeQuery();
+
                     try
                     {
                         if ( rs.next() )

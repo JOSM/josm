@@ -31,6 +31,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.jcs.access.exception.CacheException;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheListener;
@@ -82,21 +84,21 @@ public class RemoteCacheServer<K, V>
     private int puts = 0;
 
     /** Maps cache name to CacheListeners object. association of listeners (regions). */
-    private final Map<String, CacheListeners<K, V>> cacheListenersMap =
+    private final transient ConcurrentMap<String, CacheListeners<K, V>> cacheListenersMap =
         new ConcurrentHashMap<String, CacheListeners<K, V>>();
 
     /** maps cluster listeners to regions. */
-    private final Map<String, CacheListeners<K, V>> clusterListenersMap =
+    private final transient ConcurrentMap<String, CacheListeners<K, V>> clusterListenersMap =
         new ConcurrentHashMap<String, CacheListeners<K, V>>();
 
     /** The central hub */
     private transient CompositeCacheManager cacheManager;
 
     /** relates listener id with a type */
-    private final Map<Long, RemoteType> idTypeMap = new ConcurrentHashMap<Long, RemoteType>();
+    private final ConcurrentMap<Long, RemoteType> idTypeMap = new ConcurrentHashMap<Long, RemoteType>();
 
     /** relates listener id with an ip address */
-    private final Map<Long, String> idIPMap = new ConcurrentHashMap<Long, String>();
+    private final ConcurrentMap<Long, String> idIPMap = new ConcurrentHashMap<Long, String>();
 
     /** Used to get the next listener id. */
     private final int[] listenerId = new int[1];
@@ -110,6 +112,12 @@ public class RemoteCacheServer<K, V>
 
     /** An optional event logger */
     private transient ICacheEventLogger cacheEventLogger;
+
+    /** Lock for Cache listener initialization */
+    private ReentrantLock cacheListenersLock = new ReentrantLock();
+
+    /** Lock for Cluster listener initialization */
+    private ReentrantLock clusterListenersLock = new ReentrantLock();
 
     /**
      * Constructor for the RemoteCacheServer object. This initializes the server with the values
@@ -1145,19 +1153,16 @@ public class RemoteCacheServer<K, V>
     public void release()
         throws IOException
     {
-        synchronized ( cacheListenersMap )
+        for (CacheListeners<K, V> cacheDesc : cacheListenersMap.values())
         {
-            for (CacheListeners<K, V> cacheDesc : cacheListenersMap.values())
-            {
-                ICacheEventQueue<K, V>[] qlist = getEventQList( cacheDesc, 0 );
+            ICacheEventQueue<K, V>[] qlist = getEventQList( cacheDesc, 0 );
 
-                for ( int i = 0; i < qlist.length; i++ )
-                {
-                    qlist[i].addDisposeEvent();
-                }
+            for ( int i = 0; i < qlist.length; i++ )
+            {
+                qlist[i].addDisposeEvent();
             }
-            cacheManager.release();
         }
+        cacheManager.release();
     }
 
     /**
@@ -1170,10 +1175,14 @@ public class RemoteCacheServer<K, V>
     protected CacheListeners<K, V> getCacheListeners( String cacheName )
     {
         CacheListeners<K, V> cacheListeners = cacheListenersMap.get( cacheName );
-        synchronized ( cacheListenersMap )
+
+        if ( cacheListeners == null )
         {
-            if ( cacheListeners == null )
+            cacheListenersLock.lock();
+
+            try
             {
+                // double check
                 cacheListeners = cacheListenersMap.get( cacheName );
                 if ( cacheListeners == null )
                 {
@@ -1182,7 +1191,12 @@ public class RemoteCacheServer<K, V>
                     cacheListenersMap.put( cacheName, cacheListeners );
                 }
             }
+            finally
+            {
+                cacheListenersLock.unlock();
+            }
         }
+
         return cacheListeners;
     }
 
@@ -1196,9 +1210,12 @@ public class RemoteCacheServer<K, V>
     protected CacheListeners<K, V> getClusterListeners( String cacheName )
     {
         CacheListeners<K, V> cacheListeners = clusterListenersMap.get( cacheName );
-        synchronized ( clusterListenersMap )
+
+        if ( cacheListeners == null )
         {
-            if ( cacheListeners == null )
+            clusterListenersLock.lock();
+
+            try
             {
                 cacheListeners = clusterListenersMap.get( cacheName );
                 if ( cacheListeners == null )
@@ -1208,7 +1225,12 @@ public class RemoteCacheServer<K, V>
                     clusterListenersMap.put( cacheName, cacheListeners );
                 }
             }
+            finally
+            {
+                clusterListenersLock.unlock();
+            }
         }
+
         return cacheListeners;
     }
 
@@ -1227,11 +1249,7 @@ public class RemoteCacheServer<K, V>
     @SuppressWarnings("unchecked") // No generic arrays in java
     private ICacheEventQueue<K, V>[] getEventQList( CacheListeners<K, V> cacheListeners, long requesterId )
     {
-        ICacheEventQueue<K, V>[] list = null;
-        synchronized ( cacheListeners.eventQMap )
-        {
-            list = cacheListeners.eventQMap.values().toArray( new ICacheEventQueue[0] );
-        }
+        ICacheEventQueue<K, V>[] list = cacheListeners.eventQMap.values().toArray( new ICacheEventQueue[0] );
         int count = 0;
         // Set those not qualified to null; Count those qualified.
         for ( int i = 0; i < list.length; i++ )
