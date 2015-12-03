@@ -43,7 +43,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  */
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
-    public static boolean debug = false;
+    public static boolean debug;
 
     /**
      * Vectors for clock-wise tile painting
@@ -537,39 +537,39 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         int tilesize = tileSource.getTileSize();
         int tilex = center.x / tilesize;
         int tiley = center.y / tilesize;
-        int off_x = center.x % tilesize;
-        int off_y = center.y % tilesize;
+        int offsx = center.x % tilesize;
+        int offsy = center.y % tilesize;
 
         int w2 = getWidth() / 2;
         int h2 = getHeight() / 2;
-        int posx = w2 - off_x;
-        int posy = h2 - off_y;
+        int posx = w2 - offsx;
+        int posy = h2 - offsy;
 
-        int diff_left = off_x;
-        int diff_right = tilesize - off_x;
-        int diff_top = off_y;
-        int diff_bottom = tilesize - off_y;
+        int diffLeft = offsx;
+        int diffRight = tilesize - offsx;
+        int diffTop = offsy;
+        int diffBottom = tilesize - offsy;
 
-        boolean start_left = diff_left < diff_right;
-        boolean start_top = diff_top < diff_bottom;
+        boolean startLeft = diffLeft < diffRight;
+        boolean startTop = diffTop < diffBottom;
 
-        if (start_top) {
-            if (start_left) {
+        if (startTop) {
+            if (startLeft) {
                 iMove = 2;
             } else {
                 iMove = 3;
             }
         } else {
-            if (start_left) {
+            if (startLeft) {
                 iMove = 1;
             } else {
                 iMove = 0;
             }
         } // calculate the visibility borders
-        int x_min = -tilesize;
-        int y_min = -tilesize;
-        int x_max = getWidth();
-        int y_max = getHeight();
+        int xMin = -tilesize;
+        int yMin = -tilesize;
+        int xMax = getWidth();
+        int yMax = getHeight();
 
         // calculate the length of the grid (number of squares per edge)
         int gridLength = 1 << zoom;
@@ -584,7 +584,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
                     x++;
                 }
                 for (int j = 0; j < x; j++) {
-                    if (x_min <= posx && posx <= x_max && y_min <= posy && posy <= y_max) {
+                    if (xMin <= posx && posx <= xMax && yMin <= posy && posy <= yMax) {
                         // tile is visible
                         Tile tile;
                         if (scrollWrapEnabled) {

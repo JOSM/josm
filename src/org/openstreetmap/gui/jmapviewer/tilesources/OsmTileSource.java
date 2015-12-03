@@ -15,7 +15,7 @@ public class OsmTileSource {
 
         private static final String[] SERVER = {"a", "b", "c"};
 
-        private int serverNum = 0;
+        private int serverNum;
 
         /**
          * Constructs a new {@code "Mapnik"} tile source.
@@ -41,7 +41,7 @@ public class OsmTileSource {
 
         private static final String[] SERVER = {"a", "b", "c"};
 
-        private int serverNum = 0;
+        private int serverNum;
 
         /**
          * Constructs a new {@code CycleMap} tile source.

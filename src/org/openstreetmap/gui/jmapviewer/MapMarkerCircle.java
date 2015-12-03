@@ -128,19 +128,19 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
 
     @Override
     public void paint(Graphics g, Point position, int radius) {
-        int size_h = radius;
-        int size = size_h * 2;
+        int sizeH = radius;
+        int size = sizeH * 2;
 
         if (g instanceof Graphics2D && getBackColor() != null) {
             Graphics2D g2 = (Graphics2D) g;
             Composite oldComposite = g2.getComposite();
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
             g2.setPaint(getBackColor());
-            g.fillOval(position.x - size_h, position.y - size_h, size, size);
+            g.fillOval(position.x - sizeH, position.y - sizeH, size, size);
             g2.setComposite(oldComposite);
         }
         g.setColor(getColor());
-        g.drawOval(position.x - size_h, position.y - size_h, size, size);
+        g.drawOval(position.x - sizeH, position.y - sizeH, size, size);
 
         if (getLayer() == null || getLayer().isVisibleTexts()) paintText(g, position);
     }

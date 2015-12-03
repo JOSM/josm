@@ -26,8 +26,8 @@ public class OsmTileLoader implements TileLoader {
 
     private final class OsmTileJob implements TileJob {
         private final Tile tile;
-        private InputStream input = null;
-        private boolean force = false;
+        private InputStream input;
+        private boolean force;
 
         private OsmTileJob(Tile tile) {
             this.tile = tile;
@@ -100,8 +100,8 @@ public class OsmTileLoader implements TileLoader {
      */
     public Map<String, String> headers = new HashMap<>();
 
-    public int timeoutConnect = 0;
-    public int timeoutRead = 0;
+    public int timeoutConnect;
+    public int timeoutRead;
 
     protected TileLoaderListener listener;
 

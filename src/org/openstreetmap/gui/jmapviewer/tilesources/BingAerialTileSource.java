@@ -47,7 +47,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
     private static final Pattern subdomainPattern = Pattern.compile("\\{subdomain\\}");
     private static final Pattern quadkeyPattern = Pattern.compile("\\{quadkey\\}");
     private static final Pattern culturePattern = Pattern.compile("\\{culture\\}");
-    private String brandLogoUri = null;
+    private String brandLogoUri;
 
     /**
      * Constructs a new {@code BingAerialTileSource}.
