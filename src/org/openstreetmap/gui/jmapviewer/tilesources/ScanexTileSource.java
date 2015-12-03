@@ -55,7 +55,7 @@ public class ScanexTileSource extends TMSTileSource {
     private ScanexLayer layer = ScanexLayer.IRS;
 
     /** cached latitude used in {@link #tileYToLat(double, int)} */
-    private double cachedLat = 0;
+    private double cachedLat;
 
     /**
      * Constructs a new {@code ScanexTileSource}.

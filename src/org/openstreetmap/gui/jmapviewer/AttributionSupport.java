@@ -27,9 +27,9 @@ public class AttributionSupport {
     public static final Font ATTR_FONT = new Font("Arial", Font.PLAIN, 10);
     public static final Font ATTR_LINK_FONT;
 
-    protected Rectangle attrTextBounds = null;
-    protected Rectangle attrToUBounds = null;
-    protected Rectangle attrImageBounds = null;
+    protected Rectangle attrTextBounds;
+    protected Rectangle attrToUBounds;
+    protected Rectangle attrImageBounds;
 
     static {
         HashMap<TextAttribute, Integer> aUnderline = new HashMap<>();

@@ -25,7 +25,7 @@ MouseWheelListener {
 
     private Point lastDragPoint;
 
-    private boolean isMoving = false;
+    private boolean isMoving;
 
     private boolean movementEnabled = true;
 

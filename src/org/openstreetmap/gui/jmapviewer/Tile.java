@@ -40,9 +40,9 @@ public class Tile {
     protected int zoom;
     protected BufferedImage image;
     protected String key;
-    protected volatile boolean loaded = false; // field accessed by multiple threads without any monitors, needs to be volatile
-    protected volatile boolean loading = false;
-    protected volatile boolean error = false;
+    protected volatile boolean loaded; // field accessed by multiple threads without any monitors, needs to be volatile
+    protected volatile boolean loading;
+    protected volatile boolean error;
     protected String error_message;
 
     /** TileLoader-specific tile metadata */
@@ -88,7 +88,7 @@ public class Tile {
     }
 
     private static class CachedCallable<V> implements Callable<V> {
-        private V result = null;
+        private V result;
         private Callable<V> callable;
 
         /**

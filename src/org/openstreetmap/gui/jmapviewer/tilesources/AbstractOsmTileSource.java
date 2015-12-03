@@ -19,12 +19,12 @@ public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
     /**
      * Constructs a new OSM tile source
      * @param name Source name as displayed in GUI
-     * @param base_url Source URL
+     * @param baseUrl Source URL
      * @param id unique id for the tile source; contains only characters that
      * are safe for file names; can be null
      */
-    public AbstractOsmTileSource(String name, String base_url, String id) {
-        super(new TileSourceInfo(name, base_url, id));
+    public AbstractOsmTileSource(String name, String baseUrl, String id) {
+        super(new TileSourceInfo(name, baseUrl, id));
     }
 
     @Override

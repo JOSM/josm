@@ -141,7 +141,7 @@ public class MemoryTileCache implements TileCache {
      * @author Jan Peter Stotz
      */
     protected static class CacheLinkedListElement {
-        protected CacheEntry firstElement = null;
+        protected CacheEntry firstElement;
         protected CacheEntry lastElement;
         protected int elementCount;
 

@@ -30,8 +30,8 @@ public class AbstractMapQuestTileSource extends AbstractOsmTileSource {
 
     private int SERVER_NUM = 1;
 
-    public AbstractMapQuestTileSource(String name, String base_url, String id) {
-        super(name, base_url, id);
+    public AbstractMapQuestTileSource(String name, String baseUrl, String id) {
+        super(name, baseUrl, id);
     }
 
     @Override

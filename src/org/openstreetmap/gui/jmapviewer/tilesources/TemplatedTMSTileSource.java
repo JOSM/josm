@@ -31,8 +31,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
 
 public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTileSource {
 
-    private Random rand = null;
-    private String[] randomParts = null;
+    private Random rand;
+    private String[] randomParts;
     private final Map<String, String> headers = new HashMap<>();
 
     private static final String COOKIE_HEADER   = "Cookie";

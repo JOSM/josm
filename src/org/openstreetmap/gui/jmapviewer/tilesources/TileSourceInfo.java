@@ -42,12 +42,12 @@ public class TileSourceInfo {
      * Create a TileSourceInfo class
      *
      * @param name name
-     * @param base_url base URL
+     * @param baseUrl base URL
      * @param id unique id
      */
-    public TileSourceInfo(String name, String base_url, String id) {
+    public TileSourceInfo(String name, String baseUrl, String id) {
         this.name = name;
-        this.url = base_url;
+        this.url = baseUrl;
         this.id = id;
     }
 
