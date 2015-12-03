@@ -107,6 +107,6 @@ public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
 
     @Override
     public String toString() {
-        return "MapPolygon [points=" + points + "]";
+        return "MapPolygon [points=" + points + ']';
     }
 }
