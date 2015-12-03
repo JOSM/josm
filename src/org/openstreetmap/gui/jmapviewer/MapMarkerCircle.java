@@ -151,7 +151,7 @@ public class MapMarkerCircle extends MapObjectImpl implements MapMarker {
 
     @Override
     public String toString() {
-        return "MapMarker at " + getLat() + " " + getLon();
+        return "MapMarker at " + getLat() + ' ' + getLon();
     }
 
     @Override

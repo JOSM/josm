@@ -26,7 +26,7 @@ public class CheckBoxNodeData {
     }
 
     public Boolean isSelected() {
-            return layer.isVisible();
+        return layer.isVisible();
     }
 
     public void setSelected(final Boolean newValue) {
@@ -34,7 +34,7 @@ public class CheckBoxNodeData {
     }
 
     public String getText() {
-            return layer.getName();
+        return layer.getName();
     }
 
     public AbstractLayer getAbstractLayer() {
@@ -42,11 +42,11 @@ public class CheckBoxNodeData {
     }
 
     public void setAbstractLayer(final AbstractLayer layer) {
-            this.layer = layer;
+        this.layer = layer;
     }
 
     @Override
     public String toString() {
-            return getClass().getSimpleName() + "[" + getText() + "/" + isSelected() + "]";
+        return getClass().getSimpleName() + '[' + getText() + '/' + isSelected() + ']';
     }
 }

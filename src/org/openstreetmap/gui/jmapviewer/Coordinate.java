@@ -56,7 +56,7 @@ public class Coordinate implements ICoordinate {
 
     @Override
     public String toString() {
-        return "Coordinate[" + data.y + ", " + data.x + "]";
+        return "Coordinate[" + data.y + ", " + data.x + ']';
     }
 
     @Override
