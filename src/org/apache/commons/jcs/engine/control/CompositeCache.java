@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.jcs.access.exception.CacheException;
 import org.apache.commons.jcs.access.exception.ObjectNotFoundException;
@@ -82,7 +84,7 @@ public class CompositeCache<K, V>
     private AuxiliaryCache<K, V>[] auxCaches = new AuxiliaryCache[0];
 
     /** is this alive? */
-    private boolean alive = true;
+    private AtomicBoolean alive;
 
     /** Region Elemental Attributes, default. */
     private IElementAttributes attr;
@@ -91,22 +93,22 @@ public class CompositeCache<K, V>
     private ICompositeCacheAttributes cacheAttr;
 
     /** How many times update was called. */
-    private int updateCount;
+    private AtomicInteger updateCount;
 
     /** How many times remove was called. */
-    private int removeCount;
+    private AtomicInteger removeCount;
 
     /** Memory cache hit count */
-    private int hitCountRam;
+    private AtomicInteger hitCountRam;
 
     /** Auxiliary cache hit count (number of times found in ANY auxiliary) */
-    private int hitCountAux;
+    private AtomicInteger hitCountAux;
 
     /** Count of misses where element was not found. */
-    private int missCountNotFound = 0;
+    private AtomicInteger missCountNotFound;
 
     /** Count of misses where element was expired. */
-    private int missCountExpired = 0;
+    private AtomicInteger missCountExpired;
 
     /**
      * The cache hub can only have one memory cache. This could be made more flexible in the future,
@@ -127,6 +129,13 @@ public class CompositeCache<K, V>
     {
         this.attr = attr;
         this.cacheAttr = cattr;
+        this.alive = new AtomicBoolean(true);
+        this.updateCount = new AtomicInteger(0);
+        this.removeCount = new AtomicInteger(0);
+        this.hitCountRam = new AtomicInteger(0);
+        this.hitCountAux = new AtomicInteger(0);
+        this.missCountNotFound = new AtomicInteger(0);
+        this.missCountExpired = new AtomicInteger(0);
 
         createMemoryCache( cattr );
 
@@ -233,16 +242,15 @@ public class CompositeCache<K, V>
             log.debug( "Updating memory cache " + cacheElement.getKey() );
         }
 
+        updateCount.incrementAndGet();
+
         synchronized ( this )
         {
-            updateCount++;
-
             memCache.update( cacheElement );
-
             updateAuxiliaries( cacheElement, localOnly );
-
-            cacheElement.getElementAttributes().setLastAccessTimeNow();
         }
+
+        cacheElement.getElementAttributes().setLastAccessTimeNow();
     }
 
     /**
@@ -270,7 +278,6 @@ public class CompositeCache<K, V>
         // more can be added if future auxiliary caches don't fit the model
         // You could run a database cache as either a remote or a local disk.
         // The types would describe the purpose.
-
         if ( log.isDebugEnabled() )
         {
             if ( auxCaches.length > 0 )
@@ -283,85 +290,88 @@ public class CompositeCache<K, V>
             }
         }
 
-        for ( int i = 0; i < auxCaches.length; i++ )
+        for ( ICache<K, V> aux : auxCaches )
         {
-            ICache<K, V> aux = auxCaches[i];
-
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( "Auxilliary cache type: " + aux.getCacheType() );
-            }
-
             if ( aux == null )
             {
                 continue;
             }
 
-            // SEND TO REMOTE STORE
-            if ( aux.getCacheType() == CacheType.REMOTE_CACHE )
+            if ( log.isDebugEnabled() )
             {
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "ce.getElementAttributes().getIsRemote() = "
-                        + cacheElement.getElementAttributes().getIsRemote() );
-                }
+                log.debug( "Auxiliary cache type: " + aux.getCacheType() );
+            }
 
-                if ( cacheElement.getElementAttributes().getIsRemote() && !localOnly )
-                {
-                    try
+            switch (aux.getCacheType())
+            {
+                // SEND TO REMOTE STORE
+                case REMOTE_CACHE:
+                    if ( log.isDebugEnabled() )
                     {
-                        // need to make sure the group cache understands that
-                        // the key is a group attribute on update
+                        log.debug( "ce.getElementAttributes().getIsRemote() = "
+                            + cacheElement.getElementAttributes().getIsRemote() );
+                    }
+
+                    if ( cacheElement.getElementAttributes().getIsRemote() && !localOnly )
+                    {
+                        try
+                        {
+                            // need to make sure the group cache understands that
+                            // the key is a group attribute on update
+                            aux.update( cacheElement );
+                            if ( log.isDebugEnabled() )
+                            {
+                                log.debug( "Updated remote store for " + cacheElement.getKey() + cacheElement );
+                            }
+                        }
+                        catch ( IOException ex )
+                        {
+                            log.error( "Failure in updateExclude", ex );
+                        }
+                    }
+                    break;
+
+                // SEND LATERALLY
+                case LATERAL_CACHE:
+                    // lateral can't do the checking since it is dependent on the
+                    // cache region restrictions
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug( "lateralcache in aux list: cattr " + cacheAttr.isUseLateral() );
+                    }
+                    if ( cacheAttr.isUseLateral() && cacheElement.getElementAttributes().getIsLateral() && !localOnly )
+                    {
+                        // DISTRIBUTE LATERALLY
+                        // Currently always multicast even if the value is
+                        // unchanged, to cause the cache item to move to the front.
                         aux.update( cacheElement );
                         if ( log.isDebugEnabled() )
                         {
-                            log.debug( "Updated remote store for " + cacheElement.getKey() + cacheElement );
+                            log.debug( "updated lateral cache for " + cacheElement.getKey() );
                         }
                     }
-                    catch ( IOException ex )
-                    {
-                        log.error( "Failure in updateExclude", ex );
-                    }
-                }
-                // SEND LATERALLY
-            }
-            else if ( aux.getCacheType() == CacheType.LATERAL_CACHE )
-            {
-                // lateral can't do the checking since it is dependent on the
-                // cache region restrictions
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "lateralcache in aux list: cattr " + cacheAttr.isUseLateral() );
-                }
-                if ( cacheAttr.isUseLateral() && cacheElement.getElementAttributes().getIsLateral() && !localOnly )
-                {
-                    // DISTRIBUTE LATERALLY
-                    // Currently always multicast even if the value is
-                    // unchanged, to cause the cache item to move to the front.
-                    aux.update( cacheElement );
+                    break;
+
+                // update disk if the usage pattern permits
+                case DISK_CACHE:
                     if ( log.isDebugEnabled() )
                     {
-                        log.debug( "updated lateral cache for " + cacheElement.getKey() );
+                        log.debug( "diskcache in aux list: cattr " + cacheAttr.isUseDisk() );
                     }
-                }
-            }
-            // update disk if the usage pattern permits
-            else if ( aux.getCacheType() == CacheType.DISK_CACHE )
-            {
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "diskcache in aux list: cattr " + cacheAttr.isUseDisk() );
-                }
-                if ( cacheAttr.isUseDisk()
-                    && cacheAttr.getDiskUsagePattern() == DiskUsagePattern.UPDATE
-                    && cacheElement.getElementAttributes().getIsSpool() )
-                {
-                    aux.update( cacheElement );
-                    if ( log.isDebugEnabled() )
+                    if ( cacheAttr.isUseDisk()
+                        && cacheAttr.getDiskUsagePattern() == DiskUsagePattern.UPDATE
+                        && cacheElement.getElementAttributes().getIsSpool() )
                     {
-                        log.debug( "updated disk cache for " + cacheElement.getKey() );
+                        aux.update( cacheElement );
+                        if ( log.isDebugEnabled() )
+                        {
+                            log.debug( "updated disk cache for " + cacheElement.getKey() );
+                        }
                     }
-                }
+                    break;
+
+                default: // CACHE_HUB
+                    break;
             }
         }
     }
@@ -388,10 +398,8 @@ public class CompositeCache<K, V>
         boolean diskAvailable = false;
 
         // SPOOL TO DISK.
-        for ( int i = 0; i < auxCaches.length; i++ )
+        for ( ICache<K, V> aux : auxCaches )
         {
-            ICache<K, V> aux = auxCaches[i];
-
             if ( aux != null && aux.getCacheType() == CacheType.DISK_CACHE )
             {
                 diskAvailable = true;
@@ -410,20 +418,17 @@ public class CompositeCache<K, V>
                         log.error( "Problem spooling item to disk cache.", ex );
                         throw new IllegalStateException( ex.getMessage() );
                     }
-                    catch ( Exception oee )
-                    {
-                        // swallow
-                    }
+
                     if ( log.isDebugEnabled() )
                     {
-                        log.debug( "spoolToDisk done for: " + ce.getKey() + " on disk cache[" + i + "]" );
+                        log.debug( "spoolToDisk done for: " + ce.getKey() + " on disk cache[" + aux.getCacheName() + "]" );
                     }
                 }
                 else
                 {
                     if ( log.isDebugEnabled() )
                     {
-                        log.debug( "DiskCache avaialbe, but JCS is not configured to use the DiskCache as a swap." );
+                        log.debug( "DiskCache available, but JCS is not configured to use the DiskCache as a swap." );
                     }
                 }
             }
@@ -505,10 +510,8 @@ public class CompositeCache<K, V>
                             log.debug( cacheAttr.getCacheName() + " - Memory cache hit, but element expired" );
                         }
 
-                        missCountExpired++;
-
+                        missCountExpired.incrementAndGet();
                         remove( key );
-
                         element = null;
                     }
                     else
@@ -519,7 +522,7 @@ public class CompositeCache<K, V>
                         }
 
                         // Update counters
-                        hitCountRam++;
+                        hitCountRam.incrementAndGet();
                     }
 
                     found = true;
@@ -528,11 +531,8 @@ public class CompositeCache<K, V>
                 {
                     // Item not found in memory. If local invocation look in aux
                     // caches, even if not local look in disk auxiliaries
-
-                    for ( int i = 0; i < auxCaches.length; i++ )
+                    for (AuxiliaryCache<K, V> aux : auxCaches)
                     {
-                        AuxiliaryCache<K, V> aux = auxCaches[i];
-
                         if ( aux != null )
                         {
                             CacheType cacheType = aux.getCacheType();
@@ -567,28 +567,27 @@ public class CompositeCache<K, V>
                                 {
                                     if ( log.isDebugEnabled() )
                                     {
-                                        log.debug( cacheAttr.getCacheName() + " - Aux cache[" + i + "] hit, but element expired." );
+                                        log.debug( cacheAttr.getCacheName() + " - Aux cache[" + aux.getCacheName() + "] hit, but element expired." );
                                     }
 
-                                    missCountExpired++;
+                                    missCountExpired.incrementAndGet();
 
                                     // This will tell the remotes to remove the item
                                     // based on the element's expiration policy. The elements attributes
                                     // associated with the item when it created govern its behavior
                                     // everywhere.
                                     remove( key );
-
                                     element = null;
                                 }
                                 else
                                 {
                                     if ( log.isDebugEnabled() )
                                     {
-                                        log.debug( cacheAttr.getCacheName() + " - Aux cache[" + i + "] hit" );
+                                        log.debug( cacheAttr.getCacheName() + " - Aux cache[" + aux.getCacheName() + "] hit" );
                                     }
 
                                     // Update counters
-                                    hitCountAux++;
+                                    hitCountAux.incrementAndGet();
                                     copyAuxiliaryRetrievedItemToMemory( element );
                                 }
 
@@ -600,7 +599,7 @@ public class CompositeCache<K, V>
                     }
                 }
             }
-            catch ( Exception e )
+            catch ( IOException e )
             {
                 log.error( "Problem encountered getting element.", e );
             }
@@ -608,7 +607,7 @@ public class CompositeCache<K, V>
 
         if ( !found )
         {
-            missCountNotFound++;
+            missCountNotFound.incrementAndGet();
 
             if ( log.isDebugEnabled() )
             {
@@ -683,7 +682,7 @@ public class CompositeCache<K, V>
                 elements.putAll( getMultipleFromAuxiliaryCaches( remainingKeys, localOnly ) );
             }
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             log.error( "Problem encountered getting elements.", e );
         }
@@ -691,7 +690,7 @@ public class CompositeCache<K, V>
         // if we didn't find all the elements, increment the miss count by the number of elements not found
         if ( elements.size() != keys.size() )
         {
-            missCountNotFound += keys.size() - elements.size();
+            missCountNotFound.addAndGet(keys.size() - elements.size());
 
             if ( log.isDebugEnabled() )
             {
@@ -730,8 +729,7 @@ public class CompositeCache<K, V>
                         log.debug( cacheAttr.getCacheName() + " - Memory cache hit, but element expired" );
                     }
 
-                    missCountExpired++;
-
+                    missCountExpired.incrementAndGet();
                     remove( element.getKey() );
                     elementsFromMemory.remove( element.getKey() );
                 }
@@ -743,7 +741,7 @@ public class CompositeCache<K, V>
                     }
 
                     // Update counters
-                    hitCountRam++;
+                    hitCountRam.incrementAndGet();
                 }
             }
         }
@@ -764,10 +762,8 @@ public class CompositeCache<K, V>
         Map<K, ICacheElement<K, V>> elements = new HashMap<K, ICacheElement<K, V>>();
         Set<K> remainingKeys = new HashSet<K>( keys );
 
-        for ( int i = 0; i < auxCaches.length; i++ )
+        for ( AuxiliaryCache<K, V> aux : auxCaches )
         {
-            AuxiliaryCache<K, V> aux = auxCaches[i];
-
             if ( aux != null )
             {
                 Map<K, ICacheElement<K, V>> elementsFromAuxiliary =
@@ -798,7 +794,7 @@ public class CompositeCache<K, V>
                     log.debug( "Got CacheElements: " + elementsFromAuxiliary );
                 }
 
-                processRetrievedElements( i, elementsFromAuxiliary );
+                processRetrievedElements( aux, elementsFromAuxiliary );
 
                 elements.putAll( elementsFromAuxiliary );
 
@@ -952,7 +948,7 @@ public class CompositeCache<K, V>
                         log.debug( "Got CacheElements: " + elementsFromAuxiliary );
                     }
 
-                    processRetrievedElements( i, elementsFromAuxiliary );
+                    processRetrievedElements( aux, elementsFromAuxiliary );
 
                     elements.putAll( elementsFromAuxiliary );
                 }
@@ -965,11 +961,11 @@ public class CompositeCache<K, V>
     /**
      * Remove expired elements retrieved from an auxiliary. Update memory with good items.
      * <p>
-     * @param i - the aux index
+     * @param aux the auxiliary cache instance
      * @param elementsFromAuxiliary
      * @throws IOException
      */
-    private void processRetrievedElements( int i, Map<K, ICacheElement<K, V>> elementsFromAuxiliary )
+    private void processRetrievedElements( AuxiliaryCache<K, V> aux, Map<K, ICacheElement<K, V>> elementsFromAuxiliary )
         throws IOException
     {
         Iterator<ICacheElement<K, V>> elementFromAuxiliaryIterator = new HashMap<K, ICacheElement<K, V>>( elementsFromAuxiliary ).values().iterator();
@@ -985,10 +981,10 @@ public class CompositeCache<K, V>
                 {
                     if ( log.isDebugEnabled() )
                     {
-                        log.debug( cacheAttr.getCacheName() + " - Aux cache[" + i + "] hit, but element expired." );
+                        log.debug( cacheAttr.getCacheName() + " - Aux cache[" + aux.getCacheName() + "] hit, but element expired." );
                     }
 
-                    missCountExpired++;
+                    missCountExpired.incrementAndGet();
 
                     // This will tell the remote caches to remove the item
                     // based on the element's expiration policy. The elements attributes
@@ -1001,11 +997,11 @@ public class CompositeCache<K, V>
                 {
                     if ( log.isDebugEnabled() )
                     {
-                        log.debug( cacheAttr.getCacheName() + " - Aux cache[" + i + "] hit" );
+                        log.debug( cacheAttr.getCacheName() + " - Aux cache[" + aux.getCacheName() + "] hit" );
                     }
 
                     // Update counters
-                    hitCountAux++;
+                    hitCountAux.incrementAndGet();
                     copyAuxiliaryRetrievedItemToMemory( element );
                 }
             }
@@ -1077,9 +1073,8 @@ public class CompositeCache<K, V>
         HashSet<K> allKeys = new HashSet<K>();
 
         allKeys.addAll( memCache.getKeySet() );
-        for ( int i = 0; i < auxCaches.length; i++ )
+        for ( AuxiliaryCache<K, V> aux : auxCaches )
         {
-            AuxiliaryCache<K, V> aux = auxCaches[i];
             if ( aux != null )
             {
                 if(!localOnly || aux.getCacheType() == CacheType.DISK_CACHE)
@@ -1139,60 +1134,61 @@ public class CompositeCache<K, V>
      * @param localOnly
      * @return true if the item was in the cache, else false
      */
-    protected synchronized boolean remove( K key, boolean localOnly )
+    protected boolean remove( K key, boolean localOnly )
     {
-        // not thread safe, but just for debugging and testing.
-        removeCount++;
+        removeCount.incrementAndGet();
 
         boolean removed = false;
 
-        try
+        synchronized (this)
         {
-            removed = memCache.remove( key );
-        }
-        catch ( IOException e )
-        {
-            log.error( e );
-        }
-
-        // Removes from all auxiliary caches.
-        for ( int i = 0; i < auxCaches.length; i++ )
-        {
-            ICache<K, V> aux = auxCaches[i];
-
-            if ( aux == null )
-            {
-                continue;
-            }
-
-            CacheType cacheType = aux.getCacheType();
-
-            // for now let laterals call remote remove but not vice versa
-
-            if ( localOnly && ( cacheType == CacheType.REMOTE_CACHE || cacheType == CacheType.LATERAL_CACHE ) )
-            {
-                continue;
-            }
             try
             {
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "Removing " + key + " from cacheType" + cacheType );
-                }
-
-                boolean b = aux.remove( key );
-
-                // Don't take the remote removal into account.
-                if ( !removed && cacheType != CacheType.REMOTE_CACHE )
-                {
-                    removed = b;
-                }
+                removed = memCache.remove( key );
             }
-            catch ( IOException ex )
+            catch ( IOException e )
             {
-                log.error( "Failure removing from aux", ex );
+                log.error( e );
+            }
+
+            // Removes from all auxiliary caches.
+            for ( ICache<K, V> aux : auxCaches )
+            {
+                if ( aux == null )
+                {
+                    continue;
+                }
+
+                CacheType cacheType = aux.getCacheType();
+
+                // for now let laterals call remote remove but not vice versa
+
+                if ( localOnly && ( cacheType == CacheType.REMOTE_CACHE || cacheType == CacheType.LATERAL_CACHE ) )
+                {
+                    continue;
+                }
+                try
+                {
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug( "Removing " + key + " from cacheType" + cacheType );
+                    }
+
+                    boolean b = aux.remove( key );
+
+                    // Don't take the remote removal into account.
+                    if ( !removed && cacheType != CacheType.REMOTE_CACHE )
+                    {
+                        removed = b;
+                    }
+                }
+                catch ( IOException ex )
+                {
+                    log.error( "Failure removing from aux", ex );
+                }
             }
         }
+
         return removed;
     }
 
@@ -1227,42 +1223,43 @@ public class CompositeCache<K, V>
      *            looping.
      * @throws IOException
      */
-    protected synchronized void removeAll( boolean localOnly )
+    protected void removeAll( boolean localOnly )
         throws IOException
     {
-        try
+        synchronized (this)
         {
-            memCache.removeAll();
-
-            if ( log.isDebugEnabled() )
+            try
             {
-                log.debug( "Removed All keys from the memory cache." );
-            }
-        }
-        catch ( IOException ex )
-        {
-            log.error( "Trouble updating memory cache.", ex );
-        }
+                memCache.removeAll();
 
-        // Removes from all auxiliary disk caches.
-        for ( int i = 0; i < auxCaches.length; i++ )
-        {
-            ICache<K, V> aux = auxCaches[i];
-
-            if ( aux != null && ( aux.getCacheType() == CacheType.DISK_CACHE || !localOnly ) )
-            {
-                try
+                if ( log.isDebugEnabled() )
                 {
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug( "Removing All keys from cacheType" + aux.getCacheType() );
-                    }
-
-                    aux.removeAll();
+                    log.debug( "Removed All keys from the memory cache." );
                 }
-                catch ( IOException ex )
+            }
+            catch ( IOException ex )
+            {
+                log.error( "Trouble updating memory cache.", ex );
+            }
+
+            // Removes from all auxiliary disk caches.
+            for ( ICache<K, V> aux : auxCaches )
+            {
+                if ( aux != null && ( aux.getCacheType() == CacheType.DISK_CACHE || !localOnly ) )
                 {
-                    log.error( "Failure removing all from aux", ex );
+                    try
+                    {
+                        if ( log.isDebugEnabled() )
+                        {
+                            log.debug( "Removing All keys from cacheType" + aux.getCacheType() );
+                        }
+
+                        aux.removeAll();
+                    }
+                    catch ( IOException ex )
+                    {
+                        log.error( "Failure removing all from aux", ex );
+                    }
                 }
             }
         }
@@ -1284,7 +1281,7 @@ public class CompositeCache<K, V>
      * <p>
      * @param fromRemote
      */
-    public synchronized void dispose( boolean fromRemote )
+    public void dispose( boolean fromRemote )
     {
         if ( log.isInfoEnabled() )
         {
@@ -1292,87 +1289,84 @@ public class CompositeCache<K, V>
         }
 
         // If already disposed, return immediately
-        if ( !alive )
+        if ( alive.compareAndSet(true, false) == false )
         {
             return;
         }
-        alive = false;
 
-        // Now, shut down the event queue
-        if (elementEventQ != null)
+        synchronized (this)
         {
-            elementEventQ.dispose();
-            elementEventQ = null;
-        }
+            // Now, shut down the event queue
+            if (elementEventQ != null)
+            {
+                elementEventQ.dispose();
+                elementEventQ = null;
+            }
 
-        // Dispose of each auxiliary cache, Remote auxiliaries will be
-        // skipped if 'fromRemote' is true.
-        for ( int i = 0; i < auxCaches.length; i++ )
-        {
+            // Dispose of each auxiliary cache, Remote auxiliaries will be
+            // skipped if 'fromRemote' is true.
+            for ( ICache<K, V> aux : auxCaches )
+            {
+                try
+                {
+                    // Skip this auxiliary if:
+                    // - The auxiliary is null
+                    // - The auxiliary is not alive
+                    // - The auxiliary is remote and the invocation was remote
+                    if ( aux == null || aux.getStatus() != CacheStatus.ALIVE
+                        || ( fromRemote && aux.getCacheType() == CacheType.REMOTE_CACHE ) )
+                    {
+                        if ( log.isInfoEnabled() )
+                        {
+                            log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] SKIPPING auxiliary [" + aux.getCacheName() + "] fromRemote ["
+                                + fromRemote + "]" );
+                        }
+                        continue;
+                    }
+
+                    if ( log.isInfoEnabled() )
+                    {
+                        log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] auxiliary [" + aux.getCacheName() + "]" );
+                    }
+
+                    // IT USED TO BE THE CASE THAT (If the auxiliary is not a lateral, or the cache
+                    // attributes
+                    // have 'getUseLateral' set, all the elements currently in
+                    // memory are written to the lateral before disposing)
+                    // I changed this. It was excessive. Only the disk cache needs the items, since only
+                    // the disk cache is in a situation to not get items on a put.
+                    if ( aux.getCacheType() == CacheType.DISK_CACHE )
+                    {
+                        int numToFree = memCache.getSize();
+                        memCache.freeElements( numToFree );
+
+                        if ( log.isInfoEnabled() )
+                        {
+                            log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] put " + numToFree + " into auxiliary " + aux.getCacheName() );
+                        }
+                    }
+
+                    // Dispose of the auxiliary
+                    aux.dispose();
+                }
+                catch ( IOException ex )
+                {
+                    log.error( "Failure disposing of aux.", ex );
+                }
+            }
+
+            if ( log.isInfoEnabled() )
+            {
+                log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] disposing of memory cache." );
+            }
             try
             {
-                ICache<K, V> aux = auxCaches[i];
-
-                // Skip this auxiliary if:
-                // - The auxiliary is null
-                // - The auxiliary is not alive
-                // - The auxiliary is remote and the invocation was remote
-
-                if ( aux == null || aux.getStatus() != CacheStatus.ALIVE
-                    || ( fromRemote && aux.getCacheType() == CacheType.REMOTE_CACHE ) )
-                {
-                    if ( log.isInfoEnabled() )
-                    {
-                        log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] SKIPPING auxiliary [" + aux.getCacheName() + "] fromRemote ["
-                            + fromRemote + "]" );
-                    }
-                    continue;
-                }
-
-                if ( log.isInfoEnabled() )
-                {
-                    log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] auxiliary [" + aux.getCacheName() + "]" );
-                }
-
-                // IT USED TO BE THE CASE THAT (If the auxiliary is not a lateral, or the cache
-                // attributes
-                // have 'getUseLateral' set, all the elements currently in
-                // memory are written to the lateral before disposing)
-                // I changed this. It was excessive. Only the disk cache needs the items, since only
-                // the disk cache
-                // is in a situation to not get items on a put.
-
-                if ( aux.getCacheType() == CacheType.DISK_CACHE )
-                {
-                    int numToFree = memCache.getSize();
-                    memCache.freeElements( numToFree );
-
-                    if ( log.isInfoEnabled() )
-                    {
-                        log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] put " + numToFree + " into auxiliary " + aux.getCacheName() );
-                    }
-                }
-
-                // Dispose of the auxiliary
-                aux.dispose();
+                memCache.dispose();
             }
             catch ( IOException ex )
             {
-                log.error( "Failure disposing of aux.", ex );
+                log.error( "Failure disposing of memCache", ex );
             }
-        }
-
-        if ( log.isInfoEnabled() )
-        {
-            log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] disposing of memory cache." );
-        }
-        try
-        {
-            memCache.dispose();
-        }
-        catch ( IOException ex )
-        {
-            log.error( "Failure disposing of memCache", ex );
         }
     }
 
@@ -1383,20 +1377,17 @@ public class CompositeCache<K, V>
      */
     public void save()
     {
+        if ( alive.compareAndSet(true, false) == false )
+        {
+            return;
+        }
+
         synchronized ( this )
         {
-            if ( !alive )
-            {
-                return;
-            }
-            alive = false;
-
-            for ( int i = 0; i < auxCaches.length; i++ )
+            for ( ICache<K, V> aux : auxCaches )
             {
                 try
                 {
-                    ICache<K, V> aux = auxCaches[i];
-
                     if ( aux.getStatus() == CacheStatus.ALIVE )
                     {
                         for (K key : memCache.getKeySet())
@@ -1451,9 +1442,9 @@ public class CompositeCache<K, V>
      * @return The status value
      */
     @Override
-    public synchronized CacheStatus getStatus()
+    public CacheStatus getStatus()
     {
-        return alive ? CacheStatus.ALIVE : CacheStatus.DISPOSED;
+        return alive.get() ? CacheStatus.ALIVE : CacheStatus.DISPOSED;
     }
 
     /**
@@ -1749,7 +1740,7 @@ public class CompositeCache<K, V>
      */
     public int getHitCountRam()
     {
-        return hitCountRam;
+        return hitCountRam.get();
     }
 
     /**
@@ -1758,7 +1749,7 @@ public class CompositeCache<K, V>
      */
     public int getHitCountAux()
     {
-        return hitCountAux;
+        return hitCountAux.get();
     }
 
     /**
@@ -1767,7 +1758,7 @@ public class CompositeCache<K, V>
      */
     public int getMissCountNotFound()
     {
-        return missCountNotFound;
+        return missCountNotFound.get();
     }
 
     /**
@@ -1776,7 +1767,15 @@ public class CompositeCache<K, V>
      */
     public int getMissCountExpired()
     {
-        return missCountExpired;
+        return missCountExpired.get();
+    }
+
+    /**
+     * @return Returns the updateCount.
+     */
+    public int getUpdateCount()
+    {
+        return updateCount.get();
     }
 
     /**
@@ -1801,38 +1800,6 @@ public class CompositeCache<K, V>
     public IKeyMatcher<K> getKeyMatcher()
     {
         return this.keyMatcher;
-    }
-
-    /**
-     * @param updateCount The updateCount to set.
-     */
-    public synchronized void setUpdateCount( int updateCount )
-    {
-        this.updateCount = updateCount;
-    }
-
-    /**
-     * @return Returns the updateCount.
-     */
-    public synchronized int getUpdateCount()
-    {
-        return updateCount;
-    }
-
-    /**
-     * @param removeCount The removeCount to set.
-     */
-    public synchronized void setRemoveCount( int removeCount )
-    {
-        this.removeCount = removeCount;
-    }
-
-    /**
-     * @return Returns the removeCount.
-     */
-    public synchronized int getRemoveCount()
-    {
-        return removeCount;
     }
 
     /**

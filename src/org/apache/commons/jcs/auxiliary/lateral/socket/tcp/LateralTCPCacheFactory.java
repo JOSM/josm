@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheFactory;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
@@ -62,6 +63,9 @@ public class LateralTCPCacheFactory
 
     /** Address to service map. */
     private ConcurrentHashMap<String, ICacheServiceNonLocal<?, ?>> csnlInstances;
+
+    /** Lock for initialization of address to service map */
+    private ReentrantLock csnlLock;
 
     /** Map of available discovery listener instances, keyed by port. */
     private ConcurrentHashMap<String, LateralTCPDiscoveryListener> lTCPDLInstances;
@@ -168,6 +172,7 @@ public class LateralTCPCacheFactory
     public void initialize()
     {
         this.csnlInstances = new ConcurrentHashMap<String, ICacheServiceNonLocal<?, ?>>();
+        this.csnlLock = new ReentrantLock();
         this.lTCPDLInstances = new ConcurrentHashMap<String, LateralTCPDiscoveryListener>();
 
         // Create the monitoring daemon thread
@@ -216,55 +221,68 @@ public class LateralTCPCacheFactory
      *
      * @return ICacheServiceNonLocal<K, V>
      */
+    // Need to cast because of common map for all cache services
+    @SuppressWarnings("unchecked")
     public <K, V> ICacheServiceNonLocal<K, V> getCSNLInstance( ITCPLateralCacheAttributes lca )
     {
         String key = lca.getTcpServer();
-        synchronized ( csnlInstances )
+
+        ICacheServiceNonLocal<K, V> service = (ICacheServiceNonLocal<K, V>)csnlInstances.get( key );
+
+        if ( service == null || service instanceof ZombieCacheServiceNonLocal )
         {
-            // Need to cast because of common map for all cache services
-            @SuppressWarnings("unchecked")
-            ICacheServiceNonLocal<K, V> service = (ICacheServiceNonLocal<K, V>)csnlInstances.get( key );
+            csnlLock.lock();
 
-            // If service creation did not succeed last time, force retry
-            if ( service instanceof ZombieCacheServiceNonLocal)
+            try
             {
-                service = null;
-                log.info("Disposing of zombie service instance for [" + key + "]");
-            }
+                // double check
+                service = (ICacheServiceNonLocal<K, V>)csnlInstances.get( key );
 
-            if ( service == null )
-            {
-                log.info( "Instance for [" + key + "] is null, creating" );
-
-                // Create the service
-                try
+                // If service creation did not succeed last time, force retry
+                if ( service instanceof ZombieCacheServiceNonLocal)
                 {
-                    if ( log.isInfoEnabled() )
+                    service = null;
+                    log.info("Disposing of zombie service instance for [" + key + "]");
+                }
+
+                if ( service == null )
+                {
+                    log.info( "Instance for [" + key + "] is null, creating" );
+
+                    // Create the service
+                    try
                     {
-                        log.info( "Creating TCP service, lca = " + lca );
+                        if ( log.isInfoEnabled() )
+                        {
+                            log.info( "Creating TCP service, lca = " + lca );
+                        }
+
+                        service = new LateralTCPService<K, V>( lca );
+                    }
+                    catch ( IOException ex )
+                    {
+                        // Failed to connect to the lateral server.
+                        // Configure this LateralCacheManager instance to use the
+                        // "zombie" services.
+                        log.error( "Failure, lateral instance will use zombie service", ex );
+
+                        service = new ZombieCacheServiceNonLocal<K, V>( lca.getZombieQueueMaxSize() );
+
+                        // Notify the cache monitor about the error, and kick off
+                        // the recovery process.
+                        monitor.notifyError();
                     }
 
-                    service = new LateralTCPService<K, V>( lca );
+                    csnlInstances.put( key, service );
                 }
-                catch ( IOException ex )
-                {
-                    // Failed to connect to the lateral server.
-                    // Configure this LateralCacheManager instance to use the
-                    // "zombie" services.
-                    log.error( "Failure, lateral instance will use zombie service", ex );
-
-                    service = new ZombieCacheServiceNonLocal<K, V>( lca.getZombieQueueMaxSize() );
-
-                    // Notify the cache monitor about the error, and kick off
-                    // the recovery process.
-                    monitor.notifyError();
-                }
-
-                csnlInstances.put( key, service );
             }
-
-            return service;
+            finally
+            {
+                csnlLock.unlock();
+            }
         }
+
+        return service;
     }
 
     /**

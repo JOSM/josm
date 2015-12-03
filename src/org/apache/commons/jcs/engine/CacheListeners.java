@@ -19,12 +19,13 @@ package org.apache.commons.jcs.engine;
  * under the License.
  */
 
-import org.apache.commons.jcs.engine.behavior.ICache;
-import org.apache.commons.jcs.engine.behavior.ICacheEventQueue;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import org.apache.commons.jcs.engine.behavior.ICache;
+import org.apache.commons.jcs.engine.behavior.ICacheEventQueue;
 
 /**
  * Used to associates a set of [cache listener to cache event queue] for a
@@ -36,7 +37,7 @@ public class CacheListeners<K, V>
     public final ICache<K, V> cache;
 
     /** Map ICacheListener to ICacheEventQueue */
-    public final Map<Long, ICacheEventQueue<K, V>> eventQMap =
+    public final ConcurrentMap<Long, ICacheEventQueue<K, V>> eventQMap =
         new ConcurrentHashMap<Long, ICacheEventQueue<K, V>>();
 
     /**

@@ -19,6 +19,16 @@ package org.apache.commons.jcs.engine.memory.lru;
  * under the License.
  */
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.control.CompositeCache;
@@ -32,15 +42,6 @@ import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * This is a test memory manager using the jdk1.4 LinkedHashMap.
  */
@@ -51,13 +52,13 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
     private static final Log log = LogFactory.getLog( LRUMemoryCache.class );
 
     /** number of hits */
-    private int hitCnt = 0; // TODO should these be long values?
+    private AtomicInteger hitCnt;
 
     /** number of misses */
-    private int missCnt = 0;
+    private AtomicInteger missCnt;
 
     /** number of puts */
-    private int putCnt = 0;
+    private AtomicInteger putCnt;
 
     /**
      * For post reflection creation initialization
@@ -68,7 +69,10 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
     public synchronized void initialize( CompositeCache<K, V> hub )
     {
         super.initialize( hub );
-        log.info( "initialized LHMLRUMemoryCache for " + cacheName );
+        hitCnt = new AtomicInteger(0);
+        missCnt = new AtomicInteger(0);
+        putCnt = new AtomicInteger(0);
+        log.info( "initialized LHMLRUMemoryCache for " + getCacheName() );
     }
 
     /**
@@ -92,7 +96,7 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
     public void update( ICacheElement<K, V> ce )
         throws IOException
     {
-        putCnt++;
+        putCnt.incrementAndGet();
         map.put( ce.getKey(), new MemoryElementDescriptor<K, V>(ce) );
     }
 
@@ -126,24 +130,27 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
 
         if ( log.isDebugEnabled() )
         {
-            log.debug( "getting item from cache " + cacheName + " for key " + key );
+            log.debug( "getting item from cache " + getCacheName() + " for key " + key );
         }
 
         me = map.get( key );
 
         if ( me != null )
         {
-            hitCnt++;
+            hitCnt.incrementAndGet();
             if ( log.isDebugEnabled() )
             {
-                log.debug( cacheName + ": LRUMemoryCache hit for " + key );
+                log.debug( getCacheName() + ": LHMLRUMemoryCache hit for " + key );
             }
             return me.ce;
         }
         else
         {
-            missCnt++;
-            log.debug( cacheName + ": LRUMemoryCache miss for " + key );
+            missCnt.incrementAndGet();
+            if ( log.isDebugEnabled() )
+            {
+                log.debug( getCacheName() + ": LHMLRUMemoryCache miss for " + key );
+            }
         }
 
         return null;
@@ -251,9 +258,9 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
         ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
 
         elems.add(new StatElement<Integer>( "Map Size", Integer.valueOf(map.size()) ) );
-        elems.add(new StatElement<Integer>( "Put Count", Integer.valueOf(putCnt) ) );
-        elems.add(new StatElement<Integer>( "Hit Count", Integer.valueOf(hitCnt) ) );
-        elems.add(new StatElement<Integer>( "Miss Count", Integer.valueOf(missCnt) ) );
+        elems.add(new StatElement<AtomicInteger>("Put Count", putCnt));
+        elems.add(new StatElement<AtomicInteger>("Hit Count", hitCnt));
+        elems.add(new StatElement<AtomicInteger>("Miss Count", missCnt));
 
         stats.setStatElements( elems );
 
@@ -305,7 +312,7 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
          */
         public LHMSpooler()
         {
-            super( (int) ( cache.getCacheAttributes().getMaxObjects() * .5 ), .75F, true );
+            super( (int) ( getCacheAttributes().getMaxObjects() * .5 ), .75F, true );
         }
 
         /**
@@ -320,7 +327,7 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
         {
             ICacheElement<K, V> element = eldest.getValue().ce;
 
-            if ( size() <= cache.getCacheAttributes().getMaxObjects() )
+            if ( size() <= getCacheAttributes().getMaxObjects() )
             {
                 return false;
             }
@@ -329,7 +336,7 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
 
                 if ( log.isDebugEnabled() )
                 {
-                    log.debug( "LHMLRU max size: " + cache.getCacheAttributes().getMaxObjects()
+                    log.debug( "LHMLRU max size: " + getCacheAttributes().getMaxObjects()
                         + ".  Spooling element, key: " + element.getKey() );
                 }
                 spoolToDisk( element );
@@ -350,11 +357,11 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
         @SuppressWarnings("synthetic-access")
         private void spoolToDisk( ICacheElement<K, V> element )
         {
-            cache.spoolToDisk( element );
+            getCompositeCache().spoolToDisk( element );
 
             if ( log.isDebugEnabled() )
             {
-                log.debug( cache.getCacheName() + "Spooled element to disk: " + element.getKey() );
+                log.debug( getCacheName() + "Spooled element to disk: " + element.getKey() );
             }
         }
     }

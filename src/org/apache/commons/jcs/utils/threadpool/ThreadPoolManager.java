@@ -20,14 +20,14 @@ package org.apache.commons.jcs.utils.threadpool;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.commons.jcs.utils.props.PropertyLoader;
 import org.apache.commons.jcs.utils.threadpool.PoolConfiguration.WhenBlockedPolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -99,9 +99,6 @@ public class ThreadPoolManager
     /** The default config, created using property defaults if present, else those above. */
     private static PoolConfiguration defaultConfig;
 
-    /** Setting this after initialization will have no effect.  */
-    private static String propsFileName = null;
-
     /** the root property name */
     private static final String PROP_NAME_ROOT = "thread_pool";
 
@@ -115,7 +112,10 @@ public class ThreadPoolManager
     private static volatile Properties props = null;
 
     /** Map of names to pools. */
-    private static HashMap<String, ThreadPoolExecutor> pools = new HashMap<String, ThreadPoolExecutor>();
+    private static ConcurrentHashMap<String, ThreadPoolExecutor> pools = new ConcurrentHashMap<String, ThreadPoolExecutor>();
+
+    /** Lock for pools initialization. */
+    private static ReentrantLock poolLock = new ReentrantLock();
 
     /** singleton instance */
     private static ThreadPoolManager INSTANCE = null;
@@ -236,29 +236,41 @@ public class ThreadPoolManager
      */
     public ThreadPoolExecutor getPool( String name )
     {
-        ThreadPoolExecutor pool = null;
+        ThreadPoolExecutor pool = pools.get( name );
 
-        synchronized ( pools )
+        if ( pool == null )
         {
-            pool = pools.get( name );
-            if ( pool == null )
+            poolLock.lock();
+
+            try
             {
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "Creating pool for name [" + name + "]" );
-                }
-                PoolConfiguration config = this.loadConfig( PROP_NAME_ROOT + "." + name );
-                pool = createPool( config );
+                // double check
+                pool = pools.get( name );
 
-                if ( pool != null )
+                if ( pool == null )
                 {
-                    pools.put( name, pool );
-                }
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug( "Creating pool for name [" + name + "]" );
+                    }
 
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "PoolName = " + getPoolNames() );
+                    PoolConfiguration config = loadConfig( PROP_NAME_ROOT + "." + name );
+                    pool = createPool( config );
+
+                    if ( pool != null )
+                    {
+                        pools.put( name, pool );
+                    }
+
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug( "PoolName = " + getPoolNames() );
+                    }
                 }
+            }
+            finally
+            {
+                poolLock.unlock();
             }
         }
 
@@ -273,32 +285,8 @@ public class ThreadPoolManager
     public ArrayList<String> getPoolNames()
     {
         ArrayList<String> poolNames = new ArrayList<String>();
-        synchronized ( pools )
-        {
-            poolNames.addAll(pools.keySet());
-        }
+        poolNames.addAll(pools.keySet());
         return poolNames;
-    }
-
-    /**
-     * Setting this post initialization will have no effect.
-     * <p>
-     * @param propsFileName The propsFileName to set.
-     */
-    public static void setPropsFileName( String propsFileName )
-    {
-        ThreadPoolManager.propsFileName = propsFileName;
-    }
-
-    /**
-     * Returns the name of the properties file that we used to initialize the pools. If the value
-     * was set post-initialization, then it may not be the file used.
-     * <p>
-     * @return Returns the propsFileName.
-     */
-    public static String getPropsFileName()
-    {
-        return propsFileName;
     }
 
     /**
@@ -313,38 +301,13 @@ public class ThreadPoolManager
     }
 
     /**
-     * @return Returns the props.
-     */
-    public static Properties getProps()
-    {
-        return props;
-    }
-
-    /**
      * Initialize the ThreadPoolManager and create all the pools defined in the configuration.
      */
-    protected void configure()
+    private static void configure()
     {
         if ( log.isDebugEnabled() )
         {
             log.debug( "Initializing ThreadPoolManager" );
-        }
-
-        if ( props == null )
-        {
-            try
-            {
-                props = PropertyLoader.loadProperties( propsFileName );
-
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "File contained " + props.size() + " properties" );
-                }
-            }
-            catch ( Exception e )
-            {
-                log.error( "Problem loading properties. propsFileName [" + propsFileName + "]", e );
-            }
         }
 
         if ( props == null )
@@ -368,7 +331,7 @@ public class ThreadPoolManager
      * @param root
      * @return PoolConfiguration
      */
-    protected PoolConfiguration loadConfig( String root )
+    private static PoolConfiguration loadConfig( String root )
     {
         PoolConfiguration config = (PoolConfiguration) defaultConfig.clone();
 
