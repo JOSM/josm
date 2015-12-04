@@ -19,6 +19,23 @@ package org.apache.commons.jcs.auxiliary.lateral.socket.tcp;
  * under the License.
  */
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.commons.jcs.access.exception.CacheException;
 import org.apache.commons.jcs.auxiliary.lateral.LateralElementDescriptor;
 import org.apache.commons.jcs.auxiliary.lateral.behavior.ILateralCacheListener;
@@ -33,20 +50,6 @@ import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
 import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Listens for connections from other TCP lateral caches and handles them. The initialization method
@@ -97,10 +100,10 @@ public class LateralTCPListener<K, V>
     private long listenerId = CacheInfo.listenerId;
 
     /** is this shut down? */
-    private boolean shutdown = false;
+    private AtomicBoolean shutdown;
 
     /** is this terminated? */
-    private boolean terminated = false;
+    private AtomicBoolean terminated;
 
     /**
      * Gets the instance attribute of the LateralCacheTCPListener class.
@@ -155,8 +158,8 @@ public class LateralTCPListener<K, V>
 
             pooledExecutor = Executors.newCachedThreadPool(
                     new DaemonThreadFactory("JCS-LateralTCPListener-"));
-            terminated = false;
-            shutdown = false;
+            terminated = new AtomicBoolean(false);
+            shutdown = new AtomicBoolean(false);
 
             log.info( "Listening on port " + port );
 
@@ -167,10 +170,9 @@ public class LateralTCPListener<K, V>
             receiver.setDaemon( true );
             receiver.start();
         }
-        catch ( Exception ex )
+        catch ( IOException ex )
         {
-            log.error( ex );
-            throw new IllegalStateException( ex.getMessage() );
+            throw new IllegalStateException( ex );
         }
     }
 
@@ -371,16 +373,13 @@ public class LateralTCPListener<K, V>
         }
 
         // TODO handle active deregistration, rather than passive detection
-        synchronized (this)
-        {
-            terminated = true;
-        }
+        terminated.set(true);
     }
 
     @Override
     public synchronized void dispose()
     {
-        terminated = true;
+        terminated.set(true);
         notify();
 
         pooledExecutor.shutdownNow();
@@ -519,17 +518,15 @@ public class LateralTCPListener<K, V>
                     inner: while (true)
                     {
                         // Check to see if we've been asked to exit, and exit
-                        synchronized (LateralTCPListener.this)
+                        if (terminated.get())
                         {
-                            if (terminated)
+                            if (log.isDebugEnabled())
                             {
-                                if (log.isDebugEnabled())
-                                {
-                                    log.debug("Thread terminated, exiting gracefully");
-                                }
-                                break outer;
+                                log.debug("Thread terminated, exiting gracefully");
                             }
+                            break outer;
                         }
+
                         try
                         {
                             socket = serverSocket.accept();
@@ -641,11 +638,11 @@ public class LateralTCPListener<K, V>
                     }
                 }
             }
-            catch ( java.io.EOFException e )
+            catch ( EOFException e )
             {
                 log.info( "Caught java.io.EOFException closing connection." + e.getMessage() );
             }
-            catch ( java.net.SocketException e )
+            catch ( SocketException e )
             {
                 log.info( "Caught java.net.SocketException closing connection." + e.getMessage() );
             }
@@ -753,14 +750,13 @@ public class LateralTCPListener<K, V>
     @Override
     public void shutdown()
     {
-        if ( !shutdown )
+        if ( shutdown.compareAndSet(false, true) )
         {
-            shutdown = true;
-
             if ( log.isInfoEnabled() )
             {
                 log.info( "Shutting down TCP Lateral receiver." );
             }
+
             receiver.interrupt();
         }
         else
