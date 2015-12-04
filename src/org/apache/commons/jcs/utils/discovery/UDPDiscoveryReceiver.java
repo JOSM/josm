@@ -19,14 +19,6 @@ package org.apache.commons.jcs.utils.discovery;
  * under the License.
  */
 
-import org.apache.commons.jcs.engine.CacheInfo;
-import org.apache.commons.jcs.engine.behavior.IShutdownObserver;
-import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
-import org.apache.commons.jcs.utils.discovery.UDPDiscoveryMessage.BroadcastType;
-import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -35,6 +27,14 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import org.apache.commons.jcs.engine.CacheInfo;
+import org.apache.commons.jcs.engine.behavior.IShutdownObserver;
+import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
+import org.apache.commons.jcs.utils.discovery.UDPDiscoveryMessage.BroadcastType;
+import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /** Receives UDP Discovery messages. */
 public class UDPDiscoveryReceiver
@@ -150,7 +150,7 @@ public class UDPDiscoveryReceiver
         throws IOException
     {
         final DatagramPacket packet = new DatagramPacket( mBuffer, mBuffer.length );
-
+        ObjectInputStream objectStream = null;
         Object obj = null;
         try
         {
@@ -167,7 +167,7 @@ public class UDPDiscoveryReceiver
             }
 
             final ByteArrayInputStream byteStream = new ByteArrayInputStream( mBuffer, 0, packet.getLength() );
-            final ObjectInputStream objectStream = new ObjectInputStreamClassLoaderAware( byteStream, null );
+            objectStream = new ObjectInputStreamClassLoaderAware( byteStream, null );
             obj = objectStream.readObject();
 
             if ( obj != null && obj instanceof UDPDiscoveryMessage )
@@ -187,6 +187,20 @@ public class UDPDiscoveryReceiver
         catch ( Exception e )
         {
             log.error( "Error receiving multicast packet", e );
+        }
+        finally
+        {
+            if (objectStream != null)
+            {
+                try
+                {
+                    objectStream.close();
+                }
+                catch (IOException e)
+                {
+                    log.error( "Error closing object stream", e );
+                }
+            }
         }
         return obj;
     }
