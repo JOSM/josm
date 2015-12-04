@@ -19,16 +19,16 @@ package org.apache.commons.jcs.utils.access;
  * under the License.
  */
 
+import java.io.Serializable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import org.apache.commons.jcs.JCS;
 import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.access.GroupCacheAccess;
 import org.apache.commons.jcs.access.exception.CacheException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Utility class to encapsulate doing a piece of work, and caching the results
@@ -106,7 +106,7 @@ public class JCSWorker<K extends Serializable, V extends Serializable>
     /**
      * Map to hold who's doing work presently.
      */
-    private static volatile Map<String, JCSWorkerHelper> map = new HashMap<String, JCSWorkerHelper>();
+    private volatile ConcurrentMap<String, JCSWorkerHelper<V>> map = new ConcurrentHashMap<String, JCSWorkerHelper<V>>();
 
     /**
      * Region for the JCS cache.
@@ -158,7 +158,7 @@ public class JCSWorker<K extends Serializable, V extends Serializable>
      *             Throws an exception if anything goes wrong while doing the
      *             work.
      */
-    public V getResult( K aKey, JCSWorkerHelper aWorker )
+    public V getResult( K aKey, JCSWorkerHelper<V> aWorker )
         throws Exception
     {
         return run( aKey, null, aWorker );
@@ -168,7 +168,7 @@ public class JCSWorker<K extends Serializable, V extends Serializable>
      * Gets the cached result for this region/key OR does the work and caches
      * the result, returning the result. If the result has not been cached yet,
      * this calls doWork() on the JCSWorkerHelper to do the work and cache the
-     * result. This is also an opertunity to do any post processing of the
+     * result. This is also an opportunity to do any post processing of the
      * result in your CachedWorker implementation.
      * @param aKey
      *            The key to get/put with on the Cache.
@@ -183,7 +183,7 @@ public class JCSWorker<K extends Serializable, V extends Serializable>
      *             Throws an exception if anything goes wrong while doing the
      *             work.
      */
-    public V getResult( K aKey, String aGroup, JCSWorkerHelper aWorker )
+    public V getResult( K aKey, String aGroup, JCSWorkerHelper<V> aWorker )
         throws Exception
     {
         return run( aKey, aGroup, aWorker );
@@ -203,25 +203,14 @@ public class JCSWorker<K extends Serializable, V extends Serializable>
      *             If something goes wrong while doing the work, throw an
      *             exception.
      */
-    private V run( K aKey, String aGroup, JCSWorkerHelper aHelper )
+    private V run( K aKey, String aGroup, JCSWorkerHelper<V> aHelper )
         throws Exception
     {
         V result = null;
         // long start = 0;
         // long dbTime = 0;
-        JCSWorkerHelper helper = null;
+        JCSWorkerHelper<V> helper = map.putIfAbsent(getRegion() + aKey, aHelper);
 
-        synchronized ( map )
-        {
-            // Check to see if we already have a thread doing this work.
-            helper = map.get( getRegion() + aKey );
-            if ( helper == null )
-            {
-                // If not, add ourselves as the Worker so
-                // calls in another thread will use this worker's result
-                map.put( getRegion() + aKey, aHelper );
-            }
-        }
         if ( helper != null )
         {
             synchronized ( helper )
@@ -230,9 +219,16 @@ public class JCSWorker<K extends Serializable, V extends Serializable>
                 {
                     logger.debug( "Found a worker already doing this work (" + getRegion() + ":" + aKey + ")." );
                 }
-                if ( !helper.isFinished() )
+                while ( !helper.isFinished() )
                 {
-                    helper.wait();
+                    try
+                    {
+                        helper.wait();
+                    }
+                    catch (InterruptedException e)
+                    {
+                        // expected
+                    }
                 }
                 if ( logger.isDebugEnabled() )
                 {
@@ -261,9 +257,7 @@ public class JCSWorker<K extends Serializable, V extends Serializable>
             // If the cache dosn't have it, do the work.
             if ( result == null )
             {
-                @SuppressWarnings("unchecked") // Need to cast from Object
-                V doWork = (V)aHelper.doWork();
-                result = doWork;
+                result = aHelper.doWork();
                 if ( logger.isDebugEnabled() )
                 {
                     logger.debug( "Work Done, caching: key:" + aKey + ", group:" + aGroup + ", result:" + result + "." );
@@ -287,19 +281,17 @@ public class JCSWorker<K extends Serializable, V extends Serializable>
             {
                 logger.debug( getRegion() + ":" + aKey + " entered finally." );
             }
-            synchronized ( map )
+
+            // Remove ourselves as the worker.
+            if ( helper == null )
             {
-                // Remove ourselves as the worker.
-                if ( helper == null )
-                {
-                    map.remove( getRegion() + aKey );
-                }
-                synchronized ( aHelper )
-                {
-                    aHelper.setFinished( true );
-                    // Wake everyone waiting on us
-                    aHelper.notifyAll();
-                }
+                map.remove( getRegion() + aKey );
+            }
+            synchronized ( aHelper )
+            {
+                aHelper.setFinished( true );
+                // Wake everyone waiting on us
+                aHelper.notifyAll();
             }
         }
     }

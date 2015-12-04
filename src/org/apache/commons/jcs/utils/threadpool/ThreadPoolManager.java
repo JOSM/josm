@@ -33,8 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * This manages threadpools for an application using Doug Lea's Util Concurrent package.
- * http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html
+ * This manages threadpools for an application
  * <p>
  * It is a singleton since threads need to be managed vm wide.
  * <p>
@@ -111,20 +110,22 @@ public class ThreadPoolManager
      */
     private static volatile Properties props = null;
 
-    /** Map of names to pools. */
-    private static ConcurrentHashMap<String, ThreadPoolExecutor> pools = new ConcurrentHashMap<String, ThreadPoolExecutor>();
-
-    /** Lock for pools initialization. */
-    private static ReentrantLock poolLock = new ReentrantLock();
-
     /** singleton instance */
     private static ThreadPoolManager INSTANCE = null;
+
+    /** Map of names to pools. */
+    private ConcurrentHashMap<String, ThreadPoolExecutor> pools;
+
+    /** Lock for pools initialization. */
+    private ReentrantLock poolLock;
 
     /**
      * No instances please. This is a singleton.
      */
     private ThreadPoolManager()
     {
+        this.pools = new ConcurrentHashMap<String, ThreadPoolExecutor>();
+        this.poolLock = new ReentrantLock();
         configure();
     }
 
@@ -136,7 +137,6 @@ public class ThreadPoolManager
      */
     private ThreadPoolExecutor createPool( PoolConfiguration config )
     {
-        ThreadPoolExecutor pool = null;
         BlockingQueue<Runnable> queue = null;
         if ( config.isUseBoundary() )
         {
@@ -156,9 +156,13 @@ public class ThreadPoolManager
             queue = new LinkedBlockingQueue<Runnable>();
         }
 
-        pool = new ThreadPoolExecutor(config.getStartUpSize(), config.getMaximumPoolSize(),
-                config.getKeepAliveTime(), TimeUnit.MILLISECONDS,
-                queue, new DaemonThreadFactory("JCS-ThreadPoolManager-"));
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(
+            config.getStartUpSize(),
+            config.getMaximumPoolSize(),
+            config.getKeepAliveTime(),
+            TimeUnit.MILLISECONDS,
+            queue,
+            new DaemonThreadFactory("JCS-ThreadPoolManager-"));
 
         // when blocked policy
         switch (config.getWhenBlockedPolicy())
@@ -256,11 +260,7 @@ public class ThreadPoolManager
 
                     PoolConfiguration config = loadConfig( PROP_NAME_ROOT + "." + name );
                     pool = createPool( config );
-
-                    if ( pool != null )
-                    {
-                        pools.put( name, pool );
-                    }
+                    pools.put( name, pool );
 
                     if ( log.isDebugEnabled() )
                     {
@@ -284,9 +284,7 @@ public class ThreadPoolManager
      */
     public ArrayList<String> getPoolNames()
     {
-        ArrayList<String> poolNames = new ArrayList<String>();
-        poolNames.addAll(pools.keySet());
-        return poolNames;
+        return new ArrayList<String>(pools.keySet());
     }
 
     /**

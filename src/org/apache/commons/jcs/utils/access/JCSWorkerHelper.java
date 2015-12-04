@@ -21,7 +21,7 @@ package org.apache.commons.jcs.utils.access;
 
 /**
  * Interface for doing a piece of work which is expected to be cached. This is
- * ment to be used in conjunction with JCSWorker.
+ * meant to be used in conjunction with JCSWorker.
  * <p>
  * Implement doWork() to return the work being done. isFinished() should return
  * false until setFinished(true) is called, after which time it should return
@@ -29,7 +29,7 @@ package org.apache.commons.jcs.utils.access;
  * <p>
  * @author tsavo
  */
-public interface JCSWorkerHelper
+public interface JCSWorkerHelper<V>
 {
     /**
      * Tells us whether or not the work has been completed. This will be called
@@ -56,6 +56,5 @@ public interface JCSWorkerHelper
      *             If anything goes wrong while doing the work, an Exception
      *             should be thrown.
      */
-    Object doWork()
-        throws Exception;
+    V doWork() throws Exception;
 }

@@ -45,7 +45,7 @@ public abstract class AbstractAuxiliaryCacheMonitor extends Thread
     /**
      * Must make sure AbstractAuxiliaryCacheMonitor is started before any error can be detected!
      */
-    private AtomicBoolean allright = new AtomicBoolean(true);
+    protected AtomicBoolean allright = new AtomicBoolean(true);
 
     /**
      * shutdown flag
@@ -79,14 +79,6 @@ public abstract class AbstractAuxiliaryCacheMonitor extends Thread
         {
             AbstractAuxiliaryCacheMonitor.idlePeriod = idlePeriod;
         }
-    }
-
-    /**
-     * Set error condition unconditionally
-     */
-    protected void setError(boolean state)
-    {
-        allright.set(!state);
     }
 
     /**
@@ -134,7 +126,6 @@ public abstract class AbstractAuxiliaryCacheMonitor extends Thread
      * do actual work
      */
     protected abstract void doWork();
-
 
     /**
      * Main processing method for the AbstractAuxiliaryCacheMonitor object
