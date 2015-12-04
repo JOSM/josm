@@ -25,8 +25,7 @@ package org.apache.commons.jcs.utils.access;
  * <p>
  * @author tsavo
  */
-public abstract class AbstractJCSWorkerHelper
-    implements JCSWorkerHelper
+public abstract class AbstractJCSWorkerHelper<V> implements JCSWorkerHelper<V>
 {
     /** finished flag. Can't we use wait notify? */
     private boolean finished = false;
@@ -43,7 +42,7 @@ public abstract class AbstractJCSWorkerHelper
      * @return finished
      */
     @Override
-    public boolean isFinished()
+    public synchronized boolean isFinished()
     {
         return finished;
     }
@@ -52,7 +51,7 @@ public abstract class AbstractJCSWorkerHelper
      * @param isFinished
      */
     @Override
-    public void setFinished( boolean isFinished )
+    public synchronized void setFinished( boolean isFinished )
     {
         finished = isFinished;
     }

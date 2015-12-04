@@ -19,13 +19,7 @@ package org.apache.commons.jcs.utils.discovery;
  * under the License.
  */
 
-import org.apache.commons.jcs.engine.behavior.IRequireScheduler;
-import org.apache.commons.jcs.engine.behavior.IShutdownObserver;
-import org.apache.commons.jcs.utils.discovery.behavior.IDiscoveryListener;
-import org.apache.commons.jcs.utils.net.HostNameUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,6 +27,13 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.jcs.engine.behavior.IRequireScheduler;
+import org.apache.commons.jcs.engine.behavior.IShutdownObserver;
+import org.apache.commons.jcs.utils.discovery.behavior.IDiscoveryListener;
+import org.apache.commons.jcs.utils.net.HostNameUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This service creates a listener that can create lateral caches and add them to the no wait list.
@@ -85,9 +86,9 @@ public class UDPDiscoveryService
             // todo, you should be able to set this
             udpDiscoveryAttributes.setServiceAddress( HostNameUtil.getLocalHostAddress() );
         }
-        catch ( UnknownHostException e1 )
+        catch ( UnknownHostException e )
         {
-            log.error( "Couldn't get localhost address", e1 );
+            log.error( "Couldn't get localhost address", e );
         }
 
         try
@@ -95,12 +96,8 @@ public class UDPDiscoveryService
             // todo need some kind of recovery here.
             receiver = new UDPDiscoveryReceiver( this, getUdpDiscoveryAttributes().getUdpDiscoveryAddr(),
                                                  getUdpDiscoveryAttributes().getUdpDiscoveryPort() );
-            udpReceiverThread = new Thread( receiver );
-            udpReceiverThread.setDaemon( true );
-            // udpReceiverThread.setName( t.getName() + "--UDPReceiver" );
-            udpReceiverThread.start();
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             log.error( "Problem creating UDPDiscoveryReceiver, address ["
                 + getUdpDiscoveryAttributes().getUdpDiscoveryAddr() + "] port ["
@@ -315,6 +312,17 @@ public class UDPDiscoveryService
     }
 
     /**
+     * Start necessary receiver thread
+     */
+    public void startup()
+    {
+        udpReceiverThread = new Thread( receiver );
+        udpReceiverThread.setDaemon( true );
+        // udpReceiverThread.setName( t.getName() + "--UDPReceiver" );
+        udpReceiverThread.start();
+    }
+
+    /**
      * Shuts down the receiver.
      */
     @Override
@@ -363,29 +371,6 @@ public class UDPDiscoveryService
                 log.debug( "Shutdown already called." );
             }
         }
-    }
-
-    /**
-     * Call shutdown to be safe.
-     * <p>
-     * @throws Throwable on error
-     */
-    @Override
-    protected void finalize()
-        throws Throwable
-    {
-        super.finalize();
-
-        // TODO reconsider this, since it uses the logger
-        shutdown();
-    }
-
-    /**
-     * @param discoveredServices The discoveredServices to set.
-     */
-    public synchronized void setDiscoveredServices( Set<DiscoveredService> discoveredServices )
-    {
-        this.discoveredServices = discoveredServices;
     }
 
     /**

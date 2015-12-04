@@ -19,13 +19,13 @@ package org.apache.commons.jcs.utils.discovery;
  * under the License.
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IProvideScheduler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This manages UDPDiscovery Services. We should end up with one service per Lateral Cache Manager
@@ -101,6 +101,7 @@ public class UDPDiscoveryManager
                 service.setScheduledExecutorService(((IProvideScheduler)cacheMgr).getScheduledExecutorService());
             }
 
+            service.startup();
             services.put( key, service );
         }
 

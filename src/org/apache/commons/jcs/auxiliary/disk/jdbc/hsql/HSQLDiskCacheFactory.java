@@ -169,13 +169,11 @@ public class HSQLDiskCacheFactory
 
         try
         {
-            sStatement.executeQuery( createSql.toString() );
-            sStatement.close();
+            sStatement.execute( createSql.toString() );
         }
         catch ( SQLException e )
         {
-            // FIXME: This is not reliable
-            if ( e.toString().indexOf( "already exists" ) != -1 )
+            if ("23000".equals(e.getSQLState()))
             {
                 newT = false;
             }
@@ -184,22 +182,34 @@ public class HSQLDiskCacheFactory
                 throw e;
             }
         }
-
-        // TODO create an index on SYSTEM_EXPIRE_TIME_SECONDS
-        String setupData[] = { "create index iKEY on " + tableName + " (CACHE_KEY, REGION)" };
+        finally
+        {
+            sStatement.close();
+        }
 
         if ( newT )
         {
-            for ( int i = 1; i < setupData.length; i++ )
+            // TODO create an index on SYSTEM_EXPIRE_TIME_SECONDS
+            String setupData[] = { "create index iKEY on " + tableName + " (CACHE_KEY, REGION)" };
+            Statement iStatement = cConn.createStatement();
+
+            try
             {
-                try
+                for ( int i = 0; i < setupData.length; i++ )
                 {
-                    sStatement.executeQuery( setupData[i] );
+                    try
+                    {
+                        iStatement.execute( setupData[i] );
+                    }
+                    catch ( SQLException e )
+                    {
+                        log.error( "Exception caught when creating index.", e );
+                    }
                 }
-                catch ( SQLException e )
-                {
-                    log.error( "Exception caught when creating index." + e );
-                }
+            }
+            finally
+            {
+                iStatement.close();
             }
         }
     }
