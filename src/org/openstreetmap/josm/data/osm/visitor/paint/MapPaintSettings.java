@@ -48,10 +48,6 @@ public final class MapPaintSettings implements PreferenceChangedListener {
     private boolean fillConnectionNode;
     /** Preference: should only the data area outline be drawn */
     private boolean outlineOnly;
-    /** Preference: if unclosed areas should be drawn differently for partial fill */
-    private boolean unclosedAreaHighlight;
-    /** Preference: width of unclosed area highlight */
-    private double unclosedAreaHighlightWidth;
     /** Preference: parameter to avoid partial fill on small area objects:
      * If more than a certain percentage of the total area would be filled by 
      * partial fill, then fill this area completely (avoiding narrow gap in the
@@ -114,8 +110,6 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         fillConnectionNode = Main.pref.getBoolean("mappaint.node.fill-connection", false);
 
         outlineOnly = Main.pref.getBoolean("draw.data.area_outline_only", false);
-        unclosedAreaHighlight = Main.pref.getBoolean("draw.unclosed_area_partial_fill_highlight", false);
-        unclosedAreaHighlightWidth = Main.pref.getDouble("draw.unclosed_area_partial_fill_highlight.width", 80);
         partialFillThreshold = Main.pref.getDouble("draw.area.partial_fill_threshold", 70);
     }
 
@@ -356,23 +350,6 @@ public final class MapPaintSettings implements PreferenceChangedListener {
      */
     public boolean isOutlineOnly() {
         return outlineOnly;
-    }
-
-    /**
-     * Determines if unclosed areas should be drawn differently for partial fill.
-     * 
-     * @return {@code true} if unclosed areas should be drawn differently for partial fill
-     */
-    public boolean isUnclosedAreaHighlight() {
-        return unclosedAreaHighlight;
-    }
-
-    /**
-     * Returns the width of unclosed area highlight.
-     * @return the width of unclosed area highlight
-     */
-    public double getUnclosedAreaHighlightWidth() {
-        return unclosedAreaHighlightWidth;
     }
 
     /**
