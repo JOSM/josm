@@ -120,8 +120,8 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     }
 
     private void processKeyEvent(KeyEvent e) {
-        if (Main.isDebugEnabled()) {
-            Main.debug("AdvancedKeyPressDetector enabled="+enabled+" => processKeyEvent("+e+") from "+new Exception().getStackTrace()[2]);
+        if (Main.isTraceEnabled()) {
+            Main.trace("AdvancedKeyPressDetector enabled="+enabled+" => processKeyEvent("+e+") from "+new Exception().getStackTrace()[2]);
         }
         if (e.getID() == KeyEvent.KEY_PRESSED) {
             if (timer.isRunning()) {
@@ -129,8 +129,8 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
             } else if (set.add(e.getKeyCode()) && enabled) {
                 if (isFocusInMainWindow()) {
                     for (KeyPressReleaseListener q: keyListeners) {
-                        if (Main.isDebugEnabled()) {
-                            Main.debug(q+" => doKeyPressed("+e+')');
+                        if (Main.isTraceEnabled()) {
+                            Main.trace(q+" => doKeyPressed("+e+')');
                         }
                         q.doKeyPressed(e);
                     }
@@ -142,8 +142,8 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
                 if (set.remove(e.getKeyCode()) && enabled) {
                     if (isFocusInMainWindow()) {
                         for (KeyPressReleaseListener q: keyListeners) {
-                            if (Main.isDebugEnabled()) {
-                                Main.debug(q+" => doKeyReleased("+e+')');
+                            if (Main.isTraceEnabled()) {
+                                Main.trace(q+" => doKeyReleased("+e+')');
                             }
                             q.doKeyReleased(e);
                         }
