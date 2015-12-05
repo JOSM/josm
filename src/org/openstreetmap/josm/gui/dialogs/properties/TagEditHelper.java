@@ -505,8 +505,8 @@ class TagEditHelper {
 
                    List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
                    Collections.sort(valueList, comparator);
-                   if (Main.isDebugEnabled()) {
-                       Main.debug("Focus gained by {0}, e={1}", values, e);
+                   if (Main.isTraceEnabled()) {
+                       Main.trace("Focus gained by {0}, e={1}", values, e);
                    }
                    values.setPossibleACItems(valueList);
                    values.getEditor().selectAll();
